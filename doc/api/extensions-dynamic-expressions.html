@@ -199,7 +199,7 @@ Class <SPAN CLASS="typeNameLabel">TapeCode</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeCode">TapeCode</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#new(<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -370,7 +370,7 @@ Interface <SPAN CLASS="typeNameLabel">TapeExpression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#MessageCall(<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>)
+<CODE>MessageCall(<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -388,7 +388,7 @@ Interface <SPAN CLASS="typeNameLabel">TapeExpression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#Singleton(<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>)
+<CODE>Singleton(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -397,7 +397,7 @@ Interface <SPAN CLASS="typeNameLabel">TapeExpression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#Method(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeCode">TapeCode</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>)
+<CODE>Method(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeCode">TapeCode</A></SPAN>, <I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -415,7 +415,7 @@ Interface <SPAN CLASS="typeNameLabel">TapeExpression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#Code(<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>)
+<CODE>Code(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -527,7 +527,7 @@ Interface <SPAN CLASS="typeNameLabel">TapeExpression</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>saveTo(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A></SPAN>)
 </CODE>
@@ -837,7 +837,7 @@ Class <SPAN CLASS="typeNameLabel">TapeMessageCallExpression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeMessageCallExpression">TapeMessageCallExpression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#new(<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -958,7 +958,7 @@ Class <SPAN CLASS="typeNameLabel">TapeMethod</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeMethod">TapeMethod</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeCode">TapeCode</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeCode">TapeCode</A></SPAN>, <I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1351,7 +1351,7 @@ Class <SPAN CLASS="typeNameLabel">TapeSingleton</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeSingleton">TapeSingleton</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#new(<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="extensions-dynamic-expressions.html#TapeExpression">TapeExpression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>

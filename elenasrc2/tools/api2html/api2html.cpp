@@ -36,7 +36,7 @@ struct ApiSymbolInfo
 struct ApiMethodInfo
 {
    bool prop, special, convertor, isAbstract, isInternal;
-   bool isMultidispatcher;
+   bool isMultidispatcher, withVargs;
 
    IdentifierString       prefix;
    IdentifierString       name;
@@ -48,7 +48,7 @@ struct ApiMethodInfo
    {
       special = prop = convertor = false;
       isAbstract = isMultidispatcher = false;
-      isInternal = false;
+      withVargs = isInternal = false;
    }
 };
 
@@ -278,6 +278,10 @@ void writeRefName(TextFileWriter& writer, ident_t name, bool allowResolvedTempla
          }
          writer.writeLiteral(",");
       }
+      else if (name[i] == '[' && name[i + 1] == ']') {
+         // skip array brackets
+         i++;
+      }
       else if (!paramMode || allowResolvedTemplates)
          writer.writeChar(name[i]);
    }
@@ -290,7 +294,10 @@ void writeClassName(TextFileWriter& writer, ApiClassInfo* info)
       writer.writeLiteral(descr);
    }
    else {
-      writer.writeLiteral(info->prefix.c_str());
+      if (info->prefix.Length() > 0) {
+         writer.writeLiteral(info->prefix.c_str());
+      }
+      
       writer.writeLiteral("<SPAN CLASS=\"typeNameLabel\">");
       writer.writeLiteral(info->name.c_str());
       writer.writeLiteral("</SPAN>");
@@ -365,8 +372,13 @@ inline void repeatStr(TextFileWriter& writer, const char* s, int count)
 
 void writeType(TextFileWriter& writer, ident_t type, bool fullReference = false)
 {
+   if (type.startsWith("params ")) {
+      writer.writeLiteral("<I>params</I>&nbsp;");
+      type = type.c_str() + 7;
+   }
+
+   writer.writeLiteral("<SPAN CLASS=\"memberNameLink\">");
    if (type.find('\'') != NOTFOUND_POS) {
-      writer.writeLiteral("<SPAN CLASS=\"memberNameLink\">");      
       writer.writeLiteral("<A HREF=\"");
 
       pos_t index = type.find("&lt;");
@@ -396,9 +408,9 @@ void writeType(TextFileWriter& writer, ident_t type, bool fullReference = false)
       else writer.writeLiteral(type.c_str() + ns.Length() + 1);
 
       writer.writeLiteral("</A>");
-      writer.writeLiteral("</SPAN>");
    }
    else writer.writeLiteral(type.c_str());
+   writer.writeLiteral("</SPAN>");
 }
 
 void writeParent(TextFileWriter& writer, List<IdentifierString>::Iterator& it, ApiClassInfo* info)
@@ -491,6 +503,7 @@ void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
    writer.writeLiteralNewLine("<CODE>");
    if (info->prefix.Length() != 0) {
       writer.writeLiteral(info->prefix.ident());
+      writer.writeLiteral("&nbsp;");
    }
    if (info->retType.Length() != 0) {
       writeType(writer, info->retType);
@@ -1247,6 +1260,12 @@ void parseName(ApiMethodInfo* info, bool templateBased, ident_t rootNs)
          if (info->name[i] == ',' || info->name[i] == '>') {
             readType(type, param.c_str(), rootNs, templateBased);
 
+            if (info->withVargs && info->name[i] == '>') {
+               type.append("[]");
+
+               type.insert("params ", 0);
+            }
+
             info->params.add(type.c_str());
 
             param.clear();
@@ -1279,10 +1298,16 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
 
    pos_t index = messageLine.find('.') + 1;
    int propIndex = messageLine.find(".prop#");
+   int vargIndex = messageLine.find(".params#");
    if (propIndex != NOTFOUND_POS) {
       info->prop = true;
 
       info->name.copy(messageLine.c_str() + propIndex + 6, retPos - propIndex - 6);
+   }
+   else if (vargIndex != NOTFOUND_POS) {
+      info->withVargs = true;
+
+      info->name.copy(messageLine.c_str() + vargIndex + 8, retPos - propIndex - 8);
    }
    else info->name.copy(messageLine.c_str() + index, retPos - index);
 

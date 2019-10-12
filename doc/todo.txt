@@ -8,10 +8,9 @@ In development:
               xdev API
                 * correctly display variadic arguments
                 * template extensions
-                * missing algorithms (template extensions)
 
+                * missing algorithms (template extensions)
                 * missing system'routines'stex
-                * missing algorithms
 
               xdev
                 * simplified syntax to invoke dynamic message?

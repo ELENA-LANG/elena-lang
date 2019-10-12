@@ -321,7 +321,7 @@ Class <SPAN CLASS="typeNameLabel">CodeblockExpression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#CodeblockExpression">CodeblockExpression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#new(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -925,7 +925,7 @@ Class <SPAN CLASS="typeNameLabel">DynamicMessageCallExpression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#DynamicMessageCallExpression">DynamicMessageCallExpression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#new(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1164,7 +1164,7 @@ Class <SPAN CLASS="typeNameLabel">DynamicSingleton</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#DynamicSingleton">DynamicSingleton</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#new(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1251,7 +1251,7 @@ Interface <SPAN CLASS="typeNameLabel">Expression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#CodeBlock(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>)
+<CODE>CodeBlock(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1323,7 +1323,7 @@ Interface <SPAN CLASS="typeNameLabel">Expression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#MessageCall(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>)
+<CODE>MessageCall(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>, <I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1341,7 +1341,7 @@ Interface <SPAN CLASS="typeNameLabel">Expression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#DynamicMessageCall(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>)
+<CODE>DynamicMessageCall(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>, <I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1449,7 +1449,7 @@ Interface <SPAN CLASS="typeNameLabel">Expression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#Statement(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>)
+<CODE>Statement(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1588,7 +1588,7 @@ Interface <SPAN CLASS="typeNameLabel">Expression</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>saveTo(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#ExpressionScope">ExpressionScope</A></SPAN>)
 </CODE>
@@ -1681,7 +1681,7 @@ Interface <SPAN CLASS="typeNameLabel">ExpressionScope</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+abstract get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ScopeLevel</CODE>
 </TD>
@@ -1701,7 +1701,7 @@ abstract get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumb
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN></CODE></TD>
+abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>resolve(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
 </CODE>
@@ -1710,7 +1710,7 @@ abstract <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#E
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>declare(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#ScopeVariable">ScopeVariable</A></SPAN>)
 </CODE>
@@ -1991,7 +1991,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">IdleExpressionScope</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-get<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>ScopeLevel</CODE>
 </TD>
@@ -2321,7 +2321,7 @@ Class <SPAN CLASS="typeNameLabel">MessageCallExpression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#MessageCallExpression">MessageCallExpression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>, <I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -2910,7 +2910,7 @@ Class <SPAN CLASS="typeNameLabel">ScopeVariable</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-get<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Name</CODE>
 </TD>
@@ -2918,7 +2918,7 @@ get<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-set</CODE></TD>
+set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Name(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
 </CODE>
@@ -3438,7 +3438,7 @@ Class <SPAN CLASS="typeNameLabel">StatementExpression</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#StatementExpression">StatementExpression</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>params#new(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic-expressions.html#Expression">Expression[]</A></SPAN>)
 </CODE>
 </TD>
 </TR>
