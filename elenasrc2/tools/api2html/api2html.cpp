@@ -87,6 +87,8 @@ struct ApiClassInfo
 
 struct ApiModuleInfo
 {
+   bool withVirtuals, withClasses;
+
    IdentifierString name;
 
    List<ApiClassInfo*> classes;
@@ -94,7 +96,7 @@ struct ApiModuleInfo
    ApiModuleInfo()
       : classes(nullptr, freeobj), symbols(nullptr, freeobj)
    {
-
+      withVirtuals = withClasses = false;
    }
    ~ApiModuleInfo()
    {
@@ -205,8 +207,8 @@ void writeClassSummaryHeader(TextFileWriter& writer)
    writer.writeLiteralNewLine("Class Summary");
    writer.writeLiteralNewLine("</HEADER>");
    writer.writeLiteralNewLine("<TR>"); 
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Class name</TH>"); 
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Description</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Class name</TH>"); 
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Description</TH>");
    writer.writeLiteralNewLine("</TR>");
 }
 
@@ -218,8 +220,8 @@ void writeSymbolSummaryHeader(TextFileWriter& writer)
    writer.writeLiteralNewLine("Symbol Summary");
    writer.writeLiteralNewLine("</HEADER>");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Symbol name</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Description</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Symbol name</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Description</TH>");
    writer.writeLiteralNewLine("</TR>");
 
 }
@@ -232,13 +234,13 @@ void writeExtendedSummaryHeader(TextFileWriter& writer)
    writer.writeLiteralNewLine("Extended Class Summary");
    writer.writeLiteralNewLine("</HEADER>");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Extended class name</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Description</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Extended class name</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Description</TH>");
    writer.writeLiteralNewLine("</TR>");
 
 }
 
-void writeRefName(TextFileWriter& writer, ident_t name)
+void writeRefName(TextFileWriter& writer, ident_t name, bool allowResolvedTemplates)
 {
    int paramIndex = 1;
    bool paramMode = false;
@@ -250,28 +252,33 @@ void writeRefName(TextFileWriter& writer, ident_t name)
       else if (name.compare("&lt;", i, 4)) {
          paramMode = true;
          writer.writeLiteral("&lt;");
+
+         i += 3;
       }
       else if (name.compare("&gt;", i, 4)) {
-         String<char, 5> tmp;
-         tmp.copy("T");
-         tmp.appendInt(paramIndex);
-         writer.writeLiteral(tmp.c_str());
+         if (!allowResolvedTemplates) {
+            String<char, 5> tmp;
+            tmp.copy("T");
+            tmp.appendInt(paramIndex);
+            writer.writeLiteral(tmp.c_str());
+         }
          writer.writeLiteral("&gt;");
-
          paramMode = false;
 
          i += 3;
       }
       else if (name[i] == ',') {
-         String<char, 5> tmp;
-         tmp.copy("T");
-         tmp.appendInt(paramIndex);
-         writer.writeLiteral(tmp.c_str());
-         writer.writeLiteral(",");
+         if (!allowResolvedTemplates) {
+            String<char, 5> tmp;
+            tmp.copy("T");
+            tmp.appendInt(paramIndex);
+            writer.writeLiteral(tmp.c_str());
 
-         paramIndex++;
+            paramIndex++;
+         }
+         writer.writeLiteral(",");
       }
-      else if (!paramMode)
+      else if (!paramMode || allowResolvedTemplates)
          writer.writeChar(name[i]);
    }
 }
@@ -297,7 +304,7 @@ void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* b
    writer.writeLiteral("<A HREF=\"");
    writer.writeLiteral(bodyFileName);
    writer.writeLiteral("#");
-   writeRefName(writer, info->name.c_str());
+   writeRefName(writer, info->name.c_str(), false);
    writer.writeLiteral("\">");
    writer.writeLiteral(info->name.c_str());
    writer.writeLiteralNewLine("</A>");
@@ -318,7 +325,7 @@ void writeSymbolSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const 
    writer.writeLiteral("<A HREF=\"");
    writer.writeLiteral(bodyFileName);
    writer.writeLiteral("#");
-   writeRefName(writer, info->name.c_str());
+   writeRefName(writer, info->name.c_str(), false);
    writer.writeLiteral("\">");
    writer.writeLiteral(info->name.c_str());
    writer.writeLiteralNewLine("</A>");
@@ -338,7 +345,7 @@ void writeExtendedSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const
    writer.writeLiteral("<A HREF=\"");
    writer.writeLiteral(bodyFileName);
    writer.writeLiteral("#ext-");
-   writeRefName(writer, info->name.c_str());
+   writeRefName(writer, info->name.c_str(), true);
    writer.writeLiteral("\">");
    writer.writeLiteral(info->name.c_str());
    writer.writeLiteralNewLine("</A>");
@@ -380,7 +387,7 @@ void writeType(TextFileWriter& writer, ident_t type, bool fullReference = false)
          writeNs(writer, ns.ident());
          writer.writeLiteral(".html#");
       }
-      writeRefName(writer, type.c_str() + ns.Length() + 1);
+      writeRefName(writer, type.c_str() + ns.Length() + 1, false);
 
       writer.writeLiteral("\">");
       if (fullReference) {
@@ -431,8 +438,8 @@ void writeFields(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Field</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Field</TH>");
    writer.writeLiteralNewLine("</TR>");
 
 
@@ -557,8 +564,8 @@ void writeMethods(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Method</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Method</TH>");
    writer.writeLiteralNewLine("</TR>");
 
    bool alt = true;
@@ -596,8 +603,8 @@ void writeProperties(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Property accessor</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Property accessor</TH>");
    writer.writeLiteralNewLine("</TR>");
 
    bool alt = true;
@@ -635,8 +642,8 @@ void writeStaticProperties(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Property accessor</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Property accessor</TH>");
    writer.writeLiteralNewLine("</TR>");
 
    auto it = info->constructors.start();
@@ -674,8 +681,8 @@ void writeExtensions(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Extension Method</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Extension Method</TH>");
    writer.writeLiteralNewLine("</TR>");
 
    bool alt = true;
@@ -714,8 +721,8 @@ void writeConstructors(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Constructor</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Constructor</TH>");
    writer.writeLiteralNewLine("</TR>");
 
    auto it = info->constructors.start();
@@ -754,8 +761,8 @@ void writeConversions(TextFileWriter& writer, ApiClassInfo* info)
 
    writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Type</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Conversion Method</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Conversion Method</TH>");
    writer.writeLiteralNewLine("</TR>");
 
    bool alt = true;
@@ -785,18 +792,37 @@ void writeConversions(TextFileWriter& writer, ApiClassInfo* info)
    writer.writeLiteralNewLine("</UL>");
 }
 
+void copyName(IdentifierString& name, ident_t fullName)
+{
+   pos_t index = fullName.find("&lt;");
+   if (index == NOTFOUND_POS) {
+      name.copy(fullName.c_str() + fullName.findLast('\'') + 1);
+   }
+   else {
+      if (index != NOTFOUND_POS) {
+         for (size_t i = index; i >= 0; i--) {
+            if (fullName[i] == '\'') {
+               name.copy(fullName.c_str() + i + 1);
+               break;
+            }
+         }
+      }
+   }
+}
+
 void parseNs(IdentifierString& ns, ident_t root, ident_t fullName)
 {
    if (isWeakReference(fullName)) {
       ns.copy(root);
    }
 
+   size_t ltIndex = fullName.find("&lt;");
    size_t last = 0;
    for (size_t i = 0; i < getlength(fullName); i++) {
       if (fullName[i] == '\'') {
          last = i;
       }
-      else if (fullName[i] == '#')
+      else if (fullName[i] == '#' || (fullName[i] == '&' && i == ltIndex))
          break;
    }
 
@@ -999,8 +1025,8 @@ void writeSymbolBody(TextFileWriter& writer, ApiSymbolInfo* info, const char* ro
 
    writer.writeLiteralNewLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
    writer.writeLiteralNewLine("<TR>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\">Modifier and Type</TH>");
-   writer.writeLiteralNewLine("<TH CLASS=\"colLast\">Name</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colFirst\" scope=\"col\">Modifier and Type</TH>");
+   writer.writeLiteralNewLine("<TH CLASS=\"colLast\" scope=\"col\">Name</TH>");
    writer.writeLiteralNewLine("</TR>");
 
    writer.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
@@ -1499,6 +1525,8 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
          }
          else info->isVirtual = false;
 
+         moduleInfo->withClasses = true;
+
          info->templateBased = templateBased;
          info->fullName.copy(fullName.c_str());
 
@@ -1556,21 +1584,25 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
       }
 
       IdentifierString targetFullName;
-      if (isWeakReference(targetName.c_str())) {
-         targetFullName.copy(rootNs);
-         targetFullName.append(targetName.c_str());
-      }
-      else targetFullName.copy(targetName.c_str());
+      readType(targetFullName, targetName.c_str(), rootNs, false);
+
+      //if (isWeakReference(targetName.c_str())) {
+      //   targetFullName.copy(rootNs);
+      //   targetFullName.append(targetName.c_str());
+      //}
+      //else targetFullName.copy(targetName.c_str());
 
       ApiClassInfo* info = findClass(moduleInfo, targetFullName);
       if (info == nullptr) {
          info = new ApiClassInfo();
 
          info->fullName.copy(targetFullName.c_str());
-         info->name.copy(targetFullName.c_str() + targetFullName.ident().findLast('\'') + 1);
+         copyName(info->name, info->fullName.ident());
          info->isVirtual = true;
 
          moduleInfo->classes.add(info);
+
+         moduleInfo->withVirtuals = true;
       }
 
       readExtensions(line, reader, info, rootNs);
@@ -1598,7 +1630,7 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
 
       info->fullName.copy(ns);
       info->fullName.append(line.c_str() + 7);
-      info->name.copy(info->fullName.c_str() + info->fullName.ident().findLast('\'') + 1);
+      copyName(info->name, info->fullName.ident());
 
       moduleInfo->symbols.add(info);
 
@@ -1674,62 +1706,41 @@ int main(int argc, char* argv[])
 
       writeSummaryHeader(summaryWriter, (*it)->name.c_str(), shortDescr);
 
-      // classes
-      writeClassSummaryHeader(summaryWriter);
+      if ((*it)->withClasses) {
+         // classes
+         writeClassSummaryHeader(summaryWriter);
 
-      auto class_it = (*it)->classes.start();
-      bool alt = true;
-      while (!class_it.Eof()) {
-         if (!(*class_it)->isVirtual) {
-            if (alt) {
-               summaryWriter.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+         auto class_it = (*it)->classes.start();
+         bool alt = true;
+         while (!class_it.Eof()) {
+            if (!(*class_it)->isVirtual) {
+               if (alt) {
+                  summaryWriter.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+               }
+               else {
+                  summaryWriter.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+               }
+               alt = !alt;
+
+               writeSummaryTable(summaryWriter, *class_it, name);
+               writeBody(bodyWriter, *class_it, ns);
+
+               summaryWriter.writeLiteralNewLine("</TR>");
             }
-            else {
-               summaryWriter.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
-            }
-            alt = !alt;
 
-            writeSummaryTable(summaryWriter, *class_it, name);
-            writeBody(bodyWriter, *class_it, ns);
-
-            summaryWriter.writeLiteralNewLine("</TR>");
+            class_it++;
          }
-         
-         class_it++;
-      }
 
-      writeClassSummaryFooter(summaryWriter);
+         writeClassSummaryFooter(summaryWriter);
+      }
 
       // symbols
-      writeSymbolSummaryHeader(summaryWriter);
+      if ((*it)->symbols.Count() > 0) {
+         writeSymbolSummaryHeader(summaryWriter);
 
-      auto symbol_it = (*it)->symbols.start();
-      alt = true;
-      while (!symbol_it.Eof()) {
-         if (alt) {
-            summaryWriter.writeLiteralNewLine("<TR CLASS=\"altColor\">");
-         }
-         else {
-            summaryWriter.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
-         }
-         alt = !alt;
-
-         writeSymbolSummaryTable(summaryWriter, *symbol_it, name);
-         writeSymbolBody(bodyWriter, *symbol_it, ns);
-
-         summaryWriter.writeLiteralNewLine("</TR>");
-
-         symbol_it++;
-      }
-      writeClassSummaryFooter(summaryWriter);
-
-      // extensions
-      writeExtendedSummaryHeader(summaryWriter);
-
-      class_it = (*it)->classes.start();
-      alt = true;
-      while (!class_it.Eof()) {
-         if ((*class_it)->isVirtual) {
+         auto symbol_it = (*it)->symbols.start();
+         bool alt = true;
+         while (!symbol_it.Eof()) {
             if (alt) {
                summaryWriter.writeLiteralNewLine("<TR CLASS=\"altColor\">");
             }
@@ -1738,16 +1749,43 @@ int main(int argc, char* argv[])
             }
             alt = !alt;
 
-            writeExtendedSummaryTable(summaryWriter, *class_it, name);
-            writeExtendedBody(bodyWriter, *class_it, ns);
+            writeSymbolSummaryTable(summaryWriter, *symbol_it, name);
+            writeSymbolBody(bodyWriter, *symbol_it, ns);
 
             summaryWriter.writeLiteralNewLine("</TR>");
-         }
 
-         class_it++;
+            symbol_it++;
+         }
+         writeClassSummaryFooter(summaryWriter);
       }
 
-      writeClassSummaryFooter(summaryWriter);
+      // extensions
+      if ((*it)->withVirtuals) {
+         writeExtendedSummaryHeader(summaryWriter);
+
+         auto class_it = (*it)->classes.start();
+         bool alt = true;
+         while (!class_it.Eof()) {
+            if ((*class_it)->isVirtual) {
+               if (alt) {
+                  summaryWriter.writeLiteralNewLine("<TR CLASS=\"altColor\">");
+               }
+               else {
+                  summaryWriter.writeLiteralNewLine("<TR CLASS=\"rowColor\">");
+               }
+               alt = !alt;
+
+               writeExtendedSummaryTable(summaryWriter, *class_it, name);
+               writeExtendedBody(bodyWriter, *class_it, ns);
+
+               summaryWriter.writeLiteralNewLine("</TR>");
+            }
+
+            class_it++;
+         }
+
+         writeClassSummaryFooter(summaryWriter);
+      }
 
       writeSummaryFooter(summaryWriter);
 
