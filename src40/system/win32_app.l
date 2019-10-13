@@ -45,7 +45,7 @@ entry()
     }   
     catch:(Exception e)
     {
-        //console.writeLine(e.Printable);
+        console.writeLine(e.Printable);
         
         extern elenart.Exit(-1);
     }

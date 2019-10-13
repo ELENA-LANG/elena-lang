@@ -5,13 +5,13 @@ In development:
               zdev
                 * write - Programming in ELENA : manual
 
-              xdev API
-                * template extensions
-
-                * missing algorithms (template extensions)
-                * missing system'routines'stex
+              xdev
+                * calc example
+                * js example
+                * remove obsolete code
 
               xdev
+                * do-while - if the second agrument is code brackets?
                 * simplified syntax to invoke dynamic message?
                 * (re)implement manifest
 
@@ -23,11 +23,14 @@ In development:
                 * do not allow to write something like
                   A{ int dump[4] := 3; }  // !! error
 
+              xdev API
+                * template extensions
+
+                * missing algorithms (template extensions)
+                * missing system'routines'stex
+
               xdev
-                * test all samples (bulls and cows)
-                * calc example
-                * js example
-                * remove obsolete code
+                * test all samples
 
               xdev
                 * fix bug with inserting unicode character
