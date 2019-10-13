@@ -9,6 +9,8 @@ Content
   + [Numbers](#numbers)
   + [Mathematical Operations and Functions](#mathematical-operations-and-functions)
   + [Strings](#strings)
+  + [Functions](#functions)
+  + [Control Flow](#control-flow)
 
 ## Overview
 A programming language is a mammoth task to develop and to learn. So encountering a new language you may ask: why another
@@ -838,4 +840,479 @@ Similar to the examples above the first index is a position of the sub string an
 
 The exception will be generated if the index lays outside the target string for these operations.
 
-There is a number of extension methods for formatting, padding and interpolating strings
+There is a number of extension methods for padding and trimming strings
+
+Extension | Description
+--------- | -----------
+trimLeft | Removes all leading occurrences of the given character
+trimRight | Removes all tailing occurrences of the given character
+trim | Removes all leading and tailing occurrences of the given character
+padLeft | Returns a new string of a specified length in which the beginning of the current string is padded with the given character
+padRight | Returns a new string of a specified length in which the end of the current string is padded with the given character
+
+#### Conversion to and from strings
+
+Every ELENA class supports **Printable** property which returns a string that represents the object. By default it is a class name:
+
+    import extensions;
+    
+    public program()
+    {
+        console.printLine(console.Printable);
+    }
+
+The output will be the full class name:
+
+    system'$private'Console
+
+Basic types override this method and return its text value:
+
+    import extensions;
+    
+    public program()
+    {
+        console.printLine(12.Printable);
+        console.printLine(23.4r.Printable);
+    }
+
+with the result:
+
+    12
+    23.4
+
+Alternatively we may use **toString()** extension:
+
+        console.printLine(12.toString());
+        console.printLine(23.4r.toString());
+
+Similar a string supports the conversion to basic types:
+
+    int n := "12".toInt();
+    real r := "23.4".toReal();
+
+The direct conversion between a character and an integer is possible, using extensions **toInt()** and **toChar()**
+
+    import extensions;
+    
+    public program()
+    {
+        auto ch := $78;
+        int code := ch.toInt();
+        
+        console.printLine("code of ", ch, " is ", code);
+    }
+
+And the result will be:
+
+    code of N is 78
+
+### Functions
+
+In ELENA functions are objects which handle a special message **closure** and may be declared as function literals. They are first-class functions and can be passed, stored either as weak or strong typed ones. Functions can be stateless or memory allocated (closures). A special type of functions - extension ones are supported and may operate the data without actually storing them (forming a temporal mix-in).
+
+A function can be named or anonymous. A named one can be public or private. Anonymous (or function literal) one may encapsulate the referred variables. They can be assigned to variables and handled as normal objects.
+
+    import extensions;
+    
+    F(x,y)
+    {
+        // returning the sum of two arguments
+        ^ x + y
+    }
+    
+    public program()
+    {
+        // using named private function
+        console.printLine(F(1,2));
+        
+        // declaring and assigning anonymous function
+        var f := (x,y){ ^ x * y};
+        // invoking a function
+        console.printLine(f(1,2));    
+    }
+
+The result is:
+
+    3
+    2
+
+#### Returning operator
+
+**^** operator is used to terminate the code flow and returns the given expression. The operator must be the last one in the scope.
+
+In general, all functions (and class methods) return a value. If the value is not specified, built-in variable **self** (referring an instance of a method owner) is returned.
+
+#### Shorthand function declaration
+
+A function body is described inside the curly brackets. If the function contains only returning operator the body may be simplified:
+
+    F(x,y)
+       = x + y;
+
+Anonymous functions may use **=>** operator:
+
+        var f := (x,y => x * y);
+
+#### Closures
+
+Variables declared outside the function scope can be referred inside it. The appropriate boxing will be done automatically.
+
+    import extensions;
+    
+    public program()
+    {
+        var n := 3;
+        
+        var f := (x => n + x );
+    
+        console.printLine(f(1))
+    }
+
+The result will be:
+
+    4
+
+#### Strong-typed arguments
+
+The function arguments can be weak or strong-typed. 
+
+    import extensions;
+    
+    Test(int x, int y)
+        = x.allMask(y);
+    
+    public program()
+    {
+        console.printLine(Test(11,4));
+
+        var test := (int x, int y => x.anyMask(y));
+        console.printLine(Test(12,4));
+    }
+ 
+The result is:
+
+    false
+    true
+
+We may use variadic arguments
+
+    import extensions;
+    
+    Sum(params int[] args)
+    {
+        int sum := 0;
+        for (int i := 0, i < args.Length, i += 1)
+        {
+            sum += args[i]
+        };
+        
+        ^ sum
+    }
+    
+    public program()
+    {
+        console.printLine(Sum(1));
+        console.printLine(Sum(1,2));
+        console.printLine(Sum(1,2,3));
+        console.printLine(Sum(1,2,3,4));
+    }
+
+The result will be:
+
+    1
+    3
+    6
+    10
+ 
+When an argument may be changed inside the function it should be passed with **ref** prefix:
+
+    import extensions;
+    
+    Exchange(ref int l, ref int r)
+    {
+        int t := l;
+        l := r;
+        r := t;
+    }
+    
+    public program()
+    {
+        int x := 2;
+        int y := 3;
+        
+        console.printLine(x,",",y);
+        
+        Exchange(ref x, ref y);
+        
+        console.printLine(x,",",y)
+    }
+
+The result is
+ 
+    2,3
+    3,2
+
+#### Message functions
+
+In ELENA a message can be invoked using a special function **system'Message** which contains this message value. It can be created dynamically or using a message literal. The message literal consists of a prefix attribute **mssgconst**, the message name and the number of parameters enclosed in the square brackets:
+
+    mssgconst writeLine[1](console,"Hello");
+
+The result is:
+
+    Hello
+
+An extension message is invoked by **system'ExtensionMssage**. It contains the message value and a reference to the extension class. Similar extension literal  consists of a prefix attribute **mssgconst**, the message name, the extension reference in angle brackets and the number of parameters enclosed in the square brackets:
+
+    var n := RealNumber.Pi / 2;
+    var f := mssgconst sin<system'math'mathOp>[0];
+    
+    console.printLine(f(n));
+
+The result is:
+
+    1.0
+
+### Control Flow
+
+ELENA supports rich set of control flow constructs : branching, looping, exception handling. They are implemented as code-templates and can be easily extended. Branching and looping statements are controlled by boolean expressions. Though branching operator can deal with non-boolean result as well. Exceptions are used to gracefully deal with critical errors. Exceptions may contain a stack trace to identify the error source.
+
+#### Boolean type
+
+A **BoolValue** (alias **bool**) is a boolean type that has one of two possible values : **true** and **false**. It is a typical result of comparison operations. A boolean value is required by control flow statements (though non-boolean result can be used as well, providing a conversion operation exists). It supports typical comparison and logical operations:
+
+    console
+        .printLine("true==false : ",true == false)
+        .printLine("true!=false : ",true != false)
+        .printLine("true and false : ",true && false)
+        .printLine("true or false : ",true || false)
+        .printLine("true xor false : ",true ^^ false);
+
+The results are:
+
+    true==false : false
+    true!=false : true
+    true and false : false
+    true or false : true
+    true xor false : true
+
+A boolean inversion is implemented via **Inverted** property:
+
+    console.printLine("not ",true,"=",true.Inverted)
+
+and the result is:
+
+    not true=false
+
+A boolean value can be used directly for branching operation. The message **if** with two functions without arguments can be send to it. **true** value will execute the first function, **false** - the second one.
+
+    import extensions;
+    
+    public program()
+    {
+        var n := 2;
+        
+        (n == 2).if({ console.printLine("true!") },{ console.printLine("true!") });
+    }
+
+with the result:
+
+    true!
+
+**iif** message is supported as well: true value will return the first argument, false - the second one
+
+    var n := 2;
+    
+    console.printLine((n != 2).iif("true", "false") )
+
+The output is as expected:
+
+    false
+
+#### Branching operator
+
+ELENA supports built-in branching operator **?**. It requires that an loperand is a boolean value. True-part argument follows the operator immediately. Optional false-part is introduced with colon:
+
+    import extensions;
+
+    public program()
+    {
+        var n := 2;
+        
+        (n == 2) ? { console.printLine("n==2") };
+        (n == 3) ? { console.printLine("n==3") } : { console.printLine("n!=3") }
+    }
+
+The following result will be printed:
+
+    n==2
+    n!=3
+    
+If right operands are not functions the operator returns true-part if the loperand is true and false-part otherwise.
+
+    var n := 2;
+    
+    console.printLine(n == 2 ? "n==2" : "n!=2");
+
+with the similar result:
+
+    n==2
+
+#### Branching statements
+
+ELENA does not reserve keywords for the control statements. But there are set of code templates that help make the code more readable. This list can be extended by programmers themselves. 
+
+Let's start with **if-else**, known for many.
+
+    var n := 2;
+    if (n == 2)
+    {
+        console.printLine("n==2")
+    }
+    else
+    {
+        console.printLine("n!=2")
+    }
+
+the result is
+
+    n==2
+
+if we need only true-part, we may skip the else block.
+
+    if (n == 2)
+    {
+        console.printLine("n==2")
+    }
+
+Alternatively only else part can be written:
+
+    ifnot (n == 2)
+    {
+        console.printLine("n!=2")
+    }
+ 
+If the code brackets contains only single statement we may write the statement directly after colon:
+
+    if(n == 2):console.printLine("n==2")
+    else:console.printLine("n!=2")
+
+#### Looping statements
+
+ELENA provides several type of loop constructs : for, while, until, do-until, do-while.
+
+**FOR** loops is used to execute the loop body for the specified iteration. It consists of initialization, condition and iteration expressions separated by commas and the main loop body:
+
+    import extensions;
+    
+    public program()
+    {
+        for (var i := 0, i < 5, i += 1)
+        {
+            console.printLine(i)
+        }
+    }
+
+The first expression declares and initializes the loop variable, the second one is checked if the variable is inside the iteration range and the third one is increased the loop variable after the main loop body is executed.
+
+The result will be:
+
+    0
+    1
+    2
+    3
+    4
+
+If we need to execute an iteration step before the condition check we may skip the last expression. In this case the first expression will both initialize and iterate the loop variable on every step. The condition (second expression) will work similar, the loop continues until a false value is encountered. As a result the iteration step is guarantee to be executed at least once.
+
+    import extensions;
+    
+    public program()
+    {
+        var sum := 0;
+        for(var line := console.readLine(), line != emptyString)
+        {
+            sum += line.toInt()
+        };
+        
+        console.printLine("The sum is ", sum)
+    }
+
+In this example we read numbers from the console until an empty line is encountered, and print the sum. A method **readLine** reads the next line of characters from the console. **emptyString** is an empty string literal constant. An extension method **toInt** converts a string to an integer.
+
+The output may look like this:
+
+    1
+    3
+    5
+    
+    The sum is 9
+
+**WHILE** is a classical loop construct, it executes the code while the condition is true. Let's write the enumeration loop. **Enumerators** are special objects which enumerates collections, returning their members one after another. We will enumerate a string:
+
+    import extensions;
+    
+    public program()
+    {
+        auto s := "♥♦♣♠";
+        auto e := s.enumerator();
+        while (e.next()) {
+            console.printLine(e.get())
+        }
+    }
+
+The result will be:
+
+    ♥
+    ♦
+    ♣
+    ♠
+
+The opposite construct is **UNTIL**. It repeats the code until the condition is true. Let's repeat the code while the number is not zero:
+
+   import extensions;
+   
+   public program()
+   {
+       var n := 23;
+       until(n == 0)
+       {
+          console.printLine(n);
+        
+          n /= 3
+       }
+   }
+
+The output will be:
+
+    23
+    7
+    2
+
+It is clear that both loop constructs are interchangeable. The choice may depend on rather semantic meanings : to underscore one condition over another one.
+
+If we need to execute the loop at least once whatever condition is, we have to use **DO-WHILE** or **DO-UNTIL**. Let's calculate the factorial of 5:
+
+    import extensions;
+    
+    public program()
+    {
+        int counter := 5;
+        int factorial := 1;
+    
+        do {
+            factorial *= counter;
+            counter -= 1
+        }
+        while:(counter > 0);
+        
+        console.printLine(factorial)
+    }
+
+*Note that we have to put colon after **while** token*
+
+The result as expected:
+
+        120
+ 
+#### Exception handling

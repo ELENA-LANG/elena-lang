@@ -144,20 +144,20 @@ public for<loop_body>(init_expr, cond_expr, step1_expr, step2_expr)
 
 // --- doUntil statement ---
 
-public doUntil<loop_body>(cond_expr)
+public do<loop_body,cond_expr>:until()
 {
     loop_body;
     
     __loop& cast bool(cond_expr) ! { loop_body }
 }
 
-public doWhile<loop_body>(cond_expr)
+
+public do<loop_body,cond_expr>:while()
 {
     loop_body;
     
     __loop& cast bool(cond_expr) ? { loop_body }
 }
-
 
 // -- try-catch statement ---
 
