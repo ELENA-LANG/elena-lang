@@ -17,7 +17,7 @@ extension testOp
 {
     testEvaluation()
     {
-        var result := self.evaluatedWith(dynamicRules);
+        var result := self.evaluatedWith(dynamicRules.States);
         
         console.printLine(self," evaluated as ",result)
     }

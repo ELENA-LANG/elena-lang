@@ -1115,6 +1115,8 @@ public class SymbolCollection
             var tape := info.Symbol.compiled();
  
             prop(set, tape);
-        }
+        };
+        
+        ^ set
     }
 }
