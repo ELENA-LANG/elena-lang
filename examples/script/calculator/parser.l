@@ -1,31 +1,31 @@
 import system'routines;
 import extensions;
 //import extensions'text;
-//
-//extension lexicalOp
-//{
-//    get LexicalType()
-//    {
-//        if (self >= $48 && self <= $57)
-//            { ^ subjconst digit };
-//
-//        if (self >= $97 && self <= $122)
-//            { ^ subjconst letter };
-//
-//        self =>
-//            $32 { ^ subjconst whitespace }
-//            $40 { ^ subjconst opening }
-//            $41 { ^ subjconst closing }
-//            $42 { ^ subjconst star }
-//            $43 { ^ subjconst plus }
-//            $44 { ^ subjconst comma }
-//            $45 { ^ subjconst minus }
-//            $46 { ^ subjconst dot }
-//            $47 { ^ subjconst slash }
-//            : { ^ subjconst unknown }
-//    }
-//}
-//
+
+extension lexicalOp
+{
+    get LexicalType()
+    {
+        if (self >= $48 && self <= $57)
+            { ^ subjconst digit };
+
+        if (self >= $97 && self <= $122)
+            { ^ subjconst letter };
+
+        self =>
+            $32 { ^ subjconst whitespace }
+            $40 { ^ subjconst opening }
+            $41 { ^ subjconst closing }
+            $42 { ^ subjconst star }
+            $43 { ^ subjconst plus }
+            $44 { ^ subjconst comma }
+            $45 { ^ subjconst minus }
+            $46 { ^ subjconst dot }
+            $47 { ^ subjconst slash }
+            : { ^ subjconst unknown }
+    }
+}
+
 //class DerivationTree
 //{
 //    theRoot;
@@ -238,7 +238,7 @@ import extensions;
 class StateMachine
 {
     theStates;
-//    theCurrentState;
+    theCurrentState;
 //    theDerivationTree;
 //    
 //    prop int Level;
@@ -247,14 +247,16 @@ class StateMachine
     {
 //        theDerivationTree := new DerivationTree();
         theStates := states;
+        theCurrentState := states.State0;
+        
 //        Level := 0
     }
 
-//    generic()
-//    {
-//        theCurrentState := mixin __received(theStates).eval()
-//    }
-//
+    get generic()
+    {
+        theCurrentState := (__received.getPropertyMessage())(theStates);
+    }
+
 //    opening(ch)
 //    {
 //        Level := Level + 10;
@@ -286,8 +288,10 @@ class StateMachine
 
     Func1 cast() = (ch)
     {
-//        var type := ch.LexicalType;
-//
+        var type := ch.LexicalType;
+
+        type(theCurrentState, ch);
+
 //        mixin type(self).eval:ch
     };
 
@@ -337,7 +341,7 @@ extension parserOp
 {
     evaluatedWith(states)
     {
-        var stateMachine := StateMachine.assign(states).State0();
+        var stateMachine := StateMachine.assign(states);
         
         try
         {

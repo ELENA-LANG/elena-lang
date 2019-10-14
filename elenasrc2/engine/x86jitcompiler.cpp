@@ -1078,12 +1078,12 @@ void _ELENA_::compileDCopyCount(int, x86JITScope& scope)
 
 void _ELENA_::compileDSetVerb(int, x86JITScope& scope)
 {
-   // and ecx, PARAM_MASK | MESSAGE_FLAG_MASK
+   // and ecx, PARAM_MASK | ACTION_MASK
    // mov edx, ebx
    // shl edx, ACTION_ORDER
    // or  ecx, edx
    scope.code->writeWord(0xE181);
-   scope.code->writeDWord(PARAM_MASK | MESSAGE_FLAG_MASK);
+   scope.code->writeDWord(PARAM_MASK | ACTION_MASK);
    scope.code->writeWord(0xD38B);
    scope.code->writeWord(0xE2C1);
    scope.code->writeByte(ACTION_ORDER);
@@ -1405,10 +1405,10 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
 
 void _ELENA_::compileSetVerb(int, x86JITScope& scope)
 {
-   // and ecx, PARAM_MASK | MESSAGE_FLAG_MASK
+   // and ecx, PARAM_MASK | ACTION_MASK
    // or  ecx, m
    scope.code->writeWord(0xE181);
-   scope.code->writeDWord(PARAM_MASK | MESSAGE_FLAG_MASK);
+   scope.code->writeDWord(PARAM_MASK | ACTION_MASK);
    scope.code->writeWord(0xC981);
    scope.code->writeDWord(scope.resolveMessage(encodeAction(scope.argument)));
 }

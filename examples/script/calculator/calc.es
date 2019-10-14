@@ -11,3 +11,7 @@
 =>;
 
 ]]
+
+State0  : 
+  digit => { $machine.State1; };
+

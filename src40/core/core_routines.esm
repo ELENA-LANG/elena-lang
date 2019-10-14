@@ -3789,9 +3789,12 @@ end
 
 procedure __signature."#dispatch[1]"
 
-  bloadsi 1
-  ifb labDefault
+  // check if it is invoke
+  dcopy SPECIAL_MESSAGE
+  ande
+  ifn labDefault 0 
 
+  eaddn -1
   nload
   dsetverb
   aloadsi 1
