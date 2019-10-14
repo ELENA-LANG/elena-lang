@@ -1,7 +1,7 @@
 import system'collections;
 import system'routines;
 
-preloaded used = new object[]::(Expression,DynamicSingleton);
+preloaded used = new object[]::(Expression,DynamicSingleton,SymbolCollection);
 
 public class ScopeVariable
 {
@@ -1037,10 +1037,20 @@ public class ClosureExpression : Expression
     }    
 }
 
-public class DynamicSingleton
+public abstract DynamicSymbol
+{
+    abstract compiled() {}
+}
+
+public class DynamicSingleton : DynamicSymbol
 {
     Expression[] methods;
-    
+
+    constructor()
+    {
+        this methods := new Expression[](0);
+    }
+        
     constructor(Expression method)
     {
         this methods := new Expression[]::(method);
@@ -1067,5 +1077,44 @@ public class DynamicSingleton
         methods.forEach:(m){m.saveTo(list)};
         
         ^ ClosureClass.create(list);
+    }
+}
+
+public class SymbolInfo
+{
+    prop string Name;
+    prop DynamicSymbol Symbol;
+    
+    constructor(string name, DynamicSymbol symbol)
+    {
+        Name := name;
+        Symbol := symbol
+    } 
+}
+
+public class SymbolCollection
+{
+    SymbolInfo[] symbols;
+    
+    constructor(params SymbolInfo[] symbols)
+    {
+        this symbols := symbols;                
+    }
+    
+    compiled()
+    {
+        auto set := new DynamicStruct();
+        
+        int len := symbols.Length;
+        for (int i := 0, i < len, i+=1) {
+            auto info := symbols[i];
+            
+            MessageName name := new MessageName(info.Name);
+            Message prop := name.setPropertyMessage(); 
+
+            var tape := info.Symbol.compiled();
+ 
+            prop(set, tape);
+        }
     }
 }

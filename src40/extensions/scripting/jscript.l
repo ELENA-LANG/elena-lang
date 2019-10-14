@@ -1,6 +1,6 @@
 import extensions'dynamic;
 
-static lscriptEngine
+static ScriptEngine lscriptEngine
     = new ScriptEngine()
             .loadPath("~\scripts\grammar.es")
             .loadPath("~\scripts\lscript.es");
@@ -8,10 +8,10 @@ static lscriptEngine
 public singleton lscript
 {
     eval(string script)
-        = lscriptEngine.buildScript(script).compled();
+        = lscriptEngine.buildScript(script).compiled();
             
     evalPath(string path)
-        = lscriptEngine.buildScriptFile(path).compled();
+        = lscriptEngine.buildScriptFile(path).compiled();
         
     load(string path)
         = lscriptEngine.loadPath(path);

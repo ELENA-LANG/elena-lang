@@ -35,7 +35,7 @@
 
    #define expression  ::= <= += " extensions'dynamic'openExpressionClosure " += " extensions'dynamic'ifClosure " =>
                              "expression" "(" expr_member if_operator expr_member ")"
-                              <= += " extensions'dynamic'closeClosure " =>;
+                              <= += " extensions'dynamic'closeClosure " += " extensions'dynamic'closeClosure " =>;
 
    #define expr_member ::=   nested;
    #define expr_member ::=   numeric;

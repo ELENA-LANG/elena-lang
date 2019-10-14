@@ -1,77 +1,18 @@
 [[
    #grammar cf
 
-   #define start      ::= <= root ( namespace ( => members <= )) =>;
+   #define start      ::= <= root ( namespace ( => member+ $eof <= )) =>;
    #define start      ::= $eof;
 
-   #define members    ::= member ";" members;
-   #define members    ::= directive ";" members;
-   #define members    ::= $eof;
-   #define member     ::= <= symbol ( => s_name "=" expression <= ) =>;
+   #define member     ::= symbol;
 
-   #define directive  ::= <= include ( => "#import" forward alias <= ) =>;
-   #define alias      ::= "as" s_name;
+   #define symbol     ::= <= symbol ( => s_name "=" expression ";" <= ) =>;
 
-   #define expression    ::= <= expression ( => object operations <= ) =>; 
-   #define l1_expression ::= <= expression ( => object l1_operation* <= ) =>; 
-   #define l2_expression ::= <= expression ( => object l2_operation* <= ) =>; 
-   #define operations    ::= operation operations;
-   #define operations    ::= $eps;
+   #define expression ::= object ;
 
-   #define operation     ::= "." message ext_op op_params;
-   #define l1_operation  ::= "." message ext_op op_params;
-   #define l2_operation  ::= "." message ext_op op_params;
+   #define object     ::= singleton;
 
-   #define operation     ::= <= message = add => "+" l1_expression;
-   #define l1_operation  ::= <= message = multiply => "*" l2_expression;
+   #define singleton  ::= <= nested ( => "{" "}" <= ) =>;
 
-   #define op_params     ::= "(" op_params_r;
-   #define op_params_r   ::= expression op_nparam;
-   #define op_params_r   ::= ")";
-
-   #define op_nparam  ::= "," expression op_nparam;
-   #define op_nparam  ::= ")";
-
-   #define ext_op     ::= "<" extension ">";
-   #define ext_op     ::= $eps;
-
-   #define extension  ::= "%" message;
-
-   #define object     ::= numeric;
-   #define object     ::= identifier;
-   #define object     ::= literal;
-   #define object     ::= "{" singleton;
-
-   #define singleton  ::= <= nested ( => cls_mmbrs <= ) =>;
-   #define cls_mmbrs  ::= cls_mmbr ";" cls_mmbrs;
-   #define cls_mmbrs  ::= "}";
-
-   #define cls_mmbr   ::= <= method ( => m_name ":" mmbr_expr <= ) =>;
-   #define mmbr_expr  ::= <= returning ( => expression <= ) =>;
-   #define mmbr_expr  ::= "function" "(" f_params f_body;
-
-   #define f_params   ::= f_param f_nparam;
-   #define f_params   ::= ")";
-   #define f_param    ::= parameter;
-   #define f_nparam   ::= "," f_param f_nparam;
-   #define f_nparam   ::= ")";
-
-   #define f_body     ::= <= code ( => "{" f_line <= ) =>;
-
-   #define f_line     ::= <= returning ( => "return" expression f_end <= ) =>;
-   #define f_line     ::= expression f_next;
-   #define f_line     ::= f_eof;
-   #define f_next     ::= ";" f_line;
-   #define f_end      ::= ";" f_eof;
-   #define f_eof      ::= "}";
-
-   #define numeric    ::= <= numeric = $numeric =>;
-   #define m_name     ::= <= nameattr ( identifier = $identifier ) =>;
    #define s_name     ::= <= nameattr ( identifier = $identifier ) =>;
-   #define parameter  ::= <= parameter ( nameattr ( identifier = $identifier )) =>;
-   #define identifier ::= <= identifier = $identifier =>;
-   #define message    ::= <= message = $identifier =>;
-   #define literal    ::= <= literal = "$literal" =>;
-
-   #define forward    ::= <= forward ( reference = $literal ) =>;
 ]]
