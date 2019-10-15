@@ -291,8 +291,6 @@ class StateMachine
         var type := ch.LexicalType;
 
         type(theCurrentState, ch);
-
-//        mixin type(self).eval:ch
     };
 
 //    get Value()
@@ -331,8 +329,8 @@ class StateMachine
 //    {
 //        theDerivationTree.LastNode.appendContent(content)
 //    }
-//    
-//    dispatch() => theCurrentState;
+    
+    dispatch() => theCurrentState;
 }
 
 // --- parserOp ---

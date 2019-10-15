@@ -25,11 +25,84 @@
 <=
        system'dynamic'expressions'DynamicSingleton (
 =>
-                                   "nested" "(" ")"
+                                   "nested" "(" method* ")"
 <=     ) =>;
+
+  #define method          ::= 
+<=
+       system'dynamic'expressions'MethodExpression (
+=>
+                                   "method" "(" m_name parameter* body ")"
+<=
+       )
+=>;
+
+  #define method          ::= 
+<=
+       system'dynamic'expressions'GetMethodExpression (
+=>
+                                   "get_method" "(" m_name body ")"
+<=
+       )
+=>;
+
+  #define parameter       ::= 
+<=
+         system'dynamic'expressions'ScopeVariable (
+=>
+                                   "parameter" "(" p_name ")"
+<=
+         )
+=>;
+
+  #define body            ::=
+<=
+             system'dynamic'expressions'CodeblockExpression (
+=>
+                                   "code" "(" statement* ")"
+<=
+             )
+=>;
+
+  #define statement       ::= expression; 
+  #define statement       ::= ret_expression; 
+
+  #define ret_expression  ::= 
+<=
+               system'dynamic'expressions'ReturnExpression (
+=>
+                                   expression
+<=
+               )
+=>;
+
+  #define expression      ::= "expression" "(" operation ")";
+
+  #define operation       ::=
+<=
+               system'dynamic'expressions'GetPropertyExpression (
+=>
+                                 object message "property_parameter"
+<=
+               )
+=>; 
+
+  #define object          ::=
+<=
+                    Expression.Variable ( 
+                       system'dynamic'expressions'ScopeVariable (
+=>
+                           "identifier" "(" ident_quote ")"
+<=
+                       )
+                    )
+=>;
       
   #define s_name          ::= "nameattr" "(" identifier ")" ;
+  #define m_name          ::= "nameattr" "(" identifier ")" ;
+  #define p_name          ::= "nameattr" "(" identifier ")" ;
 
+  #define message         ::= "message" "=" ident_quote;
   #define identifier      ::= "identifier" "=" ident_quote;
 
   #define ident_quote  ::= <= "$identifier" =>;

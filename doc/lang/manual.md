@@ -11,6 +11,8 @@ Content
   + [Strings](#strings)
   + [Functions](#functions)
   + [Control Flow](#control-flow)
+  + [Symbols](#symbols)
+  + [Types](#types)
 
 ## Overview
 A programming language is a mammoth task to develop and to learn. So encountering a new language you may ask: why another
@@ -1316,3 +1318,221 @@ The result as expected:
         120
  
 #### Exception handling
+
+Exception handling is designed to deal with unexpected situations during the program executing. For dynamic language the typical unexpected situation is sending a message to the object which does not handle it (no appropriate method is declared). In this case **MethodNotFound** exception is raised. Another notable examples are : dividing by zero, nil reference and out of memory exceptions. The language provides several code templates to deal with such situations.
+
+Typical exception in ELENA inherits **system'Exception** base class. A method named **raise()** is declared and used to raise an exception in the code. There are several exceptions in **system** library :  OutOfRangeException, InvalidArgumentException, InvalidOperationException, MethodNotFoundException, NotSupportedException, AbortException, CriticalException and so on. A typical exception contains the error message and a call stack referring to the moment when the exception was created. 
+
+Raising an exception in ELENA is straightforward.
+
+    divide(l,r)
+    {
+        if(r == 0)
+        {
+            InvalidArgumentException.raise()
+        }
+        else
+        {
+            ^ l / r
+        }
+    }
+
+To handle it we have to write **TRY-CATCH** or **TRY-FINALLY** constructs.
+
+    public program()
+    {
+        console.print("Enter the first number:");
+        var l := console.readLine().toInt();
+        
+        console.print("Enter the second number:");
+        var r := console.readLine().toInt();
+    
+        try
+        {
+            console.printLine("The result is ", divide(l,r))
+        }
+        catch:(InvalidArgumentException e)
+        {
+            console.printLine("The second argument cannot be a zero")
+        };
+    }
+
+The output will be:
+
+    Enter the first number:2
+    Enter the second number:0
+    The second argument cannot be a zero
+
+An anonymous function declared after **catch** token is invoked if the raised exception matches the function argument list. If we want to handle any standard exception we may use a base exception class:
+
+        catch:(Exception e)
+        {
+            console.printLine("An operation error")
+        };
+
+Several exception handlers may be declared:
+
+    catch:(InvalidArgumentException e)
+    {
+        console.printLine("The second argument cannot be a zero")
+    }
+    catch:(Exception e)
+    {
+        console.printLine("An operation error")
+    };
+
+In our case both handlers are matched to InvalidArgumentException exception (because InvalidArgumentException is a child of Exception) but the proper exception handler will be raised because it is described early.
+
+If we need to execute the code whenever an exception is raised or the code works correctly we have to use **TRY-FINALLY-CATCH** construct. The typical use-case is a resource freeing.
+
+    import extensions;
+    
+    public program()
+    {
+        console.printLine("Try");
+        try
+        {
+            var o := new Object();
+            o.fail();
+        }
+        finally
+        {
+            console.printLine("Finally");
+        }
+        catch:(Exception e)
+        {
+            console.printLine("Error!");
+        }
+    }
+
+The output will be:
+
+    Try
+    Finally
+    Error!
+
+If the second line is commented out the output will be:
+
+    Try
+    Finally
+
+We we do not need a special handler but would like to execute the code after the operation we may skip catch part:
+
+        console.printLine("Try");
+        try
+        {
+            var o := new Object();
+            o.fail();
+        }
+        finally
+        {
+            console.printLine("Finally");
+        }
+
+And the result is:
+
+    Try
+    Finally
+    system'Object : Method fail[0] not found
+    Call stack:
+    system'Exception#class.new[1]:exceptions.l(96)
+    system'MethodNotFoundException#class.new[1]:exceptions.l(1)
+    system'MethodNotFoundException#class.new[2]:exceptions.l(190)
+    mytest'program.#invoke[0]:test.l(14)
+    mytest'program.#invoke[0]:test.l(9)
+    system'$private'entry.#invoke[0]:win32_app.l(37)
+    system'#startUp:win32_app.l(55)
+
+### Symbols
+
+Symbols are named expression which could be use to make the code more readable. A typical symbol is a constant declaration. Though they can more. Symbols are used to declare global singleton instances. The module initialization code is implemented via them. They can be private or public.
+
+#### Values / Constants 
+
+A typical symbol use case is a value which can be reused further in the code:
+
+    import extensions;
+    import extensions'math;
+    
+    real PiOver2 = RealNumber.Pi / 2;
+    
+    public program()
+    {
+        console.printLine("sin(",PiOver2,")=", sin(PiOver2))
+    }
+
+Here we declare a private strong-typed symbol PiOver2. The type may be omitted. In this case it will be a weak typed value. The result is:
+
+    sin(1.570796326795)=1.0
+
+If the symbol should be public (be accessible outside the module) **public** attribute should be put before the type and the name.
+
+If the symbol value can be calculated in compile-time we may declare a constant symbol
+
+    import extensions;
+    import extensions'math;
+    
+    public const int N = 3;
+    
+    public program()
+    {
+        for (int i := 0, i < N, i += 1)
+        {
+            console.printLine(i,"^2=", sqr(i))
+        }
+    }
+
+The output is:
+
+    0^2=0
+    1^2=1
+    2^2=4
+
+#### Static symbols
+
+A normal symbols is evaluated every time it is used. A static symbol is a special case which is initialized only once by the first call (so called lazy loading) and its value is reused for every next call. It is a preferred way to implement a singleton (if it is not stateless).
+
+    import extensions;
+    import extensions'math;
+    
+    static inputedNumber = console.print("Enter the number:").readLine().toInt();
+    
+    public program()
+    {
+        console.printLine(inputedNumber,"^3 = ", power(inputedNumber, 3))
+    }
+
+In this example the symbol is evaluated only once and the entered value is preserved, so the number should be entered only once:
+
+    Enter the number:4
+    4^3 = 64
+
+#### Preloaded symbols
+
+A preloaded symbol is a special symbol which is automatically evaluated on the program start if namespace members are used in the program. So it may be used for module initialization.
+
+    import extensions;
+    
+    preloaded onModuleUse = console.printLine("Starting");
+    
+    public program()
+    {
+        console.printLine("Hello World")
+    }
+
+The output is:
+
+    Starting
+    Hello World
+
+### Types
+
+In programming a data type (or simply type) defines the role of data : a number, a text and so on. In object-oriented this concept was extended with a class which encapsulates the data and operations with them. The data is stored in fields and the operations are done via methods. In ELENA both a type and a class means mostly the same and can be used interchangeably without loss of meaning (except primitive types). Classes form a hierarchy based on inheritance. It means every class (except a super one - **system'Object**) has a parent and a single one.
+
+A programming language can have static or dynamic type systems. In OOP classes can be made polymorphic fixing part of the problem with static types. Dynamic languages resolve types in run-time. This affects their performance. Modern programming languages as a result of it try to combine these approaches. In ELENA the types are dynamic and are resolved in run-time. In this sense you may write your program without explicitly specifying types at all. But in most cases the types should be specified to make your code more readable and to improve it performance.
+
+In dynamic languages the operation to invoke a method is usually called sending a message. The class reacts to the message by calling appropriate method (with the same name and a signature). In normal case it is done via searching the appropriate handler in the method table. And it takes time. To deal with this ELENA allows to declare **sealed** or **closed** classes. Methods of sealed class can be resolved in compile-time and called directly. Methods of closed classes (or interfaces) can be resolved in compile-time via a method table. But the sealed class can not be inherited. Interfaces can be inherited but no new methods can be declared (except private ones).
+
+In ELENA typecasting are implemented via a sending a special methods - conversion handlers. Every class may be converted into another one if it handles this message. Otherwise an exception is raised.
+
+#### Primitive types
