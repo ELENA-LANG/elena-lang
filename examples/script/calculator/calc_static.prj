@@ -24,6 +24,6 @@
         <forward key="xprogram">extensions'programLoop</forward>
         <forward key="rules">calc'staticRules</forward>
         <forward key="program'control">calc'control</forward>
-        <forward key="program">staticTestCases</forward>
+        <forward key="program">calc'staticTestCases</forward>
     </forwards>
 </configuration>

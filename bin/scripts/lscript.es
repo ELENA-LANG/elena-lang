@@ -22,11 +22,11 @@
    #define next_parameter ::= "," parameter;
 
    #define body           ::= <= code ( => "{" statement* "}" <= ) =>;
-   #define ret_body       ::= <= code ( ret_expression ( => "=" expression ";" <= ) ) =>;
+   #define ret_body       ::= <= code ( returning ( => "=" expression ";" <= ) ) =>;
    #define statement      ::= expression ";";
 
    #define operations     ::= "." property;
-   #define property       ::= message <= property_parameter =>;
+   #define property       ::= message <= property_parameter ( ) =>;
 
    #define s_name         ::= <= nameattr ( identifier = $identifier ) =>;
    #define m_name         ::= <= nameattr ( identifier = $identifier ) =>;

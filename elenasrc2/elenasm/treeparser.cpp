@@ -22,6 +22,7 @@ TreeScriptParser :: TreeScriptParser()
    _attributes.add("singleton", V_SINGLETON);
    _attributes.add("preloaded_symbol", V_PRELOADED);
    _attributes.add("action", V_ACTION);
+   _attributes.add("get_method", V_GETACCESSOR);
 }
 
 void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer, LexicalType type)

@@ -71,7 +71,7 @@
 <=
                system'dynamic'expressions'ReturnExpression (
 =>
-                                   "ret_expression" "(" expression ")"
+                                   "returning" "(" expression ")"
 <=
                )
 =>;
@@ -91,7 +91,7 @@
 <=
                system'dynamic'expressions'GetPropertyExpression (
 =>
-                                 object message "property_parameter"
+                                 object message "property_parameter" "(" ")"
 <=
                )
 =>; 
