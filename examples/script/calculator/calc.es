@@ -42,4 +42,4 @@
 ]]
 
 State0  : 
-  digit => { $machine.State1; };
+  digit => { $machine.State0; };

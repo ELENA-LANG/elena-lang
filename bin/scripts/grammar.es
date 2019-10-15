@@ -19,7 +19,7 @@
                                    "symbol" "(" s_name symbol_expr ")"
 <=   ) =>;
 
-  #define symbol_expr     ::= nested_symbol; 
+  #define symbol_expr     ::= "expression" "(" nested_symbol ")"; 
                               
   #define nested_symbol   ::= 
 <=
@@ -71,12 +71,21 @@
 <=
                system'dynamic'expressions'ReturnExpression (
 =>
-                                   expression
+                                   "ret_expression" "(" expression ")"
 <=
                )
 =>;
 
   #define expression      ::= "expression" "(" operation ")";
+
+  #define operation       ::=
+<=
+               system'dynamic'expressions'NestedExpression (
+=>
+                                 nested_symbol
+<=
+               )
+=>;
 
   #define operation       ::=
 <=
@@ -89,10 +98,10 @@
 
   #define object          ::=
 <=
-                    Expression.Variable ( 
+                    system'dynamic'expressions'VariableExpression ( 
                        system'dynamic'expressions'ScopeVariable (
 =>
-                           "identifier" "(" ident_quote ")"
+                           "identifier" "=" ident_quote
 <=
                        )
                     )

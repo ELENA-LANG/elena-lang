@@ -8,7 +8,7 @@
     <targets>
         <target name="eson" type="2">
             <option>[[ #grammar tree ]]</option>
-            <option>~\scripts\jscript.es</option>
+            <option>~\scripts\lscript.es</option>
         </target>
     </targets>
     <files>
@@ -21,8 +21,9 @@
         </module>
     </files>
     <forwards>
-        <forward key="program">extensions'programLoop</forward>
+        <forward key="xprogram">extensions'programLoop</forward>
         <forward key="rules">calc'staticRules</forward>
         <forward key="program'control">calc'control</forward>
+        <forward key="program">staticTestCases</forward>
     </forwards>
 </configuration>

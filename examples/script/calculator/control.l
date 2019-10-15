@@ -5,13 +5,13 @@ import extensions'scripting;
 
 // --- testCase ---
 
-preloaded subjects = new::(subjconst States);
+preloaded subjects = new::(subjconst States,subjconst State0,subjconst State1);
 
 public static dynamicRules = 
     lscript.evalPath("calc.es");
     
-//public symbol staticRules =
-//    calc'rules'States;
+public symbol staticRules =
+    calc'rules'States;
 
 extension testOp
 {
@@ -19,19 +19,19 @@ extension testOp
     {
         var result := self.evaluatedWith(dynamicRules.States);
         
-        console.printLine(self," evaluated as ",result)
+//        console.printLine(self," evaluated as ",result)
     }
 }
 
-//extension staticTestOp
-//{
-//    testStaticEvaluation()
-//    {
-//        var result := self.evaluatedWith(staticRules);
-//        
-//        console.printLine(self," evaluated as ",result)
-//    }
-//}
+extension staticTestOp
+{
+    testStaticEvaluation()
+    {
+        var result := self.evaluatedWith(staticRules);
+        
+  //      console.printLine(self," evaluated as ",result)
+    }
+}
 
 public testCases()
 {
@@ -52,8 +52,10 @@ public testCases()
 //    "min(2,3)".testEvaluation();
 }
 
-//public staticTestCases()
-//{
+public staticTestCases()
+{
+    "2".testStaticEvaluation();
+    
 //    "22.4".testStaticEvaluation();
 //
 //    "2+3-1".testStaticEvaluation();
@@ -67,8 +69,8 @@ public testCases()
 //    "sqrt(2*2)".testStaticEvaluation();
 //    
 //    "min(2,3)".testStaticEvaluation();
-//}
-//
+}
+
 //// --- controller ---
 //
 //public singleton control

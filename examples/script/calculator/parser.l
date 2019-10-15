@@ -286,13 +286,6 @@ class StateMachine
 //        theDerivationTree := nil
 //    }
 
-    Func1 cast() = (ch)
-    {
-        var type := ch.LexicalType;
-
-        type(theCurrentState, ch);
-    };
-
 //    get Value()
 //    {
 //        var value := nil;
@@ -343,15 +336,20 @@ extension parserOp
         
         try
         {
-            self.forEach(stateMachine)
+            self.forEach:(ch)
+            {
+                var type := ch.LexicalType;
+        
+                type(stateMachine, ch)
+            }
         }
         catch(Exception e)
         {
             console.printLine(e);
             
-            stateMachine.invalidate()
+  //          stateMachine.invalidate()
         };
         
-        ^ stateMachine.Value
+//        ^ stateMachine.Value
     }
 }

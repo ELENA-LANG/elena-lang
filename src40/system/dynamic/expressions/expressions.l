@@ -119,6 +119,9 @@ public interface Expression
     static Expression Loop(Expression cond, Expression body)
         = new LoopExpression(cond, body);
         
+    static Expression GetMethod(string name, Expression body)
+        = new GetMethodExpression(name, body);        
+          
     static Expression Method(string name, Expression body)
         = new MethodExpression(name, body);        
           
@@ -145,7 +148,10 @@ public interface Expression
           
     static Expression Return(Expression expr)
         = new ReturnExpression(expr);
-          
+
+    static Expression Nested(DynamicSingleton expr)
+        = new NestedExpression(expr);          
+                              
     abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
 
     saveTo(List<Tuple<Message,ClosureTape>> list)
@@ -906,6 +912,14 @@ public class MethodExpression : Expression
     ScopeVariable[] parameters;
     Expression      body;
     
+    constructor(Message message, Expression body)
+    {
+        this parameters := new ScopeVariable[]::( new ScopeVariable("self") );
+        this message := message;
+        
+        this body := body;
+    }
+     
     constructor(string name, Expression body)
     {
         this parameters := new ScopeVariable[]::( new ScopeVariable("self") );
@@ -973,6 +987,18 @@ public class MethodExpression : Expression
     }    
 }
 
+public class GetMethodExpression : MethodExpression
+{
+    constructor(string name, Expression body)
+    //    <= (new MessageName(name).getPropertyMessage(), body);   // !! temporally commented out
+    {
+        this parameters := new ScopeVariable[]::( new ScopeVariable("self") );
+        this message := new MessageName(name).getPropertyMessage();
+        
+        this body := body;
+    }
+
+}
 
 public class ClosureExpression : Expression
 {
@@ -1035,6 +1061,23 @@ public class ClosureExpression : Expression
 
         body.saveTo(list, closureScope);        
     }    
+}
+
+public class NestedExpression : Expression
+{
+    DynamicSingleton singleton;
+    
+    constructor(DynamicSingleton singleton)
+    {
+        this singleton := singleton;
+    }
+    
+    saveTo(List<DynamicClosure> list, ExpressionScope scope)
+    {
+        var tape := singleton.compiled();
+        
+        list.append(new ConstantClosure(tape));
+    }      
 }
 
 public abstract DynamicSymbol
