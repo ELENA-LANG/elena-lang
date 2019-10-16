@@ -26,6 +26,13 @@
    #define statement      ::= expression ";";
 
    #define operations     ::= "." property;
+   #define operations     ::= "." message m_args;
+
+   #define m_args         ::= "(" ")";
+   #define m_args         ::= "(" m_arg ")";
+
+   #define m_arg          ::= expression;
+
    #define property       ::= message <= property_parameter ( ) =>;
 
    #define s_name         ::= <= nameattr ( identifier = $identifier ) =>;

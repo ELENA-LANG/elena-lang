@@ -1,6 +1,6 @@
 import system'routines;
 import extensions;
-//import extensions'text;
+import extensions'text;
 
 extension lexicalOp
 {
@@ -26,42 +26,39 @@ extension lexicalOp
     }
 }
 
-//class DerivationTree
-//{
-//    theRoot;
-//    theLast;
-//
+class DerivationTree
+{
+    theRoot;
+    theLast;
+
 //    LastNode = theLast;
-//    
-//    get Value() => theRoot;
-//
-//    append(node)
-//    {
-//        theLast := node;
-//
-//        theRoot := theRoot + node;
-//    }
-//
+    
+    get Value() => theRoot;
+
+    append(node)
+    {
+        theLast := node;
+
+        theRoot := theRoot + node;
+    }
+
 //    newArgument()
 //    {
 //        theLast := theLast.newArgument()
 //    }
-//
-//    constructor()
-//    {
-//        theRoot := new BaseTreeNode::{ Level = -1; add(node) = node; }
-//    }
-//}
-//
-//// --- BaseTreeNode ---
-//
-//class BaseTreeNode
-//{
-//    theStrategy;
-//    theLevel;
-//    
-//    Level = theLevel;
-//
+
+    constructor()
+    {
+        theRoot := new BaseTreeNode::{ this Level := -1; add(node) = node; }
+    }
+}
+
+// --- BaseTreeNode ---
+
+class BaseTreeNode
+{
+    prop int Level;
+    
 //    add(node)
 //    {
 //        if (self.Level < node.Level)
@@ -79,14 +76,13 @@ extension lexicalOp
 //    }
 //
 //    setFunction(function) {}
-//        
-//    constructor(strategy, baseLevel)
-//    {
-//        theStrategy := strategy;
-//        theLevel := baseLevel + strategy.Order()
-//    }
-//}
-//
+        
+    constructor new(level)
+    {
+        Level := level
+    }
+}
+
 //// --- TreeNode ---
 //
 //class TreeNode : BaseTreeNode
@@ -127,14 +123,14 @@ extension lexicalOp
 //    constructor(strategy, baseLevel)
 //        <= (strategy, baseLevel);
 //}
-//
-//// --- TreeLeaf ---
-//
-//class TreeLeaf : BaseTreeNode
-//{
-//    theToken;
-//    theFunction;
-//
+
+// --- TreeLeaf ---
+
+class TreeLeaf : BaseTreeNode
+{
+    theToken;
+    theFunction;
+
 //    setFunction(function)
 //    {
 //        theFunction := function
@@ -147,21 +143,22 @@ extension lexicalOp
 //            
 //        ^ theFunction.eval();
 //    }
-//
-//    appendContent(ch)
-//    {
-//        theToken.append(ch)
-//    }
-//
-//    Value = theStrategy.evalToken(theToken);
-//            
-//    constructor(strategy, baseLevel)
-//        <= (strategy, baseLevel)
-//    {
-//        theToken := new StringWriter()
-//    }
-//}
-//
+
+    appendContent(ch)
+    {
+        theToken.append(ch)
+    }
+
+    Value = theFunction(theToken.Value);
+            
+    constructor(level, function)
+        <= new(level)
+    {
+        theToken := new StringWriter();
+        theFunction := function
+    }
+}
+
 //// --- FunctionNode ---
 //
 //class FunctionNode : TreeLeaf
@@ -239,17 +236,24 @@ class StateMachine
 {
     theStates;
     theCurrentState;
-//    theDerivationTree;
-//    
-//    prop int Level;
+    theDerivationTree;
+    theLeaf;
+    
+    int level;
+
+    private init()
+    {
+        theDerivationTree := new DerivationTree();
+        theCurrentState := theStates.State0;
+        
+        level := 0
+    }
 
     constructor assign(states)
     {
-//        theDerivationTree := new DerivationTree();
         theStates := states;
-        theCurrentState := states.State0;
         
-//        Level := 0
+        self.init()
     }
 
     get generic()
@@ -280,29 +284,41 @@ class StateMachine
 //        
 //        mixin theCurrentState(self).comma(ch)
 //    }
-//
-//    invalidate()
-//    {
-//        theDerivationTree := nil
-//    }
 
-//    get Value()
-//    {
-//        var value := nil;
-//        
-//        if (nil == theDerivationTree)
-//        { 
-//            value := "Invalid expression" 
-//        }
-//        else
-//        {
-//            value := theDerivationTree.Value
-//                | back:"Invalid expression"
-//        };
-//            
-//        ^ value
-//    }
-//
+    invalidate()
+    {
+        theDerivationTree := nil
+    }
+
+    get Value()
+    {
+        var value := nil;
+        
+        if (nil == theDerivationTree)
+        { 
+            value := "Invalid expression" 
+        }
+        else
+        {
+            value := theDerivationTree.Value
+                | back:"Invalid expression"
+        };
+            
+        ^ value
+    }
+
+    newLeaf()
+    {
+        theLeaf := new TreeLeaf(level, mssgconst toReal<convertorOp>[0]);
+        
+        theDerivationTree.append(theLeaf)
+    }
+    
+    appendContent(ch)
+    {
+        theLeaf.appendContent(ch)
+    }
+
 //    newLeaf(strategy)
 //    {
 //        theDerivationTree.append(new TreeLeaf(strategy, Level));
@@ -316,11 +332,6 @@ class StateMachine
 //    newFunction(strategy)
 //    {
 //        theDerivationTree.append(new FunctionNode(strategy, Level))
-//    }
-//    
-//    addContent(content)
-//    {
-//        theDerivationTree.LastNode.appendContent(content)
 //    }
     
     dispatch() => theCurrentState;
@@ -347,9 +358,9 @@ extension parserOp
         {
             console.printLine(e);
             
-  //          stateMachine.invalidate()
+            stateMachine.invalidate()
         };
         
-//        ^ stateMachine.Value
+        ^ stateMachine.Value
     }
 }

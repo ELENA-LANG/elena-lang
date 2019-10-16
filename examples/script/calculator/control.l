@@ -19,7 +19,7 @@ extension testOp
     {
         var result := self.evaluatedWith(dynamicRules.States);
         
-//        console.printLine(self," evaluated as ",result)
+        console.printLine(self," evaluated as ",result)
     }
 }
 
@@ -29,14 +29,16 @@ extension staticTestOp
     {
         var result := self.evaluatedWith(staticRules);
         
-  //      console.printLine(self," evaluated as ",result)
+        console.printLine(self," evaluated as ",result)
     }
 }
 
 public testCases()
 {
     "2".testEvaluation();
-    
+
+    "22".testEvaluation();
+        
 //    "22.4".testEvaluation();
 //
 //    "2+3-1".testEvaluation();
@@ -56,6 +58,8 @@ public staticTestCases()
 {
     "2".testStaticEvaluation();
     
+    "22".testStaticEvaluation();
+        
 //    "22.4".testStaticEvaluation();
 //
 //    "2+3-1".testStaticEvaluation();

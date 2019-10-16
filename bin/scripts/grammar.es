@@ -86,6 +86,7 @@
 =>;
 
   #define expression      ::= "expression" "(" operation ")";
+  #define expression      ::= "expression" "(" object ")";
 
   #define operation       ::=
 <=
@@ -101,6 +102,15 @@
                system'dynamic'expressions'GetPropertyExpression (
 =>
                                  object message "property_parameter" "(" ")"
+<=
+               )
+=>; 
+
+  #define operation       ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                                 object message expression*
 <=
                )
 =>; 
