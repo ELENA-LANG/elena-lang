@@ -15,7 +15,7 @@
 
    #define singleton      ::= <= nested ( => "{" method* "}" <= ) =>;
 
-   #define method         ::= <= method ( => m_name "(" parameters? ")" body <= ) =>;  
+   #define method         ::= <= script_method ( => m_name "(" parameters? ")" body <= ) =>;  
    #define method         ::= <= get_method ( => m_name ret_body <= ) =>;  
 
    #define parameters     ::= parameter next_parameter*;

@@ -22,6 +22,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
    tokens.add("class", lxClass);
    tokens.add("singleton", lxClass);
    tokens.add("nested", lxNestedClass);
+   tokens.add("script_method", lxClassMethod);
    tokens.add("method", lxClassMethod);
    tokens.add("action", lxClassMethod);
    tokens.add("get_method", lxClassMethod);

@@ -39,6 +39,15 @@
 
   #define method          ::= 
 <=
+       system'dynamic'expressions'MethodExpression (
+=>
+                                   "script_method" "(" m_name parameter* body ")"
+<=
+       )
+=>;
+
+  #define method          ::= 
+<=
        system'dynamic'expressions'GetMethodExpression (
 =>
                                    "get_method" "(" m_name body ")"

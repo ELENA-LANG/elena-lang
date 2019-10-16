@@ -543,6 +543,7 @@ private:
       bool         subCodeMode;       
       bool         abstractMethod;
       bool         embeddableRetMode;
+      bool         targetSelfMode;     // used for script generated methods - self refers to __target
 //      bool         dispatchMode;
       
       virtual Scope* getScope(ScopeLevel level)

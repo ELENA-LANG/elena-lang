@@ -715,6 +715,9 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
       }
       else {
          if (terminal.compare(SELF_VAR)) {
+            if (targetSelfMode) {
+               return mapGroup();
+            }
             if (closureMode || nestedMode) {
                return parent->mapTerminal(OWNER_VAR, false, mode | scopeMode);
             }
@@ -6780,6 +6783,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
    methodScope.extensionMode = scope.extensionClassRef != 0;
    methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
+   methodScope.targetSelfMode = test(methodScope.hints, tpTargetSelf);
    if (methodScope.withOpenArg && methodScope.closureMode)
       methodScope.genericClosure = true;
 }

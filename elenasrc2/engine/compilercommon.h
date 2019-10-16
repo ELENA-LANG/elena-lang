@@ -20,6 +20,7 @@ constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
 
 /// modificator
 constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
+constexpr auto V_SCRIPTSELFMODE  = 0x80006002u;
 
 /// visibility:
 constexpr auto V_PUBLIC          = 0x80005001u;
@@ -131,6 +132,7 @@ enum MethodHint
    tpEmbeddable  = 0x0000020,
    tpGeneric     = 0x0000040,
    tpAction      = 0x0000080,
+   tpTargetSelf  = 0x0000100, // used for script generated classes (self refers to __target)
    tpConstructor = 0x0200400,
    tpConversion  = 0x0200800,
    tpMultimethod = 0x0001000,
