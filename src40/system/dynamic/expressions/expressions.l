@@ -53,8 +53,8 @@ public interface Expression
     static Expression Constant(object o)
         = new ConstantExpression(o);
         
-    static Expression NumericConstant(object o)
-        = new NumericConstantExpression(o);
+    static Expression IntConstant(string value)
+        = new IntConstantExpression(value);
         
     static Expression Symbol(string s)
         = new SymbolExpression(s);
@@ -450,7 +450,7 @@ public class ConstantExpression : Expression
     }
 }
 
-public class NumericConstantExpression : ConstantExpression
+public class IntConstantExpression : ConstantExpression
 {
     constructor(o)
     {
@@ -1107,6 +1107,11 @@ public class DynamicSingleton : DynamicSymbol
     constructor(Expression method1, Expression method2, Expression method3)
     {
         this methods := new Expression[]::(method1, method2, method3);                
+    }
+    
+    constructor(params Expression[] methods)
+    {
+        this methods := methods;                
     }
     
     constructor new(params Expression[] methods)

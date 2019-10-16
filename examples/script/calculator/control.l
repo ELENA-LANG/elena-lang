@@ -35,20 +35,16 @@ extension staticTestOp
 
 public testCases()
 {
-    "2".testEvaluation();
+    "22.4".testEvaluation();
 
-    "22".testEvaluation();
-        
-//    "22.4".testEvaluation();
-//
-//    "2+3-1".testEvaluation();
-//            
-//    "-2+3".testEvaluation();
-//
-//    "2+3*4".testEvaluation();
-//
-//    "(2+3)*4".testEvaluation();
-//    
+    "2+3-1".testEvaluation();
+            
+    "-2+3".testEvaluation();
+
+    "2+3*4".testEvaluation();
+
+    "(2+3)*4".testEvaluation();
+    
 //    "sqrt(2*2)".testEvaluation();
 //    
 //    "min(2,3)".testEvaluation();
@@ -56,20 +52,16 @@ public testCases()
 
 public staticTestCases()
 {
-    "2".testStaticEvaluation();
+    "22.4".testStaticEvaluation();
+
+    "2+3-1".testStaticEvaluation();
+            
+    "-2+3".testStaticEvaluation();
+
+    "2+3*4".testStaticEvaluation();
+
+    "(2+3)*4".testStaticEvaluation();
     
-    "22".testStaticEvaluation();
-        
-//    "22.4".testStaticEvaluation();
-//
-//    "2+3-1".testStaticEvaluation();
-//            
-//    "-2+3".testStaticEvaluation();
-//
-//    "2+3*4".testStaticEvaluation();
-//
-//    "(2+3)*4".testStaticEvaluation();
-//    
 //    "sqrt(2*2)".testStaticEvaluation();
 //    
 //    "min(2,3)".testStaticEvaluation();

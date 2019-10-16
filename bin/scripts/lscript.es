@@ -12,6 +12,7 @@
 
    #define object         ::= singleton;
    #define object         ::= identifier;
+   #define object         ::= integer;
 
    #define singleton      ::= <= nested ( => "{" method* "}" <= ) =>;
 
@@ -29,9 +30,10 @@
    #define operations     ::= "." message m_args;
 
    #define m_args         ::= "(" ")";
-   #define m_args         ::= "(" m_arg ")";
+   #define m_args         ::= "(" m_arg next_arg* ")";
 
    #define m_arg          ::= expression;
+   #define next_arg       ::= "," m_arg;
 
    #define property       ::= message <= property_parameter ( ) =>;
 
@@ -41,4 +43,5 @@
 
    #define message        ::= <= message = $identifier =>;
    #define identifier     ::= <= identifier = $identifier =>;
+   #define integer        ::= <= integer = $numeric =>;
 ]]

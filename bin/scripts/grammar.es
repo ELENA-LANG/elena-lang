@@ -126,6 +126,15 @@
                     )
 =>;
       
+  #define object          ::=
+<=
+                    system'dynamic'expressions'IntConstantExpression ( 
+=>
+                           "integer" "=" int_quote
+<=
+                    )
+=>;
+      
   #define s_name          ::= "nameattr" "(" identifier ")" ;
   #define m_name          ::= "nameattr" "(" identifier ")" ;
   #define p_name          ::= "nameattr" "(" identifier ")" ;
@@ -134,4 +143,5 @@
   #define identifier      ::= "identifier" "=" ident_quote;
 
   #define ident_quote  ::= <= "$identifier" =>;
+  #define int_quote    ::= <= "$numeric" =>;
 ]]

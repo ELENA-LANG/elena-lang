@@ -57,79 +57,81 @@ class DerivationTree
 
 class BaseTreeNode
 {
+    theFunction;
+    
     prop int Level;
     
-//    add(node)
-//    {
-//        if (self.Level < node.Level)
-//        {
-//            self.append(node);
-//            
-//            ^ self
-//        }
-//        else
-//        {
-//            node.append(self);
-//            
-//            ^ node
-//        }
-//    }
-//
+    add(node)
+    {
+        if (self.Level < node.Level)
+        {
+            self.append(node);
+            
+            ^ self
+        }
+        else
+        {
+            node.append(self);
+            
+            ^ node
+        }
+    }
+
 //    setFunction(function) {}
         
-    constructor new(level)
+    constructor(level,function)
     {
-        Level := level
+        Level := level;
+        theFunction := function
     }
 }
 
-//// --- TreeNode ---
-//
-//class TreeNode : BaseTreeNode
-//{
-//    theLeft;
-//    theRight;
-//
-//    append(node)
-//    {
-//        if (nil == theLeft)
-//        { 
-//            theLeft := node 
-//        }
-//        else
-//        {
-//            if (nil == theRight)
-//            { 
-//                theRight := node 
-//            }
-//            else
-//            { 
-//                theRight := theRight + node 
-//            }
-//        }
-//    }
-//    
-//    get Value()
-//    {
-//        if (nil == theLeft)
-//            { InvalidArgumentException.raise() };
-//        
-//        if (nil == theRight)
-//            { InvalidArgumentException.raise() };
-//        
-//        ^ theStrategy.evalNode(theLeft.Value, theRight.Value)
-//    }
-//    
-//    constructor(strategy, baseLevel)
-//        <= (strategy, baseLevel);
-//}
+// --- TreeNode ---
+
+class TreeNode : BaseTreeNode
+{
+    theLeft;
+    theRight;
+
+    append(node)
+    {
+        if (nil == theLeft)
+        { 
+            theLeft := node 
+        }
+        else
+        {
+            if (nil == theRight)
+            { 
+                theRight := node 
+            }
+            else
+            { 
+                theRight := theRight + node 
+            }
+        }
+    }
+    
+    get Value()
+    {
+        if (nil == theLeft)
+            { InvalidArgumentException.raise() };
+        
+        if (nil == theRight)
+            { InvalidArgumentException.raise() };
+        
+        ^ theFunction(theLeft.Value, theRight.Value)
+    }
+    
+    constructor(baseLevel, function)
+        <= (baseLevel, function);
+}
 
 // --- TreeLeaf ---
 
 class TreeLeaf : BaseTreeNode
 {
     theToken;
-    theFunction;
 
 //    setFunction(function)
 //    {
@@ -152,10 +154,9 @@ class TreeLeaf : BaseTreeNode
     Value = theFunction(theToken.Value);
             
     constructor(level, function)
-        <= new(level)
+        <= (level,function)
     {
         theToken := new StringWriter();
-        theFunction := function
     }
 }
 
@@ -307,9 +308,9 @@ class StateMachine
         ^ value
     }
 
-    newLeaf()
+    newLeaf(leafLevel)
     {
-        theLeaf := new TreeLeaf(level, mssgconst toReal<convertorOp>[0]);
+        theLeaf := new TreeLeaf(level + leafLevel, mssgconst toReal<convertorOp>[0]);
         
         theDerivationTree.append(theLeaf)
     }
@@ -323,12 +324,19 @@ class StateMachine
 //    {
 //        theDerivationTree.append(new TreeLeaf(strategy, Level));
 //    }
-//
-//    newNode(strategy)
-//    {
-//        theDerivationTree.append(new TreeNode(strategy, Level));
-//    }
-//
+
+    newNode(nodeLevel, operator)
+    {
+        var function;
+        operator =>
+            "+" { function := mssgconst add[1]}
+            "-" { function := mssgconst subtract[1]}        
+            "*" { function := mssgconst multiply[1]}
+            "/" { function := mssgconst divide[1]};
+            
+        theDerivationTree.append(new TreeNode(level + nodeLevel, function));
+    }
+
 //    newFunction(strategy)
 //    {
 //        theDerivationTree.append(new FunctionNode(strategy, Level))
@@ -356,7 +364,7 @@ extension parserOp
         }
         catch(Exception e)
         {
-            console.printLine(e);
+            //console.printLine(e);
             
             stateMachine.invalidate()
         };

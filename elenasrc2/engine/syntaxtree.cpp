@@ -34,7 +34,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
    tokens.add("preloaded_symbol", lxSymbol);
    tokens.add("literal", lxLiteral);
    tokens.add("identifier", lxIdentifier);
-   tokens.add("numeric", lxInteger);
+   tokens.add("integer", lxInteger);
    tokens.add("parameter", lxMethodParameter);
    tokens.add("include", lxInclude);
    tokens.add("forward", lxForward);
