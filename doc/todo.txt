@@ -6,12 +6,7 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev
-                * calc example
-                * test interpreter
                 * js example
-                * do we need assembly and escript grammars?
-                * do we need escript ?
-                * remove obsolete code
 
               xdev
                 * do-while - if the second agrument is code brackets?

@@ -1,5 +1,5 @@
 import extensions;
-import extensions'dynamic;
+//import extensions'dynamic;
 import extensions'scripting;
 
 public program()

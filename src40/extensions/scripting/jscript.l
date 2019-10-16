@@ -1,18 +1,16 @@
-import extensions'dynamic;
-
-static ScriptEngine lscriptEngine
+static ScriptEngine jscriptEngine
     = new ScriptEngine()
             .loadPath("~\scripts\grammar.es")
-            .loadPath("~\scripts\lscript.es");
+            .loadPath("~\scripts\jscript.es");
 
-public singleton lscript
+public singleton jscript
 {
     eval(string script)
-        = lscriptEngine.buildScript(script).compiled();
+        = jscriptEngine.buildScript(script).compiled();
             
     evalPath(string path)
-        = lscriptEngine.buildScriptFile(path).compiled();
+        = jscriptEngine.buildScriptFile(path).compiled();
         
     load(string path)
-        = lscriptEngine.loadPath(path);
+        = jscriptEngine.loadPath(path);
 }

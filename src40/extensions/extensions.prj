@@ -34,14 +34,11 @@
         <module name="dynamic">
             <include>dynamic\json.l</include>
             <include>dynamic\derserializer.l</include>
-            <include>dynamic\tape_assembly.l</include>
-            <include>dynamic\expressions\expressions.l</include>
         </module>
         <module name="scripting">
             <include>scripting\interpreter.l</include>
-            <include>scripting\escript.l</include>
             <include>scripting\jscript.l</include>
-            <include>scripting\assembly.l</include>
+            <include>scripting\lscript.l</include>
         </module>
         <module name="threading">
             <include>threading\threading.l</include>
