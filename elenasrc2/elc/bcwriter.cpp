@@ -5060,6 +5060,12 @@ void ByteCodeWriter :: generateInlineArgCall(CommandTape& tape, SNode larg, SNod
    // setverb m
    tape.write(bcSetVerb, getAction(message));
 
+   if (test(message, SPECIAL_MESSAGE)) {
+      // eorn SPECIAL_MESSAGE
+      tape.write(bcEOrN, SPECIAL_MESSAGE);
+      releaseObject(tape);
+   }
+
    // acallvi 0
    tape.write(bcACallVI, 0);
    // jmp labEnd
@@ -5091,6 +5097,12 @@ void ByteCodeWriter :: generateInlineArgCall(CommandTape& tape, SNode larg, SNod
 
    // copym
    tape.write(bcCopyM, encodeMessage(getAction(message), 1, VARIADIC_MESSAGE));
+
+   if (test(message, SPECIAL_MESSAGE)) {
+      // eorn SPECIAL_MESSAGE
+      tape.write(bcEOrN, SPECIAL_MESSAGE);
+      releaseObject(tape);
+   }
 
    // acallvi 0
    tape.write(bcACallVI, 0);

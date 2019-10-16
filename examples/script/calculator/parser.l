@@ -1,4 +1,5 @@
 import system'routines;
+import system'collections;
 import extensions;
 import extensions'text;
 
@@ -84,6 +85,11 @@ class BaseTreeNode
         Level := level;
         theFunction := function
     }
+    
+    constructor(level)
+    {
+        Level := level;
+    }
 }
 
 // --- TreeNode ---
@@ -158,31 +164,51 @@ class TreeLeaf : BaseTreeNode
     {
         theToken := new StringWriter();
     }
+    
+    constructor(level)
+        <= (level)
+    {
+        theToken := new StringWriter();
+    }
 }
 
-//// --- FunctionNode ---
-//
-//class FunctionNode : TreeLeaf
-//{
+// --- FunctionNode ---
+
+class FunctionNode : TreeLeaf
+{
+    List theArgNodes;
+    
 //    theArg1;
 //    theArg2;
 //    
 //    theArgState;
-//    
-//    get Value()
-//    {
-//        var subj := new MessageName(cast string(theToken));
-//        
-//        if (nil == theArg1) {
-//            ^ mixin subj(theStrategy).eval()
-//        }
-//        else if (nil == theArg2) {
-//            ^ mixin subj(theStrategy).eval(theArg1.Value)
-//        }
-//        else {
-//            ^ mixin subj(theStrategy).eval(theArg1.Value, theArg2.Value)
-//        }
-//    }
+    
+    append(node)
+    {
+        int last := theArgNodes.Length - 1;
+        
+        var lastNode := theArgNodes[last];
+        if (lastNode == nil)
+        {
+            theArgNodes[last] := node
+        }
+        else
+        {
+            theArgNodes[last] := theArgNodes[last] + node
+        }
+    }
+    
+    get Value()
+    {
+        object[] args := new object[](theArgNodes.Length);
+        for (int i := 0, i < args.Length, i+=1) {
+            args[i] := theArgNodes[i].Value
+        };
+        
+        var symbol := new Symbol(theToken.Value);
+        
+        ^ symbol(inlinearg args);
+    }
 //
 //    first_arg(node)
 //    {
@@ -223,13 +249,16 @@ class TreeLeaf : BaseTreeNode
 //
 //    append(node)
 //        => theArgState;
-//        
-//    constructor(strategy, baseLevel)
-//        <= (strategy, baseLevel)
-//    {
-//        theArgState := subjconst first_arg;
-//    }
-//}
+        
+    constructor(baseLevel)
+        <= (baseLevel)
+    {
+        theArgNodes := new List();
+        theArgNodes.append(nil);
+        
+        theToken.append("extensions'math'");
+    }
+}
 
 // --- StateMachine ---
 
@@ -260,6 +289,16 @@ class StateMachine
     get generic()
     {
         theCurrentState := (__received.getPropertyMessage())(theStates);
+    }
+
+    incLevel(diff)
+    {
+        level := level + diff
+    }
+
+    decLevel(diff)
+    {
+        level := level - diff
     }
 
 //    opening(ch)
@@ -308,9 +347,16 @@ class StateMachine
         ^ value
     }
 
-    newLeaf(leafLevel)
+    newNumberLeaf(leafLevel)
     {
         theLeaf := new TreeLeaf(level + leafLevel, mssgconst toReal<convertorOp>[0]);
+        
+        theDerivationTree.append(theLeaf)
+    }
+    
+    newFunctionLeaf(leafLevel)
+    {
+        theLeaf := new FunctionNode(level + leafLevel);
         
         theDerivationTree.append(theLeaf)
     }

@@ -417,6 +417,8 @@ ELENA byte codes (or ecodes)
  
  eaddn                      - ext += n
 
+ eorn n                     - ext || n
+
  inc                        - index++
  
  ladd                       - long[base] += long[acc]

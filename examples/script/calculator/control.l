@@ -5,7 +5,9 @@ import extensions'scripting;
 
 // --- testCase ---
 
-preloaded subjects = new::(subjconst States,subjconst State0,subjconst State1);
+preloaded subjects = new::(subjconst States,subjconst State0,subjconst State1,subjconst State2,subjconst State3);
+
+preloaded objects = new::(extensions'math'sqrt(4));
 
 public static dynamicRules = 
     lscript.evalPath("calc.es");
@@ -34,7 +36,7 @@ extension staticTestOp
 }
 
 public testCases()
-{
+{    
     "22.4".testEvaluation();
 
     "2+3-1".testEvaluation();
@@ -45,8 +47,8 @@ public testCases()
 
     "(2+3)*4".testEvaluation();
     
-//    "sqrt(2*2)".testEvaluation();
-//    
+    "sqrt(2*2)".testEvaluation();
+    
 //    "min(2,3)".testEvaluation();
 }
 
@@ -62,8 +64,8 @@ public staticTestCases()
 
     "(2+3)*4".testStaticEvaluation();
     
-//    "sqrt(2*2)".testStaticEvaluation();
-//    
+    "sqrt(2*2)".testStaticEvaluation();
+    
 //    "min(2,3)".testStaticEvaluation();
 }
 

@@ -235,6 +235,8 @@ enum ByteCode
    bcEqualR          = 0xDE,
    bcBLoadAI         = 0xDF,
 
+   bcEOrN            = 0xE0,
+
    bcMTRedirect      = 0xE8,
    bcXMTRedirect     = 0xE9,
    bcGreaterN        = 0xEA,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)

@@ -2670,6 +2670,13 @@ inline % 0DFh
 
 end
 
+// ; eorn i
+inline % 0E0h
+
+  or  ecx, __arg1
+
+end
+
 // ; mtredirect
 
 inline % 0E8h
