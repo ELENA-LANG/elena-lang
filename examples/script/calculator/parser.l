@@ -43,10 +43,10 @@ class DerivationTree
         theRoot := theRoot + node;
     }
 
-//    newArgument()
-//    {
-//        theLast := theLast.newArgument()
-//    }
+    newArgument()
+    {
+        theLast := theRoot.newArgument()
+    }
 
     constructor()
     {
@@ -78,8 +78,6 @@ class BaseTreeNode
         }
     }
 
-//    setFunction(function) {}
-        
     constructor(level,function)
     {
         Level := level;
@@ -88,7 +86,7 @@ class BaseTreeNode
     
     constructor(level)
     {
-        Level := level;
+        Level := level
     }
 }
 
@@ -98,6 +96,18 @@ class TreeNode : BaseTreeNode
 {
     theLeft;
     theRight;
+
+    newArgument()
+    {
+        if (nil == theRight)
+        {
+            ^ theRight.newArgument()
+        }
+        else
+        {
+            ^ theLeft.newArgument()
+        }
+    }
 
     append(node)
     {
@@ -139,19 +149,6 @@ class TreeLeaf : BaseTreeNode
 {
     theToken;
 
-//    setFunction(function)
-//    {
-//        theFunction := function
-//    }
-//
-//    newArgument()
-//    {
-//        if (nil == theFunction)
-//            { InvalidArgumentException.raise() };
-//            
-//        ^ theFunction.eval();
-//    }
-
     appendContent(ch)
     {
         theToken.append(ch)
@@ -178,10 +175,12 @@ class FunctionNode : TreeLeaf
 {
     List theArgNodes;
     
-//    theArg1;
-//    theArg2;
-//    
-//    theArgState;
+    newArgument()
+    {
+        theArgNodes.append(nil);
+        
+        ^ self
+    }
     
     append(node)
     {
@@ -209,46 +208,6 @@ class FunctionNode : TreeLeaf
         
         ^ symbol(inlinearg args);
     }
-//
-//    first_arg(node)
-//    {
-//        if (nil == theArg1)
-//        { 
-//            theArg1 := node.setFunction(self) 
-//        }
-//        else
-//        { 
-//            theArg1 := theArg1 + node.setFunction(self) 
-//        }
-//    }
-//
-//    second_arg(node)
-//    {
-//        if (nil == theArg2)
-//        { 
-//            theArg2 := node.setFunction(self) 
-//        }
-//        else
-//        { 
-//            theArg2 := theArg2 + node.setFunction(self) 
-//        }
-//    }
-//        
-//    first_arg()
-//    {
-//        theArgState := subjconst second_arg
-//    }    
-//        
-//    second_arg()
-//    {
-//        theArgState := subjconst third_arg
-//    }    
-//
-//    eval()
-//        => theArgState;
-//
-//    append(node)
-//        => theArgState;
         
     constructor(baseLevel)
         <= (baseLevel)
@@ -268,6 +227,7 @@ class StateMachine
     theCurrentState;
     theDerivationTree;
     theLeaf;
+    theFunction;
     
     int level;
 
@@ -301,29 +261,10 @@ class StateMachine
         level := level - diff
     }
 
-//    opening(ch)
-//    {
-//        Level := Level + 10;
-//        
-//        mixin theCurrentState(self).opening:ch
-//    }
-//
-//    closing(ch)
-//    {
-//        Level := Level - 10;
-//        
-//        if (0 > Level)
-//            { InvalidOperationException.raise() };
-//        
-//        mixin theCurrentState(self).closing(ch)
-//    }
-//
-//    comma(ch)
-//    {
-//        theDerivationTree.newArgument();
-//        
-//        mixin theCurrentState(self).comma(ch)
-//    }
+    newArgument()
+    {
+        theDerivationTree.newArgument()
+    }
 
     invalidate()
     {
@@ -366,11 +307,6 @@ class StateMachine
         theLeaf.appendContent(ch)
     }
 
-//    newLeaf(strategy)
-//    {
-//        theDerivationTree.append(new TreeLeaf(strategy, Level));
-//    }
-
     newNode(nodeLevel, operator)
     {
         var function;
@@ -383,11 +319,6 @@ class StateMachine
         theDerivationTree.append(new TreeNode(level + nodeLevel, function));
     }
 
-//    newFunction(strategy)
-//    {
-//        theDerivationTree.append(new FunctionNode(strategy, Level))
-//    }
-    
     dispatch() => theCurrentState;
 }
 
@@ -410,7 +341,7 @@ extension parserOp
         }
         catch(Exception e)
         {
-            //console.printLine(e);
+            console.printLine(e);
             
             stateMachine.invalidate()
         };

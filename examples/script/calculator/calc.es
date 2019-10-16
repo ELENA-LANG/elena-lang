@@ -65,7 +65,8 @@ State1 :
   minus    => { $machine.newNode(1, $input); $machine.State0; }
   star     => { $machine.newNode(2, $input); $machine.State0; }
   slash    => { $machine.newNode(2, $input); $machine.State0; }
-  closing  => { $machine.decLevel(10); $machine.State2; };
+  closing  => { $machine.decLevel(10); $machine.State2; }
+  comma    => { $machine.newArgument(); $machine.State0; };
 
 State2 :
   digit    => { $machine.newNumberLeaf(3); $machine.appendContent($input); $machine.State1; }

@@ -5,12 +5,6 @@ import system'math;
 //
 //public singleton mathControl
 //{ 
-//    min(object l, object r)
-//        = (l < r).iif(l,r);
-//
-//    max(object l, object r)
-//        = (l > r).iif(l,r);
-//
 ////    generic(n) = mixin __received(new Wrap{n, mathOp}).eval();
 ////    
 ////    generic (n, m) = mixin __received(new Wrap{n, mathOp}).eval(m).
@@ -339,4 +333,28 @@ public singleton log10
     
     real closure(real operand)
         = operand.log10();
+}
+
+public min(l1,l2)
+{
+    if (l1 < l2)
+    {
+        ^ l1
+    }
+    else
+    {
+        l2
+    }
+}
+
+public max(l1,l2)
+{
+    if (l1 > l2)
+    {
+        ^ l1
+    }
+    else
+    {
+        l2
+    }
 }
