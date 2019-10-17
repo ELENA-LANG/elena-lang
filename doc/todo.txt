@@ -6,21 +6,19 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev
-                * js example
-
-              xdev
                 * (re)implement dto inline attribute
-                * do-while - if the second agrument is code brackets?
                 * simplified syntax to invoke dynamic message?
                 * (re)implement manifest
-
-              xdev
-                * support dto_field, info scope attributes
-                * static fields should be accessaible from storng typed extensions
                 * re-implement lazy expression
-
                 * do not allow to write something like
                   A{ int dump[4] := 3; }  // !! error
+                * fix all open bugs in 4.1 milestone
+
+              xdev
+                * test all samples
+
+              xdev - usability
+                * warn if the project is not configurated
 
               xdev API
                 * template extensions
@@ -28,30 +26,25 @@ In development:
                 * missing algorithms (template extensions)
                 * missing system'routines'stex
 
-              xdev
-                * test all samples
-
-              xdev
-                * fix bug with inserting unicode character
-                * fix all open bugs in 4.1 milestone
-                             
-              xdev - usability
-                * warn if the project is not configurated
-
-              xdev API
-                * review all api
-
+------                                                           
+Pipeline:
+------   
               ydev - Linux
                 * linker : adata + mdata + rdata (meta starts with size field)
                 * get rid of debug section
                 * suport elenart
                   
-------                                                           
-Pipeline:
-------   
+              xdev API
+                * review all api
+
               xdev
-                 * support constant class meta attributes
-                 * support class / method / field / static field meta description
+                * fix bug with inserting unicode character
+                             
+              xdev
+                * support constant class meta attributes
+                * support class / method / field / static field meta description
+                * do-while - if the second agrument is code brackets?
+                * static fields should be accessaible from storng typed extensions
 
               xdev - lib
                 * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
