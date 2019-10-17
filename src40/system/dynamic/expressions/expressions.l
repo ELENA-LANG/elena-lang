@@ -874,7 +874,7 @@ public class IfExpression : Expression
         offs := offs - 1;
         
         list[bookmark] := new JumpIfNotClosure(offs);
-        
+        list.append(new ConstantClosure(nilValue)); // !! should be redesigned
     }
 }
 
@@ -908,7 +908,7 @@ public class LoopExpression : Expression
         
         list[bookmark] := new JumpIfNotClosure(offs);
         
-        list.append(new ConstantClosure(nilValue));
+        list.append(new ConstantClosure(nilValue)); // !! should be redesigned
     }
 }
 

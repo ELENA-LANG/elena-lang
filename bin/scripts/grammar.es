@@ -137,7 +137,25 @@
                )
 =>; 
 
+  #define operation       ::=
+<=
+               system'dynamic'expressions'IfExpression (
+=>
+                                 object "operator" "=" "?" body_expr
+<=
+               )
+=>; 
+
+  #define body_expr       ::= "expression" "(" body ")";
+
   #define operator        ::= <= "add" => "+";
+  #define operator        ::= <= "subtract" => "-";
+  #define operator        ::= <= "multiply" => "*";
+  #define operator        ::= <= "divide" => "/";
+  #define operator        ::= <= "notgreater" => "<=";
+  #define operator        ::= <= "equal" => "==";
+  #define operator        ::= <= "less" => "<";
+  #define operator        ::= <= "greater" => ">";
 
   #define object          ::= expression;
 

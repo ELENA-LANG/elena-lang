@@ -11,7 +11,7 @@
     <targets>
         <target name="grammar" type="2">
             <option>[[ #grammar tree ]]</option>
-            <option>grammar_js.es</option>
+            <option>~\scripts\jscript.es</option>
         </target>
     </targets>
     <files>
@@ -24,5 +24,6 @@
     </files>
     <forwards>
         <forward key="program">fibonacci'stat_program</forward>
+        <forward key="jsprogram">fibonacci'stat'program</forward>
     </forwards>
 </configuration>

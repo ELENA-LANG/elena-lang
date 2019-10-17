@@ -839,5 +839,4 @@ void CFParser :: parse(_ScriptReader& reader, MemoryDump* output)
    ScriptReader scriptReader(&logReader, log.getCoordinateMap());
       
    _baseParser->parse(scriptReader, output);
-
 }
