@@ -70,7 +70,7 @@ class ExpressionTree
             
             var op := node.Operation;
             
-            ^ mixin op(left).eval:right
+            ^ op(left, right);
         }
     }
     

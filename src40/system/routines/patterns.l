@@ -453,7 +453,7 @@ class Selector : Enumerator
     
     constructor new(ExtensionMessage extension, Enumerator enumerator)
     {
-        theSelector := (x){ ^ mixin extension(x).eval() };
+        theSelector := (x => extension(x));
         theEnumerator := enumerator
     }
     
@@ -798,7 +798,7 @@ public class Accumulating : BasePattern
     constructor new(object variable, ExtensionMessage operation)
     {
         theResult := variable;
-        theOperation := (a,b){ mixin operation(a).eval(b) }
+        theOperation := (a,b){ operation(a, b) }
     }
 
     closure(param) { theResult.Value := theOperation(theResult.Value, param) }
