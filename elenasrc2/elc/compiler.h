@@ -89,7 +89,7 @@ public:
    };
 
    // InheritResult
-   enum InheritResult
+   enum class InheritResult
    {
       irNone = 0,
       irSuccessfull,

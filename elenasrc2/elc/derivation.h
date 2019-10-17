@@ -53,7 +53,7 @@ class DerivationWriter : public _DerivationWriter
       bool isNameParameter(ident_t name, ref_t& argument)
       {
          if (templateMode == stInlineTemplate || templateMode == stPropertyTemplate) {
-            int index = parameters.get(name);
+            ref_t index = parameters.get(name);
             if (index == parameters.Count()) {
                argument = nestedLevel + index;
 

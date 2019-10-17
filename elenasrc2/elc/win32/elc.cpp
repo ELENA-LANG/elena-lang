@@ -95,7 +95,7 @@ public:
       }
    }
 
-   virtual void afterLoad(_ELENA_::ExecutableImage& image)
+   virtual void afterLoad(_ELENA_::ExecutableImage&)
    {
    }
 

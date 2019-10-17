@@ -667,6 +667,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->abstractMethod = false;
    this->genericClosure = false;
    this->embeddableRetMode = false;
+   this->targetSelfMode = false;
 //   this->dispatchMode = false;
 }
 
@@ -718,7 +719,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
             if (targetSelfMode) {
                return mapGroup();
             }
-            if (closureMode || nestedMode) {
+            else if (closureMode || nestedMode) {
                return parent->mapTerminal(OWNER_VAR, false, mode | scopeMode);
             }
             else return mapSelf();
@@ -1459,7 +1460,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
    _Module* module = moduleScope->loadReferenceModule(parentRef, moduleRef);
 
    if (module == NULL || moduleRef == 0)
-      return irUnsuccessfull;
+      return InheritResult::irUnsuccessfull;
 
    // load parent meta data
    _Memory* metaData = module->mapSection(moduleRef | mskMetaRDataRef, true);
@@ -1508,7 +1509,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       scope.info.mattributes.clear();
 
       if (/*!ignoreSealed && */test(scope.info.header.flags, elSealed))
-         return irSealed;
+         return InheritResult::irSealed;
 
       // restore parent and flags
       scope.info.header.parentRef = parentRef;
@@ -1523,15 +1524,15 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
 
       scope.info.header.flags |= flagCopy;
 
-      return irSuccessfull;
+      return InheritResult::irSuccessfull;
    }
-   else return irUnsuccessfull;
+   else return InheritResult::irUnsuccessfull;
 }
 
 void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields/*, bool ignoreSealed*/)
 {
    scope.info.header.parentRef = parentRef;
-   InheritResult res = irSuccessfull;
+   InheritResult res = InheritResult::irSuccessfull;
    if (scope.info.header.parentRef != 0) {
       res = inheritClass(scope, scope.info.header.parentRef, ignoreFields/*, ignoreSealed*/);
    }
@@ -1542,10 +1543,10 @@ void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref
    //if (res == irInvalid) {
    //   scope.raiseError(errInvalidParent/*, baseNode*/);
    //}
-   /*else */if (res == irSealed) {
+   /*else */if (res == InheritResult::irSealed) {
       scope.raiseError(errSealedParent, baseNode);
    }
-   else if (res == irUnsuccessfull)
+   else if (res == InheritResult::irUnsuccessfull)
       scope.raiseError(errUnknownBaseClass, baseNode);
 }
 
@@ -2162,7 +2163,7 @@ int Compiler :: defineFieldSize(CodeScope& scope, int offset)
    else return classScope->info.size - offset;
 }
 
-void Compiler :: writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type)
+void Compiler :: writeParamFieldTerminal(SyntaxWriter& writer, CodeScope&, ObjectInfo object, int, LexicalType type)
 {
    writer.newNode(lxFieldExpression);
    writer.appendNode(type, object.param);
@@ -2610,7 +2611,7 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
    return result;
 }
 
-ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int mode)
+ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int)
 {
    ObjectInfo retVal;
    IdentifierString message;
@@ -7007,7 +7008,7 @@ inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference, bool isA
 
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst, bool isArray)
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t, bool isSealed, bool isConst, bool isArray)
 {
    _Module* module = scope.module;
 
@@ -7669,7 +7670,7 @@ inline ref_t mapClassName(_Module* module, ref_t reference)
    return module->mapConstant(refName);
 }
 
-void Compiler :: copyStaticFieldValues(SNode node, ClassScope& scope)
+void Compiler :: copyStaticFieldValues(SNode, ClassScope& scope)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
 
@@ -8429,7 +8430,6 @@ bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
    int flag = 1;
    
    SNode current = callNode.firstChild();
-   int nested = 0;
    while (current != lxNone) {
       if (test(current.type, lxObjectMask)) {
          if (test(stackSafeAttr, flag)) {

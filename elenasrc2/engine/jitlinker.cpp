@@ -1033,7 +1033,7 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
    return NULL; // !! should be resolved only once
 }
 
-void* JITLinker :: resolveMetaAttributeTable(ReferenceInfo referenceInfo, int mask)
+void* JITLinker :: resolveMetaAttributeTable(ReferenceInfo, int mask)
 {
    _Memory* asection = _loader->getTargetSection(mask);
 

@@ -644,6 +644,9 @@ struct DebugLineInfo
    {
       symbol = dsNone;
       col = row = length = 0;
+
+      this->addresses.symbol.nameRef = 0;
+      this->addresses.symbol.flags = 0;
    }
    DebugLineInfo(DebugSymbol symbol, int length, int col, int row)
    {

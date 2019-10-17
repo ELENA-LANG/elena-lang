@@ -2075,7 +2075,7 @@ _Memory* TemplateGenerator::TemplateScope :: loadTemplateTree()
 
 // --- TemplateGenerator ---
 
-TemplateGenerator :: TemplateGenerator(SyntaxTree& tree)
+TemplateGenerator :: TemplateGenerator(SyntaxTree&)
 {
 //   _root = tree.readRoot();
 }
