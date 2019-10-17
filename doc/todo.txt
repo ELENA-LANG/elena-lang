@@ -6,24 +6,15 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev
-                * re-implement literal constructor
-
-              xdev
-                * test rosetta samples (Define a primitive data type)
+                * test rosetta samples (Delegates)
                 * basic test
                 * test basic samples
                 * test anangram sample - is result correct?
 
-              xdev
-                * (re)implement dto inline attribute
-                * simplified syntax to invoke dynamic message?
                 * (re)implement manifest
                 * do not allow to write something like
                   A{ int dump[4] := 3; }  // !! error
                 * fix all open bugs in 4.1 milestone
-
-              xdev
-                * test all samples
 
               xdev - usability
                 * warn if the project is not configurated

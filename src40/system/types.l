@@ -9,7 +9,7 @@
 #define private     80005002h
 #define internal    80005003h
 //#define __meta      80005004h
-//#define inline      80005005h
+#define inline      80005005h
 #define property    80005006h
 
 /// property:

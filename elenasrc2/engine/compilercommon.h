@@ -90,7 +90,7 @@ constexpr auto V_MESSAGE         = 0x80000806u;
 constexpr auto V_SUBJECT         = 0x80000807u;
 constexpr auto V_SYMBOL          = 0x80000808u;
 constexpr auto V_INLINEARG       = 0x80000809u;
-constexpr auto V_INLINEATTRIBUTE = 0x8000080Au;
+//constexpr auto V_INLINEATTRIBUTE = 0x8000080Au;
 
 /// primitive types
 constexpr auto V_FLAG            = 0x80000001u;

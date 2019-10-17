@@ -27,7 +27,7 @@ class DerivationWriter : public _DerivationWriter
       daType        = 0x0001,
    //      daClass       = 0x0002,
       daTemplate    = 0x0004,
-      daProperty    = 0x0008, // !! obosolete
+      daProperty    = 0x0008,
       daInline      = 0x0010,
       daImport      = 0x0040,
       daExtension   = 0x8000,
@@ -159,7 +159,7 @@ class DerivationWriter : public _DerivationWriter
    void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, List<SNode>* parameters, SyntaxTree& buffer);
    void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
-   void generateAttributeTemplateTree(SyntaxWriter& writer, SNode node, SNode nameNode, Scope& derivationScope, SyntaxTree& buffer);
+   void generateInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode nameNode, Scope& derivationScope, SyntaxTree& buffer);
    void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);

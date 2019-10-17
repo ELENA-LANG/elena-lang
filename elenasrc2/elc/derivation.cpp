@@ -639,7 +639,7 @@ ref_t DerivationWriter :: mapInlineAttribute(SNode terminal)
 
    ref_t templateRef = _scope->attributes.get(templateName.ident());
    if (templateRef) {
-      return V_INLINEATTRIBUTE;
+      return templateRef;
    }
    else _scope->raiseError(errInvalidHint, _filePath, terminal);
 
@@ -932,6 +932,9 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
          else if (current == lxClassProperty) {
             generatePropertyTree(writer, current, derivationScope, buffer);
          }
+         else if (current == lxInlineAttribute) {
+            generateInlineTemplateTree(writer, current, goToNode(current, lxNameAttr), derivationScope, buffer);
+         }
          //      else if (current == lxFieldTemplate) {
          //         withInPlaceInit |= generateFieldTemplateTree(writer, current, scope, buffer);
          //      }
@@ -1036,7 +1039,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
    if (current == lxNameAttr) {
       nameNode = current;
 
-      current = goToFirstNode(nameNode.prevNode(), lxAttribute, lxTarget, lxInlineAttribute );
+      current = goToFirstNode(nameNode.prevNode(), lxAttribute, lxTarget/*, lxInlineAttribute */);
    }
 
    while (true) {
@@ -1050,10 +1053,10 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 
          generateTypeAttribute(writer, attrNodes, terminal, dimensionCounter, current.argument, derivationScope);
       }
-      else if (current == lxInlineAttribute) {
-         // COMPILER MAGIC : inject an attribute template
-         generateAttributeTemplateTree(writer, current, nameNode, derivationScope, buffer);
-      }
+      //else if (current == lxInlineAttribute) {
+      //   // COMPILER MAGIC : inject an attribute template
+      //   generateAttributeTemplateTree(writer, current, nameNode, derivationScope, buffer);
+      //}
       else if (current == lxAttribute) {
          writer.newNode(lxAttribute, current.argument);
          copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
@@ -1410,37 +1413,37 @@ void DerivationWriter :: generatePropertyBody(SyntaxWriter& writer, SNode node, 
    }
 }
 
-void DerivationWriter :: generateAttributeTemplateTree(SyntaxWriter& writer, SNode node, SNode nameNode, Scope& derivationScope, SyntaxTree& buffer)
+void DerivationWriter :: generateInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode nameNode, Scope& derivationScope, SyntaxTree& buffer)
 {
    List<SNode> parameters;
-   IdentifierString templateName;
+   //IdentifierString templateName;
 
-   SyntaxTree tempTree;
-   SyntaxWriter tempWriter(tempTree);
+   //SyntaxTree tempTree;
+   //SyntaxWriter tempWriter(tempTree);
 
-   SNode current = node;
-   templateName.copy(current.firstChild(lxTerminalMask).identifier());
+   //SNode current = node;
+   //templateName.copy(current.firstChild(lxTerminalMask).identifier());
 
-   if (nameNode.nextNode() == lxClassMethod) {
-      tempWriter.newNode(lxNameAttr);
-      tempWriter.newNode(lxMessage);
+   //if (nameNode.nextNode() == lxClassMethod) {
+   //   tempWriter.newNode(lxNameAttr);
+   //   tempWriter.newNode(lxMessage);
 
-      SyntaxTree::copyNode(tempWriter, nameNode);
-      SyntaxTree::copyMatchedNodes(writer, lxParameter, nameNode.nextNode());
+   //   SyntaxTree::copyNode(tempWriter, nameNode);
+   //   SyntaxTree::copyMatchedNodes(writer, lxParameter, nameNode.nextNode());
 
-      tempWriter.closeNode();
-      tempWriter.closeNode();
+   //   tempWriter.closeNode();
+   //   tempWriter.closeNode();
 
-      parameters.add(tempTree.readRoot());
-   }
+   //   parameters.add(tempTree.readRoot());
+   //}
 
-   //// name parameter is always the last parameter
-   //parameters.add(nameNode);
+   // name parameter is always the last parameter
+   parameters.add(nameNode);
 
-   templateName.append("#inline#");
-   templateName.appendInt(parameters.Count());
+   //templateName.append("#inline#");
+   //templateName.appendInt(parameters.Count());
 
-   ref_t templateRef = _scope->attributes.get(templateName.c_str());
+   ref_t templateRef = /*_scope->attributes.get(templateName.c_str())*/node.argument;
    if (!templateRef)
       _scope->raiseError(errInvalidSyntax, _filePath, node.parentNode());
 

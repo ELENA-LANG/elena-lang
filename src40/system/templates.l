@@ -56,10 +56,10 @@ property rprop<T, __name>
     }    
 }
 
-//attribute dto<__name>
-//{
-//    this __dto_properties += subjconst __name;
-//}
+inline dto<__name>
+{
+    this __dto_properties += subjconst __name;
+}
 
 // --- extern statement ---
 
