@@ -118,6 +118,7 @@
    #define object         ::= integer;
    #define object         ::= identifier;
    #define object         ::= m_call;
+   #define object         ::= "(" expression ")";
 
    #define m_call         ::= 
 <=

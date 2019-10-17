@@ -128,6 +128,19 @@
                )
 =>; 
 
+  #define operation       ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                                 object "operator" "=" operator object
+<=
+               )
+=>; 
+
+  #define operator        ::= <= "add" => "+";
+
+  #define object          ::= expression;
+
   #define object          ::=
 <=
                     system'dynamic'expressions'VariableExpression ( 
