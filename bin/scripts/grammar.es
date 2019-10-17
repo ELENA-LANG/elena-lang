@@ -25,8 +25,21 @@
 <=
        system'dynamic'expressions'DynamicSingleton (
 =>
-                                   "nested" "(" method* ")"
+                                   "nested" "(" member* ")"
 <=     ) =>;
+
+  #define member          ::= method;
+  #define member          ::= action;
+
+  #define action          ::= 
+<=
+       system'dynamic'expressions'ActionMethodExpression (
+=>
+                                   "action" "(" parameter* body ")"
+<=
+       )
+=>;
+
 
   #define method          ::= 
 <=
@@ -135,6 +148,24 @@
                     )
 =>;
       
+  #define object          ::=
+<=
+                    system'dynamic'expressions'SymbolExpression ( 
+=>
+                           "reference" "=" ref_quote
+<=
+                    )
+=>;
+      
+  #define object          ::=
+<=
+                    system'dynamic'expressions'ConstantExpression ( 
+=>
+                           "literal" "=" quote
+<=
+                    )
+=>;
+      
   #define s_name          ::= "nameattr" "(" identifier ")" ;
   #define m_name          ::= "nameattr" "(" identifier ")" ;
   #define p_name          ::= "nameattr" "(" identifier ")" ;
@@ -143,5 +174,7 @@
   #define identifier      ::= "identifier" "=" ident_quote;
 
   #define ident_quote  ::= <= "$identifier" =>;
+  #define ref_quote    ::= <= "$reference" =>;
   #define int_quote    ::= <= "$numeric" =>;
+  #define quote        ::= <= "$literal" =>;
 ]]

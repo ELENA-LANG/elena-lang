@@ -122,6 +122,9 @@ public interface Expression
     static Expression GetMethod(string name, Expression body)
         = new GetMethodExpression(name, body);        
           
+    static Expression ActionMethod(Expression body)
+        = new ActionMethodExpression(body);        
+          
     static Expression Method(string name, Expression body)
         = new MethodExpression(name, body);        
           
@@ -1001,6 +1004,18 @@ public class GetMethodExpression : MethodExpression
         this body := body;
     }
 
+}
+
+public class ActionMethodExpression : MethodExpression
+{
+    constructor(Expression body)
+    //    <= (new Message("[0]"), body);   // !! temporally commented out
+    {
+        this parameters := new ScopeVariable[]::( new ScopeVariable("self") );
+        this message := new Message("[0]");
+        
+        this body := body;
+    }
 }
 
 public class ClosureExpression : Expression

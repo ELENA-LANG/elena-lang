@@ -7,12 +7,43 @@ Content
   + [Entry point](#entry-point)
   + [Variables](#variables)
   + [Numbers](#numbers)
+    + [Integer Types](#integer-types)
+    + [Floating-point types](#floating-point-types)
+    + [Numeric literals](#numeric-literals)
+    + [Numeric conversions](#numeric-conversions)
   + [Mathematical Operations and Functions](#mathematical-operations-and-functions)
+    + [Arithmetic Operators](#arithmetic-operators)
+    + [Bitwise Operators](#bitwise-operators)
+    + [Assignment Operators](#assignment-operators)
+    + [Numeric Comparisons](#numeric-comparisons)
+    + [Operator Precedence](#operator-precedence)
+    + [Numerical Conversions](#numerical-conversions)
+    + [Methods and functions](#methods-and-functions)
   + [Strings](#strings)
+    + [Characters](#characters)
+    + [String literals](#string-literals)
+    + [Reading string content](#reading-string-content)
+    + [Basic operations and functions](#basic-operations-and-functions)
+    + [Conversion to and from strings](#conversion-to-and-from-strings)
   + [Functions](#functions)
+    + [Returning operator](#returning-operator)
+    + [Closures](#closures)
+    + [Strong-typed arguments](#strong-typed-arguments)
+    + [Message functions](#message-functions)
   + [Control Flow](#control-flow)
+    + [Boolean type](#boolean-type)
+    + [Branching operator](#branching-operator)
+    + [Branching statements](#branching-statements)
+    + [Looping statements](#looping-statements)
+    + [Exception handling](#exception-handling)
   + [Symbols](#symbols)
+    + [Values / Constants](#values-/-constants)
+    + [Static symbols](#static-symbols)
+    + [Preloaded symbols](#preloaded-symbols)
   + [Types](#types)
+    + [Primitive types](#primitive-types)
+    + [Classes](#classes)
+    + [Abstract classes](#abstract-classes)
 
 ## Overview
 A programming language is a mammoth task to develop and to learn. So encountering a new language you may ask: why another
@@ -1536,3 +1567,185 @@ In dynamic languages the operation to invoke a method is usually called sending 
 In ELENA typecasting are implemented via a sending a special methods - conversion handlers. Every class may be converted into another one if it handles this message. Otherwise an exception is raised.
 
 #### Primitive types
+
+In most cases a class and a type mean the same. The only exception is a primitive type. Primitive types are built-in and support only predefined operations. They are classical data types in sense that they are pure data. The following types are supported by ELENA:
+
+Type | Size | Description
+---- | ---- | -----------
+__float | 8 | A 64-bit floating-point number
+__int | 1 | A 8-bit integer number
+__int | 2 | A 16-bit integer number
+__int | 4 | A 32-bit integer number
+__int | 8 | A 64-bit integer number
+__raw |  | a raw data
+__ptr | 4 | a 32-bit pointer
+__mssg | 4 | a message reference
+__mssg | 8 | an extension reference
+__subj | 4 | a message name reference
+__symbol | 4 | a symbol reference
+__string | | an array
+
+Primitive types can be used in the program with a help of appropriate wrappers. Every time a primitive type is used in the code (except primitive operations) it is boxed into its wrapper. After the operation it is unboxed back. Due to performance issues no validation is applied to the primitive operations, so it is up to a programmer (or a wrapper class) to handle it correctly. 
+
+#### Classes
+
+Putting aside primitive types every program object is an instance of a class. A class is a structure encapsulating data (fields) with operations with them (methods). A class may specify constructors to create an object and conversion routines to convert it from another object.
+
+Declaring and using classes is straightforward for anyone familiar with C-like object-oriented languages:
+
+    import extensions;
+    
+    // declaring a class named A
+    class A
+    {
+        // declaring a field named a
+        field a;
+        
+        // declaring an implicit constructor
+        constructor()
+        {
+            a := "Some value"
+        }
+        
+        // declaring a method named printMe
+        method printMe()
+        {
+            console.printLine(a)
+        }
+    }
+    
+    public program()
+    {
+        // creating an instance of A class
+        var o := new A();
+        
+        // calling a method 
+        o.printMe()
+    }
+
+The output is:
+
+    Some value
+
+The keyword **class** specifies a normal class. A class body is enclosed in curly brackets. A class name declared right before the class body. A field may be declared in any place inside the class body. It may starts with an attribute **field**. Implicit constructor is named **constructor**. A method may be declared with a keyword **method**. The code could be placed inside curly brackets.
+
+The classes form an hierarchy. Every one (except the super one) has a parent. If the parent is not specified the class inherits **system'Object** (a super class). A child class can override any non-sealed method of its parent. An instance of a child class is simultaneously of a parent type (so called is-a relation). So we could assign a child to a variable of a parent type. But the overridden methods will be used (polymorphic code). In case of weak types (or type-less) this is true as well (we only assume that all variables are of the super type).
+
+    import  extensions;
+    
+    class Parent
+    {
+        field f;
+        
+        constructor()
+        {
+            f := "some value"
+        }
+        
+        printMe()
+        {
+            console.printLine("parent:",f)
+        }
+    }
+    
+    class Child : Parent
+    {
+        printMe()
+        {
+            console.printLine("child:",f)
+        }
+    }
+    
+    public program()
+    {
+        Parent p := new Parent();
+        Child c := new Child();
+        
+        p.printMe();
+        c.printMe()
+    }
+
+The output will be:
+
+    parent:some value
+    child:some value
+
+The parent clause should follow the class name and be introduced with a colon. To override the method we have only declare it once again with the same name and signature.
+
+In ELENA a type (or a class) can be used directly in the code like any other symbols. The only difference that we cannot invoke implicit constructor. The explicit one should be used instead.
+
+    import extensions;
+    
+    // declaring a class named A 
+    class A
+    {
+        field a;
+        
+        // implicit constructor
+        constructor()
+        {
+            a := "a"
+        }
+        
+        // explicit constructor named new
+        constructor new()
+            // invoking an implicit constructor
+            <= ();
+    }
+    
+    // declaring a class named B
+    class B
+    {
+        field b;
+        
+        // implicit constructor
+        constructor()
+        {
+            b := 2
+        }
+        
+        // explicit constructor named new
+        constructor new()
+            // invoking an implicit constructor
+            <= ();    
+    }
+    
+    // factory function
+    factory(class)
+        // sending a message - name and returning a result of the operation 
+        = class.new();
+    
+    public program()
+    {
+        // creating objects using a class directly
+        var a := factory(A);
+        var b := factory(B);
+        
+        // printing the object types
+        console
+            .printLine(a)
+            .printLine(b);
+    }
+
+The output is:
+
+    mylib'$private'A
+    mylib'$private'B
+
+By default a class is declared private. It means it cannot be accessed outside its namespace. In the case of a library we would like to reuse it. So we have to provide a public attribute:
+
+    public class B
+    {
+    }
+
+Now the class can be accessed either outside the library or by a reference:
+
+    public program()
+    {
+        var b := new mylib'B()
+    }
+
+A reference (or a full name) consists of a namespace (which in turn may contain sub-namespaces separated by apostrophes) and a proper name separated by an apostrophe.
+
+#### Abstract classes
+

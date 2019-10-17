@@ -9,6 +9,7 @@ In development:
                 * js example
 
               xdev
+                * (re)implement dto inline attribute
                 * do-while - if the second agrument is code brackets?
                 * simplified syntax to invoke dynamic message?
                 * (re)implement manifest
@@ -33,7 +34,6 @@ In development:
               xdev
                 * fix bug with inserting unicode character
                 * fix all open bugs in 4.1 milestone
-                * Stand alone executable: Script engine #64
                              
               xdev - usability
                 * warn if the project is not configurated
@@ -70,6 +70,7 @@ Pipeline:
 
               ydev
                 * script : support several operation in a row
+                * following rule does not work - function* code $eof
 
               zdev
                 * source to expression tree

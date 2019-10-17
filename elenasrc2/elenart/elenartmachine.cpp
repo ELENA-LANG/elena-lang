@@ -314,6 +314,12 @@ void* ELENARTMachine :: loadMessage(ident_t message)
    if (param != 0) {
       messageName.copy(message + subject, param - subject);
    }
+   else if (paramCount != -1) {
+      // if it is a function invoker
+      messageName.copy(INVOKE_MESSAGE);
+
+      flags |= SPECIAL_MESSAGE;
+   }
    else messageName.copy(message + subject);
 
    if (messageName.ident().startsWith("prop#")) {
