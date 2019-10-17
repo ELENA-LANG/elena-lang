@@ -4967,7 +4967,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       targetMode |= mode;
    }
 
-   objectInfo = compileObject(writer, current, scope, 0, targetMode);
+   if (test(targetMode, HINT_LAZY_EXPR)) {
+      objectInfo = compileClosure(writer, current, scope, targetMode);
+   }
+   else objectInfo = compileObject(writer, current, scope, 0, targetMode);
+
    // HOTFIX : reload the operation node
    operationNode = current.nextNode();
    if (operationNode != lxNone) {
@@ -5794,7 +5798,7 @@ void Compiler :: compileExpressionMethod(SyntaxWriter& writer, SNode node, Metho
    codeScope.level++;
 
    if (lazyMode) {
-      compileRetExpression(writer, node.findChild(lxReturning), codeScope, 0);
+      compileRetExpression(writer, node, codeScope, 0);
    }
    else compileRetExpression(writer, node, codeScope, 0);
 

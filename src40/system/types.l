@@ -30,7 +30,7 @@
 //#80002004 = __direct;
 #define __loop      80002005h
 #define preloaded   80002006h
-//#80002009 = lazy;
+#define lazy        80002009h
 
 /// scope:
 #define class       80001001h
