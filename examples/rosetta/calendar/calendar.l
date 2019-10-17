@@ -6,8 +6,8 @@ import extensions'routines;
 
 // --- calendar ---
 
-const MonthNames = new string[] {"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"};
-const DayNames = new string[] {"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
+const MonthNames = new string[]::("JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER");
+const DayNames = new string[]::("MO", "TU", "WE", "TH", "FR", "SA", "SU");
 
 class CalendarMonthPrinter
 {
@@ -41,12 +41,13 @@ class CalendarMonthPrinter
         {
             theLine.writeCopies("   ",theDate.DayOfWeek == 0 ? 7 : (theDate.DayOfWeek - 1));
             
-            doUntil(theDate.Month != theMonth || theDate.DayOfWeek == 1)
+            do
             {
                 theLine.writePaddingLeft(theDate.Day.Printable, $32, 3);
                 
                 theDate := theDate.addDays:1
-            }         
+            }
+            until:(theDate.Month != theMonth || theDate.DayOfWeek == 1)
         };
         
         int length := theLine.Length;
@@ -56,7 +57,7 @@ class CalendarMonthPrinter
         theRow.append(1)
     }
     
-    indexer() = new Indexer:
+    indexer() = new Indexer::
     {
         bool Available = theRow < 7;
 

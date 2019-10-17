@@ -6,7 +6,7 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev
-                * re-implement lazy expression
+                * re-implement literal constructor
 
               xdev
                 * test rosetta samples (Bulls and cows)

@@ -84,7 +84,7 @@ public program()
 {
     var gameMaster := new GameMaster();
 
-    lazy::(^gameMaster.proceed(gameMaster.ask())).doWhile();
+    (lazy:gameMaster.proceed(gameMaster.ask())).doWhile();
     
     console.readChar()
 }

@@ -23,12 +23,12 @@ extension helper
 }
 
 testCases
-    = new string[][] {
-         new string[]{"AA","BB","CC"},
-         new string[]{"AA","AA","AA"},
-         new string[]{"AA","CC","BB"},
-         new string[]{"AA","ACB","BB","CC"},
-         new string[]{"single_element"}};
+    = new string[][]::(
+         new string[]::("AA","BB","CC"),
+         new string[]::("AA","AA","AA"),
+         new string[]::("AA","CC","BB"),
+         new string[]::("AA","ACB","BB","CC"),
+         new string[]::("single_element"));
 
 public program()
 {
