@@ -9,7 +9,7 @@ In development:
                 * re-implement literal constructor
 
               xdev
-                * test rosetta samples (Bulls and cows)
+                * test rosetta samples (Define a primitive data type)
                 * basic test
                 * test basic samples
                 * test anangram sample - is result correct?
