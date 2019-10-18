@@ -1310,7 +1310,12 @@ inline void writeClassNameInfo(SyntaxWriter& writer, _Module* module, ref_t refe
    }
 }
 
-void Compiler :: declareParameterDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf, bool withTargetSelf)
+void Compiler :: declareCodeDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   writer.appendNode(lxSourcePath, scope.saveSourcePath(_writer, node.identifier()));
+}
+
+void Compiler :: declareProcedureDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf, bool withTargetSelf)
 {
    _ModuleScope* moduleScope = scope.moduleScope;
 
@@ -5586,7 +5591,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          }
          else scope.raiseError(errIllegalMethod, node);
       }
-      else if ((scope.hints & tpMask) == tpSealed && test(scope.hints, tpConversion)) {
+      else if (test(scope.hints, tpConversion)) {
          if (paramCount == 0 && unnamedMessage && scope.outputRef) {
             ref_t signatureRef = scope.moduleScope->module->mapSignature(&scope.outputRef, 1, false);
             actionRef = scope.moduleScope->module->mapAction(CAST_MESSAGE, signatureRef, false);
@@ -5755,7 +5760,7 @@ void Compiler :: compileActionMethod(SyntaxWriter& writer, SNode node, MethodSco
 {
    writer.newNode(lxClassMethod, scope.message);
 
-   declareParameterDebugInfo(writer, node, scope, false, false);
+   declareProcedureDebugInfo(writer, node, scope, false, false);
 
    CodeScope codeScope(&scope);
 
@@ -5787,7 +5792,7 @@ void Compiler :: compileExpressionMethod(SyntaxWriter& writer, SNode node, Metho
 {
    writer.newNode(lxClassMethod, scope.message);
 
-   declareParameterDebugInfo(writer, node, scope, false, false);
+   declareProcedureDebugInfo(writer, node, scope, false, false);
 
    CodeScope codeScope(&scope);
 
@@ -5821,30 +5826,72 @@ void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, Cod
 
       // try to implement light-weight resend operation
       ObjectInfo target;
+      ref_t targetRef = methodScope->getReturningRef(false);
+
+      int stackSafeAttrs = 0;
+      bool directOp = _logic->isCompatible(*scope.moduleScope, targetRef, scope.moduleScope->superReference);
       if (isSingleStatement(node)) {
          SNode terminal = node.firstChild(lxTerminalMask);
 
          target = scope.mapTerminal(terminal.identifier(), terminal == lxReference, 0);
+         if (!directOp) {
+            // try to find out if direct dispatch is possible
+            ref_t sourceRef = resolveObjectReference(scope, target, false, false);
+
+            _CompilerLogic::ChechMethodInfo methodInfo;
+            if (_logic->checkMethod(*scope.moduleScope, sourceRef, methodScope->message, methodInfo) != tpUnknown) {
+               directOp = _logic->isCompatible(*scope.moduleScope, targetRef, methodInfo.outputReference);
+            }
+         }
       }
 
-      if (target.kind == okConstantSymbol || target.kind == okField || target.kind == okReadOnlyField) {
-         writer.newNode(lxResending, methodScope->message);
-         writer.newNode(lxExpression);
-         if (target.kind == okField || target.kind == okReadOnlyField) {
-            writer.appendNode(lxResultField, target.param);
-         }
-         else writer.appendNode(lxConstantSymbol, target.param);
+      // check if direct dispatch can be done
+      if (directOp) {
+         // we are lucky and can dispatch the message directly
+         if (target.kind == okConstantSymbol || target.kind == okField || target.kind == okReadOnlyField) {
+            writer.newNode(lxResending, methodScope->message);
+            writer.newNode(lxExpression);
+            if (target.kind == okField || target.kind == okReadOnlyField) {
+               writer.appendNode(lxResultField, target.param);
+            }
+            else writer.appendNode(lxConstantSymbol, target.param);
 
-         writer.closeNode();
-         writer.closeNode();
+            writer.closeNode();
+            writer.closeNode();
+         }
+         else {
+            writer.newNode(lxResending, methodScope->message);
+            writer.newNode(lxNewFrame);
+
+            target = compileExpression(writer, node, scope, 0, 0);
+
+            writer.closeNode();
+            writer.closeNode();
+         }
       }
       else {
-         writer.newNode(lxResending, methodScope->message);
+         int mode = 0;
+
+         // bad luck - we have to dispatch and type cast the result
          writer.newNode(lxNewFrame);
 
-         target = compileExpression(writer, node, scope, 0, 0);
+         writer.newBookmark();
 
-         writer.closeNode();
+         target = compileExpression(writer, node, scope, 0, mode);
+         for (auto it = methodScope->parameters.start(); !it.Eof(); it++) {
+            ObjectInfo param = methodScope->mapParameter(*it, 0);
+
+            writeParamTerminal(writer, scope, param, mode, lxLocal);
+         }
+
+         ObjectInfo retVal = compileMessage(writer, node, scope, target, methodScope->message, mode | HINT_NODEBUGINFO, stackSafeAttrs);
+
+         if (!convertObject(writer, scope, targetRef, retVal, mode)) {
+            scope.raiseError(errInvalidOperation, node);
+         }
+
+         writer.removeBookmark();
+
          writer.closeNode();
       }
    }
@@ -6097,7 +6144,7 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
       scope.rootToFree -= 1;
    }
 
-   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elExtension));
+   declareProcedureDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elExtension));
 
    int paramCount = getParamCount(scope.message);
    int preallocated = 0;
@@ -6187,7 +6234,7 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
 {
    writer.newNode(lxClassMethod, scope.message);
 
-   declareParameterDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elExtension));
+   declareProcedureDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elExtension));
 
    int preallocated = 0;
 
@@ -6213,6 +6260,10 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current.compare(lxFieldInit, lxFieldAccum)) {
+         SNode sourceNode = current.findChild(lxSourcePath);
+         if (sourceNode != lxNone)
+            declareCodeDebugInfo(writer, node, scope);
+
          writer.newNode(lxExpression);
          writer.appendNode(lxBreakpoint, dsStep);
          compileRootExpression(writer, current, codeScope);
@@ -6246,7 +6297,7 @@ void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScop
       writer.appendNode(attrNode.type, attrNode.argument);
    }
 
-   declareParameterDebugInfo(writer, node, scope, true, false);
+   declareProcedureDebugInfo(writer, node, scope, true, false);
 
    CodeScope codeScope(&scope);
 

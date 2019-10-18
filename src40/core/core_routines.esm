@@ -57,6 +57,25 @@ procedure __object."__getClass[1]"
 
 end
 
+procedure __object."__getParent[1]"
+
+  bloadsi 1
+  parent
+  quitn 1
+
+end
+
+procedure __object."__getClassParent[1]"
+
+  bloadsi 1
+  class
+  bcopya
+  parent
+  quitn 1
+
+end
+
+
 procedure __object."setField$system@IntNumber$system@Object[3]"
 
   aloadsi 1

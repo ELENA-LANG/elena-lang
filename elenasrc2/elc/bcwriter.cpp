@@ -1540,6 +1540,16 @@ void ByteCodeWriter :: writeProcedureDebugInfo(Scope& scope, ref_t sourceRef)
    scope.debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 }
 
+void ByteCodeWriter :: writeCodeDebugInfo(Scope& scope, ref_t sourceRef)
+{
+   if (scope.debug) {
+      DebugLineInfo symbolInfo(dsCodeInfo, 0, 0, 0);
+      symbolInfo.addresses.source.nameRef = sourceRef;
+
+      scope.debug->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+   }
+}
+
 void ByteCodeWriter :: writeNewStatement(MemoryWriter* debug)
 {
    DebugLineInfo symbolInfo(dsStatement, 0, 0, 0);
@@ -1961,6 +1971,9 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
                if(peekNext(it) == bdBreakpoint)
                   writeBreakpoint(++it, scope.debug);
             }
+            break;
+         case bdSourcePath:
+            writeCodeDebugInfo(scope, (*it).argument);
             break;
          case bdSelf:
             writeSelf(scope, (*it).additional, frameLevel);

@@ -121,7 +121,7 @@ DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, iden
          moduleName = module->Name();
 
          DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
-         while (current->symbol != dsProcedure)
+         while (current->symbol != dsProcedure && current->symbol != dsCodeInfo)
             current = &current[-1];
 
          _Memory* section = module->mapSection(DEBUG_STRINGS_ID, true);
@@ -279,6 +279,9 @@ DebugLineInfo* DebugController :: seekLineInfo(size_t address, ident_t &moduleNa
                methodName = NULL;
                prev = 0;
             }
+            else if (info[i].symbol == dsCodeInfo) {
+               procPath = (const char*)strings->get(info[i].addresses.source.nameRef);
+            }
             else if (info[i].symbol == dsMessage) {
                methodName = (const char*)strings->get(info[i].addresses.source.nameRef);
             }
@@ -322,7 +325,7 @@ size_t DebugController :: findNearestAddress(_Module* module, ident_t path, int 
    int nearestRow = 0;
    bool skipping = true;
    for (int i = 0 ; i < count ; i++) {
-      if (info[i].symbol == dsProcedure) {
+      if (info[i].symbol == dsProcedure || info[i].symbol == dsCodeInfo) {
          ident_t procPath = (const char*)strings->get(info[i].addresses.source.nameRef);
          if (procPath.compare(path)) {
             skipping = false;

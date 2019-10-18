@@ -1189,6 +1189,17 @@ void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
       SNode nameNode = node.prevNode();
 
       bufferWriter.newNode(lxFieldInit);
+
+      if (derivationScope.templateMode != stNormal) {
+         // HOTFIX : save the template source path
+         IdentifierString fullPath(_scope->module->Name());
+         fullPath.append('\'');
+         fullPath.append(_filePath);
+
+         writer.appendNode(lxSourcePath, fullPath.c_str());
+         //writer.appendNode(lxTemplate, scope.templateRef);
+      }
+
       SNode attrNode = nameNode.prevNode();
       if (attrNode == lxAttribute && attrNode.argument == V_MEMBER) {
          // HOTFIX : if the field has scope prefix - copy it as well

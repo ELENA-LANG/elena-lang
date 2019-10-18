@@ -193,7 +193,7 @@ namespace _ELENA_
       dsLocal                   = 0x0005,
       dsMessage                 = 0x0006,
       dsProcedure               = 0x0007,
-//      dsConstructor             = 0x0008,
+      dsCodeInfo                = 0x0008,
 //      dsStack                   = 0x0009,
       dsStatement               = 0x000A,
       dsVirtualBlock            = 0x000B,

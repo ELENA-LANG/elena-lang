@@ -6,11 +6,15 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev
-                * test rosetta samples (Delegates)
+                * fixing inititializer code 
+
+              xdev
+                * test rosetta samples (Equilibrium index)
                 * basic test
                 * test basic samples
                 * test anangram sample - is result correct?
 
+                * abstract class cannot be sealed
                 * (re)implement manifest
                 * do not allow to write something like
                   A{ int dump[4] := 3; }  // !! error
