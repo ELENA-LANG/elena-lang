@@ -9,7 +9,8 @@ In development:
                 * fixing inititializer code 
 
               xdev
-                * test rosetta samples (JSON)
+                * test rosetta samples (Quaternion type)
+                * test rosetta samples (Read a file line by line)
                 * basic test
                 * test basic samples
 

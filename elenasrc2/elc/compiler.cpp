@@ -5910,7 +5910,7 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    if (messageNode.firstChild(lxTerminalMask) == lxNone) {
       // HOTFIX : support implicit constructors
       messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
-         SyntaxTree::countNodeMask(messageNode, lxObjectMask), STATIC_MESSAGE);
+         SyntaxTree::countNodeMask(messageNode, lxObjectMask), /*STATIC_MESSAGE*/0);
 
       implicitConstructor = true;
    }
@@ -5948,8 +5948,11 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
    ObjectInfo target(okClassSelf, scope.getClassRefId(), classRef);
    int stackSafeAttr = 0;
    if (implicitConstructor) {
-      messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), 
+      ref_t resolvedMessageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), 
          stackSafeAttr, false);
+
+      if (resolvedMessageRef)
+         messageRef = resolvedMessageRef;
    }
    else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
 
@@ -5973,7 +5976,8 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
 
             target.reference = classRef;
             if (implicitConstructor) {
-               messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), stackSafeAttr, false);
+               messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, parent,
+                  implicitSignatureRef, getParamCount(messageRef), stackSafeAttr, false);
             }
             else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
 

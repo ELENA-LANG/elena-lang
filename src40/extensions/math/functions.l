@@ -343,7 +343,7 @@ public min(l1,l2)
     }
     else
     {
-        l2
+        ^ l2
     }
 }
 
@@ -355,6 +355,6 @@ public max(l1,l2)
     }
     else
     {
-        l2
+        ^ l2
     }
 }
