@@ -23,11 +23,11 @@ const int conductor = 1;
 const int electronHead = 2;
 const int electronTail = 3;
 
-wireWorldRuleSet = new RuleSet:
+wireWorldRuleSet = new RuleSet::
 {
     proceed(Space s, int x, int y, ref int retVal)
     {
-        int cell := s.at(x, y).
+        int cell := s.at(x, y);
         
         cell =>
             conductor 
@@ -67,7 +67,7 @@ sealed class Model
         theSpace := IntMatrixSpace new(maxX, maxY, RuleSet::
         {
             proceed(Space s, int x, int y, ref<int> retVal)
-            [
+            {
                 if (x < strings length)
                 [
                     var l := strings[x].
@@ -83,11 +83,11 @@ sealed class Model
                         retVal value := empty
                     ]                    
                 ];
-                [
+                {
                     retVal value := empty
-                ]
+                }
                 
-            ]
+            }
         }).
     }
     

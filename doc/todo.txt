@@ -6,8 +6,8 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev
-                * test (Runtime evaluation,Runtime evaluation/In an environment)
-                * test rosetta samples (Sorting algorithms/Bogosort)
+                * test (Runtime evaluation,Runtime evaluation/In an environment,Sorting algorithms/Sleep sort,
+                  Walk a directory/Non-recursively, Wireworld, Zhang-Suen thinning algorithm,Zeckendorf arithmetic)
                 * basic test
                 * test basic samples
 

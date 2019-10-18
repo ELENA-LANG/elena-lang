@@ -3,7 +3,7 @@ import system'routines;
 import extensions;
 import extensions'routines;
 
-const string[] image = new string[]{
+const string[] image = new string[]::(
         "                                                          ",
         " #################                   #############        ",
         " ##################               ################        ",
@@ -21,19 +21,19 @@ const string[] image = new string[]{
         " ########     ####### ######    ################## ###### ",
         " ########     ####### ######      ################ ###### ",
         " ########     ####### ######         ############# ###### ",
-        "                                                          "};
+        "                                                          ");
 
-int[][] nbrs = new int[][]
+int[][] nbrs = new int[][]::
 {
-    new int[]{0, -1}, new int[]{1, -1}, new int[]{1, 0},   new int[]{1, 1}, new int[]{0, 1},
-    new int[]{-1, 1}, new int[]{-1, 0}, new int[]{-1, -1}, new int[]{0, -1}
+    new int[]::(0, -1), new int[]::(1, -1), new int[]::(1, 0),   new int[]::(1, 1), new int[](0, 1),
+    new int[]::(-1, 1), new int[]::(-1, 0), new int[]::(-1, -1), new int[]::(0, -1)
 };
 
-int[][][] nbrGroups = new int[][][]
-{
-    new int[][]{new int[]{0, 2, 4}, new int[]{2, 4, 6}}, 
-    new int[][]{new int[]{0, 2, 6}, new int[]{0, 4, 6}}
-};
+int[][][] nbrGroups = new int[][][]::
+(
+    new int[][]::(new int[]::(0, 2, 4), new int[]::(2, 4, 6)), 
+    new int[][]::(new int[]::(0, 2, 6), new int[]::(0, 4, 6))
+);
 
 extension zhangsuenOp : Matrix<char>
 {

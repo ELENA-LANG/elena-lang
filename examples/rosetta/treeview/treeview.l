@@ -53,14 +53,14 @@ extension treeOp
 public program()
 {
     var tree := Node.new(
-                 new Node[]{
-                    Node.new("a", new Node[]
-                    {
-                        Node.new("b", new Node[]{Node.new("c")}),
+                 new Node[]::(
+                    Node.new("a", new Node[]::
+                    (
+                        Node.new("b", new Node[]::(Node.new("c"))),
                         Node.new("d")
-                    }),
+                    )),
                     Node.new("e")
-                 });
+                 ));
                  
     console.writeTree(tree).readChar()
 }
