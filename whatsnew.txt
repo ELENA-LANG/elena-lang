@@ -8,6 +8,7 @@
 ***************************************************************
 
 [ELENA]
+[!] several critical bug fixes!
 [+] #481 : New expression attribute - inlinearg
 [*] the operations with reference arguments are improved
 [-] #200 : unboxing explicit local allocated extension

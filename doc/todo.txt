@@ -9,7 +9,7 @@ In development:
                 * fixing inititializer code 
 
               xdev
-                * test rosetta samples (Evolutionary algorithm)
+                * test rosetta samples (First-class function)
                 * basic test
                 * test basic samples
 
