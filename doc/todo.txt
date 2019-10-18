@@ -9,10 +9,9 @@ In development:
                 * fixing inititializer code 
 
               xdev
-                * test rosetta samples (Equilibrium index)
+                * test rosetta samples (Evolutionary algorithm)
                 * basic test
                 * test basic samples
-                * test anangram sample - is result correct?
 
                 * abstract class cannot be sealed
                 * (re)implement manifest
