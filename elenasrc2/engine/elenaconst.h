@@ -284,7 +284,7 @@ namespace _ELENA_
    constexpr int elStandartVMT         = 0x00000001;
    constexpr int elNestedClass         = 0x00000002;
    constexpr int elDynamicRole         = 0x00000004;
-   constexpr int elStructureRole       = 0x00000008;
+   constexpr int elStructureRole       = 0x00000128;
    constexpr int elAbstract            = 0x00000010;
    constexpr int elClosed              = 0x00000020;
    constexpr int elWrapper             = 0x00000040;
