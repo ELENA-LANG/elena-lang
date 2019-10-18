@@ -5094,10 +5094,12 @@ ObjectInfo Compiler :: compileCode(SyntaxWriter& writer, SNode node, CodeScope& 
             //   scope.raiseError(errIllegalOperation, current);
 
             if (scope.withEmbeddableRet()) {
+               retVal = scope.mapTerminal(SELF_VAR, false, 0);
+
                compileEmbeddableRetExpression(writer, current, scope);
                writer.newNode(lxReturning);
                writer.appendNode(lxBreakpoint, dsStep);
-               writeTerminal(writer, current, scope, scope.mapTerminal(SELF_VAR, false, 0), HINT_NODEBUGINFO);
+               writeTerminal(writer, current, scope, retVal, HINT_NODEBUGINFO | HINT_NOBOXING);
                writer.closeNode();
             }
             else {

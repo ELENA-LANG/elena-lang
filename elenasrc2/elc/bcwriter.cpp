@@ -2489,6 +2489,12 @@ void ByteCodeWriter :: assignStruct(CommandTape& tape, LexicalType target, int o
 
       copyStructure(tape, 0, size);
    }
+   else if (target == lxLocal) {
+      // bloadfi param
+      tape.write(bcBLoadFI, offset, bpFrame);
+
+      copyStructure(tape, 0, size);
+   }
    //else if (target == lxLocalAddress) {
    //   // bloadfi param
    //   tape.write(bcBLoadFI, offset, bpFrame);
