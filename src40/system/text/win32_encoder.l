@@ -66,18 +66,18 @@ public struct WinEncoder : Encoder
     }
 }
 
-//// --- Win1252Encoder ---
-//
-//public static T<Encoder> WIN1252Encoder = WinEncoder new(1252).
-//
-//// --- Win1251Encoder ---
-//
-//public static T<Encoder> WIN1251Encoder = WinEncoder new(1251).
+// --- Win1252Encoder ---
+
+public static Encoder WIN1252Encoder = new WinEncoder(1252);
+
+// --- Win1251Encoder ---
+
+public static Encoder WIN1251Encoder = new WinEncoder(1251);
 
 // --- OEMEncoder ---
 
 public static Encoder OEMEncoder = new WinEncoder(1);
 
-//// --- AnsiEncoder ---
-//
-//public static T<Encoder> AnsiEncoder = WinEncoder new(0).
+// --- AnsiEncoder ---
+
+public static Encoder AnsiEncoder = new WinEncoder(0);

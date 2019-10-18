@@ -64,14 +64,18 @@ public extension classROp
         auto list := new List<MessageName>();
         for(int i := 0, i < retVal, i += 1)
         {
-           if (tmp_array[i].allMask(40h))
+           int id := tmp_array[i];
+           if (id.allMask(40h))
            {
-               Message message;
-               intern system'core_routines'__message.copy(message, tmp_array[i]);
-               
-               MessageName prop := message.MessageName;
-               
-               list.append(prop);
+               int count := id && 01Fh;
+               if (count == 0) {
+                   Message message;
+                   intern system'core_routines'__message.copy(message, tmp_array[i]);
+                   
+                   MessageName prop := message.MessageName;
+                   
+                   list.append(prop);
+               }
            };
         };
 

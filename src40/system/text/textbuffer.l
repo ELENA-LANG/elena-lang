@@ -165,7 +165,7 @@ public sealed class TextBuilder
         s.read(i_val, ref ch);
         while (ch != $125)
         {
-            intConvertor.convert(ch, ref n);
+            n := intConvertor.convert(ch);
             if(n >= 30h && n <= 39h)
             {               
                 n := n - 30h;

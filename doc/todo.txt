@@ -6,10 +6,8 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev
-                * fixing inititializer code 
-
-              xdev
-                * test rosetta samples (Read a file line by line)
+                * test (Runtime evaluation,Runtime evaluation/In an environment)
+                * test rosetta samples (Sorting algorithms/Bogosort)
                 * basic test
                 * test basic samples
 
