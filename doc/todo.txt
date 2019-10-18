@@ -9,7 +9,7 @@ In development:
                 * fixing inititializer code 
 
               xdev
-                * test rosetta samples (First-class function)
+                * test rosetta samples (JSON)
                 * basic test
                 * test basic samples
 

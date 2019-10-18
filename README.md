@@ -68,7 +68,7 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 
 ### 3. Rosetta code
 
-You may try to implement some of [Rosetta code tasks](http://rosettacode.org/wiki/Category:Programming_Tasks) 
+You may try to implement some of [Rosetta code tasks](http://rosettacode.org/wiki/Reports:Tasks_not_implemented_in_Elena) 
 which are not yet implemented
 
 ## Source Code Organization

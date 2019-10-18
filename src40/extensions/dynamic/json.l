@@ -237,8 +237,10 @@ singleton helper
             
             var object := helper.deserializeObject(e);
             
-            auto prop := new MessageName(field);            
-            mixin prop(target).prop := object;
+            MessageName prop := new MessageName(field);
+            Message setProp := prop.setPropertyMessage();
+            
+            setProp(target, object);
             
             token := helper.readNext(e);
             token =>
