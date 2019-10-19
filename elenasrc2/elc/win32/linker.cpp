@@ -730,6 +730,9 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
    fixImage(info);
 
    Path path(project.StrSetting(opTarget));
+   if(!Path::checkExtension(project.StrSetting(opTarget), "exe")) {
+      path.changeExtension("exe");
+   }
 
    if (emptystr(path))
       throw InternalError(errEmptyTarget);

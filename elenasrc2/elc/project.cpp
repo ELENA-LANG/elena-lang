@@ -107,6 +107,9 @@ bool Project :: loadPathOption(_ConfigFile& config, ProjectSetting setting, path
 {
    ident_t value = getOption(config, setting);
    if (value) {
+      if (emptystr(value))
+         value = "unnammed";
+
       Path path(rootPath, value);
 
       _settings.add(setting, IdentifierString::clonePath(path.c_str()));

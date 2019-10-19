@@ -316,6 +316,7 @@ void ProjectSettingsDialog :: loadTemplateList()
 
    _ELENA_::ident_t curTemplate = _project->getTemplate();
 
+   bool selected = false;
    int current = 0;
    _ELENA_::_ConfigFile::Nodes list;
    config.select("configuration/templates/*", list);
@@ -325,9 +326,14 @@ void ProjectSettingsDialog :: loadTemplateList()
 
       addComboBoxItem(IDC_SETTINGS_TEPMPLATE, TextString(key));
 
-      if (curTemplate.compare(key))
+      if (curTemplate.compare(key)) {
          setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, current);
+         selected = true;
+      }         
    }
+
+   if (!selected)
+      setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, 0);
 }
 
 void ProjectSettingsDialog :: onCreate()
