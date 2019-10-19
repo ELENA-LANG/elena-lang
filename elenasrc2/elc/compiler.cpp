@@ -3272,7 +3272,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    }
 
    // define the message target if required
-   if (target.kind == okConstantRole || target.kind == okSubject) {
+   if (target.kind == okConstantRole/* || target.kind == okSubject*/) {
       writer.newNode(lxOverridden);
       writer.newNode(lxExpression);
       writeTerminal(writer, node, scope, target, 0);
@@ -7807,7 +7807,7 @@ void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode no
    }
 
    // validate field types
-   if (!testany(scope.info.header.flags, elStructureRole | elDynamicRole) && scope.info.fieldTypes.Count() > 0) {
+   if (scope.info.fieldTypes.Count() > 0) {
       validateClassFields(node, scope);
    }
    else if (scope.info.statics.Count() > 0) {

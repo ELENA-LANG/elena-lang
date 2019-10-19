@@ -10,7 +10,7 @@ import extensions'text;
 
 extension fieldOp
 {
-    Unserialized
+    MessageName Unserialized
         = new MessageName(cast string(self));
 }
 
@@ -102,10 +102,9 @@ public program()
             var value := keyValue[1];
 
             // update field
-            var subj := name.Unserialized;
+            MessageName subj := name.Unserialized;
             
-            //mixin subj(db.LastMember) := value;            
-            mixin subj(db.LastMember).eval(value)
+            subj.setPropertyValue(db.LastMember, value)
         }
     };
     

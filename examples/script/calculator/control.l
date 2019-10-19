@@ -8,7 +8,7 @@ preloaded subjects = new::(subjconst States,subjconst State0,subjconst State1,su
 preloaded functions = new::(extensions'math'sqrt,extensions'math'min);
 
 public static dynamicRules = 
-    lscript.evalPath("calc.es");
+    lscript.evalPath("calc.es").States;
     
 public symbol staticRules =
     calc'rules'States;
@@ -17,7 +17,7 @@ extension testOp
 {
     testEvaluation()
     {
-        var result := self.evaluatedWith(dynamicRules.States);
+        var result := self.evaluatedWith(dynamicRules);
         
         console.printLine(self," evaluated as ",result)
     }
@@ -83,7 +83,7 @@ public singleton control
         }
         else
         {
-            ^ line.evaluatedWith(forward rules.States)
+            ^ line.evaluatedWith(forward rules)
         }
     }    
 }

@@ -4,6 +4,7 @@
         <template>console</template>
         <executable>calc_static.exe</executable>
         <debuginfo>-1</debuginfo>
+        <classsymbolload>-1</classsymbolload>
     </project>
     <targets>
         <target name="eson" type="2">

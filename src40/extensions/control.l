@@ -276,5 +276,12 @@ public extension invokeOp : MessageName
         Message mssg := self.getPropertyMessage();
         
         ^ mssg(target)
+    
+    }
+    setPropertyValue(target,value)
+    {
+        Message mssg := self.setPropertyMessage();
+        
+        mssg(target, value)
     }
 }

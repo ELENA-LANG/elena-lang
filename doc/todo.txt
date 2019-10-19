@@ -8,8 +8,7 @@ In development:
               xdev
                 * test (Runtime evaluation,Runtime evaluation/In an environment,Sorting algorithms/Sleep sort,
                   Walk a directory/Non-recursively, Wireworld, Zhang-Suen thinning algorithm,Zeckendorf arithmetic)
-                * basic test
-                * test basic samples
+                * test basic samples - textdb
 
                 * abstract class cannot be sealed
                 * (re)implement manifest
