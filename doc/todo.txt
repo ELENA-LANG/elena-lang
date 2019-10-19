@@ -5,24 +5,14 @@ In development:
               zdev
                 * write - Programming in ELENA : manual
 
-              xdev API
-                * abstract class cannot be sealed
-                * (re)implement manifest
-                * do not allow to write something like
-                  A{ int dump[4] := 3; }  // !! error
-                * fix all open bugs in 4.1 milestone
-
+------                                                           
+Pipeline:
+------   
               xdev
                 * test (Runtime evaluation,Runtime evaluation/In an environment,Sorting algorithms/Sleep sort,
                   Walk a directory/Non-recursively, Wireworld, Zhang-Suen thinning algorithm,Zeckendorf arithmetic)
                 * chat sample
 
-              xdev - usability
-                * warn if the project is not configurated
-
-------                                                           
-Pipeline:
-------   
               xdev API
                 * template extensions
 
@@ -41,6 +31,10 @@ Pipeline:
                 * fix bug with inserting unicode character
                              
               xdev
+                * abstract class cannot be sealed
+                * do not allow to write something like
+                  A{ int dump[4] := 3; }  // !! error
+                * (re)implement manifest
                 * support constant class meta attributes
                 * support class / method / field / static field meta description
                 * do-while - if the second agrument is code brackets?

@@ -3721,8 +3721,9 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       case okOuterSelf:
       {
          InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
+         //MethodScope* method = (MethodScope*)scope.getScope(Scope::slMethod);
 
-         if (!closure->markAsPresaved(target))
+         if (/*!method->subCodeMode || */!closure->markAsPresaved(target))
             scope.raiseError(errInvalidOperation, sourceNode);
 
          size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
