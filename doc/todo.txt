@@ -5,29 +5,30 @@ In development:
               zdev
                 * write - Programming in ELENA : manual
 
-              xdev
-                * test (Runtime evaluation,Runtime evaluation/In an environment,Sorting algorithms/Sleep sort,
-                  Walk a directory/Non-recursively, Wireworld, Zhang-Suen thinning algorithm,Zeckendorf arithmetic)
-                * test basic samples - textdb
-
+              xdev API
                 * abstract class cannot be sealed
                 * (re)implement manifest
                 * do not allow to write something like
                   A{ int dump[4] := 3; }  // !! error
                 * fix all open bugs in 4.1 milestone
 
+              xdev
+                * test (Runtime evaluation,Runtime evaluation/In an environment,Sorting algorithms/Sleep sort,
+                  Walk a directory/Non-recursively, Wireworld, Zhang-Suen thinning algorithm,Zeckendorf arithmetic)
+                * chat sample
+
               xdev - usability
                 * warn if the project is not configurated
 
+------                                                           
+Pipeline:
+------   
               xdev API
                 * template extensions
 
                 * missing algorithms (template extensions)
                 * missing system'routines'stex
 
-------                                                           
-Pipeline:
-------   
               ydev - Linux
                 * linker : adata + mdata + rdata (meta starts with size field)
                 * get rid of debug section

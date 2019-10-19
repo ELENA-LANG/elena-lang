@@ -76,7 +76,7 @@ sealed class ChatServer
                             {
                                 console.printLine(member.Name,":",command.Value).
                                 
-                                member.Server.translate(new CommandDTO:
+                                member.Server.translate(new CommandDTO::
                                                         { 
                                                             this Command := TRANSLATE; 
                                                             this Value := command.Value; 
@@ -130,7 +130,7 @@ sealed class ChatServer
         theNetworkServer.start();
         
         theBroadcastThread := Thread.assign(
-        (){
+        {
             while(self.proceed()) {}
         });
        

@@ -20,7 +20,7 @@ class Client
     }
 }
 
-public control = new Client().mixInto(new :
+public control = new Client().mixInto(new::
 {
     greeting()
     {

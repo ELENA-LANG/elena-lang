@@ -48,9 +48,12 @@ class BaseClient
 
 class CommandDTO : DTO
 {
-    prop dto int Command;
+    [dto]
+    prop int Command;
     
-    prop dto string Value;
+    [dto]
+    prop string Value;
     
-    prop dto string User;
+    [dto]
+    prop string User;
 }
