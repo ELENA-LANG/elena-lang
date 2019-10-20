@@ -5,8 +5,10 @@ In development:
               zdev
                 * write - Programming in ELENA : manual
 
+              xdev
+                * implementing #492
+
               ydev tutorials
-                * variadic argument
                 * migrate all existing ones
 
               xdev
