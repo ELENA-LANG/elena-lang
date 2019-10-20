@@ -5,31 +5,17 @@ In development:
               zdev
                 * write - Programming in ELENA : manual
 
-------                                                           
-Pipeline:
-------   
+              ydev tutorials
+                * variadic argument
+                * migrate all existing ones
+
               xdev
                 * test (Runtime evaluation,Runtime evaluation/In an environment,Sorting algorithms/Sleep sort,
                   Walk a directory/Non-recursively, Wireworld, Zhang-Suen thinning algorithm,Zeckendorf arithmetic)
-                * chat sample
 
-              xdev API
-                * template extensions
+              ydev
+                * xforms
 
-                * missing algorithms (template extensions)
-                * missing system'routines'stex
-
-              ydev - Linux
-                * linker : adata + mdata + rdata (meta starts with size field)
-                * get rid of debug section
-                * suport elenart
-                  
-              xdev API
-                * review all api
-
-              xdev
-                * fix bug with inserting unicode character
-                             
               xdev
                 * abstract class cannot be sealed
                 * do not allow to write something like
@@ -40,6 +26,25 @@ Pipeline:
                 * do-while - if the second agrument is code brackets?
                 * static fields should be accessaible from storng typed extensions
 
+------                                                           
+Pipeline:
+------   
+              xdev API
+                * template extensions
+                * missing algorithms (template extensions)
+                * missing system'routines'stex
+
+              xdev
+                * chat sample
+
+              ydev - Linux
+                * linker : adata + mdata + rdata (meta starts with size field)
+                * get rid of debug section
+                * suport elenart
+
+              xdev
+                * fix bug with inserting unicode character
+                             
               xdev - lib
                 * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
 

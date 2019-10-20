@@ -3227,9 +3227,15 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
       operation = callType == tpClosed ? lxSDirectCalling : lxDirectCalling;
       argument = messageRef;
 
-      if (!test(mode, HINT_DYNAMIC_OBJECT) && _logic->isEmbeddable(*scope.moduleScope, classReference) && result.stackSafe)
+      if (!test(mode, HINT_DYNAMIC_OBJECT)) {
          // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
-         stackSafeAttr |= 1;
+         if (target.kind == okParams) {
+            // HOTFIX : if variadic argument should not be dynamic, mark it as stacksafe
+            stackSafeAttr |= 1;
+         }
+         else if (_logic->isEmbeddable(*scope.moduleScope, classReference) && result.stackSafe)
+            stackSafeAttr |= 1;
+      }
    }
    else {
       // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
@@ -8720,11 +8726,34 @@ bool Compiler :: optimizeArgBoxing(_ModuleScope& scope, SNode& node)
    else return false;
 }
 
+/*
+         int stackSafeAttrs = rootNode.findChild(lxStacksafeAttr).argument;
+         int flag = 1;
+         SNode current = rootNode.firstChild(lxObjectMask);
+         bool stackSafeArg = false;
+         while (current != lxNone) {
+            if (current == callNode && test(stackSafeAttrs, flag)) {
+               stackSafeArg = true;
+               break;
+            }
+
+            current = current.nextNode(lxObjectMask);
+            flag <<= 1;
+         }
+*/
+
 bool Compiler :: optimizeArgOp(_ModuleScope& scope, SNode& node)
 {
+   int stackSafeAttrs = 1;
+
    SNode callNode = node.parentNode();
+   if (callNode.compare(lxDirectCalling, lxSDirectCalling)) {
+      // make sure variadic argument can be passed directly
+      stackSafeAttrs = callNode.findChild(lxStacksafeAttr).argument;
+   }
+
    SNode calleeNode = callNode.firstChild(lxObjectMask);
-   if (calleeNode == lxArgBoxing) {
+   if (calleeNode == lxArgBoxing && test(stackSafeAttrs, 1)) {
       calleeNode = lxExpression;
 
       return true;
