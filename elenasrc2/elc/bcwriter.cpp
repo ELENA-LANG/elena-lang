@@ -5279,7 +5279,6 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
 
    if (argUnboxMode) {
       releaseArgList(tape);
-      releaseObject(tape);
    }
    else if (openArg) {
       // clear open argument list, including trailing nil and subtracting normal arguments

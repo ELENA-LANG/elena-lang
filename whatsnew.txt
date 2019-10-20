@@ -9,6 +9,7 @@
 
 [ELENA]
 [-] #489 : Creating a variadic argument enumerator
+[-] #490 : Passing a variadic argument list in sub call
 
 ***************************************************************
                              What's New in 4.1.1
