@@ -1028,7 +1028,7 @@ inline % 1Bh
 
   mov  edx, ecx
   pop  esi
-  and  edx, 000000Fh
+  and  edx, PARAM_MASK
   lea  esp, [esp + edx * 4 + 4]
   jmp  esi
   nop
@@ -2687,7 +2687,7 @@ inline % 0E8h
   mov  eax, ebx
   push ecx
   add  ecx, 1
-  and  ecx, 0Fh
+  and  ecx, PARAM_MASK
   mov  esi, __arg1
   push ecx
   mov  ebx, [esi + edx * 8] // ; message from overload list
@@ -2750,7 +2750,7 @@ inline % 0E9h
   mov  eax, ebx
   push ecx
   add  ecx, 1
-  and  ecx, 0Fh
+  and  ecx, PARAM_MASK
   mov  esi, __arg1
   push ecx
   mov  ebx, [esi + edx * 8] // ; message from overload list
