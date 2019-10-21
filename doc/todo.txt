@@ -6,7 +6,17 @@ In development:
                 * write - Programming in ELENA : manual
 
               xdev
+                * 
+
+
+                * where to persist the method state
+                  - heap
+
+                * it should be a class
+
                 * implementing #492
+                * support break and continue statements
+                * addai, saveai
 
               ydev tutorials
                 * migrate all existing ones
