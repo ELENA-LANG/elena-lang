@@ -304,6 +304,9 @@ class ByteCodeWriter
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
    void generateResending(CommandTape& tape, SyntaxTree::Node node);
    void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
+   void generateYieldInit(CommandTape& tape, SyntaxTree::Node node);
+   void generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node);
+   void generateYieldStop(CommandTape& tape, SyntaxTree::Node node);
    void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
    void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
    void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);

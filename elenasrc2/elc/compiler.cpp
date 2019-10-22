@@ -1775,6 +1775,11 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
          }
          else scope.raiseError(errInvalidHint, node);
       }
+      else if (current == lxMessage) {
+         // COMPILER MAGIC : if the field should be mapped to the message
+         attrs.messageRef = current.argument;
+         attrs.messageAttr = current.findChild(lxAttribute).argument;
+      }
 
       current = current.nextNode();
    }
@@ -2383,10 +2388,10 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
 
    ObjectInfo object;
    switch (terminal.type) {
-//      case lxConstantList:
-//            // HOTFIX : recognize predefined constant lists
-//            object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
-//         break;
+      //case lxConstantList:
+      //      // HOTFIX : recognize predefined constant lists
+      //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
+      //   break;
       case lxLiteral:
          object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
          break;
@@ -6149,7 +6154,7 @@ void Compiler :: compileEmbeddableMethod(SyntaxWriter& writer, SNode node, Metho
    }
 }
 
-void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+void Compiler :: beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -6158,6 +6163,72 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    }
 
    declareProcedureDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elExtension));
+}
+
+void Compiler :: endMethod(SyntaxWriter& writer, MethodScope& scope, CodeScope& codeScope, int paramCount, int preallocated)
+{
+   writer.appendNode(lxParamCount, paramCount + scope.rootToFree);
+   writer.appendNode(lxReserved, scope.reserved);
+   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
+
+   writer.closeNode();
+}
+
+void Compiler :: compileMethodCode(SyntaxWriter& writer, SNode node, SNode body, MethodScope& scope, CodeScope& codeScope, int& preallocated)
+{
+   if (scope.multiMethod) {
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+
+      compileMultidispatch(writer, node.parentNode(), codeScope, *classScope);
+   }
+
+   writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
+
+   // new stack frame
+   // stack already contains current self reference
+   // the original message should be restored if it is a generic method
+   codeScope.level++;
+   // declare the current subject for a generic method
+   if (scope.generic) {
+      codeScope.level++;
+      codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0, 0);
+   }
+
+   preallocated = codeScope.level;
+
+   if (scope.yieldMethod) {
+      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+
+      compileYieldDispatch(writer, methodScope->getAttribute(maYieldContext));
+   }
+
+   ObjectInfo retVal = compileCode(writer, body == lxReturning ? node : body, codeScope);
+
+   // if the method returns itself
+   if (retVal.kind == okUnknown) {
+      ObjectInfo thisParam = scope.mapSelf();
+
+      // adding the code loading self
+      writer.newNode(lxReturning);
+      writer.newBookmark();
+      writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO | HINT_NOBOXING);
+
+      ref_t resultRef = scope.getReturningRef(false);
+      if (resultRef != 0) {
+         if (!convertObject(writer, codeScope, resultRef, thisParam, 0))
+            scope.raiseError(errInvalidOperation, node);
+      }
+
+      writer.removeBookmark();
+      writer.closeNode();
+   }
+
+   writer.closeNode();
+}
+
+void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   beginMethod(writer, node, scope);
 
    int paramCount = getParamCount(scope.message);
    int preallocated = 0;
@@ -6174,59 +6245,51 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    else if (body == lxDispatchCode) {
       compileDispatchExpression(writer, body, codeScope);
    }
-   else {
-      if (scope.multiMethod) {
-         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
+   else compileMethodCode(writer, node, body, scope, codeScope, preallocated);
 
-         compileMultidispatch(writer, node.parentNode(), codeScope, *classScope);
-      }
-
-      writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
-
-      // new stack frame
-      // stack already contains current self reference
-      // the original message should be restored if it is a generic method
-      codeScope.level++;
-      // declare the current subject for a generic method
-      if (scope.generic) {
-         codeScope.level++;
-         codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0, 0);
-      }
-
-      preallocated = codeScope.level;
-
-      ObjectInfo retVal = compileCode(writer, body == lxReturning ? node : body, codeScope);
-
-      // if the method returns itself
-      if(retVal.kind == okUnknown) {
-         ObjectInfo thisParam = scope.mapSelf();
-
-         // adding the code loading self
-         writer.newNode(lxReturning);
-         writer.newBookmark();
-         writeTerminal(writer, node, codeScope, thisParam, HINT_NODEBUGINFO | HINT_NOBOXING) ;
-
-         ref_t resultRef = scope.getReturningRef(false);
-         if (resultRef != 0) {
-            if (!convertObject(writer, codeScope, resultRef, thisParam, 0))
-               scope.raiseError(errInvalidOperation, node);
-         }
-
-         writer.removeBookmark();
-         writer.closeNode();
-      }
-
-      writer.closeNode();
-   }
-
-   writer.appendNode(lxParamCount, paramCount + scope.rootToFree);
-   writer.appendNode(lxReserved, scope.reserved);
-   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
-
-   writer.closeNode();
+   endMethod(writer, scope, codeScope, paramCount, preallocated);
 }
 
-void Compiler ::compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+void Compiler :: compileYieldInit(SyntaxWriter& writer, int index)
+{
+   writer.appendNode(lxYieldInit, index);
+}
+
+void Compiler :: compileYieldDispatch(SyntaxWriter& writer, int index)
+{
+   writer.appendNode(lxYieldDispatch, index);
+}
+
+void Compiler :: compileYieldEnd(SyntaxWriter& writer, int index)
+{
+   writer.appendNode(lxYieldStop, index);
+}
+
+void Compiler :: compileYieldableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
+{
+   beginMethod(writer, node, scope);
+
+   int paramCount = getParamCount(scope.message);
+   int preallocated = 0;
+
+   CodeScope codeScope(&scope);
+
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
+   if (body == lxCode) {
+      int contextIndex = scope.getAttribute(maYieldContext);
+
+      compileYieldInit(writer, contextIndex);
+
+      compileMethodCode(writer, node, body, scope, codeScope, preallocated);
+
+      compileYieldEnd(writer, contextIndex);
+   }
+   else scope.raiseError(errInvalidOperation, body);
+
+   endMethod(writer, scope, codeScope, paramCount, preallocated);
+}
+
+void Compiler :: compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
 {
    writer.newNode(lxClassMethod, scope.message);
 
@@ -6521,6 +6584,9 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
                   }
                   else compileAbstractMethod(writer, current, methodScope);
                }
+               else if (methodScope.yieldMethod) {
+                  compileYieldableMethod(writer, current, methodScope);
+               }
                else if (isMethodEmbeddable(methodScope, current)) {
                   // COMPILER MAGIC : if the method retunging value can be passed as an extra argument
                   compileEmbeddableMethod(writer, current, methodScope);
@@ -6709,7 +6775,7 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
 
             generateClassStaticField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.isSealedAttr, attrs.isConstAttr, attrs.isArray);
          }
-         else generateClassField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.size, singleField, attrs.isEmbeddable);
+         else generateClassField(scope, current, attrs, singleField);
       }
       current = current.nextNode();
    }
@@ -6850,6 +6916,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.closureMode = _logic->isClosure(scope.info, methodScope.message);
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
+   methodScope.yieldMethod = _logic->isMethodYieldable(scope.info, methodScope.message);
    methodScope.extensionMode = scope.extensionClassRef != 0;
    methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
    methodScope.targetSelfMode = test(methodScope.hints, tpTargetSelf);
@@ -6948,8 +7015,13 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
    }
 }
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, ref_t classRef, ref_t elementRef, int sizeHint, bool singleField, bool embeddable)
+void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, FieldAttributes& attrs, bool singleField)
 {
+   ref_t classRef = attrs.fieldRef;
+   ref_t elementRef = attrs.elementRef;
+   int   sizeHint = attrs.size;
+   bool  embeddable = attrs.isEmbeddable;
+
    if (sizeHint == -1) {
       if (singleField) {
          scope.info.header.flags |= elDynamicRole;
@@ -7063,6 +7135,10 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          if (classRef != 0)
             scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
       }
+   }
+
+   if (attrs.messageRef != 0) {
+      scope.addAttribute(attrs.messageRef, attrs.messageAttr, offset);
    }
 }
 
@@ -7435,6 +7511,10 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
             }
          }
       }
+
+      if (test(methodHints, tpYieldable)) {
+         scope.info.header.flags |= elWithYieldable;
+      }
    }
 }
 
@@ -7564,9 +7644,9 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, ClassTy
 //      if (test(scope.info.header.flags, elExtension)) {
 //         scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
 //      }
-//
-//      // inject virtual fields
-//      _logic->injectVirtualFields(*scope.moduleScope, node, scope.reference, scope.info, *this);
+
+      // inject virtual fields
+      _logic->injectVirtualFields(*scope.moduleScope, node, scope.reference, scope.info, *this);
 
       // generate fields
       generateClassFields(node, scope, countFields(node) == 1);
@@ -9429,6 +9509,26 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    }
 
    createPackageInfo(scope.module, *scope.project);
+}
+
+void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex)
+{
+   // declare field
+   IdentifierString fieldName(VIRTUAL_FIELD);
+   fieldName.appendInt(postfixIndex);
+
+   SNode fieldNode = classNode.appendNode(lxClassField, INVALID_REF);
+   fieldNode.appendNode(lxNameAttr).appendNode(lxIdentifier, fieldName.c_str());
+
+   SNode subNode = fieldNode.appendNode(subType, subArg);
+   subNode.appendNode(lxAttribute, arg);
+
+   // assing field
+   SNode assignNode = classNode.appendNode(lxFieldInit);
+   assignNode.appendNode(lxIdentifier, fieldName.c_str());
+   // NOTE : if stack allocated variables are declared
+   // this nummber has to be increased
+   assignNode.appendNode(lxRawBuffer, 2); 
 }
 
 //void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef)

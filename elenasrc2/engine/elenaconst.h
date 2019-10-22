@@ -302,7 +302,7 @@ namespace _ELENA_
    constexpr int elMessage             = 0x00008000;
    constexpr int elSymbol              = 0x00100000;
    constexpr int elExtMessage          = 0x00208000;
-//   const int elEmbeddableWrapper   = 0x00400040;   // wrapper containing embeddable field
+   constexpr int elWithYieldable       = 0x00400000;
    constexpr int elWithCustomDispatcher= 0x00800000;
    constexpr int elWithVariadics       = 0x01000000;
 ////   const int elTapeGroup           = 0x02000200;
@@ -438,6 +438,8 @@ namespace _ELENA_
    constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
 
    constexpr auto INLINE_CLASSNAME     = "$inline";          // nested class generic name
+
+   constexpr auto VIRTUAL_FIELD        = "$virtual#";
 
   // --- ELENA special sections ---
    constexpr auto METAINFO_SECTION     = "#metainfo";

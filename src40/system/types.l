@@ -17,6 +17,7 @@
 #define abstract    80004002h
 #define closed      80004003h
 #define predefined  80004005h
+#define yieldable   80004006h
 
 /// scope_accessors:
 #define get         80003007h
@@ -60,6 +61,7 @@
 //#8000101B = nonstructural;
 #define auto        8000101Ch
 #define attribute   8000101Fh
+#define yield       80001020h
 
 /// primitive types
 #define __string    80000801h

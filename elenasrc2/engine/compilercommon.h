@@ -35,6 +35,7 @@ constexpr auto V_SEALED          = 0x80004001u;
 constexpr auto V_ABSTRACT        = 0x80004002u;
 constexpr auto V_CLOSED          = 0x80004003u;
 constexpr auto V_PREDEFINED      = 0x80004005u;
+constexpr auto V_YIELDABLE       = 0x80004006u;
 
 /// accessors:
 constexpr auto V_GETACCESSOR = 0x80003007u;
@@ -145,7 +146,8 @@ enum MethodHint
    tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
    tpInitializer = 0x0200000,
    tpSetAccessor = 0x0400000,
-   tpCast        = 0x0800000
+   tpCast        = 0x0800000,
+   tpYieldable   = 0x1000000
 };
 
 // --- _Project ---
@@ -387,6 +389,7 @@ public:
    virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 
 //   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef) = 0;
+   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex) = 0;
 //
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
@@ -419,12 +422,18 @@ public:
       bool  isClassAttr;
       bool  isArray;
 
+      // if the field should be mapped to the message
+      ref_t messageRef;
+      ref_t messageAttr;
+
       FieldAttributes()
       {
          elementRef = fieldRef = 0;
          size = 0;
          isClassAttr = isStaticField = isEmbeddable = isConstAttr = isSealedAttr = false;
          isArray = false;
+
+         messageRef = messageAttr = 0;
       }
    };
 
@@ -531,6 +540,7 @@ public:
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
    virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
@@ -546,7 +556,7 @@ public:
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
-//   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
+   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;

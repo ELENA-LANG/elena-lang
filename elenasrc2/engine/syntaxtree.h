@@ -116,6 +116,8 @@ enum LexicalType
    lxBlockLocalAddr           = 0x00A11F,   // arg - offset
    lxClassRefField            = 0x008120,   // arg - self instance offset
    lxBaseField                = 0x00A122,
+   lxRawBuffer                = 0x00A123,    // arg - size
+   lxRawList                  = 0x00A124,    // arg - size
 
    lxCondBoxing               = 0x00C001,   // conditional boxing, arg - size
    lxBoxing                   = 0x00C002,   // boxing of the argument, arg - size
@@ -170,6 +172,7 @@ enum LexicalType
    lxByteArrOp                = 0x08C032, // arg - operation id
    lxShortArrOp               = 0x08C033, // arg - operation id
    lxSeqExpression            = 0x00C034,
+   lxYieldDispatch            = 0x00C035,
    lxDispatching              = 0x00C036,   // dispatching a message, optional arg - message
    lxAssigning                = 0x10C037,   // an assigning expression, arg - size
    lxIntOp                    = 0x18C038,   // arg - operation id
@@ -179,6 +182,8 @@ enum LexicalType
    lxSealedMultiDispatching   = 0x00C03C,
    lxCodeExpression           = 0x00C03D,
    lxCollection               = 0x00C03E,
+   lxYieldInit                = 0x00C03F,
+   lxYieldStop                = 0x00C040,
    lxOverridden               = 0x004047,
    lxFinally                  = 0x004048,
 
@@ -1193,6 +1198,19 @@ public:
       }
 
       return counter;
+   }
+
+   static bool existChild(Node node, LexicalType type, ref_t arg)
+   {
+      Node current = node.nextNode();
+      while (current != lxNone) {
+         if (current == type && current.argument == arg)
+            return true;
+
+         current = current.nextNode();
+      }
+
+      return false;
    }
 
    static bool existSibling(Node node, LexicalType type1)

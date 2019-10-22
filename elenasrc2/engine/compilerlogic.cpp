@@ -664,6 +664,11 @@ bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
 }
 
+bool CompilerLogic :: isMethodYieldable(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpYieldable);
+}
+
 bool CompilerLogic :: isMethodEmbeddable(ClassInfo& info, ref_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpEmbeddable);
@@ -765,13 +770,28 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
    }
 }
 
-//void CompilerLogic :: injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
-//{
+void CompilerLogic :: injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
+{
+   // generate yield fields
+   if (test(info.header.flags, elWithYieldable)) {
+      int index = info.fields.Count();
+
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxClassMethod && SyntaxTree::existChild(current, lxAttribute, V_YIELDABLE)) {
+            // NOTE : field initialization MUST be declared after the yield method declaration
+            compiler.injectVirtualField(node, maYieldContext, lxMessage, current.argument, ++index);
+         }
+
+         current = current.nextNode();
+      }
+   }
+
 //   // generate enumeration list static field
 //   if ((info.header.flags & elDebugMask) == elEnumList && !test(info.header.flags, elNestedClass)) {
 //      compiler.injectVirtualStaticConstField(scope, node, ENUM_VAR, classRef);
 //   }
-//}
+}
 
 void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
 {
@@ -1727,6 +1747,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          return true;
       case V_SCRIPTSELFMODE:
          attrValue = tpTargetSelf;
+         return true;
+      case V_YIELDABLE:
+         attrValue = tpYieldable;
          return true;
       case 0:
          return true;

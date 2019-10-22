@@ -542,10 +542,19 @@ private:
       bool         nestedMode;
       bool         subCodeMode;       
       bool         abstractMethod;
+      bool         yieldMethod;
       bool         embeddableRetMode;
       bool         targetSelfMode;     // used for script generated methods - self refers to __target
 //      bool         dispatchMode;
       
+      ref_t getAttribute(MethodAttribute attr, bool ownerClass = true)
+      {
+         ClassInfo::Attribute key(message, attr);
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         return scope->info.methodHints.get(key);
+      }
+
       virtual Scope* getScope(ScopeLevel level)
       {
          if (level == slMethod) {
@@ -975,12 +984,22 @@ private:
    void compileExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope, bool lazyMode);
    void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
+   void beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void endMethod(SyntaxWriter& writer, MethodScope& scope, CodeScope& codeScope, int paramCount, int preallocated);
+   void compileMethodCode(SyntaxWriter& writer, SNode node, SNode body, MethodScope& scope, CodeScope& codeScope,
+      int& preallocated);
+
    void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
    void compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
    void compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope);
+
+   void compileYieldInit(SyntaxWriter& writer, int index);
+   void compileYieldDispatch(SyntaxWriter& writer, int index);
+   void compileYieldEnd(SyntaxWriter& writer, int index);
+   void compileYieldableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
    void compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message);
 
@@ -999,7 +1018,7 @@ private:
    void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileForward(SNode ns, NamespaceScope& scope);
 
-   void generateClassField(ClassScope& scope, SNode node, ref_t fieldRef, ref_t elementRef, int sizeHint, bool singleField, bool embeddable);
+   void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
    void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst, bool isArray);
    
    void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
@@ -1118,6 +1137,7 @@ public:
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);
+   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex);
 //   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);
 //   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message);
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);

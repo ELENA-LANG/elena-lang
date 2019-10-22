@@ -519,6 +519,7 @@ enum MethodAttribute
    maEmbeddableNew      = 0x409,
    maOverloadlist       = 0x20A,
    maMultimethod        = 0x40B,
+   maYieldContext       = 0x00C,
 };
 
 enum ClassAttribute

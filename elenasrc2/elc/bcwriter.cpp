@@ -6196,10 +6196,10 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
 
          generateCodeBlock(tape, node);
          break;
-//      case lxCreatingClass:
-//      case lxCreatingStruct:
-//         generateCreating(tape, node);
-//         break;
+      case lxCreatingClass:
+      case lxCreatingStruct:
+         generateCreating(tape, node);
+         break;
 //      //case lxBreakpoint:
 //      //   translateBreakpoint(tape, node);
 //      //   break;
@@ -6362,6 +6362,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxIntsVariable:
          case lxBinaryVariable:
             generateDebugInfo(tape, current);
+            break;
+         case lxYieldDispatch:
+            generateYieldDispatch(tape, current);
             break;
          default:
             generateObject(tape, current);
@@ -6532,6 +6535,54 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
    }
 }
 
+void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node)
+{
+   //; jump if state is set
+   // aloadfi 1
+   // bloadai index
+   // nloadi 1
+   // ifn labStart 0
+   // acopyb
+   // ajumpi 1 
+   // labStart:
+
+   tape.newLabel();
+
+   tape.write(bcALoadFI, 1, bpFrame);
+   tape.write(bcBLoadAI, node.argument);
+   tape.write(bcNLoadI, 1);
+   tape.write(bcIfN, 0, baCurrentLabel);
+   tape.write(bcACopyB);
+   tape.write(bcAJumpI, 1);
+   tape.setLabel();
+}
+
+void ByteCodeWriter :: generateYieldInit(CommandTape& tape, SyntaxTree::Node node)
+{
+   // ; set ret point
+   // dloadsi 1
+   // bloadai index
+   // nsavei 0
+
+   tape.write(bcDLoadSI, 1);
+   tape.write(bcBLoadAI, node.argument);
+   tape.write(bcNSaveI, 0);
+}
+
+void ByteCodeWriter :: generateYieldStop(CommandTape& tape, SyntaxTree::Node node)
+{
+   // ; clear state
+   // aloadfi 1
+   // bloadai index
+   // dcopy 0
+   // nsavei 1
+
+   tape.write(bcALoadFI, 1, bpFrame);
+   tape.write(bcBLoadAI, node.argument);
+   tape.write(bcDCopy, 0);
+   tape.write(bcNSaveI, 1);
+}
+
 void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef)
 {
    int reserved = node.findChild(lxReserved).argument;
@@ -6611,6 +6662,12 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
             }               
 
             generateMultiDispatching(tape, current, node.argument);
+            break;
+         case lxYieldInit:
+            generateYieldInit(tape, current);
+            break;
+         case lxYieldStop:
+            generateYieldStop(tape, current);
             break;
          case lxNil:
             // idle body;

@@ -12,7 +12,7 @@ In development:
                 * where to persist the method state
                   - heap
 
-                * it should be a class
+                * it should be a class, (extensions are not allowed)
 
                 * implementing #492
                 * support break and continue statements

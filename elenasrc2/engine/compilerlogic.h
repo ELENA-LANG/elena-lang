@@ -147,6 +147,7 @@ public:
    virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
+   virtual bool isMethodYieldable(ClassInfo& info, ref_t message);
    virtual bool isMethodInternal(ClassInfo& info, ref_t message);
    virtual bool isMethodPrivate(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
@@ -166,7 +167,7 @@ public:
    virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
 
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
-//   virtual void injectVirtualFields(_CompilerScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
+   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
    virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef);
    virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef);

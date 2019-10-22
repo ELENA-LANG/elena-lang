@@ -44,6 +44,12 @@ Content
     + [Primitive types](#primitive-types)
     + [Classes](#classes)
     + [Abstract classes](#abstract-classes)
+    + [Interfaces](#interfaces)
+    + [Singletons](#singletons)
+    + [Structs](#structs)
+    + [Strings](#strings)
+    + [Extensions](#extensions) 
+    + [Sealed / Closed Classes](#sealed--closed-classes)
 
 ## Overview
 A programming language is a mammoth task to develop and to learn. So encountering a new language you may ask: why another
@@ -1303,18 +1309,18 @@ The result will be:
 
 The opposite construct is **UNTIL**. It repeats the code until the condition is true. Let's repeat the code while the number is not zero:
 
-   import extensions;
-   
-   public program()
-   {
-       var n := 23;
-       until(n == 0)
-       {
-          console.printLine(n);
-        
-          n /= 3
-       }
-   }
+    import extensions;
+    
+    public program()
+    {
+        var n := 23;
+        until(n == 0)
+        {
+           console.printLine(n);
+         
+           n /= 3
+        }
+    }
 
 The output will be:
 
@@ -1447,7 +1453,7 @@ If the second line is commented out the output will be:
     Try
     Finally
 
-We we do not need a special handler but would like to execute the code after the operation we may skip catch part:
+If we want to execute the code after the operation whenever an exception is raised, we may skip catch part:
 
         console.printLine("Try");
         try
@@ -1749,3 +1755,360 @@ A reference (or a full name) consists of a namespace (which in turn may contain 
 
 #### Abstract classes
 
+An abstract class is a special class used as a basis for creating specific classes that conform to its protocol, or the set of operations it supports. Abstract classes are not instantiated directly. It differs from an interface that the children can extend its functionality (declaring new methods). The abstract class may contain both abstract and normal methods. An abstract method must have an empty body (opening and closing curly brackets)
+
+    import extensions;
+    
+    abstract class Bike
+    {  
+        abstract run() {}  
+    }
+      
+    class Honda4 : Bike
+    {  
+        // overriding an abstract method
+        run()
+        {
+            console.printLine("running safely")
+        }
+    }    
+    
+    public program()
+    {
+        Bike obj := new Honda4();
+        obj.run()
+    }        
+
+The output will be:
+
+    running safely
+
+Classes based on an abstract class must implement all the parent abstract methods. If a child class adds a new abstract methods or implements only some of the parent abstract methods, it should be declared abstract as well.
+
+    abstract class BikeWithTrolley : Bike
+    {
+        abstract pack() {}
+    }
+
+#### Interfaces
+
+An interface is a special case of an abstract class. For performance reason a new method cannot be declared for the interface children (except private ones). As a result an interface method can be called semi-directly (via a method table). An interface methods can be both abstract and normal ones (like in abstract classes).
+
+    interface IObserver
+    {
+        // declaring an interface abstract method
+        abstract notify() {} 
+    }
+
+Though we could directly inherit the interface:
+
+    class Oberver : IObserver
+    {
+        notify() 
+        {
+            console.printLine("I'm notified")
+        }
+    }
+
+it is unpractical, because we cannot extends the class functionality. Instead we may use a template named **interface**:
+
+    import extensions;
+    
+    // declaring an interface
+    interface IObserver
+    {
+        // declaring an inteeface method to be implemented
+        abstract notify() {}
+    }
+    
+    // creating a class supporting an interface
+    class MyClass : interface<IObserver>
+    {
+        // implementing an interface method
+        notify() 
+        {
+            console.printLine("I'm notified")
+        }
+        
+        // implementing some other functionality
+        doSomework()
+        {
+            console.printLine("I'm doing some work")
+        }
+    }
+    
+    // simply routine to invoke the interface
+    sendNotification(IObserver observer)
+    {
+        observer.notify()
+    }
+    
+    public program()
+    {
+        // creating an intance of MyClass
+        auto myObject := new MyClass();
+        
+        // do some work
+        myObject.doSomework();
+        
+        // passing the interface implementation to the function by 
+        // explicit typecasting the object
+        sendNotification(cast IObserver(myObject));    
+    }        
+
+The output is:
+
+    I'm doing some work
+    I'm notified
+
+The class may implement several interfaces (so we may by-pass a problem with a single inheritance). 
+
+    import extensions;
+    
+    // declaring an interface
+    interface IObserver
+    {
+        // declaring an inteeface method to be implemented
+        abstract notify() {}
+    }
+    
+    // declaring the second interface
+    interface IWork
+    {
+        abstract doSomework() {}
+    }
+    
+    // creating a class supporting both interfaces
+    class MyClass : interface<IObserver>, interface<IWork>
+    {
+        // implementing an interface method
+        notify() 
+        {
+            console.printLine("I'm notified")
+        }
+        
+        // implementing the second interface
+        doSomework()
+        {
+            console.printLine("I'm doing some work")
+        }
+    }
+    
+    // simply routine to invoke the interface
+    sendNotification(IObserver observer)
+    {
+        observer.notify()
+    }
+    
+    public program()
+    {
+        // creating an intance of MyClass 
+        auto myObject := new MyClass();
+        
+        // implicitly typecast it to the second interface
+        IWork work := myObject;
+        
+        // use the second interface
+        work.doSomework();
+        
+        // passing the interface implementation to the function by 
+        // explicit typecasting the object
+        sendNotification(cast IObserver(myObject));    
+    }
+
+with the same result:
+
+    I'm doing some work
+    I'm notified
+        
+#### Singletons
+
+Singletons are special classes which should no be initialized (constructors are not allowed) and only a single instance exists. Singletons are mostly stateless (though they may have static fields). They are always sealed.
+
+The singleton class is declared with **singleton** attribute. It can be used directly using a class reference:
+
+    import extensions;
+    
+    // declaring a singleton
+    public singleton StringHelpers
+    {
+        // Gets the first character of a string.
+        char first(string str)
+        {
+            ^ str[0]
+        }
+    }
+    
+    public program()
+    {
+        var str := "My string";
+        
+        // calling a singleton method
+        console.printLine("Calling StringHelpers.First(""",str,""")=", 
+             StringHelpers.first(str))
+    }
+
+The output will be:
+
+    Calling StringHelpers.First("My string")=M
+
+#### Structs
+
+Structs are special kind of classes which are stored in-place, rather than by reference in the memory heap. Structs are sealed (meaning they cannot be inherited). They hold mostly small data values (such as numbers, handlers, pointers). All primitive data handlers are structs.
+
+Struct fields can be either primitive or another structures. No reference types are allowed. All fields should be strong typed for that reason.
+
+In most cases the use of structs is quite straightforward.
+
+    import extensions;
+    
+    // declaring a struct
+    struct Record
+    {
+       // declaring struct fields
+       int x;
+       int y;
+       
+       // declaring struct constructor
+       constructor(int x, int y)
+       {
+           // using this prefix to distinguish a class member from the local one
+           this x := x;
+           this y := y
+       }
+       
+       printMe()
+       {
+           console.printLine("Record(",x,",",y,")");
+       }
+    }    
+    
+    public program()
+    {
+        // creating a struct
+        auto r := new Record(2, 4);
+        
+        // invoking struct method
+        r.printMe()
+    }
+
+The result will be:
+
+    Record(2,4)
+
+Note that structs are stored in-place. It means that in our example the object was declared in the method stack. Every time it is used as a weak type, it will be boxed and unboxed after the operation. To improve performance we can declare a struct to be a constant one to avoid unboxing operation. For example all numbers are constant structs:
+
+    // declaring a constant struct
+    public const struct IntNumber : IntBaseNumber
+    {
+        // a field is a primitive 32-bit integer type   
+        embeddable __int theValue[4];
+    ...
+ 
+#### Strings
+
+Strings are special type of classes (both structs and nonstructural classes) which is used to contain the arrays. As a result the class length is variable. No default constructors (without parameters) are allowed.
+
+    public const struct String : BaseValue
+    {
+        __string byte[] theArray;
+    
+        constructor allocate(int size)
+            = new byte[](size + 1);
+
+It may contain only a single field markred as **__string** one.
+
+#### Extensions
+
+Extensions are special stateless classes used to declare extension methods. Extension methods allow you to extend the original class functionality without creating a new derived type, recompiling, or otherwise modifying the original type. Every method declared in an extension class is an extension method.
+
+In normal cases extension classes is never used directly (except using in mixins). To be used in other modules they should be declared as a public one. To start to use the extension it is enough to declare it in the same namespace as the code where it will be used. If the extension is declared in another module, it should be included into the code (using **import** statement).
+
+    import extensions;
+    
+    // declaring an extension
+    public extension MyExtension
+    {
+        // every member of the extension is an extension method
+        printMe()
+        {
+            console.printLine("I'm printing ", self);
+        }
+    }
+    
+    public program()
+    {
+        // invoking an extension method for various types
+        2.printMe();
+        "abc".printMe();
+        2.3r.printMe()
+    }
+
+The result is:
+
+    I'm printing 2
+    I'm printing abc
+    I'm printing 2.3
+
+Extensions methods are used in ELENA in many places. For example **print** and **printLine** are extension variadic methods. If the class already have the method with the same name it will be used instead of extension one. For example if we extend our previous example with a new class containing the method **printMe**
+
+    MyClass
+    {
+        printMe()
+        {
+            console.printLine("I'm printing myself");
+        }
+    }
+    
+    public program()
+    {
+        auto o := new MyClass();
+        o.printMe();
+    }
+
+The correct method will be invoked:
+
+    I'm printing myself
+
+But if the object is of weak type, the extension will be called:
+
+    public program()
+    {
+        var o := new MyClass();
+        o.printMe();
+    }
+
+The output will be:
+
+    I'm printing mytest'$private'MyClass
+
+So it is a good practice not to mix the extension and normal method names.
+
+Extensions can be weak one, meaning that they can extends any object (or instances of **system'Object** class). But we could always specify the exact extension target:
+
+    // declaring an extension of MyClass
+    public extension MyStrongExtension : MyClass
+    {
+        printMe()
+        {
+            console.printLine("I'm printing MyClass");
+        }
+    }
+    
+    MyClass
+    {
+    }
+    
+    public program()
+    {
+        auto o := new MyClass();
+        o.printMe();
+    }
+
+The output will be:
+
+    I'm printing MyClass
+
+It is possible to have several extension method with the same name as long as the extension targets are not the same.
+   
+#### Sealed / Closed Classes
