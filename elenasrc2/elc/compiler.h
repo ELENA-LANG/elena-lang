@@ -16,28 +16,28 @@
 namespace _ELENA_
 {
 
-////struct Unresolved
-////{
-////   ident_t    fileName;
-////   ref_t      reference;
-////   _Module*   module;
-////   size_t     row;
-////   size_t     col;           // virtual column
-////
-////   Unresolved()
-////   {
-////      reference = 0;
-////   }
-////   Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
-////   {
-////      this->fileName = fileName;
-////      this->reference = reference;
-////      this->module = module;
-////      this->row = row;
-////      this->col = col;
-////   }
-////};
+//struct Unresolved
+//{
+//   ident_t    fileName;
+//   ref_t      reference;
+//   _Module*   module;
+//   size_t     row;
+//   size_t     col;           // virtual column
 //
+//   Unresolved()
+//   {
+//      reference = 0;
+//   }
+//   Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
+//   {
+//      this->fileName = fileName;
+//      this->reference = reference;
+//      this->module = module;
+//      this->row = row;
+//      this->col = col;
+//   }
+//};
+
 ////typedef List<Unresolved> Unresolveds;
 
 // --- Compiler class ---
@@ -149,7 +149,7 @@ public:
 
       okExternal,
       okInternal,
-//      okPrimitiveConv
+      okPrimitive                     // param - size
    };
 
    enum ClassType

@@ -112,16 +112,16 @@ enum LexicalType
    lxResultField              = 0x00A11A, // arg -offset
    lxCurrentMessage           = 0x00A11B,
    lxSelfLocal                = 0x00A11C,
-   lxConstantList             = 0x00A11E,   // arg - reference
-   lxBlockLocalAddr           = 0x00A11F,   // arg - offset
-   lxClassRefField            = 0x008120,   // arg - self instance offset
+   lxConstantList             = 0x00A11E, // arg - reference
+   lxBlockLocalAddr           = 0x00A11F, // arg - offset
+   lxClassRefField            = 0x008120, // arg - self instance offset
    lxBaseField                = 0x00A122,
-   lxRawBuffer                = 0x00A123,    // arg - size
-   lxRawList                  = 0x00A124,    // arg - size
+   lxPrimitive                = 0x00A123, // arg - size
+   //lxRawList                  = 0x00A124,    // arg - size
 
-   lxCondBoxing               = 0x00C001,   // conditional boxing, arg - size
-   lxBoxing                   = 0x00C002,   // boxing of the argument, arg - size
-   lxLocalUnboxing            = 0x00C003,   // arg - size
+   lxCondBoxing               = 0x00C001, // conditional boxing, arg - size
+   lxBoxing                   = 0x00C002, // boxing of the argument, arg - size
+   lxLocalUnboxing            = 0x00C003, // arg - size
    lxUnboxing                 = 0x00C004,   // boxing and unboxing of the argument, arg - size
    lxArgBoxing                = 0x00C005,   // argument list boxing, arg - size
    lxArgUnboxing              = 0x00C006,
@@ -1202,7 +1202,7 @@ public:
 
    static bool existChild(Node node, LexicalType type, ref_t arg)
    {
-      Node current = node.nextNode();
+      Node current = node.firstChild();
       while (current != lxNone) {
          if (current == type && current.argument == arg)
             return true;

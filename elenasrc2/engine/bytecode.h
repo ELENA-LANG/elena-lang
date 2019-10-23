@@ -236,6 +236,7 @@ enum ByteCode
    bcBLoadAI         = 0xDF,
 
    bcEOrN            = 0xE0,
+   bcNewI            = 0xE1,
 
    bcMTRedirect      = 0xE8,
    bcXMTRedirect     = 0xE9,

@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 158;
+const int gcCommandNumber = 159;
 const int gcCommands[gcCommandNumber] =
 {
    bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcParent,
@@ -97,7 +97,7 @@ const int gcCommands[gcCommandNumber] =
    bcCheck, bcMTRedirect, bcDCopyVerb, bcXCopy, bcXMTRedirect,
    bcSaveFI, bcAddFI, bcSubFI, bcNShiftR, bcLSave,
    bcSelect, bcEqualR, bcBLoadAI, bcAndE, bcDMoveVerb,
-   bcEOrN
+   bcEOrN, bcNewI
 };
 
 const int gcCommandExNumber = 6;
@@ -153,7 +153,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &loadIndexOp, &compileSCopyF, &compileSetVerb, &compileDShiftN, &compileDAndN, &compileDAddN, &compileDOrN,
    &compileEAddN, &compileDShiftN, &compileDMulN, &loadOneByteLOp, &compileBLoadR, &compileInit, &loadROp, &loadIndexOp,
 
-   &loadNOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadNOp, &compileCreateI, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
 
    &compileCreate, &compileCreateN, &compileNop, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
@@ -962,12 +962,26 @@ void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
    scope.code->writeDWord(size);
 
    loadNOp(opcode, scope);
+   if (vmtRef) {
+      // set vmt reference
+      // mov [eax-4], vmt
+      scope.code->writeWord(0x40C7);
+      scope.code->writeByte(0xFC);
+      scope.writeReference(*scope.code, vmtRef, 0);
+   }
+}
 
-   // set vmt reference
-   // mov [eax-4], vmt
-   scope.code->writeWord(0x40C7);
-   scope.code->writeByte(0xFC);
-   scope.writeReference(*scope.code, vmtRef, 0);
+void _ELENA_::compileCreateI(int opcode, x86JITScope& scope)
+{
+   int size = align(scope.argument + scope.objectSize, gcPageSize);
+
+   scope.argument |= 0x800000;  // mark object as a binary structure
+
+   // mov  ecx, #gc_page + (size - 1)
+   scope.code->writeByte(0xB9);
+   scope.code->writeDWord(size);
+
+   loadNOp(opcode, scope);
 }
 
 void _ELENA_::compileSelectR(int opcode, x86JITScope& scope)

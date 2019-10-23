@@ -534,9 +534,11 @@ void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
 
 void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
 {
-   // newn size, vmt
-
-   tape.write(bcNewN, reference | mskVMTRef, size);
+   if (reference) {
+      // newn size, vmt
+      tape.write(bcNewN, reference | mskVMTRef, size);
+   }
+   else tape.write(bcNewI, size);
 }
 
 void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t reference)
@@ -6551,7 +6553,7 @@ void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node
    tape.write(bcALoadFI, 1, bpFrame);
    tape.write(bcBLoadAI, node.argument);
    tape.write(bcNLoadI, 1);
-   tape.write(bcIfN, 0, baCurrentLabel);
+   tape.write(bcIfN, baCurrentLabel, 0);
    tape.write(bcACopyB);
    tape.write(bcAJumpI, 1);
    tape.setLabel();
@@ -6560,11 +6562,11 @@ void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node
 void ByteCodeWriter :: generateYieldInit(CommandTape& tape, SyntaxTree::Node node)
 {
    // ; set ret point
-   // dloadsi 1
+   // dloadsi 0
    // bloadai index
    // nsavei 0
 
-   tape.write(bcDLoadSI, 1);
+   tape.write(bcDLoadSI, 0);
    tape.write(bcBLoadAI, node.argument);
    tape.write(bcNSaveI, 0);
 }
@@ -6664,6 +6666,12 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
             generateMultiDispatching(tape, current, node.argument);
             break;
          case lxYieldInit:
+            if (!open) {
+               open = true;
+               exitLabel = false;
+
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+            }
             generateYieldInit(tape, current);
             break;
          case lxYieldStop:

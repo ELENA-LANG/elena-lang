@@ -2677,6 +2677,15 @@ inline % 0E0h
 
 end
 
+// ; newi (ecx - size, __arg1 - length)
+
+inline % 0E1h
+
+  mov  ebx, __arg1
+  call code : %GC_ALLOC
+  
+end
+
 // ; mtredirect
 
 inline % 0E8h

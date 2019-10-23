@@ -4,18 +4,20 @@ In development:
 
               zdev
                 * write - Programming in ELENA : manual
+                * migrate tutorials from reddit
+                * duck typing tutorial
 
               xdev
-                * 
-
+                * createstruct
 
                 * where to persist the method state
                   - heap
 
-                * it should be a class, (extensions are not allowed)
+                * it should be a class, (extensions are not allowed) - check in validateMessage
 
                 * implementing #492
                 * support break and continue statements
+                * implenent break / continue analog
                 * addai, saveai
 
               ydev tutorials
@@ -38,14 +40,24 @@ In development:
                 * do-while - if the second agrument is code brackets?
                 * static fields should be accessaible from storng typed extensions
 
-------                                                           
-Pipeline:
-------   
+              ydev
+                * graph - use script to define the function (+tutorial)
+
+             xdev
+                * improve compilation speed
+
+              ydev
+                * source to expression tree
+                * expression tree to source
+
               xdev API
                 * template extensions
                 * missing algorithms (template extensions)
                 * missing system'routines'stex
 
+------                                                           
+Pipeline:
+------   
               xdev
                 * chat sample
 
@@ -76,19 +88,12 @@ Pipeline:
                 * script : support several operation in a row
                 * following rule does not work - function* code $eof
 
-              zdev
-                * source to expression tree
-                * expression tree to source
-
               xdev - language
                 * 2*i should be compiled as i*2
                 * call a property directly
                 * optimize:
                      int dump[4];
                      dump[i*2] := 3;
-
-              xdev - tutorials
-                * duck typing tutorial
 
               xdev - bytecode optimization
                 * operations with stack-allocated array : dump[0] := 1;
@@ -231,7 +236,6 @@ Pipeline:
 
                  * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
                  * Zhang-Suen thinning algorithm
-                 * implenent break analog
                  * Support enumeration list #265
                  * Sockets
                  * property template - should support public / internal visibility attributes

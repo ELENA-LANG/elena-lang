@@ -334,6 +334,9 @@ ELENA byte codes (or ecodes)
  newn vmt, n                - create the binary object with the specified size ;
                                out: acc contains the class instance
 
+ newi i                     - create the binary object with the specified size i * reg_size;
+                               out: acc contains the class instance
+
  nlen                       - [acc].Length >> index / 4 ; where acc is a object
 
  validate                   - validates if acc is not zero, otherwise break the code

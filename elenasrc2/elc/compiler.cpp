@@ -561,7 +561,6 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference)
    abstractMode = false;
    abstractBaseMode = false;
    withInitializers = false;
-//   withImplicitConstructor = false;
 }
 
 void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
@@ -2372,6 +2371,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
       case okInternal:
          writer.appendNode(lxInternalRef, object.param);
          return;
+      case okPrimitive:
+         writer.newNode(lxCreatingStruct, object.param);
+         break;
    }
 
    writeTarget(writer, resolveObjectReference(scope, object, false), object.element);
@@ -2392,6 +2394,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
       //      // HOTFIX : recognize predefined constant lists
       //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
       //   break;
+      case lxPrimitive:
+         object = ObjectInfo(okPrimitive, terminal.argument);
+         break;
       case lxLiteral:
          object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
          break;
@@ -6276,13 +6281,9 @@ void Compiler :: compileYieldableMethod(SyntaxWriter& writer, SNode node, Method
 
    SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
    if (body == lxCode) {
-      int contextIndex = scope.getAttribute(maYieldContext);
-
-      compileYieldInit(writer, contextIndex);
+      compileYieldInit(writer, scope.getAttribute(maYieldContext));
 
       compileMethodCode(writer, node, body, scope, codeScope, preallocated);
-
-      compileYieldEnd(writer, contextIndex);
    }
    else scope.raiseError(errInvalidOperation, body);
 
@@ -6341,7 +6342,10 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
             declareCodeDebugInfo(writer, node, scope);
 
          writer.newNode(lxExpression);
-         writer.appendNode(lxBreakpoint, dsStep);
+
+         if (current.argument != INVALID_REF)
+            writer.appendNode(lxBreakpoint, dsStep);
+
          compileRootExpression(writer, current, codeScope);
          writer.closeNode();
       }
@@ -6966,6 +6970,12 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& implicitClass)
 
             current = lxStaticMethod;
          }
+         else if (test(methodScope.hints, tpYieldable)) {
+            scope.info.header.flags |= elWithYieldable;
+
+            // HOTFIX : the class should have intializer method
+            scope.withInitializers = true;
+         }
 
          if (!_logic->validateMessage(*methodScope.moduleScope, methodScope.message, false))
             scope.raiseError(errIllegalMethod, current);
@@ -7510,10 +7520,6 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
                scope.addAttribute(message, maEmbeddableRet, embeddableMessage);
             }
          }
-      }
-
-      if (test(methodHints, tpYieldable)) {
-         scope.info.header.flags |= elWithYieldable;
       }
    }
 }
@@ -9524,11 +9530,12 @@ void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subT
    subNode.appendNode(lxAttribute, arg);
 
    // assing field
-   SNode assignNode = classNode.appendNode(lxFieldInit);
+   SNode assignNode = classNode.appendNode(lxFieldInit, INVALID_REF); // INVALID_REF indicates the virtual code
    assignNode.appendNode(lxIdentifier, fieldName.c_str());
+   assignNode.appendNode(lxAssign);
    // NOTE : if stack allocated variables are declared
    // this nummber has to be increased
-   assignNode.appendNode(lxRawBuffer, 2); 
+   assignNode.appendNode(lxExpression).appendNode(lxPrimitive, 2); 
 }
 
 //void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef)

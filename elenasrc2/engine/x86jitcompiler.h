@@ -107,6 +107,7 @@ protected:
    friend void compileHook(int opcode, x86JITScope& scope);
    friend void compileCreate(int opcode, x86JITScope& scope);
    friend void compileCreateN(int opcode, x86JITScope& scope);
+   friend void compileCreateI(int opcode, x86JITScope& scope);
    friend void compileSelectR(int opcode, x86JITScope& scope);
    friend void compileACopyR(int opcode, x86JITScope& scope);
    friend void compileBCopyR(int opcode, x86JITScope& scope);
