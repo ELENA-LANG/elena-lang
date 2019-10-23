@@ -1811,58 +1811,58 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
          return true;
       case V_VARIABLE:
       case V_AUTO:
-         attributes.typeAttr = true;
+         attributes.include(EAttr::eaType);
          return true;
       case V_CONVERSION:
-         attributes.castAttr = true;
+         attributes.include(EAttr::eaCast);
          return true;
       case V_NEWOP:
-         attributes.newOpAttr = true;
+         attributes.include(EAttr::eaNewOp);
          return true;
       case V_FORWARD:
-         attributes.forwardAttr = true;
+         attributes.include(EAttr::eaForward);
          return true;
       case V_EXTERN:
-         attributes.externAttr = true;
+         attributes.include(EAttr::eaExtern);
          return true;
       case V_WRAPPER:
-         attributes.refAttr = true;
+         attributes.include(EAttr::eaRef);
          return true;
 	  case V_ARGARRAY:
-			attributes.paramsAttr = true;
+         attributes.include(EAttr::eaParams);
 			return true;
 	  case V_INTERN:
-         attributes.internAttr = true;
+         attributes.include(EAttr::eaIntern);
          return true;
       case V_LOOP:
-         attributes.loopAttr = true;
+         attributes.include(EAttr::eaLoop);
          return true;
       case V_MEMBER:
-         attributes.memberAttr = true;
+         attributes.include(EAttr::eaMember);
          return true;
       case V_SUBJECT:
-         attributes.subjAttr = true;
+         attributes.include(EAttr::eaSubj);
          return true;
       case V_MESSAGE:
-         attributes.mssgAttr = true;
+         attributes.include(EAttr::eaMssg);
          return true;
       case V_GROUP:
-         attributes.wrapAttr = true;
+         attributes.include(EAttr::eaWrap);
          return true;
       case V_CLASS:
-         attributes.classAttr = true;
+         attributes.include(EAttr::eaClass);
          return true;
       case V_DIRECT:
-         attributes.directAttr = true;
+         attributes.include(EAttr::eaDirect);
          return true;
       case V_LAZY:
-         attributes.lazyAttr = true;
+         attributes.include(EAttr::eaLazy);
          return true;
       case V_INLINEARG:
-         attributes.inlineArgAttr = true;
+         attributes.include(EAttr::eaInlineArg);
          return true;
       case V_IGNOREDUPLICATE:
-         attributes.ignoreDuplicates = true;
+         attributes.include(EAttr::eaIgnoreDuplicates);
          return true;
       default:
          return false;

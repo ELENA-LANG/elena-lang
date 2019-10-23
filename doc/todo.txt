@@ -8,7 +8,28 @@ In development:
                 * duck typing tutorial
 
               xdev
-                * createstruct
+                * yield, get rid of yield_init
+
+
+address labNext
+<save in context>
+jump first
+
+
+call yield
+
+yield
+
+  pop ret
+  save in context
+  jump to method end
+
+end
+
+
+yield
+
+
 
                 * where to persist the method state
                   - heap

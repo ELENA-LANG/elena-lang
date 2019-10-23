@@ -280,7 +280,7 @@ private:
             else return false;
          }
 
-         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode)
+         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
          {
             if (parent) {
                return parent->mapTerminal(identifier, referenceOne, mode);
@@ -366,7 +366,7 @@ private:
 ////         moduleScope->raiseWarning(level, message, sourcePath, identifier);
 ////      }
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       ObjectInfo mapGlobal(ident_t identifier);
 
@@ -403,7 +403,7 @@ private:
 
       bool defineForward(ident_t forward, ident_t referenceName)
       {
-         ObjectInfo info = mapTerminal(referenceName, true, 0);
+         ObjectInfo info = mapTerminal(referenceName, true, EAttr::eaNone);
       
          return forwards.add(forward, info.param, true);
       }
@@ -434,9 +434,9 @@ private:
 
       void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 
-      ObjectInfo mapField(ident_t identifier, int scopeMode);
+      ObjectInfo mapField(ident_t identifier, EAttr scopeMode);
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -527,7 +527,7 @@ private:
    {
       ref_t        message;
       LocalMap     parameters;
-      int          scopeMode;
+      EAttr        scopeMode;
       int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
       int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
       int          hints;
@@ -596,11 +596,11 @@ private:
          else return Scope::resolveAutoOutput(reference);
       }
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       ObjectInfo mapSelf(/*bool forced = false*/);
       ObjectInfo mapGroup();
-      ObjectInfo mapParameter(Parameter param, int mode);
+      ObjectInfo mapParameter(Parameter param, EAttr mode);
 
       MethodScope(ClassScope* parent);
    };
@@ -642,7 +642,7 @@ private:
       // check if a local was declared in one of nested code scopes
       bool checkLocal(ident_t local)
       {
-         ObjectInfo info = mapTerminal(local, false, 0);
+         ObjectInfo info = mapTerminal(local, false, EAttr::eaNone);
          return info.kind == okLocal || info.kind == okLocalAddress;
       }
 
@@ -657,7 +657,7 @@ private:
 
       ObjectInfo mapLocal(ident_t identifier);
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
       virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -719,7 +719,7 @@ private:
       bool withFrame;
       bool consructionMode;
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       ResendScope(CodeScope* parent)
          : CodeScope(parent)
@@ -770,7 +770,7 @@ private:
          else return Scope::getScope(level);
       }
 
-      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, int mode);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       InlineClassScope(CodeScope* owner, ref_t reference);
    };
@@ -898,53 +898,53 @@ private:
    void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
    void compileVariable(SyntaxWriter& writer, SNode& node, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle);
 
-   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, int mode);
+   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, EAttr mode);
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
    ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ObjectInfo target);
 
-   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
-   ObjectInfo compileSubjectReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, int mode);
+   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
+   ObjectInfo compileSubjectReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
 
-   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, int mode);
-   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
-   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, int mode, LexicalType type);
+   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
+   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
+   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
-   ObjectInfo compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, int mode);
+   ObjectInfo compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
+   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
+   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, EAttr mode);
 
    ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
-   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
-   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode, int operator_id);
+   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand);
    void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, int mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
-   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ObjectInfo target, int mode, int operator_id);
+   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
+   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ObjectInfo target, EAttr mode, int operator_id);
 
    ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
    ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
 
-   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode, 
+   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode, 
       bool& variadicOne, bool& inlineArg);
 
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, ObjectInfo target, int mode);
-   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, int mode, int stackSafeAttr);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, ObjectInfo target, EAttr mode);
+   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, EAttr mode, int stackSafeAttr);
 //   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 
    SNode injectAttributeIdentidier(SNode current, Scope& scope);
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
-   ref_t compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, int mode);
+   EAttr compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, EAttr mode);
 
-   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int mode);
-   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
-   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode);
+   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
+   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
    ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool accumulateMode);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
    ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
    ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, int mode);
-   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, int mode);
+   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, EAttr mode);
+   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
    void compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    ObjectInfo compileSubCode(SyntaxWriter& writer, SNode thenNode, CodeScope& scope, bool branchingMode);
@@ -952,7 +952,7 @@ private:
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode/*, int mode*/);
    void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal, bool accumulatorMode);
 
-   ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, ref_t expectedRef, int mode);
+   ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, ref_t expectedRef, EAttr mode);
 
    ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ref_t operator_id);
    ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo);
@@ -962,7 +962,7 @@ private:
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
-   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, int mode);
+   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, EAttr mode);
    ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 
    void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
@@ -976,7 +976,7 @@ private:
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
    void declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode);
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
-   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, int mode/*, bool alreadyDeclared*/);
+   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
 
 ////   void declareSingletonClass(SNode node, ClassScope& scope);
 
@@ -996,7 +996,6 @@ private:
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
    void compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
-   void compileYieldInit(SyntaxWriter& writer, int index);
    void compileYieldDispatch(SyntaxWriter& writer, int index);
    void compileYieldEnd(SyntaxWriter& writer, int index);
    void compileYieldableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
@@ -1011,7 +1010,7 @@ private:
    void compilePreloadedCode(_ModuleScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
-   void compileAction(SNode node, ClassScope& scope, SNode argNode, int mode/*, bool alreadyDeclared = false*/);
+   void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
    void compileNestedVMT(SNode node, InlineClassScope& scope);
 
    void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope, bool ignoreAutoMultimethods = false);
@@ -1045,7 +1044,7 @@ private:
 
    ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, bool fpuMode, ref_t targetRef, ref_t elementRef = 0);
 
-   bool convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source, int mode);
+   bool convertObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
    bool typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
    bool sendTypecast(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
 

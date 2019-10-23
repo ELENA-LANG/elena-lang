@@ -437,39 +437,125 @@ public:
       }
    };
 
+   enum class ExpressionAttribute : unsigned __int64
+   {
+      eaNone               = 0x00000000000,
+      eaType               = 0x00000000001,
+      eaCast               = 0x00000000002,
+      eaNewOp              = 0x00000000004,
+      eaForward            = 0x00000000008,
+      eaExtern             = 0x00000000010,
+      eaRef                = 0x00000000020,
+      eaParams             = 0x00000000040,
+      eaIntern             = 0x00000000080,
+      eaLoop               = 0x00000000100,
+      eaMember             = 0x00000000200,
+      eaSubj               = 0x00000000400,
+      eaMssg               = 0x00000000800,
+      eaWrap               = 0x00000001000,
+      eaClass              = 0x00000002000,
+      eaDirect             = 0x00000004000,
+      eaLazy               = 0x00000008000,
+      eaInlineArg          = 0x00000010000,
+      eaIgnoreDuplicates   = 0x00000020000,
+      eaYield              = 0x00000040000,
+
+      eaNoPrimitives       = 0x00000080000,
+      eaAssigningExpr      = 0x00000100000,
+      eaPropExpr           = 0x00000200000,
+      eaCallExpr           = 0x00000400000,
+      eaVirtualExpr        = 0x00000800000,
+      eaParameter          = 0x00001000000, 
+      eaModuleScope        = 0x00002000000,
+      eaRetExpr            = 0x00004000000,
+      eaDirectCall         = 0x00008000000,
+      eaNoBoxing           = 0x00010000000,
+      eaDynamicObject      = 0x00020000000,
+      eaNoUnboxing         = 0x00040000000,
+      eaClosure            = 0x00080000000,
+      eaNoDebugInfo        = 0x00200000000,
+      eaRootSymbol         = 0x01400000000,
+      eaSubCodeClosure     = 0x00800000000,
+      eaRoot               = 0x01000000000,
+      eaInlineExpr         = 0x02000000000,
+      eaSilent             = 0x04000000000,
+      eaSwitch             = 0x08000000000,
+      eaInitializerScope   = 0x10000000000,
+
+      eaScopeMask          = 0x00100200020,
+      eaClosureMask        = 0x01C00008000,
+   };
+
    struct ExpressionAttributes
    {
-      bool  typeAttr;
-      bool  castAttr;
-      bool  newOpAttr;
-      bool  forwardAttr;
-      bool  externAttr;
-      bool  refAttr;
-	   bool  paramsAttr;
-	   bool  internAttr;
-      bool  loopAttr;
-      bool  memberAttr;
-      bool  subjAttr;
-      bool  mssgAttr;
-      bool  wrapAttr;
-      bool  classAttr;
-      bool  directAttr;
-      bool  lazyAttr;
-      bool  inlineArgAttr;
-      bool  ignoreDuplicates;
+      ExpressionAttribute attrs;
 
-      bool isExprAttr()
+    //  bool isExprAttr()
+    //  {
+    //     return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | 
+    //        classAttr | directAttr | lazyAttr | inlineArgAttr;
+    //  } 
+
+      bool test(ExpressionAttribute mask)
       {
-         return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | 
-            classAttr | directAttr | lazyAttr | inlineArgAttr;
-      } 
+         return ((__int64)attrs & (__int64)mask) == (__int64)mask;
+      }
+
+      bool testAndExclude(ExpressionAttribute mask)
+      {
+         if (test(mask)) {
+            exclude(mask);
+
+            return true;
+         }
+         else return false;
+      }
+
+      bool testany(ExpressionAttribute mask)
+      {
+         return ((__int64)attrs & (__int64)mask) != (__int64)0ul;
+      }
+
+      void exclude(ExpressionAttribute mask)
+      {
+         attrs = (ExpressionAttribute)((__int64)attrs & ~(__int64)mask);
+      }
+
+      void include(ExpressionAttribute mask)
+      {
+         attrs = (ExpressionAttribute)((__int64)attrs | (__int64)mask);
+      }
+
+      operator const ExpressionAttribute () const { return attrs; }
+
+      static bool test(ExpressionAttribute attrs, ExpressionAttribute mask)
+      {
+         return ((__int64)attrs & (__int64)mask) == (__int64)mask;
+      }
+
+      static bool testany(ExpressionAttribute attrs, ExpressionAttribute mask)
+      {
+         return ((__int64)attrs & (__int64)mask) != (__int64)0;
+      }
 
       ExpressionAttributes()
       {
-         refAttr = externAttr = typeAttr = castAttr = forwardAttr = false;
-         paramsAttr = newOpAttr = loopAttr = internAttr = false;
-         classAttr = mssgAttr = wrapAttr = subjAttr = memberAttr = false;
-         lazyAttr = inlineArgAttr = directAttr = ignoreDuplicates = false;
+         attrs = ExpressionAttribute::eaNone;
+      }
+
+      ExpressionAttributes(ExpressionAttribute attrs)
+      {
+         this->attrs = attrs;
+      }
+      ExpressionAttributes(ExpressionAttribute attrs, ExpressionAttribute excludeMask)
+         : ExpressionAttributes(attrs)
+      {
+         exclude(excludeMask);
+      }
+      ExpressionAttributes(ExpressionAttributes attrs, ExpressionAttribute excludeMask)
+         : ExpressionAttributes(attrs.attrs)
+      {
+         exclude(excludeMask);
       }
    };
 
@@ -598,6 +684,9 @@ public:
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;
    virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns) = 0;
 };
+
+typedef _CompilerLogic::ExpressionAttributes EAttrs;
+typedef _CompilerLogic::ExpressionAttribute EAttr;
 
 }  // _ELENA_
 

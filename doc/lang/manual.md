@@ -50,6 +50,9 @@ Content
     + [Strings](#strings)
     + [Extensions](#extensions) 
     + [Sealed / Closed Classes](#sealed--closed-classes)
+  + [Fields](#fields)
+    + [Class Fields](#class_fields)
+    + [Field Initializer](#field-initializer)
 
 ## Overview
 A programming language is a mammoth task to develop and to learn. So encountering a new language you may ask: why another
@@ -2112,3 +2115,113 @@ The output will be:
 It is possible to have several extension method with the same name as long as the extension targets are not the same.
    
 #### Sealed / Closed Classes
+
+**Sealed** and **closed** attributes are used to improve the performance of the operations with the classes. A sealed class cannot be inherited. As a result the compiler may generate direct method calls for this class (of course when the type is known). All structs and singletons are sealed by default. Declaring a sealed class is quite simple:
+
+    sealed class MySealedClass
+    {
+    }
+
+Closed classes can be inherited but no new methods (private ones or new fields are allowed). All interfaces are closed. When the type is closed, the compiler may use a method table to resolve the method call.
+
+    closed class MyBaseClass
+    {
+        // declaring a "virtual" method
+        myMethod() {}
+    }
+    
+    class MyChileClass : MyBaseClass
+    {
+        // overriding a method
+        myMethod() {}
+    }
+
+### Fields
+
+A field is a variable that is declared in a class or struct. Fields are class members and used to hold its state. Fields can be weak (or of system'Object type) or strong ones. Struct fields may be primitive or another structs. They cannot be weak. Both fixed size and dynamic arrays are supported. All fields are private ones. They cannot be accessed outside its class.
+
+#### Class Fields
+
+A class field should be declared inside the class body. **Field** and type attributes is optional.
+
+    class MyClass
+    {
+        // a fully qualified field declaration
+        field int x;
+        
+        // field attribute my be omitted
+        int y;
+        
+        // type attribute my be omitted
+        field z;
+        
+        // the minimal declaration
+        f;
+    }
+
+The fields can be accessed in the method by their name.
+
+    import extensions;
+    
+    class MyClass
+    {
+        // declaring a field named x
+        int x;
+    
+        constructor()
+        {
+            // constructos are typical places to initialize fields
+            x := 2
+        }
+    
+        printX()
+        {
+            // field is referred by its name
+            console.printLine("MyClass.x="x)
+        }    
+    }    
+    
+    public program()
+    {
+        var o := new MyClass();
+        
+        o.printX()
+    }
+
+The output will be:
+
+   MyClass.x=2
+
+If a local variable and a field names are the same we may use **this** prefix to tell a field apart:
+
+    class MyClass
+    {
+        // declaring a field named x
+        int x;
+    
+        // declaring an argument named x
+        constructor(int x)
+        {
+            // to tell apart a field from a local, this qualifier should be used
+            this x := x
+        }
+    
+        printX()
+        {
+            // field is directly referred using this prefix
+            console.printLine("MyClass.x=",this x)
+        }    
+    }
+    
+    public program()
+    {
+        var o := new MyClass(3);
+        
+        o.printX()
+    }
+
+The output will be:
+
+    MyClass.x=3
+
+#### Field Initializer

@@ -182,7 +182,7 @@ enum LexicalType
    lxSealedMultiDispatching   = 0x00C03C,
    lxCodeExpression           = 0x00C03D,
    lxCollection               = 0x00C03E,
-   lxYieldInit                = 0x00C03F,
+   lxYieldReturing            = 0x00C03F,
    lxYieldStop                = 0x00C040,
    lxOverridden               = 0x004047,
    lxFinally                  = 0x004048,
