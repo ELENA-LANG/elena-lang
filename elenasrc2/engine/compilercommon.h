@@ -481,6 +481,7 @@ public:
       eaSilent             = 0x04000000000,
       eaSwitch             = 0x08000000000,
       eaInitializerScope   = 0x10000000000,
+      eaRefExpr            = 0x20000000000,
 
       eaScopeMask          = 0x00100200020,
       eaClosureMask        = 0x01C00008000,

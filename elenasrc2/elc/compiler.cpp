@@ -59,7 +59,7 @@ constexpr auto HINT_SILENT          = EAttr::eaSilent;
 constexpr auto HINT_FORWARD         = EAttr::eaForward;
 constexpr auto HINT_REFOP           = EAttr::eaRef;
 constexpr auto HINT_RETEXPR         = EAttr::eaRetExpr;
-constexpr auto HINT_REFEXPR         = EAttr::eaRef;
+constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
 
 // scope modes
@@ -678,6 +678,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->genericClosure = false;
    this->embeddableRetMode = false;
    this->targetSelfMode = false;
+   this->yieldMethod = false;
 //   this->dispatchMode = false;
 }
 
@@ -4912,15 +4913,15 @@ inline bool isCallingOp(SNode node)
 
 ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, EAttr modeAttrs)
 {
+   bool noPrimMode = EAttrs::test(modeAttrs, HINT_NOPRIMITIVES);
+   bool inlineArgMode = false;
+   bool boxingMode = false;
+   //   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
+
    EAttrs mode(modeAttrs, HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
    ObjectInfo objectInfo;
 
    writer.newBookmark();
-
-   bool noPrimMode = mode.test(HINT_NOPRIMITIVES);
-   bool inlineArgMode = false;
-   bool boxingMode = false;
-//   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
 
    EAttrs targetMode(mode, HINT_PROP_MODE | HINT_LOOP | HINT_CALL_MODE);
 
