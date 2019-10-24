@@ -1464,7 +1464,7 @@ void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, iden
    else scope.raiseError(errInvalidLink, node);
 }
 
-Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields/*, bool ignoreSealed*/)
+Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed)
 {
    _ModuleScope* moduleScope = scope.moduleScope;
 
@@ -1524,7 +1524,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
       // meta attributes are not directly inherited
       scope.info.mattributes.clear();
 
-      if (/*!ignoreSealed && */test(scope.info.header.flags, elSealed))
+      if (!ignoreSealed && test(scope.info.header.flags, elSealed))
          return InheritResult::irSealed;
 
       // restore parent and flags
@@ -1545,12 +1545,12 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
    else return InheritResult::irUnsuccessfull;
 }
 
-void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields/*, bool ignoreSealed*/)
+void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields)
 {
    scope.info.header.parentRef = parentRef;
    InheritResult res = InheritResult::irSuccessfull;
    if (scope.info.header.parentRef != 0) {
-      res = inheritClass(scope, scope.info.header.parentRef, ignoreFields/*, ignoreSealed*/);
+      res = inheritClass(scope, scope.info.header.parentRef, ignoreFields, test(scope.info.header.flags, elVirtualVMT));
    }
 
    //if (res == irObsolete) {
@@ -4073,16 +4073,6 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 
    // check if the class was already compiled
    if (!node.argument) {
-      compileParentDeclaration(node.firstChild(), scope, false);
-
-      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
-         // COMPILER MAGIC : inject interface implementation
-         _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef);
-      }
-
-      bool implicitMode = true;
-      declareVMT(node, scope, implicitMode);
-
       // COMPILER MAGIC : check if it is a virtual vmt (only for the class initialization)
       SNode current = node.firstChild();
       bool virtualClass = true;
@@ -4091,7 +4081,7 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
             ExpressionAttributes attributes;
             if (_logic->validateExpressionAttribute(current.argument, attributes) && attributes.test(EAttr::eaNewOp)) {
                // only V_NEWOP attribute is allowed
-               current = lxIdle;
+               current.setArgument(0);
             }
             else scope.raiseError(errInvalidHint, current);
          }
@@ -4110,6 +4100,17 @@ void Compiler :: compileNestedVMT(SNode node, InlineClassScope& scope)
 
       if (virtualClass)
          scope.info.header.flags |= elVirtualVMT;
+
+      compileParentDeclaration(node.firstChild(), scope, false);
+
+      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
+         // COMPILER MAGIC : inject interface implementation
+         _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef);
+      }
+
+      bool implicitMode = true;
+      declareVMT(node, scope, implicitMode);
+
 
       generateClassDeclaration(node, scope, ClassType::ctClass, true);
 

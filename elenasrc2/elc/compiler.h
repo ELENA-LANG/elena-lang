@@ -846,7 +846,7 @@ private:
 
    int defineFieldSize(CodeScope& scope, int offset);
 
-   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields/*, bool ignoreSealed*/);
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed);
    void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 
    // NOTE : the method is used to set template pseudo variable

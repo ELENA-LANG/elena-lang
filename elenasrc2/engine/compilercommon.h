@@ -80,6 +80,7 @@ constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
 constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
+constexpr auto V_YIELD           = 0x80001020u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -482,6 +483,7 @@ public:
       eaSwitch             = 0x08000000000,
       eaInitializerScope   = 0x10000000000,
       eaRefExpr            = 0x20000000000,
+      eaYieldExpr          = 0x40000000000,
 
       eaScopeMask          = 0x00100200020,
       eaClosureMask        = 0x01C00008000,

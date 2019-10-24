@@ -1607,6 +1607,8 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, bool& publicOne)
 {
    switch ((size_t)attrValue)
    {
+      case 0:
+         return 0;
       case V_SEALED:
          attrValue = elSealed;
          return true;
@@ -1863,6 +1865,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
          return true;
       case V_IGNOREDUPLICATE:
          attributes.include(EAttr::eaIgnoreDuplicates);
+         return true;
+      case V_YIELD:
+         attributes.include(EAttr::eaYieldExpr);
          return true;
       default:
          return false;
