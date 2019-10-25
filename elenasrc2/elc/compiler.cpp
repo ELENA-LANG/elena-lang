@@ -863,6 +863,13 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool reference
    return Scope::mapTerminal(identifier, referenceOne, mode);
 }
 
+// --- Compiler::YieldCodeScope ---
+
+Compiler::YieldCodeScope :: YieldCodeScope(MethodScope* parent)
+   : CodeScope(parent)
+{
+}
+
 // --- Compiler::ResendScope ---
 
 inline bool isField(Compiler::ObjectKind kind)
@@ -1996,135 +2003,75 @@ size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
    return 0; // !! dummy returning statement, the code never reaches this point
 }
 
-void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle)
+ObjectInfo Compiler :: declareStackVariable(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int size, bool binaryArray, 
+   ClassInfo& localInfo, ObjectInfo variable)
 {
-//   //if (terminal == lxExpression)
-//   //   terminal = terminal.findChild(lxIdentifier, lxPrivate);
-
    ident_t identifier = terminal.identifier();
-//   //if (scope.moduleScope->mapAttribute(terminal) != 0)
-//   //   scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousVariable, terminal);
+   ident_t className = NULL;
+   LexicalType variableType = lxVariable;
+   int variableArg = 0;
 
-   if (!scope.locals.exist(identifier)) {
-      LexicalType variableType = lxVariable;
-      int variableArg = 0;
-      int size = dynamicArray ? -1 : 0;
-      ident_t className = NULL;
+   variable.kind = okLocal;
 
-      ObjectInfo variable(okLocal);
-      variable.reference = typeRef;
-
-      // COMPILER MAGIC : if it is a fixed-sized array
-      SNode opNode = terminal.nextNode();
-      if (opNode == lxOperator && opNode.argument == REFER_OPERATOR_ID) {
-         if (size)
-            scope.raiseError(errInvalidSyntax, terminal);
-
-         SNode sizeExprNode = opNode.nextNode();
-
-         size = resolveArraySize(sizeExprNode, scope);
-
-         // HOTFIX : remove the size attribute
-         opNode = lxIdle;
-         sizeExprNode = lxIdle;
-
-         opNode = sizeExprNode.nextNode();
-      }
-      if (opNode == lxNone && canBeIdle) {
-         // HOTFIX : remove the variable if the statement contains only a declaration
-         terminal = lxIdle;
-      }
-
-      if (size != 0 && variable.reference != 0) {
-         if (!isPrimitiveRef(variable.reference)) {
-            // if it is a primitive array
-            variable.element = variable.reference;
-            variable.reference = _logic->definePrimitiveArray(*scope.moduleScope, variable.element, true);
-         }
-         else scope.raiseError(errInvalidHint, terminal);
-      }
-
-      ClassInfo localInfo;
-      bool binaryArray = false;
-      if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.reference))
-         scope.raiseError(errUnknownVariableType, terminal);
-
-      if (variable.reference == V_BINARYARRAY && variable.element != 0) {
-         localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
-      }
-
-      if (_logic->isEmbeddableArray(localInfo) && size != 0) {
-         binaryArray = true;
-         size = size * (-((int)localInfo.size));
-      }
-      else if (variable.reference == V_OBJARRAY && size == -1) {
-         // if it is a primitive dynamic array
-      }
-      else if (_logic->isEmbeddable(localInfo) && size == 0) {
-         bool dummy = false;
-         size = _logic->defineStructSize(localInfo, dummy);
-      }
-      else if (size != 0)
+   if (size > 0) {
+      if (!allocateStructure(scope, size, binaryArray, variable))
          scope.raiseError(errInvalidOperation, terminal);
 
-      if (size > 0) {
-         if (!allocateStructure(scope, size, binaryArray, variable))
-            scope.raiseError(errInvalidOperation, terminal);
+      // make the reservation permanent
+      scope.saved = scope.reserved;
 
-         // make the reservation permanent
-         scope.saved = scope.reserved;
-
-         switch (localInfo.header.flags & elDebugMask) {
-            case elDebugDWORD:
-               variableType = lxIntVariable;
-               break;
-            case elDebugQWORD:
-               variableType = lxLongVariable;
-               break;
-            case elDebugReal64:
-               variableType = lxReal64Variable;
-               break;
-            case elDebugIntegers:
-               variableType = lxIntsVariable;
-               variableArg = size;
-               break;
-            case elDebugShorts:
-               variableType = lxShortsVariable;
-               variableArg = size;
-               break;
-            case elDebugBytes:
+      switch (localInfo.header.flags & elDebugMask) {
+         case elDebugDWORD:
+            variableType = lxIntVariable;
+            break;
+         case elDebugQWORD:
+            variableType = lxLongVariable;
+            break;
+         case elDebugReal64:
+            variableType = lxReal64Variable;
+            break;
+         case elDebugIntegers:
+            variableType = lxIntsVariable;
+            variableArg = size;
+            break;
+         case elDebugShorts:
+            variableType = lxShortsVariable;
+            variableArg = size;
+            break;
+         case elDebugBytes:
+            variableType = lxBytesVariable;
+            variableArg = size;
+            break;
+         default:
+            if (isPrimitiveRef(variable.extraparam)) {
                variableType = lxBytesVariable;
                variableArg = size;
-               break;
-            default:
-               if (isPrimitiveRef(variable.extraparam)) {
-                  variableType = lxBytesVariable;
+            }
+            else {
+               variableType = lxBinaryVariable;
+               // HOTFIX : size should be provide only for dynamic variables
+               if (binaryArray)
                   variableArg = size;
-               }
-               else {
-                  variableType = lxBinaryVariable;
-                  // HOTFIX : size should be provide only for dynamic variables
-                  if (binaryArray)
-                     variableArg = size;
 
-                  if (variable.reference != 0 && !isPrimitiveRef(variable.reference)) {
-                     className = scope.moduleScope->module->resolveReference(variable.reference);
-                  }
+               if (variable.reference != 0 && !isPrimitiveRef(variable.reference)) {
+                  className = scope.moduleScope->module->resolveReference(variable.reference);
                }
-               break;
-         }
+            }
+            break;
       }
-      else {
-         if (size < 0) {
+   }
+   else {
+      if (size < 0) {
          //   // replace dynamic primitive array with a wrapper
-            size = 0;
+         size = 0;
          //   variable.reference = resolvePrimitiveReference(scope, variable.reference, variable.element);
          //   variable.element = 0;
-         }
-
-         variable.param = scope.newLocal();
       }
 
+      variable.param = scope.newLocal();
+   }
+
+   if (!scope.locals.exist(identifier)) {
       scope.mapLocal(identifier, variable.param, variable.reference, variable.element, size);
 
       // injecting variable label
@@ -2151,6 +2098,76 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
       }
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
+
+   return variable;
+}
+
+void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle)
+{
+   ident_t identifier = terminal.identifier();
+   int size = dynamicArray ? -1 : 0;
+
+   // COMPILER MAGIC : if it is a fixed-sized array
+   SNode opNode = terminal.nextNode();
+   if (opNode == lxOperator && opNode.argument == REFER_OPERATOR_ID) {
+      if (size)
+         scope.raiseError(errInvalidSyntax, terminal);
+
+      SNode sizeExprNode = opNode.nextNode();
+
+      size = resolveArraySize(sizeExprNode, scope);
+
+      // HOTFIX : remove the size attribute
+      opNode = lxIdle;
+      sizeExprNode = lxIdle;
+
+      opNode = sizeExprNode.nextNode();
+   }
+   ObjectInfo variable;
+   variable.reference = typeRef;
+
+   if (size != 0 && variable.reference != 0) {
+      if (!isPrimitiveRef(variable.reference)) {
+         // if it is a primitive array
+         variable.element = variable.reference;
+         variable.reference = _logic->definePrimitiveArray(*scope.moduleScope, variable.element, true);
+      }
+      else scope.raiseError(errInvalidHint, terminal);
+   }
+
+   ClassInfo localInfo;
+   bool binaryArray = false;
+   if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.reference))
+      scope.raiseError(errUnknownVariableType, terminal);
+
+   if (variable.reference == V_BINARYARRAY && variable.element != 0) {
+      localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
+   }
+
+   if (_logic->isEmbeddableArray(localInfo) && size != 0) {
+      binaryArray = true;
+      size = size * (-((int)localInfo.size));
+   }
+   else if (variable.reference == V_OBJARRAY && size == -1) {
+      // if it is a primitive dynamic array
+   }
+   else if (_logic->isEmbeddable(localInfo) && size == 0) {
+      bool dummy = false;
+      size = _logic->defineStructSize(localInfo, dummy);
+   }
+   else if (size != 0)
+      scope.raiseError(errInvalidOperation, terminal);
+
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+   if (methodScope->yieldMethod) {
+      // COMPILER MAGIC : if it is a yield method - variables should be declared in the class
+   }
+   else variable = declareStackVariable(writer, terminal, scope, size, binaryArray, localInfo, variable);
+
+   if (opNode == lxNone && canBeIdle) {
+      // HOTFIX : remove the variable if the statement contains only a declaration
+      terminal = lxIdle;
+   }
 }
 
 void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
@@ -2643,6 +2660,9 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
 
 ObjectInfo Compiler :: compileYieldExpression(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode)
 {
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
+   int index = methodScope->getAttribute(maYieldContext);
+
    EAttrs objectMode(mode, HINT_YIELD_EXPR);
    objectMode.include(HINT_NOPRIMITIVES);
 
@@ -2650,7 +2670,7 @@ ObjectInfo Compiler :: compileYieldExpression(SyntaxWriter& writer, SNode object
 
    ObjectInfo retVal = compileObject(writer, objectNode, scope, 0, objectMode);
 
-   writer.inject(lxYieldReturing);
+   writer.inject(lxYieldReturing, index);
    writer.closeNode();
 
    writer.removeBookmark();
@@ -6199,9 +6219,7 @@ void Compiler :: compileMethodCode(SyntaxWriter& writer, SNode node, SNode body,
    preallocated = codeScope.level;
 
    if (scope.yieldMethod) {
-      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-
-      compileYieldDispatch(writer, methodScope->getAttribute(maYieldContext));
+      compileYieldDispatch(writer, scope.getAttribute(maYieldContext));
    }
 
    ObjectInfo retVal = compileCode(writer, body == lxReturning ? node : body, codeScope);
@@ -6264,7 +6282,7 @@ void Compiler :: compileYieldableMethod(SyntaxWriter& writer, SNode node, Method
    int paramCount = getParamCount(scope.message);
    int preallocated = 0;
 
-   CodeScope codeScope(&scope);
+   YieldCodeScope codeScope(&scope);
 
    SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
    if (body == lxCode) {

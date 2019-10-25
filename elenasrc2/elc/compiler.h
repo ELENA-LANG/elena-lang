@@ -228,6 +228,7 @@ private:
             slSymbol,
             slMethod,
             slCode,
+            slYieldCode,
             slOwnerClass,
          };
    
@@ -713,6 +714,19 @@ private:
       CodeScope(CodeScope* parent);
    };
 
+   struct YieldCodeScope : public CodeScope
+   {
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == slYieldCode) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
+      YieldCodeScope(MethodScope* parent);
+   };
+
    // --- ResendScope ---
    struct ResendScope : public CodeScope
    {
@@ -896,6 +910,9 @@ private:
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 
    void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
+
+   ObjectInfo declareStackVariable(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int size, bool binaryArray, 
+      ClassInfo& localInfo, ObjectInfo variable);
    void compileVariable(SyntaxWriter& writer, SNode& node, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, EAttr mode);
