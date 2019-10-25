@@ -61,6 +61,7 @@ constexpr auto HINT_REFOP           = EAttr::eaRef;
 constexpr auto HINT_RETEXPR         = EAttr::eaRetExpr;
 constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
+constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
 
 // scope modes
 constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
@@ -2640,6 +2641,23 @@ ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope
    return result;
 }
 
+ObjectInfo Compiler :: compileYieldExpression(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode)
+{
+   EAttrs objectMode(mode, HINT_YIELD_EXPR);
+   objectMode.include(HINT_NOPRIMITIVES);
+
+   writer.newBookmark();
+
+   ObjectInfo retVal = compileObject(writer, objectNode, scope, 0, objectMode);
+
+   writer.inject(lxYieldReturing);
+   writer.closeNode();
+
+   writer.removeBookmark();
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope)
 {
    ObjectInfo retVal;
@@ -3199,7 +3217,8 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    }
 }
 
-ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, EAttr mode, int stackSafeAttr)
+ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, 
+   EAttr mode, int stackSafeAttr)
 {
    ObjectInfo retVal(okObject);
 
@@ -4966,6 +4985,9 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
 
    if (targetMode.test(HINT_LAZY_EXPR)) {
       objectInfo = compileClosure(writer, current, scope, targetMode);
+   }
+   else if (targetMode.test(HINT_YIELD_EXPR)) {
+      compileYieldExpression(writer, current, scope, targetMode);
    }
    else objectInfo = compileObject(writer, current, scope, 0, targetMode);
 

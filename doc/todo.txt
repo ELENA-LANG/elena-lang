@@ -7,39 +7,29 @@ In development:
                 * migrate tutorials from reddit
                 * duck typing tutorial
 
+              ydev tutorials
+
               xdev
-                * yield, get rid of yield_init
-
-
-address labNext
-<save in context>
-jump first
-
-
-call yield
-
-yield
-
-  pop ret
-  save in context
-  jump to method end
-
-end
-
-
-yield
-
-
-
-                * where to persist the method state
-                  - heap
-
+                * yieldable methods with variables
+                * implementing #492
                 * it should be a class, (extensions are not allowed) - check in validateMessage
 
-                * implementing #492
+              ydev tutorials
+
+              xdev
                 * support break and continue statements
                 * implenent break / continue analog
                 * addai, saveai
+
+              ydev tutorials
+
+              xdev
+                * port Linux
+
+              ydev tutorials
+
+              xdev
+                * port Linux IDE
 
               ydev tutorials
                 * migrate all existing ones

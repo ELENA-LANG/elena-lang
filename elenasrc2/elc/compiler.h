@@ -904,6 +904,7 @@ private:
 
    ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
    ObjectInfo compileSubjectReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
+   ObjectInfo compileYieldExpression(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
 
    void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
    void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);

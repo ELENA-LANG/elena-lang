@@ -6208,6 +6208,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
 //      case lxCode:
 //         generateCodeBlock(tape, node);
 //         break;
+      case lxYieldReturing:
+         generateYieldReturn(tape, node);
+         break;
       default:
          loadObject(tape, node, mode);
          break;
@@ -6367,9 +6370,6 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             break;
          case lxYieldDispatch:
             generateYieldDispatch(tape, current);
-            break;
-         case lxYieldReturing:
-            generateYieldReturn(tape, current);
             break;
          default:
             generateObject(tape, current);
@@ -6548,7 +6548,7 @@ void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node
    // nload
    // ifn labStart 0
    // nop
-   // ajumpi 1 
+   // ajumpi 0 
    // labStart:
 
    tape.newLabel();
@@ -6558,7 +6558,7 @@ void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node
    tape.write(bcNLoad);
    tape.write(bcIfN, baCurrentLabel, 0);
    tape.write(bcNop);
-   tape.write(bcAJumpI, 1);
+   tape.write(bcAJumpI, 0);
    tape.setLabel();
 }
 
