@@ -2686,6 +2686,14 @@ inline % 0E1h
   
 end
 
+// ; acopyai
+
+inline % 0E2h
+
+  lea eax, [eax+__arg1]
+
+end
+
 // ; mtredirect
 
 inline % 0E8h

@@ -112,6 +112,7 @@ enum LexicalType
    lxResultField              = 0x00A11A, // arg -offset
    lxCurrentMessage           = 0x00A11B,
    lxSelfLocal                = 0x00A11C,
+   lxResultFieldIndex         = 0x00A11D, // arg -offset
    lxConstantList             = 0x00A11E, // arg - reference
    lxBlockLocalAddr           = 0x00A11F, // arg - offset
    lxClassRefField            = 0x008120, // arg - self instance offset

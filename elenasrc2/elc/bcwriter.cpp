@@ -824,6 +824,8 @@ void ByteCodeWriter :: loadBase(CommandTape& tape, LexicalType sourceType, ref_t
          // bloadai
          tape.write(bcBLoadAI, sourceArgument);
          break;
+      //case lxResultFieldIndex:
+      //   break;
       case lxStaticConstField:
          if ((int)sourceArgument > 0) {
             // bloadr ref
@@ -4048,6 +4050,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // aloadai
          tape.write(bcALoadAI, argument);
          break;
+      //case lxResultFieldIndex:
+      //   break;
       case lxInternalCall:
          tape.write(bcCallR, argument | mskInternalRef);
          break;

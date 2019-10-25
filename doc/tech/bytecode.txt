@@ -20,9 +20,12 @@ ELENA byte codes (or ecodes)
  --------------------
  acopyb                     - base => acc
  
+ acopyai i                  - acc+i => acc
+                              does not affect ext register (ECX) 
+
  acopyf i                   - fp+i => acc
-                              does not affect ext register (ECX)           
- 
+                              does not affect ext register (ECX) 
+
  acopyr r                   - r => acc
  
  acopys i                   - sp+i => acc

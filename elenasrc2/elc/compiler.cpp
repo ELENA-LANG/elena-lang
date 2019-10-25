@@ -2102,6 +2102,15 @@ ObjectInfo Compiler :: declareStackVariable(SyntaxWriter& writer, SNode terminal
    return variable;
 }
 
+ObjectInfo Compiler :: declareYieldVariable(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int size, bool binaryArray,
+   ClassInfo& localInfo, ObjectInfo variable)
+{
+   YieldCodeScope* yieldScope = (YieldCodeScope*)scope.getScope(Scope::slYieldCode);
+
+
+   return ObjectInfo(); // !! temporal
+}
+
 void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle)
 {
    ident_t identifier = terminal.identifier();
@@ -2161,6 +2170,7 @@ void Compiler :: compileVariable(SyntaxWriter& writer, SNode& terminal, CodeScop
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
    if (methodScope->yieldMethod) {
       // COMPILER MAGIC : if it is a yield method - variables should be declared in the class
+      variable = declareYieldVariable(writer, terminal, scope, size, binaryArray, localInfo, variable);
    }
    else variable = declareStackVariable(writer, terminal, scope, size, binaryArray, localInfo, variable);
 

@@ -913,6 +913,8 @@ private:
 
    ObjectInfo declareStackVariable(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int size, bool binaryArray, 
       ClassInfo& localInfo, ObjectInfo variable);
+   ObjectInfo declareYieldVariable(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int size, bool binaryArray,
+      ClassInfo& localInfo, ObjectInfo variable);
    void compileVariable(SyntaxWriter& writer, SNode& node, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, EAttr mode);
