@@ -17,6 +17,12 @@ In development:
               ydev tutorials
 
               xdev
+                * implement enum type
+                * BoolValue cannot be inherited
+
+              ydev tutorials
+
+              xdev
                 * support break and continue statements
                 * implenent break / continue analog
                 * addai, saveai

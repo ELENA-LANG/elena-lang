@@ -4050,8 +4050,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // aloadai
          tape.write(bcALoadAI, argument);
          break;
-      //case lxResultFieldIndex:
-      //   break;
+      case lxResultFieldIndex:
+         // acopyai
+         tape.write(bcACopyAI, argument);
+         break;
       case lxInternalCall:
          tape.write(bcCallR, argument | mskInternalRef);
          break;

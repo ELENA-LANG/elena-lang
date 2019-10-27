@@ -140,6 +140,7 @@ public:
       okNil,
       okSuper,
       okLocalAddress,                 // param - local offset
+      okYieldLocalAddress,            // param - context offset, exrparam - offset index 
       okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
@@ -613,6 +614,7 @@ private:
       LocalMap     locals;
       int          level;
       bool         genericMethod;
+      bool         yieldMethod;
 
       bool         ignoreDuplicates; // used for code templates, should be applied only to the statement
 
@@ -712,19 +714,6 @@ private:
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
       CodeScope(CodeScope* parent);
-   };
-
-   struct YieldCodeScope : public CodeScope
-   {
-      virtual Scope* getScope(ScopeLevel level)
-      {
-         if (level == slYieldCode) {
-            return this;
-         }
-         else return parent->getScope(level);
-      }
-
-      YieldCodeScope(MethodScope* parent);
    };
 
    // --- ResendScope ---
@@ -911,10 +900,8 @@ private:
 
    void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   ObjectInfo declareStackVariable(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int size, bool binaryArray, 
-      ClassInfo& localInfo, ObjectInfo variable);
-   ObjectInfo declareYieldVariable(SyntaxWriter& writer, SNode terminal, CodeScope& scope, int size, bool binaryArray,
-      ClassInfo& localInfo, ObjectInfo variable);
+   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
+                                    int& variableArg, ident_t& className);
    void compileVariable(SyntaxWriter& writer, SNode& node, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle);
 
    ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, EAttr mode);
@@ -927,6 +914,8 @@ private:
 
    void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
    void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
+   void writeVariableTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
+   void writeYieldVariableTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
