@@ -2412,10 +2412,13 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          writer.appendNode(lxInternalRef, object.param);
          return;
       case okPrimitive:
+         writer.newBookmark();
          if (EAttrs::test(mode, HINT_AUTOSIZE) && !writeSizeArgument(writer))
             scope.raiseError(errInvalidOperation, terminal);
 
-         writer.newNode(lxCreatingStruct, object.param);
+         writer.appendNode(lxCreatingStruct, object.param);
+         writer.inject(lxSeqExpression);
+         writer.removeBookmark();
          break;
    }
 
