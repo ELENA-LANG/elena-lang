@@ -62,6 +62,7 @@ constexpr auto HINT_RETEXPR         = EAttr::eaRetExpr;
 constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
 constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
+constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 
 // scope modes
 constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
@@ -805,15 +806,6 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
       if (genericMethod && identifier.compare(SUBJECT_VAR)) {
          return ObjectInfo(okSubject, local.offset, V_SUBJECT);
       }
-      else if (yieldMethod) {
-         MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
-         if (local.size != 0) {
-            int index = methodScope->getAttribute(maYieldContext);
-
-            return ObjectInfo(okYieldLocalAddress, -local.offset - 1, local.class_ref, local.element_ref, index);
-         }
-         else return ObjectInfo(/*okLocal, local.offset, local.class_ref, local.element_ref, 0*/);
-      }
       else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.element_ref, 0);
       }
@@ -1032,7 +1024,6 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
             case okSuper:
             case okSelfParam:
             case okLocalAddress:
-            case okYieldLocalAddress:
             case okFieldAddress:
             case okReadOnlyFieldAddress:
             case okOuterField:
@@ -2246,33 +2237,15 @@ void Compiler :: writeVariableTerminal(SyntaxWriter& writer, CodeScope& scope, O
    else writer.newNode(type, object.param);
 }
 
-void Compiler :: writeYieldVariableTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
+bool Compiler :: writeSizeArgument(SyntaxWriter& writer)
 {
-   bool boxing = !EAttrs::test(mode, HINT_NOBOXING) || EAttrs::test(mode, HINT_DYNAMIC_OBJECT);
-
-   if (boxing) {
-      bool variable = false;
-      int size = _logic->defineStructSizeVariable(*scope.moduleScope,
-         resolveObjectReference(scope, object, false), object.element, variable);
-      if (size < 0 && type == lxFieldAddress) {
-         // if it is fixed-size array
-         size = defineFieldSize(scope, object.param) * (-size);
-      }
-      writer.newNode((variable && !EAttrs::test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxBoxing, size);
-
-      writer.newNode(lxFieldExpression);
-      writer.appendNode(lxField, object.extraparam);
-      writer.appendNode(type, object.param);
-      writer.closeNode();
-
-      if (EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
-         writer.appendNode(lxBoxingRequired);
+   SNode current = writer.CurrentNode().lastChild();
+   if (current == lxField) {
+      writer.appendNode(lxTapeArgument, current.argument);
+      
+      return true;
    }
-   else {
-      writer.newNode(lxFieldExpression);
-      writer.appendNode(lxField, object.extraparam);
-      writer.appendNode(type, object.param);
-   }
+   else return false;
 }
 
 void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode)
@@ -2391,9 +2364,6 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          writer.appendNode(lxLocalAddress, object.param);
          writer.appendNode(lxTarget, scope.moduleScope->messageNameReference);
          break;
-      case okYieldLocalAddress:
-         writeYieldVariableTerminal(writer, scope, object, mode, lxResultFieldIndex);
-         break;
       case okLocalAddress:
       case okFieldAddress:
       case okReadOnlyFieldAddress:
@@ -2442,6 +2412,9 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          writer.appendNode(lxInternalRef, object.param);
          return;
       case okPrimitive:
+         if (EAttrs::test(mode, HINT_AUTOSIZE) && !writeSizeArgument(writer))
+            scope.raiseError(errInvalidOperation, terminal);
+
          writer.newNode(lxCreatingStruct, object.param);
          break;
    }
@@ -2705,6 +2678,19 @@ ObjectInfo Compiler :: compileYieldExpression(SyntaxWriter& writer, SNode object
 
    EAttrs objectMode(mode, HINT_YIELD_EXPR);
    objectMode.include(HINT_NOPRIMITIVES);
+
+   // save context
+   writer.newNode(lxExpression);
+   writer.appendNode(lxTapeArgument, index);
+   writer.newNode(lxCopying, -1);
+   writer.newNode(lxFieldExpression);
+   writer.appendNode(lxField, index);
+   writer.appendNode(lxResultFieldIndex, 1);
+   writer.closeNode();
+   writer.appendNode(lxLocalAddress, -2);
+
+   writer.closeNode();
+   writer.closeNode();
 
    writer.newBookmark();
 
@@ -3768,7 +3754,8 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScop
    return scope.resolveAutoType(target, sourceRef, source.element);
 }
 
-ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool accumulateMode)
+ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, 
+   bool accumulateMode)
 {
    ObjectInfo retVal = target;
    LexicalType operationType = lxAssigning;
@@ -3817,7 +3804,6 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
       case okOuterStaticField:
          break;
       case okLocalAddress:
-      case okYieldLocalAddress:
       case okFieldAddress:
       {
          size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
@@ -3888,22 +3874,11 @@ ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeSc
    }
    else compileExpression(writer, sourceNode, scope, targetRef, assignMode);
 
-//   else if (retVal.kind == okPrimitiveConv) {
-//      if (retVal.param == V_REAL64) {
-//         if (retVal.extraparam == V_INT32) {
-//            writer.appendNode(lxIntConversion);
-//         }
-//         writer.insert(lxRealOp, SET_MESSAGE_ID);
-//         writer.closeNode();
-//      }
-//   }
-//   else {
-      if (byRefAssigning)
-         writer.appendNode(lxByRefTarget);
+   if (byRefAssigning)
+      writer.appendNode(lxByRefTarget);
 
-      writer.inject(operationType, operand);
-      writer.closeNode();
-   //}
+   writer.inject(operationType, operand);
+   writer.closeNode();
 
    return retVal;
 }
@@ -5070,7 +5045,6 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
       switch (objectInfo.kind) {
          case okLocalAddress:
          case okFieldAddress:
-         case okYieldLocalAddress:
             // HOTFIX : the result of an assignment operation result should be boxed
             writer.inject(lxBoxing, _logic->defineStructSize(*scope.moduleScope, sourceRef, 0u));
             writer.appendNode(lxTarget, sourceRef);
@@ -6314,6 +6288,20 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
 
 void Compiler :: compileYieldDispatch(SyntaxWriter& writer, int index)
 {
+   // load context
+   writer.newNode(lxExpression);
+   writer.appendNode(lxTapeArgument, index);
+   writer.newNode(lxCopying, -1);
+   writer.appendNode(lxLocalAddress, -2);
+   writer.newNode(lxFieldExpression);
+   writer.appendNode(lxField, index);
+   writer.appendNode(lxResultFieldIndex, 1);
+   writer.closeNode();
+
+   writer.closeNode();
+   writer.closeNode();
+
+   // dispatch
    writer.appendNode(lxYieldDispatch, index);
 }
 
@@ -6332,30 +6320,14 @@ void Compiler :: compileYieldableMethod(SyntaxWriter& writer, SNode node, Method
    }
    else scope.raiseError(errInvalidOperation, body);
 
-   // COMPILER MAGIC : struct variables should be allocated in context
+   // COMPILER MAGIC : struct variables should be synchronized with the context field
    if (scope.reserved > 0) {
-      // looking for context initialization
       int index = scope.getAttribute(maYieldContext);
-      SNode current = node.nextNode();
-      // field init should be after the method
-      while (current != lxNone) {
-         if (current == lxFieldInit) {
-            SNode targetNode = current.firstChild(lxTerminalMask);
-            ObjectInfo target = scope.mapTerminal(targetNode.identifier(), false, EAttr::eaNone);
-            if (target.kind == okField && target.param == index) {
-               // update the context field size
-               SNode allocNode = targetNode.nextNode(lxObjectMask);
-               if (allocNode == lxExpression)
-                  allocNode = allocNode.findSubNodeMask(lxObjectMask);
 
-               allocNode.setArgument(allocNode.argument + scope.reserved);
-
-               scope.reserved = 0;
-               break;
-            }
-         }
-         current = current.nextNode();
-      }
+      // injecting the argument size
+      SyntaxWriter methodWriter(writer);
+      methodWriter.seekUp(lxClassMethod);
+      methodWriter.CurrentNode().insertNode(lxSetTapeArgument, scope.reserved).appendNode(lxTapeArgument, index);
    }
 
    endMethod(writer, scope, codeScope, paramCount, preallocated);
@@ -6413,6 +6385,9 @@ void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScop
             declareCodeDebugInfo(writer, node, scope);
 
          writer.newNode(lxExpression);
+
+         if (current.firstChild() == lxSetTapeArgument) {
+         }
 
          if (current.argument != INVALID_REF)
             writer.appendNode(lxBreakpoint, dsStep);
@@ -9605,8 +9580,12 @@ void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subT
    assignNode.appendNode(lxIdentifier, fieldName.c_str());
    assignNode.appendNode(lxAssign);
    // NOTE : if stack allocated variables are declared
-   // this nummber has to be increased
-   assignNode.appendNode(lxExpression).appendNode(lxPrimitive, 1); 
+   // this nummber has to be auto-update
+
+   SNode exprNode = assignNode.appendNode(lxExpression);
+   // indicating that the size should be auto-set
+   exprNode.appendNode(lxAttribute, V_AUTOSIZE); 
+   exprNode.appendNode(lxPrimitive, 1);
 }
 
 //void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef)

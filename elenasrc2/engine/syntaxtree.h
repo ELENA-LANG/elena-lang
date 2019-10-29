@@ -185,6 +185,7 @@ enum LexicalType
    lxCollection               = 0x00C03E,
    lxYieldReturing            = 0x00C03F,
    lxYieldStop                = 0x00C040,
+   lxCopying                  = 0x10C041,   // an assigning expression, arg - size
    lxOverridden               = 0x004047,
    lxFinally                  = 0x004048,
 
@@ -255,6 +256,8 @@ enum LexicalType
    lxArrayType                = 0x2004A,
    lxDimensionAttr            = 0x2004B,
    lxCheckLocal               = 0x2004C,
+   lxTapeArgument             = 0x2004D,
+   lxSetTapeArgument          = 0x2004E,
 
    lxTempAttr                 = 0x2010D,
    lxSubOpMode                = 0x2010E,

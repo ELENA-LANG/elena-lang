@@ -140,7 +140,6 @@ public:
       okNil,
       okSuper,
       okLocalAddress,                 // param - local offset
-      okYieldLocalAddress,            // param - context offset, exrparam - offset index 
       okParams,                       // param - local offset
 ////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - role reference
@@ -912,10 +911,11 @@ private:
    ObjectInfo compileSubjectReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
    ObjectInfo compileYieldExpression(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
 
+   bool writeSizeArgument(SyntaxWriter& writer);
+
    void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
    void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void writeVariableTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
-   void writeYieldVariableTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void writeTerminalInfo(SyntaxWriter& writer, SNode node);
 
@@ -948,7 +948,8 @@ private:
    ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
    ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
-   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool accumulateMode);
+   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, 
+      bool accumulateMode);
    ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
    ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
    ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);

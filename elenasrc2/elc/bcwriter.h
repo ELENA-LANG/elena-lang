@@ -319,6 +319,7 @@ class ByteCodeWriter
    void generateBranching(CommandTape& tape, SyntaxTree::Node node);
    void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateInlineArgCallExpression(CommandTape& tape, SyntaxTree::Node node);

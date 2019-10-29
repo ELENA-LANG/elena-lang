@@ -21,6 +21,7 @@ constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
 /// modificator
 constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
 constexpr auto V_SCRIPTSELFMODE  = 0x80006002u;
+constexpr auto V_AUTOSIZE        = 0x80006003u;
 
 /// visibility:
 constexpr auto V_PUBLIC          = 0x80005001u;
@@ -484,6 +485,7 @@ public:
       eaInitializerScope   = 0x10000000000,
       eaRefExpr            = 0x20000000000,
       eaYieldExpr          = 0x40000000000,
+      eaAutoSize           = 0x80000000000,
 
       eaScopeMask          = 0x00100200020,
       eaClosureMask        = 0x01C00008000,

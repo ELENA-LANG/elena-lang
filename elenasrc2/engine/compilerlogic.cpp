@@ -1811,6 +1811,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case 0:
          // HOTFIX : recognize idle attributes
          return true;
+      case V_AUTOSIZE:
+         attributes.include(EAttr::eaAutoSize);
+         return true;
       case V_VARIABLE:
       case V_AUTO:
          attributes.include(EAttr::eaType);

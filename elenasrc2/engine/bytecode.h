@@ -549,8 +549,10 @@ struct CommandTape
 {
    BList<ByteCommand> tape;   // !! should we better use an array?
 
-   int        labelSeed;
-   Stack<int> labels;
+   int            labelSeed;
+   Stack<int>     labels;
+   
+   Map<int, int> arguments;
 
    ByteCodeIterator start() { return tape.start(); }
 
@@ -601,6 +603,21 @@ struct CommandTape
       *it = newLabel;
 
       return oldLabel;
+   }
+
+   int resolveArgument(int key)
+   {
+      return arguments.get(key);
+   }
+
+   void setArgument(int key, int value)
+   {
+      arguments.add(key, value);
+   }
+
+   void clearArguments()
+   {
+      arguments.clear();
    }
 
    ByteCodeIterator find(ByteCode code);

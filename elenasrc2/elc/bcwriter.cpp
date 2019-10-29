@@ -2258,6 +2258,16 @@ void ByteCodeWriter :: assignInt(CommandTape& tape, LexicalType target, int offs
          tape.write(bcBWrite);
       }
    }
+   else if (target == lxResultFieldIndex) {
+      // bswap
+      // acopyai
+      // bswap
+      // ncopy
+      tape.write(bcBSwap);
+      tape.write(bcACopyAI, offset);
+      tape.write(bcBSwap);
+      tape.write(bcNCopy);
+   }
    else if (target == lxLocalAddress) {
       // bcopyf param
       // ncopy
@@ -2490,6 +2500,17 @@ void ByteCodeWriter :: assignStruct(CommandTape& tape, LexicalType target, int o
    else if (target == lxLocalAddress) {
       // bcopyf param
       tape.write(bcBCopyF, offset);
+
+      copyStructure(tape, 0, size);
+   }
+   else if (target == lxResultFieldIndex) {
+      // bswap
+      // acopyai
+      // bswap
+      // ncopy
+      tape.write(bcBSwap);
+      tape.write(bcACopyAI, offset);
+      tape.write(bcBSwap);
 
       copyStructure(tape, 0, size);
    }
@@ -5652,6 +5673,60 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       tape.write(bcPopB);
 }
 
+
+void ByteCodeWriter :: generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode)
+{
+   int size = node.argument << 2;
+   if (!size)
+      return;
+
+   if (test(mode, BASE_PRESAVED))
+      tape.write(bcPushB);
+
+   bool accRequiered = test(mode, ACC_REQUIRED);
+
+   SNode target;
+   SNode source;
+   assignOpArguments(node, target, source);
+
+   if (source == lxExpression)
+      source = source.findSubNodeMask(lxObjectMask);
+
+   generateObject(tape, source, ACC_REQUIRED);
+
+   if (target == lxFieldExpression || target == lxExpression) {
+      SNode arg1, arg2;
+      assignOpArguments(target, arg1, arg2);
+      if (arg1.type == lxFieldExpression) {
+         SNode arg3, arg4;
+         assignOpArguments(arg1, arg3, arg4);
+         loadBase(tape, arg3.type, arg3.argument, ACC_PRESAVED);
+         loadFieldExpressionBase(tape, arg4.type, arg4.argument, ACC_PRESAVED);
+      }
+      else loadBase(tape, arg1.type, arg1.argument, ACC_PRESAVED);
+
+      if (size == 4) {
+         assignInt(tape, arg2, arg2.argument, accRequiered);
+      }
+      else assignStruct(tape, arg2, arg2.argument, size);
+   }
+   else {
+      loadBase(tape, target.type, target.argument, ACC_PRESAVED);
+
+      if (size == 4) {
+         copyInt(tape, 0);
+      }
+      else copyStructure(tape, 0, size);
+
+   }
+
+   if (accRequiered)
+      assignBaseTo(tape, lxResult);
+
+   if (test(mode, BASE_PRESAVED))
+      tape.write(bcPopB);
+}
+
 void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node)
 {
    excludeFrame(tape);
@@ -6151,6 +6226,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, int mode)
       case lxAssigning:
          generateAssigningExpression(tape, node, mode);
          break;
+      case lxCopying:
+         generateCopying(tape, node, mode);
+         break;
       case lxBranching:
          generateBranching(tape, node);
          break;
@@ -6235,6 +6313,12 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, int mod
       }
       else if (current == lxExternFrame) {
          generateExternFrame(tape, current);
+      }
+      else if (current == lxTapeArgument) {
+         SNode nextNode = current.nextNode();
+
+         nextNode.setArgument(nextNode.argument + tape.resolveArgument(current.argument));
+         //setAssignsize(node);
       }
       else generateDebugInfo(tape, current);
 
@@ -6625,6 +6709,9 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
    SyntaxTree::Node current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
+         case lxSetTapeArgument:
+            tape.setArgument(current.findChild(lxTapeArgument).argument, current.argument);
+            break;
          case lxCalling:
             if (!open) {
                open = true;
@@ -6757,6 +6844,8 @@ void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root, pos_t source
    }
 
    endClass(tape);
+
+   tape.clearArguments();
 }
 
 void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
