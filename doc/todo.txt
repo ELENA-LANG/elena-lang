@@ -6,13 +6,12 @@ In development:
                 * write - Programming in ELENA : manual
                 * migrate tutorials from reddit
                 * duck typing tutorial
+                * yieldable method tutorial
                 * migrate all existing ones
                 * tutorials
                 * rosetta code : AmicablePairs using yieldable method
 
               dev2
-                * implementing #492
-
                 * work with attributes : list of classes, constants, strings, integers, messages, ...
                   print attributes from static and normal methods
 

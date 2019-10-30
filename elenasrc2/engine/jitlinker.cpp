@@ -607,6 +607,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
       return LOADER_NOTLOADED;
 
+
    ReferenceHelper refHelper(this, sectionInfo.module, &references);
 
    MemoryReader attrReader(sectionInfo.attrSection);
@@ -615,6 +616,9 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
    MemoryReader vmtReader(sectionInfo.vmtSection);
    // read tape record size
    size_t size = vmtReader.getDWord();
+
+   if (referenceInfo.referenceName.endsWith("Base#class"))
+      size -= 0;
 
    // read VMT header
    ClassHeader header;
@@ -688,6 +692,9 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
          // NOTE : ignore virtual VMT
          ClassInfo::StaticInfoMap staticValues;
          staticValues.read(&vmtReader);
+
+         if (referenceInfo.referenceName.endsWith("Base#class"))
+            size -= 0;
 
          ref_t currentMask = 0;
          ref_t currentRef = 0;
@@ -1326,6 +1333,9 @@ void* JITLinker :: resolveEntry(void* programEntry)
 // NOTE: reference should not be a forward one, otherwise there may be code duplication
 void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMode)
 {
+   if (referenceInfo.referenceName.endsWith("Base#class"))
+      mask -= 0;
+
    void* vaddress = _loader->resolveReference(referenceInfo, mask);
    if (vaddress==LOADER_NOTLOADED) {
       switch (mask) {

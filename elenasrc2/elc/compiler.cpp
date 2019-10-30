@@ -8076,9 +8076,8 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
          dataWriter.writeDWord(0);
       }
       else if (retVal.kind == okClass) {
-         dataWriter.Memory()->addReference(retVal.reference | mskVMTRef, dataWriter.Position());
+         dataWriter.Memory()->addReference(retVal.param | mskVMTRef, dataWriter.Position());
          dataWriter.writeDWord(0);
-
       }
       else {
          SymbolScope memberScope(nsScope, nsScope->moduleScope->mapAnonymous());
