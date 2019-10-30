@@ -8,6 +8,7 @@ In development:
                 * duck typing tutorial
                 * migrate all existing ones
                 * tutorials
+                * rosetta code : AmicablePairs using yieldable method
 
               dev2
                 * implementing #492
