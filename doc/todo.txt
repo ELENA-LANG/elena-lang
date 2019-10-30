@@ -36,6 +36,8 @@ In development:
                 * do-while - if the second agrument is code brackets?
                 * static fields should be accessaible from storng typed extensions
                 * improve compilation speed
+                * yield can be used only for yieldable method
+                * yieldable method can be declared only for normal class
 
               dev3
                 * port Linux
