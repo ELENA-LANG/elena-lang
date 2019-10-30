@@ -544,8 +544,10 @@ void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference
 void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t reference)
 {
    //   new fieldCount, vmt
-
-   tape.write(bcNew, reference | mskVMTRef, fieldCount);
+   if (reference) {
+      tape.write(bcNew, reference | mskVMTRef, fieldCount);
+   }
+   else tape.write(bcNew, 0, fieldCount);
 }
 
 void ByteCodeWriter :: initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument)
@@ -5711,7 +5713,13 @@ void ByteCodeWriter :: generateCopying(CommandTape& tape, SyntaxTree::Node node,
       else assignStruct(tape, arg2, arg2.argument, size);
    }
    else {
-      loadBase(tape, target.type, target.argument, ACC_PRESAVED);
+      if (target == lxSeqExpression) {
+         pushObject(tape, lxResult);
+         generateObject(tape, target);
+         loadBase(tape, lxResult, 0, 0);
+         popObject(tape, lxResult);
+      }
+      else loadBase(tape, target.type, target.argument, ACC_PRESAVED);
 
       if (size == 4) {
          copyInt(tape, 0);

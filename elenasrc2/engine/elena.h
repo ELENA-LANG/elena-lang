@@ -520,6 +520,8 @@ enum MethodAttribute
    maOverloadlist       = 0x20A,
    maMultimethod        = 0x40B,
    maYieldContext       = 0x00C,
+   maYieldLocals        = 0x00D,
+   maYieldPreallocated  = 0x00E,
 };
 
 enum ClassAttribute

@@ -2412,11 +2412,12 @@ void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& 
          writer.appendNode(lxInternalRef, object.param);
          return;
       case okPrimitive:
+      case okPrimCollection:
          writer.newBookmark();
          if (EAttrs::test(mode, HINT_AUTOSIZE) && !writeSizeArgument(writer))
             scope.raiseError(errInvalidOperation, terminal);
 
-         writer.appendNode(lxCreatingStruct, object.param);
+         writer.appendNode(object.kind == okPrimitive ? lxCreatingStruct : lxCreatingClass, object.param);
          writer.inject(lxSeqExpression);
          writer.removeBookmark();
          break;
@@ -2443,6 +2444,9 @@ ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, Cod
       //   break;
       case lxPrimitive:
          object = ObjectInfo(okPrimitive, terminal.argument);
+         break;
+      case lxPrimCollection:
+         object = ObjectInfo(okPrimCollection, terminal.argument);
          break;
       case lxLiteral:
          object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
@@ -2678,6 +2682,8 @@ ObjectInfo Compiler :: compileYieldExpression(SyntaxWriter& writer, SNode object
 {
    MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
    int index = methodScope->getAttribute(maYieldContext);
+   int index2 = methodScope->getAttribute(maYieldLocals);
+   int preallocated = methodScope->getAttribute(maYieldPreallocated);
 
    EAttrs objectMode(mode, HINT_YIELD_EXPR);
    objectMode.include(HINT_NOPRIMITIVES);
@@ -2685,12 +2691,26 @@ ObjectInfo Compiler :: compileYieldExpression(SyntaxWriter& writer, SNode object
    // save context
    writer.newNode(lxExpression);
    writer.appendNode(lxTapeArgument, index);
-   writer.newNode(lxCopying, -1);
+   writer.newNode(lxCopying);
    writer.newNode(lxFieldExpression);
    writer.appendNode(lxField, index);
    writer.appendNode(lxResultFieldIndex, 1);
    writer.closeNode();
    writer.appendNode(lxLocalAddress, -2);
+
+   writer.closeNode();
+   writer.closeNode();
+
+   // save locals
+   writer.newNode(lxExpression);
+   writer.appendNode(lxTapeArgument, index2);
+   writer.newNode(lxCopying, 0);
+   writer.appendNode(lxField, index2);
+
+   writer.newNode(lxSeqExpression);
+   writer.appendNode(lxTapeArgument, index2);
+   writer.appendNode(lxLocalAddress, preallocated);
+   writer.closeNode();
 
    writer.closeNode();
    writer.closeNode();
@@ -6238,7 +6258,8 @@ void Compiler :: compileMethodCode(SyntaxWriter& writer, SNode node, SNode body,
    preallocated = codeScope.level;
 
    if (scope.yieldMethod) {
-      compileYieldDispatch(writer, scope.getAttribute(maYieldContext));
+      scope.setAttribute(maYieldPreallocated, preallocated);
+      compileYieldDispatch(writer, scope.getAttribute(maYieldContext), scope.getAttribute(maYieldLocals), preallocated);
    }
 
    ObjectInfo retVal = compileCode(writer, body == lxReturning ? node : body, codeScope);
@@ -6289,17 +6310,30 @@ void Compiler :: compileMethod(SyntaxWriter& writer, SNode node, MethodScope& sc
    endMethod(writer, scope, codeScope, paramCount, preallocated);
 }
 
-void Compiler :: compileYieldDispatch(SyntaxWriter& writer, int index)
+void Compiler :: compileYieldDispatch(SyntaxWriter& writer, int index, int index2, int preallocated)
 {
    // load context
    writer.newNode(lxExpression);
    writer.appendNode(lxTapeArgument, index);
-   writer.newNode(lxCopying, -1);
+   writer.newNode(lxCopying);
    writer.appendNode(lxLocalAddress, -2);
    writer.newNode(lxFieldExpression);
    writer.appendNode(lxField, index);
    writer.appendNode(lxResultFieldIndex, 1);
    writer.closeNode();
+
+   writer.closeNode();
+   writer.closeNode();
+
+   // load locals
+   writer.newNode(lxExpression);
+   writer.appendNode(lxTapeArgument, index2);
+   writer.newNode(lxCopying);
+   writer.newNode(lxSeqExpression);
+   writer.appendNode(lxTapeArgument, index2);
+   writer.appendNode(lxLocalAddress, preallocated);
+   writer.closeNode();
+   writer.appendNode(lxField, index2);
 
    writer.closeNode();
    writer.closeNode();
@@ -6324,14 +6358,14 @@ void Compiler :: compileYieldableMethod(SyntaxWriter& writer, SNode node, Method
    else scope.raiseError(errInvalidOperation, body);
 
    // COMPILER MAGIC : struct variables should be synchronized with the context field
-   if (scope.reserved > 0) {
-      int index = scope.getAttribute(maYieldContext);
+   int index = scope.getAttribute(maYieldContext);
+   int index2 = scope.getAttribute(maYieldLocals);
 
-      // injecting the argument size
-      SyntaxWriter methodWriter(writer);
-      methodWriter.seekUp(lxClassMethod);
-      methodWriter.CurrentNode().insertNode(lxSetTapeArgument, scope.reserved).appendNode(lxTapeArgument, index);
-   }
+   // injecting the virtual field sizes
+   SyntaxWriter methodWriter(writer);
+   methodWriter.seekUp(lxClassMethod);
+   methodWriter.CurrentNode().insertNode(lxSetTapeArgument, scope.reserved).appendNode(lxTapeArgument, index);
+   methodWriter.CurrentNode().insertNode(lxSetTapeArgument, codeScope.level - preallocated).appendNode(lxTapeArgument, index2);
 
    endMethod(writer, scope, codeScope, paramCount, preallocated);
 }
@@ -9566,7 +9600,8 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    createPackageInfo(scope.module, *scope.project);
 }
 
-void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex)
+void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex, 
+   LexicalType objType, int objArg)
 {
    // declare field
    IdentifierString fieldName(VIRTUAL_FIELD);
@@ -9588,7 +9623,7 @@ void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subT
    SNode exprNode = assignNode.appendNode(lxExpression);
    // indicating that the size should be auto-set
    exprNode.appendNode(lxAttribute, V_AUTOSIZE); 
-   exprNode.appendNode(lxPrimitive, 1);
+   exprNode.appendNode(objType, objArg);
 }
 
 //void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef)

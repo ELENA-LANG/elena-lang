@@ -2,52 +2,30 @@
 In development:
 ------         
 
-              zdev
+              dev1
                 * write - Programming in ELENA : manual
                 * migrate tutorials from reddit
                 * duck typing tutorial
+                * migrate all existing ones
+                * tutorials
 
-              ydev tutorials
-
-              xdev
+              dev2
                 * yieldable methods with variables
-                * implementing #492
+                * embeddable result
                 * it should be a class, (extensions are not allowed) - check in validateMessage
-
-              ydev tutorials
-
-              xdev
+                * implementing #492
+                * refactor code generation (ByteCodeWriter), there should be a context to keep track on the current register
+                  load, get rid of code duplication, simplify opertion / assinging, 
                 * implement enum type
                 * BoolValue cannot be inherited
-
-              ydev tutorials
-
-              xdev
                 * support break and continue statements
                 * implenent break / continue analog
                 * addai, saveai
-
-              ydev tutorials
-
-              xdev
-                * port Linux
-
-              ydev tutorials
-
-              xdev
-                * port Linux IDE
-
-              ydev tutorials
-                * migrate all existing ones
-
-              xdev
-                * test (Runtime evaluation,Runtime evaluation/In an environment,Sorting algorithms/Sleep sort,
-                  Walk a directory/Non-recursively, Wireworld, Zhang-Suen thinning algorithm,Zeckendorf arithmetic)
-
-              ydev
-                * xforms
-
-              xdev
+                * optimize GC : copying blocks
+                * optimize GC : bit cards
+                * optimize copying operation
+                * optimize pi sample
+                * optimite yield operstions
                 * abstract class cannot be sealed
                 * do not allow to write something like
                   A{ int dump[4] := 3; }  // !! error
@@ -56,18 +34,23 @@ In development:
                 * support class / method / field / static field meta description
                 * do-while - if the second agrument is code brackets?
                 * static fields should be accessaible from storng typed extensions
-
-              ydev
-                * graph - use script to define the function (+tutorial)
-
-             xdev
                 * improve compilation speed
 
-              ydev
+              dev3
+                * port Linux
+                * port Linux IDE
+
+              dev4
+                * test (Runtime evaluation,Runtime evaluation/In an environment,Sorting algorithms/Sleep sort,
+                  Walk a directory/Non-recursively, Wireworld, Zhang-Suen thinning algorithm,Zeckendorf arithmetic)
+
+              dev5
+                * xforms
+                * graph - use script to define the function (+tutorial)
                 * source to expression tree
                 * expression tree to source
 
-              xdev API
+              dev6
                 * template extensions
                 * missing algorithms (template extensions)
                 * missing system'routines'stex

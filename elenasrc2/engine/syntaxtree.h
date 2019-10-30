@@ -117,8 +117,8 @@ enum LexicalType
    lxBlockLocalAddr           = 0x00A11F, // arg - offset
    lxClassRefField            = 0x008120, // arg - self instance offset
    lxBaseField                = 0x00A122,
-   lxPrimitive                = 0x00A123, // arg - size
-   //lxRawList                  = 0x00A124,    // arg - size
+   lxPrimitive                = 0x00A123, // arg * 4 = size
+   lxPrimCollection           = 0x00A124, // arg - length
 
    lxCondBoxing               = 0x00C001, // conditional boxing, arg - size
    lxBoxing                   = 0x00C002, // boxing of the argument, arg - size

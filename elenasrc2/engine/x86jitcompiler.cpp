@@ -940,11 +940,13 @@ void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
 
    loadNOp(opcode, scope);
 
-   // set vmt reference
-   // mov [eax-4], vmt
-   scope.code->writeWord(0x40C7);
-   scope.code->writeByte(0xFC);
-   scope.writeReference(*scope.code, vmtRef, 0);
+   if (vmtRef) {
+      // set vmt reference
+      // mov [eax-4], vmt
+      scope.code->writeWord(0x40C7);
+      scope.code->writeByte(0xFC);
+      scope.writeReference(*scope.code, vmtRef, 0);
+   }
 }
 
 void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)

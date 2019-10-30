@@ -149,7 +149,8 @@ public:
 
       okExternal,
       okInternal,
-      okPrimitive                     // param - size
+      okPrimitive,                    // param * 4 = size 
+      okPrimCollection                // param - length
    };
 
    enum ClassType
@@ -554,6 +555,15 @@ private:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
 
          return scope->info.methodHints.get(key);
+      }
+
+      void setAttribute(MethodAttribute attr, ref_t value, bool ownerClass = true)
+      {
+         ClassInfo::Attribute key(message, attr);
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
+
+         scope->info.methodHints.exclude(key);
+         scope->info.methodHints.add(key, value);
       }
 
       virtual Scope* getScope(ScopeLevel level)
@@ -1006,7 +1016,7 @@ private:
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
    void compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
-   void compileYieldDispatch(SyntaxWriter& writer, int index);
+   void compileYieldDispatch(SyntaxWriter& writer, int index, int index2, int preallocated);
    void compileYieldEnd(SyntaxWriter& writer, int index);
    void compileYieldableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
@@ -1146,7 +1156,8 @@ public:
 //   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);
-   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex);
+   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex, 
+      LexicalType objType, int objArg);
 //   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);
 //   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message);
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
