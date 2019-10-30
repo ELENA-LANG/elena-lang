@@ -2715,14 +2715,36 @@ ObjectInfo Compiler :: compileYieldExpression(SyntaxWriter& writer, SNode object
    writer.closeNode();
    writer.closeNode();
 
-   writer.newBookmark();
+   ObjectInfo retVal;
+   if (scope.withEmbeddableRet()) {
+      retVal = scope.mapTerminal(SELF_VAR, false, EAttr::eaNone);
 
-   ObjectInfo retVal = compileObject(writer, objectNode, scope, 0, objectMode);
+      // HOTFIX : the node should be compiled as returning expression
+      LexicalType ori = objectNode.type;
+      objectNode = lxReturning;
+      compileEmbeddableRetExpression(writer, objectNode, scope);
+      objectNode = ori;
 
-   writer.inject(lxYieldReturing, index);
-   writer.closeNode();
+      writer.newBookmark();
+      writer.appendNode(lxBreakpoint, dsStep);
+      writeTerminal(writer, objectNode, scope, retVal, HINT_NODEBUGINFO | HINT_NOBOXING);
 
-   writer.removeBookmark();
+      writer.inject(lxYieldReturing, index);
+      writer.closeNode();
+
+      writer.removeBookmark();
+   }
+   else {
+      writer.newBookmark();
+
+      writer.appendNode(lxBreakpoint, dsStep);
+      retVal = compileObject(writer, objectNode, scope, 0, objectMode);
+
+      writer.inject(lxYieldReturing, index);
+      writer.closeNode();
+
+      writer.removeBookmark();
+   }
 
    return retVal;
 }
@@ -6208,10 +6230,19 @@ void Compiler :: compileEmbeddableMethod(SyntaxWriter& writer, SNode node, Metho
       dummyWriter.newNode(node.type);
       SyntaxTree::copyNode(dummyWriter, node);
       dummyWriter.closeNode();
-      compileMethod(writer, dummyTree.readRoot(), privateScope);
-      //compileMethod(writer, node, privateScope);
 
-      compileMethod(writer, node, scope);
+      if (scope.yieldMethod) { 
+         compileYieldableMethod(writer, dummyTree.readRoot(), privateScope);
+         //compileMethod(writer, node, privateScope);
+
+         compileYieldableMethod(writer, node, scope);
+      }
+      else {
+         compileMethod(writer, dummyTree.readRoot(), privateScope);
+         //compileMethod(writer, node, privateScope);
+
+         compileMethod(writer, node, scope);
+      }
    }
 }
 
@@ -6671,12 +6702,12 @@ void Compiler :: compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope,
                   }
                   else compileAbstractMethod(writer, current, methodScope);
                }
-               else if (methodScope.yieldMethod) {
-                  compileYieldableMethod(writer, current, methodScope);
-               }
                else if (isMethodEmbeddable(methodScope, current)) {
                   // COMPILER MAGIC : if the method retunging value can be passed as an extra argument
                   compileEmbeddableMethod(writer, current, methodScope);
+               }
+               else if (methodScope.yieldMethod) {
+                  compileYieldableMethod(writer, current, methodScope);
                }
                else compileMethod(writer, current, methodScope);
             }
@@ -8043,6 +8074,11 @@ bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInf
          dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
 
          dataWriter.writeDWord(0);
+      }
+      else if (retVal.kind == okClass) {
+         dataWriter.Memory()->addReference(retVal.reference | mskVMTRef, dataWriter.Position());
+         dataWriter.writeDWord(0);
+
       }
       else {
          SymbolScope memberScope(nsScope, nsScope->moduleScope->mapAnonymous());

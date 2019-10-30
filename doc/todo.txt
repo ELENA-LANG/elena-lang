@@ -10,10 +10,11 @@ In development:
                 * tutorials
 
               dev2
-                * yieldable methods with variables
-                * embeddable result
-                * it should be a class, (extensions are not allowed) - check in validateMessage
                 * implementing #492
+
+                * work with attributes : list of classes, constants, strings, integers, messages, ...
+                  print attributes from static and normal methods
+
                 * refactor code generation (ByteCodeWriter), there should be a context to keep track on the current register
                   load, get rid of code duplication, simplify opertion / assinging, 
                 * implement enum type
