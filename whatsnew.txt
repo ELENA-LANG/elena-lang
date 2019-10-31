@@ -8,6 +8,7 @@
 ***************************************************************
 
 [ELENA]
+[+] #492 : Yield statement 
 
 [ELC]
 [-] #489 : Creating a variadic argument enumerator
