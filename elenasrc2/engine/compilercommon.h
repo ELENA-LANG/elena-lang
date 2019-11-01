@@ -440,7 +440,7 @@ public:
       }
    };
 
-   enum class ExpressionAttribute : unsigned int64_t
+   enum class ExpressionAttribute : uint64_t
    {
       eaNone               = 0x00000000000,
       eaType               = 0x00000000001,
@@ -504,7 +504,7 @@ public:
 
       bool test(ExpressionAttribute mask)
       {
-         return ((int64_t)attrs & (int64_t)mask) == (int64_t)mask;
+         return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
       }
 
       bool testAndExclude(ExpressionAttribute mask)
@@ -519,29 +519,29 @@ public:
 
       bool testany(ExpressionAttribute mask)
       {
-         return ((int64_t)attrs & (int64_t)mask) != (int64_t)0ul;
+         return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0ul;
       }
 
       void exclude(ExpressionAttribute mask)
       {
-         attrs = (ExpressionAttribute)((int64_t)attrs & ~(int64_t)mask);
+         attrs = (ExpressionAttribute)((uint64_t)attrs & ~(uint64_t)mask);
       }
 
       void include(ExpressionAttribute mask)
       {
-         attrs = (ExpressionAttribute)((int64_t)attrs | (int64_t)mask);
+         attrs = (ExpressionAttribute)((uint64_t)attrs | (uint64_t)mask);
       }
 
       operator const ExpressionAttribute () const { return attrs; }
 
       static bool test(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
-         return ((int64_t)attrs & (int64_t)mask) == (int64_t)mask;
+         return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
       }
 
       static bool testany(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
-         return ((int64_t)attrs & (int64_t)mask) != (int64_t)0;
+         return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0;
       }
 
       ExpressionAttributes()

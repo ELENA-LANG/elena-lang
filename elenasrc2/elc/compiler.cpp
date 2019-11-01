@@ -75,12 +75,12 @@ typedef _CompilerLogic::FieldAttributes      FieldAttributes;
 
 EAttr operator | (const EAttr& l, const EAttr& r)
 {
-   return (EAttr)((int64_t)l | (int64_t)r);
+   return (EAttr)((uint64_t)l | (uint64_t)r);
 }
 
 EAttr operator & (const EAttr& l, const EAttr& r)
 {
-   return (EAttr)((int64_t)l & (int64_t)r);
+   return (EAttr)((uint64_t)l & (uint64_t)r);
 }
 
 // --- Auxiliary routines ---
