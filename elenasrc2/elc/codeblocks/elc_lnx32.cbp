@@ -33,6 +33,7 @@
 		<Compiler>
 			<Add option="-march=pentium2" />
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 			<Add option="-m32" />
 			<Add option="-Wno-conversion-null" />
 			<Add option="-Wno-switch" />

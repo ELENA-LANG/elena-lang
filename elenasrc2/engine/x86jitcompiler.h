@@ -241,6 +241,7 @@ void compileSCopyF(int opcode, x86JITScope& scope);
 void compileJump(int opcode, x86JITScope& scope);
 void compileHook(int opcode, x86JITScope& scope);
 void compileCreate(int opcode, x86JITScope& scope);
+void compileCreateI(int opcode, x86JITScope& scope);
 void compileCreateN(int opcode, x86JITScope& scope);
 void compileSelectR(int opcode, x86JITScope& scope);
 void compileACopyR(int opcode, x86JITScope& scope);

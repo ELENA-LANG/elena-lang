@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x016C
+#define ELC_REVISION_NUMBER         0x016D
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -29,9 +29,9 @@ constexpr auto SOURCERULES_FILE     = "source_rules.dat";
 
 #else
 
-#define SYNTAX_FILE                 "/usr/share/elena/syntax.dat"
-#define RULES_FILE                  "/usr/share/elena/rules.dat"
-#define SOURCERULES_RULES_FILE      "/usr/share/elena/source_rules.dat"
+constexpr auto SYNTAX_FILE          = "/usr/share/elena/syntax.dat";
+constexpr auto RULES_FILE           = "/usr/share/elena/rules.dat";
+constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
 
 #endif
 

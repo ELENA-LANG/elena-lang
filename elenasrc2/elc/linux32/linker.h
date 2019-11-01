@@ -80,6 +80,7 @@ class Linker32
    void writeSegments(ImageInfo& info, FileWriter* file);
 
    bool createExecutable(ImageInfo& info, const char* exePath/*, ref_t tls_directory*/);
+   bool createDebugFile(ImageInfo& image, const char* debugFilePath);
 
 protected:
    virtual void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference) = 0;

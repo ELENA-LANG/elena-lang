@@ -66,7 +66,7 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
                return ((ImageBaseMap*)map)->mdata + ((ImageBaseMap*)map)->base;
             case mskMetaAttributes:
                return ((ImageBaseMap*)map)->adata + ((ImageBaseMap*)map)->base;
-         }         
+         }
       default:
          return disp;
    }
@@ -315,6 +315,7 @@ void Linker32 :: fixImage(ImageInfo& info)
 {
    Section* text = info.image->getTextSection();
    Section* rdata = info.image->getRDataSection();
+   Section* adata = info.image->getADataSection();
    Section* mdata = info.image->getMDataSection();
    Section* bss = info.image->getBSSSection();
    Section* stat = info.image->getStatSection();
@@ -503,6 +504,32 @@ bool Linker32 :: createExecutable(ImageInfo& info, const char* exePath/*, ref_t 
    return true;
 }
 
+bool Linker32 :: createDebugFile(ImageInfo& info, const char* debugFilePath)
+{
+   FileWriter	debugFile(debugFilePath, feRaw, false);
+
+   if (!debugFile.isOpened())
+      return false;
+
+   Section* debugInfo = info.image->getDebugSection();
+
+   // signature
+   debugFile.write(DEBUG_MODULE_SIGNATURE, strlen(DEBUG_MODULE_SIGNATURE));
+
+   // save entry point
+   ref_t imageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
+   ref_t entryPoint = info.map.code + info.map.base + info.image->getDebugEntryPoint();
+
+   debugFile.writeDWord(debugInfo->Length());
+   debugFile.writeDWord(entryPoint);
+
+   // save DebugInfo
+   MemoryReader reader(debugInfo);
+   debugFile.read(&reader, debugInfo->Length());
+
+   return true;
+}
+
 void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
 {
    ImageInfo info(&project, &image);
@@ -536,7 +563,7 @@ void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
          fileNameArg.append(".dn");
 
          project.raiseError(errCannotCreate, fileNameArg.c_str());
-      }         
+      }
    }
 }
 

@@ -75,12 +75,12 @@ typedef _CompilerLogic::FieldAttributes      FieldAttributes;
 
 EAttr operator | (const EAttr& l, const EAttr& r)
 {
-   return (EAttr)((__int64)l | (__int64)r);
+   return (EAttr)((int64_t)l | (int64_t)r);
 }
 
 EAttr operator & (const EAttr& l, const EAttr& r)
 {
-   return (EAttr)((__int64)l & (__int64)r);
+   return (EAttr)((int64_t)l & (int64_t)r);
 }
 
 // --- Auxiliary routines ---
@@ -2000,7 +2000,7 @@ size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
    return 0; // !! dummy returning statement, the code never reaches this point
 }
 
-LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
+LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray,
    int& variableArg, ident_t& className)
 {
    LexicalType variableType = lxVariable;
@@ -2242,7 +2242,7 @@ bool Compiler :: writeSizeArgument(SyntaxWriter& writer)
    SNode current = writer.CurrentNode().lastChild();
    if (current == lxField) {
       writer.appendNode(lxTapeArgument, current.argument);
-      
+
       return true;
    }
    else return false;
@@ -3092,7 +3092,7 @@ void Compiler :: compileBranchingOperand(SyntaxWriter& writer, SNode roperandNod
    ref_t ifReference = 0;
    ref_t resolved_operator_id = operator_id;
    // try to resolve the branching operator directly
-   if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id, 
+   if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id,
       resolveObjectReference(scope, loperand, false), ifReference)) {
       // we are lucky : we can implement branching directly
       compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
@@ -3308,7 +3308,7 @@ ObjectInfo Compiler :: compileOperator(SyntaxWriter& writer, SNode node, CodeSco
    }
 }
 
-ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, 
+ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef,
    EAttr mode, int stackSafeAttr)
 {
    ObjectInfo retVal(okObject);
@@ -3326,7 +3326,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    if (!inlineArgCall) {
       callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
    }
-      
+
    if (result.found) {
       retVal.reference = result.outputReference;
    }
@@ -3423,7 +3423,7 @@ ObjectInfo Compiler :: compileMessage(SyntaxWriter& writer, SNode node, CodeScop
    // inserting calling expression
    writer.inject(operation, argument);
 
-   // TODO : inject target boxing if it is stack allocated and the message call is not stacksafe 
+   // TODO : inject target boxing if it is stack allocated and the message call is not stacksafe
 
    analizeMessageParameters(writer.CurrentNode());
 
@@ -3799,7 +3799,7 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScop
    return scope.resolveAutoType(target, sourceRef, source.element);
 }
 
-ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, 
+ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target,
    bool accumulateMode)
 {
    ObjectInfo retVal = target;
@@ -4665,7 +4665,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SyntaxWriter& writer, SNode node,
       if (target.reference == V_OBJARRAY && paramCount == 1) {
          ObjectInfo roperand = compileExpression(writer, node.findNext(lxObjectMask), scope, 0, EAttr::eaNone);
 
-         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef, 
+         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef,
                                           resolveObjectReference(scope, roperand, false));
          if (operationType != 0) {
             // if it is a primitive operation
@@ -4960,7 +4960,7 @@ EAttr Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& curre
 
       // COMPILER MAGIC : make possible to ignore duplicates - used for some code templates
       if (scope.ignoreDuplicates && scope.checkLocal(current.identifier())) {
-         // ignore duplicates 
+         // ignore duplicates
       }
       else compileVariable(writer, current, scope, typeRef, dynamicSize, !exprAttr.testany(HINT_REFOP));
    }
@@ -5049,11 +5049,11 @@ ObjectInfo Compiler :: compileExpression(SyntaxWriter& writer, SNode node, CodeS
          targetMode.include(HINT_NOBOXING);
          if (targetMode.testany(HINT_DYNAMIC_OBJECT | HINT_PARAMETER)) {
             // HOTFIX : an assignment target should not be boxed but the operation result should be!
-            targetMode.exclude(HINT_DYNAMIC_OBJECT); 
+            targetMode.exclude(HINT_DYNAMIC_OBJECT);
 
             boxingMode = noPrimMode = true;
          }
-      }         
+      }
 
       mode.include(HINT_NOUNBOXING);
    }
@@ -6039,13 +6039,13 @@ void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode 
 
    bool variadicOne = false;
    bool inlineArg = false;
-   ref_t implicitSignatureRef = compileMessageParameters(writer, expr.findChild(lxMessage).nextNode(), resendScope, EAttr::eaNone, 
+   ref_t implicitSignatureRef = compileMessageParameters(writer, expr.findChild(lxMessage).nextNode(), resendScope, EAttr::eaNone,
       variadicOne, inlineArg);
 
    ObjectInfo target(okClassSelf, scope.getClassRefId(), classRef);
    int stackSafeAttr = 0;
    if (implicitConstructor) {
-      ref_t resolvedMessageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef), 
+      ref_t resolvedMessageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, target.param, implicitSignatureRef, getParamCount(messageRef),
          stackSafeAttr, false);
 
       if (resolvedMessageRef)
@@ -6231,7 +6231,7 @@ void Compiler :: compileEmbeddableMethod(SyntaxWriter& writer, SNode node, Metho
       SyntaxTree::copyNode(dummyWriter, node);
       dummyWriter.closeNode();
 
-      if (scope.yieldMethod) { 
+      if (scope.yieldMethod) {
          compileYieldableMethod(writer, dummyTree.readRoot(), privateScope);
          //compileMethod(writer, node, privateScope);
 
@@ -8673,7 +8673,7 @@ bool Compiler :: optimizeAssigningBoxing(_ModuleScope& scope, SNode& node)
       optimizeBoxing(scope, boxingNode);
 
       applied = true;
-   }      
+   }
 
    return applied;
 }
@@ -8683,7 +8683,7 @@ bool Compiler :: optimizeConstantAssigning(_ModuleScope& scope, SNode& node)
    SNode parent = node.parentNode();
    while (parent == lxExpression)
       parent = parent.parentNode();
-   
+
    if (parent.argument == 4) {
       // direct operation with numeric constants
       parent.set(lxIntOp, SET_OPERATOR_ID);
@@ -8700,7 +8700,7 @@ bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
 
    int stackSafeAttr = callNode.findChild(lxStacksafeAttr).argument;
    int flag = 1;
-   
+
    SNode current = callNode.firstChild();
    while (current != lxNone) {
       if (test(current.type, lxObjectMask)) {
@@ -8711,12 +8711,12 @@ bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
                applied = true;
             }
          }
-   
+
          flag <<= 1;
       }
       current = current.nextNode();
    }
-   
+
    return applied;
 }
 
@@ -8746,7 +8746,7 @@ bool Compiler :: optimizeAssigningOp(_ModuleScope& scope, SNode& node)
 
    SNode larg = node.findSubNodeMask(lxObjectMask);
    SNode rarg = node.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-               
+
    if (target == lxFieldAddress) {
 
    }
@@ -8997,10 +8997,10 @@ bool Compiler :: optimizeDuplicateboxing(_ModuleScope& scope, SNode& node)
    if (nested > 1) {
       Map<Attribute, int> boxed;
       Map<int, int>       tempLocals;
-      
+
       int counter = 0;
       applied = analizeParameterBoxing(callNode, counter, boxed, tempLocals);
-      
+
       // inject boxed temporal variable
       counter = 0;
       injectBoxingTempLocal(callNode, counter, boxed, tempLocals);
@@ -9635,7 +9635,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    createPackageInfo(scope.module, *scope.project);
 }
 
-void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex, 
+void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex,
    LexicalType objType, int objArg)
 {
    // declare field
@@ -9657,7 +9657,7 @@ void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subT
 
    SNode exprNode = assignNode.appendNode(lxExpression);
    // indicating that the size should be auto-set
-   exprNode.appendNode(lxAttribute, V_AUTOSIZE); 
+   exprNode.appendNode(lxAttribute, V_AUTOSIZE);
    exprNode.appendNode(objType, objArg);
 }
 
