@@ -57,6 +57,8 @@ namespace _ELENA_
    typedef unsigned long long ref64_t;
    typedef unsigned long long pos64_t;
 
+   typedef unsigned long long uint64_t;
+
    // --- FileEncoding ---
    enum FileEncoding { feUTF8 = 0, feRaw = -1, feUTF16 = -2, feUTF32 = -3 };
 }
