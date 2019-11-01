@@ -51,8 +51,17 @@ Content
     + [Extensions](#extensions) 
     + [Sealed / Closed Classes](#sealed--closed-classes)
   + [Fields](#fields)
-    + [Class Fields](#class_fields)
+    + [Class Fields](#class-fields)
     + [Field Initializer](#field-initializer)
+    + [Constant fields](#constant-fields)
+    + [Static fields](#static-fields)
+    + [Static constant fields](#static-constant-fields)
+    + [Static sealed fields](#static-sealed-fields)
+    + [Static attribute fields](#static-attribute-fields)
+    + [Primitive fields](#primitive-fields)
+    + [Fixed size array field](#fixed-size-array-field)
+    + [Dynamic size array field](#dynamic-size-array-field)
+  + [Methods](#methods)
 
 ## Overview
 A programming language is a mammoth task to develop and to learn. So encountering a new language you may ask: why another
@@ -69,6 +78,7 @@ To summarize all of the above, let's name some functions of ELENA:
   * Optional types
   * Multiple dispatching / multi-methods
   * Support of variadic methods
+  * Yieldable methods
   * Closures
   * Mixins
   * Type interfaces / conversions
@@ -2142,7 +2152,7 @@ A field is a variable that is declared in a class or struct. Fields are class me
 
 #### Class Fields
 
-A class field should be declared inside the class body. **Field** and type attributes is optional.
+A class field should be declared inside the class body. **Field** and type attributes are optional.
 
     class MyClass
     {
@@ -2190,7 +2200,7 @@ The fields can be accessed in the method by their name.
 
 The output will be:
 
-   MyClass.x=2
+    MyClass.x=2
 
 If a local variable and a field names are the same we may use **this** prefix to tell a field apart:
 
@@ -2225,3 +2235,317 @@ The output will be:
     MyClass.x=3
 
 #### Field Initializer
+
+Constructors are traditional place to initialize the fields. But in some cases it is more convenient to do it in place, after the declaration.  
+
+    class Record
+    {
+        // an initialization expression can be a constant
+        int x := 0;
+
+        // it can be a result of operations  
+        string y := "My" + "String";
+
+        // or class creation  
+        z := new Object(); 
+    }
+
+In this case, we could not declare a constructor at all and use the default one:
+
+    public program()
+    {
+        var p := new Record();
+    }
+
+An initialization expression can be used alone, for example in the derived classes. In this case we have to use **this** qualifier:
+
+    class MySpecialRecord : Record
+    {
+        // we have to use this prefix to initialize already existing fields
+        this x := 2; 
+    } 
+
+And of course we could use it for initializing class fields right in the code:
+
+    struct Point
+    {
+        int x := 0;
+        int y := 0;
+        
+        printMe()
+        {
+            console.printLine("x:",x,",y:",y)
+        }
+    }
+    
+    public program()
+    {
+        var p := new Point::
+        {
+            this x := 1;
+            
+            this y := 2; 
+        };
+        
+        p.printMe()
+    }
+
+And the output is:
+
+    x:1,y:2
+
+#### Constant fields
+
+Constant fields are special type of class fields which can be initialized only in class constructors.
+
+    class MyClass
+    {
+        // declaring a contant field
+        const int x;
+        
+        constructor(int x)
+        {
+            // have to be initialized in the constructor
+            this x := x
+        }
+        
+        printMe()
+        {
+            // can be used in class methods but cannot be changed
+            console.printLine("MyClass.x=",x)
+        }
+    }
+
+#### Static fields
+
+Static fields are class variables which are shared by all class instances. They can be accessed both from normal and static methods. A value changed in one class instances, will be changed for all class instances. Static fields are inherited by the children classes. But in this case the changes are visible only per class. For example in the following code:
+
+    abstract class Base
+    {
+        // declaring a static field
+        static nameField;
+        
+        // declaring a method to access a static field
+        printName()
+        {
+            console.printLine(nameField)
+        }
+    }
+    
+    // inheriting the base class
+    class A : Base
+    {
+        // setting a value for the class A
+        this nameField := "A";        
+    }
+    
+    class B : Base
+    {
+        // setting a value for the class B
+        this nameField := "B";
+    }
+    
+    public program()
+    {
+        var a := new A();
+        var b := new B();
+        
+        a.printName();
+        b.printName();
+    }
+
+The output will be:
+
+    A
+    B
+
+So the value of a static field changed for the class A is visible only in instances of A and similar for the class B.
+
+Note that singleton my have static fields as well:
+
+    singleton MySingleton
+    {
+        static mySingletonField := "Some value";
+        
+        printMe()
+        {
+            console.printLine(mySingletonField)
+        }
+    }
+    
+    public program()
+    {
+        MySingleton.printMe()
+    }
+
+And the result should be:
+
+    Some value
+
+#### Static constant fields
+
+Static fields can be constant. It means they have to be initialized right after the declaration and cannot be changed in the code.
+
+    class A
+    {
+        // declaring and intializing a constant static field
+        const static classNameField := "A";
+        
+        // declaring a method to access a static field
+        printName()
+        {
+            console.printLine(classNameField )
+        }
+    }
+
+It can be inherited as well and should be initialized for every derived class.
+
+#### Static sealed fields
+
+In case if we do not like to inherit static fields, we have to declare them sealed. In this case they have to be initialized only once.
+
+    abstract class Base
+    {
+        // declaring a static field
+        sealed static nameField := "Hello from Base";
+        
+        // declaring a method to access a static field
+        printName()
+        {
+            console.printLine(nameField)
+        }
+    }    
+    
+    // inheriting the base class
+    class A : Base
+    {
+        constructor() {}
+    }
+    
+    class B : Base
+    {
+        constructor() {}
+    }
+    
+    public program()
+    {
+        var a := new A();
+        var b := new B();
+        
+        a.printName();
+        b.printName();
+    }
+
+And the result is:
+
+    Hello from Base
+    Hello from Base
+
+As you see sealed static fields are similar to the traditional static fields in the languages like C#.
+
+#### Static attribute fields
+
+Static attribute fields are special case of static fields which value are inherited by the children. They can be used to provide class meta information. For example using so-called accumulator attributes we may extend the class meta information in the derived classes:
+
+    import extensions;
+    
+    class Base
+    {
+        // declaring accumulator attribute
+        attribute object[] theFamily;
+        
+        // adding a reference to the class
+        this theFamily += Base;
+        
+        static printFamily()
+        {
+            console.printLine(theFamily.asEnumerable())
+        }
+    }
+    
+    class A : Base
+    {
+        // adding a reference to the derived class
+        this theFamily += A;
+    }    
+    
+    class B : Base
+    {
+        // adding a reference to the derived class
+        this theFamily += B;
+    }    
+    
+    public program()
+    {
+        console.print("A:");
+        A.printFamily();
+        
+        console.print("B:");
+        B.printFamily();
+    }
+
+The result is:
+
+    A:mytest'$private'Base#class,mytest'$private'A#class
+    B:mytest'$private'Base#class,mytest'$private'B#class
+
+An accumulator attribute of the class A contains the class and its parent. The similar attribute of the class B contains its own copy of the attribute. If a new class will be derived from B, the attribute will be inherited and can be extended further and so on.
+
+#### Primitive fields
+
+Primitive types are boxed into corresponding wrapper structures. To declare such a structure we have to declare a primitive field:
+
+    // declaring an 32bit integer wrapper
+    struct MyIntNumber
+    {
+        embeddable __int theValue[4];
+    } 
+    
+    // declaring an Unicode character wrapper
+    struct MyCharValue
+    {
+        embeddable __raw theValue[4];
+    }
+    
+    // declaring a 64bit floating-point number wrapper
+    struct MyRealNumber
+    {
+        embeddable __float theValue[8];
+    }
+
+#### Fixed size array field
+
+It is possible to declare fixed size array in a data structure. They are useful when you write methods that interop with data sources from other languages or platforms. The array type must be a structure itself. To declare a fixed size array field the field name should be followed by the size constant enclosed in square brackets:
+
+    struct WSADATA
+    {
+        short wVersion;
+        short wHighVersion;
+        // declaring a fixed size arrays of bytes 
+        byte  szDescription[257];
+        byte  szSystemStatus[129];
+    }
+
+#### Dynamic size array field
+
+Arrays are special case of primitive built-in types. The array declaration consists of the element type and empty square brackets (**\[\]**). A primitive arrays are encapsulated into a string classes (both reference and structure ones). The string class must have only one field of an array type with **__string** prefix.
+
+    class MyArray
+    {
+        // declaring an array of system'Object  
+        __string object[] theArray;
+    
+        constructor allocate(int len)
+            = new object[](len);
+    }
+    
+    struct MyString
+    {
+        // declaring an array of system'CharValue
+        __string char[] theArray;
+        
+        constructor allocate(int len)
+            = new char[](len);
+    }
+
+### Methods

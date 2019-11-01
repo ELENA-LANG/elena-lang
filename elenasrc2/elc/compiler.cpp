@@ -4277,6 +4277,13 @@ ObjectInfo Compiler :: compileClosure(SyntaxWriter& writer, SNode node, CodeScop
       return ObjectInfo();
    }
    else {
+      //int stackSafeAttr = 0;
+      //ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, closureRef, 0, 0, stackSafeAttr, true);
+      //if (messageRef) {
+      //   // call the constructor if it can be resolved directly
+      //   compileMessage(writer, node, scope, closureRef, messageRef, HINT_SILENT | HINT_NODEBUGINFO, stackSafeAttr);
+      //}
+
       // dynamic binary symbol
       if (test(scope.info.header.flags, elStructureRole)) {
          writer.newNode(lxStruct, scope.info.size);

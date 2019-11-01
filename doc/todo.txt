@@ -12,6 +12,10 @@ In development:
                 * rosetta code : AmicablePairs using yieldable method
 
               dev2
+                * creating nested class - implciit constructor should be called
+                * creating nested class - field intialization should be called 
+                * creating nested class - in-place field intialization should be called 
+
                 * refactor code generation (ByteCodeWriter), there should be a context to keep track on the current register
                   load, get rid of code duplication, simplify opertion / assinging, 
                 * implement enum type
