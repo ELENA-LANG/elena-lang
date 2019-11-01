@@ -280,7 +280,7 @@ struct _ModuleScope
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
    virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 
-   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, 
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode,
                                  bool ignoreFields) = 0;
 
    virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
@@ -391,7 +391,7 @@ public:
    virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 
 //   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef) = 0;
-   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex, 
+   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex,
       LexicalType objType, int objArg) = 0;
 //
 //   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
@@ -440,7 +440,7 @@ public:
       }
    };
 
-   enum class ExpressionAttribute : unsigned __int64
+   enum class ExpressionAttribute : unsigned int64_t
    {
       eaNone               = 0x00000000000,
       eaType               = 0x00000000001,
@@ -468,7 +468,7 @@ public:
       eaPropExpr           = 0x00000200000,
       eaCallExpr           = 0x00000400000,
       eaVirtualExpr        = 0x00000800000,
-      eaParameter          = 0x00001000000, 
+      eaParameter          = 0x00001000000,
       eaModuleScope        = 0x00002000000,
       eaRetExpr            = 0x00004000000,
       eaDirectCall         = 0x00008000000,
@@ -498,13 +498,13 @@ public:
 
     //  bool isExprAttr()
     //  {
-    //     return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr | 
+    //     return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr |
     //        classAttr | directAttr | lazyAttr | inlineArgAttr;
-    //  } 
+    //  }
 
       bool test(ExpressionAttribute mask)
       {
-         return ((__int64)attrs & (__int64)mask) == (__int64)mask;
+         return ((int64_t)attrs & (int64_t)mask) == (int64_t)mask;
       }
 
       bool testAndExclude(ExpressionAttribute mask)
@@ -519,29 +519,29 @@ public:
 
       bool testany(ExpressionAttribute mask)
       {
-         return ((__int64)attrs & (__int64)mask) != (__int64)0ul;
+         return ((int64_t)attrs & (int64_t)mask) != (int64_t)0ul;
       }
 
       void exclude(ExpressionAttribute mask)
       {
-         attrs = (ExpressionAttribute)((__int64)attrs & ~(__int64)mask);
+         attrs = (ExpressionAttribute)((int64_t)attrs & ~(int64_t)mask);
       }
 
       void include(ExpressionAttribute mask)
       {
-         attrs = (ExpressionAttribute)((__int64)attrs | (__int64)mask);
+         attrs = (ExpressionAttribute)((int64_t)attrs | (int64_t)mask);
       }
 
       operator const ExpressionAttribute () const { return attrs; }
 
       static bool test(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
-         return ((__int64)attrs & (__int64)mask) == (__int64)mask;
+         return ((int64_t)attrs & (int64_t)mask) == (int64_t)mask;
       }
 
       static bool testany(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
-         return ((__int64)attrs & (__int64)mask) != (__int64)0;
+         return ((int64_t)attrs & (int64_t)mask) != (int64_t)0;
       }
 
       ExpressionAttributes()
@@ -637,10 +637,10 @@ public:
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
    virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;
-   //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;   
+   //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
 
    // class is considered to be a role if it cannot be initiated
-   virtual bool isRole(ClassInfo& info) = 0;          
+   virtual bool isRole(ClassInfo& info) = 0;
    virtual bool isAbstract(ClassInfo& info) = 0;
    virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
 
@@ -652,7 +652,7 @@ public:
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
    virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
-   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, 
+   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
       ref_t elementRef, ident_t ns, bool noUnboxing) = 0;
    virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
    virtual void injectNewOperation(SyntaxWriter& writer, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
@@ -663,7 +663,7 @@ public:
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
    virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
-   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
+   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,
       bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
