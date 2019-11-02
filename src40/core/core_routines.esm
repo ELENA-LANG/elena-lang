@@ -57,7 +57,7 @@ procedure __object."__getClass[1]"
 
 end
 
-procedure __object."__getParent[1]"
+procedure __object."__getBaseClass[1]"
 
   bloadsi 1
   parent
@@ -65,7 +65,7 @@ procedure __object."__getParent[1]"
 
 end
 
-procedure __object."__getClassParent[1]"
+procedure __object."__getParentClass[1]"
 
   bloadsi 1
   class
