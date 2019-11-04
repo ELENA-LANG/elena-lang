@@ -12,100 +12,100 @@
 namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
-   #define ENGINE_MAJOR_VERSION           4                 // ELENA Engine version
-   #define ENGINE_MINOR_VERSION           1
-   #define ENGINE_RELEASE_VERSION         2
+   #define ENGINE_MAJOR_VERSION           5                 // ELENA Engine version
+   #define ENGINE_MINOR_VERSION           0
+   #define ENGINE_RELEASE_VERSION         0
 
    constexpr auto LINE_LEN                = 0x1000;         // the maximal source line length
    constexpr auto IDENTIFIER_LEN          = 0x0300;         // the maximal identifier length
 
-  // --- ELENA Standart message constants ---
-   constexpr int ACTION_ORDER             = 9;
-
-   constexpr auto ACTION_MASK             = 0x1C0u;
-   constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
-   // indicates it is an invoke message (without target variable in the call stack)
-   constexpr auto SPECIAL_MESSAGE         = 0x020u;
-   constexpr auto PROPERTY_MESSAGE        = 0x040u;
-   constexpr auto VARIADIC_MESSAGE        = 0x080u;
-   constexpr auto STATIC_MESSAGE          = 0x100u;
-   constexpr auto PARAM_MASK              = 0x01Fu;
-   constexpr auto ARG_COUNT               = 0x01Fu;
-
-//   #define PARAMX_MASK             0x000000000000FFFFu
+//  // --- ELENA Standart message constants ---
+//   constexpr int ACTION_ORDER             = 9;
+//
+//   constexpr auto ACTION_MASK             = 0x1C0u;
+//   constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
+//   // indicates it is an invoke message (without target variable in the call stack)
+//   constexpr auto SPECIAL_MESSAGE         = 0x020u;
+//   constexpr auto PROPERTY_MESSAGE        = 0x040u;
+//   constexpr auto VARIADIC_MESSAGE        = 0x080u;
+//   constexpr auto STATIC_MESSAGE          = 0x100u;
+//   constexpr auto PARAM_MASK              = 0x01Fu;
+//   constexpr auto ARG_COUNT               = 0x01Fu;
+//
+////   #define PARAMX_MASK             0x000000000000FFFFu
 
    constexpr auto INVALID_REF             = 0xFFFFFFFFu;
 
-   constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
-   constexpr auto SET_OPERATOR_ID         = 0x0007;
-   constexpr auto LESS_OPERATOR_ID        = 0x0008;
-   constexpr auto IF_OPERATOR_ID          = 0x0009;
-   constexpr auto AND_OPERATOR_ID         = 0x000A;
-   constexpr auto OR_OPERATOR_ID          = 0x000B;
-   constexpr auto XOR_OPERATOR_ID         = 0x000C;
-   constexpr auto IFNOT_OPERATOR_ID       = 0x000D;
-   constexpr auto NOTEQUAL_OPERATOR_ID    = 0x000E;
-   constexpr auto NOTLESS_OPERATOR_ID     = 0x000F;
-   constexpr auto NOTGREATER_OPERATOR_ID  = 0x0010;
-   constexpr auto GREATER_OPERATOR_ID     = 0x0011;
-   constexpr auto ADD_OPERATOR_ID         = 0x0012;
-   constexpr auto SUB_OPERATOR_ID         = 0x0013;
-   constexpr auto MUL_OPERATOR_ID         = 0x0014;
-   constexpr auto DIV_OPERATOR_ID         = 0x0015;
-   constexpr auto REFER_OPERATOR_ID       = 0x0016;
-   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
-   constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
-   constexpr auto SET_REFER_OPERATOR_ID   = 0x0019;
-   constexpr auto SHIFTR_OPERATOR_ID      = 0x001A;
-   constexpr auto SHIFTL_OPERATOR_ID      = 0x001B;
-   constexpr auto INCREASE_OPERATOR_ID    = 0x001C;
-   constexpr auto SEPARATE_OPERATOR_ID    = 0x001D;
-   constexpr auto FINALLY_OPERATOR_ID     = 0x001E;
-
-   constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
-   constexpr auto CATCH_OPERATOR_ID       = 0x0023;
-   constexpr auto ALT_OPERATOR_ID         = 0x0024;
-
-   // built-in class attributes
-   constexpr auto PACKAGE_ATTR_INDEX      = -5;
-   constexpr auto NAME_ATTR_INDEX         = -6;
-   constexpr auto MAX_ATTR_INDEX          = -6;
-
-//   // virtual operator
-//   #define SETNIL_REFER_MESSAGE_ID 0x1019
-
-   // ---- ELENAVM command masks ---
-   constexpr auto VM_MASK                 = 0x0200;             // vm command mask
-   constexpr auto LITERAL_ARG_MASK        = 0x0400;             // indicates that the command has a literal argument
-
-   // ---- ELENAVM commands ---
-   constexpr auto START_VM_MESSAGE_ID     = 0x02F1;             // restart VM
-   constexpr auto MAP_VM_MESSAGE_ID       = 0x06F2;             // map forward reference
-   constexpr auto USE_VM_MESSAGE_ID       = 0x06F3;             // set current package
-   constexpr auto LOAD_VM_MESSAGE_ID      = 0x06F4;             // load template
-   constexpr auto OPEN_VM_CONSOLE         = 0x02F5;             // open console
-
-   // ---- ELENAVM interpreter commands ---
-   constexpr auto CALL_TAPE_MESSAGE_ID    = 0x05E0;             // call symbol
-   constexpr auto ARG_TAPE_MESSAGE_ID     = 0x05E1;             // define the second parameter
-   constexpr auto PUSH_VAR_MESSAGE_ID     = 0x01E2;             // copy the data
-   constexpr auto ASSIGN_VAR_MESSAGE_ID   = 0x01E3;             // assign the data
-   constexpr auto PUSH_TAPE_MESSAGE_ID    = 0x05E4;             // push constant
-   constexpr auto PUSHS_TAPE_MESSAGE_ID   = 0x05E5;             // push literal constant
-   constexpr auto PUSHN_TAPE_MESSAGE_ID   = 0x05E6;             // push integer constant
-   constexpr auto PUSHR_TAPE_MESSAGE_ID   = 0x05E7;             // push floating numeric constant
-   constexpr auto PUSHL_TAPE_MESSAGE_ID   = 0x05E8;             // push long integer constant
-   constexpr auto PUSHM_TAPE_MESSAGE_ID   = 0x05E9;             // push message reference
-   constexpr auto PUSHG_TAPE_MESSAGE_ID   = 0x05EA;             // push the subject reference
-   constexpr auto POP_TAPE_MESSAGE_ID     = 0x01EB;             // free the stack content
-   constexpr auto SEND_TAPE_MESSAGE_ID    = 0x05EC;             // send the message
-   constexpr auto REVERSE_TAPE_MESSAGE_ID = 0x01ED;             // reverse the stack
-   constexpr auto PUSHE_TAPE_MESSAGE_ID   = 0x05EE;             // push message reference
-
-   constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
-
-   constexpr auto VA_ALIGNMENT            = 0x08;
-   constexpr auto VA_ALIGNMENT_POWER      = 0x03;
+//   constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
+//   constexpr auto SET_OPERATOR_ID         = 0x0007;
+//   constexpr auto LESS_OPERATOR_ID        = 0x0008;
+//   constexpr auto IF_OPERATOR_ID          = 0x0009;
+//   constexpr auto AND_OPERATOR_ID         = 0x000A;
+//   constexpr auto OR_OPERATOR_ID          = 0x000B;
+//   constexpr auto XOR_OPERATOR_ID         = 0x000C;
+//   constexpr auto IFNOT_OPERATOR_ID       = 0x000D;
+//   constexpr auto NOTEQUAL_OPERATOR_ID    = 0x000E;
+//   constexpr auto NOTLESS_OPERATOR_ID     = 0x000F;
+//   constexpr auto NOTGREATER_OPERATOR_ID  = 0x0010;
+//   constexpr auto GREATER_OPERATOR_ID     = 0x0011;
+//   constexpr auto ADD_OPERATOR_ID         = 0x0012;
+//   constexpr auto SUB_OPERATOR_ID         = 0x0013;
+//   constexpr auto MUL_OPERATOR_ID         = 0x0014;
+//   constexpr auto DIV_OPERATOR_ID         = 0x0015;
+//   constexpr auto REFER_OPERATOR_ID       = 0x0016;
+//   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
+//   constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
+//   constexpr auto SET_REFER_OPERATOR_ID   = 0x0019;
+//   constexpr auto SHIFTR_OPERATOR_ID      = 0x001A;
+//   constexpr auto SHIFTL_OPERATOR_ID      = 0x001B;
+//   constexpr auto INCREASE_OPERATOR_ID    = 0x001C;
+//   constexpr auto SEPARATE_OPERATOR_ID    = 0x001D;
+//   constexpr auto FINALLY_OPERATOR_ID     = 0x001E;
+//
+//   constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
+//   constexpr auto CATCH_OPERATOR_ID       = 0x0023;
+//   constexpr auto ALT_OPERATOR_ID         = 0x0024;
+//
+//   // built-in class attributes
+//   constexpr auto PACKAGE_ATTR_INDEX      = -5;
+//   constexpr auto NAME_ATTR_INDEX         = -6;
+//   constexpr auto MAX_ATTR_INDEX          = -6;
+//
+////   // virtual operator
+////   #define SETNIL_REFER_MESSAGE_ID 0x1019
+//
+//   // ---- ELENAVM command masks ---
+//   constexpr auto VM_MASK                 = 0x0200;             // vm command mask
+//   constexpr auto LITERAL_ARG_MASK        = 0x0400;             // indicates that the command has a literal argument
+//
+//   // ---- ELENAVM commands ---
+//   constexpr auto START_VM_MESSAGE_ID     = 0x02F1;             // restart VM
+//   constexpr auto MAP_VM_MESSAGE_ID       = 0x06F2;             // map forward reference
+//   constexpr auto USE_VM_MESSAGE_ID       = 0x06F3;             // set current package
+//   constexpr auto LOAD_VM_MESSAGE_ID      = 0x06F4;             // load template
+//   constexpr auto OPEN_VM_CONSOLE         = 0x02F5;             // open console
+//
+//   // ---- ELENAVM interpreter commands ---
+//   constexpr auto CALL_TAPE_MESSAGE_ID    = 0x05E0;             // call symbol
+//   constexpr auto ARG_TAPE_MESSAGE_ID     = 0x05E1;             // define the second parameter
+//   constexpr auto PUSH_VAR_MESSAGE_ID     = 0x01E2;             // copy the data
+//   constexpr auto ASSIGN_VAR_MESSAGE_ID   = 0x01E3;             // assign the data
+//   constexpr auto PUSH_TAPE_MESSAGE_ID    = 0x05E4;             // push constant
+//   constexpr auto PUSHS_TAPE_MESSAGE_ID   = 0x05E5;             // push literal constant
+//   constexpr auto PUSHN_TAPE_MESSAGE_ID   = 0x05E6;             // push integer constant
+//   constexpr auto PUSHR_TAPE_MESSAGE_ID   = 0x05E7;             // push floating numeric constant
+//   constexpr auto PUSHL_TAPE_MESSAGE_ID   = 0x05E8;             // push long integer constant
+//   constexpr auto PUSHM_TAPE_MESSAGE_ID   = 0x05E9;             // push message reference
+//   constexpr auto PUSHG_TAPE_MESSAGE_ID   = 0x05EA;             // push the subject reference
+//   constexpr auto POP_TAPE_MESSAGE_ID     = 0x01EB;             // free the stack content
+//   constexpr auto SEND_TAPE_MESSAGE_ID    = 0x05EC;             // send the message
+//   constexpr auto REVERSE_TAPE_MESSAGE_ID = 0x01ED;             // reverse the stack
+//   constexpr auto PUSHE_TAPE_MESSAGE_ID   = 0x05EE;             // push message reference
+//
+//   constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
+//
+//   constexpr auto VA_ALIGNMENT            = 0x08;
+//   constexpr auto VA_ALIGNMENT_POWER      = 0x03;
 
   // --- ELENA Reference masks ---
    enum ReferenceType : unsigned int
@@ -268,13 +268,16 @@ namespace _ELENA_
       ptLinux32Console   = 0x00002,
    };
 
-////  // --- ELENA Debug Mode ---
-////   enum DebugMode {
-////      dbmNone       =  0,
-////      dbmActive     = -1
-////   };
+//  // --- ELENA Debug Mode ---
+//   enum DebugMode {
+//      dbmNone       =  0,
+//      dbmActive     = -1
+//   };
 
    // --- ELENA Parse Table constants ---
+   constexpr int mskTerminal           = 0x2000;
+   constexpr int nsEps                 = 2;
+
    constexpr int cnHashSize            = 0x0100;              // the parse table hash size
    constexpr int cnTablePower          = 0x0010;
    constexpr int cnTableKeyPower       = cnTablePower + 1;
@@ -331,16 +334,16 @@ namespace _ELENA_
 //////   const int elDebugDPTR           = 0x000F0000;
 //   const int elEnumList            = 0x00100000;
 
-  // --- ELENA Linker / ELENA VM constants ---
-   constexpr int lnGCMGSize            = 0x00000001;
-   constexpr int lnGCYGSize            = 0x00000002;
-   constexpr int lnThreadCount         = 0x00000003;
-   constexpr int lnObjectSize          = 0x00000004;
-
-   constexpr int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
-
-//  // ELENA run-time exceptions
-//   #define ELENA_ERR_OUTOF_MEMORY  0x190
+//  // --- ELENA Linker / ELENA VM constants ---
+//   constexpr int lnGCMGSize            = 0x00000001;
+//   constexpr int lnGCYGSize            = 0x00000002;
+//   constexpr int lnThreadCount         = 0x00000003;
+//   constexpr int lnObjectSize          = 0x00000004;
+//
+//   constexpr int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
+//
+////  // ELENA run-time exceptions
+////   #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- Project warning levels
    constexpr int WARNING_LEVEL_1 = 1;
@@ -353,175 +356,175 @@ namespace _ELENA_
    constexpr int WARNING_MASK_3 = 7;
 
    // --- ELENA Module structure constants ---
-   constexpr auto ELENA_SIGNITURE         = "ELENA.21.";      // the stand alone image
-   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.21.";   // the ELENAVM client
+   constexpr auto ELENA_SIGNITURE         = "ELENA.050.";      // the stand alone image
+   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.050.";   // the ELENAVM client
 
-   constexpr auto MODULE_SIGNATURE        = "ELENA.21.0";     // the module version
+   constexpr auto MODULE_SIGNATURE        = "ELENA.050.0";     // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!03";
 
   // --- ELENA core module names ---
    constexpr auto CORE_ALIAS           = "core";          // Core functionality
 
-  // --- ELENA verb messages ---
-   constexpr auto DISPATCH_MESSAGE     = "#dispatch";
-   constexpr auto NEWOBJECT_MESSAGE    = "#new";
-   constexpr auto CAST_MESSAGE         = "#cast";
-   constexpr auto CONSTRUCTOR_MESSAGE  = "#constructor";
-   constexpr auto INVOKE_MESSAGE       = "#invoke";
-   constexpr auto EQUAL_MESSAGE        = "equal";
-   constexpr auto NOTEQUAL_MESSAGE     = "notequal";
-   constexpr auto LESS_MESSAGE         = "less";
-   constexpr auto AND_MESSAGE          = "and";
-   constexpr auto OR_MESSAGE           = "or";
-   constexpr auto XOR_MESSAGE          = "xor";
-   constexpr auto GREATER_MESSAGE      = "greater";
-   constexpr auto NOTLESS_MESSAGE      = "notless";
-   constexpr auto NOTGREATER_MESSAGE   = "notgreater";
-   constexpr auto ADD_MESSAGE          = "add";
-   constexpr auto SUB_MESSAGE          = "subtract";
-   constexpr auto MUL_MESSAGE          = "multiply";
-   constexpr auto DIV_MESSAGE          = "divide";
-   constexpr auto REFER_MESSAGE        = "at";
-  // #define APPEND_MESSAGE           "append"
-  // #define REDUCE_MESSAGE           "reduce"
-   constexpr auto SET_REFER_MESSAGE    = "setAt";
-  // #define SET_MESSAGE              "set"
-   constexpr auto READ_MESSAGE         = "read";
-   constexpr auto WRITE_MESSAGE        = "write";
-   constexpr auto IF_MESSAGE           = "if";
-   constexpr auto IFNOT_MESSAGE        = "ifnot";
-  // #define SHIFT_MESSAGE            "shift"
-  // #define IF_ELSE_MESSAGE          "if:else"
-   constexpr auto INIT_MESSAGE         = "#init";
-  // #define ISNIL_MESSAGE            "#isnil"
-
-   // ELENA verb operators
-   constexpr auto EQUAL_OPERATOR       = "==";
-   constexpr auto NOTEQUAL_OPERATOR		= "!=";
-   constexpr auto NOTLESS_OPERATOR     = ">=";
-   constexpr auto NOTGREATER_OPERATOR  = "<=";
-   constexpr auto GREATER_OPERATOR     = ">";
-   constexpr auto LESS_OPERATOR        = "<";
-   constexpr auto IF_OPERATOR          = "?";
-   constexpr auto IFNOT_OPERATOR       = "!";
-   constexpr auto AND_OPERATOR         = "&&";
-   constexpr auto OR_OPERATOR          = "||";
-   constexpr auto XOR_OPERATOR         = "^^";
-   constexpr auto ADD_OPERATOR         = "+";
-   constexpr auto SUB_OPERATOR         = "-";
-   constexpr auto MUL_OPERATOR         = "*";
-   constexpr auto DIV_OPERATOR         = "/";
-   constexpr auto APPEND_OPERATOR      = "+=";
-   constexpr auto REDUCE_OPERATOR      = "-=";
-   constexpr auto INCREASE_OPERATOR    = "*=";
-   constexpr auto SEPARATE_OPERATOR    = "/=";
-   constexpr auto SHIFTL_OPERATOR      = "$shl";
-   constexpr auto SHIFTR_OPERATOR      = "$shr";
-   constexpr auto ISNIL_OPERATOR       = "??";
-   constexpr auto CATCH_OPERATOR       = "|";
-   constexpr auto ALT_OPERATOR         = "\\";
-   constexpr auto FINALLY_OPERATOR     = "$fnl";
-
-  // operator templates
-   constexpr auto DOIFNOTNIL_OPERATOR  = "doIfNotNil#1#1";
-   constexpr auto TRYORRETURN_OPERATOR = "tryOrReturn#1#1";
-
-  // --- ELENA explicit variables ---
-   constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target
-   constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference
-   constexpr auto SUPER_VAR            = "super";            // the predecessor class
-   constexpr auto SUBJECT_VAR          = "__received";       // the current message
-   constexpr auto NIL_VAR              = "nil";              // the nil pseudo symbol - representing the null value
-   constexpr auto RETVAL_VAR           = "$$ret";            // the closure returning value
-   constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
-   constexpr auto PARENT_VAR           = "$$parent";         // the closure parent
-   constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
-
-   constexpr auto INLINE_CLASSNAME     = "$inline";          // nested class generic name
-
-   constexpr auto VIRTUAL_FIELD        = "$virtual#";
-
-  // --- ELENA special sections ---
-   constexpr auto METAINFO_SECTION     = "#metainfo";
-   constexpr auto ATTRIBUTE_SECTION    = "#attributes";
-   constexpr auto EXTENSION_SECTION    = "#extensions";
-   constexpr auto INITIALIZER_SECTION  = "#initializer";
-   constexpr auto PACKAGE_SECTION      = "#package";
-   constexpr auto IMPORTS_SECTION      = "#import";
-   constexpr auto NAMESPACES_SECTION   = "#namespaces";
-   constexpr auto NAMESPACE_REF        = "#namespace";
-
-  // --- ELENA class prefixes / postfixes ---
-   constexpr auto PRIVATE_PREFIX_NS    = "'$private'";
-
-   constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
-   constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
-   constexpr auto TEMPLATE_PREFIX_NS_LEN     = 7;
-
-   constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
-   constexpr auto FORWARD_PREFIX_NS_LEN      = 10;
-
-   constexpr auto CLASSCLASS_POSTFIX         = "#class";
-   constexpr auto GENERIC_PREFIX             = "#generic";
-      ////   #define EMBEDDED_PREFIX          "#embedded"
-      ////   #define TARGET_POSTFIX           "##"
-   constexpr auto STATICFIELD_POSTFIX        = "#static";
-   constexpr auto EMBEDDAMLE_PREFIX          = "auto#";
-
-  // --- ELENA Standard module references ---
-   #define DLL_NAMESPACE            "$dlls"
-   #define RTDLL_FORWARD            "$rt"
-
-//   #define STANDARD_MODULE_LEN      6
-   #define INTERNAL_MASK_LEN        12
-   #define COREAPI_MASK_LEN         5
-
-   #define CORE_MODULE              "coreapi"
-   #define STANDARD_MODULE          "system"                         // the standard module name
-   #define FORWARD_MODULE           "$forwards"
-   #define RT_MODULE                "elenart"                        // ELENART / ELENAVM dll
-   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
-                                                                     // will be treated like internal core api one
-   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
-
-   #define NATIVE_MODULE            "$native"
-
-   constexpr auto META_MODULE             = "$meta";
-   constexpr auto MESSAGE_TABLE           = "$meta'$messages";
-   constexpr auto MESSAGEBODY_TABLE       = "$meta'$messagebody";
-   constexpr auto MATTRIBUTE_TABLE        = "$meta'$attributes";
-
-  // VM temporal code
-   constexpr auto TAPE_SYMBOL             = "$tape";
-
-   constexpr auto GC_THREADTABLE          = "$elena'@gcthreadroot";           // thread table
-   constexpr auto TLS_KEY                 = "$elena'@tlskey";                 // TLS key
-   constexpr auto TAPE_KEY                = "$elena'@tapekey";                // VM Tape key
-   constexpr auto NAMESPACE_KEY           = "$elena'@rootnamespace";          // The project namespace
-
-   // predefined system forwards
-   constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
-   constexpr auto LAZYEXPR_FORWARD        = "$lazyexpression";                // the base lazy expression class
-   constexpr auto INT_FORWARD             = "$int";
-   constexpr auto LONG_FORWARD            = "$long";
-   constexpr auto REAL_FORWARD            = "$real";
-   constexpr auto STR_FORWARD             = "$literal";
-   constexpr auto WIDESTR_FORWARD         = "$wideliteral";
-   constexpr auto CHAR_FORWARD            = "$char";
-   constexpr auto MESSAGE_FORWARD         = "$message";
-   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
-   constexpr auto MESSAGENAME_FORWARD     = "$messagename";
-   constexpr auto REFTEMPLATE_FORWARD     = "$reference";
-   constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
-   constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
-   constexpr auto ARGARRAYTEMPLATE_FORWARD= "$varray";
-   constexpr auto BOOL_FORWARD            = "$bool";
-   constexpr auto TRUE_FORWARD            = "$true";
-   constexpr auto FALSE_FORWARD           = "$false";
-   constexpr auto WRAP_FORWARD            = "$wrap";
-
-   constexpr auto PROGRAM_ENTRY           = "$program";                     // the program entry
-   constexpr auto SYSTEM_ENTRY            = "$system_entry";                // the system entry
+//  // --- ELENA verb messages ---
+//   constexpr auto DISPATCH_MESSAGE     = "#dispatch";
+//   constexpr auto NEWOBJECT_MESSAGE    = "#new";
+//   constexpr auto CAST_MESSAGE         = "#cast";
+//   constexpr auto CONSTRUCTOR_MESSAGE  = "#constructor";
+//   constexpr auto INVOKE_MESSAGE       = "#invoke";
+//   constexpr auto EQUAL_MESSAGE        = "equal";
+//   constexpr auto NOTEQUAL_MESSAGE     = "notequal";
+//   constexpr auto LESS_MESSAGE         = "less";
+//   constexpr auto AND_MESSAGE          = "and";
+//   constexpr auto OR_MESSAGE           = "or";
+//   constexpr auto XOR_MESSAGE          = "xor";
+//   constexpr auto GREATER_MESSAGE      = "greater";
+//   constexpr auto NOTLESS_MESSAGE      = "notless";
+//   constexpr auto NOTGREATER_MESSAGE   = "notgreater";
+//   constexpr auto ADD_MESSAGE          = "add";
+//   constexpr auto SUB_MESSAGE          = "subtract";
+//   constexpr auto MUL_MESSAGE          = "multiply";
+//   constexpr auto DIV_MESSAGE          = "divide";
+//   constexpr auto REFER_MESSAGE        = "at";
+//  // #define APPEND_MESSAGE           "append"
+//  // #define REDUCE_MESSAGE           "reduce"
+//   constexpr auto SET_REFER_MESSAGE    = "setAt";
+//  // #define SET_MESSAGE              "set"
+//   constexpr auto READ_MESSAGE         = "read";
+//   constexpr auto WRITE_MESSAGE        = "write";
+//   constexpr auto IF_MESSAGE           = "if";
+//   constexpr auto IFNOT_MESSAGE        = "ifnot";
+//  // #define SHIFT_MESSAGE            "shift"
+//  // #define IF_ELSE_MESSAGE          "if:else"
+//   constexpr auto INIT_MESSAGE         = "#init";
+//  // #define ISNIL_MESSAGE            "#isnil"
+//
+//   // ELENA verb operators
+//   constexpr auto EQUAL_OPERATOR       = "==";
+//   constexpr auto NOTEQUAL_OPERATOR		= "!=";
+//   constexpr auto NOTLESS_OPERATOR     = ">=";
+//   constexpr auto NOTGREATER_OPERATOR  = "<=";
+//   constexpr auto GREATER_OPERATOR     = ">";
+//   constexpr auto LESS_OPERATOR        = "<";
+//   constexpr auto IF_OPERATOR          = "?";
+//   constexpr auto IFNOT_OPERATOR       = "!";
+//   constexpr auto AND_OPERATOR         = "&&";
+//   constexpr auto OR_OPERATOR          = "||";
+//   constexpr auto XOR_OPERATOR         = "^^";
+//   constexpr auto ADD_OPERATOR         = "+";
+//   constexpr auto SUB_OPERATOR         = "-";
+//   constexpr auto MUL_OPERATOR         = "*";
+//   constexpr auto DIV_OPERATOR         = "/";
+//   constexpr auto APPEND_OPERATOR      = "+=";
+//   constexpr auto REDUCE_OPERATOR      = "-=";
+//   constexpr auto INCREASE_OPERATOR    = "*=";
+//   constexpr auto SEPARATE_OPERATOR    = "/=";
+//   constexpr auto SHIFTL_OPERATOR      = "$shl";
+//   constexpr auto SHIFTR_OPERATOR      = "$shr";
+//   constexpr auto ISNIL_OPERATOR       = "??";
+//   constexpr auto CATCH_OPERATOR       = "|";
+//   constexpr auto ALT_OPERATOR         = "\\";
+//   constexpr auto FINALLY_OPERATOR     = "$fnl";
+//
+//  // operator templates
+//   constexpr auto DOIFNOTNIL_OPERATOR  = "doIfNotNil#1#1";
+//   constexpr auto TRYORRETURN_OPERATOR = "tryOrReturn#1#1";
+//
+//  // --- ELENA explicit variables ---
+//   constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target
+//   constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference
+//   constexpr auto SUPER_VAR            = "super";            // the predecessor class
+//   constexpr auto SUBJECT_VAR          = "__received";       // the current message
+//   constexpr auto NIL_VAR              = "nil";              // the nil pseudo symbol - representing the null value
+//   constexpr auto RETVAL_VAR           = "$$ret";            // the closure returning value
+//   constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
+//   constexpr auto PARENT_VAR           = "$$parent";         // the closure parent
+//   constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
+//
+//   constexpr auto INLINE_CLASSNAME     = "$inline";          // nested class generic name
+//
+//   constexpr auto VIRTUAL_FIELD        = "$virtual#";
+//
+//  // --- ELENA special sections ---
+//   constexpr auto METAINFO_SECTION     = "#metainfo";
+//   constexpr auto ATTRIBUTE_SECTION    = "#attributes";
+//   constexpr auto EXTENSION_SECTION    = "#extensions";
+//   constexpr auto INITIALIZER_SECTION  = "#initializer";
+//   constexpr auto PACKAGE_SECTION      = "#package";
+//   constexpr auto IMPORTS_SECTION      = "#import";
+//   constexpr auto NAMESPACES_SECTION   = "#namespaces";
+//   constexpr auto NAMESPACE_REF        = "#namespace";
+//
+//  // --- ELENA class prefixes / postfixes ---
+//   constexpr auto PRIVATE_PREFIX_NS    = "'$private'";
+//
+//   constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
+//   constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
+//   constexpr auto TEMPLATE_PREFIX_NS_LEN     = 7;
+//
+//   constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
+//   constexpr auto FORWARD_PREFIX_NS_LEN      = 10;
+//
+//   constexpr auto CLASSCLASS_POSTFIX         = "#class";
+//   constexpr auto GENERIC_PREFIX             = "#generic";
+//      ////   #define EMBEDDED_PREFIX          "#embedded"
+//      ////   #define TARGET_POSTFIX           "##"
+//   constexpr auto STATICFIELD_POSTFIX        = "#static";
+//   constexpr auto EMBEDDAMLE_PREFIX          = "auto#";
+//
+//  // --- ELENA Standard module references ---
+//   #define DLL_NAMESPACE            "$dlls"
+//   #define RTDLL_FORWARD            "$rt"
+//
+////   #define STANDARD_MODULE_LEN      6
+//   #define INTERNAL_MASK_LEN        12
+//   #define COREAPI_MASK_LEN         5
+//
+//   #define CORE_MODULE              "coreapi"
+//   #define STANDARD_MODULE          "system"                         // the standard module name
+//   #define FORWARD_MODULE           "$forwards"
+//   #define RT_MODULE                "elenart"                        // ELENART / ELENAVM dll
+//   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
+//                                                                     // will be treated like internal core api one
+//   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
+//
+//   #define NATIVE_MODULE            "$native"
+//
+//   constexpr auto META_MODULE             = "$meta";
+//   constexpr auto MESSAGE_TABLE           = "$meta'$messages";
+//   constexpr auto MESSAGEBODY_TABLE       = "$meta'$messagebody";
+//   constexpr auto MATTRIBUTE_TABLE        = "$meta'$attributes";
+//
+//  // VM temporal code
+//   constexpr auto TAPE_SYMBOL             = "$tape";
+//
+//   constexpr auto GC_THREADTABLE          = "$elena'@gcthreadroot";           // thread table
+//   constexpr auto TLS_KEY                 = "$elena'@tlskey";                 // TLS key
+//   constexpr auto TAPE_KEY                = "$elena'@tapekey";                // VM Tape key
+//   constexpr auto NAMESPACE_KEY           = "$elena'@rootnamespace";          // The project namespace
+//
+//   // predefined system forwards
+//   constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
+//   constexpr auto LAZYEXPR_FORWARD        = "$lazyexpression";                // the base lazy expression class
+//   constexpr auto INT_FORWARD             = "$int";
+//   constexpr auto LONG_FORWARD            = "$long";
+//   constexpr auto REAL_FORWARD            = "$real";
+//   constexpr auto STR_FORWARD             = "$literal";
+//   constexpr auto WIDESTR_FORWARD         = "$wideliteral";
+//   constexpr auto CHAR_FORWARD            = "$char";
+//   constexpr auto MESSAGE_FORWARD         = "$message";
+//   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
+//   constexpr auto MESSAGENAME_FORWARD     = "$messagename";
+//   constexpr auto REFTEMPLATE_FORWARD     = "$reference";
+//   constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
+//   constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
+//   constexpr auto ARGARRAYTEMPLATE_FORWARD= "$varray";
+//   constexpr auto BOOL_FORWARD            = "$bool";
+//   constexpr auto TRUE_FORWARD            = "$true";
+//   constexpr auto FALSE_FORWARD           = "$false";
+//   constexpr auto WRAP_FORWARD            = "$wrap";
+//
+//   constexpr auto PROGRAM_ENTRY           = "$program";                     // the program entry
+//   constexpr auto SYSTEM_ENTRY            = "$system_entry";                // the system entry
 
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)

@@ -10,28 +10,28 @@
 #define elcH 1
 
 #include "config.h"
-#include "jitcompiler.h"
+//#include "jitcompiler.h"
 #include "parser.h"
 #include "project.h"
-#include "compiler.h"
+//#include "compiler.h"
 #include "compilerscope.h"
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x016D
+#define ELC_REVISION_NUMBER         0x0001
 
 // --- ELC default file names ---
 #ifdef _WIN32
 
 constexpr auto SYNTAX_FILE          = "syntax.dat";
-constexpr auto RULES_FILE           = "rules.dat";
-constexpr auto SOURCERULES_FILE     = "source_rules.dat";
+//constexpr auto RULES_FILE           = "rules.dat";
+//constexpr auto SOURCERULES_FILE     = "source_rules.dat";
 
 #else
 
 constexpr auto SYNTAX_FILE          = "/usr/share/elena/syntax.dat";
-constexpr auto RULES_FILE           = "/usr/share/elena/rules.dat";
-constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
+//constexpr auto RULES_FILE           = "/usr/share/elena/rules.dat";
+//constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
 
 #endif
 
@@ -127,19 +127,18 @@ constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
 #define ELC_ERR_INVALID_PATH        "elc: error 402: Invalid or none-existing file '%s'\n"
 #define ELC_ERR_INVALID_TEMPLATE    "elc: error 404: Invalid or none-existing template '%s'\n"
 
-////#define ELC_WRN_MISSING_VMPATH      "elc: warning 411: Missing project/vmpath\n"
-
 namespace _ELC_
 {
 
 // --- ELC type definitions ---
-//typedef _ELENA_::IniConfigFile ElcConfigFile;
 typedef _ELENA_::XmlConfigFile ElcXmlConfigFile;
 
 // --- Command Line Project ---
 class Project : public _ELENA_::Project
 {
    int _tabSize, _encoding;
+   _ELENA_::ProjectSettings _sources;
+   _ELENA_::TargetSettings  _targets;
 
    virtual bool readCategory(_ELENA_::_ConfigFile& config, _ELENA_::ProjectSetting setting, _ELENA_::_ConfigFile::Nodes& list)
    {
@@ -221,48 +220,48 @@ class Project : public _ELENA_::Project
       }
    }
 
-   void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
+//   void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
+//   {
+//      if (!moduleNs.compare(rootNs)) {
+//         moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
+//      }
+//      else moduleNs = NULL;
+//
+//      size_t ns_index = filePath.find(PATH_SEPARATOR);
+//      while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
+//         if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
+//            filePath += (ns_index + 1);
+//            moduleNs += (ns_index + 1);
+//
+//            ns_index = filePath.find(PATH_SEPARATOR);
+//         }
+//         else break;
+//      }
+//
+//      size_t index = filePath.find(PATH_SEPARATOR);
+//      while (index != NOTFOUND_POS) {
+//         if (retVal.Length() != 0) {
+//            retVal.append('\'');
+//         }
+//         retVal.append(filePath, index);
+//
+//         filePath += (index + 1);
+//         index = filePath.find(PATH_SEPARATOR);
+//      }
+//   }
+
+   void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source/*, _ELENA_::ModuleScope& scope*/, _ELENA_::SyntaxTree& derivationTree)
    {
-      if (!moduleNs.compare(rootNs)) {
-         moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
-      }
-      else moduleNs = NULL;
+      _ELENA_::DerivationWriter writer(derivationTree/*, &scope*/);
+//      writer.begin();
 
-      size_t ns_index = filePath.find(PATH_SEPARATOR);
-      while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
-         if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
-            filePath += (ns_index + 1);
-            moduleNs += (ns_index + 1);
-
-            ns_index = filePath.find(PATH_SEPARATOR);
-         }
-         else break;
-      }
-
-      size_t index = filePath.find(PATH_SEPARATOR);
-      while (index != NOTFOUND_POS) {
-         if (retVal.Length() != 0) {
-            retVal.append('\'');
-         }
-         retVal.append(filePath, index);
-
-         filePath += (index + 1);
-         index = filePath.find(PATH_SEPARATOR);
-      }
-   }
-
-   void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)
-   {
-      _ELENA_::DerivationWriter writer(derivationTree, &scope);
-      writer.begin();
-
-      _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
+      auto file_it = source->getIt(ELC_INCLUDE);
       while (!file_it.Eof()) {
          _ELENA_::ident_t filePath = *file_it;
 
-         //_ELENA_::SourceFileInfo* info = initSourceFileInfo(scope, filePath);
-         _ELENA_::IdentifierString ns;
-         retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, ns);
+//         //_ELENA_::SourceFileInfo* info = initSourceFileInfo(scope, filePath);
+//         _ELENA_::IdentifierString ns;
+//         retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, ns);
 
          try {
             // based on the target type generate the syntax tree for the file
@@ -273,10 +272,10 @@ class Project : public _ELENA_::Project
             _ELENA_::TextFileReader sourceFile(fullPath.c_str(), getDefaultEncoding(), true);
             if (!sourceFile.isOpened())
                raiseError(errInvalidFile, filePath);
-
-            scope.beginModule(ns.c_str(), filePath, writer);
+//
+//            scope.beginModule(ns.c_str(), filePath, writer);
             parser.parse(&sourceFile, writer, getTabSize());
-            scope.endModule(writer);
+//            scope.endModule(writer);
          }
          catch (_ELENA_::LineTooLong& e)
          {
@@ -299,75 +298,74 @@ class Project : public _ELENA_::Project
          file_it = source->nextIt(ELC_INCLUDE, file_it);
       }
 
-      writer.end();
-
-      //   // generate the module members
-      //   for (auto it = files.start(); !it.Eof(); it++) {
-      //      _ELENA_::SyntaxTree* derivationTree = (*it)->tree;
-      //      _ELENA_::SyntaxTree* syntaxTree = new _ELENA_::SyntaxTree();
-      //
-      //      _ELENA_::SyntaxWriter syntaxWriter(*syntaxTree);
-      //      _ELENA_::DerivationTransformer transformer(*derivationTree);
-      //      syntaxWriter.newNode(_ELENA_::lxRoot);
-      //      transformer.generate(syntaxWriter, scope, (*it)->path, (*it)->ns, &(*it)->importedNs);
-      //      syntaxWriter.closeNode();
-      //
-      //      (*it)->tree = syntaxTree;
-      //
-      //      freeobj(derivationTree);
-      //   }
+//      writer.end();
+//
+//      //   // generate the module members
+//      //   for (auto it = files.start(); !it.Eof(); it++) {
+//      //      _ELENA_::SyntaxTree* derivationTree = (*it)->tree;
+//      //      _ELENA_::SyntaxTree* syntaxTree = new _ELENA_::SyntaxTree();
+//      //
+//      //      _ELENA_::SyntaxWriter syntaxWriter(*syntaxTree);
+//      //      _ELENA_::DerivationTransformer transformer(*derivationTree);
+//      //      syntaxWriter.newNode(_ELENA_::lxRoot);
+//      //      transformer.generate(syntaxWriter, scope, (*it)->path, (*it)->ns, &(*it)->importedNs);
+//      //      syntaxWriter.closeNode();
+//      //
+//      //      (*it)->tree = syntaxTree;
+//      //
+//      //      freeobj(derivationTree);
+//      //   }
    }
 
-
-   void buildSyntaxTree(_ELENA_::ScriptParser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)
-   {
-      _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
-      while (!file_it.Eof()) {
-         _ELENA_::ident_t filePath = *file_it;
-
-         _ELENA_::IdentifierString ns;
-         retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, ns);
-
-         try {
-            // based on the target type generate the syntax tree for the file
-            _ELENA_::Path fullPath(StrSetting(_ELENA_::opProjectPath));
-            fullPath.combine(filePath);
-
-            parser.parse(fullPath.c_str(), derivationTree);
-            derivationTree.readRoot().firstChild().appendNode(_ELENA_::lxSourcePath, filePath);
-         }
-         catch (_ELENA_::LineTooLong& e)
-         {
-            raiseError(errLineTooLong, filePath, e.row, 1);
-         }
-         catch (_ELENA_::InvalidChar& e)
-         {
-            size_t destLength = 6;
-
-            _ELENA_::String<char, 6> symbol;
-            _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*) & e.ch, 1, destLength);
-
-            raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
-         }
-         catch (_ELENA_::SyntaxError& e)
-         {
-            raiseError(e.error, filePath, e.row, e.column, e.token);
-         }
-         catch (_ELENA_::ScriptError& e)
-         {
-            raiseError(e.error, filePath);
-         }
-
-         file_it = source->nextIt(ELC_INCLUDE, file_it);
-      }
-   }
+//   void buildSyntaxTree(_ELENA_::ScriptParser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)
+//   {
+//      _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
+//      while (!file_it.Eof()) {
+//         _ELENA_::ident_t filePath = *file_it;
+//
+//         _ELENA_::IdentifierString ns;
+//         retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, ns);
+//
+//         try {
+//            // based on the target type generate the syntax tree for the file
+//            _ELENA_::Path fullPath(StrSetting(_ELENA_::opProjectPath));
+//            fullPath.combine(filePath);
+//
+//            parser.parse(fullPath.c_str(), derivationTree);
+//            derivationTree.readRoot().firstChild().appendNode(_ELENA_::lxSourcePath, filePath);
+//         }
+//         catch (_ELENA_::LineTooLong& e)
+//         {
+//            raiseError(errLineTooLong, filePath, e.row, 1);
+//         }
+//         catch (_ELENA_::InvalidChar& e)
+//         {
+//            size_t destLength = 6;
+//
+//            _ELENA_::String<char, 6> symbol;
+//            _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*) & e.ch, 1, destLength);
+//
+//            raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
+//         }
+//         catch (_ELENA_::SyntaxError& e)
+//         {
+//            raiseError(e.error, filePath, e.row, e.column, e.token);
+//         }
+//         catch (_ELENA_::ScriptError& e)
+//         {
+//            raiseError(e.error, filePath);
+//         }
+//
+//         file_it = source->nextIt(ELC_INCLUDE, file_it);
+//      }
+//   }
 
 public:
    _ELENA_::Path appPath;
    _ELENA_::IdentifierString projectName;
 
-   _ELENA_::_JITCompiler* createJITCompiler();
-//   _ELENA_::_JITCompiler* createJITCompiler64();
+//   _ELENA_::_JITCompiler* createJITCompiler();
+////   _ELENA_::_JITCompiler* createJITCompiler64();
 
    virtual void printInfo(const char* msg, _ELENA_::ReferenceInfo param);
    virtual void printInfo(const char* msg, _ELENA_::ident_t param);
@@ -390,7 +388,7 @@ public:
       name.pathToName(modulePath.c_str());
 
       int key = 0;
-      for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
+      for (auto it = _sources.start(); !it.Eof(); it++) {
          _ELENA_::ident_t currentName = _sources.get(it.key(), ELC_NAMESPACE_KEY, DEFAULT_STR);
          if (currentName.compare(name)) {
             key = it.key();
@@ -475,7 +473,7 @@ public:
       _ELENA_::Project::loadConfig(config, configPath);
    }
 
-   virtual void loadConfig(_ELENA_::path_t path, bool root = false, bool requiered = true)
+   void loadConfig(_ELENA_::path_t path, bool root = false, bool requiered = true)
    {
       ElcXmlConfigFile config;
       _ELENA_::Path configPath;
@@ -586,102 +584,100 @@ public:
          }
    }
 
-
    virtual int getDefaultEncoding() { return _encoding; }
 
    virtual int getTabSize() { return _tabSize; }
 
-   bool compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
+   bool compileSources(/*_ELENA_::Compiler& compiler, */_ELENA_::Parser& parser)
    {
-      bool debugMode = BoolSetting(_ELENA_::opDebugMode);
+//      bool debugMode = BoolSetting(_ELENA_::opDebugMode);
 
       //   //_ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
       _ELENA_::SyntaxTree derivationTree;
       for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
          _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ProjectSettings::VItem>* source = *it;
 
-         // create module
-         _ELENA_::ModuleScope scope(this, &compiler);
+//         // create module
+//         _ELENA_::ModuleScope scope(this, &compiler);
 
          _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
-         compiler.initializeScope(name, scope, debugMode);
+//         compiler.initializeScope(name, scope, debugMode);
+
+         printInfo("Parsing %s", name);
 
          _ELENA_::ident_t target = source->get(ELC_TARGET_NAME);
          int type = !emptystr(target) ? _targets.get(target, ELC_TYPE_NAME, 1) : 1;
          if (type == 1) {
             derivationTree.clear();
 
-            printInfo("Parsing %s", name);
-
             // build derivation tree, recognize scopes and register all symbols
-            buildSyntaxTree(parser, source, scope, derivationTree);
+            buildSyntaxTree(parser, source/*, scope*/, derivationTree);
 
-            printInfo("Compiling %s", name);
-
-            scope.compile(derivationTree, nullptr);
+//            printInfo("Compiling %s", name);
+//
+//            scope.compile(derivationTree, nullptr);
          }
          else if (type == 2) {
-            derivationTree.clear();
-
-            printInfo("Parsing %s", name);
-
-            // if it is a script file
-            _ELENA_::ScriptParser scriptParser;
-
-            // load options
-            _ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>* targetInfo = _targets.get(target, (_ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>*)NULL);
-
-            _ELENA_::TargetIterator option_it = targetInfo->getIt(ELC_OPTION);
-            while (!option_it.Eof()) {
-               if (!scriptParser.setOption(*option_it, StrSetting(_ELENA_::opProjectPath))) {
-                  raiseError(errInvalidTargetOption, *option_it);
-               }
-
-               option_it = targetInfo->nextIt(ELC_OPTION, option_it);
-            }
-
-            // compile script files
-            buildSyntaxTree(scriptParser, source, scope, derivationTree);
-
-            printInfo("Compiling %s", name);
-
-            scope.compile(derivationTree, nullptr);
+            throw _ELENA_::InternalError("Not supported"); // !! temporal
+//            derivationTree.clear();
+//
+//            // if it is a script file
+//            _ELENA_::ScriptParser scriptParser;
+//
+//            // load options
+//            _ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>* targetInfo = _targets.get(target, (_ELENA_::Map<_ELENA_::ident_t, _ELENA_::TargetSettings::VItem>*)NULL);
+//
+//            _ELENA_::TargetIterator option_it = targetInfo->getIt(ELC_OPTION);
+//            while (!option_it.Eof()) {
+//               if (!scriptParser.setOption(*option_it, StrSetting(_ELENA_::opProjectPath))) {
+//                  raiseError(errInvalidTargetOption, *option_it);
+//               }
+//
+//               option_it = targetInfo->nextIt(ELC_OPTION, option_it);
+//            }
+//
+//            // compile script files
+//            buildSyntaxTree(scriptParser, source, scope, derivationTree);
+//
+//            printInfo("Compiling %s", name);
+//
+//            scope.compile(derivationTree, nullptr);
          }
 
-         saveModule(scope.module, "nl");
-
-         if (scope.debugModule)
-            saveModule(scope.debugModule, "dnl");
+//         saveModule(scope.module, "nl");
+//
+//         if (scope.debugModule)
+//            saveModule(scope.debugModule, "dnl");
       }
 
-      //   // validate the unresolved forward refereces if unresolved reference warning is enabled
-      //   //compiler.validateUnresolved(unresolveds, *this);
+      // validate the unresolved forward refereces if unresolved reference warning is enabled
+      //compiler.validateUnresolved(unresolveds, *this);
 
       return !HasWarnings();
    }
 
-   void setCompilerOptions(_ELENA_::Compiler& compiler)
-   {
-      if (IntSetting(_ELENA_::opL0, -1) != 0) {
-         _ELENA_::Path rulesPath(StrSetting(_ELENA_::opAppPath), RULES_FILE);
-         _ELENA_::Path sourceRulesPath(StrSetting(_ELENA_::opAppPath), SOURCERULES_FILE);
-
-         _ELENA_::FileReader rulesFile(rulesPath.c_str(), _ELENA_::feRaw, false);
-         if (!rulesFile.isOpened()) {
-            raiseWarning(0, errInvalidFile, RULES_FILE);
-         }
-         else compiler.loadRules(&rulesFile);
-
-         _ELENA_::FileReader sourceRulesFile(sourceRulesPath.c_str(), _ELENA_::feRaw, false);
-         if (!rulesFile.isOpened()) {
-            raiseWarning(0, errInvalidFile, RULES_FILE);
-         }
-         else compiler.loadSourceRules(&sourceRulesFile);
-      }
-      if (IntSetting(_ELENA_::opL1, -1) != 0) {
-         compiler.turnOnOptimiation(1);
-      }
-   }
+//   void setCompilerOptions(_ELENA_::Compiler& compiler)
+//   {
+//      if (IntSetting(_ELENA_::opL0, -1) != 0) {
+//         _ELENA_::Path rulesPath(StrSetting(_ELENA_::opAppPath), RULES_FILE);
+//         _ELENA_::Path sourceRulesPath(StrSetting(_ELENA_::opAppPath), SOURCERULES_FILE);
+//
+//         _ELENA_::FileReader rulesFile(rulesPath.c_str(), _ELENA_::feRaw, false);
+//         if (!rulesFile.isOpened()) {
+//            raiseWarning(0, errInvalidFile, RULES_FILE);
+//         }
+//         else compiler.loadRules(&rulesFile);
+//
+//         _ELENA_::FileReader sourceRulesFile(sourceRulesPath.c_str(), _ELENA_::feRaw, false);
+//         if (!rulesFile.isOpened()) {
+//            raiseWarning(0, errInvalidFile, RULES_FILE);
+//         }
+//         else compiler.loadSourceRules(&sourceRulesFile);
+//      }
+//      if (IntSetting(_ELENA_::opL1, -1) != 0) {
+//         compiler.turnOnOptimiation(1);
+//      }
+//   }
 
    void cleanUp();
 

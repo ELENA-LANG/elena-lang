@@ -11,8 +11,8 @@
 #include <windows.h>
 #include "elena.h"
 
-#define TITLE "ELENA Standard Library 4.1: Module "
-#define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>4.1"
+#define TITLE "ELENA Standard Library 5.0: Module "
+#define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>5.0"
 
 //#define OPERATORS "+-*/=<>?!"
 

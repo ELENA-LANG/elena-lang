@@ -684,19 +684,19 @@ void DebugController :: toggleBreakpoint(Breakpoint& breakpoint, bool adding)
 
 _Module* DebugController :: resolveModule(ident_t ns)
 {
-   // check if the module is already loaded
-   auto it = _modules.start();
-   while (!it.Eof()) {
-      if (NamespaceName::isIncluded((*it)->Name(), ns)) {
-         IdentifierString virtualRef(ns + getlength((*it)->Name()), "'");
-         virtualRef.append(NAMESPACE_REF);
-         if ((*it)->mapReference(virtualRef, true))
-            return *it;
-      }
-      it++;
-   }
+   //// check if the module is already loaded
+   //auto it = _modules.start();
+   //while (!it.Eof()) {
+   //   if (NamespaceName::isIncluded((*it)->Name(), ns)) {
+   //      IdentifierString virtualRef(ns + getlength((*it)->Name()), "'");
+   //      virtualRef.append(NAMESPACE_REF);
+   //      if ((*it)->mapReference(virtualRef, true))
+   //         return *it;
+   //   }
+   //   it++;
+   //}
 
-   return NULL;
+   return nullptr;
 }
 
 _Module* DebugController :: loadDebugModule(ident_t reference)
@@ -1055,19 +1055,19 @@ void DebugController::readByteArray(_DebuggerWatch* watch, size_t address, ident
 
 void DebugController :: parseMessage(IdentifierString& messageValue, ref_t message)
 {
-   ref_t sign_ref = getAction(message);
-   if (sign_ref != 0) {
-   //   ident_t subject = retrieveKey(_subjects.start(), sign_ref, DEFAULT_STR);
-   //   if (emptystr(subject)) {
-         messageValue.append("?<");
-         messageValue.appendHex(getAction(message));
-         messageValue.append('>');
-      //}
-      //else messageValue.append(subject);
-   }
-   messageValue.append('[');
-   messageValue.appendInt(getParamCount(message));
-   messageValue.append("]");
+   //ref_t sign_ref = getAction(message);
+   //if (sign_ref != 0) {
+   ////   ident_t subject = retrieveKey(_subjects.start(), sign_ref, DEFAULT_STR);
+   ////   if (emptystr(subject)) {
+   //      messageValue.append("?<");
+   //      messageValue.appendHex(getAction(message));
+   //      messageValue.append('>');
+   //   //}
+   //   //else messageValue.append(subject);
+   //}
+   //messageValue.append('[');
+   //messageValue.appendInt(getParamCount(message));
+   //messageValue.append("]");
 }
 
 void DebugController :: readMessage(_DebuggerWatch* watch, size_t address, ref_t message)

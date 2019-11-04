@@ -172,7 +172,6 @@
     <ClInclude Include="..\errors.h" />
     <ClInclude Include="..\separser.h" />
     <ClInclude Include="..\source.h" />
-    <ClInclude Include="..\syntax.h" />
     <ClInclude Include="..\bcwriter.h" />
     <ClInclude Include="..\win32\syslibloader.h" />
     <ClInclude Include="..\win32\linker.h" />

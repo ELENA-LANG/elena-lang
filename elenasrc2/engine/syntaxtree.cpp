@@ -9,88 +9,88 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "syntaxtree.h"
-#include <stdarg.h>
+//#include <stdarg.h>
 
 using namespace _ELENA_;
 
-// --- loadSyntaxTokens ---
-
-void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
-{
-   tokens.add("root", lxRoot);
-   tokens.add("namespace", lxNamespace);
-   tokens.add("class", lxClass);
-   tokens.add("singleton", lxClass);
-   tokens.add("nested", lxNestedClass);
-   tokens.add("script_method", lxClassMethod);
-   tokens.add("method", lxClassMethod);
-   tokens.add("action", lxClassMethod);
-   tokens.add("get_method", lxClassMethod);
-   tokens.add("message", lxMessage);
-   tokens.add("code", lxCode);
-   tokens.add("expression", lxExpression);
-   tokens.add("returning", lxReturning);
-   tokens.add("symbol", lxSymbol);
-   tokens.add("preloaded_symbol", lxSymbol);
-   tokens.add("literal", lxLiteral);
-   tokens.add("identifier", lxIdentifier);
-   tokens.add("integer", lxInteger);
-   tokens.add("parameter", lxMethodParameter);
-   tokens.add("include", lxInclude);
-   tokens.add("forward", lxForward);
-   tokens.add("reference", lxReference);
-   tokens.add("variable", lxVariable);
-   tokens.add("assign", lxAssign);
-   tokens.add("operator", lxOperator);
-   tokens.add("nameattr", lxNameAttr);
-   tokens.add("property_parameter", lxPropertyParam);
-
-   if (fullMode) {
-      tokens.add("argarrop", lxArgArrOp);
-      tokens.add("assigning", lxAssigning);
-      tokens.add("boxing", lxBoxing);
-      tokens.add("call", lxCalling);
-      tokens.add("condboxing", lxCondBoxing);
-      tokens.add("directcall", lxDirectCalling);
-      tokens.add("embeddable", lxEmbeddableAttr);
-      tokens.add("fieldaddress", lxFieldAddress);
-      tokens.add("localaddress", lxLocalAddress);
-      tokens.add("sdirectcall", lxSDirectCalling);
-      tokens.add("unboxing", lxUnboxing);
-
-      tokens.add("constint", lxConstantInt);
-      tokens.add("constreal", lxConstantReal);
-      tokens.add("stacksafe", lxStacksafeAttr);
-      tokens.add("boxable", lxBoxableAttr);
-      tokens.add("intop", lxIntOp);
-      tokens.add("longop", lxLongOp);
-      tokens.add("realop", lxRealOp);
-      tokens.add("intarrop", lxIntArrOp);
-      tokens.add("bytearrop", lxByteArrOp);
-      tokens.add("shortarrop", lxShortArrOp);
-      tokens.add("temp", lxTempAttr);
-      tokens.add("stdextcall", lxStdExternalCall);
-      tokens.add("extcall", lxExternalCall);
-      tokens.add("corecall", lxCoreAPICall);
-      tokens.add("extarg", lxExtArgument);
-      tokens.add("intextarg", lxIntExtArgument);
-      tokens.add("interncall", lxInternalCall);
-      tokens.add("branching", lxBranching);
-      tokens.add("looping", lxLooping);
-      tokens.add("constlong", lxConstantLong);
-      tokens.add("constsymbol", lxConstantSymbol);
-      tokens.add("constmssg", lxMessageConstant);
-      tokens.add("constsubj", lxSubjectConstant);
-      tokens.add("argunboxing", lxArgUnboxing);
-      tokens.add("argboxing", lxArgBoxing);
-      tokens.add("byreftarget", lxByRefTarget);
-      tokens.add("arrop", lxArrOp); 
-      tokens.add("binarrop", lxBinArrOp);
-      tokens.add("duplicateboxing", lxDuplicateBoxingAttr);
-      tokens.add("newarrop", lxNewArrOp);
-      tokens.add("nested_expr", lxNested);
-   }
-}
+//// --- loadSyntaxTokens ---
+//
+//void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
+//{
+//   tokens.add("root", lxRoot);
+//   tokens.add("namespace", lxNamespace);
+//   tokens.add("class", lxClass);
+//   tokens.add("singleton", lxClass);
+//   tokens.add("nested", lxNestedClass);
+//   tokens.add("script_method", lxClassMethod);
+//   tokens.add("method", lxClassMethod);
+//   tokens.add("action", lxClassMethod);
+//   tokens.add("get_method", lxClassMethod);
+//   tokens.add("message", lxMessage);
+//   tokens.add("code", lxCode);
+//   tokens.add("expression", lxExpression);
+//   tokens.add("returning", lxReturning);
+//   tokens.add("symbol", lxSymbol);
+//   tokens.add("preloaded_symbol", lxSymbol);
+//   tokens.add("literal", lxLiteral);
+//   tokens.add("identifier", lxIdentifier);
+//   tokens.add("integer", lxInteger);
+//   tokens.add("parameter", lxMethodParameter);
+//   tokens.add("include", lxInclude);
+//   tokens.add("forward", lxForward);
+//   tokens.add("reference", lxReference);
+//   tokens.add("variable", lxVariable);
+//   tokens.add("assign", lxAssign);
+//   tokens.add("operator", lxOperator);
+//   tokens.add("nameattr", lxNameAttr);
+//   tokens.add("property_parameter", lxPropertyParam);
+//
+//   if (fullMode) {
+//      tokens.add("argarrop", lxArgArrOp);
+//      tokens.add("assigning", lxAssigning);
+//      tokens.add("boxing", lxBoxing);
+//      tokens.add("call", lxCalling);
+//      tokens.add("condboxing", lxCondBoxing);
+//      tokens.add("directcall", lxDirectCalling);
+//      tokens.add("embeddable", lxEmbeddableAttr);
+//      tokens.add("fieldaddress", lxFieldAddress);
+//      tokens.add("localaddress", lxLocalAddress);
+//      tokens.add("sdirectcall", lxSDirectCalling);
+//      tokens.add("unboxing", lxUnboxing);
+//
+//      tokens.add("constint", lxConstantInt);
+//      tokens.add("constreal", lxConstantReal);
+//      tokens.add("stacksafe", lxStacksafeAttr);
+//      tokens.add("boxable", lxBoxableAttr);
+//      tokens.add("intop", lxIntOp);
+//      tokens.add("longop", lxLongOp);
+//      tokens.add("realop", lxRealOp);
+//      tokens.add("intarrop", lxIntArrOp);
+//      tokens.add("bytearrop", lxByteArrOp);
+//      tokens.add("shortarrop", lxShortArrOp);
+//      tokens.add("temp", lxTempAttr);
+//      tokens.add("stdextcall", lxStdExternalCall);
+//      tokens.add("extcall", lxExternalCall);
+//      tokens.add("corecall", lxCoreAPICall);
+//      tokens.add("extarg", lxExtArgument);
+//      tokens.add("intextarg", lxIntExtArgument);
+//      tokens.add("interncall", lxInternalCall);
+//      tokens.add("branching", lxBranching);
+//      tokens.add("looping", lxLooping);
+//      tokens.add("constlong", lxConstantLong);
+//      tokens.add("constsymbol", lxConstantSymbol);
+//      tokens.add("constmssg", lxMessageConstant);
+//      tokens.add("constsubj", lxSubjectConstant);
+//      tokens.add("argunboxing", lxArgUnboxing);
+//      tokens.add("argboxing", lxArgBoxing);
+//      tokens.add("byreftarget", lxByRefTarget);
+//      tokens.add("arrop", lxArrOp); 
+//      tokens.add("binarrop", lxBinArrOp);
+//      tokens.add("duplicateboxing", lxDuplicateBoxingAttr);
+//      tokens.add("newarrop", lxNewArrOp);
+//      tokens.add("nested_expr", lxNested);
+//   }
+//}
 
 // --- SyntaxWriter ---
 
@@ -536,256 +536,256 @@ SyntaxTree::Node SyntaxTree :: readRoot()
    return read(0u);
 }
 
-void SyntaxTree :: saveNode(Node node, _Memory* dump, bool inclusingNode)
-{
-   SyntaxTree tree;
-   SyntaxWriter writer(tree);
-
-   writer.newNode(lxRoot);
-
-   if (inclusingNode) {
-      if (node.strArgument != INVALID_REF) {
-         writer.newNode(node.type, node.identifier());
-      }
-      else writer.newNode(node.type, node.argument);
-      copyNode(writer, node);
-      writer.closeNode();
-   }
-   else copyNode(writer, node);
-
-   writer.closeNode();
-
-   tree.save(dump);
-}
-
-void SyntaxTree :: loadNode(Node node, _Memory* dump)
-{
-   SyntaxTree tree(dump);
-
-   copyNode(tree.readRoot(), node);
-}
-
-void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer)
-{
-   SNode current = buffer.readRoot();
-   while (current != lxNone) {
-      if (current != lxIdle) {
-         if (current.strArgument != INVALID_REF) {
-            writer.newNode(current.type, current.identifier());
-         }
-         else writer.newNode(current.type, current.argument);
-
-         SyntaxTree::copyNode(writer, current);
-         writer.closeNode();
-
-         current = lxIdle;
-      }
-      current = current.nextNode();
-   }
-}
-
-void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
-{
-   SyntaxTree::Node node = owner.findChild(type);
-   if (node != lxNone) {
-      writer.appendNode(type, node.argument);
-   }
-}
-
-void SyntaxTree :: copyMatchedNodes(Writer& writer, LexicalType type, Node node)
-{
-   SyntaxTree::Node current = node.firstChild();
-   while (current != lxNone) {
-      if (current == type) {
-         if (current.strArgument != INVALID_REF) {
-            writer.newNode(current.type, current.identifier());
-         }
-         else writer.newNode(current.type, current.argument);
-
-         copyNode(writer, current);
-
-         writer.closeNode();
-      }
-
-      current = current.nextNode();
-   }
-}
-
-void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      if (current.strArgument != INVALID_REF) {
-         writer.newNode(current.type, current.identifier());
-      }
-      else writer.newNode(current.type, current.argument);
-
-      copyNode(writer, current);
-
-      writer.closeNode();
-
-      current = current.nextNode();
-   }
-}
-
-void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destination)
-{
-   SNode current = source.firstChild();
-   while (current != lxNone) {
-      if (current.strArgument != INVALID_REF) {
-         //if (source.tree == destination.tree) {
-         //   // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
-         //   // so the special routine should be used
-         //   copyNode(current, destination.appendStrNode(current.type, current.strArgument));
-         //}
-         /*else */copyNode(current, destination.appendNode(current.type, current.identifier()));
-      }
-      else copyNode(current, destination.appendNode(current.type, current.argument));
-
-      current = current.nextNode();
-   }
-}
-
-void SyntaxTree :: copyNodeSafe(Node source, Node destination, bool inclusingNode)
-{
-   MemoryDump dump;
-   saveNode(source, &dump, inclusingNode);
-   loadNode(destination, &dump);
-}
-
-//bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
+//void SyntaxTree :: saveNode(Node node, _Memory* dump, bool inclusingNode)
+//{
+//   SyntaxTree tree;
+//   SyntaxWriter writer(tree);
+//
+//   writer.newNode(lxRoot);
+//
+//   if (inclusingNode) {
+//      if (node.strArgument != INVALID_REF) {
+//         writer.newNode(node.type, node.identifier());
+//      }
+//      else writer.newNode(node.type, node.argument);
+//      copyNode(writer, node);
+//      writer.closeNode();
+//   }
+//   else copyNode(writer, node);
+//
+//   writer.closeNode();
+//
+//   tree.save(dump);
+//}
+//
+//void SyntaxTree :: loadNode(Node node, _Memory* dump)
+//{
+//   SyntaxTree tree(dump);
+//
+//   copyNode(tree.readRoot(), node);
+//}
+//
+//void SyntaxTree :: moveNodes(Writer& writer, SyntaxTree& buffer)
+//{
+//   SNode current = buffer.readRoot();
+//   while (current != lxNone) {
+//      if (current != lxIdle) {
+//         if (current.strArgument != INVALID_REF) {
+//            writer.newNode(current.type, current.identifier());
+//         }
+//         else writer.newNode(current.type, current.argument);
+//
+//         SyntaxTree::copyNode(writer, current);
+//         writer.closeNode();
+//
+//         current = lxIdle;
+//      }
+//      current = current.nextNode();
+//   }
+//}
+//
+//void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
+//{
+//   SyntaxTree::Node node = owner.findChild(type);
+//   if (node != lxNone) {
+//      writer.appendNode(type, node.argument);
+//   }
+//}
+//
+//void SyntaxTree :: copyMatchedNodes(Writer& writer, LexicalType type, Node node)
+//{
+//   SyntaxTree::Node current = node.firstChild();
+//   while (current != lxNone) {
+//      if (current == type) {
+//         if (current.strArgument != INVALID_REF) {
+//            writer.newNode(current.type, current.identifier());
+//         }
+//         else writer.newNode(current.type, current.argument);
+//
+//         copyNode(writer, current);
+//
+//         writer.closeNode();
+//      }
+//
+//      current = current.nextNode();
+//   }
+//}
+//
+//void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      if (current.strArgument != INVALID_REF) {
+//         writer.newNode(current.type, current.identifier());
+//      }
+//      else writer.newNode(current.type, current.argument);
+//
+//      copyNode(writer, current);
+//
+//      writer.closeNode();
+//
+//      current = current.nextNode();
+//   }
+//}
+//
+//void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destination)
+//{
+//   SNode current = source.firstChild();
+//   while (current != lxNone) {
+//      if (current.strArgument != INVALID_REF) {
+//         //if (source.tree == destination.tree) {
+//         //   // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
+//         //   // so the special routine should be used
+//         //   copyNode(current, destination.appendStrNode(current.type, current.strArgument));
+//         //}
+//         /*else */copyNode(current, destination.appendNode(current.type, current.identifier()));
+//      }
+//      else copyNode(current, destination.appendNode(current.type, current.argument));
+//
+//      current = current.nextNode();
+//   }
+//}
+//
+//void SyntaxTree :: copyNodeSafe(Node source, Node destination, bool inclusingNode)
+//{
+//   MemoryDump dump;
+//   saveNode(source, &dump, inclusingNode);
+//   loadNode(destination, &dump);
+//}
+//
+////bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
+////{
+////   va_list argptr;
+////   va_start(argptr, counter);
+////
+////   Node member = node.firstChild();
+////   if (member == lxNone)
+////      return false;
+////
+////   for (int i = 0; i < counter; i++) {
+////      // get the next pattern
+////      NodePattern pattern = va_arg(argptr, NodePattern);
+////
+////      // find the next tree node
+////      while (!test(member.type, mask)) {
+////         member = member.nextNode();
+////         if (member == lxNone) {
+////            va_end(argptr);
+////            return false;
+////         }
+////      }
+////
+////      if (!pattern.match(member)) {
+////         va_end(argptr);
+////         return false;
+////      }
+////      else member = member.nextNode();
+////   }
+////
+////   va_end(argptr);
+////   return true;
+////}
+//
+//SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
 //{
 //   va_list argptr;
 //   va_start(argptr, counter);
 //
-//   Node member = node.firstChild();
-//   if (member == lxNone)
-//      return false;
+//   size_t level = 1;
+//   Node nodes[0x10];
+//   nodes[0] = node;
 //
 //   for (int i = 0; i < counter; i++) {
 //      // get the next pattern
 //      NodePattern pattern = va_arg(argptr, NodePattern);
 //
-//      // find the next tree node
-//      while (!test(member.type, mask)) {
-//         member = member.nextNode();
-//         if (member == lxNone) {
-//            va_end(argptr);
-//            return false;
+//      size_t newLevel = level;
+//      for (size_t j = 0; j < level; j++) {
+//         Node member = nodes[j].firstChild();
+//
+//         if (member != lxNone) {
+//            // find the matched member
+//            while (member != lxNone) {
+//               if (pattern.match(member)) {
+//                  nodes[newLevel] = member;
+//                  newLevel++;
+//               }
+//
+//               member = member.nextNode();
+//            }
 //         }
 //      }
 //
-//      if (!pattern.match(member)) {
-//         va_end(argptr);
-//         return false;
+//      size_t oldLevel = level;
+//      level = 0;
+//      for (size_t j = oldLevel; j < newLevel; j++) {
+//         nodes[level] = nodes[j];
+//         level++;
 //      }
-//      else member = member.nextNode();
+//
+//      if (level == 0) {
+//         nodes[0] = Node();
+//
+//         break;
+//      }
+//         
 //   }
 //
-//   va_end(argptr);
-//   return true;
+//   return nodes[0];
 //}
-
-SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
-{
-   va_list argptr;
-   va_start(argptr, counter);
-
-   size_t level = 1;
-   Node nodes[0x10];
-   nodes[0] = node;
-
-   for (int i = 0; i < counter; i++) {
-      // get the next pattern
-      NodePattern pattern = va_arg(argptr, NodePattern);
-
-      size_t newLevel = level;
-      for (size_t j = 0; j < level; j++) {
-         Node member = nodes[j].firstChild();
-
-         if (member != lxNone) {
-            // find the matched member
-            while (member != lxNone) {
-               if (pattern.match(member)) {
-                  nodes[newLevel] = member;
-                  newLevel++;
-               }
-
-               member = member.nextNode();
-            }
-         }
-      }
-
-      size_t oldLevel = level;
-      level = 0;
-      for (size_t j = oldLevel; j < newLevel; j++) {
-         nodes[level] = nodes[j];
-         level++;
-      }
-
-      if (level == 0) {
-         nodes[0] = Node();
-
-         break;
-      }
-         
-   }
-
-   return nodes[0];
-}
-
-SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
-{
-   if (node.existChild(lxRow))
-      return node;
-
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      SNode terminalNode = findTerminalInfo(current);
-      if (terminalNode != lxNone)
-         return terminalNode;
-
-      current = current.nextNode();
-   }
-
-   return current;
-}
-
-//bool SyntaxTree :: apply(SyntaxTree::Node node, Trie<SyntaxTree::NodePattern>& trie)
+//
+//SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
 //{
-//   bool applied = false;
-//   //Node current(&trie);
-//   //while (!it.Eof()) {
-//   //   // skip meta commands (except labels)
-//   //   if (matchable(it)) {
-//   //      // make first step
-//   //      if (makeStep(current, *it, 0)) {
-//   //         int previousArg = (*it).argument;
-//   //         it++;
+//   if (node.existChild(lxRow))
+//      return node;
 //
-//   //         ByteCodeIterator word_it = it;
-//   //         while (!word_it.Eof() && (!matchable(word_it) || makeStep(current, *word_it, previousArg))) {
-//   //            if (matchable(word_it))
-//   //               previousArg = (*word_it).argument;
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      SNode terminalNode = findTerminalInfo(current);
+//      if (terminalNode != lxNone)
+//         return terminalNode;
 //
-//   //            // check if the end node is reached
-//   //            if (current.Value().code == bcMatch) {
-//   //               it = word_it;
+//      current = current.nextNode();
+//   }
 //
-//   //               transform(--word_it, current.FirstNode());
-//
-//   //               applied = true;
-//   //               current = Node(&trie);
-//
-//   //               break;
-//   //            }
-//   //            else word_it++;
-//   //         }
-//   //      }
-//   //      else it++;
-//   //   }
-//   //   else it++;
-//   //}
-//
-//   return applied;
+//   return current;
 //}
+//
+////bool SyntaxTree :: apply(SyntaxTree::Node node, Trie<SyntaxTree::NodePattern>& trie)
+////{
+////   bool applied = false;
+////   //Node current(&trie);
+////   //while (!it.Eof()) {
+////   //   // skip meta commands (except labels)
+////   //   if (matchable(it)) {
+////   //      // make first step
+////   //      if (makeStep(current, *it, 0)) {
+////   //         int previousArg = (*it).argument;
+////   //         it++;
+////
+////   //         ByteCodeIterator word_it = it;
+////   //         while (!word_it.Eof() && (!matchable(word_it) || makeStep(current, *word_it, previousArg))) {
+////   //            if (matchable(word_it))
+////   //               previousArg = (*word_it).argument;
+////
+////   //            // check if the end node is reached
+////   //            if (current.Value().code == bcMatch) {
+////   //               it = word_it;
+////
+////   //               transform(--word_it, current.FirstNode());
+////
+////   //               applied = true;
+////   //               current = Node(&trie);
+////
+////   //               break;
+////   //            }
+////   //            else word_it++;
+////   //         }
+////   //      }
+////   //      else it++;
+////   //   }
+////   //   else it++;
+////   //}
+////
+////   return applied;
+////}

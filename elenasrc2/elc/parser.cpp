@@ -31,7 +31,7 @@ SyntaxError :: SyntaxError(int column, int row, ident_t token, const char* error
    this->token = token;
 }
 
-inline const char* getError(Symbol symbol)
+inline const char* getError(int symbol)
 {
    //switch(symbol) {
    //   case nsDeclarationEndExpected:
@@ -52,6 +52,11 @@ inline const char* getError(Symbol symbol)
    //}
 }
 
+LexicalType getLexicalType(int symbol)
+{
+   return (LexicalType)symbol;
+}
+
 TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
 {
    TerminalInfo terminal;
@@ -61,69 +66,69 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
    terminal.disp = info.position;
    terminal.length = info.length;
    switch (info.state) {
-      case dfaQuote:
-         terminal.symbol = tsLiteral;
-         break;
-      case dfaCharacter:
-         terminal.symbol = tsCharacter;
-         break;
+//      case dfaQuote:
+//         terminal.symbol = tsLiteral;
+//         break;
+//      case dfaCharacter:
+//         terminal.symbol = tsCharacter;
+//         break;
       case dfaEOF:
-         terminal.symbol = tsEof;
+         terminal.symbol = lxEOF;
          terminal.value = _eof_message;
          break;
       case dfaIdentifier:
-         terminal.symbol = tsIdentifier;
+         terminal.symbol = lxIdentifier;
          break;
-      case dfaFullIdentifier:
-         terminal.symbol = tsReference;
-         break;
-    //  case dfaMember:
-    //     terminal.symbol = tsMember;
-    //     break;
-      case dfaGlobal:
-         terminal.symbol = tsGlobal;
-         break;
-    //  case dfaPrivate:
-    //     if (terminal.value[1] == 0) {
-    //        //HOTFIX : if it is $ symbol
-    //        terminal.symbol = (Symbol)table.defineSymbol(terminal);
-    //     }
-    //     else terminal.symbol = tsPrivate;
-    //     break;
-      case dfaInteger:
-         terminal.symbol = tsInteger;
-         break;
-      case dfaExplicitConst:
-         switch (terminal.value[getlength(terminal.value) - 1]) {
-            case 'h':
-               terminal.symbol = tsHexInteger;
-               break;
-            case 'l':
-               terminal.symbol = tsLong;
-               break;
-            case 'r':
-               terminal.symbol = tsReal;
-               break;
-            default:
-               terminal.symbol = tsExplicitConst;
-               break;
-         }
-         break;
-      case dfaLong:
-         terminal.symbol = tsLong;
-         break;
-	   case dfaHexInteger:
-         terminal.symbol = tsHexInteger;
-         break;
-	   case dfaReal:
-         terminal.symbol = tsReal;
-         break;
-      case dfaWideQuote:
-         terminal.symbol = tsWide;
-         break;
-      case dfaAttribute:
+//      case dfaFullIdentifier:
+//         terminal.symbol = tsReference;
+//         break;
+//    //  case dfaMember:
+//    //     terminal.symbol = tsMember;
+//    //     break;
+//      case dfaGlobal:
+//         terminal.symbol = tsGlobal;
+//         break;
+//    //  case dfaPrivate:
+//    //     if (terminal.value[1] == 0) {
+//    //        //HOTFIX : if it is $ symbol
+//    //        terminal.symbol = (Symbol)table.defineSymbol(terminal);
+//    //     }
+//    //     else terminal.symbol = tsPrivate;
+//    //     break;
+//      case dfaInteger:
+//         terminal.symbol = tsInteger;
+//         break;
+//      case dfaExplicitConst:
+//         switch (terminal.value[getlength(terminal.value) - 1]) {
+//            case 'h':
+//               terminal.symbol = tsHexInteger;
+//               break;
+//            case 'l':
+//               terminal.symbol = tsLong;
+//               break;
+//            case 'r':
+//               terminal.symbol = tsReal;
+//               break;
+//            default:
+//               terminal.symbol = tsExplicitConst;
+//               break;
+//         }
+//         break;
+//      case dfaLong:
+//         terminal.symbol = tsLong;
+//         break;
+//	   case dfaHexInteger:
+//         terminal.symbol = tsHexInteger;
+//         break;
+//	   case dfaReal:
+//         terminal.symbol = tsReal;
+//         break;
+//      case dfaWideQuote:
+//         terminal.symbol = tsWide;
+//         break;
+//      case dfaAttribute:
       default:
-         terminal.symbol = (Symbol)table.defineSymbol(terminal);
+         terminal.symbol = getLexicalType(table.defineSymbol(terminal));
    }
    return terminal;
 }
@@ -137,15 +142,15 @@ Parser :: Parser(StreamReader* syntax)
 
 bool Parser :: derive(TerminalInfo& terminal, ParserStack& stack, _DerivationWriter& writer, bool& traceble)
 {
-   Symbol current = (Symbol)stack.pop();
+   int current = stack.pop();
    while (!test(current, mskTerminal)) {
       traceble = test(current, mskTraceble);
-      if (current == nsNone)
-         writer.writeSymbol(nsNone);
+      if (current == 0)
+         writer.closeNode();
       else {
          if (traceble) {
-            stack.push(nsNone);
-            writer.writeSymbol(current);
+            stack.push(0);
+            writer.newNode(getLexicalType(current));
          }
          if (!_table.read(current, terminal.symbol, stack))
             return false;
@@ -153,7 +158,7 @@ bool Parser :: derive(TerminalInfo& terminal, ParserStack& stack, _DerivationWri
          if (test(current, mskError))
             throw SyntaxError(terminal.Col(), terminal.Row(), terminal.value, getError(current));
       }
-      current = (Symbol)stack.pop();
+      current = stack.pop();
    }
    return (terminal == current);
 }
@@ -161,7 +166,7 @@ bool Parser :: derive(TerminalInfo& terminal, ParserStack& stack, _DerivationWri
 void Parser :: parse(TextReader* reader, _DerivationWriter& writer, int tabSize)
 {
    SourceReader source(tabSize, reader);
-   ParserStack  stack(tsEof);
+   ParserStack  stack(lxEOF);
    TerminalInfo terminal;
 
    stack.push(nsStart);
@@ -173,7 +178,7 @@ void Parser :: parse(TextReader* reader, _DerivationWriter& writer, int tabSize)
          throw SyntaxError(terminal.Col(), terminal.Row(), _buffer);
 
       if (traceble)
-         writer.writeTerminal(terminal);
+         writer.appendTerminal(terminal);
 
-   } while (terminal != tsEof);
+   } while (terminal != lxEOF);
 }

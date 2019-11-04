@@ -9,7 +9,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_NUMBER 2
+#define BUILD_NUMBER 1
 
 // !! code duplication (syntax.h)
 const int mskAnySymbolMask             = 0x07000;               // masks
@@ -24,7 +24,7 @@ int _registerSymbol(ParserTable& table, ident_t symbol, int new_id)
       id = new_id;
 
       if ((symbol[0]<'A')||(symbol[0]>'Z'))
-         id |= ParserTable::mskTerminal;
+         id |= mskTerminal;
 
       table.registerSymbol(id, symbol);
 
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
       int              rule_len = 0;
       bool             arrayCheck = false;
 
-      table.registerSymbol(ParserTable::nsEps, "eps");
+      table.registerSymbol(nsEps, "eps");
 
       while (true) {
          info = source.read(token, IDENTIFIER_LEN);

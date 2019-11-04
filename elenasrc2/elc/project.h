@@ -11,7 +11,7 @@
 
 #include "libman.h"
 #include "compilercommon.h"
-#include "separser.h"
+//#include "separser.h"
 
 namespace _ELENA_
 {
@@ -24,8 +24,6 @@ typedef Map<ident_t, ProjectSettings::VItem> FileMapping;
 typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ForwardIterator;
 typedef _Iterator<ProjectSettings::VItem, _MapItem<int, ProjectSettings::VItem>, int>         SourceIterator;
 typedef _Iterator<TargetSettings::VItem, _MapItem<ident_t, TargetSettings::VItem>, ident_t>   TargetIterator;
-
-////typedef _Iterator<ProjectSettings::VItem, _MapItem<ident_t, ProjectSettings::VItem>, ident_t> ProjectSettingIterator;
 
 // --- ELENA Project options ---
 enum ProjectSetting
@@ -57,9 +55,8 @@ enum ProjectSetting
    opPlatform              = 0x002A,      // defines the project platform type
    opGCYGSize              = 0x002B,
 
-//   // compiler engine options
+   // compiler engine options
    opWarnOnWeakUnresolved  = 0x0042,
-//   opWarnOnSignature       = 0x0043,
 
    // compiler optimization options
    opL0                    = 0x0050,   // byte-code optimization
@@ -72,7 +69,7 @@ enum ProjectSetting
    opExternals             = 0x0064,
    opWinAPI                = 0x0065,   // used only for WIN32
    opReferences            = 0x0066,
-   opTargets               = 0x0067,   // compiler targets (only xml project)
+   opTargets               = 0x0067,   // compiler targets
 
    // compiler manfifest
    opManifestName          = 0x0070,
@@ -92,8 +89,6 @@ protected:
    LibraryManager  _loader;
 
    ProjectSettings _settings;
-   TargetSettings  _targets;
-   ProjectSettings _sources;
 
    virtual bool readCategory(_ConfigFile& config, ProjectSetting setting, _ConfigFile::Nodes& list) = 0;
    virtual ident_t getOption(_ConfigFile& config, ProjectSetting setting) = 0;
@@ -114,37 +109,37 @@ protected:
 
 public:
    // project
-   virtual int IntSetting(ProjectSetting key, int defaultValue = 0)
-   {
-      return _settings.get(key, defaultValue);
-   }
+//   virtual int IntSetting(ProjectSetting key, int defaultValue = 0)
+//   {
+//      return _settings.get(key, defaultValue);
+//   }
 
    virtual ident_t StrSetting(ProjectSetting key) const
    {
       return _settings.get(key, DEFAULT_STR);
    }
 
-   virtual bool BoolSetting(ProjectSetting key) const
-   {
-      return (_settings.get(key, 0) != 0);
-   }
-
-   virtual bool testSetting(ProjectSetting key)
-   {
-      return _settings.exist(key);
-   }
-
-   ForwardIterator getForwardIt()
-   {
-      return _settings.getIt(opForwards);
-   }
-
-   ident_t resolvePrimitive(ident_t alias) const
-   {
-      return _loader.resolvePrimitive(alias);
-   }
-
-   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
+//   virtual bool BoolSetting(ProjectSetting key) const
+//   {
+//      return (_settings.get(key, 0) != 0);
+//   }
+//
+//   virtual bool testSetting(ProjectSetting key)
+//   {
+//      return _settings.exist(key);
+//   }
+//
+//   ForwardIterator getForwardIt()
+//   {
+//      return _settings.getIt(opForwards);
+//   }
+//
+//   ident_t resolvePrimitive(ident_t alias) const
+//   {
+//      return _loader.resolvePrimitive(alias);
+//   }
+//
+//   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
    virtual void addSource(path_t path) = 0;
    virtual void addModule(_ConfigFile::Node moduleNode) = 0;
@@ -154,57 +149,57 @@ public:
 
    void initLoader()
    {
-      // if library path is set we need to set the loader root as well
-      if (!emptystr(StrSetting(opLibPath))) {
-         Path libPath(StrSetting(opLibPath));
+      //// if library path is set we need to set the loader root as well
+      //if (!emptystr(StrSetting(opLibPath))) {
+      //   Path libPath(StrSetting(opLibPath));
 
-         _loader.setRootPath(libPath.c_str());
-      }
+      //   _loader.setRootPath(libPath.c_str());
+      //}
 
-      // if package is set we need to set the loader package as well
-      Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
+      //// if package is set we need to set the loader package as well
+      //Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
 
-      _loader.setNamespace(StrSetting(opNamespace), outputPath.c_str());
+      //_loader.setNamespace(StrSetting(opNamespace), outputPath.c_str());
 
-      // add references to the additional libraries
-      for (ForwardIterator it = _settings.getIt(opReferences); !it.Eof(); it++) {
-         _loader.addPackage(it.key(), *it);
-      }
+      //// add references to the additional libraries
+      //for (auto it = _settings.getIt(opReferences); !it.Eof(); it++) {
+      //   _loader.addPackage(it.key(), *it);
+      //}
    }
 
-   void addLoaderListener(_JITLoaderListener* listener)
-   {
-      _loader.addListener(listener);
-   }
-
-   virtual ident_t resolveForward(ident_t forward);
-   virtual bool addForward(ident_t forward, ident_t reference);
-
-   // loader
-   virtual _Module* loadModule(ident_t package, bool silentMode);
-
-   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false);
-   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
-   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
+//   void addLoaderListener(_JITLoaderListener* listener)
+//   {
+//      _loader.addListener(listener);
+//   }
+//
+//   virtual ident_t resolveForward(ident_t forward);
+//   virtual bool addForward(ident_t forward, ident_t reference);
+//
+//   // loader
+//   virtual _Module* loadModule(ident_t package, bool silentMode);
+//
+//   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false);
+//   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
+//   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 
    virtual bool HasWarnings() const { return _hasWarning; }
 
-   virtual int getTabSize() { return 4; }
-
-   virtual ident_t getManinfestName()
-   {
-      return StrSetting(opManifestName);
-   }
-
-   virtual ident_t getManinfestVersion()
-   {
-      return StrSetting(opManifestVersion);
-   }
-
-   virtual ident_t getManinfestAuthor()
-   {
-      return StrSetting(opManifestAuthor);
-   }
+//   virtual int getTabSize() { return 4; }
+//
+//   virtual ident_t getManinfestName()
+//   {
+//      return StrSetting(opManifestName);
+//   }
+//
+//   virtual ident_t getManinfestVersion()
+//   {
+//      return StrSetting(opManifestVersion);
+//   }
+//
+//   virtual ident_t getManinfestAuthor()
+//   {
+//      return StrSetting(opManifestAuthor);
+//   }
 
    bool indicateWarning()
    {
@@ -220,21 +215,21 @@ public:
       else return false;
    }
 
-   virtual _Module* createModule(ident_t name);
-   virtual _Module* createDebugModule(ident_t name);
-
-   virtual void saveModule(_Module* module, ident_t extension);
+//   virtual _Module* createModule(ident_t name);
+//   virtual _Module* createDebugModule(ident_t name);
+//
+//   virtual void saveModule(_Module* module, ident_t extension);
 
    virtual ident_t Namespace() const
    {
       return StrSetting(opNamespace);
    }
-   virtual bool WarnOnWeakUnresolved() const
-   {
-      return BoolSetting(opWarnOnWeakUnresolved);
-   }
-
-//   void compile(ident_t sourceFile, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved);
+//   virtual bool WarnOnWeakUnresolved() const
+//   {
+//      return BoolSetting(opWarnOnWeakUnresolved);
+//   }
+//
+////   void compile(ident_t sourceFile, Compiler& compiler, ScriptParser parser, ModuleInfo& moduleInfo, Unresolveds& unresolved);
 
    Project();
    virtual ~Project() {}

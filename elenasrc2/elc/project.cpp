@@ -14,31 +14,30 @@
 
 using namespace _ELENA_;
 
-#define NMODULE_LEN getlength(NATIVE_MODULE)
-
-inline ident_t getLoadError(LoadResult result)
-{
-   switch(result)
-   {
-      case lrDuplicate:
-         return errDuplicatedModule;
-      case lrNotFound:
-         return errUnknownModule;
-      case lrWrongStructure:
-         return errInvalidModule;
-      case lrWrongVersion:
-         return errInvalidModuleVersion;
-      case lrCannotCreate:
-         return errCannotCreate;
-      default:
-         return NULL;
-   }
-}
+//#define NMODULE_LEN getlength(NATIVE_MODULE)
+//
+//inline ident_t getLoadError(LoadResult result)
+//{
+//   switch(result)
+//   {
+//      case lrDuplicate:
+//         return errDuplicatedModule;
+//      case lrNotFound:
+//         return errUnknownModule;
+//      case lrWrongStructure:
+//         return errInvalidModule;
+//      case lrWrongVersion:
+//         return errInvalidModuleVersion;
+//      case lrCannotCreate:
+//         return errCannotCreate;
+//      default:
+//         return NULL;
+//   }
+//}
 
 // --- Project ---
 
 Project :: Project()
-   : _sources(true), _targets(true)
 {
    _hasWarning = false;
    _numberOfWarnings = 100;
@@ -179,10 +178,10 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
          }
          else filePath.combine((const char*)value);
 
-         if (key.compare(CORE_ALIAS)) {
-            _loader.addCorePath(filePath.c_str());
-         }
-         else _loader.addPrimitivePath(key, filePath.c_str());
+         //if (key.compare(CORE_ALIAS)) {
+         //   _loader.addCorePath(filePath.c_str());
+         //}
+         //else _loader.addPrimitivePath(key, filePath.c_str());
       }
    }
 }
@@ -266,140 +265,140 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadOption(config, opManifestAuthor);
 }
 
-//void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
-//{
-//   ReferenceNs fwd(forward);
+////void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
+////{
+////   ReferenceNs fwd(forward);
+////
+////   _settings.add(opForwards, fwd, StringHelper::clone(reference));
+////}
 //
-//   _settings.add(opForwards, fwd, StringHelper::clone(reference));
+//_Module* Project :: loadModule(ident_t package, bool silentMode)
+//{
+//   LoadResult result = lrNotFound;
+//   _Module* module = _loader.loadModule(package, result);
+//   if (result != lrSuccessful) {
+//      if (!silentMode) {
+//         raiseError(getLoadError(result), package);
+//      }
+//
+//      return NULL;
+//   }
+//   else return module;
 //}
-
-_Module* Project :: loadModule(ident_t package, bool silentMode)
-{
-   LoadResult result = lrNotFound;
-   _Module* module = _loader.loadModule(package, result);
-   if (result != lrSuccessful) {
-      if (!silentMode) {
-         raiseError(getLoadError(result), package);
-      }
-
-      return NULL;
-   }
-   else return module;
-}
-
-_Module* Project :: createModule(ident_t name)
-{
-   LoadResult result = lrNotFound;
-   _Module* module = _loader.createModule(name, result);
-
-   if (result != lrSuccessful/* && result != lrDuplicate*/) {
-      raiseError(getLoadError(lrCannotCreate), name);
-
-      return NULL;
-   }
-   else return module;
-}
-
-_Module* Project :: createDebugModule(ident_t name)
-{
-   return new Module(name);
-}
-
-void Project :: saveModule(_Module* module, ident_t extension)
-{
-   ident_t name = module->Name();
-   Path path;
-   _loader.nameToPath(name, path, extension);
-
-   Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
-
-   Path::create(outputPath.c_str(), path.c_str());
-
-   FileWriter writer(path.c_str(), feRaw, false);
-   if(!module->save(writer))
-      raiseError(getLoadError(lrCannotCreate), IdentifierString(path.c_str()));
-}
-
-ident_t Project :: resolveForward(ident_t forward)
-{
-   return _settings.get(opForwards, forward, DEFAULT_STR);
-}
-
-bool Project :: addForward(ident_t forward, ident_t reference)
-{
-   if (emptystr(resolveForward(forward))) {
-      _settings.add(opForwards, forward, reference.clone());
-
-      return true;
-   }
-   else return false;
-}
-
-_Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode)
-{
-   LoadResult result = lrNotFound;
-   _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
-   if (result != lrSuccessful) {
-      // Bad luck : try to resolve it indirectly
-      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
-      if (result != lrSuccessful) {
-         if (!silentMode)
-            raiseError(getLoadError(result), weakReferenceName);
-
-         return NULL;
-      }
-      else return module;
-   }
-   else return module;
-}
-
-_Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
-{
-   //while (isWeakReference(referenceName)) {
-   //   referenceName = resolveForward(referenceName);
-   //}
-
-   if (emptystr(referenceName))
-      return NULL;
-
-   LoadResult result = lrNotFound;
-   _Module* module = NULL;
-   if (referenceName.compare(NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
-      module = _loader.resolveNative(referenceName, result, reference);
-   }
-   else module = _loader.resolveModule(referenceName, result, reference);
-
-   if (result != lrSuccessful) {
-      if (!silentMode)
-         raiseError(getLoadError(result), referenceName);
-
-      return NULL;
-   }
-   else return module;
-}
-
-_Module* Project :: resolveCore(ref_t reference, bool silentMode)
-{
-   LoadResult result = lrNotFound;
-   _Module* module = _loader.resolveCore(reference, result);
-
-   if (result != lrSuccessful) {
-      if (!silentMode)
-         raiseError(getLoadError(result), CORE_ALIAS);
-
-      return NULL;
-   }
-   else return module;
-}
-
-ident_t Project :: resolveExternalAlias(ident_t alias, bool& stdCall)
-{
-   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
-   if (!emptystr(dll)) {
-      stdCall = true;
-
-      return dll;
-   }
-   else return _settings.get(opExternals, alias, DEFAULT_STR);
-}
-
+//
+//_Module* Project :: createModule(ident_t name)
+//{
+//   LoadResult result = lrNotFound;
+//   _Module* module = _loader.createModule(name, result);
+//
+//   if (result != lrSuccessful/* && result != lrDuplicate*/) {
+//      raiseError(getLoadError(lrCannotCreate), name);
+//
+//      return NULL;
+//   }
+//   else return module;
+//}
+//
+//_Module* Project :: createDebugModule(ident_t name)
+//{
+//   return new Module(name);
+//}
+//
+//void Project :: saveModule(_Module* module, ident_t extension)
+//{
+//   ident_t name = module->Name();
+//   Path path;
+//   _loader.nameToPath(name, path, extension);
+//
+//   Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
+//
+//   Path::create(outputPath.c_str(), path.c_str());
+//
+//   FileWriter writer(path.c_str(), feRaw, false);
+//   if(!module->save(writer))
+//      raiseError(getLoadError(lrCannotCreate), IdentifierString(path.c_str()));
+//}
+//
+//ident_t Project :: resolveForward(ident_t forward)
+//{
+//   return _settings.get(opForwards, forward, DEFAULT_STR);
+//}
+//
+//bool Project :: addForward(ident_t forward, ident_t reference)
+//{
+//   if (emptystr(resolveForward(forward))) {
+//      _settings.add(opForwards, forward, reference.clone());
+//
+//      return true;
+//   }
+//   else return false;
+//}
+//
+//_Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode)
+//{
+//   LoadResult result = lrNotFound;
+//   _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
+//   if (result != lrSuccessful) {
+//      // Bad luck : try to resolve it indirectly
+//      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
+//      if (result != lrSuccessful) {
+//         if (!silentMode)
+//            raiseError(getLoadError(result), weakReferenceName);
+//
+//         return NULL;
+//      }
+//      else return module;
+//   }
+//   else return module;
+//}
+//
+//_Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
+//{
+//   //while (isWeakReference(referenceName)) {
+//   //   referenceName = resolveForward(referenceName);
+//   //}
+//
+//   if (emptystr(referenceName))
+//      return NULL;
+//
+//   LoadResult result = lrNotFound;
+//   _Module* module = NULL;
+//   if (referenceName.compare(NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
+//      module = _loader.resolveNative(referenceName, result, reference);
+//   }
+//   else module = _loader.resolveModule(referenceName, result, reference);
+//
+//   if (result != lrSuccessful) {
+//      if (!silentMode)
+//         raiseError(getLoadError(result), referenceName);
+//
+//      return NULL;
+//   }
+//   else return module;
+//}
+//
+//_Module* Project :: resolveCore(ref_t reference, bool silentMode)
+//{
+//   LoadResult result = lrNotFound;
+//   _Module* module = _loader.resolveCore(reference, result);
+//
+//   if (result != lrSuccessful) {
+//      if (!silentMode)
+//         raiseError(getLoadError(result), CORE_ALIAS);
+//
+//      return NULL;
+//   }
+//   else return module;
+//}
+//
+//ident_t Project :: resolveExternalAlias(ident_t alias, bool& stdCall)
+//{
+//   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);
+//   if (!emptystr(dll)) {
+//      stdCall = true;
+//
+//      return dll;
+//   }
+//   else return _settings.get(opExternals, alias, DEFAULT_STR);
+//}
+//

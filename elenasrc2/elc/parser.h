@@ -10,11 +10,18 @@
 #define parserH 1
 
 #include "parsertable.h"
-#include "syntax.h"
 #include "source.h"
+#include "syntaxtree.h"
 
 namespace _ELENA_
 {
+
+// --- ELENA Parser constants ---
+constexpr int mskError        = 0x04000;
+constexpr int mskTraceble     = 0x01000;
+
+constexpr int nsStart         = 0x00001;
+constexpr int tsEof           = 0x03003;
 
 const char _eof_message[] = { '<', 'e', 'n', 'd', ' ', 'o', 'f', ' ', 'f', 'i', 'l', 'e', '>', 0 };
 
@@ -29,6 +36,60 @@ public:
 
    SyntaxError(int column, int row, ident_t token);
    SyntaxError(int column, int row, ident_t token, const char* error);
+};
+
+// --- TerminalInfo structure ---
+struct TerminalInfo
+{
+   LexicalType symbol;
+
+   size_t      disp;          // number of symbols (tab considered as a single char)
+   size_t      row;
+   size_t      col;           // virtual column
+   size_t      length;
+   ident_t     value;
+
+   operator ident_t() const { return value; }
+
+   bool operator == (TerminalInfo& terminal) const
+   {
+      return (symbol == terminal.symbol && value.compare(terminal.value));
+   }
+
+   bool operator != (TerminalInfo& terminal) const
+   {
+      return (symbol != terminal.symbol || !value.compare(terminal.value));
+   }
+
+   bool operator == (const int& symbol) const
+   {
+      return (this->symbol == symbol);
+   }
+
+   bool operator != (const int& symbol) const
+   {
+      return (this->symbol != symbol);
+   }
+
+   int Row() const { return row; }
+
+   int Col() const { return col; }
+
+   TerminalInfo()
+   {
+      this->symbol = lxNone;
+      this->value = nullptr;
+   }
+};
+
+// --- _DerivationWriter ---
+
+class _DerivationWriter
+{
+public:
+   virtual void newNode(LexicalType symbol, bool cachingMode = true) = 0;
+   virtual void appendTerminal(TerminalInfo& terminal, bool cachingMode = true) = 0;
+   virtual void closeNode(bool cachingMode = true) = 0;
 };
 
 // --- Parser class ---

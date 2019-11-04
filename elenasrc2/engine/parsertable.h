@@ -16,11 +16,6 @@ namespace _ELENA_
 
 class ParserTable
 {
-public:
-// --- Build-in constants ---
-   const static int mskTerminal = 0x2000;
-   const static int nsEps       = 2;
-
 private:
    SymbolMap  _symbols;
    SyntaxHash _syntax;
