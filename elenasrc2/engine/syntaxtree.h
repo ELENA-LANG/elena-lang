@@ -29,6 +29,7 @@ enum LexicalType
 
    // scopes
    lxRoot                     = 0x000001,
+   lxNamespace                = 0x000003,
 
    lxSymbol                   = 0x000010,
 
@@ -42,7 +43,6 @@ enum LexicalType
    lxIdentifier               = 0x002011,
 
 //   lxIdle                     = 0x000002,
-//   lxNamespace                = 0x000003,
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
 //   lxScope                    = 0x000013,
@@ -210,15 +210,15 @@ enum LexicalType
 //   lxBytesVariable            = 0x1003C,
 //   lxShortsVariable           = 0x1003D,
 //   lxParamsVariable           = 0x1003E,
-//
-//   // attributes
+
+   // attributes
+   lxNameAttr                 = 0x20001,
 //   lxAttribute                = 0x20000,
 //   lxSourcePath               = 0x20001,
 //   lxCol                      = 0x20003,
 //   lxRow                      = 0x20004,
 //   lxLength                   = 0x02005,
 //   lxBreakpoint               = 0x20006,
-//   lxNameAttr                 = 0x20029,
 //   lxImport                   = 0x20007,
 //   lxReserved                 = 0x20008,
 //   lxAllocated                = 0x20009,
@@ -1107,7 +1107,7 @@ private:
 public:
 //   static void moveNodes(Writer& writer, SyntaxTree& buffer);
 //   static void copyNode(Writer& writer, LexicalType type, Node owner);
-//   static void copyNode(Writer& writer, Node node);
+   static void copyNode(Writer& writer, Node node);
 //   static void copyNode(Node source, Node destination);
 //   static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
 //   static void saveNode(Node node, _Memory* dump, bool includingNode = false);

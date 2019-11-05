@@ -1,17 +1,17 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA compiler class scope implementation.
-////
-////                                              (C)2005-2019, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "compilerscope.h"
+//		This file contains ELENA compiler class scope implementation.
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2019, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "compilerscope.h"
+
+using namespace _ELENA_;
+
 //typedef ClassInfo::Attribute Attribute;
 //
 //inline ref_t importAction(_Module* exporter, ref_t exportRef, _Module* importer)
@@ -44,9 +44,9 @@
 //      ref = module->mapReference(name.c_str(), true);
 //   } while (ref != 0);
 //}
-//
-//// --- CompilerScope ---
-//
+
+// --- CompilerScope ---
+
 //ref_t ModuleScope :: mapAnonymous(ident_t prefix)
 //{
 //   // auto generate the name
@@ -459,31 +459,31 @@
 //      return ::resolveImplicitIdentifier(referenceOne, identifier, module, project, importedNs);
 //   }   
 //}
-//
-//void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
-//{
-//   // declare classes / symbols based on the derivation tree
-//   bool repeatMode = true;
-//   bool idle = false;
-//   bool nothingToCompile = true;
-//   while (repeatMode && !idle) {
-//      repeatMode = false;
-//      idle = !compiler->declareModule(derivationTree, *this, false, repeatMode);
-//      if (idle && repeatMode) {
-//         repeatMode = false;
-//         // if the last declaration was not successful, force it last time 
-//         idle = !compiler->declareModule(derivationTree, *this, true, repeatMode);
-//      }
-//
-//      nothingToCompile &= idle;
-//   }
-//   
-//   if (!nothingToCompile) {
-//      // compile classes / symbols if not idle 
-//      compiler->compileModule(derivationTree, *this, greeting);
-//   }
-//}
-//
+
+void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
+{
+   // declare classes / symbols based on the derivation tree
+   bool repeatMode = true;
+   bool idle = false;
+   bool nothingToCompile = true;
+   while (repeatMode && !idle) {
+      repeatMode = false;
+      idle = !compiler->declareModule(derivationTree, *this, false, repeatMode);
+      if (idle && repeatMode) {
+         repeatMode = false;
+         // if the last declaration was not successful, force it last time 
+         idle = !compiler->declareModule(derivationTree, *this, true, repeatMode);
+      }
+
+      nothingToCompile &= idle;
+   }
+   
+   if (!nothingToCompile) {
+      // compile classes / symbols if not idle 
+      compiler->compileModule(derivationTree, *this, greeting);
+   }
+}
+
 //void ModuleScope :: generateTemplateCode(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
 //{
 //   SyntaxTree templateTree;

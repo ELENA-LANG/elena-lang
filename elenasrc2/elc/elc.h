@@ -13,12 +13,12 @@
 //#include "jitcompiler.h"
 #include "parser.h"
 #include "project.h"
-//#include "compiler.h"
+#include "compiler.h"
 #include "compilerscope.h"
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0001
+#define ELC_REVISION_NUMBER         0x0002
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -253,7 +253,7 @@ class Project : public _ELENA_::Project
    void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source/*, _ELENA_::ModuleScope& scope*/, _ELENA_::SyntaxTree& derivationTree)
    {
       _ELENA_::DerivationWriter writer(derivationTree/*, &scope*/);
-//      writer.begin();
+      writer.newNode(_ELENA_::lxRoot, false);
 
       auto file_it = source->getIt(ELC_INCLUDE);
       while (!file_it.Eof()) {
@@ -298,8 +298,8 @@ class Project : public _ELENA_::Project
          file_it = source->nextIt(ELC_INCLUDE, file_it);
       }
 
-//      writer.end();
-//
+      writer.closeNode(false);
+
 //      //   // generate the module members
 //      //   for (auto it = files.start(); !it.Eof(); it++) {
 //      //      _ELENA_::SyntaxTree* derivationTree = (*it)->tree;
@@ -588,7 +588,7 @@ public:
 
    virtual int getTabSize() { return _tabSize; }
 
-   bool compileSources(/*_ELENA_::Compiler& compiler, */_ELENA_::Parser& parser)
+   bool compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
    {
 //      bool debugMode = BoolSetting(_ELENA_::opDebugMode);
 
@@ -597,8 +597,8 @@ public:
       for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
          _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ProjectSettings::VItem>* source = *it;
 
-//         // create module
-//         _ELENA_::ModuleScope scope(this, &compiler);
+         // create module
+         _ELENA_::ModuleScope scope(this, &compiler);
 
          _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
 //         compiler.initializeScope(name, scope, debugMode);
@@ -613,9 +613,9 @@ public:
             // build derivation tree, recognize scopes and register all symbols
             buildSyntaxTree(parser, source/*, scope*/, derivationTree);
 
-//            printInfo("Compiling %s", name);
-//
-//            scope.compile(derivationTree, nullptr);
+            printInfo("Compiling %s", name);
+
+            scope.compile(derivationTree, nullptr);
          }
          else if (type == 2) {
             throw _ELENA_::InternalError("Not supported"); // !! temporal

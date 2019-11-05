@@ -10,7 +10,7 @@
 #define compilerscopeH
 
 //#include "syntaxtree.h"
-//#include "compilercommon.h"
+#include "compilercommon.h"
 #include "derivation.h"
 
 namespace _ELENA_
@@ -22,11 +22,11 @@ namespace _ELENA_
 //      free((void*)s.c_str());
 //   }
 //}
-//
-//struct ModuleScope : _ModuleScope
-//{
-//   _Compiler* compiler;
-//
+
+struct ModuleScope : _ModuleScope
+{
+   _Compiler* compiler;
+
 //   virtual ref_t mapAnonymous(ident_t prefix);
 //
 //   // warning mapping
@@ -103,20 +103,20 @@ namespace _ELENA_
 //
 //   virtual void declareNamespace(ident_t name);
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);
-//
-//   void compile(SyntaxTree& derivationTree, ident_t greeting);
-//
+
+   void compile(SyntaxTree& derivationTree, ident_t greeting);
+
 //   void beginModule(ident_t ns, ident_t filePath, DerivationWriter& writer);
 //   void endModule(DerivationWriter& writer);
-//
-//   ModuleScope(_ProjectManager* project, _Compiler* compiler)
-//   {
-//      this->project = project;
-//      this->compiler = compiler;
-//
-//   //   warnOnWeakUnresolved = project->WarnOnWeakUnresolved();
-//   }
-//};
+
+   ModuleScope(_ProjectManager* project, _Compiler* compiler)
+   {
+      this->project = project;
+      this->compiler = compiler;
+
+   //   warnOnWeakUnresolved = project->WarnOnWeakUnresolved();
+   }
+};
 
 } // _ELENA_
 

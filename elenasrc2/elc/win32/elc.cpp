@@ -13,7 +13,7 @@
 #include "elc.h"
 //#include "constants.h"
 #include "errors.h"
-//#include "compilerlogic.h"
+#include "compilerlogic.h"
 #include "linker.h"
 //#include "image.h"
 //#include "x86jitcompiler.h"
@@ -324,12 +324,12 @@ int main()
 
       // compile normal project
       bool result = false;
-      //_ELENA_::CompilerLogic elenaLogic;
-      //_ELENA_::Compiler compiler(&elenaLogic);
+      _ELENA_::CompilerLogic elenaLogic;
+      _ELENA_::Compiler compiler(&elenaLogic);
       _ELENA_::Parser parser(&syntaxFile);
       //project.setCompilerOptions(compiler);
 
-      result = project.compileSources(/*compiler, */parser);
+      result = project.compileSources(compiler, parser);
 
       if (result)
          print(ELC_SUCCESSFUL_COMPILATION);

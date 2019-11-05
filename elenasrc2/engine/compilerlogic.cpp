@@ -1,18 +1,18 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA compiler logic class implementation.
-////
-////                                              (C)2005-2019, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "compilerlogic.h"
-//#include "errors.h"
+//		This file contains ELENA compiler logic class implementation.
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2019, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "compilerlogic.h"
+#include "errors.h"
+
+using namespace _ELENA_;
+
 //typedef ClassInfo::Attribute Attribute;
 //
 //inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
@@ -128,11 +128,11 @@
 ////   EmbeddableOp(maEmbeddableEval2, 3, EVAL_MESSAGE_ID),
 //   EmbeddableOp(maEmbeddableNew, -1/*, 0*/) 
 //};
-//
-//// --- CompilerLogic ---
-//
-//CompilerLogic :: CompilerLogic()
-//{
+
+// --- CompilerLogic ---
+
+CompilerLogic :: CompilerLogic()
+{
 //   // nil
 //   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_NIL, 0, lxNilOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_NIL, 0, lxNilOp, V_FLAG));
@@ -245,8 +245,8 @@
 //   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
 //
-//}
-//
+}
+
 //int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
 //{
 //   bool methodFound = info.methods.exist(message);

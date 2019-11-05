@@ -3,6 +3,7 @@ In development:
 ------         
               dev
                 * uncomment parseMessage, resolveModule, cleanUp, initLoader, loadPrimitiveCategory
+                * nameattr should be identifier?
                 * redesign
 
               dev1

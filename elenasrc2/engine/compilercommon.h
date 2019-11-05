@@ -10,7 +10,7 @@
 #define compilerCommonH
 
 //#include "elena.h"
-//#include "syntaxtree.h"
+#include "syntaxtree.h"
 //#include "bytecode.h"
 
 namespace _ELENA_
@@ -168,9 +168,9 @@ public:
 //   virtual ident_t getManinfestName() = 0;
 //   virtual ident_t getManinfestVersion() = 0;
 //   virtual ident_t getManinfestAuthor() = 0;
-//
-//   virtual void printInfo(const char* msg, ident_t value) = 0;
-//
+
+   virtual void printInfo(const char* msg, ident_t value) = 0;
+
 //   virtual void raiseError(ident_t msg) = 0;
 //   virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
 //   virtual void raiseError(ident_t msg, ident_t value) = 0;
@@ -198,11 +198,11 @@ public:
 
 //// class forward declaration
 //class _Compiler;
-//
-//// --- _ModuleScope ---
-//
-//struct _ModuleScope
-//{
+
+// --- _ModuleScope ---
+
+struct _ModuleScope
+{
 //   struct BranchingInfo
 //   {
 //      ref_t reference;
@@ -215,12 +215,12 @@ public:
 //         trueRef = falseRef = 0;
 //      }
 //   };
-//
-//   _ProjectManager*  project;
-//
-//   _Module*          module;
-//   _Module*          debugModule;
-//
+
+   _ProjectManager*  project;
+
+   _Module*          module;
+   _Module*          debugModule;
+
 //   // cached references
 //   ref_t             superReference;
 //   ref_t             intReference;
@@ -346,12 +346,12 @@ public:
 //   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 //
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
-//
-//   _ModuleScope()
+
+   _ModuleScope()
 //      : attributes(0), savedPaths(-1)
-//   {
-//      project = nullptr;
-//      debugModule = module = nullptr;
+   {
+      project = nullptr;
+      debugModule = module = nullptr;
 //      intReference = superReference = 0;
 //      messageNameReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
@@ -363,14 +363,14 @@ public:
 //
 //      init_message = newobject_message = dispatch_message = 0;
 //      constructor_message = 0;
-//   }
-//};
-//
-//// --- _Compiler ---
-//
-//class _Compiler
-//{
-//public:
+   }
+};
+
+// --- _Compiler ---
+
+class _Compiler
+{
+public:
 //   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode) = 0;
 //
 //   virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
@@ -401,18 +401,18 @@ public:
 //   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, ref_t* arguments, ident_t ns) = 0;
 //
 //   virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef) = 0;
-//
-//   virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forcedDeclaration, bool& repeatMode) = 0;
-//   virtual void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting) = 0;
-//
-//////   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
-//};
-//
-//// --- _CompilerLogic ---
-//
-//class _CompilerLogic
-//{
-//public:
+
+   virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forcedDeclaration, bool& repeatMode) = 0;
+   virtual void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting) = 0;
+
+////   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
+};
+
+// --- _CompilerLogic ---
+
+class _CompilerLogic
+{
+public:
 //   struct FieldAttributes
 //   {
 //      ref_t fieldRef;
@@ -689,8 +689,8 @@ public:
 //
 //   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;
 //   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns) = 0;
-//};
-//
+};
+
 //typedef _CompilerLogic::ExpressionAttributes EAttrs;
 //typedef _CompilerLogic::ExpressionAttribute EAttr;
 

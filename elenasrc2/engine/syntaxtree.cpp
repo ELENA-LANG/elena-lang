@@ -610,24 +610,24 @@ SyntaxTree::Node SyntaxTree :: readRoot()
 //      current = current.nextNode();
 //   }
 //}
-//
-//void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current.strArgument != INVALID_REF) {
-//         writer.newNode(current.type, current.identifier());
-//      }
-//      else writer.newNode(current.type, current.argument);
-//
-//      copyNode(writer, current);
-//
-//      writer.closeNode();
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+
+void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.strArgument != INVALID_REF) {
+         writer.newNode(current.type, current.identifier());
+      }
+      else writer.newNode(current.type, current.argument);
+
+      copyNode(writer, current);
+
+      writer.closeNode();
+
+      current = current.nextNode();
+   }
+}
+
 //void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destination)
 //{
 //   SNode current = source.firstChild();

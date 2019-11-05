@@ -1,22 +1,22 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA compiler logic class.
-////
-////                                              (C)2005-2019, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#ifndef compilerLogicH
-//#define compilerLogicH
+//		This file contains ELENA compiler logic class.
 //
-//#include "elena.h"
-//#include "compilercommon.h"
-//
-//namespace _ELENA_
-//{
-//
-//class CompilerLogic : public _CompilerLogic
-//{
+//                                              (C)2005-2019, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef compilerLogicH
+#define compilerLogicH
+
+#include "elena.h"
+#include "compilercommon.h"
+
+namespace _ELENA_
+{
+
+class CompilerLogic : public _CompilerLogic
+{
 //   struct OperatorInfo
 //   {
 //      int         operatorId;
@@ -76,8 +76,8 @@
 //   ref_t getClassClassRef(_ModuleScope& scope, ref_t reference);
 //
 //   bool isBoolean(_ModuleScope& scope, ref_t reference);
-//
-//public:
+
+public:
 //   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
 //   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
 //
@@ -218,10 +218,10 @@
 //   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
 //   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns);
 //   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference);
-//
-//   CompilerLogic();
-//};
-//
-//} // _ELENA_
-//
-//#endif // compilerLogicH
+
+   CompilerLogic();
+};
+
+} // _ELENA_
+
+#endif // compilerLogicH

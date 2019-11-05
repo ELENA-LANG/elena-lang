@@ -142,12 +142,12 @@ class DerivationWriter : public _DerivationWriter
 
    void recognizeScope();
    void recognizeDefinition(SNode scopeNode);
-//   void recognizeScopeAttributes(SNode node, int mode);
+   void recognizeScopeAttributes(SNode node, int mode);
 //   void recognizeClassMebers(SNode node);
 //   void recognizeMethodMebers(SNode node);
-//
-//   bool recognizeMetaScope(SNode node);
-//   
+
+   bool recognizeMetaScope(SNode node);
+   
 //   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
 //   void generateTemplateTree(SNode node, SNode nameNode, ScopeType templateType);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
@@ -166,27 +166,24 @@ class DerivationWriter : public _DerivationWriter
 //   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
-//   void generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope, bool rootMode);
+   void generateTokenExpression(SyntaxWriter& writer, SNode& node/*, Scope& derivationScope, bool rootMode*/);
 //   void generateTypeAttribute(SyntaxWriter& writer, SNode attrNodes, SNode terminal, size_t dimensionCounterwriter, 
 //                              ref_t argRef, Scope& derivationScope);
    void generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, bool templateArgMode = false, bool onlyAttributes = false);
-//   void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
-//   void generateExpressionNode(SyntaxWriter& writer, SNode& current, bool& first, bool& expressionExpected, Scope& derivationScope);
+   void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
+   void generateExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected, Scope& derivationScope*/);
 //   void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 //   void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
-//   void generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);
+   void generateIdentifier(SyntaxWriter& writer, SNode current/*, Scope& derivationScope*/);
 //   void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 //
 //   void declareType(SNode node);
 //   void generateImport(SyntaxWriter& writer, SNode ns);
 
 public:
-//   void begin();
-//   void end();
-//
 //   void newNamespace(ident_t ns, ident_t filePath);
 //   void importModule(ident_t moduke);
 //   void closeNamespace();
