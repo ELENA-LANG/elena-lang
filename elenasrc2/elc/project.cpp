@@ -14,26 +14,26 @@
 
 using namespace _ELENA_;
 
-//#define NMODULE_LEN getlength(NATIVE_MODULE)
-//
-//inline ident_t getLoadError(LoadResult result)
-//{
-//   switch(result)
-//   {
-//      case lrDuplicate:
-//         return errDuplicatedModule;
-//      case lrNotFound:
-//         return errUnknownModule;
-//      case lrWrongStructure:
-//         return errInvalidModule;
-//      case lrWrongVersion:
-//         return errInvalidModuleVersion;
-//      case lrCannotCreate:
-//         return errCannotCreate;
-//      default:
-//         return NULL;
-//   }
-//}
+#define NMODULE_LEN getlength(NATIVE_MODULE)
+
+inline ident_t getLoadError(LoadResult result)
+{
+   switch(result)
+   {
+      case lrDuplicate:
+         return errDuplicatedModule;
+      case lrNotFound:
+         return errUnknownModule;
+      case lrWrongStructure:
+         return errInvalidModule;
+      case lrWrongVersion:
+         return errInvalidModuleVersion;
+      case lrCannotCreate:
+         return errCannotCreate;
+      default:
+         return NULL;
+   }
+}
 
 // --- Project ---
 
@@ -265,45 +265,38 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    loadOption(config, opManifestAuthor);
 }
 
-////void Project :: loadForward(const wchar16_t* forward, const wchar16_t* reference)
-////{
-////   ReferenceNs fwd(forward);
-////
-////   _settings.add(opForwards, fwd, StringHelper::clone(reference));
-////}
-//
-//_Module* Project :: loadModule(ident_t package, bool silentMode)
-//{
-//   LoadResult result = lrNotFound;
-//   _Module* module = _loader.loadModule(package, result);
-//   if (result != lrSuccessful) {
-//      if (!silentMode) {
-//         raiseError(getLoadError(result), package);
-//      }
-//
-//      return NULL;
-//   }
-//   else return module;
-//}
-//
-//_Module* Project :: createModule(ident_t name)
-//{
-//   LoadResult result = lrNotFound;
-//   _Module* module = _loader.createModule(name, result);
-//
-//   if (result != lrSuccessful/* && result != lrDuplicate*/) {
-//      raiseError(getLoadError(lrCannotCreate), name);
-//
-//      return NULL;
-//   }
-//   else return module;
-//}
-//
-//_Module* Project :: createDebugModule(ident_t name)
-//{
-//   return new Module(name);
-//}
-//
+_Module* Project :: loadModule(ident_t package, bool silentMode)
+{
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.loadModule(package, result);
+   if (result != lrSuccessful) {
+      if (!silentMode) {
+         raiseError(getLoadError(result), package);
+      }
+
+      return NULL;
+   }
+   else return module;
+}
+
+_Module* Project :: createModule(ident_t name)
+{
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.createModule(name, result);
+
+   if (result != lrSuccessful/* && result != lrDuplicate*/) {
+      raiseError(getLoadError(lrCannotCreate), name);
+
+      return NULL;
+   }
+   else return module;
+}
+
+_Module* Project :: createDebugModule(ident_t name)
+{
+   return new Module(name);
+}
+
 //void Project :: saveModule(_Module* module, ident_t extension)
 //{
 //   ident_t name = module->Name();
@@ -318,65 +311,65 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 //   if(!module->save(writer))
 //      raiseError(getLoadError(lrCannotCreate), IdentifierString(path.c_str()));
 //}
-//
-//ident_t Project :: resolveForward(ident_t forward)
-//{
-//   return _settings.get(opForwards, forward, DEFAULT_STR);
-//}
-//
-//bool Project :: addForward(ident_t forward, ident_t reference)
-//{
-//   if (emptystr(resolveForward(forward))) {
-//      _settings.add(opForwards, forward, reference.clone());
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//_Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode)
-//{
-//   LoadResult result = lrNotFound;
-//   _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
-//   if (result != lrSuccessful) {
-//      // Bad luck : try to resolve it indirectly
-//      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
-//      if (result != lrSuccessful) {
-//         if (!silentMode)
-//            raiseError(getLoadError(result), weakReferenceName);
-//
-//         return NULL;
-//      }
-//      else return module;
-//   }
-//   else return module;
-//}
-//
-//_Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
-//{
-//   //while (isWeakReference(referenceName)) {
-//   //   referenceName = resolveForward(referenceName);
-//   //}
-//
-//   if (emptystr(referenceName))
-//      return NULL;
-//
-//   LoadResult result = lrNotFound;
-//   _Module* module = NULL;
-//   if (referenceName.compare(NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
-//      module = _loader.resolveNative(referenceName, result, reference);
-//   }
-//   else module = _loader.resolveModule(referenceName, result, reference);
-//
-//   if (result != lrSuccessful) {
-//      if (!silentMode)
-//         raiseError(getLoadError(result), referenceName);
-//
-//      return NULL;
-//   }
-//   else return module;
-//}
-//
+
+ident_t Project :: resolveForward(ident_t forward)
+{
+   return _settings.get(opForwards, forward, DEFAULT_STR);
+}
+
+bool Project :: addForward(ident_t forward, ident_t reference)
+{
+   if (emptystr(resolveForward(forward))) {
+      _settings.add(opForwards, forward, reference.clone());
+
+      return true;
+   }
+   else return false;
+}
+
+_Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode)
+{
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.resolveWeakModule(weakReferenceName, result, reference);
+   if (result != lrSuccessful) {
+      // Bad luck : try to resolve it indirectly
+      module = _loader.resolveIndirectWeakModule(weakReferenceName, result, reference);
+      if (result != lrSuccessful) {
+         if (!silentMode)
+            raiseError(getLoadError(result), weakReferenceName);
+
+         return NULL;
+      }
+      else return module;
+   }
+   else return module;
+}
+
+_Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
+{
+   //while (isWeakReference(referenceName)) {
+   //   referenceName = resolveForward(referenceName);
+   //}
+
+   if (emptystr(referenceName))
+      return NULL;
+
+   LoadResult result = lrNotFound;
+   _Module* module = NULL;
+   if (referenceName.compare(NATIVE_MODULE, NMODULE_LEN) && referenceName[NMODULE_LEN]=='\'') {
+      module = _loader.resolveNative(referenceName, result, reference);
+   }
+   else module = _loader.resolveModule(referenceName, result, reference);
+
+   if (result != lrSuccessful) {
+      if (!silentMode)
+         raiseError(getLoadError(result), referenceName);
+
+      return NULL;
+   }
+   else return module;
+}
+
 //_Module* Project :: resolveCore(ref_t reference, bool silentMode)
 //{
 //   LoadResult result = lrNotFound;

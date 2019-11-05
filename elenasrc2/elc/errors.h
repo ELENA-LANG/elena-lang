@@ -30,8 +30,8 @@ namespace _ELENA_
 //   #define errObjectExpected        "%s(%d:%d): error 017: object expected\n"
 //   #define errMessageExpected       "%s(%d:%d): error 018: message expected\n"
 
-//  // --- Compiler error messages ---
-//   #define errDuplicatedSymbol	   "%s(%d:%d): error 102: Class '%s' already exists\n"
+  // --- Compiler error messages ---
+   #define errDuplicatedSymbol	   "%s(%d:%d): error 102: Class '%s' already exists\n"
 //   #define errDuplicatedMethod      "%s(%d:%d): error 103: Method '%s' already exists in the class\n"
 //   #define errUnknownClass          "%s(%d:%d): error 104: Class '%s' doesn't exist\n"
 //   #define errDuplicatedLocal       "%s(%d:%d): error 105: Variable '%s' already exists\n"
@@ -101,13 +101,13 @@ namespace _ELENA_
 //   #define errFatalLinker          "internal error 601: linker fatal error"
 
   // --- Linker error messages ---
-//   #define errUnknownModule         "linker: error 201: Unknown module '%s'\n"
+   #define errUnknownModule         "linker: error 201: Unknown module '%s'\n"
    #define errUnresovableLink       "linker: error 202: Link '%s' is not resolved\n"
-//   #define errInvalidModule	      "linker: error 203: Invalid module file '%s'\n"
-//   #define errCannotCreate	         "linker: error 204: Cannot create a file '%s'\n"
+   #define errInvalidModule	      "linker: error 203: Invalid module file '%s'\n"
+   #define errCannotCreate	         "linker: error 204: Cannot create a file '%s'\n"
    #define errInvalidFile           "linker: error 205: Invalid file '%s'\n"
-//   #define errDuplicatedModule      "linker: error 208: Module '%s' already exists in the project\n"
-//   #define errInvalidModuleVersion  "linker: error 210: Obsolete module file '%s'\n"
+   #define errDuplicatedModule      "linker: error 208: Module '%s' already exists in the project\n"
+   #define errInvalidModuleVersion  "linker: error 210: Obsolete module file '%s'\n"
    #define errConstantExpectedLink  "linker: error 211: Symbol '%s' cannot be constant\n"
 //   #define errEmptyTarget           "linker: error 212: Target is not specified\n"
 //   #define errInvalidTargetOption   "linker: error 213: Invalid target option '%s'\n"

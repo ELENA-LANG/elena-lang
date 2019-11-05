@@ -119,11 +119,11 @@ public:
       return _settings.get(key, DEFAULT_STR);
    }
 
-//   virtual bool BoolSetting(ProjectSetting key) const
-//   {
-//      return (_settings.get(key, 0) != 0);
-//   }
-//
+   virtual bool BoolSetting(ProjectSetting key) const
+   {
+      return (_settings.get(key, 0) != 0);
+   }
+
 //   virtual bool testSetting(ProjectSetting key)
 //   {
 //      return _settings.exist(key);
@@ -149,37 +149,37 @@ public:
 
    void initLoader()
    {
-      //// if library path is set we need to set the loader root as well
-      //if (!emptystr(StrSetting(opLibPath))) {
-      //   Path libPath(StrSetting(opLibPath));
+      // if library path is set we need to set the loader root as well
+      if (!emptystr(StrSetting(opLibPath))) {
+         Path libPath(StrSetting(opLibPath));
 
-      //   _loader.setRootPath(libPath.c_str());
-      //}
+         _loader.setRootPath(libPath.c_str());
+      }
 
-      //// if package is set we need to set the loader package as well
-      //Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
+      // if package is set we need to set the loader package as well
+      Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
 
-      //_loader.setNamespace(StrSetting(opNamespace), outputPath.c_str());
+      _loader.setNamespace(StrSetting(opNamespace), outputPath.c_str());
 
-      //// add references to the additional libraries
-      //for (auto it = _settings.getIt(opReferences); !it.Eof(); it++) {
-      //   _loader.addPackage(it.key(), *it);
-      //}
+      // add references to the additional libraries
+      for (auto it = _settings.getIt(opReferences); !it.Eof(); it++) {
+         _loader.addPackage(it.key(), *it);
+      }
    }
 
-//   void addLoaderListener(_JITLoaderListener* listener)
-//   {
-//      _loader.addListener(listener);
-//   }
-//
-//   virtual ident_t resolveForward(ident_t forward);
-//   virtual bool addForward(ident_t forward, ident_t reference);
-//
-//   // loader
-//   virtual _Module* loadModule(ident_t package, bool silentMode);
-//
-//   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false);
-//   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
+   void addLoaderListener(_JITLoaderListener* listener)
+   {
+      _loader.addListener(listener);
+   }
+
+   virtual ident_t resolveForward(ident_t forward);
+   virtual bool addForward(ident_t forward, ident_t reference);
+
+   // loader
+   virtual _Module* loadModule(ident_t package, bool silentMode);
+
+   virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false);
+   virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
 //   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 
    virtual bool HasWarnings() const { return _hasWarning; }
@@ -215,9 +215,9 @@ public:
       else return false;
    }
 
-//   virtual _Module* createModule(ident_t name);
-//   virtual _Module* createDebugModule(ident_t name);
-//
+   virtual _Module* createModule(ident_t name);
+   virtual _Module* createDebugModule(ident_t name);
+
 //   virtual void saveModule(_Module* module, ident_t extension);
 
    virtual ident_t Namespace() const

@@ -4,6 +4,8 @@ In development:
               dev
                 * uncomment parseMessage, resolveModule, cleanUp, initLoader, loadPrimitiveCategory
                 * nameattr should be identifier?
+                * modules should be generated on the same level, there should be possibility to provide alt path to libs
+                  through virtual namespaces
                 * redesign
 
               dev1

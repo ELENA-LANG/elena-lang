@@ -220,37 +220,37 @@ class Project : public _ELENA_::Project
       }
    }
 
-//   void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
-//   {
-//      if (!moduleNs.compare(rootNs)) {
-//         moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
-//      }
-//      else moduleNs = NULL;
-//
-//      size_t ns_index = filePath.find(PATH_SEPARATOR);
-//      while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
-//         if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
-//            filePath += (ns_index + 1);
-//            moduleNs += (ns_index + 1);
-//
-//            ns_index = filePath.find(PATH_SEPARATOR);
-//         }
-//         else break;
-//      }
-//
-//      size_t index = filePath.find(PATH_SEPARATOR);
-//      while (index != NOTFOUND_POS) {
-//         if (retVal.Length() != 0) {
-//            retVal.append('\'');
-//         }
-//         retVal.append(filePath, index);
-//
-//         filePath += (index + 1);
-//         index = filePath.find(PATH_SEPARATOR);
-//      }
-//   }
+   void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
+   {
+      if (!moduleNs.compare(rootNs)) {
+         moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
+      }
+      else moduleNs = NULL;
 
-   void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source/*, _ELENA_::ModuleScope& scope*/, _ELENA_::SyntaxTree& derivationTree)
+      size_t ns_index = filePath.find(PATH_SEPARATOR);
+      while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
+         if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
+            filePath += (ns_index + 1);
+            moduleNs += (ns_index + 1);
+
+            ns_index = filePath.find(PATH_SEPARATOR);
+         }
+         else break;
+      }
+
+      size_t index = filePath.find(PATH_SEPARATOR);
+      while (index != NOTFOUND_POS) {
+         if (retVal.Length() != 0) {
+            retVal.append('\'');
+         }
+         retVal.append(filePath, index);
+
+         filePath += (index + 1);
+         index = filePath.find(PATH_SEPARATOR);
+      }
+   }
+
+   void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)
    {
       _ELENA_::DerivationWriter writer(derivationTree/*, &scope*/);
       writer.newNode(_ELENA_::lxRoot, false);
@@ -259,9 +259,8 @@ class Project : public _ELENA_::Project
       while (!file_it.Eof()) {
          _ELENA_::ident_t filePath = *file_it;
 
-//         //_ELENA_::SourceFileInfo* info = initSourceFileInfo(scope, filePath);
-//         _ELENA_::IdentifierString ns;
-//         retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, ns);
+         _ELENA_::IdentifierString ns;
+         retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, ns);
 
          try {
             // based on the target type generate the syntax tree for the file
@@ -272,9 +271,24 @@ class Project : public _ELENA_::Project
             _ELENA_::TextFileReader sourceFile(fullPath.c_str(), getDefaultEncoding(), true);
             if (!sourceFile.isOpened())
                raiseError(errInvalidFile, filePath);
-//
-//            scope.beginModule(ns.c_str(), filePath, writer);
+
+            // declare a namespace
+            scope.declareNamespace(ns.c_str());
+            writer.newNode(_ELENA_::lxNamespace, ns.c_str(), false);            
+            writer.newNode(_ELENA_::lxSourcePath, filePath, false);
+            writer.closeNode(false);
+
+            //   // add the module itself
+            //   writer.importModule(module->Name());
+            //
+            //   // system module should be included by default
+            //   if (!module->Name().compare(STANDARD_MODULE)) {
+            //      writer.importModule(STANDARD_MODULE);
+            //   }
+
             parser.parse(&sourceFile, writer, getTabSize());
+
+            writer.closeNode(false);
 //            scope.endModule(writer);
          }
          catch (_ELENA_::LineTooLong& e)
@@ -590,7 +604,7 @@ public:
 
    bool compileSources(_ELENA_::Compiler& compiler, _ELENA_::Parser& parser)
    {
-//      bool debugMode = BoolSetting(_ELENA_::opDebugMode);
+      bool debugMode = BoolSetting(_ELENA_::opDebugMode);
 
       //   //_ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
       _ELENA_::SyntaxTree derivationTree;
@@ -601,7 +615,7 @@ public:
          _ELENA_::ModuleScope scope(this, &compiler);
 
          _ELENA_::ident_t name = source->get(ELC_NAMESPACE_KEY);
-//         compiler.initializeScope(name, scope, debugMode);
+         compiler.initializeScope(name, scope, debugMode);
 
          printInfo("Parsing %s", name);
 
@@ -611,7 +625,7 @@ public:
             derivationTree.clear();
 
             // build derivation tree, recognize scopes and register all symbols
-            buildSyntaxTree(parser, source/*, scope*/, derivationTree);
+            buildSyntaxTree(parser, source, scope, derivationTree);
 
             printInfo("Compiling %s", name);
 

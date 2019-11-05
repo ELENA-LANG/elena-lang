@@ -152,6 +152,21 @@ inline void copyIdentifier(SyntaxWriter& writer, SNode ident/*, bool ignoreTermi
 //   _importedNs.clear();
 //}
 
+void DerivationWriter :: newNode(LexicalType symbol, ident_t arg, bool cachingMode)
+{
+   if (cachingMode) {
+      _level++;
+
+      _cacheWriter.newNode(symbol, arg);
+
+      // whole root scope should be cached
+      if (symbol == lxScope && _level == 1)
+         _cachingLevel = _level;
+   }
+   else _output.newNode(symbol, arg);
+
+}
+
 void DerivationWriter :: newNode(LexicalType symbol, bool cachingMode)
 {
    if (cachingMode) {
@@ -248,6 +263,11 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
 {
    writer.newNode(terminal.symbol, terminal.value);
 
+   writer.appendNode(lxCol, terminal.col);
+   writer.appendNode(lxRow, terminal.row);
+   writer.appendNode(lxLength, terminal.length);
+   //   _writer->writeDWord(terminal.disp);
+   
    writer.closeNode();
 }
 
@@ -284,11 +304,6 @@ void DerivationWriter :: appendTerminal(TerminalInfo& terminal, bool cachingMode
       saveTerminal(_output, terminal);
    }
 
-//   _cacheWriter.appendNode(lxCol, terminal.col);
-//   _cacheWriter.appendNode(lxRow, terminal.row);
-//   _cacheWriter.appendNode(lxLength, terminal.length);
-//   //   _writer->writeDWord(terminal.disp);
-//
 //   _cacheWriter.closeNode();
 }
 

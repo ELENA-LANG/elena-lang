@@ -241,10 +241,10 @@ private:
 //         {
 //            moduleScope->project->raiseError(message);
 //         }
-//         virtual void raiseError(const char* message, SNode terminal)
-//         {
-//            parent->raiseError(message, terminal);
-//         }
+         virtual void raiseError(const char* message, SNode terminal)
+         {
+            parent->raiseError(message, terminal);
+         }
 //         virtual void raiseWarning(int level, const char* message, SNode terminal)
 //         {
 //            parent->raiseWarning(level, message, terminal);
@@ -330,10 +330,10 @@ private:
 //
 ////      // list of references to the current module which should be checked after the project is compiled
 ////      Unresolveds* forwardsUnresolved;
-//
-//      IdentifierString  ns;
-//      IdentifierString  sourcePath;
-//
+
+      IdentifierString  ns;
+      IdentifierString  sourcePath;
+
 //      virtual Scope* getScope(ScopeLevel level)
 //      {
 //         if (level == slNamespace) {
@@ -351,10 +351,10 @@ private:
 //      {
 //         Scope::raiseError(message);
 //      }
-//      virtual void raiseError(const char* message, SNode terminal)
-//      {
-//         moduleScope->raiseError(message, sourcePath, terminal);
-//      }
+      virtual void raiseError(const char* message, SNode terminal)
+      {
+         moduleScope->raiseError(message, sourcePath, terminal);
+      }
 //      virtual void raiseWarning(int level, const char* message, SNode terminal)
 //      {
 //         moduleScope->raiseWarning(level, message, sourcePath, terminal);
@@ -376,9 +376,9 @@ private:
 //      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
 //
 //      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
-//
-//      ref_t mapNewTerminal(SNode terminal);
-//
+
+      ref_t mapNewTerminal(SNode terminal, bool privateOne);
+
 //      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 //
 //      void loadExtensions(ident_t ns);
@@ -413,15 +413,15 @@ private:
       NamespaceScope(_ModuleScope* moduleScope/*, ident_t path*/, ident_t ns/*, IdentifierList* imported*//*, bool withFullInfo*/);
    };
 
-//   // - SourceScope -
-//   struct SourceScope : public Scope
-//   {
-//      ref_t          reference;
-//      bool           internalOne;
-//
-//      SourceScope(Scope* parent, ref_t reference/*, ident_t sourcePath*/);
-//   };
-//
+   // - SourceScope -
+   struct SourceScope : public Scope
+   {
+      ref_t          reference;
+      bool           privateOne;
+
+      SourceScope(Scope* parent, ref_t reference, bool privateOne);
+   };
+
 //   // - ClassScope -
 //   struct ClassScope : public SourceScope
 //   {
@@ -500,10 +500,10 @@ private:
 //
 //      ClassScope(Scope* parent, ref_t reference);
 //   };
-//
-//   // - SymbolScope -
-//   struct SymbolScope : public SourceScope
-//   {
+
+   // - SymbolScope -
+   struct SymbolScope : public SourceScope
+   {
 //      bool  constant;
 //      bool  staticOne;
 //      bool  preloaded;
@@ -520,10 +520,10 @@ private:
 //      }
 //
 //      void save();
-//
-//      SymbolScope(NamespaceScope* parent, ref_t reference);
-//   };
-//
+
+      SymbolScope(NamespaceScope* parent, ref_t reference, bool privateOne);
+   };
+
 //   // - MethodScope -
 //   struct MethodScope : public Scope
 //   {
@@ -1054,8 +1054,8 @@ private:
 //   void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
 //   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope, bool implicitMode);
 //   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileSymbolDeclaration(SNode node, SymbolScope& scope);
-//   void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
+   void compileSymbolDeclaration(SNode node, SymbolScope& scope);
+   void compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);
 //   void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
 //   //void compileMetaCategory(SNode node, NamespaceScope& scope);
@@ -1137,11 +1137,11 @@ public:
    bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forced, bool& repeatMode);
    void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting);
 
-//   void initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo);
-//
+   void initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo);
+
 //////   void validateUnresolved(Unresolveds& unresolveds, _ProjectManager& project);
 //   void copyStaticFieldValues(SNode node, ClassScope& scope);
-//
+
 //   // _Compiler interface implementation
 //   //virtual void injectVirtualReturningMethod(SyntaxWriter& writer, ref_t messagRef, LexicalType type, int argument);
 //   virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);

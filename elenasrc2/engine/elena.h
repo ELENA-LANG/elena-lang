@@ -120,15 +120,15 @@ struct ReferenceInfo
 //      attrSection = nullptr;
 //   }
 //};
-//
-//// --- _LoaderListener ---
-//
-//class _JITLoaderListener
-//{
-//public:
-//   virtual void onModuleLoad(_Module*) = 0;
-//};
-//
+
+// --- _LoaderListener ---
+
+class _JITLoaderListener
+{
+public:
+   virtual void onModuleLoad(_Module*) = 0;
+};
+
 //// --- _JITLoader ---
 //
 //class _JITLoader
@@ -251,28 +251,28 @@ public:
    }
 };
 
-//// --- ReferenceName ---
-//
-//class ReferenceName : public IdentifierString
-//{
-//public:
-//   ReferenceName()
-//   {
-//   }
-//   ReferenceName(ident_t reference)
-//   {
-//      copy(reference + reference.findLast('\'') + 1);
-//   }
-//   ReferenceName(ident_t reference, ident_t package)
-//   {
-//      size_t length = getlength(package);
-//
-//      if (reference.compare(package, length) && reference[length] == '\'') {
-//         copy(reference + length + 1);
-//      }
-//      else copy(reference + reference.findLast('\'') + 1);
-//   }
-//};
+// --- ReferenceName ---
+
+class ReferenceName : public IdentifierString
+{
+public:
+   ReferenceName()
+   {
+   }
+   ReferenceName(ident_t reference)
+   {
+      copy(reference + reference.findLast('\'') + 1);
+   }
+   ReferenceName(ident_t reference, ident_t package)
+   {
+      size_t length = getlength(package);
+
+      if (reference.compare(package, length) && reference[length] == '\'') {
+         copy(reference + length + 1);
+      }
+      else copy(reference + reference.findLast('\'') + 1);
+   }
+};
 
 // --- NamespaceName ---
 
@@ -755,18 +755,18 @@ typedef MemoryMap<ident_t, int>                             SymbolMap;
 typedef MemoryHashTable<ref_t, int, syntaxRule, cnHashSize> SyntaxHash;
 typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
-//// --- miscellaneous routines ---
-//
+// --- miscellaneous routines ---
+
 //inline bool isSealedStaticField(ref_t ref)
 //{
 //   return (int)ref >= 0;
 //}
-//
-//inline bool isTemplateWeakReference(ident_t referenceName)
-//{
-//   return referenceName[0] == '\'' && referenceName.startsWith(TEMPLATE_PREFIX_NS);
-//}
-//
+
+inline bool isTemplateWeakReference(ident_t referenceName)
+{
+   return referenceName[0] == '\'' && referenceName.startsWith(TEMPLATE_PREFIX_NS);
+}
+
 //inline bool isForwardReference(ident_t referenceName)
 //{
 //   return referenceName.startsWith(FORWARD_PREFIX_NS);

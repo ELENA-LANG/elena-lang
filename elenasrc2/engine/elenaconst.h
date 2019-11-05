@@ -439,9 +439,9 @@ namespace _ELENA_
 //   constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
 //   constexpr auto PARENT_VAR           = "$$parent";         // the closure parent
 //   constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
-//
-//   constexpr auto INLINE_CLASSNAME     = "$inline";          // nested class generic name
-//
+
+   constexpr auto INLINE_CLASSNAME     = "$inline";          // nested class generic name
+
 //   constexpr auto VIRTUAL_FIELD        = "$virtual#";
 //
 //  // --- ELENA special sections ---
@@ -450,17 +450,17 @@ namespace _ELENA_
 //   constexpr auto EXTENSION_SECTION    = "#extensions";
 //   constexpr auto INITIALIZER_SECTION  = "#initializer";
 //   constexpr auto PACKAGE_SECTION      = "#package";
-//   constexpr auto IMPORTS_SECTION      = "#import";
-//   constexpr auto NAMESPACES_SECTION   = "#namespaces";
-//   constexpr auto NAMESPACE_REF        = "#namespace";
-//
-//  // --- ELENA class prefixes / postfixes ---
-//   constexpr auto PRIVATE_PREFIX_NS    = "'$private'";
-//
-//   constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
-//   constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
-//   constexpr auto TEMPLATE_PREFIX_NS_LEN     = 7;
-//
+   constexpr auto IMPORTS_SECTION      = "#import";
+   constexpr auto NAMESPACES_SECTION   = "#namespaces";
+   constexpr auto NAMESPACE_REF        = "#namespace";
+
+  // --- ELENA class prefixes / postfixes ---
+   constexpr auto PRIVATE_PREFIX_NS          = "'$private'";
+
+   constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
+   constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
+   constexpr auto TEMPLATE_PREFIX_NS_LEN     = 7;
+
 //   constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
 //   constexpr auto FORWARD_PREFIX_NS_LEN      = 10;
 //
@@ -486,9 +486,9 @@ namespace _ELENA_
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
 //                                                                     // will be treated like internal core api one
 //   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
-//
-//   #define NATIVE_MODULE            "$native"
-//
+
+   constexpr auto NATIVE_MODULE           = "$native";
+
 //   constexpr auto META_MODULE             = "$meta";
 //   constexpr auto MESSAGE_TABLE           = "$meta'$messages";
 //   constexpr auto MESSAGEBODY_TABLE       = "$meta'$messagebody";
@@ -500,8 +500,8 @@ namespace _ELENA_
 //   constexpr auto GC_THREADTABLE          = "$elena'@gcthreadroot";           // thread table
 //   constexpr auto TLS_KEY                 = "$elena'@tlskey";                 // TLS key
 //   constexpr auto TAPE_KEY                = "$elena'@tapekey";                // VM Tape key
-//   constexpr auto NAMESPACE_KEY           = "$elena'@rootnamespace";          // The project namespace
-//
+   constexpr auto NAMESPACE_KEY           = "$elena'@rootnamespace";          // The project namespace
+
 //   // predefined system forwards
 //   constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
 //   constexpr auto LAZYEXPR_FORWARD        = "$lazyexpression";                // the base lazy expression class

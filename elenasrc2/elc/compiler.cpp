@@ -11,7 +11,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "compiler.h"
-//#include "errors.h"
+#include "errors.h"
 //#include <errno.h>
 
 using namespace _ELENA_;
@@ -217,8 +217,8 @@ using namespace _ELENA_;
 Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ident_t ns)
    : Scope(moduleScope)//, constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr), extensionTemplates(NULL, freestr)
 {
-//   this->ns.copy(ns);
-//
+   this->ns.copy(ns);
+
 //   // load private namespaces
 //   loadExtensions(moduleScope->module->Name(), ns, true);
 //
@@ -307,61 +307,44 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ident_t ns
 //
 //   return reference;
 //}
-//
-//ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal)
-//{
-//   if (terminal == lxNameAttr) {
-//      // verify if the name is unique
-//      ident_t name;
-//      if (!terminal.argument) {
-//         bool privateOne = false;
-//
-//         // if it is a script engine generated syntax tree
-//         name = terminal.firstChild(lxTerminalMask).identifier();
-//         terminal.setArgument(moduleScope->mapNewIdentifier(ns.c_str(), name, privateOne));
-//      }
-//      else name = module->resolveReference(terminal.argument);
-//
-//      ref_t reference = terminal.argument;
-//      if (name.startsWith(PRIVATE_PREFIX_NS)) {
-//         IdentifierString altName("'", name.c_str() + getlength(PRIVATE_PREFIX_NS));
-//         // if the public symbol with the same name was already declared -
-//         // raise an error
-//         ref_t dup = module->mapReference(altName.c_str(), true);
-//         if (dup)
-//            reference = dup;
-//      }
-//      else {
-//         IdentifierString altName(PRIVATE_PREFIX_NS, name.c_str() + 1);
-//         // if the private symbol with the same name was already declared -
-//         // raise an error
-//         ref_t dup = module->mapReference(altName.c_str(), true);
-//         if (dup)
-//            reference = dup;
-//      }
-//
-//      if (module->mapSection(reference | mskSymbolRef, true))
-//         raiseError(errDuplicatedSymbol, terminal.firstChild(lxTerminalMask));
-//
-//      return terminal.argument;
-//   }
-//   else if (terminal == lxNone) {
-//      return moduleScope->mapAnonymous();
-//   }
-//   else throw InternalError("Cannot map new terminal"); // !! temporal
-//}
-//
-////////bool Compiler::ModuleScope :: doesReferenceExist(ident_t referenceName)
-////////{
-////////   ref_t moduleRef = 0;
-////////   _Module* module = project->resolveModule(referenceName, moduleRef, true);
-////////
-////////   if (module == NULL || moduleRef == 0)
-////////      return false;
-////////
-////////   return module->mapReference(referenceName, true) != 0;
-////////}
-//
+
+ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal, bool privateOne)
+{
+   if (terminal == lxNameAttr) {
+      // verify if the name is unique
+      ident_t name = terminal.firstChild(lxTerminalMask).identifier();
+
+      terminal.setArgument(moduleScope->mapNewIdentifier(ns.c_str(), name, privateOne));
+
+      ref_t reference = terminal.argument;
+      if (privateOne) {
+         IdentifierString altName("'", name.c_str() + getlength(PRIVATE_PREFIX_NS));
+         // if the public symbol with the same name was already declared -
+         // raise an error
+         ref_t dup = module->mapReference(altName.c_str(), true);
+         if (dup)
+            reference = dup;
+      }
+      else {
+         IdentifierString altName(PRIVATE_PREFIX_NS, name.c_str() + 1);
+         // if the private symbol with the same name was already declared -
+         // raise an error
+         ref_t dup = module->mapReference(altName.c_str(), true);
+         if (dup)
+            reference = dup;
+      }
+
+      if (module->mapSection(reference | mskSymbolRef, true))
+         raiseError(errDuplicatedSymbol, terminal.firstChild(lxTerminalMask));
+
+      return terminal.argument;
+   }
+   else if (terminal == lxNone) {
+      return moduleScope->mapAnonymous();
+   }
+   else throw InternalError("Cannot map new terminal"); // !! temporal
+}
+
 //ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool checkState)
 //{
 //   // if reference is zero the symbol is unknown
@@ -517,34 +500,32 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ident_t ns
 //
 //   extensionTemplates.add(message, pattern.clone());
 //}
-//
-//// --- Compiler::SourceScope ---
-//
-//Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference)
-//   : Scope(moduleScope)
+
+// --- Compiler::SourceScope ---
+
+Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference, bool privateOne)
+   : Scope(moduleScope)
+{
+   this->reference = reference;
+   this->privateOne = privateOne;
+}
+
+// --- Compiler::SymbolScope ---
+
+Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, bool privateOne)
+   : SourceScope(parent, reference, privateOne)
+{
+   //outputRef = 0;
+   //constant = false;
+   //staticOne = false;
+   //preloaded = false;
+}
+
+//ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
 //{
-//   this->reference = reference;
-//
-//   ident_t name = module->resolveReference(reference);
-//   this->internalOne = name.startsWith(PRIVATE_PREFIX_NS);
+//   return Scope::mapTerminal(identifier);
 //}
-//
-//// --- Compiler::SymbolScope ---
-//
-//Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference)
-//   : SourceScope(parent, reference)
-//{
-//   outputRef = 0;
-//   constant = false;
-//   staticOne = false;
-//   preloaded = false;
-//}
-//
-////ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
-////{
-////   return Scope::mapTerminal(identifier);
-////}
-//
+
 //void Compiler::SymbolScope :: save()
 //{
 //   SymbolExpressionInfo info;
@@ -8044,9 +8025,9 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //      compileSymbolCode(scope);
 //   }
 //}
-//
-//void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
-//{
+
+void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
+{
 //   bool publicAttr = false;
 //   declareSymbolAttributes(node, scope, true, publicAttr);
 //   if (publicAttr) {
@@ -8056,8 +8037,8 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //   if ((scope.constant || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == nullptr) {
 //      scope.save();
 //   }
-//}
-//
+}
+
 //bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef)
 //{
 //   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
@@ -8195,9 +8176,9 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //      mattributes.write(&attrWriter);
 //   }
 //}
-//
-//void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope)
-//{
+
+void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope)
+{
 //   expressionTree.clear();
 //
 //   SyntaxWriter writer(expressionTree);
@@ -8258,8 +8239,8 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //
 //   // create byte code sections
 //   _writer.saveTape(tape, *scope.moduleScope);
-//}
-//
+}
+
 //void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, int mode*/, bool accumulatorMode)
 //{
 //   // !! temporal
@@ -9371,11 +9352,11 @@ Compiler :: Compiler(_CompilerLogic* logic)
 void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 {
 //   SyntaxTree expressionTree; // expression tree is reused
-//
-//   // second pass - implementation
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current) {
+
+   // second pass - implementation
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current) {
 //         case lxInclude:
 //            compileForward(current, scope);
 //            break;
@@ -9403,36 +9384,36 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 //            }
 //            break;
 //         }
-//         case lxSymbol:
-//         {
-//            SymbolScope symbolScope(&scope, current.argument);
-//            compileSymbolImplementation(expressionTree, current, symbolScope);
-//            break;
-//         }
+         case lxSymbol:
+         {
+            SymbolScope symbolScope(&scope, current.argument, true);
+            compileSymbolImplementation(/*expressionTree, */current, symbolScope);
+            break;
+         }
 //         //case lxMeta:
 //         //   compileMetaCategory(current, scope);
 //         //   break;
-//      }
-//      current = current.nextNode();
-//   }
+      }
+      current = current.nextNode();
+   }
 }
 
 bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool forced, bool& repeatMode)
 {
-//   SNode current = node.firstChild();
-//
+   SNode current = node.firstChild();
+
 //   if (scope.moduleScope->superReference == 0)
 //      scope.raiseError(errNotDefinedBaseClass);
 
    // first pass - declaration
    bool declared = false;
-//   while (current != lxNone) {
+   while (current != lxNone) {
 //      //      if (scope.mapAttribute(name) != 0)
 //      //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
 //
-//      if (current.argument == 0 || current.argument == INVALID_REF) {
-//         // hotfix : ignore already declared classes and symbols
-//         switch (current) {
+      if (current.argument == 0 || current.argument == INVALID_REF) {
+         // hotfix : ignore already declared classes and symbols
+         switch (current) {
 //            case lxClass:
 //               if (forced || !current.findChild(lxParent) || scope.moduleScope->isClassDeclared(resolveParentRef(current.findChild(lxParent), scope, true))) {
 //                  current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
@@ -9449,34 +9430,36 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool for
 //               }
 //               else repeatMode = true;
 //               break;
-//            case lxSymbol:
-//            {
-//               current.setArgument(scope.mapNewTerminal(current.findChild(lxNameAttr)));
-//
-//               SymbolScope symbolScope(&scope, current.argument);
-//
-//               scope.moduleScope->mapSection(symbolScope.reference | mskSymbolRef, false);
-//
-//               // declare symbol
-//               compileSymbolDeclaration(current, symbolScope);
-//               declared = true;
-//               break;
-//            }
-//         }
-//      }
-//      current = current.nextNode();
-//   }
+            case lxSymbol:
+            {
+               bool privateOne = true;
+
+               current.setArgument(scope.mapNewTerminal(current.findChild(lxNameAttr), privateOne));
+
+               SymbolScope symbolScope(&scope, current.argument, privateOne);
+
+               scope.moduleScope->mapSection(symbolScope.reference | mskSymbolRef, false);
+
+               // declare symbol
+               compileSymbolDeclaration(current, symbolScope);
+               declared = true;
+               break;
+            }
+         }
+      }
+      current = current.nextNode();
+   }
 
    return declared;
 }
 
 void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFullInfo)
 {
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxSourcePath) {
-//         scope.sourcePath.copy(current.identifier());
-//      }
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxSourcePath) {
+         scope.sourcePath.copy(current.identifier());
+      }
 //      else if (current == lxImport) {
 //         bool duplicateInclusion = false;
 //         if (scope.moduleScope->includeNamespace(scope.importedNs, current.identifier(), duplicateInclusion)) {
@@ -9491,10 +9474,10 @@ void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFu
 //            current = lxIdle; // remove the node, to prevent duplicate warnings
 //         }
 //      }
-//
-//      current = current.nextNode();
-//   }
-//
+
+      current = current.nextNode();
+   }
+
 //   if (withFullInfo) {
 //      for (auto it = scope.importedNs.start(); !it.Eof(); it++) {
 //         ident_t imported_ns = *it;
@@ -9594,17 +9577,17 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, iden
 //   }
 //   else return false;
 //}
-//
-//void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo)
-//{
-//   scope.module = scope.project->createModule(name);
-//
-//   if (withDebugInfo) {
-//      scope.debugModule = scope.project->createDebugModule(name);
-//      // HOTFIX : save the module name in strings table
-//      _writer.writeSourcePath(scope.debugModule, name);
-//   }
-//
+
+void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo)
+{
+   scope.module = scope.project->createModule(name);
+
+   if (withDebugInfo) {
+      scope.debugModule = scope.project->createDebugModule(name);
+      //// HOTFIX : save the module name in strings table
+      //_writer.writeSourcePath(scope.debugModule, name);
+   }
+
 //   // cache the frequently used references
 //   scope.superReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SUPER_FORWARD));
 //   scope.intReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(INT_FORWARD));
@@ -9640,8 +9623,8 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, iden
 //   }
 //
 //   createPackageInfo(scope.module, *scope.project);
-//}
-//
+}
+
 //void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex,
 //   LexicalType objType, int objArg)
 //{

@@ -189,6 +189,7 @@ public:
 //   void closeNamespace();
 
    virtual void newNode(LexicalType symbol, bool cachingMode = true);
+   virtual void newNode(LexicalType symbol, ident_t arg, bool cachingMode = true);
    virtual void appendTerminal(TerminalInfo& terminal, bool cachingMode = true);
    virtual void closeNode(bool cachingMode = true);
 

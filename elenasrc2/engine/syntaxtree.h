@@ -213,11 +213,11 @@ enum LexicalType
 
    // attributes
    lxNameAttr                 = 0x20001,
+   lxSourcePath               = 0x20002,
+   lxCol                      = 0x20003,
+   lxRow                      = 0x20004,
+   lxLength                   = 0x02005,
 //   lxAttribute                = 0x20000,
-//   lxSourcePath               = 0x20001,
-//   lxCol                      = 0x20003,
-//   lxRow                      = 0x20004,
-//   lxLength                   = 0x02005,
 //   lxBreakpoint               = 0x20006,
 //   lxImport                   = 0x20007,
 //   lxReserved                 = 0x20008,
@@ -1240,9 +1240,9 @@ public:
 //
 //   static Node findPattern(Node node, int counter, ...);
 //   //static bool matchPattern(Node node, int mask, int counter, ...);
-//
-//   static Node findTerminalInfo(Node node);
-//
+
+   static Node findTerminalInfo(Node node);
+
 //   //static bool apply(Node node, Trie<NodePattern>& trie);
 //
 //   void createRoot(LexicalType type, int argument)

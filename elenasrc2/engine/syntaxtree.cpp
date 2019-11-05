@@ -733,24 +733,24 @@ void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
 //
 //   return nodes[0];
 //}
-//
-//SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
-//{
-//   if (node.existChild(lxRow))
-//      return node;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      SNode terminalNode = findTerminalInfo(current);
-//      if (terminalNode != lxNone)
-//         return terminalNode;
-//
-//      current = current.nextNode();
-//   }
-//
-//   return current;
-//}
-//
+
+SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
+{
+   if (node.existChild(lxRow))
+      return node;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      SNode terminalNode = findTerminalInfo(current);
+      if (terminalNode != lxNone)
+         return terminalNode;
+
+      current = current.nextNode();
+   }
+
+   return current;
+}
+
 ////bool SyntaxTree :: apply(SyntaxTree::Node node, Trie<SyntaxTree::NodePattern>& trie)
 ////{
 ////   bool applied = false;

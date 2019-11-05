@@ -74,7 +74,7 @@ public:
          name.copyTo(buf, (size_t)pos, bufLen);
          maxLen -= bufLen;
 
-         combine(path_t(buf), bufLen);
+         appendName(path_t(buf), bufLen);
          name += pos + 1;
       }
       appendExtension(extension);
@@ -285,6 +285,14 @@ public:
       if(!emptystr(extension)) {
          _path.append('.');
          _path.append(extension);
+      }
+   }
+
+   void appendName(path_t name, size_t len)
+   {
+      if (!emptystr(name)) {
+         _path.append('.');
+         _path.append(name, len);
       }
    }
 
