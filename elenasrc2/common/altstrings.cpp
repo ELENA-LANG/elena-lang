@@ -3,7 +3,7 @@
 //
 //		This file contains String classes implementations
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //                                              (C)1994-2004, Unicode, Inc.
 //---------------------------------------------------------------------------
 
@@ -482,6 +482,18 @@ size_t findSubStr(const char* s, char c, size_t length, size_t defValue)
    }
 
    return defValue;
+}
+
+size_t findLastSubStr(const char* s, char c, size_t length, size_t defValue)
+{
+   size_t last = defValue;
+   for (size_t i = 0; i < length; i++) {
+      if (s[i] == c) {
+         last = i;
+      }
+   }
+
+   return last;
 }
 
 void append(char* dest, const char* sour, size_t length)
@@ -1451,6 +1463,15 @@ size_t ident_t :: findLast(size_t index, char ch, size_t defValue)
 size_t ident_t :: findSubStr(size_t index, char c, size_t length, size_t defValue)
 {
    size_t pos = ::findSubStr(_string + index, c, length, NOTFOUND_POS);
+   if (pos != NOTFOUND_POS) {
+      return index + pos;
+   }
+   else return defValue;
+}
+
+size_t ident_t :: findLastSubStr(size_t index, char c, size_t length, size_t defValue)
+{
+   size_t pos = ::findLastSubStr(_string + index, c, length, NOTFOUND_POS);
    if (pos != NOTFOUND_POS) {
       return index + pos;
    }

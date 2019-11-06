@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
       if (_ELENA_::ident_t(argv[1]).compare("-amd64")) {
          amd64Mode = true;
 
-         _ELENA_::FileName name(argv[2]);
+         _ELENA_::FileName name(argv[2], true); 
 
          target.copy(argv[3]);
          target.combine(name.c_str());
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
          target.copy(argv[2]);
       }
       else {
-         _ELENA_::FileName name(argv[1]);
+         _ELENA_::FileName name(argv[1], true);
 
          target.copy(argv[2]);
          target.combine(name.c_str());

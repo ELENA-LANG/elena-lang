@@ -373,6 +373,13 @@ public:
 
             bufLen = IDENTIFIER_LEN;
             path.copyTo(buf, pos, bufLen);
+
+            // replace dots with apostrophes
+            for (size_t i = 0; i < bufLen; i++) {
+               if (buf[i] == '.')
+                  buf[i] = '\'';
+            }
+
             append(buf, bufLen);
 
             break;

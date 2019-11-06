@@ -105,6 +105,8 @@ public:
    size_t findSubStr(size_t index, char c, size_t length, size_t defValue);
    size_t findSubStr(size_t index, const char* s, size_t defValue = NOTFOUND_POS);
 
+   size_t findLastSubStr(size_t index, char c, size_t length, size_t defValue);
+
    int toInt();
    int toInt(size_t index);
 

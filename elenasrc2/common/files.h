@@ -118,7 +118,7 @@ public:
 
       size_t namepos = s.findLast(PATH_SEPARATOR) + 1;
 
-      size_t pos = s.findSubStr(namepos, '.', len - namepos, NOTFOUND_POS);
+      size_t pos = s.findLastSubStr(namepos, '.', len - namepos, NOTFOUND_POS);
       if (pos != NOTFOUND_POS) {
          return ident_t(path + pos + 1).compare(extension);
       }
@@ -396,6 +396,15 @@ public:
       _path.copy(path + dotpos + 1);
    }
 
+   void appendExtension(path_t path)
+   {
+      size_t len = getlength(path);
+      size_t dotpos = path.findLast('.', len);
+
+      _path.append('.');
+      _path.append(path + dotpos + 1);
+   }
+
    bool isEmpty() const
    {
       return getlength(_path) == 0;
@@ -413,10 +422,18 @@ public:
 
 #ifdef _WIN32
    FileName(const char* pathStr)
+      : FileName(pathStr, false)
+   {
+   }
+
+   FileName(const char* pathStr, bool withExtension)
    {
       Path path(pathStr);
 
       copyName(path.c_str());
+      if (withExtension) {
+         appendExtension(path.c_str());
+      }
    }
 #endif
 

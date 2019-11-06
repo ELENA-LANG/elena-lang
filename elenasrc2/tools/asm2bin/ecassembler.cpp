@@ -210,6 +210,8 @@ ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
       return subj;
    }
    else token.raiseErr("Invalid operand (%d)");
+
+   return 0; // dummy returning value 
 }
 
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
@@ -672,8 +674,10 @@ void ECodesAssembler :: compileProcedure(TokenInfo& token, _Module* binary, bool
 void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
 {
    FileName moduleName(outputPath);
+   moduleName.appendExtension(outputPath);
 
-   ReferenceNs name("system", IdentifierString(moduleName));
+   ReferenceNs name;
+   name.pathToName(moduleName.c_str());
 
    Module       binary(name);
 
