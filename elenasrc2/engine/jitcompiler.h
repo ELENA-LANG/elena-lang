@@ -65,9 +65,9 @@ public:
 //   virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
 //   virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
 //   virtual void compileCollection(MemoryWriter* writer, _Memory* binary) = 0;
-//
-//   virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
-//   virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter) = 0;
+
+   virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
+   virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter) = 0;
 
    virtual void allocateVariable(MemoryWriter& writer) = 0;
    virtual void allocateArray(MemoryWriter& writer, size_t count) = 0;

@@ -147,7 +147,7 @@ namespace _ELENA_
       mskStatSymbolRef       = 0x82000000u,   // reference to static symbol
       mskEntryRef            = 0x14000000u,   // reference to the program entry
       mskEntryRelRef         = 0x34000000u,   // reference to the program entry
-      mskSymbolAttributeRef  = 0x17000000u,
+      //mskSymbolAttributeRef  = 0x17000000u,
 
       mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000u,   // meta data
@@ -478,8 +478,8 @@ namespace _ELENA_
 ////   #define STANDARD_MODULE_LEN      6
 //   #define INTERNAL_MASK_LEN        12
 //   #define COREAPI_MASK_LEN         5
-//
-//   #define CORE_MODULE              "coreapi"
+
+   #define CORE_MODULE              "coreapi"
 //   #define STANDARD_MODULE          "system"                         // the standard module name
 //   #define FORWARD_MODULE           "$forwards"
 //   #define RT_MODULE                "elenart"                        // ELENART / ELENAVM dll

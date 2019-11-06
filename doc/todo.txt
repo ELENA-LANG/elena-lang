@@ -2,7 +2,9 @@
 In development:
 ------         
               dev
-                * uncomment beforeLoad, ExecutableImage, prepareCompiler, fixReferences
+                * uncomment - resolveBytecodeSection
+                * uncomment beforeLoad, ExecutableImage, prepareCompiler, fixReferences, compileMessageArg, resolveMessage,
+                  resolveMessageByIndex, printMethod
                 * uncomment parseMessage, resolveModule, cleanUp, initLoader, loadPrimitiveCategory
                 * nameattr should be identifier, what about reference / global - simplest way to declare sub namespaces?
                 * redesign

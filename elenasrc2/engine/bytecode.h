@@ -20,7 +20,7 @@ enum ByteCode
 //   bcPushB           = 0x02,
 //   bcPop             = 0x03,
 //   bcSNop            = 0x04,
-//   bcPushE           = 0x05,
+   bcPushE           = 0x05,
 //   bcDCopyVerb       = 0x06,
 //   bcThrow           = 0x07,
 //   bcDCopyCount      = 0x08,
@@ -39,7 +39,7 @@ enum ByteCode
 //   bcPopB            = 0x14,
 //   bcClose           = 0x15,
 //   bcSub             = 0x16,
-//   bcQuit            = 0x17,
+   bcQuit            = 0x17,
 //   bcGet             = 0x18,
 //   bcSet             = 0x19,
 //   bcInc             = 0x1A,
@@ -59,7 +59,7 @@ enum ByteCode
 //   bcTryLock         = 0x27,
 //   bcFreeLock        = 0x28,
 //   bcRethrow         = 0x29,
-//   bcSystem          = 0x2A,
+   bcSystem          = 0x2A,
 //   bcSelect          = 0x2B,
 //   bcESwap           = 0x2C,
 //   bcBSwap           = 0x2D,
@@ -164,7 +164,7 @@ enum ByteCode
 //   bcBCopyF          = 0x9B,
 //   bcACopyF          = 0x9C,
 //   bcACopyS          = 0x9D,
-//   bcACopyR          = 0x9E,
+   bcACopyR          = 0x9E,
 //   bcCopyM           = 0x9F,
 //
 //   bcJump            = 0xA0,
@@ -172,7 +172,7 @@ enum ByteCode
 //   bcACallVI         = 0xA2,
 //   bcCallR           = 0xA3,
 //   bcAJumpI          = 0xA4,
-//   bcCallExtR        = 0xA5,
+   bcCallExtR        = 0xA5,
 //   bcHook            = 0xA6,
 //   bcAddress         = 0xA7,
 //   bcACallI          = 0xA8,
@@ -186,7 +186,7 @@ enum ByteCode
 //
 //   bcPushN           = 0xB0,
 //   bcELoadFI         = 0xB1,
-//   bcPushR           = 0xB2,
+   bcPushR           = 0xB2,
 //   bcBSaveSI         = 0xB3,
 //   bcPushAI          = 0xB4,
 //   bcESaveFI         = 0xB5,
@@ -217,8 +217,8 @@ enum ByteCode
 //   bcALoadAI         = 0xCD,
 //   bcALoadBI         = 0xCE,
 //   bcAXSaveBI        = 0xCF,
-//
-//   bcPopI            = 0xD0,
+
+   bcPopI            = 0xD0,
 //   bcNReadI          = 0xD1,
 //   bcSCopyF          = 0xD2,
 //   bcSetVerb         = 0xD3,
@@ -439,22 +439,22 @@ public:
    static bool IsRCode(ByteCode code)
    {
       switch(code) {
-         //case bcPushR:
+         case bcPushR:
          ////case bcEvalR:
          //case bcCallR:
          //case bcALoadR:
          //case bcASaveR:
-         //case bcACopyR:
+         case bcACopyR:
          //case bcNew:
          //case bcNewN:
          //case bcBCopyR:
          //case bcXCallRM:
-         //case bcCallExtR:
+         case bcCallExtR:
          //case bcSelectR:
          //case bcXJumpRM:
          //case bcXIndexRM:
          //case bcBLoadR:
-         //   return true;
+            return true;
          default:
             return false;
       }
@@ -512,13 +512,13 @@ public:
          //case bcPushB:
          //case bcPushFI:
          //case bcPushN:
-         //case bcPushR:
+         case bcPushR:
          //case bcPushSI:
          //case bcPushAI:
          //case bcPushF:
-         //case bcPushE:
+         case bcPushE:
          //case bcPushD:
-         //   return true;
+            return true;
          default:
             return false;
       }
@@ -529,7 +529,7 @@ public:
       switch(code) {
          //case bcPop:
          //case bcPopA:
-         //case bcPopI:
+         case bcPopI:
          //case bcPopB:
          //case bcPopE:
          //case bcPopD:

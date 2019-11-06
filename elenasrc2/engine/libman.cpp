@@ -23,11 +23,11 @@ LibraryManager :: LibraryManager()
 {
 }
 
-//LibraryManager :: LibraryManager(path_t root, ident_t package)
-//   : _rootPath(root), _namespace(package), _modules(NULL, freeobj), _binaries(NULL, freeobj),
-//   _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr), _debugModules(NULL, freeobj)
-//{
-//}
+LibraryManager :: LibraryManager(path_t root, ident_t package)
+   : _rootPath(root), _namespace(package), _modules(NULL, freeobj), _binaries(NULL, freeobj),
+   _binaryPaths(NULL, freestr), _packagePaths(NULL, freestr), _debugModules(NULL, freeobj)
+{
+}
 
 void LibraryManager :: onModuleLoad(_Module* module)
 {

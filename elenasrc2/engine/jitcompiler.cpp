@@ -31,13 +31,13 @@ using namespace _ELENA_;
 //      entries[i] = entries[i - 1];
 //   }
 //}
-//
-//// --- _JITCompiler ---
-//
-//void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter)
-//{
-//   compileProcedure(helper, reader, codeWriter);
-//}
+
+// --- _JITCompiler ---
+
+void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter)
+{
+   compileProcedure(helper, reader, codeWriter);
+}
 
 // --- JITCompiler32 ---
 

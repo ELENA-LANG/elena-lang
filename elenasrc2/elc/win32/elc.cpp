@@ -11,7 +11,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elc.h"
-//#include "constants.h"
+#include "constants.h"
 #include "errors.h"
 #include "compilerlogic.h"
 #include "linker.h"
@@ -287,10 +287,10 @@ int main()
          return -3;
       }
 
-      //// Initializing..
-      //_ELENA_::Path configPath(project.appPath.c_str(), DEFAULT_CONFIG);
+      // Initializing..
+      _ELENA_::Path configPath(project.appPath.c_str(), DEFAULT_CONFIG);
 
-      //project.loadConfig(configPath.c_str(), true, false);
+      project.loadConfig(configPath.c_str(), true, false);
 
       // Initializing..
       for (int i = 1 ; i < argc ; i++) {
@@ -305,7 +305,7 @@ int main()
 
       project.initLoader();
 
-      int platform = /*project.IntSetting(_ELENA_::opPlatform)*/0;
+      int platform = project.IntSetting(_ELENA_::opPlatform);
 
       // Greetings
       print(ELC_STARTING, (const char*)project.projectName, showPlatform(platform));

@@ -37,8 +37,8 @@ struct x86JITScope
    int            argument;
    int            extra_arg;
 
-//   void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
-//
+   void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
+
 //   ref_t resolveMessage(ref_t reference)
 //   {
 //      return helper->resolveMessage(reference, module);
@@ -62,11 +62,11 @@ protected:
    friend void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
    friend void loadCoreOp(x86JITScope& scope, char* code);
 
-//   friend void loadFunction(int opcode, x86JITScope& scope);
+   friend void loadFunction(int opcode, x86JITScope& scope);
 //   ////friend void loadExtensions(int opcode, x86JITScope& scope);
 //   //friend void loadCode(int opcode, x86JITScope& scope);
 //   friend void loadOneByteLOp(int opcode, x86JITScope& scope);
-//   friend void loadOneByteOp(int opcode, x86JITScope& scope);
+   friend void loadOneByteOp(int opcode, x86JITScope& scope);
 //   friend void loadIndexOp(int opcode, x86JITScope& scope);
 //   friend void loadVMTIndexOp(int opcode, x86JITScope& scope);
 //   //friend void loadVMTMIndexOp(int opcode, x86JITScope& scope);
@@ -88,16 +88,16 @@ protected:
 //   friend void compilePopA(int opcode, x86JITScope& scope);
 //   friend void compilePopE(int opcode, x86JITScope& scope);
 //   friend void compilePopD(int opcode, x86JITScope& scope);
-//   friend void compilePopN(int opcode, x86JITScope& scope);
+   friend void compilePopN(int opcode, x86JITScope& scope);
 //   friend void compileOpen(int opcode, x86JITScope& scope);
-//   friend void compilePush(int opcode, x86JITScope& scope);
+   friend void compilePush(int opcode, x86JITScope& scope);
 //   friend void compilePushFI(int opcode, x86JITScope& scope);
 //   friend void compilePushF(int opcode, x86JITScope& scope);
 //   friend void compilePushS(int opcode, x86JITScope& scope);
 //   friend void compilePushB(int opcode, x86JITScope& scope);
-//   friend void compilePushE(int opcode, x86JITScope& scope);
+   friend void compilePushE(int opcode, x86JITScope& scope);
 //   friend void compilePushD(int opcode, x86JITScope& scope);
-//   friend void compileCallR(int opcode, x86JITScope& scope);
+   friend void compileCallR(int opcode, x86JITScope& scope);
 //   friend void compileJumpN(int opcode, x86JITScope& scope);
 //   friend void compileMCopy(int opcode, x86JITScope& scope);
 //   friend void compileASaveR(int opcode, x86JITScope& scope);
@@ -109,7 +109,7 @@ protected:
 //   friend void compileCreateN(int opcode, x86JITScope& scope);
 //   friend void compileCreateI(int opcode, x86JITScope& scope);
 //   friend void compileSelectR(int opcode, x86JITScope& scope);
-//   friend void compileACopyR(int opcode, x86JITScope& scope);
+   friend void compileACopyR(int opcode, x86JITScope& scope);
 //   friend void compileBCopyR(int opcode, x86JITScope& scope);
 //   friend void compileALoadR(int opcode, x86JITScope& scope);
 //   friend void compileBLoadR(int opcode, x86JITScope& scope);
@@ -133,7 +133,7 @@ protected:
 //   friend void compileLessN(int opcode, x86JITScope& scope);
 //   friend void compileGreaterN(int opcode, x86JITScope& scope);
 //   friend void compileIfHeap(int opcode, x86JITScope& scope);
-//   friend void compileQuit(int opcode, x86JITScope& scope);
+   friend void compileQuit(int opcode, x86JITScope& scope);
 //   friend void compileQuitN(int opcode, x86JITScope& scope);
 //   friend void compileSetVerb(int opcode, x86JITScope& scope);
 //   friend void compileSetSubj(int opcode, x86JITScope& scope);
@@ -184,10 +184,10 @@ public:
    virtual int allocateTLSVariable(_JITLoader* loader);
    virtual void allocateThreadTable(_JITLoader* loader, int length);
 //   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length);
-//
-//   virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
-//   virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
-//
+
+   virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
+   virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
+
 //   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
@@ -206,11 +206,11 @@ public:
 // --- compiler friend functions---
 inline void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
 void loadCoreOp(x86JITScope& scope, char* code);
-//void loadFunction(int opcode, x86JITScope& scope);
+void loadFunction(int opcode, x86JITScope& scope);
 ////void loadExtensions(int opcode, x86JITScope& scope);
 ////void loadCode(int opcode, x86JITScope& scope);
 //void loadOneByteLOp(int opcode, x86JITScope& scope);
-//void loadOneByteOp(int opcode, x86JITScope& scope);
+void loadOneByteOp(int opcode, x86JITScope& scope);
 //void loadIndexOp(int opcode, x86JITScope& scope);
 //void loadVMTIndexOp(int opcode, x86JITScope& scope);
 ////void loadVMTMIndexOp(int opcode, x86JITScope& scope);
@@ -224,16 +224,16 @@ void compileNop(int opcode, x86JITScope& scope);
 //void compileBreakpoint(int opcode, x86JITScope& scope);
 //void compilePop(int opcode, x86JITScope& scope);
 //void compilePopA(int opcode, x86JITScope& scope);
-//void compilePopN(int opcode, x86JITScope& scope);
+void compilePopN(int opcode, x86JITScope& scope);
 //void compileOpen(int opcode, x86JITScope& scope);
-//void compilePush(int opcode, x86JITScope& scope);
+void compilePush(int opcode, x86JITScope& scope);
 //void compilePushF(int opcode, x86JITScope& scope);
 //void compilePushFI(int opcode, x86JITScope& scope);
 //void compilePushS(int opcode, x86JITScope& scope);
 //void compilePushB(int opcode, x86JITScope& scope);
-//void compilePushE(int opcode, x86JITScope& scope);
+void compilePushE(int opcode, x86JITScope& scope);
 //void compilePushD(int opcode, x86JITScope& scope);
-//void compileCallR(int opcode, x86JITScope& scope);
+void compileCallR(int opcode, x86JITScope& scope);
 //void compileJumpN(int opcode, x86JITScope& scope);
 //void compileMCopy(int opcode, x86JITScope& scope);
 //void compileASaveR(int opcode, x86JITScope& scope);
@@ -244,7 +244,7 @@ void compileNop(int opcode, x86JITScope& scope);
 //void compileCreateI(int opcode, x86JITScope& scope);
 //void compileCreateN(int opcode, x86JITScope& scope);
 //void compileSelectR(int opcode, x86JITScope& scope);
-//void compileACopyR(int opcode, x86JITScope& scope);
+void compileACopyR(int opcode, x86JITScope& scope);
 //void compileBCopyR(int opcode, x86JITScope& scope);
 //void compileALoadR(int opcode, x86JITScope& scope);
 //void compileBLoadR(int opcode, x86JITScope& scope);
@@ -270,7 +270,7 @@ void compileNop(int opcode, x86JITScope& scope);
 //void compileLessN(int opcode, x86JITScope& scope);
 //void compileGreaterN(int opcode, x86JITScope& scope);
 //void compileIfHeap(int opcode, x86JITScope& scope);
-//void compileQuit(int opcode, x86JITScope& scope);
+void compileQuit(int opcode, x86JITScope& scope);
 //void compileQuitN(int opcode, x86JITScope& scope);
 //void compilePopE(int opcode, x86JITScope& scope);
 //void compilePopD(int opcode, x86JITScope& scope);

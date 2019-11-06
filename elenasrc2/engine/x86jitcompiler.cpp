@@ -62,14 +62,14 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/1;
+const int gcCommandNumber = /*160*/2;
 const int gcCommands[gcCommandNumber] =
 {
-   bcNop // !! temporal
+   bcSystem, bcCallExtR
 //   bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcParent,
 //   bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
 //   bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
-//   bcALoadBI, bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,
+//   bcALoadBI, bcPushAI, bcPushF, bcBSRedirect,
 //   bcHook, bcThrow, bcUnhook, bcClass, bcACallVD,
 //   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
 //   bcEQuit, bcAJumpVI, bcASaveBI, bcXCallRM, bcESaveSI,
@@ -89,7 +89,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
 //   bcCreate, bcExclude, bcDCopyR, bcInclude,
 //   bcSelectR, bcNext, bcXSelectR, bcCount,
-//   bcRAbs, bcRExp, bcRInt, bcValidate, bcSystem,
+//   bcRAbs, bcRExp, bcRInt, bcValidate, ,
 //   bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
 //   bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
 //   bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
@@ -101,21 +101,27 @@ const int gcCommands[gcCommandNumber] =
 //   bcEOrN, bcNewI, bcACopyAI
 };
 
-const int gcCommandExNumber = /*6*/1;
-const int gcCommandExs[gcCommandExNumber] =
-{
-   bcNop // !! temporal
-
-//   bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
-//   bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
-//   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00
-};
+const int gcCommandExNumber = /*6*/0;
+//const int gcCommandExs[gcCommandExNumber] =
+//{
+//   bcNop // !! temporal
+//
+////   bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
+////   bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
+////   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00
+//};
 
 // command table
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compilePushE, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileQuit,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -136,21 +142,18 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileACopyR, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFunction, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compilePush, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compilePopN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -326,10 +329,7 @@ void _ELENA_::loadCoreOp(x86JITScope& scope, char* code)
          scope.compiler->writeCoreReference(scope, key, position, offset, code);
       }
       else {
-         //if ((key & mskAnyRef) == mskLinkerConstant) {
-         //   scope.code->writeDWord(scope.helper->getLinkerConstant(key & ~mskAnyRef));
-         //}
-         /*else */scope.helper->writeReference(*writer, key, *(int*)(code + offset), scope.module);
+         scope.helper->writeReference(*writer, key, *(int*)(code + offset), scope.module);
       }
 
       relocation += 2;
@@ -351,39 +351,39 @@ inline void _ELENA_::writeCoreReference(x86JITScope& scope, ref_t reference, int
       scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
 }
 
-//void _ELENA_::loadOneByteOp(int opcode, x86JITScope& scope)
-//{
-//   MemoryWriter* writer = scope.code;
-//
-//   char* code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = writer->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   writer->write(code, *(int*)(code - 4));
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   int key, offset;
-//   while (count > 0) {
-//      key = relocation[0];
-//      offset = relocation[1];
-//
-//      // locate relocation position
-//      writer->seek(position + relocation[1]);
-//
-//      if ((key & mskTypeMask) == mskPreloaded) {
-//         scope.compiler->writeCoreReference(scope, key, position, offset, code);
-//      }
-//      else scope.writeReference(*writer, key, *(int*)(code + offset));
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
-//
+void _ELENA_::loadOneByteOp(int opcode, x86JITScope& scope)
+{
+   MemoryWriter* writer = scope.code;
+
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = writer->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   writer->write(code, *(int*)(code - 4));
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   int key, offset;
+   while (count > 0) {
+      key = relocation[0];
+      offset = relocation[1];
+
+      // locate relocation position
+      writer->seek(position + relocation[1]);
+
+      if ((key & mskTypeMask) == mskPreloaded) {
+         scope.compiler->writeCoreReference(scope, key, position, offset, code);
+      }
+      else scope.writeReference(*writer, key, *(int*)(code + offset));
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 //void _ELENA_::loadNOp(int opcode, x86JITScope& scope)
 //{
 //   char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -663,94 +663,94 @@ inline void _ELENA_::writeCoreReference(x86JITScope& scope, ref_t reference, int
 //   }
 //   scope.code->seekEOF();
 //}
-//
-//void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
+
+void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
+{
+   // if it is internal native call
+   switch (scope.argument & mskAnyRef) {
+      case mskNativeCodeRef:
+      case mskPreloadCodeRef:
+         compileCallR(opcode, scope);
+         return;
+   }
+
+   MemoryWriter* writer = scope.code;
+
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   int key, offset;
+   while (count > 0) {
+      key = relocation[0];
+      offset = relocation[1];
+
+      // locate relocation position
+      writer->seek(position + relocation[1]);
+
+      // !! temporal, more optimal way should be used
+      if (relocation[0]==-1) {
+         scope.writeReference(*writer, scope.argument, *(int*)(code + offset));
+      }
+      //else if ((key & mskTypeMask) == mskPreloaded) {
+      //   scope.compiler->writePreloadedReference(scope, key, position, offset, code);
+      //}
+      else scope.writeReference(*writer, key, *(int*)(code + offset));
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+//void _ELENA_::loadCode(int opcode, x86JITScope& scope)
 //{
-//   // if it is internal native call
-//   switch (scope.argument & mskAnyRef) {
-//      case mskNativeCodeRef:
-//      case mskPreloadCodeRef:
-//         compileCallR(opcode, scope);
-//         return;
+//   // if it is a symbol reference
+//   if ((scope.argument & mskAnyRef) == mskSymbolRef) {
+//      compileCallR(bcCallR, scope);
 //   }
+//   else {
+//      // otherwise a primitive code
+//      SectionInfo   info = scope.getSection(scope.argument);
+//      MemoryWriter* writer = scope.code;
 //
-//   MemoryWriter* writer = scope.code;
+//      // override module
+//      scope.module = info.module;
 //
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
+//      char*  code = (char*)info.section->get(0);
+//      size_t position = scope.code->Position();
+//      size_t length = *(size_t*)(code - 4);
 //
-//   // simply copy correspondent inline code
-//   writer->write(code, length);
+//      // simply copy correspondent inline code
+//      writer->write(code, length);
 //
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   int key, offset;
-//   while (count > 0) {
-//      key = relocation[0];
-//      offset = relocation[1];
+//      // resolve section references
+//      int count = *(int*)(code + length);
+//      int* relocation = (int*)(code + length + 4);
+//      int key, offset;
+//      while (count > 0) {
+//         key = relocation[0];
+//         offset = relocation[1];
 //
-//      // locate relocation position
-//      writer->seek(position + relocation[1]);
+//         // locate relocation position
+//         writer->seek(position + relocation[1]);
 //
-//      // !! temporal, more optimal way should be used
-//      if (relocation[0]==-1) {
-//         scope.writeReference(*writer, scope.argument, *(int*)(code + offset));
+//         scope.writeReference(*writer, key, *(int*)(code + offset));
+//
+//         relocation += 2;
+//         count--;
 //      }
-//      //else if ((key & mskTypeMask) == mskPreloaded) {
-//      //   scope.compiler->writePreloadedReference(scope, key, position, offset, code);
-//      //}
-//      else scope.writeReference(*writer, key, *(int*)(code + offset));
-//
-//      relocation += 2;
-//      count--;
+//      // clear module overriding
+//      scope.module = NULL;
+//      scope.code->seekEOF();
 //   }
-//   scope.code->seekEOF();
 //}
-//
-////void _ELENA_::loadCode(int opcode, x86JITScope& scope)
-////{
-////   // if it is a symbol reference
-////   if ((scope.argument & mskAnyRef) == mskSymbolRef) {
-////      compileCallR(bcCallR, scope);
-////   }
-////   else {
-////      // otherwise a primitive code
-////      SectionInfo   info = scope.getSection(scope.argument);
-////      MemoryWriter* writer = scope.code;
-////
-////      // override module
-////      scope.module = info.module;
-////
-////      char*  code = (char*)info.section->get(0);
-////      size_t position = scope.code->Position();
-////      size_t length = *(size_t*)(code - 4);
-////
-////      // simply copy correspondent inline code
-////      writer->write(code, length);
-////
-////      // resolve section references
-////      int count = *(int*)(code + length);
-////      int* relocation = (int*)(code + length + 4);
-////      int key, offset;
-////      while (count > 0) {
-////         key = relocation[0];
-////         offset = relocation[1];
-////
-////         // locate relocation position
-////         writer->seek(position + relocation[1]);
-////
-////         scope.writeReference(*writer, key, *(int*)(code + offset));
-////
-////         relocation += 2;
-////         count--;
-////      }
-////      // clear module overriding
-////      scope.module = NULL;
-////      scope.code->seekEOF();
-////   }
-////}
 
 void _ELENA_::compileNop(int, x86JITScope& scope)
 {
@@ -768,17 +768,17 @@ void _ELENA_::compileNop(int, x86JITScope& scope)
 //   if (scope.withDebugInfo)
 //      scope.helper->addBreakpoint(scope.code->Position());
 //}
-//
-//void _ELENA_::compilePush(int opcode, x86JITScope& scope)
-//{
-//   // push constant | reference
-//   scope.code->writeByte(0x68);
-//   if (opcode == bcPushR && scope.argument != 0) {
-//      scope.writeReference(*scope.code, scope.argument, 0);
-//   }
-//   else scope.code->writeDWord(scope.argument);
-//}
-//
+
+void _ELENA_::compilePush(int opcode, x86JITScope& scope)
+{
+   // push constant | reference
+   scope.code->writeByte(0x68);
+   if (opcode == bcPushR && scope.argument != 0) {
+      scope.writeReference(*scope.code, scope.argument, 0);
+   }
+   else scope.code->writeDWord(scope.argument);
+}
+
 //void _ELENA_::compilePopE(int, x86JITScope& scope)
 //{
 //   // pop ecx
@@ -835,12 +835,12 @@ void _ELENA_::compileNop(int, x86JITScope& scope)
 //
 //   //scope.prevFSPOffs += (scope.argument << 2);
 //}
-//
-//void _ELENA_::compileQuit(int, x86JITScope& scope)
-//{
-//   scope.code->writeByte(0xC3);
-//}
-//
+
+void _ELENA_::compileQuit(int, x86JITScope& scope)
+{
+   scope.code->writeByte(0xC3);
+}
+
 //void _ELENA_::compileQuitN(int, x86JITScope& scope)
 //{
 //   scope.code->writeByte(0xC2);
@@ -1053,20 +1053,20 @@ void _ELENA_::compileNop(int, x86JITScope& scope)
 //
 //   loadROp(opcode, scope);
 //}
-//
-//void _ELENA_::compileACopyR(int, x86JITScope& scope)
-//{
-//   // mov eax, r
-//   scope.code->writeByte(0xB8);
-//   if (scope.argument == 0) {
-//      scope.code->writeDWord(0);
-//   }
-//   else if (scope.argument == -1) {
-//      scope.code->writeDWord((pos_t)-1);
-//   }
-//   else scope.writeReference(*scope.code, scope.argument, 0);
-//}
-//
+
+void _ELENA_::compileACopyR(int, x86JITScope& scope)
+{
+   // mov eax, r
+   scope.code->writeByte(0xB8);
+   if (scope.argument == 0) {
+      scope.code->writeDWord(0);
+   }
+   else if (scope.argument == -1) {
+      scope.code->writeDWord((pos_t)-1);
+   }
+   else scope.writeReference(*scope.code, scope.argument, 0);
+}
+
 //void _ELENA_::compileBCopyR(int, x86JITScope& scope)
 //{
 //   // mov edi, r
@@ -1201,26 +1201,26 @@ void _ELENA_::compileNop(int, x86JITScope& scope)
 //   // push edi
 //   scope.code->writeByte(0x57);
 //}
-//
-//void _ELENA_::compilePushE(int, x86JITScope& scope)
-//{
-//   // push ecx
-//   scope.code->writeByte(0x51);
-//}
-//
+
+void _ELENA_::compilePushE(int, x86JITScope& scope)
+{
+   // push ecx
+   scope.code->writeByte(0x51);
+}
+
 //void _ELENA_::compilePushD(int, x86JITScope& scope)
 //{
 //   // push ebx
 //   scope.code->writeByte(0x53);
 //}
-//
-//void _ELENA_::compileCallR(int, x86JITScope& scope)
-//{
-//   // call symbol
-//   scope.code->writeByte(0xE8);
-//   scope.writeReference(*scope.code, scope.argument | mskRelCodeRef, 0);
-//}
-//
+
+void _ELENA_::compileCallR(int, x86JITScope& scope)
+{
+   // call symbol
+   scope.code->writeByte(0xE8);
+   scope.writeReference(*scope.code, scope.argument | mskRelCodeRef, 0);
+}
+
 //void _ELENA_::compileJumpN(int, x86JITScope& scope)
 //{
 //   // jmp [eax+i]
@@ -1246,18 +1246,18 @@ void _ELENA_::compileNop(int, x86JITScope& scope)
 //   scope.code->writeByte(0xB9);
 //   scope.code->writeDWord(scope.resolveMessage(scope.argument));
 //}
-//
-//void _ELENA_::compilePopN(int, x86JITScope& scope)
-//{
-//   // add esp, arg
-//   scope.code->writeWord(0xC481);
-//   scope.code->writeDWord(scope.argument << 2);
-//
-//   //// lea esp, [esp + level * 4]
-//   //x86Helper::leaRM32disp(
-//   //   scope.code, x86Helper::otESP, x86Helper::otESP, scope.argument << 2);
-//}
-//
+
+void _ELENA_::compilePopN(int, x86JITScope& scope)
+{
+   // add esp, arg
+   scope.code->writeWord(0xC481);
+   scope.code->writeDWord(scope.argument << 2);
+
+   //// lea esp, [esp + level * 4]
+   //x86Helper::leaRM32disp(
+   //   scope.code, x86Helper::otESP, x86Helper::otESP, scope.argument << 2);
+}
+
 //void _ELENA_::compileACopyB(int, x86JITScope& scope)
 //{
 //   // mov eax, edi
@@ -1590,20 +1590,20 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
 //   this->prevFSPOffs = 0;
 }
 
-//void x86JITScope :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
-//{
-//   // HOTFIX : mskLockVariable used to fool trylock opcode, adding virtual offset
-//   if ((reference & mskAnyRef) == mskLockVariable) {
-//      disp += compiler->getObjectHeaderSize();
-//   }
-//
-//   helper->writeReference(writer, reference, disp, module);
-//}
+void x86JITScope :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
+{
+   // HOTFIX : mskLockVariable used to fool trylock opcode, adding virtual offset
+   if ((reference & mskAnyRef) == mskLockVariable) {
+      disp += compiler->getObjectHeaderSize();
+   }
+
+   helper->writeReference(writer, reference, disp, module);
+}
 
 // --- x86JITCompiler ---
 
 x86JITCompiler :: x86JITCompiler(bool debugMode)
-//   : _inlineExs(NULL, gcCommandExNumber << 2)
+   : _inlineExs(NULL, gcCommandExNumber << 2)
 {
    _debugMode = debugMode;
 }
@@ -1734,8 +1734,8 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 
    // preload vm exended commmands
    for (int i = 0; i < gcCommandExNumber; i++) {
-      SectionInfo info = helper.getCoreSection(gcCommandExs[i]);
-      _inlineExs.add(gcCommandExs[i], info.section->get(0));
+      //SectionInfo info = helper.getCoreSection(gcCommandExs[i]);
+      //_inlineExs.add(gcCommandExs[i], info.section->get(0));
    }
 }
 
@@ -1825,51 +1825,51 @@ int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
 //
 //   return position;
 //}
-//
-//inline void compileTape(MemoryReader& tapeReader, size_t endPos, x86JITScope& scope)
-//{
-//   unsigned char code = 0;
-//   while(tapeReader.Position() < endPos) {
-//      // read bytecode + arguments
-//      code = tapeReader.getByte();
-//      // preload an argument if a command requires it
-//      if (code > MAX_SINGLE_ECODE) {
-//         scope.argument = tapeReader.getDWord();
-//      }
-//      commands[code](code, scope);
-//   }
-//}
-//
-//void x86JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
-//{
-//   x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
-//
-//   size_t codeSize = tapeReader.getDWord();
-//   size_t endPos = tapeReader.Position() + codeSize;
-//
-//   compileTape(tapeReader, endPos, scope);
-//
-//   // ; copy the parameter to the accumulator to simulate embedded symbol
-//   // ; exit the procedure
-//   // ret
-//   codeWriter.writeByte(0xC3);
-//
-//   alignCode(&codeWriter, 0x04, true);
-//}
-//
-//void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
-//{
-//   x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
-////   scope.prevFSPOffs = 4;
-//
-//   size_t codeSize = tapeReader.getDWord();
-//   size_t endPos = tapeReader.Position() + codeSize;
-//
-//   compileTape(tapeReader, endPos, scope);
-//
-//   alignCode(&codeWriter, 0x04, true);
-//}
-//
+
+inline void compileTape(MemoryReader& tapeReader, size_t endPos, x86JITScope& scope)
+{
+   unsigned char code = 0;
+   while(tapeReader.Position() < endPos) {
+      // read bytecode + arguments
+      code = tapeReader.getByte();
+      // preload an argument if a command requires it
+      if (code > MAX_SINGLE_ECODE) {
+         scope.argument = tapeReader.getDWord();
+      }
+      commands[code](code, scope);
+   }
+}
+
+void x86JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
+{
+   x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
+
+   size_t codeSize = tapeReader.getDWord();
+   size_t endPos = tapeReader.Position() + codeSize;
+
+   compileTape(tapeReader, endPos, scope);
+
+   // ; copy the parameter to the accumulator to simulate embedded symbol
+   // ; exit the procedure
+   // ret
+   codeWriter.writeByte(0xC3);
+
+   alignCode(&codeWriter, 0x04, true);
+}
+
+void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
+{
+   x86JITScope scope(&tapeReader, &codeWriter, &helper, this);
+//   scope.prevFSPOffs = 4;
+
+   size_t codeSize = tapeReader.getDWord();
+   size_t endPos = tapeReader.Position() + codeSize;
+
+   compileTape(tapeReader, endPos, scope);
+
+   alignCode(&codeWriter, 0x04, true);
+}
+
 //void x86JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section)
 //{
 //   size_t position = writer.Position();

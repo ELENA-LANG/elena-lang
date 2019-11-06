@@ -183,19 +183,19 @@ ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
       int paramCount = message[0] - '0';
       int flags = 0;
 
-      IdentifierString subject(token.value);
-      subject.copy(message.c_str() + 1);
+      //IdentifierString subject(token.value);
+      //subject.copy(message.c_str() + 1);
 
-      if (subject.ident().startsWith("params#")) {
-         subject.cut(0, 7);
-         flags |= VARIADIC_MESSAGE;
-      }
+      //if (subject.ident().startsWith("params#")) {
+      //   subject.cut(0, 7);
+      //   flags |= VARIADIC_MESSAGE;
+      //}
 
-      if (subject.compare(INVOKE_MESSAGE)) {
-         flags |= SPECIAL_MESSAGE;
-      }
+      //if (subject.compare(INVOKE_MESSAGE)) {
+      //   flags |= SPECIAL_MESSAGE;
+      //}
 
-      ref_t subj = binary->mapAction(subject, signRef, false);
+      ref_t subj = /*binary->mapAction(subject, signRef, false)*/0;
 
       return encodeMessage(subj, paramCount, flags);
    }
@@ -486,116 +486,116 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
    if (opcode != bcNone) {
       switch (opcode)
       {
-         case bcCallR:
+         //case bcCallR:
          case bcACopyR:
-         case bcBCopyR:
+         //case bcBCopyR:
          case bcPushR:
             compileRCommand(opcode, token, writer, binary);
             break;
          case bcCallExtR:
             compileExtCommand(opcode, token, writer, binary);
             break;
-         case bcACallVI:
-         case bcAJumpVI:
-         case bcALoadSI:
-         case bcBLoadSI:
-         case bcBLoadFI:
-         case bcACopyS:
-         case bcACopyF:
-         case bcSCopyF:
-         case bcBCopyS:
-         case bcBCopyF:
-         case bcALoadAI:
-         case bcALoadFI:
-         case bcPushAI:
-         case bcOpen:
-         case bcAddN:
-         case bcMulN:
-         case bcDLoadFI:
-         case bcDLoadSI:
-         case bcDSaveFI:
-         case bcDSaveSI:
-         case bcRestore:
-         case bcReserve:
-         case bcALoadBI:
-         case bcASaveSI:
-         case bcASaveFI:
-         case bcNSaveI:
-         case bcNLoadI:
-         case bcESwapSI:
-         case bcBSwapSI:
-         case bcAXSaveBI:
-         case bcELoadFI:
-         case bcELoadSI:
-         case bcESaveSI:
-         case bcESaveFI:
-         case bcShiftLN:
-         case bcShiftRN:
-         case bcEAddN:
-         case bcDSwapSI:
-         case bcAJumpI:
-         case bcACallI:
-         case bcNReadI:
-         case bcNWriteI:
-         case bcPushF:
-         case bcEOrN:
-            compileICommand(opcode, token, writer);
-            break;
-         case bcQuitN:
+         //case bcACallVI:
+         //case bcAJumpVI:
+         //case bcALoadSI:
+         //case bcBLoadSI:
+         //case bcBLoadFI:
+         //case bcACopyS:
+         //case bcACopyF:
+         //case bcSCopyF:
+         //case bcBCopyS:
+         //case bcBCopyF:
+         //case bcALoadAI:
+         //case bcALoadFI:
+         //case bcPushAI:
+         //case bcOpen:
+         //case bcAddN:
+         //case bcMulN:
+         //case bcDLoadFI:
+         //case bcDLoadSI:
+         //case bcDSaveFI:
+         //case bcDSaveSI:
+         //case bcRestore:
+         //case bcReserve:
+         //case bcALoadBI:
+         //case bcASaveSI:
+         //case bcASaveFI:
+         //case bcNSaveI:
+         //case bcNLoadI:
+         //case bcESwapSI:
+         //case bcBSwapSI:
+         //case bcAXSaveBI:
+         //case bcELoadFI:
+         //case bcELoadSI:
+         //case bcESaveSI:
+         //case bcESaveFI:
+         //case bcShiftLN:
+         //case bcShiftRN:
+         //case bcEAddN:
+         //case bcDSwapSI:
+         //case bcAJumpI:
+         //case bcACallI:
+         //case bcNReadI:
+         //case bcNWriteI:
+         //case bcPushF:
+         //case bcEOrN:
+         //   compileICommand(opcode, token, writer);
+         //   break;
+         //case bcQuitN:
          case bcPopI:
-         case bcDCopy:
-         case bcECopy:
-         case bcAndN:
-         case bcOrN:
-         case bcPushN:
+         //case bcDCopy:
+         //case bcECopy:
+         //case bcAndN:
+         //case bcOrN:
+         //case bcPushN:
             compileNCommand(opcode, token, writer);
             break;
-         case bcSetVerb:
-         case bcCopyM:
-            compileMCommand(opcode, token, writer, binary);
-            break;
-         case bcIfB:
-         case bcElseB:
-         case bcIf:
-         case bcElse:
-         case bcLess:
-         case bcNotLess:
-         case bcNext:
-         case bcJump:
-         case bcHook:
-         case bcAddress:
-            compileJump(opcode, token, writer, info);
-            break;
-         case bcIfM:
-         case bcElseM:
-            compileMccJump(opcode, token, writer, info, binary);
-            break;
-         case bcIfN:
-         case bcElseN:
-         case bcLessN:
-         case bcNotLessN:
-         case bcGreaterN:
-         case bcNotGreaterN:
-            compileNJump(opcode, token, writer, info);
-            break;
-         case bcIfR:
-         case bcElseR:
-            compileRJump(opcode, token, writer, info, binary);
-            break;
-         case bcNewN:
-            compileCreateCommand(opcode, token, writer, binary);
-            break;
-         case bcSelectR:
-            compileRRCommand(opcode, token, writer, binary);
-            break;
-         case bcSaveFI:
-         case bcAddFI:
-            compileNNCommand(opcode, token, writer);
-            break;
-         case bcXIndexRM:
-         case bcXCallRM:
-            compileRMCommand(opcode, token, writer, binary);
-            break;
+         //case bcSetVerb:
+         //case bcCopyM:
+         //   compileMCommand(opcode, token, writer, binary);
+         //   break;
+         //case bcIfB:
+         //case bcElseB:
+         //case bcIf:
+         //case bcElse:
+         //case bcLess:
+         //case bcNotLess:
+         //case bcNext:
+         //case bcJump:
+         //case bcHook:
+         //case bcAddress:
+         //   compileJump(opcode, token, writer, info);
+         //   break;
+         //case bcIfM:
+         //case bcElseM:
+         //   compileMccJump(opcode, token, writer, info, binary);
+         //   break;
+         //case bcIfN:
+         //case bcElseN:
+         //case bcLessN:
+         //case bcNotLessN:
+         //case bcGreaterN:
+         //case bcNotGreaterN:
+         //   compileNJump(opcode, token, writer, info);
+         //   break;
+         //case bcIfR:
+         //case bcElseR:
+         //   compileRJump(opcode, token, writer, info, binary);
+         //   break;
+         //case bcNewN:
+         //   compileCreateCommand(opcode, token, writer, binary);
+         //   break;
+         //case bcSelectR:
+         //   compileRRCommand(opcode, token, writer, binary);
+         //   break;
+         //case bcSaveFI:
+         //case bcAddFI:
+         //   compileNNCommand(opcode, token, writer);
+         //   break;
+         //case bcXIndexRM:
+         //case bcXCallRM:
+         //   compileRMCommand(opcode, token, writer, binary);
+         //   break;
          default:
             writeCommand(ByteCommand(opcode), writer);
             break;

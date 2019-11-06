@@ -4011,16 +4011,16 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //         // aloadsi index
 //         tape.write(bcALoadSI, argument);
 //         break;
-////////      case lxCurrentField:
-////////         // aloadsi index
-////////         // aloadai 0
-////////         tape.write(bcALoadSI, argument);
-////////         tape.write(bcALoadAI, 0);
-////////         break;
-//      case lxNil:
-//         // acopyr 0
-//         tape.write(bcACopyR, argument);
-//         break;
+//////      case lxCurrentField:
+//////         // aloadsi index
+//////         // aloadai 0
+//////         tape.write(bcALoadSI, argument);
+//////         tape.write(bcALoadAI, 0);
+//////         break;
+      case lxNil:
+         // acopyr 0
+         tape.write(bcACopyR, argument);
+         break;
 //      case lxField:
 //         if (basePresaved)
 //            tape.write(bcPushB);

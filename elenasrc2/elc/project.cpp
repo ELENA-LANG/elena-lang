@@ -178,10 +178,10 @@ void Project :: loadPrimitiveCategory(_ConfigFile& config, path_t path)
          }
          else filePath.combine((const char*)value);
 
-         //if (key.compare(CORE_ALIAS)) {
-         //   _loader.addCorePath(filePath.c_str());
-         //}
-         //else _loader.addPrimitivePath(key, filePath.c_str());
+         if (key.compare(CORE_ALIAS)) {
+            _loader.addCorePath(filePath.c_str());
+         }
+         else _loader.addPrimitivePath(key, filePath.c_str());
       }
    }
 }

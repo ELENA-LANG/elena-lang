@@ -134,7 +134,7 @@ public:
    }
 
    LibraryManager();
-//   LibraryManager(path_t root, ident_t package);
+   LibraryManager(path_t root, ident_t package);
    virtual ~LibraryManager() {}
 };
 

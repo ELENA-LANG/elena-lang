@@ -89,18 +89,18 @@ struct SectionInfo
 {
    _Module* module;
    _Memory* section;
-   _Memory* attrSection;
+   //_Memory* attrSection;
 
    SectionInfo()
    {
       module = nullptr;
-      attrSection = section = nullptr;
+      /*attrSection = */section = nullptr;
    }
-   SectionInfo(_Module* module, _Memory* section, _Memory* attrSection)
+   SectionInfo(_Module* module, _Memory* section/*, _Memory* attrSection*/)
    {
       this->module = module;
       this->section = section;
-      this->attrSection = attrSection;
+      //this->attrSection = attrSection;
    }
 };
 
@@ -411,71 +411,71 @@ public:
    }
 };
 
-//// --- Quote ---
-//
-//template<class S> class QuoteTemplate
-//{
-//   S _string;
-//
-//public:
-//   size_t Length() { return _string.Length(); }
-//
-//   ident_t ident() { return (const char*)_string; }
-//
-//   QuoteTemplate(ident_t string)
-//   {
-//      int mode = 0; // 1 - normal, 2 - character code
-//      int index = 0;
-//      for (size_t i = 0 ; i <= getlength(string) ; i++) {
-//         switch (mode) {
-//            case 0:
-//               if (string[i]=='"') {
-//                  mode = 1;
-//               }
-//               else if (string[i]=='$') {
-//                  mode = 2;
-//                  index = i + 1;
-//               }
-//               else return;
-//
-//               break;
-//            case 1:
-//               if (string[i]==0) {
-//                  mode = 0;
-//               }
-//               else if (string[i]=='"') {
-//                  if (string[i + 1]=='"')
-//                     _string.append(string[i]);
-//
-//                  mode = 0;
-//               }
-//               else _string.append(string[i]);
-//               break;
-//            case 2:
-//               if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
-//                  String<char, 12> number(string + index, i - index);
-//                  unic_c ch = (string[i] == 'h') ? ((ident_t)number).toLong(16) : ((ident_t)number).toInt();
-//
-//                  String<char, 5> temp;
-//                  size_t temp_len = 4;
-//                  Convertor::copy(temp, &ch, 1, temp_len);
-//                  _string.append(temp, temp_len);
-//
-//                  if(string[i] == '"') {
-//                     mode = 1;
-//                  }
-//                  else if(string[i] == '$') {
-//                     index = i + 1;
-//                     mode = 2;
-//                  }
-//                  else mode = 0;
-//               }
-//               break;
-//         }
-//      }
-//   }
-//};
-//
+// --- Quote ---
+
+template<class S> class QuoteTemplate
+{
+   S _string;
+
+public:
+   size_t Length() { return _string.Length(); }
+
+   ident_t ident() { return (const char*)_string; }
+
+   QuoteTemplate(ident_t string)
+   {
+      int mode = 0; // 1 - normal, 2 - character code
+      int index = 0;
+      for (size_t i = 0 ; i <= getlength(string) ; i++) {
+         switch (mode) {
+            case 0:
+               if (string[i]=='"') {
+                  mode = 1;
+               }
+               else if (string[i]=='$') {
+                  mode = 2;
+                  index = i + 1;
+               }
+               else return;
+
+               break;
+            case 1:
+               if (string[i]==0) {
+                  mode = 0;
+               }
+               else if (string[i]=='"') {
+                  if (string[i + 1]=='"')
+                     _string.append(string[i]);
+
+                  mode = 0;
+               }
+               else _string.append(string[i]);
+               break;
+            case 2:
+               if ((string[i] < '0' || string[i] > '9') && (string[i] < 'A' || string[i] > 'F') && (string[i] < 'a' || string[i] > 'f')) {
+                  String<char, 12> number(string + index, i - index);
+                  unic_c ch = (string[i] == 'h') ? ((ident_t)number).toLong(16) : ((ident_t)number).toInt();
+
+                  String<char, 5> temp;
+                  size_t temp_len = 4;
+                  Convertor::copy(temp, &ch, 1, temp_len);
+                  _string.append(temp, temp_len);
+
+                  if(string[i] == '"') {
+                     mode = 1;
+                  }
+                  else if(string[i] == '$') {
+                     index = i + 1;
+                     mode = 2;
+                  }
+                  else mode = 0;
+               }
+               break;
+         }
+      }
+   }
+};
+
 //// --- VMTEntry ---
 //
 //struct VMTEntry

@@ -14,15 +14,41 @@ ELENA byte codes (or ecodes)
    d(ex)  - index             (data register) 
    
    e(xt)  - length / message  (data register) 
+
+ 
+ Register operations:
+ --------------------
+ acopyr r                   - r => acc
  
 
+ Stack operations:
+ -----------------
+ popi n                     - sp-=i; 
+ 
+ pushe                      - ext => [sp+1] ; sp++;
+	
+ pushr r                    - r  => [sp+1] ; sp++
 
+
+ Frame operations:
+ -----------------              
+ quit                       - terminates the procedure;
+ 
+
+ Call operations:
+ ----------------
+ callextr r                 - calls the external procedure ; index contains the result
+ 
 
  Misc operations:
  ---------------- 
  nop                        - idle command  
 
  breakpoint                 - used for debugging
+
+ system                     - %SYSTEM_ENV => ext 
+
+
 
 
 
@@ -43,8 +69,6 @@ ELENA byte codes (or ecodes)
  acopyf i                   - fp+i => acc
                               does not affect ext register (ECX) 
 
- acopyr r                   - r => acc
- 
  acopys i                   - sp+i => acc
                               does not affect ext register (ECX)
 
@@ -240,13 +264,9 @@ ELENA byte codes (or ecodes)
  
  pushd                      - index => [sp+1] ; sp++;
 
- pushe                      - ext => [sp+1] ; sp++;
-	
  pushf i                    - fp+i => [sp+1] ; sp++
  
  pushfi i                   - [fp+i] => [sp+1] ; sp++
- 
- pushr r                    - r  => [sp+1] ; sp++
  
  pushsi i                   - [sp+i] => [sp+1] ; sp++
            
@@ -393,8 +413,6 @@ ELENA byte codes (or ecodes)
  
  freelock                   - free eax
 
- system                     - %SYSTEM_ENV => ext 
-
 
  Frame operations:
  -----------------              
@@ -411,8 +429,6 @@ ELENA byte codes (or ecodes)
                               init the frame header offset
                               it should be only one command per procedure ; 
  
- quit                       - terminates the procedure;
-
  quitn                      - terminates the procedure;
                               clear the stack parameters
 

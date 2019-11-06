@@ -131,10 +131,10 @@ class JITLinker : _JITLoaderListener
 //   int            _uniqueID;           // used for dynamic subject
 
 //   void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
-//   void createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void* address, size_t& sizePtr);
+   void createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void* address, size_t& sizePtr);
 //   void createNativeClassDebugInfo(ReferenceInfo referenceInfo, void* vaddress, size_t& sizePtr);
-//   void endNativeDebugInfo(size_t sizePtr);
-//
+   void endNativeDebugInfo(size_t sizePtr);
+
 //   void* getVMTAddress(_Module* module, ref_t reference, References& references);
 //   void* getVMTReference(_Module* module, ref_t reference, References& references);
 //   int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
@@ -159,7 +159,7 @@ class JITLinker : _JITLoaderListener
 //   void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
 ////   void* resolveConstVariable(ident_t  reference, int mask);
 //   void* resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
-//   void* resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
+   void* resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
 //   void* createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references);
 //   void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo);
 //   void* resolveConstant(ReferenceInfo referenceInfo, int mask);

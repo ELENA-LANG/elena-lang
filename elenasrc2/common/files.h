@@ -63,6 +63,7 @@ public:
       size_t maxLen = LOCAL_PATH_LENGTH;
 
       bool stopped = false;
+      bool rootNs = true;
       while (!stopped) {
          size_t pos = name.find('\'');
          if (pos == NOTFOUND_POS) {
@@ -74,8 +75,13 @@ public:
          name.copyTo(buf, (size_t)pos, bufLen);
          maxLen -= bufLen;
 
-         appendName(path_t(buf), bufLen);
-         name += pos + 1;
+         if (rootNs) {
+            combine(path_t(buf), bufLen);
+            rootNs = false;
+         }
+         else appendSubName(path_t(buf), bufLen);
+         
+         name += pos + 1;         
       }
       appendExtension(extension);
    }
@@ -288,7 +294,7 @@ public:
       }
    }
 
-   void appendName(path_t name, size_t len)
+   void appendSubName(path_t name, size_t len)
    {
       if (!emptystr(name)) {
          _path.append('.');
