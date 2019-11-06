@@ -83,43 +83,43 @@ struct ReferenceInfo
    }
 };
 
-//// --- SectionInfo ---
-//
-//struct SectionInfo
-//{
-//   _Module* module;
-//   _Memory* section;
-//   _Memory* attrSection;
-//
-//   SectionInfo()
-//   {
-//      module = nullptr;
-//      attrSection = section = nullptr;
-//   }
-//   SectionInfo(_Module* module, _Memory* section, _Memory* attrSection)
-//   {
-//      this->module = module;
-//      this->section = section;
-//      this->attrSection = attrSection;
-//   }
-//};
-//
-//// --- ClassSectionInfo ---
-//
-//struct ClassSectionInfo
-//{
-//   _Module* module;
-//   _Memory* codeSection;
-//   _Memory* vmtSection;
-//   _Memory* attrSection;
-//
-//   ClassSectionInfo()
-//   {
-//      module = nullptr;
-//      codeSection = vmtSection = nullptr;
-//      attrSection = nullptr;
-//   }
-//};
+// --- SectionInfo ---
+
+struct SectionInfo
+{
+   _Module* module;
+   _Memory* section;
+   _Memory* attrSection;
+
+   SectionInfo()
+   {
+      module = nullptr;
+      attrSection = section = nullptr;
+   }
+   SectionInfo(_Module* module, _Memory* section, _Memory* attrSection)
+   {
+      this->module = module;
+      this->section = section;
+      this->attrSection = attrSection;
+   }
+};
+
+// --- ClassSectionInfo ---
+
+struct ClassSectionInfo
+{
+   _Module* module;
+   _Memory* codeSection;
+   _Memory* vmtSection;
+   _Memory* attrSection;
+
+   ClassSectionInfo()
+   {
+      module = nullptr;
+      codeSection = vmtSection = nullptr;
+      attrSection = nullptr;
+   }
+};
 
 // --- _LoaderListener ---
 
@@ -129,44 +129,44 @@ public:
    virtual void onModuleLoad(_Module*) = 0;
 };
 
-//// --- _JITLoader ---
-//
-//class _JITLoader
-//{
-//public:
-//   virtual _Memory* getTargetSection(ref_t mask) = 0;
-//
-//   virtual _Memory* getTargetDebugSection() = 0;
-//
-//   virtual SectionInfo getSectionInfo(ReferenceInfo referenceInfo, ref_t mask, bool silentMode) = 0;
-//   virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
-//   virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
-//
-//   virtual size_t getLinkerConstant(int id) = 0;
-//
-//   virtual ident_t getLiteralClass() = 0;
-//   virtual ident_t getWideLiteralClass() = 0;
-//   virtual ident_t getCharacterClass() = 0;
-//   virtual ident_t getIntegerClass() = 0;
-//   virtual ident_t getRealClass() = 0;
-//   virtual ident_t getLongClass() = 0;
-//   virtual ident_t getMessageClass() = 0;
-//   virtual ident_t getExtMessageClass() = 0;
-//   virtual ident_t getMessageNameClass() = 0;
-//   virtual ident_t getNamespace() = 0;
-//
-//   virtual ReferenceInfo retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
-//
-//   virtual void* resolveReference(ReferenceInfo referenceInfo, ref_t mask) = 0;
-//
-//   //virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
-//
-//   virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask) = 0;
-//
-//   virtual void addListener(_JITLoaderListener* listener) = 0;
-//
-//   virtual ~_JITLoader() {}
-//};
+// --- _JITLoader ---
+
+class _JITLoader
+{
+public:
+   virtual _Memory* getTargetSection(ref_t mask) = 0;
+
+   virtual _Memory* getTargetDebugSection() = 0;
+
+   virtual SectionInfo getSectionInfo(ReferenceInfo referenceInfo, ref_t mask, bool silentMode) = 0;
+   virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
+   //virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
+
+   virtual size_t getLinkerConstant(int id) = 0;
+
+   //virtual ident_t getLiteralClass() = 0;
+   //virtual ident_t getWideLiteralClass() = 0;
+   //virtual ident_t getCharacterClass() = 0;
+   //virtual ident_t getIntegerClass() = 0;
+   //virtual ident_t getRealClass() = 0;
+   //virtual ident_t getLongClass() = 0;
+   //virtual ident_t getMessageClass() = 0;
+   //virtual ident_t getExtMessageClass() = 0;
+   //virtual ident_t getMessageNameClass() = 0;
+   virtual ident_t getNamespace() = 0;
+
+   virtual ReferenceInfo retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
+
+   virtual void* resolveReference(ReferenceInfo referenceInfo, ref_t mask) = 0;
+
+   //virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
+
+   virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask) = 0;
+
+   virtual void addListener(_JITLoaderListener* listener) = 0;
+
+   virtual ~_JITLoader() {}
+};
 
 // --- IdentifierString ---
 
@@ -767,16 +767,16 @@ inline bool isTemplateWeakReference(ident_t referenceName)
    return referenceName[0] == '\'' && referenceName.startsWith(TEMPLATE_PREFIX_NS);
 }
 
-//inline bool isForwardReference(ident_t referenceName)
-//{
-//   return referenceName.startsWith(FORWARD_PREFIX_NS);
-//}
-//
-//inline ref_t encodeMessage(ref_t actionRef, int paramCount, ref_t flags)
-//{
-//   return flags | ((actionRef << ACTION_ORDER) + paramCount);
-//}
-//
+inline bool isForwardReference(ident_t referenceName)
+{
+   return referenceName.startsWith(FORWARD_PREFIX_NS);
+}
+
+inline ref_t encodeMessage(ref_t actionRef, int paramCount, ref_t flags)
+{
+   return flags | ((actionRef << ACTION_ORDER) + paramCount);
+}
+
 //inline ref64_t encodeMessage64(ref_t actionRef, int paramCount, ref_t flags)
 //{
 //   ref64_t message = actionRef;
@@ -786,21 +786,21 @@ inline bool isTemplateWeakReference(ident_t referenceName)
 //
 //   return message | flags;
 //}
-//
-//inline ref_t encodeAction(ref_t actionId)
-//{
-//   return encodeMessage(actionId, 0, 0);
-//}
-//
-//inline void decodeMessage(ref_t message, ref_t& actionRef, int& paramCount, ref_t& flags)
-//{
-//   actionRef = (message >> ACTION_ORDER);
-//
-//   paramCount = message & PARAM_MASK;
-//
-//   flags = message & MESSAGE_FLAG_MASK;
-//}
-//
+
+inline ref_t encodeAction(ref_t actionId)
+{
+   return encodeMessage(actionId, 0, 0);
+}
+
+inline void decodeMessage(ref_t message, ref_t& actionRef, int& argCount, ref_t& flags)
+{
+   actionRef = (message >> ACTION_ORDER);
+
+   argCount = message & ARG_MASK;
+
+   flags = message & MESSAGE_FLAG_MASK;
+}
+
 //inline ref_t overwriteParamCount(ref_t message, int paramCount)
 //{
 //   int dummy;
@@ -845,16 +845,16 @@ inline bool isTemplateWeakReference(ident_t referenceName)
 //
 //   return paramCount;
 //}
-//
-//inline ref_t getAction(ref_t message)
-//{
-//   int   paramCount;
-//   ref_t action, flags;
-//   decodeMessage(message, action, paramCount, flags);
-//
-//   return action;
-//}
-//
+
+inline ref_t getAction(ref_t message)
+{
+   int   argCount;
+   ref_t action, flags;
+   decodeMessage(message, action, argCount, flags);
+
+   return action;
+}
+
 ////inline ref64_t toMessage64(ref_t message)
 ////{
 ////   int   paramCount;
@@ -917,64 +917,64 @@ inline bool isTemplateWeakReference(ident_t referenceName)
 //{
 //   return test(message, VARIADIC_MESSAGE);
 //}
-//
-//inline bool isPrimitiveRef(ref_t reference)
-//{
-//   return (int)reference < 0;
-//}
-//
-//inline ref_t importConstant(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   ident_t val = exporter->resolveConstant(exportRef);
-//
-//   return importer->mapConstant(val);
-//}
-//
-//inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   if (isPrimitiveRef(exportRef)) {
-//      return exportRef;
-//   }
-//   else if (exportRef) {
-//      ident_t reference = exporter->resolveReference(exportRef);
-//      if (isWeakReference(reference) && !isTemplateWeakReference(reference)) {
-//         IdentifierString fullName(exporter->Name(), reference);
-//
-//         return importer->mapReference(fullName.c_str());
-//      }
-//      else return importer->mapReference(reference);
-//   }
-//   else return 0;
-//}
-//
-//inline ref_t importSignature(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   if (!exportRef)
-//      return 0;
-//
-//   ref_t dump[ARG_COUNT];
-//   size_t len = exporter->resolveSignature(exportRef, dump);
-//   for (size_t i = 0; i < len; i++) {
-//      dump[i] = importReference(exporter, dump[i], importer);
-//   }
-//
-//   return importer->mapSignature(dump, len, false);
-//}
-//
-//inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   int paramCount = 0;
-//   ref_t actionRef, flags;
-//   decodeMessage(exportRef, actionRef, paramCount, flags);
-//
-//   // signature and custom verb should be imported
-//   ref_t signature = 0;
-//   ident_t actionName = exporter->resolveAction(actionRef, signature);
-//
-//   actionRef = importer->mapAction(actionName, importSignature(exporter, signature, importer), false);
-//
-//   return encodeMessage(actionRef, paramCount, flags);
-//}
+
+inline bool isPrimitiveRef(ref_t reference)
+{
+   return (int)reference < 0;
+}
+
+inline ref_t importConstant(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   ident_t val = exporter->resolveConstant(exportRef);
+
+   return importer->mapConstant(val);
+}
+
+inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   if (isPrimitiveRef(exportRef)) {
+      return exportRef;
+   }
+   else if (exportRef) {
+      ident_t reference = exporter->resolveReference(exportRef);
+      if (isWeakReference(reference) && !isTemplateWeakReference(reference)) {
+         IdentifierString fullName(exporter->Name(), reference);
+
+         return importer->mapReference(fullName.c_str());
+      }
+      else return importer->mapReference(reference);
+   }
+   else return 0;
+}
+
+inline ref_t importSignature(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   if (!exportRef)
+      return 0;
+
+   ref_t dump[ARG_COUNT];
+   size_t len = exporter->resolveSignature(exportRef, dump);
+   for (size_t i = 0; i < len; i++) {
+      dump[i] = importReference(exporter, dump[i], importer);
+   }
+
+   return importer->mapSignature(dump, len, false);
+}
+
+inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   int paramCount = 0;
+   ref_t actionRef, flags;
+   decodeMessage(exportRef, actionRef, paramCount, flags);
+
+   // signature and custom verb should be imported
+   ref_t signature = 0;
+   ident_t actionName = exporter->resolveAction(actionRef, signature);
+
+   actionRef = importer->mapAction(actionName, importSignature(exporter, signature, importer), false);
+
+   return encodeMessage(actionRef, paramCount, flags);
+}
 
 } // _ELENA_
 

@@ -11,7 +11,7 @@
 
 #include "elena.h"
 #include "compilercommon.h"
-//#include "bcwriter.h"
+#include "bcwriter.h"
 
 namespace _ELENA_
 {
@@ -98,10 +98,10 @@ public:
 //      //irInvalid,
 ////      irObsolete
 //   };
-//
-//   enum ObjectKind
-//   {
-//      okUnknown = 0,
+
+   enum ObjectKind
+   {
+      okUnknown = 0,
 //
 //      okObject,                       // param - class reference
 //      okSymbol,                       // param - reference
@@ -137,7 +137,7 @@ public:
 //      okParamField,
 //      okSubject,                      // param - parameter offset
 //      okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
-//      okNil,
+      okNil,
 //      okSuper,
 //      okLocalAddress,                 // param - local offset
 //      okParams,                       // param - local offset
@@ -151,8 +151,8 @@ public:
 //      okInternal,
 //      okPrimitive,                    // param * 4 = size 
 //      okPrimCollection                // param - length
-//   };
-//
+   };
+
 //   enum ClassType
 //   {
 //      ctUndefined            = 0x100, 
@@ -164,32 +164,32 @@ public:
 //      ctEmbeddableClass      = 0x002,
 //      ctEmbeddableClassClass = 0x003,
 //   };
-//
-//   struct ObjectInfo
-//   {
-//      ObjectKind kind;
+
+   struct ObjectInfo
+   {
+      ObjectKind kind;
 //      ref_t      param;
 //      // target class reference
 //      ref_t      reference;
 //      ref_t      element;
 //      ref_t      extraparam;
-//
-//      ObjectInfo()
-//      {
-//         this->kind = okUnknown;
+
+      ObjectInfo()
+      {
+         this->kind = okUnknown;
 //         this->param = 0;
 //         this->reference = 0;
 //         this->element = 0;
 //         this->extraparam = 0;
-//      }
-//      ObjectInfo(ObjectKind kind)
-//      {
-//         this->kind = kind;
+      }
+      ObjectInfo(ObjectKind kind)
+      {
+         this->kind = kind;
 //         this->param = 0;
 //         this->reference = 0;
 //         this->extraparam = 0;
 //         this->element = 0;
-//      }
+      }
 //      ObjectInfo(ObjectKind kind, ref_t param)
 //      {
 //         this->kind = kind;
@@ -214,8 +214,8 @@ public:
 //         this->element = element;
 //         this->extraparam = extraparam;
 //      }
-//   };
-//
+   };
+
 //   typedef MemoryMap<ident_t, Parameter>  LocalMap;
 
 private:
@@ -257,16 +257,16 @@ private:
 ////         {
 ////            parent->raiseWarning(level, message);
 ////         }
-////
-//         virtual pos_t saveSourcePath(ByteCodeWriter& writer)
-//         {
-//            return parent->saveSourcePath(writer);
-//         }
-//         virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path)
-//         {
-//            return parent->saveSourcePath(writer, path);
-//         }
 //
+         virtual pos_t saveSourcePath(ByteCodeWriter& writer)
+         {
+            return parent->saveSourcePath(writer);
+         }
+         virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path)
+         {
+            return parent->saveSourcePath(writer, path);
+         }
+
 //         virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
 //         {
 //            if (parent) {
@@ -281,15 +281,15 @@ private:
 //            }
 //            else return false;
 //         }
-//
-//         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
-//         {
-//            if (parent) {
-//               return parent->mapTerminal(identifier, referenceOne, mode);
-//            }
-//            else return ObjectInfo();
-//         }
-//   
+
+         virtual ObjectInfo mapTerminal(ident_t identifier/*, bool referenceOne, EAttr mode*/)
+         {
+            if (parent) {
+               return parent->mapTerminal(identifier/*, referenceOne, mode*/);
+            }
+            else return ObjectInfo();
+         }
+   
 //         virtual Scope* getScope(ScopeLevel level)
 //         {
 //            if (parent) {
@@ -367,14 +367,14 @@ private:
 //////      {
 //////         moduleScope->raiseWarning(level, message, sourcePath, identifier);
 //////      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//
+
+      virtual ObjectInfo mapTerminal(ident_t identifier/*, bool referenceOne, EAttr mode*/);
+
 //      ObjectInfo mapGlobal(ident_t identifier);
-//
-//      virtual pos_t saveSourcePath(ByteCodeWriter& writer);
-//      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
-//
+
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer);
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
+
 //      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
 
       ref_t mapNewTerminal(SNode terminal, bool privateOne);
@@ -615,10 +615,10 @@ private:
 //
 //      MethodScope(ClassScope* parent);
 //   };
-//
-//   // - CodeScope -
-//   struct CodeScope : public Scope
-//   {
+
+   // - CodeScope -
+   struct CodeScope : public Scope
+   {
 //      // scope local variables
 //      LocalMap     locals;
 //      int          level;
@@ -719,12 +719,18 @@ private:
 //
 //         return scope ? scope->info.header.flags : 0;
 //      }
-//
-//      CodeScope(SourceScope* parent);
+
+      CodeScope(SourceScope* parent);
 //      CodeScope(MethodScope* parent);
 //      CodeScope(CodeScope* parent);
-//   };
-//
+   };
+
+   struct ExprScope : public Scope
+   {
+      ExprScope(SourceScope* parent);
+      ExprScope(CodeScope* parent);
+   };
+
 //   // --- ResendScope ---
 //   struct ResendScope : public CodeScope
 //   {
@@ -788,22 +794,22 @@ private:
 //   };
 //
 //   _CompilerLogic*  _logic;
-//
-//   ByteCodeWriter   _writer;
-//
+
+   ByteCodeWriter   _writer;
+
 //   MessageMap     _operators;                        // list of operators
 //
 //   int            _optFlag;
-//
-//   // optimization rules
-//   TransformTape _rules;
+
+   // optimization rules
+   TransformTape _rules;
 //   SyntaxTrie    _sourceRules;
-//
-//   // optmimization routines
-//   bool applyRules(CommandTape& tape);
-//   bool optimizeIdleBreakpoints(CommandTape& tape);
-//   bool optimizeJumps(CommandTape& tape);
-//   void optimizeTape(CommandTape& tape);
+
+   // optmimization routines
+   bool applyRules(CommandTape& tape);
+   bool optimizeIdleBreakpoints(CommandTape& tape);
+   bool optimizeJumps(CommandTape& tape);
+   void optimizeTape(CommandTape& tape);
 //
 //   void validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared);
 //
@@ -954,7 +960,15 @@ private:
 //   SNode injectAttributeIdentidier(SNode current, Scope& scope);
 //   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
 //   EAttr compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, EAttr mode);
-//
+
+   void recognizeTerminal(SNode node, ObjectInfo info, ExprScope& scope);
+
+   ObjectInfo mapTerminal(SNode node, ExprScope& scope);
+   ObjectInfo mapObject(SNode node, ExprScope& scope);
+   ObjectInfo mapExpression(SNode node, ExprScope& scope);
+
+   /*ObjectInfo*/void compileExpression(/*SyntaxWriter& writer, */SNode node, ExprScope& scope/*, ref_t targetRef, EAttr mode*/);
+
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
@@ -963,7 +977,6 @@ private:
 //   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
 //   ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, EAttr mode);
 //   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   void compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //
@@ -1126,7 +1139,7 @@ private:
 //   //int saveMetaInfo(_ModuleScope& scope, ident_t info);
 
 public:
-//   void loadRules(StreamReader* optimization);
+   void loadRules(StreamReader* optimization);
 //   void loadSourceRules(StreamReader* optimization);
 //   void turnOnOptimiation(int level)
 //   {

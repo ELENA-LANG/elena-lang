@@ -246,10 +246,10 @@ struct _ModuleScope
 //
 //   // cached bool values
 //   BranchingInfo     branchingInfo;
-//
-//   // cached paths
-//   SymbolMap         savedPaths;
-//
+
+   // cached paths
+   SymbolMap         savedPaths;
+
 //   MessageMap        attributes;
 
    virtual ref_t mapAnonymous(ident_t prefix = nullptr) = 0;
@@ -343,7 +343,7 @@ struct _ModuleScope
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
    _ModuleScope()
-//      : attributes(0), savedPaths(-1)
+      : /*attributes(0), */savedPaths(-1)
    {
       project = nullptr;
       debugModule = module = nullptr;

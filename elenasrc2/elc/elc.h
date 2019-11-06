@@ -10,7 +10,7 @@
 #define elcH 1
 
 #include "config.h"
-//#include "jitcompiler.h"
+#include "jitcompiler.h"
 #include "parser.h"
 #include "project.h"
 #include "compiler.h"
@@ -18,19 +18,19 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0002
+#define ELC_REVISION_NUMBER         0x0003
 
 // --- ELC default file names ---
 #ifdef _WIN32
 
 constexpr auto SYNTAX_FILE          = "syntax.dat";
-//constexpr auto RULES_FILE           = "rules.dat";
+constexpr auto RULES_FILE           = "rules.dat";
 //constexpr auto SOURCERULES_FILE     = "source_rules.dat";
 
 #else
 
 constexpr auto SYNTAX_FILE          = "/usr/share/elena/syntax.dat";
-//constexpr auto RULES_FILE           = "/usr/share/elena/rules.dat";
+constexpr auto RULES_FILE           = "/usr/share/elena/rules.dat";
 //constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
 
 #endif
@@ -378,8 +378,8 @@ public:
    _ELENA_::Path appPath;
    _ELENA_::IdentifierString projectName;
 
-//   _ELENA_::_JITCompiler* createJITCompiler();
-////   _ELENA_::_JITCompiler* createJITCompiler64();
+   _ELENA_::_JITCompiler* createJITCompiler();
+//   _ELENA_::_JITCompiler* createJITCompiler64();
 
    virtual void printInfo(const char* msg, _ELENA_::ReferenceInfo param);
    virtual void printInfo(const char* msg, _ELENA_::ident_t param);
@@ -658,10 +658,10 @@ public:
 //            scope.compile(derivationTree, nullptr);
          }
 
-//         saveModule(scope.module, "nl");
-//
-//         if (scope.debugModule)
-//            saveModule(scope.debugModule, "dnl");
+         saveModule(scope.module, "nl");
+
+         if (scope.debugModule)
+            saveModule(scope.debugModule, "dnl");
       }
 
       // validate the unresolved forward refereces if unresolved reference warning is enabled
@@ -670,28 +670,28 @@ public:
       return !HasWarnings();
    }
 
-//   void setCompilerOptions(_ELENA_::Compiler& compiler)
-//   {
-//      if (IntSetting(_ELENA_::opL0, -1) != 0) {
-//         _ELENA_::Path rulesPath(StrSetting(_ELENA_::opAppPath), RULES_FILE);
-//         _ELENA_::Path sourceRulesPath(StrSetting(_ELENA_::opAppPath), SOURCERULES_FILE);
-//
-//         _ELENA_::FileReader rulesFile(rulesPath.c_str(), _ELENA_::feRaw, false);
-//         if (!rulesFile.isOpened()) {
-//            raiseWarning(0, errInvalidFile, RULES_FILE);
-//         }
-//         else compiler.loadRules(&rulesFile);
-//
-//         _ELENA_::FileReader sourceRulesFile(sourceRulesPath.c_str(), _ELENA_::feRaw, false);
-//         if (!rulesFile.isOpened()) {
-//            raiseWarning(0, errInvalidFile, RULES_FILE);
-//         }
-//         else compiler.loadSourceRules(&sourceRulesFile);
-//      }
-//      if (IntSetting(_ELENA_::opL1, -1) != 0) {
-//         compiler.turnOnOptimiation(1);
-//      }
-//   }
+   void setCompilerOptions(_ELENA_::Compiler& compiler)
+   {
+      if (IntSetting(_ELENA_::opL0, -1) != 0) {
+         _ELENA_::Path rulesPath(StrSetting(_ELENA_::opAppPath), RULES_FILE);
+         //_ELENA_::Path sourceRulesPath(StrSetting(_ELENA_::opAppPath), SOURCERULES_FILE);
+
+         _ELENA_::FileReader rulesFile(rulesPath.c_str(), _ELENA_::feRaw, false);
+         if (!rulesFile.isOpened()) {
+            raiseWarning(0, errInvalidFile, RULES_FILE);
+         }
+         else compiler.loadRules(&rulesFile);
+
+         //_ELENA_::FileReader sourceRulesFile(sourceRulesPath.c_str(), _ELENA_::feRaw, false);
+         //if (!rulesFile.isOpened()) {
+         //   raiseWarning(0, errInvalidFile, RULES_FILE);
+         //}
+         //else compiler.loadSourceRules(&sourceRulesFile);
+      }
+      //if (IntSetting(_ELENA_::opL1, -1) != 0) {
+      //   compiler.turnOnOptimiation(1);
+      //}
+   }
 
    void cleanUp();
 

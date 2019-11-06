@@ -15,8 +15,8 @@
 #include "errors.h"
 #include "compilerlogic.h"
 #include "linker.h"
-//#include "image.h"
-//#include "x86jitcompiler.h"
+#include "image.h"
+#include "x86jitcompiler.h"
 //#include "amd64jitcompiler.h"
 //#include "derivation.h"
 //
@@ -61,52 +61,52 @@ void print(const char* str, ...)
    fflush(stdout);
 }
 
-//// --- ImageHelper ---
-//
-//class ImageHelper : public _ELENA_::ExecutableImage::_Helper
-//{
-//   _ELENA_::Linker* _linker;
-//   bool             _consoleMode;
-//
-//public:
-//   _ELENA_::ref_t tls_directory;
-//
-//   virtual void beforeLoad(_ELENA_::_JITCompiler* compiler, _ELENA_::ExecutableImage& image)
-//   {
-//      _ELENA_::Project* project = image.getProject();
-//      _ELENA_::_JITLoader* loader = dynamic_cast<_ELENA_::_JITLoader*>(&image);
-//
-//      // compile TLS section if it is a multi-threading app
-//      if (project->IntSetting(_ELENA_::opThreadMax) > 1) {
-//         _linker->prepareTLS(image, compiler->allocateTLSVariable(loader), tls_directory);
-//
-//      }
-//      else compiler->allocateTLSVariable(loader);
-//
-//      // load GC thread table, should be allocated before static roots
-//      // thread table contains TLS reference
-//      compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
-//
-//      if (_vmMode) {
-//         _ELENA_::MemoryDump tape;
-//         createTape(tape, project, _consoleMode);
-//
-//         compiler->allocateVMTape(loader, tape.get(0), tape.Length());
-//      }
-//   }
-//
-//   virtual void afterLoad(_ELENA_::ExecutableImage&)
-//   {
-//   }
-//
-//   ImageHelper(_ELENA_::Linker* linker, bool consoleMode, bool vmMode = false)
-//   {
-//      this->_linker = linker;
-//      this->tls_directory = 0;
-//      this->_vmMode = vmMode;
-//      this->_consoleMode = consoleMode;
-//   }
-//};
+// --- ImageHelper ---
+
+class ImageHelper : public _ELENA_::ExecutableImage::_Helper
+{
+   _ELENA_::Linker* _linker;
+   bool             _consoleMode;
+
+public:
+   _ELENA_::ref_t tls_directory;
+
+   virtual void beforeLoad(_ELENA_::_JITCompiler* compiler, _ELENA_::ExecutableImage& image)
+   {
+      _ELENA_::Project* project = image.getProject();
+      _ELENA_::_JITLoader* loader = dynamic_cast<_ELENA_::_JITLoader*>(&image);
+
+      // compile TLS section if it is a multi-threading app
+      if (project->IntSetting(_ELENA_::opThreadMax) > 1) {
+         _linker->prepareTLS(image, compiler->allocateTLSVariable(loader), tls_directory);
+
+      }
+      else compiler->allocateTLSVariable(loader);
+
+      // load GC thread table, should be allocated before static roots
+      // thread table contains TLS reference
+      compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
+
+      //if (_vmMode) {
+      //   _ELENA_::MemoryDump tape;
+      //   createTape(tape, project, _consoleMode);
+
+      //   compiler->allocateVMTape(loader, tape.get(0), tape.Length());
+      //}
+   }
+
+   virtual void afterLoad(_ELENA_::ExecutableImage&)
+   {
+   }
+
+   ImageHelper(_ELENA_::Linker* linker, bool consoleMode, bool vmMode = false)
+   {
+      this->_linker = linker;
+      this->tls_directory = 0;
+      this->_vmMode = vmMode;
+      this->_consoleMode = consoleMode;
+   }
+};
 
 // --- Project ---
 
@@ -234,10 +234,10 @@ void _ELC_::Project :: cleanUp()
 //   }
 }
 
-//_ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
-//{
-//   return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
-//}
+_ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
+{
+   return new _ELENA_::x86JITCompiler(BoolSetting(_ELENA_::opDebugMode));
+}
 
 // --- Main function ---
 
@@ -327,7 +327,7 @@ int main()
       _ELENA_::CompilerLogic elenaLogic;
       _ELENA_::Compiler compiler(&elenaLogic);
       _ELENA_::Parser parser(&syntaxFile);
-      //project.setCompilerOptions(compiler);
+      project.setCompilerOptions(compiler);
 
       result = project.compileSources(compiler, parser);
 
@@ -338,84 +338,84 @@ int main()
          print(ELC_WARNING_COMPILATION);
       }
 
-//      // Linking..
-//      if (platform == _ELENA_::ptWin32Console) {
+      // Linking..
+      if (platform == _ELENA_::ptWin32Console) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker;
+         ImageHelper helper(&linker, true);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
+//      else if (platform == _ELENA_::ptWin64Console) {
 //         print(ELC_LINKING);
 //
-//         _ELENA_::Linker linker;
+//         _ELENA_::Linker linker(true);
 //         ImageHelper helper(&linker, true);
-//         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
+//         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler64(), helper);
 //         linker.run(project, image, (_ELENA_::ref_t) - 1);
 //
 //         print(ELC_SUCCESSFUL_LINKING);
 //      }
-////      else if (platform == _ELENA_::ptWin64Console) {
-////         print(ELC_LINKING);
-////
-////         _ELENA_::Linker linker(true);
-////         ImageHelper helper(&linker, true);
-////         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler64(), helper);
-////         linker.run(project, image, (_ELENA_::ref_t) - 1);
-////
-////         print(ELC_SUCCESSFUL_LINKING);
-////      }
-//      else if (platform == _ELENA_::ptWin32ConsoleX) {
-//         print(ELC_LINKING);
-//
-//         _ELENA_::Linker linker;
-//         ImageHelper helper(&linker, true);
-//         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
-//
-//         linker.run(project, image, helper.tls_directory);
-//
-//         print(ELC_SUCCESSFUL_LINKING);
-//      }
-//      else if (platform == _ELENA_::ptVMWin32Console) {
-//         print(ELC_LINKING);
-//
-//         _ELENA_::Linker linker;
-//         ImageHelper helper(&linker, true, true);
-//         _ELENA_::ExecutableImage image(false, &project, project.createJITCompiler(), helper);
-//
-//         linker.run(project, image, (_ELENA_::ref_t) - 1);
-//
-//         print(ELC_SUCCESSFUL_LINKING);
-//      }
-//      else if (platform == _ELENA_::ptWin32GUI) {
+      else if (platform == _ELENA_::ptWin32ConsoleX) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker;
+         ImageHelper helper(&linker, true);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
+
+         linker.run(project, image, helper.tls_directory);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
+      else if (platform == _ELENA_::ptVMWin32Console) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker;
+         ImageHelper helper(&linker, true, true);
+         _ELENA_::ExecutableImage image(false, &project, project.createJITCompiler(), helper);
+
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
+      else if (platform == _ELENA_::ptWin32GUI) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker;
+         ImageHelper helper(&linker, false);
+         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
+         linker.run(project, image, (_ELENA_::ref_t) - 1);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
+//      else if (platform == _ELENA_::ptWin32GUIX) {
 //         print(ELC_LINKING);
 //
 //         _ELENA_::Linker linker;
 //         ImageHelper helper(&linker, false);
 //         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
-//         linker.run(project, image, (_ELENA_::ref_t) - 1);
+//         linker.run(project, image, helper.tls_directory);
 //
 //         print(ELC_SUCCESSFUL_LINKING);
 //      }
-////      else if (platform == _ELENA_::ptWin32GUIX) {
-////         print(ELC_LINKING);
-////
-////         _ELENA_::Linker linker;
-////         ImageHelper helper(&linker, false);
-////         _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
-////         linker.run(project, image, helper.tls_directory);
-////
-////         print(ELC_SUCCESSFUL_LINKING);
-////      }
-////      //else if (platform == _ELENA_::ptVMWin32GUI) {
-////      //   print(ELC_LINKING);
-////
-////      //   _ELENA_::VirtualMachineClientImage image(
-////      //      &project, project.createJITCompiler(), true);
-////
-////      //   _ELENA_::Linker linker;
-////      //   linker.run(project, image, (_ELENA_::ref_t) - 1);
-////
-////      //   print(ELC_SUCCESSFUL_LINKING);
-////      //}
-//      else if (platform == _ELENA_::ptLibrary) {
-//         // no linking for the library
-//      }
-      /*else*/ print(ELC_UNKNOWN_PLATFORM);
+//      //else if (platform == _ELENA_::ptVMWin32GUI) {
+//      //   print(ELC_LINKING);
+//
+//      //   _ELENA_::VirtualMachineClientImage image(
+//      //      &project, project.createJITCompiler(), true);
+//
+//      //   _ELENA_::Linker linker;
+//      //   linker.run(project, image, (_ELENA_::ref_t) - 1);
+//
+//      //   print(ELC_SUCCESSFUL_LINKING);
+//      //}
+      else if (platform == _ELENA_::ptLibrary) {
+         // no linking for the library
+      }
+      else print(ELC_UNKNOWN_PLATFORM);
    }
    catch(_ELENA_::InternalError& e) {
       print(_ELENA_::WideString(ELC_INTERNAL_ERROR), (const wchar_t*)_ELENA_::WideString(e.message));

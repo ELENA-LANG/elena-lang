@@ -14,14 +14,14 @@
 
 using namespace _ELENA_;
 
-constexpr auto MODE_ROOT            = 0x01;
+constexpr auto MODE_ROOT                  = 0x01;
 //constexpr auto MODE_PROPERTYALLOWED = 0x40;
 //
 //constexpr auto MODE_CLOSURE         = -2;
 //constexpr auto MODE_COMPLEXMESSAGE  = -3;
 //constexpr auto MODE_PROPERTYMETHOD  = -4;
-//
-//#define EXPRESSION_IMPLICIT_MODE   1
+
+constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
 // --- DerivationWriter ---
 
@@ -118,9 +118,9 @@ inline void copyIdentifier(SyntaxWriter& writer, SNode ident/*, bool ignoreTermi
    else writer.newNode(ident.type);
 
    //if (!ignoreTerminalInfo) {
-      //SyntaxTree::copyNode(writer, lxRow, ident);
-      //SyntaxTree::copyNode(writer, lxCol, ident);
-      //SyntaxTree::copyNode(writer, lxLength, ident);
+      SyntaxTree::copyNode(writer, lxRow, ident);
+      SyntaxTree::copyNode(writer, lxCol, ident);
+      SyntaxTree::copyNode(writer, lxLength, ident);
    //}
 
    writer.closeNode();
@@ -1997,10 +1997,10 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
 
 void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode)
 {
-//   writer.newBookmark();
-//   
+   writer.newBookmark();
+   
 //   bool first = true;
-//   bool expressionExpected = !test(mode, EXPRESSION_IMPLICIT_MODE);
+   bool expressionExpected = !test(mode, EXPRESSION_IMPLICIT_MODE);
    
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -2009,15 +2009,15 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
       current = current.nextNode();
    }
 
-//   if (expressionExpected) {
-//      writer.inject(lxExpression);
-//      writer.closeNode();
-//   }
-//
-////   if (first && test(mode, EXPRESSION_OBJECT_REQUIRED))
-////      scope.raiseError(errInvalidSyntax, node);
-//
-//   writer.removeBookmark();
+   if (expressionExpected) {
+      writer.inject(lxExpression);
+      writer.closeNode();
+   }
+
+//   if (first && test(mode, EXPRESSION_OBJECT_REQUIRED))
+//      scope.raiseError(errInvalidSyntax, node);
+
+   writer.removeBookmark();
 }
 
 //void DerivationWriter:: declareType(SNode node)

@@ -111,10 +111,10 @@ public:
    _Module* loadModule(ident_t package, LoadResult& result, bool readOnly = true);
    _Module* loadDebugModule(ident_t package, LoadResult& result);
 
-//   bool loadCore(LoadResult& result);
+   bool loadCore(LoadResult& result);
 
    _Module* resolveNative(ident_t referenceName, LoadResult& result, ref_t& reference);
-//   _Module* resolveCore(ref_t reference, LoadResult& result);
+   _Module* resolveCore(ref_t reference, LoadResult& result);
    virtual _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
    virtual _Module* resolveWeakModule(ident_t weakName, LoadResult& result, ref_t& reference);
    virtual _Module* resolveIndirectWeakModule(ident_t weakName, LoadResult& result, ref_t& reference);

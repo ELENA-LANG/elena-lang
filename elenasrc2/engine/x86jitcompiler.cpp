@@ -1,70 +1,71 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA JIT-X linker class.
-////		Supported platforms: x86
-////                                              (C)2005-2019, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "x86jitcompiler.h"
-//#include "bytecode.h"
-//
-//using namespace _ELENA_;
-//
-//// --- ELENA Object constants ---
-//constexpr int gcPageSize         = 0x0010;           // a heap page size constant
-//constexpr int elObjectOffset     = 0x0008;           // object header / offset constant
-//
-//// --- ELENA CORE built-in routines
-//constexpr int GC_ALLOC           = 0x10001;
-//constexpr int HOOK               = 0x10010;
-//constexpr int INIT_RND           = 0x10012;
-//constexpr int ENDFRAME           = 0x10016;
-//constexpr int CALC_SIZE          = 0x1001F;
-//constexpr int GET_COUNT          = 0x10020;
-//constexpr int THREAD_WAIT        = 0x10021;
-//constexpr int BREAK              = 0x10026;
-//constexpr int EXPAND_HEAP        = 0x10028;
-//
-//constexpr int CORE_GC_TABLE      = 0x20002;
-//constexpr int CORE_STATICROOT    = 0x20005;
-//constexpr int CORE_TLS_INDEX     = 0x20007;
-//constexpr int CORE_THREADTABLE   = 0x20008;
-//constexpr int CORE_OS_TABLE      = 0x20009;
-//constexpr int CORE_MESSAGE_TABLE = 0x2000A;
-//constexpr int CORE_EH_TABLE      = 0x2000B;
-//constexpr int SYSTEM_ENV         = 0x2000C;
-//constexpr int VOID               = 0x2000D;
-//constexpr int VOIDPTR            = 0x2000E;
-//
-//// preloaded gc routines
-//const int coreVariableNumber = 3;
-//const int coreVariables[coreVariableNumber] =
-//{
-//   CORE_GC_TABLE, CORE_OS_TABLE, CORE_EH_TABLE
-//};
-//
-//const int coreStaticNumber = 2;
-//const int coreStatics[coreStaticNumber] =
-//{
-//   VOID, VOIDPTR
-//};
-//
-//// preloaded gc routines
-//const int coreFunctionNumber = 9;
-//const int coreFunctions[coreFunctionNumber] =
-//{
-//   BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, ENDFRAME,
-//   CALC_SIZE, GET_COUNT,
-//   THREAD_WAIT
-//};
-//
-//// preloaded gc commands
-//const int gcCommandNumber = 160;
-//const int gcCommands[gcCommandNumber] =
-//{
+//		This file contains ELENA JIT-X linker class.
+//		Supported platforms: x86
+//                                              (C)2005-2019, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "x86jitcompiler.h"
+#include "bytecode.h"
+
+using namespace _ELENA_;
+
+// --- ELENA Object constants ---
+constexpr int gcPageSize         = 0x0010;           // a heap page size constant
+constexpr int elObjectOffset     = 0x0008;           // object header / offset constant
+
+// --- ELENA CORE built-in routines
+constexpr int GC_ALLOC           = 0x10001;
+constexpr int HOOK               = 0x10010;
+constexpr int INIT_RND           = 0x10012;
+constexpr int ENDFRAME           = 0x10016;
+constexpr int CALC_SIZE          = 0x1001F;
+constexpr int GET_COUNT          = 0x10020;
+constexpr int THREAD_WAIT        = 0x10021;
+constexpr int BREAK              = 0x10026;
+constexpr int EXPAND_HEAP        = 0x10028;
+
+constexpr int CORE_GC_TABLE      = 0x20002;
+constexpr int CORE_STATICROOT    = 0x20005;
+constexpr int CORE_TLS_INDEX     = 0x20007;
+constexpr int CORE_THREADTABLE   = 0x20008;
+constexpr int CORE_OS_TABLE      = 0x20009;
+constexpr int CORE_MESSAGE_TABLE = 0x2000A;
+constexpr int CORE_EH_TABLE      = 0x2000B;
+constexpr int SYSTEM_ENV         = 0x2000C;
+constexpr int VOID               = 0x2000D;
+constexpr int VOIDPTR            = 0x2000E;
+
+// preloaded gc routines
+const int coreVariableNumber = 3;
+const int coreVariables[coreVariableNumber] =
+{
+   CORE_GC_TABLE, CORE_OS_TABLE, CORE_EH_TABLE
+};
+
+const int coreStaticNumber = 2;
+const int coreStatics[coreStaticNumber] =
+{
+   VOID, VOIDPTR
+};
+
+// preloaded gc routines
+const int coreFunctionNumber = 9;
+const int coreFunctions[coreFunctionNumber] =
+{
+   BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, ENDFRAME,
+   CALC_SIZE, GET_COUNT,
+   THREAD_WAIT
+};
+
+// preloaded gc commands
+const int gcCommandNumber = /*160*/1;
+const int gcCommands[gcCommandNumber] =
+{
+   bcNop // !! temporal
 //   bcALoadSI, bcACallVI, bcOpen, bcBCopyA, bcParent,
 //   bcALoadFI, bcASaveSI, bcASaveFI, bcClose, bcMIndex,
 //   bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
@@ -98,20 +99,67 @@
 //   bcSaveFI, bcAddFI, bcSubFI, bcNShiftR, bcLSave,
 //   bcSelect, bcEqualR, bcBLoadAI, bcAndE, bcDMoveVerb,
 //   bcEOrN, bcNewI, bcACopyAI
-//};
-//
-//const int gcCommandExNumber = 6;
-//const int gcCommandExs[gcCommandExNumber] =
-//{
+};
+
+const int gcCommandExNumber = /*6*/1;
+const int gcCommandExs[gcCommandExNumber] =
+{
+   bcNop // !! temporal
+
 //   bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
 //   bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
 //   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00
-//};
-//
-//// command table
-//void (*commands[0x100])(int opcode, x86JITScope& scope) =
-//{
-//   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &loadMTOp, &loadOneByteOp,
+};
+
+// command table
+void (*commands[0x100])(int opcode, x86JITScope& scope) =
+{
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   //   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &loadMTOp, &loadOneByteOp,
 //   &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDSetVerb,
 //
 //   &compileNot, &loadOneByteLOp, &loadOneByteLOp, &compileIndexDec, &compilePopB, &loadOneByteLOp, &compileDSub, &compileQuit,
@@ -158,8 +206,8 @@
 //
 //   &compileCreate, &compileCreateN, &compileNop, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
 //   &compileIfM, &compileElseM, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop
-//};
-//
+};
+
 //// --- x86JITCompiler commands ---
 //
 //inline void compileJump(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
@@ -250,59 +298,59 @@
 //   // jge   lbEnding
 //   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JGE);
 //}
-//
-//void _ELENA_::loadCoreOp(x86JITScope& scope, char* code)
-//{
-//   MemoryWriter* writer = scope.code;
-//
-//   if (code==NULL)
-//      throw InternalError("Cannot load core command");
-//
-//   size_t position = writer->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   writer->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   int key, offset;
-//   while (count > 0) {
-//      key = relocation[0];
-//      offset = relocation[1];
-//
-//      // locate relocation position
-//      writer->seek(position + offset);
-//
-//      if ((key & mskTypeMask) == mskPreloaded) {
-//         scope.compiler->writeCoreReference(scope, key, position, offset, code);
-//      }
-//      else {
-//         //if ((key & mskAnyRef) == mskLinkerConstant) {
-//         //   scope.code->writeDWord(scope.helper->getLinkerConstant(key & ~mskAnyRef));
-//         //}
-//         /*else */scope.helper->writeReference(*writer, key, *(int*)(code + offset), scope.module);
-//      }
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   writer->seekEOF();
-//}
-//
-//inline void _ELENA_::writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code)
-//{
-//   // references should be already preloaded
-//   if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
-//      scope.helper->writeReference(*scope.code,
-//         scope.compiler->_preloaded.get(reference & ~mskAnyRef), true, *(int*)(code + offset));
-//
-//      scope.lh.addFixableJump(offset + position, (*scope.code->Memory())[offset + position]);
-//   }
-//   else scope.helper->writeReference(*scope.code,
-//      scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
-//}
-//
+
+void _ELENA_::loadCoreOp(x86JITScope& scope, char* code)
+{
+   MemoryWriter* writer = scope.code;
+
+   if (code==NULL)
+      throw InternalError("Cannot load core command");
+
+   size_t position = writer->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   writer->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   int key, offset;
+   while (count > 0) {
+      key = relocation[0];
+      offset = relocation[1];
+
+      // locate relocation position
+      writer->seek(position + offset);
+
+      if ((key & mskTypeMask) == mskPreloaded) {
+         scope.compiler->writeCoreReference(scope, key, position, offset, code);
+      }
+      else {
+         //if ((key & mskAnyRef) == mskLinkerConstant) {
+         //   scope.code->writeDWord(scope.helper->getLinkerConstant(key & ~mskAnyRef));
+         //}
+         /*else */scope.helper->writeReference(*writer, key, *(int*)(code + offset), scope.module);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+inline void _ELENA_::writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code)
+{
+   // references should be already preloaded
+   if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
+      scope.helper->writeReference(*scope.code,
+         scope.compiler->_preloaded.get(reference & ~mskAnyRef), true, *(int*)(code + offset));
+
+      scope.lh.addFixableJump(offset + position, (*scope.code->Memory())[offset + position]);
+   }
+   else scope.helper->writeReference(*scope.code,
+      scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
+}
+
 //void _ELENA_::loadOneByteOp(int opcode, x86JITScope& scope)
 //{
 //   MemoryWriter* writer = scope.code;
@@ -703,18 +751,18 @@
 ////      scope.code->seekEOF();
 ////   }
 ////}
-//
-//void _ELENA_::compileNop(int, x86JITScope& scope)
-//{
-//   // nop command is used to indicate possible label
-//   // fix the label if it exists
-//   if (scope.lh.checkLabel(scope.tape->Position() - 1)) {
-//      scope.lh.fixLabel(scope.tape->Position() - 1);
-//   }
-//   // or add the label
-//   else scope.lh.setLabel(scope.tape->Position() - 1);
-//}
-//
+
+void _ELENA_::compileNop(int, x86JITScope& scope)
+{
+   // nop command is used to indicate possible label
+   // fix the label if it exists
+   if (scope.lh.checkLabel(scope.tape->Position() - 1)) {
+      scope.lh.fixLabel(scope.tape->Position() - 1);
+   }
+   // or add the label
+   else scope.lh.setLabel(scope.tape->Position() - 1);
+}
+
 //void _ELENA_::compileBreakpoint(int, x86JITScope& scope)
 //{
 //   if (scope.withDebugInfo)
@@ -1524,24 +1572,24 @@
 //   // or ebx, ecx
 //   scope.code->writeWord(0xD90B);
 //}
-//
-//// --- x86JITScope ---
-//
-//x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler)
-//   : lh(code)
-//{
-//   this->tape = tape;
-//   this->code = code;
-//   this->helper = helper;
-//   this->compiler = compiler;
-//   this->withDebugInfo = compiler->isWithDebugInfo();
-//   this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
-//   this->module = NULL;
-//   this->extra_arg = 0;
-//
-////   this->prevFSPOffs = 0;
-//}
-//
+
+// --- x86JITScope ---
+
+x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler)
+   : lh(code)
+{
+   this->tape = tape;
+   this->code = code;
+   this->helper = helper;
+   this->compiler = compiler;
+   this->withDebugInfo = compiler->isWithDebugInfo();
+   this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
+   this->module = NULL;
+   this->extra_arg = 0;
+
+//   this->prevFSPOffs = 0;
+}
+
 //void x86JITScope :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
 //{
 //   // HOTFIX : mskLockVariable used to fool trylock opcode, adding virtual offset
@@ -1551,160 +1599,160 @@
 //
 //   helper->writeReference(writer, reference, disp, module);
 //}
-//
-//// --- x86JITCompiler ---
-//
-//x86JITCompiler :: x86JITCompiler(bool debugMode)
+
+// --- x86JITCompiler ---
+
+x86JITCompiler :: x86JITCompiler(bool debugMode)
 //   : _inlineExs(NULL, gcCommandExNumber << 2)
-//{
-//   _debugMode = debugMode;
-//}
-//
-//size_t x86JITCompiler :: getObjectHeaderSize() const
-//{
-//   return elObjectOffset;
-//}
-//
-//bool x86JITCompiler :: isWithDebugInfo() const
-//{
-//   // in the current implementation, debug info (i.e. debug section)
-//   // is always generated (to be used by RTManager)
-//   return true;
-//}
-//
-//void x86JITCompiler :: alignCode(MemoryWriter* writer, int alignment, bool code)
-//{
-//   writer->align(alignment, code ? 0x90 : 0x00);
-//}
-//
-//void x86JITCompiler :: writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code)
-//{
-//   if (!_preloaded.exist(reference& ~mskAnyRef)) {
-//      MemoryWriter writer(scope.code->Memory());
-//
-//      _preloaded.add(reference & ~mskAnyRef, scope.helper->getVAddress(writer, mskCodeRef));
-//
-//      // due to optimization section must be ROModule::ROSection instance
-//      SectionInfo info = scope.helper->getCoreSection(reference & ~mskAnyRef);
-//      // separate scope should be used to prevent overlapping
-//      x86JITScope newScope(NULL, &writer, scope.helper, this);
-//      newScope.module = info.module;
-//
-//      loadCoreOp(newScope, info.section ? (char*)info.section->get(0) : NULL);
-//   }
-//   _ELENA_::writeCoreReference(scope, reference, position, offset, code);
-//}
-//
-//inline void loadCoreData(_ReferenceHelper& helper, x86JITScope& dataScope, ref_t reference)
-//{
-//   // due to optimization section must be ROModule::ROSection instance
-//   SectionInfo info = helper.getCoreSection(reference);
-//   dataScope.module = info.module;
-//
-//   loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
-//}
-//
-//void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
-//{
-//   // preload core data
-//   _Memory* data = loader->getTargetSection((ref_t)mskDataRef);
-//   _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
-//   _Memory* sdata = loader->getTargetSection((ref_t)mskStatRef);
-//   _Memory* code = loader->getTargetSection((ref_t)mskCodeRef);
-//
-//   MemoryWriter dataWriter(data);
-//   MemoryWriter rdataWriter(rdata);
-//   MemoryWriter sdataWriter(sdata);
-//   MemoryWriter codeWriter(code);
-//
-//   // preloaded variables
-//    x86JITScope dataScope(NULL, &dataWriter, &helper, this);
-//   for (int i = 0; i < coreVariableNumber; i++) {
-//      if (!_preloaded.exist(coreVariables[i])) {
-//         _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
-//
-//         loadCoreData(helper, dataScope, coreVariables[i]);
-//      }
-//   }
-//
-//   // MESSAGE TABLE POINTER
-//   _preloaded.add(CORE_MESSAGE_TABLE, helper.getVAddress(rdataWriter, mskRDataRef));
-//   rdataWriter.writeDWord(0);
-//
-//   // load GC static root
-//   _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
-//
-//   // SYSTEM_ENV
-//   x86JITScope rdataScope(NULL, &rdataWriter, &helper, this);
-//   _preloaded.add(SYSTEM_ENV, helper.getVAddress(rdataWriter, mskRDataRef));
-//   loadCoreData(helper, rdataScope, SYSTEM_ENV);
-//   // NOTE : the table is tailed with GCMGSize,GCYGSize,MaxThread and DebugPtr fields
-//   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
-//   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
-//   rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
-//
-//   // resolve reference to SYSTEM_ENV at rdata header
-//   rdata->addReference((ref_t)_preloaded.get(SYSTEM_ENV), 0);
-//
-//   // lnVMAPI_Instance
-//   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance)); // ??
-//
-//   // preloaded core static variables
-//   for (int i = 0; i < coreStaticNumber; i++) {
-//      if (!_preloaded.exist(coreStatics[i])) {
-//         _preloaded.add(coreStatics[i], helper.getVAddress(rdataWriter, mskRDataRef));
-//
-//         // due to optimization section must be ROModule::ROSection instance
-//         SectionInfo info = helper.getCoreSection(coreStatics[i]);
-//         rdataScope.module = info.module;
-//
-//         loadCoreOp(rdataScope, info.section ? (char*)info.section->get(0) : NULL);
-//      }
-//   }
-//
-//   // preloaded core functions
-//   x86JITScope scope(NULL, &codeWriter, &helper, this);
-//   for (int i = 0; i < coreFunctionNumber; i++) {
-//      if (!_preloaded.exist(coreFunctions[i])) {
-//         _preloaded.add(coreFunctions[i], helper.getVAddress(codeWriter, mskCodeRef));
-//
-//         // due to optimization section must be ROModule::ROSection instance
-//         SectionInfo info = helper.getCoreSection(coreFunctions[i]);
-//         scope.module = info.module;
-//
-//         loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
-//      }
-//   }
-//
-//   // preload vm commands
-//   for (int i = 0; i < gcCommandNumber; i++) {
-//      SectionInfo info = helper.getCoreSection(gcCommands[i]);
-//
-//      // due to optimization section must be ROModule::ROSection instance
-//      _inlines[gcCommands[i]] = (char*)info.section->get(0);
-//   }
-//
-//   // preload vm exended commmands
-//   for (int i = 0; i < gcCommandExNumber; i++) {
-//      SectionInfo info = helper.getCoreSection(gcCommandExs[i]);
-//      _inlineExs.add(gcCommandExs[i], info.section->get(0));
-//   }
-//}
-//
-//void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode)
-//{
-//   if (virtualMode) {
-//      _Memory* data = loader->getTargetSection(mskRDataRef);
-//
-//      size_t offset = ((size_t)_preloaded.get(SYSTEM_ENV) & ~mskAnyRef);
-//      (*data)[offset] = (counter << 2);
-//   }
-//   else {
-// 	   size_t offset = (size_t)_preloaded.get(SYSTEM_ENV);
-// 	   *(int*)offset = (counter << 2);
-//   }
-//}
-//
+{
+   _debugMode = debugMode;
+}
+
+size_t x86JITCompiler :: getObjectHeaderSize() const
+{
+   return elObjectOffset;
+}
+
+bool x86JITCompiler :: isWithDebugInfo() const
+{
+   // in the current implementation, debug info (i.e. debug section)
+   // is always generated (to be used by RTManager)
+   return true;
+}
+
+void x86JITCompiler :: alignCode(MemoryWriter* writer, int alignment, bool code)
+{
+   writer->align(alignment, code ? 0x90 : 0x00);
+}
+
+void x86JITCompiler :: writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code)
+{
+   if (!_preloaded.exist(reference& ~mskAnyRef)) {
+      MemoryWriter writer(scope.code->Memory());
+
+      _preloaded.add(reference & ~mskAnyRef, scope.helper->getVAddress(writer, mskCodeRef));
+
+      // due to optimization section must be ROModule::ROSection instance
+      SectionInfo info = scope.helper->getCoreSection(reference & ~mskAnyRef);
+      // separate scope should be used to prevent overlapping
+      x86JITScope newScope(NULL, &writer, scope.helper, this);
+      newScope.module = info.module;
+
+      loadCoreOp(newScope, info.section ? (char*)info.section->get(0) : NULL);
+   }
+   _ELENA_::writeCoreReference(scope, reference, position, offset, code);
+}
+
+inline void loadCoreData(_ReferenceHelper& helper, x86JITScope& dataScope, ref_t reference)
+{
+   // due to optimization section must be ROModule::ROSection instance
+   SectionInfo info = helper.getCoreSection(reference);
+   dataScope.module = info.module;
+
+   loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
+}
+
+void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
+{
+   // preload core data
+   _Memory* data = loader->getTargetSection((ref_t)mskDataRef);
+   _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
+   _Memory* sdata = loader->getTargetSection((ref_t)mskStatRef);
+   _Memory* code = loader->getTargetSection((ref_t)mskCodeRef);
+
+   MemoryWriter dataWriter(data);
+   MemoryWriter rdataWriter(rdata);
+   MemoryWriter sdataWriter(sdata);
+   MemoryWriter codeWriter(code);
+
+   // preloaded variables
+    x86JITScope dataScope(NULL, &dataWriter, &helper, this);
+   for (int i = 0; i < coreVariableNumber; i++) {
+      if (!_preloaded.exist(coreVariables[i])) {
+         _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
+
+         loadCoreData(helper, dataScope, coreVariables[i]);
+      }
+   }
+
+   // MESSAGE TABLE POINTER
+   _preloaded.add(CORE_MESSAGE_TABLE, helper.getVAddress(rdataWriter, mskRDataRef));
+   rdataWriter.writeDWord(0);
+
+   // load GC static root
+   _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
+
+   // SYSTEM_ENV
+   x86JITScope rdataScope(NULL, &rdataWriter, &helper, this);
+   _preloaded.add(SYSTEM_ENV, helper.getVAddress(rdataWriter, mskRDataRef));
+   loadCoreData(helper, rdataScope, SYSTEM_ENV);
+   // NOTE : the table is tailed with GCMGSize,GCYGSize,MaxThread and DebugPtr fields
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
+
+   // resolve reference to SYSTEM_ENV at rdata header
+   rdata->addReference((ref_t)_preloaded.get(SYSTEM_ENV), 0);
+
+   // lnVMAPI_Instance
+   dataWriter.writeDWord(helper.getLinkerConstant(lnVMAPI_Instance)); // ??
+
+   // preloaded core static variables
+   for (int i = 0; i < coreStaticNumber; i++) {
+      if (!_preloaded.exist(coreStatics[i])) {
+         _preloaded.add(coreStatics[i], helper.getVAddress(rdataWriter, mskRDataRef));
+
+         // due to optimization section must be ROModule::ROSection instance
+         SectionInfo info = helper.getCoreSection(coreStatics[i]);
+         rdataScope.module = info.module;
+
+         loadCoreOp(rdataScope, info.section ? (char*)info.section->get(0) : NULL);
+      }
+   }
+
+   // preloaded core functions
+   x86JITScope scope(NULL, &codeWriter, &helper, this);
+   for (int i = 0; i < coreFunctionNumber; i++) {
+      if (!_preloaded.exist(coreFunctions[i])) {
+         _preloaded.add(coreFunctions[i], helper.getVAddress(codeWriter, mskCodeRef));
+
+         // due to optimization section must be ROModule::ROSection instance
+         SectionInfo info = helper.getCoreSection(coreFunctions[i]);
+         scope.module = info.module;
+
+         loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
+      }
+   }
+
+   // preload vm commands
+   for (int i = 0; i < gcCommandNumber; i++) {
+      SectionInfo info = helper.getCoreSection(gcCommands[i]);
+
+      // due to optimization section must be ROModule::ROSection instance
+      _inlines[gcCommands[i]] = (char*)info.section->get(0);
+   }
+
+   // preload vm exended commmands
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      SectionInfo info = helper.getCoreSection(gcCommandExs[i]);
+      _inlineExs.add(gcCommandExs[i], info.section->get(0));
+   }
+}
+
+void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode)
+{
+   if (virtualMode) {
+      _Memory* data = loader->getTargetSection(mskRDataRef);
+
+      size_t offset = ((size_t)_preloaded.get(SYSTEM_ENV) & ~mskAnyRef);
+      (*data)[offset] = (counter << 2);
+   }
+   else {
+ 	   size_t offset = (size_t)_preloaded.get(SYSTEM_ENV);
+ 	   *(int*)offset = (counter << 2);
+   }
+}
+
 //void x86JITCompiler :: setTLSKey(void* ptr)
 //{
 //   _preloaded.add(CORE_TLS_INDEX, ptr);
@@ -1724,45 +1772,45 @@
 //{
 //   _preloaded.add(CORE_GC_TABLE, ptr);
 //}
-//
-//void* x86JITCompiler :: getPreloadedReference(ref_t reference)
-//{
-//   return (void*)_preloaded.get(reference);
-//}
-//
-//void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumber)
-//{
-//   // get target image & resolve virtual address
-//   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
-//
-//   // size place holder
-//   dataWriter.writeDWord(0);
-//   int position = dataWriter.Position();
-//   if (maxThreadNumber > 0) {
-//      // reserve space for the thread table      
-//      allocateArray(dataWriter, maxThreadNumber);
-//   }
-//
-//   // map thread table
-//   loader->mapReference(ReferenceInfo(GC_THREADTABLE), (void*)(position | mskDataRef), (ref_t)mskDataRef);
-//   _preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
-//}
-//
-//int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
-//{
-//   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
-//
-//   // reserve space for TLS index
-//   int position = dataWriter.Position();
-//   allocateVariable(dataWriter);
-//
-//   // map TLS index
-//   loader->mapReference(ReferenceInfo(TLS_KEY), (void*)(position | mskDataRef), (ref_t)mskDataRef);
-//   _preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
-//
-//   return position;
-//}
-//
+
+void* x86JITCompiler :: getPreloadedReference(ref_t reference)
+{
+   return (void*)_preloaded.get(reference);
+}
+
+void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumber)
+{
+   // get target image & resolve virtual address
+   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
+
+   // size place holder
+   dataWriter.writeDWord(0);
+   int position = dataWriter.Position();
+   if (maxThreadNumber > 0) {
+      // reserve space for the thread table      
+      allocateArray(dataWriter, maxThreadNumber);
+   }
+
+   // map thread table
+   loader->mapReference(ReferenceInfo(GC_THREADTABLE), (void*)(position | mskDataRef), (ref_t)mskDataRef);
+   _preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
+}
+
+int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
+{
+   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
+
+   // reserve space for TLS index
+   int position = dataWriter.Position();
+   allocateVariable(dataWriter);
+
+   // map TLS index
+   loader->mapReference(ReferenceInfo(TLS_KEY), (void*)(position | mskDataRef), (ref_t)mskDataRef);
+   _preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
+
+   return position;
+}
+
 //int x86JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t length)
 //{
 //   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskRDataRef));

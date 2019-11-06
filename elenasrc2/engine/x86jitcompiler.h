@@ -1,42 +1,42 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA JIT-X linker class.
-////		Supported platforms: x86
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#ifndef x86jitcompilerH
-//#define x86jitcompilerH 1
-//
-//#include "jitcompiler.h"
-//#include "x86helper.h"
-//
-//namespace _ELENA_
-//{
-//
-////#define JIT_TYPE_X 1
-//
-//class x86JITCompiler;
-//
-//// --- x86JITScope ---
-//
-//struct x86JITScope
-//{
-//   _Module*          module;
-//   x86JITCompiler*   compiler;
-//   MemoryWriter*     code;
-//   _ReferenceHelper* helper;
-//   MemoryReader*     tape;
-//   x86LabelHelper    lh;
-//
-//   bool              withDebugInfo;
-//   int               objectSize;
-//
-//   // byte code command argument
-//   int            argument;
-//   int            extra_arg;
-//
+//		This file contains ELENA JIT-X linker class.
+//		Supported platforms: x86
+//                                              (C)2005-2018, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef x86jitcompilerH
+#define x86jitcompilerH 1
+
+#include "jitcompiler.h"
+#include "x86helper.h"
+
+namespace _ELENA_
+{
+
+//#define JIT_TYPE_X 1
+
+class x86JITCompiler;
+
+// --- x86JITScope ---
+
+struct x86JITScope
+{
+   _Module*          module;
+   x86JITCompiler*   compiler;
+   MemoryWriter*     code;
+   _ReferenceHelper* helper;
+   MemoryReader*     tape;
+   x86LabelHelper    lh;
+
+   bool              withDebugInfo;
+   int               objectSize;
+
+   // byte code command argument
+   int            argument;
+   int            extra_arg;
+
 //   void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
 //
 //   ref_t resolveMessage(ref_t reference)
@@ -48,20 +48,20 @@
 //   //{
 //   //   return helper->getSection(reference, module);
 //   //}
-//
-//   x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler);
-//};
-//
-//// --- x86JITCompiler ---
-//
-//class x86JITCompiler : public JITCompiler32
-//{
-//protected:
-//   bool _debugMode;
-//
-//   friend void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
-//   friend void loadCoreOp(x86JITScope& scope, char* code);
-//
+
+   x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler);
+};
+
+// --- x86JITCompiler ---
+
+class x86JITCompiler : public JITCompiler32
+{
+protected:
+   bool _debugMode;
+
+   friend void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
+   friend void loadCoreOp(x86JITScope& scope, char* code);
+
 //   friend void loadFunction(int opcode, x86JITScope& scope);
 //   ////friend void loadExtensions(int opcode, x86JITScope& scope);
 //   //friend void loadCode(int opcode, x86JITScope& scope);
@@ -76,9 +76,9 @@
 //   friend void loadROp(int opcode, x86JITScope& scope);
 //   friend void loadMTOp(int opcode, x86JITScope& scope);
 //   friend void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
-//
-//   // commands
-//   friend void compileNop(int opcode, x86JITScope& scope);
+
+   // commands
+   friend void compileNop(int opcode, x86JITScope& scope);
 //   friend void compileBreakpoint(int opcode, x86JITScope& scope);
 //   //friend void compileAElse(int opcode, x86JITScope& scope);
 //   //friend void compileAThen(int opcode, x86JITScope& scope);
@@ -161,36 +161,36 @@
 //   friend void compileNot(int opcode, x86JITScope& scope);
 //   friend void compileInit(int opcode, x86JITScope& scope);
 //   friend void compileMTRedirect(int op, x86JITScope& scope);
-//
-//   // preloaded command set
-//   void* _inlines[0x100];
-//   IntFixedMap<void*> _inlineExs;
-//
-//   // preloaded references
-//   IntFixedMap<void*> _preloaded;
-//
-//   void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
-//
-//public:
-//   virtual bool isWithDebugInfo() const;
-//   virtual size_t getObjectHeaderSize() const;
-//
-//   virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
-//
-//   virtual void* getPreloadedReference(ref_t reference);
-//
-//   virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader);
-//
-//   virtual int allocateTLSVariable(_JITLoader* loader);
-//   virtual void allocateThreadTable(_JITLoader* loader, int length);
+
+   // preloaded command set
+   void* _inlines[0x100];
+   IntFixedMap<void*> _inlineExs;
+
+   // preloaded references
+   IntFixedMap<void*> _preloaded;
+
+   void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
+
+public:
+   virtual bool isWithDebugInfo() const;
+   virtual size_t getObjectHeaderSize() const;
+
+   virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
+
+   virtual void* getPreloadedReference(ref_t reference);
+
+   virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader);
+
+   virtual int allocateTLSVariable(_JITLoader* loader);
+   virtual void allocateThreadTable(_JITLoader* loader, int length);
 //   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length);
 //
 //   virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
 //   virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
 //
 //   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
-//
-//   virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
+
+   virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
 //   virtual void setTLSKey(void* ptr);
 //   virtual void setThreadTable(void* ptr);
 //   virtual void setEHTable(void* ptr);
@@ -199,13 +199,13 @@
 //   virtual void generateSymbolCall(MemoryDump& tape, void* address);
 //   virtual void generateArg(MemoryDump& tape, void* address);
 //   virtual void generateExternalCall(MemoryDump& tape, ref_t functionReference);
-//
-//   x86JITCompiler(bool debugMode);
-//};
-//
-//// --- compiler friend functions---
-//inline void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
-//void loadCoreOp(x86JITScope& scope, char* code);
+
+   x86JITCompiler(bool debugMode);
+};
+
+// --- compiler friend functions---
+inline void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
+void loadCoreOp(x86JITScope& scope, char* code);
 //void loadFunction(int opcode, x86JITScope& scope);
 ////void loadExtensions(int opcode, x86JITScope& scope);
 ////void loadCode(int opcode, x86JITScope& scope);
@@ -220,7 +220,7 @@
 //void loadROp(int opcode, x86JITScope& scope);
 //void loadMTOp(int opcode, x86JITScope& scope);
 //void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
-//void compileNop(int opcode, x86JITScope& scope);
+void compileNop(int opcode, x86JITScope& scope);
 //void compileBreakpoint(int opcode, x86JITScope& scope);
 //void compilePop(int opcode, x86JITScope& scope);
 //void compilePopA(int opcode, x86JITScope& scope);
@@ -301,7 +301,7 @@
 //void compileNot(int opcode, x86JITScope& scope);
 //void compileInit(int opcode, x86JITScope& scope);
 //void compileMTRedirect(int op, x86JITScope& scope);
-//
-//} // _ELENA_
-//
-//#endif // x86jitcompilerH
+
+} // _ELENA_
+
+#endif // x86jitcompilerH

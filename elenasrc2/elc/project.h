@@ -109,10 +109,10 @@ protected:
 
 public:
    // project
-//   virtual int IntSetting(ProjectSetting key, int defaultValue = 0)
-//   {
-//      return _settings.get(key, defaultValue);
-//   }
+   virtual int IntSetting(ProjectSetting key, int defaultValue = 0)
+   {
+      return _settings.get(key, defaultValue);
+   }
 
    virtual ident_t StrSetting(ProjectSetting key) const
    {
@@ -133,12 +133,12 @@ public:
 //   {
 //      return _settings.getIt(opForwards);
 //   }
-//
-//   ident_t resolvePrimitive(ident_t alias) const
-//   {
-//      return _loader.resolvePrimitive(alias);
-//   }
-//
+
+   ident_t resolvePrimitive(ident_t alias) const
+   {
+      return _loader.resolvePrimitive(alias);
+   }
+
 //   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
    virtual void addSource(path_t path) = 0;
@@ -180,7 +180,7 @@ public:
 
    virtual _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode = false);
    virtual _Module* resolveModule(ident_t referenceName, ref_t& reference, bool silentMode = false);
-//   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
+   virtual _Module* resolveCore(ref_t reference, bool silentMode = false);
 
    virtual bool HasWarnings() const { return _hasWarning; }
 
@@ -218,7 +218,7 @@ public:
    virtual _Module* createModule(ident_t name);
    virtual _Module* createDebugModule(ident_t name);
 
-//   virtual void saveModule(_Module* module, ident_t extension);
+   virtual void saveModule(_Module* module, ident_t extension);
 
    virtual ident_t Namespace() const
    {

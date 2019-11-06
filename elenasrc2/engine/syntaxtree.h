@@ -18,7 +18,7 @@ enum LexicalType
 {
 //   lxSimpleMask               = 0x002000,
 //   lxCodeScopeMask            = 0x004000,
-//   lxObjectMask               = 0x008000,
+   lxObjectMask               = 0x008000,
 //   lxExprMask                 = 0x00C000,
    lxTerminalMask             = 0x002000,
 //   lxSubOpMask                = 0x100000,
@@ -36,11 +36,21 @@ enum LexicalType
    // derivation symbols
    lxToken                    = 0x001010,
    lxScope                    = 0x001020,
-   lxExpression               = 0x001030,
 
    // derivation terminals
    lxEOF                      = 0x002010, // indicating closing code bracket
    lxIdentifier               = 0x002011,
+
+   // expression nodes
+   lxExpression               = 0x009030,
+   lxNil                      = 0x008040,
+
+   // attributes
+   lxNameAttr                 = 0x20001,
+   lxSourcePath               = 0x20002,
+   lxCol                      = 0x20003,
+   lxRow                      = 0x20004,
+   lxLength                   = 0x20005,
 
 //   lxIdle                     = 0x000002,
 //   lxTemplate                 = 0x00000F,
@@ -114,7 +124,6 @@ enum LexicalType
 //   lxExtMessageConstant       = 0x00A114, // arg -reference
 //   lxSubjectConstant          = 0x00A115, // arg - reference
 //   lxStaticConstField         = 0x008116, // arg - reference
-//   lxNil                      = 0x00A117,
 //   lxCurrent                  = 0x00A118, // arg -offset
 //   lxResult                   = 0x00A119, // arg -offset
 //   lxResultField              = 0x00A11A, // arg -offset
@@ -211,12 +220,6 @@ enum LexicalType
 //   lxShortsVariable           = 0x1003D,
 //   lxParamsVariable           = 0x1003E,
 
-   // attributes
-   lxNameAttr                 = 0x20001,
-   lxSourcePath               = 0x20002,
-   lxCol                      = 0x20003,
-   lxRow                      = 0x20004,
-   lxLength                   = 0x02005,
 //   lxAttribute                = 0x20000,
 //   lxBreakpoint               = 0x20006,
 //   lxImport                   = 0x20007,
@@ -1106,7 +1109,7 @@ private:
 
 public:
 //   static void moveNodes(Writer& writer, SyntaxTree& buffer);
-//   static void copyNode(Writer& writer, LexicalType type, Node owner);
+   static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
 //   static void copyNode(Node source, Node destination);
 //   static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);

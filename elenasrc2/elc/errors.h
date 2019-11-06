@@ -35,7 +35,7 @@ namespace _ELENA_
 //   #define errDuplicatedMethod      "%s(%d:%d): error 103: Method '%s' already exists in the class\n"
 //   #define errUnknownClass          "%s(%d:%d): error 104: Class '%s' doesn't exist\n"
 //   #define errDuplicatedLocal       "%s(%d:%d): error 105: Variable '%s' already exists\n"
-//   #define errUnknownObject         "%s(%d:%d): error 106: Unknown object '%s'\n"
+   #define errUnknownObject         "%s(%d:%d): error 106: Unknown object '%s'\n"
 //   #define errInvalidOperation	   "%s(%d:%d): error 107: Invalid operation with '%s'\n"
 //   #define errDuplicatedField       "%s(%d:%d): error 109: Field '%s' already exists in the class\n"
 //   #define errUnknownVariableType   "%s(%d:%d): error 104: Type of the variable '%s' doesn't exist\n"
@@ -97,7 +97,7 @@ namespace _ELENA_
 //   #define errNoDispatcher	         "internal error 502: Default dispatch method is not declared in the base class\n"
 //   #define errClosureError          "internal error 503: closure cannot be generated"
 ////   #define errCrUnknownReference    "reference cannot be resolved"
-//   #define errCommandSetAbsent     "internal error 600: command set is not defined"
+   #define errCommandSetAbsent     "internal error 600: command set is not defined"
 //   #define errFatalLinker          "internal error 601: linker fatal error"
 
   // --- Linker error messages ---
@@ -109,7 +109,7 @@ namespace _ELENA_
    #define errDuplicatedModule      "linker: error 208: Module '%s' already exists in the project\n"
    #define errInvalidModuleVersion  "linker: error 210: Obsolete module file '%s'\n"
    #define errConstantExpectedLink  "linker: error 211: Symbol '%s' cannot be constant\n"
-//   #define errEmptyTarget           "linker: error 212: Target is not specified\n"
+   #define errEmptyTarget           "linker: error 212: Target is not specified\n"
 //   #define errInvalidTargetOption   "linker: error 213: Invalid target option '%s'\n"
 //
 ////  // --- Compiler internal error messages ---

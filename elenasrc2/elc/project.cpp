@@ -297,20 +297,20 @@ _Module* Project :: createDebugModule(ident_t name)
    return new Module(name);
 }
 
-//void Project :: saveModule(_Module* module, ident_t extension)
-//{
-//   ident_t name = module->Name();
-//   Path path;
-//   _loader.nameToPath(name, path, extension);
-//
-//   Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
-//
-//   Path::create(outputPath.c_str(), path.c_str());
-//
-//   FileWriter writer(path.c_str(), feRaw, false);
-//   if(!module->save(writer))
-//      raiseError(getLoadError(lrCannotCreate), IdentifierString(path.c_str()));
-//}
+void Project :: saveModule(_Module* module, ident_t extension)
+{
+   ident_t name = module->Name();
+   Path path;
+   _loader.nameToPath(name, path, extension);
+
+   Path outputPath(StrSetting(opProjectPath), StrSetting(opOutputPath));
+
+   Path::create(outputPath.c_str(), path.c_str());
+
+   FileWriter writer(path.c_str(), feRaw, false);
+   if(!module->save(writer))
+      raiseError(getLoadError(lrCannotCreate), IdentifierString(path.c_str()));
+}
 
 ident_t Project :: resolveForward(ident_t forward)
 {
@@ -370,20 +370,20 @@ _Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool 
    else return module;
 }
 
-//_Module* Project :: resolveCore(ref_t reference, bool silentMode)
-//{
-//   LoadResult result = lrNotFound;
-//   _Module* module = _loader.resolveCore(reference, result);
-//
-//   if (result != lrSuccessful) {
-//      if (!silentMode)
-//         raiseError(getLoadError(result), CORE_ALIAS);
-//
-//      return NULL;
-//   }
-//   else return module;
-//}
-//
+_Module* Project :: resolveCore(ref_t reference, bool silentMode)
+{
+   LoadResult result = lrNotFound;
+   _Module* module = _loader.resolveCore(reference, result);
+
+   if (result != lrSuccessful) {
+      if (!silentMode)
+         raiseError(getLoadError(result), CORE_ALIAS);
+
+      return NULL;
+   }
+   else return module;
+}
+
 //ident_t Project :: resolveExternalAlias(ident_t alias, bool& stdCall)
 //{
 //   ident_t dll = _settings.get(opWinAPI, alias, DEFAULT_STR);

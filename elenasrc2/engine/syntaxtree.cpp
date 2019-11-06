@@ -583,15 +583,15 @@ SyntaxTree::Node SyntaxTree :: readRoot()
 //      current = current.nextNode();
 //   }
 //}
-//
-//void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
-//{
-//   SyntaxTree::Node node = owner.findChild(type);
-//   if (node != lxNone) {
-//      writer.appendNode(type, node.argument);
-//   }
-//}
-//
+
+void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
+{
+   SyntaxTree::Node node = owner.findChild(type);
+   if (node != lxNone) {
+      writer.appendNode(type, node.argument);
+   }
+}
+
 //void SyntaxTree :: copyMatchedNodes(Writer& writer, LexicalType type, Node node)
 //{
 //   SyntaxTree::Node current = node.firstChild();

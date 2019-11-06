@@ -16,6 +16,23 @@ ELENA byte codes (or ecodes)
    e(xt)  - length / message  (data register) 
  
 
+
+
+ Misc operations:
+ ---------------- 
+ nop                        - idle command  
+
+ breakpoint                 - used for debugging
+
+
+
+
+
+
+
+
+
+
  Register operations:
  --------------------
  acopyb                     - base => acc
@@ -362,8 +379,6 @@ ELENA byte codes (or ecodes)
 
  Misc operations:
  ---------------- 
- breakpoint                 - used for debugging
-
  hook label                 - assign a new exception handler ; ext affected (*index and ext affected)
 
  throw                      - raise an exception (acc contains the exception object)

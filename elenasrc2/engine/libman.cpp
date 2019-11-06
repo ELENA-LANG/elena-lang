@@ -132,54 +132,54 @@ _Module* LibraryManager :: loadNative(ident_t package, LoadResult& result)
    return binary;
 }
 
-//bool LibraryManager :: loadCore(LoadResult& result)
-//{
-//   PathMap::Iterator it = _binaryPaths.start();
-//   while (!it.Eof()) {
-//      if (emptystr(it.key())) {
-//         Path path(*it);
-//
-//         FileReader reader(path.str(), feRaw, false);
-//
-//         _Module* binary = new ROModule(reader, result);
-//         if(result != lrSuccessful) {
-//            delete binary;
-//
-//            return false;
-//
-//         }
-//         else _binaries.addToTop(NULL, binary);
-//      }
-//      it++;
-//   }
-//   return true;
-//}
-//
-//_Module* LibraryManager :: resolveCore(ref_t reference, LoadResult& result)
-//{
-//   result = lrNotFound;
-//
-//   // load modules if it is first time usage
-//   if (!_binaries.exist(NULL)) {
-//      if (!loadCore(result))
-//         return NULL;
-//   }
-//
-//   ModuleMap::Iterator it = _binaries.start();
-//   while (!it.Eof()) {
-//      if (emptystr(it.key())) {
-//         _Memory* current = (*it)->mapSection(reference, true);
-//         if (current) {
-//            result = lrSuccessful;
-//            return *it;
-//         }
-//         else it++;
-//      }
-//      else break;
-//   }
-//
-//   return NULL;
-//}
+bool LibraryManager :: loadCore(LoadResult& result)
+{
+   PathMap::Iterator it = _binaryPaths.start();
+   while (!it.Eof()) {
+      if (emptystr(it.key())) {
+         Path path(*it);
+
+         FileReader reader(path.str(), feRaw, false);
+
+         _Module* binary = new ROModule(reader, result);
+         if(result != lrSuccessful) {
+            delete binary;
+
+            return false;
+
+         }
+         else _binaries.addToTop(NULL, binary);
+      }
+      it++;
+   }
+   return true;
+}
+
+_Module* LibraryManager :: resolveCore(ref_t reference, LoadResult& result)
+{
+   result = lrNotFound;
+
+   // load modules if it is first time usage
+   if (!_binaries.exist(NULL)) {
+      if (!loadCore(result))
+         return NULL;
+   }
+
+   ModuleMap::Iterator it = _binaries.start();
+   while (!it.Eof()) {
+      if (emptystr(it.key())) {
+         _Memory* current = (*it)->mapSection(reference, true);
+         if (current) {
+            result = lrSuccessful;
+            return *it;
+         }
+         else it++;
+      }
+      else break;
+   }
+
+   return NULL;
+}
 
 _Module* LibraryManager :: resolveNative(ident_t referenceName, LoadResult& result, ref_t& reference)
 {

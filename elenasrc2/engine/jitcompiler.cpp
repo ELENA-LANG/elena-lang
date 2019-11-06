@@ -1,19 +1,19 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA JIT compiler class implementation.
-////
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "jitcompiler.h"
+//		This file contains ELENA JIT compiler class implementation.
 //
-//#pragma warning(disable : 4100)
-//
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2018, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "jitcompiler.h"
+
+#pragma warning(disable : 4100)
+
+using namespace _ELENA_;
+
 //// --- ELENA Class constants ---
 //const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
 //const int elVMTCountOffset64      = 0x0018;           // a VMTX size offset
@@ -38,9 +38,9 @@
 //{
 //   compileProcedure(helper, reader, codeWriter);
 //}
-//
-//// --- JITCompiler32 ---
-//
+
+// --- JITCompiler32 ---
+
 //void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
 //{
 //   writer->seek(writer->Position() - 8);
@@ -228,17 +228,17 @@
 //
 //   return writer.Position() - 4;
 //}
-//
-//void JITCompiler32 :: allocateVariable(MemoryWriter& writer)
-//{
-//   writer.writeDWord(0);
-//}
-//
-//void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
-//{
-//   writer.writeBytes(0, count * 4);
-//}
-//
+
+void JITCompiler32 :: allocateVariable(MemoryWriter& writer)
+{
+   writer.writeDWord(0);
+}
+
+void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
+{
+   writer.writeBytes(0, count * 4);
+}
+
 //void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize)
 //{
 //   // create VMT static table

@@ -2,10 +2,9 @@
 In development:
 ------         
               dev
+                * uncomment beforeLoad, ExecutableImage, prepareCompiler, fixReferences
                 * uncomment parseMessage, resolveModule, cleanUp, initLoader, loadPrimitiveCategory
-                * nameattr should be identifier?
-                * modules should be generated on the same level, there should be possibility to provide alt path to libs
-                  through virtual namespaces
+                * nameattr should be identifier, what about reference / global - simplest way to declare sub namespaces?
                 * redesign
 
               dev1

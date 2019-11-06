@@ -19,20 +19,20 @@ namespace _ELENA_
    constexpr auto LINE_LEN                = 0x1000;         // the maximal source line length
    constexpr auto IDENTIFIER_LEN          = 0x0300;         // the maximal identifier length
 
-//  // --- ELENA Standart message constants ---
-//   constexpr int ACTION_ORDER             = 9;
-//
+  // --- ELENA Standart message constants ---
+   constexpr int ACTION_ORDER             = 9;
+
 //   constexpr auto ACTION_MASK             = 0x1C0u;
-//   constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
+   constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
 //   // indicates it is an invoke message (without target variable in the call stack)
 //   constexpr auto SPECIAL_MESSAGE         = 0x020u;
 //   constexpr auto PROPERTY_MESSAGE        = 0x040u;
 //   constexpr auto VARIADIC_MESSAGE        = 0x080u;
 //   constexpr auto STATIC_MESSAGE          = 0x100u;
-//   constexpr auto PARAM_MASK              = 0x01Fu;
-//   constexpr auto ARG_COUNT               = 0x01Fu;
-//
-////   #define PARAMX_MASK             0x000000000000FFFFu
+   constexpr auto ARG_MASK                = 0x01Fu;
+   constexpr auto ARG_COUNT               = 0x01Eu;
+
+//   #define PARAMX_MASK             0x000000000000FFFFu
 
    constexpr auto INVALID_REF             = 0xFFFFFFFFu;
 
@@ -103,9 +103,9 @@ namespace _ELENA_
 //   constexpr auto PUSHE_TAPE_MESSAGE_ID   = 0x05EE;             // push message reference
 //
 //   constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
-//
-//   constexpr auto VA_ALIGNMENT            = 0x08;
-//   constexpr auto VA_ALIGNMENT_POWER      = 0x03;
+
+   constexpr auto VA_ALIGNMENT            = 0x08;
+   constexpr auto VA_ALIGNMENT_POWER      = 0x03;
 
   // --- ELENA Reference masks ---
    enum ReferenceType : unsigned int
@@ -334,16 +334,16 @@ namespace _ELENA_
 //////   const int elDebugDPTR           = 0x000F0000;
 //   const int elEnumList            = 0x00100000;
 
-//  // --- ELENA Linker / ELENA VM constants ---
-//   constexpr int lnGCMGSize            = 0x00000001;
-//   constexpr int lnGCYGSize            = 0x00000002;
-//   constexpr int lnThreadCount         = 0x00000003;
-//   constexpr int lnObjectSize          = 0x00000004;
-//
-//   constexpr int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
-//
-////  // ELENA run-time exceptions
-////   #define ELENA_ERR_OUTOF_MEMORY  0x190
+  // --- ELENA Linker / ELENA VM constants ---
+   constexpr int lnGCMGSize            = 0x00000001;
+   constexpr int lnGCYGSize            = 0x00000002;
+   constexpr int lnThreadCount         = 0x00000003;
+   constexpr int lnObjectSize          = 0x00000004;
+
+   constexpr int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
+
+//  // ELENA run-time exceptions
+//   #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- Project warning levels
    constexpr int WARNING_LEVEL_1 = 1;
@@ -428,13 +428,13 @@ namespace _ELENA_
 //  // operator templates
 //   constexpr auto DOIFNOTNIL_OPERATOR  = "doIfNotNil#1#1";
 //   constexpr auto TRYORRETURN_OPERATOR = "tryOrReturn#1#1";
-//
-//  // --- ELENA explicit variables ---
-//   constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target
-//   constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference
+
+  // --- ELENA explicit variables ---
+   constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target
+   constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference
 //   constexpr auto SUPER_VAR            = "super";            // the predecessor class
 //   constexpr auto SUBJECT_VAR          = "__received";       // the current message
-//   constexpr auto NIL_VAR              = "nil";              // the nil pseudo symbol - representing the null value
+   constexpr auto NIL_VAR              = "nil";              // the nil pseudo symbol - representing the null value
 //   constexpr auto RETVAL_VAR           = "$$ret";            // the closure returning value
 //   constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
 //   constexpr auto PARENT_VAR           = "$$parent";         // the closure parent
@@ -443,12 +443,12 @@ namespace _ELENA_
    constexpr auto INLINE_CLASSNAME     = "$inline";          // nested class generic name
 
 //   constexpr auto VIRTUAL_FIELD        = "$virtual#";
-//
-//  // --- ELENA special sections ---
+
+  // --- ELENA special sections ---
 //   constexpr auto METAINFO_SECTION     = "#metainfo";
 //   constexpr auto ATTRIBUTE_SECTION    = "#attributes";
 //   constexpr auto EXTENSION_SECTION    = "#extensions";
-//   constexpr auto INITIALIZER_SECTION  = "#initializer";
+   constexpr auto INITIALIZER_SECTION  = "#initializer";
 //   constexpr auto PACKAGE_SECTION      = "#package";
    constexpr auto IMPORTS_SECTION      = "#import";
    constexpr auto NAMESPACES_SECTION   = "#namespaces";
@@ -461,20 +461,20 @@ namespace _ELENA_
    constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";
    constexpr auto TEMPLATE_PREFIX_NS_LEN     = 7;
 
-//   constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
-//   constexpr auto FORWARD_PREFIX_NS_LEN      = 10;
-//
-//   constexpr auto CLASSCLASS_POSTFIX         = "#class";
+   constexpr auto FORWARD_PREFIX_NS          = "$forwards'";
+   constexpr auto FORWARD_PREFIX_NS_LEN      = 10;
+
+   constexpr auto CLASSCLASS_POSTFIX         = "#class";
 //   constexpr auto GENERIC_PREFIX             = "#generic";
 //      ////   #define EMBEDDED_PREFIX          "#embedded"
 //      ////   #define TARGET_POSTFIX           "##"
 //   constexpr auto STATICFIELD_POSTFIX        = "#static";
 //   constexpr auto EMBEDDAMLE_PREFIX          = "auto#";
-//
-//  // --- ELENA Standard module references ---
-//   #define DLL_NAMESPACE            "$dlls"
-//   #define RTDLL_FORWARD            "$rt"
-//
+
+  // --- ELENA Standard module references ---
+   #define DLL_NAMESPACE            "$dlls"
+   #define RTDLL_FORWARD            "$rt"
+
 ////   #define STANDARD_MODULE_LEN      6
 //   #define INTERNAL_MASK_LEN        12
 //   #define COREAPI_MASK_LEN         5
@@ -489,17 +489,17 @@ namespace _ELENA_
 
    constexpr auto NATIVE_MODULE           = "$native";
 
-//   constexpr auto META_MODULE             = "$meta";
-//   constexpr auto MESSAGE_TABLE           = "$meta'$messages";
-//   constexpr auto MESSAGEBODY_TABLE       = "$meta'$messagebody";
-//   constexpr auto MATTRIBUTE_TABLE        = "$meta'$attributes";
-//
+   constexpr auto META_MODULE             = "$meta";
+   constexpr auto MESSAGE_TABLE           = "$meta'$messages";
+   constexpr auto MESSAGEBODY_TABLE       = "$meta'$messagebody";
+   constexpr auto MATTRIBUTE_TABLE        = "$meta'$attributes";
+
 //  // VM temporal code
 //   constexpr auto TAPE_SYMBOL             = "$tape";
-//
-//   constexpr auto GC_THREADTABLE          = "$elena'@gcthreadroot";           // thread table
-//   constexpr auto TLS_KEY                 = "$elena'@tlskey";                 // TLS key
-//   constexpr auto TAPE_KEY                = "$elena'@tapekey";                // VM Tape key
+
+   constexpr auto GC_THREADTABLE          = "$elena'@gcthreadroot";           // thread table
+   constexpr auto TLS_KEY                 = "$elena'@tlskey";                 // TLS key
+   constexpr auto TAPE_KEY                = "$elena'@tapekey";                // VM Tape key
    constexpr auto NAMESPACE_KEY           = "$elena'@rootnamespace";          // The project namespace
 
 //   // predefined system forwards
@@ -522,9 +522,9 @@ namespace _ELENA_
 //   constexpr auto TRUE_FORWARD            = "$true";
 //   constexpr auto FALSE_FORWARD           = "$false";
 //   constexpr auto WRAP_FORWARD            = "$wrap";
-//
-//   constexpr auto PROGRAM_ENTRY           = "$program";                     // the program entry
-//   constexpr auto SYSTEM_ENTRY            = "$system_entry";                // the system entry
+
+   constexpr auto PROGRAM_ENTRY           = "$program";                     // the program entry
+   constexpr auto SYSTEM_ENTRY            = "$system_entry";                // the system entry
 
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)

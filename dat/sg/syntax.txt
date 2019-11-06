@@ -3,7 +3,7 @@ __define eps            	2
 
 __define TOKEN 			4112
 __define SCOPE_DECLARATION	4128
-__define EXPRESSION		4144
+__define EXPRESSION	       36912
 
 __define eof            	8208
 __define identifier 		8209
