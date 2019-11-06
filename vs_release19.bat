@@ -31,7 +31,7 @@ move %1\dat\og\rules.dat %1\bin
 move %1\dat\og\source_rules.dat %1\bin
 
 md lib40
-%1\bin\asm2binx %1\src40\core\core_routines.esm lib40\system
+%1\bin\asm2binx %1\src40\core\system.core_routines.esm lib40
 
 %1\bin\asm2binx %1\asm\x32\core.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\corex.asm %1\bin\x32
