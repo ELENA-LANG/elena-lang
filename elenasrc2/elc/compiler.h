@@ -104,8 +104,8 @@ public:
       okUnknown = 0,
 //
 //      okObject,                       // param - class reference
-//      okSymbol,                       // param - reference
-//      okConstantSymbol,               // param - reference
+      okSymbol,                       // param - reference
+      okConstantSymbol,               // param - reference
       okClass,                        // param - reference
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
@@ -144,7 +144,7 @@ public:
 //////      okBlockLocal,                   // param - local offset
 //      okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
-//      okExtension,
+      okExtension,
 //      okClassSelf,                    // param - class reference; used in class resending expression
 //
 //      okExternal,
@@ -170,7 +170,7 @@ public:
       ObjectKind kind;
       ref_t      param;
       // target class reference
-//      ref_t      reference;
+      ref_t      reference;
 //      ref_t      element;
 //      ref_t      extraparam;
 
@@ -178,7 +178,7 @@ public:
       {
          this->kind = okUnknown;
          this->param = 0;
-//         this->reference = 0;
+         this->reference = 0;
 //         this->element = 0;
 //         this->extraparam = 0;
       }
@@ -186,7 +186,7 @@ public:
       {
          this->kind = kind;
          this->param = 0;
-//         this->reference = 0;
+         this->reference = 0;
 //         this->extraparam = 0;
 //         this->element = 0;
       }
@@ -194,18 +194,18 @@ public:
       {
          this->kind = kind;
          this->param = param;
-//         this->reference = 0;
+         this->reference = 0;
 //         this->element = 0;
 //         this->extraparam = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->reference = reference;
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->reference = reference;
 //         this->element = 0;
 //         this->extraparam = 0;
-//      }
+      }
 //      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference, ref_t element, ref_t extraparam)
 //      {
 //         this->kind = kind;
@@ -282,10 +282,10 @@ private:
 //            else return false;
 //         }
 
-         virtual ObjectInfo mapTerminal(ident_t identifier/*, bool referenceOne, EAttr mode*/)
+         virtual ObjectInfo mapTerminal(ident_t identifier/*, bool referenceOne*/, EAttr mode)
          {
             if (parent) {
-               return parent->mapTerminal(identifier/*, referenceOne, mode*/);
+               return parent->mapTerminal(identifier/*, referenceOne*/, mode);
             }
             else return ObjectInfo();
          }
@@ -315,9 +315,9 @@ private:
    // - NamespaceScope -
    struct NamespaceScope : Scope
    {
-//      // imported namespaces
+      // imported namespaces
 //      IdentifierList    importedNs;
-//      ForwardMap        forwards;       // forward declarations
+      ForwardMap        forwards;       // forward declarations
 //
 //      // symbol hints
 //      Map<ref_t, ref_t> constantHints;
@@ -370,19 +370,19 @@ private:
 ////         moduleScope->raiseWarning(level, message, sourcePath, identifier);
 ////      }
 
-      virtual ObjectInfo mapTerminal(ident_t identifier/*, bool referenceOne, EAttr mode*/);
+      virtual ObjectInfo mapTerminal(ident_t identifier/*, bool referenceOne*/, EAttr mode);
 
 //      ObjectInfo mapGlobal(ident_t identifier);
 
       virtual pos_t saveSourcePath(ByteCodeWriter& writer);
       virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
 
-//      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
+      ref_t resolveImplicitIdentifier(ident_t name/*, bool referenceOne*/, bool innermost);
 
       ref_t mapNewTerminal(SNode terminal, Visibility visibility);
 
-//      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
-//
+      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
+
 //      void loadExtensions(ident_t ns);
 //      void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
 //      {
@@ -1069,13 +1069,13 @@ private:
 //   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool embeddableClass);
 //   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, bool allowTypeAttribute, bool embeddableClass);
 ////   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
-//   void generateClassDeclaration(SNode node, ClassScope& scope, ClassType classType, bool nestedDeclarationMode = false);
+   void generateClassDeclaration(SNode node, ClassScope& scope/*, ClassType classType, bool nestedDeclarationMode = false*/);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
 
    void compileClassDeclaration(SNode node, ClassScope& scope);
    void compileClassImplementation(/*SyntaxTree& expressionTree, */SNode node, ClassScope& scope);
-//   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope, bool implicitMode);
+   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope, bool implicitMode);
 //   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope);

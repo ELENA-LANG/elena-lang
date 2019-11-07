@@ -3993,13 +3993,13 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
    }
 
    switch (type) {
-//      case lxSymbolReference:
-//         tape.write(bcCallR, argument | mskSymbolRef);
-//         break;
+      case lxSymbolReference:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         break;
 //      case lxConstantString:
 //      case lxConstantWideStr:
       case lxClassSymbol:
-//      case lxConstantSymbol:
+      case lxConstantSymbol:
 //      case lxConstantChar:
 //      case lxConstantInt:
 //      case lxConstantLong:

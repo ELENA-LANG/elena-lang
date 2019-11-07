@@ -57,12 +57,12 @@ ref_t ModuleScope :: mapAnonymous(ident_t prefix)
    return module->mapReference(name);
 }
 
-//void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, bool ignoreFields)
-//{
-//   target.header = copy.header;
+void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, bool ignoreFields)
+{
+   target.header = copy.header;
 //   target.size = copy.size;
-//
-//   if (!headerOnly) {
+
+   if (!headerOnly) {
 //      // import method references and mark them as inherited as required
 //      auto it = copy.methods.start();
 //      if (inheritMode) {
@@ -157,15 +157,15 @@ ref_t ModuleScope :: mapAnonymous(ident_t prefix)
 //            type_it++;
 //         }
 //      }
-//   }
-//   // import class class reference
-//   if (target.header.classRef != 0)
-//      target.header.classRef = importReference(exporter, target.header.classRef, module);
-//
+   }
+   // import class class reference
+   if (target.header.classRef != 0)
+      target.header.classRef = importReference(exporter, target.header.classRef, module);
+
 //   // import parent reference
 //   target.header.parentRef = importReference(exporter, target.header.parentRef, module);
-//}
-//
+}
+
 //ref_t ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
 //{
 //   _Module* argModule = NULL;
@@ -200,63 +200,63 @@ ref_t ModuleScope :: mapAnonymous(ident_t prefix)
 //   }
 //   return moduleRef;
 //}
-//
-//ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
-//{
-//   _Module* argModule = NULL;
-//
-//   if (emptystr(vmtName))
-//      return 0;
-//
-//   if (isTemplateWeakReference(vmtName)) {
-//      // COMPILER MAGIC : try to find a template
-//      ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
-//      if (ref != 0 && info.header.classRef != 0) {
-//         if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
-//            // HOTFIX : class class ref should be template weak reference as well
-//            IdentifierString classClassName(vmtName, CLASSCLASS_POSTFIX);
-//
-//            info.header.classRef = module->mapReference(classClassName);
-//         }
-//      }
-//
-//      return ref;
-//   }
-//   else {
-//      // load class meta data
-//      ref_t moduleRef = 0;
-//      if (isWeakReference(vmtName)) {
-//         // if it is a weak reference - do not need to resolve the module
-//         argModule = module;
-//         moduleRef = module->mapReference(vmtName);
-//      }
-//      else argModule = project->resolveModule(vmtName, moduleRef, true);
-//
-//      if (argModule == NULL || moduleRef == 0)
-//         return 0;
-//
-//      // load argument VMT meta data
-//      _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
-//      if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
-//         return 0;
-//
-//      MemoryReader reader(metaData);
-//
-//      if (argModule != module) {
-//         ClassInfo copy;
-//         copy.load(&reader, headerOnly);
-//
-//         importClassInfo(copy, info, argModule, headerOnly, false, false);
-//      }
-//      else info.load(&reader, headerOnly);
-//
-//      if (argModule != module) {
-//         // import reference
-//         importReference(argModule, moduleRef, module);
-//      }
-//      return moduleRef;
-//   }
-//}
+
+ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
+{
+   _Module* argModule = NULL;
+
+   if (emptystr(vmtName))
+      return 0;
+
+   if (isTemplateWeakReference(vmtName)) {
+      // COMPILER MAGIC : try to find a template
+      ref_t ref = loadClassInfo(info, resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN), headerOnly);
+      if (ref != 0 && info.header.classRef != 0) {
+         if (module->resolveReference(info.header.classRef).endsWith(CLASSCLASS_POSTFIX)) {
+            // HOTFIX : class class ref should be template weak reference as well
+            IdentifierString classClassName(vmtName, CLASSCLASS_POSTFIX);
+
+            info.header.classRef = module->mapReference(classClassName);
+         }
+      }
+
+      return ref;
+   }
+   else {
+      // load class meta data
+      ref_t moduleRef = 0;
+      if (isWeakReference(vmtName)) {
+         // if it is a weak reference - do not need to resolve the module
+         argModule = module;
+         moduleRef = module->mapReference(vmtName);
+      }
+      else argModule = project->resolveModule(vmtName, moduleRef, true);
+
+      if (argModule == NULL || moduleRef == 0)
+         return 0;
+
+      // load argument VMT meta data
+      _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
+      if (metaData == NULL || metaData->Length() == sizeof(SymbolExpressionInfo))
+         return 0;
+
+      MemoryReader reader(metaData);
+
+      if (argModule != module) {
+         ClassInfo copy;
+         copy.load(&reader, headerOnly);
+
+         importClassInfo(copy, info, argModule, headerOnly, false, false);
+      }
+      else info.load(&reader, headerOnly);
+
+      if (argModule != module) {
+         // import reference
+         importReference(argModule, moduleRef, module);
+      }
+      return moduleRef;
+   }
+}
 
 inline ident_t getPrefix(Visibility visibility)
 {

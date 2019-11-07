@@ -36,14 +36,14 @@ struct ModuleScope : _ModuleScope
 //   {
 //      return loadReferenceModule(module->resolveReference(reference), moduleReference);
 //   }
-//
-//   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, bool ignoreFields);
-//   
-//   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
-//   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
-//   {
-//      return loadClassInfo(info, module->resolveReference(reference), headerOnly);
-//   }
+
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, bool ignoreFields);
+   
+   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
+   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)
+   {
+      return loadClassInfo(info, module->resolveReference(reference), headerOnly);
+   }
 //   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName);
 //
 //   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false);
@@ -73,23 +73,23 @@ struct ModuleScope : _ModuleScope
 
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, Visibility visibility);
    //   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs);
-//
-//   virtual ident_t resolveFullName(ref_t reference)
-//   {
-//      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
-//      if (isTemplateWeakReference(referenceName)) {
-//         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
-//      }
-//      else return referenceName;
-//   }   
-//   virtual ident_t resolveFullName(ident_t referenceName)
-//   {
-//      if (isTemplateWeakReference(referenceName)) {
-//         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
-//      }
-//      else return referenceName;
-//   }
-//
+
+   virtual ident_t resolveFullName(ref_t reference)
+   {
+      ident_t referenceName = module->resolveReference(reference & ~mskAnyRef);
+      if (isTemplateWeakReference(referenceName)) {
+         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      }
+      else return referenceName;
+   }   
+   virtual ident_t resolveFullName(ident_t referenceName)
+   {
+      if (isTemplateWeakReference(referenceName)) {
+         return project->resolveForward(referenceName + TEMPLATE_PREFIX_NS_LEN);
+      }
+      else return referenceName;
+   }
+
 //   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns);
 //
 //   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode);

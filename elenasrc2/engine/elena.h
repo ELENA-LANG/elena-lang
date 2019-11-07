@@ -504,7 +504,7 @@ public:
 struct ClassHeader
 {
 //   ref_t  staticSize;      // static table size
-//   ref_t  classRef;        // class class reference
+   ref_t  classRef;        // class class reference
 //   size_t count;
    size_t flags;
 //   ref_t  parentRef;
@@ -600,15 +600,15 @@ struct ClassInfo
 //      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
-//      header.classRef = 0;
+      header.classRef = 0;
 //      size = 0;
    }
 };
 
-//// --- SymbolExpressionInfo ---
-//
-//struct SymbolExpressionInfo
-//{
+// --- SymbolExpressionInfo ---
+
+struct SymbolExpressionInfo
+{
 //   ref_t expressionClassRef;
 //   ref_t listRef;
 //   bool  constant;
@@ -626,14 +626,14 @@ struct ClassInfo
 //      constant = (reader->getDWord() != 0);
 //      expressionClassRef = reader->getDWord();
 //   }
-//
-//   SymbolExpressionInfo()
-//   {
+
+   SymbolExpressionInfo()
+   {
 //      expressionClassRef = 0;
 //      listRef = 0;
 //      constant = false;
-//   }
-//};
+   }
+};
 
 // --- DebugLineInfo ---
 

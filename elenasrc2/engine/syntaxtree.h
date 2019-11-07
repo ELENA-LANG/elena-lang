@@ -49,6 +49,8 @@ enum LexicalType
    lxExpression               = 0x009030,
    lxNil                      = 0x008040,
    lxClassSymbol              = 0x008050, // arg - reference
+   lxSymbolReference          = 0x008060,
+   lxConstantSymbol           = 0x008070, // arg - reference
 
    // attributes
    lxAttribute                = 0x20000,
@@ -111,10 +113,8 @@ enum LexicalType
 //   lxImporting                = 0x008101,
 //   lxNested                   = 0x008102, // arg - count
 //   lxStruct                   = 0x008103, // arg - count
-//   lxConstantSymbol           = 0x00A104, // arg - reference
 //   lxField                    = 0x008105, // arg - offset
 //   lxStaticField              = 0x008106, // arg - reference   // - lxClassStaticField
-//   lxSymbolReference          = 0x008107,
 //   lxLocalAddress             = 0x00A108, // arg - offset
 //   lxFieldAddress             = 0x008109, // arg - offset
 //   lxLocal                    = 0x00A10A, // arg - offset

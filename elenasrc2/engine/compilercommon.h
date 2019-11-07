@@ -126,8 +126,8 @@ enum class Visibility
    Public
 };
 
-//typedef Map<ident_t, ref_t>      ForwardMap;
-//
+typedef Map<ident_t, ref_t>      ForwardMap;
+
 //enum MethodHint
 //{
 //   tpMask        = 0x00000F,
@@ -264,8 +264,8 @@ struct _ModuleScope
    virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
 //   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
 
-//   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-//   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
+   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
 //   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
 //
 //   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
@@ -292,8 +292,8 @@ struct _ModuleScope
 
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
    //   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
-//   virtual ident_t resolveFullName(ref_t reference) = 0;
-//   virtual ident_t resolveFullName(ident_t referenceName) = 0;
+   virtual ident_t resolveFullName(ref_t reference) = 0;
+   virtual ident_t resolveFullName(ident_t referenceName) = 0;
 
    void raiseError(const char* message, ident_t sourcePath, SNode node)
    {
@@ -446,6 +446,11 @@ public:
    enum class ExpressionAttribute : uint64_t
    {
       eaNone               = 0x00000000000,
+      eaNoDebugInfo        = 0x00000000001,
+      eaNestedNs           = 0x00000000002,
+      
+      eaScopeMask          = 0x00000000002,
+
 //      eaType               = 0x00000000001,
 //      eaCast               = 0x00000000002,
 //      eaNewOp              = 0x00000000004,
@@ -479,7 +484,6 @@ public:
 //      eaDynamicObject      = 0x00020000000,
 //      eaNoUnboxing         = 0x00040000000,
 //      eaClosure            = 0x00080000000,
-      eaNoDebugInfo        = 0x00200000000,
 //      eaRootSymbol         = 0x01400000000,
 //      eaSubCodeClosure     = 0x00800000000,
 //      eaRoot               = 0x01000000000,
@@ -491,7 +495,6 @@ public:
 //      eaYieldExpr          = 0x40000000000,
 //      eaAutoSize           = 0x80000000000,
 //
-//      eaScopeMask          = 0x00100200020,
 //      eaClosureMask        = 0x01C00008000,
    };
 
@@ -510,16 +513,16 @@ public:
          return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
       }
 
-//      bool testAndExclude(ExpressionAttribute mask)
-//      {
-//         if (test(mask)) {
-//            exclude(mask);
-//
-//            return true;
-//         }
-//         else return false;
-//      }
-//
+      //bool testAndExclude(ExpressionAttribute mask)
+      //{
+      //   if (test(mask)) {
+      //      exclude(mask);
+
+      //      return true;
+      //   }
+      //   else return false;
+      //}
+
 //      bool testany(ExpressionAttribute mask)
 //      {
 //         return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0ul;
