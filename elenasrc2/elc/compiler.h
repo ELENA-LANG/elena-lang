@@ -967,11 +967,11 @@ private:
 //   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
 //   EAttr compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, EAttr mode);
 
-   void recognizeTerminal(SNode node, ObjectInfo info, ExprScope& scope);
+   void recognizeTerminal(SNode node, ObjectInfo info, ExprScope& scope, EAttr mode);
 
-   ObjectInfo mapTerminal(SNode node, ExprScope& scope);
-   ObjectInfo mapObject(SNode node, ExprScope& scope);
-   ObjectInfo mapExpression(SNode node, ExprScope& scope);
+   ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
+   ObjectInfo mapObject(SNode node, ExprScope& scope, EAttr mode);
+   ObjectInfo mapExpression(SNode node, ExprScope& scope, EAttr mode);
 
    /*ObjectInfo*/void compileExpression(/*SyntaxWriter& writer, */SNode node, ExprScope& scope/*, ref_t targetRef, EAttr mode*/);
 

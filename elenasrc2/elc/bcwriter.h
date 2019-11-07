@@ -92,6 +92,12 @@ class ByteCodeWriter
    struct FlowScope
    {
       RegScope acc;
+      bool     debugBlockStarted;
+
+      FlowScope()
+      {
+         debugBlockStarted = false;
+      }
    };
 
 //   List<ImportScope> imports;
@@ -168,9 +174,9 @@ class ByteCodeWriter
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareSelfInfo(CommandTape& tape, int level);
 //   void declareMessageInfo(CommandTape& tape, ident_t message);
-//   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
-//   void declareBlock(CommandTape& tape);
-//
+   void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
+   void declareBlock(CommandTape& tape);
+
 //   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
 //   void newStructure(CommandTape& tape, int size, ref_t reference);
 //   void newDynamicStructure(CommandTape& tape, int itemSize);
@@ -291,9 +297,9 @@ class ByteCodeWriter
 //   void doByteArrayOperation(CommandTape& tape, int operator_id);
 //   void doShortArrayOperation(CommandTape& tape, int operator_id);
 //   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
-//
-//   bool translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, bool ignoreBranching);
-//
+
+   void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope/*, bool ignoreBranching*/);
+
 //   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
 //   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 //   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal, int mode);

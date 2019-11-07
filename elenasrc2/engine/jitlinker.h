@@ -83,8 +83,8 @@ class JITLinker : _JITLoaderListener
       }
 
 //      virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL);
-//
-//      virtual void addBreakpoint(size_t position);
+
+      virtual void addBreakpoint(size_t position);
 
       virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
       virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);

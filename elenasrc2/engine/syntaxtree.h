@@ -55,6 +55,7 @@ enum LexicalType
    lxCol                      = 0x20003,
    lxRow                      = 0x20004,
    lxLength                   = 0x20005,
+   lxBreakpoint               = 0x20006,
 
 //   lxIdle                     = 0x000002,
 //   lxTemplate                 = 0x00000F,
@@ -223,7 +224,6 @@ enum LexicalType
 //   lxShortsVariable           = 0x1003D,
 //   lxParamsVariable           = 0x1003E,
 
-//   lxBreakpoint               = 0x20006,
 //   lxImport                   = 0x20007,
 //   lxReserved                 = 0x20008,
 //   lxAllocated                = 0x20009,

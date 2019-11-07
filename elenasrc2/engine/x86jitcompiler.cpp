@@ -114,7 +114,7 @@ const int gcCommandExNumber = /*6*/0;
 // command table
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileBreakpoint, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileQuit,
@@ -763,11 +763,11 @@ void _ELENA_::compileNop(int, x86JITScope& scope)
    else scope.lh.setLabel(scope.tape->Position() - 1);
 }
 
-//void _ELENA_::compileBreakpoint(int, x86JITScope& scope)
-//{
-//   if (scope.withDebugInfo)
-//      scope.helper->addBreakpoint(scope.code->Position());
-//}
+void _ELENA_::compileBreakpoint(int, x86JITScope& scope)
+{
+   if (scope.withDebugInfo)
+      scope.helper->addBreakpoint(scope.code->Position());
+}
 
 void _ELENA_::compilePush(int opcode, x86JITScope& scope)
 {

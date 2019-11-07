@@ -31,8 +31,8 @@ public:
 //
 //   //// used for 64bit programming, currently only for mskVMTXMethodAddress and mskVMTXEntryOffset
 //   //virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module = NULL) = 0;
-//
-//   virtual void addBreakpoint(size_t position) = 0;
+
+   virtual void addBreakpoint(size_t position) = 0;
 };
 
 //// --- _BinaryHelper ---

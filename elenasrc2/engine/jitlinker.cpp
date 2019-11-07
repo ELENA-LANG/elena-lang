@@ -53,21 +53,21 @@ SectionInfo JITLinker::ReferenceHelper :: getCoreSection(ref_t reference)
 //
 //   return _owner->resolveMessage(module, reference);
 //}
-//
-//void JITLinker::ReferenceHelper :: addBreakpoint(size_t position)
-//{
-//   if (!_debug)
-//      _debug = _owner->_loader->getTargetDebugSection();
-//
-//   MemoryWriter writer(_debug);
-//
-//   if (!_owner->_virtualMode) {
-//      ref_t address = (size_t)_owner->_codeBase;
-//
-//      writer.writeDWord(address + position);
-//   }
-//   else writer.writeRef((ref_t)_owner->_codeBase, position);
-//}
+
+void JITLinker::ReferenceHelper :: addBreakpoint(size_t position)
+{
+   if (!_debug)
+      _debug = _owner->_loader->getTargetDebugSection();
+
+   MemoryWriter writer(_debug);
+
+   if (!_owner->_virtualMode) {
+      ref_t address = (size_t)_owner->_codeBase;
+
+      writer.writeDWord(address + position);
+   }
+   else writer.writeRef((ref_t)_owner->_codeBase, position);
+}
 
 void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module)
 {

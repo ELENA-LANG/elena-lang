@@ -288,20 +288,20 @@ void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t s
 //   tape.write(bdMessage, 0, writer.Position());
 //   writer.writeLiteral(message);
 //}
-//
-//void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
-//{
-//   tape.write(bcBreakpoint);
-//
-//   tape.write(bdBreakpoint, stepType, row);
-//   tape.write(bdBreakcoord, disp, length);
-//}
-//
-//void ByteCodeWriter :: declareBlock(CommandTape& tape)
-//{
-//   tape.write(blBlock);
-//}
-//
+
+void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
+{
+   tape.write(bcBreakpoint);
+
+   tape.write(bdBreakpoint, stepType, row);
+   tape.write(bdBreakcoord, disp, length);
+}
+
+void ByteCodeWriter :: declareBlock(CommandTape& tape)
+{
+   tape.write(blBlock);
+}
+
 //void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
 //{
 //   // { pushn 0 } n
@@ -3815,10 +3815,24 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //
 //   return counter;
 //}
-//
-//bool ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, bool ignoreBranching)
-//{
-//   if (node != lxNone) {
+
+void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowScope& scope/*, bool ignoreBranching*/)
+{
+   SNode terminal = node.nextNode(lxTerminalMask);
+   if (terminal != lxNone) {
+      if (!scope.debugBlockStarted) {
+         declareBlock(tape);
+
+         scope.debugBlockStarted = true;
+      }
+
+      declareBreakpoint(tape,
+         terminal.findChild(lxRow).argument,
+         terminal.findChild(lxCol).argument - 1,
+         terminal.findChild(lxLength).argument, node.argument);
+   }
+
+ //  if (node != lxNone) {
 //      // try to find the terminal symbol
 //      SNode terminal = node;
 //      while (terminal != lxNone && terminal.findChild(lxRow) != lxRow) {
@@ -3840,10 +3854,6 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //      }
 //
 //      if (terminal != lxNone) {
-//         declareBreakpoint(tape,
-//            terminal.findChild(lxRow).argument,
-//            terminal.findChild(lxCol).argument - 1,
-//            terminal.findChild(lxLength).argument, node.argument);
 //      }
 //
 //      node = lxIdle; // comment breakpoint out to prevent duplicate compilation
@@ -3864,10 +3874,10 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //         }
 //      }
 //      else return true;
-//   }
-//   else return false;
-//}
-//
+  // }
+  // else return false;
+}
+
 //void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument)
 //{
 //   switch (type)
@@ -6190,6 +6200,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 
 void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
 {
+   if (node.firstChild() == lxBreakpoint) {
+      translateBreakpoint(tape, node.firstChild(), scope);
+   }
+
    switch (node.type)
    {
 //      case lxExpression:
@@ -6436,12 +6450,12 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
       switch (type)
       {
          case lxExpression:
-//            if (translateBreakpoint(tape, current.findChild(lxBreakpoint), true)) {
-//               declareBlock(tape);
-//               generateExpression(tape, current);
-//               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//            }
-            /*else */generateExpression(tape, current, scope);
+            scope.debugBlockStarted = false;
+            generateExpression(tape, current, scope);
+
+            if (scope.debugBlockStarted)
+               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+
             break;
 //         case lxReturning:
 //            generateReturnExpression(tape, current);

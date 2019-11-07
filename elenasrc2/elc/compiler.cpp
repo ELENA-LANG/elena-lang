@@ -43,7 +43,7 @@ using namespace _ELENA_;
 //constexpr auto HINT_MODULESCOPE     = EAttr::eaModuleScope;
 //constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
-//constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
+constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
 //constexpr auto HINT_PARAMETER		   = EAttr::eaParameter;
 //constexpr auto HINT_SUBCODE_CLOSURE = EAttr::eaSubCodeClosure;
 //constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
@@ -5015,7 +5015,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
 //   return retVal;
 //}
 
-void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope& scope)
+void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope& scope, EAttr mode)
 {
    // injecting an expression node
    SNode exprNode = terminal.parentNode().injectNode(lxExpression);
@@ -5195,13 +5195,15 @@ void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope&
    //
    //   writeTarget(writer, resolveObjectReference(scope, object, false), object.element);
    //
-   //   if (!EAttrs::test(mode, HINT_NODEBUGINFO))
+   if (!EAttrs::test(mode, HINT_NODEBUGINFO))
+      exprNode.insertNode(lxBreakpoint, dsStep);
+
    //      writeTerminalInfo(writer, terminal);
    //
    //   writer.closeNode();
 }
 
-ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope)
+ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 {
 //   EAttrs mode(modeAttr);
    ident_t token = terminal.identifier();
@@ -5357,12 +5359,12 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope)
          ///*else */if (object.kind == okUnknown) {
          //   scope.raiseError(errUnknownObject, terminal);
          //}
-         recognizeTerminal(terminal, object, scope);
+   recognizeTerminal(terminal, object, scope, mode);
 
    return object;
 }
 
-ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope)
+ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr mode)
 {
 //   EAttrs mode(modeAttr);
    ObjectInfo result;
@@ -5418,14 +5420,14 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope)
 //            result = ObjectInfo(okUnknown);
 //            break;
 //         default:
-            result = mapTerminal(/*writer, */node, scope/*, mode*/);
+            result = mapTerminal(/*writer, */node, scope, mode);
 //      }
 //   }
 //
    return result;
 }
 
-ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope)
+ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope, EAttr mode)
 {
    //   bool noPrimMode = EAttrs::test(modeAttrs, HINT_NOPRIMITIVES);
    //   bool inlineArgMode = false;
@@ -5439,7 +5441,7 @@ ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope)
    //
    //   EAttrs targetMode(mode, HINT_PROP_MODE | HINT_LOOP | HINT_CALL_MODE);
    //
-   objectInfo = mapObject(node.firstChild(), scope);
+   objectInfo = mapObject(node.firstChild(), scope, mode);
 
    //   // COMPILER MAGIC : compile the expression attributes
    //   if (current.compare(lxAttribute, lxTypeAttribute)) {
@@ -8735,12 +8737,10 @@ void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNo
 //
 //   writer.newNode(lxSymbol, node.argument);
 //   writer.newNode(lxExpression);
-//   writer.appendNode(lxBreakpoint, dsStep);
-//   writer.newBookmark();
+   //   writer.newBookmark();
 
    ExprScope exprScope(&scope);
-
-   /*ObjectInfo retVal = */mapExpression(expression, exprScope);
+   /*ObjectInfo retVal = */mapExpression(expression, exprScope, EAttr::eaNone);
    compileExpression(expression, exprScope);
 
 //   // HOTFIX : due to implementation (compileSymbolConstant requires constant types) typecast should be done explicitly

@@ -442,10 +442,10 @@ public:
 //         messageRef = messageAttr = 0;
 //      }
 //   };
-//
-//   enum class ExpressionAttribute : uint64_t
-//   {
-//      eaNone               = 0x00000000000,
+
+   enum class ExpressionAttribute : uint64_t
+   {
+      eaNone               = 0x00000000000,
 //      eaType               = 0x00000000001,
 //      eaCast               = 0x00000000002,
 //      eaNewOp              = 0x00000000004,
@@ -479,7 +479,7 @@ public:
 //      eaDynamicObject      = 0x00020000000,
 //      eaNoUnboxing         = 0x00040000000,
 //      eaClosure            = 0x00080000000,
-//      eaNoDebugInfo        = 0x00200000000,
+      eaNoDebugInfo        = 0x00200000000,
 //      eaRootSymbol         = 0x01400000000,
 //      eaSubCodeClosure     = 0x00800000000,
 //      eaRoot               = 0x01000000000,
@@ -493,23 +493,23 @@ public:
 //
 //      eaScopeMask          = 0x00100200020,
 //      eaClosureMask        = 0x01C00008000,
-//   };
-//
-//   struct ExpressionAttributes
-//   {
-//      ExpressionAttribute attrs;
-//
-//    //  bool isExprAttr()
-//    //  {
-//    //     return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr |
-//    //        classAttr | directAttr | lazyAttr | inlineArgAttr;
-//    //  }
-//
-//      bool test(ExpressionAttribute mask)
-//      {
-//         return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
-//      }
-//
+   };
+
+   struct ExpressionAttributes
+   {
+      ExpressionAttribute attrs;
+
+    //  bool isExprAttr()
+    //  {
+    //     return paramsAttr | refAttr | internAttr | externAttr | forwardAttr | memberAttr | subjAttr | wrapAttr | mssgAttr |
+    //        classAttr | directAttr | lazyAttr | inlineArgAttr;
+    //  }
+
+      bool test(ExpressionAttribute mask)
+      {
+         return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
+      }
+
 //      bool testAndExclude(ExpressionAttribute mask)
 //      {
 //         if (test(mask)) {
@@ -536,22 +536,22 @@ public:
 //      }
 //
 //      operator const ExpressionAttribute () const { return attrs; }
-//
-//      static bool test(ExpressionAttribute attrs, ExpressionAttribute mask)
-//      {
-//         return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
-//      }
-//
+
+      static bool test(ExpressionAttribute attrs, ExpressionAttribute mask)
+      {
+         return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
+      }
+
 //      static bool testany(ExpressionAttribute attrs, ExpressionAttribute mask)
 //      {
 //         return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0;
 //      }
-//
-//      ExpressionAttributes()
-//      {
-//         attrs = ExpressionAttribute::eaNone;
-//      }
-//
+
+      ExpressionAttributes()
+      {
+         attrs = ExpressionAttribute::eaNone;
+      }
+
 //      ExpressionAttributes(ExpressionAttribute attrs)
 //      {
 //         this->attrs = attrs;
@@ -566,8 +566,8 @@ public:
 //      {
 //         exclude(excludeMask);
 //      }
-//   };
-//
+   };
+
 //   struct ChechMethodInfo
 //   {
 //      bool  found;
@@ -694,8 +694,8 @@ public:
 //   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns) = 0;
 };
 
-//typedef _CompilerLogic::ExpressionAttributes EAttrs;
-//typedef _CompilerLogic::ExpressionAttribute EAttr;
+typedef _CompilerLogic::ExpressionAttributes EAttrs;
+typedef _CompilerLogic::ExpressionAttribute EAttr;
 
 }  // _ELENA_
 

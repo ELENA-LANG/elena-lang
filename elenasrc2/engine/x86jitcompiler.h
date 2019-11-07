@@ -79,7 +79,7 @@ protected:
 
    // commands
    friend void compileNop(int opcode, x86JITScope& scope);
-//   friend void compileBreakpoint(int opcode, x86JITScope& scope);
+   friend void compileBreakpoint(int opcode, x86JITScope& scope);
 //   //friend void compileAElse(int opcode, x86JITScope& scope);
 //   //friend void compileAThen(int opcode, x86JITScope& scope);
 //   friend void compileIfM(int opcode, x86JITScope& scope);
@@ -222,7 +222,7 @@ void loadIndexOp(int opcode, x86JITScope& scope);
 //void loadMTOp(int opcode, x86JITScope& scope);
 //void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
 void compileNop(int opcode, x86JITScope& scope);
-//void compileBreakpoint(int opcode, x86JITScope& scope);
+void compileBreakpoint(int opcode, x86JITScope& scope);
 //void compilePop(int opcode, x86JITScope& scope);
 //void compilePopA(int opcode, x86JITScope& scope);
 void compilePopN(int opcode, x86JITScope& scope);
