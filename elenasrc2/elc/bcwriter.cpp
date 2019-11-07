@@ -1905,31 +1905,31 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 
    int frameLevel = 0;
    int level = 1;
-   int stackLevel = 0;
+   //int stackLevel = 0;
    while (!it.Eof() && level > 0) {
       // calculate stack level
-      if(*it == bcAllocStack) {
-         stackLevel += (*it).argument;
-      }
-      else if (*it == bcResetStack) {
-         stackLevel = stackLevels.peek();
-      }
-      else if (ByteCodeCompiler::IsPush(*it)) {
-         stackLevel++;
-      }
-      else if (ByteCodeCompiler::IsPop(*it) || *it == bcFreeStack) {
-         stackLevel -= (/**it == bcPopI || */*it == bcFreeStack) ? (*it).argument : 1;
+      //if(*it == bcAllocStack) {
+      //   stackLevel += (*it).argument;
+      //}
+      //else if (*it == bcResetStack) {
+      //   stackLevel = stackLevels.peek();
+      //}
+      //else if (ByteCodeCompiler::IsPush(*it)) {
+      //   stackLevel++;
+      //}
+      //else if (ByteCodeCompiler::IsPop(*it) || *it == bcFreeStack) {
+      //   stackLevel -= (/**it == bcPopI || */*it == bcFreeStack) ? (*it).argument : 1;
 
-         // clear previous stack level bookmarks when they are no longer valid
-         while (stackLevels.Count() > 0 && stackLevels.peek() > stackLevel)
-            stackLevels.pop();
-      }
+      //   // clear previous stack level bookmarks when they are no longer valid
+      //   while (stackLevels.Count() > 0 && stackLevels.peek() > stackLevel)
+      //      stackLevels.pop();
+      //}
 
       // save command
       switch (*it) {
-         case bcFreeStack:
-         case bcAllocStack:
-         case bcResetStack:
+         //case bcFreeStack:
+         //case bcAllocStack:
+         //case bcResetStack:
          case bcNone:
          case bcNop:
          case blBreakLabel:
@@ -1946,16 +1946,16 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             scope.code->writeByte(bcNop);
 
             break;
-         case blDeclare:
-            if ((*it).Argument() == bsBranch) {
-               stackLevels.push(stackLevel);
-            }
-            break;
+         //case blDeclare:
+         //   if ((*it).Argument() == bsBranch) {
+         //      stackLevels.push(stackLevel);
+         //   }
+         //   break;
          case blEnd:
-            if ((*it).Argument() == bsBranch) {
+            /*if ((*it).Argument() == bsBranch) {
                stackLevels.pop();
             }
-            else level--;
+            else */level--;
             break;
          case blStatement:
             // generate debug exception only if debug info enabled
@@ -4019,7 +4019,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //////         break;
       case lxNil:
          // acopyr 0
-         tape.write(bcACopyR, argument);
+         tape.write(bcSetR, argument);
          break;
 //      case lxField:
 //         if (basePresaved)

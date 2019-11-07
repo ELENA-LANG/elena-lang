@@ -114,12 +114,12 @@ namespace _ELENA_
 //
 ////  // --- Compiler internal error messages ---
 //////   #define errReferenceOverflow     "error 301: The section reference overflow\n"
-//
-//  // --- Compiler warnings ---
+
+  // --- Compiler warnings ---
 ////   #define wrnUnresovableLink       "%s(%d:%d): warning 401: Link %s is unresolvable\n"
 //   #define wrnUnknownHint           "%s(%d:%d): warning 404: Unknown attribute '%s'\n"
-////////   #define wrnUnknownHintValue      "%s(%d:%d): warning 405: Unknown class hint value '%s'\n"
-//   #define wrnInvalidHint           "%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n"
+//////   #define wrnUnknownHintValue      "%s(%d:%d): warning 405: Unknown class hint value '%s'\n"
+   #define wrnInvalidHint           "%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n"
 //   #define wrnUnknownMessage        "%s(%d:%d): warning 407: Message '%s' does not belong to the object\n"
 //////   #define wrnObsoleteMessage       "%s(%d:%d): warning 408: Message '%s' is obsolete"
 //////   #define wrnObsoleteConstruction  "%s(%d:%d): warning 409: Construction near '%s' is obsolete"

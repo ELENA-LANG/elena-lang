@@ -214,10 +214,11 @@ typedef Compiler::ObjectInfo                 ObjectInfo;       // to simplify co
 
 // --- Compiler::NamespaceScope ---
 
-Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ident_t ns)
+Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope)
    : Scope(moduleScope)//, constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr), extensionTemplates(NULL, freestr)
 {
-   this->ns.copy(ns);
+   // by default - private visibility
+   defaultVisibility = Visibility::Private;
 
 //   // load private namespaces
 //   loadExtensions(moduleScope->module->Name(), ns, true);
@@ -308,28 +309,36 @@ ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier/*, bool re
 //   return reference;
 //}
 
-ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal, bool privateOne)
+ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal, Visibility visibility)
 {
    if (terminal == lxNameAttr) {
       // verify if the name is unique
       ident_t name = terminal.firstChild(lxTerminalMask).identifier();
 
-      terminal.setArgument(moduleScope->mapNewIdentifier(ns.c_str(), name, privateOne));
+      terminal.setArgument(moduleScope->mapNewIdentifier(ns.c_str(), name, visibility));
 
       ref_t reference = terminal.argument;
-      if (privateOne) {
-         IdentifierString altName("'", name.c_str() + getlength(PRIVATE_PREFIX_NS));
-         // if the public symbol with the same name was already declared -
-         // raise an error
-         ref_t dup = module->mapReference(altName.c_str(), true);
+      if (visibility == Visibility::Public) {
+         ref_t dup = moduleScope->resolveImplicitIdentifier(ns.c_str(), name, Visibility::Internal);
+         if (!dup)
+            dup = moduleScope->resolveImplicitIdentifier(ns.c_str(), name, Visibility::Private);
+
          if (dup)
             reference = dup;
       }
-      else {
-         IdentifierString altName(PRIVATE_PREFIX_NS, name.c_str() + 1);
-         // if the private symbol with the same name was already declared -
-         // raise an error
-         ref_t dup = module->mapReference(altName.c_str(), true);
+      else if (visibility == Visibility::Internal) {
+         ref_t dup = moduleScope->resolveImplicitIdentifier(ns.c_str(), name, Visibility::Public);
+         if (!dup)
+            dup = moduleScope->resolveImplicitIdentifier(ns.c_str(), name, Visibility::Private);
+
+         if (dup)
+            reference = dup;
+      }
+      else if (visibility == Visibility::Private) {
+         ref_t dup = moduleScope->resolveImplicitIdentifier(ns.c_str(), name, Visibility::Public);
+         if (!dup)
+            dup = moduleScope->resolveImplicitIdentifier(ns.c_str(), name, Visibility::Internal);
+
          if (dup)
             reference = dup;
       }
@@ -503,17 +512,18 @@ ref_t Compiler::NamespaceScope :: mapNewTerminal(SNode terminal, bool privateOne
 
 // --- Compiler::SourceScope ---
 
-Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference, bool privateOne)
+Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference, Visibility visibility)
    : Scope(moduleScope)
 {
    this->reference = reference;
-   this->privateOne = privateOne;
+
+   this->visibility = visibility;
 }
 
 // --- Compiler::SymbolScope ---
 
-Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, bool privateOne)
-   : SourceScope(parent, reference, privateOne)
+Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Visibility visibility)
+   : SourceScope(parent, reference, visibility)
 {
    //outputRef = 0;
    //constant = false;
@@ -1110,9 +1120,9 @@ Compiler :: Compiler(_CompilerLogic* logic)
 //   : _sourceRules(SNodePattern(lxNone))
 {
 //   _optFlag = 0;
-//
-//   this->_logic = logic;
-//
+
+   this->_logic = logic;
+
 //   ByteCodeCompiler::loadOperators(_operators);
 }
 
@@ -1699,26 +1709,26 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //
 //   return typeRef;
 //}
-//
-//void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool& publicAttribute)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         int value = current.argument;
-//         if (!_logic->validateSymbolAttribute(value, scope.constant, scope.staticOne, scope.preloaded, publicAttribute)) {
-//            current = lxIdle; // HOTFIX : to prevent duplicate warnings
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//         }
-//      }
+
+void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (!_logic->validateSymbolAttribute(value/*, scope.constant, scope.staticOne, scope.preloaded*/, scope.visibility)) {
+            current.setArgument(0); // HOTFIX : to prevent duplicate warnings
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+      }
 //      else if (current == lxTypeAttribute) {
 //         scope.outputRef = resolveTypeAttribute(scope, current, declarationMode);
 //      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+
+      current = current.nextNode();
+   }
+}
+
 //int Compiler :: resolveSize(SNode node, Scope& scope)
 //{
 //   if (node == lxInteger) {
@@ -8717,9 +8727,6 @@ void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNo
 //
 //   SyntaxWriter writer(expressionTree);
 //
-//   bool publicAttr = false;
-//   declareSymbolAttributes(node, scope, false, publicAttr);
-//
 //   bool isStatic = scope.staticOne;
 
    SNode expression = node.findChild(lxExpression);
@@ -9889,12 +9896,11 @@ void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNo
 ////   else scope.raiseError(errInvalidSyntax, current);
 ////}
 
-void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
+void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
 {
 //   SyntaxTree expressionTree; // expression tree is reused
 
    // second pass - implementation
-   SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current) {
 //         case lxInclude:
@@ -9926,7 +9932,9 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
 //         }
          case lxSymbol:
          {
-            SymbolScope symbolScope(&scope, current.argument, true);
+            SymbolScope symbolScope(&scope, current.argument, scope.defaultVisibility);
+            declareSymbolAttributes(current, symbolScope, false);
+
             compileSymbolImplementation(/*expressionTree, */current, symbolScope);
             break;
          }
@@ -9938,10 +9946,8 @@ void Compiler :: compileImplementations(SNode node, NamespaceScope& scope)
    }
 }
 
-bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool forced, bool& repeatMode)
+bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool forced, bool& repeatMode)
 {
-   SNode current = node.firstChild();
-
 //   if (scope.moduleScope->superReference == 0)
 //      scope.raiseError(errNotDefinedBaseClass);
 
@@ -9972,11 +9978,11 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool for
 //               break;
             case lxSymbol:
             {
-               bool privateOne = true;
+               SymbolScope symbolScope(&scope, scope.defaultVisibility);
+               declareSymbolAttributes(current, symbolScope, true);
 
-               current.setArgument(scope.mapNewTerminal(current.findChild(lxNameAttr), privateOne));
-
-               SymbolScope symbolScope(&scope, current.argument, privateOne);
+               symbolScope.reference = scope.mapNewTerminal(current.findChild(lxNameAttr), symbolScope.visibility);
+               current.setArgument(symbolScope.reference);
 
                scope.moduleScope->mapSection(symbolScope.reference | mskSymbolRef, false);
 
@@ -9993,13 +9999,13 @@ bool Compiler :: compileDeclarations(SNode node, NamespaceScope& scope, bool for
    return declared;
 }
 
-void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFullInfo)
+void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool withFullInfo)
 {
-   SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxSourcePath) {
          scope.sourcePath.copy(current.identifier());
       }
+      else break;
 //      else if (current == lxImport) {
 //         bool duplicateInclusion = false;
 //         if (scope.moduleScope->includeNamespace(scope.importedNs, current.identifier(), duplicateInclusion)) {
@@ -10029,16 +10035,20 @@ void Compiler :: declareNamespace(SNode node, NamespaceScope& scope, bool withFu
 
 bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope, bool forced, bool& repeatMode)
 {
-   SNode current = syntaxTree.readRoot().firstChild();
+   SNode node = syntaxTree.readRoot().firstChild();
    bool retVal = false;
-   while (current != lxNone) {
-      // declare classes several times to ignore the declaration order
-      NamespaceScope namespaceScope(&scope, current.identifier());
-      declareNamespace(current, namespaceScope, false);
+   while (node != lxNone) {
+      if (node == lxNamespace) {
+         SNode current = node.firstChild();
 
-      retVal |= compileDeclarations(current, namespaceScope, forced, repeatMode);
+         NamespaceScope namespaceScope(&scope);
+         declareNamespace(current, namespaceScope, false);
 
-      current = current.nextNode();
+         // declare classes several times to ignore the declaration order
+         retVal |= compileDeclarations(current, namespaceScope, forced, repeatMode);
+      }
+
+      node = node.nextNode();
    }
 
    return retVal;
@@ -10046,18 +10056,20 @@ bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope, bool
 
 void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting)
 {
-   SNode current = syntaxTree.readRoot().firstChild();
-   while (current != lxNone) {
-      // declare classes several times to ignore the declaration order
-      NamespaceScope namespaceScope(&scope, current.identifier()/*, true*/);
-      declareNamespace(current, namespaceScope, true);
+   SNode node = syntaxTree.readRoot().firstChild();
+   while (node != lxNone) {
+      if (node == lxNamespace) {
+         SNode current = node.firstChild();
 
-      if (!emptystr(greeting))
-         scope.project->printInfo("%s", greeting);
+         NamespaceScope namespaceScope(&scope/*, true*/);
+         declareNamespace(current, namespaceScope, true);
 
-      compileImplementations(current, namespaceScope);
+         if (!emptystr(greeting))
+            scope.project->printInfo("%s", greeting);
 
-      current = current.nextNode();
+         compileImplementations(current, namespaceScope);
+      }
+      node = node.nextNode();
    }
 }
 

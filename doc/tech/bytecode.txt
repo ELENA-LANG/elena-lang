@@ -7,26 +7,24 @@ ELENA byte codes (or ecodes)
                                negative - to the previous frame)
    s(p)   - stack pointer     (only positive)
 
-   a(cc)  - accumulator       (object register) 
+   acc    - accumulator (ebx)
 
-   b(ase) - base              (object register) 
-
-   d(ex)  - index             (data register) 
-   
-   e(xt)  - length / message  (data register) 
+   index  - data accumulator (ecx)
 
  
  Register operations:
  --------------------
- acopyr r                   - r => acc
- 
+ setr r                     - r => acc
+
+ savesi i                   - [sp:i] <= index
+
 
  Stack operations:
  -----------------
- popi n                     - sp-=i; 
+ alloci i                   - sp+=i;
+
+ freei i                    - sp-=i; 
  
- pushe                      - ext => [sp+1] ; sp++;
-	
  pushr r                    - r  => [sp+1] ; sp++
 
 
@@ -42,11 +40,11 @@ ELENA byte codes (or ecodes)
 
  Misc operations:
  ---------------- 
- nop                        - idle command  
-
  breakpoint                 - used for debugging
 
- system                     - %SYSTEM_ENV => ext 
+ loadenv                    - %SYSTEM_ENV => index 
+
+ nop                        - idle command  
 
 
 
@@ -203,6 +201,8 @@ ELENA byte codes (or ecodes)
  -----------------
  addfi i,n                  - [fp:i] <= [fp:i] + n
 
+ pushe                      - ext => [sp+1] ; sp++;
+	
  aloadfi i                  - [fp+i] => acc
 
  aloadsi i                  - [sp+i] => acc;
@@ -227,8 +227,6 @@ ELENA byte codes (or ecodes)
  dloadsi i                  - [sp:i] => index
 
  dsavefi i                  - [fp:i] <= index
-
- dsavesi i                  - [sp:i] <= index
 
  dswapsi                    - ext <=> [sp:i]
  

@@ -258,24 +258,53 @@ ref_t ModuleScope :: mapAnonymous(ident_t prefix)
 //   }
 //}
 
-inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, bool privateOne)
+inline ident_t getPrefix(Visibility visibility)
 {
-   ident_t prefix = privateOne ? PRIVATE_PREFIX_NS : "'";
+   if (visibility == Visibility::Private) {
+      return PRIVATE_PREFIX_NS;
+   }
+   else if (visibility == Visibility::Internal) {
+      return INTERNAL_PREFIX_NS;
+   }
+   else return "'";
+}
+
+inline ref_t mapNewIdentifier(_Module* module, ident_t identifier, Visibility visibility)
+{
+   ident_t prefix = getPrefix(visibility);
 
    IdentifierString name(prefix, identifier);
 
    return module->mapReference(name);
 }
 
-ref_t ModuleScope :: mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne)
+ref_t ModuleScope :: mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility)
 {
    if (!emptystr(ns)) {
       ReferenceNs nameWithNs(ns, identifier);
 
-      return ::mapNewIdentifier(module, nameWithNs.c_str(), privateOne);
-
+      return ::mapNewIdentifier(module, nameWithNs.c_str(), visibility);
    }
-   else return ::mapNewIdentifier(module, identifier, privateOne);
+   else return ::mapNewIdentifier(module, identifier, visibility);
+}
+
+inline ref_t mapExistingIdentifier(_Module* module, ident_t identifier, Visibility visibility)
+{
+   ident_t prefix = getPrefix(visibility);
+
+   IdentifierString name(prefix, identifier);
+
+   return module->mapReference(name, true);
+}
+
+ref_t ModuleScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, Visibility visibility)
+{
+   if (!emptystr(ns)) {
+      ReferenceNs nameWithNs(ns, identifier);
+
+      return ::mapExistingIdentifier(module, nameWithNs.c_str(), visibility);
+   }
+   else return ::mapExistingIdentifier(module, identifier, visibility);
 }
 
 //ref_t ModuleScope :: mapFullReference(ident_t referenceName, bool existing)
@@ -660,23 +689,23 @@ void ModuleScope :: saveListMember(ident_t name, ident_t memberName)
 //   saveListMember(IMPORTS_SECTION, extModule->Name());
 //}
 
-void ModuleScope :: declareNamespace(ident_t ns)
-{
-   IdentifierString virtualRef("'");
-   if (!emptystr(ns)) {
-      virtualRef.append(ns);
-      virtualRef.append("'");
-   }
-   virtualRef.append(NAMESPACE_REF);
-
-   module->mapReference(virtualRef.c_str(), false);
-   if (debugModule)
-      // HOTFIX : save the namespace in the debug module as well
-      debugModule->mapReference(virtualRef.c_str(), false);
-
-   if (!emptystr(ns))
-      saveListMember(NAMESPACES_SECTION, ns);
-}
+//void ModuleScope :: declareNamespace(ident_t ns)
+//{
+//   IdentifierString virtualRef("'");
+//   if (!emptystr(ns)) {
+//      virtualRef.append(ns);
+//      virtualRef.append("'");
+//   }
+//   virtualRef.append(NAMESPACE_REF);
+//
+//   module->mapReference(virtualRef.c_str(), false);
+//   if (debugModule)
+//      // HOTFIX : save the namespace in the debug module as well
+//      debugModule->mapReference(virtualRef.c_str(), false);
+//
+//   if (!emptystr(ns))
+//      saveListMember(NAMESPACES_SECTION, ns);
+//}
 
 //bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)
 //{

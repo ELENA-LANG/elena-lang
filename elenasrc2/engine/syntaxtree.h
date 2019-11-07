@@ -46,6 +46,7 @@ enum LexicalType
    lxNil                      = 0x008040,
 
    // attributes
+   lxAttribute                = 0x20000,
    lxNameAttr                 = 0x20001,
    lxSourcePath               = 0x20002,
    lxCol                      = 0x20003,
@@ -220,7 +221,6 @@ enum LexicalType
 //   lxShortsVariable           = 0x1003D,
 //   lxParamsVariable           = 0x1003E,
 
-//   lxAttribute                = 0x20000,
 //   lxBreakpoint               = 0x20006,
 //   lxImport                   = 0x20007,
 //   lxReserved                 = 0x20008,

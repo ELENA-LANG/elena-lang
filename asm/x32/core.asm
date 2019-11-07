@@ -916,7 +916,7 @@ end
 
 // ; ==== Command Set ==
 
-// ; system
+// ; loadenv
 
 inline % 2Ah
 
@@ -928,6 +928,15 @@ end
 inline % 0A5h
 
   call extern __arg1
-  mov  ebx, eax
+  mov  ecx, eax
 
 end
+
+// ; savesi
+
+inline % 0BBh
+
+  mov  [esp + __arg1], ecx
+
+end
+

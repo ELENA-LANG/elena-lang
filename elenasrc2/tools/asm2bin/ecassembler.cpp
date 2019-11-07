@@ -489,7 +489,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       switch (opcode)
       {
          //case bcCallR:
-         case bcACopyR:
+         case bcSetR:
          //case bcBCopyR:
          case bcPushR:
             compileRCommand(opcode, token, writer, binary);
@@ -516,7 +516,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcDLoadFI:
          //case bcDLoadSI:
          //case bcDSaveFI:
-         //case bcDSaveSI:
+         case bcSaveSI:
          //case bcRestore:
          //case bcReserve:
          //case bcALoadBI:
@@ -541,10 +541,11 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcNWriteI:
          //case bcPushF:
          //case bcEOrN:
-         //   compileICommand(opcode, token, writer);
-         //   break;
+            compileICommand(opcode, token, writer);
+            break;
          //case bcQuitN:
-         case bcPopI:
+         case bcFreeI:
+         case bcAllocI:
          //case bcDCopy:
          //case bcECopy:
          //case bcAndN:

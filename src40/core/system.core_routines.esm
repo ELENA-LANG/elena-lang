@@ -7,10 +7,11 @@ symbol sta_start
   pushr entry : "$forwards'$program"
   pushr api : seh_handler
   pushr api : default_handler
-  system
-  pushe
+  alloci 1
+  loadenv
+  savesi 0
   callextr extern : InitializeSTA
-  popi 4
+  freei 4
   quit
 
 end

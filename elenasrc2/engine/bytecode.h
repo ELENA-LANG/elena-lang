@@ -20,7 +20,7 @@ enum ByteCode
 //   bcPushB           = 0x02,
 //   bcPop             = 0x03,
 //   bcSNop            = 0x04,
-   bcPushE           = 0x05,
+//   bcPushE           = 0x05,
 //   bcDCopyVerb       = 0x06,
 //   bcThrow           = 0x07,
 //   bcDCopyCount      = 0x08,
@@ -59,7 +59,7 @@ enum ByteCode
 //   bcTryLock         = 0x27,
 //   bcFreeLock        = 0x28,
 //   bcRethrow         = 0x29,
-   bcSystem          = 0x2A,
+   bcLoadEnv         = 0x2A,
 //   bcSelect          = 0x2B,
 //   bcESwap           = 0x2C,
 //   bcBSwap           = 0x2D,
@@ -164,7 +164,7 @@ enum ByteCode
 //   bcBCopyF          = 0x9B,
 //   bcACopyF          = 0x9C,
 //   bcACopyS          = 0x9D,
-   bcACopyR          = 0x9E,
+   bcSetR            = 0x9E,
 //   bcCopyM           = 0x9F,
 //
 //   bcJump            = 0xA0,
@@ -195,7 +195,7 @@ enum ByteCode
 //   bcDLoadSI         = 0xB8,
 //   bcDSaveFI         = 0xB9,
 //   bcPushSI          = 0xBA,
-//   bcDSaveSI         = 0xBB,
+   bcSaveSI         = 0xBB,
 //   bcELoadSI         = 0xBC,
 //   bcPushF           = 0xBD,
 //   bcESaveSI         = 0xBE,
@@ -218,8 +218,9 @@ enum ByteCode
 //   bcALoadBI         = 0xCE,
 //   bcAXSaveBI        = 0xCF,
 
-   bcPopI            = 0xD0,
-//   bcNReadI          = 0xD1,
+   bcFreeI           = 0xD0,
+   bcAllocI          = 0xD1, 
+//   bcNReadI          = 0xD1??,
 //   bcSCopyF          = 0xD2,
 //   bcSetVerb         = 0xD3,
 //   bcShiftLN         = 0xD4,
@@ -272,14 +273,14 @@ enum ByteCode
    blBreakLabel     = 0xC004,  // meta command, breaking the optimization rules
 
    // meta commands:
-   bcAllocStack     = 0x8101,  // meta command, used to indicate that the previous command allocate number of items in the stack; used only for exec
-   bcFreeStack      = 0x8102,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
-   bcResetStack     = 0x8103,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
+   //bcAllocStack     = 0x8101,  // meta command, used to indicate that the previous command allocate number of items in the stack; used only for exec
+   //bcFreeStack      = 0x8102,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
+   //bcResetStack     = 0x8103,  // meta command, used to indicate that the previous command release number of items from stack; used only for exec
 
    bcMatch          = 0x8FFE,  // used in optimization engine
    bcNone           = 0x8FFF,  // used in optimization engine
 
-   blDeclare        = 0x8120,  // meta command, closing the structure
+   //blDeclare        = 0x8120,  // meta command, closing the structure
    blStatement      = 0x8121,  // meta command, declaring statement
    blBlock          = 0x8122,  // meta command, declaring sub code
 
@@ -329,7 +330,7 @@ enum TapeStructure
    bsSymbol      = 0x1,
    bsClass       = 0x2,
    bsMethod      = 0x3,
-   bsBranch      = 0x5,
+   //bsBranch      = 0x5,
    bsImport      = 0x6,
    bsInitializer = 0x7,
 };
@@ -444,7 +445,7 @@ public:
          //case bcCallR:
          //case bcALoadR:
          //case bcASaveR:
-         case bcACopyR:
+         case bcSetR:
          //case bcNew:
          //case bcNewN:
          //case bcBCopyR:
@@ -513,10 +514,11 @@ public:
          //case bcPushFI:
          //case bcPushN:
          case bcPushR:
+         case bcAllocI:
          //case bcPushSI:
          //case bcPushAI:
          //case bcPushF:
-         case bcPushE:
+         //case bcPushE:
          //case bcPushD:
             return true;
          default:
@@ -529,11 +531,11 @@ public:
       switch(code) {
          //case bcPop:
          //case bcPopA:
-         case bcPopI:
+         case bcFreeI:
          //case bcPopB:
          //case bcPopE:
          //case bcPopD:
-         //   return true;
+            return true;
          default:
             return false;
       }

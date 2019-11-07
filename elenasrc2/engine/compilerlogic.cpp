@@ -1877,9 +1877,9 @@ CompilerLogic :: CompilerLogic()
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, bool& publicOne)
-//{
+
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility)
+{
 //   if (attrValue == (int)V_CONST) {
 //      constant = true;
 //
@@ -1898,36 +1898,43 @@ CompilerLogic :: CompilerLogic()
 //
 //      return true;
 //   }
-//   else if (attrValue == (int)V_PUBLIC) {
-//      publicOne = true;
-//
-//      return true;
-//   }
-//   else if (attrValue == (int)V_INTERNAL) {
-//      return true;
-//   }
-//   else return false;
-//}
-//
-////////bool CompilerLogic :: validateWarningAttribute(int& attrValue)
-////////{
-////////   switch ((size_t)attrValue)
-////////   {
-////////      case V_WARNING1:
-//
-////////         attrValue = WARNING_MASK_0;
-////////         return true;
-////////      case V_WARNING2:
-////////         attrValue = WARNING_MASK_1;
-////////         return true;
-////////      case V_WARNING3:
-////////         attrValue = WARNING_MASK_2;
-////////         return true;
-////////      default:
-////////         return false;
-////////   }
-////////}
-//
+   /*else */if (attrValue == (int)V_PUBLIC) {
+      visibility = Visibility::Public;
+
+      return true;
+   }
+   else if (attrValue == (int)V_PRIVATE) {
+      visibility = Visibility::Private;
+
+      return true;
+   }
+   else if (attrValue == (int)V_INTERNAL) {
+      visibility = Visibility::Internal;
+
+      return true;
+   }
+   else return false;
+}
+
+//////bool CompilerLogic :: validateWarningAttribute(int& attrValue)
+//////{
+//////   switch ((size_t)attrValue)
+//////   {
+//////      case V_WARNING1:
+
+//////         attrValue = WARNING_MASK_0;
+//////         return true;
+//////      case V_WARNING2:
+//////         attrValue = WARNING_MASK_1;
+//////         return true;
+//////      case V_WARNING3:
+//////         attrValue = WARNING_MASK_2;
+//////         return true;
+//////      default:
+//////         return false;
+//////   }
+//////}
+
 //void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 //{
 //   // if it is a primitive field

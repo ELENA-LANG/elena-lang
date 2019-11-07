@@ -25,11 +25,11 @@ namespace _ELENA_
 //constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
 //constexpr auto V_SCRIPTSELFMODE  = 0x80006002u;
 //constexpr auto V_AUTOSIZE        = 0x80006003u;
-//
-///// visibility:
-//constexpr auto V_PUBLIC          = 0x80005001u;
-//constexpr auto V_PRIVATE         = 0x80005002u;
-//constexpr auto V_INTERNAL        = 0x80005003u;
+
+/// visibility:
+constexpr auto V_PUBLIC          = 0x80005001u;
+constexpr auto V_PRIVATE         = 0x80005002u;
+constexpr auto V_INTERNAL        = 0x80005003u;
 //constexpr auto V_META            = 0x80005004u;
 //constexpr auto V_INLINE          = 0x80005005u;
 //constexpr auto V_PROPERTY        = 0x80005006u;
@@ -118,7 +118,14 @@ namespace _ELENA_
 ////#define V_PARAMETER      (ref_t)-02
 //constexpr auto V_STRCONSTANT     = 0x80000010u; // used for explicit constant operations
 ////#define V_TAPEGROUP      (ref_t)-8209
-//
+
+enum class Visibility
+{
+   Private,
+   Internal,
+   Public
+};
+
 //typedef Map<ident_t, ref_t>      ForwardMap;
 //
 //enum MethodHint
@@ -177,8 +184,8 @@ public:
 
 //   virtual void raiseErrorIf(bool throwExecption, ident_t msg, ident_t identifier) = 0;
 
-//   virtual void raiseWarning(int level, ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
-////   virtual void raiseWarning(int level, ident_t msg, ident_t path) = 0;
+   virtual void raiseWarning(int level, ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
+//   virtual void raiseWarning(int level, ident_t msg, ident_t path) = 0;
 
    virtual _Module* createModule(ident_t name) = 0;
    virtual _Module* createDebugModule(ident_t name) = 0;
@@ -280,10 +287,11 @@ struct _ModuleScope
 //
 //   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
 
-   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne) = 0;
-//   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
-//
-//   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
+   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
+   //   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
+
+   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
+   //   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
 //   virtual ident_t resolveFullName(ref_t reference) = 0;
 //   virtual ident_t resolveFullName(ident_t referenceName) = 0;
 
@@ -300,17 +308,17 @@ struct _ModuleScope
       project->raiseError(message, sourcePath, row, col, identifier);
    }
 
-//   void raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
-//   {
-//      SNode terminal = SyntaxTree::findTerminalInfo(node);
-//
-//      int col = terminal.findChild(lxCol).argument;
-//      int row = terminal.findChild(lxRow).argument;
-//      ident_t identifier = terminal.identifier();
-//
-//      project->raiseWarning(level, message, sourcePath, row, col, identifier);
-//   }
-//
+   void raiseWarning(int level, const char* message, ident_t sourcePath, SNode node)
+   {
+      SNode terminal = SyntaxTree::findTerminalInfo(node);
+
+      int col = terminal.findChild(lxCol).argument;
+      int row = terminal.findChild(lxRow).argument;
+      ident_t identifier = terminal.identifier();
+
+      project->raiseWarning(level, message, sourcePath, row, col, identifier);
+   }
+
 //   void printMessageInfo(const char* info, ref_t message)
 //   {
 //      IdentifierString messageName;
@@ -667,7 +675,7 @@ public:
 //   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
 //   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes) = 0;
-//   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, bool& publicOne) = 0;
+   virtual bool validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility) = 0;
 //   virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
 //   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
 //

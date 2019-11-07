@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0004
+#define ELC_REVISION_NUMBER         0x0005
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -220,35 +220,35 @@ class Project : public _ELENA_::Project
       }
    }
 
-   void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
-   {
-      if (!moduleNs.compare(rootNs)) {
-         moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
-      }
-      else moduleNs = NULL;
+   //void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
+   //{
+   //   if (!moduleNs.compare(rootNs)) {
+   //      moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
+   //   }
+   //   else moduleNs = NULL;
 
-      size_t ns_index = filePath.find(PATH_SEPARATOR);
-      while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
-         if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
-            filePath += (ns_index + 1);
-            moduleNs += (ns_index + 1);
+   //   size_t ns_index = filePath.find(PATH_SEPARATOR);
+   //   while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
+   //      if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
+   //         filePath += (ns_index + 1);
+   //         moduleNs += (ns_index + 1);
 
-            ns_index = filePath.find(PATH_SEPARATOR);
-         }
-         else break;
-      }
+   //         ns_index = filePath.find(PATH_SEPARATOR);
+   //      }
+   //      else break;
+   //   }
 
-      size_t index = filePath.find(PATH_SEPARATOR);
-      while (index != NOTFOUND_POS) {
-         if (retVal.Length() != 0) {
-            retVal.append('\'');
-         }
-         retVal.append(filePath, index);
+   //   size_t index = filePath.find(PATH_SEPARATOR);
+   //   while (index != NOTFOUND_POS) {
+   //      if (retVal.Length() != 0) {
+   //         retVal.append('\'');
+   //      }
+   //      retVal.append(filePath, index);
 
-         filePath += (index + 1);
-         index = filePath.find(PATH_SEPARATOR);
-      }
-   }
+   //      filePath += (index + 1);
+   //      index = filePath.find(PATH_SEPARATOR);
+   //   }
+   //}
 
    void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)
    {
@@ -259,8 +259,8 @@ class Project : public _ELENA_::Project
       while (!file_it.Eof()) {
          _ELENA_::ident_t filePath = *file_it;
 
-         _ELENA_::IdentifierString ns;
-         retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, ns);
+         //_ELENA_::IdentifierString ns;
+         //retrieveSubNs(StrSetting(_ELENA_::opNamespace), scope.module->Name(), filePath, ns);
 
          try {
             // based on the target type generate the syntax tree for the file
@@ -273,8 +273,8 @@ class Project : public _ELENA_::Project
                raiseError(errInvalidFile, filePath);
 
             // declare a namespace
-            scope.declareNamespace(ns.c_str());
-            writer.newNode(_ELENA_::lxNamespace, ns.c_str(), false);            
+            //scope.declareNamespace(ns.c_str());
+            writer.newNode(_ELENA_::lxNamespace, false);            
             writer.newNode(_ELENA_::lxSourcePath, filePath, false);
             writer.closeNode(false);
 

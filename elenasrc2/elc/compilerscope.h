@@ -46,11 +46,9 @@ struct ModuleScope : _ModuleScope
 //   }
 //   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName);
 //
-////   //   ref_t mapIdentifier(ident_t referenceName, bool existing = false);
 //   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false);
-////   ///*virtual */ref_t mapNewTerminal(SNode terminal, bool privateOne);
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
-   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, bool privateOne);
+   virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility);
 
    virtual _Memory* mapSection(ref_t reference, bool existing)
    {
@@ -73,7 +71,8 @@ struct ModuleScope : _ModuleScope
 //   void saveIncludedModule(_Module* extModule);
    void saveListMember(ident_t sectionName, ident_t memberName);
 
-//   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs);
+   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, Visibility visibility);
+   //   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs);
 //
 //   virtual ident_t resolveFullName(ref_t reference)
 //   {
@@ -101,7 +100,7 @@ struct ModuleScope : _ModuleScope
 //
 //   virtual void saveAttribute(ident_t typeName, ref_t classReference);
 
-   virtual void declareNamespace(ident_t name);
+//   virtual void declareNamespace(ident_t name);
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);
 
    void compile(SyntaxTree& derivationTree, ident_t greeting);

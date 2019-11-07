@@ -16,29 +16,29 @@
 namespace _ELENA_
 {
 
-////struct Unresolved
-////{
-////   ident_t    fileName;
-////   ref_t      reference;
-////   _Module*   module;
-////   size_t     row;
-////   size_t     col;           // virtual column
-////
-////   Unresolved()
-////   {
-////      reference = 0;
-////   }
-////   Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
-////   {
-////      this->fileName = fileName;
-////      this->reference = reference;
-////      this->module = module;
-////      this->row = row;
-////      this->col = col;
-////   }
-////};
+//struct Unresolved
+//{
+//   ident_t    fileName;
+//   ref_t      reference;
+//   _Module*   module;
+//   size_t     row;
+//   size_t     col;           // virtual column
+//
+//   Unresolved()
+//   {
+//      reference = 0;
+//   }
+//   Unresolved(ident_t fileName, ref_t reference, _Module* module, size_t row, size_t col)
+//   {
+//      this->fileName = fileName;
+//      this->reference = reference;
+//      this->module = module;
+//      this->row = row;
+//      this->col = col;
+//   }
+//};
 
-////typedef List<Unresolved> Unresolveds;
+//typedef List<Unresolved> Unresolveds;
 
 // --- Compiler class ---
 class Compiler : public _Compiler
@@ -245,19 +245,19 @@ private:
          {
             parent->raiseError(message, terminal);
          }
-//         virtual void raiseWarning(int level, const char* message, SNode terminal)
+         virtual void raiseWarning(int level, const char* message, SNode terminal)
+         {
+            parent->raiseWarning(level, message, terminal);
+         }
+//         virtual void raiseWarning(int level, const char* message, ident_t identifier)
 //         {
-//            parent->raiseWarning(level, message, terminal);
+//            parent->raiseWarning(level, message, identifier);
 //         }
-////         virtual void raiseWarning(int level, const char* message, ident_t identifier)
-////         {
-////            parent->raiseWarning(level, message, identifier);
-////         }
-////         virtual void raiseWarning(int level, const char* message)
-////         {
-////            parent->raiseWarning(level, message);
-////         }
-//
+//         virtual void raiseWarning(int level, const char* message)
+//         {
+//            parent->raiseWarning(level, message);
+//         }
+
          virtual pos_t saveSourcePath(ByteCodeWriter& writer)
          {
             return parent->saveSourcePath(writer);
@@ -331,6 +331,8 @@ private:
 ////      // list of references to the current module which should be checked after the project is compiled
 ////      Unresolveds* forwardsUnresolved;
 
+      Visibility        defaultVisibility;
+
       IdentifierString  ns;
       IdentifierString  sourcePath;
 
@@ -355,18 +357,18 @@ private:
       {
          moduleScope->raiseError(message, sourcePath, terminal);
       }
-//      virtual void raiseWarning(int level, const char* message, SNode terminal)
-//      {
-//         moduleScope->raiseWarning(level, message, sourcePath, terminal);
-//      }
-//////      virtual void raiseWarning(int level, const char* message)
-//////      {
-//////         moduleScope->raiseWarning(level, message, sourcePath);
-//////      }
-//////      virtual void raiseWarning(int level, const char* message, ident_t identifier)
-//////      {
-//////         moduleScope->raiseWarning(level, message, sourcePath, identifier);
-//////      }
+      virtual void raiseWarning(int level, const char* message, SNode terminal)
+      {
+         moduleScope->raiseWarning(level, message, sourcePath, terminal);
+      }
+////      virtual void raiseWarning(int level, const char* message)
+////      {
+////         moduleScope->raiseWarning(level, message, sourcePath);
+////      }
+////      virtual void raiseWarning(int level, const char* message, ident_t identifier)
+////      {
+////         moduleScope->raiseWarning(level, message, sourcePath, identifier);
+////      }
 
       virtual ObjectInfo mapTerminal(ident_t identifier/*, bool referenceOne, EAttr mode*/);
 
@@ -377,7 +379,7 @@ private:
 
 //      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne);
 
-      ref_t mapNewTerminal(SNode terminal, bool privateOne);
+      ref_t mapNewTerminal(SNode terminal, Visibility visibility);
 
 //      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 //
@@ -410,16 +412,16 @@ private:
 //         return forwards.add(forward, info.param, true);
 //      }
 
-      NamespaceScope(_ModuleScope* moduleScope/*, ident_t path*/, ident_t ns/*, IdentifierList* imported*//*, bool withFullInfo*/);
+      NamespaceScope(_ModuleScope* moduleScope/*, ident_t path, IdentifierList* imported*//*, bool withFullInfo*/);
    };
 
    // - SourceScope -
    struct SourceScope : public Scope
    {
-      ref_t          reference;
-      bool           privateOne;
+      ref_t      reference;
+      Visibility visibility;
 
-      SourceScope(Scope* parent, ref_t reference, bool privateOne);
+      SourceScope(Scope* parent, ref_t reference, Visibility visibility);
    };
 
 //   // - ClassScope -
@@ -521,7 +523,11 @@ private:
 //
 //      void save();
 
-      SymbolScope(NamespaceScope* parent, ref_t reference, bool privateOne);
+      SymbolScope(NamespaceScope* parent, ref_t reference, Visibility visibility);
+      SymbolScope(NamespaceScope* parent, Visibility visibility)
+         : SymbolScope(parent, 0, visibility)
+      {
+      }
    };
 
 //   // - MethodScope -
@@ -792,8 +798,8 @@ private:
 //
 //      InlineClassScope(CodeScope* owner, ref_t reference);
 //   };
-//
-//   _CompilerLogic*  _logic;
+
+   _CompilerLogic*  _logic;
 
    ByteCodeWriter   _writer;
 
@@ -883,7 +889,7 @@ private:
 //   void validateClassFields(SNode node, ClassScope& scope);
 //
 //   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
-//   void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool& publicAttribute);
+   void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode);
 //   void declareClassAttributes(SNode node, ClassScope& scope, bool& publicAttribute);
 ////   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
 //   void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
@@ -1105,7 +1111,7 @@ private:
 //   void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
 ////   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
 
-   void declareNamespace(SNode node, NamespaceScope& scope, bool withFullInfo);
+   void declareNamespace(SNode& node, NamespaceScope& scope, bool withFullInfo);
 
 //   void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);
 //   void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);

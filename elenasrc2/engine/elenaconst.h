@@ -430,17 +430,17 @@ namespace _ELENA_
 //   constexpr auto TRYORRETURN_OPERATOR = "tryOrReturn#1#1";
 
   // --- ELENA explicit variables ---
-   constexpr auto GROUP_VAR            = "__target";         // the current method target / closure owner method target
-   constexpr auto SELF_VAR             = "self";             // the current method class reference / closure owner class reference
+   constexpr auto GROUP_VAR                  = "__target";         // the current method target / closure owner method target
+   constexpr auto SELF_VAR                   = "self";             // the current method class reference / closure owner class reference
 //   constexpr auto SUPER_VAR            = "super";            // the predecessor class
 //   constexpr auto SUBJECT_VAR          = "__received";       // the current message
-   constexpr auto NIL_VAR              = "nil";              // the nil pseudo symbol - representing the null value
+   constexpr auto NIL_VAR                    = "nil";              // the nil pseudo symbol - representing the null value
 //   constexpr auto RETVAL_VAR           = "$$ret";            // the closure returning value
 //   constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
 //   constexpr auto PARENT_VAR           = "$$parent";         // the closure parent
 //   constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
 
-   constexpr auto INLINE_CLASSNAME     = "$inline";          // nested class generic name
+   constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 
 //   constexpr auto VIRTUAL_FIELD        = "$virtual#";
 
@@ -448,14 +448,15 @@ namespace _ELENA_
 //   constexpr auto METAINFO_SECTION     = "#metainfo";
 //   constexpr auto ATTRIBUTE_SECTION    = "#attributes";
 //   constexpr auto EXTENSION_SECTION    = "#extensions";
-   constexpr auto INITIALIZER_SECTION  = "#initializer";
+   constexpr auto INITIALIZER_SECTION        = "#initializer";
 //   constexpr auto PACKAGE_SECTION      = "#package";
-   constexpr auto IMPORTS_SECTION      = "#import";
-   constexpr auto NAMESPACES_SECTION   = "#namespaces";
-   constexpr auto NAMESPACE_REF        = "#namespace";
+   constexpr auto IMPORTS_SECTION            = "#import";
+   constexpr auto NAMESPACES_SECTION         = "#namespaces";
+   constexpr auto NAMESPACE_REF              = "#namespace";
 
   // --- ELENA class prefixes / postfixes ---
    constexpr auto PRIVATE_PREFIX_NS          = "'$private'";
+   constexpr auto INTERNAL_PREFIX_NS         = "'$intern'";
 
    constexpr auto TEMPLATE_PREFIX_NS         = "'$auto'";
    constexpr auto TEMPLATE_PREFIX_NS_ENCODED = "@$auto@";

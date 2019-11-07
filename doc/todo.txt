@@ -2,11 +2,15 @@
 In development:
 ------         
               dev
+                * implicit / explicit namespaces, public / internal / private namespaces --- 
+
+                * private / internal / public : private accessible only by proper name and visible inside its own
+                  namespace, internal accessible by proper and relative name, visible inside its own module
+
                 * uncomment - resolveBytecodeSection
                 * uncomment beforeLoad, ExecutableImage, prepareCompiler, fixReferences, compileMessageArg, resolveMessage,
                   resolveMessageByIndex, printMethod
                 * uncomment parseMessage, resolveModule, cleanUp, initLoader, loadPrimitiveCategory
-                * nameattr should be identifier, what about reference / global - simplest way to declare sub namespaces?
                 * redesign
 
               dev1
