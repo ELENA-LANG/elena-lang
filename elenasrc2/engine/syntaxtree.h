@@ -39,6 +39,7 @@ enum LexicalType
    lxScope                    = 0x001020,
    lxAttributeDecl            = 0x001030,    
    lxSizeDecl                 = 0x001040,
+   lxBaseDecl                 = 0x001050,
 
    // derivation terminals
    lxEOF                      = 0x002010, // indicating closing code bracket

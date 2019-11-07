@@ -77,19 +77,19 @@ public:
 //   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length) = 0;
 //
 //   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
-//   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize) = 0;
-//
-//   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
-//
+   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength/*, size_t staticSize*/) = 0;
+
+   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
+
 //   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
 //   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
 //   virtual size_t findFlags(void* refVMT) = 0;
 //   virtual size_t findLength(void* refVMT) = 0;
 //
 //   virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count) = 0;
-//
-//   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode) = 0;
-//
+
+   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode) = 0;
+
 //   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
 
    virtual void* getPreloadedReference(ref_t reference) = 0;
@@ -130,11 +130,11 @@ public:
 //   virtual size_t findLength(void* refVMT);
 //   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
 //   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
-//
-//   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
-//   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
+
+   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength/*, size_t staticSize*/);
+   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
 //   virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
-//   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode);
+   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode);
 
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateProgramEnd(MemoryDump& tape);

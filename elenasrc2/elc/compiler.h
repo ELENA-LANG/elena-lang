@@ -1076,7 +1076,7 @@ private:
    void compileClassDeclaration(SNode node, ClassScope& scope);
    void compileClassImplementation(/*SyntaxTree& expressionTree, */SNode node, ClassScope& scope);
    void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope, bool implicitMode);
-//   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);

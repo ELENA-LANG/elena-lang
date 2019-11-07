@@ -132,11 +132,11 @@ class JITLinker : _JITLoaderListener
 
    void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
    void createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void* address, size_t& sizePtr);
-//   void createNativeClassDebugInfo(ReferenceInfo referenceInfo, void* vaddress, size_t& sizePtr);
+   void createNativeClassDebugInfo(ReferenceInfo referenceInfo, void* vaddress, size_t& sizePtr);
    void endNativeDebugInfo(size_t sizePtr);
 
-//   void* getVMTAddress(_Module* module, ref_t reference, References& references);
-//   void* getVMTReference(_Module* module, ref_t reference, References& references);
+   void* getVMTAddress(_Module* module, ref_t reference, References& references);
+   void* getVMTReference(_Module* module, ref_t reference, References& references);
 //   int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
 //   int getVMTMethodAddress(void* vaddress, int messageID);   
 //   int getVMTMethodIndex(void* vaddress, int messageID);
@@ -160,8 +160,8 @@ class JITLinker : _JITLoaderListener
 ////   void* resolveConstVariable(ident_t  reference, int mask);
    void* resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
    void* resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
-//   void* createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references);
-//   void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo);
+   void* createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references);
+   void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo);
 //   void* resolveConstant(ReferenceInfo referenceInfo, int mask);
 //   void* resolveStaticVariable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveAnonymousStaticVariable();

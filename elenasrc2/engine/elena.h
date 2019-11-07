@@ -109,15 +109,15 @@ struct SectionInfo
 struct ClassSectionInfo
 {
    _Module* module;
-   _Memory* codeSection;
+   //_Memory* codeSection;
    _Memory* vmtSection;
-   _Memory* attrSection;
+   //_Memory* attrSection;
 
    ClassSectionInfo()
    {
       module = nullptr;
-      codeSection = vmtSection = nullptr;
-      attrSection = nullptr;
+      /*codeSection = */vmtSection = nullptr;
+      //attrSection = nullptr;
    }
 };
 
@@ -140,7 +140,7 @@ public:
 
    virtual SectionInfo getSectionInfo(ReferenceInfo referenceInfo, ref_t mask, bool silentMode) = 0;
    virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
-   //virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
+   virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
 
    virtual size_t getLinkerConstant(int id) = 0;
 
@@ -483,14 +483,14 @@ public:
    }
 };
 
-//// --- VMTEntry ---
-//
-//struct VMTEntry
-//{
-//   ref_t message;
-//   pos_t address;
-//};
-//
+// --- VMTEntry ---
+
+struct VMTEntry
+{
+   ref_t message;
+   pos_t address;
+};
+
 //// --- VMTXEntry ---
 //
 //struct VMTXEntry
@@ -505,9 +505,9 @@ struct ClassHeader
 {
 //   ref_t  staticSize;      // static table size
    ref_t  classRef;        // class class reference
-//   size_t count;
+   size_t count;
    size_t flags;
-//   ref_t  parentRef;
+   ref_t  parentRef;
 };
 
 // --- ClassInfo ---

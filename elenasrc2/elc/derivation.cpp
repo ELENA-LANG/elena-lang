@@ -842,9 +842,9 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
 //
 //         recognizeScopeAttributes(current.prevNode(), mode);
 //      }
-//      else if (current == lxParent) {
-//         recognizeScopeAttributes(current.lastChild(), 0);
-//      }
+      ///*else */if (current == lxBaseDecl) {
+      //   recognizeScopeAttributes(current.lastChild(), 0);
+      //}
 
       current = current.nextNode();
    }

@@ -4,8 +4,8 @@ move dat\sg\syntax.dat bin
 bin\og dat\og\rules.txt
 move dat\og\rules.dat bin
 
-bin\og s dat\og\source_rules.txt 
-move dat\og\source_rules.dat bin
+rem bin\og s dat\og\source_rules.txt 
+rem move dat\og\source_rules.dat bin
 
 bin\asm2binx src40\core\system.core_routines.esm lib40
 @echo off 
@@ -41,35 +41,35 @@ bin\elc src40\system\system.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\elc src40\extensions\extensions.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem bin\elc src40\extensions\extensions.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-bin\elc src40\net\net.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem bin\elc src40\net\net.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-bin\elc src40\forms\forms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem bin\elc src40\forms\forms.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-bin\elc src40\sqlite\sqlite.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem bin\elc src40\sqlite\sqlite.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-bin\elc src40\cellular\cellular.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem bin\elc src40\cellular\cellular.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
-bin\elc src40\algorithms\algorithms.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+rem bin\elc src40\algorithms\algorithms.prj
+rem @echo off 
+rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
+rem @echo on
 
 rem bin\elc src40\graphics\graphics.prj
 rem bin\elc src40\xforms\xforms.prj

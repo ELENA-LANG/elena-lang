@@ -5,6 +5,7 @@ __define TOKEN 			4112
 __define SCOPE_DECLARATION	4128
 __define ATTRIBUTE_DECLARATION  4144
 __define SIZE 			4160
+__define BASE 			4176
 __define EXPRESSION	       36912
 
 __define eof            	8208
@@ -46,7 +47,7 @@ NEXT_TOKEN ->
 TOKEN ->
 	identifier
 
-REFEREMCE_TOKEN ->
+REFERENCE_TOKEN ->
 	reference
 
 GLOBAL_TOKEN ->
@@ -73,6 +74,9 @@ DYNAMIC_SIZES ->
 	
 DYNAMIC_SIZE ->
 	[]
+
+COLON ->
+	:
 
 DECLARATION_END ->
 	;

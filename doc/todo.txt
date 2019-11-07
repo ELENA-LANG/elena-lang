@@ -2,6 +2,8 @@
 In development:
 ------         
               dev
+                * inherit identifier, reference, global, template
+
                 * implicit / explicit namespaces, public / internal / private namespaces --- 
 
                 * private / internal / public : private accessible only by proper name and visible inside its own

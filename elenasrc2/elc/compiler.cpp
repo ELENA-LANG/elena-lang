@@ -567,9 +567,9 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Vi
 Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility visibility)
    : SourceScope(parent, reference, visibility)
 {
-//   info.header.parentRef =  moduleScope->superReference;
+   info.header.parentRef =  /*moduleScope->superReference*/0;
    info.header.flags = elStandartVMT;
-//   info.header.count = 0;
+   info.header.count = 0;
    info.header.classRef = 0;
 //   info.header.staticSize = 0;
 //   info.size = 0;
@@ -7549,27 +7549,27 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
    classClassScope.save();
 }
 
-//void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope)
-//{
-//   //// HOTFIX : due to current implementation the default constructor can be declared as a special method and a constructor;
-//   ////          only one is allowed
-//   //if (classScope.withImplicitConstructor && classClassScope.info.methods.exist(encodeAction(DEFAULT_MESSAGE_ID)))
-//   //   classScope.raiseError(errOneDefaultConstructor, node.findChild(lxNameAttr));
-//
-//   if (classClassScope.info.staticValues.Count() > 0)
-//      copyStaticFieldValues(node, classClassScope);
-//
-//   expressionTree.clear();
-//
-//   SyntaxWriter writer(expressionTree);
-//
-//   writer.newNode(lxClass, classClassScope.reference);
-//   compileClassVMT(writer, node, classClassScope, classScope);
-//   writer.closeNode();
-//
-//   generateClassImplementation(expressionTree.readRoot(), classClassScope);
-//}
-//
+void Compiler :: compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope)
+{
+   //// HOTFIX : due to current implementation the default constructor can be declared as a special method and a constructor;
+   ////          only one is allowed
+   //if (classScope.withImplicitConstructor && classClassScope.info.methods.exist(encodeAction(DEFAULT_MESSAGE_ID)))
+   //   classScope.raiseError(errOneDefaultConstructor, node.findChild(lxNameAttr));
+
+   //if (classClassScope.info.staticValues.Count() > 0)
+   //   copyStaticFieldValues(node, classClassScope);
+
+   expressionTree.clear();
+
+   SyntaxWriter writer(expressionTree);
+
+   writer.newNode(lxClass, classClassScope.reference);
+   //compileClassVMT(writer, node, classClassScope, classScope);
+   writer.closeNode();
+
+   generateClassImplementation(expressionTree.readRoot(), classClassScope);
+}
+
 //void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 //{
 //   methodScope.hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
@@ -9913,7 +9913,7 @@ void Compiler :: compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNo
 
 void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
 {
-//   SyntaxTree expressionTree; // expression tree is reused
+   SyntaxTree expressionTree; // expression tree is reused
 
    // second pass - implementation
    while (current != lxNone) {
@@ -9932,18 +9932,18 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
             // compile class
             ClassScope classScope(&scope, current.argument, scope.defaultVisibility);
             declareClassAttributes(current, classScope/*, false*/);
-//            scope.moduleScope->loadClassInfo(classScope.info, current.argument, false);
+            scope.moduleScope->loadClassInfo(classScope.info, current.argument, false);
 
             compileClassImplementation(/*expressionTree, */current, classScope);
 
-//            // compile class class if it available
-//            if (classScope.info.header.classRef != classScope.reference && classScope.info.header.classRef != 0) {
-//               ClassScope classClassScope(&scope, classScope.info.header.classRef);
-//               scope.moduleScope->loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
-//               classClassScope.classClassMode = true;
-//
-//               compileClassClassImplementation(expressionTree, current, classClassScope, classScope);
-//            }
+            // compile class class if it available
+            if (classScope.info.header.classRef != classScope.reference && classScope.info.header.classRef != 0) {
+               ClassScope classClassScope(&scope, classScope.info.header.classRef, classScope.visibility);
+               scope.moduleScope->loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
+               //classClassScope.classClassMode = true;
+
+               compileClassClassImplementation(expressionTree, current, classClassScope, classScope);
+            }
             break;
          }
          case lxSymbol:

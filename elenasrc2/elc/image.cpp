@@ -148,34 +148,34 @@ SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, size_t mask)
    return sectionInfo;
 }
 
-//ClassSectionInfo ExecutableImage :: getClassSectionInfo(ReferenceInfo referenceInfo, size_t codeMask, size_t vmtMask, bool silentMode)
-//{
-//   ClassSectionInfo sectionInfo;
-//
-//   ref_t referenceID = 0;
-//   if (referenceInfo.isRelative()) {
-//      if (isTemplateWeakReference(referenceInfo.referenceName)) {
-//         sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID, silentMode);
-//      }
-//      else {
-//         sectionInfo.module = referenceInfo.module;
-//         referenceID = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
-//      }
-//   }
-//   else sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID, silentMode);
-//
-//   if (sectionInfo.module == NULL || referenceID == 0) {
-//      if (!silentMode)
-//         throw JITUnresolvedException(referenceInfo);
-//   }
-//   else {
-//      sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
-//      sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
-//      sectionInfo.attrSection = sectionInfo.module->mapSection(referenceID | mskAttributeRef, true);
-//   }
-//
-//   return sectionInfo;
-//}
+ClassSectionInfo ExecutableImage :: getClassSectionInfo(ReferenceInfo referenceInfo, size_t codeMask, size_t vmtMask, bool silentMode)
+{
+   ClassSectionInfo sectionInfo;
+
+   ref_t referenceID = 0;
+   if (referenceInfo.isRelative()) {
+      if (isTemplateWeakReference(referenceInfo.referenceName)) {
+         sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID, silentMode);
+      }
+      else {
+         sectionInfo.module = referenceInfo.module;
+         referenceID = referenceInfo.module->mapReference(referenceInfo.referenceName, true);
+      }
+   }
+   else sectionInfo.module = _project->resolveModule(referenceInfo.referenceName, referenceID, silentMode);
+
+   if (sectionInfo.module == NULL || referenceID == 0) {
+      if (!silentMode)
+         throw JITUnresolvedException(referenceInfo);
+   }
+   else {
+      //sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
+      sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
+      //sectionInfo.attrSection = sectionInfo.module->mapSection(referenceID | mskAttributeRef, true);
+   }
+
+   return sectionInfo;
+}
 
 size_t ExecutableImage :: getLinkerConstant(int id)
 {

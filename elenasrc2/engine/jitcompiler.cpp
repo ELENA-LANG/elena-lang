@@ -14,10 +14,10 @@
 
 using namespace _ELENA_;
 
-//// --- ELENA Class constants ---
-//const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
-//const int elVMTCountOffset64      = 0x0018;           // a VMTX size offset
-//
+// --- ELENA Class constants ---
+const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
+const int elVMTCountOffset64      = 0x0018;           // a VMTX size offset
+
 //inline void insertVMTEntry(VMTEntry* entries, int count, int index)
 //{
 //   for (int i = count ; i > index ; i--) {
@@ -239,58 +239,58 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
    writer.writeBytes(0, count * 4);
 }
 
-//void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize)
-//{
-//   // create VMT static table
-//   vmtWriter.writeBytes(0, staticSize << 2);
-//
-//   alignCode(&vmtWriter, VA_ALIGNMENT, false);
-//
-//   // create VMT header:
-//   //   dummy parent reference
-//   vmtWriter.writeDWord(0);
-//
-//   //   vmt length
-//   vmtWriter.writeDWord(vmtLength);
-//
-//   //   vmt flags
-//   vmtWriter.writeDWord(flags);
-//
-//   //   dummy class reference
-//   vmtWriter.writeDWord(0);
-//
-//   int position = vmtWriter.Position();
-//
-//   size_t vmtSize = 0;
-//   if (test(flags, elStandartVMT)) {
-//      // + VMT length
-//      vmtSize = vmtLength * sizeof(VMTEntry);
-//   }
-//
-//   vmtWriter.writeBytes(0, vmtSize);
-//
-//   vmtWriter.seek(position);
-//}
-//
-//int JITCompiler32 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
-//{
-//   if (parentVMT != NULL) {
-//      // get the parent vmt size
-//      int count = *(int*)((int)parentVMT - elVMTCountOffset32);
-//
-//      // get the parent entry array
-//      VMTEntry* parentEntries = (VMTEntry*)parentVMT;
-//
-//      // copy parent VMT
-//      for(int i = 0 ; i < count ; i++) {
-//         entries[i] = parentEntries[i];
-//      }
-//
-//      return count;
-//   }
-//   else return 0;
-//}
-//
+void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength/*, size_t staticSize*/)
+{
+   //// create VMT static table
+   //vmtWriter.writeBytes(0, staticSize << 2);
+
+   alignCode(&vmtWriter, VA_ALIGNMENT, false);
+
+   // create VMT header:
+   //   dummy parent reference
+   vmtWriter.writeDWord(0);
+
+   //   vmt length
+   vmtWriter.writeDWord(vmtLength);
+
+   //   vmt flags
+   vmtWriter.writeDWord(flags);
+
+   //   dummy class reference
+   vmtWriter.writeDWord(0);
+
+   int position = vmtWriter.Position();
+
+   size_t vmtSize = 0;
+   if (test(flags, elStandartVMT)) {
+      // + VMT length
+      vmtSize = vmtLength * sizeof(VMTEntry);
+   }
+
+   vmtWriter.writeBytes(0, vmtSize);
+
+   vmtWriter.seek(position);
+}
+
+int JITCompiler32 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
+{
+   if (parentVMT != NULL) {
+      // get the parent vmt size
+      int count = *(int*)((int)parentVMT - elVMTCountOffset32);
+
+      // get the parent entry array
+      VMTEntry* parentEntries = (VMTEntry*)parentVMT;
+
+      // copy parent VMT
+      for(int i = 0 ; i < count ; i++) {
+         entries[i] = parentEntries[i];
+      }
+
+      return count;
+   }
+   else return 0;
+}
+
 //void JITCompiler32 :: addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& entryCount)
 //{
 //   size_t index = 0;
@@ -310,44 +310,44 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
 //   entries[index].message = message;
 //   entries[index].address = codePosition;
 //}
-//
-//void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode)
-//{
-//   _Memory* image = vmtWriter.Memory();   
-//
-//   // update class package reference if available
-//   if (packageParentVAddress != NULL) {
-//      int position = vmtWriter.Position();
-//      vmtWriter.seek(position - 0x10);
-//
-//      if (virtualMode) {
-//         vmtWriter.writeRef((ref_t)packageParentVAddress, 0);
-//      }
-//      else vmtWriter.writeDWord((int)packageParentVAddress);
-//
-//      vmtWriter.seek(position);
-//   }
-//
-//   // update class vmt reference if available
-//   if (classClassVAddress != NULL) {
-//      vmtWriter.seek(vmtWriter.Position() - 4);
-//
-//      if (virtualMode) {                                  
-//         vmtWriter.writeRef((ref_t)classClassVAddress, 0);
-//      }
-//      else vmtWriter.writeDWord((int)classClassVAddress);
-//   }
-//
-//   // if in virtual mode mark method addresses as reference
-//   if (virtualMode) {
-//      ref_t entryPosition = vmtWriter.Position();
-//      for (int i = 0 ; i < count ; i++) {
-//         image->addReference(mskCodeRef, entryPosition + 4);
-//      
-//         entryPosition += 8;
-//      }
-//   }
-//}
+
+void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode)
+{
+   _Memory* image = vmtWriter.Memory();   
+
+   // update class package reference if available
+   if (packageParentVAddress != NULL) {
+      int position = vmtWriter.Position();
+      vmtWriter.seek(position - 0x10);
+
+      if (virtualMode) {
+         vmtWriter.writeRef((ref_t)packageParentVAddress, 0);
+      }
+      else vmtWriter.writeDWord((int)packageParentVAddress);
+
+      vmtWriter.seek(position);
+   }
+
+   // update class vmt reference if available
+   if (classClassVAddress != NULL) {
+      vmtWriter.seek(vmtWriter.Position() - 4);
+
+      if (virtualMode) {                                  
+         vmtWriter.writeRef((ref_t)classClassVAddress, 0);
+      }
+      else vmtWriter.writeDWord((int)classClassVAddress);
+   }
+
+   // if in virtual mode mark method addresses as reference
+   if (virtualMode) {
+      ref_t entryPosition = vmtWriter.Position();
+      for (int i = 0 ; i < count ; i++) {
+         image->addReference(mskCodeRef, entryPosition + 4);
+      
+         entryPosition += 8;
+      }
+   }
+}
    
 void JITCompiler32 :: generateProgramStart(MemoryDump& tape)
 {
