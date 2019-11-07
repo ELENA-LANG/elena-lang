@@ -498,20 +498,20 @@ public:
 //   ref64_t message;
 //   ref64_t address;
 //};
-//
-//// --- ClassHeader ---
-//
-//struct ClassHeader
-//{
+
+// --- ClassHeader ---
+
+struct ClassHeader
+{
 //   ref_t  staticSize;      // static table size
 //   ref_t  classRef;        // class class reference
 //   size_t count;
-//   size_t flags;
+   size_t flags;
 //   ref_t  parentRef;
-//};
-//
-//// --- ClassInfo ---
-//
+};
+
+// --- ClassInfo ---
+
 //enum MethodAttribute
 //{
 //   maActionMask         = 0x100,
@@ -541,9 +541,9 @@ public:
 //   caSymbolSerializable = 0x003,
 //   caInfo               = 0x004
 //};
-//
-//struct ClassInfo
-//{
+
+struct ClassInfo
+{
 //   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
 //   typedef Pair<ref_t, int>                    Attribute;
 //   typedef MemoryMap<ref_t, bool, false>       MethodMap;
@@ -552,8 +552,8 @@ public:
 //   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
 //   typedef MemoryMap<Attribute, ref_t, false>  CategoryInfoMap;
 //   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
-//
-//   ClassHeader     header;
+
+   ClassHeader     header;
 //   int             size;           // Object size
 //   MethodMap       methods;        // list of methods, true means the method was declared in this instance
 //   FieldMap        fields;
@@ -563,10 +563,10 @@ public:
 //   FieldTypeMap    fieldTypes;
 //   CategoryInfoMap methodHints;
 //   CategoryInfoMap mattributes;   
-//
-//   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
-//   {
-//      writer->write((void*)this, sizeof(ClassHeader));
+
+   void save(StreamWriter* writer, bool headerAndSizeOnly = false)
+   {
+      writer->write((void*)this, sizeof(ClassHeader));
 //      writer->writeDWord(size);
 //      if (!headerAndSizeOnly) {
 //         mattributes.write(writer);
@@ -577,11 +577,11 @@ public:
 //         fields.write(writer);
 //         fieldTypes.write(writer);
 //      }
-//   }
-//
-//   void load(StreamReader* reader, bool headerOnly = false, bool ignoreFields = false)
-//   {
-//      reader->read((void*)&header, sizeof(ClassHeader));
+   }
+
+   void load(StreamReader* reader, bool headerOnly = false, bool ignoreFields = false)
+   {
+      reader->read((void*)&header, sizeof(ClassHeader));
 //      size = reader->getDWord();
 //      if (!headerOnly) {
 //         mattributes.read(reader);
@@ -594,17 +594,17 @@ public:
 //            fieldTypes.read(reader);
 //         }
 //      }
-//   }
-//
-//   ClassInfo()
+   }
+
+   ClassInfo()
 //      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
-//   {
-//      header.flags = 0;
+   {
+      header.flags = 0;
 //      header.classRef = 0;
 //      size = 0;
-//   }
-//};
-//
+   }
+};
+
 //// --- SymbolExpressionInfo ---
 //
 //struct SymbolExpressionInfo

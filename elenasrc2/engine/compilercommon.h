@@ -668,9 +668,9 @@ public:
 //
 //   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,
 //      bool& disptacherNotAllowed, bool& emptyStructure) = 0;
-//
-//   // attribute validations
-//   virtual bool validateClassAttribute(int& attrValue, bool& publicOne) = 0;
+
+   // attribute validations
+   virtual bool validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
 //   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
 //   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;

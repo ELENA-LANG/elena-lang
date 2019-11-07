@@ -127,19 +127,19 @@ class ByteCodeWriter
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
 //   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
-//   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
+   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
    void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
    void writeProcedureDebugInfo(Scope& scope, ref_t sourceRef);
    void writeCodeDebugInfo(Scope& scope, ref_t sourceRef);
    void writeDebugInfoStopper(MemoryWriter* debug);
 
    void writeProcedure(ByteCodeIterator& it, Scope& scope);
-//   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
+   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
    void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode);
-//   void writeClass(ref_t reference, ByteCodeIterator& it, _ModuleScope& scope);
-//
+   void writeClass(ref_t reference, ByteCodeIterator& it, _ModuleScope& scope);
+
 //   void declareInitializer(CommandTape& tape, ref_t reference);
-//   void declareClass(CommandTape& tape, ref_t reference);
+   void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
 //   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
@@ -256,7 +256,7 @@ class ByteCodeWriter
 //   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
 //   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
 //   void endIdleMethod(CommandTape& tape);
-//   void endClass(CommandTape& tape);
+   void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
 //   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
@@ -370,7 +370,7 @@ public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
 //   int writeString(ident_t path);
 
-//   void generateClass(CommandTape& tape, SNode root, pos_t sourcePathBookmark);
+   void generateClass(CommandTape& tape, SNode root, pos_t sourcePathBookmark);
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root/*, bool isStatic*/, pos_t sourcePathBookmark);

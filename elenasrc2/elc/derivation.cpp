@@ -527,11 +527,11 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 //   else if (bodyNode.compare(lxSizeDecl, lxFieldInit)) {
 //      _scope->raiseError(errInvalidSyntax, _filePath, bodyNode);
 //   }
-//   else {
-//      scopeNode = lxClass;
-//
-//      recognizeClassMebers(scopeNode);
-//   }
+   else {
+      scopeNode = lxClass;
+
+      recognizeClassMebers(scopeNode);
+   }
 }
 
 void DerivationWriter :: recognizeScope()
@@ -808,11 +808,11 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 //   }
 //
 //}
-//
-//void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& scope*/)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
+
+void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& scope*/)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
 //      if (current == lxScope) {
 //         SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning, lxExpression, lxResendExpression);
 //
@@ -845,11 +845,11 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 //      else if (current == lxParent) {
 //         recognizeScopeAttributes(current.lastChild(), 0);
 //      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+
+      current = current.nextNode();
+   }
+}
+
 ////void DerivationWriter :: generateMetaTree(SyntaxWriter& writer, SNode node, Scope& scope)
 ////{
 ////   writer.newNode(lxMeta);
@@ -884,9 +884,9 @@ void DerivationWriter :: generateScope(SyntaxWriter& writer, SNode node, Scope& 
 ////            }            
             break;
          }
-//         case lxClass:
-//            generateClassTree(writer, current, scope);
-//            break;
+         case lxClass:
+            generateClassTree(writer, current, scope);
+            break;
 //         case lxForward:
 //            declareType(current);
 //            break;
@@ -919,16 +919,16 @@ void DerivationWriter :: generateSymbolTree(SyntaxWriter& writer, SNode node, Sc
    writer.closeNode();
 }
 
-//void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested)
-//{
-//   SyntaxTree buffer((pos_t)0);
-//
+void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool nested*/)
+{
+   SyntaxTree buffer((pos_t)0);
+
 //   bool closureMode = false;
 //   if (!nested) {
-//      writer.newNode(lxClass);
+      writer.newNode(lxClass);
 //      //writer.appendNode(lxSourcePath, scope.sourcePath);
-//
-//      generateAttributes(writer, node.prevNode(), derivationScope, buffer);
+
+      generateAttributes(writer, node.prevNode(), derivationScope, buffer);
 //      if (node.argument == MODE_CLOSURE) {
 //         // if it is a single method singleton
 //         writer.appendNode(lxAttribute, V_SINGLETON);
@@ -936,8 +936,8 @@ void DerivationWriter :: generateSymbolTree(SyntaxWriter& writer, SNode node, Sc
 //         closureMode = true;
 //      }
 //   }
-//
-//   SNode current = node.firstChild();
+
+   SNode current = node.firstChild();
 //   if (closureMode) {
 //      // HOTFIX : recognize method parameters
 //      recognizeMethodMebers(node);
@@ -946,7 +946,7 @@ void DerivationWriter :: generateSymbolTree(SyntaxWriter& writer, SNode node, Sc
 //   }
 //   else {
 //      bool firstParent = true;
-//      while (current != lxNone) {
+      while (current != lxNone) {
 //         if (current == lxParent) {
 //            SNode baseNameNode = current.findChild(lxNameAttr);
 //            if (firstParent) {
@@ -985,48 +985,20 @@ void DerivationWriter :: generateSymbolTree(SyntaxWriter& writer, SNode node, Sc
 //         ////      }
 //         //      else scope.raiseError(errInvalidSyntax, node);
 //
-//         current = current.nextNode();
-//      }
-//
-//      if (!buffer.isEmpty()) {
-//         SyntaxTree::copyNode(writer, buffer.readRoot());
-//      //   current = derivationScope.buffer.readRoot().findChild(lxFieldInit);
-//      //   writer.newNode(lxClassMethod);
-//
-//      //   if (derivationScope.templateMode != stNormal) {
-//      //      // HOTFIX : save the template source path
-//      //      IdentifierString fullPath(_scope->module->Name());
-//      //      fullPath.append('\'');
-//      //      fullPath.append(_filePath);
-//
-//      //      writer.appendNode(lxSourcePath, fullPath.c_str());
-//      //      //writer.appendNode(lxTemplate, scope.templateRef);
-//      //   }
-//
-//      //   writer.appendNode(lxAttribute, V_INITIALIZER);
-//      //   writer.newNode(lxNameAttr);
-//      //   writer.appendNode(lxIdentifier, INIT_MESSAGE);
-//      //   writer.closeNode();
-//      //   writer.newNode(lxCode);
-//      //   while (current != lxNone) {
-//      //      if (current == lxFieldInit) {
-//      //         writer.newNode(lxExpression);
-//      //         SyntaxTree::copyNode(writer, current);
-//      //         writer.closeNode();
-//      //      }
-//      //      current = current.nextNode();
-//      //   }
-//      //   writer.closeNode();
-//      //   writer.closeNode();
-//      }
-//   }
-//
+         current = current.nextNode();
+      }
+
+      if (!buffer.isEmpty()) {
+         SyntaxTree::copyNode(writer, buffer.readRoot());
+      }
+   //}
+
 //   if (nested)
 //      writer.inject(lxNestedClass);
-//
-//   writer.closeNode();
-//}
-//
+
+   writer.closeNode();
+}
+
 //void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode current, Scope& derivationScope)
 //{
 //   ref_t attributeCategory = 0u;

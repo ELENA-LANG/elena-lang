@@ -143,7 +143,7 @@ class DerivationWriter : public _DerivationWriter
    void recognizeScope();
    void recognizeDefinition(SNode scopeNode);
    void recognizeScopeAttributes(SNode node, int mode);
-//   void recognizeClassMebers(SNode node);
+   void recognizeClassMebers(SNode node);
 //   void recognizeMethodMebers(SNode node);
 
    bool recognizeMetaScope(SNode node);
@@ -160,7 +160,7 @@ class DerivationWriter : public _DerivationWriter
 //   void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-//   void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
+   void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool nested = false*/);
 //   void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode, SyntaxTree& buffer);
 //   // returns true if in-place init found
 //   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);

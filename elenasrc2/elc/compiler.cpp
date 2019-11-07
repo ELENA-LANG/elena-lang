@@ -546,14 +546,14 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Vi
 //   MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
 //   info.save(&metaWriter);
 //}
-//
-//// --- Compiler::ClassScope ---
-//
-//Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference)
-//   : SourceScope(parent, reference)
-//{
+
+// --- Compiler::ClassScope ---
+
+Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility visibility)
+   : SourceScope(parent, reference, visibility)
+{
 //   info.header.parentRef =  moduleScope->superReference;
-//   info.header.flags = elStandartVMT;
+   info.header.flags = elStandartVMT;
 //   info.header.count = 0;
 //   info.header.classRef = 0;
 //   info.header.staticSize = 0;
@@ -565,8 +565,8 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Vi
 //   abstractMode = false;
 //   abstractBaseMode = false;
 //   withInitializers = false;
-//}
-//
+}
+
 //void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
 //{
 //   // import static fields
@@ -1650,20 +1650,20 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   }
 //   else compileParentDeclaration(node, scope, parentRef);
 //}
-//
-//void Compiler :: declareClassAttributes(SNode node, ClassScope& scope, bool& publicAttribute)
-//{
+
+void Compiler :: declareClassAttributes(SNode node, ClassScope& scope/*, bool& publicAttribute*/)
+{
 //   int flags = scope.info.header.flags;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxAttribute) {
-//         int value = current.argument;
-//         if (!_logic->validateClassAttribute(value, publicAttribute)) {
-//            current = lxIdle;
-//
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//         }
-//         else {
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (!_logic->validateClassAttribute(value, scope.visibility)) {
+            current.setArgument(0); // HOTFIX : to prevent duplicate warnings
+
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+         else {
 //            current.set(lxClassFlag, value);
 //            if (value != 0 && test(flags, value)) {
 //               scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateAttribute, current);
@@ -1672,15 +1672,15 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //               scope.abstractMode = true;
 //
 //            flags |= value;
-//         }
-//      }
+         }
+      }
 //      else if (current == lxTypeAttribute) {
 //         scope.raiseError(errInvalidSyntax, current);
 //      }
-//      current = current.nextNode();
-//   }
-//}
-//
+      current = current.nextNode();
+   }
+}
+
 //void Compiler :: validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared)
 //{
 //   if (!typeRef)
@@ -5028,9 +5028,9 @@ void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope&
 ////         scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
 //         writer.newNode(lxSymbolReference, object.param);
 //         break;
-//      case okClass:
-//         writer.newNode(lxClassSymbol, object.param);
-//         break;
+      case okClass:
+         exprNode.set(lxClassSymbol, object.param);
+         break;
 //      case okExtension:
 //         scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
 //      case okConstantSymbol:
@@ -7432,25 +7432,25 @@ ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope, EAttr mode)
 //      current = current.nextNode();
 //   }
 //}
-//
-//void Compiler :: compileSymbolCode(ClassScope& scope)
-//{
-//   CommandTape tape;
-//
-//   bool publicAttr = scope.info.mattributes.exist(Attribute(caSerializable, 0));
-//
-//   SyntaxTree tree;
-//   SyntaxWriter writer(tree);
-//   generateClassSymbol(writer, scope);
-//
-//   _writer.generateSymbol(tape, tree.readRoot(), false, INVALID_REF);
-//
-//   // create byte code sections
-//   _writer.saveTape(tape, *scope.moduleScope);
-//
-//   compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
-//}
-//
+
+void Compiler :: compileSymbolCode(ClassScope& scope)
+{
+   CommandTape tape;
+
+   //bool publicAttr = scope.info.mattributes.exist(Attribute(caSerializable, 0));
+
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+   generateClassSymbol(writer, scope);
+
+   _writer.generateSymbol(tape, tree.readRoot(), /*false, */INVALID_REF);
+
+   // create byte code sections
+   _writer.saveTape(tape, *scope.moduleScope);
+
+   //compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
+}
+
 //void Compiler :: compilePreloadedCode(SymbolScope& scope)
 //{
 //   _Module* module = scope.moduleScope->module;
@@ -8408,9 +8408,9 @@ ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope, EAttr mode)
 //
 //   return parentRef;
 //}
-//
-//void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
-//{
+
+void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
+{
 //   bool extensionDeclaration = isExtensionDeclaration(node);
 //   compileParentDeclaration(node.findChild(lxParent), scope, extensionDeclaration);
 //
@@ -8452,10 +8452,10 @@ ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope, EAttr mode)
 //      index = ++scope.info.header.staticSize;
 //      scope.info.staticValues.add(-index - 4, 0);
 //   }
-//
-//   // save declaration
-//   scope.save();
-//
+
+   // save declaration
+   scope.save();
+
 //   // compile class class if it available
 //   if (scope.info.header.classRef != scope.reference && scope.info.header.classRef != 0) {
 //      ClassScope classClassScope((NamespaceScope*)scope.parent, scope.info.header.classRef);
@@ -8463,8 +8463,8 @@ ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope, EAttr mode)
 //
 //      compileClassClassDeclaration(node, classClassScope, scope, implicitMode);
 //   }
-//}
-//
+}
+
 //inline ref_t mapClassName(_Module* module, ref_t reference)
 //{
 //   ident_t refName = module->resolveReference(reference);
@@ -8514,26 +8514,26 @@ ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope, EAttr mode)
 //
 //   scope.save();
 //}
-//
-//void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
-//{
+
+void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
+{
 //   analizeClassTree(node, scope);
-//
-//   pos_t sourcePathRef = scope.saveSourcePath(_writer);
-//
-//   CommandTape tape;
-//   _writer.generateClass(tape, node, sourcePathRef);
-//
-//   // optimize
-//   optimizeTape(tape);
-//
-//   //// create byte code sections
-//   //scope.save();
-//   _writer.saveTape(tape, *scope.moduleScope);
-//}
-//
-//void Compiler :: compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope)
-//{
+
+   pos_t sourcePathRef = scope.saveSourcePath(_writer);
+
+   CommandTape tape;
+   _writer.generateClass(tape, node, sourcePathRef);
+
+   // optimize
+   optimizeTape(tape);
+
+   //// create byte code sections
+   //scope.save();
+   _writer.saveTape(tape, *scope.moduleScope);
+}
+
+void Compiler :: compileClassImplementation(/*SyntaxTree& expressionTree, */SNode node, ClassScope& scope)
+{
 //   expressionTree.clear();
 //
 //   SyntaxWriter writer(expressionTree);
@@ -8562,15 +8562,15 @@ ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope, EAttr mode)
 //   writer.newNode(lxClass, node.argument);
 //   compileVMT(writer, node, scope);
 //   writer.closeNode();
-//
-//   generateClassImplementation(expressionTree.readRoot(), scope);
-//
+
+   generateClassImplementation(/*expressionTree.readRoot()*/node, scope);
+
 //   // compile explicit symbol
 //   // extension cannot be used stand-alone, so the symbol should not be generated
 //   if (scope.extensionClassRef == 0 && scope.info.header.classRef != 0) {
-//      compileSymbolCode(scope);
+      compileSymbolCode(scope);
 //   }
-//}
+}
 
 void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 {
@@ -9906,20 +9906,21 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
 //         case lxInclude:
 //            compileForward(current, scope);
 //            break;
-//         case lxClass:
-//         {
-//#ifdef FULL_OUTOUT_INFO
-//            // info
-//            ident_t name = scope.module->resolveReference(current.argument);
-//            scope.moduleScope->printInfo("class %s", name);
-//#endif // FULL_OUTOUT_INFO
-//
-//            // compile class
-//            ClassScope classScope(&scope, current.argument);
+         case lxClass:
+         {
+#ifdef FULL_OUTOUT_INFO
+            // info
+            ident_t name = scope.module->resolveReference(current.argument);
+            scope.moduleScope->printInfo("class %s", name);
+#endif // FULL_OUTOUT_INFO
+
+            // compile class
+            ClassScope classScope(&scope, current.argument, scope.defaultVisibility);
+            declareClassAttributes(current, classScope/*, false*/);
 //            scope.moduleScope->loadClassInfo(classScope.info, current.argument, false);
-//
-//            compileClassImplementation(expressionTree, current, classScope);
-//
+
+            compileClassImplementation(/*expressionTree, */current, classScope);
+
 //            // compile class class if it available
 //            if (classScope.info.header.classRef != classScope.reference && classScope.info.header.classRef != 0) {
 //               ClassScope classClassScope(&scope, classScope.info.header.classRef);
@@ -9928,8 +9929,8 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
 //
 //               compileClassClassImplementation(expressionTree, current, classClassScope, classScope);
 //            }
-//            break;
-//         }
+            break;
+         }
          case lxSymbol:
          {
             SymbolScope symbolScope(&scope, current.argument, scope.defaultVisibility);
@@ -9960,22 +9961,25 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
       if (current.argument == 0 || current.argument == INVALID_REF) {
          // hotfix : ignore already declared classes and symbols
          switch (current) {
-//            case lxClass:
-//               if (forced || !current.findChild(lxParent) || scope.moduleScope->isClassDeclared(resolveParentRef(current.findChild(lxParent), scope, true))) {
-//                  current.setArgument(/*name == lxNone ? scope.mapNestedExpression() : */scope.mapNewTerminal(current.findChild(lxNameAttr)));
-//
-//                  ClassScope classScope(&scope, current.argument);
-//
-//                  // NOTE : the symbol section is created even if the class symbol doesn't exist
-//                  scope.moduleScope->mapSection(classScope.reference | mskSymbolRef, false);
-//
-//                  // build class expression tree
-//                  compileClassDeclaration(current, classScope);
-//
-//                  declared = true;
-//               }
-//               else repeatMode = true;
-//               break;
+            case lxClass:
+               //if (forced || !current.findChild(lxParent) || scope.moduleScope->isClassDeclared(resolveParentRef(current.findChild(lxParent), scope, true))) 
+               {
+                  ClassScope classScope(&scope, scope.defaultVisibility);
+                  declareClassAttributes(current, classScope/*, publicClass*/);
+
+                  classScope.reference = scope.mapNewTerminal(current.findChild(lxNameAttr), classScope.visibility);
+                  current.setArgument(classScope.reference);
+
+                  // NOTE : the symbol section is created even if the class symbol doesn't exist
+                  scope.moduleScope->mapSection(classScope.reference | mskSymbolRef, false);
+
+                  // declare class
+                  compileClassDeclaration(current, classScope);
+
+                  declared = true;
+               }
+               //else repeatMode = true;
+               break;
             case lxSymbol:
             {
                SymbolScope symbolScope(&scope, scope.defaultVisibility);
@@ -10596,27 +10600,27 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   //SNode expr = methNode.appendNode(lxReturning).appendNode(lxExpression);
 //   //expr.appendNode(lxIdentifier, variable);
 //}
-//
-////void Compiler :: injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message)
-////{
-////   writer.appendNode(lxCallTarget, targetRef);
-////
-////   writer.insert(lxDirectCalling, message);
-////   writer.closeNode();
-////
-////}
-//
-//void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
+
+//void Compiler :: injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message)
 //{
-//   CodeScope codeScope(&scope);
+//   writer.appendNode(lxCallTarget, targetRef);
 //
-//   writer.newNode(lxSymbol, scope.reference);
-//   writer.newNode(lxExpression);
-//   writeTerminal(writer, SNode(), codeScope, ObjectInfo(okClass, scope.reference/*, scope.info.header.classRef*/), HINT_NODEBUGINFO);
+//   writer.insert(lxDirectCalling, message);
 //   writer.closeNode();
-//   writer.closeNode();
+//
 //}
-//
+
+void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
+{
+   ExprScope exprScope(&scope);
+
+   writer.newNode(lxSymbol, scope.reference);
+   writer.newNode(lxAutogenerated);
+   recognizeTerminal(writer.CurrentNode(), ObjectInfo(okClass, scope.reference/*, scope.info.header.classRef*/), exprScope, HINT_NODEBUGINFO);
+   writer.closeNode();
+   writer.closeNode();
+}
+
 //////void Compiler :: generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor)
 //////{
 //////   CodeScope codeScope(&scope);

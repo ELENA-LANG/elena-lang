@@ -1603,13 +1603,13 @@ CompilerLogic :: CompilerLogic()
 //   }
 //   return false;
 //}
-//
-//bool CompilerLogic :: validateClassAttribute(int& attrValue, bool& publicOne)
-//{
-//   switch ((size_t)attrValue)
-//   {
-//      case 0:
-//         return 0;
+
+bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibility)
+{
+   switch ((size_t)attrValue)
+   {
+      case 0:
+         return true;
 //      case V_SEALED:
 //         attrValue = elSealed;
 //         return true;
@@ -1646,20 +1646,27 @@ CompilerLogic :: CompilerLogic()
 //      //case V_TAPEGROUP:
 //      //   attrValue = elTapeGroup;
 ////         return true;
-//      case V_PUBLIC:
-//         publicOne = true;
-//      case V_CLASS:
+      case V_PUBLIC:
+         visibility = Visibility::Public;
+         return true;
+      case V_INTERNAL:
+         visibility = Visibility::Internal;
+         return true;
+      case V_PRIVATE:
+         visibility = Visibility::Private;
+         return true;
+         //      case V_CLASS:
 //      case V_INTERNAL:
 //         attrValue = 0;
 //         return true;
 //      case V_SINGLETON:
 //         attrValue = elRole | elNestedClass;
 //         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue, bool complexName)
 //{
 //   bool dummy = false;

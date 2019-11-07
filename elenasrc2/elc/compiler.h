@@ -106,7 +106,7 @@ public:
 //      okObject,                       // param - class reference
 //      okSymbol,                       // param - reference
 //      okConstantSymbol,               // param - reference
-//      okClass,                        // param - reference
+      okClass,                        // param - reference
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
@@ -168,8 +168,8 @@ public:
    struct ObjectInfo
    {
       ObjectKind kind;
-//      ref_t      param;
-//      // target class reference
+      ref_t      param;
+      // target class reference
 //      ref_t      reference;
 //      ref_t      element;
 //      ref_t      extraparam;
@@ -177,7 +177,7 @@ public:
       ObjectInfo()
       {
          this->kind = okUnknown;
-//         this->param = 0;
+         this->param = 0;
 //         this->reference = 0;
 //         this->element = 0;
 //         this->extraparam = 0;
@@ -185,19 +185,19 @@ public:
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
-//         this->param = 0;
+         this->param = 0;
 //         this->reference = 0;
 //         this->extraparam = 0;
 //         this->element = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param)
-//      {
-//         this->kind = kind;
-//         this->param = param;
+      ObjectInfo(ObjectKind kind, ref_t param)
+      {
+         this->kind = kind;
+         this->param = param;
 //         this->reference = 0;
 //         this->element = 0;
 //         this->extraparam = 0;
-//      }
+      }
 //      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference)
 //      {
 //         this->kind = kind;
@@ -424,10 +424,10 @@ private:
       SourceScope(Scope* parent, ref_t reference, Visibility visibility);
    };
 
-//   // - ClassScope -
-//   struct ClassScope : public SourceScope
-//   {
-//      ClassInfo   info;
+   // - ClassScope -
+   struct ClassScope : public SourceScope
+   {
+      ClassInfo   info;
 //      ref_t       extensionClassRef;
 //      bool        embeddable;
 //      bool        classClassMode;
@@ -449,15 +449,15 @@ private:
 //         }
 //         else return Scope::getScope(level);
 //      }
-//
-//      void save()
-//      {
-//         // save class meta data
-//         MemoryWriter metaWriter(moduleScope->mapSection(reference | mskMetaRDataRef, false), 0);
-//         metaWriter.Memory()->trim(0);
-//         info.save(&metaWriter);
-//      }
-//
+
+      void save()
+      {
+         // save class meta data
+         MemoryWriter metaWriter(moduleScope->mapSection(reference | mskMetaRDataRef, false), 0);
+         metaWriter.Memory()->trim(0);
+         info.save(&metaWriter);
+      }
+
 //      void addAttribute(ref_t message, int attribute, ref_t value)
 //      {
 //         ClassInfo::Attribute attr(message, attribute);
@@ -499,9 +499,13 @@ private:
 //            return false;
 //         }
 //      }
-//
-//      ClassScope(Scope* parent, ref_t reference);
-//   };
+
+      ClassScope(Scope* parent, ref_t reference, Visibility visibility);
+      ClassScope(NamespaceScope* parent, Visibility visibility)
+         : ClassScope(parent, 0, visibility)
+      {
+      }
+   };
 
    // - SymbolScope -
    struct SymbolScope : public SourceScope
@@ -890,7 +894,7 @@ private:
 //
 //   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
    void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode);
-//   void declareClassAttributes(SNode node, ClassScope& scope, bool& publicAttribute);
+   void declareClassAttributes(SNode node, ClassScope& scope/*, bool& publicAttribute*/);
 ////   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
 //   void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
 //   void declareVMT(SNode member, ClassScope& scope, bool& implicitClass);
@@ -1047,8 +1051,8 @@ private:
 //   ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
 //   void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedCode(_ModuleScope& scope, SNode node);
-//   void compileSymbolCode(ClassScope& scope);
-//
+   void compileSymbolCode(ClassScope& scope);
+
 //   void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
 //   void compileNestedVMT(SNode node, InlineClassScope& scope);
 //
@@ -1066,11 +1070,11 @@ private:
 //   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, bool allowTypeAttribute, bool embeddableClass);
 ////   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
 //   void generateClassDeclaration(SNode node, ClassScope& scope, ClassType classType, bool nestedDeclarationMode = false);
-//
-//   void generateClassImplementation(SNode node, ClassScope& scope);
-//
-//   void compileClassDeclaration(SNode node, ClassScope& scope);
-//   void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
+
+   void generateClassImplementation(SNode node, ClassScope& scope);
+
+   void compileClassDeclaration(SNode node, ClassScope& scope);
+   void compileClassImplementation(/*SyntaxTree& expressionTree, */SNode node, ClassScope& scope);
 //   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope, bool implicitMode);
 //   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
@@ -1107,9 +1111,9 @@ private:
 ////   void generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope, SyntaxTree& autogenerated);
 
 //   //void generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument);
-//
-//   void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
-////   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
+
+   void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
+//   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
 
    void declareNamespace(SNode& node, NamespaceScope& scope, bool withFullInfo);
 
