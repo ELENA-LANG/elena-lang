@@ -684,17 +684,17 @@ void DebugController :: toggleBreakpoint(Breakpoint& breakpoint, bool adding)
 
 _Module* DebugController :: resolveModule(ident_t ns)
 {
-   //// check if the module is already loaded
-   //auto it = _modules.start();
-   //while (!it.Eof()) {
-   //   if (NamespaceName::isIncluded((*it)->Name(), ns)) {
-   //      IdentifierString virtualRef(ns + getlength((*it)->Name()), "'");
-   //      virtualRef.append(NAMESPACE_REF);
-   //      if ((*it)->mapReference(virtualRef, true))
-   //         return *it;
-   //   }
-   //   it++;
-   //}
+   // check if the module is already loaded
+   auto it = _modules.start();
+   while (!it.Eof()) {
+      if (NamespaceName::isIncluded((*it)->Name(), ns)) {
+         IdentifierString virtualRef(ns + getlength((*it)->Name()), "'");
+         virtualRef.append(NAMESPACE_REF);
+         if ((*it)->mapReference(virtualRef, true))
+            return *it;
+      }
+      it++;
+   }
 
    return nullptr;
 }

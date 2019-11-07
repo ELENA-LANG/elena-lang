@@ -1,37 +1,37 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA RT Engine
-////
-////                                              (C)2009-2019, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "elenartmachine.h"
+//                                              (C)2009-2019, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "elenartmachine.h"
 //#include "rtman.h"
 //#include "config.h"
 //#include "bytecode.h"
 //
 //#define LIBRARY_PATH                "configuration/library/path"
-//
-//using namespace _ELENA_;
-//
-//// --- Instance ---
-//
-//void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)
-//{
-//   // setting up system
-//   __routineProvider.Prepare();
-//   __routineProvider.InitSTA((SystemEnv*)env, frameHeader);
-//
-//   _Entry entry;
-//   entry.address = programEntry;
-//
-//   __routineProvider.ExecuteInNewFrame(env, entry);
-//
-//   // winding down system
-//   Exit(0);
-//}
-//
+
+using namespace _ELENA_;
+
+// --- Instance ---
+
+void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)
+{
+   // setting up system
+   __routineProvider.Prepare();
+   __routineProvider.InitSTA((SystemEnv*)env, frameHeader);
+
+   _Entry entry;
+   entry.address = programEntry;
+
+   __routineProvider.ExecuteInNewFrame(env, entry);
+
+   // winding down system
+   Exit(0);
+}
+
 //void ELENARTMachine :: startMTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)
 //{
 //   // setting up system
@@ -58,44 +58,44 @@
 //
 //   __routineProvider.ExitThread(env, 0, false);
 //}
-//
-//void ELENARTMachine :: Exit(int exitCode)
-//{
-//   __routineProvider.Exit(exitCode);
-//}
-//
+
+void ELENARTMachine :: Exit(int exitCode)
+{
+   __routineProvider.Exit(exitCode);
+}
+
 //void ELENARTMachine :: ExitThread(SystemEnv* env, int exitCode)
 //{
 //   __routineProvider.ExitThread(env, exitCode, true);
 //}
-//
-//// --- Instance::ImageSection ---
-//
-//void* ELENARTMachine :: ImageSection :: get(pos_t position) const
-//{
-//   return (unsigned char*)_section + position;
-//}
-//
-//bool ELENARTMachine :: ImageSection :: read(pos_t position, void* s, pos_t length)
-//{
-//   if (position < _length && _length >= position + length) {
-//      memcpy(s, (unsigned char*)_section + position, length);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//ELENARTMachine :: ELENARTMachine(path_t rootPath, path_t execFileName)
+
+// --- Instance::ImageSection ---
+
+void* ELENARTMachine :: ImageSection :: get(pos_t position) const
+{
+   return (unsigned char*)_section + position;
+}
+
+bool ELENARTMachine :: ImageSection :: read(pos_t position, void* s, pos_t length)
+{
+   if (position < _length && _length >= position + length) {
+      memcpy(s, (unsigned char*)_section + position, length);
+
+      return true;
+   }
+   else return false;
+}
+
+ELENARTMachine :: ELENARTMachine(path_t rootPath, path_t execFileName)
 //   : _rootPath(rootPath)
-//{
+{
 //   _messageSection = nullptr;
 //   _mattributesSection = nullptr;
 //
 //   _debugFilePath.copy(execFileName);
 //   _debugFilePath.changeExtension("dn");
-//}
-//
+}
+
 //bool ELENARTMachine :: loadDebugSection()
 //{
 //   if (_debugFilePath.isEmpty())
@@ -144,15 +144,15 @@
 //
 //   return true;
 //}
-//
-//void ELENARTMachine :: init(void* messageTable, void* mattributeTable, path_t configPath)
-//{
+
+void ELENARTMachine :: init(void* messageTable, void* mattributeTable, path_t configPath)
+{
 //   _messageSection = messageTable;
 //   _mattributesSection = mattributeTable;
 //
 //   loadConfig(configPath);
-//}
-//
+}
+
 //int ELENARTMachine :: readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
 //{
 //   RTManager manager;

@@ -6,31 +6,31 @@
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
-//#define CONFIG_PATH "elenart.cfg"
-//
-//using namespace _ELENA_;
-//
-//static ELENARTMachine* _Instance = NULL;
-//static void*           _SystemEnv = NULL;
+#define CONFIG_PATH "elenart.cfg"
+
+using namespace _ELENA_;
+
+static ELENARTMachine* _Instance = NULL;
+static void*           _SystemEnv = NULL;
 
 EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
 {
-//   ProgramHeader header;
-//   // initialize the exception handler
-//   __asm {
-//      mov header.root_exception_struct.core_catch_frame, ebp
-//      mov header.root_exception_struct.core_catch_level, esp
-//   }
-//   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
-//
-//   // initialize the critical exception handler
-//   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
-//
-//   // initialize system env variable
-//   _SystemEnv = systemEnv;
-//
-//   // start the system
-//   _Instance->startSTA(&header, (SystemEnv*)systemEnv, entryPoint);
+   ProgramHeader header;
+   // initialize the exception handler
+   __asm {
+      mov header.root_exception_struct.core_catch_frame, ebp
+      mov header.root_exception_struct.core_catch_level, esp
+   }
+   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+
+   // initialize the critical exception handler
+   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
+
+   // initialize system env variable
+   _SystemEnv = systemEnv;
+
+   // start the system
+   _Instance->startSTA(&header, (SystemEnv*)systemEnv, entryPoint);
 }
 
 //EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
@@ -80,57 +80,57 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, vo
 
 EXTERN_DLL_EXPORT void Exit(int exitCode)
 {
-//   _Instance->Exit(exitCode);
+   _Instance->Exit(exitCode);
 }
 
 //EXTERN_DLL_EXPORT void StopThread(int exitCode)
 //{
 //   _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);
 //}
-//
-//void loadModulePath(HMODULE hModule, Path& rootPath, bool includeName)
-//{
-//   TCHAR path[MAX_PATH + 1];
-//
-//   ::GetModuleFileName(hModule, path, MAX_PATH);
-//
-//   if (includeName) {
-//      rootPath.copy(path);
-//   }
-//   else rootPath.copySubPath(path);
-//   rootPath.lower();
-//}
-//
-//// ==== DLL entries ====
-//
-//void init(HMODULE hModule)
-//{
-//   // get DLL path
-//   Path rootPath;
-//   loadModulePath(hModule, rootPath, false);
-//
-//   // get EXE path
-//   Path execPath;
-//   loadModulePath(0, execPath, true);
-//
-//   _Instance = new ELENARTMachine(rootPath.c_str(), execPath.c_str());
-//
-//   void* messageSection = nullptr;
-//   void* mattributeSection = nullptr;
-//   ELENARTMachine::ImageSection section;
-//   section.init((void*)0x400000, 0x1000);
-//
-//   size_t ptr = 0;
-//   PEHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
-//   messageSection = (void*)ptr;
-//
-//   PEHelper::seekSection(MemoryReader(&section), ".adata", ptr);
-//   mattributeSection = (void*)ptr;
-//
-//   Path configPath(CONFIG_PATH);
-//   _Instance->init(messageSection, mattributeSection, configPath.c_str());
-//}
-//
+
+void loadModulePath(HMODULE hModule, Path& rootPath, bool includeName)
+{
+   TCHAR path[MAX_PATH + 1];
+
+   ::GetModuleFileName(hModule, path, MAX_PATH);
+
+   if (includeName) {
+      rootPath.copy(path);
+   }
+   else rootPath.copySubPath(path);
+   rootPath.lower();
+}
+
+// ==== DLL entries ====
+
+void init(HMODULE hModule)
+{
+   // get DLL path
+   Path rootPath;
+   loadModulePath(hModule, rootPath, false);
+
+   // get EXE path
+   Path execPath;
+   loadModulePath(0, execPath, true);
+
+   _Instance = new ELENARTMachine(rootPath.c_str(), execPath.c_str());
+
+   void* messageSection = nullptr;
+   void* mattributeSection = nullptr;
+   ELENARTMachine::ImageSection section;
+   section.init((void*)0x400000, 0x1000);
+
+   size_t ptr = 0;
+   PEHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
+   messageSection = (void*)ptr;
+
+   PEHelper::seekSection(MemoryReader(&section), ".adata", ptr);
+   mattributeSection = (void*)ptr;
+
+   Path configPath(CONFIG_PATH);
+   _Instance->init(messageSection, mattributeSection, configPath.c_str());
+}
+
 //EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
 //{
 //   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
@@ -229,19 +229,19 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                        LPVOID lpReserved
                )
 {
-//   switch (ul_reason_for_call)
-//   {
-//      case DLL_PROCESS_ATTACH:
-//      {
-//         init(hModule);
-//         return TRUE;
-//      }
-//      case DLL_THREAD_ATTACH:
-//      case DLL_THREAD_DETACH:
-//         return TRUE;
-//      case DLL_PROCESS_DETACH:
-//         freeobj(_Instance);
-//         break;
-//   }
+   switch (ul_reason_for_call)
+   {
+      case DLL_PROCESS_ATTACH:
+      {
+         init(hModule);
+         return TRUE;
+      }
+      case DLL_THREAD_ATTACH:
+      case DLL_THREAD_DETACH:
+         return TRUE;
+      case DLL_PROCESS_DETACH:
+         freeobj(_Instance);
+         break;
+   }
    return TRUE;
 }

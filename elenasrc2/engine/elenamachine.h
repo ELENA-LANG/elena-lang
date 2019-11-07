@@ -90,47 +90,47 @@ struct SystemEnv
    pos_t             MaxThread;
 };
 
-//// --- ProgramHeader ---
-//
-//struct ProgramHeader
-//{
-//   ExceptionStruct root_exception_struct;
-//   CriticalStruct  root_critical_struct;
-//};
-//
-//// --- FrameHeader ---
-//
-//struct FrameHeader
-//{
-//   pos_t reserved; // should be zero
-//   pos_t previousFrame;
-//};
-//
-//// --- SystemRoutineProvider ---
-//
-//static class SystemRoutineProvider
-//{
-//public:
-//   static void InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler);
+// --- ProgramHeader ---
+
+struct ProgramHeader
+{
+   ExceptionStruct root_exception_struct;
+   CriticalStruct  root_critical_struct;
+};
+
+// --- FrameHeader ---
+
+struct FrameHeader
+{
+   pos_t reserved; // should be zero
+   pos_t previousFrame;
+};
+
+// --- SystemRoutineProvider ---
+
+static class SystemRoutineProvider
+{
+public:
+   static void InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler);
 //   static void InitTLSEntry(pos_t threadIndex, pos_t index, ProgramHeader* frameHeader, pos_t* threadTable);
-//
-//   static void Prepare();
-//
-//   static void InitSTA(SystemEnv* env, ProgramHeader* frameHeader);
+
+   static void Prepare();
+
+   static void InitSTA(SystemEnv* env, ProgramHeader* frameHeader);
 //   static void InitMTA(SystemEnv* env, ProgramHeader* frameHeader);
 //
 //   static int ExecuteInFrame(SystemEnv* env, _Entry& entry);
-//   static int ExecuteInNewFrame(SystemEnv* env, _Entry& entry);
-//
+   static int ExecuteInNewFrame(SystemEnv* env, _Entry& entry);
+
 //   static bool NewThread(SystemEnv* env, ProgramHeader* frameHeader);
-//
-//   static void Exit(pos_t exitCode);
+
+   static void Exit(pos_t exitCode);
 //   static void ExitThread(SystemEnv* env, pos_t exitCode, bool withExit);
 //
 //   static void OpenFrame(SystemEnv* env, FrameHeader* frameHeader);
 //   static void CloseFrame(SystemEnv* env, FrameHeader* frameHeader);
 //
-//} __routineProvider;
+} __routineProvider;
 
 } // _ELENA_
 
