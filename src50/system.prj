@@ -14,6 +14,7 @@
   <files>
      <module>
        <include>types.l</include>
+       <include>object.l</include>
      </module>
   </files>
 </configuration>
