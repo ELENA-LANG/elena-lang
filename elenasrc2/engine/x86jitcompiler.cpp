@@ -144,7 +144,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileSetR, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFunction, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compilePush, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1906,15 +1906,15 @@ void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& 
 //   }
 //   writer.seekEOF();
 //}
-//
-//void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeByte(bcCallR);
-//   ecodes.writeDWord((size_t)address | mskCodeRef);
-//}
-//
+
+void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcCallR);
+   ecodes.writeDWord((size_t)address | mskCodeRef);
+}
+
 //void x86JITCompiler :: generateArg(MemoryDump& tape, void* address)
 //{
 //   MemoryWriter ecodes(&tape);

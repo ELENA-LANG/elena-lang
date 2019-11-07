@@ -10,7 +10,7 @@
 #define derivationH 1
 
 #include "parser.h"
-//#include "compilercommon.h"
+#include "compilercommon.h"
 
 namespace _ELENA_
 {
@@ -124,7 +124,7 @@ class DerivationWriter : public _DerivationWriter
 
    SyntaxWriter  _output;
 
-//   _ModuleScope* _scope;
+   _ModuleScope* _scope;
 //   ident_t       _ns;
 //   ident_t       _filePath;
 //   IdentifierList _importedNs;
@@ -135,10 +135,10 @@ class DerivationWriter : public _DerivationWriter
    void saveScope(SyntaxWriter& writer);
 
 //   ref_t resolveTemplate(ident_t templateName);
-//
-//   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory);
+
+   ref_t mapAttribute(SNode terminal, /*bool allowType, bool& allowPropertyTemplate, */ref_t& previusCategory);
 //   ref_t mapInlineAttribute(SNode terminal);
-//   void declareAttribute(SNode node);
+   void declareAttribute(SNode node);
 
    void recognizeScope();
    void recognizeDefinition(SNode scopeNode);
@@ -183,6 +183,9 @@ class DerivationWriter : public _DerivationWriter
 //   void declareType(SNode node);
 //   void generateImport(SyntaxWriter& writer, SNode ns);
 
+   void raiseError(ident_t err, SNode node);
+   void raiseWarning(int level, ident_t msg, SNode node);
+
 public:
 //   void newNamespace(ident_t ns, ident_t filePath);
 //   void importModule(ident_t moduke);
@@ -193,12 +196,12 @@ public:
    virtual void appendTerminal(TerminalInfo& terminal, bool cachingMode = true);
    virtual void closeNode(bool cachingMode = true);
 
-   DerivationWriter(SyntaxTree& target/*, _ModuleScope* scope*/)
+   DerivationWriter(SyntaxTree& target, _ModuleScope* scope)
       :  _output(target), _cacheWriter(_cache)//, _importedNs(nullptr, freestr)
    {
       _cachingLevel = _level = 0;
 
-//      _scope = scope;
+      _scope = scope;
 
       _cacheWriter.newNode(lxRoot);
    }

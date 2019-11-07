@@ -60,8 +60,8 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
 
-  //// resolve message & action tables
-  // linker.resolve(MESSAGE_TABLE, mskMessageTableRef, true);
+  // resolve message & action tables
+   linker.resolve(MESSAGE_TABLE, mskMessageTableRef, true);
 
   //// resolve attribute table
   // linker.resolve(MATTRIBUTE_TABLE, mskMetaAttributes, true);

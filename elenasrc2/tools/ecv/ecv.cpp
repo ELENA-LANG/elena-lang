@@ -594,7 +594,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //         break;
       case bcPushR:
 //      case bcALoadR:
-//      case bcCallR:
+      case bcCallR:
 //      case bcASaveR:
       case bcSetR:
 //      case bcBCopyR:

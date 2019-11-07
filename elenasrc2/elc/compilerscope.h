@@ -97,8 +97,8 @@ struct ModuleScope : _ModuleScope
 //   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
 //   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef);
 //   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
-//
-//   virtual void saveAttribute(ident_t typeName, ref_t classReference);
+
+   virtual void saveAttribute(ident_t typeName, ref_t classReference);
 
 //   virtual void declareNamespace(ident_t name);
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);

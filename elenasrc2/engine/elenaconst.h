@@ -335,25 +335,25 @@ namespace _ELENA_
 //   const int elEnumList            = 0x00100000;
 
   // --- ELENA Linker / ELENA VM constants ---
-   constexpr int lnGCMGSize            = 0x00000001;
-   constexpr int lnGCYGSize            = 0x00000002;
-   constexpr int lnThreadCount         = 0x00000003;
-   constexpr int lnObjectSize          = 0x00000004;
+   constexpr int lnGCMGSize               = 0x00000001;
+   constexpr int lnGCYGSize               = 0x00000002;
+   constexpr int lnThreadCount            = 0x00000003;
+   constexpr int lnObjectSize             = 0x00000004;
 
-   constexpr int lnVMAPI_Instance      = 0x00001001;   // reference to VM;
+   constexpr int lnVMAPI_Instance         = 0x00001001;   // reference to VM;
 
 //  // ELENA run-time exceptions
 //   #define ELENA_ERR_OUTOF_MEMORY  0x190
 
   // --- Project warning levels
-   constexpr int WARNING_LEVEL_1 = 1;
-   constexpr int WARNING_LEVEL_2 = 2;
-   constexpr int WARNING_LEVEL_3 = 4;
+   constexpr int WARNING_LEVEL_1          = 1;
+   constexpr int WARNING_LEVEL_2          = 2;
+   constexpr int WARNING_LEVEL_3          = 4;
 
-   constexpr int WARNING_MASK_0 = 0;
-   constexpr int WARNING_MASK_1 = 1;
-   constexpr int WARNING_MASK_2 = 3;
-   constexpr int WARNING_MASK_3 = 7;
+   constexpr int WARNING_MASK_0           = 0;
+   constexpr int WARNING_MASK_1           = 1;
+   constexpr int WARNING_MASK_2           = 3;
+   constexpr int WARNING_MASK_3           = 7;
 
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE         = "ELENA.050.";      // the stand alone image
@@ -363,11 +363,11 @@ namespace _ELENA_
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!03";
 
   // --- ELENA core module names ---
-   constexpr auto CORE_ALIAS           = "core";          // Core functionality
+   constexpr auto CORE_ALIAS              = "core";          // Core functionality
 
-//  // --- ELENA verb messages ---
-//   constexpr auto DISPATCH_MESSAGE     = "#dispatch";
-//   constexpr auto NEWOBJECT_MESSAGE    = "#new";
+  // --- ELENA verb messages ---
+   constexpr auto DISPATCH_MESSAGE        = "#dispatch";
+   constexpr auto NEWOBJECT_MESSAGE       = "#new";
 //   constexpr auto CAST_MESSAGE         = "#cast";
 //   constexpr auto CONSTRUCTOR_MESSAGE  = "#constructor";
 //   constexpr auto INVOKE_MESSAGE       = "#invoke";
@@ -446,7 +446,7 @@ namespace _ELENA_
 
   // --- ELENA special sections ---
 //   constexpr auto METAINFO_SECTION     = "#metainfo";
-//   constexpr auto ATTRIBUTE_SECTION    = "#attributes";
+   constexpr auto ATTRIBUTE_SECTION          = "#attributes";
 //   constexpr auto EXTENSION_SECTION    = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
 //   constexpr auto PACKAGE_SECTION      = "#package";

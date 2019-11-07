@@ -9,7 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "derivation.h"
-//#include "errors.h"
+#include "errors.h"
 //#include "bytecode.h"
 
 using namespace _ELENA_;
@@ -25,61 +25,61 @@ constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
 // --- DerivationWriter ---
 
-////inline SNode goToLastNode(SNode current)
-////{
-////   SNode lastOne;
-////   while (current != lxNone) {
-////      lastOne = current;
-////      current = current.nextNode();
-////   }      
-////
-////   return lastOne;
-////}
-//
-//inline SNode goToFirstNode(SNode current)
+//inline SNode goToLastNode(SNode current)
 //{
-//   SNode firstOne = current;
+//   SNode lastOne;
 //   while (current != lxNone) {
-//      firstOne = current;
-//      current = current.prevNode();
-//   }
+//      lastOne = current;
+//      current = current.nextNode();
+//   }      
 //
-//   return firstOne;
+//   return lastOne;
 //}
-//
-//inline SNode goToFirstNode(SNode current, LexicalType type)
-//{
-//   SNode firstOne = current;
-//   while (current != lxNone && current == type) {
-//      firstOne = current;
-//      current = current.prevNode();
-//   }
-//
-//   return firstOne;
-//}
-//
-//inline SNode goToFirstNode(SNode current, LexicalType type1, LexicalType type2)
-//{
-//   SNode firstOne = current;
-//   while (current != lxNone && current.compare(type1, type2)) {
-//      firstOne = current;
-//      current = current.prevNode();
-//   }
-//
-//   return firstOne;
-//}
-//
-//inline SNode goToFirstNode(SNode current, LexicalType type1, LexicalType type2, LexicalType type3)
-//{
-//   SNode firstOne = current;
-//   while (current != lxNone && current.compare(type1, type2, type3)) {
-//      firstOne = current;
-//      current = current.prevNode();
-//   }
-//
-//   return firstOne;
-//}
-//
+
+inline SNode goToFirstNode(SNode current)
+{
+   SNode firstOne = current;
+   while (current != lxNone) {
+      firstOne = current;
+      current = current.prevNode();
+   }
+
+   return firstOne;
+}
+
+inline SNode goToFirstNode(SNode current, LexicalType type)
+{
+   SNode firstOne = current;
+   while (current != lxNone && current == type) {
+      firstOne = current;
+      current = current.prevNode();
+   }
+
+   return firstOne;
+}
+
+inline SNode goToFirstNode(SNode current, LexicalType type1, LexicalType type2)
+{
+   SNode firstOne = current;
+   while (current != lxNone && current.compare(type1, type2)) {
+      firstOne = current;
+      current = current.prevNode();
+   }
+
+   return firstOne;
+}
+
+inline SNode goToFirstNode(SNode current, LexicalType type1, LexicalType type2, LexicalType type3)
+{
+   SNode firstOne = current;
+   while (current != lxNone && current.compare(type1, type2, type3)) {
+      firstOne = current;
+      current = current.prevNode();
+   }
+
+   return firstOne;
+}
+
 //inline SNode goToNode(SNode current, LexicalType type)
 //{
 //   while (current != lxNone && current != type)
@@ -160,7 +160,7 @@ void DerivationWriter :: newNode(LexicalType symbol, ident_t arg, bool cachingMo
       _cacheWriter.newNode(symbol, arg);
 
       // whole root scope should be cached
-      if (symbol == lxScope && _level == 1)
+      if ((symbol == lxScope || symbol == lxAttributeDecl) && _level == 1)
          _cachingLevel = _level;
    }
    else _output.newNode(symbol, arg);
@@ -175,7 +175,7 @@ void DerivationWriter :: newNode(LexicalType symbol, bool cachingMode)
       _cacheWriter.newNode(symbol);
 
       // whole root scope should be cached
-      if (symbol == lxScope && _level == 1)
+      if ((symbol == lxScope || symbol == lxAttributeDecl) && _level == 1)
          _cachingLevel = _level;
    }
    else _output.newNode(symbol);
@@ -536,21 +536,21 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 
 void DerivationWriter :: recognizeScope()
 {
-   SNode scopeNode = _cache.readRoot().lastChild();
-   if (scopeNode == lxScope) {
-      recognizeScopeAttributes(scopeNode.prevNode(), MODE_ROOT);
+   SNode node = _cache.readRoot().lastChild();
+   if (node == lxScope) {
+      recognizeScopeAttributes(node.prevNode(), MODE_ROOT);
 
-      if (!recognizeMetaScope(scopeNode)) {
-         recognizeDefinition(scopeNode);
+      if (!recognizeMetaScope(node)) {
+         recognizeDefinition(node);
       }
    }
-//   else if (scopeNode == lxAttributeDecl) {
-//      declareAttribute(scopeNode);
-//   }
+   else if (node == lxAttributeDecl) {
+      declareAttribute(node);
+   }
 }
 
-//ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory)
-//{
+ref_t DerivationWriter :: mapAttribute(SNode node, /*bool allowType, bool& allowPropertyTemplate, */ref_t& previusCategory)
+{
 //   if (node == lxIdentifier) {
 //      ident_t token = node.identifier();
 //
@@ -564,24 +564,24 @@ void DerivationWriter :: recognizeScope()
 //      }
 //
 //      if (!isPrimitiveRef(ref) && !allowType)
-//         _scope->raiseError(errInvalidHint, _filePath, node);
+//         raiseError(errInvalidHint, node);
 //
 //      return ref;
 //   }
 //   else {
-//      ref_t attrRef = 0;
-//
-//      bool tokenNode = node.existChild(lxToken);
-//      bool sizeNode = node.existChild(lxDynamicSizeDecl);
-//      if (!allowType && (tokenNode || sizeNode))
-//         _scope->raiseError(errInvalidHint, _filePath, node);
-//
-//      if (tokenNode)
-//         return V_TEMPLATE;
-//
-//      SNode terminal = node.firstChild(lxTerminalMask);
-//      ident_t token = terminal.identifier();
-//
+      ref_t attrRef = 0;
+////
+////      bool tokenNode = node.existChild(lxToken);
+////      bool sizeNode = node.existChild(lxDynamicSizeDecl);
+////      if (!allowType && (tokenNode || sizeNode))
+////         _scope->raiseError(errInvalidHint, _filePath, node);
+////
+////      if (tokenNode)
+////         return V_TEMPLATE;
+
+      SNode terminal = node.firstChild(lxTerminalMask);
+      ident_t token = terminal.identifier();
+
 //      if (allowPropertyTemplate) {
 //         allowPropertyTemplate = false;
 //
@@ -599,16 +599,16 @@ void DerivationWriter :: recognizeScope()
 //      }
 //
 //      allowPropertyTemplate = false;
-//
-//      ref_t ref = _scope->attributes.get(token);      
-//      if (isPrimitiveRef(ref)) {
-//         // Compiler magic : check if the attribute have correct order
-//         if ((ref & V_CATEGORY_MASK) < previusCategory) {
-//            previusCategory = ref & V_CATEGORY_MASK;
-//         }
-//         else ref = 0u;
-//      }
-//
+
+      ref_t ref = _scope->attributes.get(token);      
+      if (isPrimitiveRef(ref)) {
+         // Compiler magic : check if the attribute have correct order
+         if ((ref & V_CATEGORY_MASK) < previusCategory) {
+            previusCategory = ref & V_CATEGORY_MASK;
+         }
+         else ref = 0u;
+      }
+
 //      if (allowType) {
 //         if (!isPrimitiveRef(ref))
 //            attrRef = ref;
@@ -616,37 +616,67 @@ void DerivationWriter :: recognizeScope()
 //         if (attrRef || !ref)
 //            return attrRef;
 //      }
-//
-//      if (!isPrimitiveRef(ref) && !allowType)
-//         _scope->raiseError(errInvalidHint, _filePath, node);
-//
-//      return ref;
+
+      if (!isPrimitiveRef(ref)/* && !allowType*/)
+         raiseError(errInvalidHint, node);
+
+      return ref;
 //   }
-//}
-//
-//void DerivationWriter :: declareAttribute(SNode node)
-//{
-//   ident_t name = node.findChild(lxIdentifier).identifier();
-//
-//   SNode attrNode = node.findChild(lxSizeDecl);
-//   ref_t attrRef = 0;
-//   if (attrNode == lxSizeDecl) {
-//      SNode valNode = attrNode.firstChild(lxTerminalMask);
-//      ident_t value = valNode.identifier();
-//      if (valNode == lxHexInteger) {
-//         attrRef = value.toULong(16);
-//      }
-//      else {
-//         attrRef = value.toULong(10);
-//      }
-//   }
-//
-//   if (attrRef && _scope->attributes.add(name, attrRef, true)) {
-//      _scope->saveAttribute(name, attrRef);
-//   }
-//   else _scope->raiseError(errDuplicatedDefinition, _filePath, node);
-//}
-//
+}
+
+void DerivationWriter :: raiseError(ident_t err, SNode node)
+{
+   SNode parentNode = node.parentNode();
+   while (parentNode != lxNone) {
+      if (parentNode == lxNamespace && parentNode.existChild(lxSourcePath)) {
+         _scope->raiseError(err, parentNode.findChild(lxSourcePath).identifier(), node);
+
+         return; // !! dummy return
+      }
+
+      parentNode = parentNode.parentNode();
+   }
+
+   _scope->raiseError(err, "<not defined>", node);
+}
+
+void DerivationWriter :: raiseWarning(int level, ident_t msg, SNode node)
+{
+   SNode parentNode = node.parentNode();
+   while (parentNode != lxNone) {
+      if (parentNode == lxNamespace && parentNode.existChild(lxSourcePath)) {
+         _scope->raiseWarning(level, msg, parentNode.findChild(lxSourcePath).identifier(), node);
+
+         return; // !! dummy return
+      }
+
+      parentNode = parentNode.parentNode();
+   }
+
+   _scope->raiseWarning(level, msg, "<not defined>", node);
+}
+
+void DerivationWriter :: declareAttribute(SNode node)
+{
+   ident_t name = node.findChild(lxIdentifier).identifier();
+   SNode attrNode = node.findChild(lxSizeDecl);
+   ref_t attrRef = 0;
+   SNode valNode = attrNode.firstChild(lxTerminalMask);
+   ident_t value = valNode.identifier();
+   if (valNode == lxHexInteger) {
+      attrRef = value.toULong(16);
+   }
+   //else if (valNode == lxInteger) {
+   //   attrRef = value.toULong(10);
+   //}
+   else raiseError(errInvalidSyntax, attrNode);
+
+   if (attrRef && _scope->attributes.add(name, attrRef, true)) {
+      _scope->saveAttribute(name, attrRef);
+   }
+   else raiseError(errDuplicatedDefinition, node);
+}
+
 //ref_t DerivationWriter :: mapInlineAttribute(SNode terminal)
 //{
 //   ident_t token = terminal.findChild(lxIdentifier).identifier();
@@ -671,7 +701,7 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
    SNode nameNode = current;
    nameNode = lxNameAttr;
 
-//   current = goToFirstNode(nameNode.prevNode(), lxToken, lxInlineAttribute);
+   current = goToFirstNode(nameNode.prevNode(), lxToken/*, lxInlineAttribute*/);
 //   while (current == lxInlineAttribute) {
 //      ref_t inlineAttrRef = mapInlineAttribute(current);
 //
@@ -684,13 +714,13 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 //   bool visibilitySet = false;
 //   bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
 //   bool withoutMapping = false;
-//   ref_t attributeCategory = V_CATEGORY_MAX;
-//   while (current == lxToken) {
-//      bool allowType = current.nextNode() == lxNameAttr;
-//
-//      ref_t attrRef = mapAttribute(current, allowType, allowPropertyTemplate, attributeCategory);
-//      if (isPrimitiveRef(attrRef)) {
-//         current.set(lxAttribute, attrRef);
+   ref_t attributeCategory = V_CATEGORY_MAX;
+   while (current == lxToken) {
+      //bool allowType = current.nextNode()/*.compare(lxNameAttr)*/ == lxNameAttr;
+
+      ref_t attrRef = mapAttribute(current, /*allowType, allowPropertyTemplate, */attributeCategory);
+      if (isPrimitiveRef(attrRef)) {
+         current.set(lxAttribute, attrRef);
 //         if (test(mode, MODE_ROOT)) {
 //            if ((attrRef == V_PUBLIC || attrRef == V_INTERNAL)) {
 //               // the symbol visibility should be provided only once
@@ -708,21 +738,18 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 //               withoutMapping = true;
 //            }
 //         }
-//      }
+      }
 //      else if (attrRef != 0 || allowType) {
 //         current.set(lxTarget, attrRef);
 //         allowType = false;
 //      }
-//      else _scope->raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, _filePath, current);
-//      
-//      current = current.nextNode();
-//   }
-//   
-//   SNode nameTerminal = nameNode.firstChild(lxTerminalMask);
-//   //   if (nameTerminal != lxIdentifier)
-//   //      scope.raiseError(errInvalidSyntax, nameNode);
-//   
-//   IdentifierString name(nameTerminal.identifier().c_str());
+      else raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, current);
+      
+      current = current.nextNode();
+   }
+   
+   SNode nameTerminal = nameNode.firstChild(lxTerminalMask);
+   IdentifierString name(nameTerminal.identifier().c_str());
 //   if (nameNode.existChild(lxToken)) {
 //      // if it is a template identifier      
 //      bool codeTemplate = nameNode.nextNode().findChild(lxCode) == lxCode;
@@ -757,13 +784,10 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 //         name.appendInt(subParamCounter);
 //      }
 //   }
-//   
-//   // verify if there is an attribute with the same name
-//   if (test(mode, MODE_ROOT) && _scope->attributes.exist(name))
-//      _scope->raiseWarning(WARNING_LEVEL_2, wrnAmbiguousIdentifier, _filePath, nameNode);
-//   
-//   if (test(mode, MODE_ROOT) && !withoutMapping)
-//      nameNode.setArgument(_scope->mapNewIdentifier(_ns.c_str(), name.ident(), privateOne));
+   
+   // verify if there is an attribute with the same name
+   if (test(mode, MODE_ROOT) && _scope->attributes.exist(name))
+      raiseWarning(WARNING_LEVEL_2, wrnAmbiguousIdentifier, nameNode);
 }
 
 //void DerivationWriter :: recognizeMethodMebers(SNode node)
@@ -1057,11 +1081,11 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
    SNode nameNode;
    if (current == lxNameAttr) {
       nameNode = current;
-//
-//      current = goToFirstNode(nameNode.prevNode(), lxAttribute, lxTarget/*, lxInlineAttribute */);
+
+      current = goToFirstNode(nameNode.prevNode(), lxAttribute/*, lxTarget, lxInlineAttribute */);
    }
 
-//   while (true) {
+   while (true) {
 //      if (current == lxTarget || (current.argument == V_TEMPLATE && current == lxAttribute)) {
 //         SNode terminal = current.firstChild(lxTerminalMask);
 //         size_t dimensionCounter = SyntaxTree::countChild(current, lxDynamicSizeDecl);
@@ -1076,19 +1100,19 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //      //   // COMPILER MAGIC : inject an attribute template
 //      //   generateAttributeTemplateTree(writer, current, nameNode, derivationScope, buffer);
 //      //}
-//      else if (current == lxAttribute) {
-//         writer.newNode(lxAttribute, current.argument);
-//         copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
-//
+      /*else */if (current == lxAttribute) {
+         writer.newNode(lxAttribute, current.argument);
+         copyIdentifier(writer, current.firstChild(lxTerminalMask)/*, derivationScope.ignoreTerminalInfo*/);
+
 //         if (current.existChild(lxDynamicSizeDecl))
 //            _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
-//
-//         writer.closeNode();
-//      }
-//      else break;
-//
-//      current = current.nextNode();
-//   }
+
+         writer.closeNode();
+      }
+      else break;
+
+      current = current.nextNode();
+   }
    if (nameNode != lxNone) {
 //      if (nameNode.existChild(lxDynamicSizeDecl))
 //         _scope->raiseError(errInvalidSyntax, _filePath, nameNode.findChild(lxDynamicSizeDecl));

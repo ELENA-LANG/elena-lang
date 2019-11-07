@@ -99,10 +99,10 @@ public:
 //   virtual void setThreadTable(void* ptr) = 0;
 //   virtual void setEHTable(void* ptr) = 0;
 //   virtual void setGCTable(void* ptr) = 0;
-//
-//   virtual void generateProgramStart(MemoryDump& tape) = 0;
-//   virtual void generateSymbolCall(MemoryDump& tape, void* address) = 0;
-//   virtual void generateProgramEnd(MemoryDump& tape) = 0;
+
+   virtual void generateProgramStart(MemoryDump& tape) = 0;
+   virtual void generateSymbolCall(MemoryDump& tape, void* address) = 0;
+   virtual void generateProgramEnd(MemoryDump& tape) = 0;
 };
 
 // --- JITCompiler32 class ---
@@ -135,9 +135,9 @@ public:
 //   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
 //   virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
 //   virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode);
-//
-//   virtual void generateProgramStart(MemoryDump& tape);
-//   virtual void generateProgramEnd(MemoryDump& tape);
+
+   virtual void generateProgramStart(MemoryDump& tape);
+   virtual void generateProgramEnd(MemoryDump& tape);
 };
 
 //// --- JITCompiler64 class ---

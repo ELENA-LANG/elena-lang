@@ -488,7 +488,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
    if (opcode != bcNone) {
       switch (opcode)
       {
-         //case bcCallR:
+         case bcCallR:
          case bcSetR:
          //case bcBCopyR:
          case bcPushR:

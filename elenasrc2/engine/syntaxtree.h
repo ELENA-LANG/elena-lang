@@ -36,10 +36,13 @@ enum LexicalType
    // derivation symbols
    lxToken                    = 0x001010,
    lxScope                    = 0x001020,
+   lxAttributeDecl            = 0x001030,    
+   lxSizeDecl                 = 0x001040,
 
    // derivation terminals
    lxEOF                      = 0x002010, // indicating closing code bracket
    lxIdentifier               = 0x002011,
+   lxHexInteger               = 0x002012,
 
    // expression nodes
    lxExpression               = 0x009030,
@@ -94,7 +97,6 @@ enum LexicalType
 //   lxLiteral                  = 0x018004,
 //   lxReference                = 0x018007,
 //   lxInteger                  = 0x018008,
-//   lxHexInteger               = 0x018009,
 //   lxReal                     = 0x01800A,
 //   lxCharacter                = 0x01800B,
 //   lxLong                     = 0x01800C,

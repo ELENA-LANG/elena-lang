@@ -170,7 +170,7 @@ enum ByteCode
 //   bcJump            = 0xA0,
 //   bcAJumpVI         = 0xA1,
 //   bcACallVI         = 0xA2,
-//   bcCallR           = 0xA3,
+   bcCallR           = 0xA3,
 //   bcAJumpI          = 0xA4,
    bcCallExtR        = 0xA5,
 //   bcHook            = 0xA6,
@@ -442,7 +442,7 @@ public:
       switch(code) {
          case bcPushR:
          ////case bcEvalR:
-         //case bcCallR:
+         case bcCallR:
          //case bcALoadR:
          //case bcASaveR:
          case bcSetR:

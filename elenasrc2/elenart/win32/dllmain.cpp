@@ -4,17 +4,17 @@
 #include <windows.h>
 #include "pehelper.h"
 
-//#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-//
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
 //#define CONFIG_PATH "elenart.cfg"
 //
 //using namespace _ELENA_;
 //
 //static ELENARTMachine* _Instance = NULL;
 //static void*           _SystemEnv = NULL;
-//
-//EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
-//{
+
+EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
+{
 //   ProgramHeader header;
 //   // initialize the exception handler
 //   __asm {
@@ -31,8 +31,8 @@
 //
 //   // start the system
 //   _Instance->startSTA(&header, (SystemEnv*)systemEnv, entryPoint);
-//}
-//
+}
+
 //EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
 //{
 //   ProgramHeader header;
@@ -77,12 +77,12 @@
 //{
 //   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
 //}
-//
-//EXTERN_DLL_EXPORT void Exit(int exitCode)
-//{
+
+EXTERN_DLL_EXPORT void Exit(int exitCode)
+{
 //   _Instance->Exit(exitCode);
-//}
-//
+}
+
 //EXTERN_DLL_EXPORT void StopThread(int exitCode)
 //{
 //   _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);

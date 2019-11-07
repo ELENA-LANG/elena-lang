@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0005
+#define ELC_REVISION_NUMBER         0x0006
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -252,7 +252,7 @@ class Project : public _ELENA_::Project
 
    void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)
    {
-      _ELENA_::DerivationWriter writer(derivationTree/*, &scope*/);
+      _ELENA_::DerivationWriter writer(derivationTree, &scope);
       writer.newNode(_ELENA_::lxRoot, false);
 
       auto file_it = source->getIt(ELC_INCLUDE);

@@ -16,11 +16,11 @@
 namespace _ELENA_
 {
 
-//constexpr auto V_CATEGORY_MASK   = 0x7FFFFF00u;
-//constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
-//
-//// attributes / prmitive types
-//
+constexpr auto V_CATEGORY_MASK   = 0x7FFFFF00u;
+constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
+
+// attributes / prmitive types
+
 ///// modificator
 //constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
 //constexpr auto V_SCRIPTSELFMODE  = 0x80006002u;
@@ -257,13 +257,13 @@ struct _ModuleScope
    // cached paths
    SymbolMap         savedPaths;
 
-//   MessageMap        attributes;
+   MessageMap        attributes;
 
    virtual ref_t mapAnonymous(ident_t prefix = nullptr) = 0;
 
-//   virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
-////   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
-//
+   virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
+//   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
+
 //   virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 //   virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
 //   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
@@ -351,7 +351,7 @@ struct _ModuleScope
 //   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
    _ModuleScope()
-      : /*attributes(0), */savedPaths(-1)
+      : attributes(0), savedPaths(-1)
    {
       project = nullptr;
       debugModule = module = nullptr;

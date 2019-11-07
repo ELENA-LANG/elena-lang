@@ -157,38 +157,38 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 
 // --- JITLinker ---
 
-//ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_t weakActionRef, ref_t signature)
-//{   
-//   if (signature == 0u && weakActionRef != 0u)
-//      return weakActionRef;
-//
-//   MemoryWriter mdataWriter(messageTable.section);
-//
-//   ref_t actionRef = mdataWriter.Position() / 8;
-//   // weak action ref for strong one or the same ref
-//   if (weakActionRef) {
-//      mdataWriter.writeDWord(weakActionRef);
-//   }
-//   else mdataWriter.writeDWord(0);
-//
-//   // signature or action name for weak message
-//   if (signature) {
-//      mdataWriter.writeRef(mskMessageTableRef | signature, 0);
-//   }
-//   else {
-//      MemoryWriter bodyWriter(_loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true).section);
-//
-//      mdataWriter.writeRef(mskMessageTableRef | bodyWriter.Position(), 0);
-//
-//      bodyWriter.writeLiteral(actionName, getlength(actionName) + 1);
-//      bodyWriter.align(4, 0);
-//   }
-//
-//   messageTable.module->mapPredefinedAction(actionName, actionRef, signature);
-//
-//   return actionRef;
-//}
-//
+ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_t weakActionRef, ref_t signature)
+{   
+   if (signature == 0u && weakActionRef != 0u)
+      return weakActionRef;
+
+   MemoryWriter mdataWriter(messageTable.section);
+
+   ref_t actionRef = mdataWriter.Position() / 8;
+   // weak action ref for strong one or the same ref
+   if (weakActionRef) {
+      mdataWriter.writeDWord(weakActionRef);
+   }
+   else mdataWriter.writeDWord(0);
+
+   // signature or action name for weak message
+   if (signature) {
+      mdataWriter.writeRef(mskMessageTableRef | signature, 0);
+   }
+   else {
+      MemoryWriter bodyWriter(_loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true).section);
+
+      mdataWriter.writeRef(mskMessageTableRef | bodyWriter.Position(), 0);
+
+      bodyWriter.writeLiteral(actionName, getlength(actionName) + 1);
+      bodyWriter.align(4, 0);
+   }
+
+   messageTable.module->mapPredefinedAction(actionName, actionRef, signature);
+
+   return actionRef;
+}
+
 //ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool variadicOne)
 //{
 //   if (!signature)
@@ -256,19 +256,19 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 //
 //   return resolvedSignature;
 //}
-//
-//ref_t JITLinker :: resolveWeakAction(SectionInfo& messageTable, ident_t actionName)
-//{
-//   ref_t resolvedAction = messageTable.module->mapAction(actionName, 0u, true);
-//   if (!resolvedAction) {
-//      resolvedAction = mapAction(messageTable, actionName, 0u, 0u);
-//
-//      messageTable.module->mapPredefinedAction(actionName, resolvedAction, 0u);
-//   }
-//
-//   return resolvedAction;
-//}
-//
+
+ref_t JITLinker :: resolveWeakAction(SectionInfo& messageTable, ident_t actionName)
+{
+   ref_t resolvedAction = messageTable.module->mapAction(actionName, 0u, true);
+   if (!resolvedAction) {
+      resolvedAction = mapAction(messageTable, actionName, 0u, 0u);
+
+      messageTable.module->mapPredefinedAction(actionName, resolvedAction, 0u);
+   }
+
+   return resolvedAction;
+}
+
 //ident_t JITLinker :: retrieveResolvedAction(ref_t reference)
 //{
 //   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
@@ -467,55 +467,55 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
 //
 //   return _virtualMode ? position : (size_t)writer.Memory()->get(position);
 //}
-//
-//void* JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo)
-//{
-//   if (sectionInfo.section == NULL)
-//      return LOADER_NOTLOADED;
-//
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mask);
-//   MemoryWriter writer(image);
-//
-//   void* vaddress = calculateVAddress(&writer, mask & mskImageMask);
-//   size_t position = writer.Position();
-//
-//   _loader->mapReference(referenceInfo, vaddress, mask);
-//
-//   // load section into target image
-//   MemoryReader reader(sectionInfo.section);
-//   writer.read(&reader, sectionInfo.section->Length());
-//
-//   // resolve section references
-//   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
-//   ref_t currentMask = 0;
-//   ref_t currentRef = 0;
-//   while (!it.Eof()) {
-//      currentMask = it.key() & mskAnyRef;
-//      currentRef = it.key() & ~mskAnyRef;
-//
-//      if (currentMask == mskPreloadDataRef) {
-//         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeDataRef, _virtualMode);
-//      }
-//      else if (currentMask == mskPreloadCodeRef) {
-//         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeCodeRef, _virtualMode);
-//      }
-//      else if (currentMask == mskPreloadRelCodeRef) {
-//         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeRelCodeRef, _virtualMode);
-//      }
-//      //else if (currentMask == 0) {
-//      //   (*image)[*it + position] = resolveMessage(sectionInfo.module, currentRef);
-//      //}
-//      else {
-//         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
-//
-//         resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
-//      }
-//      it++;
-//   }
-//   return vaddress;
-//}
-//
+
+void* JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo)
+{
+   if (sectionInfo.section == NULL)
+      return LOADER_NOTLOADED;
+
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mask);
+   MemoryWriter writer(image);
+
+   void* vaddress = calculateVAddress(&writer, mask & mskImageMask);
+   size_t position = writer.Position();
+
+   _loader->mapReference(referenceInfo, vaddress, mask);
+
+   // load section into target image
+   MemoryReader reader(sectionInfo.section);
+   writer.read(&reader, sectionInfo.section->Length());
+
+   // resolve section references
+   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
+   ref_t currentMask = 0;
+   ref_t currentRef = 0;
+   while (!it.Eof()) {
+      currentMask = it.key() & mskAnyRef;
+      currentRef = it.key() & ~mskAnyRef;
+
+      if (currentMask == mskPreloadDataRef) {
+         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeDataRef, _virtualMode);
+      }
+      else if (currentMask == mskPreloadCodeRef) {
+         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeCodeRef, _virtualMode);
+      }
+      else if (currentMask == mskPreloadRelCodeRef) {
+         resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeRelCodeRef, _virtualMode);
+      }
+      //else if (currentMask == 0) {
+      //   (*image)[*it + position] = resolveMessage(sectionInfo.module, currentRef);
+      //}
+      else {
+         void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+
+         resolveReference(image, *it + position, (ref_t)refVAddress, currentMask, _virtualMode);
+      }
+      it++;
+   }
+   return vaddress;
+}
+
 //void* JITLinker :: resolveNativeVariable(ReferenceInfo referenceInfo, int mask)
 //{
 //   // get target image & resolve virtual address
@@ -985,61 +985,61 @@ void* JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, int mask,
 //
 //   return (void*)vaddress;
 //}
-//
-//void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
-//{
-//   References      references(RefInfo(0, NULL));
-//
-//   // get target image & resolve virtual address
-//   MemoryWriter writer(_loader->getTargetSection(mask));
-//
-//   pos_t position = writer.Position();
-//
-//   SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
-//   SectionInfo bodyInfo = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, false);
-//
-//   // load table into target image
-//   MemoryReader reader(sectionInfo.section);
-//   writer.read(&reader, sectionInfo.section->Length());
-//   writer.writeDWord(0);
-//   writer.writeDWord(0);
-//   
-//   ref_t bodyPtr = writer.Position();
-//
-//   // load table content into target image
-//   MemoryReader bodyReader(bodyInfo.section);
-//   writer.read(&bodyReader, bodyInfo.section->Length());
-//
-//   // resolve section references
-//   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
-//   while (!it.Eof()) {
-//      ref_t key = it.key();
-//
-//      if ((key & mskAnyRef) == mskMessageTableRef) {
-//         // fix the reference to the message body buffer
-//         writer.seek(position + *it);
-//         writer.writeDWord(bodyPtr + (key & ~mskAnyRef));
-//      }
-//      else references.add(position + *it, RefInfo(key, sectionInfo.module));
-//
-//      it++;
-//   }
-//   writer.seekEOF();
-//
-//   // resolve signature references
-//   _ELENA_::RelocationMap::Iterator body_it(bodyInfo.section->getReferences());
-//   while (!body_it.Eof()) {
-//      references.add(bodyPtr + *body_it, RefInfo(body_it.key(), bodyInfo.module));
-//
-//      body_it++;
-//   }
-//
-//   // fix not loaded references
-//   fixReferences(references, _loader->getTargetSection(mask));
-//
-//   return NULL; // !! should be resolved only once
-//}
-//
+
+void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
+{
+   References      references(RefInfo(0, NULL));
+
+   // get target image & resolve virtual address
+   MemoryWriter writer(_loader->getTargetSection(mask));
+
+   pos_t position = writer.Position();
+
+   SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+   SectionInfo bodyInfo = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, false);
+
+   // load table into target image
+   MemoryReader reader(sectionInfo.section);
+   writer.read(&reader, sectionInfo.section->Length());
+   writer.writeDWord(0);
+   writer.writeDWord(0);
+   
+   ref_t bodyPtr = writer.Position();
+
+   // load table content into target image
+   MemoryReader bodyReader(bodyInfo.section);
+   writer.read(&bodyReader, bodyInfo.section->Length());
+
+   // resolve section references
+   _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
+   while (!it.Eof()) {
+      ref_t key = it.key();
+
+      if ((key & mskAnyRef) == mskMessageTableRef) {
+         // fix the reference to the message body buffer
+         writer.seek(position + *it);
+         writer.writeDWord(bodyPtr + (key & ~mskAnyRef));
+      }
+      else references.add(position + *it, RefInfo(key, sectionInfo.module));
+
+      it++;
+   }
+   writer.seekEOF();
+
+   // resolve signature references
+   _ELENA_::RelocationMap::Iterator body_it(bodyInfo.section->getReferences());
+   while (!body_it.Eof()) {
+      references.add(bodyPtr + *body_it, RefInfo(body_it.key(), bodyInfo.module));
+
+      body_it++;
+   }
+
+   // fix not loaded references
+   fixReferences(references, _loader->getTargetSection(mask));
+
+   return nullptr; // !! should be resolved only once
+}
+
 //void* JITLinker :: resolveMetaAttributeTable(ReferenceInfo, int mask)
 //{
 //   _Memory* asection = _loader->getTargetSection(mask);
@@ -1152,33 +1152,33 @@ void* JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, int mask,
 //
 //   return vaddress;
 //}
-//
-//////void* JITLinker :: resolveThreadSafeVariable(const TCHAR*  reference, int mask)
-//////{
-//////   // get target image & resolve virtual address
-//////   MemoryWriter writer(_loader->getTargetSection(mskTLSRef));
-//////
-//////   size_t vaddress = (_virtualMode ? writer.Position() : (size_t)writer.Address()) | mskTLSRef;
-//////
-//////   writer.writeDWord(0);
-//////
-//////   _loader->mapReference(reference, (void*)vaddress, mskTLSRef);
-//////
-//////   return (void*)vaddress;
-//////}
-//
-//void JITLinker :: createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr)
-//{
-//   _Memory* debug = _loader->getTargetDebugSection();
-//
-//   MemoryWriter writer(debug);
-//   writer.writeLiteral(reference);
-//
-//   sizePtr = writer.Position();
-//   writer.writeDWord(0); // size place holder
-//
-//   writer.writeDWord((size_t)param);
-//}
+
+////void* JITLinker :: resolveThreadSafeVariable(const TCHAR*  reference, int mask)
+////{
+////   // get target image & resolve virtual address
+////   MemoryWriter writer(_loader->getTargetSection(mskTLSRef));
+////
+////   size_t vaddress = (_virtualMode ? writer.Position() : (size_t)writer.Address()) | mskTLSRef;
+////
+////   writer.writeDWord(0);
+////
+////   _loader->mapReference(reference, (void*)vaddress, mskTLSRef);
+////
+////   return (void*)vaddress;
+////}
+
+void JITLinker :: createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr)
+{
+   _Memory* debug = _loader->getTargetDebugSection();
+
+   MemoryWriter writer(debug);
+   writer.writeLiteral(reference);
+
+   sizePtr = writer.Position();
+   writer.writeDWord(0); // size place holder
+
+   writer.writeDWord((size_t)param);
+}
 
 void JITLinker :: createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void* address, size_t& sizePtr)
 {
@@ -1244,31 +1244,31 @@ void JITLinker :: endNativeDebugInfo(size_t sizePtr)
    (*debug)[sizePtr] = debug->Length() - sizePtr;
 }
 
-//void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param)
-//{
-//   _Memory* image = _loader->getTargetSection(mskCodeRef);
-//
-//   // map dynamic code
-//   MemoryWriter writer(image);
-//   void* vaddress = calculateVAddress(&writer, mskCodeRef);
-//
-//   if (_withDebugInfo && !emptystr(reference)) {
-//      // it it is a debug mode a special debug record is created containing link to tape
-//      size_t sizePtr = 0;
-//      createNativeDebugInfo(reference, param, sizePtr);
-//
-//      //HOTFIX: temporal byte code is compiled as a method
-//      //because compileSymbol emulates embedded code now
-//      _compiler->compileProcedure(helper, reader, writer);
-//
-//      endNativeDebugInfo(sizePtr);
-//   }
-//   //HOTFIX: temporal byte code is compiled as a method
-//   //because compileSymbol emulates embedded code now
-//   else _compiler->compileProcedure(helper, reader, writer);
-//
-//   return vaddress;
-//}
+void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param)
+{
+   _Memory* image = _loader->getTargetSection(mskCodeRef);
+
+   // map dynamic code
+   MemoryWriter writer(image);
+   void* vaddress = calculateVAddress(&writer, mskCodeRef);
+
+   if (_withDebugInfo && !emptystr(reference)) {
+      // it it is a debug mode a special debug record is created containing link to tape
+      size_t sizePtr = 0;
+      createNativeDebugInfo(reference, param, sizePtr);
+
+      //HOTFIX: temporal byte code is compiled as a method
+      //because compileSymbol emulates embedded code now
+      _compiler->compileProcedure(helper, reader, writer);
+
+      endNativeDebugInfo(sizePtr);
+   }
+   //HOTFIX: temporal byte code is compiled as a method
+   //because compileSymbol emulates embedded code now
+   else _compiler->compileProcedure(helper, reader, writer);
+
+   return vaddress;
+}
 
 void JITLinker :: onModuleLoad(_Module* module)
 {
@@ -1278,57 +1278,57 @@ void JITLinker :: onModuleLoad(_Module* module)
       _initializers.add(ModuleReference(module, initRef));
 }
 
-//void JITLinker :: generateInitTape(MemoryDump& tape)
-//{
-//   ReferenceHelper helper(this, NULL, NULL);
-//   IdentifierString initSymbol("'", INITIALIZER_SECTION);
-//
-//   auto it = _initializers.start();
-//   while (!it.Eof()) {
-//      _Module* module = (*it).value1;
-//      ref_t initRef = (*it).value2;
-//
-//      void* initializer = resolveBytecodeSection(ReferenceInfo(module, initSymbol), mskCodeRef, helper.getSection(initRef | mskSymbolRef, module));
-//      if (initializer != LOADER_NOTLOADED) {
-//         if (!_virtualMode) {
-//            // HOTFIX : in VM mode - use relative address
-//            _Memory* image = _loader->getTargetSection(mskCodeRef);
-//
-//            _compiler->generateSymbolCall(tape, (void*)((size_t)initializer - (size_t)image->get(0)));
-//         }
-//         else _compiler->generateSymbolCall(tape, initializer);
-//      }
-//
-//      it++;
-//   }
-//
-//   _initializers.clear();
-//}
-//
-//void* JITLinker :: resolveEntry(void* programEntry)
-//{
-//   MemoryDump   ecodes;
-//
-//   _compiler->generateProgramStart(ecodes);
-//
-//   // generate module initializers
-//   generateInitTape(ecodes);
-//
-//   _compiler->generateSymbolCall(ecodes, programEntry);
-//
-//   _compiler->generateProgramEnd(ecodes);
-//
-//   References references(RefInfo(0, NULL));
-//   ReferenceHelper refHelper(this, NULL, &references);
-//   MemoryReader reader(&ecodes);
-//
-//   void* entry = resolveTemporalByteCode(refHelper, reader, NULL, NULL);
-//
-//   // fix not loaded references
-//   fixReferences(references, _loader->getTargetSection(mskCodeRef));
-//
-//   return entry;
-//}
+void JITLinker :: generateInitTape(MemoryDump& tape)
+{
+   ReferenceHelper helper(this, NULL, NULL);
+   IdentifierString initSymbol("'", INITIALIZER_SECTION);
+
+   auto it = _initializers.start();
+   while (!it.Eof()) {
+      _Module* module = (*it).value1;
+      ref_t initRef = (*it).value2;
+
+      void* initializer = resolveBytecodeSection(ReferenceInfo(module, initSymbol), mskCodeRef, helper.getSection(initRef | mskSymbolRef, module));
+      if (initializer != LOADER_NOTLOADED) {
+         if (!_virtualMode) {
+            // HOTFIX : in VM mode - use relative address
+            _Memory* image = _loader->getTargetSection(mskCodeRef);
+
+            _compiler->generateSymbolCall(tape, (void*)((size_t)initializer - (size_t)image->get(0)));
+         }
+         else _compiler->generateSymbolCall(tape, initializer);
+      }
+
+      it++;
+   }
+
+   _initializers.clear();
+}
+
+void* JITLinker :: resolveEntry(void* programEntry)
+{
+   MemoryDump   ecodes;
+
+   _compiler->generateProgramStart(ecodes);
+
+   // generate module initializers
+   generateInitTape(ecodes);
+
+   _compiler->generateSymbolCall(ecodes, programEntry);
+
+   _compiler->generateProgramEnd(ecodes);
+
+   References references(RefInfo(0, NULL));
+   ReferenceHelper refHelper(this, NULL, &references);
+   MemoryReader reader(&ecodes);
+
+   void* entry = resolveTemporalByteCode(refHelper, reader, NULL, NULL);
+
+   // fix not loaded references
+   fixReferences(references, _loader->getTargetSection(mskCodeRef));
+
+   return entry;
+}
 
 // NOTE: reference should not be a forward one, otherwise there may be code duplication
 void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMode)
@@ -1351,11 +1351,11 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //         case mskVMTRef:
 //            vaddress = resolveBytecodeVMTSection(referenceInfo, mask, _loader->getClassSectionInfo(referenceInfo, mskClassRef, mskVMTRef, silentMode));
 //            break;
-//         case mskNativeCodeRef:
-//         case mskNativeDataRef:
-//         case mskNativeRDataRef:
-//            vaddress = resolveNativeSection(referenceInfo, mask, _loader->getSectionInfo(referenceInfo, mask, silentMode));
-//            break;
+         case mskNativeCodeRef:
+         case mskNativeDataRef:
+         case mskNativeRDataRef:
+            vaddress = resolveNativeSection(referenceInfo, mask, _loader->getSectionInfo(referenceInfo, mask, silentMode));
+            break;
 //         case mskNativeRelCodeRef:
 //            vaddress = resolveNativeSection(referenceInfo, mskNativeCodeRef, _loader->getSectionInfo(referenceInfo, mskNativeCodeRef, silentMode));
 //            break;
@@ -1390,18 +1390,18 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 ////         case mskConstVariable:
 ////            vaddress = resolveConstVariable(reference, mask);
 ////            break;
-//         case mskMessageTableRef:
-//            vaddress = resolveMessageTable(referenceInfo, mskMessageTableRef);
-//            break;
+         case mskMessageTableRef:
+            vaddress = resolveMessageTable(referenceInfo, mskMessageTableRef);
+            break;
 //         case mskMetaAttributes:
 //            vaddress = resolveMetaAttributeTable(referenceInfo, mskMetaAttributes);
 //            break;
-//         case mskEntryRef:
-//            vaddress = resolveEntry(resolve(referenceInfo, mskSymbolRef, silentMode));
-//            break;
-//         case mskEntryRelRef:
-//            vaddress = resolveEntry(resolve(referenceInfo, mskSymbolRelRef, silentMode));
-//            break;
+         case mskEntryRef:
+            vaddress = resolveEntry(resolve(referenceInfo, mskSymbolRef, silentMode));
+            break;
+         case mskEntryRelRef:
+            vaddress = resolveEntry(resolve(referenceInfo, mskSymbolRelRef, silentMode));
+            break;
       }
    }
    if (!silentMode && vaddress == LOADER_NOTLOADED)
@@ -1422,9 +1422,9 @@ void JITLinker :: prepareCompiler()
 
    // load predefine messages
    SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
-   //// dispatch message should be the first
-   //resolveWeakAction(messageTable, DISPATCH_MESSAGE);
-   //resolveWeakAction(messageTable, NEWOBJECT_MESSAGE);
+   // dispatch message should be the first
+   resolveWeakAction(messageTable, DISPATCH_MESSAGE);
+   resolveWeakAction(messageTable, NEWOBJECT_MESSAGE);
 
    _compiler->prepareCore(helper, _loader);
 

@@ -328,18 +328,18 @@ ref_t ModuleScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, V
 //
 //   return reference;
 //}
-//
-//void ModuleScope :: saveAttribute(ident_t name, ref_t attr)
-//{
-//   if (attr) {
-//      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
-//      MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//      metaWriter.writeDWord(attr);
-//      metaWriter.writeLiteral(name);
-//   }
-//}
-//
+
+void ModuleScope :: saveAttribute(ident_t name, ref_t attr)
+{
+   if (attr) {
+      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
+      MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+      metaWriter.writeDWord(attr);
+      metaWriter.writeLiteral(name);
+   }
+}
+
 //_Module* ModuleScope :: loadReferenceModule(ident_t referenceName, ref_t& reference)
 //{
 //   if (isTemplateWeakReference(referenceName)) {

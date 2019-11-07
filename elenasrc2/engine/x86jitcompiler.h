@@ -196,8 +196,8 @@ public:
 //   virtual void setThreadTable(void* ptr);
 //   virtual void setEHTable(void* ptr);
 //   virtual void setGCTable(void* ptr);
-//
-//   virtual void generateSymbolCall(MemoryDump& tape, void* address);
+
+   virtual void generateSymbolCall(MemoryDump& tape, void* address);
 //   virtual void generateArg(MemoryDump& tape, void* address);
 //   virtual void generateExternalCall(MemoryDump& tape, ref_t functionReference);
 

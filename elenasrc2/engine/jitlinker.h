@@ -130,7 +130,7 @@ class JITLinker : _JITLoaderListener
 
 //   int            _uniqueID;           // used for dynamic subject
 
-//   void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
+   void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
    void createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void* address, size_t& sizePtr);
 //   void createNativeClassDebugInfo(ReferenceInfo referenceInfo, void* vaddress, size_t& sizePtr);
    void endNativeDebugInfo(size_t sizePtr);
@@ -148,9 +148,9 @@ class JITLinker : _JITLoaderListener
 //   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress, bool constArrayMode);
 //
 //   size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
-//
-//   ref_t mapAction(SectionInfo& messageTable, ident_t action, ref_t weakActionRef, ref_t signature);
-//   ref_t resolveWeakAction(SectionInfo& messageTable, ident_t action);
+
+   ref_t mapAction(SectionInfo& messageTable, ident_t action, ref_t weakActionRef, ref_t signature);
+   ref_t resolveWeakAction(SectionInfo& messageTable, ident_t action);
 //   ref_t resolveMessage(_Module* module, ref_t reference);
 //   ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne);
 //
@@ -158,14 +158,14 @@ class JITLinker : _JITLoaderListener
 //
 //   void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
 ////   void* resolveConstVariable(ident_t  reference, int mask);
-//   void* resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
+   void* resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
    void* resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
 //   void* createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references);
 //   void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo);
 //   void* resolveConstant(ReferenceInfo referenceInfo, int mask);
 //   void* resolveStaticVariable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveAnonymousStaticVariable();
-//   void* resolveMessageTable(ReferenceInfo referenceInfo, int mask);
+   void* resolveMessageTable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveMetaAttributeTable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveMessage(ReferenceInfo referenceInfo, ident_t vmt, bool actionOnlyMode);
 //   void* resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt);
@@ -177,14 +177,14 @@ public:
    void* resolve(ReferenceInfo referenceInfo, int mask, bool silentMode);
    void* resolve(ident_t reference, int mask, bool silentMode);
 
-//   void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
-//
-//   void* resolveEntry(void* programEntry);
-//
-////   //void loadModuleInfo(_Module* module);
-//
-//   void generateInitTape(MemoryDump& tape);
-//
+   void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
+
+   void* resolveEntry(void* programEntry);
+
+//   //void loadModuleInfo(_Module* module);
+
+   void generateInitTape(MemoryDump& tape);
+
 //   bool getDebugMode() const { return _withDebugInfo; }
 
    size_t getStaticCount() const 
