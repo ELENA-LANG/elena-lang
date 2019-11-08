@@ -480,28 +480,28 @@ namespace _ELENA_
 //   #define INTERNAL_MASK_LEN        12
 //   #define COREAPI_MASK_LEN         5
 
-   #define CORE_MODULE              "coreapi"
-//   #define STANDARD_MODULE          "system"                         // the standard module name
+   constexpr auto CORE_MODULE                = "coreapi";
+   constexpr auto STANDARD_MODULE            = "system";                         // the standard module name
 //   #define FORWARD_MODULE           "$forwards"
 //   #define RT_MODULE                "elenart"                        // ELENART / ELENAVM dll
 //   #define COREAPI_MASK             "core_"                          // core api mask : any function starting with it
 //                                                                     // will be treated like internal core api one
 //   #define INTERNAL_MASK            "system'core_"                   // primitive module mask
 
-   constexpr auto NATIVE_MODULE           = "$native";
+   constexpr auto NATIVE_MODULE              = "$native";
 
-   constexpr auto META_MODULE             = "$meta";
-   constexpr auto MESSAGE_TABLE           = "$meta'$messages";
-   constexpr auto MESSAGEBODY_TABLE       = "$meta'$messagebody";
-   constexpr auto MATTRIBUTE_TABLE        = "$meta'$attributes";
+   constexpr auto META_MODULE                = "$meta";
+   constexpr auto MESSAGE_TABLE              = "$meta'$messages";
+   constexpr auto MESSAGEBODY_TABLE          = "$meta'$messagebody";
+   constexpr auto MATTRIBUTE_TABLE           = "$meta'$attributes";
 
 //  // VM temporal code
 //   constexpr auto TAPE_SYMBOL             = "$tape";
 
-   constexpr auto GC_THREADTABLE          = "$elena'@gcthreadroot";           // thread table
-   constexpr auto TLS_KEY                 = "$elena'@tlskey";                 // TLS key
-   constexpr auto TAPE_KEY                = "$elena'@tapekey";                // VM Tape key
-   constexpr auto NAMESPACE_KEY           = "$elena'@rootnamespace";          // The project namespace
+   constexpr auto GC_THREADTABLE             = "$elena'@gcthreadroot";           // thread table
+   constexpr auto TLS_KEY                    = "$elena'@tlskey";                 // TLS key
+   constexpr auto TAPE_KEY                   = "$elena'@tapekey";                // VM Tape key
+   constexpr auto NAMESPACE_KEY              = "$elena'@rootnamespace";          // The project namespace
 
 //   // predefined system forwards
 //   constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor

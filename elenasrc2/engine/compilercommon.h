@@ -327,22 +327,22 @@ struct _ModuleScope
 //
 //      project->printInfo(info, messageName.ident());
 //   }
-//
-//   void printInfo(const char* message, const char* arg)
+
+   void printInfo(const char* message, const char* arg)
+   {
+      project->printInfo(message, arg);
+   }
+
+   //   void raiseWarning(int level, const char* message, ident_t sourcePath, ident_t identifier)
 //   {
-//      project->printInfo(message, arg);
+//      project->raiseWarning(level, message, sourcePath, 0, 0, identifier);
 //   }
 //
-//   //   void raiseWarning(int level, const char* message, ident_t sourcePath, ident_t identifier)
-////   {
-////      project->raiseWarning(level, message, sourcePath, 0, 0, identifier);
-////   }
-////
-////   void raiseWarning(int level, const char* message, ident_t sourcePath)
-////   {
-////      project->raiseWarning(level, message, sourcePath);
-////   }
-//
+//   void raiseWarning(int level, const char* message, ident_t sourcePath)
+//   {
+//      project->raiseWarning(level, message, sourcePath);
+//   }
+
 //   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode) = 0;
 //   virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 //   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;

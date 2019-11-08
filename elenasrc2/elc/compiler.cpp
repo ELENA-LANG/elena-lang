@@ -9964,11 +9964,12 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
          }
          case lxNamespace:
          {
-               NamespaceScope namespaceScope(&scope/*, true*/);
-               declareNamespace(current.firstChild(), namespaceScope, true);
+            SNode node = current.firstChild();
+            NamespaceScope namespaceScope(&scope/*, true*/);
+            declareNamespace(node, namespaceScope, true);
 
-               compileImplementations(current.firstChild(), namespaceScope);
-               break;
+            compileImplementations(node, namespaceScope);
+            break;
          }
 //         //case lxMeta:
 //         //   compileMetaCategory(current, scope);
@@ -9994,11 +9995,13 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
          switch (current) {
             case lxNamespace:
             {
+               SNode node = current.firstChild();
+
                NamespaceScope namespaceScope(&scope);
-               declareNamespace(current.firstChild(), namespaceScope, false);
+               declareNamespace(node, namespaceScope, false);
 
                // declare classes several times to ignore the declaration order
-               declared |= compileDeclarations(current.firstChild(), namespaceScope, forced, repeatMode);
+               declared |= compileDeclarations(node, namespaceScope, forced, repeatMode);
 
                break;
             }
@@ -10156,34 +10159,33 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, iden
 //   }
 //   else return 0;
 //}
-//
-//bool Compiler :: loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silenMode)
-//{
-//   _Module* extModule = scope.project->loadModule(name, silenMode);
-//   bool duplicates = false;
-//   if (extModule) {
-//      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
-//
-//      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
-//      if (section) {
-//         MemoryReader metaReader(section);
-//         while (!metaReader.Eof()) {
-//            ref_t attrRef = metaReader.getDWord();
-//            if (!isPrimitiveRef(attrRef)) {
-//               attrRef = importReference(extModule, attrRef, scope.module);
-//            }
-//
-//            ident_t attrName = metaReader.getLiteral(DEFAULT_STR);
-//
-//            if (!attributes->add(attrName, attrRef, true))
-//               duplicates = true;
-//         }
-//      }
-//
-//      return true;
-//   }
-//   else return false;
-//}
+
+bool Compiler :: loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silenMode)
+{
+   _Module* extModule = scope.project->loadModule(name, silenMode);
+   if (extModule) {
+      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
+
+      _Memory* section = extModule->mapSection(extModule->mapReference(sectionName, true) | mskMetaRDataRef, true);
+      if (section) {
+         MemoryReader metaReader(section);
+         while (!metaReader.Eof()) {
+            ref_t attrRef = metaReader.getDWord();
+            if (!isPrimitiveRef(attrRef)) {
+               attrRef = importReference(extModule, attrRef, scope.module);
+            }
+
+            ident_t attrName = metaReader.getLiteral(DEFAULT_STR);
+
+            if (!attributes->add(attrName, attrRef, true))
+               scope.printInfo(wrnDuplicateAttribute, attrName);
+         }
+      }
+
+      return true;
+   }
+   else return false;
+}
 
 void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo)
 {
@@ -10191,8 +10193,8 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 
    if (withDebugInfo) {
       scope.debugModule = scope.project->createDebugModule(name);
-      //// HOTFIX : save the module name in strings table
-      //_writer.writeSourcePath(scope.debugModule, name);
+      // HOTFIX : save the module name in strings table
+      _writer.writeSourcePath(scope.debugModule, name);
    }
 
 //   // cache the frequently used references
@@ -10222,13 +10224,13 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.newobject_message = encodeAction(scope.module->mapAction(NEWOBJECT_MESSAGE, 0, false));
 //   scope.init_message = encodeMessage(scope.module->mapAction(INIT_MESSAGE, 0, false), 0, SPECIAL_MESSAGE | STATIC_MESSAGE);
 //   scope.constructor_message = encodeAction(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false));
-//
-//   if (!scope.module->Name().compare(STANDARD_MODULE)) {
-//      // system attributes should be loaded automatically
-//      if (!loadAttributes(scope, STANDARD_MODULE, &scope.attributes, true))
-//         scope.printInfo(wrnInvalidModule, STANDARD_MODULE);
-//   }
-//
+
+   if (!scope.module->Name().compare(STANDARD_MODULE)) {
+      // system attributes should be loaded automatically
+      if (!loadAttributes(scope, STANDARD_MODULE, &scope.attributes, true))
+         scope.printInfo(wrnInvalidModule, STANDARD_MODULE);
+   }
+
 //   createPackageInfo(scope.module, *scope.project);
 }
 

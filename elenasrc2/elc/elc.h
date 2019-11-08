@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x000A
+#define ELC_REVISION_NUMBER         0x000B
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -278,9 +278,6 @@ class Project : public _ELENA_::Project
             writer.newNodeDirectly(_ELENA_::lxSourcePath, filePath);
             writer.closeNodeDirectly();
 
-            //   // add the module itself
-            //   writer.importModule(module->Name());
-            //
             //   // system module should be included by default
             //   if (!module->Name().compare(STANDARD_MODULE)) {
             //      writer.importModule(STANDARD_MODULE);

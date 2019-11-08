@@ -135,11 +135,11 @@ namespace _ELENA_
    #define wrnAmbiguousIdentifier   "%s(%d:%d): warning 421: Identifier '%s' is ambiguous"
 ////   #define wrnAmbiguousMessageName  "%s(%d:%d): warning 422: Message name '%s' is ambiguous"
 ////   #define wrnAmbiguousVariable     "%s(%d:%d): warning 423: Variable '%s' is ambiguous"
-//   #define wrnDuplicateAttribute    "%s(%d:%d): warning 424: '%s': duplicate attribute\n"
+   #define wrnDuplicateAttribute    "%s(%d:%d): warning 424: '%s': duplicate attribute\n"
 //   #define wrnDuplicateInclude      "%s(%d:%d): warning 425: '%s': duplicate inclusion\n"
    #define wrnExplicitExtension     "%s(%d:%d): warning 426: an extension '%s' should not be used directly\n"
-//   constexpr auto wrnInvalidModule  = "Invalid or unknown module %s\n";
-//
+   constexpr auto wrnInvalidModule  = "Invalid or unknown module %s\n";
+
 //   constexpr auto infoAbstractMetod = "abstract method %s";
 //   constexpr auto infoNewMethod     = "new method %s";
 //
