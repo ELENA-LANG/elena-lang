@@ -307,27 +307,27 @@ ref_t ModuleScope :: resolveImplicitIdentifier(ident_t ns, ident_t identifier, V
    else return ::mapExistingIdentifier(module, identifier, visibility);
 }
 
-//ref_t ModuleScope :: mapFullReference(ident_t referenceName, bool existing)
-//{
-//   if (emptystr(referenceName))
-//      return 0;
-//
-//   ref_t reference = 0;
-//   if (existing && !isTemplateWeakReference(referenceName)) {
-//      // check if the reference does exist
-//      ref_t moduleRef = 0;
-//      _Module* argModule = project->resolveModule(referenceName, moduleRef);
-//      if (argModule != NULL && moduleRef != 0) {
-//         if (argModule != module) {
-//            reference = module->mapReference(referenceName);
-//         }
-//         else reference = moduleRef;
-//      }
-//   }
-//   else reference = module->mapReference(referenceName, existing);
-//
-//   return reference;
-//}
+ref_t ModuleScope :: mapFullReference(ident_t referenceName, bool existing)
+{
+   if (emptystr(referenceName))
+      return 0;
+
+   ref_t reference = 0;
+   if (existing && !isTemplateWeakReference(referenceName)) {
+      // check if the reference does exist
+      ref_t moduleRef = 0;
+      _Module* argModule = project->resolveModule(referenceName, moduleRef);
+      if (argModule != NULL && moduleRef != 0) {
+         if (argModule != module) {
+            reference = module->mapReference(referenceName);
+         }
+         else reference = moduleRef;
+      }
+   }
+   else reference = module->mapReference(referenceName, existing);
+
+   return reference;
+}
 
 void ModuleScope :: saveAttribute(ident_t name, ref_t attr)
 {

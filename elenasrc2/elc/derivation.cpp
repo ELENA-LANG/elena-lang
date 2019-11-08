@@ -226,7 +226,10 @@ void DerivationWriter :: closeNode()
 
 inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
 {
-   writer.newNode(terminal.symbol, terminal.value);
+   if (terminal.symbol == lxGlobalReference) {
+      writer.newNode(terminal.symbol, terminal.value + 1);
+   }
+   else writer.newNode(terminal.symbol, terminal.value);
 
    writer.appendNode(lxCol, terminal.col);
    writer.appendNode(lxRow, terminal.row);

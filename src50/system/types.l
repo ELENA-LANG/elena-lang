@@ -32,9 +32,9 @@
 //#define __loop      80002005h
 //#define preloaded   80002006h
 //#define lazy        80002009h
-//
-///// scope:
-//#define class       80001001h
+
+/// scope:
+#define class       80001001h
 //#define struct      80001002h
 //#define symbol      80001003h
 //#define constructor 80001004h

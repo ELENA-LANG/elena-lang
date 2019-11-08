@@ -54,7 +54,8 @@ inline const char* getError(int symbol)
 
 LexicalType getLexicalType(int symbol)
 {
-   return (LexicalType)symbol;
+   // NOTE : the last 8 bits are used as a token variant
+   return (LexicalType)(symbol & 0xFFFFFFF0);
 }
 
 TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
@@ -79,15 +80,12 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
       case dfaIdentifier:
          terminal.symbol = lxIdentifier;
          break;
-//      case dfaFullIdentifier:
-//         terminal.symbol = tsReference;
-//         break;
-//    //  case dfaMember:
-//    //     terminal.symbol = tsMember;
-//    //     break;
-//      case dfaGlobal:
-//         terminal.symbol = tsGlobal;
-//         break;
+      case dfaFullIdentifier:
+         terminal.symbol = lxReference;
+         break;
+      case dfaGlobal:
+         terminal.symbol = lxGlobalReference;
+         break;
 //    //  case dfaPrivate:
 //    //     if (terminal.value[1] == 0) {
 //    //        //HOTFIX : if it is $ symbol
@@ -128,7 +126,7 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
 //         break;
 //      case dfaAttribute:
       default:
-         terminal.symbol = getLexicalType(table.defineSymbol(terminal));
+         terminal.symbol = (LexicalType)(table.defineSymbol(terminal));
    }
    return terminal;
 }

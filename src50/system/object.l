@@ -1,8 +1,8 @@
-//// --- super object ---
-//
-///// a common ancestor
-//
-Object;
+// --- super object ---
+
+/// a common ancestor
+
+public class Object;
 
 //public class Object
 //{

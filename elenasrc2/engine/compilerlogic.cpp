@@ -1677,10 +1677,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
       case V_PRIVATE:
          visibility = Visibility::Private;
          return true;
-         //      case V_CLASS:
-//      case V_INTERNAL:
-//         attrValue = 0;
-//         return true;
+      case V_CLASS:
+         attrValue = 0;
+         return true;
 //      case V_SINGLETON:
 //         attrValue = elRole | elNestedClass;
 //         return true;

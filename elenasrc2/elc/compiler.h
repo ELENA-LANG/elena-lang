@@ -222,16 +222,16 @@ private:
    // - Scope -
    struct Scope
    {
-//         enum ScopeLevel
-//         {
-//            slNamespace,
-//            slClass,
-//            slSymbol,
-//            slMethod,
-//            slCode,
-//            slYieldCode,
-//            slOwnerClass,
-//         };
+         enum class ScopeLevel
+         {
+            slNamespace,
+            slClass,
+            slSymbol,
+            slMethod,
+            slCode,
+            slYieldCode,
+            slOwnerClass,
+         };
    
          _ModuleScope* moduleScope;
          _Module*      module;
@@ -282,21 +282,21 @@ private:
 //            else return false;
 //         }
 
-         virtual ObjectInfo mapTerminal(ident_t identifier/*, bool referenceOne*/, EAttr mode)
+         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
          {
             if (parent) {
-               return parent->mapTerminal(identifier/*, referenceOne*/, mode);
+               return parent->mapTerminal(identifier, referenceOne, mode);
             }
             else return ObjectInfo();
          }
    
-//         virtual Scope* getScope(ScopeLevel level)
-//         {
-//            if (parent) {
-//               return parent->getScope(level);
-//            }
-//            else return NULL;
-//         }
+         virtual Scope* getScope(ScopeLevel level)
+         {
+            if (parent) {
+               return parent->getScope(level);
+            }
+            else return NULL;
+         }
    
          Scope(_ModuleScope* moduleScope)
          {
@@ -336,14 +336,14 @@ private:
       IdentifierString  ns;
       IdentifierString  sourcePath;
 
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slNamespace) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slNamespace) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
 //      void defineConstantSymbol(ref_t reference, ref_t classReference)
 //      {
 //         constantHints.add(reference, classReference);
@@ -370,9 +370,9 @@ private:
 ////         moduleScope->raiseWarning(level, message, sourcePath, identifier);
 ////      }
 
-      virtual ObjectInfo mapTerminal(ident_t identifier/*, bool referenceOne*/, EAttr mode);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
-//      ObjectInfo mapGlobal(ident_t identifier);
+      ObjectInfo mapGlobal(ident_t identifier);
 
       virtual pos_t saveSourcePath(ByteCodeWriter& writer);
       virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
@@ -442,14 +442,14 @@ private:
 //      ObjectInfo mapField(ident_t identifier, EAttr scopeMode);
 //
 //      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass || level == slOwnerClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slClass || level == ScopeLevel::slOwnerClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
 
       void save()
       {
@@ -515,17 +515,17 @@ private:
 //      bool  staticOne;
 //      bool  preloaded;
 //      ref_t outputRef;
-//
-//////      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slSymbol) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
+
+////      virtual ObjectInfo mapTerminal(ident_t identifier);
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slSymbol) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
 //      void save();
 
       SymbolScope(NamespaceScope* parent, ref_t reference, Visibility visibility);
@@ -740,6 +740,8 @@ private:
    {
       ExprScope(SourceScope* parent);
       ExprScope(CodeScope* parent);
+
+      ObjectInfo mapGlobal(ident_t identifier);
    };
 
 //   // --- ResendScope ---

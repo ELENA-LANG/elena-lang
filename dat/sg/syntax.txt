@@ -2,6 +2,7 @@ __define START          	1
 __define eps            	2
 
 __define TOKEN 			4112
+__define GLOBAL_TOKEN 		4113
 __define SCOPE_DECLARATION	4128
 __define ATTRIBUTE_DECLARATION  4144
 __define SIZE 			4160
@@ -11,17 +12,19 @@ __define EXPRESSION	       36912
 __define eof            	8208
 __define identifier 		8209
 __define hex 			8210
+__define reference		8211
+__define global			8212
 
 START ->
 	DECLARATION DECLARATIONS eof
 	| eof
 
+ATTRIBUTE_DECLARATION ->
+	identifier SIZE
+
 DECLARATIONS ->
 	DECLARATION DECLARATIONS
 	| eps
-
-ATTRIBUTE_DECLARATION ->
-	identifier SIZE
 
 DECLARATION ->
 	TOKENS SCOPE_DECLARATION
@@ -44,6 +47,7 @@ SYMBOL_DECLARATION ->
 
 EXPRESSION ->
 	TOKEN
+	| GLOBAL_TOKEN
 	
 TOKENS ->
 	TOKEN NEXT_TOKEN
@@ -54,11 +58,14 @@ NEXT_TOKEN ->
 
 TOKEN ->
 	identifier
+	| reference
+
+GLOBAL_TOKEN ->
+	global
 
 SIZE ->
 	hex
 	| integer
-	| identifier	
 
 DYNAMIC_SIZES ->
 	DYNAMIC_SIZE DYNAMIC_SIZES

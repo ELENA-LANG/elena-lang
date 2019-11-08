@@ -55,7 +55,7 @@ constexpr auto V_INTERNAL        = 0x80005003u;
 //constexpr auto V_LAZY            = 0x80002009u;
 
 /// scope:
-//constexpr auto V_CLASS           = 0x80001001u;
+constexpr auto V_CLASS           = 0x80001001u;
 //constexpr auto V_STRUCT          = 0x80001002u;
 //constexpr auto V_SYMBOLEXPR      = 0x80001003u;
 //constexpr auto V_CONSTRUCTOR     = 0x80001004u;
@@ -289,7 +289,7 @@ struct _ModuleScope
 //   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
-   //   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
+   virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
    //   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;

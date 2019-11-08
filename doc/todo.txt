@@ -2,11 +2,11 @@
 In development:
 ------         
               dev
-                * import ns / attributes
-                * reference identifiers
+                * import ns
                 * methods
                 * constructors
                 * nested class scope?
+                * global types
 
                 * inherit identifier, reference, global, template
 

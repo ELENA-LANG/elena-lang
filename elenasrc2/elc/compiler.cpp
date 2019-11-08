@@ -261,25 +261,25 @@ pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer, ident_t
    else return 0;
 }
 
-//ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
-//{
-//   if (NamespaceName::isIncluded(FORWARD_MODULE, identifier)) {
-//      IdentifierString forwardName(FORWARD_PREFIX_NS, identifier + getlength(FORWARD_MODULE) + 1);
-//
-//      // if it is a forward reference
-//      return defineObjectInfo(moduleScope->mapFullReference(forwardName.c_str(), false), false);
-//   }
-//
-//   // if it is an existing full reference
-//   ref_t reference = moduleScope->mapFullReference(identifier, true);
-//   if (reference) {
-//      return defineObjectInfo(reference, true);
-//   }
-//   // if it is a forward reference
-//   else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), false);
-//}
+ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
+{
+   //if (NamespaceName::isIncluded(FORWARD_MODULE, identifier)) {
+   //   IdentifierString forwardName(FORWARD_PREFIX_NS, identifier + getlength(FORWARD_MODULE) + 1);
 
-ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier/*, bool referenceOne*/, EAttr mode)
+   //   // if it is a forward reference
+   //   return defineObjectInfo(moduleScope->mapFullReference(forwardName.c_str(), false), false);
+   //}
+
+   // if it is an existing full reference
+   ref_t reference = moduleScope->mapFullReference(identifier, true);
+   if (reference) {
+      return defineObjectInfo(reference, true);
+   }
+   // if it is a forward reference
+   else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), false);
+}
+
+ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
 {
    ref_t reference = 0;
 //   if (!referenceOne) {
@@ -297,16 +297,15 @@ ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier/*, bool re
 
    if (parent == NULL) {
       // outer most ns
-
-//      if (referenceOne) {
-//         return mapGlobal(identifier);
-//      }
-      /*else */if (identifier.compare(NIL_VAR)) {
+      if (referenceOne) {
+         return mapGlobal(identifier);
+      }
+      else if (identifier.compare(NIL_VAR)) {
          return ObjectInfo(okNil);
       }
    }
 
-   return Scope::mapTerminal(identifier, /*referenceOne, */mode | HINT_NESTEDNS);
+   return Scope::mapTerminal(identifier, referenceOne, mode | HINT_NESTEDNS);
 }
 
 ref_t Compiler::NamespaceScope :: resolveImplicitIdentifier(ident_t identifier, /*bool referenceOne, */bool innermost)
@@ -894,6 +893,13 @@ Compiler::ExprScope :: ExprScope(SourceScope* parent)
    : Scope(parent)
 {
 
+}
+
+ObjectInfo Compiler::ExprScope :: mapGlobal(ident_t identifier)
+{
+   NamespaceScope* nsScope = (NamespaceScope*)getScope(ScopeLevel::slNamespace);
+
+   return nsScope->mapGlobal(identifier);
 }
 
 //// --- Compiler::ResendScope ---
@@ -5232,7 +5238,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    ident_t token = terminal.identifier();
 
    ObjectInfo object;
-//   switch (terminal.type) {
+   switch (terminal.type) {
 //      //case lxConstantList:
 //      //      // HOTFIX : recognize predefined constant lists
 //      //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
@@ -5307,9 +5313,9 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 //         object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s), V_REAL64);
 //         break;
 //      }
-//      case lxGlobalReference:
-//         object = scope.mapGlobal(token.c_str());
-//         break;
+      case lxGlobalReference:
+         object = scope.mapGlobal(token.c_str());
+         break;
 ////      case lxLocal:
 ////         // if it is a temporal variable
 ////         object = ObjectInfo(okLocal, terminal.argument);
@@ -5329,7 +5335,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 //         object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(action), 0, 0, actionRef);
 //         break;
 //      }
-//      default:
+      default:
 //         if (mode.testany(HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER | HINT_SUBJECTREF | HINT_MESSAGEREF)) {
 //            if (mode.test(HINT_FORWARD)) {
 //               IdentifierString forwardName(FORWARD_MODULE, "'", token);
@@ -5352,10 +5358,10 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 //               object = compileMessageReference(writer, terminal, scope);
 //            }
 //         }
-         /*else */object = scope.mapTerminal(token/*, terminal == lxReference*/, mode & HINT_SCOPE_MASK);
-//         break;
-//   }
-//
+         /*else */object = scope.mapTerminal(token, terminal == lxReference, mode & HINT_SCOPE_MASK);
+         break;
+   }
+
 //   if (object.kind == okExplicitConstant) {
 //      // replace an explicit constant with the appropriate object
 //      writer.newBookmark();

@@ -46,6 +46,8 @@ enum LexicalType
    lxEOF                      = 0x002010, // indicating closing code bracket
    lxIdentifier               = 0x002011,
    lxHexInteger               = 0x002012,
+   lxReference                = 0x002013,
+   lxGlobalReference          = 0x002014,
 
    // expression nodes
    lxExpression               = 0x009030,
@@ -102,7 +104,6 @@ enum LexicalType
 //
 //   // parameters
 //   lxLiteral                  = 0x018004,
-//   lxReference                = 0x018007,
 //   lxInteger                  = 0x018008,
 //   lxReal                     = 0x01800A,
 //   lxCharacter                = 0x01800B,
@@ -110,7 +111,6 @@ enum LexicalType
 //   lxWide                     = 0x01800D,
 //   lxExplicitConst            = 0x01800E,
 //   lxExplicitAttr             = 0x01800F,
-//   lxGlobalReference          = 0x018011,
 //
 //   lxImporting                = 0x008101,
 //   lxNested                   = 0x008102, // arg - count
