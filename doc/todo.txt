@@ -2,6 +2,12 @@
 In development:
 ------         
               dev
+                * import ns / attributes
+                * reference identifiers
+                * methods
+                * constructors
+                * nested class scope?
+
                 * inherit identifier, reference, global, template
 
                 * implicit / explicit namespaces, public / internal / private namespaces --- 

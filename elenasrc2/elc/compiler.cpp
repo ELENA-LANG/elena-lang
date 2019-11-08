@@ -233,6 +233,14 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope)
 //   else packageReference = 0;
 }
 
+Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent)
+   : Scope(parent)//, constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr), extensionTemplates(NULL, freestr)
+{
+   defaultVisibility = parent->defaultVisibility;
+   sourcePath.copy(parent->sourcePath);
+   ns.copy(parent->ns);
+}
+
 pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
 {
    return saveSourcePath(writer, sourcePath);
@@ -9954,6 +9962,14 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
             compileSymbolImplementation(/*expressionTree, */current, symbolScope);
             break;
          }
+         case lxNamespace:
+         {
+               NamespaceScope namespaceScope(&scope/*, true*/);
+               declareNamespace(current.firstChild(), namespaceScope, true);
+
+               compileImplementations(current.firstChild(), namespaceScope);
+               break;
+         }
 //         //case lxMeta:
 //         //   compileMetaCategory(current, scope);
 //         //   break;
@@ -9976,6 +9992,16 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
       if (current.argument == 0 || current.argument == INVALID_REF) {
          // hotfix : ignore already declared classes and symbols
          switch (current) {
+            case lxNamespace:
+            {
+               NamespaceScope namespaceScope(&scope);
+               declareNamespace(current.firstChild(), namespaceScope, false);
+
+               // declare classes several times to ignore the declaration order
+               declared |= compileDeclarations(current.firstChild(), namespaceScope, forced, repeatMode);
+
+               break;
+            }
             case lxClass:
                //if (forced || !current.findChild(lxParent) || scope.moduleScope->isClassDeclared(resolveParentRef(current.findChild(lxParent), scope, true))) 
                {
@@ -10023,6 +10049,16 @@ void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool wi
    while (current != lxNone) {
       if (current == lxSourcePath) {
          scope.sourcePath.copy(current.identifier());
+      }
+      else if (current == lxNameAttr) {
+         if (scope.ns.Length() > 0)
+            scope.ns.append('\'');
+
+         scope.ns.append(current.firstChild(lxTerminalMask).identifier());
+      }
+      else if (current == lxAttribute) {
+         if (!_logic->validateNsAttribute(current.argument, scope.defaultVisibility))
+            scope.raiseError(errInvalidHint, current);
       }
       else break;
 //      else if (current == lxImport) {

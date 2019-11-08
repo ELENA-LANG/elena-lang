@@ -21,18 +21,19 @@ namespace _ELENA_
 
 class DerivationWriter : public _DerivationWriter
 {
-//   enum DeclarationAttr
-//   {
-//      daNone        = 0x0000,
+   enum class MetaScope : int
+   {
+      None,
+      Namespace,
 //      daType        = 0x0001,
 //   //      daClass       = 0x0002,
 //      daTemplate    = 0x0004,
 //      daProperty    = 0x0008,
 //      daInline      = 0x0010,
-//      daImport      = 0x0040,
+//      Import      = 0x0040,
 //      daExtension   = 0x8000,
-//   };
-//
+   };
+
 //   enum ScopeType
 //   {
 //      stNormal = 0,
@@ -132,6 +133,8 @@ class DerivationWriter : public _DerivationWriter
 //   void loadTemplateParameters(Scope& scope, SNode node);
 //   void loadTemplateExprParameters(Scope& scope, SNode node);
 
+   MetaScope recognizeMetaScope(SNode node);
+
    void saveScope(SyntaxWriter& writer);
 
 //   ref_t resolveTemplate(ident_t templateName);
@@ -146,8 +149,10 @@ class DerivationWriter : public _DerivationWriter
    void recognizeClassMebers(SNode node);
 //   void recognizeMethodMebers(SNode node);
 
-   bool recognizeMetaScope(SNode node);
-   
+ //  bool recognizeMetaScope(SNode node);
+
+   void declareNestedNamespace(SNode node, Scope& derivationScope);
+
 //   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
 //   void generateTemplateTree(SNode node, SNode nameNode, ScopeType templateType);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
@@ -181,20 +186,19 @@ class DerivationWriter : public _DerivationWriter
 //   void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 //
 //   void declareType(SNode node);
-//   void generateImport(SyntaxWriter& writer, SNode ns);
+   void generateImport(SyntaxWriter& writer, SNode ns);
 
    void raiseError(ident_t err, SNode node);
    void raiseWarning(int level, ident_t msg, SNode node);
 
 public:
-//   void newNamespace(ident_t ns, ident_t filePath);
-//   void importModule(ident_t moduke);
-//   void closeNamespace();
+   void newNodeDirectly(LexicalType symbol);
+   void newNodeDirectly(LexicalType symbol, ident_t arg);
+   void closeNodeDirectly();
 
-   virtual void newNode(LexicalType symbol, bool cachingMode = true);
-   virtual void newNode(LexicalType symbol, ident_t arg, bool cachingMode = true);
-   virtual void appendTerminal(TerminalInfo& terminal, bool cachingMode = true);
-   virtual void closeNode(bool cachingMode = true);
+   virtual void newNode(LexicalType symbol);
+   virtual void appendTerminal(TerminalInfo& terminal);
+   virtual void closeNode();
 
    DerivationWriter(SyntaxTree& target, _ModuleScope* scope)
       :  _output(target), _cacheWriter(_cache)//, _importedNs(nullptr, freestr)

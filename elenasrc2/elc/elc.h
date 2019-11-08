@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0009
+#define ELC_REVISION_NUMBER         0x000A
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -253,7 +253,7 @@ class Project : public _ELENA_::Project
    void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)
    {
       _ELENA_::DerivationWriter writer(derivationTree, &scope);
-      writer.newNode(_ELENA_::lxRoot, false);
+      writer.newNodeDirectly(_ELENA_::lxRoot);
 
       auto file_it = source->getIt(ELC_INCLUDE);
       while (!file_it.Eof()) {
@@ -274,9 +274,9 @@ class Project : public _ELENA_::Project
 
             // declare a namespace
             //scope.declareNamespace(ns.c_str());
-            writer.newNode(_ELENA_::lxNamespace, false);            
-            writer.newNode(_ELENA_::lxSourcePath, filePath, false);
-            writer.closeNode(false);
+            writer.newNodeDirectly(_ELENA_::lxNamespace);            
+            writer.newNodeDirectly(_ELENA_::lxSourcePath, filePath);
+            writer.closeNodeDirectly();
 
             //   // add the module itself
             //   writer.importModule(module->Name());
@@ -288,7 +288,7 @@ class Project : public _ELENA_::Project
 
             parser.parse(&sourceFile, writer, getTabSize());
 
-            writer.closeNode(false);
+            writer.closeNodeDirectly();
 //            scope.endModule(writer);
          }
          catch (_ELENA_::LineTooLong& e)
@@ -312,23 +312,7 @@ class Project : public _ELENA_::Project
          file_it = source->nextIt(ELC_INCLUDE, file_it);
       }
 
-      writer.closeNode(false);
-
-//      //   // generate the module members
-//      //   for (auto it = files.start(); !it.Eof(); it++) {
-//      //      _ELENA_::SyntaxTree* derivationTree = (*it)->tree;
-//      //      _ELENA_::SyntaxTree* syntaxTree = new _ELENA_::SyntaxTree();
-//      //
-//      //      _ELENA_::SyntaxWriter syntaxWriter(*syntaxTree);
-//      //      _ELENA_::DerivationTransformer transformer(*derivationTree);
-//      //      syntaxWriter.newNode(_ELENA_::lxRoot);
-//      //      transformer.generate(syntaxWriter, scope, (*it)->path, (*it)->ns, &(*it)->importedNs);
-//      //      syntaxWriter.closeNode();
-//      //
-//      //      (*it)->tree = syntaxTree;
-//      //
-//      //      freeobj(derivationTree);
-//      //   }
+      writer.closeNodeDirectly();
    }
 
 //   void buildSyntaxTree(_ELENA_::ScriptParser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)

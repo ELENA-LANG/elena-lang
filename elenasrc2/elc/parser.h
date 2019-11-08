@@ -87,9 +87,9 @@ struct TerminalInfo
 class _DerivationWriter
 {
 public:
-   virtual void newNode(LexicalType symbol, bool cachingMode = true) = 0;
-   virtual void appendTerminal(TerminalInfo& terminal, bool cachingMode = true) = 0;
-   virtual void closeNode(bool cachingMode = true) = 0;
+   virtual void newNode(LexicalType symbol) = 0;
+   virtual void appendTerminal(TerminalInfo& terminal) = 0;
+   virtual void closeNode() = 0;
 };
 
 // --- Parser class ---

@@ -126,137 +126,102 @@ inline void copyIdentifier(SyntaxWriter& writer, SNode ident/*, bool ignoreTermi
    writer.closeNode();
 }
 
-//void DerivationWriter :: newNamespace(ident_t ns, ident_t filePath)
-//{
-//   _ns = ns;
-//   _filePath = filePath;
-//
-//   _output.newNode(lxNamespace, ns);
-//   _output.appendNode(lxSourcePath, filePath);
-//}
-//
-//void DerivationWriter :: importModule(ident_t name)
-//{
-//   _output.appendNode(lxImport, name);
-//
-//   _importedNs.add(name.clone());
-//}
-//
-//void DerivationWriter :: closeNamespace()
-//{
-//   _output.closeNode();
-//
-//   _ns = nullptr;
-//   _filePath = nullptr;
-//
-//   _importedNs.clear();
-//}
-
-void DerivationWriter :: newNode(LexicalType symbol, ident_t arg, bool cachingMode)
+void DerivationWriter :: newNodeDirectly(LexicalType symbol, ident_t arg)
 {
-   if (cachingMode) {
-      _level++;
-
-      _cacheWriter.newNode(symbol, arg);
-
-      // whole root scope should be cached
-      if ((symbol == lxScope || symbol == lxAttributeDecl) && _level == 1)
-         _cachingLevel = _level;
-   }
-   else _output.newNode(symbol, arg);
-
+   _output.newNode(symbol, arg);
 }
 
-void DerivationWriter :: newNode(LexicalType symbol, bool cachingMode)
+void DerivationWriter :: newNodeDirectly(LexicalType symbol)
 {
-   if (cachingMode) {
-      _level++;
-
-      _cacheWriter.newNode(symbol);
-
-      // whole root scope should be cached
-      if ((symbol == lxScope || symbol == lxAttributeDecl) && _level == 1)
-         _cachingLevel = _level;
-   }
-   else _output.newNode(symbol);
-
-//   switch (symbol) {
-//      case nsExpression:
-//      case nsRootExpression:
-//      case nsOperandExpression:
-//      case nsSubExpression:
-//      case nsSingleExpression:
-//      case nsSubSingleExpression:
-//      case nsL1Operand:
-//      case nsL2Operand:
-//      case nsL3Operand:
-//      case nsL4Operand:
-//      case nsL6Operand:
-//         _cacheWriter.newNode(lxExpression);
-//         break;
-//      case nsNestedStatements:
-//      case nsNestedStatement:
-//         _cacheWriter.newNode(lxCode);
-//         break;
-//      case nsCodeEnd:
-//         _cacheWriter.newNode(lxEOF);
-//         break;
-//      case nsRetExpression:
-//         _cacheWriter.newNode(lxReturning);
-//         break;
-//      case nsResendExpression:
-//         _cacheWriter.newNode(lxResendExpression);
-//         break;
-//      case nsL1Operator:
-//      case nsL2Operator:
-//      case nsL3Operator:
-//      case nsL4Operator:
-//      case nsL5Operator:
-//      case nsL6Operator:
-//      case nsL0Operator:
-//      case nsL6bOperator:
-//         _cacheWriter.newNode(lxOperator);
-//         break;
-//      case nsAssignmentOperand:
-//         // HOTFIX : to indicate an assignment operation
-//         _cacheWriter.newNode(lxOperator, -1);
-//         break;
-//      case nsArrayOperator:
-//         _cacheWriter.newNode(lxOperator, REFER_OPERATOR_ID);
-//         break;
-//
-//      case nsSwitching:
-//         _cacheWriter.newNode(lxSwitching);
-//         break;
-//      case nsCollection:
-//         _cacheWriter.newNode(lxCollection);
-//         break;
-//      case nsScope:
-//      case nsAttribute:
-//         // whole root scope should be cached
-//         if (_level == 1)
-//            _cachingLevel = _level;
-//      default:
-//         _cacheWriter.newNode((LexicalType)(symbol & ~mskAnySymbolMask));
-//         break;
-//   }
+   _output.newNode(symbol);
 }
 
-void DerivationWriter :: closeNode(bool cachingMode)
+void DerivationWriter :: closeNodeDirectly()
 {
-   if (cachingMode) {
+   _output.closeNode();
+}
+
+DerivationWriter::MetaScope DerivationWriter :: recognizeMetaScope(SNode node)
+{
+   recognizeScopeAttributes(node.lastChild(), 0);
+
+   MetaScope scopeType = MetaScope::None;
+
+   SNode current = node.firstChild();
+   while (current == lxAttribute) {
+      switch (current.argument) {
+         case V_NAMESPACE:
+            scopeType = MetaScope::Namespace;
+            break;
+         //         case V_TYPETEMPL:
+         //            declType = (DeclarationAttr)(declType | daType);
+         //            break;
+         //         case V_INLINE:
+         //            declType = (DeclarationAttr)(declType | daInline);
+         //            break;
+         //         case V_PROPERTY:
+         //            declType = (DeclarationAttr)(declType | daProperty);
+         //            break;
+      //case V_IMPORT:
+      //   declType = (MetaScope)(declType | MetaScope::Import);
+      //   break;
+         //         case V_EXTENSION:
+         //            declType = (DeclarationAttr)(declType | daExtension);
+         //            break;
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   return scopeType;
+}
+
+void DerivationWriter :: newNode(LexicalType symbol)
+{
+   _level++;
+
+   if (symbol == lxScope && _level == 1) {
+      _cachingLevel = _level;
+
+      SNode node = _cache.readRoot();
+      MetaScope scopeType = recognizeMetaScope(node);
+      // the namespace node should be copied directly
+      if (scopeType == MetaScope::Namespace) {
+         Scope scope;
+         declareNestedNamespace(node, scope);
+         
+         _cachingLevel = _level = 0;
+
+         return;
+      }
+      // otherwise it should be cached
+   }
+   else if (symbol == lxAttributeDecl) {
+      _cachingLevel = _level;
+   }
+
+   _cacheWriter.newNode(symbol);
+}
+
+void DerivationWriter :: closeNode()
+{
+   if (_level == 0) {
+      _output.closeNode();
+   }
+   else {
       _level--;
 
       _cacheWriter.closeNode();
       if (_level < _cachingLevel) {
          _cachingLevel = 0;
-   
+
          saveScope(_output);
-   
+
          _cacheWriter.newNode(lxRoot);
       }
    }
-   else _output.closeNode();
 }
 
 inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
@@ -271,7 +236,7 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
    writer.closeNode();
 }
 
-void DerivationWriter :: appendTerminal(TerminalInfo& terminal, bool cachingMode)
+void DerivationWriter :: appendTerminal(TerminalInfo& terminal)
 {
 //   // HOT FIX : if there are several constants e.g. $10$13, it should be treated like literal terminal
 //   if (terminal == tsCharacter && terminal.value.findSubStr(1, '$', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
@@ -297,12 +262,7 @@ void DerivationWriter :: appendTerminal(TerminalInfo& terminal, bool cachingMode
 //   }
 //   else _cacheWriter.newNode(type, terminal.value);
 //
-   if (cachingMode) {
-      saveTerminal(_cacheWriter, terminal);
-   }
-   else {
-      saveTerminal(_output, terminal);
-   }
+   saveTerminal(_cacheWriter, terminal);
 
 //   _cacheWriter.closeNode();
 }
@@ -425,8 +385,8 @@ void DerivationWriter :: saveScope(SyntaxWriter& writer)
 //   SyntaxTree::saveNode(root, target);
 //}
 
-bool DerivationWriter :: recognizeMetaScope(SNode node)
-{
+//bool DerivationWriter :: recognizeMetaScope(SNode node)
+//{
 //   // recognize the declaration type
 //   DeclarationAttr declType = daNone;
 //   SNode nameNode;
@@ -436,24 +396,23 @@ bool DerivationWriter :: recognizeMetaScope(SNode node)
 //      current = current.prevNode();
 //   }      
 //   
-//   //   bool privateOne = true;
 //   while (current == lxAttribute) {
 //      switch (current.argument) {
-//         case V_TYPETEMPL:
-//            declType = (DeclarationAttr)(declType | daType);
-//            break;
-//         case V_INLINE:
-//            declType = (DeclarationAttr)(declType | daInline);
-//            break;
-//         case V_PROPERTY:
-//            declType = (DeclarationAttr)(declType | daProperty);
-//            break;
+////         case V_TYPETEMPL:
+////            declType = (DeclarationAttr)(declType | daType);
+////            break;
+////         case V_INLINE:
+////            declType = (DeclarationAttr)(declType | daInline);
+////            break;
+////         case V_PROPERTY:
+////            declType = (DeclarationAttr)(declType | daProperty);
+////            break;
 //         case V_IMPORT:
 //            declType = (DeclarationAttr)(declType | daImport);
 //            break;
-//         case V_EXTENSION:
-//            declType = (DeclarationAttr)(declType | daExtension);
-//            break;
+////         case V_EXTENSION:
+////            declType = (DeclarationAttr)(declType | daExtension);
+////            break;
 //         default:
 //            break;
 //      }
@@ -461,16 +420,16 @@ bool DerivationWriter :: recognizeMetaScope(SNode node)
 //      current = current.prevNode();
 //   }
 //   
-//   if (nameNode.existChild(lxToken)) {
-//      declType = (DeclarationAttr)(declType | daTemplate);
-//   }
-//
-//   if (declType == daType) {
-//      node = lxForward;
-//
-//      return true;
-//   }
-//   else if (declType == daImport) {
+////   if (nameNode.existChild(lxToken)) {
+////      declType = (DeclarationAttr)(declType | daTemplate);
+////   }
+////
+////   if (declType == daType) {
+////      node = lxForward;
+////
+////      return true;
+////   }
+//   /*else */if (declType == daImport) {
 //      SNode name = node.prevNode();
 //      if (name == lxNameAttr) {
 //         node = lxImport;
@@ -479,35 +438,35 @@ bool DerivationWriter :: recognizeMetaScope(SNode node)
 //      }
 //      else return false;
 //   }
-//   else if (test(declType, daTemplate)) {
-//      if (testany(declType, daImport | daType))
-//         _scope->raiseError(errInvalidSyntax, _filePath, node);
-//   
-//      recognizeDefinition(node);
+////   else if (test(declType, daTemplate)) {
+////      if (testany(declType, daImport | daType))
+////         _scope->raiseError(errInvalidSyntax, _filePath, node);
+////   
+////      recognizeDefinition(node);
+////
+////      ScopeType type = ScopeType::stClassTemplate;
+////      if (node.existChild(lxCode)) {
+////         type = ScopeType::stCodeTemplate;
+////      }
+////      else if (test(declType, daProperty)) {
+////         type = ScopeType::stPropertyTemplate;
+////      }
+////      else if (test(declType, daInline)) {
+////         type = ScopeType::stInlineTemplate;
+////      }
+////      else if (test(declType, daExtension)) {
+////         type = ScopeType::stExtensionTemplate;
+////      }
+////
+////      generateTemplateTree(node, nameNode, type);
+////
+////      node = lxIdle;
+////
+////      return true;
+////   }
 //
-//      ScopeType type = ScopeType::stClassTemplate;
-//      if (node.existChild(lxCode)) {
-//         type = ScopeType::stCodeTemplate;
-//      }
-//      else if (test(declType, daProperty)) {
-//         type = ScopeType::stPropertyTemplate;
-//      }
-//      else if (test(declType, daInline)) {
-//         type = ScopeType::stInlineTemplate;
-//      }
-//      else if (test(declType, daExtension)) {
-//         type = ScopeType::stExtensionTemplate;
-//      }
-//
-//      generateTemplateTree(node, nameNode, type);
-//
-//      node = lxIdle;
-//
-//      return true;
-//   }
-
-   return false;
-}
+//   return false;
+//}
 
 void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 {
@@ -538,11 +497,7 @@ void DerivationWriter :: recognizeScope()
 {
    SNode node = _cache.readRoot().lastChild();
    if (node == lxScope) {
-      recognizeScopeAttributes(node.prevNode(), MODE_ROOT);
-
-      if (!recognizeMetaScope(node)) {
-         recognizeDefinition(node);
-      }
+      recognizeDefinition(node);
    }
    else if (node == lxAttributeDecl) {
       declareAttribute(node);
@@ -626,7 +581,7 @@ ref_t DerivationWriter :: mapAttribute(SNode node, /*bool allowType, bool& allow
 
 void DerivationWriter :: raiseError(ident_t err, SNode node)
 {
-   SNode parentNode = node.parentNode();
+   SNode parentNode = _output.CurrentNode();
    while (parentNode != lxNone) {
       if (parentNode == lxNamespace && parentNode.existChild(lxSourcePath)) {
          _scope->raiseError(err, parentNode.findChild(lxSourcePath).identifier(), node);
@@ -893,13 +848,31 @@ void DerivationWriter :: generateScope(SyntaxWriter& writer, SNode node, Scope& 
 //         //case lxMeta:
 //         //   generateMetaTree(writer, current, scope);
 //         //   break;
-//         case lxImport:
-//            generateImport(writer, current);
-//            break;
+         case lxImport:
+            generateImport(writer, current);
+            break;
       }
 
       current = current.nextNode();
    }
+}
+
+void DerivationWriter :: declareNestedNamespace(SNode node, Scope& derivationScope)
+{
+   SyntaxTree buffer((pos_t)0);
+
+   _output.newNode(lxNamespace);
+
+   generateAttributes(_output, node.lastChild(), derivationScope, buffer);
+
+   if (!buffer.isEmpty())
+      SyntaxTree::copyNode(_output, buffer.readRoot());
+
+   _cache.clear();
+   _cacheWriter.clear();
+   _cacheWriter.newNode(lxRoot);
+
+   // NOTE : the node should not be closed 
 }
 
 void DerivationWriter :: generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
@@ -2042,9 +2015,9 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
 //   _scope->attributes.add(shortcut, classRef);
 //   _scope->saveAttribute(shortcut, classRef);
 //}
-//
-//void DerivationWriter :: generateImport(SyntaxWriter& writer, SNode ns)
-//{
+
+void DerivationWriter :: generateImport(SyntaxWriter& writer, SNode ns)
+{
 //   SNode nameNode = ns.prevNode().firstChild(lxTerminalMask);
 //   if (nameNode != lxNone) {
 //      ident_t name = nameNode.identifier();
@@ -2059,8 +2032,8 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
 //
 //      _importedNs.add(name.clone());
 //   }
-//}
-//
+}
+
 //// --- TemplateGenerator::TemplateScope ---
 //
 //bool TemplateGenerator::TemplateScope :: generateClassName()

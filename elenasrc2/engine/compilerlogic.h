@@ -186,6 +186,7 @@ public:
 //   virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
 //   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
+   virtual bool validateNsAttribute(int attrValue, Visibility& visibility);
    virtual bool validateClassAttribute(int& attrValue, Visibility& visibility);
 //   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
 //   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName);

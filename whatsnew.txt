@@ -9,6 +9,8 @@
 
 [ELENA]
 [!] binary incompatible due to major version change
+[+] Explicit namespaces
+[+] Flat library hierarchy
 [+] #492 : Yield statement 
 
 [ELC]

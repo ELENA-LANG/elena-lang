@@ -33,6 +33,7 @@ enum LexicalType
 
    lxSymbol                   = 0x000010,
    lxClass                    = 0x000011,
+   lxImport                   = 0x000012,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -226,7 +227,6 @@ enum LexicalType
 //   lxShortsVariable           = 0x1003D,
 //   lxParamsVariable           = 0x1003E,
 
-//   lxImport                   = 0x20007,
 //   lxReserved                 = 0x20008,
 //   lxAllocated                = 0x20009,
 //   lxParamCount               = 0x2000A,

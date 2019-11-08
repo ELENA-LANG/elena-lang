@@ -53,8 +53,8 @@ constexpr auto V_INTERNAL        = 0x80005003u;
 //constexpr auto V_LOOP            = 0x80002005u;
 //constexpr auto V_PRELOADED       = 0x80002006u;
 //constexpr auto V_LAZY            = 0x80002009u;
-//
-///// scope:
+
+/// scope:
 //constexpr auto V_CLASS           = 0x80001001u;
 //constexpr auto V_STRUCT          = 0x80001002u;
 //constexpr auto V_SYMBOLEXPR      = 0x80001003u;
@@ -85,7 +85,8 @@ constexpr auto V_INTERNAL        = 0x80005003u;
 //constexpr auto V_TEMPLATE        = 0x8000101Eu;
 //constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
 //constexpr auto V_YIELD           = 0x80001020u;
-//
+constexpr auto V_NAMESPACE       = 0x80001021u;
+
 ///// primitive type attributes
 //constexpr auto V_STRING          = 0x80000801u;
 //constexpr auto V_FLOAT           = 0x80000802u;
@@ -673,6 +674,7 @@ public:
 //      bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
+   virtual bool validateNsAttribute(int attrValue, Visibility& visibility) = 0;
    virtual bool validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
 //   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
 //   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;

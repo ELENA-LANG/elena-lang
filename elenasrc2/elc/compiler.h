@@ -413,6 +413,7 @@ private:
 //      }
 
       NamespaceScope(_ModuleScope* moduleScope/*, ident_t path, IdentifierList* imported*//*, bool withFullInfo*/);
+      NamespaceScope(NamespaceScope* parent/*, ident_t path, IdentifierList* imported*//*, bool withFullInfo*/);
    };
 
    // - SourceScope -

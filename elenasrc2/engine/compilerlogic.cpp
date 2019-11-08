@@ -1604,6 +1604,28 @@ CompilerLogic :: CompilerLogic()
 //   return false;
 //}
 
+bool CompilerLogic :: validateNsAttribute(int attrValue, Visibility& visibility)
+{
+   switch ((size_t)attrValue)
+   {
+      case 0:
+         return true;
+      case V_PUBLIC:
+         visibility = Visibility::Public;
+         return true;
+      case V_INTERNAL:
+         visibility = Visibility::Internal;
+         return true;
+      case V_PRIVATE:
+         visibility = Visibility::Private;
+         return true;
+      case V_NAMESPACE:
+         return true;
+      default:
+         return false;
+   }
+}
+
 bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibility)
 {
    switch ((size_t)attrValue)
