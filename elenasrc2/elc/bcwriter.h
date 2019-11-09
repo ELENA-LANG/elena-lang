@@ -142,7 +142,7 @@ class ByteCodeWriter
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
-//   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
+   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
 //   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
@@ -253,9 +253,9 @@ class ByteCodeWriter
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape, bool idle = false);
-//   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
+   void exitMethod(CommandTape& tape, int count/*, int reserved, bool withFrame = true*/);
 //   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
-//   void endIdleMethod(CommandTape& tape);
+   void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
@@ -358,8 +358,8 @@ class ByteCodeWriter
 //   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
+
+   void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
 //   void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
 //
 //   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
@@ -370,7 +370,7 @@ public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
 //   int writeString(ident_t path);
 
-   void generateClass(CommandTape& tape, SNode root, pos_t sourcePathBookmark);
+   void generateClass(CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, bool(*cond)(LexicalType));
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root/*, bool isStatic*/, pos_t sourcePathBookmark);

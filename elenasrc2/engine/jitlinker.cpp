@@ -46,13 +46,13 @@ SectionInfo JITLinker::ReferenceHelper :: getCoreSection(ref_t reference)
    return _owner->_loader->getCoreSectionInfo(reference, 0);
 }
 
-//ref_t JITLinker::ReferenceHelper :: resolveMessage(ref_t reference, _Module* module)
-//{
-//   if (!module)
-//      module = _module;
-//
-//   return _owner->resolveMessage(module, reference);
-//}
+ref_t JITLinker::ReferenceHelper :: resolveMessage(ref_t reference, _Module* module)
+{
+   if (!module)
+      module = _module;
+
+   return _owner->resolveMessage(module, reference);
+}
 
 void JITLinker::ReferenceHelper :: addBreakpoint(size_t position)
 {
@@ -276,27 +276,27 @@ ref_t JITLinker :: resolveWeakAction(SectionInfo& messageTable, ident_t actionNa
 //   ref_t signature;
 //   return messageTable.module->resolveAction(reference, signature);
 //}
-//
-//ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
-//{
-//   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
-//
-//   ref_t actionRef, flags;
-//   int paramCount = 0;
-//   decodeMessage(message, actionRef, paramCount, flags);
-//
-//   // signature and custom verb should be imported
-//   ref_t signature;
-//   ident_t actionName = module->resolveAction(actionRef, signature);
-//
-//   ref_t resolvedSignature = resolveSignature(module, signature, test(message, VARIADIC_MESSAGE));
-//   ref_t resolvedAction = messageTable.module->mapAction(actionName, resolvedSignature, true);
-//   if (!resolvedAction) {
-//      resolvedAction = mapAction(messageTable, actionName, resolveWeakAction(messageTable, actionName), resolvedSignature);
-//   }
-//
-//   return encodeMessage(resolvedAction, paramCount, flags);
-//}
+
+ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
+{
+   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
+
+   ref_t actionRef, flags;
+   int argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   // signature and custom verb should be imported
+   ref_t signature;
+   ident_t actionName = module->resolveAction(actionRef, signature);
+
+   ref_t resolvedSignature = /*resolveSignature(module, signature, test(message, VARIADIC_MESSAGE))*/0;
+   ref_t resolvedAction = messageTable.module->mapAction(actionName, resolvedSignature, true);
+   if (!resolvedAction) {
+      resolvedAction = mapAction(messageTable, actionName, resolveWeakAction(messageTable, actionName), resolvedSignature);
+   }
+
+   return encodeMessage(resolvedAction, argCount, flags);
+}
 
 void* JITLinker :: calculateVAddress(MemoryWriter* writer, int mask)
 {
@@ -457,16 +457,16 @@ void* JITLinker :: getVMTReference(_Module* module, ref_t reference, References&
 //   }
 //   else return _compiler->findFlags(vaddress);
 //}
-//
-//size_t JITLinker :: loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer)
-//{
-//   size_t position = writer.Position();
-//
-//   // method just in time compilation
-//   _compiler->compileProcedure(refHelper, reader, writer);
-//
-//   return _virtualMode ? position : (size_t)writer.Memory()->get(position);
-//}
+
+size_t JITLinker :: loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer)
+{
+   size_t position = writer.Position();
+
+   // method just in time compilation
+   _compiler->compileProcedure(refHelper, reader, writer);
+
+   return _virtualMode ? position : (size_t)writer.Memory()->get(position);
+}
 
 void* JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo)
 {
@@ -604,7 +604,7 @@ void* JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, int mask,
 
 void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references)
 {
-   if (/*sectionInfo.codeSection == NULL || */sectionInfo.vmtSection == NULL)
+   if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
       return LOADER_NOTLOADED;
 
    ReferenceHelper refHelper(this, sectionInfo.module, &references);
@@ -648,7 +648,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
 
       // read and compile VMT entries
       MemoryWriter   codeWriter(codeImage);
-      //MemoryReader   codeReader(sectionInfo.codeSection);
+      MemoryReader   codeReader(sectionInfo.codeSection);
 
       size_t          methodPosition;
       VMTEntry        entry;
@@ -657,15 +657,15 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       while (size > 0) {
          vmtReader.read((void*)&entry, sizeof(VMTEntry));
    
-//         codeReader.seek(entry.address);
-//         methodPosition = loadMethod(refHelper, codeReader, codeWriter);
-//         
-//         // NOTE : private / implicit message is not added to VMT
-//         if (test(entry.message, STATIC_MESSAGE)) {
-//            _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
-//         }
-//         else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
-//
+         codeReader.seek(entry.address);
+         methodPosition = loadMethod(refHelper, codeReader, codeWriter);
+         
+         // NOTE : private / implicit message is not added to VMT
+         /*if (test(entry.message, STATIC_MESSAGE)) {
+            _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
+         }
+         else */_compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
+
          size -= sizeof(VMTEntry);
       }
       if (_withDebugInfo)

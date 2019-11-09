@@ -543,7 +543,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcEOrN:
             compileICommand(opcode, token, writer);
             break;
-         //case bcQuitN:
+         case bcQuitN:
          case bcFreeI:
          case bcAllocI:
          //case bcDCopy:

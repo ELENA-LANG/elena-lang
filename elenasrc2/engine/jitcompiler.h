@@ -23,7 +23,7 @@ public:
 
    virtual void* getVAddress(MemoryWriter& writer, int mask) = 0;
 
-//   virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL) = 0;
+   virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL) = 0;
 
    virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module = NULL) = 0;
    virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp) = 0;
@@ -85,8 +85,8 @@ public:
 //   virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength) = 0;
 //   virtual size_t findFlags(void* refVMT) = 0;
 //   virtual size_t findLength(void* refVMT) = 0;
-//
-//   virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count) = 0;
+
+   virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count) = 0;
 
    virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode) = 0;
 
@@ -133,7 +133,7 @@ public:
 
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength/*, size_t staticSize*/);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
-//   virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
+   virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
    virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode);
 
    virtual void generateProgramStart(MemoryDump& tape);

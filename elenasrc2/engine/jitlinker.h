@@ -82,7 +82,7 @@ class JITLinker : _JITLoaderListener
          return _owner->calculateVAddress(&writer, mask);
       }
 
-//      virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL);
+      virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL);
 
       virtual void addBreakpoint(size_t position);
 
@@ -146,14 +146,14 @@ class JITLinker : _JITLoaderListener
 
    void fixReferences(References& relocations, _Memory* image);
 //   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress, bool constArrayMode);
-//
-//   size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
+
+   size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
    ref_t mapAction(SectionInfo& messageTable, ident_t action, ref_t weakActionRef, ref_t signature);
    ref_t resolveWeakAction(SectionInfo& messageTable, ident_t action);
-//   ref_t resolveMessage(_Module* module, ref_t reference);
+   ref_t resolveMessage(_Module* module, ref_t reference);
 //   ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne);
-//
+
 //   void createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes);
 //
 //   void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);

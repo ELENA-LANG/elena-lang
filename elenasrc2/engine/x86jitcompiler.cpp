@@ -142,7 +142,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileSetR, &compileNop,
+   &compileNop, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileSetR, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -841,12 +841,12 @@ void _ELENA_::compileQuit(int, x86JITScope& scope)
    scope.code->writeByte(0xC3);
 }
 
-//void _ELENA_::compileQuitN(int, x86JITScope& scope)
-//{
-//   scope.code->writeByte(0xC2);
-//   scope.code->writeWord((unsigned short)(scope.argument << 2));
-//}
-//
+void _ELENA_::compileQuitN(int, x86JITScope& scope)
+{
+   scope.code->writeByte(0xC2);
+   scope.code->writeWord((unsigned short)(scope.argument << 2));
+}
+
 //void _ELENA_::compileNext(int opcode, x86JITScope& scope)
 //{
 //   int jumpOffset = scope.argument;

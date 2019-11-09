@@ -77,7 +77,7 @@ constexpr auto V_CLASS           = 0x80001001u;
 //constexpr auto V_EXTERN          = 0x80001015u;
 //constexpr auto V_INTERN          = 0x80001016u;
 //constexpr auto V_FORWARD         = 0x80001017u;
-//constexpr auto V_IMPORT          = 0x80001018u;
+constexpr auto V_IMPORT          = 0x80001018u;
 //constexpr auto V_GROUP           = 0x80001019u;
 //constexpr auto V_NOSTRUCT        = 0x8000101Bu;
 //constexpr auto V_AUTO            = 0x8000101Cu;
@@ -292,7 +292,7 @@ struct _ModuleScope
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
-   //   virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, bool referenceOne, IdentifierList* importedNs) = 0;
+   virtual ref_t resolveImportedIdentifier(ident_t identifier, IdentifierList* importedNs) = 0;
    virtual ident_t resolveFullName(ref_t reference) = 0;
    virtual ident_t resolveFullName(ident_t referenceName) = 0;
 
@@ -348,8 +348,9 @@ struct _ModuleScope
 //   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 //   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef) = 0;
 //   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
-//
-//   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
+
+   virtual void declareNamespace(ident_t name) = 0;
+   virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
 
    _ModuleScope()
       : attributes(0), savedPaths(-1)

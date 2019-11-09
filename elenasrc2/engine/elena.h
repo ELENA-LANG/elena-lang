@@ -109,14 +109,14 @@ struct SectionInfo
 struct ClassSectionInfo
 {
    _Module* module;
-   //_Memory* codeSection;
+   _Memory* codeSection;
    _Memory* vmtSection;
    //_Memory* attrSection;
 
    ClassSectionInfo()
    {
       module = nullptr;
-      /*codeSection = */vmtSection = nullptr;
+      codeSection = vmtSection = nullptr;
       //attrSection = nullptr;
    }
 };
@@ -546,7 +546,7 @@ struct ClassInfo
 {
 //   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
 //   typedef Pair<ref_t, int>                    Attribute;
-//   typedef MemoryMap<ref_t, bool, false>       MethodMap;
+   typedef MemoryMap<ref_t, bool, false>       MethodMap;
 //   typedef MemoryMap<ident_t, int, true>       FieldMap;
 //   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
 //   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
@@ -555,7 +555,7 @@ struct ClassInfo
 
    ClassHeader     header;
 //   int             size;           // Object size
-//   MethodMap       methods;        // list of methods, true means the method was declared in this instance
+   MethodMap       methods;        // list of methods, true means the method was declared in this instance
 //   FieldMap        fields;
 //   StaticFieldMap  statics;
 //   StaticInfoMap   staticValues;
@@ -568,36 +568,36 @@ struct ClassInfo
    {
       writer->write((void*)this, sizeof(ClassHeader));
 //      writer->writeDWord(size);
-//      if (!headerAndSizeOnly) {
+      if (!headerAndSizeOnly) {
 //         mattributes.write(writer);
 //         statics.write(writer);
 //         staticValues.write(writer);
-//         methods.write(writer);
+         methods.write(writer);
 //         methodHints.write(writer);
 //         fields.write(writer);
 //         fieldTypes.write(writer);
-//      }
+      }
    }
 
    void load(StreamReader* reader, bool headerOnly = false, bool ignoreFields = false)
    {
       reader->read((void*)&header, sizeof(ClassHeader));
 //      size = reader->getDWord();
-//      if (!headerOnly) {
+      if (!headerOnly) {
 //         mattributes.read(reader);
 //         statics.read(reader);
 //         staticValues.read(reader);
-//         methods.read(reader);
+         methods.read(reader);
 //         methodHints.read(reader);
 //         if (!ignoreFields) {
 //            fields.read(reader);
 //            fieldTypes.read(reader);
 //         }
-//      }
+      }
    }
 
    ClassInfo()
-//      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+      : /*fields(-1), */methods(0)//, methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
@@ -779,9 +779,9 @@ inline bool isForwardReference(ident_t referenceName)
    return referenceName.startsWith(FORWARD_PREFIX_NS);
 }
 
-inline ref_t encodeMessage(ref_t actionRef, int paramCount, ref_t flags)
+inline ref_t encodeMessage(ref_t actionRef, int argCount, ref_t flags)
 {
-   return flags | ((actionRef << ACTION_ORDER) + paramCount);
+   return flags | ((actionRef << ACTION_ORDER) + argCount);
 }
 
 //inline ref64_t encodeMessage64(ref_t actionRef, int paramCount, ref_t flags)
@@ -825,33 +825,24 @@ inline void decodeMessage(ref_t message, ref_t& actionRef, int& argCount, ref_t&
 //
 //   return encodeMessage(newAction, paramCount, flags);
 //}
-//
-////inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
-////{
-////   actionRef = (ref_t)(message >> 16);
-////
-////   actionRef &= ACTION_MASK;
-////
-////   paramCount = message & PARAMX_MASK;
-////}
-//
-////inline int getAbsoluteParamCount(ref_t message)
-////{
-////   int   paramCount;
-////   ref_t action;
-////   decodeMessage(message, action, paramCount);
-////
-////   return paramCount;
-////}
-//
-//inline int getParamCount(ref_t message)
+
+//inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
 //{
-//   int   paramCount;
-//   ref_t action, flags;
-//   decodeMessage(message, action, paramCount, flags);
+//   actionRef = (ref_t)(message >> 16);
 //
-//   return paramCount;
+//   actionRef &= ACTION_MASK;
+//
+//   paramCount = message & PARAMX_MASK;
 //}
+
+inline int getArgCount(ref_t message)
+{
+   int   argCount;
+   ref_t action, flags;
+   decodeMessage(message, action, argCount, flags);
+
+   return argCount;
+}
 
 inline ref_t getAction(ref_t message)
 {
@@ -862,24 +853,24 @@ inline ref_t getAction(ref_t message)
    return action;
 }
 
-////inline ref64_t toMessage64(ref_t message)
-////{
-////   int   paramCount;
-////   ref_t actionRef;
-////   decodeMessage(message, actionRef, paramCount);
-////
-////   return encodeMessage64(actionRef, paramCount);
-////}
-////
-////inline ref_t fromMessage64(ref64_t message)
-////{
-////   int   paramCount;
-////   ref_t actionRef;
-////   decodeMessage64(message, actionRef, paramCount);
-////
-////   return encodeMessage(actionRef, paramCount);
-////}
+//inline ref64_t toMessage64(ref_t message)
+//{
+//   int   paramCount;
+//   ref_t actionRef;
+//   decodeMessage(message, actionRef, paramCount);
 //
+//   return encodeMessage64(actionRef, paramCount);
+//}
+//
+//inline ref_t fromMessage64(ref64_t message)
+//{
+//   int   paramCount;
+//   ref_t actionRef;
+//   decodeMessage64(message, actionRef, paramCount);
+//
+//   return encodeMessage(actionRef, paramCount);
+//}
+
 //inline bool IsExprOperator(int operator_id)
 //{
 //   switch (operator_id) {

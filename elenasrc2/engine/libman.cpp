@@ -281,7 +281,7 @@ _Module* LibraryManager :: resolve(bool debugModule, ident_t referenceName, Load
       name.trimLastSubNs();
    }
 
-   return NULL;
+   return nullptr;
 }
 
 _Module* LibraryManager :: resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference)

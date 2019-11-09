@@ -135,7 +135,7 @@ protected:
 //   friend void compileGreaterN(int opcode, x86JITScope& scope);
 //   friend void compileIfHeap(int opcode, x86JITScope& scope);
    friend void compileQuit(int opcode, x86JITScope& scope);
-//   friend void compileQuitN(int opcode, x86JITScope& scope);
+   friend void compileQuitN(int opcode, x86JITScope& scope);
 //   friend void compileSetVerb(int opcode, x86JITScope& scope);
 //   friend void compileSetSubj(int opcode, x86JITScope& scope);
 //   friend void compilePopB(int opcode, x86JITScope& scope);
@@ -273,7 +273,7 @@ void compileSetR(int opcode, x86JITScope& scope);
 //void compileGreaterN(int opcode, x86JITScope& scope);
 //void compileIfHeap(int opcode, x86JITScope& scope);
 void compileQuit(int opcode, x86JITScope& scope);
-//void compileQuitN(int opcode, x86JITScope& scope);
+void compileQuitN(int opcode, x86JITScope& scope);
 //void compilePopE(int opcode, x86JITScope& scope);
 //void compilePopD(int opcode, x86JITScope& scope);
 //void compileSetVerb(int opcode, x86JITScope& scope);

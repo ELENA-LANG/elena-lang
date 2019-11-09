@@ -32,6 +32,9 @@ ELENA byte codes (or ecodes)
  -----------------              
  quit                       - terminates the procedure;
  
+ quitn                      - terminates the procedure;
+                              clear the stack parameters
+
 
  Call operations:
  ----------------
@@ -427,9 +430,6 @@ ELENA byte codes (or ecodes)
                               init the frame header offset
                               it should be only one command per procedure ; 
  
- quitn                      - terminates the procedure;
-                              clear the stack parameters
-
  reserve i                  - exclude part of the stack from managed stack frame ;
                               should follow "open" byte code
  

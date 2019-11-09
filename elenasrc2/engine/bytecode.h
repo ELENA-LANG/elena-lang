@@ -159,7 +159,7 @@ enum ByteCode
 //   bcIfHeap          = 0x96,
 //   bcBCopyS          = 0x97,
 //   bcOpen            = 0x98,
-//   bcQuitN           = 0x99,
+   bcQuitN           = 0x99,
 //   bcBCopyR          = 0x9A,
 //   bcBCopyF          = 0x9B,
 //   bcACopyF          = 0x9C,
@@ -541,7 +541,7 @@ public:
       }
    }
 
-   //static bool resolveMessageName(IdentifierString& messageName, _Module* module, size_t messageRef);
+   static bool resolveMessageName(IdentifierString& messageName, _Module* module, size_t messageRef);
 };
 
 // --- CommandTape ---

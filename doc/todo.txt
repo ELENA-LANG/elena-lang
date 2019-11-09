@@ -2,12 +2,24 @@
 In development:
 ------         
               dev
-                * import ns
                 * methods
+                * methods : reference name??
                 * constructors
+                * creating an object : implicit / explicit, default constructor should be embeddable
+                * singletons
+                * calls
+                * system module to be included by default : an option?
+
+                * functions
+                * variables
+                * templates
+
+                * inheritance
+
                 * nested class scope?
                 * global types
 
+                * uncomment resolveMessage 
                 * inherit identifier, reference, global, template
 
                 * implicit / explicit namespaces, public / internal / private namespaces --- 

@@ -18,13 +18,13 @@ using namespace _ELENA_;
 const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
 const int elVMTCountOffset64      = 0x0018;           // a VMTX size offset
 
-//inline void insertVMTEntry(VMTEntry* entries, int count, int index)
-//{
-//   for (int i = count ; i > index ; i--) {
-//      entries[i] = entries[i-1];
-//   }
-//}
-//
+inline void insertVMTEntry(VMTEntry* entries, int count, int index)
+{
+   for (int i = count ; i > index ; i--) {
+      entries[i] = entries[i-1];
+   }
+}
+
 //inline void insertVMTXEntry(VMTXEntry* entries, int count, int index)
 //{
 //   for (int i = count; i > index; i--) {
@@ -291,25 +291,25 @@ int JITCompiler32 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
    else return 0;
 }
 
-//void JITCompiler32 :: addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& entryCount)
-//{
-//   size_t index = 0;
-//
-//   // find the message entry
-//   while (index < entryCount && (entries[index].message < message))
-//      index++;
-//
-//   if(index < entryCount) {
-//      if (entries[index].message != message) {
-//         insertVMTEntry(entries, entryCount, index);
-//         entryCount++;
-//      }
-//   }  
-//   else entryCount++;
-//
-//   entries[index].message = message;
-//   entries[index].address = codePosition;
-//}
+void JITCompiler32 :: addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& entryCount)
+{
+   size_t index = 0;
+
+   // find the message entry
+   while (index < entryCount && (entries[index].message < message))
+      index++;
+
+   if(index < entryCount) {
+      if (entries[index].message != message) {
+         insertVMTEntry(entries, entryCount, index);
+         entryCount++;
+      }
+   }  
+   else entryCount++;
+
+   entries[index].message = message;
+   entries[index].address = codePosition;
+}
 
 void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode)
 {

@@ -30,7 +30,7 @@ class DerivationWriter : public _DerivationWriter
 //      daTemplate    = 0x0004,
 //      daProperty    = 0x0008,
 //      daInline      = 0x0010,
-//      Import      = 0x0040,
+      Import,
 //      daExtension   = 0x8000,
    };
 
@@ -147,7 +147,7 @@ class DerivationWriter : public _DerivationWriter
    void recognizeDefinition(SNode scopeNode);
    void recognizeScopeAttributes(SNode node, int mode);
    void recognizeClassMebers(SNode node);
-//   void recognizeMethodMebers(SNode node);
+   void recognizeMethodMebers(SNode node);
 
  //  bool recognizeMetaScope(SNode node);
 
@@ -166,7 +166,7 @@ class DerivationWriter : public _DerivationWriter
 //   //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool nested = false*/);
-//   void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode, bool propertyMode, SyntaxTree& buffer);
+   void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool closureMode, bool propertyMode*/, SyntaxTree& buffer);
 //   // returns true if in-place init found
 //   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);

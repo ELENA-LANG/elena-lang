@@ -408,6 +408,29 @@ ident_t ModuleScope:: resolveWeakTemplateReference(ident_t referenceName)
    return resolvedName;
 }
 
+ref_t ModuleScope :: resolveImportedIdentifier(ident_t identifier, IdentifierList* importedNs)
+{
+   ref_t reference = 0;
+
+   auto it = importedNs->start();
+   while (!it.Eof()) {
+      ReferenceNs fullName(*it, identifier);
+   
+      reference = 0;
+      _Module* ext_module = project->resolveModule(fullName, reference, true);
+      if (ext_module && reference) {
+         if (ext_module != module) {
+            return module->mapReference(fullName.c_str(), false);
+         }
+         else return reference;
+      }
+   
+      it++;
+   }
+
+   return reference;
+}
+
 //inline ref_t resolveImplicitIdentifier(bool referenceOne, ident_t identifier, _Module* module, _ProjectManager* project, IdentifierList* importedNs)
 //{
 //   ref_t reference = 0;
@@ -680,49 +703,49 @@ void ModuleScope :: saveListMember(ident_t name, ident_t memberName)
    metaWriter.writeLiteral(memberName.c_str());
 }
 
-//void ModuleScope :: saveIncludedModule(_Module* extModule)
-//{
-//   // HOTFIX : do not include itself
-//   if (module == extModule)
-//      return;
-//
-//   saveListMember(IMPORTS_SECTION, extModule->Name());
-//}
+void ModuleScope :: saveIncludedModule(_Module* extModule)
+{
+   // HOTFIX : do not include itself
+   if (module == extModule)
+      return;
 
-//void ModuleScope :: declareNamespace(ident_t ns)
-//{
-//   IdentifierString virtualRef("'");
-//   if (!emptystr(ns)) {
-//      virtualRef.append(ns);
-//      virtualRef.append("'");
-//   }
-//   virtualRef.append(NAMESPACE_REF);
-//
-//   module->mapReference(virtualRef.c_str(), false);
-//   if (debugModule)
-//      // HOTFIX : save the namespace in the debug module as well
-//      debugModule->mapReference(virtualRef.c_str(), false);
-//
-//   if (!emptystr(ns))
-//      saveListMember(NAMESPACES_SECTION, ns);
-//}
+   saveListMember(IMPORTS_SECTION, extModule->Name());
+}
 
-//bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)
-//{
-//   // check if the namespace exists
-//   ReferenceNs virtualRef(name, NAMESPACE_REF);
-//   ref_t dummyRef = 0;
-//   _Module* extModule = project->resolveModule(virtualRef, dummyRef, true);
-//   if (extModule && dummyRef) {
-//      ident_t value = retrieve(importedNs.start(), name, NULL);
-//      if (value == NULL) {
-//         importedNs.add(name.clone());
-//
-//         saveIncludedModule(extModule);
-//
-//         return true;
-//      }
-//      else duplicateInclusion = true;
-//   }
-//   return false;
-//}
+void ModuleScope :: declareNamespace(ident_t ns)
+{
+   IdentifierString virtualRef("'");
+   if (!emptystr(ns)) {
+      virtualRef.append(ns);
+      virtualRef.append("'");
+   }
+   virtualRef.append(NAMESPACE_REF);
+
+   module->mapReference(virtualRef.c_str(), false);
+   if (debugModule)
+      // HOTFIX : save the namespace in the debug module as well
+      debugModule->mapReference(virtualRef.c_str(), false);
+
+   if (!emptystr(ns))
+      saveListMember(NAMESPACES_SECTION, ns);
+}
+
+bool ModuleScope :: includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion)
+{
+   // check if the namespace exists
+   ReferenceNs virtualRef(name, NAMESPACE_REF);
+   ref_t dummyRef = 0;
+   _Module* extModule = project->resolveModule(virtualRef, dummyRef, true);
+   if (extModule && dummyRef) {
+      ident_t value = retrieve(importedNs.start(), name, NULL);
+      if (value == NULL) {
+         importedNs.add(name.clone());
+
+         saveIncludedModule(extModule);
+
+         return true;
+      }
+      else duplicateInclusion = true;
+   }
+   return false;
+}

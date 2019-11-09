@@ -316,7 +316,7 @@ private:
    struct NamespaceScope : Scope
    {
       // imported namespaces
-//      IdentifierList    importedNs;
+      IdentifierList    importedNs;
       ForwardMap        forwards;       // forward declarations
 //
 //      // symbol hints
@@ -377,7 +377,7 @@ private:
       virtual pos_t saveSourcePath(ByteCodeWriter& writer);
       virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
 
-      ref_t resolveImplicitIdentifier(ident_t name/*, bool referenceOne*/, bool innermost);
+      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne, bool innermost);
 
       ref_t mapNewTerminal(SNode terminal, Visibility visibility);
 
@@ -431,7 +431,7 @@ private:
       ClassInfo   info;
 //      ref_t       extensionClassRef;
 //      bool        embeddable;
-//      bool        classClassMode;
+      bool        classClassMode;
 //      bool        abstractMode;
 //      bool        abstractBaseMode;
 //      bool        withInitializers;
@@ -484,22 +484,22 @@ private:
 //         if (hints != 0)
 //            info.methodHints.add(attr, hints);
 //      }
-//
-//      bool include(ref_t message)
-//      {
-//         // check if the method is inhreited and update vmt size accordingly
-//         auto it = info.methods.getIt(message);
-//         if (it.Eof()) {
-//            info.methods.add(message, true);
-//
-//            return true;
-//         }
-//         else {
-//            (*it) = true;
-//
-//            return false;
-//         }
-//      }
+
+      bool include(ref_t message)
+      {
+         // check if the method is inhreited and update vmt size accordingly
+         auto it = info.methods.getIt(message);
+         if (it.Eof()) {
+            info.methods.add(message, true);
+
+            return true;
+         }
+         else {
+            (*it) = true;
+
+            return false;
+         }
+      }
 
       ClassScope(Scope* parent, ref_t reference, Visibility visibility);
       ClassScope(NamespaceScope* parent, Visibility visibility)
@@ -535,10 +535,10 @@ private:
       }
    };
 
-//   // - MethodScope -
-//   struct MethodScope : public Scope
-//   {
-//      ref_t        message;
+   // - MethodScope -
+   struct MethodScope : public Scope
+   {
+      ref_t        message;
 //      LocalMap     parameters;
 //      EAttr        scopeMode;
 //      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
@@ -576,15 +576,15 @@ private:
 //         scope->info.methodHints.exclude(key);
 //         scope->info.methodHints.add(key, value);
 //      }
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slMethod) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slMethod) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      ref_t getReturningRef(bool ownerClass = true)
 //      {
 //         if (outputRef == INVALID_REF) {
@@ -623,9 +623,9 @@ private:
 //      ObjectInfo mapSelf(/*bool forced = false*/);
 //      ObjectInfo mapGroup();
 //      ObjectInfo mapParameter(Parameter param, EAttr mode);
-//
-//      MethodScope(ClassScope* parent);
-//   };
+
+      MethodScope(ClassScope* parent);
+   };
 
    // - CodeScope -
    struct CodeScope : public Scope
@@ -732,7 +732,7 @@ private:
 //      }
 
       CodeScope(SourceScope* parent);
-//      CodeScope(MethodScope* parent);
+      CodeScope(MethodScope* parent);
 //      CodeScope(CodeScope* parent);
    };
 
@@ -900,12 +900,12 @@ private:
    void declareClassAttributes(SNode node, ClassScope& scope/*, bool& publicAttribute*/);
 ////   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
 //   void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
-//   void declareVMT(SNode member, ClassScope& scope, bool& implicitClass);
-//
+   void declareVMT(SNode member, ClassScope& scope, bool& implicitClass);
+
 //   ref_t mapTypeAttribute(SNode member, Scope& scope);
 //   ref_t mapTemplateAttribute(SNode node, Scope& scope);
-//   void declareMethodAttributes(SNode member, MethodScope& scope);
-//
+   void declareMethodAttributes(SNode member, MethodScope& scope);
+
 //   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
 //
 //   bool isTemplateParameterDeclared(SNode node, Scope& scope);
@@ -1016,11 +1016,11 @@ private:
 //   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
 //   void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
-//
-//   ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
+
+   /*ObjectInfo*/void compileCode(/*SyntaxWriter& writer, */SNode node, CodeScope& scope);
+
 //   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
-//   void declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode);
+   void declareArgumentList(SNode node, MethodScope& scope/*, bool withoutWeakMessages, bool declarationMode*/);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
 //   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
 //
@@ -1031,13 +1031,13 @@ private:
 //   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 //
 //   void beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//   void endMethod(SyntaxWriter& writer, MethodScope& scope, CodeScope& codeScope, int paramCount, int preallocated);
-//   void compileMethodCode(SyntaxWriter& writer, SNode node, SNode body, MethodScope& scope, CodeScope& codeScope,
-//      int& preallocated);
-//
+   void endMethod(SNode node, MethodScope& scope, CodeScope& codeScope, int argCount/*, int preallocated*/);
+   void compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope/*,
+      int& preallocated*/);
+
 //   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
 //   void compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//   void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void compileMethod(/*SyntaxWriter& writer, */SNode node, MethodScope& scope);
 //   void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //   void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
 //   void compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope);
@@ -1058,8 +1058,8 @@ private:
 
 //   void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
 //   void compileNestedVMT(SNode node, InlineClassScope& scope);
-//
-//   void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope, bool ignoreAutoMultimethods = false);
+
+   void compileVMT(/*SyntaxWriter& writer, */SNode node, ClassScope& scope/*, bool ignoreAutoMultimethods = false*/);
 //   void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileForward(SNode ns, NamespaceScope& scope);
 //
@@ -1068,9 +1068,9 @@ private:
 //   
 //   void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
 //   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
-//
-//   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool embeddableClass);
-//   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, bool allowTypeAttribute, bool embeddableClass);
+
+   void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool embeddableClass*/);
+   void generateMethodDeclarations(SNode node, ClassScope& scope, /*bool closed, */LexicalType methodType/*, bool allowTypeAttribute, bool embeddableClass*/);
 ////   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
    void generateClassDeclaration(SNode node, ClassScope& scope/*, ClassType classType, bool nestedDeclarationMode = false*/);
 
@@ -1079,7 +1079,7 @@ private:
    void compileClassDeclaration(SNode node, ClassScope& scope);
    void compileClassImplementation(/*SyntaxTree& expressionTree, */SNode node, ClassScope& scope);
    void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope, bool implicitMode);
-   void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileClassClassImplementation(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(/*SyntaxTree& expressionTree, */SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);
