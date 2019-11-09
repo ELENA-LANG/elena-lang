@@ -543,7 +543,7 @@ private:
 //      EAttr        scopeMode;
 //      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
 //      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
-//      int          hints;
+      int          hints;
 //      ref_t        outputRef;
 //      bool         withOpenArg;
 //      bool         classEmbeddable;
@@ -832,8 +832,8 @@ private:
 //   bool isMethodEmbeddable(MethodScope& scope, SNode node);
 //
 //   void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref_t messageRef);
-//   void initialize(ClassScope& scope, MethodScope& methodScope);
-//
+   void initialize(ClassScope& scope, MethodScope& methodScope);
+
 //   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message);
 //
 //   int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message)
@@ -1039,7 +1039,7 @@ private:
 //   void compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileMethod(/*SyntaxWriter& writer, */SNode node, MethodScope& scope);
 //   void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//   void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
+   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
 //   void compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //
 //   void compileYieldDispatch(SyntaxWriter& writer, int index, int index2, int preallocated);
@@ -1059,8 +1059,8 @@ private:
 //   void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
 //   void compileNestedVMT(SNode node, InlineClassScope& scope);
 
-   void compileVMT(/*SyntaxWriter& writer, */SNode node, ClassScope& scope/*, bool ignoreAutoMultimethods = false*/);
-//   void compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope);
+   void compileVMT(SNode node, ClassScope& scope/*, bool ignoreAutoMultimethods = false*/);
+   void compileClassVMT(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileForward(SNode ns, NamespaceScope& scope);
 //
 //   void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);

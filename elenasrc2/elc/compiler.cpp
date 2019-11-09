@@ -72,7 +72,7 @@ constexpr auto HINT_SCOPE_MASK      = EAttr::eaScopeMask;
 //constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
 
 typedef Compiler::ObjectInfo                 ObjectInfo;       // to simplify code, ommiting compiler qualifier
-//typedef ClassInfo::Attribute                 Attribute;
+typedef ClassInfo::Attribute                 Attribute;
 //typedef _CompilerLogic::ExpressionAttributes ExpressionAttributes;
 //typedef _CompilerLogic::FieldAttributes      FieldAttributes;
 
@@ -682,7 +682,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->reserved = 0;
 //   this->scopeMode = EAttr::eaNone;
 //   this->rootToFree = 1;
-//   this->hints = 0;
+   this->hints = 0;
 //   this->outputRef = INVALID_REF; // to indicate lazy load
 //   this->withOpenArg = false;
 //   this->classEmbeddable = false;
@@ -7050,9 +7050,9 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 //
 //   writer.closeNode();
 //}
-//
-//void Compiler :: compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope)
-//{
+
+void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
+{
 //   writer.newNode(lxClassMethod, scope.message);
 //
 //   SNode attrNode = node.findChild(lxEmbeddableMssg);
@@ -7062,15 +7062,15 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 //   }
 //
 //   declareProcedureDebugInfo(writer, node, scope, true, false);
-//
-//   CodeScope codeScope(&scope);
-//
+
+   CodeScope codeScope(&scope);
+
 //   bool retExpr = false;
 //   bool withFrame = false;
 //   int classFlags = codeScope.getClassFlags();
 //   int preallocated = 0;
-//
-//   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
+
+   SNode bodyNode = node.findChild(/*lxResendExpression, */lxCode/*, lxReturning, lxDispatchCode*/);
 //   if (bodyNode == lxDispatchCode) {
 //      compileConstructorDispatchExpression(writer, bodyNode, codeScope);
 //
@@ -7098,8 +7098,8 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 //   }
 //   // if it is a dynamic object implicit constructor call is not possible
 //   else scope.raiseError(errIllegalConstructor, node);
-//
-//   if (bodyNode != lxNone) {
+
+   if (bodyNode != lxNone) {
 //      if (!withFrame) {
 //         withFrame = true;
 //
@@ -7119,25 +7119,25 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 //      else {
 //         preallocated = codeScope.level;
 //
-//         compileCode(writer, bodyNode, codeScope);
+         compileCode(bodyNode, codeScope);
 //
 //         // HOT FIX : returning the created object
 //         writer.newNode(lxExpression);
 //         writer.appendNode(lxLocal, 1);
 //         writer.closeNode();
 //      }
-//   }
-//
+   }
+
 //   if (withFrame)
 //      writer.closeNode();
-//
-//   writer.appendNode(lxParamCount, getParamCount(scope.message) + 1);
+
+   node.insertNode(lxArgCount, getArgCount(scope.message));
 //   writer.appendNode(lxReserved, scope.reserved);
 //   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
 //
 //   writer.closeNode();
-//}
-//
+}
+
 //void Compiler :: compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message)
 //{
 //   if (classScope.info.methods.exist(message)) {
@@ -7243,7 +7243,7 @@ void Compiler :: compileVMT(/*SyntaxWriter& writer, */SNode node, ClassScope& sc
 //               scope.withImplicitConstructor = true;
 //            }
 
-//            initialize(scope, methodScope);
+            initialize(scope, methodScope);
 //            if (methodScope.outputRef) {
 //               // HOTFIX : validate the output type once again in case it was declared later in the code
 //               SNode typeNode = current.findChild(lxTypeAttribute);
@@ -7324,8 +7324,8 @@ void Compiler :: compileVMT(/*SyntaxWriter& writer, */SNode node, ClassScope& sc
 //   }
 }
 
-//void Compiler :: compileClassVMT(SyntaxWriter& writer, SNode node, ClassScope& classClassScope, ClassScope& classScope)
-//{
+void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassScope& classScope)
+{
 //   bool staticFieldsCopied = false;
 //
 //   // add virtual constructor
@@ -7338,22 +7338,22 @@ void Compiler :: compileVMT(/*SyntaxWriter& writer, */SNode node, ClassScope& sc
 //      }
 //      else compileDefaultConstructor(writer, methodScope);
 //   }
-//
-//   SNode current = node.firstChild();
-//
-//   while (current != lxNone) {
-//      switch (current) {
-//         case lxConstructor:
-//         {
-//            MethodScope methodScope(&classScope);
-//            methodScope.message = current.argument;
-//
-//            initialize(classClassScope, methodScope);
-//            declareArgumentList(current, methodScope, false, false);
-//
-//            compileConstructor(writer, current, methodScope, classClassScope);
-//            break;
-//         }
+
+   SNode current = node.firstChild();
+
+   while (current != lxNone) {
+      switch (current) {
+         case lxConstructor:
+         {
+            MethodScope methodScope(&classScope);
+            methodScope.message = current.argument;
+
+            initialize(classClassScope, methodScope);
+            declareArgumentList(current, methodScope/*, false, false*/);
+
+            compileConstructor(current, methodScope, classClassScope);
+            break;
+         }
 //         case lxStaticMethod:
 //         {
 //            if (!staticFieldsCopied) {
@@ -7375,11 +7375,11 @@ void Compiler :: compileVMT(/*SyntaxWriter& writer, */SNode node, ClassScope& sc
 //            else compileMethod(writer, current, methodScope);
 //            break;
 //         }
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
+      }
+
+      current = current.nextNode();
+   }
+
 //   // if the VMT conatains newly defined generic handlers, overrides default one
 //   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
 //      && classClassScope.info.methods.exist(classClassScope.moduleScope->dispatch_message, false))
@@ -7398,8 +7398,8 @@ void Compiler :: compileVMT(/*SyntaxWriter& writer, */SNode node, ClassScope& sc
 //      // overwrite the class info
 //      classClassScope.save();
 //   }
-//}
-//
+}
+
 //inline int countFields(SNode node)
 //{
 //   int counter = 0;
@@ -7533,14 +7533,14 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 
 void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope, bool implicitMode)
 {
-   //if (implicitMode) {
-   //   // if no static method / constructors are declared - class class should inherit the parent class class
-   //   IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
-   //   classClassParentName.append(CLASSCLASS_POSTFIX);
+   if (implicitMode) {
+      // if no static method / constructors are declared - class class should inherit the parent class class
+      IdentifierString classClassParentName(classClassScope.moduleScope->module->resolveReference(classScope.info.header.parentRef));
+      classClassParentName.append(CLASSCLASS_POSTFIX);
 
-   //   classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
-   //}
-   //else classClassScope.info.header.parentRef = classScope.moduleScope->superReference;
+      classClassScope.info.header.parentRef = classClassScope.moduleScope->module->mapReference(classClassParentName);
+   }
+   else classClassScope.info.header.parentRef = classScope.moduleScope->superReference;
 
 //   if (classScope.abstractMode || test(classScope.info.header.flags, elDynamicRole)) {
 //      // dynamic class should not have default constructor
@@ -7581,15 +7581,15 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
    //   copyStaticFieldValues(node, classClassScope);
 
    //writer.newNode(lxClass, classClassScope.reference);
-   //compileClassVMT(writer, node, classClassScope, classScope);
+   compileClassVMT(node, classClassScope, classScope);
    //writer.closeNode();
 
    generateClassImplementation(node, classClassScope);
 }
 
-//void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
-//{
-//   methodScope.hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
+void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
+{
+   methodScope.hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
 //   methodScope.outputRef = scope.info.methodHints.get(ClassInfo::Attribute(methodScope.message, maReference));
 //   if (test(methodScope.hints, tpInitializer))
 //      methodScope.scopeMode = methodScope.scopeMode | INITIALIZER_SCOPE;
@@ -7606,7 +7606,7 @@ void Compiler :: compileClassClassImplementation(SNode node, ClassScope& classCl
 //   methodScope.targetSelfMode = test(methodScope.hints, tpTargetSelf);
 //   if (methodScope.withOpenArg && methodScope.closureMode)
 //      methodScope.genericClosure = true;
-//}
+}
 
 void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& implicitClass)
 {
@@ -7626,9 +7626,9 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& implicitClass)
          }
          else methodScope.message = current.argument;
 
-//         if (test(methodScope.hints, tpConstructor)) {
-//            implicitClass = false;
-//
+         if (test(methodScope.hints, tpConstructor)) {
+            implicitClass = false;
+
 //            if (_logic->isAbstract(scope.info)) {
 //               // abstract class cannot have constructors
 //               scope.raiseError(errIllegalMethod, current);
@@ -7637,8 +7637,8 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& implicitClass)
 ////               // if it is a special default constructor
 ////               current.setArgument(methodScope.message | SPECIAL_MESSAGE);
 ////            }
-//            else current = lxConstructor;
-//         }
+            /*else */current = lxConstructor;
+         }
 //         else if (test(methodScope.hints, tpPredefined)) {
 //            // recognize predefined message signatures
 //            predefineMethod(current, scope, methodScope);
@@ -8345,7 +8345,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope/*, Class
 
    // generate methods
    if (scope.classClassMode) {
-//      generateMethodDeclarations(node, scope, closed, lxConstructor, false, isEmbeddable(classType));
+      generateMethodDeclarations(node, scope, /*closed, */lxConstructor/*, false, isEmbeddable(classType)*/);
 //      generateMethodDeclarations(node, scope, closed, lxStaticMethod, true, isEmbeddable(classType));
    }
    else generateMethodDeclarations(node, scope, /*closed, */lxClassMethod/*, true, isEmbeddable(classType)*/);
@@ -8376,20 +8376,20 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-//      bool explicitMode = false;
-//      if (current == lxAttribute) {
-//         int value = current.argument;
-//         if (_logic->validateMethodAttribute(value, explicitMode)) {
-//            scope.hints |= value;
-//
-//            current.setArgument(value);
-//         }
-//         else {
-//            current = lxIdle;
-//
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//         }
-//      }
+      bool explicitMode = false;
+      if (current == lxAttribute) {
+         int value = current.argument;
+         if (_logic->validateMethodAttribute(value, explicitMode)) {
+            scope.hints |= value;
+
+            current.setArgument(value);
+         }
+         else {
+            current.setArgument(0);
+
+            scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+         }
+      }
 //      else if (current == lxTypeAttribute) {
 //         // if it is a type attribute
 //         scope.outputRef = resolveTypeAttribute(scope, current, true);
@@ -8555,7 +8555,7 @@ bool isClassMethod(LexicalType type)
 
 bool isClassClassMethod(LexicalType type)
 {
-   return /*type == lxClassMethod*/false;
+   return type == lxConstructor;
 }
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)

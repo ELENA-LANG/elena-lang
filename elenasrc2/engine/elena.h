@@ -512,14 +512,14 @@ struct ClassHeader
 
 // --- ClassInfo ---
 
-//enum MethodAttribute
-//{
-//   maActionMask         = 0x100,
-//   maRefefernceMask     = 0x200,
-//   maMessageMask        = 0x400,
-//
-//   maNone               = 0x000,
-//   maHint               = 0x001,
+enum MethodAttribute
+{
+   maActionMask         = 0x100,
+   maRefefernceMask     = 0x200,
+   maMessageMask        = 0x400,
+
+   maNone               = 0x000,
+   maHint               = 0x001,
 //   maReference          = 0x202,
 //   maEmbeddableRet      = 0x403,
 //   maEmbeddableIdle     = 0x005,
@@ -529,8 +529,8 @@ struct ClassHeader
 //   maYieldContext       = 0x00C,
 //   maYieldLocals        = 0x00D,
 //   maYieldPreallocated  = 0x00E,
-//};
-//
+};
+
 //enum ClassAttribute
 //{
 //   caNone               = 0x000,
@@ -545,12 +545,12 @@ struct ClassHeader
 struct ClassInfo
 {
 //   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
-//   typedef Pair<ref_t, int>                    Attribute;
+   typedef Pair<ref_t, int>                    Attribute;
    typedef MemoryMap<ref_t, bool, false>       MethodMap;
 //   typedef MemoryMap<ident_t, int, true>       FieldMap;
 //   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
 //   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
-//   typedef MemoryMap<Attribute, ref_t, false>  CategoryInfoMap;
+   typedef MemoryMap<Attribute, ref_t, false>  CategoryInfoMap;
 //   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader     header;
@@ -561,7 +561,7 @@ struct ClassInfo
 //   StaticInfoMap   staticValues;
 //
 //   FieldTypeMap    fieldTypes;
-//   CategoryInfoMap methodHints;
+   CategoryInfoMap methodHints;
 //   CategoryInfoMap mattributes;   
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
@@ -573,7 +573,7 @@ struct ClassInfo
 //         statics.write(writer);
 //         staticValues.write(writer);
          methods.write(writer);
-//         methodHints.write(writer);
+         methodHints.write(writer);
 //         fields.write(writer);
 //         fieldTypes.write(writer);
       }
@@ -588,7 +588,7 @@ struct ClassInfo
 //         statics.read(reader);
 //         staticValues.read(reader);
          methods.read(reader);
-//         methodHints.read(reader);
+         methodHints.read(reader);
 //         if (!ignoreFields) {
 //            fields.read(reader);
 //            fieldTypes.read(reader);
@@ -597,7 +597,7 @@ struct ClassInfo
    }
 
    ClassInfo()
-      : /*fields(-1), */methods(0)//, methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+      : /*fields(-1), */methods(0), methodHints(0)//, fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;

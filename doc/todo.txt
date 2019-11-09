@@ -2,9 +2,10 @@
 In development:
 ------         
               dev
-                * methods
-                * methods : reference name??
                 * constructors
+
+                * method visibility
+                * methods : reference name??
                 * creating an object : implicit / explicit, default constructor should be embeddable
                 * singletons
                 * calls

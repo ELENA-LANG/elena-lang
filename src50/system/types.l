@@ -37,11 +37,11 @@
 #define class       80001001h
 //#define struct      80001002h
 //#define symbol      80001003h
-//#define constructor 80001004h
+#define constructor 80001004h
 //#define extension   80001005h
 //#define singleton   80001006h
 //#define interface   80001007h
-//#define method      80001008h
+#define method      80001008h
 //#define field       80001009h
 //#define type        8000100Ah
 //#define generic     8000100Bh

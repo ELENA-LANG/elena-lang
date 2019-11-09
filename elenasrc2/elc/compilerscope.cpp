@@ -12,12 +12,12 @@
 
 using namespace _ELENA_;
 
-//typedef ClassInfo::Attribute Attribute;
-//
-//inline ref_t importAction(_Module* exporter, ref_t exportRef, _Module* importer)
-//{
-//   return getAction(importMessage(exporter, encodeAction(exportRef), importer));
-//}
+typedef ClassInfo::Attribute Attribute;
+
+inline ref_t importAction(_Module* exporter, ref_t exportRef, _Module* importer)
+{
+   return getAction(importMessage(exporter, encodeAction(exportRef), importer));
+}
 
 //inline ref_t importReference(_Module* exporter, ref_t exportRef, _Module* importer)
 //{
@@ -63,44 +63,44 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
 //   target.size = copy.size;
 
    if (!headerOnly) {
-//      // import method references and mark them as inherited as required
-//      auto it = copy.methods.start();
-//      if (inheritMode) {
-//         while (!it.Eof()) {
-//            target.methods.add(importMessage(exporter, it.key(), module), false);
-//
-//            it++;
-//         }
-//      }
-//      else {
-//         while (!it.Eof()) {
-//            target.methods.add(importMessage(exporter, it.key(), module), *it);
-//
-//            it++;
-//         }
-//      }
-//
-//      // import method attributes
-//      auto mtype_it = copy.methodHints.start();
-//      while (!mtype_it.Eof()) {
-//         Attribute key = mtype_it.key();
-//         ref_t value = *mtype_it;
-//         if (test(key.value2, maActionMask)) {
-//            value = importAction(exporter, value, module);
-//         }
-//         else if (test(key.value2, maRefefernceMask)) {
-//            value = importReference(exporter, value, module);
-//         }
-//         else if (test(key.value2, maMessageMask))
-//            value = importMessage(exporter, value, module);
-//
-//         target.methodHints.add(
-//            Attribute(importMessage(exporter, key.value1, module), key.value2),
-//            value);
-//
-//         mtype_it++;
-//      }
-//
+      // import method references and mark them as inherited as required
+      auto it = copy.methods.start();
+      if (inheritMode) {
+         while (!it.Eof()) {
+            target.methods.add(importMessage(exporter, it.key(), module), false);
+
+            it++;
+         }
+      }
+      else {
+         while (!it.Eof()) {
+            target.methods.add(importMessage(exporter, it.key(), module), *it);
+
+            it++;
+         }
+      }
+
+      // import method attributes
+      auto mtype_it = copy.methodHints.start();
+      while (!mtype_it.Eof()) {
+         Attribute key = mtype_it.key();
+         ref_t value = *mtype_it;
+         if (test(key.value2, maActionMask)) {
+            value = importAction(exporter, value, module);
+         }
+         else if (test(key.value2, maRefefernceMask)) {
+            value = importReference(exporter, value, module);
+         }
+         else if (test(key.value2, maMessageMask))
+            value = importMessage(exporter, value, module);
+
+         target.methodHints.add(
+            Attribute(importMessage(exporter, key.value1, module), key.value2),
+            value);
+
+         mtype_it++;
+      }
+
 //      // import static fields
 //      ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
 //      while (!static_it.Eof()) {
@@ -162,8 +162,8 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
    if (target.header.classRef != 0)
       target.header.classRef = importReference(exporter, target.header.classRef, module);
 
-//   // import parent reference
-//   target.header.parentRef = importReference(exporter, target.header.parentRef, module);
+   // import parent reference
+   target.header.parentRef = importReference(exporter, target.header.parentRef, module);
 }
 
 //ref_t ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)

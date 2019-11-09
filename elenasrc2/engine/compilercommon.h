@@ -58,11 +58,11 @@ constexpr auto V_INTERNAL        = 0x80005003u;
 constexpr auto V_CLASS           = 0x80001001u;
 //constexpr auto V_STRUCT          = 0x80001002u;
 //constexpr auto V_SYMBOLEXPR      = 0x80001003u;
-//constexpr auto V_CONSTRUCTOR     = 0x80001004u;
+constexpr auto V_CONSTRUCTOR     = 0x80001004u;
 //constexpr auto V_EXTENSION       = 0x80001005u;
 //constexpr auto V_SINGLETON       = 0x80001006u;
 //constexpr auto V_LIMITED         = 0x80001007u;
-//constexpr auto V_METHOD          = 0x80001008u;
+constexpr auto V_METHOD          = 0x80001008u;
 //constexpr auto V_FIELD           = 0x80001009u;
 //constexpr auto V_TYPETEMPL       = 0x8000100Au;
 //constexpr auto V_GENERIC         = 0x8000100Bu;
@@ -129,10 +129,10 @@ enum class Visibility
 
 typedef Map<ident_t, ref_t>      ForwardMap;
 
-//enum MethodHint
-//{
-//   tpMask        = 0x00000F,
-//
+enum MethodHint
+{
+   tpMask        = 0x00000F,
+
 //   tpUnknown     = 0x0000000,
 //   tpSealed      = 0x0000001,
 //   tpClosed      = 0x0000002,
@@ -144,7 +144,7 @@ typedef Map<ident_t, ref_t>      ForwardMap;
 //   tpGeneric     = 0x0000040,
 //   tpAction      = 0x0000080,
 //   tpTargetSelf  = 0x0000100, // used for script generated classes (self refers to __target)
-//   tpConstructor = 0x0200400,
+   tpConstructor = 0x0200400,
 //   tpConversion  = 0x0200800,
 //   tpMultimethod = 0x0001000,
 //   tpStatic      = 0x0004000,
@@ -158,7 +158,7 @@ typedef Map<ident_t, ref_t>      ForwardMap;
 //   tpSetAccessor = 0x0400000,
 //   tpCast        = 0x0800000,
 //   tpYieldable   = 0x1000000
-//};
+};
 
 // --- _Project ---
 
@@ -228,8 +228,8 @@ struct _ModuleScope
    _Module*          module;
    _Module*          debugModule;
 
-//   // cached references
-//   ref_t             superReference;
+   // cached references
+   ref_t             superReference;
 //   ref_t             intReference;
 //   ref_t             longReference;
 //   ref_t             realReference;
@@ -357,7 +357,7 @@ struct _ModuleScope
    {
       project = nullptr;
       debugModule = module = nullptr;
-//      intReference = superReference = 0;
+      /*intReference = */superReference = 0;
 //      messageNameReference = messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      charReference = realReference = 0;
@@ -677,7 +677,7 @@ public:
    // attribute validations
    virtual bool validateNsAttribute(int attrValue, Visibility& visibility) = 0;
    virtual bool validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
-//   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
+   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
 //   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
 //   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes) = 0;

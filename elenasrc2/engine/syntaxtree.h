@@ -36,6 +36,7 @@ enum LexicalType
    lxClass                    = 0x000011,
    lxImport                   = 0x000012,
    lxClassMethod              = 0x000013,
+   lxConstructor              = 0x000014,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -80,7 +81,6 @@ enum LexicalType
 //   lxDispatchCode             = 0x000020,
 //   lxAssign                   = 0x000021,
 //   lxParent                   = 0x000023,
-//   lxConstructor              = 0x000024,
 //   lxStaticMethod             = 0x000025,
 //   lxSwitchOption             = 0x00003C,
 //   lxWrapping                 = 0x00002B,

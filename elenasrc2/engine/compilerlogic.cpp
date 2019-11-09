@@ -1710,11 +1710,11 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
-//{
-//   switch ((size_t)attrValue)
-//   {
+
+bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
+{
+   switch ((size_t)attrValue)
+   {
 //      case V_EMBEDDABLE:
 //         attrValue = tpEmbeddable;
 //         return true;
@@ -1724,9 +1724,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
 //      case V_PRIVATE:
 //         attrValue = (tpPrivate | tpSealed);
 //         return true;
-////      case V_PUBLIC:
-////         attrValue = 0;
-////         return true;
+//      case V_PUBLIC:
+//         attrValue = 0;
+//         return true;
 //      case V_INTERNAL:
 //         attrValue = tpInternal;
 //         return true;
@@ -1737,20 +1737,20 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
 //         attrValue = tpAction;
 //         explicitMode = true;
 //         return true;
-//      case V_CONSTRUCTOR:
-//         attrValue = tpConstructor;
-//         explicitMode = true;
-//         return true;
+      case V_CONSTRUCTOR:
+         attrValue = tpConstructor;
+         explicitMode = true;
+         return true;
 //      case V_CONVERSION:
 //         attrValue = tpConversion;
 //         return true;
 //      case V_INITIALIZER:
 //         attrValue = (tpSpecial | tpPrivate | tpInitializer);
 //         return true;
-//      case V_METHOD:
-//         attrValue = 0;
-//         explicitMode = true;
-//         return true;
+      case V_METHOD:
+         attrValue = 0;
+         explicitMode = true;
+         return true;
 //      case V_STATIC:
 //         attrValue = (tpStatic | tpSealed);
 //         return true;
@@ -1784,11 +1784,11 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
 //         return true;
 //      case 0:
 //         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& attrs)
 //{
 //   switch ((size_t)attrValue)

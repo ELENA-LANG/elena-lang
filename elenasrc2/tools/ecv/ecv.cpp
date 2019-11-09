@@ -1138,7 +1138,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    while (size > 0) {
       vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
-      //int hints = info.methodHints.get(ClassInfo::Attribute(entry.message, maHint));
+      int hints = info.methodHints.get(ClassInfo::Attribute(entry.message, maHint));
       //bool isAbstract = test(hints, tpAbstract);
       //bool isMultidispatcher = test(hints, tpMultimethod);
       //bool isInternal = test(hints, tpInternal);
