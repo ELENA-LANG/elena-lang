@@ -612,20 +612,20 @@ struct SymbolExpressionInfo
 //   ref_t expressionClassRef;
 //   ref_t listRef;
 //   bool  constant;
-//
-//   void save(StreamWriter* writer)
-//   {
-//      writer->writeDWord(listRef);
-//      writer->writeDWord(constant ? -1: 0);
-//      writer->writeDWord(expressionClassRef);
-//   }
-//
-//   void load(StreamReader* reader)
-//   {
-//      listRef = reader->getDWord();
-//      constant = (reader->getDWord() != 0);
-//      expressionClassRef = reader->getDWord();
-//   }
+
+   void save(StreamWriter* writer)
+   {
+      //writer->writeDWord(listRef);
+      //writer->writeDWord(constant ? -1: 0);
+      //writer->writeDWord(expressionClassRef);
+   }
+
+   void load(StreamReader* reader)
+   {
+      //listRef = reader->getDWord();
+      //constant = (reader->getDWord() != 0);
+      //expressionClassRef = reader->getDWord();
+   }
 
    SymbolExpressionInfo()
    {

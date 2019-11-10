@@ -518,6 +518,9 @@ void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
    bool repeatMode = true;
    bool idle = false;
    bool nothingToCompile = true;
+
+   compiler->declareModuleIdentifiers(derivationTree, *this);
+
    while (repeatMode && !idle) {
       repeatMode = false;
       idle = !compiler->declareModule(derivationTree, *this, false, repeatMode);

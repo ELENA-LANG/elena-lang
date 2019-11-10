@@ -610,7 +610,7 @@ bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, boo
    return isValidType(info);
 }
 
-bool CompilerLogic :: isClassDeclared(_ModuleScope& scope, ref_t targetRef) 
+bool CompilerLogic :: doesClassExist(_ModuleScope& scope, ref_t targetRef)
 {
    if (!targetRef)
       return false;

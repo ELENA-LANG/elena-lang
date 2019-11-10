@@ -272,13 +272,13 @@ struct _ModuleScope
    virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
    virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
 
-   //bool isClassDeclared(ref_t reference)
-   //{
-   //   if (!reference) {
-   //      return false;
-   //   }
-   //   else return mapSection(reference | mskMetaRDataRef, true) != nullptr;
-   //}
+   bool isDeclared(ref_t reference)
+   {
+      if (!reference) {
+         return false;
+      }
+      else return mapSection(reference | mskMetaRDataRef, true) != nullptr;
+   }
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
@@ -407,6 +407,7 @@ public:
 //
 //   virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef) = 0;
 
+   virtual void declareModuleIdentifiers(SyntaxTree& tree, _ModuleScope& scope) = 0;
    virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forcedDeclaration, bool& repeatMode) = 0;
    virtual void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting) = 0;
 
@@ -629,7 +630,7 @@ public:
 //
 //   virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
    virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared) = 0;
-   virtual bool isClassDeclared(_ModuleScope& scope, ref_t targetRef) = 0;
+   virtual bool doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;
 //
 //   virtual bool isWrapper(ClassInfo& info) = 0;

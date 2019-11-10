@@ -2,9 +2,6 @@
 In development:
 ------         
               dev
-                * class based on not yet declared type
-                * using a type before it declaration
-
                 * dispatching
 
                 * declaring variable
@@ -40,6 +37,8 @@ In development:
                 * interfaces
 
                 * constructors
+
+                * using a type before it declaration
 
                 * method visibility
                 * methods : reference name??

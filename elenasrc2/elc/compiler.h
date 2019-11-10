@@ -527,7 +527,7 @@ private:
          else return Scope::getScope(level);
       }
 
-//      void save();
+      void save();
 
       SymbolScope(NamespaceScope* parent, ref_t reference, Visibility visibility);
       SymbolScope(NamespaceScope* parent, Visibility visibility)
@@ -867,7 +867,7 @@ private:
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, bool noPrimitivesMode, bool unboxWrapper = true);
 ////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
-   ref_t resolveTypeIdentifier(Scope& scope, SNode terminal);
+   ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
 
 //   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
@@ -1109,6 +1109,8 @@ private:
 //
 //   void createPackageInfo(_Module* module, _ProjectManager& project);
 
+   void declareMembers(SNode node, NamespaceScope& scope);
+
    bool compileDeclarations(SNode node, NamespaceScope& scope, bool forced, bool& repeatMode);
    void compileImplementations(SNode node, NamespaceScope& scope);
 
@@ -1119,7 +1121,7 @@ private:
    void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
 //   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
 
-   void declareNamespace(SNode& node, NamespaceScope& scope, bool withFullInfo);
+   void declareNamespace(SNode& node, NamespaceScope& scope, bool withImports);
 
 //   void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);
 //   void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
@@ -1159,6 +1161,8 @@ public:
 //   {
 //      _optFlag |= level;
 //   }
+
+   void declareModuleIdentifiers(SyntaxTree& tree, _ModuleScope& scope);
 
    // return true if no forward class declarations are encountered
    bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forced, bool& repeatMode);

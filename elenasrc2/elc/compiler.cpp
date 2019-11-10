@@ -561,16 +561,16 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Vi
 //   return Scope::mapTerminal(identifier);
 //}
 
-//void Compiler::SymbolScope :: save()
-//{
-//   SymbolExpressionInfo info;
+void Compiler::SymbolScope :: save()
+{
+   SymbolExpressionInfo info;
 //   info.expressionClassRef = outputRef;
 //   info.constant = constant;
-//
-//   // save class meta data
-//   MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
-//   info.save(&metaWriter);
-//}
+
+   // save class meta data
+   MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
+   info.save(&metaWriter);
+}
 
 // --- Compiler::ClassScope ---
 
@@ -1594,7 +1594,7 @@ void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref
       scope.raiseError(errUnknownBaseClass, baseNode);
 }
 
-ref_t Compiler :: resolveTypeIdentifier(Scope& scope, SNode terminal)
+ref_t Compiler :: resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode)
 {
    ObjectInfo identInfo;
 
@@ -1608,6 +1608,9 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, SNode terminal)
       case okClass:
       case okSingleton:
          return identInfo.param;
+      case okSymbol:
+         if (declarationMode)
+            return identInfo.param;
       default:
          return 0;
    }
@@ -4905,7 +4908,7 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
 //         typeRef = resolveTemplateDeclaration(current, scope, declarationMode);
 //      }
    /*else */if (!typeRef) 
-      typeRef = resolveTypeIdentifier(scope, node.firstChild(lxTerminalMask));
+      typeRef = resolveTypeIdentifier(scope, node.firstChild(lxTerminalMask), declarationMode);
 
    validateType(scope, node, typeRef, declarationMode);
 
@@ -8627,8 +8630,8 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 //      //scope.
 //   }
 //
-//   if ((scope.constant || scope.outputRef != 0) && scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == nullptr) {
-//      scope.save();
+//   if (scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == nullptr) {
+      scope.save();
 //   }
 }
 
@@ -9990,7 +9993,7 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
          {
             SNode node = current.firstChild();
             NamespaceScope namespaceScope(&scope/*, true*/);
-            declareNamespace(node, namespaceScope, true);
+            declareNamespace(node, namespaceScope, false);
 
             compileImplementations(node, namespaceScope);
             break;
@@ -10011,36 +10014,26 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
    // first pass - declaration
    bool declared = false;
    while (current != lxNone) {
-//      //      if (scope.mapAttribute(name) != 0)
-//      //         scope.raiseWarning(WARNING_LEVEL_3, wrnAmbiguousIdentifier, name);
-//
-      if (current.argument == 0 || current.argument == INVALID_REF) {
-         // hotfix : ignore already declared classes and symbols
-         switch (current) {
-            case lxNamespace:
-            {
-               SNode node = current.firstChild();
+      switch (current) {
+         case lxNamespace:
+         {
+            SNode node = current.firstChild();
 
-               NamespaceScope namespaceScope(&scope);
-               declareNamespace(node, namespaceScope, false);
+            NamespaceScope namespaceScope(&scope);
+            declareNamespace(node, namespaceScope, false);
 
-               // declare classes several times to ignore the declaration order
-               declared |= compileDeclarations(node, namespaceScope, forced, repeatMode);
+            // declare classes several times to ignore the declaration order
+            declared |= compileDeclarations(node, namespaceScope, forced, repeatMode);
 
-               break;
-            }
-            case lxClass:
-               if (forced || !current.findChild(lxParent) 
-                  || _logic->isClassDeclared(*scope.moduleScope, resolveParentRef(current.findChild(lxParent), scope, true))) 
+            break;
+         }
+         case lxClass:
+            if (!scope.moduleScope->isDeclared(current.argument)) {
+               if (forced || !current.findChild(lxParent)
+                  || _logic->doesClassExist(*scope.moduleScope, resolveParentRef(current.findChild(lxParent), scope, true)))
                {
-                  ClassScope classScope(&scope, scope.defaultVisibility);
+                  ClassScope classScope(&scope, current.argument, scope.defaultVisibility);
                   declareClassAttributes(current, classScope/*, publicClass*/);
-
-                  classScope.reference = scope.mapNewTerminal(current.findChild(lxNameAttr), classScope.visibility);
-                  current.setArgument(classScope.reference);
-
-                  // NOTE : the symbol section is created even if the class symbol doesn't exist
-                  scope.moduleScope->mapSection(classScope.reference | mskSymbolRef, false);
 
                   // declare class
                   compileClassDeclaration(current, classScope);
@@ -10048,23 +10041,19 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
                   declared = true;
                }
                else repeatMode = true;
-               break;
-            case lxSymbol:
-            {
-               SymbolScope symbolScope(&scope, scope.defaultVisibility);
+            }
+
+            break;
+         case lxSymbol:
+            if (!scope.moduleScope->isDeclared(current.argument)) {
+               SymbolScope symbolScope(&scope, current.argument, scope.defaultVisibility);
                declareSymbolAttributes(current, symbolScope, true);
-
-               symbolScope.reference = scope.mapNewTerminal(current.findChild(lxNameAttr), symbolScope.visibility);
-               current.setArgument(symbolScope.reference);
-
-               scope.moduleScope->mapSection(symbolScope.reference | mskSymbolRef, false);
 
                // declare symbol
                compileSymbolDeclaration(current, symbolScope);
                declared = true;
-               break;
             }
-         }
+            break;
       }
       current = current.nextNode();
    }
@@ -10072,7 +10061,7 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
    return declared;
 }
 
-void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool withFullInfo)
+void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool ignoreImports)
 {
    while (current != lxNone) {
       if (current == lxSourcePath) {
@@ -10088,7 +10077,7 @@ void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool wi
          if (!_logic->validateNsAttribute(current.argument, scope.defaultVisibility))
             scope.raiseError(errInvalidHint, current);
       }
-      else if (current == lxImport) {
+      else if (current == lxImport && !ignoreImports) {
          bool duplicateInclusion = false;
          if (scope.moduleScope->includeNamespace(scope.importedNs, current.identifier(), duplicateInclusion)) {
             //if (duplicateExtensions)
@@ -10109,16 +10098,72 @@ void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool wi
 
       current = current.nextNode();
    }
+}
 
-   scope.moduleScope->declareNamespace(scope.ns.c_str());
+void Compiler :: declareMembers(SNode current, NamespaceScope& scope)
+{
+   while (current != lxNone) {
+      switch (current) {
+         case lxNamespace:
+         {
+            SNode node = current.firstChild();
 
-//   if (withFullInfo) {
-//      for (auto it = scope.importedNs.start(); !it.Eof(); it++) {
-//         ident_t imported_ns = *it;
-//
-//         scope.loadModuleInfo(imported_ns);
-//      }
-//   }
+            NamespaceScope namespaceScope(&scope);
+            declareNamespace(node, namespaceScope, true);
+            scope.moduleScope->declareNamespace(scope.ns.c_str());
+
+            declareMembers(node, namespaceScope);
+            break;
+         }
+         case lxClass:
+         {
+            ClassScope classScope(&scope, scope.defaultVisibility);
+            declareClassAttributes(current, classScope);
+
+            classScope.reference = scope.mapNewTerminal(current.findChild(lxNameAttr), classScope.visibility);
+            current.setArgument(classScope.reference);
+
+            // NOTE : the symbol section is created even if the class symbol doesn't exist
+            scope.moduleScope->mapSection(classScope.reference | mskSymbolRef, false);
+
+            break;
+         }
+         case lxSymbol:
+         {
+            SymbolScope symbolScope(&scope, scope.defaultVisibility);
+            declareSymbolAttributes(current, symbolScope, true);
+
+            symbolScope.reference = scope.mapNewTerminal(current.findChild(lxNameAttr), symbolScope.visibility);
+            current.setArgument(symbolScope.reference);
+
+            scope.moduleScope->mapSection(symbolScope.reference | mskSymbolRef, false);
+
+            break;
+         }
+      }
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: declareModuleIdentifiers(SyntaxTree& syntaxTree, _ModuleScope& scope)
+{
+   SNode node = syntaxTree.readRoot().firstChild();
+   bool retVal = false;
+   while (node != lxNone) {
+      if (node == lxNamespace) {
+         SNode current = node.firstChild();
+
+         NamespaceScope namespaceScope(&scope);
+         declareNamespace(current, namespaceScope, true);
+
+         scope.declareNamespace(namespaceScope.ns.c_str());
+
+         // declare all module members - map symbol identifiers
+         declareMembers(current, namespaceScope);
+      }
+
+      node = node.nextNode();
+   }
 }
 
 bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope, bool forced, bool& repeatMode)
@@ -10132,7 +10177,7 @@ bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope, bool
          NamespaceScope namespaceScope(&scope);
          declareNamespace(current, namespaceScope, false);
 
-         // declare classes several times to ignore the declaration order
+         // compile class declarations several times to ignore the declaration order
          retVal |= compileDeclarations(current, namespaceScope, forced, repeatMode);
       }
 
@@ -10150,7 +10195,7 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, iden
          SNode current = node.firstChild();
 
          NamespaceScope namespaceScope(&scope/*, true*/);
-         declareNamespace(current, namespaceScope, true);
+         declareNamespace(current, namespaceScope, false);
 
          if (!emptystr(greeting))
             scope.project->printInfo("%s", greeting);
