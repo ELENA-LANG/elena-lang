@@ -510,27 +510,9 @@ void DerivationWriter :: recognizeScope()
    }
 }
 
-ref_t DerivationWriter :: mapAttribute(SNode node, /*bool allowType, bool& allowPropertyTemplate, */ref_t& previusCategory)
+ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, /*bool& allowPropertyTemplate, */ref_t& previusCategory)
 {
-//   if (node == lxIdentifier) {
-//      ident_t token = node.identifier();
-//
-//      ref_t ref = _scope->attributes.get(token);
-//      if (isPrimitiveRef(ref)) {
-//         // Compiler magic : check if the attribute have correct order
-//         if ((ref & V_CATEGORY_MASK) < previusCategory) {
-//            previusCategory = ref & V_CATEGORY_MASK;
-//         }
-//         else ref = 0u;
-//      }
-//
-//      if (!isPrimitiveRef(ref) && !allowType)
-//         raiseError(errInvalidHint, node);
-//
-//      return ref;
-//   }
-//   else {
-      ref_t attrRef = 0;
+   ref_t attrRef = 0;
 ////
 ////      bool tokenNode = node.existChild(lxToken);
 ////      bool sizeNode = node.existChild(lxDynamicSizeDecl);
@@ -540,8 +522,8 @@ ref_t DerivationWriter :: mapAttribute(SNode node, /*bool allowType, bool& allow
 ////      if (tokenNode)
 ////         return V_TEMPLATE;
 
-      SNode terminal = node.firstChild(lxTerminalMask);
-      ident_t token = terminal.identifier();
+   SNode terminal = node.firstChild(lxTerminalMask);
+   ident_t token = terminal.identifier();
 
 //      if (allowPropertyTemplate) {
 //         allowPropertyTemplate = false;
@@ -561,28 +543,27 @@ ref_t DerivationWriter :: mapAttribute(SNode node, /*bool allowType, bool& allow
 //
 //      allowPropertyTemplate = false;
 
-      ref_t ref = _scope->attributes.get(token);      
-      if (isPrimitiveRef(ref)) {
-         // Compiler magic : check if the attribute have correct order
-         if ((ref & V_CATEGORY_MASK) < previusCategory) {
-            previusCategory = ref & V_CATEGORY_MASK;
-         }
-         else ref = 0u;
+   ref_t ref = _scope->attributes.get(token);      
+   if (isPrimitiveRef(ref)) {
+      // Compiler magic : check if the attribute have correct order
+      if ((ref & V_CATEGORY_MASK) < previusCategory) {
+         previusCategory = ref & V_CATEGORY_MASK;
       }
+      else ref = 0u;
+   }
 
-//      if (allowType) {
-//         if (!isPrimitiveRef(ref))
-//            attrRef = ref;
-//
-//         if (attrRef || !ref)
-//            return attrRef;
-//      }
+   if (allowType) {
+      if (!isPrimitiveRef(ref))
+         attrRef = ref;
 
-      if (!isPrimitiveRef(ref)/* && !allowType*/)
-         raiseError(errInvalidHint, node);
+      if (attrRef || !ref)
+         return attrRef;
+   }
 
-      return ref;
-//   }
+   if (!isPrimitiveRef(ref) && !allowType)
+      raiseError(errInvalidHint, node);
+
+   return ref;
 }
 
 void DerivationWriter :: raiseError(ident_t err, SNode node)
@@ -656,59 +637,63 @@ void DerivationWriter :: declareAttribute(SNode node)
 //   return 0;
 //}
 
+void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalType nameNodeType)
+{
+   //   while (current == lxInlineAttribute) {
+   //      ref_t inlineAttrRef = mapInlineAttribute(current);
+   //
+   //      current.setArgument(inlineAttrRef);
+   //
+   //      current = current.nextNode();
+   //   }
+   //   int templateMode = 0;
+   //   bool privateOne = true;
+   //   bool visibilitySet = false;
+   //   bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
+   //   bool withoutMapping = false;
+   ref_t attributeCategory = V_CATEGORY_MAX;
+   while (current == lxToken) {
+      bool allowType = current.nextNode()/*.compare(lxNameAttr)*/ == nameNodeType;
+
+      ref_t attrRef = mapAttribute(current, allowType, /*allowPropertyTemplate, */attributeCategory);
+      if (isPrimitiveRef(attrRef)) {
+         current.set(lxAttribute, attrRef);
+         //         if (test(mode, MODE_ROOT)) {
+         //            if ((attrRef == V_PUBLIC || attrRef == V_INTERNAL)) {
+         //               // the symbol visibility should be provided only once
+         //               if (!visibilitySet) {
+         //                  privateOne = attrRef == V_INTERNAL;
+         //                  visibilitySet = true;
+         //               }
+         //               else _scope->raiseError(errInvalidHint, _filePath, current);
+         //            }
+         //            else if(attrRef == V_INLINE || attrRef == V_PROPERTY) {
+         //               templateMode = attrRef;
+         //            }
+         //            else if (attrRef == V_TYPETEMPL || attrRef == V_META) {
+         //               // NOTE : the type alias should not be mapped in the module
+         //               withoutMapping = true;
+         //            }
+         //         }
+      }
+      else if (attrRef != 0 || allowType) {
+         current.set(lxType, attrRef);
+         allowType = false;
+      }
+      else raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, current);
+
+      current = current.nextNode();
+   }
+}
+
 void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 {
    // set name
    SNode nameNode = current;
    nameNode = lxNameAttr;
 
-   current = goToFirstNode(nameNode.prevNode(), lxToken/*, lxInlineAttribute*/);
-//   while (current == lxInlineAttribute) {
-//      ref_t inlineAttrRef = mapInlineAttribute(current);
-//
-//      current.setArgument(inlineAttrRef);
-//
-//      current = current.nextNode();
-//   }
-//   int templateMode = 0;
-//   bool privateOne = true;
-//   bool visibilitySet = false;
-//   bool allowPropertyTemplate = test(mode, MODE_PROPERTYALLOWED);
-//   bool withoutMapping = false;
-   ref_t attributeCategory = V_CATEGORY_MAX;
-   while (current == lxToken) {
-      //bool allowType = current.nextNode()/*.compare(lxNameAttr)*/ == lxNameAttr;
+   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken/*, lxInlineAttribute*/), mode, lxNameAttr);
 
-      ref_t attrRef = mapAttribute(current, /*allowType, allowPropertyTemplate, */attributeCategory);
-      if (isPrimitiveRef(attrRef)) {
-         current.set(lxAttribute, attrRef);
-//         if (test(mode, MODE_ROOT)) {
-//            if ((attrRef == V_PUBLIC || attrRef == V_INTERNAL)) {
-//               // the symbol visibility should be provided only once
-//               if (!visibilitySet) {
-//                  privateOne = attrRef == V_INTERNAL;
-//                  visibilitySet = true;
-//               }
-//               else _scope->raiseError(errInvalidHint, _filePath, current);
-//            }
-//            else if(attrRef == V_INLINE || attrRef == V_PROPERTY) {
-//               templateMode = attrRef;
-//            }
-//            else if (attrRef == V_TYPETEMPL || attrRef == V_META) {
-//               // NOTE : the type alias should not be mapped in the module
-//               withoutMapping = true;
-//            }
-//         }
-      }
-//      else if (attrRef != 0 || allowType) {
-//         current.set(lxTarget, attrRef);
-//         allowType = false;
-//      }
-      else raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, current);
-      
-      current = current.nextNode();
-   }
-   
    SNode nameTerminal = nameNode.firstChild(lxTerminalMask);
    IdentifierString name(nameTerminal.identifier().c_str());
 //   if (nameNode.existChild(lxToken)) {
@@ -802,9 +787,10 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
 
          recognizeScopeAttributes(current.prevNode(), mode);
       }
-      ///*else */if (current == lxBaseDecl) {
-      //   recognizeScopeAttributes(current.lastChild(), 0);
-      //}
+      else if (current == lxBaseDecl) {
+         // HOTFIX : passing none as a name node, because the type should be last token
+         recognizeAttributes(current.firstChild(), 0, lxNone);
+      }
 
       current = current.nextNode();
    }
@@ -923,28 +909,28 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
 //      generateMethodTree(writer, node, derivationScope, true, current.argument == MODE_PROPERTYMETHOD, buffer);
 //   }
 //   else {
-//      bool firstParent = true;
+      bool firstParent = true;
       while (current != lxNone) {
-//         if (current == lxParent) {
+         if (current == lxBaseDecl) {
 //            SNode baseNameNode = current.findChild(lxNameAttr);
-//            if (firstParent) {
-//               writer.newNode(lxParent);               
-//               copyIdentifier(writer, baseNameNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
+            if (firstParent) {
+               writer.newNode(lxParent);               
+               generateAttributes(writer, current.firstChild(), derivationScope, buffer);
 //               if (baseNameNode.existChild(lxToken)) {
 //                  generateTemplateAttributes(writer, baseNameNode.findChild(lxToken), derivationScope);
 //               }
-//               writer.closeNode();
-//
-//               firstParent = false;
-//            }
-//            else {
+               writer.closeNode();
+
+               firstParent = false;
+            }
+            else {
 //               if (baseNameNode.existChild(lxToken)) {
 //                  generateClassTemplateTree(writer, current, derivationScope);
 //               }
-//               else _scope->raiseError(errInvalidHint, _filePath, current);
-//            }
-//         }
-         /*else */if (current == lxClassMethod) {
+               /*else */raiseError(errInvalidHint, current);
+            }
+         }
+         else if (current == lxClassMethod) {
             generateMethodTree(writer, current, derivationScope, /*false, current.argument == MODE_PROPERTYMETHOD, */buffer);
          }
 //         else if (current == lxClassField/* || current == lxFieldInit*/) {
@@ -987,10 +973,10 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
 //      current = current.nextNode();
 //   }
 //}
-//
-//void DerivationWriter :: generateTypeAttribute(SyntaxWriter& writer, SNode attrNodes, SNode terminal, size_t dimensionCounter, 
-//   ref_t argRef, Scope& derivationScope)
-//{
+
+void DerivationWriter :: generateTypeAttribute(SyntaxWriter& writer/*, SNode attrNodes*/, SNode terminal/*, size_t dimensionCounter*/, 
+   ref_t typeRef, Scope& derivationScope)
+{
 //   writer.newNode(lxTypeAttribute);
 //   for (size_t i = 0; i < dimensionCounter; i++)
 //      writer.newNode(lxArrayType);
@@ -1002,8 +988,8 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
 //      writer.closeNode();
 //   }
 //   else {
-//      LexicalType targetType = lxTarget;
-//      int targetArgument = argRef;
+      LexicalType targetType = lxType;
+      int targetArgument = typeRef;
 //      if (derivationScope.withTypeParameters()) {
 //         // check template parameter if required
 //         int index = derivationScope.parameters.get(terminal.identifier());
@@ -1013,16 +999,16 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
 //         }
 //      }
 //
-//      writer.newNode(targetType, targetArgument);
-//      copyIdentifier(writer, terminal, derivationScope.ignoreTerminalInfo);
-//      writer.closeNode();
+      writer.newNode(targetType, targetArgument);
+      copyIdentifier(writer, terminal/*, derivationScope.ignoreTerminalInfo*/);
+      writer.closeNode();
 //   }
 //
 //   for (size_t i = 0; i < dimensionCounter; i++)
 //      writer.closeNode();
-//
+
 //   writer.closeNode();
-//}
+}
 
 void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
 {
@@ -1032,25 +1018,25 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
    if (current == lxNameAttr) {
       nameNode = current;
 
-      current = goToFirstNode(nameNode.prevNode(), lxAttribute/*, lxTarget, lxInlineAttribute */);
+      current = goToFirstNode(nameNode.prevNode(), lxAttribute, lxType/*, lxInlineAttribute */);
    }
 
    while (true) {
-//      if (current == lxTarget || (current.argument == V_TEMPLATE && current == lxAttribute)) {
-//         SNode terminal = current.firstChild(lxTerminalMask);
+      if (current == lxType/* || (current.argument == V_TEMPLATE && current == lxAttribute)*/) {
+         SNode terminal = current.firstChild(lxTerminalMask);
 //         size_t dimensionCounter = SyntaxTree::countChild(current, lxDynamicSizeDecl);
 //
 //         SNode attrNodes;
 //         if (current == lxAttribute)
 //            attrNodes = current.firstChild();
 //
-//         generateTypeAttribute(writer, attrNodes, terminal, dimensionCounter, current.argument, derivationScope);
-//      }
+         generateTypeAttribute(writer/*, attrNodes*/, terminal/*, dimensionCounter*/, current.argument, derivationScope);
+      }
 //      //else if (current == lxInlineAttribute) {
 //      //   // COMPILER MAGIC : inject an attribute template
 //      //   generateAttributeTemplateTree(writer, current, nameNode, derivationScope, buffer);
 //      //}
-      /*else */if (current == lxAttribute) {
+      else if (current == lxAttribute) {
          writer.newNode(lxAttribute, current.argument);
          copyIdentifier(writer, current.firstChild(lxTerminalMask)/*, derivationScope.ignoreTerminalInfo*/);
 

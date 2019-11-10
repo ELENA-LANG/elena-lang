@@ -87,17 +87,17 @@ public:
 //         this->size = size;
 //      }
 //   };
-//
-//   // InheritResult
-//   enum class InheritResult
-//   {
-//      irNone = 0,
-//      irSuccessfull,
-//      irUnsuccessfull,
-//      irSealed,
-//      //irInvalid,
-////      irObsolete
-//   };
+
+   // InheritResult
+   enum class InheritResult
+   {
+      irNone = 0,
+      irSuccessfull,
+      irUnsuccessfull,
+      irSealed,
+      //irInvalid,
+//      irObsolete
+   };
 
    enum ObjectKind
    {
@@ -105,8 +105,9 @@ public:
 //
 //      okObject,                       // param - class reference
       okSymbol,                       // param - reference
-      okConstantSymbol,               // param - reference
+      //okConstantSymbol,               // param - reference
       okClass,                        // param - reference
+      okSingleton,                    // param - reference
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
@@ -237,10 +238,10 @@ private:
          _Module*      module;
          Scope*        parent;
 
-//         virtual void raiseError(const char* message)
-//         {
-//            moduleScope->project->raiseError(message);
-//         }
+         virtual void raiseError(const char* message)
+         {
+            moduleScope->project->raiseError(message);
+         }
          virtual void raiseError(const char* message, SNode terminal)
          {
             parent->raiseError(message, terminal);
@@ -348,11 +349,11 @@ private:
 //      {
 //         constantHints.add(reference, classReference);
 //      }
-//
-//      virtual void raiseError(const char* message)
-//      {
-//         Scope::raiseError(message);
-//      }
+
+      virtual void raiseError(const char* message)
+      {
+         Scope::raiseError(message);
+      }
       virtual void raiseError(const char* message, SNode terminal)
       {
          moduleScope->raiseError(message, sourcePath, terminal);
@@ -823,9 +824,9 @@ private:
    bool optimizeIdleBreakpoints(CommandTape& tape);
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
-//
-//   void validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared);
-//
+
+   void validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared);
+
 //   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 //
@@ -863,12 +864,11 @@ private:
 //   ref_t resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 //
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
-//   ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
+   ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
 //   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, bool noPrimitivesMode, bool unboxWrapper = true);
 ////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
-//   ref_t resolveImplicitIdentifier(Scope& scope, SNode terminal);
-//   ref_t resolveImplicitIdentifier(Scope& scope, ident_t identifier, bool referenceOne, bool gloabalOne = false);
-//
+   ref_t resolveTypeIdentifier(Scope& scope, SNode terminal);
+
 //   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
 //   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
@@ -876,8 +876,8 @@ private:
 //   void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
 //
 //   int defineFieldSize(CodeScope& scope, int offset);
-//
-//   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed);
+
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreFields, bool ignoreSealed*/);
 //   void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 //
 //   // NOTE : the method is used to set template pseudo variable
@@ -885,13 +885,13 @@ private:
 //   void declareCodeDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //
 //   int resolveSize(SNode node, Scope& scope);
-//   ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
-////   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
-//
+   ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
+//   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
+
 //   bool isValidAttributeType(Scope& scope, _CompilerLogic::FieldAttributes& attrs);
-//
-//   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false/*, bool ignoreSealed = false*/);
-//   void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode);
+
+   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreFields = false*/);
+   void compileParentDeclaration(SNode node, ClassScope& scope/*, bool extensionMode*/);
 //   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 //   void validateClassFields(SNode node, ClassScope& scope);
 //
@@ -923,6 +923,7 @@ private:
 //
 //   size_t resolveArraySize(SNode node, Scope& scope);
 //
+   ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode);
 //   ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
 //   ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 //

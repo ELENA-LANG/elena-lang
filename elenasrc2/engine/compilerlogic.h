@@ -80,9 +80,9 @@ class CompilerLogic : public _CompilerLogic
 public:
 //   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
 //   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
-//
-//   virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
-//
+
+   virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
+
 //   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef)
 //   {
 //      bool dummy = false;
@@ -122,8 +122,9 @@ public:
 //   virtual bool isVariable(ClassInfo& info);
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef);
 //   virtual bool isArray(ClassInfo& info);
-//   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared);
-//   virtual bool isValidType(ClassInfo& info);
+   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared);
+   virtual bool isValidType(ClassInfo& info);
+   virtual bool isClassDeclared(_ModuleScope& scope, ref_t targetRef);
 //   virtual bool isEmbeddable(ClassInfo& info);
 //   virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference)
 //   {

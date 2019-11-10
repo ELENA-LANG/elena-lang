@@ -600,16 +600,25 @@ CompilerLogic :: CompilerLogic()
 //{
 //   return test(info.header.flags, elDynamicRole);
 //}
-//
-//bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, bool ignoreUndeclared)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, classReference))
-//      return ignoreUndeclared;
-//
-//   return isValidType(info);
-//}
-//
+
+bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, bool ignoreUndeclared)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference, true))
+      return ignoreUndeclared;
+
+   return isValidType(info);
+}
+
+bool CompilerLogic :: isClassDeclared(_ModuleScope& scope, ref_t targetRef) 
+{
+   if (!targetRef)
+      return false;
+
+   ClassInfo info;
+   return defineClassInfo(scope, info, targetRef, true);
+}
+
 //bool CompilerLogic :: validateAutoType(_ModuleScope& scope, ref_t& reference)
 //{
 //   ClassInfo info;
@@ -625,12 +634,12 @@ CompilerLogic :: CompilerLogic()
 //
 //   return true;
 //}
-//
-//bool CompilerLogic :: isValidType(ClassInfo& info)
-//{
-//   return !testany(info.header.flags, elRole);
-//}
-//
+
+bool CompilerLogic :: isValidType(ClassInfo& info)
+{
+   return !testany(info.header.flags, elRole);
+}
+
 //bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 //{
 //   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
@@ -1336,15 +1345,15 @@ CompilerLogic :: CompilerLogic()
 //   writer.inject((LexicalType)operation, targetRef);
 //   writer.closeNode();
 //}
-//
-//bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
-//{
+
+bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
+{
 //   if (isPrimitiveRef(reference) && !headerOnly) {
 //      scope.loadClassInfo(info, scope.superReference);
 //   }
-//
-//   switch (reference)
-//   {
+
+   switch (reference)
+   {
 //      case V_INT32:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
@@ -1417,22 +1426,22 @@ CompilerLogic :: CompilerLogic()
 //         break;
 //      case V_AUTO:
 //         break;
-//      default:
-//         if (reference != 0) {
-//            if (!scope.loadClassInfo(info, reference, headerOnly))
-//               return false;
-//         }
-//         else {
-//            info.header.parentRef = 0;
-//            info.header.flags = 0;
-//            //info.size = 0;
-//         }
-//         break;
-//   }
-//
-//   return true;
-//}
-//
+      default:
+         if (reference != 0) {
+            if (!scope.loadClassInfo(info, reference, headerOnly))
+               return false;
+         }
+         else {
+            info.header.parentRef = 0;
+            info.header.flags = 0;
+            //info.size = 0;
+         }
+         break;
+   }
+
+   return true;
+}
+
 //int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable)
 //{
 //   if (reference == V_BINARYARRAY && elementRef != 0) {

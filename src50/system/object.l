@@ -2,10 +2,10 @@
 
 /// a common ancestor
 
-public class Object;
-
-//public class Object
-//{
+public class Object
+{
+    constructor new() {} // !! temporal
+    
 //    /// Creates the object
 //    constructor() {}
 //    
@@ -26,8 +26,8 @@ public class Object;
 //                
 //    /// Implements a message dispatching in VMT
 //    dispatch() => system'core_routines'__object;
-//}
-//
+}
+
 ///// A common boolean value
 //public interface BoolValue
 //{

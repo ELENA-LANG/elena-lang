@@ -33,7 +33,7 @@ namespace _ELENA_
   // --- Compiler error messages ---
    #define errDuplicatedSymbol	   "%s(%d:%d): error 102: Class '%s' already exists\n"
 //   #define errDuplicatedMethod      "%s(%d:%d): error 103: Method '%s' already exists in the class\n"
-//   #define errUnknownClass          "%s(%d:%d): error 104: Class '%s' doesn't exist\n"
+   #define errUnknownClass          "%s(%d:%d): error 104: Class '%s' doesn't exist\n"
 //   #define errDuplicatedLocal       "%s(%d:%d): error 105: Variable '%s' already exists\n"
    #define errUnknownObject         "%s(%d:%d): error 106: Unknown object '%s'\n"
 //   #define errInvalidOperation	   "%s(%d:%d): error 107: Invalid operation with '%s'\n"
@@ -57,7 +57,7 @@ namespace _ELENA_
 //////   #define errUnknownExtRole        "%s(%d:%d): error 138: Unknown external role '%s' mapping\n"
 //   #define errInvalidParent         "%s(%d:%d): error 139: Invalid parent class %s\n"
 ////////   #define errInvalidSync           "%s(%d:%d): error 140: The method %s cannot have a sync hint\n"
-//   #define errSealedParent          "%s(%d:%d): error 141: parent class %s cannot be inherited\n"
+   #define errSealedParent          "%s(%d:%d): error 141: parent class %s cannot be inherited\n"
 //   #define errClosedParent          "%s(%d:%d): error 141: new method cannot be declared\n"
 //////   #define errInvalidSymbolExpr     "%s(%d:%d): error 142: %s cannot be used inside a symbol\n"
 //////   #define errInvalidRoleDeclr      "%s(%d:%d): error 143: %s cannot be used with a role\n"
@@ -89,11 +89,11 @@ namespace _ELENA_
 //   constexpr auto errEmptyStructure             = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
 //   constexpr auto errReadOnlyField              = "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n";
 //   constexpr auto errDefaultConstructorNotFound = "%s(%d:%d): error 171: implicit constructor is not found for '%s'\n";
-//   constexpr auto errInvalidType                = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
+   constexpr auto errInvalidType                = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
 //   constexpr auto errDupInternalMethod          = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
-//
-//   #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
-//   #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
+
+   #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
+   #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
 //   #define errNoDispatcher	         "internal error 502: Default dispatch method is not declared in the base class\n"
 //   #define errClosureError          "internal error 503: closure cannot be generated"
 ////   #define errCrUnknownReference    "reference cannot be resolved"

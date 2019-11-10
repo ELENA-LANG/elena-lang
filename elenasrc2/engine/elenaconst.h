@@ -503,8 +503,8 @@ namespace _ELENA_
    constexpr auto TAPE_KEY                   = "$elena'@tapekey";                // VM Tape key
    constexpr auto NAMESPACE_KEY              = "$elena'@rootnamespace";          // The project namespace
 
-//   // predefined system forwards
-//   constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
+   // predefined system forwards
+   constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
 //   constexpr auto LAZYEXPR_FORWARD        = "$lazyexpression";                // the base lazy expression class
 //   constexpr auto INT_FORWARD             = "$int";
 //   constexpr auto LONG_FORWARD            = "$long";

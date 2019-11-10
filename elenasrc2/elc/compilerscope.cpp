@@ -57,7 +57,7 @@ ref_t ModuleScope :: mapAnonymous(ident_t prefix)
    return module->mapReference(name);
 }
 
-void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, bool ignoreFields)
+void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode/*, bool ignoreFields*/)
 {
    target.header = copy.header;
 //   target.size = copy.size;
@@ -246,7 +246,7 @@ ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool header
          ClassInfo copy;
          copy.load(&reader, headerOnly);
 
-         importClassInfo(copy, info, argModule, headerOnly, false, false);
+         importClassInfo(copy, info, argModule, headerOnly, false/*, false*/);
       }
       else info.load(&reader, headerOnly);
 
@@ -340,25 +340,25 @@ void ModuleScope :: saveAttribute(ident_t name, ref_t attr)
    }
 }
 
-//_Module* ModuleScope :: loadReferenceModule(ident_t referenceName, ref_t& reference)
-//{
-//   if (isTemplateWeakReference(referenceName)) {
-//      // COMPILER MAGIC : try to find a template implementation
-//      return loadReferenceModule(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), reference);
-//   }
-//   else {
-//      if (isWeakReference(referenceName)) {
-//         reference = module->mapReference(referenceName, true);
-//
-//         return reference ? module : NULL;
-//      }
-//
-//      _Module* extModule = project->resolveModule(referenceName, reference);
-//
-//      return reference ? extModule : NULL;
-//   }
-//}
-//
+_Module* ModuleScope :: loadReferenceModule(ident_t referenceName, ref_t& reference)
+{
+   if (isTemplateWeakReference(referenceName)) {
+      // COMPILER MAGIC : try to find a template implementation
+      return loadReferenceModule(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), reference);
+   }
+   else {
+      if (isWeakReference(referenceName)) {
+         reference = module->mapReference(referenceName, true);
+
+         return reference ? module : NULL;
+      }
+
+      _Module* extModule = project->resolveModule(referenceName, reference);
+
+      return reference ? extModule : NULL;
+   }
+}
+
 //ref_t ModuleScope :: mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared)
 //{
 //   ReferenceNs forwardName;

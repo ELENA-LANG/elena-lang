@@ -98,10 +98,10 @@ constexpr auto V_NAMESPACE       = 0x80001021u;
 //constexpr auto V_SYMBOL          = 0x80000808u;
 //constexpr auto V_INLINEARG       = 0x80000809u;
 ////constexpr auto V_INLINEATTRIBUTE = 0x8000080Au;
-//
-///// primitive types
+
+/// primitive types
 //constexpr auto V_FLAG            = 0x80000001u;
-//constexpr auto V_NIL             = 0x80000002u;
+constexpr auto V_NIL             = 0x80000002u;
 //constexpr auto V_INT32           = 0x80000003u;
 //constexpr auto V_INT64           = 0x80000004u;
 //constexpr auto V_DWORD           = 0x80000005u;
@@ -179,7 +179,7 @@ public:
 
    virtual void printInfo(const char* msg, ident_t value) = 0;
 
-//   virtual void raiseError(ident_t msg) = 0;
+   virtual void raiseError(ident_t msg) = 0;
    virtual void raiseError(ident_t msg, ident_t path, int row, int column, ident_t terminal = NULL) = 0;
    virtual void raiseError(ident_t msg, ident_t value) = 0;
 
@@ -268,24 +268,24 @@ struct _ModuleScope
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
    virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
 //   virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName) = 0;
-//
-//   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
-//   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
-//
-//   bool isClassDeclared(ref_t reference)
-//   {
-//      if (!reference) {
-//         return false;
-//      }
-//      else return mapSection(reference | mskMetaRDataRef, true) != nullptr;
-//   }
+
+   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference) = 0;
+   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference) = 0;
+
+   //bool isClassDeclared(ref_t reference)
+   //{
+   //   if (!reference) {
+   //      return false;
+   //   }
+   //   else return mapSection(reference | mskMetaRDataRef, true) != nullptr;
+   //}
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
-//
-//   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode,
-//                                 bool ignoreFields) = 0;
-//
+
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode/*,
+                                 bool ignoreFields*/) = 0;
+
 //   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
@@ -598,10 +598,10 @@ public:
 //
 //   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
 //   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result) = 0;
-//
-//   // retrieve the class info / size
-//   virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
-//
+
+   // retrieve the class info / size
+   virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
+
 //   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
 //   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
 //   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
@@ -628,7 +628,8 @@ public:
 //   virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 //
 //   virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
-//   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared) = 0;
+   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared) = 0;
+   virtual bool isClassDeclared(_ModuleScope& scope, ref_t targetRef) = 0;
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;
 //
 //   virtual bool isWrapper(ClassInfo& info) = 0;

@@ -400,7 +400,7 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
          }
          // if it is a stateless symbol
          else if (test(info.header.flags, elStateless)) {
-            return ObjectInfo(okConstantSymbol, reference, reference);
+            return ObjectInfo(okSingleton, reference, reference);
          }
          // if it is a normal class
          // then the symbol is reference to the class class
@@ -577,7 +577,7 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Vi
 Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility visibility)
    : SourceScope(parent, reference, visibility)
 {
-   info.header.parentRef =  /*moduleScope->superReference*/0;
+   info.header.parentRef =  moduleScope->superReference;
    info.header.flags = elStandartVMT;
    info.header.count = 0;
    info.header.classRef = 0;
@@ -1300,21 +1300,6 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   }
 //}
 //
-////ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef)
-////{
-//////   if (object.kind == okExternal) {
-//////      // HOTFIX : recognize external functions returning long / real
-//////      if (targetRef == scope.moduleScope->longReference) {
-//////         return V_INT64;
-//////      }
-//////      else if (targetRef == scope.moduleScope->realReference) {
-//////         return V_REAL64;
-//////      }
-//////      else return resolveObjectReference(scope, object);
-//////   }
-////   /*else */return resolveObjectReference(scope, object);
-////}
-//
 //ref_t Compiler :: resolveObjectReference(CodeScope& scope, ObjectInfo object, bool noPrimitivesMode, bool unboxWapper)
 //{
 //   ref_t retVal = 0;
@@ -1337,19 +1322,19 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   }
 //   else return retVal;
 //}
-//
-//ref_t Compiler :: resolveObjectReference(_ModuleScope&, ObjectInfo object)
-//{
-//   // if static message is sent to a class class
-//   switch (object.kind)
-//   {
-//      case okNil:
-//         return V_NIL;
-//      default:
-//         return object.reference;
-//   }
-//}
-//
+
+ref_t Compiler :: resolveObjectReference(_ModuleScope&, ObjectInfo object)
+{
+   // if static message is sent to a class class
+   switch (object.kind)
+   {
+      case okNil:
+         return V_NIL;
+      default:
+         return object.reference;
+   }
+}
+
 //inline void writeClassNameInfo(SyntaxWriter& writer, _Module* module, ref_t reference)
 //{
 //   ident_t className = module->resolveReference(reference);
@@ -1506,44 +1491,44 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   }
 //   else scope.raiseError(errInvalidLink, node);
 //}
-//
-//Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed)
-//{
-//   _ModuleScope* moduleScope = scope.moduleScope;
-//
-//   size_t flagCopy = scope.info.header.flags;
-//   size_t classClassCopy = scope.info.header.classRef;
-//
-//   // get module reference
-//   ref_t moduleRef = 0;
-//   _Module* module = moduleScope->loadReferenceModule(parentRef, moduleRef);
-//
-//   if (module == NULL || moduleRef == 0)
-//      return InheritResult::irUnsuccessfull;
-//
-//   // load parent meta data
-//   _Memory* metaData = module->mapSection(moduleRef | mskMetaRDataRef, true);
-//   if (metaData != NULL) {
-//      MemoryReader reader(metaData);
-//      // import references if we inheriting class from another module
-//      if (moduleScope->module != module) {
-//         ClassInfo copy;
-//         copy.load(&reader);
-//
-//         moduleScope->importClassInfo(copy, scope.info, module, false, true, ignoreFields);
-//      }
-//      else {
-//         scope.info.load(&reader, false, ignoreFields);
-//
-//         // mark all methods as inherited
-//         ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
-//         while (!it.Eof()) {
-//            (*it) = false;
-//
-//            it++;
-//         }
-//      }
-//
+
+Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreFields, bool ignoreSealed*/)
+{
+   _ModuleScope* moduleScope = scope.moduleScope;
+
+   size_t flagCopy = scope.info.header.flags;
+   size_t classClassCopy = scope.info.header.classRef;
+
+   // get module reference
+   ref_t moduleRef = 0;
+   _Module* module = moduleScope->loadReferenceModule(parentRef, moduleRef);
+
+   if (module == NULL || moduleRef == 0)
+      return InheritResult::irUnsuccessfull;
+
+   // load parent meta data
+   _Memory* metaData = module->mapSection(moduleRef | mskMetaRDataRef, true);
+   if (metaData != NULL) {
+      MemoryReader reader(metaData);
+      // import references if we inheriting class from another module
+      if (moduleScope->module != module) {
+         ClassInfo copy;
+         copy.load(&reader);
+
+         moduleScope->importClassInfo(copy, scope.info, module, false, true/*, ignoreFields*/);
+      }
+      else {
+         scope.info.load(&reader, false/*, ignoreFields*/);
+
+         // mark all methods as inherited
+         ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
+         while (!it.Eof()) {
+            (*it) = false;
+
+            it++;
+         }
+      }
+
 //      // inherit static field values
 //      auto staticValue_it = scope.info.staticValues.start();
 //      while (!staticValue_it.Eof()) {
@@ -1569,69 +1554,65 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //
 //      if (!ignoreSealed && test(scope.info.header.flags, elSealed))
 //         return InheritResult::irSealed;
-//
-//      // restore parent and flags
-//      scope.info.header.parentRef = parentRef;
-//      scope.info.header.classRef = classClassCopy;
-//
+
+      // restore parent and flags
+      scope.info.header.parentRef = parentRef;
+      scope.info.header.classRef = classClassCopy;
+
 //      if (test(scope.info.header.flags, elAbstract)) {
 //         // exclude abstract flag
 //         scope.info.header.flags &= ~elAbstract;
 //
 //         scope.abstractBaseMode = true;
 //      }
-//
-//      scope.info.header.flags |= flagCopy;
-//
-//      return InheritResult::irSuccessfull;
-//   }
-//   else return InheritResult::irUnsuccessfull;
-//}
-//
-//void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields)
-//{
-//   scope.info.header.parentRef = parentRef;
-//   InheritResult res = InheritResult::irSuccessfull;
-//   if (scope.info.header.parentRef != 0) {
-//      res = inheritClass(scope, scope.info.header.parentRef, ignoreFields, test(scope.info.header.flags, elVirtualVMT));
-//   }
-//
-//   //if (res == irObsolete) {
-//   //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
-//   //}
-//   //if (res == irInvalid) {
-//   //   scope.raiseError(errInvalidParent/*, baseNode*/);
-//   //}
-//   /*else */if (res == InheritResult::irSealed) {
-//      scope.raiseError(errSealedParent, baseNode);
-//   }
-//   else if (res == InheritResult::irUnsuccessfull)
-//      scope.raiseError(errUnknownBaseClass, baseNode);
-//}
-//
-//ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, ident_t identifier, bool referenceOne, bool gloabalOne)
-//{
-//   NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//   if (gloabalOne) {
-//      return ns->moduleScope->mapFullReference(identifier, true);
-//   }
-//   else {
-//      ref_t reference = ns->resolveImplicitIdentifier(identifier, referenceOne);
-//      if (!reference && referenceOne)
-//         reference = scope.moduleScope->mapFullReference(identifier, true);
-//
-//      return reference;
-//   }
-//}
-//
-//ref_t Compiler :: resolveImplicitIdentifier(Scope& scope, SNode terminal)
-//{
-//   if (terminal == lxGlobalReference) {
-//      return resolveImplicitIdentifier(scope, terminal.identifier(), false, true);
-//   }
-//   else return resolveImplicitIdentifier(scope, terminal.identifier(), terminal == lxReference);
-//}
-//
+
+      scope.info.header.flags |= flagCopy;
+
+      return InheritResult::irSuccessfull;
+   }
+   else return InheritResult::irUnsuccessfull;
+}
+
+void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreFields*/)
+{
+   scope.info.header.parentRef = parentRef;
+   InheritResult res = InheritResult::irSuccessfull;
+   if (scope.info.header.parentRef != 0) {
+      res = inheritClass(scope, scope.info.header.parentRef/*, ignoreFields, test(scope.info.header.flags, elVirtualVMT)*/);
+   }
+
+   //if (res == irObsolete) {
+   //   scope.raiseWarning(wrnObsoleteClass, node.Terminal());
+   //}
+   //if (res == irInvalid) {
+   //   scope.raiseError(errInvalidParent/*, baseNode*/);
+   //}
+   /*else */if (res == InheritResult::irSealed) {
+      scope.raiseError(errSealedParent, baseNode);
+   }
+   else if (res == InheritResult::irUnsuccessfull)
+      scope.raiseError(errUnknownBaseClass, baseNode);
+}
+
+ref_t Compiler :: resolveTypeIdentifier(Scope& scope, SNode terminal)
+{
+   ObjectInfo identInfo;
+
+   NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
+   if (terminal == lxGlobalReference) {
+      identInfo = ns->mapGlobal(terminal.identifier());
+   }
+   else identInfo = ns->mapTerminal(terminal.identifier(), terminal == lxReference, EAttr::eaNone);
+
+   switch (identInfo.kind) {
+      case okClass:
+      case okSingleton:
+         return identInfo.param;
+      default:
+         return 0;
+   }
+}
+
 //bool isExtensionDeclaration(SNode node)
 //{
 //   SNode current = node.firstChild();
@@ -1649,13 +1630,13 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //
 //   return false;
 //}
-//
-//void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode)
-//{
-//   ref_t parentRef = 0;
-//   if (node == lxParent) {
-//      parentRef = resolveParentRef(node, scope, false);
-//   }
+
+void Compiler :: compileParentDeclaration(SNode node, ClassScope& scope/*, bool extensionMode*/)
+{
+   ref_t parentRef = 0;
+   if (node == lxParent) {
+      parentRef = resolveParentRef(node, scope, false);
+   }
 //   else if (node != lxNone) {
 //      while (node == lxAttribute)
 //         // HOTFIX : skip attributes
@@ -1664,24 +1645,24 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //      if (node == lxTemplate || test(node.type, lxTerminalMask))
 //         parentRef = resolveParentRef(node, scope, false);
 //   }
-//
-//   if (scope.info.header.parentRef == scope.reference) {
-//      if (parentRef != 0) {
-//         scope.raiseError(errInvalidSyntax, node);
-//      }
-//   }
-//   else if (parentRef == 0) {
-//      parentRef = scope.info.header.parentRef;
-//   }
-//
+
+   if (scope.info.header.parentRef == scope.reference) {
+      if (parentRef != 0) {
+         scope.raiseError(errInvalidSyntax, node);
+      }
+   }
+   else if (parentRef == 0) {
+      parentRef = scope.info.header.parentRef;
+   }
+
 //   if (extensionMode) {
 //      // COMPLIER MAGIC : treat the parent declaration in the special way for the extension
 //      scope.extensionClassRef = parentRef;
 //
 //      compileParentDeclaration(node, scope, scope.moduleScope->superReference);
 //   }
-//   else compileParentDeclaration(node, scope, parentRef);
-//}
+   /*else */compileParentDeclaration(node, scope, parentRef);
+}
 
 void Compiler :: declareClassAttributes(SNode node, ClassScope& scope/*, bool& publicAttribute*/)
 {
@@ -1713,15 +1694,15 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope/*, bool& p
    }
 }
 
-//void Compiler :: validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared)
-//{
-//   if (!typeRef)
-//      scope.raiseError(errUnknownClass, current);
-//
-//   if (!_logic->isValidType(*scope.moduleScope, typeRef, ignoreUndeclared))
-//      scope.raiseError(errInvalidType, current);
-//}
-//
+void Compiler :: validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared)
+{
+   if (!typeRef)
+      scope.raiseError(errUnknownClass, current);
+
+   if (!_logic->isValidType(*scope.moduleScope, typeRef, ignoreUndeclared))
+      scope.raiseError(errInvalidType, current);
+}
+
 //ref_t Compiler :: resolveTypeAttribute(Scope& scope, SNode node, bool declarationMode)
 //{
 //   ref_t typeRef = 0;
@@ -4915,6 +4896,22 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
 //   }
 //   else return resolveTemplateDeclarationUnsafe(node, scope, declarationMode);
 //}
+
+ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode)
+{
+   ref_t typeRef = node.argument;
+
+//      if (typeRef == V_TEMPLATE) {
+//         typeRef = resolveTemplateDeclaration(current, scope, declarationMode);
+//      }
+   /*else */if (!typeRef) 
+      typeRef = resolveTypeIdentifier(scope, node.firstChild(lxTerminalMask));
+
+   validateType(scope, node, typeRef, declarationMode);
+
+   return typeRef;
+}
+
 //
 //EAttr Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, EAttr mode)
 //{
@@ -5065,7 +5062,8 @@ void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope&
          break;
       case okExtension:
          scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
-      case okConstantSymbol:
+      //case okConstantSymbol:
+      case okSingleton:
          exprNode.set(lxConstantSymbol, object.param);
          break;
 //      case okLiteralConstant:
@@ -7546,9 +7544,9 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
 //      // dynamic class should not have default constructor
 //      classClassScope.abstractMode = true;
 //   }
-//
-//   compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef/*, true*/);
-//
+
+   compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef/*, true*/);
+
 //   //// !! hotfix : remove closed
 //   //classClassScope.info.header.flags &= ~elClosed;
 
@@ -8394,14 +8392,14 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 //         // if it is a type attribute
 //         scope.outputRef = resolveTypeAttribute(scope, current, true);
 //      }
-//      else if (current == lxNameAttr && !explicitMode) {
-//         // resolving implicit method attributes
-//         int attr = scope.moduleScope->attributes.get(current.firstChild(lxTerminalMask).identifier());
-//         if (_logic->validateImplicitMethodAttribute(attr, current.nextNode().type == lxMessage)) {
-//            scope.hints |= attr;
-//            current.set(lxAttribute, attr);
-//         }
-//      }
+      //else if (current == lxNameAttr && !explicitMode) {
+      //   // resolving implicit method attributes
+      //   int attr = scope.moduleScope->attributes.get(current.firstChild(lxTerminalMask).identifier());
+      //   if (_logic->validateImplicitMethodAttribute(attr, current.nextNode().type == lxMessage)) {
+      //      scope.hints |= attr;
+      //      current.set(lxAttribute, attr);
+      //   }
+      //}
 
       current = current.nextNode();
    }
@@ -8421,11 +8419,16 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 //   return baseNode;
 //}
 
-//ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
-//{
-//   ref_t parentRef = 0;
-//   if (node == lxNone) {
-//   }
+ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
+{
+   ref_t parentRef = 0;
+   if (node == lxNone) {
+   }
+   else {
+      SNode typeNode = node.findChild(lxType);
+      parentRef = resolveTypeAttribute(typeNode, scope, silentMode);
+   }
+
 //   else if (test(node.type, lxTerminalMask)) {
 //      parentRef = resolveImplicitIdentifier(scope, node);
 //   }
@@ -8437,15 +8440,15 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 //
 //   if (parentRef == 0 && !silentMode)
 //      scope.raiseError(errUnknownClass, node);
-//
-//   return parentRef;
-//}
+
+   return parentRef;
+}
 
 void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 {
 //   bool extensionDeclaration = isExtensionDeclaration(node);
-//   compileParentDeclaration(node.findChild(lxParent), scope, extensionDeclaration);
-//
+   compileParentDeclaration(node.findChild(lxParent), scope/*, extensionDeclaration*/);
+
 //   bool publicClass = false;
 //   declareClassAttributes(node, scope, publicClass);
 //   if (publicClass) {
@@ -8453,7 +8456,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 //      scope.info.mattributes.add(Attribute(caSerializable, 0), INVALID_REF);
 //   }
 
-   bool implicitMode = true;
+   bool implicitMode = true; // when implicitmode is on - the parent constructors are inherited
    declareVMT(node, scope, implicitMode);
 
 //   ClassType type = ClassType::ctUndefinedClass;
@@ -10002,8 +10005,8 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
 
 bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool forced, bool& repeatMode)
 {
-//   if (scope.moduleScope->superReference == 0)
-//      scope.raiseError(errNotDefinedBaseClass);
+   if (scope.moduleScope->superReference == 0)
+      scope.raiseError(errNotDefinedBaseClass);
 
    // first pass - declaration
    bool declared = false;
@@ -10027,7 +10030,8 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
                break;
             }
             case lxClass:
-               //if (forced || !current.findChild(lxParent) || scope.moduleScope->isClassDeclared(resolveParentRef(current.findChild(lxParent), scope, true))) 
+               if (forced || !current.findChild(lxParent) 
+                  || _logic->isClassDeclared(*scope.moduleScope, resolveParentRef(current.findChild(lxParent), scope, true))) 
                {
                   ClassScope classScope(&scope, scope.defaultVisibility);
                   declareClassAttributes(current, classScope/*, publicClass*/);
@@ -10043,7 +10047,7 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
 
                   declared = true;
                }
-               //else repeatMode = true;
+               else repeatMode = true;
                break;
             case lxSymbol:
             {
@@ -10157,23 +10161,23 @@ void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, iden
    }
 }
 
-//inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t referenceName)
-//{
-//   if (!emptystr(referenceName)) {
-//      // HOTFIX : for the standard module the references should be mapped forcefully
-//      if (module->Name().compare(STANDARD_MODULE)) {
-//         return module->mapReference(referenceName + getlength(module->Name()));
-//      }
-//      else {
-//         ref_t extRef = 0;
-//         _Module* extModule = project->resolveModule(referenceName, extRef, true);
-//
-//         return importReference(extModule, extRef, module);
-//      }
-//   }
-//   else return 0;
-//}
-//
+inline ref_t safeMapReference(_Module* module, _ProjectManager* project, ident_t referenceName)
+{
+   if (!emptystr(referenceName)) {
+      // HOTFIX : for the standard module the references should be mapped forcefully
+      if (module->Name().compare(STANDARD_MODULE)) {
+         return module->mapReference(referenceName + getlength(module->Name()));
+      }
+      else {
+         ref_t extRef = 0;
+         _Module* extModule = project->resolveModule(referenceName, extRef, true);
+
+         return importReference(extModule, extRef, module);
+      }
+   }
+   else return 0;
+}
+
 //inline ref_t safeMapWeakReference(_Module* module, ident_t referenceName)
 //{
 //   if (!emptystr(referenceName)) {
@@ -10223,8 +10227,8 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
       _writer.writeSourcePath(scope.debugModule, name);
    }
 
-//   // cache the frequently used references
-//   scope.superReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SUPER_FORWARD));
+   // cache the frequently used references
+   scope.superReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SUPER_FORWARD));
 //   scope.intReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(INT_FORWARD));
 //   scope.longReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LONG_FORWARD));
 //   scope.realReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REAL_FORWARD));

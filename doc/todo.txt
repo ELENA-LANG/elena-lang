@@ -2,6 +2,43 @@
 In development:
 ------         
               dev
+                * class based on not yet declared type
+                * using a type before it declaration
+
+                * dispatching
+
+                * declaring variable
+
+                * weak parameters
+                * stron-typed parameters
+
+                * multi-methods 
+                * variadic methods
+                * yieldable methods
+
+                * extensions
+                * extension templates
+                * extension dispatching
+
+                * public / internal / private methods
+                * public / internal / private fields?
+
+                * public / internal / private extensions?
+
+                * methods with reference name
+                * fields with reference name
+
+                * system auto included
+
+                * class template
+                * template base class
+                * "multi-inheritance"
+
+                * abstract classes
+                * sealed classes
+                * closed classes
+                * interfaces
+
                 * constructors
 
                 * method visibility
@@ -33,6 +70,7 @@ In development:
                 * uncomment beforeLoad, ExecutableImage, prepareCompiler, fixReferences, compileMessageArg, resolveMessage,
                   resolveMessageByIndex, printMethod
                 * uncomment parseMessage, resolveModule, cleanUp, initLoader, loadPrimitiveCategory
+                * declaring unresolved types?
                 * redesign
 
               dev1

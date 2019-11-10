@@ -139,9 +139,11 @@ class DerivationWriter : public _DerivationWriter
 
 //   ref_t resolveTemplate(ident_t templateName);
 
-   ref_t mapAttribute(SNode terminal, /*bool allowType, bool& allowPropertyTemplate, */ref_t& previusCategory);
+   ref_t mapAttribute(SNode terminal, bool allowType, /*bool& allowPropertyTemplate, */ref_t& previusCategory);
 //   ref_t mapInlineAttribute(SNode terminal);
    void declareAttribute(SNode node);
+
+   void recognizeAttributes(SNode node, int mode, LexicalType nameType);
 
    void recognizeScope();
    void recognizeDefinition(SNode scopeNode);
@@ -172,8 +174,8 @@ class DerivationWriter : public _DerivationWriter
 //   void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
    void generateTokenExpression(SyntaxWriter& writer, SNode& node/*, Scope& derivationScope, bool rootMode*/);
-//   void generateTypeAttribute(SyntaxWriter& writer, SNode attrNodes, SNode terminal, size_t dimensionCounterwriter, 
-//                              ref_t argRef, Scope& derivationScope);
+   void generateTypeAttribute(SyntaxWriter& writer/*, SNode attrNodes*/, SNode terminal/*, size_t dimensionCounterwriter*/, 
+                              ref_t typeRef, Scope& derivationScope);
    void generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, bool templateArgMode = false, bool onlyAttributes = false);

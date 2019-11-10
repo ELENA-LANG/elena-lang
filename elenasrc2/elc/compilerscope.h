@@ -29,15 +29,15 @@ struct ModuleScope : _ModuleScope
 
    virtual ref_t mapAnonymous(ident_t prefix);
 
-//   // warning mapping
-////      bool warnOnWeakUnresolved;
-//   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference);
-//   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference)
-//   {
-//      return loadReferenceModule(module->resolveReference(reference), moduleReference);
-//   }
+   // warning mapping
+//      bool warnOnWeakUnresolved;
+   virtual _Module* loadReferenceModule(ident_t referenceName, ref_t& reference);
+   virtual _Module* loadReferenceModule(ref_t reference, ref_t& moduleReference)
+   {
+      return loadReferenceModule(module->resolveReference(reference), moduleReference);
+   }
 
-   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, bool ignoreFields);
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode/*, bool ignoreFields*/);
    
    virtual ref_t loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false);
    virtual ref_t loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false)

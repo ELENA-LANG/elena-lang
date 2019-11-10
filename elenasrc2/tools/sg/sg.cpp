@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "sg.h"
@@ -9,7 +9,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_NUMBER 1
+#define BUILD_NUMBER 2
 
 // !! code duplication (syntax.h)
 const int mskAnySymbolMask             = 0x07000;               // masks
@@ -28,10 +28,12 @@ int _registerSymbol(ParserTable& table, ident_t symbol, int new_id)
 
       table.registerSymbol(id, symbol);
 
-      if (last_id < (id & ~mskAnySymbolMask)) last_id = id & ~mskAnySymbolMask;
+      if (!test(id, mskTraceble)) {
+         if (last_id < (id & ~mskAnySymbolMask)) last_id = id & ~mskAnySymbolMask;
 
-      if (last_id >= mskTraceble) {
-         printLine("WARNING: symbol id is overflown %d", last_id);
+         if (last_id >= mskTraceble) {
+            printLine("WARNING: symbol id is overflown %d", last_id);
+         }
       }
    }
    return id;
