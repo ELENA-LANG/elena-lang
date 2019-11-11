@@ -180,13 +180,13 @@ class DerivationWriter : public _DerivationWriter
 //   void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory/*, bool templateArgMode = false, bool onlyAttributes = false*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
-   void generateExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected*/, Scope& derivationScope);
+   void generateExpressionNode(SyntaxWriter& writer, SNode& current, bool& first/*, bool& expressionExpected*/, Scope& derivationScope);
 //   void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 //   void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
    void generateIdentifier(SyntaxWriter& writer, SNode current/*, Scope& derivationScope*/);
-//   void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
-//
+   void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
+
 //   void declareType(SNode node);
    void generateImport(SyntaxWriter& writer, SNode ns);
 

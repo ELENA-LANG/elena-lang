@@ -21,6 +21,7 @@ enum LexicalType
    lxObjectMask               = 0x008000,
 //   lxExprMask                 = 0x00C000,
    lxTerminalMask             = 0x002000,
+   lxOperatorMask             = 0x010000,
 //   lxSubOpMask                = 0x100000,
 //   lxPrimitiveOpMask          = 0x080000,
 //
@@ -47,6 +48,7 @@ enum LexicalType
    lxBaseDecl                 = 0x001050,
    lxCode                     = 0x001060,
    lxDispatchCode             = 0x001070,
+   lxMessage                  = 0x011080, // arg - message
 
    // derivation terminals
    lxEOF                      = 0x002010, // indicating closing code bracket
@@ -63,6 +65,7 @@ enum LexicalType
    lxConstantSymbol           = 0x008070, // arg - reference
    lxInternalRef              = 0x008080,
    lxImporting                = 0x008090,
+   lxCalling                  = 0x0080A0,
 
    // attributes
    lxAttribute                = 0x20000,
@@ -82,7 +85,6 @@ enum LexicalType
 //   lxMeta                     = 0x000015,
 //   lxParameter                = 0x000017,
 //   lxNestedClass              = 0x000018,
-//   lxMessage                  = 0x00001B, // arg - message
 //   lxDispatchCode             = 0x000020,
 //   lxAssign                   = 0x000021,
 //   lxStaticMethod             = 0x000025,
@@ -154,7 +156,6 @@ enum LexicalType
 //   lxUnboxing                 = 0x00C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing                = 0x00C005,   // argument list boxing, arg - size
 //   lxArgUnboxing              = 0x00C006,
-//   lxCalling                  = 0x10C007,   // sending a message, arg - message
 //   lxDirectCalling            = 0x10C008,   // calling a method, arg - message
 //   lxSDirectCalling           = 0x10C009,   // calling a virtual method, arg - message
 //   lxResending                = 0x00C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
@@ -636,11 +637,31 @@ public:
          return tree->read(tree->appendChild(position, type, 0, tree->saveStrArgument(argument)));
       }
 
+      // inject a node in place of the current one
+      void injectAndReplaceNode(LexicalType type, int argument = 0)
+      {
+         if (this->strArgument != INVALID_REF) {
+            injectNode(this->type, this->identifier());
+         }
+         else injectNode(this->type, this->argument);
+
+         set(type, argument);
+      }
+
+      // inject a child node between the current one and its children
       Node injectNode(LexicalType type, int argument = 0)
       {
          pos_t child = tree->getChild(position);
          if (child != INVALID_REF) {
             return tree->read(tree->injectChild(child, type, argument, INVALID_REF));
+         }
+         else return appendNode(type, argument);
+      }
+      Node injectNode(LexicalType type, ident_t argument)
+      {
+         pos_t child = tree->getChild(position);
+         if (child != INVALID_REF) {
+            return tree->read(tree->injectChild(child, type, 0, tree->saveStrArgument(argument)));
          }
          else return appendNode(type, argument);
       }

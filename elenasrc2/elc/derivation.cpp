@@ -1710,25 +1710,24 @@ void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current/
    /*else */copyIdentifier(writer, current/*, derivationScope.ignoreTerminalInfo*/);
 }
 
-//void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope)
-//{
+void DerivationWriter :: generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope)
+{
 //   ref_t argument = 0;
-//
-//   SNode identNode = current.firstChild(lxTerminalMask);
+
+   SNode identNode = current.firstChild(lxTerminalMask);
 //   if (current == lxMessage && derivationScope.isMessageParameter(identNode.identifier(), argument)) {
 //      writer.newNode(lxTemplateMsgParam, argument);
 //      copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
 //      writer.closeNode();
 //   }
 //   else {
-//      writer.newNode(lxMessage);
+      writer.newNode(lxMessage);
 //      if (current.compare(lxMessage, lxSubMessage)) {
-//         copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
+         copyIdentifier(writer, identNode/*, derivationScope.ignoreTerminalInfo*/);
 //      }
-//      writer.closeNode();
-//
+      writer.closeNode();
 //   }
-//}
+}
 
 void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope/*, bool rootMode*/)
 {
@@ -1856,20 +1855,20 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
 //   current = node;
 //}
 
-void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected*/, 
+void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& current, bool& first/*, bool& expressionExpected*/, 
    Scope& derivationScope)
 {
    switch (current.type) {
-//      case lxMessage:
+      case lxMessage:
 //      case lxImplicitMessage:
-//         if (!first) {
-//            writer.inject(lxExpression);
-//            writer.closeNode();
-//         }
-//         else first = false;
-//
-//         generateMesage(writer, current, derivationScope);
-//         break;
+         if (!first) {
+            writer.inject(lxExpression);
+            writer.closeNode();
+         }
+         else first = false;
+
+         generateMesage(writer, current, derivationScope);
+         break;
 //      case lxSubMessage:
 //         generateMesage(writer, current, derivationScope);
 //         break;
@@ -1947,12 +1946,12 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
 {
    writer.newBookmark();
    
-//   bool first = true;
+   bool first = true;
    bool expressionExpected = !test(mode, EXPRESSION_IMPLICIT_MODE);
    
    SNode current = node.firstChild();
    while (current != lxNone) {
-      generateExpressionNode(writer, current/*, first, expressionExpected*/, derivationScope);
+      generateExpressionNode(writer, current, first/*, expressionExpected*/, derivationScope);
 
       current = current.nextNode();
    }

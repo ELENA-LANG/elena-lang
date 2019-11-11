@@ -2,11 +2,11 @@
 In development:
 ------         
               dev
-                * dispatching
                 * message call
                 * end of code - breakpoint
                 * explicit constructor
                 * implicit constructor
+                * reference message??
                 * implement sealed, const, struct
                 * countable
 

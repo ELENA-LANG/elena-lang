@@ -102,8 +102,8 @@ public:
    enum ObjectKind
    {
       okUnknown = 0,
-//
-//      okObject,                       // param - class reference
+
+      okObject,                       // param - class reference
       okSymbol,                       // param - reference
       //okConstantSymbol,               // param - reference
       okClass,                        // param - reference
@@ -926,8 +926,8 @@ private:
 ////      int dummy;
 ////      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
 ////   }
-//   ref_t mapMessage(SNode node, CodeScope& scope, bool variadicOne);
-//
+   ref_t mapMessage(SNode node, ExprScope& scope/*, bool variadicOne*/);
+
 //   size_t resolveArraySize(SNode node, Scope& scope);
 //
    ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode);
@@ -973,9 +973,9 @@ private:
 //
 //   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode, 
 //      bool& variadicOne, bool& inlineArg);
-//
-//   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t exptectedRef, ObjectInfo target, EAttr mode);
-//   ObjectInfo compileMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, int messageRef, EAttr mode, int stackSafeAttr);
+
+   ObjectInfo compileMessage(SNode node, ExprScope& scope, /*ref_t exptectedRef,*/ ObjectInfo target, EAttr mode);
+   ObjectInfo compileMessage(SNode node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode/*, int stackSafeAttr*/);
 ////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
 //   SNode injectAttributeIdentidier(SNode current, Scope& scope);
@@ -986,9 +986,8 @@ private:
 
    ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo mapObject(SNode node, ExprScope& scope, EAttr mode);
-   ObjectInfo mapExpression(SNode node, ExprScope& scope, EAttr mode);
 
-   /*ObjectInfo*/void compileExpression(/*SyntaxWriter& writer, */SNode node, ExprScope& scope/*, ref_t targetRef, EAttr mode*/);
+   ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo/*, ref_t targetRef*/, EAttr mode);
 
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
@@ -1005,9 +1004,9 @@ private:
 //
 //   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode/*, int mode*/);
 //   void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal, bool accumulatorMode);
-//
-//   ObjectInfo compileOperation(SyntaxWriter& writer, SNode current, CodeScope& scope, ObjectInfo objectInfo, ref_t expectedRef, EAttr mode);
-//
+
+   ObjectInfo compileOperation(SNode node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
+
 //   ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ref_t operator_id);
 //   ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo);
 ////   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
