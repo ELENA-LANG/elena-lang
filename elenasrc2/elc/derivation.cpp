@@ -759,7 +759,7 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxScope) {
-         SNode bodyNode = current.findChild(lxCode/*, lxDispatchCode, lxReturning, lxExpression, lxResendExpression*/);
+         SNode bodyNode = current.findChild(lxCode, lxDispatchCode/*, lxReturning, lxExpression, lxResendExpression*/);
 
          int mode = 0;
 //         if (bodyNode == lxExpression) {
@@ -1269,12 +1269,12 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //      writer.closeNode();
 //   }
 //   else {
-//      SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning, lxResendExpression);
-//      if (bodyNode.compare(lxReturning, lxDispatchCode)) {
-//         writer.newNode(bodyNode.type);
-//         generateExpressionTree(writer, bodyNode.firstChild(), derivationScope, EXPRESSION_IMPLICIT_MODE);
-//         writer.closeNode();
-//      }
+      SNode bodyNode = node.findChild(lxCode, lxDispatchCode/*, lxReturning, lxResendExpression*/);
+      if (bodyNode/*.compare(lxReturning, lxDispatchCode)*/ == lxDispatchCode) {
+         writer.newNode(bodyNode.type);
+         generateExpressionTree(writer, bodyNode.firstChild(), derivationScope, EXPRESSION_IMPLICIT_MODE);
+         writer.closeNode();
+      }
 //      else if (bodyNode == lxResendExpression) {
 //         writer.newNode(bodyNode.type);
 //         generateExpressionTree(writer, bodyNode, derivationScope, EXPRESSION_IMPLICIT_MODE);
@@ -1285,27 +1285,24 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //
 //         writer.closeNode();
 //      }
-//      else if (bodyNode == lxCode) {
-//         generateCodeTree(writer, bodyNode, derivationScope);
-//      }
+      else if (bodyNode == lxCode) {
+         generateCodeTree(writer, bodyNode, derivationScope);
+      }
 //   }
 
    writer.closeNode();
 }
 
-//void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark*/)
-//{
-//   writer.newNode(node.type, node.argument);
-//
-////   if (withBookmark)
-////      writer.newBookmark();
-////
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
-//         case lxExpression:
-//            generateExpressionTree(writer, current, derivationScope);
-//            break;
+void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
+{
+   writer.newNode(node.type, node.argument);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxExpression:
+            generateExpressionTree(writer, current, derivationScope);
+            break;
 //         case lxReturning:
 ////         case lxExtension:
 //            writer.newNode(current.type, current.argument);
@@ -1326,16 +1323,13 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //            writer.closeNode();
 //            break;
 //         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-////   if (withBookmark)
-////      writer.removeBookmark();
-//
-//   writer.closeNode();
-//}
-//
+      }
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
+
 //void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode current, Scope& derivationScope, bool closureMode)
 //{
 //   if (closureMode) {
@@ -1636,43 +1630,40 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //   while (node.nextNode() != lxNone)
 //      node = node.nextNode();
 //}
-//
-////inline bool isTypeExpressionAttribute(SNode current)
-////{
-////   return current.nextNode() == lxToken && current.nextNode().nextNode() != lxToken;
-////}
-//
-//void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
-//   ref_t& previousCategory, bool templateArgMode, bool onlyAttributes)
+
+//inline bool isTypeExpressionAttribute(SNode current)
 //{
-//   bool allowType = !onlyAttributes && (templateArgMode || current.nextNode().nextNode() != lxToken);
+//   return current.nextNode() == lxToken && current.nextNode().nextNode() != lxToken;
+//}
+
+void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
+   ref_t& previousCategory/*, bool templateArgMode, bool onlyAttributes*/)
+{
+   bool allowType = /*!onlyAttributes && (templateArgMode || */current.nextNode().nextNode() != lxToken/*)*/;
 //   bool allowProperty = false;
-//   
-//   SNode identNode = current;
-//   if (current == lxToken) {
-//      identNode = current.firstChild(lxTerminalMask);
-//   }
-//   
+   
+   SNode identNode = current.firstChild(lxTerminalMask);
+   
 //   size_t dimensionCounter = SyntaxTree::countChild(current, lxDynamicSizeDecl);
 //   if (dimensionCounter && !allowType)
 //      _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
-//
-//   ref_t attrRef = mapAttribute(current, allowType, allowProperty, previousCategory);
-//   if (allowType && (attrRef == V_TEMPLATE || !isPrimitiveRef(attrRef))) {
-//      SNode attrNode;
-//      if (attrRef == V_TEMPLATE)
-//         attrNode = current.findChild(lxToken);
-//
-//      generateTypeAttribute(writer, attrNode, identNode, dimensionCounter, attrRef, derivationScope);
-//   }
-//   else if (isPrimitiveRef(attrRef)) {
-//      writer.newNode(lxAttribute, attrRef);
-//
-//      copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
-//
-//      writer.closeNode();
-//   }
-//}
+
+   ref_t attrRef = mapAttribute(current, allowType, /*allowProperty, */previousCategory);
+   if (isPrimitiveRef(attrRef)) {
+      writer.newNode(lxAttribute, attrRef);
+
+      copyIdentifier(writer, identNode/*, derivationScope.ignoreTerminalInfo*/);
+
+      writer.closeNode();
+   }
+   else {
+      //      SNode attrNode;
+      //      if (attrRef == V_TEMPLATE)
+      //         attrNode = current.findChild(lxToken);
+      //
+      generateTypeAttribute(writer, /*attrNode, */identNode, /*dimensionCounter, */attrRef, derivationScope);
+   }
+}
 
 void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current/*, Scope& derivationScope*/)
 {
@@ -1739,19 +1730,19 @@ void DerivationWriter :: generateIdentifier(SyntaxWriter& writer, SNode current/
 //   }
 //}
 
-void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& node/*, Scope& derivationScope, bool rootMode*/)
+void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope/*, bool rootMode*/)
 {
-//   ref_t attributeCategory = V_CATEGORY_MAX;
+   ref_t attributeCategory = V_CATEGORY_MAX;
 //   if (node.nextNode().compare(lxCollection, lxNestedClass, lxAttrExpression)) {
 //      generateExpressionAttribute(writer, node, derivationScope, attributeCategory, false, true);
 //   }
 //   else {
-//      if (node.nextNode() == lxToken) {
-//         while (node.nextNode() == lxToken) {
-//            generateExpressionAttribute(writer, node, derivationScope, attributeCategory);
-//            node = node.nextNode();
-//         }
-//      }
+      if (node.nextNode() == lxToken) {
+         while (node.nextNode() == lxToken) {
+            generateExpressionAttribute(writer, node, derivationScope, attributeCategory);
+            node = node.nextNode();
+         }
+      }
 //      if (rootMode) {
 //         if (goToNode(node, lxCode/*, lxClosureExpr*/, lxOperator) == lxCode) {
 //            // COMPILER MAGIC : recognize the code template
@@ -1759,10 +1750,7 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
 //            return;
 //         }
 //      }
-//      if (node == lxToken) {
-         generateIdentifier(writer, node.firstChild(lxTerminalMask)/*, derivationScope*/);
-//      }
-//      else generateIdentifier(writer, node, derivationScope);
+      generateIdentifier(writer, node.firstChild(lxTerminalMask)/*, derivationScope*/);
 //
 //      size_t dimensionCounter = SyntaxTree::countChild(node, lxDynamicSizeDecl);
 //      if (dimensionCounter > 0) {
@@ -1868,8 +1856,8 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
 //   current = node;
 //}
 
-void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected, 
-   Scope& derivationScope*/)
+void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected*/, 
+   Scope& derivationScope)
 {
    switch (current.type) {
 //      case lxMessage:
@@ -1920,7 +1908,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
 //         first = false;
 //         break;
       case lxToken:
-         generateTokenExpression(writer, current/*, derivationScope, true*/);
+         generateTokenExpression(writer, current, derivationScope/*, true*/);
          break;
 //      case lxPropertyParam:
 //         // to indicate the get property call
@@ -1964,7 +1952,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
    
    SNode current = node.firstChild();
    while (current != lxNone) {
-      generateExpressionNode(writer, current/*, first, expressionExpected, derivationScope*/);
+      generateExpressionNode(writer, current/*, first, expressionExpected*/, derivationScope);
 
       current = current.nextNode();
    }

@@ -1842,13 +1842,13 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes)
-//{
-//   switch (attrValue) {
-//      case 0:
-//         // HOTFIX : recognize idle attributes
-//         return true;
+
+bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes)
+{
+   switch (attrValue) {
+      case 0:
+         // HOTFIX : recognize idle attributes
+         return true;
 //      case V_AUTOSIZE:
 //         attributes.include(EAttr::eaAutoSize);
 //         return true;
@@ -1874,9 +1874,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //	  case V_ARGARRAY:
 //         attributes.include(EAttr::eaParams);
 //			return true;
-//	  case V_INTERN:
-//         attributes.include(EAttr::eaIntern);
-//         return true;
+	  case V_INTERN:
+         attributes.include(EAttr::eaIntern);
+         return true;
 //      case V_LOOP:
 //         attributes.include(EAttr::eaLoop);
 //         return true;
@@ -1910,10 +1910,10 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_YIELD:
 //         attributes.include(EAttr::eaYieldExpr);
 //         return true;
-//      default:
-//         return false;
-//   }
-//}
+      default:
+         return false;
+   }
+}
 
 bool CompilerLogic :: validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility)
 {

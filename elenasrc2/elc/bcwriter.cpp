@@ -1475,12 +1475,12 @@ void ByteCodeWriter :: exitMethod(CommandTape& tape, int count/*, int reserved, 
    else tape.write(bcQuit);
 }
 
-//void ByteCodeWriter :: endMethod(CommandTape& tape, int count, int reserved, bool withFrame)
-//{
-//   exitMethod(tape, count, reserved, withFrame);
-//
-//   tape.write(blEnd, bsMethod);
-//}
+void ByteCodeWriter :: endMethod(CommandTape& tape, int count/*, int reserved, bool withFrame*/)
+{
+   exitMethod(tape, count/*, reserved, withFrame*/);
+
+   tape.write(blEnd, bsMethod);
+}
 
 void ByteCodeWriter :: endIdleMethod(CommandTape& tape)
 {
@@ -6496,22 +6496,22 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
    }
 }
 
-//void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints)
-//{
-//   ByteCodeIterator it = tape.end();
-//
-//   tape.import(scope.section, true, withBreakpoints);
-//
-//   // goes to the first imported command
-//   it++;
-//
-//   // import references
-//   while (!it.Eof()) {
-//      CommandTape::importReference(*it, scope.sour, scope.dest);
-//      it++;
-//   }
-//}
-//
+void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints)
+{
+   ByteCodeIterator it = tape.end();
+
+   tape.import(scope.section, true, withBreakpoints);
+
+   // goes to the first imported command
+   it++;
+
+   // import references
+   while (!it.Eof()) {
+      CommandTape::importReference(*it, scope.sour, scope.dest);
+      it++;
+   }
+}
+
 //void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
 //{
 //   tape.write(bcMTRedirect, operationList | mskConstArray, message);
@@ -6730,8 +6730,8 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
       sourcePathRef = methodSourcePathRef;
 
 //   bool withNewFrame = false;
-//   bool open = false;
-//   bool exit = false;
+   bool open = false;
+   bool exit = false;
 //   bool exitLabel = true;
    SyntaxTree::Node current = node.firstChild();
    while (current != lxNone) {
@@ -6758,19 +6758,20 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
 //               callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument, false, false);
 //            }
 //            break;
-//         case lxImporting:
+         case lxImporting:
 //         case lxCreatingClass:
 //         case lxCreatingStruct:
-//            if (!open) {
-//               open = true;
-//
-//               declareIdleMethod(tape, node.argument, sourcePathRef);
-//            }
+            if (!open) {
+               open = true;
+
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+            }
 //            if (current == lxImporting) {
-//               importCode(tape, *imports.get(current.argument - 1), true);
+               importCode(tape, *imports.get(current.argument - 1), true);
+               exit = true; // NOTE : the imported code should already contain an exit command
 //            }
 //            else generateCreating(tape, current);
-//            break;
+            break;
 //         case lxNewFrame:
 //            withNewFrame = true;
 //            if (!open) {
@@ -6830,15 +6831,15 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
 
       current = current.nextNode();
    }
-//   if (!open) {
+   if (!open) {
       declareIdleMethod(tape, node.argument, sourcePathRef);
 
 //      if (!exit)
          exitMethod(tape, argCount/*, reserved, false*/);
 
       endIdleMethod(tape);
- //  }
-//   else endMethod(tape, paramCount, reserved, withNewFrame);
+   }
+   else endMethod(tape, argCount/*, reserved, withNewFrame*/);
 }
 
 //////void ByteCodeWriter :: generateTemplateMethods(CommandTape& tape, SNode root)

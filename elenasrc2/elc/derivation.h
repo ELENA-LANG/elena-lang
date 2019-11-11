@@ -172,15 +172,15 @@ class DerivationWriter : public _DerivationWriter
 //   // returns true if in-place init found
 //   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
-//   void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
-   void generateTokenExpression(SyntaxWriter& writer, SNode& node/*, Scope& derivationScope, bool rootMode*/);
+   void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
+   void generateTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope/*, bool rootMode*/);
    void generateTypeAttribute(SyntaxWriter& writer/*, SNode attrNodes*/, SNode terminal/*, size_t dimensionCounterwriter*/, 
                               ref_t typeRef, Scope& derivationScope);
    void generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-//   void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, bool templateArgMode = false, bool onlyAttributes = false);
+   void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory/*, bool templateArgMode = false, bool onlyAttributes = false*/);
    void generateExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
-   void generateExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected, Scope& derivationScope*/);
+   void generateExpressionNode(SyntaxWriter& writer, SNode& current/*, bool& first, bool& expressionExpected*/, Scope& derivationScope);
 //   void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 //   void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);

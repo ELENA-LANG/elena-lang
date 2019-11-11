@@ -30,9 +30,11 @@ constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
 
 // --- Scope hint constants ---
 constexpr auto HINT_NESTEDNS        = EAttr::eaNestedNs;
+constexpr auto HINT_INTERNALOP      = EAttr::eaIntern;
 
 //constexpr auto HINT_CLOSURE_MASK    = EAttr::eaClosureMask;
 constexpr auto HINT_SCOPE_MASK      = EAttr::eaScopeMask;
+constexpr auto HINT_OBJECT_MASK     = EAttr::eaObjectMask;
 
 //constexpr auto HINT_ROOT            = EAttr::eaRoot;
 //constexpr auto HINT_ROOTSYMBOL      = EAttr::eaRootSymbol;
@@ -51,7 +53,6 @@ constexpr auto HINT_SCOPE_MASK      = EAttr::eaScopeMask;
 //constexpr auto HINT_PARAMETER		   = EAttr::eaParameter;
 //constexpr auto HINT_SUBCODE_CLOSURE = EAttr::eaSubCodeClosure;
 //constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
-//constexpr auto HINT_INTERNALOP      = EAttr::eaIntern;
 //constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
 //constexpr auto HINT_MEMBER          = EAttr::eaMember;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
@@ -1429,23 +1430,31 @@ ref_t Compiler :: resolveObjectReference(_ModuleScope&, ObjectInfo object)
 //      current = current.nextNode();
 //   }
 //}
-//
-//void Compiler :: importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t function, ref_t message)
-//{
-//   _ModuleScope* moduleScope = scope.moduleScope;
-//
-//   IdentifierString virtualReference(function);
-//   virtualReference.append('.');
-//
-//   int paramCount;
-//   ref_t actionRef, flags;
-//   decodeMessage(message, actionRef, paramCount, flags);
-//
+
+inline SNode findIdentifier(SNode current)
+{
+   if (current.firstChild(lxTerminalMask))
+      return current.firstChild(lxTerminalMask);
+
+   return current;
+}
+
+void Compiler :: importCode(SNode node, Scope& scope, ref_t functionRef, ref_t message)
+{
+   _ModuleScope* moduleScope = scope.moduleScope;
+
+   IdentifierString virtualReference(scope.module->resolveReference(functionRef));
+   virtualReference.append('.');
+
+   int argCount;
+   ref_t actionRef, flags;
+   decodeMessage(message, actionRef, argCount, flags);
+
 //   // HOTFIX : include self as a parameter
 //   paramCount++;
-//
-//   size_t signIndex = virtualReference.Length();
-//   virtualReference.append('0' + (char)paramCount);
+
+   size_t signIndex = virtualReference.Length();
+   virtualReference.append('0' + (char)argCount);
 //   if (test(message, STATIC_MESSAGE)) {
 //      virtualReference.append(scope.module->Name());
 //      virtualReference.append("$");
@@ -1453,10 +1462,10 @@ ref_t Compiler :: resolveObjectReference(_ModuleScope&, ObjectInfo object)
 //
 //   if (test(flags, VARIADIC_MESSAGE))
 //      virtualReference.append("params#");
-//
-//   ref_t signature = 0;
-//   virtualReference.append(moduleScope->module->resolveAction(actionRef, signature));
-//
+
+   ref_t signature = 0;
+   virtualReference.append(moduleScope->module->resolveAction(actionRef, signature));
+
 //   if (signature) {
 //      ref_t signatures[ARG_COUNT];
 //      size_t len = moduleScope->module->resolveSignature(signature, signatures);
@@ -1479,18 +1488,18 @@ ref_t Compiler :: resolveObjectReference(_ModuleScope&, ObjectInfo object)
 //         }
 //      }
 //   }
-//
-//   virtualReference.replaceAll('\'', '@', signIndex);
-//
-//   ref_t reference = 0;
-//   _Module* api = moduleScope->project->resolveModule(virtualReference, reference);
-//
-//   _Memory* section = api != NULL ? api->mapSection(reference | mskCodeRef, true) : NULL;
-//   if (section != NULL) {
-//      writer.appendNode(lxImporting, _writer.registerImportInfo(section, api, moduleScope->module));
-//   }
-//   else scope.raiseError(errInvalidLink, node);
-//}
+
+   virtualReference.replaceAll('\'', '@', signIndex);
+
+   ref_t reference = 0;
+   _Module* api = moduleScope->project->resolveModule(virtualReference, reference);
+
+   _Memory* section = api != NULL ? api->mapSection(reference | mskCodeRef, true) : NULL;
+   if (section != NULL) {
+      node.set(lxImporting, _writer.registerImportInfo(section, api, moduleScope->module));
+   }
+   else scope.raiseError(errInvalidLink, findIdentifier(node.firstChild()));
+}
 
 Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreFields, bool ignoreSealed*/)
 {
@@ -4915,22 +4924,20 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
    return typeRef;
 }
 
-//
-//EAttr Compiler :: compileExpressionAttributes(SyntaxWriter& writer, SNode& current, CodeScope& scope, EAttr mode)
-//{
-//   ExpressionAttributes exprAttr;
-//
+EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, EAttr mode)
+{
+   EAttrs exprAttr;
+
 //   bool  invalidExpr = false;
 //   bool  newVariable = false;
 //   bool  dynamicSize = false;
 //   ref_t typeRef = 0;
-//
-//   // NOTE : root attributes (i.e. loop) are handled in compileRootExpression
-//   while (current == lxAttribute) {
-//      int value = current.argument;
-//      if (!_logic->validateExpressionAttribute(value, exprAttr))
-//         scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//
+
+   while (current == lxAttribute) {
+      int value = current.argument;
+      if (!_logic->validateExpressionAttribute(value, exprAttr))
+         scope.raiseError(errInvalidHint, current);
+
 //      if (!newVariable && exprAttr.test(EAttr::eaType) && !exprAttr.test(EAttr::eaCast)) {
 //         // if it is a variable declaration
 //         newVariable = true;
@@ -4938,10 +4945,10 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
 //         if (value == V_AUTO)
 //            typeRef = value;
 //      }
-//
-//      current = current.nextNode();
-//   }
-//
+
+      current = current.nextNode();
+   }
+
 //   if (exprAttr.test(EAttr::eaWrap)) {
 //      SNode msgNode = goToNode(current, lxMessage/*, lxCollection*/);
 //      msgNode = lxWrapping;
@@ -5009,10 +5016,10 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
 //      }
 //      else compileVariable(writer, current, scope, typeRef, dynamicSize, !exprAttr.testany(HINT_REFOP));
 //   }
-//
-//   return exprAttr;
-//}
-//
+
+   return exprAttr;
+}
+
 //inline SNode findLeftMostNode(SNode current, LexicalType type)
 //{
 //   if (current == lxExpression) {
@@ -5211,9 +5218,9 @@ void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope&
 //         break;
 //      case okExternal:
 //         return;
-//      case okInternal:
-//         writer.appendNode(lxInternalRef, object.param);
-//         return;
+      case okInternal:
+         exprNode.set(lxInternalRef, object.param);
+         return;
 //      case okPrimitive:
 //      case okPrimCollection:
 //         writer.newBookmark();
@@ -5238,133 +5245,147 @@ void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope&
 
 ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 {
-//   EAttrs mode(modeAttr);
+   //   EAttrs mode(modeAttr);
    ident_t token = terminal.identifier();
-
    ObjectInfo object;
-   switch (terminal.type) {
-//      //case lxConstantList:
-//      //      // HOTFIX : recognize predefined constant lists
-//      //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
-//      //   break;
-//      case lxPrimitive:
-//         object = ObjectInfo(okPrimitive, terminal.argument);
-//         break;
-//      case lxPrimCollection:
-//         object = ObjectInfo(okPrimCollection, terminal.argument);
-//         break;
-//      case lxLiteral:
-//         object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
-//         break;
-//      case lxWide:
-//         object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->wideReference);
-//         break;
-//      case lxCharacter:
-//         object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->charReference);
-//         break;
-//      case lxInteger:
-//      {
-//         String<char, 20> s;
-//
-//         int integer = token.toInt();
-//         if (errno == ERANGE)
-//            scope.raiseError(errInvalidIntNumber, terminal);
-//
-//         // convert back to string as a decimal integer
-//         s.appendHex(integer);
-//
-//         object = ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
-//         break;
-//      }
-//      case lxLong:
-//      {
-//         String<char, 30> s("_"); // special mark to tell apart from integer constant
-//         s.append(token, getlength(token) - 1);
-//
-//         token.toULongLong(10, 1);
-//         if (errno == ERANGE)
-//            scope.raiseError(errInvalidIntNumber, terminal);
-//
-//         object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT64);
-//         break;
-//      }
-//      case lxHexInteger:
-//      {
-//         String<char, 20> s;
-//
-//         int integer = token.toULong(16);
-//         if (errno == ERANGE)
-//            scope.raiseError(errInvalidIntNumber, terminal);
-//
-//         // convert back to string as a decimal integer
-//         s.appendHex(integer);
-//
-//         object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT32, 0, integer);
-//         break;
-//      }
-//      case lxReal:
-//      {
-//         String<char, 30> s(token, getlength(token) - 1);
-//         token.toDouble();
-//         if (errno == ERANGE)
-//            scope.raiseError(errInvalidIntNumber, terminal);
-//
-//         // HOT FIX : to support 0r constant
-//         if (s.Length() == 1) {
-//            s.append(".0");
-//         }
-//
-//         object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s), V_REAL64);
-//         break;
-//      }
-      case lxGlobalReference:
-         object = scope.mapGlobal(token.c_str());
-         break;
-////      case lxLocal:
-////         // if it is a temporal variable
-////         object = ObjectInfo(okLocal, terminal.argument);
-////         break;
-//      case lxExplicitConst:
-//      {
-//         // try to resolve explicit constant
-//         size_t len = getlength(token);
-//
-//         IdentifierString action(token + len - 1);
-//         action.append(CONSTRUCTOR_MESSAGE);
-//
-//         ref_t dummyRef = 0;
-//         ref_t actionRef = scope.module->mapAction(action, scope.module->mapSignature(&scope.moduleScope->literalReference, 1, false), dummyRef);
-//
-//         action.copy(token, len - 1);
-//         object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(action), 0, 0, actionRef);
-//         break;
-//      }
-      default:
-//         if (mode.testany(HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER | HINT_SUBJECTREF | HINT_MESSAGEREF)) {
-//            if (mode.test(HINT_FORWARD)) {
-//               IdentifierString forwardName(FORWARD_MODULE, "'", token);
-//
-//               object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
-//            }
-//            else if (mode.test(HINT_EXTERNALOP)) {
-//               object = ObjectInfo(okExternal, 0, V_INT32);
-//            }
-//            else if (mode.test(HINT_INTERNALOP)) {
-//               object = ObjectInfo(okInternal, scope.module->mapReference(token), V_INT32);
-//            }
-//            else if (mode.test(HINT_MEMBER)) {
-//               object = scope.mapMember(token);
-//            }
-//            else if (mode.testAndExclude(HINT_SUBJECTREF)) {
-//               object = compileSubjectReference(writer, terminal, scope, mode);
-//            }
-//            else if (mode.testAndExclude(HINT_MESSAGEREF)) {
-//               object = compileMessageReference(writer, terminal, scope);
-//            }
-//         }
-         /*else */object = scope.mapTerminal(token, terminal == lxReference, mode & HINT_SCOPE_MASK);
-         break;
+
+   if (EAttrs::testany(mode, HINT_INTERNALOP)) {
+      bool invalid = false;
+      if (EAttrs::test(mode, HINT_INTERNALOP)) {
+         if (terminal == lxReference) {
+            object = ObjectInfo(okInternal, scope.module->mapReference(token), V_INT32);
+         }
+         else if (terminal == lxGlobalReference) {
+            object = ObjectInfo(okInternal, scope.moduleScope->mapFullReference(token), V_INT32);
+         }
+         else invalid = true;
+      }
+      if (invalid)
+         scope.raiseError(errInvalidOperation, terminal);
    }
+   else {
+      switch (terminal.type) {
+         //      //case lxConstantList:
+         //      //      // HOTFIX : recognize predefined constant lists
+         //      //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
+         //      //   break;
+         //      case lxPrimitive:
+         //         object = ObjectInfo(okPrimitive, terminal.argument);
+         //         break;
+         //      case lxPrimCollection:
+         //         object = ObjectInfo(okPrimCollection, terminal.argument);
+         //         break;
+         //      case lxLiteral:
+         //         object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
+         //         break;
+         //      case lxWide:
+         //         object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->wideReference);
+         //         break;
+         //      case lxCharacter:
+         //         object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->charReference);
+         //         break;
+         //      case lxInteger:
+         //      {
+         //         String<char, 20> s;
+         //
+         //         int integer = token.toInt();
+         //         if (errno == ERANGE)
+         //            scope.raiseError(errInvalidIntNumber, terminal);
+         //
+         //         // convert back to string as a decimal integer
+         //         s.appendHex(integer);
+         //
+         //         object = ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
+         //         break;
+         //      }
+         //      case lxLong:
+         //      {
+         //         String<char, 30> s("_"); // special mark to tell apart from integer constant
+         //         s.append(token, getlength(token) - 1);
+         //
+         //         token.toULongLong(10, 1);
+         //         if (errno == ERANGE)
+         //            scope.raiseError(errInvalidIntNumber, terminal);
+         //
+         //         object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT64);
+         //         break;
+         //      }
+         //      case lxHexInteger:
+         //      {
+         //         String<char, 20> s;
+         //
+         //         int integer = token.toULong(16);
+         //         if (errno == ERANGE)
+         //            scope.raiseError(errInvalidIntNumber, terminal);
+         //
+         //         // convert back to string as a decimal integer
+         //         s.appendHex(integer);
+         //
+         //         object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT32, 0, integer);
+         //         break;
+         //      }
+         //      case lxReal:
+         //      {
+         //         String<char, 30> s(token, getlength(token) - 1);
+         //         token.toDouble();
+         //         if (errno == ERANGE)
+         //            scope.raiseError(errInvalidIntNumber, terminal);
+         //
+         //         // HOT FIX : to support 0r constant
+         //         if (s.Length() == 1) {
+         //            s.append(".0");
+         //         }
+         //
+         //         object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s), V_REAL64);
+         //         break;
+         //      }
+         case lxGlobalReference:
+            object = scope.mapGlobal(token.c_str());
+            break;
+         ////      case lxLocal:
+         ////         // if it is a temporal variable
+         ////         object = ObjectInfo(okLocal, terminal.argument);
+         ////         break;
+         //      case lxExplicitConst:
+         //      {
+         //         // try to resolve explicit constant
+         //         size_t len = getlength(token);
+         //
+         //         IdentifierString action(token + len - 1);
+         //         action.append(CONSTRUCTOR_MESSAGE);
+         //
+         //         ref_t dummyRef = 0;
+         //         ref_t actionRef = scope.module->mapAction(action, scope.module->mapSignature(&scope.moduleScope->literalReference, 1, false), dummyRef);
+         //
+         //         action.copy(token, len - 1);
+         //         object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(action), 0, 0, actionRef);
+         //         break;
+         //      }
+         default:
+         //         if (mode.testany(HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER | HINT_SUBJECTREF | HINT_MESSAGEREF)) {
+         //            if (mode.test(HINT_FORWARD)) {
+         //               IdentifierString forwardName(FORWARD_MODULE, "'", token);
+         //
+         //               object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
+         //            }
+         //            else if (mode.test(HINT_EXTERNALOP)) {
+         //               object = ObjectInfo(okExternal, 0, V_INT32);
+         //            }
+         //            else if (mode.test(HINT_MEMBER)) {
+         //               object = scope.mapMember(token);
+         //            }
+         //            else if (mode.testAndExclude(HINT_SUBJECTREF)) {
+         //               object = compileSubjectReference(writer, terminal, scope, mode);
+         //            }
+         //            else if (mode.testAndExclude(HINT_MESSAGEREF)) {
+         //               object = compileMessageReference(writer, terminal, scope);
+         //            }
+         //         }
+            /*else */object = scope.mapTerminal(token, terminal == lxReference, mode & HINT_SCOPE_MASK);
+            break;
+      }
+   }
+
 
 //   if (object.kind == okExplicitConstant) {
 //      // replace an explicit constant with the appropriate object
@@ -5469,16 +5490,12 @@ ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope, EAttr mode)
    //
    //   EAttrs mode(modeAttrs, HINT_NOPRIMITIVES | HINT_ASSIGNING_EXPR);
    ObjectInfo objectInfo;
-   
-   //   writer.newBookmark();
-   //
-   //   EAttrs targetMode(mode, HINT_PROP_MODE | HINT_LOOP | HINT_CALL_MODE);
-   //
-   objectInfo = mapObject(node.firstChild(), scope, mode);
+   SNode current = node.firstChild();
 
-   //   // COMPILER MAGIC : compile the expression attributes
-   //   if (current.compare(lxAttribute, lxTypeAttribute)) {
-   //      targetMode.include(compileExpressionAttributes(writer, current, scope, mode));
+   EAttrs targetMode(mode, HINT_OBJECT_MASK);
+   // COMPILER MAGIC : recognize expression attributes
+   if (current.compare(lxAttribute, lxType)) {
+      targetMode.include(declareExpressionAttributes(current, scope, mode));
    //      if (targetMode.testany(HINT_DIRECTCALL)) {
    //         // HOTFIX : direct call attribute should be applied to the operation
    //         mode.include(HINT_DIRECTCALL);
@@ -5488,8 +5505,14 @@ ObjectInfo Compiler :: mapExpression(SNode node, ExprScope& scope, EAttr mode)
    //         noPrimMode = true;
    //         inlineArgMode = true;
    //      }
-   //   }
+   }
+
+   //   writer.newBookmark();
    //
+   //   EAttrs targetMode(mode, HINT_PROP_MODE | HINT_LOOP | HINT_CALL_MODE);
+   //
+   objectInfo = mapObject(current, scope, targetMode);
+
    //   SNode operationNode = current.nextNode();
    //   if (isAssigmentOp(operationNode)) {
    //      // recognize the property set operation
@@ -6482,12 +6505,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope/*, bool with
 //
 //   writer.closeNode();
 //}
-//
-//void Compiler :: compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   if (isImportRedirect(node)) {
-//      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
-//   }
+
+void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
+{
+   ExprScope exprScope(&scope);
+
+   ObjectInfo retVal = mapExpression(node, exprScope, EAttr::eaNone);
+   if (retVal.kind == okInternal) {
+      importCode(node, exprScope, retVal.param, exprScope.getMessageID());
+   }
 //   else {
 //      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 //
@@ -6554,7 +6580,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope/*, bool with
 //         ObjectInfo retVal = compileMessage(writer, node, scope, target, methodScope->message, mode | HINT_NODEBUGINFO, stackSafeAttrs);
 //
 //         if (!convertObject(writer, scope, targetRef, retVal, mode)) {
-//            scope.raiseError(errInvalidOperation, node);
+            scope.raiseError(errInvalidOperation, node);
 //         }
 //
 //         writer.removeBookmark();
@@ -6562,8 +6588,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope/*, bool with
 //         writer.closeNode();
 //      }
 //   }
-//}
-//
+}
+
 //void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
 //{
 //   SNode expr = node/*.findChild(lxExpression)*/;
@@ -6897,17 +6923,17 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 
    CodeScope codeScope(&scope);
 
-   SNode body = node.findChild(lxCode/*, lxReturning, lxDispatchCode, lxResendExpression*/);
+   SNode body = node.findChild(lxCode/*, lxReturning*/, lxDispatchCode/*, lxResendExpression*/);
 //   // check if it is a resend
 //   if (body == lxResendExpression) {
 //      compileResendExpression(writer, body, codeScope, scope.multiMethod);
 //      preallocated = 1;
 //   }
-//   // check if it is a dispatch
-//   else if (body == lxDispatchCode) {
-//      compileDispatchExpression(writer, body, codeScope);
-//   }
-   /*else */compileMethodCode(/*writer, */node, body, scope, codeScope/*, preallocated*/);
+   // check if it is a dispatch
+   /*else */if (body == lxDispatchCode) {
+      compileDispatchExpression(body, codeScope);
+   }
+   else compileMethodCode(node, body, scope, codeScope/*, preallocated*/);
 
    endMethod(node, scope, codeScope, argCount/*, preallocated*/);
 }

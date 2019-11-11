@@ -75,7 +75,7 @@ constexpr auto V_METHOD          = 0x80001008u;
 //constexpr auto V_DISPATCHER      = 0x80001013u;
 //constexpr auto V_ARGARRAY        = 0x80001014u;
 //constexpr auto V_EXTERN          = 0x80001015u;
-//constexpr auto V_INTERN          = 0x80001016u;
+constexpr auto V_INTERN          = 0x80001016u;
 //constexpr auto V_FORWARD         = 0x80001017u;
 constexpr auto V_IMPORT          = 0x80001018u;
 //constexpr auto V_GROUP           = 0x80001019u;
@@ -102,7 +102,7 @@ constexpr auto V_NAMESPACE       = 0x80001021u;
 /// primitive types
 //constexpr auto V_FLAG            = 0x80000001u;
 constexpr auto V_NIL             = 0x80000002u;
-//constexpr auto V_INT32           = 0x80000003u;
+constexpr auto V_INT32           = 0x80000003u;
 //constexpr auto V_INT64           = 0x80000004u;
 //constexpr auto V_DWORD           = 0x80000005u;
 //constexpr auto V_REAL64          = 0x80000006u;
@@ -451,8 +451,10 @@ public:
       eaNone               = 0x00000000000,
       eaNoDebugInfo        = 0x00000000001,
       eaNestedNs           = 0x00000000002,
-      
+      eaIntern             = 0x00000000004,
+
       eaScopeMask          = 0x00000000002,
+      eaObjectMask         = 0x00000000004,
 
 //      eaType               = 0x00000000001,
 //      eaCast               = 0x00000000002,
@@ -461,7 +463,6 @@ public:
 //      eaExtern             = 0x00000000010,
 //      eaRef                = 0x00000000020,
 //      eaParams             = 0x00000000040,
-//      eaIntern             = 0x00000000080,
 //      eaLoop               = 0x00000000100,
 //      eaMember             = 0x00000000200,
 //      eaSubj               = 0x00000000400,
@@ -526,47 +527,47 @@ public:
       //   else return false;
       //}
 
-//      bool testany(ExpressionAttribute mask)
-//      {
-//         return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0ul;
-//      }
-//
-//      void exclude(ExpressionAttribute mask)
-//      {
-//         attrs = (ExpressionAttribute)((uint64_t)attrs & ~(uint64_t)mask);
-//      }
-//
-//      void include(ExpressionAttribute mask)
-//      {
-//         attrs = (ExpressionAttribute)((uint64_t)attrs | (uint64_t)mask);
-//      }
-//
-//      operator const ExpressionAttribute () const { return attrs; }
+      bool testany(ExpressionAttribute mask)
+      {
+         return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0ul;
+      }
+
+      void exclude(ExpressionAttribute mask)
+      {
+         attrs = (ExpressionAttribute)((uint64_t)attrs & ~(uint64_t)mask);
+      }
+
+      void include(ExpressionAttribute mask)
+      {
+         attrs = (ExpressionAttribute)((uint64_t)attrs | (uint64_t)mask);
+      }
+
+      operator const ExpressionAttribute () const { return attrs; }
 
       static bool test(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
          return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
       }
 
-//      static bool testany(ExpressionAttribute attrs, ExpressionAttribute mask)
-//      {
-//         return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0;
-//      }
+      static bool testany(ExpressionAttribute attrs, ExpressionAttribute mask)
+      {
+         return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0;
+      }
 
       ExpressionAttributes()
       {
          attrs = ExpressionAttribute::eaNone;
       }
 
-//      ExpressionAttributes(ExpressionAttribute attrs)
-//      {
-//         this->attrs = attrs;
-//      }
-//      ExpressionAttributes(ExpressionAttribute attrs, ExpressionAttribute excludeMask)
-//         : ExpressionAttributes(attrs)
-//      {
-//         exclude(excludeMask);
-//      }
+      ExpressionAttributes(ExpressionAttribute attrs)
+      {
+         this->attrs = attrs;
+      }
+      ExpressionAttributes(ExpressionAttribute attrs, ExpressionAttribute excludeMask)
+         : ExpressionAttributes(attrs)
+      {
+         exclude(excludeMask);
+      }
 //      ExpressionAttributes(ExpressionAttributes attrs, ExpressionAttribute excludeMask)
 //         : ExpressionAttributes(attrs.attrs)
 //      {
@@ -682,7 +683,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
 //   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
-//   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes) = 0;
+   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes) = 0;
    virtual bool validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility) = 0;
 //   virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
 //   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;

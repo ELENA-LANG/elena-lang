@@ -192,7 +192,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
 //   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName);
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
-//   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes);
+   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes);
    virtual bool validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility);
 ////////   virtual bool validateWarningAttribute(int& attrValue);
 //   virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);

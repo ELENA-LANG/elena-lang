@@ -149,7 +149,7 @@ public:
 //      okClassSelf,                    // param - class reference; used in class resending expression
 //
 //      okExternal,
-//      okInternal,
+      okInternal,
 //      okPrimitive,                    // param * 4 = size 
 //      okPrimCollection                // param - length
    };
@@ -742,6 +742,13 @@ private:
       ExprScope(SourceScope* parent);
       ExprScope(CodeScope* parent);
 
+      ref_t getMessageID()
+      {
+         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
+      
+         return scope ? scope->message : 0;
+      }
+
       ObjectInfo mapGlobal(ident_t identifier);
    };
 
@@ -872,9 +879,9 @@ private:
 //   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
 //   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
-//
-//   void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ident_t reference, ref_t message);
-//
+
+   void importCode(SNode node, Scope& scope, ref_t reference, ref_t message);
+
 //   int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreFields, bool ignoreSealed*/);
@@ -973,7 +980,7 @@ private:
 //
 //   SNode injectAttributeIdentidier(SNode current, Scope& scope);
 //   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
-//   EAttr compileExpressionAttributes(SyntaxWriter& writer, SNode& node, CodeScope& scope, EAttr mode);
+   EAttr declareExpressionAttributes(SNode& node, ExprScope& scope, EAttr mode);
 
    void recognizeTerminal(SNode node, ObjectInfo info, ExprScope& scope, EAttr mode);
 
@@ -1015,7 +1022,7 @@ private:
 //   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
-//   void compileDispatchExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileDispatchExpression(SNode node, CodeScope& scope);
 //   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
    /*ObjectInfo*/void compileCode(/*SyntaxWriter& writer, */SNode node, CodeScope& scope);

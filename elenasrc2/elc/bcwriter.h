@@ -56,26 +56,26 @@ class ByteCodeWriter
 //         frameSize = 0;
 //      }
 //   };
-//
-//   struct ImportScope
-//   {
-//      _Memory*    section; 
-//      _Module*    sour;
-//      _Module*    dest;
-//
-//      ImportScope()
-//      {
-//         section = NULL;
-//         sour = NULL;
-//         dest = NULL;
-//      }
-//      ImportScope(_Memory* section, _Module* sour, _Module* dest)
-//      {
-//         this->section = section;
-//         this->sour = sour;
-//         this->dest = dest;
-//      }
-//   };
+
+   struct ImportScope
+   {
+      _Memory*    section; 
+      _Module*    sour;
+      _Module*    dest;
+
+      ImportScope()
+      {
+         section = NULL;
+         sour = NULL;
+         dest = NULL;
+      }
+      ImportScope(_Memory* section, _Module* sour, _Module* dest)
+      {
+         this->section = section;
+         this->sour = sour;
+         this->dest = dest;
+      }
+   };
 
    struct RegScope
    {
@@ -100,7 +100,7 @@ class ByteCodeWriter
       }
    };
 
-//   List<ImportScope> imports;
+   List<ImportScope> imports;
    MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
 
    ByteCode peekNext(ByteCodeIterator it)
@@ -254,7 +254,7 @@ class ByteCodeWriter
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape, bool idle = false);
    void exitMethod(CommandTape& tape, int count/*, int reserved, bool withFrame = true*/);
-//   void endMethod(CommandTape& tape, int paramCount, int reserved, bool withFrame = true);
+   void endMethod(CommandTape& tape, int argCount/*, int reserved, bool withFrame = true*/);
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
@@ -361,10 +361,10 @@ class ByteCodeWriter
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
 //   void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
-//
-//   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
-//
-//////   void generateTemplateMethods(CommandTape& tape, SNode root);
+
+   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
+
+////   void generateTemplateMethods(CommandTape& tape, SNode root);
 
 public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
@@ -379,17 +379,17 @@ public:
 
    void saveTape(CommandTape& tape, _ModuleScope& scope);
 
-//   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
+   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
+   {
+      imports.add(ImportScope(section, sour, dest));
+
+      return imports.Count();
+   }
+//   void clear()
 //   {
-//      imports.add(ImportScope(section, sour, dest));
-//
-//      return imports.Count();
+//      _strings.clear();
+//      imports.clear();
 //   }
-////   void clear()
-////   {
-////      _strings.clear();
-////      imports.clear();
-////   }
 };
 
 //bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);

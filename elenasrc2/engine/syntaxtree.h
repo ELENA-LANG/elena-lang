@@ -46,6 +46,7 @@ enum LexicalType
    lxSizeDecl                 = 0x001040,
    lxBaseDecl                 = 0x001050,
    lxCode                     = 0x001060,
+   lxDispatchCode             = 0x001070,
 
    // derivation terminals
    lxEOF                      = 0x002010, // indicating closing code bracket
@@ -60,6 +61,8 @@ enum LexicalType
    lxClassSymbol              = 0x008050, // arg - reference
    lxSymbolReference          = 0x008060,
    lxConstantSymbol           = 0x008070, // arg - reference
+   lxInternalRef              = 0x008080,
+   lxImporting                = 0x008090,
 
    // attributes
    lxAttribute                = 0x20000,
@@ -114,7 +117,6 @@ enum LexicalType
 //   lxExplicitConst            = 0x01800E,
 //   lxExplicitAttr             = 0x01800F,
 //
-//   lxImporting                = 0x008101,
 //   lxNested                   = 0x008102, // arg - count
 //   lxStruct                   = 0x008103, // arg - count
 //   lxField                    = 0x008105, // arg - offset
@@ -254,7 +256,6 @@ enum LexicalType
 //   lxEmbeddableAttr           = 0x2002D,
 //   lxBoxableAttr              = 0x2002E,
 //   lxExtArgumentRef           = 0x20031,
-//   lxInternalRef              = 0x20032,
 //   lxEmbeddableMssg           = 0x20034,
 //   lxBoxingRequired           = 0x20035,
 //   lxStaticAttr               = 0x2003B,
