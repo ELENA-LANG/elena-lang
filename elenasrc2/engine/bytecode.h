@@ -22,14 +22,14 @@ enum ByteCode
 //   bcSNop            = 0x04,
 //   bcPushE           = 0x05,
 //   bcDCopyVerb       = 0x06,
-//   bcThrow           = 0x07,
+   bcThrow           = 0x07,
 //   bcDCopyCount      = 0x08,
 //   bcOr              = 0x09,
-//   bcPushA           = 0x0A,
+   bcPushA           = 0x0A,
 //   bcPopA            = 0x0B,
 //   bcACopyB          = 0x0C,
 //   bcPopE            = 0x0D,
-//   bcBSRedirect      = 0x0E,
+   bcBSRedirect      = 0x0E,
 //   bcDSetVerb        = 0x0F,
 //
 //   bcNot             = 0x10,
@@ -155,10 +155,10 @@ enum ByteCode
 //   bcRestore         = 0x92,
 //   bcALoadR          = 0x93,
 //   bcALoadFI         = 0x94,
-//   bcALoadSI         = 0x95,
+   bcPeekSI          = 0x95,
 //   bcIfHeap          = 0x96,
 //   bcBCopyS          = 0x97,
-//   bcOpen            = 0x98,
+   bcOpen            = 0x98,
    bcQuitN           = 0x99,
 //   bcBCopyR          = 0x9A,
 //   bcBCopyF          = 0x9B,
@@ -198,13 +198,13 @@ enum ByteCode
    bcSaveSI         = 0xBB,
 //   bcELoadSI         = 0xBC,
 //   bcPushF           = 0xBD,
-//   bcESaveSI         = 0xBE,
-//   bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
-//
+   bcPushS           = 0xBE,
+   bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
+
 //   bcASaveBI         = 0xC0,
 //   bcNWriteI         = 0xC1,
 //   bcASwapSI         = 0xC2,
-//   bcASaveSI         = 0xC3,
+   bcStoreSI         = 0xC3,
 //   bcASaveFI         = 0xC4,
 //   bcBSwapSI         = 0xC5,
 //   bcESwapSI         = 0xC6,
@@ -509,7 +509,7 @@ public:
    static bool IsPush(ByteCode code)
    {
       switch(code) {
-         //case bcPushA:
+         case bcPushA:
          //case bcPushB:
          //case bcPushFI:
          //case bcPushN:

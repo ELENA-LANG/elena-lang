@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   5
+#define REVISION_VERSION   7
 
 using namespace _ELENA_;
 
@@ -391,6 +391,7 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
 {
    ident_t postfix;
    bool literalConstant = false;
+   bool messageConstant = false;
    bool quote = false;
    int mask = reference & mskAnyRef;
    if (mask == mskInt32Ref) {
@@ -425,10 +426,12 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       command.append("const : ");
    }
    else if (mask == mskMessage) {
-      command.append("const : %");
+      messageConstant = true;
+
+      command.append("mssgconst : ");
    }
    else if (mask == mskMessageName) {
-      command.append("const : %");
+      command.append("subjconst : ");
    }
    else if (mask == mskVMTRef) {
       command.append("class : ");
@@ -452,6 +455,17 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
          command.append("\"");
 
       command.append(postfix);
+   }
+   else if (messageConstant) {
+      command.append("\"");
+
+      ident_t mssg = module->resolveReference(reference & ~mskAnyRef);
+      command.append(mssg + 1);
+      command.append("[");
+      command.appendInt(mssg[0] - '0');
+      command.append("]");
+
+      command.append("\"");
    }
    else {
       command.append(module->resolveReference(reference & ~mskAnyRef));
@@ -529,9 +543,11 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 
    switch(code)
    {
+      case bcPushS:
 //      case bcPushSI:
-//      case bcALoadSI:
-//      case bcASaveSI:
+      case bcPeekSI:
+      case bcStoreSI:
+      case bcSaveSI:
 //      case bcBLoadSI:
 //      case bcBSaveSI:
 //      case bcBLoadFI:
@@ -544,9 +560,9 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcBCopyF:
 //      case bcACopyS:
 //      case bcPushF:
-//         printCommand(command, opcode);
-//         command.appendInt(argument);
-//         break;
+         printCommand(command, opcode);
+         command.appendInt(argument);
+         break;
 //      case bcJump:
 //      case bcHook:
 //      case bcIf:
@@ -605,12 +621,12 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printCommand(command, opcode);
          printExternReference(command, module, argument);
          break;
-//      case bcReserve:
+      case bcReserve:
 //      case bcRestore:
 //      case bcPushN:
       case bcFreeI:
       case bcAllocI:
-//      case bcOpen:
+      case bcOpen:
       case bcQuitN:
 //      case bcDCopy:
 //      case bcECopy:

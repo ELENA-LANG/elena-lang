@@ -6181,7 +6181,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope/*, bool with
 //   size_t signatureLen = 0;
 //
 //   bool constantConversion = false;
-//   bool unnamedMessage = false;
+   bool unnamedMessage = false;
    ref_t flags = 0;
 
    SNode nameNode = node.findChild(lxNameAttr/*, lxMessage*/);
@@ -6200,8 +6200,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope/*, bool with
       //   messageNode = messageNode.nextNode();
       //}
    }
-//   else unnamedMessage = true;
-//
+   else unnamedMessage = true;
+
 //   bool weakSignature = true;
 //   bool noSignature = true; // NOTE : is similar to weakSignature except if withoutWeakMessages=true
    int paramCount = 0;
@@ -6270,14 +6270,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope/*, bool with
    if (scope.message == 0) {
 //      if (test(scope.hints, tpSpecial))
 //         flags |= SPECIAL_MESSAGE;
-//
-//      if ((scope.hints & tpMask) == tpDispatcher) {
-//         if (paramCount == 0 && unnamedMessage) {
-//            actionRef = getAction(scope.moduleScope->dispatch_message);
-//            unnamedMessage = false;
-//         }
-//         else scope.raiseError(errIllegalMethod, node);
-//      }
+
+      if ((scope.hints & tpMask) == tpDispatcher) {
+         if (paramCount == 0 && unnamedMessage) {
+            actionRef = getAction(scope.moduleScope->dispatch_message);
+            unnamedMessage = false;
+         }
+         else scope.raiseError(errIllegalMethod, node);
+      }
 //      else if (test(scope.hints, tpConversion)) {
 //         if (paramCount == 0 && unnamedMessage && scope.outputRef) {
 //            ref_t signatureRef = scope.moduleScope->module->mapSignature(&scope.outputRef, 1, false);
@@ -6514,7 +6514,7 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
    if (retVal.kind == okInternal) {
       importCode(node, exprScope, retVal.param, exprScope.getMessageID());
    }
-//   else {
+   else {
 //      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
 //
 //      // try to implement light-weight resend operation
@@ -6587,7 +6587,7 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 //
 //         writer.closeNode();
 //      }
-//   }
+   }
 }
 
 //void Compiler :: compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
@@ -8421,14 +8421,14 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
 //         // if it is a type attribute
 //         scope.outputRef = resolveTypeAttribute(scope, current, true);
 //      }
-      //else if (current == lxNameAttr && !explicitMode) {
-      //   // resolving implicit method attributes
-      //   int attr = scope.moduleScope->attributes.get(current.firstChild(lxTerminalMask).identifier());
-      //   if (_logic->validateImplicitMethodAttribute(attr, current.nextNode().type == lxMessage)) {
-      //      scope.hints |= attr;
-      //      current.set(lxAttribute, attr);
-      //   }
-      //}
+      else if (current == lxNameAttr && !explicitMode) {
+         // resolving implicit method attributes
+         int attr = scope.moduleScope->attributes.get(current.firstChild(lxTerminalMask).identifier());
+         if (_logic->validateImplicitMethodAttribute(attr/*, current.nextNode().type == lxMessage*/)) {
+            scope.hints |= attr;
+            current.set(lxAttribute, attr);
+         }
+      }
 
       current = current.nextNode();
    }
@@ -8502,12 +8502,12 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
       scope.info.header.classRef = scope.moduleScope->module->mapReference(classClassName);
 //   }
-//
-//   // if it is a super class validate it, generate built-in attributes
-//   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
-//      if (!scope.info.methods.exist(scope.moduleScope->dispatch_message))
-//         scope.raiseError(errNoDispatcher, node);
-//
+
+   // if it is a super class validate it, generate built-in attributes
+   if (scope.info.header.parentRef == 0 && scope.reference == scope.moduleScope->superReference) {
+      if (!scope.info.methods.exist(scope.moduleScope->dispatch_message))
+         scope.raiseError(errNoDispatcher, node);
+
 //      // package -5
 //      int index = ++scope.info.header.staticSize;
 //      scope.info.staticValues.add(-index - 4, 0);
@@ -8515,7 +8515,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 //      // class name -6
 //      index = ++scope.info.header.staticSize;
 //      scope.info.staticValues.add(-index - 4, 0);
-//   }
+   }
 
    // save declaration
    scope.save();
@@ -10306,7 +10306,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.literalReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(STR_FORWARD));
 //   scope.wideReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WIDESTR_FORWARD));
 //   scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
-//   scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
+   scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
 //   scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
 //   scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
 //   scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
@@ -10319,9 +10319,9 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.branchingInfo.reference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
 //   scope.branchingInfo.trueRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(TRUE_FORWARD));
 //   scope.branchingInfo.falseRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(FALSE_FORWARD));
-//
-//   // cache the frequently used messages
-//   scope.dispatch_message = encodeAction(scope.module->mapAction(DISPATCH_MESSAGE, 0, false));
+
+   // cache the frequently used messages
+   scope.dispatch_message = encodeMessage(scope.module->mapAction(DISPATCH_MESSAGE, 0, false), 1, 0);
 //   scope.newobject_message = encodeAction(scope.module->mapAction(NEWOBJECT_MESSAGE, 0, false));
 //   scope.init_message = encodeMessage(scope.module->mapAction(INIT_MESSAGE, 0, false), 0, SPECIAL_MESSAGE | STATIC_MESSAGE);
 //   scope.constructor_message = encodeAction(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false));

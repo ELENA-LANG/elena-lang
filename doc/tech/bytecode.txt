@@ -11,12 +11,12 @@ ELENA byte codes (or ecodes)
 
    index  - data accumulator (ecx)
 
- 
+
  Register operations:
  --------------------
- setr r                     - r => acc
-
  savesi i                   - [sp:i] <= index
+
+ setr r                     - r => acc
 
 
  Stack operations:
@@ -25,16 +25,31 @@ ELENA byte codes (or ecodes)
 
  freei i                    - sp-=i; 
  
+ peeksi i                   - [sp+i] => acc;
+
+ pusha                      - acc => [sp+1] ; sp++                  
+
  pushr r                    - r  => [sp+1] ; sp++
 
+ pushs i                    - sp+i => [sp+1] ; sp++
+
+ storesi i                  - [sp+i] <= acc
+ 
 
  Frame operations:
  -----------------              
+ open i                     - save the last frame and open the new frame ; 
+                              init the frame header offset
+                              it should be only one command per procedure ; 
+ 
  quit                       - terminates the procedure;
  
  quitn                      - terminates the procedure;
                               clear the stack parameters
 
+ reserve i                  - exclude part of the stack from managed stack frame ;
+                              should follow "open" byte code
+ 
 
  Call operations:
  ----------------
@@ -53,6 +68,10 @@ ELENA byte codes (or ecodes)
  nop                        - idle command  
 
 
+ Object operations:
+ ------------------
+ bsredirect                 - search acc::VMT for the message in index;
+                              if found jumps to it; binary search is used ; index, acc presaved
 
 
 
@@ -211,12 +230,7 @@ ELENA byte codes (or ecodes)
 	
  aloadfi i                  - [fp+i] => acc
 
- aloadsi i                  - [sp+i] => acc;
-                               does not affect m register (EDX)
-
  asavefi i                  - [fp+i] <= acc 
- 
- asavesi i                  - [sp+i] <= acc
  
  aswapsi i                  - [sp+i] <=> acc
 
@@ -258,8 +272,6 @@ ELENA byte codes (or ecodes)
  
  popi n                     - sp-=i; 
  
- pusha                      - acc => [sp+1] ; sp++                  
-
  pushai i                   - [acc::i] => [sp+1] ; sp++
  
  pushb                      - base => [sp+1] ; sp++
@@ -345,9 +357,6 @@ ELENA byte codes (or ecodes)
  
  blen                       - [acc].Length >> index ; where acc is a object
 
- bsredirect                 - search acc::VMT for the message in ext;
-                              if found jumps to it; binary search is used ; index, ext, acc presaved
-
  mtredirect r               - search in message table r the message in ext and provided parameter list; if found jumps to it;
 
  class                      - base::VMT >> acc 
@@ -425,13 +434,6 @@ ELENA byte codes (or ecodes)
                               on ext
 
  exclude                    - should be called before external call, excluding the stack starting from ESP from GC frames
- 
- open i                     - save the last frame and open the new frame ; 
-                              init the frame header offset
-                              it should be only one command per procedure ; 
- 
- reserve i                  - exclude part of the stack from managed stack frame ;
-                              should follow "open" byte code
  
  restore n                  - remove the excluded stack
 

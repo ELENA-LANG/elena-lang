@@ -1,0 +1,39 @@
+//        ELENA Language 5.0
+//      inline system library
+
+// ; external methods
+
+procedure __object."#dispatch[1]"
+
+  bsredirect  
+
+  open     4
+  reserve  2
+  savesi   3
+  pushs   -3
+  pusha
+  setr     class : system'Message
+  pushr    class : system'MethodNotFoundException
+  storesi  5
+  peeksi   0
+  pushr    mssgconst : "new[2]"
+
+  throw
+
+end
+
+// ; system routines
+
+symbol sta_start
+
+  pushr entry : "$forwards'$program"
+  pushr api : seh_handler
+  pushr api : default_handler
+  alloci 1
+  loadenv
+  savesi 0
+  callextr extern : InitializeSTA
+  freei 4
+  quit
+
+end

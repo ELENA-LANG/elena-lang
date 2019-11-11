@@ -916,11 +916,61 @@ end
 
 // ; ==== Command Set ==
 
-// ; loadenv
+// ; throw
+inline % 7
 
+  mov  esi, [data : %CORE_GC_TABLE + gc_et_current]
+  jmp  [esi]
+
+end
+
+// ; bsredirect
+inline % 0Eh // (ebx - object, ecx - message)
+
+  mov  edi, [ebx-4]
+  mov  esi, [edi - elVMTSizeOffset]
+  xor  edx, edx
+
+labSplit:
+  test esi, esi
+  jz   short labEnd
+
+labStart:
+  shr   esi, 1
+  setnc dl
+  cmp   ecx, [edi+esi*8]
+  je    short labFound
+  lea   eax, [edi+esi*8]
+  jb    short labSplit
+  lea   edi, [eax+8]
+  sub   esi, edx
+  jmp   labSplit
+labFound:
+  jmp   [edi+esi*8+4]
+
+labEnd:
+                                                                
+end
+
+// ; loadenv
 inline % 2Ah
 
   mov  ecx, rdata : %SYSTEM_ENV
+
+end
+
+// ; peeksi
+inline % 95h
+
+  mov  ebx, [esp+__arg1]
+
+end
+
+// ; open
+inline % 98h
+
+  push ebp
+  mov  ebp, esp
 
 end
 
@@ -933,10 +983,34 @@ inline % 0A5h
 end
 
 // ; savesi
-
 inline % 0BBh
 
   mov  [esp + __arg1], ecx
+
+end
+
+// ; reserve
+inline % 0BFh
+
+  sub  esp, __arg1
+  push ebp
+  push 0
+  mov  ebp, esp
+
+end
+
+// ; pushs
+inline % 0BEh
+
+  lea  eax, [esp + __arg1]
+  push eax
+
+end
+
+// ; storesi
+inline % 0C3h
+
+  mov  [esp+__arg1], ebx
 
 end
 

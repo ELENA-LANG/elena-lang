@@ -1697,28 +1697,28 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
    }
 }
 
-//bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue, bool complexName)
-//{
-//   bool dummy = false;
-//   switch ((size_t)attrValue)
-//   {
+bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/)
+{
+   bool dummy = false;
+   switch ((size_t)attrValue)
+   {
 //      case V_METHOD:
 //      case V_CONSTRUCTOR:
-//      case V_DISPATCHER:
+      case V_DISPATCHER:
 //      case V_CONVERSION:
 //      case V_GENERIC:
 //      case V_ACTION:
-//         return validateMethodAttribute(attrValue, dummy);
+         return validateMethodAttribute(attrValue, dummy);
 //      case V_GETACCESSOR:
 //      case V_SETACCESSOR:
 //         if (complexName) {
 //            return validateMethodAttribute(attrValue, dummy);
 //         }
 //         else return false;
-//      default:
-//         return false;
-//   }
-//}
+      default:
+         return false;
+   }
+}
 
 bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
 {
@@ -1772,10 +1772,10 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_PREDEFINED:
 //         attrValue = tpPredefined;
 //         return true;
-//      case V_DISPATCHER:
-//         attrValue = tpDispatcher;
-//         explicitMode = true;
-//         return true;
+      case V_DISPATCHER:
+         attrValue = tpDispatcher;
+         explicitMode = true;
+         return true;
 ////      case V_STACKUNSAFE:
 ////         attrValue = tpDynamic;
 ////         return true;

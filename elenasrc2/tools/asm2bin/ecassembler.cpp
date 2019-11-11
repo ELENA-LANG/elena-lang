@@ -122,20 +122,20 @@ void ECodesAssembler :: compileMessage(TokenInfo& token, IdentifierString& messa
 {   
    IdentifierString action;
 
-   int paramCount = 0;
+   int argCount = 0;
    if (token.terminal.state == dfaQuote) {
       QuoteTemplate<IdentifierString> quote(token.terminal.line);
 
-      if (!readMessage(quote.ident(), action, signRef, paramCount, binary))
+      if (!readMessage(quote.ident(), action, signRef, argCount, binary))
          token.raiseErr("Invalid operand (%d)");
    }
-   else readMessage(token, action, signRef, paramCount);
+   else readMessage(token, action, signRef, argCount);
 
    // reserve place for param counter
    message.append('0');
    message.append(action);
 
-   message[0] = message[0] + paramCount;
+   message[0] = message[0] + argCount;
 }
 
 void ECodesAssembler :: compileMessageName(TokenInfo& token, IdentifierString& messageName)
@@ -224,16 +224,17 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
    else if (word.compare("0")) {
       return 0;
    }
+   else if (word.compare("mssgconst")) {
+      token.read(":", "Invalid operand (%d)");
+      token.read();
+
+      return compileRMessageArg(token, binary);
+   }
    else if (word.compare("const")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
 
-      if (word.compare("%")) {
-         token.read();
-
-         return compileRMessageArg(token, binary);
-      }
-      else if (token.terminal.state == dfaInteger || token.terminal.state == dfaHexInteger) {
+      if (token.terminal.state == dfaInteger || token.terminal.state == dfaHexInteger) {
          int n = 0;
          token.getInteger(n, constants);
 
@@ -499,7 +500,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             break;
          //case bcACallVI:
          //case bcAJumpVI:
-         //case bcALoadSI:
+         case bcPeekSI:
          //case bcBLoadSI:
          //case bcBLoadFI:
          //case bcACopyS:
@@ -510,7 +511,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcALoadAI:
          //case bcALoadFI:
          //case bcPushAI:
-         //case bcOpen:
+         case bcOpen:
          //case bcAddN:
          //case bcMulN:
          //case bcDLoadFI:
@@ -518,9 +519,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcDSaveFI:
          case bcSaveSI:
          //case bcRestore:
-         //case bcReserve:
+         case bcReserve:
          //case bcALoadBI:
-         //case bcASaveSI:
+         case bcStoreSI:
          //case bcASaveFI:
          //case bcNSaveI:
          //case bcNLoadI:
@@ -529,7 +530,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcAXSaveBI:
          //case bcELoadFI:
          //case bcELoadSI:
-         //case bcESaveSI:
+         case bcPushS:
          //case bcESaveFI:
          //case bcShiftLN:
          //case bcShiftRN:

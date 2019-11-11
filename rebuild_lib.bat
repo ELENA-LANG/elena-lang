@@ -7,7 +7,7 @@ move dat\og\rules.dat bin
 rem bin\og s dat\og\source_rules.txt 
 rem move dat\og\source_rules.dat bin
 
-bin\asm2binx src40\core\system.core_routines.esm lib50
+bin\asm2binx src50\core\system.core_routines.esm lib50
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on

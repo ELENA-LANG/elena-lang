@@ -72,7 +72,7 @@ constexpr auto V_METHOD          = 0x80001008u;
 //constexpr auto V_STATIC          = 0x8000100Fu;
 //constexpr auto V_CONVERSION      = 0x80001011u;
 //constexpr auto V_NEWOP           = 0x80001012u;
-//constexpr auto V_DISPATCHER      = 0x80001013u;
+constexpr auto V_DISPATCHER      = 0x80001013u;
 //constexpr auto V_ARGARRAY        = 0x80001014u;
 //constexpr auto V_EXTERN          = 0x80001015u;
 constexpr auto V_INTERN          = 0x80001016u;
@@ -137,7 +137,7 @@ enum MethodHint
 //   tpSealed      = 0x0000001,
 //   tpClosed      = 0x0000002,
 //   tpNormal      = 0x0000003,
-//   tpDispatcher  = 0x0000004,
+   tpDispatcher  = 0x0000004,
 //   tpPrivate     = 0x0000005,
 //   tpStackSafe   = 0x0000010,
 //   tpEmbeddable  = 0x0000020,
@@ -234,7 +234,7 @@ struct _ModuleScope
 //   ref_t             longReference;
 //   ref_t             realReference;
 //   ref_t             messageNameReference;
-//   ref_t             messageReference;
+   ref_t             messageReference;
 //   ref_t             extMessageReference;
 //   ref_t             literalReference;
 //   ref_t             wideReference;
@@ -245,9 +245,9 @@ struct _ModuleScope
 //   ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
 //   ref_t             wrapReference;
-//
-//   // cached messages
-//   ref_t             dispatch_message;
+
+   // cached messages
+   ref_t             dispatch_message;
 //   ref_t             newobject_message;
 //   ref_t             init_message;
 //   ref_t             constructor_message;
@@ -358,7 +358,7 @@ struct _ModuleScope
       project = nullptr;
       debugModule = module = nullptr;
       /*intReference = */superReference = 0;
-//      messageNameReference = messageReference = 0;
+      /*messageNameReference = */messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      charReference = realReference = 0;
 //      closureTemplateReference = refTemplateReference = 0;
@@ -366,7 +366,7 @@ struct _ModuleScope
 //      arrayTemplateReference = 0;
 //      wrapReference = argArrayTemplateReference = 0;
 //
-//      init_message = newobject_message = dispatch_message = 0;
+      /*init_message = newobject_message = */dispatch_message = 0;
 //      constructor_message = 0;
    }
 };
@@ -681,7 +681,7 @@ public:
    virtual bool validateNsAttribute(int attrValue, Visibility& visibility) = 0;
    virtual bool validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
-//   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
+   virtual bool validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes) = 0;
    virtual bool validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility) = 0;

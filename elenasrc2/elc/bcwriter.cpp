@@ -2060,11 +2060,11 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
                writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
             }
             break;
-         //case bcOpen:
-         //   frameLevel = (*it).argument;
-         //   stackLevel = 0;
-         //   (*it).save(scope.code);
-         //   break;
+         case bcOpen:
+            frameLevel = (*it).argument;
+            //stackLevel = 0;
+            (*it).save(scope.code);
+            break;
          //case bcPushFI:
          //case bcPushF:
          //case bcALoadFI:

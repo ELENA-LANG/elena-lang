@@ -23,9 +23,9 @@ public class Object
 //    predefined bool notgreater(o) {}
 //                
 //    string Printable = self.__getClassName();
-//                
-//    /// Implements a message dispatching in VMT
-//    dispatch() => system'core_routines'__object;
+                
+    /// Implements a message dispatching in VMT
+    dispatch() => intern system'core_routines'__object;
 }
 
 ///// A common boolean value

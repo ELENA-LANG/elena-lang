@@ -503,9 +503,6 @@ void* JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, int mask, S
       else if (currentMask == mskPreloadRelCodeRef) {
          resolveReference(image, *it + position, (ref_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeRelCodeRef, _virtualMode);
       }
-      //else if (currentMask == 0) {
-      //   (*image)[*it + position] = resolveMessage(sectionInfo.module, currentRef);
-      //}
       else {
          void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 
@@ -1061,35 +1058,35 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
 //
 //   return NULL; // !! should be resolved only once
 //}
-//
-//ref_t JITLinker :: parseMessage(ident_t reference, bool actionOnlyMode)
-//{
-//   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
-//
-//   if (actionOnlyMode) {
-//      ref_t resolvedAction = messageTable.module->mapAction(reference, 0, true);
-//      if (!resolvedAction) {
-//         resolvedAction = resolveWeakAction(messageTable, reference);
-//      }
-//
-//      return resolvedAction;
-//   }
-//   else {
-//      ref_t flags = 0;
-//      int paramCount = reference[0] - '0';
-//
-//      // signature and custom verb should be imported
-//      ident_t actionName = reference + 1;
-//
-//      ref_t resolvedAction = messageTable.module->mapAction(actionName, 0, true);
-//      if (!resolvedAction) {
-//         resolvedAction = resolveWeakAction(messageTable, actionName);
-//      }
-//
-//      return encodeMessage(resolvedAction, paramCount, flags);
-//   }
-//}
-//
+
+ref_t JITLinker :: parseMessage(ident_t reference, bool actionOnlyMode)
+{
+   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
+
+   if (actionOnlyMode) {
+      ref_t resolvedAction = messageTable.module->mapAction(reference, 0, true);
+      if (!resolvedAction) {
+         resolvedAction = resolveWeakAction(messageTable, reference);
+      }
+
+      return resolvedAction;
+   }
+   else {
+      ref_t flags = 0;
+      int paramCount = reference[0] - '0';
+
+      // signature and custom verb should be imported
+      ident_t actionName = reference + 1;
+
+      ref_t resolvedAction = messageTable.module->mapAction(actionName, 0, true);
+      if (!resolvedAction) {
+         resolvedAction = resolveWeakAction(messageTable, actionName);
+      }
+
+      return encodeMessage(resolvedAction, paramCount, flags);
+   }
+}
+
 //void* JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt)
 //{
 //   int dotPos = referenceInfo.referenceName.find('.');
@@ -1124,30 +1121,30 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
 //
 //   return vaddress;
 //}
-//
-//void* JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt, bool actionOnlyMode)
-//{
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskRDataRef);
-//   MemoryWriter writer(image);
-//
-//   // allocate object header
-//   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
-//
-//   void* vaddress = calculateVAddress(&writer, mskRDataRef);
-//
-//   _loader->mapReference(referenceInfo, vaddress, mskMessage);
-//
-//   _compiler->compileInt32(&writer, parseMessage(referenceInfo.referenceName, actionOnlyMode));
-//
-//   // get constant VMT reference
-//   void* vmtVAddress = resolve(vmt, mskVMTRef, false);
-//
-//   // fix object VMT reference
-//   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
-//
-//   return vaddress;
-//}
+
+void* JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt, bool actionOnlyMode)
+{
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   // allocate object header
+   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
+
+   void* vaddress = calculateVAddress(&writer, mskRDataRef);
+
+   _loader->mapReference(referenceInfo, vaddress, mskMessage);
+
+   _compiler->compileInt32(&writer, parseMessage(referenceInfo.referenceName, actionOnlyMode));
+
+   // get constant VMT reference
+   void* vmtVAddress = resolve(vmt, mskVMTRef, false);
+
+   // fix object VMT reference
+   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
+
+   return vaddress;
+}
 
 ////void* JITLinker :: resolveThreadSafeVariable(const TCHAR*  reference, int mask)
 ////{
@@ -1370,9 +1367,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //         case mskStatSymbolRef:
 //            vaddress = resolveStaticVariable(referenceInfo, mskStatRef);
 //            break;
-//         case mskMessage:
-//            vaddress = resolveMessage(referenceInfo, _loader->getMessageClass(), false);
-//            break;
+         case mskMessage:
+            vaddress = resolveMessage(referenceInfo, _loader->getMessageClass(), false);
+            break;
 //         case mskMessageName:
 //            vaddress = resolveMessage(referenceInfo, _loader->getMessageNameClass(), true);
 //            break;

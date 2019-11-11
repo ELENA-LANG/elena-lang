@@ -55,7 +55,7 @@ public:
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code) = 0;
 
-//   virtual void compileInt32(MemoryWriter* writer, int integer) = 0;
+   virtual void compileInt32(MemoryWriter* writer, int integer) = 0;
 //   virtual void compileInt64(MemoryWriter* writer, long long integer) = 0;
 //   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset) = 0;
 //   virtual void compileInt64(MemoryWriter* writer, int low, int high) = 0;
@@ -75,8 +75,8 @@ public:
    virtual int allocateTLSVariable(_JITLoader* loader) = 0;
    virtual void allocateThreadTable(_JITLoader* loader, int length) = 0;
 //   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length) = 0;
-//
-//   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
+
+   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength/*, size_t staticSize*/) = 0;
 
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
@@ -109,7 +109,7 @@ public:
 class JITCompiler32 : public _JITCompiler
 {
 public:
-//   virtual void compileInt32(MemoryWriter* writer, int integer);
+   virtual void compileInt32(MemoryWriter* writer, int integer);
 //   virtual void compileInt64(MemoryWriter* writer, long long integer);
 //   virtual void compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset);
 //   virtual void compileInt64(MemoryWriter* writer, int low, int high);
@@ -123,9 +123,9 @@ public:
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);
 
-//   // return VMT field position
-//   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
-//
+   // return VMT field position
+   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
+
 //   virtual size_t findFlags(void* refVMT);
 //   virtual size_t findLength(void* refVMT);
 //   virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);

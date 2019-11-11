@@ -51,7 +51,7 @@
 //#define static      8000100Fh
 //#define cast        80001011h
 //#define new         80001012h
-//#define dispatch    80001013h
+#define dispatch    80001013h
 //#define params      80001014h
 //#define extern      80001015h
 #define intern      80001016h
