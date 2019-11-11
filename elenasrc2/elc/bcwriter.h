@@ -94,6 +94,11 @@ class ByteCodeWriter
       RegScope acc;
       bool     debugBlockStarted;
 
+      void clear()
+      {
+         acc.type = lxNone;
+      }
+
       FlowScope()
       {
          debugBlockStarted = false;
@@ -148,7 +153,7 @@ class ByteCodeWriter
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
-//   void declareArgumentList(CommandTape& tape, int count);
+   void declareArgumentList(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
 //   void declareThenBlock(CommandTape& tape);
 //   void declareThenElseBlock(CommandTape& tape);
@@ -300,15 +305,15 @@ class ByteCodeWriter
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope/*, bool ignoreBranching*/);
 
-//   void pushObject(CommandTape& tape, LexicalType type, ref_t argument = 0);
-//   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
+   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 //   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal, int mode);
 //
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 //   void unboxCallParameter(CommandTape& tape, SNode current);
 
-//   void pushObject(CommandTape& tape, SyntaxTree::Node node);
+   void pushObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode);
+   void pushObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 
@@ -333,8 +338,8 @@ class ByteCodeWriter
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
-//   ref_t generateCall(CommandTape& tape, SyntaxTree::Node node, int paramCount, int presavedCount);
-//
+   /*ref_t*/void generateCall(CommandTape& tape, SyntaxTree::Node node/*, int paramCount, int presavedCount*/);
+
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
 //   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
@@ -344,7 +349,7 @@ class ByteCodeWriter
 //   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 //   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 //   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateInlineArgCallExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message);
 //   void generateVariadicInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message);

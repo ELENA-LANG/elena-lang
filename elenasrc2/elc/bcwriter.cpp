@@ -13,6 +13,7 @@
 
 using namespace _ELENA_;
 
+constexpr auto STACKOP_MODE      = 0x0001;
 //constexpr auto ACC_REQUIRED    = 0x0001;
 //constexpr auto BOOL_ARG_EXPR   = 0x0002;
 //constexpr auto EMBEDDABLE_EXPR = 0x0004;
@@ -302,13 +303,11 @@ void ByteCodeWriter :: declareBlock(CommandTape& tape)
    tape.write(blBlock);
 }
 
-//void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
-//{
-//   // { pushn 0 } n
-//   for(int i = 0 ; i < count ; i++)
-//      tape.write(bcPushN, 0);
-//}
-//
+void ByteCodeWriter :: declareArgumentList(CommandTape& tape, int count)
+{
+   tape.write(bcAllocI, count);
+}
+
 //void ByteCodeWriter :: declareVariable(CommandTape& tape, int value)
 //{
 //   // pushn  value
@@ -3783,38 +3782,38 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //   // freelock
 //   tape.write(bcFreeLock);
 //}
-//
-//inline SNode getChild(SNode node, size_t index)
+
+inline SNode getChild(SNode node, size_t index)
+{
+   SNode current = node.firstChild(lxObjectMask);
+
+   while (index > 0 && current != lxNone) {
+      current = current.nextNode(lxObjectMask);
+
+      index--;
+   }
+
+   return current;
+}
+
+//inline bool existNode(SNode node, LexicalType type)
 //{
-//   SNode current = node.firstChild();
-//
-//   while (index > 0 && current != lxNone) {
-//      current = current.nextNode();
-//
-//      index--;
-//   }
-//
-//   return current;
+//   return SyntaxTree::findChild(node, type) == type;
 //}
-//
-////inline bool existNode(SNode node, LexicalType type)
-////{
-////   return SyntaxTree::findChild(node, type) == type;
-////}
-//
-//inline size_t countChildren(SNode node)
-//{
-//   size_t counter = 0;
-//   SNode current = node.firstChild();
-//
-//   while (current != lxNone) {
-//      current = current.nextNode();
-//
-//      counter++;
-//   }
-//
-//   return counter;
-//}
+
+inline size_t countChildren(SNode node)
+{
+   size_t counter = 0;
+   SNode current = node.firstChild(lxObjectMask);
+
+   while (current != lxNone) {
+      current = current.nextNode(lxObjectMask);
+
+      counter++;
+   }
+
+   return counter;
+}
 
 void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowScope& scope/*, bool ignoreBranching*/)
 {
@@ -3878,18 +3877,20 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowSc
   // else return false;
 }
 
-//void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument)
-//{
-//   switch (type)
-//   {
-//      case lxSymbolReference:
-//         tape.write(bcCallR, argument | mskSymbolRef);
-//         tape.write(bcPushA);
-//         break;
+void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode)
+{
+   switch (type)
+   {
+      case lxSymbolReference:
+         tape.write(bcCallR, argument | mskSymbolRef);
+         tape.write(bcPushA);
+
+         scope.clear();
+         break;
 //      case lxConstantString:
 //      case lxConstantWideStr:
-//      case lxClass:
-//      case lxConstantSymbol:
+      case lxClassSymbol:
+      case lxConstantSymbol:
 //      case lxConstantChar:
 //      case lxConstantInt:
 //      case lxConstantLong:
@@ -3898,9 +3899,9 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowSc
 //      case lxExtMessageConstant:
 //      case lxSubjectConstant:
 //      case lxConstantList:
-//         // pushr reference
-//         tape.write(bcPushR, argument | defineConstantMask(type));
-//         break;
+         // pushr reference
+         tape.write(bcPushR, argument | defineConstantMask(type));
+         break;
 //      case lxLocal:
 //      case lxSelfLocal:
 //         //case lxBoxableLocal:
@@ -3915,10 +3916,10 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowSc
 //         // pushf n
 //         tape.write(bcPushF, argument, bpFrame);
 //         break;
-//      case lxCurrent:
-//         // pushsi index
-//         tape.write(bcPushSI, argument);
-//         break;
+      case lxCurrent:
+         // pushsi index
+         tape.write(bcPushSI, argument);
+         break;
 //      case lxField:
 //         // aloadfi 1
 //         // pushai offset / pusha
@@ -3962,14 +3963,14 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowSc
 //         // pushfi index
 //         tape.write(bcPushFI, argument, bpBlock);
 //         break;
-//      case lxNil:
-//         // pushn 0
-//         tape.write(bcPushN, 0);
-//         break;
-//      case lxResult:
-//         // pusha
-//         tape.write(bcPushA);
-//         break;
+      case lxNil:
+         // pushn 0
+         tape.write(bcPushR, 0);
+         break;
+      case lxResult:
+         // pusha
+         tape.write(bcPushA);
+         break;
 //      case lxResultField:
 //         // pushai reference
 //         tape.write(bcPushAI, argument);
@@ -3978,10 +3979,10 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowSc
 //         // pushe
 //         tape.write(bcPushE);
 //         break;
-//      default:
-//         break;
-//   }
-//}
+      default:
+         break;
+   }
+}
 
 void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode)
 {
@@ -3995,6 +3996,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
    switch (type) {
       case lxSymbolReference:
          tape.write(bcCallR, argument | mskSymbolRef);
+         type = lxNone; // acc content is undefined
          break;
 //      case lxConstantString:
 //      case lxConstantWideStr:
@@ -4017,10 +4019,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //         // aloadfi index
 //         tape.write(bcALoadFI, argument, bpFrame);
 //         break;
-//      case lxCurrent:
-//         // aloadsi index
-//         tape.write(bcALoadSI, argument);
-//         break;
+      case lxCurrent:
+         // peeksi index
+         tape.write(bcPeekSI, argument);
+         break;
 //////      case lxCurrentField:
 //////         // aloadsi index
 //////         // aloadai 0
@@ -4139,21 +4141,21 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //   if (basePresaved)
 //      tape.write(bcPopB);
 //}
-//
-//void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t argument)
-//{
-//   switch (type)
-//   {
+
+void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t argument)
+{
+   switch (type)
+   {
 //      case lxLocal:
 //      case lxSelfLocal:
 //      //case lxBoxableLocal:
 //         // asavefi index
 //         tape.write(bcASaveFI, argument, bpFrame);
 //         break;
-//      case lxCurrent:
-//         // asavesi index
-//         tape.write(bcASaveSI, argument);
-//         break;
+      case lxCurrent:
+         // storesi index
+         tape.write(bcStoreSI, argument);
+         break;
 //      case lxField:
 //         // bloadfi 1
 //         // asavebi index
@@ -4187,10 +4189,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case lxBaseField:
 //         tape.write(bcASaveBI, argument);
 //         break;
-//      default:
-//         break;
-//   }
-//}
+      default:
+         break;
+   }
+}
 
 void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
 {
@@ -4203,11 +4205,11 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //   }
 }
 
-////void ByteCodeWriter::pushObject(CommandTape& tape, SNode node)
-////{
-////   pushObject(tape, node.type, node.argument);
-////}
-//
+void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
+{
+   pushObject(tape, node.type, node.argument, scope, mode);
+}
+
 //void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //{
 //   SNode current = node.firstChild();
@@ -4983,9 +4985,9 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //   if (bpNode != lxNone)
 //      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 //}
-//
-//ref_t ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode, int paramCount, int presavedCount)
-//{
+
+/*ref_t*/void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode/*, int paramCount, int presavedCount*/)
+{
 //   SNode bpNode = callNode.findChild(lxBreakpoint);
 //   if (bpNode != lxNone) {
 //      translateBreakpoint(tape, bpNode, false);
@@ -5002,15 +5004,15 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //      else generateExpression(tape, overridden, ACC_REQUIRED);
 //   }
 //   else tape.write(bcALoadSI, 0);
-//
-//   // copym message
-//   ref_t message = callNode.argument;
+
+   // copym message
+   ref_t message = callNode.argument;
 //   SNode msg = callNode.findChild(lxOvreriddenMessage);
 //   if (msg != lxNone)
 //      message = msg.argument;
-//
-//   tape.write(bcCopyM, message);
-//
+
+   tape.write(bcCopyM, message);
+
 //   bool invokeMode = test(message, SPECIAL_MESSAGE);
 //
 //   SNode target = callNode.findChild(lxCallTarget);
@@ -5028,17 +5030,16 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //      tape.write(bcFreeStack, getParamCount(callNode.argument));
 //   }
 //   else {
-//      // acallvi offs
-//      tape.write(bcACallVI, 0);
-//      tape.write(bcFreeStack, 1 + getParamCount(callNode.argument));
+      // callvi offs
+      tape.write(bcCallVI, 0);
 //   }
 //
 //   if (bpNode != lxNone)
 //      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//
-//   return message;
-//}
-//
+
+   //return message;
+}
+
 //void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
 //{
 //   int paramCount = 0;
@@ -5207,24 +5208,37 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //   pushObject(tape, lxResult);
 //   presavedCount++;
 //}
-//
-//void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node)
-//{
-//   bool directMode = true;
+
+inline bool isSubOperation(SNode node)
+{
+   if (node == lxExpression) {
+      return isSubOperation(node.firstChild(lxObjectMask));
+   }
+   else return test(node.type, lxCodeScopeMask);
+}
+
+void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, FlowScope& scope)
+{
+   bool directMode = true;
 //   bool argUnboxMode = false;
 //   bool unboxMode = false;
 //   bool openArg = false;
 //   bool accTarget = false;
 //   bool accPresaving = false; // if the message target is in acc
-//
-//   int paramCount = 0;
+
+   int argCount = 0;
 //   int presavedCount = 0;
 //
 //   int argMode = ACC_REQUIRED;
-//
-//   // analizing a sub tree
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
+
+   // analizing a sub tree
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      argCount++;
+
+      if (isSubOperation(current))
+         directMode = false;
+
 //      SNode member = current;
 //      if (current == lxExpression) {
 //         member = current.firstChild(lxObjectMask);
@@ -5273,27 +5287,27 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //      }
 //      else if (test(member.type, lxCodeScopeMask) || member == lxResult)
 //         directMode = false;
-//
-//      current = current.nextNode();
-//   }
-//
+
+      current = current.nextNode(lxObjectMask);
+   }
+
 //   if (!argUnboxMode && isOpenArg(node.argument)) {
 //      // NOTE : do not add trailing nil for result of unboxing operation
 //      pushObject(tape, lxNil);
 //      openArg = true;
 //   }      
-//
-//   if (!directMode && (paramCount > 1 || unboxMode)) {
-//      declareArgumentList(tape, paramCount);
-//   }
-//   // if message has no arguments - direct mode is allowed
-//   else directMode = true;
-//
-//   size_t counter = countChildren(node);
+
+   if (!directMode && (argCount > 1/* || unboxMode*/)) {
+      declareArgumentList(tape, argCount);
+   }
+   // if message has no arguments - direct mode is allowed
+   else directMode = true;
+
+   size_t counter = countChildren(node);
 //   size_t index = 0;
-//   for (size_t i = 0; i < counter; i++) {
-//      // get parameters in reverse order if required
-//      current = getChild(node, directMode ? counter - i - 1 : i);
+   for (size_t i = 0; i < counter; i++) {
+      // get parameters in reverse order if required
+      current = getChild(node, directMode ? counter - i - 1 : i);
 //      if (current == lxExpression) {
 //         current = current.firstChild(lxObjectMask);
 //      }
@@ -5315,6 +5329,12 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //         }
 //         else generateObject(tape, current, argMode);
 //
+      if (!directMode) {
+         generateObject(tape, current, scope);
+         saveObject(tape, lxCurrent, i);
+      }
+      else generateObject(tape, current, scope, STACKOP_MODE);
+
 //         if (directMode) {
 //            pushObject(tape, lxResult);
 //         }
@@ -5322,10 +5342,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //
 //         index++;
 //      }
-//   }
-//
-//   generateCall(tape, node, paramCount, presavedCount);
-//
+   }
+
+   generateCall(tape, node/*, paramCount, presavedCount*/);
+
 //   if (argUnboxMode) {
 //      releaseArgList(tape);
 //   }
@@ -5344,8 +5364,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scop
 //
 //   if (accPresaving)
 //      releaseObject(tape);
-//}
-//
+}
+
 //void ByteCodeWriter :: unboxCallParameter(CommandTape& tape, SNode current)
 //{
 //   SNode target = current.firstChild(lxObjectMask);
@@ -6204,6 +6224,8 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       translateBreakpoint(tape, node.firstChild(), scope);
    }
 
+   bool stackOp = test(mode, STACKOP_MODE);
+
    switch (node.type)
    {
 //      case lxExpression:
@@ -6213,11 +6235,12 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxSeqExpression:
 //         generateExpression(tape, node, mode);
 //         break;
-//      case lxCalling:
+      case lxCalling:
 //      case lxDirectCalling:
 //      case lxSDirectCalling:
-//         generateCallExpression(tape, node);
-//         break;
+         generateCallExpression(tape, node, scope);
+         scope.clear();
+         break;
 //      case lxInlineArgCall:
 //         generateInlineArgCallExpression(tape, node);
 //         break;
@@ -6326,9 +6349,16 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //         generateYieldReturn(tape, node);
 //         break;
       default:
-         loadObject(tape, node, scope, mode);
+         if (stackOp) {
+            pushObject(tape, node, scope, mode);
+            stackOp = false;
+         }
+         else loadObject(tape, node, scope, mode);
          break;
    }
+
+   if (stackOp)
+      pushObject(tape, lxResult, 0, scope, mode);
 }
 
 void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, FlowScope& scope, int mode)
@@ -6444,7 +6474,7 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, FlowSco
 
 void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
-   SyntaxTree::Node current = node.firstChild();
+   SyntaxTree::Node current = node.firstChild(lxObjectMask);
    while (current != lxNone) {
       LexicalType type = current.type;
       switch (type)
@@ -6488,11 +6518,11 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxYieldDispatch:
 //            generateYieldDispatch(tape, current);
 //            break;
-//         default:
-//            generateObject(tape, current);
-//            break;
+         default:
+            generateObject(tape, current, scope);
+            break;
       }
-      current = current.nextNode();
+      current = current.nextNode(lxObjectMask);
    }
 }
 

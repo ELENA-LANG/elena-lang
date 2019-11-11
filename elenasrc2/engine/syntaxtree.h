@@ -22,6 +22,7 @@ enum LexicalType
 //   lxExprMask                 = 0x00C000,
    lxTerminalMask             = 0x002000,
    lxOperatorMask             = 0x010000,
+   lxCodeScopeMask            = 0x020000,
 //   lxSubOpMask                = 0x100000,
 //   lxPrimitiveOpMask          = 0x080000,
 //
@@ -61,11 +62,13 @@ enum LexicalType
    lxExpression               = 0x009030,
    lxNil                      = 0x008040,
    lxClassSymbol              = 0x008050, // arg - reference
-   lxSymbolReference          = 0x008060,
+   lxSymbolReference          = 0x028060,
    lxConstantSymbol           = 0x008070, // arg - reference
    lxInternalRef              = 0x008080,
    lxImporting                = 0x008090,
-   lxCalling                  = 0x0080A0,
+   lxCalling                  = 0x0280A0,
+   lxCurrent                  = 0x0080B0, // arg -offset
+   lxResult                   = 0x0080C0, // arg -offset
 
    // attributes
    lxAttribute                = 0x20000,
@@ -137,8 +140,6 @@ enum LexicalType
 //   lxExtMessageConstant       = 0x00A114, // arg -reference
 //   lxSubjectConstant          = 0x00A115, // arg - reference
 //   lxStaticConstField         = 0x008116, // arg - reference
-//   lxCurrent                  = 0x00A118, // arg -offset
-//   lxResult                   = 0x00A119, // arg -offset
 //   lxResultField              = 0x00A11A, // arg -offset
 //   lxCurrentMessage           = 0x00A11B,
 //   lxSelfLocal                = 0x00A11C,

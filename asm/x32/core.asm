@@ -974,6 +974,14 @@ inline % 98h
 
 end
 
+// ; callvi (ecx - offset to VMT entry)
+inline % 0A2h
+
+  mov  edx, [ebx - 4]
+  call [edx + __arg1]
+
+end
+
 // ; callextr
 inline % 0A5h
 

@@ -62,12 +62,12 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/10;
+const int gcCommandNumber = /*160*/11;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
    bcReserve, bcPushS, bcStoreSI, bcPeekSI, bcThrow,
-//   bcACallVI, bcBCopyA, bcParent,
+   bcCallVI, //bcBCopyA, bcParent,
 //   bcALoadFI, bcASaveFI, bcClose, bcMIndex,
 //   bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
 //   bcALoadBI, bcPushAI, bcPushF, ,
@@ -143,13 +143,13 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOp, &compileNop, &compileNop,
-   &compileOpen, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileSetR, &compileNop,
+   &compileOpen, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileSetR, &compileMCopy,
 
-   &compileNop, &compileNop, &compileNop, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
+   &compileNop, &compileNop, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compilePush, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadIndexOp,
+   &compileNop, &compileNop, &compilePushSI, &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadIndexOp,
 
    &compileNop, &compileNop, &compileNop, &loadIndexOp, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -584,33 +584,33 @@ void _ELENA_::loadIndexOp(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
-//void _ELENA_::loadVMTIndexOp(int opcode, x86JITScope& scope)
-//{
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0]==-1) {
-//         scope.code->writeDWord((scope.argument << 3) + 4);
-//      }
-//      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
-//
+void _ELENA_::loadVMTIndexOp(int opcode, x86JITScope& scope)
+{
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0]==-1) {
+         scope.code->writeDWord((scope.argument << 3) + 4);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 ////void _ELENA_::loadVMTMIndexOp(int opcode, x86JITScope& scope)
 ////{
 ////   char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -806,15 +806,15 @@ void _ELENA_::compilePush(int opcode, x86JITScope& scope)
 //   scope.code->writeWord(0x808B);
 //   scope.code->writeDWord(scope.argument << 2);
 //}
-//
-//void _ELENA_::compilePushS(int, x86JITScope& scope)
-//{
-//   // push [esp+offset]
-//   scope.code->writeWord(0xB4FF);
-//   scope.code->writeByte(0x24);
-//   scope.code->writeDWord(scope.argument << 2);
-//}
-//
+
+void _ELENA_::compilePushSI(int, x86JITScope& scope)
+{
+   // push [esp+offset]
+   scope.code->writeWord(0xB4FF);
+   scope.code->writeByte(0x24);
+   scope.code->writeDWord(scope.argument << 2);
+}
+
 //void _ELENA_::compileJump(int, x86JITScope& scope)
 //{
 //   ::compileJump(scope, scope.tape->Position() + scope.argument, (scope.argument > 0), (__abs(scope.argument) < 0x10));
@@ -1240,13 +1240,13 @@ void _ELENA_::compileCallR(int, x86JITScope& scope)
 //   // pop eax
 //   scope.code->writeByte(0x58);
 //}
-//
-//void _ELENA_::compileMCopy(int, x86JITScope& scope)
-//{
-//   // mov ecx, message
-//   scope.code->writeByte(0xB9);
-//   scope.code->writeDWord(scope.resolveMessage(scope.argument));
-//}
+
+void _ELENA_::compileMCopy(int, x86JITScope& scope)
+{
+   // mov ecx, message
+   scope.code->writeByte(0xB9);
+   scope.code->writeDWord(scope.resolveMessage(scope.argument));
+}
 
 void _ELENA_::compilePopN(int, x86JITScope& scope)
 {

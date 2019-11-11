@@ -172,7 +172,7 @@ ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
       }
       else token.raiseErr("Invalid number (%d)\n");
    }
-   else if (token.check("message")) {
+   else if (token.check("mssgconst")) {
       token.read(":", "Invalid operand (%d)");
       token.read();
 
@@ -531,6 +531,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcELoadFI:
          //case bcELoadSI:
          case bcPushS:
+         case bcPushSI:
          //case bcESaveFI:
          //case bcShiftLN:
          //case bcShiftRN:
@@ -555,9 +556,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             compileNCommand(opcode, token, writer);
             break;
          //case bcSetVerb:
-         //case bcCopyM:
-         //   compileMCommand(opcode, token, writer, binary);
-         //   break;
+         case bcCopyM:
+            compileMCommand(opcode, token, writer, binary);
+            break;
          //case bcIfB:
          //case bcElseB:
          //case bcIf:

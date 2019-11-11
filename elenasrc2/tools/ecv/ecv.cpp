@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   7
+#define REVISION_VERSION   8
 
 using namespace _ELENA_;
 
@@ -544,7 +544,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
    switch(code)
    {
       case bcPushS:
-//      case bcPushSI:
+      case bcPushSI:
       case bcPeekSI:
       case bcStoreSI:
       case bcSaveSI:
@@ -644,12 +644,10 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append('h');
          break;
 //      case bcAJumpVI:
-//      case bcACallVI:
-//         printCommand(command, opcode);
-//         command.append("acc::vmt[");
-//         command.appendInt(argument);
-//         command.append(']');
-//         break;
+      case bcCallVI:
+         printCommand(command, opcode);
+         command.appendInt(argument);
+         break;
 //      case bcPushAI:
 //      case bcALoadAI:
 //         printCommand(command, opcode);
@@ -677,12 +675,12 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //         printMessage(command, module, argument2);
 //         command.append("\"");
 //         break;
-//      case bcCopyM:
-//         printCommand(command, opcode);
-//         command.append("message : \"");
-//         printMessage(command, module, argument);
-//         command.append("\"");
-//         break;
+      case bcCopyM:
+         printCommand(command, opcode);
+         command.append("mssgconst : \"");
+         printMessage(command, module, argument);
+         command.append("\"");
+         break;
 //      case bcSetVerb:
 //         printCommand(command, opcode);
 //         command.append("messagename : \"");

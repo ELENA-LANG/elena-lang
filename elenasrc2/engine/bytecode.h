@@ -165,11 +165,11 @@ enum ByteCode
 //   bcACopyF          = 0x9C,
 //   bcACopyS          = 0x9D,
    bcSetR            = 0x9E,
-//   bcCopyM           = 0x9F,
-//
+   bcCopyM           = 0x9F,
+
 //   bcJump            = 0xA0,
 //   bcAJumpVI         = 0xA1,
-//   bcACallVI         = 0xA2,
+   bcCallVI         = 0xA2,
    bcCallR           = 0xA3,
 //   bcAJumpI          = 0xA4,
    bcCallExtR        = 0xA5,
@@ -194,8 +194,8 @@ enum ByteCode
 //   bcDLoadFI         = 0xB7,
 //   bcDLoadSI         = 0xB8,
 //   bcDSaveFI         = 0xB9,
-//   bcPushSI          = 0xBA,
-   bcSaveSI         = 0xBB,
+   bcPushSI          = 0xBA,
+   bcSaveSI          = 0xBB,
 //   bcELoadSI         = 0xBC,
 //   bcPushF           = 0xBD,
    bcPushS           = 0xBE,
@@ -489,8 +489,8 @@ public:
    static bool IsMCode(ByteCode code)
    {
       switch (code) {
-         //case bcCopyM:
-         //   return true;
+         case bcCopyM:
+            return true;
          default:
             return false;
       }
@@ -515,7 +515,8 @@ public:
          //case bcPushN:
          case bcPushR:
          case bcAllocI:
-         //case bcPushSI:
+         case bcPushSI:
+         case bcPushS:
          //case bcPushAI:
          //case bcPushF:
          //case bcPushE:
