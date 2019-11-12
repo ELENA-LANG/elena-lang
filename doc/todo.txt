@@ -2,11 +2,17 @@
 In development:
 ------         
               dev
-                * message call
                 * end of code - breakpoint
                 * explicit constructor
                 * implicit constructor
+                * create a class with implicit constructor
+                * public / private / internal methods
+                * nested class scope
                 * reference message??
+                * fields, public / private / internal fields
+                * fields with reference name
+                * templates, template creating, template inheritance, template import
+
                 * implement sealed, const, struct
                 * countable
 
@@ -15,6 +21,11 @@ In development:
 
                 * declaring variable
                 * declaring typed variable : implicit, reference, global
+
+                * static fields / static methods are inherited
+                * const static  - are declared only in-place
+                * accum static  - are declared and inherited only in-place
+                * it should be possible to create a class from static method (using self)
 
                 * weak parameters
                 * stron-typed parameters

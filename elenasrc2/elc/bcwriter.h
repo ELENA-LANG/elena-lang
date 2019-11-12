@@ -148,7 +148,7 @@ class ByteCodeWriter
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
    void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
-//   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, bool withPresavedMessage, bool withNewFrame = true);
+   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef/*, int reserved, int allocated, bool withPresavedMessage*/, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
@@ -182,7 +182,7 @@ class ByteCodeWriter
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
-//   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
+   void newFrame(CommandTape& tape/*, int reserved, int allocated, bool withPresavedMessage*/);
 //   void newStructure(CommandTape& tape, int size, ref_t reference);
 //   void newDynamicStructure(CommandTape& tape, int itemSize);
 ////   void newDynamicNStructure(CommandTape& tape);
@@ -258,8 +258,8 @@ class ByteCodeWriter
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape, bool idle = false);
-   void exitMethod(CommandTape& tape, int count/*, int reserved, bool withFrame = true*/);
-   void endMethod(CommandTape& tape, int argCount/*, int reserved, bool withFrame = true*/);
+   void exitMethod(CommandTape& tape, int count/*, int reserved*/, bool withFrame = true);
+   void endMethod(CommandTape& tape, int argCount/*, int reserved*/, bool withFrame = true);
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);

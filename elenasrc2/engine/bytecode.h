@@ -37,7 +37,7 @@ enum ByteCode
 //   bcBCopyA          = 0x12,
 //   bcDec             = 0x13,
 //   bcPopB            = 0x14,
-//   bcClose           = 0x15,
+   bcClose           = 0x15,
 //   bcSub             = 0x16,
    bcQuit            = 0x17,
 //   bcGet             = 0x18,

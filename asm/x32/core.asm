@@ -952,6 +952,14 @@ labEnd:
                                                                 
 end
 
+// ; close
+inline % 15h
+
+  mov  esp, ebp
+  pop  ebp
+  
+end
+
 // ; loadenv
 inline % 2Ah
 

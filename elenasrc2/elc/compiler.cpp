@@ -781,7 +781,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 Compiler::CodeScope :: CodeScope(SourceScope* parent)
    : Scope(parent)//, locals(Parameter(0))
 {
-//   this->level = 0;
+   this->level = 0;
 //   this->saved = this->reserved = 0;
 //   this->genericMethod = false;
 //   this->ignoreDuplicates = false;
@@ -791,7 +791,7 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
    : Scope(parent)//, locals(Parameter(0))
 {
-//   this->level = 0;
+   this->level = 0;
 //   this->saved = this->reserved = 0;
 //   this->genericMethod = parent->generic;
 //   this->ignoreDuplicates = false;
@@ -5662,15 +5662,15 @@ ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInf
 //   writer.removeBookmark();
 //}
 
-/*ObjectInfo*/void Compiler :: compileCode(/*SyntaxWriter& writer, */SNode node, CodeScope& scope)
+/*ObjectInfo*/void Compiler :: compileCode(SNode node, CodeScope& scope)
 {
 //   ObjectInfo retVal;
-//
-//   bool needVirtualEnd = true;
-//   SNode current = node.firstChild();
-//
-//   while (current != lxNone) {
-//      switch(current) {
+
+   bool needVirtualEnd = true;
+   SNode current = node.firstChild();
+
+   while (current != lxNone) {
+      switch(current) {
 //         case lxExpression:
 //            writer.newNode(lxExpression);
 //            writer.appendNode(lxBreakpoint, dsStep);
@@ -5701,23 +5701,23 @@ ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInf
 //            }
 //            break;
 //         }
-//         case lxEOF:
-//            needVirtualEnd = false;
-//            writer.newNode(lxBreakpoint, dsEOP);
-//            writeTerminalInfo(writer, current);
-//            writer.closeNode();
-//            break;
-//      }
-//
-////      scope.freeSpace();
-//
-//      current = current.nextNode();
-//   }
-//
-//   if (needVirtualEnd) {
-//      writer.appendNode(lxBreakpoint, dsVirtualEnd);
-//   }
-//
+         case lxEOP:
+            needVirtualEnd = false;
+            current.injectNode(lxTerminalMask); // injecting virtual terminal token 
+            current.insertNode(lxBreakpoint, dsEOP);
+            break;
+      }
+
+//      scope.freeSpace();
+
+      current = current.nextNode();
+   }
+
+   if (needVirtualEnd) {
+      SNode eop = node.appendNode(lxEOP);
+      eop.insertNode(lxBreakpoint, dsVirtualEnd);
+   }
+
 //   return retVal;
 }
 
@@ -6776,13 +6776,18 @@ void Compiler :: compileMethodCode(/*SyntaxWriter& writer, */SNode node, SNode b
 //
 //      compileMultidispatch(writer, node.parentNode(), codeScope, *classScope);
 //   }
-//
-//   writer.newNode(lxNewFrame, scope.generic ? -1 : 0);
-//
-//   // new stack frame
-//   // stack already contains current self reference
-//   // the original message should be restored if it is a generic method
-//   codeScope.level++;
+
+   int frameArg = /*scope.generic ? -1 : */0;
+   if (body != lxCode) {
+      body.injectAndReplaceNode(lxNewFrame, frameArg);
+      body = body.firstChild();
+   }
+   else body.set(lxNewFrame, frameArg);
+
+   // new stack frame
+   // stack already contains current self reference
+   // the original message should be restored if it is a generic method
+   codeScope.level++;
 //   // declare the current subject for a generic method
 //   if (scope.generic) {
 //      codeScope.level++;
@@ -6816,8 +6821,6 @@ void Compiler :: compileMethodCode(/*SyntaxWriter& writer, */SNode node, SNode b
 //      writer.removeBookmark();
 //      writer.closeNode();
 //   }
-//
-//   writer.closeNode();
 }
 
 void Compiler :: compileMethod(SNode node, MethodScope& scope)
@@ -6986,8 +6989,6 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 
 void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
 {
-//   writer.newNode(lxClassMethod, scope.message);
-//
 //   SNode attrNode = node.findChild(lxEmbeddableMssg);
 //   if (attrNode != lxNone) {
 //      // COMPILER MAGIC : copy an attribute so it will be recognized as embeddable call
@@ -6999,7 +7000,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    CodeScope codeScope(&scope);
 
 //   bool retExpr = false;
-//   bool withFrame = false;
+   bool withFrame = false;
 //   int classFlags = codeScope.getClassFlags();
 //   int preallocated = 0;
 
@@ -7033,15 +7034,19 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
 //   else scope.raiseError(errIllegalConstructor, node);
 
    if (bodyNode != lxNone) {
-//      if (!withFrame) {
-//         withFrame = true;
-//
-//         writer.newNode(lxNewFrame);
-//
-//         // new stack frame
-//         // stack already contains $self value
-//         codeScope.level++;
-//      }
+      if (!withFrame) {
+         if (bodyNode != lxCode) {
+            bodyNode.injectAndReplaceNode(lxNewFrame);
+            bodyNode = bodyNode.firstChild();
+         }
+         else bodyNode.set(lxNewFrame, 0);
+
+         withFrame = true;
+         
+         // new stack frame
+         // stack already contains $self value
+         codeScope.level++;
+      }
 //
 //      if (retExpr) {
 //         writer.newNode(lxReturning);
@@ -7060,9 +7065,6 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
 //         writer.closeNode();
 //      }
    }
-
-//   if (withFrame)
-//      writer.closeNode();
 
    node.insertNode(lxArgCount, getArgCount(scope.message));
 //   writer.appendNode(lxReserved, scope.reserved);

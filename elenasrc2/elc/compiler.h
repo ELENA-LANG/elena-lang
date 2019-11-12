@@ -633,7 +633,7 @@ private:
    {
 //      // scope local variables
 //      LocalMap     locals;
-//      int          level;
+      int          level;
 //      bool         genericMethod;
 //      bool         yieldMethod;
 //

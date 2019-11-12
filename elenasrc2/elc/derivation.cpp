@@ -1309,20 +1309,20 @@ void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node, Scop
 //            generateExpressionTree(writer, current, derivationScope, EXPRESSION_IMPLICIT_MODE);
 //            writer.closeNode();
 //            break;
-//         case lxEOF:
-//         {
-//            writer.newNode(lxEOF);
-//            if (!derivationScope.ignoreTerminalInfo)
-//            {
-//               SNode terminal = current.firstChild();
-//               SyntaxTree::copyNode(writer, lxRow, terminal);
-//               SyntaxTree::copyNode(writer, lxCol, terminal);
-//               SyntaxTree::copyNode(writer, lxLength, terminal);
-//            }
-//
-//            writer.closeNode();
-//            break;
-//         }
+         case lxEOP:
+         {
+            writer.newNode(lxEOP);
+            //if (!derivationScope.ignoreTerminalInfo)
+            //{
+               SNode terminal = current.firstChild();
+               SyntaxTree::copyNode(writer, lxRow, terminal);
+               SyntaxTree::copyNode(writer, lxCol, terminal);
+               SyntaxTree::copyNode(writer, lxLength, terminal);
+            //}
+
+            writer.closeNode();
+            break;
+         }
       }
       current = current.nextNode();
    }

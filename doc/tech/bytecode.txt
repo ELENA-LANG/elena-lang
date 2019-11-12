@@ -42,6 +42,10 @@ ELENA byte codes (or ecodes)
 
  Frame operations:
  -----------------              
+ close                      - restore the previous frame ;
+                              should be paired with open
+                              it should be only one command per procedure ; 
+ 
  open i                     - save the last frame and open the new frame ; 
                               init the frame header offset
                               it should be only one command per procedure ; 
@@ -428,10 +432,6 @@ ELENA byte codes (or ecodes)
 
  Frame operations:
  -----------------              
- close                      - restore the previous frame ;
-                              should be paired with open
-                              it should be only one command per procedure ; 
- 
  equit                      - terminates the procedure ; clear the stack parameters, based
                               on ext
 
