@@ -652,12 +652,12 @@ bool CompilerLogic :: isValidType(ClassInfo& info)
 //   }
 //   else return isEmbeddable(info);
 //}
-//
-//bool CompilerLogic :: isRole(ClassInfo& info)
-//{
-//   return test(info.header.flags, elRole);
-//}
-//
+
+bool CompilerLogic :: isRole(ClassInfo& info)
+{
+   return test(info.header.flags, elRole);
+}
+
 //bool CompilerLogic :: isAbstract(ClassInfo& info)
 //{
 //   return test(info.header.flags, elAbstract);
@@ -1492,15 +1492,15 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //
 //   return 0;
 //}
-//
-//void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
-//{
-//   if (classClassMode) {
-//      // class class is always stateless and final
-//      info.header.flags |= elStateless;
-//      info.header.flags |= elFinal;
-//   }
-//
+
+void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
+{
+   if (classClassMode) {
+      // class class is always stateless and final
+      info.header.flags |= elStateless;
+      info.header.flags |= elFinal;
+   }
+
 //   if (test(info.header.flags, elNestedClass)) {
 //      // stateless inline class
 //      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
@@ -1590,8 +1590,8 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //
 //   // generate operation list if required
 //   injectOverloadList(scope, info, compiler, classRef);
-//}
-//
+}
+
 //bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg)
 //{
 //   switch ((size_t)attrValue) {
@@ -1641,9 +1641,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
    {
       case 0:
          return true;
-//      case V_SEALED:
-//         attrValue = elSealed;
-//         return true;
+      case V_SEALED:
+         attrValue = elSealed;
+         return true;
 //      case V_ABSTRACT:
 //         attrValue = elAbstract;
 //         return true;
@@ -1678,20 +1678,23 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
 //      //   attrValue = elTapeGroup;
 ////         return true;
       case V_PUBLIC:
+         attrValue = 0;
          visibility = Visibility::Public;
          return true;
       case V_INTERNAL:
+         attrValue = 0;
          visibility = Visibility::Internal;
          return true;
       case V_PRIVATE:
+         attrValue = 0;
          visibility = Visibility::Private;
          return true;
       case V_CLASS:
          attrValue = 0;
          return true;
-//      case V_SINGLETON:
-//         attrValue = elRole | elNestedClass;
-//         return true;
+      case V_SINGLETON:
+         attrValue = elRole/* | elNestedClass*/;
+         return true;
       default:
          return false;
    }

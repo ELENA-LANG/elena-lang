@@ -131,7 +131,7 @@ class ByteCodeWriter
    void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
    void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
 
-//   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
+   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings);
    void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
    void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
    void writeProcedureDebugInfo(Scope& scope, ref_t sourceRef);
@@ -183,22 +183,21 @@ class ByteCodeWriter
    void declareBlock(CommandTape& tape);
 
    void newFrame(CommandTape& tape/*, int reserved, int allocated, bool withPresavedMessage*/);
-//   void newStructure(CommandTape& tape, int size, ref_t reference);
-//   void newDynamicStructure(CommandTape& tape, int itemSize);
-////   void newDynamicNStructure(CommandTape& tape);
-//
-//   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
+   void newStructure(CommandTape& tape, int size, ref_t reference);
+   //void newDynamicStructure(CommandTape& tape, int itemSize);
+
+   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
 //   void newDynamicObject(CommandTape& tape);
 //   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
-//
-//   void popObject(CommandTape& tape, LexicalType sourceTypeS);
-//
+
+   void popObject(CommandTape& tape, LexicalType sourceType);
+
 //   void copyBase(CommandTape& tape, int size);
 //   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int mode);
 //   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int mode);
 //   void initBase(CommandTape& tape, int fieldCount);
-//   void initObject(CommandTape& tape, int fieldCount, LexicalType sourceType, ref_t sourceArgument = 0);
+   void clearObject(CommandTape& tape, int fieldCount);
 //   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveStructBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int size);
@@ -362,7 +361,7 @@ class ByteCodeWriter
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateCreating(CommandTape& tape, SyntaxTree::Node node);
+   void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
 //   void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);

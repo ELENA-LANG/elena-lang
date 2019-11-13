@@ -178,12 +178,12 @@ void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
 //   writer->write(binary->get(0), length);
 //   writer->align(4, 0);
 //}
-//
-//size_t JITCompiler32 :: findFlags(void* refVMT)
-//{
-//   return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant
-//}
-//
+
+size_t JITCompiler32 :: findFlags(void* refVMT)
+{
+   return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant
+}
+
 //size_t JITCompiler32 :: findLength(void* refVMT)
 //{
 //   int count = *(int*)((int)refVMT - elVMTCountOffset32);

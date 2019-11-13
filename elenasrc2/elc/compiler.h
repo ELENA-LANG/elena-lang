@@ -724,13 +724,13 @@ private:
 //
 //         return scope ? scope->reference : 0;
 //      }
-//
-//      ref_t getClassFlags(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->info.header.flags : 0;
-//      }
+
+      ref_t getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
@@ -884,7 +884,7 @@ private:
 
 //   int defineFieldSize(CodeScope& scope, int offset);
 
-   InheritResult inheritClass(ClassScope& scope, ref_t parentRef/*, bool ignoreFields, bool ignoreSealed*/);
+   InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed);
 //   void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 //
 //   // NOTE : the method is used to set template pseudo variable
@@ -897,14 +897,14 @@ private:
 
 //   bool isValidAttributeType(Scope& scope, _CompilerLogic::FieldAttributes& attrs);
 
-   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef/*, bool ignoreFields = false*/);
+   void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false);
    void compileParentDeclaration(SNode node, ClassScope& scope/*, bool extensionMode*/);
 //   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 //   void validateClassFields(SNode node, ClassScope& scope);
 //
 //   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
    void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode);
-   void declareClassAttributes(SNode node, ClassScope& scope/*, bool& publicAttribute*/);
+   void declareClassAttributes(SNode node, ClassScope& scope, bool visibilityOnly);
 ////   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
 //   void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
    void declareVMT(SNode member, ClassScope& scope, bool& implicitClass);
@@ -1054,10 +1054,10 @@ private:
 //   void compileYieldableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //
 //   void compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message);
-//
-//   void compileDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
-//   //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
-//
+
+   void compileDefaultConstructor(SNode node, MethodScope& scope);
+   //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
+
 //   ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
 //   void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedCode(_ModuleScope& scope, SNode node);
@@ -1072,8 +1072,8 @@ private:
 //
 //   void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst, bool isArray);
-//   
-//   void generateClassFlags(ClassScope& scope, SNode node/*, bool& closureBaseClass*/);
+   
+   void generateClassFlags(ClassScope& scope, SNode node);
 //   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
    void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool embeddableClass*/);

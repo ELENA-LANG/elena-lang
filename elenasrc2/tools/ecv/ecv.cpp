@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   8
+#define REVISION_VERSION   10
 
 using namespace _ELENA_;
 
@@ -200,7 +200,7 @@ _Memory* findSymbolCode(_Module* module, ident_t referenceName)
 
 ref_t resolveMessage(_Module* module, ident_t method)
 {
-   int paramCount = 0;
+   int argCount = 0;
    ref_t actionRef = 0;
    ref_t flags = 0;
 
@@ -232,61 +232,39 @@ ref_t resolveMessage(_Module* module, ident_t method)
       actionName.copy(method, paramIndex);
 
       IdentifierString countStr(method + paramIndex + 1, getlength(method) - paramIndex - 2);
-      paramCount = countStr.ident().toInt();
+      argCount = countStr.ident().toInt();
    }
    else actionName.copy(method);
 
-   //if (actionName.compare("dispatch")) {
-   //   actionRef = DISPATCH_MESSAGE_ID;
-   //}
-   //else if (actionName.compare("#new")) {
-   //   actionRef = NEWOBJECT_MESSAGE_ID;
-   //}
-   ///*else */if (actionName.compare("#init")) {
-   //   actionRef = INIT_MESSAGE_ID;
-   //}
-   //else {
-   //   if (method.find("set&") != NOTFOUND_POS) {
-   //      actionName.cut(0, 4);
-   //      flags = PROPSET_MESSAGE;
-   //   }
-   //   else if (method.startsWith("#cast<") && paramCount > 0) {
-   //      flags = SPECIAL_MESSAGE;
-   //   }
-   ////   else if (actionName.compare("set")) {
-   ////      flags = PROPSET_MESSAGE;
-   ////   }
+   ref_t signature = 0;
+   size_t index = actionName.ident().find('<');
+   if (index != NOTFOUND_POS) {
+      ref_t references[ARG_COUNT];
+      size_t end = actionName.ident().find('>');
+      size_t len = 0;
+      size_t i = index + 1;
+      while (i < end) {
+         size_t j = actionName.ident().find(i, ',', end);
 
-      ref_t signature = 0;
-      size_t index = actionName.ident().find('<');
-      if (index != NOTFOUND_POS) {
-         ref_t references[ARG_COUNT];
-         size_t end = actionName.ident().find('>');
-         size_t len = 0;
-         size_t i = index + 1;
-         while (i < end) {
-            size_t j = actionName.ident().find(i, ',', end);
+         IdentifierString temp(actionName.c_str() + i, j-i);
+         references[len++] = module->mapReference(temp, true);
 
-            IdentifierString temp(actionName.c_str() + i, j-i);
-            references[len++] = module->mapReference(temp, true);
-
-            i = j + 1;
-         }
-
-         signature = module->mapSignature(references, len, true);
-
-         actionName.truncate(index);
+         i = j + 1;
       }
 
-      actionRef = module->mapAction(actionName, signature, true);
-      if (actionRef == 0) {
-         printLine("Unknown subject ", actionName);
+      signature = module->mapSignature(references, len, true);
 
-         return 0;
-      }
-   //}
+      actionName.truncate(index);
+   }
 
-   return encodeMessage(actionRef, paramCount, flags);
+   actionRef = module->mapAction(actionName, signature, true);
+   if (actionRef == 0) {
+      printLine("Unknown subject ", actionName);
+
+      return 0;
+   }
+
+   return encodeMessage(actionRef, argCount, flags);
 }
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)
@@ -659,12 +637,12 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //         printCommand(command, opcode);
 //         command.appendInt(argument);
 //         break;
-//      case bcNew:
-//         printCommand(command, opcode);
-//         printReference(command, module, argument);
-//         command.append(" ");
-//         command.appendInt(argument2);
-//         break;
+      case bcNew:
+         printCommand(command, opcode);
+         printReference(command, module, argument);
+         command.append(" ");
+         command.appendInt(argument2);
+         break;
 //      case bcXCallRM:
 //      case bcXJumpRM:
 //      case bcXIndexRM:
@@ -694,12 +672,12 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //         command.append(", ");
 //         printReference(command, module, argument2);
 //         break;
-//      case bcNewN:
-//         printCommand(command, opcode);
-//         printReference(command, module, argument);
-//         command.append(", ");
-//         command.appendInt(argument2);
-//         break;
+      case bcNewN:
+         printCommand(command, opcode);
+         printReference(command, module, argument);
+         command.append(", ");
+         command.appendInt(argument2);
+         break;
 //      case bcSaveFI:
 //      case bcAddFI:
 //      case bcSubFI:
@@ -907,18 +885,18 @@ bool loadClassInfo(_Module* module, ident_t reference, ClassInfo& info)
 
 void listFields(_Module* module, ClassInfo& info, int& row, int pageSize)
 {
-//   ClassInfo::FieldMap::Iterator it = info.fields.start();
-//   while (!it.Eof()) {
-//      ref_t type = info.fieldTypes.get(*it).value1;
-//      if (type != 0 && !isPrimitiveRef(type)) {
-//         ident_t typeName = module->resolveReference(type);
-//
-//         printLine("@field ", (const char*)it.key(), " of ", typeName, row, pageSize);
-//      }
-//      else printLine("@field ", (const char*)it.key(), row, pageSize);
-//   
-//      it++;
-//   }
+   ClassInfo::FieldMap::Iterator it = info.fields.start();
+   while (!it.Eof()) {
+      /*ref_t type = info.fieldTypes.get(*it).value1;
+      if (type != 0 && !isPrimitiveRef(type)) {
+         ident_t typeName = module->resolveReference(type);
+
+         printLine("@field ", (const char*)it.key(), " of ", typeName, row, pageSize);
+      }
+      else */printLine("@field ", (const char*)it.key(), row, pageSize);
+   
+      it++;
+   }
 }
 
 void listFlags(int flags, int& row, int pageSize)

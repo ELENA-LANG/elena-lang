@@ -33,9 +33,9 @@ constexpr auto V_INTERNAL        = 0x80005003u;
 //constexpr auto V_META            = 0x80005004u;
 //constexpr auto V_INLINE          = 0x80005005u;
 //constexpr auto V_PROPERTY        = 0x80005006u;
-//
-///// property:
-//constexpr auto V_SEALED          = 0x80004001u;
+
+/// property:
+constexpr auto V_SEALED          = 0x80004001u;
 //constexpr auto V_ABSTRACT        = 0x80004002u;
 //constexpr auto V_CLOSED          = 0x80004003u;
 //constexpr auto V_PREDEFINED      = 0x80004005u;
@@ -60,7 +60,7 @@ constexpr auto V_CLASS           = 0x80001001u;
 //constexpr auto V_SYMBOLEXPR      = 0x80001003u;
 constexpr auto V_CONSTRUCTOR     = 0x80001004u;
 //constexpr auto V_EXTENSION       = 0x80001005u;
-//constexpr auto V_SINGLETON       = 0x80001006u;
+constexpr auto V_SINGLETON       = 0x80001006u;
 //constexpr auto V_LIMITED         = 0x80001007u;
 constexpr auto V_METHOD          = 0x80001008u;
 //constexpr auto V_FIELD           = 0x80001009u;
@@ -248,7 +248,7 @@ struct _ModuleScope
 
    // cached messages
    ref_t             dispatch_message;
-//   ref_t             newobject_message;
+   ref_t             newobject_message;
 //   ref_t             init_message;
 //   ref_t             constructor_message;
 //
@@ -283,8 +283,8 @@ struct _ModuleScope
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 
-   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode/*,
-                                 bool ignoreFields*/) = 0;
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode,
+                                 bool ignoreFields) = 0;
 
 //   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
 
@@ -366,7 +366,7 @@ struct _ModuleScope
 //      arrayTemplateReference = 0;
 //      wrapReference = argArrayTemplateReference = 0;
 //
-      /*init_message = newobject_message = */dispatch_message = 0;
+      /*init_message = */newobject_message = dispatch_message = 0;
 //      constructor_message = 0;
    }
 };
@@ -649,9 +649,9 @@ public:
 //   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;
 //   //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
-//
-//   // class is considered to be a role if it cannot be initiated
-//   virtual bool isRole(ClassInfo& info) = 0;
+
+   // class is considered to be a role if it cannot be initiated
+   virtual bool isRole(ClassInfo& info) = 0;
 //   virtual bool isAbstract(ClassInfo& info) = 0;
 //   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
 //
@@ -669,9 +669,9 @@ public:
 //   virtual void injectNewOperation(SyntaxWriter& writer, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
 //   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
 //   virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef) = 0;
-//
-//   // auto generate class flags
-//   virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
+
+   // auto generate class flags
+   virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
 //   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 //
 //   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,

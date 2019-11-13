@@ -129,7 +129,7 @@ rstructure %VOIDPTR
 end
 
 // --- GC_ALLOC ---
-// in: ecx - counter ; ebx - size ; ecx - actual size ; out: eax - created object ; edi contains the object or zero
+// in: ecx - size ; out: ebx - created object
 procedure %GC_ALLOC
 
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
@@ -137,9 +137,8 @@ procedure %GC_ALLOC
   add  ecx, eax
   cmp  ecx, edx
   jae  short labYGCollect
-  mov  [eax], ebx
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
-  lea  eax, [eax + elObjectOffset]
+  lea  ebx, [eax + elObjectOffset]
   ret
 
 labYGCollect:
@@ -147,14 +146,12 @@ labYGCollect:
   sub  ecx, eax
 
   // ; save registers
-  push edi                             
   push ebp
 
   // ; lock frame
   mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
 
   push ecx
-  push ebx                        
   
   // ; create set of roots
   mov  ebp, esp
@@ -307,17 +304,14 @@ labCollectFrame:
   mov  esp, ebp             
   
   // ; restore registers
-  pop  ebx
   pop  ecx
   pop  ebp
-  pop  edi
 
   // ; try to allocate once again
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  [eax], ebx
   add  ecx, eax
+  lea  ebx, [eax + elObjectOffset]
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
-  lea  eax, [eax + elObjectOffset]
   ret
 
 labFullCollect:
@@ -514,10 +508,8 @@ labFixRoot:
 
   // ; free root set
   mov  esp, [esp]
-  pop  ebx
   pop  ecx
   pop  ebp
-  pop  edi 
 
   // ; allocate
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
@@ -525,18 +517,15 @@ labFixRoot:
   add  ecx, eax
   cmp  ecx, edx
   jae  labBigAlloc
-  mov  [eax], ebx
+  lea  ebx, [eax + elObjectOffset]
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
-  lea  eax, [eax + elObjectOffset]
   ret
 
 labError:
   // ; restore stack
   mov  esp, [esp]
-  pop  ebx
   pop  ecx
   pop  ebp
-  pop  edi 
 
 labError2:
   mov  ebx, 17h
@@ -546,7 +535,6 @@ labError2:
 // ; bad luck, we have to expand GC
 labBigAlloc2:
   push ecx
-  push ebx
 
   mov  eax, [data : %CORE_GC_TABLE + gc_end]
   mov  ecx, 2A000h
@@ -564,7 +552,6 @@ labBigAlloc2:
   add  ecx, 15000h
   mov  [data : %CORE_GC_TABLE + gc_end], ecx
 
-  pop  ebx
   pop  ecx
 
 labBigAlloc:
@@ -578,21 +565,9 @@ labBigAlloc:
   add  ecx, eax
   cmp  ecx, edx
   jae  labBigAlloc2
-  mov  [eax], ebx
   mov  [data : %CORE_GC_TABLE + gc_mg_current], ecx
-  lea  eax, [eax + elObjectOffset]
+  lea  ebx, [eax + elObjectOffset]
 
-  // ; mark it as root in WB
-  cmp  ebx, 0800000h
-  jae  short labSkipBigAlloc
-
-  mov  ecx, eax
-  mov  esi, [data : %CORE_GC_TABLE + gc_header]
-  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
-  shr  ecx, page_size_order
-  mov  byte ptr [ecx + esi], 1  
-
-labSkipBigAlloc:
   ret  
 
   // ; start collecting: esi => ebp, [ebx, edx] ; ecx - count
@@ -1030,3 +1005,18 @@ inline % 0C3h
 
 end
 
+// ; new (__arg1 - size)
+inline % 0F0h
+	
+  mov  ecx, __arg1
+  call code : %GC_ALLOC
+
+end
+
+// ; fill (__arg1 - count)
+inline % 0F2h
+	
+  mov  ecx, __arg1
+  rep  stosd
+
+end

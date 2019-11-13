@@ -587,9 +587,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcElseR:
          //   compileRJump(opcode, token, writer, info, binary);
          //   break;
-         //case bcNewN:
-         //   compileCreateCommand(opcode, token, writer, binary);
-         //   break;
+         case bcNewN:
+         case bcNew:
+            compileCreateCommand(opcode, token, writer, binary);
+            break;
          //case bcSelectR:
          //   compileRRCommand(opcode, token, writer, binary);
          //   break;

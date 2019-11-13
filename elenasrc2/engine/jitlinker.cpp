@@ -447,16 +447,16 @@ void* JITLinker :: getVMTReference(_Module* module, ref_t reference, References&
 //
 //   return _compiler->findMethodIndex(entries, messageID, _compiler->findLength(entries));
 //}
-//
-//size_t JITLinker :: getVMTFlags(void* vaddress)
-//{
-//   if (_virtualMode) {
-//      _Memory* image = _loader->getTargetSection(mskVMTRef);
-//
-//      return _compiler->findFlags(image->get((ref_t)vaddress & ~mskAnyRef));
-//   }
-//   else return _compiler->findFlags(vaddress);
-//}
+
+size_t JITLinker :: getVMTFlags(void* vaddress)
+{
+   if (_virtualMode) {
+      _Memory* image = _loader->getTargetSection(mskVMTRef);
+
+      return _compiler->findFlags(image->get((ref_t)vaddress & ~mskAnyRef));
+   }
+   else return _compiler->findFlags(vaddress);
+}
 
 size_t JITLinker :: loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer)
 {
@@ -840,12 +840,12 @@ void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int ma
 //      it++;
 //   }
 //}
-//
-//void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
-//{
-//   bool constantValue = true;
+
+void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
+{
+   bool constantValue = true;
 //   ident_t value = NULL;
-//   ReferenceInfo vmtReferenceInfo = referenceInfo;
+   ReferenceInfo vmtReferenceInfo = referenceInfo;
 //   if (mask == mskLiteralRef) {
 //      value = vmtReferenceInfo.referenceName;
 //      vmtReferenceInfo.referenceName = _loader->getLiteralClass();
@@ -870,27 +870,27 @@ void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int ma
 //      value = vmtReferenceInfo.referenceName;
 //      vmtReferenceInfo.referenceName = _loader->getRealClass();
 //   }
-//   else constantValue = false;
-//
-//   // get constant VMT reference
-//   void* vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
-//
-//   // HOTFIX: if the constant is referred by iself it could be already resolved
-//   void* vaddress = _loader->resolveReference(referenceInfo, mask);
-//   if (vaddress != LOADER_NOTLOADED)
-//      return vaddress;
-//
-//   // get target image & resolve virtual address
-//   _Memory* image = _loader->getTargetSection(mskRDataRef);
-//   MemoryWriter writer(image);
-//
-//   // allocate object header
-//   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
-//
-//   vaddress = calculateVAddress(&writer, mskRDataRef);
-//
-//   _loader->mapReference(referenceInfo, vaddress, mask);
-//
+   /*else*/ constantValue = false;
+
+   // get constant VMT reference
+   void* vmtVAddress = resolve(vmtReferenceInfo, mskVMTRef, true);
+
+   // HOTFIX: if the constant is referred by iself it could be already resolved
+   void* vaddress = _loader->resolveReference(referenceInfo, mask);
+   if (vaddress != LOADER_NOTLOADED)
+      return vaddress;
+
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   // allocate object header
+   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
+
+   vaddress = calculateVAddress(&writer, mskRDataRef);
+
+   _loader->mapReference(referenceInfo, vaddress, mask);
+
 //   size_t position = writer.Position();
 //   if (mask == mskLiteralRef) {
 //      _compiler->compileLiteral(&writer, value);
@@ -930,25 +930,25 @@ void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int ma
 //      fixSectionReferences(sectionInfo, image, position, vmtVAddress, false);
 //      constantValue = true;
 //   }
-//
-//   if (vmtVAddress == LOADER_NOTLOADED)
-//      throw JITUnresolvedException(referenceInfo);
-//
-//   // check if the class could be constant one
-//   if (!constantValue) {
-//      // read VMT flags
-//      size_t flags = getVMTFlags(vmtVAddress);
-//
-//      if (!test(flags, elStateless))
-//         throw JITConstantExpectedException(referenceInfo);
-//   }
-//
-//   // fix object VMT reference
-//   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
-//
-//   return vaddress;
-//}
-//
+
+   if (vmtVAddress == LOADER_NOTLOADED)
+      throw JITUnresolvedException(referenceInfo);
+
+   // check if the class could be constant one
+   if (!constantValue) {
+      // read VMT flags
+      size_t flags = getVMTFlags(vmtVAddress);
+
+      if (!test(flags, elStateless))
+         throw JITConstantExpectedException(referenceInfo);
+   }
+
+   // fix object VMT reference
+   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
+
+   return vaddress;
+}
+
 //void* JITLinker :: resolveAnonymousStaticVariable()
 //{
 //   // get target image & resolve virtual address
@@ -1352,15 +1352,15 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //         case mskNativeRelCodeRef:
 //            vaddress = resolveNativeSection(referenceInfo, mskNativeCodeRef, _loader->getSectionInfo(referenceInfo, mskNativeCodeRef, silentMode));
 //            break;
-//         case mskConstantRef:
+         case mskConstantRef:
 //         case mskLiteralRef:
 //         case mskWideLiteralRef:
 //         case mskCharRef:
 //         case mskInt32Ref:
 //         case mskRealRef:
 //         case mskInt64Ref:
-//            vaddress = resolveConstant(referenceInfo, mask);
-//            break;
+            vaddress = resolveConstant(referenceInfo, mask);
+            break;
 //         case mskConstArray:
 //            vaddress = resolveConstant(referenceInfo, mask);
 //            break;

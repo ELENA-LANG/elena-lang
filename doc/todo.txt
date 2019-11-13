@@ -2,10 +2,16 @@
 In development:
 ------         
               dev
-                * end of code - breakpoint
+                * difference between sealed and final?
+                * singleton should be sealed?
+                * support sealed method
+                * direct call of the sealed methods
+                * declaring variable
+
                 * explicit constructor
                 * implicit constructor
                 * create a class with implicit constructor
+                * creating dynamic array / buffers
                 * public / private / internal methods
                 * nested class scope
                 * reference message??
@@ -15,11 +21,11 @@ In development:
 
                 * implement sealed, const, struct
                 * countable
+                * analog of C# $ strings
 
                 * constructor dispatching
                 * message dispatching
 
-                * declaring variable
                 * declaring typed variable : implicit, reference, global
 
                 * static fields / static methods are inherited
@@ -29,6 +35,8 @@ In development:
 
                 * weak parameters
                 * stron-typed parameters
+                * singleton can be used as a type?
+                * should V_SINGLETON be marked as elNestedClass?
 
                 * multi-methods 
                 * variadic methods
@@ -64,7 +72,6 @@ In development:
                 * method visibility
                 * methods : reference name??
                 * creating an object : implicit / explicit, default constructor should be embeddable
-                * singletons
                 * calls
                 * system module to be included by default : an option?
 
@@ -91,6 +98,8 @@ In development:
                   resolveMessageByIndex, printMethod
                 * uncomment parseMessage, resolveModule, cleanUp, initLoader, loadPrimitiveCategory
                 * declaring unresolved types?
+                * migrate changes from core to corex
+                * test if big alloc is proper working
                 * redesign
 
               dev1

@@ -26,7 +26,7 @@ enum ByteCode
 //   bcDCopyCount      = 0x08,
 //   bcOr              = 0x09,
    bcPushA           = 0x0A,
-//   bcPopA            = 0x0B,
+   bcPopA            = 0x0B,
 //   bcACopyB          = 0x0C,
 //   bcPopE            = 0x0D,
    bcBSRedirect      = 0x0E,
@@ -248,9 +248,10 @@ enum ByteCode
 //   bcSubFI           = 0xED,
 //   bcAddFI           = 0xEE,
 //   bcSaveFI          = 0xEF,
-//
-//   bcNew             = 0xF0,
-//   bcNewN            = 0xF1,
+
+   bcNew             = 0xF0,
+   bcNewN            = 0xF1,
+   bcFill            = 0xF2,
 //   bcXSelectR        = 0xF3,
 //   bcXIndexRM        = 0xF4,
 //   bcXJumpRM         = 0xF5,
@@ -446,8 +447,9 @@ public:
          //case bcALoadR:
          //case bcASaveR:
          case bcSetR:
-         //case bcNew:
-         //case bcNewN:
+         case bcNew:
+         case bcFill:
+         case bcNewN:
          //case bcBCopyR:
          //case bcXCallRM:
          case bcCallExtR:
@@ -531,7 +533,7 @@ public:
    {
       switch(code) {
          //case bcPop:
-         //case bcPopA:
+         case bcPopA:
          case bcFreeI:
          //case bcPopB:
          //case bcPopE:

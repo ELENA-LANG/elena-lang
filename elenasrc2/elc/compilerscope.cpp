@@ -57,10 +57,10 @@ ref_t ModuleScope :: mapAnonymous(ident_t prefix)
    return module->mapReference(name);
 }
 
-void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode/*, bool ignoreFields*/)
+void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode, bool ignoreFields)
 {
    target.header = copy.header;
-//   target.size = copy.size;
+   target.size = copy.size;
 
    if (!headerOnly) {
       // import method references and mark them as inherited as required
@@ -141,22 +141,22 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
 //         
 //         attribute_it++;
 //      }
-//
-//      if (!ignoreFields) {
-//         target.fields.add(copy.fields);
-//
-//         // import field types
-//         auto type_it = copy.fieldTypes.start();
-//         while (!type_it.Eof()) {
-//            ClassInfo::FieldInfo info = *type_it;
-//            info.value1 = importReference(exporter, info.value1, module);
-//            info.value2 = importReference(exporter, info.value2, module);
-//
-//            target.fieldTypes.add(type_it.key(), info);
-//
-//            type_it++;
-//         }
-//      }
+
+      if (!ignoreFields) {
+         target.fields.add(copy.fields);
+
+         //// import field types
+         //auto type_it = copy.fieldTypes.start();
+         //while (!type_it.Eof()) {
+         //   ClassInfo::FieldInfo info = *type_it;
+         //   info.value1 = importReference(exporter, info.value1, module);
+         //   info.value2 = importReference(exporter, info.value2, module);
+
+         //   target.fieldTypes.add(type_it.key(), info);
+
+         //   type_it++;
+         //}
+      }
    }
    // import class class reference
    if (target.header.classRef != 0)
@@ -246,7 +246,7 @@ ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool header
          ClassInfo copy;
          copy.load(&reader, headerOnly);
 
-         importClassInfo(copy, info, argModule, headerOnly, false/*, false*/);
+         importClassInfo(copy, info, argModule, headerOnly, false, false);
       }
       else info.load(&reader, headerOnly);
 

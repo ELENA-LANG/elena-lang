@@ -547,16 +547,16 @@ struct ClassInfo
 //   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
    typedef Pair<ref_t, int>                    Attribute;
    typedef MemoryMap<ref_t, bool, false>       MethodMap;
-//   typedef MemoryMap<ident_t, int, true>       FieldMap;
+   typedef MemoryMap<ident_t, int, true>       FieldMap;
 //   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
 //   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>  CategoryInfoMap;
 //   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader     header;
-//   int             size;           // Object size
+   int             size;           // Object size
    MethodMap       methods;        // list of methods, true means the method was declared in this instance
-//   FieldMap        fields;
+   FieldMap        fields;
 //   StaticFieldMap  statics;
 //   StaticInfoMap   staticValues;
 //
@@ -567,14 +567,14 @@ struct ClassInfo
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
       writer->write((void*)this, sizeof(ClassHeader));
-//      writer->writeDWord(size);
+      writer->writeDWord(size);
       if (!headerAndSizeOnly) {
 //         mattributes.write(writer);
 //         statics.write(writer);
 //         staticValues.write(writer);
          methods.write(writer);
          methodHints.write(writer);
-//         fields.write(writer);
+         fields.write(writer);
 //         fieldTypes.write(writer);
       }
    }
@@ -582,26 +582,26 @@ struct ClassInfo
    void load(StreamReader* reader, bool headerOnly = false, bool ignoreFields = false)
    {
       reader->read((void*)&header, sizeof(ClassHeader));
-//      size = reader->getDWord();
+      size = reader->getDWord();
       if (!headerOnly) {
 //         mattributes.read(reader);
 //         statics.read(reader);
 //         staticValues.read(reader);
          methods.read(reader);
          methodHints.read(reader);
-//         if (!ignoreFields) {
-//            fields.read(reader);
-//            fieldTypes.read(reader);
-//         }
+         if (!ignoreFields) {
+            fields.read(reader);
+            //fieldTypes.read(reader);
+         }
       }
    }
 
    ClassInfo()
-      : /*fields(-1), */methods(0), methodHints(0)//, fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+      : fields(-1), methods(0), methodHints(0)//, fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
-//      size = 0;
+      size = 0;
    }
 };
 

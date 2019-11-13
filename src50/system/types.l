@@ -11,9 +11,9 @@
 ////#define __meta      80005004h
 //#define inline      80005005h
 //#define property    80005006h
-//
-///// property:
-//#define sealed      80004001h
+
+/// property:
+#define sealed      80004001h
 //#define abstract    80004002h
 //#define closed      80004003h
 //#define predefined  80004005h
@@ -39,7 +39,7 @@
 //#define symbol      80001003h
 #define constructor 80001004h
 //#define extension   80001005h
-//#define singleton   80001006h
+#define singleton   80001006h
 //#define interface   80001007h
 #define method      80001008h
 //#define field       80001009h
