@@ -862,8 +862,8 @@ private:
 
    bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
 
-//   ObjectInfo mapClassSymbol(Scope& scope, int classRef);
-//
+   ObjectInfo mapClassSymbol(Scope& scope, int classRef);
+
 //   ref_t resolveTypeAttribute(Scope& scope, SNode node, bool declarationMode);
 //
 //   ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);

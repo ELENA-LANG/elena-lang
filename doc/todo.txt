@@ -2,7 +2,6 @@
 In development:
 ------         
               dev
-                * create a class with implicit constructor
                 * default implcit constructor should be embeddable
                 * implicit constructor
 

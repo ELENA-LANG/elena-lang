@@ -71,7 +71,7 @@ constexpr auto V_VARIABLE        = 0x8000100Du;
 //constexpr auto V_MEMBER          = 0x8000100Eu;
 //constexpr auto V_STATIC          = 0x8000100Fu;
 //constexpr auto V_CONVERSION      = 0x80001011u;
-//constexpr auto V_NEWOP           = 0x80001012u;
+constexpr auto V_NEWOP           = 0x80001012u;
 constexpr auto V_DISPATCHER      = 0x80001013u;
 //constexpr auto V_ARGARRAY        = 0x80001014u;
 //constexpr auto V_EXTERN          = 0x80001015u;
@@ -453,12 +453,12 @@ public:
       eaNestedNs           = 0x00000000002,
       eaIntern             = 0x00000000004,
       eaModuleScope        = 0x00000000008,
+      eaNewOp              = 0x00000000010,
 
       eaScopeMask          = 0x0000000000A,
-      eaObjectMask         = 0x00000000004,
+      eaObjectMask         = 0x00000000014,
 
 //      eaCast               = 0x00000000002,
-//      eaNewOp              = 0x00000000004,
 //      eaForward            = 0x00000000008,
 //      eaExtern             = 0x00000000010,
 //      eaRef                = 0x00000000020,
@@ -516,15 +516,15 @@ public:
          return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
       }
 
-      //bool testAndExclude(ExpressionAttribute mask)
-      //{
-      //   if (test(mask)) {
-      //      exclude(mask);
+      bool testAndExclude(ExpressionAttribute mask)
+      {
+         if (test(mask)) {
+            exclude(mask);
 
-      //      return true;
-      //   }
-      //   else return false;
-      //}
+            return true;
+         }
+         else return false;
+      }
 
       bool testany(ExpressionAttribute mask)
       {

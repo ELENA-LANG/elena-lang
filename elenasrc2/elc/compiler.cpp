@@ -36,6 +36,7 @@ constexpr auto HINT_INTERNALOP      = EAttr::eaIntern;
 constexpr auto HINT_SCOPE_MASK      = EAttr::eaScopeMask;
 constexpr auto HINT_OBJECT_MASK     = EAttr::eaObjectMask;
 constexpr auto HINT_MODULESCOPE     = EAttr::eaModuleScope;
+constexpr auto HINT_NEWOP           = EAttr::eaNewOp;
 
 //constexpr auto HINT_ROOT            = EAttr::eaRoot;
 //constexpr auto HINT_ROOTSYMBOL      = EAttr::eaRootSymbol;
@@ -2618,22 +2619,22 @@ void Compiler :: declareVariable(SNode& terminal, CodeScope& scope/*, ref_t type
 //
 //   return object;
 //}
-//
-//ObjectInfo Compiler :: mapClassSymbol(Scope& scope, int classRef)
-//{
-//   if (classRef) {
-//      ObjectInfo retVal(okClass);
-//      retVal.param = classRef;
-//
-//      ClassInfo info;
-//      scope.moduleScope->loadClassInfo(info, classRef, true);
-//      retVal.reference = info.header.classRef;
-//
-//      return retVal;
-//   }
-//   else return ObjectInfo(okUnknown);
-//}
-//
+
+ObjectInfo Compiler :: mapClassSymbol(Scope& scope, int classRef)
+{
+   if (classRef) {
+      ObjectInfo retVal(okClass);
+      retVal.param = classRef;
+
+      ClassInfo info;
+      scope.moduleScope->loadClassInfo(info, classRef, true);
+      retVal.reference = info.header.classRef;
+
+      return retVal;
+   }
+   else return ObjectInfo(okUnknown);
+}
+
 //ObjectInfo Compiler :: compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode)
 //{
 //   ObjectInfo retVal = mapClassSymbol(scope, resolveTemplateDeclaration(node, scope, false));
@@ -5457,14 +5458,27 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
       //      }
    }
 
-//
+   if (mode.testAndExclude(HINT_NEWOP)) {
+      ref_t typeRef = resolveTypeIdentifier(scope, current, false);
+      validateType(scope, current, typeRef, false);
+
+      result = mapClassSymbol(scope, typeRef);
+      
+      recognizeTerminal(current, result, scope, mode);
+
+      SNode mssgNode = node.findChild(lxMessage);
+      if (mssgNode != lxNone) {
+         mssgNode.setStrArgument(CONSTRUCTOR_MESSAGE);
+      }
+      else scope.raiseError(errInvalidOperation, node);
+   }
 //   if (mode.testAndExclude(HINT_REFOP)) {
 //      result = compileReferenceExpression(writer, node, scope, mode);
 //   }
 //   else if (mode.testAndExclude(HINT_PARAMSOP)) {
 //	   result = compileVariadicUnboxing(writer, node, scope, mode);
 //   }
-//   else {
+   else {
       switch (current.type) {
 //         case lxCollection:
 //            result = compileCollection(writer, node, scope, ObjectInfo(okObject, 0, V_OBJARRAY, scope.moduleScope->superReference, 0));
@@ -5512,7 +5526,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          default:
             result = mapTerminal(current, scope, mode);
       }
-//   }
+   }
 
    return result;
 }
