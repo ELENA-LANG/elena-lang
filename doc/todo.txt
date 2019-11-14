@@ -2,7 +2,6 @@
 In development:
 ------         
               dev
-                * introducing self
                 * implicit method return
                 * private / public / internal methods
                 * explicit constructor
@@ -115,6 +114,8 @@ In development:
                 * test if big alloc is proper working
                 * loops
                 * break / contninue
+                * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
+                  possible values)
                 * redesign
                 * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
 

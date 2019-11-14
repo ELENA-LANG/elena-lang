@@ -137,7 +137,7 @@ public:
 //      okParam,                        // param - parameter offset, extraparam = class reference
 //      okParamField,
 //      okSubject,                      // param - parameter offset
-//      okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
+      okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
 //      okSuper,
 //      okLocalAddress,                 // param - local offset
@@ -602,13 +602,13 @@ private:
 //
 //         return scope ? scope->info.header.flags : 0;
 //      }
-//      ref_t getClassRef(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
-//
+      ref_t getClassRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope ? scope->reference : 0;
+      }
+
 //      virtual bool resolveAutoOutput(ref_t reference)
 //      {
 //         if (outputRef == V_AUTO) {
@@ -618,10 +618,10 @@ private:
 //         }
 //         else return Scope::resolveAutoOutput(reference);
 //      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//
-//      ObjectInfo mapSelf(/*bool forced = false*/);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+
+      ObjectInfo mapSelf(/*bool forced = false*/);
 //      ObjectInfo mapGroup();
 //      ObjectInfo mapParameter(Parameter param, EAttr mode);
 
@@ -749,6 +749,13 @@ private:
          return scope ? scope->message : 0;
       }
 
+      ref_t getClassRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+      
+         return scope ? scope->reference : 0;
+      }
+
       ObjectInfo mapGlobal(ident_t identifier);
    };
 
@@ -838,8 +845,8 @@ private:
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 //
 //   bool isMethodEmbeddable(MethodScope& scope, SNode node);
-//
-//   void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, ref_t messageRef);
+
+   void writeMessageInfo(SNode node, _ModuleScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
 //   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message);
@@ -886,9 +893,9 @@ private:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed);
 //   void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
-//
-//   // NOTE : the method is used to set template pseudo variable
-//   void declareProcedureDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf, bool withTargetSelf);
+
+   // NOTE : the method is used to set template pseudo variable
+   void declareProcedureDebugInfo(SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
 //   void declareCodeDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //
 //   int resolveSize(SNode node, Scope& scope);
@@ -1024,7 +1031,7 @@ private:
    void compileDispatchExpression(SNode node, CodeScope& scope);
 //   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
 
-   /*ObjectInfo*/void compileCode(/*SyntaxWriter& writer, */SNode node, CodeScope& scope);
+   ObjectInfo compileCode(SNode node, CodeScope& scope);
 
 //   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
    void declareArgumentList(SNode node, MethodScope& scope/*, bool withoutWeakMessages, bool declarationMode*/);
@@ -1036,8 +1043,8 @@ private:
 //   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
 //   void compileExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope, bool lazyMode);
 //   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
-//
-//   void beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+
+   void beginMethod(SNode node, MethodScope& scope);
    void endMethod(SNode node, MethodScope& scope, CodeScope& codeScope, int argCount, int preallocated);
    void compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope,
       int& preallocated);

@@ -274,19 +274,19 @@ void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, in
 //{
 //   tape.write(bdParamsLocal, writeString(localName), level);
 //}
-//
-//void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
-//{
-//   tape.write(bdSelf, 0, level);
-//}
-//
-//void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ident_t message)
-//{
-//   MemoryWriter writer(&_strings);
-//
-//   tape.write(bdMessage, 0, writer.Position());
-//   writer.writeLiteral(message);
-//}
+
+void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
+{
+   tape.write(bdSelf, 0, level);
+}
+
+void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ident_t message)
+{
+   MemoryWriter writer(&_strings);
+
+   tape.write(bdMessage, 0, writer.Position());
+   writer.writeLiteral(message);
+}
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
 {
@@ -3866,8 +3866,8 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-//      case lxSelfLocal:
-//case lxBoxableLocal:
+      case lxSelfLocal:
+//      case lxBoxableLocal:
          // pushfi index
          tape.write(bcPushFI, argument, bpFrame);
          break;
@@ -3977,7 +3977,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcSetR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-//      case lxSelfLocal:
+      case lxSelfLocal:
 ////      //case lxBoxableLocal:
          // aloadfi index
          tape.write(bcPeekFI, argument, bpFrame);
@@ -4110,7 +4110,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    switch (type)
    {
       case lxLocal:
-//      case lxSelfLocal:
+      case lxSelfLocal:
 //      //case lxBoxableLocal:
          // storefi index
          tape.write(bcStoreFI, argument, bpFrame);
@@ -5491,12 +5491,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 
 void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, FlowScope& scope)
 {
-   /*if (translateBreakpoint(tape, node.findSubNode(lxBreakpoint), false)) {
-      declareBlock(tape);
-      generateExpression(tape, node, ACC_REQUIRED);
-      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-   }
-   else*/ generateExpression(tape, node, scope/*, ACC_REQUIRED*/);
+   generateExpression(tape, node, scope/*, ACC_REQUIRED*/);
 
    gotoEnd(tape, baFirstLabel);
 }
@@ -6408,9 +6403,9 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
 //            current.findChild(lxIdentifier).identifier(),
 //            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
 //         break;
-//      case lxMessageVariable:
-//         declareMessageInfo(tape, current.identifier());
-//         break;
+      //case lxMessageVariable:
+      //   declareMessageInfo(tape, current.identifier());
+      //   break;
 //      case lxParamsVariable:
 //         declareLocalParamsInfo(tape,
 //            current.firstChild(lxTerminalMask).identifier(),
@@ -6628,22 +6623,22 @@ void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node
    scope.clear();
 }
 
-//void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   SyntaxTree::Node current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
-//         case lxMessageVariable:
-//            declareMessageInfo(tape, current.identifier());
-//            break;
+void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node)
+{
+   SyntaxTree::Node current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxMessageVariable:
+            declareMessageInfo(tape, current.identifier());
+            break;
 //         case lxVariable:
 //            declareLocalInfo(tape,
 //               current.firstChild(lxTerminalMask).identifier(),
 //               current.findChild(lxLevel).argument);
 //            break;
-//         case lxSelfVariable:
-//            declareSelfInfo(tape, current.argument);
-//            break;
+         case lxSelfVariable:
+            declareSelfInfo(tape, current.argument);
+            break;
 //         case lxBinarySelf:
 //            declareSelfStructInfo(tape, SELF_VAR, current.argument,
 //               current.findChild(lxClassName).identifier());
@@ -6679,12 +6674,12 @@ void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node
 //               level, current.findChild(lxClassName).identifier());
 //            break;
 //         }
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   //; jump if state is set
@@ -6839,7 +6834,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
                }               
             }
             exitLabel = true;
-   //            generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
+            generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
             generateCodeBlock(tape, current, scope);
             break;
          default:

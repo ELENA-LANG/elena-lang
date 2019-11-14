@@ -79,6 +79,7 @@ enum LexicalType
    lxCreatingStruct           = 0x0580F0, // arg - size
    lxVariable                 = 0x010100,
    lxLocal                    = 0x018110, // arg - offset
+   lxSelfLocal                = 0x018111,
    lxAssigning                = 0x058120,   // an assigning expression, arg - size
    lxReturning                = 0x059130,
 
@@ -97,6 +98,8 @@ enum LexicalType
    lxCallTarget               = 0x000F0B, // arg - reference
    lxLevel                    = 0x000F0C,
    lxAllocated                = 0x000F0D,
+   lxMessageVariable          = 0x000F0E, // debug info only
+   lxSelfVariable             = 0x000F0F, // debug info only
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -157,7 +160,6 @@ enum LexicalType
 //   lxStaticConstField         = 0x008116, // arg - reference
 //   lxResultField              = 0x00A11A, // arg -offset
 //   lxCurrentMessage           = 0x00A11B,
-//   lxSelfLocal                = 0x00A11C,
 //   lxResultFieldIndex         = 0x00A11D, // arg -offset
 //   lxConstantList             = 0x00A11E, // arg - reference
 //   lxBlockLocalAddr           = 0x00A11F, // arg - offset
@@ -242,8 +244,6 @@ enum LexicalType
 //   lxParamsVariable           = 0x1003E,
 
 //   lxReserved                 = 0x20008,
-//   lxMessageVariable          = 0x2000D, // debug info only
-//   lxSelfVariable             = 0x2000E, // debug info only
 //   lxClassName                = 0x20014, // arg - identifier
 //   lxIntValue                 = 0x20015, // arg - integer value
 //   lxTempLocal                = 0x20016,
