@@ -804,9 +804,9 @@ bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Modu
    //   if (test(reference, SPECIAL_MESSAGE)) {
    //      command.append("#conversion&");
    //   }
-   ///*else */if (test(messageRef, STATIC_MESSAGE)) {
-   //   messageName.append("#private&");
-   //}
+   /*else */if (test(messageRef, STATIC_MESSAGE)) {
+      messageName.append("#private&");
+   }
 
    //   if (test(reference, SPECIAL_MESSAGE)) {         
    //   }

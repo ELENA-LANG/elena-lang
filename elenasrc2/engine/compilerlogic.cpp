@@ -253,20 +253,20 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
 
    if (methodFound) {
       int hint = info.methodHints.get(Attribute(message, maHint));
-//      if ((hint & tpMask) == tpPrivate) {
-//         // recognize the private message
-//         message |= STATIC_MESSAGE;
-//
-//         hint = info.methodHints.get(Attribute(message, maHint));
-//      }
-//
+      if ((hint & tpMask) == tpPrivate) {
+         // recognize the private message
+         message |= STATIC_MESSAGE;
+
+         hint = info.methodHints.get(Attribute(message, maHint));
+      }
+
 //      result.outputReference = info.methodHints.get(Attribute(message, maReference));
 //
 //      result.embeddable = test(hint, tpEmbeddable);
-//      result.closure = test(hint, tpAction);
+//      result.function = test(hint, tpFunction);
 //      result.dynamicRequired = test(hint, tpDynamic);
 
-      if ((hint & tpMask) == tpSealed/* || (hint & tpMask) == tpPrivate*/) {
+      if ((hint & tpMask) == tpSealed || (hint & tpMask) == tpPrivate) {
          return hint;
       }
       else if (test(info.header.flags, elFinal)) {
@@ -302,9 +302,9 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
    result.found = defineClassInfo(scope, info, reference);
 
    if (result.found) {
-//      if (testany(info.header.flags, elClosed | elClassClass))
-//         result.directResolved = true;
-//
+      if (testany(info.header.flags, elClosed | elClassClass))
+         result.directResolved = true;
+
 //      if (test(info.header.flags, elWithCustomDispatcher))
 //         result.withCustomDispatcher = true;
 
@@ -702,12 +702,12 @@ bool CompilerLogic :: isRole(ClassInfo& info)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
 //}
-//
-//bool CompilerLogic :: isClosure(ClassInfo& info, ref_t message)
+
+//bool CompilerLogic :: isFunction(ClassInfo& info, ref_t message)
 //{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpAction);
+//   return test(info.methodHints.get(Attribute(message, maHint)), tpFunction);
 //}
-//
+
 ////bool CompilerLogic :: isDispatcher(ClassInfo& info, ref_t message)
 ////{
 ////   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpDispatcher;
@@ -1706,11 +1706,11 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue/*, bool com
    switch ((size_t)attrValue)
    {
 //      case V_METHOD:
-//      case V_CONSTRUCTOR:
+      case V_CONSTRUCTOR:
       case V_DISPATCHER:
 //      case V_CONVERSION:
 //      case V_GENERIC:
-//      case V_ACTION:
+      case V_FUNCTION:
          return validateMethodAttribute(attrValue, dummy);
 //      case V_GETACCESSOR:
 //      case V_SETACCESSOR:
@@ -1733,22 +1733,22 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_GENERIC:
 //         attrValue = (tpGeneric | tpSealed);
 //         return true;
-//      case V_PRIVATE:
-//         attrValue = (tpPrivate | tpSealed);
-//         return true;
-//      case V_PUBLIC:
-//         attrValue = 0;
-//         return true;
-//      case V_INTERNAL:
-//         attrValue = tpInternal;
-//         return true;
+      case V_PRIVATE:
+         attrValue = (tpPrivate | tpSealed);
+         return true;
+      case V_PUBLIC:
+         attrValue = 0;
+         return true;
+      case V_INTERNAL:
+         attrValue = tpInternal;
+         return true;
       case V_SEALED:
          attrValue = tpSealed;
          return true;
-//      case V_ACTION:
-//         attrValue = tpAction;
-//         explicitMode = true;
-//         return true;
+      case V_FUNCTION:
+         attrValue = tpFunction;
+         explicitMode = true;
+         return true;
       case V_CONSTRUCTOR:
          attrValue = tpConstructor;
          explicitMode = true;

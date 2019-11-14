@@ -16,8 +16,8 @@ using namespace _ELENA_;
 
 constexpr auto MODE_ROOT                  = 0x01;
 //constexpr auto MODE_PROPERTYALLOWED = 0x40;
-//
-//constexpr auto MODE_CLOSURE         = -2;
+
+constexpr auto MODE_FUNCTION        = -2;
 //constexpr auto MODE_COMPLEXMESSAGE  = -3;
 //constexpr auto MODE_PROPERTYMETHOD  = -4;
 
@@ -477,16 +477,11 @@ void DerivationWriter :: saveScope(SyntaxWriter& writer)
 void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 {
    SNode bodyNode = scopeNode.firstChild();
-//   if (scopeNode.existChild(lxCode, lxReturning)) {
-//      // HOTFIX : recognize returning expression
-//      //         SNode body = node.findChild(lxCode, lxExpression, lxDispatchCode/*, lxReturning*/, lxResendExpression);
-//      //         if (body == lxExpression)
-//      //            body = lxReturning;
-//      //
-//      // mark one method class declaration
-//      scopeNode.set(lxClass, MODE_CLOSURE);
-//   }
-   /*else */if (bodyNode == lxExpression) {
+   if (scopeNode.existChild(lxCode, lxReturning)) {
+      // mark one method class declaration
+      scopeNode.set(lxClass, MODE_FUNCTION);
+   }
+   else if (bodyNode == lxExpression) {
       scopeNode = lxSymbol;
    }
 //   else if (bodyNode.compare(lxSizeDecl, lxFieldInit)) {
@@ -887,28 +882,28 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
 {
    SyntaxTree buffer((pos_t)0);
 
-//   bool closureMode = false;
+   bool functionMode = false;
 //   if (!nested) {
       writer.newNode(lxClass);
 //      //writer.appendNode(lxSourcePath, scope.sourcePath);
 
       generateAttributes(writer, node.prevNode(), derivationScope, buffer);
-//      if (node.argument == MODE_CLOSURE) {
-//         // if it is a single method singleton
-//         writer.appendNode(lxAttribute, V_SINGLETON);
-//
-//         closureMode = true;
-//      }
-//   }
+      if (node.argument == MODE_FUNCTION) {
+         // if it is a single method singleton
+         writer.appendNode(lxAttribute, V_SINGLETON);
+
+         functionMode = true;
+      }
+   //}
 
    SNode current = node.firstChild();
-//   if (closureMode) {
-//      // HOTFIX : recognize method parameters
-//      recognizeMethodMebers(node);
-//
-//      generateMethodTree(writer, node, derivationScope, true, current.argument == MODE_PROPERTYMETHOD, buffer);
-//   }
-//   else {
+   if (functionMode) {
+      // HOTFIX : recognize method parameters
+      recognizeMethodMebers(node);
+
+      generateMethodTree(writer, node, derivationScope, true, /*current.argument == MODE_PROPERTYMETHOD, */buffer);
+   }
+   else {
       bool firstParent = true;
       while (current != lxNone) {
          if (current == lxBaseDecl) {
@@ -931,7 +926,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
             }
          }
          else if (current == lxClassMethod) {
-            generateMethodTree(writer, current, derivationScope, /*false, current.argument == MODE_PROPERTYMETHOD, */buffer);
+            generateMethodTree(writer, current, derivationScope, false, /*current.argument == MODE_PROPERTYMETHOD, */buffer);
          }
 //         else if (current == lxClassField/* || current == lxFieldInit*/) {
 //            generateFieldTree(writer, current, derivationScope, buffer);
@@ -955,7 +950,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
       if (!buffer.isEmpty()) {
          SyntaxTree::copyNode(writer, buffer.readRoot());
       }
-   //}
+   }
 
 //   if (nested)
 //      writer.inject(lxNestedClass);
@@ -1196,7 +1191,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //   }
 //}
 
-void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, /*bool closureMode, bool propertyMode,*/ 
+void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode/*, bool propertyMode*/, 
    SyntaxTree& buffer)
 {
 //   //// recognize template attributes
@@ -1224,12 +1219,12 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //   if (propertyMode) {
 //      writer.appendNode(lxAttribute, V_GETACCESSOR);
 //   }
-//
-//   if (closureMode) {
-//      writer.appendNode(lxAttribute, V_ACTION);
-//   }
-   /*else */generateAttributes(writer, node.prevNode(), derivationScope, buffer);
-//
+
+   if (functionMode) {
+      writer.appendNode(lxAttribute, V_FUNCTION);
+   }
+   else generateAttributes(writer, node.prevNode(), derivationScope, buffer);
+
 //   // copy method arguments
 //   SNode current = node.firstChild();
 ////   SNode attribute;
@@ -1860,7 +1855,6 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
 {
    switch (current.type) {
       case lxMessage:
-//      case lxImplicitMessage:
          if (!first) {
             writer.inject(lxExpression);
             writer.closeNode();

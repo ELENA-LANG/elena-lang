@@ -66,7 +66,7 @@ constexpr auto V_METHOD          = 0x80001008u;
 //constexpr auto V_FIELD           = 0x80001009u;
 //constexpr auto V_TYPETEMPL       = 0x8000100Au;
 //constexpr auto V_GENERIC         = 0x8000100Bu;
-//constexpr auto V_ACTION          = 0x8000100Cu;     // a closure attribute
+constexpr auto V_FUNCTION        = 0x8000100Cu;     // a closure attribute
 constexpr auto V_VARIABLE        = 0x8000100Du;
 //constexpr auto V_MEMBER          = 0x8000100Eu;
 //constexpr auto V_STATIC          = 0x8000100Fu;
@@ -138,11 +138,11 @@ enum MethodHint
 //   tpClosed      = 0x0000002,
    tpNormal      = 0x0000003,
    tpDispatcher  = 0x0000004,
-//   tpPrivate     = 0x0000005,
+   tpPrivate     = 0x0000005,
 //   tpStackSafe   = 0x0000010,
 //   tpEmbeddable  = 0x0000020,
 //   tpGeneric     = 0x0000040,
-//   tpAction      = 0x0000080,
+   tpFunction      = 0x0000080,
 //   tpTargetSelf  = 0x0000100, // used for script generated classes (self refers to __target)
    tpConstructor = 0x0200400,
 //   tpConversion  = 0x0200800,
@@ -151,7 +151,7 @@ enum MethodHint
 //   tpGetAccessor = 0x0008000,
 //   tpSpecial     = 0x0010000,
 //   tpAbstract    = 0x0020000,
-//   tpInternal    = 0x0040000,
+   tpInternal    = 0x0040000,
 //   tpPredefined  = 0x0080000, // virtual class declaration
 //   tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
 //   tpInitializer = 0x0200000,
@@ -250,8 +250,8 @@ struct _ModuleScope
    ref_t             dispatch_message;
    ref_t             newobject_message;
 //   ref_t             init_message;
-//   ref_t             constructor_message;
-//
+   ref_t             constructor_message;
+
 //   // cached bool values
 //   BranchingInfo     branchingInfo;
 
@@ -367,7 +367,7 @@ struct _ModuleScope
 //      wrapReference = argArrayTemplateReference = 0;
 //
       /*init_message = */newobject_message = dispatch_message = 0;
-//      constructor_message = 0;
+      constructor_message = 0;
    }
 };
 
@@ -577,22 +577,22 @@ public:
    struct ChechMethodInfo
    {
       bool  found;
-//      bool  directResolved;
+      bool  directResolved;
 //      bool  withCustomDispatcher;
 //      bool  stackSafe;
 //      bool  embeddable;
-//      bool  closure;
+//      bool  function;
 //      bool  dynamicRequired;
 //      ref_t outputReference;
 
       ChechMethodInfo()
       {
-//         directResolved = false;
+         directResolved = false;
          /*embeddable = */found = false;
 //         outputReference = 0;
 //         withCustomDispatcher = false;
 //         stackSafe = false;
-//         closure = false;
+//         function = false;
 //         dynamicRequired = false;
       }
    };
@@ -645,7 +645,7 @@ public:
 //   virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isClosure(ClassInfo& info, ref_t message) = 0;
+//   virtual bool isFunction(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;
 //   //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
 

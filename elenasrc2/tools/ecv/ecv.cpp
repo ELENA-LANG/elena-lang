@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   12
+#define REVISION_VERSION   13
 
 using namespace _ELENA_;
 
@@ -214,14 +214,14 @@ ref_t resolveMessage(_Module* module, ident_t method)
 
    //   method = method.c_str() + getlength("prop#");
    //}
-   //if (method.startsWith("#invoke")) {
-   //   flags |= SPECIAL_MESSAGE;
-   //}
-   //if (method.startsWith("#private&")) {
-   //   flags |= STATIC_MESSAGE;
+   if (method.startsWith("#invoke")) {
+      flags |= FUNCTION_MESSAGE;
+   }
+   if (method.startsWith("#private&")) {
+      flags |= STATIC_MESSAGE;
 
-   //   method = method.c_str() + getlength("#private&");
-   //}
+      method = method.c_str() + getlength("#private&");
+   }
    //if (method.compare("#init")) {
    //   flags |= SPECIAL_MESSAGE;
    //}
@@ -1133,7 +1133,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       int hints = info.methodHints.get(ClassInfo::Attribute(entry.message, maHint));
       //bool isAbstract = test(hints, tpAbstract);
       //bool isMultidispatcher = test(hints, tpMultimethod);
-      //bool isInternal = test(hints, tpInternal);
+      bool isInternal = test(hints, tpInternal);
 
       // print the method name
       temp.copy(className);
@@ -1152,8 +1152,8 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       //   prefix.append("@abstract ");
       //if (isMultidispatcher)
       //   prefix.append("@multidispatcher ");
-      //if (isInternal)
-      //   prefix.append("@internal ");
+      if (isInternal)
+         prefix.append("@internal ");
 
       printLine(prefix, temp);
 

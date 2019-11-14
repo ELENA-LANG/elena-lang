@@ -2,11 +2,10 @@
 In development:
 ------         
               dev
-                * implicit method return
-                * private / public / internal methods
-                * explicit constructor
-                * implicit constructor
                 * create a class with implicit constructor
+                * default implcit constructor should be embeddable
+                * implicit constructor
+
                 * parameters
                 * strong typed variables
                 * typecasting

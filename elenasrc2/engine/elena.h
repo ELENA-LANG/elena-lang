@@ -816,15 +816,15 @@ inline void decodeMessage(ref_t message, ref_t& actionRef, int& argCount, ref_t&
 //
 //   return encodeMessage(actionRef, paramCount, flags);
 //}
-//
-//inline ref_t overwriteAction(ref_t message, ref_t newAction)
-//{
-//   int paramCount;
-//   ref_t actionRef, flags;
-//   decodeMessage(message, actionRef, paramCount, flags);
-//
-//   return encodeMessage(newAction, paramCount, flags);
-//}
+
+inline ref_t overwriteAction(ref_t message, ref_t newAction)
+{
+   int argCount;
+   ref_t actionRef, flags;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   return encodeMessage(newAction, argCount, flags);
+}
 
 //inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
 //{

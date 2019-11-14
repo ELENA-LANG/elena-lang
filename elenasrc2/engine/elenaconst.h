@@ -28,7 +28,7 @@ namespace _ELENA_
    constexpr auto FUNCTION_MESSAGE         = 0x020u;
 //   constexpr auto PROPERTY_MESSAGE        = 0x040u;
 //   constexpr auto VARIADIC_MESSAGE        = 0x080u;
-//   constexpr auto STATIC_MESSAGE          = 0x100u;
+   constexpr auto STATIC_MESSAGE          = 0x100u;
    constexpr auto ARG_MASK                = 0x01Fu;
    constexpr auto ARG_COUNT               = 0x01Eu;
 
@@ -369,8 +369,8 @@ namespace _ELENA_
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
    constexpr auto NEWOBJECT_MESSAGE       = "#new";
 //   constexpr auto CAST_MESSAGE         = "#cast";
-//   constexpr auto CONSTRUCTOR_MESSAGE  = "#constructor";
-//   constexpr auto INVOKE_MESSAGE       = "#invoke";
+   constexpr auto CONSTRUCTOR_MESSAGE  = "#constructor";
+   constexpr auto INVOKE_MESSAGE       = "#invoke";
 //   constexpr auto EQUAL_MESSAGE        = "equal";
 //   constexpr auto NOTEQUAL_MESSAGE     = "notequal";
 //   constexpr auto LESS_MESSAGE         = "less";

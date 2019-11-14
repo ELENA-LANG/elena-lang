@@ -21,7 +21,7 @@ TreeScriptParser :: TreeScriptParser()
 
    _attributes.add("singleton", V_SINGLETON);
    _attributes.add("preloaded_symbol", V_PRELOADED);
-   _attributes.add("action", V_ACTION);
+   _attributes.add("action", V_FUNCTION);
    _attributes.add("get_method", V_GETACCESSOR);
    _attributes.add("script_method", V_SCRIPTSELFMODE);
 }

@@ -658,10 +658,10 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
          methodPosition = loadMethod(refHelper, codeReader, codeWriter);
          
          // NOTE : private / implicit message is not added to VMT
-         /*if (test(entry.message, STATIC_MESSAGE)) {
+         if (test(entry.message, STATIC_MESSAGE)) {
             _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
          }
-         else */_compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
+         else _compiler->addVMTEntry(refHelper.resolveMessage(entry.message), methodPosition, (VMTEntry*)vmtImage->get(position), count);
 
          size -= sizeof(VMTEntry);
       }

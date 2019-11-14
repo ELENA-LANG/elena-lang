@@ -115,7 +115,6 @@ enum LexicalType
 //   lxLastSwitchOption         = 0x00003D,
 //   lxAttributeDecl            = 0x00004E,
 //   lxClassField               = 0x00004F,
-//   lxImplicitMessage          = 0x000067,
 //   lxSizeDecl                 = 0x000068,
 //   lxDynamicSizeDecl          = 0x000069,
 //   lxPropertyParam            = 0x00006B,

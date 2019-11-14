@@ -84,13 +84,13 @@ namespace _ELENA_
 //   #define errNotAbstractClass      "%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n"
 //   #define errNoMethodOverload      "%s(%d:%d): error 165: An attribute '%s' cannot be applied for an already existing method\n"
 //   #define errIllegalPrivate        "%s(%d:%d): error 166: An attribute '%s' cannot be applied for an extension\n"
-//   constexpr auto errDupPublicMethod            = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
+   constexpr auto errDupPublicMethod            = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
 //   //   #define errOneDefaultConstructor "%s(%d:%d): error 168: a class '%s' should have only one default constructor\n"
 //   constexpr auto errEmptyStructure             = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
 //   constexpr auto errReadOnlyField              = "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n";
 //   constexpr auto errDefaultConstructorNotFound = "%s(%d:%d): error 171: implicit constructor is not found for '%s'\n";
    constexpr auto errInvalidType                = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
-//   constexpr auto errDupInternalMethod          = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
+   constexpr auto errDupInternalMethod          = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
@@ -119,7 +119,7 @@ namespace _ELENA_
 //   #define wrnUnresovableLink       "%s(%d:%d): warning 401: Link %s is unresolvable\n"
    #define wrnUnknownHint           "%s(%d:%d): warning 404: Unknown attribute '%s'\n"
    #define wrnInvalidHint           "%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n"
-//   #define wrnUnknownMessage        "%s(%d:%d): warning 407: Message '%s' does not belong to the object\n"
+   #define wrnUnknownMessage        "%s(%d:%d): warning 407: Message '%s' does not belong to the object\n"
 ////   #define wrnObsoleteMessage       "%s(%d:%d): warning 408: Message '%s' is obsolete"
 ////   #define wrnObsoleteConstruction  "%s(%d:%d): warning 409: Construction near '%s' is obsolete"
 ////   #define wrnProhibitedSubjectName "%s(%d:%d): warning 410: Subject name '%s' coincides with a message verb"

@@ -552,7 +552,7 @@ private:
 //      bool         genericClosure;
 //      bool         extensionMode;
 //      bool         multiMethod;
-//      bool         closureMode;
+      bool         functionMode;
 //      bool         nestedMode;
 //      bool         subCodeMode;       
 //      bool         abstractMethod;
