@@ -46,7 +46,7 @@
 //#define type        8000100Ah
 //#define generic     8000100Bh
 //#define closure     8000100Ch
-//#define var         8000100Dh
+#define var         8000100Dh
 //#define this        8000100Eh
 //#define static      8000100Fh
 //#define cast        80001011h

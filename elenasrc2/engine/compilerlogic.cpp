@@ -13,8 +13,8 @@
 
 using namespace _ELENA_;
 
-//typedef ClassInfo::Attribute Attribute;
-//
+typedef ClassInfo::Attribute Attribute;
+
 //inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
 //{
 //   return ref1 ? ref1 : ref2;
@@ -247,12 +247,12 @@ CompilerLogic :: CompilerLogic()
 //
 }
 
-//int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
-//{
-//   bool methodFound = info.methods.exist(message);
-//
-//   if (methodFound) {
-//      int hint = info.methodHints.get(Attribute(message, maHint));
+int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
+{
+   bool methodFound = info.methods.exist(message);
+
+   if (methodFound) {
+      int hint = info.methodHints.get(Attribute(message, maHint));
 //      if ((hint & tpMask) == tpPrivate) {
 //         // recognize the private message
 //         message |= STATIC_MESSAGE;
@@ -265,28 +265,28 @@ CompilerLogic :: CompilerLogic()
 //      result.embeddable = test(hint, tpEmbeddable);
 //      result.closure = test(hint, tpAction);
 //      result.dynamicRequired = test(hint, tpDynamic);
-//
-//      if ((hint & tpMask) == tpSealed || (hint & tpMask) == tpPrivate) {
-//         return hint;
-//      }
-//      else if (test(info.header.flags, elFinal)) {
-//         return tpSealed | hint;
-//      }
+
+      if ((hint & tpMask) == tpSealed/* || (hint & tpMask) == tpPrivate*/) {
+         return hint;
+      }
+      else if (test(info.header.flags, elFinal)) {
+         return tpSealed | hint;
+      }
 //      else if (test(info.header.flags, elClosed)) {
 //         return tpClosed | hint;
 //      }
-//      else return tpNormal | hint;
-//   }
-//   else {
+      else return tpNormal | hint;
+   }
+   else {
 //      //HOTFIX : to recognize the predefined messages
 //      result.outputReference = info.methodHints.get(Attribute(message, maReference));
-//
-//      //HOTFIX : to recognize the sealed private method call
-//      //         hint search should be done even if the method is not declared
-//      return info.methodHints.get(Attribute(message, maHint));
-//   }
-//}
-//
+
+      //HOTFIX : to recognize the sealed private method call
+      //         hint search should be done even if the method is not declared
+      return info.methodHints.get(Attribute(message, maHint));
+   }
+}
+
 //ref_t CompilerLogic :: resolveArrayElement(_ModuleScope& scope, ref_t reference)
 //{
 //   ClassInfo info;
@@ -295,20 +295,20 @@ CompilerLogic :: CompilerLogic()
 //   }
 //   else return 0;
 //}
-//
-//int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
-//{
-//   ClassInfo info;
-//   result.found = defineClassInfo(scope, info, reference);
-//
-//   if (result.found) {
+
+int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
+{
+   ClassInfo info;
+   result.found = defineClassInfo(scope, info, reference);
+
+   if (result.found) {
 //      if (testany(info.header.flags, elClosed | elClassClass))
 //         result.directResolved = true;
 //
 //      if (test(info.header.flags, elWithCustomDispatcher))
 //         result.withCustomDispatcher = true;
-//
-//      int hint = checkMethod(info, message, result);
+
+      int hint = checkMethod(info, message, result);
 //      //if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
 //      //   hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
 //      //   if (hint != tpUnknown) {
@@ -327,27 +327,27 @@ CompilerLogic :: CompilerLogic()
 //      //      }
 //      //   }
 //      //}
-//
-//      return hint;
-//   }
-//   else return tpUnknown;
-//}
-//
-//int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
-//{
-//   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
-//   int callType = methodHint & tpMask;
-//
+
+      return hint;
+   }
+   else return tpUnknown;
+}
+
+int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
+{
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
+   int callType = methodHint & tpMask;
+
 //   result.stackSafe = test(methodHint, tpStackSafe);
 //
 //   if (test(messageRef, SPECIAL_MESSAGE)) {
 //      // HOTFIX : calling closure
 //      result.closure = true;
 //   }
-//
-//   return callType;
-//}
-//
+
+   return callType;
+}
+
 //int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 //{
 //   if ((loperand == 0 && roperand != V_NIL) || (roperand == 0 && loperand != V_NIL))
@@ -1693,7 +1693,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
          attrValue = 0;
          return true;
       case V_SINGLETON:
-         attrValue = elRole/* | elNestedClass*/;
+         attrValue = elRole | elSealed/* | elNestedClass*/;
          return true;
       default:
          return false;
@@ -1742,9 +1742,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_INTERNAL:
 //         attrValue = tpInternal;
 //         return true;
-//      case V_SEALED:
-//         attrValue = tpSealed;
-//         return true;
+      case V_SEALED:
+         attrValue = tpSealed;
+         return true;
 //      case V_ACTION:
 //         attrValue = tpAction;
 //         explicitMode = true;
@@ -1846,7 +1846,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //   }
 //}
 
-bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes)
+bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable)
 {
    switch (attrValue) {
       case 0:
@@ -1855,10 +1855,10 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_AUTOSIZE:
 //         attributes.include(EAttr::eaAutoSize);
 //         return true;
-//      case V_VARIABLE:
+      case V_VARIABLE:
 //      case V_AUTO:
-//         attributes.include(EAttr::eaType);
-//         return true;
+         newVariable = true;
+         return true;
 //      case V_CONVERSION:
 //         attributes.include(EAttr::eaCast);
 //         return true;

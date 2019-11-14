@@ -312,19 +312,19 @@ void* JITLinker :: calculateVAddress(MemoryWriter* writer, int mask, int alignme
    return _virtualMode ? (void*)(writer->Position() | mask) : writer->Address();
 }
 
-//int JITLinker :: resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID)
-//{
-//   void* refVAddress = resolve(_loader->retrieveReference(module, reference, mskVMTRef), mskVMTRef, false);
-//
-//   int address = _staticMethods.get(MethodInfo(refVAddress, messageID));
-//   if (address == -1) {      
-//      address = getVMTMethodAddress(refVAddress, messageID);
-//
-//      _staticMethods.add(MethodInfo(refVAddress, messageID), address);
-//   }
-//   
-//   return address;
-//}
+int JITLinker :: resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID)
+{
+   void* refVAddress = resolve(_loader->retrieveReference(module, reference, mskVMTRef), mskVMTRef, false);
+
+   int address = _staticMethods.get(MethodInfo(refVAddress, messageID));
+   if (address == -1) {      
+      address = getVMTMethodAddress(refVAddress, messageID);
+
+      _staticMethods.add(MethodInfo(refVAddress, messageID), address);
+   }
+   
+   return address;
+}
 
 void JITLinker :: fixReferences(References& references, _Memory* image)
 {
@@ -338,20 +338,20 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
       currentMask = current.reference & mskAnyRef;
       currentRef = current.reference & ~mskAnyRef;
 
-      //// if it is a vmt method address
-      //if (currentMask == mskVMTMethodAddress) {
-      //   resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
+      // if it is a vmt method address
+      if (currentMask == mskVMTMethodAddress) {
+         resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
 
-      //   // message id should be replaced with an appropriate method address
-      //   size_t offset = it.key();
-      //   size_t messageID = (*image)[offset];
+         // message id should be replaced with an appropriate method address
+         size_t offset = it.key();
+         size_t messageID = (*image)[offset];
 
-      //   (*image)[offset] = resolveVMTMethodAddress(current.module, currentRef, messageID);
-      //   if (_virtualMode) {
-      //      image->addReference(mskRelCodeRef, offset);
-      //   }
-      //   else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
-      //}
+         (*image)[offset] = resolveVMTMethodAddress(current.module, currentRef, messageID);
+         if (_virtualMode) {
+            image->addReference(mskRelCodeRef, offset);
+         }
+         else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
+      }
       //// if it is a vmt message offset
       //else if (currentMask == mskVMTEntryOffset) {
       //   void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
@@ -379,11 +379,11 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
       ////   else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
       ////}
       // otherwise
-      //else {   
+      else {   
          void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, currentMask), currentMask, false);
 
          resolveReference(image, it.key(), (ref_t)refVAddress, currentMask, _virtualMode);
-      //}
+      }
       it++;
    }
 }
@@ -422,19 +422,19 @@ void* JITLinker :: getVMTReference(_Module* module, ref_t reference, References&
    else return NULL;
 }
 
-//int JITLinker :: getVMTMethodAddress(void* vaddress, int messageID)
-//{
-//   void* entries;
-//   if (_virtualMode) {
-//      _Memory* image = _loader->getTargetSection(mskVMTRef);
-//
-//      entries = image->get((ref_t)vaddress & ~mskAnyRef);
-//   }
-//   else entries = vaddress;
-//
-//   return _compiler->findMethodAddress(entries, messageID, _compiler->findLength(entries));
-//}
-//
+int JITLinker :: getVMTMethodAddress(void* vaddress, int messageID)
+{
+   void* entries;
+   if (_virtualMode) {
+      _Memory* image = _loader->getTargetSection(mskVMTRef);
+
+      entries = image->get((ref_t)vaddress & ~mskAnyRef);
+   }
+   else entries = vaddress;
+
+   return _compiler->findMethodAddress(entries, messageID, _compiler->findLength(entries));
+}
+
 //int JITLinker :: getVMTMethodIndex(void* vaddress, int messageID)
 //{
 //   void* entries;

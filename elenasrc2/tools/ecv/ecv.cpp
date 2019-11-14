@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   10
+#define REVISION_VERSION   11
 
 using namespace _ELENA_;
 
@@ -529,9 +529,9 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcBLoadSI:
 //      case bcBSaveSI:
 //      case bcBLoadFI:
-//      case bcPushFI:
-//      case bcALoadFI:
-//      case bcASaveFI:
+      case bcPushFI:
+      case bcPeekFI:
+      case bcStoreFI:
 //      case bcDLoadFI:
 //      case bcACopyF:
 //      case bcSCopyF:
@@ -643,16 +643,16 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append(" ");
          command.appendInt(argument2);
          break;
-//      case bcXCallRM:
+      case bcCallRM:
 //      case bcXJumpRM:
 //      case bcXIndexRM:
 //      case bcXMTRedirect:
-//         printCommand(command, opcode);
-//         printReference(command, module, argument);
-//         command.append(" message : \"");
-//         printMessage(command, module, argument2);
-//         command.append("\"");
-//         break;
+         printCommand(command, opcode);
+         printReference(command, module, argument);
+         command.append(" message : \"");
+         printMessage(command, module, argument2);
+         command.append("\"");
+         break;
       case bcCopyM:
          printCommand(command, opcode);
          command.append("mssgconst : \"");

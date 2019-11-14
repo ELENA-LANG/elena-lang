@@ -148,12 +148,12 @@ class ByteCodeWriter
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
    void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
-   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef/*, int reserved, int allocated, bool withPresavedMessage*/, bool withNewFrame = true);
+   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef/*, int reserved*/, int allocated/*, bool withPresavedMessage*/, bool withNewFrame = true);
 //   void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
-   void declareArgumentList(CommandTape& tape, int count);
+   void allocateStack(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
 //   void declareThenBlock(CommandTape& tape);
 //   void declareThenElseBlock(CommandTape& tape);
@@ -166,8 +166,8 @@ class ByteCodeWriter
 //   void declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel);
 //   void doCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
-//
-//   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
+
+   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -182,7 +182,7 @@ class ByteCodeWriter
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
-   void newFrame(CommandTape& tape/*, int reserved, int allocated, bool withPresavedMessage*/);
+   void newFrame(CommandTape& tape/*, int reserved*/, int allocated/*, bool withPresavedMessage*/);
    void newStructure(CommandTape& tape, int size, ref_t reference);
    //void newDynamicStructure(CommandTape& tape, int itemSize);
 
@@ -216,7 +216,7 @@ class ByteCodeWriter
 //   void setSubject(CommandTape& tape, ref_t subject);
 //
 //   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-//   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode, bool withValidattion = true);
+   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode, bool withValidattion = true*/);
 //   void callInitMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
 //   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
 //
@@ -359,7 +359,7 @@ class ByteCodeWriter
 //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
-//   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
+   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
@@ -372,7 +372,7 @@ class ByteCodeWriter
 
 public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
-//   int writeString(ident_t path);
+   int writeString(ident_t path);
 
    void generateClass(CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, bool(*cond)(LexicalType));
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);

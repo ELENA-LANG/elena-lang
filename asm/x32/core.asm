@@ -129,21 +129,21 @@ rstructure %VOIDPTR
 end
 
 // --- GC_ALLOC ---
-// in: ecx - size ; out: ebx - created object
+// in: edx - size ; out: ebx - created object
 procedure %GC_ALLOC
 
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
-  add  ecx, eax
-  cmp  ecx, edx
+  mov  ecx, [data : %CORE_GC_TABLE + gc_yg_end]
+  add  edx, eax
+  cmp  edx, ecx
   jae  short labYGCollect
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], edx
   lea  ebx, [eax + elObjectOffset]
   ret
 
 labYGCollect:
   // ; restore ecx
-  sub  ecx, eax
+  sub  edx, eax
 
   // ; save registers
   push ebp
@@ -151,7 +151,7 @@ labYGCollect:
   // ; lock frame
   mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
 
-  push ecx
+  push edx
   
   // ; create set of roots
   mov  ebp, esp
@@ -304,14 +304,14 @@ labCollectFrame:
   mov  esp, ebp             
   
   // ; restore registers
-  pop  ecx
+  pop  edx
   pop  ebp
 
   // ; try to allocate once again
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  add  ecx, eax
+  add  edx, eax
   lea  ebx, [eax + elObjectOffset]
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], edx
   ret
 
 labFullCollect:
@@ -508,23 +508,23 @@ labFixRoot:
 
   // ; free root set
   mov  esp, [esp]
-  pop  ecx
+  pop  edx
   pop  ebp
 
   // ; allocate
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
-  add  ecx, eax
-  cmp  ecx, edx
+  mov  ecx, [data : %CORE_GC_TABLE + gc_yg_end]
+  add  edx, eax
+  cmp  edx, ecx
   jae  labBigAlloc
   lea  ebx, [eax + elObjectOffset]
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], edx
   ret
 
 labError:
   // ; restore stack
   mov  esp, [esp]
-  pop  ecx
+  pop  edx
   pop  ebp
 
 labError2:
@@ -534,7 +534,7 @@ labError2:
 
 // ; bad luck, we have to expand GC
 labBigAlloc2:
-  push ecx
+  push edx
 
   mov  eax, [data : %CORE_GC_TABLE + gc_end]
   mov  ecx, 2A000h
@@ -552,20 +552,20 @@ labBigAlloc2:
   add  ecx, 15000h
   mov  [data : %CORE_GC_TABLE + gc_end], ecx
 
-  pop  ecx
+  pop  edx
 
 labBigAlloc:
   // ; try to allocate in the mg
-  sub  ecx, eax
-  cmp  ecx, 800000h
+  sub  edx, eax
+  cmp  edx, 800000h
   jae  labError2
 
   mov  eax, [data : %CORE_GC_TABLE + gc_mg_current]
-  mov  edx, [data : %CORE_GC_TABLE + gc_end]
-  add  ecx, eax
-  cmp  ecx, edx
+  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
+  add  edx, eax
+  cmp  edx, ecx
   jae  labBigAlloc2
-  mov  [data : %CORE_GC_TABLE + gc_mg_current], ecx
+  mov  [data : %CORE_GC_TABLE + gc_mg_current], edx
   lea  ebx, [eax + elObjectOffset]
 
   ret  
@@ -829,8 +829,8 @@ end
 // ; in: ecx - catch offset
 procedure %HOOK
 
-  mov  edx, [esp]       
-  lea  ecx, [edx + ecx - 5]               
+  mov  eax, [esp]       
+  lea  ecx, [eax + ecx - 5]               
   // ; add  ecx, [esp]
   // ; sub  ecx, 5             // ; call command size should be excluded
   ret
@@ -848,8 +848,8 @@ procedure % ENDFRAME
   lea  esp, [esp+8]
   pop  ebp
 
-  pop  ebx
-  mov  fs:[0], ebx
+  pop  eax
+  mov  fs:[0], eax
   lea  esp, [esp+4]
 
   // ; restore return pointer
@@ -866,7 +866,7 @@ end
 
 procedure % CALC_SIZE
 
-  mov  ecx, ebx
+  mov  ecx, edx
   add  ecx, page_ceil
   and  ecx, page_mask
 
@@ -876,15 +876,15 @@ end
 
 procedure % GET_COUNT
 
-  mov  ebx, [eax - elSizeOffset]
-  test ebx, 0800000h
+  mov  edx, [ebx - elSizeOffset]
+  test edx, 0800000h
   jnz  short labErr
-  and  ebx, 0FFFFFFh
-  shr  ebx, 2
+  and  edx, 0FFFFFFh
+  shr  edx, 2
   ret
 
 labErr:
-  xor  ebx, ebx
+  xor  edx, edx
   ret 
 
 end
@@ -900,11 +900,11 @@ inline % 7
 end
 
 // ; bsredirect
-inline % 0Eh // (ebx - object, ecx - message)
+inline % 0Eh // (ebx - object, edx - message)
 
   mov  edi, [ebx-4]
   mov  esi, [edi - elVMTSizeOffset]
-  xor  edx, edx
+  xor  ecx, ecx
 
 labSplit:
   test esi, esi
@@ -912,13 +912,13 @@ labSplit:
 
 labStart:
   shr   esi, 1
-  setnc dl
-  cmp   ecx, [edi+esi*8]
+  setnc cl
+  cmp   edx, [edi+esi*8]
   je    short labFound
   lea   eax, [edi+esi*8]
   jb    short labSplit
   lea   edi, [eax+8]
-  sub   esi, edx
+  sub   esi, ecx
   jmp   labSplit
 labFound:
   jmp   [edi+esi*8+4]
@@ -938,7 +938,14 @@ end
 // ; loadenv
 inline % 2Ah
 
-  mov  ecx, rdata : %SYSTEM_ENV
+  mov  edx, rdata : %SYSTEM_ENV
+
+end
+
+// ; peekfi
+inline % 94h
+
+  mov  ebx, [ebp+__arg1]
 
 end
 
@@ -960,8 +967,8 @@ end
 // ; callvi (ecx - offset to VMT entry)
 inline % 0A2h
 
-  mov  edx, [ebx - 4]
-  call [edx + __arg1]
+  mov  eax, [ebx - 4]
+  call [eax + __arg1]
 
 end
 
@@ -969,14 +976,14 @@ end
 inline % 0A5h
 
   call extern __arg1
-  mov  ecx, eax
+  mov  edx, eax
 
 end
 
 // ; savesi
 inline % 0BBh
 
-  mov  [esp + __arg1], ecx
+  mov  [esp + __arg1], edx
 
 end
 
@@ -1005,10 +1012,29 @@ inline % 0C3h
 
 end
 
+// ; storefi
+inline % 0C4h
+
+  mov  [ebp+__arg1], ebx
+
+end
+
+// ; alloci
+inline %0D1h
+
+  // ; generated in jit : sub  esp, __arg1*4
+  mov  ecx, __arg1
+  xor  eax, eax
+  mov  edi, esp
+  rep  stos
+
+end
+
+
 // ; new (__arg1 - size)
 inline % 0F0h
 	
-  mov  ecx, __arg1
+  mov  edx, __arg1
   call code : %GC_ALLOC
 
 end
@@ -1018,5 +1044,12 @@ inline % 0F2h
 	
   mov  ecx, __arg1
   rep  stosd
+
+end
+
+// callrm (edx contains message, __arg1 contains vmtentry)
+inline % 0FEh
+
+   call code : __arg1
 
 end

@@ -78,8 +78,8 @@ class CompilerLogic : public _CompilerLogic
 //   bool isBoolean(_ModuleScope& scope, ref_t reference);
 
 public:
-//   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
-//   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
+   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
+   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
 
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
@@ -92,8 +92,8 @@ public:
 //   virtual int defineStructSize(ClassInfo& info, bool& variable);
 //
 //   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info);
-//
-//   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
+
+   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
 //   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand);
@@ -192,7 +192,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/);
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
-   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes);
+   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable);
    virtual bool validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility);
 ////////   virtual bool validateWarningAttribute(int& attrValue);
 //   virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass);

@@ -154,7 +154,7 @@ enum ByteCode
 //   bcECopy           = 0x91,
 //   bcRestore         = 0x92,
 //   bcALoadR          = 0x93,
-//   bcALoadFI         = 0x94,
+   bcPeekFI          = 0x94,
    bcPeekSI          = 0x95,
 //   bcIfHeap          = 0x96,
 //   bcBCopyS          = 0x97,
@@ -190,7 +190,7 @@ enum ByteCode
 //   bcBSaveSI         = 0xB3,
 //   bcPushAI          = 0xB4,
 //   bcESaveFI         = 0xB5,
-//   bcPushFI          = 0xB6,
+   bcPushFI          = 0xB6,
 //   bcDLoadFI         = 0xB7,
 //   bcDLoadSI         = 0xB8,
 //   bcDSaveFI         = 0xB9,
@@ -205,7 +205,7 @@ enum ByteCode
 //   bcNWriteI         = 0xC1,
 //   bcASwapSI         = 0xC2,
    bcStoreSI         = 0xC3,
-//   bcASaveFI         = 0xC4,
+   bcStoreFI         = 0xC4,
 //   bcBSwapSI         = 0xC5,
 //   bcESwapSI         = 0xC6,
 //   bcDSwapSI         = 0xC7,
@@ -263,7 +263,7 @@ enum ByteCode
 //   bcElseR           = 0xFB,   
 //   bcIfN             = 0xFC,
 //   bcElseN           = 0xFD,   
-//   bcXCallRM         = 0xFE,
+   bcCallRM          = 0xFE,
    bcReserved        = 0xFF,
 
    // labels
@@ -322,7 +322,7 @@ enum Predicate
 {
    bpNone  = 0,
    bpFrame = 1,
-   bpBlock = 2
+//   bpBlock = 2
 };
 
 enum TapeStructure
@@ -451,7 +451,7 @@ public:
          case bcFill:
          case bcNewN:
          //case bcBCopyR:
-         //case bcXCallRM:
+         case bcCallRM:
          case bcCallExtR:
          //case bcSelectR:
          //case bcXJumpRM:
@@ -479,7 +479,7 @@ public:
    {
       switch (code) {
          //case bcXIndexRM:
-         //case bcXCallRM:
+         case bcCallRM:
          //case bcIfM:
          //case bcElseM:
          //   return true;
@@ -513,7 +513,7 @@ public:
       switch(code) {
          case bcPushA:
          //case bcPushB:
-         //case bcPushFI:
+         case bcPushFI:
          //case bcPushN:
          case bcPushR:
          case bcAllocI:

@@ -67,7 +67,7 @@ constexpr auto V_METHOD          = 0x80001008u;
 //constexpr auto V_TYPETEMPL       = 0x8000100Au;
 //constexpr auto V_GENERIC         = 0x8000100Bu;
 //constexpr auto V_ACTION          = 0x8000100Cu;     // a closure attribute
-//constexpr auto V_VARIABLE        = 0x8000100Du;
+constexpr auto V_VARIABLE        = 0x8000100Du;
 //constexpr auto V_MEMBER          = 0x8000100Eu;
 //constexpr auto V_STATIC          = 0x8000100Fu;
 //constexpr auto V_CONVERSION      = 0x80001011u;
@@ -133,10 +133,10 @@ enum MethodHint
 {
    tpMask        = 0x00000F,
 
-//   tpUnknown     = 0x0000000,
-//   tpSealed      = 0x0000001,
+   tpUnknown     = 0x0000000,
+   tpSealed      = 0x0000001,
 //   tpClosed      = 0x0000002,
-//   tpNormal      = 0x0000003,
+   tpNormal      = 0x0000003,
    tpDispatcher  = 0x0000004,
 //   tpPrivate     = 0x0000005,
 //   tpStackSafe   = 0x0000010,
@@ -452,11 +452,11 @@ public:
       eaNoDebugInfo        = 0x00000000001,
       eaNestedNs           = 0x00000000002,
       eaIntern             = 0x00000000004,
+      eaModuleScope        = 0x00000000008,
 
-      eaScopeMask          = 0x00000000002,
+      eaScopeMask          = 0x0000000000A,
       eaObjectMask         = 0x00000000004,
 
-//      eaType               = 0x00000000001,
 //      eaCast               = 0x00000000002,
 //      eaNewOp              = 0x00000000004,
 //      eaForward            = 0x00000000008,
@@ -481,7 +481,6 @@ public:
 //      eaCallExpr           = 0x00000400000,
 //      eaVirtualExpr        = 0x00000800000,
 //      eaParameter          = 0x00001000000,
-//      eaModuleScope        = 0x00002000000,
 //      eaRetExpr            = 0x00004000000,
 //      eaDirectCall         = 0x00008000000,
 //      eaNoBoxing           = 0x00010000000,
@@ -575,9 +574,9 @@ public:
 //      }
    };
 
-//   struct ChechMethodInfo
-//   {
-//      bool  found;
+   struct ChechMethodInfo
+   {
+      bool  found;
 //      bool  directResolved;
 //      bool  withCustomDispatcher;
 //      bool  stackSafe;
@@ -585,19 +584,19 @@ public:
 //      bool  closure;
 //      bool  dynamicRequired;
 //      ref_t outputReference;
-//
-//      ChechMethodInfo()
-//      {
+
+      ChechMethodInfo()
+      {
 //         directResolved = false;
-//         embeddable = found = false;
+         /*embeddable = */found = false;
 //         outputReference = 0;
 //         withCustomDispatcher = false;
 //         stackSafe = false;
 //         closure = false;
 //         dynamicRequired = false;
-//      }
-//   };
-//
+      }
+   };
+
 //   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
 //   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result) = 0;
 
@@ -609,10 +608,10 @@ public:
 //   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
 //
 //   virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
-//
-//   // retrieve the call type
-//   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
-//
+
+   // retrieve the call type
+   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
+
 //   // retrieve the operation type
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
@@ -683,7 +682,7 @@ public:
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
-   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes) = 0;
+   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
    virtual bool validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility) = 0;
 //   virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
 //   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;

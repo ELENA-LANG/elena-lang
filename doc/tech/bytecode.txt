@@ -7,15 +7,13 @@ ELENA byte codes (or ecodes)
                                negative - to the previous frame)
    s(p)   - stack pointer     (only positive)
 
-   acc    - accumulator (ebx)
+   acc    - accumulator      (ebx)
 
-   index  - data accumulator (ecx)
+   index  - data accumulator (edx)
 
 
  Register operations:
  --------------------
- savesi i                   - [sp:i] <= index
-
  setr r                     - r => acc
 
  copym m                    - m => index
@@ -27,18 +25,26 @@ ELENA byte codes (or ecodes)
 
  freei i                    - sp-=i; 
  
+ peekfi i                   - [fp+i] => acc;
+
  peeksi i                   - [sp+i] => acc;
 
  popa                       - acc <= [sp] ; sp--
  
  pusha                      - acc => [sp+1] ; sp++                  
 
+ pushfi i                   - [fp+i] => [sp+1] ; sp++
+ 
  pushr r                    - r  => [sp+1] ; sp++
 
  pushs i                    - sp+i => [sp+1] ; sp++
 
  pushsi i                   - [sp+i] => [sp+1] ; sp++
            
+ savesi i                   - [sp:i] <= index
+
+ storefi i                  - [fp+i] <= acc 
+ 
  storesi i                  - [sp+i] <= acc
  
 
@@ -83,6 +89,9 @@ ELENA byte codes (or ecodes)
  bsredirect                 - search acc::VMT for the message in index;
                               if found jumps to it; binary search is used ; index, acc presaved
 
+ callrm r, m                - calls directly the method resolved by JIT by r and m
+                              acc contains the result
+ 
  callvi i                   - call acc::VMT[i] method
 
  fill r, i                  - fill the object with the value i-times
@@ -251,8 +260,6 @@ ELENA byte codes (or ecodes)
 	
  aloadfi i                  - [fp+i] => acc
 
- asavefi i                  - [fp+i] <= acc 
- 
  aswapsi i                  - [sp+i] <=> acc
 
  bloadfi i                  - [fp+i] => base
@@ -300,8 +307,6 @@ ELENA byte codes (or ecodes)
  pushd                      - index => [sp+1] ; sp++;
 
  pushf i                    - fp+i => [sp+1] ; sp++
- 
- pushfi i                   - [fp+i] => [sp+1] ; sp++
  
  savefi i,n                 - [fp:i] <= n
 
@@ -403,9 +408,6 @@ ELENA byte codes (or ecodes)
  
  wlen                       - [acc].Length / 2 >> index
 
- xcallrm r, m               - calls directly the method resolved by JIT by r and m
-                              acc contains the result
- 
  xindexrm r, m              - directly resolve message mapping for the specified class
  
  xjumprm r, m               - jumps directly the method resolved by JIT by r and m

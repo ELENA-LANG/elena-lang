@@ -2,15 +2,27 @@
 In development:
 ------         
               dev
-                * difference between sealed and final?
-                * singleton should be sealed?
-                * support sealed method
-                * direct call of the sealed methods
-                * declaring variable
-
+                * assigning variable
+                * returning a value from the method
+                * implicit method return
+                * private / public / internal methods
                 * explicit constructor
                 * implicit constructor
                 * create a class with implicit constructor
+                * parameters
+                * strong typed variables
+                * typecasting
+                * auto typecasting
+                * strong parameters
+                * dispatching in compile time
+                * dispatching in run time
+
+                * primitive numbers
+                * primitive operations
+                * boxing
+                * structures
+                * unboxing
+
                 * creating dynamic array / buffers
                 * public / private / internal methods
                 * nested class scope
@@ -18,6 +30,7 @@ In development:
                 * fields, public / private / internal fields
                 * fields with reference name
                 * templates, template creating, template inheritance, template import
+                * variable : identifier / reference
 
                 * implement sealed, const, struct
                 * countable
@@ -37,6 +50,7 @@ In development:
                 * stron-typed parameters
                 * singleton can be used as a type?
                 * should V_SINGLETON be marked as elNestedClass?
+                * difference between sealed and final?
 
                 * multi-methods 
                 * variadic methods
@@ -101,6 +115,7 @@ In development:
                 * migrate changes from core to corex
                 * test if big alloc is proper working
                 * redesign
+                * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
 
               dev1
                 * write - Programming in ELENA : manual

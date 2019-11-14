@@ -184,27 +184,27 @@ size_t JITCompiler32 :: findFlags(void* refVMT)
    return *(int*)((ref_t)refVMT - 0x08);  // !! explicit constant
 }
 
-//size_t JITCompiler32 :: findLength(void* refVMT)
-//{
-//   int count = *(int*)((int)refVMT - elVMTCountOffset32);
-//   return count;
-//}
-//
-//pos_t JITCompiler32 :: findMethodAddress(void* refVMT, size_t message, size_t count)
-//{
-//   VMTEntry* entries = (VMTEntry*)refVMT;
-//
-//   // search for the message entry
-//   size_t i = 0;
-//   while (i < count && entries[i].message != message) {
-//      i++;
-//   }
-//
-//   // return the method address
-//   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
-//   return (i < count) ? entries[i].address : entries[0].address;
-//}
-//
+size_t JITCompiler32 :: findLength(void* refVMT)
+{
+   int count = *(int*)((int)refVMT - elVMTCountOffset32);
+   return count;
+}
+
+pos_t JITCompiler32 :: findMethodAddress(void* refVMT, size_t message, size_t count)
+{
+   VMTEntry* entries = (VMTEntry*)refVMT;
+
+   // search for the message entry
+   size_t i = 0;
+   while (i < count && entries[i].message != message) {
+      i++;
+   }
+
+   // return the method address
+   // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
+   return (i < count) ? entries[i].address : entries[0].address;
+}
+
 //int JITCompiler32 :: findMethodIndex(void* refVMT, ref_t message, size_t count)
 //{
 //   VMTEntry* entries = (VMTEntry*)refVMT;

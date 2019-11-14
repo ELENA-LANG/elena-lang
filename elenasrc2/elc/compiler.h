@@ -44,27 +44,27 @@ namespace _ELENA_
 class Compiler : public _Compiler
 {
 public:
-//   struct Parameter
-//   {
-//      int    offset;
+   struct Parameter
+   {
+      int    offset;
 //      ref_t  class_ref;
 //      ref_t  element_ref;
 //      int    size;
-//
-//      Parameter()
-//      {
-//         offset = -1;
+
+      Parameter()
+      {
+         offset = -1;
 //         class_ref = 0;
 //         element_ref = 0;
 //         size = 0;
-//      }
-//      Parameter(int offset)
-//      {
-//         this->offset = offset;
+      }
+      Parameter(int offset)
+      {
+         this->offset = offset;
 //         this->class_ref = 0;
 //         this->element_ref = 0;
 //         this->size = 0;
-//      }
+      }
 //      Parameter(int offset, ref_t class_ref)
 //      {
 //         this->offset = offset;
@@ -86,7 +86,7 @@ public:
 //         this->element_ref = element_ref;
 //         this->size = size;
 //      }
-//   };
+   };
 
    // InheritResult
    enum class InheritResult
@@ -133,7 +133,7 @@ public:
 //      okOuterStaticField,             // param - field offset, extraparam - outer field offset
 //      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
 ////////      okCurrent,                      // param - stack offset
-//      okLocal,                        // param - local / out parameter offset, extraparam : class reference
+      okLocal,                        // param - local / out parameter offset, extraparam : class reference
 //      okParam,                        // param - parameter offset, extraparam = class reference
 //      okParamField,
 //      okSubject,                      // param - parameter offset
@@ -217,7 +217,7 @@ public:
 //      }
    };
 
-//   typedef MemoryMap<ident_t, Parameter>  LocalMap;
+   typedef MemoryMap<ident_t, Parameter>  LocalMap;
 
 private:
    // - Scope -
@@ -467,14 +467,14 @@ private:
 //         info.methodHints.exclude(attr);
 //         info.methodHints.add(attr, value);
 //      }
-//      void addHint(ref_t message, int hint)
-//      {
-//         ClassInfo::Attribute attr(message, maHint);
-//
-//         hint |= info.methodHints.get(attr);
-//         info.methodHints.exclude(attr);
-//         info.methodHints.add(attr, hint);
-//      }
+      void addHint(ref_t message, int hint)
+      {
+         ClassInfo::Attribute attr(message, maHint);
+
+         hint |= info.methodHints.get(attr);
+         info.methodHints.exclude(attr);
+         info.methodHints.add(attr, hint);
+      }
 //      void removeHint(ref_t message, int hintToRemove)
 //      {
 //         ClassInfo::Attribute attr(message, maHint);
@@ -631,8 +631,8 @@ private:
    // - CodeScope -
    struct CodeScope : public Scope
    {
-//      // scope local variables
-//      LocalMap     locals;
+      // scope local variables
+      LocalMap     locals;
       int          level;
 //      bool         genericMethod;
 //      bool         yieldMethod;
@@ -642,18 +642,18 @@ private:
 //      // scope stack allocation
 //      int          reserved;  // allocated for the current statement
 //      int          saved;     // permanently allocated
-//
-//      int newLocal()
-//      {
-//         level++;
-//
-//         return level;
-//      }
-//
-//      void mapLocal(ident_t local, int level)
-//      {
-//         locals.add(local, Parameter(level));
-//      }
+
+      int newLocal()
+      {
+         level++;
+
+         return level;
+      }
+
+      void mapLocal(ident_t local, int level)
+      {
+         locals.add(local, Parameter(level));
+      }
 //      void mapLocal(ident_t local, int level, ref_t class_ref/*, int size*/)
 //      {
 //         locals.add(local, Parameter(level, class_ref/*, size*/));
@@ -678,20 +678,20 @@ private:
 //      ObjectInfo mapMember(ident_t identifier);
 //
 //      ObjectInfo mapGlobal(ident_t identifier);
-//
-//      ObjectInfo mapLocal(ident_t identifier);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+
+      ObjectInfo mapLocal(ident_t identifier);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slCode) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slCode) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      bool isInitializer()
 //      {
 //         return getMessageID() == moduleScope->init_message;
@@ -872,7 +872,7 @@ private:
 //
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
-//   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, bool noPrimitivesMode, bool unboxWrapper = true);
+   ref_t resolveObjectReference(ExprScope& scope, ObjectInfo object/*, bool noPrimitivesMode, bool unboxWrapper = true*/);
 ////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
 
@@ -935,11 +935,11 @@ private:
 //   ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 //
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-//   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
-//                                    int& variableArg, ident_t& className);
-//   void compileVariable(SyntaxWriter& writer, SNode& node, CodeScope& scope, ref_t typeRef, bool dynamicArray, bool canBeIdle);
-//
+
+   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable/*, ClassInfo& localInfo, int size, bool binaryArray, 
+                                    int& variableArg, ident_t& className*/);
+   void declareVariable(SNode& node, CodeScope& scope/*, ref_t typeRef, bool dynamicArray, bool canBeIdle*/);
+
 //   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, EAttr mode);
 //   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ObjectInfo target);
@@ -996,7 +996,7 @@ private:
 //      bool accumulateMode);
 //   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
-//   ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   ObjectInfo compileRootExpression(SNode node, CodeScope& scope);
 //   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   void compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //
@@ -1038,9 +1038,9 @@ private:
 //   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 //
 //   void beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-   void endMethod(SNode node, MethodScope& scope, CodeScope& codeScope, int argCount/*, int preallocated*/);
-   void compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope/*,
-      int& preallocated*/);
+   void endMethod(SNode node, MethodScope& scope, CodeScope& codeScope, int argCount, int preallocated);
+   void compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope,
+      int& preallocated);
 
 //   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
 //   void compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
@@ -1074,7 +1074,7 @@ private:
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst, bool isArray);
    
    void generateClassFlags(ClassScope& scope, SNode node);
-//   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
+   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message/*, bool allowTypeAttribute*/);
 
    void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates, bool closed, bool allowTypeAttribute, bool embeddableClass*/);
    void generateMethodDeclarations(SNode node, ClassScope& scope, /*bool closed, */LexicalType methodType/*, bool allowTypeAttribute, bool embeddableClass*/);
