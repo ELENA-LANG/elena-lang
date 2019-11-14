@@ -104,7 +104,7 @@ protected:
 //   friend void compileASaveR(int opcode, x86JITScope& scope);
 //   friend void compileSCopyF(int opcode, x86JITScope& scope);
 //   friend void compileBCopyS(int opcode, x86JITScope& scope);
-//   friend void compileJump(int opcode, x86JITScope& scope);
+   friend void compileJump(int opcode, x86JITScope& scope);
 //   friend void compileHook(int opcode, x86JITScope& scope);
    friend void compileCreate(int opcode, x86JITScope& scope);
    friend void compileFill(int opcode, x86JITScope& scope);
@@ -241,7 +241,7 @@ void compileCallR(int opcode, x86JITScope& scope);
 void compileMCopy(int opcode, x86JITScope& scope);
 //void compileASaveR(int opcode, x86JITScope& scope);
 //void compileSCopyF(int opcode, x86JITScope& scope);
-//void compileJump(int opcode, x86JITScope& scope);
+void compileJump(int opcode, x86JITScope& scope);
 //void compileHook(int opcode, x86JITScope& scope);
 void compileCreate(int opcode, x86JITScope& scope);
 void compileFill(int opcode, x86JITScope& scope);

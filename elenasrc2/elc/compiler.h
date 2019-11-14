@@ -997,7 +997,7 @@ private:
 //   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
    ObjectInfo compileRootExpression(SNode node, CodeScope& scope);
-//   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
+   ObjectInfo compileRetExpression(SNode node, CodeScope& scope, EAttr mode);
 //   void compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
 //
 //   ObjectInfo compileSubCode(SyntaxWriter& writer, SNode thenNode, CodeScope& scope, bool branchingMode);

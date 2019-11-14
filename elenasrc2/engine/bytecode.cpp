@@ -44,7 +44,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "peekfi", "peeksi", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    "open", "quitn", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "setr", "copym",
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "callvi", "callr", OPCODE_UNKNOWN, "callextr", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "jump", OPCODE_UNKNOWN, "callvi", "callr", OPCODE_UNKNOWN, "callextr", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushfi", OPCODE_UNKNOWN,
@@ -376,7 +376,7 @@ inline bool removeIdleJump(ByteCodeIterator it)
 {
    while (true) {
       switch((ByteCode)*it) {
-         //case bcJump:
+         case bcJump:
          //case bcIfR:
          //case bcElseR:
          //case bcIfB:
@@ -396,8 +396,8 @@ inline bool removeIdleJump(ByteCodeIterator it)
          //case bcNext:
          //case bcIfHeap:
          //case bcXJumpRM:
-         //   *it = bcNop;
-         //   return true;
+            *it = bcNop;
+            return true;
       }
       it--;
    }
@@ -455,8 +455,8 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 //            case bcXJumpRM:
                blocks.add(index + 1, 0);
                break;
-//            case bcJump:
-//               blocks.add(index + 1, 0);
+            case bcJump:
+               blocks.add(index + 1, 0);
 //            case bcIfR:
 //            case bcElseR:              
 //            case bcIfB:
@@ -562,9 +562,9 @@ bool CommandTape :: optimizeIdleBreakpoints(CommandTape& tape)
    while (!it.Eof()) {
       int code = (*it).code;
 
-      //if (code == bcJump)
-      //   idle = true;
-      /*else */if (code == bcBreakpoint) {
+      if (code == bcJump)
+         idle = true;
+      else if (code == bcBreakpoint) {
          if (idle) {
             (*it).code = bcNone;
          }

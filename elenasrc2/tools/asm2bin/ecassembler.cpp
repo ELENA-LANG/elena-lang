@@ -566,11 +566,11 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcLess:
          //case bcNotLess:
          //case bcNext:
-         //case bcJump:
+         case bcJump:
          //case bcHook:
          //case bcAddress:
-         //   compileJump(opcode, token, writer, info);
-         //   break;
+            compileJump(opcode, token, writer, info);
+            break;
          //case bcIfM:
          //case bcElseM:
          //   compileMccJump(opcode, token, writer, info, binary);

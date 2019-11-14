@@ -3,7 +3,10 @@ In development:
 ------         
               dev
                 * returning a value from the method
+                * a method with a single returning body
                 * implicit method return
+                * step over symbol expression
+                * step over returning expression
                 * private / public / internal methods
                 * explicit constructor
                 * implicit constructor

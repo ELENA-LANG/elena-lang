@@ -1350,13 +1350,13 @@ void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, re
 //////   // throw
 //////   tape.write(bcThrow);
 //////}
-//
-//void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
-//{
-//   // jump labEnd
-//   tape.write(bcJump, label);
-//}
-//
+
+void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
+{
+   // jump labEnd
+   tape.write(bcJump, label);
+}
+
 //void ByteCodeWriter :: endCatch(CommandTape& tape)
 //{
 //   // labEnd
@@ -2072,25 +2072,25 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //case bcIfM:
          //case bcElseM:
          //case bcNext:
-         //case bcJump:
+         case bcJump:
          //case bcHook:
          //case bcAddress:
          //case bcIfHeap:
-         //   (*it).save(scope.code, true);
+            (*it).save(scope.code, true);
 
-         //   if ((*it).code > MAX_DOUBLE_ECODE)
-         //      scope.code->writeDWord((*it).additional);
+            if ((*it).code > MAX_DOUBLE_ECODE)
+               scope.code->writeDWord((*it).additional);
 
-         //   // if forward jump, it should be resolved later
-         //   if (!labels.exist((*it).argument)) {
-         //      fwdJumps.add((*it).argument, scope.code->Position());
-         //      // put jump offset place holder
-         //      scope.code->writeDWord(0);
-         //   }
-         //   // if backward jump
-         //   else scope.code->writeDWord(labels.get((*it).argument) - scope.code->Position() - 4);
+            // if forward jump, it should be resolved later
+            if (!labels.exist((*it).argument)) {
+               fwdJumps.add((*it).argument, scope.code->Position());
+               // put jump offset place holder
+               scope.code->writeDWord(0);
+            }
+            // if backward jump
+            else scope.code->writeDWord(labels.get((*it).argument) - scope.code->Position() - 4);
 
-         //   break;
+            break;
          case bdBreakpoint:
          case bdBreakcoord:
             break; // bdBreakcoord & bdBreakpoint should be ingonored if they are not paired with bcBreakpoint
@@ -5488,19 +5488,19 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 //
 //   assignBaseTo(tape, lxResult);
 //}
-//
-//void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node)
-//{
-//   if (translateBreakpoint(tape, node.findSubNode(lxBreakpoint), false)) {
-//      declareBlock(tape);
-//      generateExpression(tape, node, ACC_REQUIRED);
-//      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//   }
-//   else generateExpression(tape, node, ACC_REQUIRED);
-//
-//   gotoEnd(tape, baFirstLabel);
-//}
-//
+
+void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, FlowScope& scope)
+{
+   /*if (translateBreakpoint(tape, node.findSubNode(lxBreakpoint), false)) {
+      declareBlock(tape);
+      generateExpression(tape, node, ACC_REQUIRED);
+      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+   }
+   else*/ generateExpression(tape, node, scope/*, ACC_REQUIRED*/);
+
+   gotoEnd(tape, baFirstLabel);
+}
+
 //////void ByteCodeWriter :: generateThrowExpression(CommandTape& tape, SNode node)
 //////{
 //////   generateExpression(tape, node, ACC_REQUIRED);
@@ -6481,9 +6481,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
                declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 
             break;
-//         case lxReturning:
-//            generateReturnExpression(tape, current);
-//            break;
+         case lxReturning:
+            generateReturnExpression(tape, current, scope);
+            break;
 //         case lxExternFrame:
 //            generateExternFrame(tape, current);
 //            break;

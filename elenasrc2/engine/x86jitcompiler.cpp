@@ -147,7 +147,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadIndexOp, &compileNop, &compileNop,
    &compileOpen, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileSetR, &compileMCopy,
 
-   &compileNop, &compileNop, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
+   &compileJump, &compileNop, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compilePush, &compileNop, &compileNop, &compileNop, &compilePushFI, &compileNop,
@@ -214,23 +214,23 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
 //   &compileIfM, &compileElseM, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop
 };
 
-//// --- x86JITCompiler commands ---
-//
-//inline void compileJump(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-//{
-//   // jmp   lbEnding
-//   if (!forwardJump) {
-//      scope.lh.writeJmpBack(label);
-//   }
-//   else {
-//      // if it is forward jump, try to predict if it is short
-//      if (shortJump) {
-//         scope.lh.writeShortJmpForward(label);
-//      }
-//      else scope.lh.writeJmpForward(label);
-//   }
-//}
-//
+// --- x86JITCompiler commands ---
+
+inline void compileJump(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jmp   lbEnding
+   if (!forwardJump) {
+      scope.lh.writeJmpBack(label);
+   }
+   else {
+      // if it is forward jump, try to predict if it is short
+      if (shortJump) {
+         scope.lh.writeShortJmpForward(label);
+      }
+      else scope.lh.writeJmpForward(label);
+   }
+}
+
 //inline void compileJumpX(x86JITScope& scope, int label, bool forwardJump, bool shortJump, x86Helper::x86JumpType prefix)
 //{
 //   if (!forwardJump) {
@@ -817,11 +817,11 @@ void _ELENA_::compilePushSI(int, x86JITScope& scope)
    scope.code->writeDWord(scope.argument << 2);
 }
 
-//void _ELENA_::compileJump(int, x86JITScope& scope)
-//{
-//   ::compileJump(scope, scope.tape->Position() + scope.argument, (scope.argument > 0), (__abs(scope.argument) < 0x10));
-//}
-//
+void _ELENA_::compileJump(int, x86JITScope& scope)
+{
+   ::compileJump(scope, scope.tape->Position() + scope.argument, (scope.argument > 0), (__abs(scope.argument) < 0x10));
+}
+
 //void _ELENA_::compileHook(int opcode, x86JITScope& scope)
 //{
 //   if (scope.argument < 0) {

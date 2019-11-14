@@ -80,6 +80,7 @@ enum LexicalType
    lxVariable                 = 0x010100,
    lxLocal                    = 0x018110, // arg - offset
    lxAssigning                = 0x058120,   // an assigning expression, arg - size
+   lxReturning                = 0x059130,
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -197,7 +198,6 @@ enum LexicalType
 //   lxOption                   = 0x00C021,
 //   lxFieldExpression          = 0x00C022,
 //   lxExternFrame              = 0x004023,
-//   lxReturning                = 0x00C027,
 //   lxNewArrOp                 = 0x00C028,
 //   lxArrOp                    = 0x08C029,   // arg - operation id
 //   lxBinArrOp                 = 0x08C02A,   // arg - operation id

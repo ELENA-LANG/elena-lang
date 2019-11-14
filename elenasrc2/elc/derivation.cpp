@@ -759,7 +759,7 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxScope) {
-         SNode bodyNode = current.findChild(lxCode, lxDispatchCode/*, lxReturning, lxExpression, lxResendExpression*/);
+         SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning/*, lxExpression, lxResendExpression*/);
 
          int mode = 0;
 //         if (bodyNode == lxExpression) {
@@ -1269,8 +1269,8 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //      writer.closeNode();
 //   }
 //   else {
-      SNode bodyNode = node.findChild(lxCode, lxDispatchCode/*, lxReturning, lxResendExpression*/);
-      if (bodyNode/*.compare(lxReturning, lxDispatchCode)*/ == lxDispatchCode) {
+      SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning/*, lxResendExpression*/);
+      if (bodyNode.compare(lxReturning, lxDispatchCode)) {
          writer.newNode(bodyNode.type);
          generateExpressionTree(writer, bodyNode.firstChild(), derivationScope, EXPRESSION_IMPLICIT_MODE);
          writer.closeNode();
@@ -1303,12 +1303,12 @@ void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node, Scop
          case lxExpression:
             generateExpressionTree(writer, current, derivationScope);
             break;
-//         case lxReturning:
-////         case lxExtension:
-//            writer.newNode(current.type, current.argument);
-//            generateExpressionTree(writer, current, derivationScope, EXPRESSION_IMPLICIT_MODE);
-//            writer.closeNode();
-//            break;
+         case lxReturning:
+//         case lxExtension:
+            writer.newNode(current.type, current.argument);
+            generateExpressionTree(writer, current, derivationScope, EXPRESSION_IMPLICIT_MODE);
+            writer.closeNode();
+            break;
          case lxEOP:
          {
             writer.newNode(lxEOP);

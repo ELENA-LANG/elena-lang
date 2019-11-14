@@ -541,7 +541,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printCommand(command, opcode);
          command.appendInt(argument);
          break;
-//      case bcJump:
+      case bcJump:
 //      case bcHook:
 //      case bcIf:
 //      case bcIfB:
@@ -549,9 +549,9 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcIfHeap:
 //      case bcNotLess:
 ////      case bcAddress:
-//         printCommand(command, opcode);
-//         printLabel(command, position + argument + 5, labels);
-//         break;
+         printCommand(command, opcode);
+         printLabel(command, position + argument + 5, labels);
+         break;
 //      case bcElseM:
 //      case bcIfM:
 //         printCommand(command, opcode);

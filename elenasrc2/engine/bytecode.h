@@ -167,7 +167,7 @@ enum ByteCode
    bcSetR            = 0x9E,
    bcCopyM           = 0x9F,
 
-//   bcJump            = 0xA0,
+   bcJump            = 0xA0,
 //   bcAJumpVI         = 0xA1,
    bcCallVI         = 0xA2,
    bcCallR           = 0xA3,
@@ -410,7 +410,7 @@ public:
    static bool IsJump(ByteCode code)
    {
       switch(code) {
-         //case bcJump:
+         case bcJump:
          //case bcIfR:
          //case bcElseR:
          //case bcIfB:

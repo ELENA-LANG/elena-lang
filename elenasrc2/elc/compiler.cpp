@@ -4473,9 +4473,9 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //
 //   return target;
 //}
-//
-//ObjectInfo Compiler :: compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode)
-//{
+
+ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr mode)
+{
 //   bool autoMode = false;
 //   ref_t targetRef = 0;
 //   if (EAttrs::test(mode, HINT_ROOT)) {
@@ -4488,7 +4488,10 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //
 //   writer.newBookmark();
 //
-//   ObjectInfo info = compileExpression(writer, node, scope, targetRef, mode);
+   ExprScope exprScope(&scope);
+   ObjectInfo info = compileExpression(node, exprScope,
+      mapObject(node, exprScope, mode), /*targetRef, */mode);
+
 //   if (autoMode) {
 //      targetRef = resolveObjectReference(scope, info, true);
 //
@@ -4508,10 +4511,10 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //   }
 //
 //   writer.removeBookmark();
-//
-//   return info;
-//}
-//
+
+   return info;
+}
+
 //ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t operator_id)
 //{
 //   writer.inject(lxExpression);
@@ -5053,7 +5056,6 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope)
 //   //}
 
    ExprScope exprScope(&scope);
-
    ObjectInfo retVal = compileExpression(node, exprScope,
       mapObject(node, exprScope, rootMode),
       /*0, */rootMode);
@@ -5456,7 +5458,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 //	   result = compileVariadicUnboxing(writer, node, scope, mode);
 //   }
 //   else {
-//      switch (node.type) {
+      switch (current.type) {
 //         case lxCollection:
 //            result = compileCollection(writer, node, scope, ObjectInfo(okObject, 0, V_OBJARRAY, scope.moduleScope->superReference, 0));
 //            break;
@@ -5488,9 +5490,10 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 //         case lxClosureExpr:
 //            result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
 //            break;
-//         case lxExpression:
-//            result = compileExpression(writer, node, scope, targetRef, mode);
-//            break;
+         case lxExpression:
+            result = compileExpression(current, scope, 
+               mapObject(current, scope, mode), /*targetRef, */mode);
+            break;
 //         case lxSwitching:
 //            compileSwitch(writer, node, scope);
 //
@@ -5499,9 +5502,9 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 //         case lxIdle:
 //            result = ObjectInfo(okUnknown);
 //            break;
-//         default:
+         default:
             result = mapTerminal(current, scope, mode);
-//      }
+      }
 //   }
 
    return result;
@@ -5686,10 +5689,10 @@ ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInf
             compileRootExpression(current, scope);
 //            writer.closeNode();
             break;
-//         case lxReturning:
-//         {
-//            needVirtualEnd = false;
-//
+         case lxReturning:
+         {
+            needVirtualEnd = false;
+
 //            //if (test(scope.getMessageID(), SPECIAL_MESSAGE))
 //            //   scope.raiseError(errIllegalOperation, current);
 //
@@ -5704,12 +5707,13 @@ ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInf
 //            }
 //            else {
 //               writer.newNode(lxReturning);
+            //current.insertNode(lxBreakpoint, dsStep);
 //               writer.appendNode(lxBreakpoint, dsStep);
-//               retVal = compileRetExpression(writer, current, scope, HINT_ROOT | HINT_RETEXPR);
+               /*retVal = */compileRetExpression(current, scope, /*HINT_ROOT | HINT_RETEXPR*/EAttr::eaNone);
 //               writer.closeNode();
 //            }
-//            break;
-//         }
+            break;
+         }
          case lxEOP:
             needVirtualEnd = false;
             current.injectNode(lxTerminalMask); // injecting virtual terminal token 
@@ -6810,7 +6814,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
 //      compileYieldDispatch(writer, scope.getAttribute(maYieldContext), scope.getAttribute(maYieldLocals), preallocated);
 //   }
 
-   /*ObjectInfo retVal = */compileCode(/*writer, *//*body == lxReturning ? node : */body, codeScope);
+   /*ObjectInfo retVal = */compileCode(body == lxReturning ? node : body, codeScope);
 
 //   // if the method returns itself
 //   if (retVal.kind == okUnknown) {
@@ -6841,7 +6845,7 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 
    CodeScope codeScope(&scope);
 
-   SNode body = node.findChild(lxCode/*, lxReturning*/, lxDispatchCode/*, lxResendExpression*/);
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode/*, lxResendExpression*/);
 //   // check if it is a resend
 //   if (body == lxResendExpression) {
 //      compileResendExpression(writer, body, codeScope, scope.multiMethod);
@@ -7013,7 +7017,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    int classFlags = codeScope.getClassFlags();
    int preallocated = 0;
 
-   SNode bodyNode = node.findChild(/*lxResendExpression, */lxCode/*, lxReturning, lxDispatchCode*/);
+   SNode bodyNode = node.findChild(/*lxResendExpression, */lxCode, lxReturning/*, lxDispatchCode*/);
 //   if (bodyNode == lxDispatchCode) {
 //      compileConstructorDispatchExpression(writer, bodyNode, codeScope);
 //
@@ -7032,11 +7036,12 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
 //         bodyNode = bodyNode.findChild(lxCode);
 //      }
 //   }
-//   else if (bodyNode == lxReturning) {
+   /*else */if (bodyNode == lxReturning) {
+      throw InternalError("temporally not supported"); // !! temporal
 //      retExpr = true;
-//   }
+   }
    // if no redirect statement - call virtual constructor implicitly
-   /*else */if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(scope.moduleScope->newobject_message)) {
+   else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(scope.moduleScope->newobject_message)) {
       SNode callNode = bodyNode.prependSibling(lxCalling_1, scope.moduleScope->newobject_message);
       callNode.appendNode(lxResult);
    }
