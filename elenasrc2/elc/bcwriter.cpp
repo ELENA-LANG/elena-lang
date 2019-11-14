@@ -6482,7 +6482,11 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 
             break;
          case lxReturning:
+            scope.debugBlockStarted = false;
             generateReturnExpression(tape, current, scope);
+
+            if (scope.debugBlockStarted)
+               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
             break;
 //         case lxExternFrame:
 //            generateExternFrame(tape, current);

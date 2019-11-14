@@ -5055,6 +5055,9 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope)
 //   //   current = current.nextNode();
 //   //}
 
+   // inject a root expression
+   node = node.injectNode(lxExpression);
+
    ExprScope exprScope(&scope);
    ObjectInfo retVal = compileExpression(node, exprScope,
       mapObject(node, exprScope, rootMode),
@@ -6814,7 +6817,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
 //      compileYieldDispatch(writer, scope.getAttribute(maYieldContext), scope.getAttribute(maYieldLocals), preallocated);
 //   }
 
-   /*ObjectInfo retVal = */compileCode(body == lxReturning ? node : body, codeScope);
+   /*ObjectInfo retVal = */compileCode(body == lxReturning ? body.parentNode() : body, codeScope);
 
 //   // if the method returns itself
 //   if (retVal.kind == okUnknown) {

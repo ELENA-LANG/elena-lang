@@ -2,11 +2,8 @@
 In development:
 ------         
               dev
-                * returning a value from the method
-                * a method with a single returning body
+                * introducing self
                 * implicit method return
-                * step over symbol expression
-                * step over returning expression
                 * private / public / internal methods
                 * explicit constructor
                 * implicit constructor
@@ -116,6 +113,8 @@ In development:
                 * declaring unresolved types?
                 * migrate changes from core to corex
                 * test if big alloc is proper working
+                * loops
+                * break / contninue
                 * redesign
                 * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
 

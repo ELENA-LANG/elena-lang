@@ -477,11 +477,11 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 //            case bcHook:
 //            case bcAddress:
 //            case bcIfHeap:
-//               // remove the label from idle list
-//               idleLabels.exclude((*it).argument);
-//
-//               addJump((*it).argument, index, labels, jumps, fixes);
-//               break;
+               // remove the label from idle list
+               idleLabels.exclude((*it).argument);
+
+               addJump((*it).argument, index, labels, jumps, fixes);
+               break;
          }
 
          index++;
