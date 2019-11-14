@@ -992,8 +992,8 @@ private:
 //   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
-//   ObjectInfo compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, 
-//      bool accumulateMode);
+   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target/*, 
+      bool accumulateMode*/);
 //   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
    ObjectInfo compileRootExpression(SNode node, CodeScope& scope);

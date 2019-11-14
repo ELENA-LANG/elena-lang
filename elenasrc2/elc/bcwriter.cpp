@@ -4157,9 +4157,20 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    }
 }
 
+void ByteCodeWriter :: saveObject(CommandTape& tape, SNode node)
+{
+   if (node == lxExpression) {
+      saveObject(tape, node.findSubNodeMask(lxObjectMask));
+   }
+   else saveObject(tape, node.type, node.argument);
+}
+
 void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
 {
-   loadObject(tape, node.type, node.argument, scope, mode);
+   if (test(node.type, lxOpScopeMask)) {
+      generateObject(tape, node, scope);
+   }
+   else loadObject(tape, node.type, node.argument, scope, mode);
 
 //   if (node.type == lxLocalAddress && test(mode, EMBEDDABLE_EXPR)) {
 //      SNode implicitNode = node.findChild(lxImplicitCall);
@@ -4173,21 +4184,24 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, SNode node, FlowScope& scop
    pushObject(tape, node.type, node.argument, scope, mode);
 }
 
-//void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (larg == lxNone) {
-//            larg = current;
-//         }
-//         else rarg = current;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         if (larg == lxNone) {
+            larg = current;
+         }
+         else {
+            rarg = current;
+            break;
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //void assignOpArguments(SNode node, SNode& larg, SNode& rarg, SNode& rarg2)
 //{
 //   SNode current = node.firstChild();
@@ -5552,20 +5566,28 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 //   return test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_OPERATOR_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||
 //      (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp)));
 //}
-//
-//void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode)
-//{
+
+void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
 //   if (test(mode, BASE_PRESAVED))
 //      tape.write(bcPushB);
 //
 //   bool accRequiered = test(mode, ACC_REQUIRED);
 //
 //   int size = node.argument;
-//
-//   SNode target;
-//   SNode source;
-//   assignOpArguments(node, target, source);
-//
+
+   SNode target;
+   SNode source;
+   assignOpArguments(node, target, source);
+
+   if (isSubOperation(target)) {
+      throw InternalError("not yet implemente"); // !! temporal
+   }
+   else {
+      loadObject(tape, source, scope);
+      saveObject(tape, target);
+   }
+
 //   if (source == lxExpression)
 //      source = source.findSubNodeMask(lxObjectMask);
 //
@@ -5684,9 +5706,8 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 //
 //   if (test(mode, BASE_PRESAVED))
 //      tape.write(bcPopB);
-//}
-//
-//
+}
+
 //void ByteCodeWriter :: generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode)
 //{
 //   int size = node.argument << 2;
@@ -6201,18 +6222,22 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 
    switch (node.type)
    {
-//      case lxExpression:
+      case lxExpression:
 //      case lxLocalUnboxing:
 //      case lxFieldExpression:
 //      case lxAltExpression:
 //      case lxSeqExpression:
-//         generateExpression(tape, node, mode);
-//         break;
+         generateExpression(tape, node, scope, mode);
+         break;
       case lxCalling_0:
       case lxCalling_1:
       case lxDirectCalling:
 //      case lxSDirectCalling:
          generateCallExpression(tape, node, scope);
+         scope.clear();
+         break;
+      case lxAssigning:
+         generateAssigningExpression(tape, node, scope);
          scope.clear();
          break;
 //      case lxInlineArgCall:
@@ -6249,9 +6274,6 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxArgBoxing:
 //      case lxUnboxing:
 //         generateBoxingExpression(tape, node, mode);
-//         break;
-//      case lxAssigning:
-//         generateAssigningExpression(tape, node, mode);
 //         break;
 //      case lxCopying:
 //         generateCopying(tape, node, mode);

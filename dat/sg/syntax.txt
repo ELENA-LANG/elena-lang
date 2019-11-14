@@ -10,8 +10,8 @@ __define BASE 			4176
 __define BLOCK 			4192
 __define DISPATCH		4208
 __define BLOCK_END	       69776
-__define EXPRESSION	      102448
-__define ROOT_EXPRESSION      102449
+__define EXPRESSION	      364592
+__define ROOT_EXPRESSION      364593
 __define MESSAGE	      135296
 __define ASSIGN_OPERATOR      135328
 

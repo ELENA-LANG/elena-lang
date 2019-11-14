@@ -3827,16 +3827,18 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //
 //   return scope.resolveAutoType(target, sourceRef, source.element);
 //}
-//
-//ObjectInfo Compiler :: compileAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target,
-//   bool accumulateMode)
-//{
-//   ObjectInfo retVal = target;
-//   LexicalType operationType = lxAssigning;
-//   int operand = 0;
-//
-//   SNode current = node;
-//   SNode sourceNode;
+
+ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo target/*,
+   bool accumulateMode*/)
+{
+   ObjectInfo retVal = target;
+   LexicalType operationType = lxAssigning;
+   int operand = 0;
+
+   SNode current = node;
+   node = current.parentNode();
+
+   SNode sourceNode;
 //   if (current == lxReturning) {
 //      sourceNode = current.firstChild(lxObjectMask);
 //      if (test(sourceNode.type, lxTerminalMask)) {
@@ -3844,8 +3846,8 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //         sourceNode = current;
 //      }
 //   }
-//   else sourceNode = current.nextNode(lxObjectMask);
-//
+   /*else */sourceNode = current.nextNode(lxObjectMask);
+
 //   if (scope.isInitializer()) {
 //      // HOTFIX : recognize static field initializer
 //      if (target.kind == okStaticField || target.kind == okStaticConstantField) {
@@ -3869,14 +3871,14 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //
 //   ref_t targetRef = resolveObjectReference(scope, target, false, false);
 //   bool byRefAssigning = false;
-//   switch (target.kind) {
-//      case okLocal:
+   switch (target.kind) {
+      case okLocal:
 //      case okField:
 //      case okStaticField:
 //      case okClassStaticField:
 //      case okOuterField:
 //      case okOuterStaticField:
-//         break;
+         break;
 //      case okLocalAddress:
 //      case okFieldAddress:
 //      {
@@ -3919,12 +3921,12 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //
 //            break;
 //         }
-//      default:
-//         scope.raiseError(errInvalidOperation, sourceNode);
-//         break;
-//   }
-//
-//   EAttr assignMode = HINT_NOUNBOXING | HINT_ASSIGNING_EXPR;
+      default:
+         scope.raiseError(errInvalidOperation, node.firstChild(lxObjectMask));
+         break;
+   }
+
+   EAttr assignMode = /*HINT_NOUNBOXING | HINT_ASSIGNING_EXPR*/EAttr::eaNone;
 //   if (operand == 0)
 //      assignMode = assignMode | HINT_DYNAMIC_OBJECT | HINT_NOPRIMITIVES;
 //
@@ -3946,17 +3948,19 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //      }
 //      else scope.raiseError(errInvalidOperation, node);
 //   }
-//   else compileExpression(writer, sourceNode, scope, targetRef, assignMode);
+   /*else */compileExpression(sourceNode, scope,
+      mapObject(sourceNode, scope, assignMode), /*targetRef, */assignMode);
 //
 //   if (byRefAssigning)
 //      writer.appendNode(lxByRefTarget);
 //
 //   writer.inject(operationType, operand);
 //   writer.closeNode();
-//
-//   return retVal;
-//}
-//
+   node.set(operationType, operand);
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
 //{
 //   ObjectInfo retVal;
@@ -4766,9 +4770,9 @@ ObjectInfo Compiler :: compileOperation(SNode node, ExprScope& scope, ObjectInfo
 //      case lxTypecast:
 //         objectInfo = compileBoxingExpression(writer, current, scope, objectInfo, mode);
 //         break;
-//      case lxAssign:
-//         objectInfo = compileAssigning(writer, current, scope, objectInfo, current.argument == -1);
-//         break;
+      case lxAssign:
+         objectInfo = compileAssigning(current, scope, objectInfo/*, current.argument == -1*/);
+         break;
 //      case lxOperator:
 //         objectInfo = compileOperator(writer, current, scope, objectInfo, mode);
 //         break;

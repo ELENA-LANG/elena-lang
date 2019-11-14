@@ -1869,33 +1869,33 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
 
          generateMesage(writer, current, derivationScope);
          break;
-//      case lxSubMessage:
-//         generateMesage(writer, current, derivationScope);
-//         break;
-//      case lxExpression:
-//         //first = false;
-//         //if (test(mode, MODE_MESSAGE_BODY)) {
-//         //   generateExpressionTree(writer, current, scope);
-//         //}
-//         /*else */generateExpressionTree(writer, current, derivationScope, 0/*EXPRESSION_IMPLICIT_MODE*/);
-//         break;
-//      case lxAttrExpression:
-//         generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
-//         break;
 //      case lxOperator:
-//      case lxAssign:
-//         if (!first) {
-//            writer.inject(lxExpression);
-//            writer.closeNode();
-//         }
-//         else first = false;
-//         writer.newNode(current.type, current.argument);
-//         copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
-//         writer.closeNode();
-//         break;
+      case lxAssign:
+         if (!first) {
+            writer.inject(lxExpression);
+            writer.closeNode();
+         }
+         else first = false;
+         writer.newNode(current.type, current.argument);
+         copyIdentifier(writer, current.firstChild(lxTerminalMask)/*, derivationScope.ignoreTerminalInfo*/);
+         writer.closeNode();
+         break;
+      case lxExpression:
+         //first = false;
+         //if (test(mode, MODE_MESSAGE_BODY)) {
+         //   generateExpressionTree(writer, current, scope);
+         //}
+         /*else */generateExpressionTree(writer, current, derivationScope, 0/*EXPRESSION_IMPLICIT_MODE*/);
+         break;
 //      case lxTemplateOperator:
 //         // COMPILER MAGIC : recognize the operator template
 //         generateOperatorTemplateTree(writer, current, derivationScope);
+//         break;
+//      case lxSubMessage:
+//         generateMesage(writer, current, derivationScope);
+//         break;
+//      case lxAttrExpression:
+//         generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
 //         break;
 //      case lxNestedClass:
 //         recognizeClassMebers(current);

@@ -62,7 +62,7 @@ enum LexicalType
    lxGlobalReference          = 0x002014,
 
    // expression nodes
-   lxExpression               = 0x019030,
+   lxExpression               = 0x059030,
    lxNil                      = 0x018040,
    lxClassSymbol              = 0x018050, // arg - reference
    lxSymbolReference          = 0x058060,
@@ -79,6 +79,7 @@ enum LexicalType
    lxCreatingStruct           = 0x0580F0, // arg - size
    lxVariable                 = 0x010100,
    lxLocal                    = 0x018110, // arg - offset
+   lxAssigning                = 0x058120,   // an assigning expression, arg - size
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -214,7 +215,6 @@ enum LexicalType
 //   lxSeqExpression            = 0x00C034,
 //   lxYieldDispatch            = 0x00C035,
 //   lxDispatching              = 0x00C036,   // dispatching a message, optional arg - message
-//   lxAssigning                = 0x10C037,   // an assigning expression, arg - size
 //   lxIntOp                    = 0x18C038,   // arg - operation id
 //   lxLongOp                   = 0x18C039,   // arg - operation id
 //   lxRealOp                   = 0x18C03A,   // arg - operation id
@@ -421,14 +421,14 @@ public:
          return current;
       }
 
-      //Node findSubNodeMask(LexicalType mask)
-      //{
-      //   Node current = firstChild(mask);
-      //   if (current == lxExpression) {
-      //      return current.findSubNodeMask(mask);
-      //   }
-      //   else return current;
-      //}
+      Node findSubNodeMask(LexicalType mask)
+      {
+         Node current = firstChild(mask);
+         if (current == lxExpression) {
+            return current.findSubNodeMask(mask);
+         }
+         else return current;
+      }
 
       //Node findSubNode(LexicalType type)
       //{

@@ -2,7 +2,6 @@
 In development:
 ------         
               dev
-                * assigning variable
                 * returning a value from the method
                 * implicit method return
                 * private / public / internal methods

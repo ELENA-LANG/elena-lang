@@ -305,6 +305,7 @@ class ByteCodeWriter
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope/*, bool ignoreBranching*/);
 
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
+   void saveObject(CommandTape& tape, SNode node);
 //   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal, int mode);
 //
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
@@ -345,7 +346,7 @@ class ByteCodeWriter
 //   void generateLooping(CommandTape& tape, SyntaxTree::Node node);
 //   void generateBranching(CommandTape& tape, SyntaxTree::Node node);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
-//   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 //   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
