@@ -14,13 +14,15 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
- setr r                     - r => acc
-
  copym m                    - m => index
+
+ putfi i                    - acc => [fp+i][0]
+
+ setr r                     - r => acc
 
 
  Stack operations:
- -----------------
+ -----------------                                           
  alloci i                   - sp+=i;
 
  freei i                    - sp-=i; 
@@ -30,6 +32,8 @@ ELENA byte codes (or ecodes)
  peeksi i                   - [sp+i] => acc;
 
  popa                       - acc <= [sp] ; sp--
+ 
+ popai i                    - acc[i] <= [sp] ; sp--; 
  
  pusha                      - acc => [sp+1] ; sp++                  
 

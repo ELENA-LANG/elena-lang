@@ -520,7 +520,7 @@ enum MethodAttribute
 
    maNone               = 0x000,
    maHint               = 0x001,
-//   maReference          = 0x202,
+   maReference          = 0x202,
 //   maEmbeddableRet      = 0x403,
 //   maEmbeddableIdle     = 0x005,
 //   maEmbeddableNew      = 0x409,
@@ -609,7 +609,7 @@ struct ClassInfo
 
 struct SymbolExpressionInfo
 {
-//   ref_t expressionClassRef;
+   ref_t expressionClassRef;
 //   ref_t listRef;
 //   bool  constant;
 
@@ -617,14 +617,14 @@ struct SymbolExpressionInfo
    {
       //writer->writeDWord(listRef);
       //writer->writeDWord(constant ? -1: 0);
-      //writer->writeDWord(expressionClassRef);
+      writer->writeDWord(expressionClassRef);
    }
 
    void load(StreamReader* reader)
    {
       //listRef = reader->getDWord();
       //constant = (reader->getDWord() != 0);
-      //expressionClassRef = reader->getDWord();
+      expressionClassRef = reader->getDWord();
    }
 
    SymbolExpressionInfo()

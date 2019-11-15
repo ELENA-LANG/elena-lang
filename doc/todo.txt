@@ -2,16 +2,68 @@
 In development:
 ------         
               dev
-                * default implcit constructor should be embeddable
+                * review implicit constructor : private functions?
+
+                     new A() == A.#new().#constructor() 
+
+                  inheritance : private methods should not be inherited
+                  implicit class : auto generate implicit constructors??
+
+                * constructors should have maReference type automatically
+
+                * type alias
+                * auto variable
+
+                * assign field
+                * get field
+                * in-place intializer
+                * explicit constructor
+                * revew implicit constructors - as function? (build script?)
                 * implicit constructor
 
+                * default implcit constructor should be embeddable?
+                * embeddable constructor
+
+
+                * revew internal methods
+                  - accessible only inside its own module
+                  - polymorphic
+                  - accessed only for strong-typed classes
+                  - internal sealed can be compiled as static one (outside VMT)
+
+                * fields, public / private / internal fields
+                * fields with reference name
+                * const class \ const field
+                * structs
+                * properties
+                * public / private / internal properties
+                * properties - explicit
+                * properties - implicit
+                * properties - multi-level
+                * property - methods
+                * static fields
+                * static methods
+                * inheriting static fields / methods
+                * sealed static fields
+                * const static fields
+                * const sealed static fields
+                * accumulating static fields
+
+
                 * parameters
+                * auto returning
                 * strong typed variables
+                * conversion routines : self, others
                 * typecasting
-                * auto typecasting
                 * strong parameters
                 * dispatching in compile time
                 * dispatching in run time
+
+                * implicit conversion
+
+                * auto symbol
+                * auto method
+                * auto field
 
                 * primitive numbers
                 * primitive operations
@@ -20,11 +72,8 @@ In development:
                 * unboxing
 
                 * creating dynamic array / buffers
-                * public / private / internal methods
                 * nested class scope
                 * reference message??
-                * fields, public / private / internal fields
-                * fields with reference name
                 * templates, template creating, template inheritance, template import
                 * variable : identifier / reference
 
@@ -55,9 +104,6 @@ In development:
                 * extensions
                 * extension templates
                 * extension dispatching
-
-                * public / internal / private methods
-                * public / internal / private fields?
 
                 * public / internal / private extensions?
 
@@ -94,7 +140,6 @@ In development:
                 * nested class scope?
                 * global types
 
-                * uncomment resolveMessage 
                 * inherit identifier, reference, global, template
 
                 * implicit / explicit namespaces, public / internal / private namespaces --- 

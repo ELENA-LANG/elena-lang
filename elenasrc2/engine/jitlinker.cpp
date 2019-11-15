@@ -189,73 +189,73 @@ ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_
    return actionRef;
 }
 
-//ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool variadicOne)
-//{
-//   if (!signature)
-//      return 0;
-//
-//   ref_t signatures[ARG_COUNT];
-//   size_t count = module->resolveSignature(signature, signatures);
-//
-//   // resolve the message
-//   IdentifierString signatureName;
-//   for (size_t i = 0; i != count; i++) {
-//      signatureName.append('$');
-//      ident_t referenceName = module->resolveReference(signatures[i]);
-//      if (isWeakReference(referenceName)) {
-//         if (isTemplateWeakReference(referenceName)) {
-//            ReferenceInfo refInfo = _loader->retrieveReference(module, signatures[i], mskVMTRef);
-//   
-//            signatureName.append(refInfo.referenceName);
-//         }
-//         else {
-//            signatureName.append(module->Name());
-//            signatureName.append(referenceName);
-//         }
-//      }
-//      else signatureName.append(referenceName);
-//   }
-//
-//   if (count != 0 && variadicOne) {
-//      // HOTFIX : to tell apart vardiatic signature from normal ones (see further)
-//      signatureName.append("#params");
-//   }
-//
-//   SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true);
-//
-//   ref_t resolvedSignature = info.module->mapAction(signatureName.c_str(), 0u, true);
-//   if (resolvedSignature == 0) {      
-//      MemoryWriter writer(info.section);
-//      resolvedSignature = writer.Position();
-//
-//      IdentifierString typeName;
-//      for (size_t i = 0; i != count; i++) {
-//         ident_t referenceName = module->resolveReference(signatures[i]);
-//         if (isWeakReference(referenceName)) {
-//            if (isTemplateWeakReference(referenceName)) {
-//               typeName.copy(referenceName);
-//            }
-//            else {
-//               typeName.copy(module->Name());
-//               typeName.append(referenceName);
-//            }
-//         }
-//         else typeName.copy(referenceName);
-//
-//         ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
-//         writer.writeRef(typeClassRef | mskVMTRef, 0);
-//      }
-//
-//      if (variadicOne) {
-//         // HOTFIX : vardiatic signature should end with zero for correct multi-dispatching operation
-//         writer.writeDWord(0);
-//      }
-//
-//      info.module->mapPredefinedAction(signatureName.c_str(), resolvedSignature, 0u);
-//   }
-//
-//   return resolvedSignature;
-//}
+ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool variadicOne)
+{
+   if (!signature)
+      return 0;
+
+   ref_t signatures[ARG_COUNT];
+   size_t count = module->resolveSignature(signature, signatures);
+
+   // resolve the message
+   IdentifierString signatureName;
+   for (size_t i = 0; i != count; i++) {
+      signatureName.append('$');
+      ident_t referenceName = module->resolveReference(signatures[i]);
+      if (isWeakReference(referenceName)) {
+         if (isTemplateWeakReference(referenceName)) {
+            ReferenceInfo refInfo = _loader->retrieveReference(module, signatures[i], mskVMTRef);
+   
+            signatureName.append(refInfo.referenceName);
+         }
+         else {
+            signatureName.append(module->Name());
+            signatureName.append(referenceName);
+         }
+      }
+      else signatureName.append(referenceName);
+   }
+
+   if (count != 0 && variadicOne) {
+      // HOTFIX : to tell apart vardiatic signature from normal ones (see further)
+      signatureName.append("#params");
+   }
+
+   SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true);
+
+   ref_t resolvedSignature = info.module->mapAction(signatureName.c_str(), 0u, true);
+   if (resolvedSignature == 0) {      
+      MemoryWriter writer(info.section);
+      resolvedSignature = writer.Position();
+
+      IdentifierString typeName;
+      for (size_t i = 0; i != count; i++) {
+         ident_t referenceName = module->resolveReference(signatures[i]);
+         if (isWeakReference(referenceName)) {
+            if (isTemplateWeakReference(referenceName)) {
+               typeName.copy(referenceName);
+            }
+            else {
+               typeName.copy(module->Name());
+               typeName.append(referenceName);
+            }
+         }
+         else typeName.copy(referenceName);
+
+         ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
+         writer.writeRef(typeClassRef | mskVMTRef, 0);
+      }
+
+      if (variadicOne) {
+         // HOTFIX : vardiatic signature should end with zero for correct multi-dispatching operation
+         writer.writeDWord(0);
+      }
+
+      info.module->mapPredefinedAction(signatureName.c_str(), resolvedSignature, 0u);
+   }
+
+   return resolvedSignature;
+}
 
 ref_t JITLinker :: resolveWeakAction(SectionInfo& messageTable, ident_t actionName)
 {
@@ -289,7 +289,7 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    ref_t signature;
    ident_t actionName = module->resolveAction(actionRef, signature);
 
-   ref_t resolvedSignature = /*resolveSignature(module, signature, test(message, VARIADIC_MESSAGE))*/0;
+   ref_t resolvedSignature = resolveSignature(module, signature, test(message, VARIADIC_MESSAGE));
    ref_t resolvedAction = messageTable.module->mapAction(actionName, resolvedSignature, true);
    if (!resolvedAction) {
       resolvedAction = mapAction(messageTable, actionName, resolveWeakAction(messageTable, actionName), resolvedSignature);

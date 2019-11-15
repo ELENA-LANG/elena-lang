@@ -769,11 +769,11 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
 
             recognizeMethodMebers(current);
          }
-//         else if (current.firstChild().compare(lxSizeDecl, lxFieldInit, lxFieldAccum, lxNone)) {
-//            // if it is a field
-//            current = lxClassField;
+         else if (current.firstChild()/*.compare(lxSizeDecl, lxFieldInit, lxFieldAccum, */ == lxNone/*)*/) {
+            // if it is a field
+            current = lxClassField;
 //            mode = MODE_PROPERTYALLOWED;
-//         }
+         }
 //         else if (current.existChild(lxScope)) {
 //            // if it is a property
 //            current = lxClassProperty;
@@ -928,9 +928,9 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
          else if (current == lxClassMethod) {
             generateMethodTree(writer, current, derivationScope, false, /*current.argument == MODE_PROPERTYMETHOD, */buffer);
          }
-//         else if (current == lxClassField/* || current == lxFieldInit*/) {
-//            generateFieldTree(writer, current, derivationScope, buffer);
-//         }
+         else if (current == lxClassField/* || current == lxFieldInit*/) {
+            generateFieldTree(writer, current, derivationScope, buffer);
+         }
 //         else if (current == lxClassProperty) {
 //            generatePropertyTree(writer, current, derivationScope, buffer);
 //         }
@@ -1124,9 +1124,9 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //   
 //   generatePropertyBody(writer, node, derivationScope, nullptr, buffer);
 //}
-//
-//void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
-//{   
+
+void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
+{   
 //   // COMPILER MAGIC : property template declaration
 //   bool isPropertyTemplate = false;
 //   bool isInitializer = false;
@@ -1137,17 +1137,17 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //      generatePropertyTemplateTree(writer, node, derivationScope, buffer);
 //   }
 //   else if (!isInitializer) {
-//      writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
+      writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
 //      SNode sizeNode = node.findChild(lxSizeDecl);
 //      if (sizeNode != lxNone) {
 //         writer.newNode(lxSize);
 //         copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
 //         writer.closeNode();
 //      }
-//
-//      generateAttributes(writer, node.prevNode(), derivationScope, buffer);
-//
-//      writer.closeNode();
+
+      generateAttributes(writer, node.prevNode(), derivationScope, buffer);
+
+      writer.closeNode();
 //   }
 //
 //   // copy inplace initialization
@@ -1189,7 +1189,7 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //      generateExpressionTree(bufferWriter, bodyNode.findChild(lxExpression), derivationScope);
 //      bufferWriter.closeNode();
 //   }
-//}
+}
 
 void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode/*, bool propertyMode*/, 
    SyntaxTree& buffer)

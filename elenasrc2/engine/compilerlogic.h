@@ -105,8 +105,8 @@ public:
 //      ClassInfo info;
 //      return defineClassInfo(scope, info, reference, true);
 //   }
-//
-//   virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
+
+   virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
 //////   virtual bool isPrimitiveArray(ref_t reference);
 ////   virtual bool isPrimitiveRef(ref_t reference)
 ////   {
@@ -166,8 +166,8 @@ public:
 //   }
 //   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
 //   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
-//
-//   virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
+
+   virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler/*, bool closed*/);
 //   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
 //   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType);
 //   virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef);
@@ -191,7 +191,7 @@ public:
    virtual bool validateClassAttribute(int& attrValue, Visibility& visibility);
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/);
-//   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
+   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable);
    virtual bool validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility);
 ////////   virtual bool validateWarningAttribute(int& attrValue);

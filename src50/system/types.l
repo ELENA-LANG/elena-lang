@@ -42,14 +42,14 @@
 #define singleton   80001006h
 //#define interface   80001007h
 #define method      80001008h
-//#define field       80001009h
+#define field       80001009h
 //#define type        8000100Ah
 //#define generic     8000100Bh
 #define function    8000100Ch
 #define var         8000100Dh
 //#define this        8000100Eh
 //#define static      8000100Fh
-//#define cast        80001011h
+#define cast        80001011h
 #define new         80001012h
 #define dispatch    80001013h
 //#define params      80001014h

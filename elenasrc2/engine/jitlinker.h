@@ -152,7 +152,7 @@ class JITLinker : _JITLoaderListener
    ref_t mapAction(SectionInfo& messageTable, ident_t action, ref_t weakActionRef, ref_t signature);
    ref_t resolveWeakAction(SectionInfo& messageTable, ident_t action);
    ref_t resolveMessage(_Module* module, ref_t reference);
-//   ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne);
+   ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne);
 
 //   void createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes);
 //

@@ -1140,12 +1140,12 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       temp.append('.');
       printMessage(temp, module, entry.message);
 
-      //ref_t retType = info.methodHints.get(ClassInfo::Attribute(entry.message, maReference));
-      //if (retType) {
-      //   temp.append(" of ");
-      //   ident_t typeName = module->resolveReference(retType);
-      //   temp.append(typeName);
-      //}
+      ref_t retType = info.methodHints.get(ClassInfo::Attribute(entry.message, maReference));
+      if (retType) {
+         temp.append(" of ");
+         ident_t typeName = module->resolveReference(retType);
+         temp.append(typeName);
+      }
 
       prefix.copy("@method ");
       //if (isAbstract)

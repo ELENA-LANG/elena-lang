@@ -41,6 +41,7 @@ enum LexicalType
    lxClassMethod              = 0x000013,
    lxConstructor              = 0x000014,
    lxParent                   = 0x000015,
+   lxClassField               = 0x000016,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -114,7 +115,6 @@ enum LexicalType
 //   lxWrapping                 = 0x00002B,
 //   lxLastSwitchOption         = 0x00003D,
 //   lxAttributeDecl            = 0x00004E,
-//   lxClassField               = 0x00004F,
 //   lxSizeDecl                 = 0x000068,
 //   lxDynamicSizeDecl          = 0x000069,
 //   lxPropertyParam            = 0x00006B,
@@ -1271,6 +1271,32 @@ public:
 //
 //   static Node findPattern(Node node, int counter, ...);
 //   //static bool matchPattern(Node node, int mask, int counter, ...);
+
+   static bool existChildWithArg(Node node, LexicalType type, ref_t arg)
+   {
+      Node current = node.firstChild();
+      while (current != lxNone) {
+         if (current.type == type && current.argument == arg)
+            return true;
+
+         current = current.nextNode();
+      }
+
+      return false;
+   }
+
+   static Node goToChild(Node node, LexicalType type, ref_t arg)
+   {
+      Node current = node.firstChild();
+      while (current != lxNone) {
+         if (current.type == type && current.argument == arg)
+            break;
+
+         current = current.nextNode();
+      }
+
+      return current;
+   }
 
    static Node findTerminalInfo(Node node);
 

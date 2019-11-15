@@ -6929,7 +6929,12 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root/*, bool isSt
    /*else */declareSymbol(tape, root.argument, sourcePathRef);
 
    FlowScope scope;
-   generateCodeBlock(tape, root, scope);
+
+   scope.debugBlockStarted = false;
+   generateExpression(tape, root, scope);
+
+   if (scope.debugBlockStarted)
+      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 
 //   if (isStatic) {
 //      endStaticSymbol(tape, root.argument);

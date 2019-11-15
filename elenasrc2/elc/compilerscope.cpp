@@ -166,40 +166,40 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
    target.header.parentRef = importReference(exporter, target.header.parentRef, module);
 }
 
-//ref_t ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
-//{
-//   _Module* argModule = NULL;
-//
-//   if (emptystr(symbol))
-//      return 0;
-//
-//   // load class meta data
-//   ref_t moduleRef = 0;
-//   if (isWeakReference(symbol)) {
-//      // if it is a weak reference - do not need to resolve the module
-//      argModule = module;
-//      moduleRef = module->mapReference(symbol);
-//   }
-//   else argModule = project->resolveModule(symbol, moduleRef, true);
-//
-//   if (argModule == NULL || moduleRef == 0)
-//      return 0;
-//
-//   // load argument VMT meta data
-//   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
-//   if (metaData == NULL || metaData->Length() != sizeof(SymbolExpressionInfo))
-//      return 0;
-//
-//   MemoryReader reader(metaData);
-//
-//   info.load(&reader);
-//
-//   if (argModule != module) {
-//      // import type
-//      info.expressionClassRef = importReference(argModule, info.expressionClassRef, module);
-//   }
-//   return moduleRef;
-//}
+ref_t ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbol)
+{
+   _Module* argModule = NULL;
+
+   if (emptystr(symbol))
+      return 0;
+
+   // load class meta data
+   ref_t moduleRef = 0;
+   if (isWeakReference(symbol)) {
+      // if it is a weak reference - do not need to resolve the module
+      argModule = module;
+      moduleRef = module->mapReference(symbol);
+   }
+   else argModule = project->resolveModule(symbol, moduleRef, true);
+
+   if (argModule == NULL || moduleRef == 0)
+      return 0;
+
+   // load argument VMT meta data
+   _Memory* metaData = argModule->mapSection(moduleRef | mskMetaRDataRef, true);
+   if (metaData == NULL || metaData->Length() != sizeof(SymbolExpressionInfo))
+      return 0;
+
+   MemoryReader reader(metaData);
+
+   info.load(&reader);
+
+   if (argModule != module) {
+      // import type
+      info.expressionClassRef = importReference(argModule, info.expressionClassRef, module);
+   }
+   return moduleRef;
+}
 
 ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
 {
