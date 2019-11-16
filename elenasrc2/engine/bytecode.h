@@ -254,7 +254,7 @@ enum ByteCode
    bcFill            = 0xF2,
 //   bcXSelectR        = 0xF3,
 //   bcXIndexRM        = 0xF4,
-//   bcXJumpRM         = 0xF5,
+   bcJumpRM         = 0xF5,
 //   bcSelectR         = 0xF6,
 //   bcLessN           = 0xF7,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcIfM             = 0xF8,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
@@ -431,8 +431,8 @@ public:
          //case bcIfHeap:
          //case bcHook:
          //case bcAddress:
-         //case bcXJumpRM:
-         //   return true;
+         case bcJumpRM:
+            return true;
          default:
             return false;
          }
@@ -454,7 +454,7 @@ public:
          case bcCallRM:
          case bcCallExtR:
          //case bcSelectR:
-         //case bcXJumpRM:
+         case bcJumpRM:
          //case bcXIndexRM:
          //case bcBLoadR:
             return true;

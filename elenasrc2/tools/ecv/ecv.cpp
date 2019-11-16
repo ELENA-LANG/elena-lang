@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   13
+#define REVISION_VERSION   14
 
 using namespace _ELENA_;
 
@@ -214,7 +214,7 @@ ref_t resolveMessage(_Module* module, ident_t method)
 
    //   method = method.c_str() + getlength("prop#");
    //}
-   if (method.startsWith("#invoke")) {
+   if (method.startsWith("#invoke") || method.startsWith("#new")) {
       flags |= FUNCTION_MESSAGE;
    }
    if (method.startsWith("#private&")) {
@@ -644,7 +644,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.appendInt(argument2);
          break;
       case bcCallRM:
-//      case bcXJumpRM:
+      case bcJumpRM:
 //      case bcXIndexRM:
 //      case bcXMTRedirect:
          printCommand(command, opcode);
@@ -673,6 +673,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //         printReference(command, module, argument2);
 //         break;
       case bcNewN:
+      case bcFill:
          printCommand(command, opcode);
          printReference(command, module, argument);
          command.append(", ");

@@ -1047,6 +1047,14 @@ inline % 0F2h
 
 end
 
+// ; jumprm
+inline % 0F5h
+
+  cmp [ebx], ebx
+  jmp __arg1
+
+end
+
 // callrm (edx contains message, __arg1 contains vmtentry)
 inline % 0FEh
 

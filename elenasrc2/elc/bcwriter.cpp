@@ -572,8 +572,10 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
 
 void ByteCodeWriter :: clearObject(CommandTape& tape, int fieldCount)
 {
-   // fill 0, fieldCount
-   tape.write(bcFill, 0, fieldCount);
+   if (fieldCount > 0) {
+      // fill 0, fieldCount
+      tape.write(bcFill, 0, fieldCount);
+   }
 }
 
 //void ByteCodeWriter :: initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
@@ -1170,13 +1172,13 @@ void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
 //   tape.write(bcACallVI, vmtOffset);
 //   tape.write(bcFreeStack, 1 + paramCount);
 //}
-//
-//void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
-//{
-//   // xjumprm r, m
-//
-//   tape.write(bcXJumpRM, reference | mskVMTMethodAddress, message);
-//}
+
+void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+{
+   // jumprm r, m
+
+   tape.write(bcJumpRM, reference | mskVMTMethodAddress, message);
+}
 
 void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode, bool withValidattion*/)
 {
@@ -6241,9 +6243,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      //case lxImplicitCall:
 //      //   callInitMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
 //      //   break;
-//      case lxImplicitJump:
-//         resendResolvedMethod(tape, node.findChild(lxTarget).argument, node.argument);
-//         break;
+      case lxImplicitJump:
+         resendResolvedMethod(tape, node.findChild(lxCallTarget).argument, node.argument);
+         break;
 //      case lxTrying:
 //         generateTrying(tape, node);
 //         break;

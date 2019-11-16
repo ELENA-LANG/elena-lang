@@ -42,6 +42,7 @@ enum LexicalType
    lxConstructor              = 0x000014,
    lxParent                   = 0x000015,
    lxClassField               = 0x000016,
+   lxRedirect                 = 0x000017,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -83,6 +84,7 @@ enum LexicalType
    lxSelfLocal                = 0x018111,
    lxAssigning                = 0x058120,   // an assigning expression, arg - size
    lxReturning                = 0x059130,
+   lxImplicitJump             = 0x058140,
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -178,7 +180,6 @@ enum LexicalType
 //   lxImplicitCall             = 0x00C00B,
 //   lxTrying                   = 0x00C00C,   // try-catch expression
 //   lxAlt                      = 0x00C00D,   // alt-catch expression
-//   lxImplicitJump             = 0x00C00E,
 //   lxBranching                = 0x00C00F,   // branch expression      
 //   lxSwitching                = 0x00C010,
 //   lxLooping                  = 0x00C011,

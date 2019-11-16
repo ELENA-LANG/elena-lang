@@ -100,6 +100,8 @@ ELENA byte codes (or ecodes)
 
  fill r, i                  - fill the object with the value i-times
 
+ jumprm r, m                - jumps directly the method resolved by JIT by r and m
+ 
  new vmt, i                 - create the object with the specified
                                number of fields;
                                out: acc contains the class instance, index - undefined
@@ -415,8 +417,6 @@ ELENA byte codes (or ecodes)
  wlen                       - [acc].Length / 2 >> index
 
  xindexrm r, m              - directly resolve message mapping for the specified class
- 
- xjumprm r, m               - jumps directly the method resolved by JIT by r and m
  
  xlen                       - [acc].Count >> ext ;
 

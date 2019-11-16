@@ -812,68 +812,57 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 ////      compiler.generateListMember(scope, valuesField.value1, classRef);
 ////   }
 
-   if (!testany(info.header.flags, elClassClass | elNestedClass) && classRef != scope.superReference/* && !closed*/ 
-      && !test(info.header.flags, elExtension) && !test(info.header.flags, elRole))
+   if (!testany(info.header.flags, elClassClass | elNestedClass) && !test(info.header.flags, elRole)
+      && !test(info.header.flags, elExtension)) 
    {
-      // auto generate cast$<type> message for explicitly declared classes
-      ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
-      ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
+      // skip class classes, extensions and singletons
+      if (classRef != scope.superReference/* && !closed*/) {
+         // auto generate cast$<type> message for explicitly declared classes
+         ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
+         ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
 
-      compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR, classRef);
+         compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR, classRef);
+      }
+
+      List<ref_t> generatedConstructors;
+      bool found = 0;
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxConstructor) {
+            SNode attr = current.firstChild();
+            while (attr != lxNone) {
+               if (attr == lxAttribute) {
+                  if (attr.argument == tpEmbeddable) {
+                  //ref_t dummy = 0;
+                  //ident_t actionName = scope.module->resolveAction(getAction(current.argument), dummy);
+                  //if (actionName.compare(CONSTRUCTOR_MESSAGE)) {
+                     // NOTE : Only implicit constructors can be embeddable
+                     generatedConstructors.add(current.argument);
+
+                     current.set(lxClassMethod, current.argument | STATIC_MESSAGE);
+                     attr.setArgument(tpPrivate | tpSealed);
+
+                     found = true;
+                  //}
+                     break;
+                  }
+               }
+               else break;
+
+               attr = attr.nextNode();
+            }
+         }
+         current = current.nextNode();
+      }
+
+      if (found) {
+         for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
+            ref_t message = *it;
+
+            compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE);
+         }
+      }
    }
-
-   List<ref_t> generatedConstructors;
-   //SNode defaultConstructor = SyntaxTree::goToChild(node, lxConstructor, scope.constructor_message);
-   //if (defaultConstructor != lxNone) {
-   //   generatedConstructors.add(scope.constructor_message);
-
-   //   defaultConstructor.set(lxClassMethod, scope.constructor_message | STATIC_MESSAGE);
-   //   defaultConstructor.insertNode(lxAttribute, tpPrivate);
-   //}
-
-//   // generate embeddable constructor
-//   if (test(info.header.flags, /*elSealed | */elStructureRole)) {
-//      
-//      bool found = 0;
-//      SNode current = node.firstChild();
-//      while (current != lxNone) {
-//         if (current == lxConstructor) {
-//            SNode attr = current.firstChild();
-//            while (attr != lxNone) {
-//               if (attr == lxAttribute && attr.argument == tpEmbeddable) {
-////                  SNode multiMethodAttr = current.findChild(lxMultiMethodAttr);
-//
-//                  ref_t dummy = 0;
-//                  ident_t actionName = scope.module->resolveAction(getAction(current.argument), dummy);
-//                  if (actionName.compare(CONSTRUCTOR_MESSAGE)) {
-//                     // NOTE : Only implciit constructors can be embeddable
-//                     generatedConstructors.add(/*Attribute(*/current.argument/*, multiMethodAttr.argument)*/);
-//
-//                     current.set(lxClassMethod, current.argument | STATIC_MESSAGE);
-//                     attr.argument = tpPrivate;
-//
-//                     //                  if (multiMethodAttr != lxNone)
-//                     //                     // HOTFIX : replace the multimethod message with correct one
-//                     //                     multiMethodAttr.setArgument(multiMethodAttr.argument | SEALED_MESSAGE);
-//
-//                     found = true;
-//                  }
-//                  break;
-//               }
-//               attr = attr.nextNode();
-//            }
-//         }
-//         current = current.nextNode();
-//      }
-
-      //if (generatedConstructors.Count() > 0) {
-         //for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
-           // ref_t message = *it;
-
-            //compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE);
-         //}
-      //}
-   //}
 }
 
 //void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
@@ -1737,9 +1726,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 {
    switch ((size_t)attrValue)
    {
-//      case V_EMBEDDABLE:
-//         attrValue = tpEmbeddable;
-//         return true;
+      case V_EMBEDDABLE:
+         attrValue = tpEmbeddable;
+         return true;
 //      case V_GENERIC:
 //         attrValue = (tpGeneric | tpSealed);
 //         return true;

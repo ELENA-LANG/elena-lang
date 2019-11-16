@@ -63,11 +63,12 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
    target.size = copy.size;
 
    if (!headerOnly) {
-      // import method references and mark them as inherited as required
+      // import method references and mark them as inherited if required, ignoring private methods in the inherit mode
       auto it = copy.methods.start();
       if (inheritMode) {
          while (!it.Eof()) {
-            target.methods.add(importMessage(exporter, it.key(), module), false);
+            if (!test(it.key(), STATIC_MESSAGE))
+               target.methods.add(importMessage(exporter, it.key(), module), false);
 
             it++;
          }
@@ -80,23 +81,25 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
          }
       }
 
-      // import method attributes
+      // import method attributes ingoring private one in inherit mode
       auto mtype_it = copy.methodHints.start();
       while (!mtype_it.Eof()) {
          Attribute key = mtype_it.key();
-         ref_t value = *mtype_it;
-         if (test(key.value2, maActionMask)) {
-            value = importAction(exporter, value, module);
-         }
-         else if (test(key.value2, maRefefernceMask)) {
-            value = importReference(exporter, value, module);
-         }
-         else if (test(key.value2, maMessageMask))
-            value = importMessage(exporter, value, module);
+         if (!inheritMode || !test(key.value1, STATIC_MESSAGE)) {
+            ref_t value = *mtype_it;
+            if (test(key.value2, maActionMask)) {
+               value = importAction(exporter, value, module);
+            }
+            else if (test(key.value2, maRefefernceMask)) {
+               value = importReference(exporter, value, module);
+            }
+            else if (test(key.value2, maMessageMask))
+               value = importMessage(exporter, value, module);
 
-         target.methodHints.add(
-            Attribute(importMessage(exporter, key.value1, module), key.value2),
-            value);
+            target.methodHints.add(
+               Attribute(importMessage(exporter, key.value1, module), key.value2),
+               value);
+         }
 
          mtype_it++;
       }

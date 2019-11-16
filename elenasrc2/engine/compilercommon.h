@@ -44,10 +44,10 @@ constexpr auto V_SEALED          = 0x80004001u;
 ///// accessors:
 //constexpr auto V_GETACCESSOR = 0x80003007u;
 //constexpr auto V_SETACCESSOR = 0x80003008u;
-//
-///// scope_prefix:
+
+/// scope_prefix:
 //constexpr auto V_CONST           = 0x80002001u;
-//constexpr auto V_EMBEDDABLE      = 0x80002002u;
+constexpr auto V_EMBEDDABLE      = 0x80002002u;
 //constexpr auto V_WRAPPER         = 0x80002003u;
 //constexpr auto V_DIRECT          = 0x80002004u;
 //constexpr auto V_LOOP            = 0x80002005u;
@@ -140,7 +140,7 @@ enum MethodHint
    tpDispatcher  = 0x0000004,
    tpPrivate     = 0x0000005,
 //   tpStackSafe   = 0x0000010,
-//   tpEmbeddable  = 0x0000020,
+   tpEmbeddable  = 0x0000020,
 //   tpGeneric     = 0x0000040,
    tpFunction      = 0x0000080,
 //   tpTargetSelf  = 0x0000100, // used for script generated classes (self refers to __target)
@@ -385,7 +385,7 @@ public:
 //
 //   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
-//   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/) = 0;
+   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/) = 0;
 //   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;

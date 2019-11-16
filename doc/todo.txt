@@ -2,14 +2,11 @@
 In development:
 ------         
               dev
-                * review implicit constructor : private functions?
-
-                     new A() == A.#new().#constructor() 
-
-                  inheritance : private methods should not be inherited
-                  implicit class : auto generate implicit constructors??
+                * constructor calls are sealed
 
                 * constructors should have maReference type automatically
+
+                * implicit constructor inheritance
 
                 * type alias
                 * auto variable
@@ -45,9 +42,12 @@ In development:
                 * static methods
                 * inheriting static fields / methods
                 * sealed static fields
-                * const static fields
-                * const sealed static fields
+                * const fields
+                * const sealed fields
+                * analog of attributes : constant fields
+                * inherited only implcit constructors
                 * accumulating static fields
+                * implicit constructor inheritance - if not declared - call the parent one?
 
 
                 * parameters
@@ -64,6 +64,7 @@ In development:
                 * auto symbol
                 * auto method
                 * auto field
+                * abstract methods
 
                 * primitive numbers
                 * primitive operations
@@ -115,6 +116,7 @@ In development:
                 * class template
                 * template base class
                 * "multi-inheritance"
+                * replacing embeddable constructor call with direct operarions
 
                 * abstract classes
                 * sealed classes
