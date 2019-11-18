@@ -906,13 +906,13 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elNestedClass", row, pageSize);
    }      
 
-   if (test(flags, elDynamicRole)) {
-      printLine("@flag ", "elDynamicRole", row, pageSize);
-   }
-      
-   if (test(flags, elStructureRole)) {
-      printLine("@flag ", "elStructureRole", row, pageSize);
-   }      
+   //if (test(flags, elDynamicRole)) {
+   //   printLine("@flag ", "elDynamicRole", row, pageSize);
+   //}
+   //   
+   //if (test(flags, elStructureRole)) {
+   //   printLine("@flag ", "elStructureRole", row, pageSize);
+   //}      
 
    if (test(flags, elSealed)) {
       printLine("@flag ", "elSealed", row, pageSize);
@@ -924,109 +924,109 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elClosed", row, pageSize);
    }      
 
-   if (test(flags, elWrapper)) {
-      printLine("@flag ", "elWrapper", row, pageSize);
-   }
+   //if (test(flags, elWrapper)) {
+   //   printLine("@flag ", "elWrapper", row, pageSize);
+   //}
       
    if (test(flags, elStateless)) {
       printLine("@flag ", "elStateless", row, pageSize);
    }      
 
-   if (test(flags, elGroup)) {
-      printLine("@flag ", "elGroup", row, pageSize);
-   }      
+   //if (test(flags, elGroup)) {
+   //   printLine("@flag ", "elGroup", row, pageSize);
+   //}      
 
-   if (test(flags, elWithGenerics)) {
-      printLine("@flag ", "elWithGenerics", row, pageSize);
-   }      
+   //if (test(flags, elWithGenerics)) {
+   //   printLine("@flag ", "elWithGenerics", row, pageSize);
+   //}      
 
-   if (test(flags, elWithVariadics))
-      printLine("@flag ", "elWithVariadics", row, pageSize);
+   //if (test(flags, elWithVariadics))
+   //   printLine("@flag ", "elWithVariadics", row, pageSize);
 
-   if (test(flags, elReadOnlyRole))
-      printLine("@flag ", "elReadOnlyRole", row, pageSize);
+   //if (test(flags, elReadOnlyRole))
+   //   printLine("@flag ", "elReadOnlyRole", row, pageSize);
 
-   if (test(flags, elNonStructureRole))
-      printLine("@flag ", "elNonStructureRole", row, pageSize);
+   //if (test(flags, elNonStructureRole))
+   //   printLine("@flag ", "elNonStructureRole", row, pageSize);
 
-   if (test(flags, elSubject))
-      printLine("@flag ", "elSubject", row, pageSize);
+   //if (test(flags, elSubject))
+   //   printLine("@flag ", "elSubject", row, pageSize);
 
-   if (test(flags, elAbstract))
-      printLine("@flag ", "elAbstract", row, pageSize);
+   //if (test(flags, elAbstract))
+   //   printLine("@flag ", "elAbstract", row, pageSize);
 
    if (test(flags, elRole))
       printLine("@flag ", "elRole", row, pageSize);
 
-   if (test(flags, elExtension))
-      printLine("@flag ", "elExtension", row, pageSize);
+   //if (test(flags, elExtension))
+   //   printLine("@flag ", "elExtension", row, pageSize);
 
-   if (test(flags, elMessage))
-      printLine("@flag ", "elMessage", row, pageSize);
+   //if (test(flags, elMessage))
+   //   printLine("@flag ", "elMessage", row, pageSize);
 
-   if (test(flags, elExtMessage))
-      printLine("@flag ", "elExtMessage", row, pageSize);
+   //if (test(flags, elExtMessage))
+   //   printLine("@flag ", "elExtMessage", row, pageSize);
 
-   if (test(flags, elSymbol))
-      printLine("@flag ", "elSymbol", row, pageSize);
+   //if (test(flags, elSymbol))
+   //   printLine("@flag ", "elSymbol", row, pageSize);
 
 
    if (test(flags, elClassClass))
       printLine("@flag ", "elClassClass", row, pageSize);
 
-   if (test(flags, elNoCustomDispatcher))
-      printLine("@flag ", "elNoCustomDispatcher", row, pageSize);
+   //if (test(flags, elNoCustomDispatcher))
+   //   printLine("@flag ", "elNoCustomDispatcher", row, pageSize);
 
-   switch (flags & elDebugMask) {
-      case elDebugDWORD:
-         printLine("@flag ", "elDebugDWORD", row, pageSize);
-         break;
-      case elDebugReal64:
-         printLine("@flag ", "elDebugReal64", row, pageSize);
-         break;
-      case elDebugLiteral:
-         printLine("@flag ", "elDebugLiteral", row, pageSize);
-         break;
-      case elDebugIntegers:
-         printLine("@flag ", "elDebugIntegers", row, pageSize);
-         break;
-      case elDebugArray:
-         printLine("@flag ", "elDebugArray", row, pageSize);
-         break;
-      case elDebugQWORD:
-         printLine("@flag ", "elDebugQWORD", row, pageSize);
-         break;
-      case elDebugBytes:
-         printLine("@flag ", "elDebugBytes", row, pageSize);
-         break;
-      case elDebugShorts:
-         printLine("@flag ", "elDebugShorts", row, pageSize);
-         break;
-      case elDebugPTR:
-         printLine("@flag ", "elDebugPTR");
-         break;
-      case elDebugWideLiteral:
-         printLine("@flag ", "elDebugWideLiteral", row, pageSize);
-         break;
-      case elDebugReference:
-         printLine("@flag ", "elDebugReference", row, pageSize);
-         break;
-      case elDebugSubject:
-         printLine("@flag ", "elDebugSubject", row, pageSize);
-         break;
-   ////   //case elDebugReals:
-   ////   //   printLine("@flag ", "elDebugReals");
-   ////   //   break;
-      case elDebugMessage:
-         printLine("@flag ", "elDebugMessage", row, pageSize);
-         break;
-   ////   //case elDebugDPTR:
-   ////   //   printLine("@flag ", "elDebugDPTR");
-   ////   //   break;
-   //   case elEnumList:
-   //      printLine("@flag ", "elEnumList", row, pageSize);
+   //switch (flags & elDebugMask) {
+   //   case elDebugDWORD:
+   //      printLine("@flag ", "elDebugDWORD", row, pageSize);
    //      break;
-   }
+   //   case elDebugReal64:
+   //      printLine("@flag ", "elDebugReal64", row, pageSize);
+   //      break;
+   //   case elDebugLiteral:
+   //      printLine("@flag ", "elDebugLiteral", row, pageSize);
+   //      break;
+   //   case elDebugIntegers:
+   //      printLine("@flag ", "elDebugIntegers", row, pageSize);
+   //      break;
+   //   case elDebugArray:
+   //      printLine("@flag ", "elDebugArray", row, pageSize);
+   //      break;
+   //   case elDebugQWORD:
+   //      printLine("@flag ", "elDebugQWORD", row, pageSize);
+   //      break;
+   //   case elDebugBytes:
+   //      printLine("@flag ", "elDebugBytes", row, pageSize);
+   //      break;
+   //   case elDebugShorts:
+   //      printLine("@flag ", "elDebugShorts", row, pageSize);
+   //      break;
+   //   case elDebugPTR:
+   //      printLine("@flag ", "elDebugPTR");
+   //      break;
+   //   case elDebugWideLiteral:
+   //      printLine("@flag ", "elDebugWideLiteral", row, pageSize);
+   //      break;
+   //   case elDebugReference:
+   //      printLine("@flag ", "elDebugReference", row, pageSize);
+   //      break;
+   //   case elDebugSubject:
+   //      printLine("@flag ", "elDebugSubject", row, pageSize);
+   //      break;
+   //////   //case elDebugReals:
+   //////   //   printLine("@flag ", "elDebugReals");
+   //////   //   break;
+   //   case elDebugMessage:
+   //      printLine("@flag ", "elDebugMessage", row, pageSize);
+   //      break;
+   //////   //case elDebugDPTR:
+   //////   //   printLine("@flag ", "elDebugDPTR");
+   //////   //   break;
+   ////   case elEnumList:
+   ////      printLine("@flag ", "elEnumList", row, pageSize);
+   ////      break;
+   //}
 }
 
 void printParents(_Module* module, ref_t reference)

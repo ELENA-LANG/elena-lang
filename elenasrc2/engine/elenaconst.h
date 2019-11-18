@@ -284,55 +284,58 @@ namespace _ELENA_
    constexpr int cnSyntaxPower         = 0x0008;
 
   // --- ELENA VMT flags ---
-   constexpr int elStandartVMT         = 0x00000001;
-   constexpr int elNestedClass         = 0x00000002;
-   constexpr int elDynamicRole         = 0x00000004;
-   constexpr int elStructureRole       = 0x00000128;
-   constexpr int elAbstract            = 0x00000010;
-   constexpr int elClosed              = 0x00000020;
-   constexpr int elWrapper             = 0x00000040;
-   constexpr int elStructureWrapper    = 0x00000048;
-   constexpr int elStateless           = 0x00000080;
-   constexpr int elFinal               = 0x00000100;
-   constexpr int elSealed              = 0x00000120;
-   constexpr int elGroup               = 0x00000200;
-   constexpr int elWithGenerics        = 0x00000400;
-   constexpr int elReadOnlyRole        = 0x00000800;
-   constexpr int elNonStructureRole    = 0x00001000;
-   constexpr int elSubject             = 0x00002000;
-   constexpr int elRole                = 0x00004080;
-   constexpr int elExtension           = 0x00004980;
-   constexpr int elMessage             = 0x00008000;
-   constexpr int elSymbol              = 0x00100000;
-   constexpr int elExtMessage          = 0x00208000;
-   constexpr int elWithYieldable       = 0x00400000;
-   constexpr int elWithCustomDispatcher= 0x00800000;
-   constexpr int elWithVariadics       = 0x01000000;
-////   const int elTapeGroup           = 0x02000200;
-   constexpr int elClassClass          = 0x04000000;
-//   const int elWithMuti            = 0x08000000;
-   constexpr int elVirtualVMT          = 0x10000000;
-   constexpr int elNoCustomDispatcher  = 0x20000000;
+   constexpr int elVirtualVMT          = 0x00000001;
+   constexpr int elStandartVMT         = 0x00000003;
+   constexpr int elStateless           = 0x00000004;
+   constexpr int elFinal               = 0x00000008;
+   constexpr int elClosed              = 0x00000010;
+   constexpr int elSealed              = 0x00000038;
+   constexpr int elNestedClass         = 0x00000040;
+   constexpr int elClassClass          = 0x00000080;
+   constexpr int elRole                = 0x00000100;
 
-   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
-
-   constexpr int elDebugMask           = 0x001F0000;
-   constexpr int elDebugDWORD          = 0x00010000;
-   constexpr int elDebugReal64         = 0x00020000;
-   constexpr int elDebugLiteral        = 0x00030000;
-   constexpr int elDebugIntegers       = 0x00040000;
-   constexpr int elDebugArray          = 0x00050000;
-   constexpr int elDebugQWORD          = 0x00060000;
-   constexpr int elDebugBytes          = 0x00070000;
-   constexpr int elDebugShorts         = 0x00080000;
-   constexpr int elDebugPTR            = 0x00090000;
-   constexpr int elDebugWideLiteral    = 0x000A0000;
-   constexpr int elDebugReference      = 0x000B0000;   // symbol reference
-   constexpr int elDebugSubject        = 0x000C0000;
-//////   const int elDebugReals          = 0x000D0000;
-   constexpr int elDebugMessage        = 0x000E0000;
-//////   const int elDebugDPTR           = 0x000F0000;
-//   const int elEnumList            = 0x00100000;
+//   constexpr int elDynamicRole         = 0x00000004;
+//   constexpr int elAbstract            = 0x00000010;
+//   constexpr int elWrapper             = 0x00000040;
+//   constexpr int elStructureWrapper    = 0x00000048;
+//   constexpr int elSealed              = 0x00000120;
+//   constexpr int elStructureRole       = 0x00000128;
+//   constexpr int elGroup               = 0x00000200;
+//   constexpr int elWithGenerics        = 0x00000400;
+//   constexpr int elReadOnlyRole        = 0x00000800;
+//   constexpr int elNonStructureRole    = 0x00001000;
+//   constexpr int elSubject             = 0x00002000;
+//   constexpr int elExtension           = 0x00004980;
+//   constexpr int elMessage             = 0x00008000;
+//   constexpr int elSymbol              = 0x00100000;
+//   constexpr int elExtMessage          = 0x00208000;
+//   constexpr int elWithYieldable       = 0x00400000;
+//   constexpr int elWithCustomDispatcher= 0x00800000;
+//   constexpr int elWithVariadics       = 0x01000000;
+//////   const int elTapeGroup           = 0x02000200;
+////   const int elWithMuti            = 0x08000000;
+//   constexpr int elNoCustomDispatcher  = 0x20000000;
+//
+//
+//   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
+//
+//   constexpr int elDebugMask           = 0x001F0000;
+//   constexpr int elDebugDWORD          = 0x00010000;
+//   constexpr int elDebugReal64         = 0x00020000;
+//   constexpr int elDebugLiteral        = 0x00030000;
+//   constexpr int elDebugIntegers       = 0x00040000;
+//   constexpr int elDebugArray          = 0x00050000;
+//   constexpr int elDebugQWORD          = 0x00060000;
+//   constexpr int elDebugBytes          = 0x00070000;
+//   constexpr int elDebugShorts         = 0x00080000;
+//   constexpr int elDebugPTR            = 0x00090000;
+//   constexpr int elDebugWideLiteral    = 0x000A0000;
+//   constexpr int elDebugReference      = 0x000B0000;   // symbol reference
+//   constexpr int elDebugSubject        = 0x000C0000;
+////////   const int elDebugReals          = 0x000D0000;
+//   constexpr int elDebugMessage        = 0x000E0000;
+////////   const int elDebugDPTR           = 0x000F0000;
+////   const int elEnumList            = 0x00100000;
 
   // --- ELENA Linker / ELENA VM constants ---
    constexpr int lnGCMGSize               = 0x00000001;

@@ -269,7 +269,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       if ((hint & tpMask) == tpSealed || (hint & tpMask) == tpPrivate) {
          return hint;
       }
-      else if (test(info.header.flags, elFinal)) {
+      else if (test(info.header.flags, elSealed)) {
          return tpSealed | hint;
       }
 //      else if (test(info.header.flags, elClosed)) {
@@ -813,7 +813,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 ////   }
 
    if (!testany(info.header.flags, elClassClass | elNestedClass) && !test(info.header.flags, elRole)
-      && !test(info.header.flags, elExtension)) 
+      /*&& !test(info.header.flags, elExtension)*/) 
    {
       // skip class classes, extensions and singletons
       if (classRef != scope.superReference/* && !closed*/) {
@@ -1497,12 +1497,12 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
    if (classClassMode) {
       // class class is always stateless and final
       info.header.flags |= elStateless;
-      info.header.flags |= elFinal;
+      info.header.flags |= elSealed;
    }
 
    if (test(info.header.flags, elNestedClass)) {
       // stateless inline class
-      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
+      if (info.fields.Count() == 0/* && !test(info.header.flags, elStructureRole)*/) {
          info.header.flags |= elStateless;
 
          // stateless inline class is its own class class

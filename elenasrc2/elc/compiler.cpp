@@ -397,11 +397,11 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
       ref_t r = moduleScope->loadClassInfo(info, reference, true);
       if (r) {
          // if it is an extension
-         if (test(info.header.flags, elExtension)) {
+         /*if (test(info.header.flags, elExtension)) {
             return ObjectInfo(okExtension, reference, reference);
          }
          // if it is a stateless symbol
-         else if (test(info.header.flags, elStateless)) {
+         else */if (test(info.header.flags, elStateless)) {
             return ObjectInfo(okSingleton, reference, reference);
          }
          // if it is a normal class
@@ -1569,8 +1569,16 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
 //      // meta attributes are not directly inherited
 //      scope.info.mattributes.clear();
 
-      if (!ignoreSealed && test(scope.info.header.flags, elSealed))
-         return InheritResult::irSealed;
+      if (!ignoreSealed && test(scope.info.header.flags, elFinal)) {
+         // COMPILER MAGIC : if it is a unsealed nested class inheriting its owner
+         if (!test(scope.info.header.flags, elSealed) && test(scope.info.header.flags, elNestedClass)) {
+            ClassScope* owner = (ClassScope*)scope.getScope(Scope::ScopeLevel::slOwnerClass);
+            if (owner->reference != parentRef) {
+               return InheritResult::irSealed;
+            }
+         }
+         else return InheritResult::irSealed;
+      }         
 
       // restore parent and flags
       scope.info.header.parentRef = parentRef;
@@ -4520,7 +4528,7 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 //   bool autoMode = false;
    ref_t targetRef = 0;
 //   if (EAttrs::test(mode, HINT_ROOT)) {
-//      targetRef = scope.getReturningRef();
+      targetRef = scope.getReturningRef();
 //      if (targetRef == V_AUTO) {
 //         autoMode = true;
 //         targetRef = 0;
@@ -6712,7 +6720,7 @@ void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& sco
 //   ref_t overloadRef = classScope.info.methodHints.get(Attribute(message, maOverloadlist));
 //   if (overloadRef) {
 //      // !! hotfix : temporal do not use direct multi method resolving for the class constructors
-//      if (test(classScope.info.header.flags, /*elFinal*/elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+//      if (test(classScope.info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
 //         writer.newNode(lxSealedMultiDispatching, overloadRef);
 //      }
 //      else writer.newNode(lxMultiDispatching, overloadRef);
@@ -7105,7 +7113,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
 //      retExpr = true;
    }
    // if no redirect statement - call virtual constructor implicitly
-   else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(scope.moduleScope->newobject_message)) {
+   else if (/*!test(classFlags, elDynamicRole) && */classClassScope.info.methods.exist(scope.moduleScope->newobject_message)) {
       SNode callNode = bodyNode.prependSibling(lxCalling_1, scope.moduleScope->newobject_message);
       callNode.appendNode(lxResult);
    }
@@ -7185,13 +7193,13 @@ void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope)
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
 
    SNode op;
-   if (test(classScope->info.header.flags, elDynamicRole)) {
-      throw InternalError("Invalid operation");
-   }
-   else if (test(classScope->info.header.flags, elStructureRole)) {
-      op = methodNode.appendNode(lxCreatingStruct, classScope->info.size);         
-   }
-   else op = methodNode.appendNode(lxCreatingClass, classScope->info.fields.Count());
+   //if (test(classScope->info.header.flags, elDynamicRole)) {
+   //   throw InternalError("Invalid operation");
+   //}
+   //else if (test(classScope->info.header.flags, elStructureRole)) {
+   //   op = methodNode.appendNode(lxCreatingStruct, classScope->info.size);         
+   //}
+   /*else */op = methodNode.appendNode(lxCreatingClass, classScope->info.fields.Count());
 
    op.appendNode(lxType, classScope->reference);
 
@@ -7376,12 +7384,10 @@ void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassS
       MethodScope methodScope(&classScope);
       methodScope.message = classScope.moduleScope->newobject_message;
 
-      if (test(classScope.info.header.flags, elDynamicRole)) {
-         throw InternalError("Invalid operation"); // !! temporal
-
-         //compileDynamicDefaultConstructor(writer, methodScope);
-      }
-      else compileDefaultConstructor(node, methodScope);
+      //if (test(classScope.info.header.flags, elDynamicRole)) {
+      //   compileDynamicDefaultConstructor(writer, methodScope);
+      //}
+      /*else */compileDefaultConstructor(node, methodScope);
    }
 
 //   // if the VMT conatains newly defined generic handlers, overrides default one
@@ -7805,7 +7811,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 //         if (size != 0 && isPrimitiveRef(classRef))
 //            scope.raiseError(errIllegalField, current);
 
-         scope.info.header.flags |= elNonStructureRole;
+         //scope.info.header.flags |= elNonStructureRole;
 
          offset = scope.info.fields.Count();
          scope.info.fields.add(terminal, offset);

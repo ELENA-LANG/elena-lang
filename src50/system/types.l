@@ -1,7 +1,7 @@
 /// Attribute categories:
 /// modificator? visibility? property? scope_prefix? scope? type?
 
-///// modificator:
+/// modificator:
 //#define __ignore_duplicates 80006001h 
 
 /// visibility:

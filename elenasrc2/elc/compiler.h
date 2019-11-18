@@ -710,14 +710,14 @@ private:
 //
 //         return scope ? scope->message : 0;
 //      }
-//
-//      ref_t getReturningRef()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(slMethod);
-//
-//         return scope ? scope->getReturningRef() : 0;
-//      }
-//
+
+      ref_t getReturningRef()
+      {
+         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
+
+         return scope ? scope->getReturningRef() : 0;
+      }
+
 //      bool withEmbeddableRet()
 //      {
 //         MethodScope* scope = (MethodScope*)getScope(slMethod);

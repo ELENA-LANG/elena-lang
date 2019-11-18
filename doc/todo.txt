@@ -2,7 +2,11 @@
 In development:
 ------         
               dev
-                * nested class : with the implicit parent / explicit parent
+                * properties
+                * static methods
+                * static properties
+	
+                * "limited" : declaring
 
                 * declaring a class which cannot be inherited only internal
 

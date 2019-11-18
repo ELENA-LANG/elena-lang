@@ -1633,7 +1633,7 @@ inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
 
 void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
 {
-   bool structure = test(info.header.flags, elStructureRole);
+   //bool structure = test(info.header.flags, elStructureRole);
    int remainingSize = info.size;
 
    ClassInfo::FieldMap::Iterator it = info.fields.start();
@@ -1642,15 +1642,15 @@ void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer
          DebugLineInfo symbolInfo(dsField, 0, 0, 0);
 
          symbolInfo.addresses.field.nameRef = debugStrings->Position();
-         if (structure) {
-            int nextOffset = getNextOffset(it);
-            if (nextOffset == -1) {
-               symbolInfo.addresses.field.size = remainingSize;
-            }
-            else symbolInfo.addresses.field.size = nextOffset - *it;
+         //if (structure) {
+         //   int nextOffset = getNextOffset(it);
+         //   if (nextOffset == -1) {
+         //      symbolInfo.addresses.field.size = remainingSize;
+         //   }
+         //   else symbolInfo.addresses.field.size = nextOffset - *it;
 
-            remainingSize -= symbolInfo.addresses.field.size;
-         }
+         //   remainingSize -= symbolInfo.addresses.field.size;
+         //}
 
          debugStrings->writeLiteral(it.key());
 
