@@ -4257,6 +4257,9 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
             }
             else scope.raiseError(errInvalidHint, current);
          }
+         else if (current == lxType) {
+            current.injectAndReplaceNode(lxParent);
+         }
 //         if (current == lxClassField) {
 //            virtualClass = false;
 //         }
@@ -4273,7 +4276,7 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
 //      if (virtualClass)
 //         scope.info.header.flags |= elVirtualVMT;
 
-      compileParentDeclaration(node.firstChild(), scope/*, false*/);
+      compileParentDeclaration(node.findChild(lxParent), scope/*, false*/);
 
 //      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
 //         // COMPILER MAGIC : inject interface implementation

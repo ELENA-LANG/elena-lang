@@ -5,7 +5,7 @@ In development:
                 * nested class : with the implicit parent / explicit parent
 
                 * declaring a class which cannot be inherited only internal
- 
+
                 * abstract
                 * closed
                 * interface
@@ -26,6 +26,8 @@ In development:
                 * type alias
                 * variable : auto, template
                 * field : type, template type
+
+                * type should be only one in the token expression - test: int long r := 0;
 
                 * message parameters : type, template type, paramter in template
                 * multidispatching : compile-time, run-time
