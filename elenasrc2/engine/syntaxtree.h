@@ -43,6 +43,7 @@ enum LexicalType
    lxParent                   = 0x000015,
    lxClassField               = 0x000016,
    lxRedirect                 = 0x000017,
+   lxTemplate                 = 0x000018,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -55,6 +56,8 @@ enum LexicalType
    lxMessage                  = 0x021080, // arg - message
    lxEOP                      = 0x011090, // end of the code block
    lxAssign                   = 0x0210A0,
+   lxTemplateArgs             = 0x0010B0,
+   lxNestedClass              = 0x0010C0,
 
    // derivation terminals
    lxEOF                      = 0x002010, // end of the file
@@ -62,6 +65,8 @@ enum LexicalType
    lxHexInteger               = 0x002012,
    lxReference                = 0x002013,
    lxGlobalReference          = 0x002014,
+
+   lxVirtualReference         = 0x00201F,
 
    // expression nodes
    lxExpression               = 0x059030,
@@ -103,13 +108,13 @@ enum LexicalType
    lxAllocated                = 0x000F0D,
    lxMessageVariable          = 0x000F0E, // debug info only
    lxSelfVariable             = 0x000F0F, // debug info only
+   lxAutoMultimethod          = 0x000F10,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
 //   lxScope                    = 0x000013,
 //   lxMeta                     = 0x000015,
 //   lxParameter                = 0x000017,
-//   lxNestedClass              = 0x000018,
 //   lxDispatchCode             = 0x000020,
 //   lxAssign                   = 0x000021,
 //   lxStaticMethod             = 0x000025,
@@ -265,7 +270,6 @@ enum LexicalType
 //   lxEmbeddableMssg           = 0x20034,
 //   lxBoxingRequired           = 0x20035,
 //   lxStaticAttr               = 0x2003B,
-//   lxAutoMultimethod          = 0x2003F,
 //   lxElement                  = 0x20043,
 //   lxTypecasting              = 0x20044,
 //   lxIntConversion            = 0x20045,
@@ -1140,9 +1144,9 @@ public:
 //   static void moveNodes(Writer& writer, SyntaxTree& buffer);
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
-//   static void copyNode(Node source, Node destination);
+   static void copyNode(Node source, Node destination);
 //   static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
-//   static void saveNode(Node node, _Memory* dump, bool includingNode = false);
+   static void saveNode(Node node, _Memory* dump, bool includingNode = false);
 //   static void loadNode(Node node, _Memory* dump);
 //
 //   static void copyMatchedNodes(Writer& writer, LexicalType type, Node owner);
@@ -1198,22 +1202,22 @@ public:
 //
 //      return counter;
 //   }
-//
-//   static int countChild(Node node, LexicalType type)
-//   {
-//      int counter = 0;
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone) {
-//         if (current == type)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
+
+   static int countChild(Node node, LexicalType type)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
 //   static int countChildMask(Node node, LexicalType mask)
 //   {
 //      int counter = 0;
@@ -1309,19 +1313,19 @@ public:
 //   }
    Node readRoot();
 
-//   bool save(_Memory* section)
-//   {
-//      MemoryWriter writer(section);
-//
-//      writer.writeDWord(_body.Length());
-//      writer.write(_body.get(0), _body.Length());
-//
-//      writer.writeDWord(_strings.Length());
-//      writer.write(_strings.get(0), _strings.Length());
-//
-//      return _body.Length() > 0;
-//   }
-//
+   bool save(_Memory* section)
+   {
+      MemoryWriter writer(section);
+
+      writer.writeDWord(_body.Length());
+      writer.write(_body.get(0), _body.Length());
+
+      writer.writeDWord(_strings.Length());
+      writer.write(_strings.get(0), _strings.Length());
+
+      return _body.Length() > 0;
+   }
+
 //   void load(_Memory* section)
 //   {
 //      _body.clear();

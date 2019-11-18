@@ -362,31 +362,31 @@ _Module* ModuleScope :: loadReferenceModule(ident_t referenceName, ref_t& refere
    }
 }
 
-//ref_t ModuleScope :: mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared)
-//{
-//   ReferenceNs forwardName;
-//   // NOTE : the nested namespace is not included into the weak name
-//   forwardName.append(TEMPLATE_PREFIX_NS);
-//
-//   forwardName.append(templateName);
-//
-//   if (emptystr(project->resolveForward(templateName))) {
-//      ReferenceNs fullName(module->Name());
-//      if (!emptystr(ns))
-//         fullName.combine(ns);
-//
-//      fullName.combine(templateName);
-//
-//      project->addForward(templateName, fullName);
-//
-//      mapNewIdentifier(ns, templateName, false);
-//
-//      alreadyDeclared = false;
-//   }
-//   else alreadyDeclared = true;
-//
-//   return module->mapReference(forwardName);
-//}
+ref_t ModuleScope :: mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared)
+{
+   ReferenceNs forwardName;
+   // NOTE : the nested namespace is not included into the weak name
+   forwardName.append(TEMPLATE_PREFIX_NS);
+
+   forwardName.append(templateName);
+
+   if (emptystr(project->resolveForward(templateName))) {
+      ReferenceNs fullName(module->Name());
+      if (!emptystr(ns))
+         fullName.combine(ns);
+
+      fullName.combine(templateName);
+
+      project->addForward(templateName, fullName);
+
+      mapNewIdentifier(ns, templateName, Visibility::Public);
+
+      alreadyDeclared = false;
+   }
+   else alreadyDeclared = true;
+
+   return module->mapReference(forwardName);
+}
 
 ident_t ModuleScope:: resolveWeakTemplateReference(ident_t referenceName)
 {
@@ -580,48 +580,51 @@ void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
 //
 //   SyntaxTree::copyNode(output, templateTree.readRoot());
 //}
-//
-//ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode)
-//{
-//   SyntaxTree templateTree;
-//
-//   TemplateGenerator transformer(templateTree);
-//   SyntaxWriter writer(templateTree);
-//   writer.newNode(lxRoot);
-//   writer.newNode(lxNamespace, ns);
-//
-//   ref_t generatedReference = 0;
-//
-//   if (declarationMode) {
-//      generatedReference = transformer.declareTemplate(writer, *this, reference, parameters);
-//   }
-//   else {
-//      generatedReference = transformer.generateTemplate(writer, *this, reference, parameters, true, false);
-//
-//      writer.closeNode();
-//      writer.closeNode();
-//
-//      if (generatedReference) {
-//         IdentifierString path;
-//         path.copy("compiling ");
-//         path.append(resolveFullName(generatedReference));
-//         path.append(" template...");
-//         //writer.insertChild(0, lxSourcePath, path.c_str());
-//
-//         try
-//         {
-//            compile(templateTree, path.c_str());
-//         }
-//         catch (_Exception&)
-//         {
-//            return 0;
-//         }
-//      }
-//   }
-//
-//   return generatedReference;
-//}
-//
+
+ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode)
+{
+   SyntaxTree templateTree;
+
+   TemplateGenerator transformer(templateTree);
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   writer.newNode(lxNamespace, ns);
+
+   ref_t generatedReference = 0;
+
+   if (declarationMode) {
+      generatedReference = transformer.declareTemplate(writer, *this, reference, parameters);
+
+      writer.closeNode();
+      writer.closeNode();
+   }
+   else {
+      generatedReference = transformer.generateTemplate(writer, *this, reference, parameters, true, false);
+
+      writer.closeNode();
+      writer.closeNode();
+
+      if (generatedReference) {
+         IdentifierString path;
+         path.copy("compiling ");
+         path.append(resolveFullName(generatedReference));
+         path.append(" template...");
+         //writer.insertChild(0, lxSourcePath, path.c_str());
+
+         try
+         {
+            compile(templateTree, path.c_str());
+         }
+         catch (_Exception&)
+         {
+            return 0;
+         }
+      }
+   }
+
+   return generatedReference;
+}
+
 //void ModuleScope :: generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef)
 //{
 //   compiler->registerExtensionTemplate(tree, *this, ns, extensionRef);

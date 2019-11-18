@@ -105,7 +105,7 @@ public:
 
       okObject,                       // param - class reference
       okSymbol,                       // param - reference
-      //okConstantSymbol,               // param - reference
+      okConstantSymbol,               // param - reference
       okClass,                        // param - reference
       okSingleton,                    // param - reference
 //      okLiteralConstant,              // param - reference
@@ -335,6 +335,7 @@ private:
       Visibility        defaultVisibility;
 
       IdentifierString  ns;
+      IdentifierString  name;
       IdentifierString  sourcePath;
 
       virtual Scope* getScope(ScopeLevel level)
@@ -779,10 +780,10 @@ private:
 //         consructionMode = withFrame = false;
 //      }
 //   };
-//
-//   // - InlineClassScope -
-//   struct InlineClassScope : public ClassScope
-//   {
+
+   // - InlineClassScope -
+   struct InlineClassScope : public ClassScope
+   {
 //      struct Outer
 //      {
 //         ref_t      reference;
@@ -823,9 +824,9 @@ private:
 //      }
 //
 //      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//
-//      InlineClassScope(CodeScope* owner, ref_t reference);
-//   };
+
+      InlineClassScope(ExprScope* owner, ref_t reference);
+   };
 
    _CompilerLogic*  _logic;
 
@@ -887,6 +888,7 @@ private:
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(ExprScope& scope, ObjectInfo object/*, bool noPrimitivesMode, bool unboxWrapper = true*/);
 ////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
+   ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, bool declarationMode);
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
 
 //   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
@@ -923,7 +925,7 @@ private:
    void declareVMT(SNode member, ClassScope& scope);
 
 //   ref_t mapTypeAttribute(SNode member, Scope& scope);
-//   ref_t mapTemplateAttribute(SNode node, Scope& scope);
+   ref_t mapTemplateAttribute(SNode node, Scope& scope);
    void declareMethodAttributes(SNode member, MethodScope& scope);
 
 //   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
@@ -944,17 +946,17 @@ private:
 //   size_t resolveArraySize(SNode node, Scope& scope);
 //
    ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode);
-//   ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
-//   ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
-//
+   //ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
+   ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
+
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable/*, ClassInfo& localInfo, int size, bool binaryArray, 
                                     int& variableArg, ident_t& className*/);
    void declareVariable(SNode& node, CodeScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/);
 
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, EAttr mode);
-//   ObjectInfo compileClosure(SyntaxWriter& writer, SNode node, CodeScope& ownerScope, InlineClassScope& scope);
+   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);
+   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ObjectInfo target);
 //
 //   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
@@ -992,7 +994,7 @@ private:
 ////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
 //   SNode injectAttributeIdentidier(SNode current, Scope& scope);
-//   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
+   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
    EAttr declareExpressionAttributes(SNode& node, ExprScope& scope, EAttr mode);
 
    void recognizeTerminal(SNode node, ObjectInfo info, ExprScope& scope, EAttr mode);
@@ -1077,9 +1079,9 @@ private:
    void compileSymbolCode(ClassScope& scope);
 
 //   void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
-//   void compileNestedVMT(SNode node, InlineClassScope& scope);
+   void compileNestedVMT(SNode& node, InlineClassScope& scope);
 
-   void compileVMT(SNode node, ClassScope& scope/*, bool ignoreAutoMultimethods = false*/);
+   void compileVMT(SNode node, ClassScope& scope, bool exclusiveMode = false, bool ignoreAutoMultimethods = false);
    void compileClassVMT(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileForward(SNode ns, NamespaceScope& scope);
 
@@ -1092,7 +1094,7 @@ private:
    void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates, bool closed*/, bool allowTypeAttribute/*, bool embeddableClass*/);
    void generateMethodDeclarations(SNode node, ClassScope& scope, /*bool closed, */LexicalType methodType, bool allowTypeAttribute/*, bool embeddableClass*/);
 ////   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
-   void generateClassDeclaration(SNode node, ClassScope& scope/*, ClassType classType, bool nestedDeclarationMode = false*/);
+   void generateClassDeclaration(SNode node, ClassScope& scope/*, ClassType classType*/, bool nestedDeclarationMode = false);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
 
@@ -1172,6 +1174,9 @@ private:
 //   bool optimizeAssigningTargetBoxing(_ModuleScope& scope, SNode& node);
 //
 //   //int saveMetaInfo(_ModuleScope& scope, ident_t info);
+
+   void saveNamespaceInfo(SNode node, NamespaceScope& scope, bool innerMost);
+   void declareTemplate(SNode node, NamespaceScope& scope);
 
 public:
    void loadRules(StreamReader* optimization);

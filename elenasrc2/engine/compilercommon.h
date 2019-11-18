@@ -82,7 +82,7 @@ constexpr auto V_IMPORT          = 0x80001018u;
 //constexpr auto V_NOSTRUCT        = 0x8000101Bu;
 //constexpr auto V_AUTO            = 0x8000101Cu;
 //constexpr auto V_INITIALIZER     = 0x8000101Du;
-//constexpr auto V_TEMPLATE        = 0x8000101Eu;
+constexpr auto V_TEMPLATE        = 0x8000101Eu;
 //constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
 //constexpr auto V_YIELD           = 0x80001020u;
 constexpr auto V_NAMESPACE       = 0x80001021u;
@@ -281,7 +281,7 @@ struct _ModuleScope
    }
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
-//   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
+   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode,
                                  bool ignoreFields) = 0;
@@ -343,7 +343,7 @@ struct _ModuleScope
 //      project->raiseWarning(level, message, sourcePath);
 //   }
 
-//   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode) = 0;
+   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode) = 0;
 //   virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 //   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 //   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef) = 0;

@@ -536,28 +536,28 @@ SyntaxTree::Node SyntaxTree :: readRoot()
    return read(0u);
 }
 
-//void SyntaxTree :: saveNode(Node node, _Memory* dump, bool inclusingNode)
-//{
-//   SyntaxTree tree;
-//   SyntaxWriter writer(tree);
-//
-//   writer.newNode(lxRoot);
-//
-//   if (inclusingNode) {
-//      if (node.strArgument != INVALID_REF) {
-//         writer.newNode(node.type, node.identifier());
-//      }
-//      else writer.newNode(node.type, node.argument);
-//      copyNode(writer, node);
-//      writer.closeNode();
-//   }
-//   else copyNode(writer, node);
-//
-//   writer.closeNode();
-//
-//   tree.save(dump);
-//}
-//
+void SyntaxTree :: saveNode(Node node, _Memory* dump, bool inclusingNode)
+{
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxRoot);
+
+   if (inclusingNode) {
+      if (node.strArgument != INVALID_REF) {
+         writer.newNode(node.type, node.identifier());
+      }
+      else writer.newNode(node.type, node.argument);
+      copyNode(writer, node);
+      writer.closeNode();
+   }
+   else copyNode(writer, node);
+
+   writer.closeNode();
+
+   tree.save(dump);
+}
+
 //void SyntaxTree :: loadNode(Node node, _Memory* dump)
 //{
 //   SyntaxTree tree(dump);
@@ -628,24 +628,24 @@ void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
    }
 }
 
-//void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destination)
-//{
-//   SNode current = source.firstChild();
-//   while (current != lxNone) {
-//      if (current.strArgument != INVALID_REF) {
-//         //if (source.tree == destination.tree) {
-//         //   // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
-//         //   // so the special routine should be used
-//         //   copyNode(current, destination.appendStrNode(current.type, current.strArgument));
-//         //}
-//         /*else */copyNode(current, destination.appendNode(current.type, current.identifier()));
-//      }
-//      else copyNode(current, destination.appendNode(current.type, current.argument));
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destination)
+{
+   SNode current = source.firstChild();
+   while (current != lxNone) {
+      if (current.strArgument != INVALID_REF) {
+         //if (source.tree == destination.tree) {
+         //   // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
+         //   // so the special routine should be used
+         //   copyNode(current, destination.appendStrNode(current.type, current.strArgument));
+         //}
+         /*else */copyNode(current, destination.appendNode(current.type, current.identifier()));
+      }
+      else copyNode(current, destination.appendNode(current.type, current.argument));
+
+      current = current.nextNode();
+   }
+}
+
 //void SyntaxTree :: copyNodeSafe(Node source, Node destination, bool inclusingNode)
 //{
 //   MemoryDump dump;

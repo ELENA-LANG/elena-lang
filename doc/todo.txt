@@ -2,14 +2,36 @@
 In development:
 ------         
               dev
-                * constructor calls are sealed
+                * nested class : with the implicit parent / explicit parent
 
-                * constructors should have maReference type automatically
+                * declaring a class which cannot be inherited only internal
+ 
+                * abstract
+                * closed
+                * interface
+                * static method
+                * const static method
 
-                * implicit constructor inheritance
+                * bool values
+                * branching operator
+
+                * countable
+
+                * template code : declaration, using
+
+                * templates : declaration, using
+                * templates based on another template
+                * template variables
 
                 * type alias
-                * auto variable
+                * variable : auto, template
+                * field : type, template type
+
+                * message parameters : type, template type, paramter in template
+                * multidispatching : compile-time, run-time
+
+                * template : inherting another template
+                * template based class, import template (multi-inheritance)
 
                 * assign field
                 * get field
@@ -28,8 +50,12 @@ In development:
                   - accessed only for strong-typed classes
                   - internal sealed can be compiled as static one (outside VMT)
 
+                * singleton nested class - should init method be called?
+
                 * fields, public / private / internal fields
                 * fields with reference name
+                * strong typed fields
+                * temlate based typed fields
                 * const class \ const field
                 * structs
                 * properties
@@ -49,7 +75,6 @@ In development:
                 * accumulating static fields
                 * implicit constructor inheritance - if not declared - call the parent one?
 
-
                 * parameters
                 * auto returning
                 * strong typed variables
@@ -65,6 +90,8 @@ In development:
                 * auto method
                 * auto field
                 * abstract methods
+                                      
+                * implement analog of C# enum
 
                 * primitive numbers
                 * primitive operations
@@ -79,7 +106,6 @@ In development:
                 * variable : identifier / reference
 
                 * implement sealed, const, struct
-                * countable
                 * analog of C# $ strings
 
                 * constructor dispatching
