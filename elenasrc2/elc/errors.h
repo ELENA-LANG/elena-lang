@@ -40,7 +40,7 @@ namespace _ELENA_
    #define errDuplicatedField       "%s(%d:%d): error 109: Field '%s' already exists in the class\n"
 //   #define errUnknownVariableType   "%s(%d:%d): error 104: Type of the variable '%s' doesn't exist\n"
    #define errIllegalField          "%s(%d:%d): error 111: Illegal field declaration '%s'\n"
-//   #define errTooManyParameters     "%s(%d:%d): error 113: Too many parameters for '%s' message\n"
+   #define errTooManyParameters     "%s(%d:%d): error 113: Too many parameters for '%s' message\n"
 //////   #define errUnknownRole           "%s(%d:%d): error 117: Unknown role '%s'\n"
    #define errDuplicatedDefinition  "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n"
 //////   #define errInvalidProperty       "%s(%d:%d): error 121: Invalid or none-existing property '%s'\n"

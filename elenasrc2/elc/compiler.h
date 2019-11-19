@@ -134,7 +134,7 @@ public:
 //      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
 ////////      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
-//      okParam,                        // param - parameter offset, extraparam = class reference
+      okParam,                        // param - parameter offset, extraparam = class reference
 //      okParamField,
 //      okSubject,                      // param - parameter offset
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
@@ -547,7 +547,7 @@ private:
    struct MethodScope : public Scope
    {
       ref_t        message;
-//      LocalMap     parameters;
+      LocalMap     parameters;
 //      EAttr        scopeMode;
 //      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
 //      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
@@ -630,7 +630,7 @@ private:
 
       ObjectInfo mapSelf(/*bool forced = false*/);
 //      ObjectInfo mapGroup();
-//      ObjectInfo mapParameter(Parameter param, EAttr mode);
+      ObjectInfo mapParameter(Parameter param, EAttr mode);
 
       MethodScope(ClassScope* parent);
    };
@@ -985,9 +985,9 @@ private:
 //
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
-//
-//   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode, 
-//      bool& variadicOne, bool& inlineArg);
+
+   /*ref_t*/void compileMessageParameters(SNode node, ExprScope& scope, EAttr mode/*, 
+      bool& variadicOne, bool& inlineArg*/);
 
    ObjectInfo compileMessage(SNode node, ExprScope& scope, /*ref_t exptectedRef,*/ ObjectInfo target, EAttr mode);
    ObjectInfo compileMessage(SNode node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode/*, int stackSafeAttr*/);
@@ -1041,8 +1041,8 @@ private:
 
    ObjectInfo compileCode(SNode node, CodeScope& scope);
 
-//   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
-   void declareArgumentList(SNode node, MethodScope& scope/*, bool withoutWeakMessages, bool declarationMode*/);
+   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, /*ref_t& elementRef, */bool declarationMode);
+   void declareArgumentList(SNode node, MethodScope& scope/*, bool withoutWeakMessages*/, bool declarationMode);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
 //   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
 //

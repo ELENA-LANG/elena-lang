@@ -6224,7 +6224,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxFieldExpression:
 //      case lxAltExpression:
 //      case lxSeqExpression:
-         generateExpression(tape, node, scope, mode);
+         generateExpression(tape, node, scope, mode & ~STACKOP_MODE);
          break;
       case lxCalling_0:
       case lxCalling_1:
@@ -6633,11 +6633,11 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
          case lxMessageVariable:
             declareMessageInfo(tape, current.identifier());
             break;
-//         case lxVariable:
-//            declareLocalInfo(tape,
-//               current.firstChild(lxTerminalMask).identifier(),
-//               current.findChild(lxLevel).argument);
-//            break;
+         case lxVariable:
+            declareLocalInfo(tape,
+               current.firstChild(lxTerminalMask).identifier(),
+               current.findChild(lxLevel).argument);
+            break;
          case lxSelfVariable:
             declareSelfInfo(tape, current.argument);
             break;

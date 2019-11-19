@@ -168,7 +168,7 @@ class DerivationWriter : public _DerivationWriter
 //   //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
-   void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode/*, bool propertyMode*/, SyntaxTree& buffer);
+   void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode, bool propertyMode, SyntaxTree& buffer);
 //   // returns true if in-place init found
 //   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);

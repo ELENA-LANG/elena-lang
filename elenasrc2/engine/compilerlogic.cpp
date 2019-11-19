@@ -1591,8 +1591,8 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 //   injectOverloadList(scope, info, compiler, classRef);
 }
 
-//bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg)
-//{
+bool CompilerLogic :: validateArgumentAttribute(int attrValue/*, bool& byRefArg, bool& paramsArg*/)
+{
 //   switch ((size_t)attrValue) {
 //      case V_WRAPPER:
 //         if (!byRefArg) {
@@ -1609,8 +1609,8 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 //      case V_VARIABLE:
 //         return true;
 //   }
-//   return false;
-//}
+   return false;
+}
 
 bool CompilerLogic :: validateNsAttribute(int attrValue, Visibility& visibility)
 {
@@ -1711,12 +1711,12 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue/*, bool com
 //      case V_GENERIC:
       case V_FUNCTION:
          return validateMethodAttribute(attrValue, dummy);
-//      case V_GETACCESSOR:
+      case V_GETACCESSOR:
 //      case V_SETACCESSOR:
 //         if (complexName) {
 //            return validateMethodAttribute(attrValue, dummy);
 //         }
-//         else return false;
+         /*else */return false;
       default:
          return false;
    }
@@ -1781,9 +1781,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 ////      case V_STACKUNSAFE:
 ////         attrValue = tpDynamic;
 ////         return true;
-//      case V_GETACCESSOR:
-//         attrValue = tpGetAccessor;
-//         return true;
+      case V_GETACCESSOR:
+         attrValue = tpGetAccessor;
+         return true;
 //      case V_SETACCESSOR:
 //         attrValue = tpSetAccessor;
 //         return true;

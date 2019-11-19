@@ -44,6 +44,7 @@ enum LexicalType
    lxClassField               = 0x000016,
    lxRedirect                 = 0x000017,
    lxTemplate                 = 0x000018,
+   lxMethodParameter          = 0x000019,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -58,6 +59,7 @@ enum LexicalType
    lxAssign                   = 0x0210A0,
    lxTemplateArgs             = 0x0010B0,
    lxNestedClass              = 0x0010C0,
+   lxParameter                = 0x0010D0,
 
    // derivation terminals
    lxEOF                      = 0x002010, // end of the file
@@ -114,7 +116,6 @@ enum LexicalType
 //   lxExpression               = 0x00C012,
 //   lxScope                    = 0x000013,
 //   lxMeta                     = 0x000015,
-//   lxParameter                = 0x000017,
 //   lxDispatchCode             = 0x000020,
 //   lxAssign                   = 0x000021,
 //   lxStaticMethod             = 0x000025,
@@ -192,7 +193,6 @@ enum LexicalType
 //   lxStdExternalCall          = 0x00C014,   // calling an external function, arg - reference
 //   lxExternalCall             = 0x00C015,   // calling an external function, arg - reference
 //   lxCoreAPICall              = 0x00C016,   // calling an external function, arg - reference
-//   lxMethodParameter          = 0x00C017,
 //   lxAltExpression            = 0x00C018,
 //   lxIfNot                    = 0x00C019,   // optional arg - reference
 //   lxInternalCall             = 0x00C01A,   // calling an internal function, arg - reference

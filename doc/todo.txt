@@ -2,15 +2,34 @@
 In development:
 ------         
               dev
-                * properties
+                * message parameters
+                * properties : call
+
+                * default constructor can be inherited if no static / constructors are declared (and a parent is not abstract class)
+                  otherwise the constructor has to be declared to create an object
+                * any constructor should call the parent ony (explicitily default one) if available
+
+
+                * resend body
+                * call parent constructor
+                * abstract
+
+                * recognize idle method
+                * recognize idle constructor
+
+                * if all constructors are private - cannot be inherited directly
+                * if all constructors are internal - can be inherited only inside the module
+
+                * if the parent constructor is idle - do like normal one
+
                 * static methods
                 * static properties
-	
+	        * #381 : method returning a constant 
+
                 * "limited" : declaring
 
                 * declaring a class which cannot be inherited only internal
 
-                * abstract
                 * closed
                 * interface
                 * static method
@@ -80,6 +99,7 @@ In development:
                 * inherited only implcit constructors
                 * accumulating static fields
                 * implicit constructor inheritance - if not declared - call the parent one?
+                * optimization : do not call idle method
 
                 * parameters
                 * auto returning
@@ -104,6 +124,8 @@ In development:
                 * boxing
                 * structures
                 * unboxing
+
+                * properties : explicit
 
                 * creating dynamic array / buffers
                 * nested class scope

@@ -26,7 +26,7 @@ namespace _ELENA_
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
    // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto FUNCTION_MESSAGE         = 0x020u;
-//   constexpr auto PROPERTY_MESSAGE        = 0x040u;
+   constexpr auto PROPERTY_MESSAGE        = 0x040u;
    constexpr auto VARIADIC_MESSAGE        = 0x080u;
    constexpr auto STATIC_MESSAGE          = 0x100u;
    constexpr auto ARG_MASK                = 0x01Fu;
@@ -473,6 +473,7 @@ namespace _ELENA_
 //      ////   #define EMBEDDED_PREFIX          "#embedded"
 //      ////   #define TARGET_POSTFIX           "##"
 //   constexpr auto STATICFIELD_POSTFIX        = "#static";
+
 //   constexpr auto EMBEDDAMLE_PREFIX          = "auto#";
 
   // --- ELENA Standard module references ---

@@ -40,9 +40,9 @@ constexpr auto V_SEALED          = 0x80004001u;
 //constexpr auto V_CLOSED          = 0x80004003u;
 //constexpr auto V_PREDEFINED      = 0x80004005u;
 //constexpr auto V_YIELDABLE       = 0x80004006u;
-//
-///// accessors:
-//constexpr auto V_GETACCESSOR = 0x80003007u;
+
+/// accessors:
+constexpr auto V_GETACCESSOR = 0x80003007u;
 //constexpr auto V_SETACCESSOR = 0x80003008u;
 
 /// scope_prefix:
@@ -148,7 +148,7 @@ enum MethodHint
    tpConversion  = 0x0200800,
 //   tpMultimethod = 0x0001000,
 //   tpStatic      = 0x0004000,
-//   tpGetAccessor = 0x0008000,
+   tpGetAccessor = 0x0008000,
 //   tpSpecial     = 0x0010000,
 //   tpAbstract    = 0x0020000,
    tpInternal    = 0x0040000,
@@ -685,8 +685,8 @@ public:
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
    virtual bool validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility) = 0;
 //   virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
-//   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
-//
+   virtual bool validateArgumentAttribute(int attrValue/*, bool& byRefArg, bool& paramsArg*/) = 0;
+
 //   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 //
 //   // optimization

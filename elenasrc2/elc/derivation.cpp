@@ -19,7 +19,7 @@ constexpr auto MODE_ROOT                  = 0x01;
 
 constexpr auto MODE_FUNCTION        = -2;
 //constexpr auto MODE_COMPLEXMESSAGE  = -3;
-//constexpr auto MODE_PROPERTYMETHOD  = -4;
+constexpr auto MODE_PROPERTYMETHOD  = -4;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
@@ -719,20 +719,20 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 
 void DerivationWriter :: recognizeMethodMebers(SNode node)
 {
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current) {
-//         case lxParameter:
-//         {
-//            SNode paramNode = current.lastChild();
-//            recognizeScopeAttributes(paramNode, 0);
-//            paramNode.refresh();
-//            break;
-//         }
-//      }
-//
-//      current = current.nextNode();
-//   }
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current) {
+         case lxParameter:
+         {
+            SNode paramNode = current.lastChild();
+            recognizeScopeAttributes(paramNode, 0);
+            paramNode.refresh();
+            break;
+         }
+      }
+
+      current = current.nextNode();
+   }
 }
 
 void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& scope*/)
@@ -740,16 +740,16 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxScope) {
-         SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning/*, lxExpression, lxResendExpression*/);
+         SNode bodyNode = current.findChild(lxCode, lxDispatchCode, lxReturning, lxExpression/*, lxResendExpression*/);
 
          int mode = 0;
-//         if (bodyNode == lxExpression) {
-//            // if it is a property, mark it as a get-property
-//            current.set(lxClassMethod, MODE_PROPERTYMETHOD);
-//
-//            recognizeMethodMebers(current);
-//         }
-         /*else */if (bodyNode != lxNone) {
+         if (bodyNode == lxExpression) {
+            // if it is a property, mark it as a get-property
+            current.set(lxClassMethod, MODE_PROPERTYMETHOD);
+
+            recognizeMethodMebers(current);
+         }
+         else if (bodyNode != lxNone) {
             // if it is a method
             current = lxClassMethod;
 
@@ -886,7 +886,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
       // HOTFIX : recognize method parameters
       recognizeMethodMebers(node);
 
-      generateMethodTree(writer, node, derivationScope, true, /*current.argument == MODE_PROPERTYMETHOD, */buffer);
+      generateMethodTree(writer, node, derivationScope, true, current.argument == MODE_PROPERTYMETHOD, buffer);
    }
    else {
       bool firstParent = true;
@@ -911,7 +911,7 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
             }
          }
          else if (current == lxClassMethod) {
-            generateMethodTree(writer, current, derivationScope, false, /*current.argument == MODE_PROPERTYMETHOD, */buffer);
+            generateMethodTree(writer, current, derivationScope, false, current.argument == MODE_PROPERTYMETHOD, buffer);
          }
          else if (current == lxClassField/* || current == lxFieldInit*/) {
             generateFieldTree(writer, current, derivationScope, buffer);
@@ -1173,8 +1173,8 @@ void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
 //   }
 }
 
-void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode/*, bool propertyMode*/, 
-   SyntaxTree& buffer)
+void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode, 
+   bool propertyMode, SyntaxTree& buffer)
 {
 //   //// recognize template attributes
 //   //SNode current = node.prevNode();
@@ -1197,31 +1197,30 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //      writer.appendNode(lxSourcePath, fullPath.c_str());
 //      //writer.appendNode(lxTemplate, scope.templateRef);
 //   }
-//
-//   if (propertyMode) {
-//      writer.appendNode(lxAttribute, V_GETACCESSOR);
-//   }
+
+   if (propertyMode) {
+      writer.appendNode(lxAttribute, V_GETACCESSOR);
+   }
 
    if (functionMode) {
       writer.appendNode(lxAttribute, V_FUNCTION);
    }
    else generateAttributes(writer, node.prevNode(), derivationScope, buffer);
 
-//   // copy method arguments
-//   SNode current = node.firstChild();
-////   SNode attribute;
-//   while (current != lxNone) {
-//      switch (current) {
-//         case lxParameter:
-//         {
-//            writer.newNode(lxMethodParameter, current.argument);
-//
-//            SNode paramNode = current.lastChild();
-//            generateAttributes(writer, paramNode, derivationScope, buffer);
-//
-//            writer.closeNode();
-//            break;
-//         }
+   // copy method arguments
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current) {
+         case lxParameter:
+         {
+            writer.newNode(lxMethodParameter, current.argument);
+
+            SNode paramNode = current.lastChild();
+            generateAttributes(writer, paramNode, derivationScope, buffer);
+
+            writer.closeNode();
+            break;
+         }
 //         case lxParent:
 //         {
 //            // COMPILER MAGIC : if it is a complex name
@@ -1231,21 +1230,21 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //            writer.closeNode();
 //            break;
 //         }
-//         default:
-//            // otherwise break the loop
-//            current = SNode();
-//            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   if (propertyMode) {
-//      writer.newNode(lxReturning);
-//      generateExpressionTree(writer, node.findChild(lxExpression), derivationScope, 0);
-//      writer.closeNode();
-//   }
-//   else {
+         default:
+            // otherwise break the loop
+            current = SNode();
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   if (propertyMode) {
+      writer.newNode(lxReturning);
+      generateExpressionTree(writer, node.findChild(lxExpression), derivationScope, 0);
+      writer.closeNode();
+   }
+   else {
       SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning/*, lxResendExpression*/);
       if (bodyNode.compare(lxReturning, lxDispatchCode)) {
          writer.newNode(bodyNode.type);
@@ -1265,7 +1264,7 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
       else if (bodyNode == lxCode) {
          generateCodeTree(writer, bodyNode, derivationScope);
       }
-//   }
+   }
 
    writer.closeNode();
 }
