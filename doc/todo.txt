@@ -2,53 +2,23 @@
 In development:
 ------         
               dev
-                * abstract class cannot have constructors
-
-                * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
-                  signature or default one (if nothing is found - cannot be declared)
-
-                * explicit constructor should call at least default implicit method
-
-                * implicit default constructor cannot have redirector statement
-
-                * compile implicit constructor call
-
-                * should not be possible to create abstract class
-                * should not be possible to create abstract based class without declaring a new constructor
-
-                * any constructor should call the parent ony (explicitily default one) if available
-
-                * static methods
-
-                * resend body
-                * call parent constructor
-
-                * recognize idle method
-                * recognize idle constructor
-
-                * if all constructors are private - cannot be inherited directly
-                * if all constructors are internal - can be inherited only inside the module
-
-                * if the parent constructor is idle - do like normal one
-
-                * static properties
-	        * #381 : method returning a constant 
-
-                * "limited" : declaring
-
-                * declaring a class which cannot be inherited only internal
-
                 * closed
                 * interface
                 * static method
+                * static properties
+
+	        * #381 : method returning a constant 
                 * const static method
 
                 * bool values
                 * branching operator
 
-                * countable
-
                 * template code : declaration, using
+
+                * resend body
+                * call parent constructor
+
+                * countable
 
                 * nested class should not have static methods and constructors
 
@@ -78,6 +48,8 @@ In development:
                 * default implcit constructor should be embeddable?
                 * embeddable constructor
 
+                * implicit default constructor cannot have redirector statement
+                * nested class cannot have constructors
 
                 * revew internal methods
                   - accessible only inside its own module
@@ -121,6 +93,8 @@ In development:
                 * dispatching in run time
 
                 * implicit conversion
+                * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
+                  signature or default one (if nothing is found - cannot be declared)
 
                 * auto symbol
                 * auto method
@@ -134,6 +108,10 @@ In development:
                 * boxing
                 * structures
                 * unboxing
+
+                * recognize idle method
+                * recognize idle constructor
+                * if the parent constructor is idle - do like normal one
 
                 * properties : explicit
 
@@ -228,6 +206,7 @@ In development:
                 * redesign
                 * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
                 * review : inheriting private methods (what about the public "shadow one" hints?, should they be removed as well??)
+                * if all constructors are internal - can be inherited only inside the module
 
               dev1
                 * write - Programming in ELENA : manual

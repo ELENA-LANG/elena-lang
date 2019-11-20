@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -3398,15 +3398,19 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ObjectInfo t
       callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
 //   }
 
+   if (callType == tpPrivate) {
+      if (target.kind == okSelfParam/* || target.kind == okOuterSelf*/ || target.kind == okClassSelf) {
+         messageRef |= STATIC_MESSAGE;
+
+         callType = tpSealed;
+      }
+      else result.found = false;
+   }
+
    if (result.found) {
       retVal.reference = result.outputReference;
    }
 
-   if ((target.kind == okSelfParam/* || target.kind == okOuterSelf || target.kind == okClassSelf*/) && callType == tpPrivate) {
-      messageRef |= STATIC_MESSAGE;
-
-      callType = tpSealed;
-   }
 ////   else if (classReference == scope.moduleScope->signatureReference) {
 ////      dispatchCall = test(mode, HINT_EXTENSION_MODE);
 ////   }
@@ -4731,23 +4735,17 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 //	return objectInfo;
 //}
 
-ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
+ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, ClassInfo& targetInfo, EAttr mode)
 {
-   EAttr paramsMode = EAttr::eaNone;
-
-   LexicalType op = lxNone;
-   ref_t arg = 0;
    ref_t targetRef = 0;
-   if (target.kind == okClass) {
+   if (target.kind == okClass || target.kind == okClassSelf) {
       targetRef = target.param;
    }
-//   else if (target.kind == okSymbol && !_logic->isDeclared(*scope.moduleScope, target.param)) {
-//      scope.raiseError(errUnknownClass, node.prevNode());
-//   }
+   else targetRef = resolveObjectReference(scope, target);
 
-   ClassInfo targetInfo;
-   if (!targetRef || !_logic->defineClassInfo(*scope.moduleScope, targetInfo, targetRef))
-      scope.raiseError(errNotApplicable, node.parentNode());
+   EAttr paramsMode = EAttr::eaNone;
+   LexicalType op = lxNone;
+   ref_t arg = 0;
 
    int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
    /*ref_t implicitSignatureRef = */compileMessageParameters(node, scope, paramsMode/*, variadicOne, inlineArg*/);
@@ -4763,66 +4761,82 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
       //   op = methodNode.appendNode(lxCreatingStruct, classScope->info.size);         
       //}
       /*else {*/
-         op = lxCreatingClass;
-         arg = targetInfo.fields.Count();
+      op = lxCreatingClass;
+      arg = targetInfo.fields.Count();
       //}
    }
-//   else if (paramCount == 1 && node.argument == V_CONVERSION) {
-//      // if it is a cast expression
-//      ObjectInfo object = compileExpression(writer, node.nextNode(), scope, /*targetRef*/0, mode);
-//      if(!typecastObject(writer, scope, targetRef, object))
-//         scope.raiseError(errInvalidOperation, node);
-//   }
-//   else if (node.argument == V_NEWOP) {
-//      // if it is a implicit constructor
-//      if (target.reference == V_OBJARRAY && paramCount == 1) {
-//         ObjectInfo roperand = compileExpression(writer, node.findNext(lxObjectMask), scope, 0, EAttr::eaNone);
-//
-//         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef,
-//                                          resolveObjectReference(scope, roperand, false));
-//         if (operationType != 0) {
-//            // if it is a primitive operation
-//            _logic->injectNewOperation(writer, *scope.moduleScope, operationType, targetRef, target.element);
-//
-//            retVal.reference = target.reference;
-//            retVal.element = target.element;
-//         }
-//         else scope.raiseError(errInvalidOperation, node.parentNode());
-//      }
-//      else {
-//         EAttr paramsMode = EAttr::eaNone;
-//         int stackSafeAttr = 0;
-//		   bool variadicOne = false;
-//         bool inlineArg = false;
-//         ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne, inlineArg);
-//
-//         ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, targetRef, implicitSignatureRef, paramCount, stackSafeAttr, false);
-//         if (messageRef) {
-//            // call the constructor if it can be resolved directly
-//            compileMessage(writer, node, scope, target, messageRef, HINT_SILENT | HINT_NODEBUGINFO, stackSafeAttr);
-//         }
-//         else scope.raiseError(errDefaultConstructorNotFound, node.parentNode());
-//      }
-//   }
-//   else if (node.argument == V_OBJARRAY) {
-//      compileCollection(writer, node, scope, target);
-//   }
+   //   else if (paramCount == 1 && node.argument == V_CONVERSION) {
+   //      // if it is a cast expression
+   //      ObjectInfo object = compileExpression(writer, node.nextNode(), scope, /*targetRef*/0, mode);
+   //      if(!typecastObject(writer, scope, targetRef, object))
+   //         scope.raiseError(errInvalidOperation, node);
+   //   }
+   //   else if (node.argument == V_NEWOP) {
+   //      // if it is a implicit constructor
+   //      if (target.reference == V_OBJARRAY && paramCount == 1) {
+   //         ObjectInfo roperand = compileExpression(writer, node.findNext(lxObjectMask), scope, 0, EAttr::eaNone);
+   //
+   //         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef,
+   //                                          resolveObjectReference(scope, roperand, false));
+   //         if (operationType != 0) {
+   //            // if it is a primitive operation
+   //            _logic->injectNewOperation(writer, *scope.moduleScope, operationType, targetRef, target.element);
+   //
+   //            retVal.reference = target.reference;
+   //            retVal.element = target.element;
+   //         }
+   //         else scope.raiseError(errInvalidOperation, node.parentNode());
+   //      }
+   //      else {
+   //         EAttr paramsMode = EAttr::eaNone;
+   //         int stackSafeAttr = 0;
+   //		   bool variadicOne = false;
+   //         bool inlineArg = false;
+   //         ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne, inlineArg);
+   //
+   //         ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, targetRef, implicitSignatureRef, paramCount, stackSafeAttr, false);
+   //         if (messageRef) {
+   //            // call the constructor if it can be resolved directly
+   //            compileMessage(writer, node, scope, target, messageRef, HINT_SILENT | HINT_NODEBUGINFO, stackSafeAttr);
+   //         }
+   //         else scope.raiseError(errDefaultConstructorNotFound, node.parentNode());
+   //      }
+   //   }
+   //   else if (node.argument == V_OBJARRAY) {
+   //      compileCollection(writer, node, scope, target);
+   //   }
 
    SNode exprNode = node.parentNode();
    SNode targetNode = exprNode.firstChild(lxObjectMask);
    if (op != lxNone && targetNode != lxNone) {
-      test2(targetNode);
-
       targetNode.set(op, arg);
       targetNode.appendNode(lxType, targetRef);
    }
    else scope.raiseError(errInvalidOperation, exprNode);
 
    ObjectInfo retVal = retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT/*, stackSafeAttr*/);
+
    if (resolveObjectReference(scope, retVal/*, false*/) != targetRef)
       scope.raiseError(errDefaultConstructorNotFound, exprNode);
 
    return retVal;
+}
+
+ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
+{
+   ref_t targetRef = 0;
+   if (target.kind == okClass) {
+      targetRef = target.param;
+   }
+//   else if (target.kind == okSymbol && !_logic->isDeclared(*scope.moduleScope, target.param)) {
+//      scope.raiseError(errUnknownClass, node.prevNode());
+//   }
+
+   ClassInfo targetInfo;
+   if (!targetRef || !_logic->defineClassInfo(*scope.moduleScope, targetInfo, targetRef))
+      scope.raiseError(errNotApplicable, node.parentNode());
+
+   return compileBoxingExpression(node, scope, target, targetInfo, mode);
 }
 
 ObjectInfo Compiler :: compileOperation(SNode node, ExprScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, EAttr mode)
@@ -6362,7 +6376,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope/*, bool with
          actionStr.insert("$$", 0);
          actionStr.insert(scope.module->Name(), 0);
       }
-      else if (test(scope.hints, tpPrivate)) {
+      else if ((scope.hints & tpMask) == tpPrivate) {
          flags |= STATIC_MESSAGE;
       }
 
@@ -7158,11 +7172,20 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    else if (implicitConstructor) {
       // NOTE : implicit constructor should be called for the already created object
    }
-   //// if no redirect statement - call virtual constructor implicitly
-   //else if (/*!test(classFlags, elDynamicRole) && */classClassScope.info.methods.exist(scope.moduleScope->newobject_message)) {
-   //   SNode callNode = bodyNode.prependSibling(lxCalling_1, scope.moduleScope->newobject_message);
-   //   callNode.appendNode(lxResult);
-   //}
+   // if no redirect statement - call implicit constructor
+   else if (/*!test(classFlags, elDynamicRole) && */classClassScope.info.methods.exist(scope.moduleScope->constructor_message)) {
+      ClassScope* classScope = (ClassScope*)codeScope.getScope(Scope::ScopeLevel::slClass);
+
+      // inject the class node
+      SNode exprNode = bodyNode.prependSibling(lxExpression).appendNode(lxNewOperation);
+
+      exprNode.prependSibling(lxClassSymbol, classScope->reference);
+
+      // compile new operation
+      ExprScope exprScope(&codeScope);
+      compileBoxingExpression(exprNode, exprScope, ObjectInfo(okClassSelf, classScope->reference, classClassScope.reference),
+         classScope->info, HINT_SILENT);
+   }
    // if it is a dynamic object implicit constructor call is not possible
    else scope.raiseError(errIllegalConstructor, node);
 
@@ -7385,6 +7408,17 @@ void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassS
 {
 //   bool staticFieldsCopied = false;
 
+   //// add virtual constructor
+   //if (classClassScope.info.methods.exist(classScope.moduleScope->newobject_message, true)) {
+   //   MethodScope methodScope(&classScope);
+   //   methodScope.message = classScope.moduleScope->newobject_message;
+
+   //   //if (test(classScope.info.header.flags, elDynamicRole)) {
+   //   //   compileDynamicDefaultConstructor(writer, methodScope);
+   //   //}
+   //   /*else */compileDefaultConstructor(node, methodScope);
+   //}
+
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current) {
@@ -7424,17 +7458,6 @@ void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassS
 
       current = current.nextNode();
    }
-
-   //// add virtual constructor
-   //if (classClassScope.info.methods.exist(classScope.moduleScope->newobject_message, true)) {
-   //   MethodScope methodScope(&classScope);
-   //   methodScope.message = classScope.moduleScope->newobject_message;
-
-   //   //if (test(classScope.info.header.flags, elDynamicRole)) {
-   //   //   compileDynamicDefaultConstructor(writer, methodScope);
-   //   //}
-   //   /*else */compileDefaultConstructor(node, methodScope);
-   //}
 
 //   // if the VMT conatains newly defined generic handlers, overrides default one
 //   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
@@ -7655,6 +7678,8 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 
 void Compiler :: declareVMT(SNode node, ClassScope& scope)
 {
+   bool withDefaultConstructor = false;
+
    SNode current = node.firstChild();
    while (current != lxNone) {
 //      if (current.compare(lxFieldInit, lxFieldAccum)) {
@@ -7677,6 +7702,9 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
                scope.raiseError(errIllegalMethod, current);
             }
             else current = lxConstructor;
+
+            if (methodScope.message == scope.moduleScope->constructor_message)
+               withDefaultConstructor = true;
          }
 //         else if (test(methodScope.hints, tpPredefined)) {
 //            // recognize predefined message signatures
@@ -7700,6 +7728,11 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 //            scope.raiseError(errIllegalMethod, current);
       }
       current = current.nextNode();
+   }
+
+   if (!withDefaultConstructor && !scope.abstractMode) {
+      // if default constructor has to be created
+      injectDefaultConstructor(*scope.moduleScope, node);
    }
 }
 
@@ -8080,7 +8113,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 //   if (body != lxCode || body.firstChild() != lxEOF)
 //      scope.raiseError(errPedefineMethodCode, node);
 //
-//   if (testany(scope.hints, tpAbstract | tpPrivate))
+//   if (test(scope.hints, tpAbstract) || (scope.hints & tpMask) == tpPrivate) 
 //      // abstract or private methods cannot be predefined
 //      scope.raiseError(errIllegalMethod, node);
 //
@@ -8180,11 +8213,11 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope/*, b
 //         scope.removeHint(message, tpPredefined);
 //      }
 //
-//      if (test(scope.info.header.flags, elExtension) && (test(methodHints, tpPrivate) || test(methodHints, tpInternal)))
+//      if (test(scope.info.header.flags, elExtension) && (privateOne || test(methodHints, tpInternal)))
 //         // private / internal methods cannot be declared in the extension
 //         scope.raiseError(errIllegalPrivate, current);
 //
-//      if (test(scope.info.header.flags, elExtension) && !test(methodHints, tpPrivate) && isGeneralMessage(scope.module, message)) {
+//      if (test(scope.info.header.flags, elExtension) && !privateOne && isGeneralMessage(scope.module, message)) {
 //         // NOTE : only general public message should be saved
 //         saveExtension(scope, message, scope.internalOne);
 //      }
@@ -8525,6 +8558,13 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
       classClassScope.classClassMode = true;
 
       compileClassClassDeclaration(node, classClassScope, scope);
+
+      // HOTFIX : if the default constructor is private - a class cannot be inherited
+      int hints = classClassScope.info.methodHints.get(Attribute(scope.moduleScope->constructor_message, maHint));
+      if ((hints & tpMask) == tpPrivate) {
+         scope.info.header.flags |= elFinal;
+         scope.save();
+      }
    }
 }
 
@@ -10805,6 +10845,12 @@ void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, re
 //   writer.closeNode();
 //
 //}
+
+void Compiler :: injectDefaultConstructor(_ModuleScope& scope, SNode classNode)
+{
+   SNode methNode = classNode.appendNode(lxConstructor, scope.constructor_message);
+   methNode.appendNode(lxAttribute, tpConstructor);
+}
 
 void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
 {

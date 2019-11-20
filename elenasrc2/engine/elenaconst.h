@@ -284,8 +284,8 @@ namespace _ELENA_
    constexpr int cnSyntaxPower         = 0x0008;
 
   // --- ELENA VMT flags ---
-   constexpr int elVirtualVMT          = 0x00000001;
-   constexpr int elStandartVMT         = 0x00000003;
+   constexpr int elStandartVMT         = 0x00000001;
+   constexpr int elVirtualVMT          = 0x00000002;
    constexpr int elStateless           = 0x00000004;
    constexpr int elFinal               = 0x00000008;
    constexpr int elClosed              = 0x00000010;

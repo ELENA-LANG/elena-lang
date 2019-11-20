@@ -146,8 +146,8 @@ public:
 //      okConstantRole,                 // param - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
       okExtension,
-//      okClassSelf,                    // param - class reference; used in class resending expression
-//
+      okClassSelf,                    // param - class reference; used in class resending expression
+
 //      okExternal,
       okInternal,
 //      okPrimitive,                    // param * 4 = size 
@@ -1004,8 +1004,7 @@ private:
 
    ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
 
-   ObjectInfo compileNewOp();
-
+   ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, ClassInfo& targetInfo, EAttr mode);
    ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
@@ -1216,6 +1215,7 @@ public:
 //      LexicalType objType, int objArg);
 ////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message);
+   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode);
 ////   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
 //   virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef);
 //   virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);

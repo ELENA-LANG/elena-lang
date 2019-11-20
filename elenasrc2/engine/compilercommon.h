@@ -391,7 +391,8 @@ public:
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef) = 0;
 //   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
-//
+   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode) = 0;
+
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 //
 ////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef) = 0;

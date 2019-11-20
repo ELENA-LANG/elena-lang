@@ -690,7 +690,7 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 //
 //bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
 //{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpPrivate);
+//   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpPrivate;
 //}
 //
 //bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
@@ -812,7 +812,9 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 ////      compiler.generateListMember(scope, valuesField.value1, classRef);
 ////   }
 
-   if (!testany(info.header.flags, elClassClass | elNestedClass) && !test(info.header.flags, elRole)
+   if (test(info.header.flags, elClassClass)) {
+   }
+   else if (!test(info.header.flags, elNestedClass) && !test(info.header.flags, elRole)
       /*&& !test(info.header.flags, elExtension)*/) 
    {
       // skip class classes, extensions and singletons
