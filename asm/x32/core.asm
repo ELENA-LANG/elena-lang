@@ -1047,6 +1047,15 @@ inline % 0F2h
 
 end
 
+// ; vcallrm
+inline % 0F4h
+
+  mov  edx, __arg1
+  mov  ecx, [ebx - 4]
+  call [ecx + edx * 8 + 4]
+  
+end
+
 // ; jumprm
 inline % 0F5h
 

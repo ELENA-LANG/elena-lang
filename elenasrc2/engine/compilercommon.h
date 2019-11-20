@@ -11,7 +11,7 @@
 
 //#include "elena.h"
 #include "syntaxtree.h"
-//#include "bytecode.h"
+#include "bytecode.h"
 
 namespace _ELENA_
 {
@@ -21,10 +21,11 @@ constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
 
 // attributes / prmitive types
 
-///// modificator
+/// modificator
 //constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
 //constexpr auto V_SCRIPTSELFMODE  = 0x80006002u;
 //constexpr auto V_AUTOSIZE        = 0x80006003u;
+constexpr auto V_NODEBUGINFO     = 0x80006004u;
 
 /// visibility:
 constexpr auto V_PUBLIC          = 0x80005001u;
@@ -37,7 +38,7 @@ constexpr auto V_INTERNAL        = 0x80005003u;
 /// property:
 constexpr auto V_SEALED          = 0x80004001u;
 constexpr auto V_ABSTRACT        = 0x80004002u;
-//constexpr auto V_CLOSED          = 0x80004003u;
+constexpr auto V_CLOSED          = 0x80004003u;
 //constexpr auto V_PREDEFINED      = 0x80004005u;
 //constexpr auto V_YIELDABLE       = 0x80004006u;
 
@@ -135,7 +136,7 @@ enum MethodHint
 
    tpUnknown      = 0x0000000,
    tpSealed       = 0x0000001,
-//   tpClosed      = 0x0000002,
+   tpClosed       = 0x0000002,
    tpNormal       = 0x0000003,
    tpDispatcher   = 0x0000004,
    tpPrivate      = 0x0000005,
@@ -319,13 +320,13 @@ struct _ModuleScope
       project->raiseWarning(level, message, sourcePath, row, col, identifier);
    }
 
-//   void printMessageInfo(const char* info, ref_t message)
-//   {
-//      IdentifierString messageName;
-//      ByteCodeCompiler::resolveMessageName(messageName, module, message);
-//
-//      project->printInfo(info, messageName.ident());
-//   }
+   void printMessageInfo(const char* info, ref_t message)
+   {
+      IdentifierString messageName;
+      ByteCodeCompiler::resolveMessageName(messageName, module, message);
+
+      project->printInfo(info, messageName.ident());
+   }
 
    void printInfo(const char* message, const char* arg)
    {
@@ -657,7 +658,7 @@ public:
 //   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
 
    // auto generate virtual methods / fields
-   virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler/*, bool closed*/) = 0;
+   virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
 //   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
 //   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
 //   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;

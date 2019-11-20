@@ -83,6 +83,7 @@ enum LexicalType
    lxCalling_0                = 0x0580A0, // calling a method, arg - message
    lxCalling_1                = 0x0580A1,
    lxDirectCalling            = 0x0580A2, 
+   lxSDirectCalling           = 0x0580A3,
    lxCurrent                  = 0x0180B0, // arg - offset
    lxResult                   = 0x0180C0, // arg - offset
    lxNewFrame                 = 0x0500D0, // if argument -1 - than with presaved message
@@ -183,7 +184,6 @@ enum LexicalType
 //   lxUnboxing                 = 0x00C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing                = 0x00C005,   // argument list boxing, arg - size
 //   lxArgUnboxing              = 0x00C006,
-//   lxSDirectCalling           = 0x10C009,   // calling a virtual method, arg - message
 //   lxResending                = 0x00C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
 //   lxImplicitCall             = 0x00C00B,
 //   lxTrying                   = 0x00C00C,   // try-catch expression

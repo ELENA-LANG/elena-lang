@@ -272,9 +272,9 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       else if (test(info.header.flags, elSealed)) {
          return tpSealed | hint;
       }
-//      else if (test(info.header.flags, elClosed)) {
-//         return tpClosed | hint;
-//      }
+      else if (test(info.header.flags, elClosed)) {
+         return tpClosed | hint;
+      }
       else return tpNormal | hint;
    }
    else {
@@ -803,7 +803,7 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 ////   }
 //}
 
-void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler/*, bool closed*/)
+void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
 {
 ////   // generate enumeration list
 ////   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
@@ -818,12 +818,12 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
       /*&& !test(info.header.flags, elExtension)*/) 
    {
       // skip class classes, extensions and singletons
-      if (classRef != scope.superReference/* && !closed*/) {
+      if (classRef != scope.superReference && !closed) {
          // auto generate cast$<type> message for explicitly declared classes
          ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
          ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
 
-         compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR, classRef);
+         compiler.injectVirtualReturningMethod(scope, node, encodeMessage(actionRef, 1, 0), SELF_VAR, classRef);
       }
 
       //List<ref_t> generatedConstructors;
@@ -1651,9 +1651,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
 //      case V_LIMITED:
 //         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
 //         return true;
-//      case V_CLOSED:
-//         attrValue = elClosed;
-//         return true;
+      case V_CLOSED:
+         attrValue = elClosed;
+         return true;
 //      case V_STRUCT:
 //         attrValue = elStructureRole;
 //         return true;
@@ -1914,6 +1914,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_YIELD:
 //         attributes.include(EAttr::eaYieldExpr);
 //         return true;
+      case V_NODEBUGINFO:
+         attributes.include(EAttr::eaNoDebugInfo);
+         return true;
       default:
          return false;
    }

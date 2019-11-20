@@ -645,7 +645,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcCallRM:
       case bcJumpRM:
-//      case bcXIndexRM:
+      case bcVCallRM:
 //      case bcXMTRedirect:
          printCommand(command, opcode);
          printReference(command, module, argument);

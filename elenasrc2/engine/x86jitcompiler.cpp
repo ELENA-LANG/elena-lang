@@ -62,13 +62,13 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/19;
+const int gcCommandNumber = /*160*/20;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
    bcReserve, bcPushS, bcStoreSI, bcPeekSI, bcThrow,
    bcCallVI, bcClose, bcNew, bcFill, bcCallRM,
-   bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM,
+   bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -162,7 +162,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileNop, & compileInvokeVMT, &compileNop, &compileNop,
+   &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
 
    //   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &loadMTOp, &loadOneByteOp,
@@ -1338,35 +1338,35 @@ void _ELENA_ :: compileAllocI(int opcode, x86JITScope& scope)
 //   scope.code->writeWord(0xEB83);
 //   scope.code->writeByte(1);
 //}
-//
-//void _ELENA_::compileInvokeVMTOffset(int opcode, x86JITScope& scope)
-//{
-//   int message = scope.resolveMessage(scope.tape->getDWord());
-//
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0]==-1) {
-//         // resolve message offset
-//         scope.writeReference(*scope.code, scope.argument | mskVMTEntryOffset, message);
-//      }
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
+
+void _ELENA_::compileInvokeVMTOffset(int opcode, x86JITScope& scope)
+{
+   int message = scope.resolveMessage(scope.tape->getDWord());
+
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0]==-1) {
+         // resolve message offset
+         scope.writeReference(*scope.code, scope.argument | mskVMTEntryOffset, message);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
 
 void _ELENA_::compileInvokeVMT(int opcode, x86JITScope& scope)
 {

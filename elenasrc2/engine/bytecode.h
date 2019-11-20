@@ -253,8 +253,8 @@ enum ByteCode
    bcNewN            = 0xF1,
    bcFill            = 0xF2,
 //   bcXSelectR        = 0xF3,
-//   bcXIndexRM        = 0xF4,
-   bcJumpRM         = 0xF5,
+   bcVCallRM         = 0xF4,
+   bcJumpRM          = 0xF5,
 //   bcSelectR         = 0xF6,
 //   bcLessN           = 0xF7,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcIfM             = 0xF8,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
@@ -267,11 +267,11 @@ enum ByteCode
    bcReserved        = 0xFF,
 
    // labels
-   blLabelMask      = 0xC000,  // tape label mask
-   blBegin          = 0xC001,  // meta command, declaring the structure
-   blEnd            = 0xC002,  // meta command, closing the structure
-   blLabel          = 0xC003,  // meta command, declaring the label
-   blBreakLabel     = 0xC004,  // meta command, breaking the optimization rules
+   blLabelMask       = 0xC000,  // tape label mask
+   blBegin           = 0xC001,  // meta command, declaring the structure
+   blEnd             = 0xC002,  // meta command, closing the structure
+   blLabel           = 0xC003,  // meta command, declaring the label
+   blBreakLabel      = 0xC004,  // meta command, breaking the optimization rules
 
    // meta commands:
    //bcAllocStack     = 0x8101,  // meta command, used to indicate that the previous command allocate number of items in the stack; used only for exec
@@ -455,7 +455,7 @@ public:
          case bcCallExtR:
          //case bcSelectR:
          case bcJumpRM:
-         //case bcXIndexRM:
+         case bcVCallRM:
          //case bcBLoadR:
             return true;
          default:
@@ -478,7 +478,7 @@ public:
    static bool IsM2Code(ByteCode code)
    {
       switch (code) {
-         //case bcXIndexRM:
+         case bcVCallRM:
          case bcCallRM:
          //case bcIfM:
          //case bcElseM:

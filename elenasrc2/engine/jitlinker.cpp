@@ -352,16 +352,16 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
          }
          else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
       }
-      //// if it is a vmt message offset
-      //else if (currentMask == mskVMTEntryOffset) {
-      //   void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
+      // if it is a vmt message offset
+      else if (currentMask == mskVMTEntryOffset) {
+         void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
 
-      //   // message id should be replaced with an appropriate method address
-      //   size_t offset = it.key();
-      //   size_t messageID = (*image)[offset];
+         // message id should be replaced with an appropriate method address
+         size_t offset = it.key();
+         size_t messageID = (*image)[offset];
 
-      //   (*image)[offset] = getVMTMethodIndex(refVAddress, messageID);
-      //}
+         (*image)[offset] = getVMTMethodIndex(refVAddress, messageID);
+      }
       //// if it is a vmtx method address
       ////else if (currentMask == mskVMTXMethodAddress) {
       ////   resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
@@ -435,18 +435,18 @@ int JITLinker :: getVMTMethodAddress(void* vaddress, int messageID)
    return _compiler->findMethodAddress(entries, messageID, _compiler->findLength(entries));
 }
 
-//int JITLinker :: getVMTMethodIndex(void* vaddress, int messageID)
-//{
-//   void* entries;
-//   if (_virtualMode) {
-//      _Memory* image = _loader->getTargetSection(mskVMTRef);
-//
-//      entries = image->get((ref_t)vaddress & ~mskAnyRef);
-//   }
-//   else entries = vaddress;
-//
-//   return _compiler->findMethodIndex(entries, messageID, _compiler->findLength(entries));
-//}
+int JITLinker :: getVMTMethodIndex(void* vaddress, int messageID)
+{
+   void* entries;
+   if (_virtualMode) {
+      _Memory* image = _loader->getTargetSection(mskVMTRef);
+
+      entries = image->get((ref_t)vaddress & ~mskAnyRef);
+   }
+   else entries = vaddress;
+
+   return _compiler->findMethodIndex(entries, messageID, _compiler->findLength(entries));
+}
 
 size_t JITLinker :: getVMTFlags(void* vaddress)
 {

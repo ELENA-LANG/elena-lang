@@ -109,6 +109,8 @@ ELENA byte codes (or ecodes)
  newn vmt, n                - create the binary object with the specified size ;
                                out: acc contains the class instance, index - undefined
 
+ vcallrm r, m               - directly resolve message mapping for the specified class
+ 
 
  Jump operations:
  ---------------- 
@@ -416,8 +418,6 @@ ELENA byte codes (or ecodes)
  
  wlen                       - [acc].Length / 2 >> index
 
- xindexrm r, m              - directly resolve message mapping for the specified class
- 
  xlen                       - [acc].Count >> ext ;
 
  xmtredirect r,m            - search in message table r the message in ext and provided parameter list; if found jumps to direct address;

@@ -1212,25 +1212,21 @@ void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, re
 //
 //   tape.write(bcFreeStack, getParamCount(message));
 //}
-//
-//void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode)
-//{
+
+void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode*/)
+{
 //   int freeArg;
 //   if (invokeMode) {
 //      tape.write(bcPop);
 //      freeArg = getParamCount(message);
 //   }
 //   else freeArg = getParamCount(message) + 1;
-//
-//   // xindexrm r, m
-//   // acallvd
-//
-//   tape.write(bcXIndexRM, reference | mskVMTEntryOffset, message);
-//   tape.write(bcACallVD);
-//
-//   tape.write(bcFreeStack, freeArg);
-//}
-//
+
+   // vcallrm r, m
+
+   tape.write(bcVCallRM, reference | mskVMTEntryOffset, message);
+}
+
 //void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
 //{
 //   // bsredirect
@@ -4988,9 +4984,9 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
    if (callNode == lxDirectCalling) {
       callResolvedMethod(tape, target.argument, callNode.argument/*, invokeMode*/);
    }
-//   else if (callNode == lxSDirectCalling) {
-//      callVMTResolvedMethod(tape, target.argument, callNode.argument, invokeMode);
-//   }
+   else if (callNode == lxSDirectCalling) {
+      callVMTResolvedMethod(tape, target.argument, callNode.argument/*, invokeMode*/);
+   }
 //   else if (invokeMode) {
 //      // pop
 //      // acallvi offs
@@ -6229,7 +6225,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxCalling_0:
       case lxCalling_1:
       case lxDirectCalling:
-//      case lxSDirectCalling:
+      case lxSDirectCalling:
          generateCallExpression(tape, node, scope);
          scope.clear();
          break;

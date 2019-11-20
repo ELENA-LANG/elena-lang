@@ -139,7 +139,7 @@ class JITLinker : _JITLoaderListener
    void* getVMTReference(_Module* module, ref_t reference, References& references);
    int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
    int getVMTMethodAddress(void* vaddress, int messageID);   
-//   int getVMTMethodIndex(void* vaddress, int messageID);
+   int getVMTMethodIndex(void* vaddress, int messageID);
    size_t getVMTFlags(void* vaddress);
 
 //   void generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask);

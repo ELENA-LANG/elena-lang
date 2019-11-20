@@ -207,6 +207,7 @@ In development:
                 * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
                 * review : inheriting private methods (what about the public "shadow one" hints?, should they be removed as well??)
                 * if all constructors are internal - can be inherited only inside the module
+                * auto conversion methods should be marked as idle
 
               dev1
                 * write - Programming in ELENA : manual

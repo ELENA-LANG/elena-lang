@@ -1092,8 +1092,10 @@ private:
    void generateClassFlags(ClassScope& scope, SNode node);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
-   void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates, bool closed*/, bool allowTypeAttribute/*, bool embeddableClass*/);
-   void generateMethodDeclarations(SNode node, ClassScope& scope, /*bool closed, */LexicalType methodType, bool allowTypeAttribute/*, bool embeddableClass*/);
+   void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates*/, bool closed, 
+      bool allowTypeAttribute/*, bool embeddableClass*/);
+   void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, 
+      bool allowTypeAttribute/*, bool embeddableClass*/);
 ////   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
    void generateClassDeclaration(SNode node, ClassScope& scope/*, ClassType classType*/, bool nestedDeclarationMode = false);
 

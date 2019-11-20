@@ -118,7 +118,7 @@ protected:
    friend void compilePushA(int opcode, x86JITScope& scope);
 //   friend void compileACopyB(int opcode, x86JITScope& scope);
    friend void compileInvokeVMT(int opcode, x86JITScope& scope);
-//   friend void compileInvokeVMTOffset(int opcode, x86JITScope& scope);
+   friend void compileInvokeVMTOffset(int opcode, x86JITScope& scope);
 //   friend void compileALoadAI(int opcode, x86JITScope& scope);
 //   friend void compileACopyS(int opcode, x86JITScope& scope);
 //   friend void compileNext(int opcode, x86JITScope& scope);
@@ -255,7 +255,7 @@ void compileSetR(int opcode, x86JITScope& scope);
 void compilePushA(int opcode, x86JITScope& scope);
 //void compileACopyB(int opcode, x86JITScope& scope);
 void compileInvokeVMT(int opcode, x86JITScope& scope);
-//void compileInvokeVMTOffset(int opcode, x86JITScope& scope);
+void compileInvokeVMTOffset(int opcode, x86JITScope& scope);
 //void compileIfM(int opcode, x86JITScope& scope);
 //void compileElseM(int opcode, x86JITScope& scope);
 //void compileALoadAI(int opcode, x86JITScope& scope);

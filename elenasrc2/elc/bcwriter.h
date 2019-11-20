@@ -218,7 +218,7 @@ class ByteCodeWriter
 //   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
    void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode, bool withValidattion = true*/);
 //   void callInitMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-//   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool invokeMode);
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode*/);
 //
 //   void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
 //   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);

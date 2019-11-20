@@ -58,7 +58,7 @@ namespace _ELENA_
 //   #define errInvalidParent         "%s(%d:%d): error 139: Invalid parent class %s\n"
 ////////   #define errInvalidSync           "%s(%d:%d): error 140: The method %s cannot have a sync hint\n"
    #define errSealedParent          "%s(%d:%d): error 141: parent class %s cannot be inherited\n"
-//   #define errClosedParent          "%s(%d:%d): error 141: new method cannot be declared\n"
+   #define errClosedParent          "%s(%d:%d): error 141: new method cannot be declared\n"
 //////   #define errInvalidSymbolExpr     "%s(%d:%d): error 142: %s cannot be used inside a symbol\n"
 //////   #define errInvalidRoleDeclr      "%s(%d:%d): error 143: %s cannot be used with a role\n"
 ////   #define errInvalidHintValue      "%s(%d:%d): error 144: Invalid hint value '%s'\n"
@@ -141,8 +141,8 @@ namespace _ELENA_
    constexpr auto wrnInvalidModule  = "Invalid or unknown module %s\n";
 
 //   constexpr auto infoAbstractMetod = "abstract method %s";
-//   constexpr auto infoNewMethod     = "new method %s";
-//
+   constexpr auto infoNewMethod     = "new method %s";
+
 ////   #define wrnDuplicateInfo         "Duplicate extension - "
 
 } // _ELENA_
