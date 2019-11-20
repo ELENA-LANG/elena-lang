@@ -45,6 +45,7 @@ enum LexicalType
    lxRedirect                 = 0x000017,
    lxTemplate                 = 0x000018,
    lxMethodParameter          = 0x000019,
+   lxStaticMethod             = 0x00001A,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -122,7 +123,6 @@ enum LexicalType
 //   lxMeta                     = 0x000015,
 //   lxDispatchCode             = 0x000020,
 //   lxAssign                   = 0x000021,
-//   lxStaticMethod             = 0x000025,
 //   lxSwitchOption             = 0x00003C,
 //   lxWrapping                 = 0x00002B,
 //   lxLastSwitchOption         = 0x00003D,

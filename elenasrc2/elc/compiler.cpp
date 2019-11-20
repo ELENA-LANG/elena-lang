@@ -7433,27 +7433,27 @@ void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassS
             compileConstructor(current, methodScope, classClassScope);
             break;
          }
-//         case lxStaticMethod:
-//         {
+         case lxStaticMethod:
+         {
 //            if (!staticFieldsCopied) {
 //               // HOTFIX : inherit static fields
 //               classClassScope.copyStaticFields(classScope.info.statics, classScope.info.staticValues);
 //
 //               staticFieldsCopied = true;
 //            }
-//
-//            MethodScope methodScope(&classClassScope);
-//            methodScope.message = current.argument;
-//
-//            initialize(classClassScope, methodScope);
-//            declareArgumentList(current, methodScope, false, false);
-//
+
+            MethodScope methodScope(&classClassScope);
+            methodScope.message = current.argument;
+
+            initialize(classClassScope, methodScope);
+            declareArgumentList(current, methodScope/*, false*/, false);
+
 //            if (isMethodEmbeddable(methodScope, current)) {
 //               compileEmbeddableMethod(writer, current, methodScope);
 //            }
-//            else compileMethod(writer, current, methodScope);
-//            break;
-//         }
+            /*else */compileMethod(current, methodScope);
+            break;
+         }
       }
 
       current = current.nextNode();
@@ -7712,11 +7712,9 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 //
 //            current = lxIdle;
 //         }
-//         else if (test(methodScope.hints, tpStatic)) {
-//            implicitClass = false;
-//
-//            current = lxStaticMethod;
-//         }
+         else if (test(methodScope.hints, tpStatic)) {
+            current = lxStaticMethod;
+         }
 //         else if (test(methodScope.hints, tpYieldable)) {
 //            scope.info.header.flags |= elWithYieldable;
 //
@@ -7982,15 +7980,15 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-//         if (test(current.argument, tpAbstract)) {
-//            if (!_logic->isAbstract(scope.info))
-//               // only abstract class may have an abstract methods
-//               scope.raiseError(errNotAbstractClass, current);
-//
-//            if (scope.info.methods.exist(message))
-//               // abstract method should be newly declared
-//               scope.raiseError(errNoMethodOverload, current);
-//         }
+         if (test(current.argument, tpAbstract)) {
+            if (!_logic->isAbstract(scope.info))
+               // only abstract class may have an abstract methods
+               scope.raiseError(errNotAbstractClass, current);
+
+            if (scope.info.methods.exist(message))
+               // abstract method should be newly declared
+               scope.raiseError(errNoMethodOverload, current);
+         }
 
          hint |= current.argument;
 
@@ -8204,11 +8202,11 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope/*, b
 //            scope.addHint(message & ~STATIC_MESSAGE, tpStackSafe);
 //         }
 //      }
-//
-//      if (!included && test(methodHints, tpAbstract)) {
-//         scope.removeHint(message, tpAbstract);
-//      }
-//
+
+      if (!included && test(methodHints, tpAbstract)) {
+         scope.removeHint(message, tpAbstract);
+      }
+
 //      if (test(methodHints, tpPredefined)) {
 //         // exclude the predefined attribute from declared method
 //         scope.removeHint(message, tpPredefined);
@@ -8413,19 +8411,19 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope/*, Class
    // generate methods
    if (scope.classClassMode) {
       generateMethodDeclarations(node, scope, closed, lxConstructor, false/*, isEmbeddable(classType)*/);
-//      generateMethodDeclarations(node, scope, closed, lxStaticMethod, true, isEmbeddable(classType));
+      generateMethodDeclarations(node, scope, closed, lxStaticMethod, true/*, isEmbeddable(classType)*/);
    }
    else generateMethodDeclarations(node, scope, closed, lxClassMethod, true/*, isEmbeddable(classType)*/);
 
-//   bool withAbstractMethods = false;
-//   bool disptacherNotAllowed = false;
+   bool withAbstractMethods = false;
+   bool disptacherNotAllowed = false;
 //   bool emptyStructure = false;
-//   _logic->validateClassDeclaration(*scope.moduleScope, scope.info, withAbstractMethods, disptacherNotAllowed, emptyStructure);
-//   if (withAbstractMethods) {
-//      scope.raiseError(errAbstractMethods, node);
-//   }
-//   if (disptacherNotAllowed)
-//      scope.raiseError(errDispatcherInInterface, node);
+   _logic->validateClassDeclaration(*scope.moduleScope, scope.info, withAbstractMethods, disptacherNotAllowed/*, emptyStructure*/);
+   if (withAbstractMethods) {
+      scope.raiseError(errAbstractMethods, node);
+   }
+   if (disptacherNotAllowed)
+      scope.raiseError(errDispatcherInInterface, node);
 //   if (emptyStructure)
 //      scope.raiseError(errEmptyStructure, node.findChild(lxNameAttr));
 
@@ -8627,7 +8625,7 @@ bool isClassMethod(LexicalType type)
 
 bool isClassClassMethod(LexicalType type)
 {
-   return type == lxConstructor;
+   return type == lxConstructor || type == lxStaticMethod;
 }
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)

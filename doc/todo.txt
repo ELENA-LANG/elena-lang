@@ -2,9 +2,6 @@
 In development:
 ------         
               dev
-                * closed
-                * interface
-                * static method
                 * static properties
 
 	        * #381 : method returning a constant 

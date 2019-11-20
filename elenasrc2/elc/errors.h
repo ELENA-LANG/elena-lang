@@ -76,13 +76,13 @@ namespace _ELENA_
    #define errTypeNotAllowed        "%s(%d:%d): error 156: returning type attribute '%s' cannot be specified for this method\n"
 //   #define errNotCompatibleMulti    "%s(%d:%d): error 157: type attribute should be the same for the overloaded method '%s'\n"
    #define errTypeAlreadyDeclared   "%s(%d:%d): error 158: type attribute cannot be overridden\n"
-//   #define errAbstractMethods       "%s(%d:%d): error 159: Class contains abstract methods\n"
-//   #define errDispatcherInInterface "%s(%d:%d): error 160: Closed class contains a dispatcher method\n"
+   #define errAbstractMethods       "%s(%d:%d): error 159: Class contains abstract methods\n"
+   #define errDispatcherInInterface "%s(%d:%d): error 160: Closed class contains a dispatcher method\n"
 //   #define errAbstractMethodCode    "%s(%d:%d): error 161: An abstract method cannot have an explicit body\n"
 //   #define errPedefineMethodCode    "%s(%d:%d): error 162: A predefined method cannot have an explicit body\n"
 ////   #define errUnknownTemplate       "%s(%d:%d): error 163: Unrecognized template %s\n"
-//   #define errNotAbstractClass      "%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n"
-//   #define errNoMethodOverload      "%s(%d:%d): error 165: An attribute '%s' cannot be applied for an already existing method\n"
+   #define errNotAbstractClass      "%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n"
+   #define errNoMethodOverload      "%s(%d:%d): error 165: An attribute '%s' cannot be applied for an already existing method\n"
 //   #define errIllegalPrivate        "%s(%d:%d): error 166: An attribute '%s' cannot be applied for an extension\n"
    constexpr auto errDupPublicMethod            = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
 //   //   #define errOneDefaultConstructor "%s(%d:%d): error 168: a class '%s' should have only one default constructor\n"
@@ -140,7 +140,7 @@ namespace _ELENA_
    #define wrnExplicitExtension     "%s(%d:%d): warning 426: an extension '%s' should not be used directly\n"
    constexpr auto wrnInvalidModule  = "Invalid or unknown module %s\n";
 
-//   constexpr auto infoAbstractMetod = "abstract method %s";
+   constexpr auto infoAbstractMetod = "abstract method %s";
    constexpr auto infoNewMethod     = "new method %s";
 
 ////   #define wrnDuplicateInfo         "Duplicate extension - "

@@ -199,8 +199,9 @@ public:
    virtual bool validateArgumentAttribute(int attrValue/*, bool& byRefArg, bool& paramsArg*/);
 
 //////   virtual bool validateClassFlag(ClassInfo& info, int flag);
-//   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure);
-//
+   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
+      bool& disptacherNotAllowed/*, bool& emptyStructure*/);
+
 //   virtual bool isDefaultConstructorEnabled(ClassInfo& info)
 //   {
 //      return !test(info.header.flags, elDynamicRole);

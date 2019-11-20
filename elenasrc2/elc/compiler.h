@@ -482,16 +482,16 @@ private:
          info.methodHints.exclude(attr);
          info.methodHints.add(attr, hint);
       }
-//      void removeHint(ref_t message, int hintToRemove)
-//      {
-//         ClassInfo::Attribute attr(message, maHint);
-//
-//         int hints = info.methodHints.get(attr);
-//         hints &= ~hintToRemove;
-//         info.methodHints.exclude(attr);
-//         if (hints != 0)
-//            info.methodHints.add(attr, hints);
-//      }
+      void removeHint(ref_t message, int hintToRemove)
+      {
+         ClassInfo::Attribute attr(message, maHint);
+
+         int hints = info.methodHints.get(attr);
+         hints &= ~hintToRemove;
+         info.methodHints.exclude(attr);
+         if (hints != 0)
+            info.methodHints.add(attr, hints);
+      }
 
       bool include(ref_t message)
       {

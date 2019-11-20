@@ -294,6 +294,7 @@ namespace _ELENA_
    constexpr int elClassClass          = 0x00000080;
    constexpr int elRole                = 0x00000100;
    constexpr int elAbstract            = 0x00000200;
+   constexpr int elNoCustomDispatcher  = 0x00000400;
 
 //   constexpr int elDynamicRole         = 0x00000004;
 //   constexpr int elWrapper             = 0x00000040;
@@ -314,8 +315,7 @@ namespace _ELENA_
 //   constexpr int elWithVariadics       = 0x01000000;
 //////   const int elTapeGroup           = 0x02000200;
 ////   const int elWithMuti            = 0x08000000;
-//   constexpr int elNoCustomDispatcher  = 0x20000000;
-//
+
 //
 //   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 //

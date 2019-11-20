@@ -40,7 +40,7 @@
 #define constructor 80001004h
 //#define extension   80001005h
 #define singleton   80001006h
-//#define interface   80001007h
+#define interface   80001007h
 #define method      80001008h
 #define field       80001009h
 //#define type        8000100Ah
@@ -48,7 +48,7 @@
 #define function    8000100Ch
 #define var         8000100Dh
 //#define this        8000100Eh
-//#define static      8000100Fh
+#define static      8000100Fh
 #define cast        80001011h
 #define new         80001012h
 #define dispatch    80001013h

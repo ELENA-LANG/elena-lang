@@ -1648,9 +1648,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
       case V_ABSTRACT:
          attrValue = elAbstract;
          return true;
-//      case V_LIMITED:
-//         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
-//         return true;
+      case V_LIMITED:
+         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
+         return true;
       case V_CLOSED:
          attrValue = elClosed;
          return true;
@@ -1764,15 +1764,15 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          attrValue = 0;
          explicitMode = true;
          return true;
-//      case V_STATIC:
-//         attrValue = (tpStatic | tpSealed);
-//         return true;
+      case V_STATIC:
+         attrValue = (tpStatic | tpSealed);
+         return true;
 ////      case V_SET:
 ////         attrValue = tpAccessor;
 ////         return true;
-//      case V_ABSTRACT:
-//         attrValue = tpAbstract;
-//         return true;
+      case V_ABSTRACT:
+         attrValue = tpAbstract;
+         return true;
 //      case V_PREDEFINED:
 //         attrValue = tpPredefined;
 //         return true;
@@ -2061,29 +2061,30 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, /*bool& constant, b
 ////////
 ////////   return true;
 ////////}
-//
-//void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, bool& disptacherNotAllowed, bool& emptyStructure)
-//{
-//   if (!isAbstract(info)) {
-//      for (auto it = info.methodHints.start(); !it.Eof(); it++) {
-//         auto key = it.key();
-//         if (key.value2 == maHint && test(*it, tpAbstract)) {
-//            scope.printMessageInfo(infoAbstractMetod, key.value1);
-//
-//            withAbstractMethods = true;
-//         }            
-//      }
-//   }
-//
-//   // interface class cannot have a custom dispatcher method
-//   if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(scope.dispatch_message, true))
-//      disptacherNotAllowed = true;
-//
+
+void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
+   bool& disptacherNotAllowed/*, bool& emptyStructure*/)
+{
+   if (!isAbstract(info)) {
+      for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+         auto key = it.key();
+         if (key.value2 == maHint && test(*it, tpAbstract)) {
+            scope.printMessageInfo(infoAbstractMetod, key.value1);
+
+            withAbstractMethods = true;
+         }            
+      }
+   }
+
+   // interface class cannot have a custom dispatcher method
+   if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(scope.dispatch_message, true))
+      disptacherNotAllowed = true;
+
 //   // a structure class should contain fields
 //   if (test(info.header.flags, elStructureRole) && info.size == 0)
 //      emptyStructure = true;
-//}
-//
+}
+
 //bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOne)
 //{
 //   SNode object = SyntaxTree::findPattern(methodNode, 3,

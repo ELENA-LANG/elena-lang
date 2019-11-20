@@ -62,7 +62,7 @@ constexpr auto V_CLASS           = 0x80001001u;
 constexpr auto V_CONSTRUCTOR     = 0x80001004u;
 //constexpr auto V_EXTENSION       = 0x80001005u;
 constexpr auto V_SINGLETON       = 0x80001006u;
-//constexpr auto V_LIMITED         = 0x80001007u;
+constexpr auto V_LIMITED         = 0x80001007u;
 constexpr auto V_METHOD          = 0x80001008u;
 constexpr auto V_FIELD           = 0x80001009u;
 //constexpr auto V_TYPETEMPL       = 0x8000100Au;
@@ -70,7 +70,7 @@ constexpr auto V_FIELD           = 0x80001009u;
 constexpr auto V_FUNCTION        = 0x8000100Cu;     // a closure attribute
 constexpr auto V_VARIABLE        = 0x8000100Du;
 //constexpr auto V_MEMBER          = 0x8000100Eu;
-//constexpr auto V_STATIC          = 0x8000100Fu;
+constexpr auto V_STATIC          = 0x8000100Fu;
 constexpr auto V_CONVERSION      = 0x80001011u;
 constexpr auto V_NEWOP           = 0x80001012u;
 constexpr auto V_DISPATCHER      = 0x80001013u;
@@ -148,10 +148,10 @@ enum MethodHint
    tpConstructor  = 0x0200400,
    tpConversion   = 0x0200800,
 //   tpMultimethod = 0x0001000,
-//   tpStatic      = 0x0004000,
+   tpStatic       = 0x0004000,
    tpGetAccessor  = 0x0008000,
 //   tpSpecial     = 0x0010000,
-//   tpAbstract    = 0x0020000,
+   tpAbstract    = 0x0020000,
    tpInternal     = 0x0040000,
 //   tpPredefined  = 0x0080000, // virtual class declaration
 //   tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
@@ -673,9 +673,9 @@ public:
    // auto generate class flags
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
 //   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
-//
-//   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,
-//      bool& disptacherNotAllowed, bool& emptyStructure) = 0;
+
+   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,
+      bool& disptacherNotAllowed/*, bool& emptyStructure*/) = 0;
 
    // attribute validations
    virtual bool validateNsAttribute(int attrValue, Visibility& visibility) = 0;
