@@ -36,7 +36,7 @@ constexpr auto V_INTERNAL        = 0x80005003u;
 
 /// property:
 constexpr auto V_SEALED          = 0x80004001u;
-//constexpr auto V_ABSTRACT        = 0x80004002u;
+constexpr auto V_ABSTRACT        = 0x80004002u;
 //constexpr auto V_CLOSED          = 0x80004003u;
 //constexpr auto V_PREDEFINED      = 0x80004005u;
 //constexpr auto V_YIELDABLE       = 0x80004006u;
@@ -47,7 +47,7 @@ constexpr auto V_GETACCESSOR = 0x80003007u;
 
 /// scope_prefix:
 //constexpr auto V_CONST           = 0x80002001u;
-constexpr auto V_EMBEDDABLE      = 0x80002002u;
+//constexpr auto V_EMBEDDABLE      = 0x80002002u;
 //constexpr auto V_WRAPPER         = 0x80002003u;
 //constexpr auto V_DIRECT          = 0x80002004u;
 //constexpr auto V_LOOP            = 0x80002005u;
@@ -131,32 +131,32 @@ typedef Map<ident_t, ref_t>      ForwardMap;
 
 enum MethodHint
 {
-   tpMask        = 0x00000F,
+   tpMask         = 0x00000F,
 
-   tpUnknown     = 0x0000000,
-   tpSealed      = 0x0000001,
+   tpUnknown      = 0x0000000,
+   tpSealed       = 0x0000001,
 //   tpClosed      = 0x0000002,
-   tpNormal      = 0x0000003,
-   tpDispatcher  = 0x0000004,
-   tpPrivate     = 0x0000005,
+   tpNormal       = 0x0000003,
+   tpDispatcher   = 0x0000004,
+   tpPrivate      = 0x0000005,
 //   tpStackSafe   = 0x0000010,
-   tpEmbeddable  = 0x0000020,
+//   tpEmbeddable  = 0x0000020,
 //   tpGeneric     = 0x0000040,
    tpFunction      = 0x0000080,
 //   tpTargetSelf  = 0x0000100, // used for script generated classes (self refers to __target)
-   tpConstructor = 0x0200400,
-   tpConversion  = 0x0200800,
+   tpConstructor  = 0x0200400,
+   tpConversion   = 0x0200800,
 //   tpMultimethod = 0x0001000,
 //   tpStatic      = 0x0004000,
-   tpGetAccessor = 0x0008000,
+   tpGetAccessor  = 0x0008000,
 //   tpSpecial     = 0x0010000,
 //   tpAbstract    = 0x0020000,
-   tpInternal    = 0x0040000,
+   tpInternal     = 0x0040000,
 //   tpPredefined  = 0x0080000, // virtual class declaration
 //   tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
 //   tpInitializer = 0x0200000,
 //   tpSetAccessor = 0x0400000,
-   tpCast        = 0x0800000,
+   tpCast         = 0x0800000,
 //   tpYieldable   = 0x1000000
 };
 
@@ -248,7 +248,6 @@ struct _ModuleScope
 
    // cached messages
    ref_t             dispatch_message;
-   ref_t             newobject_message;
 //   ref_t             init_message;
    ref_t             constructor_message;
 
@@ -366,7 +365,7 @@ struct _ModuleScope
 //      arrayTemplateReference = 0;
 //      wrapReference = argArrayTemplateReference = 0;
 //
-      /*init_message = */newobject_message = dispatch_message = 0;
+      /*init_message = */dispatch_message = 0;
       constructor_message = 0;
    }
 };
@@ -385,7 +384,7 @@ public:
 //
 //   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
-   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/) = 0;
+//   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/) = 0;
 //   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
@@ -651,7 +650,7 @@ public:
 
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;
-//   virtual bool isAbstract(ClassInfo& info) = 0;
+   virtual bool isAbstract(ClassInfo& info) = 0;
 //   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
 //
 //   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;

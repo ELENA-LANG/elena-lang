@@ -2,17 +2,26 @@
 In development:
 ------         
               dev
-                * message parameters
-                * properties : call
+                * abstract class cannot have constructors
 
-                * default constructor can be inherited if no static / constructors are declared (and a parent is not abstract class)
-                  otherwise the constructor has to be declared to create an object
+                * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
+                  signature or default one (if nothing is found - cannot be declared)
+
+                * explicit constructor should call at least default implicit method
+
+                * implicit default constructor cannot have redirector statement
+
+                * compile implicit constructor call
+
+                * should not be possible to create abstract class
+                * should not be possible to create abstract based class without declaring a new constructor
+
                 * any constructor should call the parent ony (explicitily default one) if available
 
+                * static methods
 
                 * resend body
                 * call parent constructor
-                * abstract
 
                 * recognize idle method
                 * recognize idle constructor
@@ -22,7 +31,6 @@ In development:
 
                 * if the parent constructor is idle - do like normal one
 
-                * static methods
                 * static properties
 	        * #381 : method returning a constant 
 
@@ -41,6 +49,8 @@ In development:
                 * countable
 
                 * template code : declaration, using
+
+                * nested class should not have static methods and constructors
 
                 * templates : declaration, using
                 * templates based on another template
@@ -217,6 +227,7 @@ In development:
                   possible values)
                 * redesign
                 * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
+                * review : inheriting private methods (what about the public "shadow one" hints?, should they be removed as well??)
 
               dev1
                 * write - Programming in ELENA : manual

@@ -55,11 +55,13 @@ enum LexicalType
    lxCode                     = 0x001060,
    lxDispatchCode             = 0x001070,
    lxMessage                  = 0x021080, // arg - message
+   lxNewOperation             = 0x021081,
    lxEOP                      = 0x011090, // end of the code block
    lxAssign                   = 0x0210A0,
    lxTemplateArgs             = 0x0010B0,
    lxNestedClass              = 0x0010C0,
    lxParameter                = 0x0010D0,
+   lxPropertyParam            = 0x0010E0,
 
    // derivation terminals
    lxEOF                      = 0x002010, // end of the file
@@ -111,6 +113,7 @@ enum LexicalType
    lxMessageVariable          = 0x000F0E, // debug info only
    lxSelfVariable             = 0x000F0F, // debug info only
    lxAutoMultimethod          = 0x000F10,
+   //lxMandatoryOp              = 0x000F11,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -125,7 +128,6 @@ enum LexicalType
 //   lxAttributeDecl            = 0x00004E,
 //   lxSizeDecl                 = 0x000068,
 //   lxDynamicSizeDecl          = 0x000069,
-//   lxPropertyParam            = 0x00006B,
 //   lxClosureExpr              = 0x00006E,
 //   lxFieldInit                = 0x000077,
 //   lxSubMessage               = 0x00007D,
@@ -1150,20 +1152,20 @@ public:
 //   static void loadNode(Node node, _Memory* dump);
 //
 //   static void copyMatchedNodes(Writer& writer, LexicalType type, Node owner);
-//
-//   static int countNodeMask(Node current, LexicalType mask)
-//   {
-//      int counter = 0;
-//      while (current != lxNone) {
-//         if (test(current.type, mask))
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
+
+   static int countNodeMask(Node current, LexicalType mask)
+   {
+      int counter = 0;
+      while (current != lxNone) {
+         if (test(current.type, mask))
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
 //   static int countNode(Node current, LexicalType type)
 //   {
 //      int counter = 0;

@@ -805,14 +805,14 @@ bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Modu
    //      command.append("#conversion&");
    //   }
    /*else */if (test(messageRef, STATIC_MESSAGE)) {
-      messageName.append("#private&");
+      messageName.append("#static&");
    }
 
    //   if (test(reference, SPECIAL_MESSAGE)) {         
    //   }
    //   else {
    //      if (test(reference, SEALED_MESSAGE)) {
-   //         command.append("#private&");
+   //         command.append("#static&");
    //      }
    //      if (test(reference, PROPSET_MESSAGE)) {
    //         command.append("set&");

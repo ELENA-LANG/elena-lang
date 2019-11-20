@@ -25,7 +25,7 @@ namespace _ELENA_
 //   constexpr auto ACTION_MASK             = 0x1C0u;
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
    // indicates it is an invoke message (without target variable in the call stack)
-   constexpr auto FUNCTION_MESSAGE         = 0x020u;
+   constexpr auto FUNCTION_MESSAGE        = 0x020u;
    constexpr auto PROPERTY_MESSAGE        = 0x040u;
    constexpr auto VARIADIC_MESSAGE        = 0x080u;
    constexpr auto STATIC_MESSAGE          = 0x100u;
@@ -293,9 +293,9 @@ namespace _ELENA_
    constexpr int elNestedClass         = 0x00000040;
    constexpr int elClassClass          = 0x00000080;
    constexpr int elRole                = 0x00000100;
+   constexpr int elAbstract            = 0x00000200;
 
 //   constexpr int elDynamicRole         = 0x00000004;
-//   constexpr int elAbstract            = 0x00000010;
 //   constexpr int elWrapper             = 0x00000040;
 //   constexpr int elStructureWrapper    = 0x00000048;
 //   constexpr int elSealed              = 0x00000120;
@@ -370,7 +370,6 @@ namespace _ELENA_
 
   // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
-   constexpr auto NEWOBJECT_MESSAGE       = "#new";
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
    constexpr auto INVOKE_MESSAGE          = "#invoke";

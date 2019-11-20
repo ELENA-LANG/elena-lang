@@ -1787,7 +1787,7 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
    // reset VMT length
    info.header.count = 0;
    for (auto m_it = info.methods.start(); !m_it.Eof(); m_it++) {
-      //NOTE : ingnore private methods
+      //NOTE : ingnore statically linked methods
       if (!test(m_it.key(), STATIC_MESSAGE))
          info.header.count++;
    }

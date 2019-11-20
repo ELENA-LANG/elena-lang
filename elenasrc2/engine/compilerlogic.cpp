@@ -658,11 +658,11 @@ bool CompilerLogic :: isRole(ClassInfo& info)
    return test(info.header.flags, elRole);
 }
 
-//bool CompilerLogic :: isAbstract(ClassInfo& info)
-//{
-//   return test(info.header.flags, elAbstract);
-//}
-//
+bool CompilerLogic :: isAbstract(ClassInfo& info)
+{
+   return test(info.header.flags, elAbstract);
+}
+
 //bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
@@ -824,44 +824,44 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
          compiler.injectVirtualReturningMethod(scope, node, encodeAction(actionRef), SELF_VAR, classRef);
       }
 
-      List<ref_t> generatedConstructors;
-      bool found = 0;
-      SNode current = node.firstChild();
-      while (current != lxNone) {
-         if (current == lxConstructor) {
-            SNode attr = current.firstChild();
-            while (attr != lxNone) {
-               if (attr == lxAttribute) {
-                  if (attr.argument == tpEmbeddable) {
-                  //ref_t dummy = 0;
-                  //ident_t actionName = scope.module->resolveAction(getAction(current.argument), dummy);
-                  //if (actionName.compare(CONSTRUCTOR_MESSAGE)) {
-                     // NOTE : Only implicit constructors can be embeddable
-                     generatedConstructors.add(current.argument);
+      //List<ref_t> generatedConstructors;
+      //bool found = 0;
+      //SNode current = node.firstChild();
+      //while (current != lxNone) {
+      //   if (current == lxConstructor) {
+      //      SNode attr = current.firstChild();
+      //      while (attr != lxNone) {
+      //         if (attr == lxAttribute) {
+      //            if (attr.argument == tpEmbeddable) {
+      //            //ref_t dummy = 0;
+      //            //ident_t actionName = scope.module->resolveAction(getAction(current.argument), dummy);
+      //            //if (actionName.compare(CONSTRUCTOR_MESSAGE)) {
+      //               // NOTE : Only implicit constructors can be embeddable
+      //               generatedConstructors.add(current.argument);
 
-                     current.set(lxClassMethod, current.argument | STATIC_MESSAGE);
-                     attr.setArgument(tpPrivate | tpSealed);
+      //               current.set(lxClassMethod, current.argument | STATIC_MESSAGE);
+      //               attr.setArgument(tpPrivate | tpSealed);
 
-                     found = true;
-                  //}
-                     break;
-                  }
-               }
-               else break;
+      //               found = true;
+      //            //}
+      //               break;
+      //            }
+      //         }
+      //         else break;
 
-               attr = attr.nextNode();
-            }
-         }
-         current = current.nextNode();
-      }
+      //         attr = attr.nextNode();
+      //      }
+      //   }
+      //   current = current.nextNode();
+      //}
 
-      if (found) {
-         for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
-            ref_t message = *it;
+      //if (found) {
+      //   for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
+      //      ref_t message = *it;
 
-            compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE);
-         }
-      }
+      //      compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE);
+      //   }
+      //}
    }
 }
 
@@ -1643,9 +1643,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
       case V_SEALED:
          attrValue = elSealed;
          return true;
-//      case V_ABSTRACT:
-//         attrValue = elAbstract;
-//         return true;
+      case V_ABSTRACT:
+         attrValue = elAbstract;
+         return true;
 //      case V_LIMITED:
 //         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
 //         return true;
@@ -1726,9 +1726,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 {
    switch ((size_t)attrValue)
    {
-      case V_EMBEDDABLE:
-         attrValue = tpEmbeddable;
-         return true;
+      //case V_EMBEDDABLE:
+      //   attrValue = tpEmbeddable;
+      //   return true;
 //      case V_GENERIC:
 //         attrValue = (tpGeneric | tpSealed);
 //         return true;

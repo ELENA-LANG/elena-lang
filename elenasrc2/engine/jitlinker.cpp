@@ -657,7 +657,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
          codeReader.seek(entry.address);
          methodPosition = loadMethod(refHelper, codeReader, codeWriter);
          
-         // NOTE : private / implicit message is not added to VMT
+         // NOTE : statically linked message is not added to VMT
          if (test(entry.message, STATIC_MESSAGE)) {
             _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
          }
@@ -1417,7 +1417,6 @@ void JITLinker :: prepareCompiler()
    SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
    // dispatch message should be the first
    resolveWeakAction(messageTable, DISPATCH_MESSAGE);
-   resolveWeakAction(messageTable, NEWOBJECT_MESSAGE);
 
    _compiler->prepareCore(helper, _loader);
 

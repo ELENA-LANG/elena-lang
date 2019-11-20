@@ -434,8 +434,8 @@ private:
 //      ref_t       extensionClassRef;
 //      bool        embeddable;
       bool        classClassMode;
-//      bool        abstractMode;
-//      bool        abstractBaseMode;
+      bool        abstractMode;
+      bool        abstractBaseMode;
 //      bool        withInitializers;
 ////      bool        withImplicitConstructor;
 //
@@ -1004,7 +1004,9 @@ private:
 
    ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
 
-//   ObjectInfo compileBoxingExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode);
+   ObjectInfo compileNewOp();
+
+   ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
    ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target/*, 
@@ -1034,7 +1036,7 @@ private:
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 //
 //   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
+//   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
 //   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SNode node, CodeScope& scope);
 //   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
@@ -1070,7 +1072,7 @@ private:
 //
 //   void compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message);
 
-   void compileDefaultConstructor(SNode node, MethodScope& scope);
+   //void compileDefaultConstructor(SNode node, MethodScope& scope);
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
 //   ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
@@ -1204,7 +1206,7 @@ public:
 //      int stacksafeAttr, bool embeddableAttr);
 //   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
-   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
+//   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
 //   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);

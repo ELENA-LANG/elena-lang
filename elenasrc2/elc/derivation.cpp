@@ -1904,10 +1904,10 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
       case lxToken:
          generateTokenExpression(writer, current, derivationScope/*, true*/);
          break;
-//      case lxPropertyParam:
-//         // to indicate the get property call
-//         writer.appendNode(lxPropertyParam);
-//         break;
+      case lxPropertyParam:
+         // to indicate the get property call
+         writer.appendNode(lxPropertyParam);
+         break;
 //      case lxSwitching:
 //         generateSwitchTree(writer, current, derivationScope);
 //         writer.inject(lxSwitching);
