@@ -39,8 +39,8 @@ constexpr auto HINT_MODULESCOPE     = EAttr::eaModuleScope;
 constexpr auto HINT_NEWOP           = EAttr::eaNewOp;
 constexpr auto HINT_SILENT          = EAttr::eaSilent;
 constexpr auto HINT_ROOTSYMBOL      = EAttr::eaRootSymbol;
+constexpr auto HINT_ROOT            = EAttr::eaRoot;
 
-//constexpr auto HINT_ROOT            = EAttr::eaRoot;
 //constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
 //constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
 //constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
@@ -4472,6 +4472,19 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, EAttr m
          //singleton = node.existChild(lxCode);
       }
    }
+   else if (EAttrs::test(mode, HINT_ROOT)) {
+      MethodScope* ownerMeth = (MethodScope*)ownerScope.getScope(Scope::ScopeLevel::slMethod);
+      if (ownerMeth && ownerMeth->constMode) {
+         ref_t dummyRef = 0;
+         // HOTFIX : recognize property constant
+         IdentifierString name(ownerScope.module->resolveReference(ownerScope.getClassRefId()));
+         name.append('#');
+         name.append(ownerScope.module->resolveAction(getAction(ownerMeth->message), dummyRef));
+
+         nestedRef = ownerMeth->module->mapReference(name.c_str());
+      }
+   }
+
    if (!nestedRef) {
       nestedRef = ownerScope.moduleScope->mapAnonymous();
    }
@@ -5168,7 +5181,7 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 
 ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope)
 {
-   EAttr rootMode = /*HINT_ROOT*/EAttr::eaNone;
+   EAttr rootMode = HINT_ROOT;
 
 //   //// COMPILER MAGIC : recognize root attributes
 //   //SNode current = findLeftMostNode(node.firstChild(), lxAttribute);
@@ -5853,7 +5866,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 //               writer.newNode(lxReturning);
             //current.insertNode(lxBreakpoint, dsStep);
 //               writer.appendNode(lxBreakpoint, dsStep);
-               retVal = compileRetExpression(current, scope, /*HINT_ROOT | HINT_RETEXPR*/EAttr::eaNone);
+               retVal = compileRetExpression(current, scope, HINT_ROOT/* | HINT_RETEXPR*/);
 //               writer.closeNode();
 //            }
             break;
@@ -10461,7 +10474,6 @@ void Compiler :: declareMembers(SNode current, NamespaceScope& scope)
 void Compiler :: declareModuleIdentifiers(SyntaxTree& syntaxTree, _ModuleScope& scope)
 {
    SNode node = syntaxTree.readRoot().firstChild();
-   bool retVal = false;
    while (node != lxNone) {
       if (node == lxNamespace) {
          SNode current = node.firstChild();

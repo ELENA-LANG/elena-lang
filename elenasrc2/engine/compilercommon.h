@@ -459,9 +459,10 @@ public:
       eaNewOp              = 0x00000000010,
       eaSilent             = 0x00000000020,
       eaRootSymbol         = 0x00000000040,
+      eaRoot               = 0x00000000080,
 
       eaScopeMask          = 0x0000000000A,
-      eaObjectMask         = 0x00000000074,
+      eaObjectMask         = 0x000000000F4,
 
 //      eaCast               = 0x00000000002,
 //      eaForward            = 0x00000000008,
@@ -493,7 +494,6 @@ public:
 //      eaNoUnboxing         = 0x00040000000,
 //      eaClosure            = 0x00080000000,
 //      eaSubCodeClosure     = 0x00800000000,
-//      eaRoot               = 0x01000000000,
 //      eaInlineExpr         = 0x02000000000,
 //      eaSwitch             = 0x08000000000,
 //      eaInitializerScope   = 0x10000000000,

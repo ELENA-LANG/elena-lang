@@ -2,10 +2,6 @@
 In development:
 ------         
               dev
-                * const property
-                * const symbol
-	        * #381 : const static property
-
                 * bool values
                 * branching operator
 
