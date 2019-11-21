@@ -115,7 +115,7 @@ enum LexicalType
    lxMessageVariable          = 0x000F0E, // debug info only
    lxSelfVariable             = 0x000F0F, // debug info only
    lxAutoMultimethod          = 0x000F10,
-   //lxMandatoryOp              = 0x000F11,
+   lxConstAttr                = 0x000F11,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -299,7 +299,7 @@ class SyntaxTree
    MemoryDump _strings;
 
 public:
-//   struct NodePattern;
+   struct NodePattern;
 
    // --- Node ---
    class Node
@@ -1061,63 +1061,63 @@ public:
       }
    };
 
-//   struct NodePattern
-//   {
-//      LexicalType type;
-//      LexicalType followType;
-//      int         argument;
-//      int         patternId;
-//
-//      bool match(Node node)
-//      {
-//         if (node.type == type) {
-//            if (followType != lxNone) {
-//               return SyntaxTree::existSibling(node, followType);
-//            }
-//            return true;
-//         }
-//         else return false;
-//      }
-//
-//      bool operator ==(NodePattern node) const
-//      {
-//         return (this->type == node.type && this->followType == node.followType);
-//      }
-//
-//      bool operator !=(NodePattern node) const
-//      {
-//         return (this->type != node.type || this->followType != node.followType);
-//      }
-//
-//      NodePattern()
-//      {
-//         this->type = lxNone;
-//         this->followType = lxNone;
-//         this->argument = 0;
-//         this->patternId = 0;
-//      }
-//      NodePattern(LexicalType type)
-//      {
-//         this->type = type;
-//         this->followType = lxNone;
-//         this->argument = 0;
-//         this->patternId = 0;
-//      }
-//      NodePattern(LexicalType type, int argument)
-//      {
-//         this->type = type;
-//         this->followType = lxNone;
-//         this->argument = argument;
-//         this->patternId = 0;
-//      }
-//      NodePattern(LexicalType type, int argument, int patternId)
-//      {
-//         this->type = type;
-//         this->followType = lxNone;
-//         this->argument = argument;
-//         this->patternId = patternId;
-//      }
-//   };
+   struct NodePattern
+   {
+      LexicalType type;
+      LexicalType followType;
+      int         argument;
+      int         patternId;
+
+      bool match(Node node)
+      {
+         if (node.type == type) {
+            if (followType != lxNone) {
+               return SyntaxTree::existSibling(node, followType);
+            }
+            return true;
+         }
+         else return false;
+      }
+
+      bool operator ==(NodePattern node) const
+      {
+         return (this->type == node.type && this->followType == node.followType);
+      }
+
+      bool operator !=(NodePattern node) const
+      {
+         return (this->type != node.type || this->followType != node.followType);
+      }
+
+      NodePattern()
+      {
+         this->type = lxNone;
+         this->followType = lxNone;
+         this->argument = 0;
+         this->patternId = 0;
+      }
+      NodePattern(LexicalType type)
+      {
+         this->type = type;
+         this->followType = lxNone;
+         this->argument = 0;
+         this->patternId = 0;
+      }
+      NodePattern(LexicalType type, int argument)
+      {
+         this->type = type;
+         this->followType = lxNone;
+         this->argument = argument;
+         this->patternId = 0;
+      }
+      NodePattern(LexicalType type, int argument, int patternId)
+      {
+         this->type = type;
+         this->followType = lxNone;
+         this->argument = argument;
+         this->patternId = patternId;
+      }
+   };
 
 private:
    pos_t saveStrArgument(ident_t strArgument);
@@ -1262,20 +1262,20 @@ public:
 //
 //      return false;
 //   }
-//
-//   static bool existSibling(Node node, LexicalType type1)
-//   {
-//      Node current = node.nextNode();
-//      while (current != lxNone) {
-//         if (current == type1)
-//            return true;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return false;
-//   }
-//
+
+   static bool existSibling(Node node, LexicalType type1)
+   {
+      Node current = node.nextNode();
+      while (current != lxNone) {
+         if (current == type1)
+            return true;
+
+         current = current.nextNode();
+      }
+
+      return false;
+   }
+
 //   static Node findPattern(Node node, int counter, ...);
 //   //static bool matchPattern(Node node, int mask, int counter, ...);
 
@@ -1367,8 +1367,8 @@ public:
    }
 };
 
-//void loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode = false);
-//
+void loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode = false);
+
 //inline bool isSingleStatement(SyntaxTree::Node expr)
 //{
 //   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
@@ -1376,10 +1376,10 @@ public:
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;
-//typedef SyntaxTree::NodePattern  SNodePattern;
-//
-//typedef Trie<SNodePattern>           SyntaxTrie;
-//typedef MemoryTrieNode<SNodePattern> SyntaxTrieNode;
+typedef SyntaxTree::NodePattern  SNodePattern;
+
+typedef Trie<SNodePattern>           SyntaxTrie;
+typedef MemoryTrieNode<SNodePattern> SyntaxTrieNode;
 
 } // _ELENA_
 

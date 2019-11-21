@@ -18,14 +18,14 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0026
+#define ELC_REVISION_NUMBER         0x0027
 
 // --- ELC default file names ---
 #ifdef _WIN32
 
 constexpr auto SYNTAX_FILE          = "syntax.dat";
 constexpr auto RULES_FILE           = "rules.dat";
-//constexpr auto SOURCERULES_FILE     = "source_rules.dat";
+constexpr auto SOURCERULES_FILE     = "source_rules.dat";
 
 #else
 
@@ -654,7 +654,7 @@ public:
    {
       if (IntSetting(_ELENA_::opL0, -1) != 0) {
          _ELENA_::Path rulesPath(StrSetting(_ELENA_::opAppPath), RULES_FILE);
-         //_ELENA_::Path sourceRulesPath(StrSetting(_ELENA_::opAppPath), SOURCERULES_FILE);
+         _ELENA_::Path sourceRulesPath(StrSetting(_ELENA_::opAppPath), SOURCERULES_FILE);
 
          _ELENA_::FileReader rulesFile(rulesPath.c_str(), _ELENA_::feRaw, false);
          if (!rulesFile.isOpened()) {
@@ -662,11 +662,11 @@ public:
          }
          else compiler.loadRules(&rulesFile);
 
-         //_ELENA_::FileReader sourceRulesFile(sourceRulesPath.c_str(), _ELENA_::feRaw, false);
-         //if (!rulesFile.isOpened()) {
-         //   raiseWarning(0, errInvalidFile, RULES_FILE);
-         //}
-         //else compiler.loadSourceRules(&sourceRulesFile);
+         _ELENA_::FileReader sourceRulesFile(sourceRulesPath.c_str(), _ELENA_::feRaw, false);
+         if (!rulesFile.isOpened()) {
+            raiseWarning(0, errInvalidFile, RULES_FILE);
+         }
+         else compiler.loadSourceRules(&sourceRulesFile);
       }
       //if (IntSetting(_ELENA_::opL1, -1) != 0) {
       //   compiler.turnOnOptimiation(1);

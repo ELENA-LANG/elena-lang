@@ -261,6 +261,7 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       }
 
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
+      result.constRef = info.methodHints.get(Attribute(message, maConstant));
 //
 //      result.embeddable = test(hint, tpEmbeddable);
 //      result.function = test(hint, tpFunction);
@@ -1795,8 +1796,11 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_YIELDABLE:
 //         attrValue = tpYieldable;
 //         return true;
-//      case 0:
-//         return true;
+      case V_CONST:
+         attrValue = tpConstant;
+         return true;
+      case 0:
+         return true;
       default:
          return false;
    }
@@ -2513,16 +2517,23 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //   
 //   return 0;
 //}
-//
-//bool CompilerLogic :: validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass)
-//{
-//   bool dispatchOne = message == scope.dispatch_message;
-//
-//   if (isClassClass && dispatchOne) {
-//      return false;
-//   }
-//   //else if (!isClassClass && dispatchOne && getParamCount(message) != 0) {
-//   //   return false;
-//   //}
-//   else return true;
-//}
+
+bool CompilerLogic :: validateMessage(_ModuleScope& scope, ref_t message, int hints)
+{
+   bool dispatchOne = message == scope.dispatch_message;
+   if (testany(hints, tpConstructor | tpStatic)) {
+      if (dispatchOne)
+         return false;
+   }
+   //else {
+      //else if (!isClassClass && dispatchOne && getParamCount(message) != 0) {
+      //   return false;
+      //}
+   //}
+
+   // const attribute can be applied only to a get-property
+   if (test(hints, tpConstant) && (!test(message, PROPERTY_MESSAGE) && getArgCount(message) > 1))
+      return false;
+
+   return true;
+}

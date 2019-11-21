@@ -521,6 +521,7 @@ enum MethodAttribute
    maNone               = 0x000,
    maHint               = 0x001,
    maReference          = 0x202,
+   maConstant           = 0x203,
 //   maEmbeddableRet      = 0x403,
 //   maEmbeddableIdle     = 0x005,
 //   maEmbeddableNew      = 0x409,

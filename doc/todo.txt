@@ -2,10 +2,9 @@
 In development:
 ------         
               dev
-                * static properties
-
-	        * #381 : method returning a constant 
-                * const static method
+                * const property
+                * const symbol
+	        * #381 : const static property
 
                 * bool values
                 * branching operator

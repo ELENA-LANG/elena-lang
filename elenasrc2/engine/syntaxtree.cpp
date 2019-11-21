@@ -13,10 +13,10 @@
 
 using namespace _ELENA_;
 
-//// --- loadSyntaxTokens ---
-//
-//void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
-//{
+// --- loadSyntaxTokens ---
+
+void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
+{
 //   tokens.add("root", lxRoot);
 //   tokens.add("namespace", lxNamespace);
 //   tokens.add("class", lxClass);
@@ -44,14 +44,14 @@ using namespace _ELENA_;
 //   tokens.add("operator", lxOperator);
 //   tokens.add("nameattr", lxNameAttr);
 //   tokens.add("property_parameter", lxPropertyParam);
-//
-//   if (fullMode) {
+
+   if (fullMode) {
 //      tokens.add("argarrop", lxArgArrOp);
 //      tokens.add("assigning", lxAssigning);
 //      tokens.add("boxing", lxBoxing);
 //      tokens.add("call", lxCalling);
 //      tokens.add("condboxing", lxCondBoxing);
-//      tokens.add("directcall", lxDirectCalling);
+      tokens.add("directcall", lxDirectCalling);
 //      tokens.add("embeddable", lxEmbeddableAttr);
 //      tokens.add("fieldaddress", lxFieldAddress);
 //      tokens.add("localaddress", lxLocalAddress);
@@ -89,8 +89,9 @@ using namespace _ELENA_;
 //      tokens.add("duplicateboxing", lxDuplicateBoxingAttr);
 //      tokens.add("newarrop", lxNewArrOp);
 //      tokens.add("nested_expr", lxNested);
-//   }
-//}
+      tokens.add("constattr", lxConstAttr);
+   }
+}
 
 // --- SyntaxWriter ---
 

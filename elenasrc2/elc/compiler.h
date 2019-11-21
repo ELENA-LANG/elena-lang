@@ -461,13 +461,13 @@ private:
          info.save(&metaWriter);
       }
 
-//      void addAttribute(ref_t message, int attribute, ref_t value)
-//      {
-//         ClassInfo::Attribute attr(message, attribute);
-//
-//         info.methodHints.exclude(attr);
-//         info.methodHints.add(attr, value);
-//      }
+      void addAttribute(ref_t message, int attribute, ref_t value)
+      {
+         ClassInfo::Attribute attr(message, attribute);
+
+         info.methodHints.exclude(attr);
+         info.methodHints.add(attr, value);
+      }
       int getHint(ref_t message)
       {
          ClassInfo::Attribute attr(message, maHint);
@@ -567,7 +567,8 @@ private:
 //      bool         embeddableRetMode;
 //      bool         targetSelfMode;     // used for script generated methods - self refers to __target
 ////      bool         dispatchMode;
-//      
+      bool         constMode;
+
 //      ref_t getAttribute(MethodAttribute attr, bool ownerClass = true)
 //      {
 //         ClassInfo::Attribute key(message, attr);
@@ -838,7 +839,7 @@ private:
 
    // optimization rules
    TransformTape _rules;
-//   SyntaxTrie    _sourceRules;
+   SyntaxTrie    _sourceRules;
 
    // optmimization routines
    bool applyRules(CommandTape& tape);
@@ -890,6 +891,8 @@ private:
 ////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
    ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, bool declarationMode);
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
+
+   ref_t resolveConstant(ObjectInfo retVal);
 
 //   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
@@ -1123,9 +1126,9 @@ private:
 //
 //   void injectBoxingTempLocal(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
 //   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
-//   void analizeCodePatterns(SNode node, NamespaceScope& scope);
-//   void analizeMethod(SNode node, NamespaceScope& scope);
-//   void analizeClassTree(SNode node, ClassScope& scope);
+   void analizeCodePatterns(SNode node, NamespaceScope& scope);
+   void analizeMethod(SNode node, NamespaceScope& scope);
+   void analizeClassTree(SNode node, ClassScope& scope);
 //   void analizeSymbolTree(SNode node, Scope& scope);
 //   void analizeMessageParameters(SNode node);
 //
@@ -1150,9 +1153,10 @@ private:
 //   void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);
 //   void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
 //   void registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature);
-//
-//   bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
-//   bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
+
+   bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
+   bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
+   bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
 //   bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode);
 //   bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
 //   bool optimizeAssigningBoxing(_ModuleScope& scope, SNode& node);
@@ -1183,7 +1187,7 @@ private:
 
 public:
    void loadRules(StreamReader* optimization);
-//   void loadSourceRules(StreamReader* optimization);
+   void loadSourceRules(StreamReader* optimization);
 //   void turnOnOptimiation(int level)
 //   {
 //      _optFlag |= level;

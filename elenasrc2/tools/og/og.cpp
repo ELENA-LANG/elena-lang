@@ -15,7 +15,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION   2
+#define BUILD_VERSION   3
 
 typedef Trie<ByteCodePattern>            ByteTrie;
 typedef MemoryTrie<ByteCodePattern>      MemoryByteTrie;
@@ -171,62 +171,62 @@ void appendOpCodeString(TextSourceReader& source, char* token, LineInfo& info, B
    readTransform(position, source, token, info, trie);
 }
 
-//SNodePattern decodeSourceNode(TextSourceReader& source, char* token, LineInfo& info, Map<ident_t, int>& tokens)
-//{
-//   SNodePattern pattern;
-//   pattern.type = (LexicalType)tokens.get(token);
-//   if (pattern.type == lxNone) {
-//      throw UnknownToken(info);
-//   }
-//
-//   info = source.read(token, IDENTIFIER_LEN);
-//   if (ident_t(token).compare("|")) {
-//      info = source.read(token, IDENTIFIER_LEN);
-//
-//      pattern.followType = (LexicalType)tokens.get(token);
-//      if (pattern.followType == lxNone) {
-//         throw UnknownToken(info);
-//      }
-//
-//      info = source.read(token, IDENTIFIER_LEN);
-//   }
-//
-//   if (ident_t(token).compare("=")) {
-//      info = source.read(token, IDENTIFIER_LEN);
-//      pattern.patternId = ident_t(token).toInt();
-//      if (!pattern.patternId)
-//         throw UnknownToken(info);
-//
-//      info = source.read(token, IDENTIFIER_LEN);
-//      if (!ident_t(token).compare(";"))
-//         throw UnknownToken(info);
-//   }
-//   else if (ident_t(token).compare(",")) {
-//      info = source.read(token, IDENTIFIER_LEN);
-//   }
-//   else throw UnknownToken(info);
-//
-//   return pattern;
-//}
+SNodePattern decodeSourceNode(TextSourceReader& source, char* token, LineInfo& info, Map<ident_t, int>& tokens)
+{
+   SNodePattern pattern;
+   pattern.type = (LexicalType)tokens.get(token);
+   if (pattern.type == lxNone) {
+      throw UnknownToken(info);
+   }
 
-//void appendSourceString(TextSourceReader& source, char* token, LineInfo& info, SyntaxTrie& trie, Map<ident_t, int>& tokens)
-//{
-//   // save source pattern
-//   SNodePattern pattern = decodeSourceNode(source, token, info, tokens);
-//
-//   size_t position = trie.add(0, pattern);
-//
-//   while (!ident_t(token).compare(";")) {
-//      position = trie.add(position, decodeSourceNode(source, token, info, tokens));
-//   }
-//
-//   //// save end state
-//   //position = trie.add(position, ByteCodePattern(bcMatch));
-//
-//   //// save replacement (should be saved in reverse order, to simplify transform algorithm)
-//   //info = source.read(token, IDENTIFIER_LEN);
-//   //readTransform(position, source, token, info, trie);
-//}
+   info = source.read(token, IDENTIFIER_LEN);
+   if (ident_t(token).compare("|")) {
+      info = source.read(token, IDENTIFIER_LEN);
+
+      pattern.followType = (LexicalType)tokens.get(token);
+      if (pattern.followType == lxNone) {
+         throw UnknownToken(info);
+      }
+
+      info = source.read(token, IDENTIFIER_LEN);
+   }
+
+   if (ident_t(token).compare("=")) {
+      info = source.read(token, IDENTIFIER_LEN);
+      pattern.patternId = ident_t(token).toInt();
+      if (!pattern.patternId)
+         throw UnknownToken(info);
+
+      info = source.read(token, IDENTIFIER_LEN);
+      if (!ident_t(token).compare(";"))
+         throw UnknownToken(info);
+   }
+   else if (ident_t(token).compare(",")) {
+      info = source.read(token, IDENTIFIER_LEN);
+   }
+   else throw UnknownToken(info);
+
+   return pattern;
+}
+
+void appendSourceString(TextSourceReader& source, char* token, LineInfo& info, SyntaxTrie& trie, Map<ident_t, int>& tokens)
+{
+   // save source pattern
+   SNodePattern pattern = decodeSourceNode(source, token, info, tokens);
+
+   size_t position = trie.add(0, pattern);
+
+   while (!ident_t(token).compare(";")) {
+      position = trie.add(position, decodeSourceNode(source, token, info, tokens));
+   }
+
+   //// save end state
+   //position = trie.add(position, ByteCodePattern(bcMatch));
+
+   //// save replacement (should be saved in reverse order, to simplify transform algorithm)
+   //info = source.read(token, IDENTIFIER_LEN);
+   //readTransform(position, source, token, info, trie);
+}
 
 bool isMatchNode(ByteCodePattern pattern)
 {
@@ -276,46 +276,46 @@ void parseOpcodeRule(Path& path)
 
 void parseSourceRules(Path& path)
 {
-   //Map<ident_t, int> tokens;
-   //loadSyntaxTokens(tokens, true);
+   Map<ident_t, int> tokens;
+   loadSyntaxTokens(tokens, true);
 
-   //TextFileReader   sourceFile(path.c_str(), feUTF8, false);
-   //TextSourceReader source(4, &sourceFile);
-   //LineInfo         info(0, 0, 0);
-   //char             token[IDENTIFIER_LEN + 1];
+   TextFileReader   sourceFile(path.c_str(), feUTF8, false);
+   TextSourceReader source(4, &sourceFile);
+   LineInfo         info(0, 0, 0);
+   char             token[IDENTIFIER_LEN + 1];
 
-   //SNodePattern     defValue;
-   //SyntaxTrie       trie(defValue);
-   //try
-   //{
-   //   // add root
-   //   trie.addRoot(SNodePattern(lxRoot));
+   SNodePattern     defValue;
+   SyntaxTrie       trie(defValue);
+   try
+   {
+      // add root
+      trie.addRoot(SNodePattern(lxRoot));
 
-   //   // generate tree
-   //   while (true) {
-   //      info = source.read(token, IDENTIFIER_LEN);
+      // generate tree
+      while (true) {
+         info = source.read(token, IDENTIFIER_LEN);
 
-   //      if (info.state == dfaEOF) break;
+         if (info.state == dfaEOF) break;
 
-   //      appendSourceString(source, token, info, trie, tokens);
-   //   }
+         appendSourceString(source, token, info, trie, tokens);
+      }
 
-   //   //// add suffix links
-   //   //trie.prepare(isMatchNode);
+      //// add suffix links
+      //trie.prepare(isMatchNode);
 
-   //   // save the result
-   //   Path outputFile(path);
-   //   outputFile.changeExtension("dat");
+      // save the result
+      Path outputFile(path);
+      outputFile.changeExtension("dat");
 
-   //   FileWriter file(outputFile.c_str(), feRaw, false);
-   //   trie.save(&file);
+      FileWriter file(outputFile.c_str(), feRaw, false);
+      trie.save(&file);
 
-   //   printLine("\nSuccessfully created\n");
-   //}
-   //catch (UnknownToken& token)
-   //{
-   //   printLine("(%d): Invalid token %s\n", token.line.row, token.line.line);
-   //}
+      printLine("\nSuccessfully created\n");
+   }
+   catch (UnknownToken& token)
+   {
+      printLine("(%d): Invalid token %s\n", token.line.row, token.line.line);
+   }
 }
 
 int main(int argc, char* argv[])

@@ -22,10 +22,10 @@
 ///// scope_accessors:
 //#define get         80003007h
 //#define set         80003008h
-//
-///// scope_prefix:
-//
-//#define const       80002001h
+
+/// scope_prefix:
+
+#define const       80002001h
 //#define embeddable  80002002h
 //#define ref         80002003h
 ////#80002004 = __direct;

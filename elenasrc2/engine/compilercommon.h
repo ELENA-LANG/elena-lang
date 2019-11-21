@@ -47,7 +47,7 @@ constexpr auto V_GETACCESSOR = 0x80003007u;
 //constexpr auto V_SETACCESSOR = 0x80003008u;
 
 /// scope_prefix:
-//constexpr auto V_CONST           = 0x80002001u;
+constexpr auto V_CONST           = 0x80002001u;
 //constexpr auto V_EMBEDDABLE      = 0x80002002u;
 //constexpr auto V_WRAPPER         = 0x80002003u;
 //constexpr auto V_DIRECT          = 0x80002004u;
@@ -140,6 +140,7 @@ enum MethodHint
    tpNormal       = 0x0000003,
    tpDispatcher   = 0x0000004,
    tpPrivate      = 0x0000005,
+
 //   tpStackSafe   = 0x0000010,
 //   tpEmbeddable  = 0x0000020,
 //   tpGeneric     = 0x0000040,
@@ -159,6 +160,7 @@ enum MethodHint
 //   tpSetAccessor = 0x0400000,
    tpCast         = 0x0800000,
 //   tpYieldable   = 0x1000000
+   tpConstant     = 0x2000000,
 };
 
 // --- _Project ---
@@ -456,9 +458,10 @@ public:
       eaModuleScope        = 0x00000000008,
       eaNewOp              = 0x00000000010,
       eaSilent             = 0x00000000020,
+      eaRootSymbol         = 0x00000000040,
 
       eaScopeMask          = 0x0000000000A,
-      eaObjectMask         = 0x00000000034,
+      eaObjectMask         = 0x00000000074,
 
 //      eaCast               = 0x00000000002,
 //      eaForward            = 0x00000000008,
@@ -489,7 +492,6 @@ public:
 //      eaDynamicObject      = 0x00020000000,
 //      eaNoUnboxing         = 0x00040000000,
 //      eaClosure            = 0x00080000000,
-//      eaRootSymbol         = 0x01400000000,
 //      eaSubCodeClosure     = 0x00800000000,
 //      eaRoot               = 0x01000000000,
 //      eaInlineExpr         = 0x02000000000,
@@ -585,12 +587,14 @@ public:
 //      bool  function;
 //      bool  dynamicRequired;
       ref_t outputReference;
+      ref_t constRef;
 
       ChechMethodInfo()
       {
          directResolved = false;
          /*embeddable = */found = false;
          outputReference = 0;
+         constRef = 0;
 //         withCustomDispatcher = false;
 //         stackSafe = false;
 //         function = false;
@@ -685,7 +689,7 @@ public:
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
    virtual bool validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility) = 0;
-//   virtual bool validateMessage(_ModuleScope& scope, ref_t message, bool isClassClass) = 0;
+   virtual bool validateMessage(_ModuleScope& scope, ref_t message, int hints) = 0;
    virtual bool validateArgumentAttribute(int attrValue/*, bool& byRefArg, bool& paramsArg*/) = 0;
 
 //   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
