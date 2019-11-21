@@ -26,17 +26,115 @@ public class Object
     dispatch() => intern system'core_routines'__object;
 }
 
-///// A common boolean value
-//public interface BoolValue
-//{
+/// A common boolean value
+public interface BoolValue
+{
+    private constructor() {}
+    
 //    /// return the default value
 //    static bool Default
 //        = false;
+
+    const static true = BoolValue::
+    {
+        /// Executes the action
+        if(trueAction) = trueAction();
+    
+//        /// Executes then-action
+//        if(trueAction,falseAction) = trueAction();
+//    
+//        /// Always returns nil.
+//        ifnot(trueAction) = nil;
+//    
+//        iif(object trueVal, object falseVal) = trueVal;
 //        
+//        /// Executes logical OR operation
+//        ///
+//        /// Always return true
+//        bool or(expr) = self;
+//    
+//        /// Executes logical AND operation
+//        bool and(expr) = expr;
+//    
+//        /// Executes logical XOR operation
+//        bool xor(expr)
+//        {
+//            cast bool(expr) ? { ^ false };
+//            
+//            ^ self
+//        }
+//    
+//        /// Determines whether the specified object is equal to the current object boolean value.
+//        bool equal(expr) = expr;
+//    
+//        /// Determines whether the specified object is equal to the current object boolean value.
+//        bool equal(bool b) = b;
+//    
+//        /// Always returns false.
+//        bool Inverted = false;
+//    
+//        /// Returns literal representation.
+//        string Printable = "true";
+//    
+//        /// Returns itself.
+//        bool clone() = self;        
+    };
+                        
+    const static false = BoolValue::
+    {
+        /// Always returns nil
+        if(trueAction) = nil;
+        
+//        /// Executes else-action
+//        if(trueAction,falseAction) = falseAction();
+//    
+//        /// Executes the action
+//        ifnot(action) = action();
+//    
+//        iif(object trueVal, object falseVal) = falseVal;
+//    
+//        /// Executes logical OR operation
+//        bool or(expr) = expr;
+//    
+//        /// Executes logical AND operation
+//        ///
+//        /// Always return false
+//        bool and(expr) = self;
+//    
+//        /// Executes logical XOR operation
+//        bool xor(expr)
+//        {
+//            cast bool(expr) ? { ^ true };
+//            
+//            ^ self
+//        }
+//    
+//        /// Determines whether the specified object is equal to the current object boolean value
+//        bool equal(expr)
+//        {
+//            cast bool(expr) ? { ^ self } : { ^ true }
+//        }
+//    
+//        /// Determines whether the specified object is equal to the current object boolean value
+//        bool equal(bool f)
+//        {
+//            ^ f.Inverted
+//        }
+//    
+//        /// Always returns true
+//        bool Inverted = true;
+//    
+//        /// Returns literal representation
+//        string Printable = "false";
+//        
+//        /// Returns itself
+//        bool clone() = self;        
+    };
+                        
 //    abstract bool equal(bool f) {}
-//
-//    abstract if(trueAction) {}
-//
+
+    abstract if(trueAction) {}
+
 //    abstract if(trueAction,falseAction) {}
 //
 //    abstract ifnot(action) {}
@@ -52,8 +150,11 @@ public class Object
 //    abstract get bool Inverted() {}
 //
 //    abstract bool clone() {}
-//}
-//
+}
+
+public const true = BoolValue.true;
+public const false = BoolValue.false;
+
 //public extension commonOp
 //{
 //    /// Returns the parameter        

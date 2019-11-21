@@ -587,6 +587,11 @@ private:
 //         scope->info.methodHints.add(key, value);
 //      }
 
+      bool isPrivate()
+      {
+         return (hints & tpMask) == tpPrivate;
+      }
+
       virtual Scope* getScope(ScopeLevel level)
       {
          if (level == ScopeLevel::slMethod) {
@@ -816,15 +821,15 @@ private:
 //      ObjectInfo allocateRetVar();
 //
 //      bool markAsPresaved(ObjectInfo object);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == slClass) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slClass) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
 //      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       InlineClassScope(ExprScope* owner, ref_t reference);

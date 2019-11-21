@@ -1581,9 +1581,12 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
 
       if (!ignoreSealed && test(scope.info.header.flags, elFinal)) {
          // COMPILER MAGIC : if it is a unsealed nested class inheriting its owner
-         if (!test(scope.info.header.flags, elSealed) && test(scope.info.header.flags, elNestedClass)) {
+         if (!test(scope.info.header.flags, elSealed) && test(flagCopy, elNestedClass)) {
             ClassScope* owner = (ClassScope*)scope.getScope(Scope::ScopeLevel::slOwnerClass);
-            if (owner->reference != parentRef) {
+            if (owner->classClassMode && scope.info.header.classRef == owner->reference) {
+               // HOTFIX : if it is owner class class - allow it as well
+            }
+            else if (owner->reference != parentRef) {
                return InheritResult::irSealed;
             }
          }
@@ -7874,8 +7877,8 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
          else methodScope.message = current.argument;
 
          if (test(methodScope.hints, tpConstructor)) {
-            if (_logic->isAbstract(scope.info) || scope.abstractMode) {
-               // abstract class cannot have constructors
+            if ((_logic->isAbstract(scope.info) || scope.abstractMode) && !methodScope.isPrivate()) {
+               // abstract class cannot have nonprivate constructors
                scope.raiseError(errIllegalMethod, current);
             }
             else current = lxConstructor;

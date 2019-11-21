@@ -92,7 +92,8 @@ In development:
                 * auto method
                 * auto field
                 * abstract methods
-                                      
+                * internal / protected methods : refactor
+
                 * implement analog of C# enum
 
                 * primitive numbers
@@ -201,6 +202,7 @@ In development:
                 * if all constructors are internal - can be inherited only inside the module
                 * auto conversion methods should be marked as idle
                 * it should be possible to turn-off optimization (opL1)
+                * protected default constructor - the class cannot be created using default constructor
 
               dev1
                 * write - Programming in ELENA : manual
