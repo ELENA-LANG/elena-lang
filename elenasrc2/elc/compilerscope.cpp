@@ -629,26 +629,28 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
 //{
 //   compiler->registerExtensionTemplate(tree, *this, ns, extensionRef);
 //}
-//
-//ref_t ModuleScope :: resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns)
-//{
-//   ref_t signRef = 0;
-//   module->resolveAction(getAction(closureMessage), signRef);
-//
-//   int paramCount = getParamCount(closureMessage);
-//
-//   IdentifierString closureName(module->resolveReference(closureTemplateReference));
-//   if (signRef == 0) {
-//      if (paramCount > 0) {
-//         closureName.appendInt(paramCount);
-//      }
-//
-//      if (isWeakReference(closureName)) {
-//         return module->mapReference(closureName, true);
-//      }
-//      else return mapFullReference(closureName, true);
-//   }
-//   else {   
+
+ref_t ModuleScope :: resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns)
+{
+   ref_t signRef = 0;
+   module->resolveAction(getAction(closureMessage), signRef);
+
+   int paramCount = getArgCount(closureMessage);
+
+   IdentifierString closureName(module->resolveReference(closureTemplateReference));
+   if (signRef == 0) {
+      if (paramCount > 0) {
+         closureName.appendInt(paramCount);
+      }
+
+      if (isWeakReference(closureName)) {
+         return module->mapReference(closureName, true);
+      }
+      else return mapFullReference(closureName, true);
+   }
+   else {   
+      throw InternalError("Not yet implemented"); // !! temporal
+
 //      ref_t signatures[ARG_COUNT];
 //      size_t signLen = module->resolveSignature(signRef, signatures);
 //
@@ -688,8 +690,8 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
 //         return generateTemplate(templateReference, parameters, ns, false);
 //      }
 //      else return superReference;
-//   }
-//}
+   }
+}
 
 void ModuleScope :: saveListMember(ident_t name, ident_t memberName)
 {

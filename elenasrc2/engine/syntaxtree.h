@@ -63,6 +63,7 @@ enum LexicalType
    lxNestedClass              = 0x0010C0,
    lxParameter                = 0x0010D0,
    lxPropertyParam            = 0x0010E0,
+   lxOperator                 = 0x0210F0,
 
    // derivation terminals
    lxEOF                      = 0x002010, // end of the file
@@ -237,7 +238,6 @@ enum LexicalType
 //   lxOverridden               = 0x004047,
 //   lxFinally                  = 0x004048,
 //
-//   lxOperator                 = 0x10025,
 //   lxIntVariable              = 0x10028,
 //   lxLongVariable             = 0x10029,
 //   lxReal64Variable           = 0x1002A,
@@ -436,20 +436,20 @@ public:
          else return current;
       }
 
-      //Node findSubNode(LexicalType type)
-      //{
-      //   Node current = firstChild();
-      //   while (current != lxNone && current.type != type) {
-      //      if (current == lxExpression) {
-      //         Node subNode = current.findSubNode(type);
-      //         if (subNode != lxNone)
-      //            return subNode;
-      //      }
-      //      current = current.nextNode();
-      //   }
+      Node findSubNode(LexicalType type)
+      {
+         Node current = firstChild();
+         while (current != lxNone && current.type != type) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            current = current.nextNode();
+         }
 
-      //   return current;
-      //}
+         return current;
+      }
       //Node findSubNode(LexicalType type1, LexicalType type2)
       //{
       //   Node current = firstChild();

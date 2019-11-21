@@ -816,14 +816,14 @@ inline void decodeMessage(ref_t message, ref_t& actionRef, int& argCount, ref_t&
    flags = message & MESSAGE_FLAG_MASK;
 }
 
-//inline ref_t overwriteParamCount(ref_t message, int paramCount)
-//{
-//   int dummy;
-//   ref_t actionRef, flags;
-//   decodeMessage(message, actionRef, dummy, flags);
-//
-//   return encodeMessage(actionRef, paramCount, flags);
-//}
+inline ref_t overwriteArgCount(ref_t message, int argCount)
+{
+   int dummy;
+   ref_t actionRef, flags;
+   decodeMessage(message, actionRef, dummy, flags);
+
+   return encodeMessage(actionRef, argCount, flags);
+}
 
 inline ref_t overwriteAction(ref_t message, ref_t newAction)
 {

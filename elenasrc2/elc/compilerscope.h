@@ -91,7 +91,7 @@ struct ModuleScope : _ModuleScope
       else return referenceName;
    }
 
-//   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns);
+   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns);
 
    virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode);
 //   virtual void generateTemplateCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);

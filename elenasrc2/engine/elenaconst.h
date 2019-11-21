@@ -39,7 +39,7 @@ namespace _ELENA_
 //   constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
 //   constexpr auto SET_OPERATOR_ID         = 0x0007;
 //   constexpr auto LESS_OPERATOR_ID        = 0x0008;
-//   constexpr auto IF_OPERATOR_ID          = 0x0009;
+   constexpr auto IF_OPERATOR_ID          = 0x0009;
 //   constexpr auto AND_OPERATOR_ID         = 0x000A;
 //   constexpr auto OR_OPERATOR_ID          = 0x000B;
 //   constexpr auto XOR_OPERATOR_ID         = 0x000C;
@@ -393,21 +393,21 @@ namespace _ELENA_
 //  // #define SET_MESSAGE              "set"
 //   constexpr auto READ_MESSAGE         = "read";
 //   constexpr auto WRITE_MESSAGE        = "write";
-//   constexpr auto IF_MESSAGE           = "if";
+   constexpr auto IF_MESSAGE           = "if";
 //   constexpr auto IFNOT_MESSAGE        = "ifnot";
 //  // #define SHIFT_MESSAGE            "shift"
 //  // #define IF_ELSE_MESSAGE          "if:else"
 //   constexpr auto INIT_MESSAGE         = "#init";
 //  // #define ISNIL_MESSAGE            "#isnil"
-//
-//   // ELENA verb operators
+
+   // ELENA verb operators
 //   constexpr auto EQUAL_OPERATOR       = "==";
 //   constexpr auto NOTEQUAL_OPERATOR		= "!=";
 //   constexpr auto NOTLESS_OPERATOR     = ">=";
 //   constexpr auto NOTGREATER_OPERATOR  = "<=";
 //   constexpr auto GREATER_OPERATOR     = ">";
 //   constexpr auto LESS_OPERATOR        = "<";
-//   constexpr auto IF_OPERATOR          = "?";
+   constexpr auto IF_OPERATOR          = "?";
 //   constexpr auto IFNOT_OPERATOR       = "!";
 //   constexpr auto AND_OPERATOR         = "&&";
 //   constexpr auto OR_OPERATOR          = "||";
@@ -519,7 +519,7 @@ namespace _ELENA_
 //   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
 //   constexpr auto MESSAGENAME_FORWARD     = "$messagename";
 //   constexpr auto REFTEMPLATE_FORWARD     = "$reference";
-//   constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
+   constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
 //   constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
 //   constexpr auto ARGARRAYTEMPLATE_FORWARD= "$varray";
 //   constexpr auto BOOL_FORWARD            = "$bool";

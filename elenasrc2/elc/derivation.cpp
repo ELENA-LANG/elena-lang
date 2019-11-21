@@ -17,9 +17,9 @@ using namespace _ELENA_;
 constexpr auto MODE_ROOT                  = 0x01;
 //constexpr auto MODE_PROPERTYALLOWED = 0x40;
 
-constexpr auto MODE_FUNCTION        = -2;
+constexpr auto MODE_FUNCTION              = -2;
 //constexpr auto MODE_COMPLEXMESSAGE  = -3;
-constexpr auto MODE_PROPERTYMETHOD  = -4;
+constexpr auto MODE_PROPERTYMETHOD        = -4;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
@@ -1306,20 +1306,20 @@ void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node, Scop
    writer.closeNode();
 }
 
-//void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode current, Scope& derivationScope, bool closureMode)
-//{
-//   if (closureMode) {
-//      generateCodeTree(writer, current, derivationScope);
-//      writer.inject(lxClosureExpr);
-//      writer.closeNode();
-//   }
-//   else {
-//      writer.newNode(lxExpression);
-//      generateCodeTree(writer, current, derivationScope);
-//      writer.closeNode();
-//   }
-//}
-//
+void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode current, Scope& derivationScope, bool closureMode)
+{
+   /*if (closureMode) {
+      generateCodeTree(writer, current, derivationScope);
+      writer.inject(lxClosureExpr);
+      writer.closeNode();
+   }
+   else {*/
+      writer.newNode(lxExpression);
+      generateCodeTree(writer, current, derivationScope);
+      writer.closeNode();
+   //}
+}
+
 //void DerivationWriter :: generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
 //{
 //   SNode nameNode = node.firstChild();
@@ -1864,7 +1864,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
 
          generateMesage(writer, current, derivationScope);
          break;
-//      case lxOperator:
+      case lxOperator:
       case lxAssign:
          if (!first) {
             writer.inject(lxExpression);
@@ -1876,11 +1876,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
          writer.closeNode();
          break;
       case lxExpression:
-         //first = false;
-         //if (test(mode, MODE_MESSAGE_BODY)) {
-         //   generateExpressionTree(writer, current, scope);
-         //}
-         /*else */generateExpressionTree(writer, current, derivationScope, 0/*EXPRESSION_IMPLICIT_MODE*/);
+         generateExpressionTree(writer, current, derivationScope);
          break;
 //      case lxTemplateOperator:
 //         // COMPILER MAGIC : recognize the operator template
@@ -1897,10 +1893,10 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
          generateClassTree(writer, current, derivationScope, true);
          first = false;
          break;
-//      case lxCode:
-//         generateCodeExpression(writer, current, derivationScope, first);
-//         first = false;
-//         break;
+      case lxCode:
+         generateCodeExpression(writer, current, derivationScope, first);
+         first = false;
+         break;
       case lxToken:
          generateTokenExpression(writer, current, derivationScope/*, true*/);
          break;

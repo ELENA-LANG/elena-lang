@@ -245,7 +245,7 @@ struct _ModuleScope
 //   ref_t             refTemplateReference;
 //   ref_t             arrayTemplateReference;
 //   ref_t             argArrayTemplateReference;
-//   ref_t             closureTemplateReference;
+   ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
 //   ref_t             wrapReference;
 
@@ -288,7 +288,7 @@ struct _ModuleScope
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode,
                                  bool ignoreFields) = 0;
 
-//   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
+   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
@@ -363,7 +363,7 @@ struct _ModuleScope
       /*messageNameReference = */messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      charReference = realReference = 0;
-//      closureTemplateReference = refTemplateReference = 0;
+      closureTemplateReference = /*refTemplateReference = */0;
 //      lazyExprReference = extMessageReference = 0;
 //      arrayTemplateReference = 0;
 //      wrapReference = argArrayTemplateReference = 0;

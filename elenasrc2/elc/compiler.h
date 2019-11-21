@@ -835,17 +835,14 @@ private:
       InlineClassScope(ExprScope* owner, ref_t reference);
    };
 
-   _CompilerLogic*  _logic;
-
-   ByteCodeWriter   _writer;
-
-//   MessageMap     _operators;                        // list of operators
-//
-//   int            _optFlag;
+   _CompilerLogic*   _logic;
+   ByteCodeWriter    _writer;
+   MessageMap        _operators;                        // list of operators
 
    // optimization rules
-   TransformTape _rules;
-   SyntaxTrie    _sourceRules;
+//   int            _optFlag;
+   TransformTape     _rules;
+   SyntaxTrie        _sourceRules;
 
    // optmimization routines
    bool applyRules(CommandTape& tape);
@@ -942,7 +939,7 @@ private:
 //   bool isTemplateParameterDeclared(SNode node, Scope& scope);
 //
 //   ref_t resolveVariadicMessage(Scope& scope, ref_t message);
-//   ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
+   ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
 //   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
 //                                     bool withExtension, int& stackSafeAttr);
 ////   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
@@ -986,12 +983,12 @@ private:
 //
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode, int operator_id);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode);
+   ObjectInfo compileOperator(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand);
 //   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-//   void compileBranchingOperand(SyntaxWriter& writer, SNode roperandNode, CodeScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
-//   ObjectInfo compileBranchingOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ObjectInfo target, EAttr mode, int operator_id);
-//
+   void compileBranchingOperand(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
+   ObjectInfo compileBranchingOperator(SNode roperand, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
+
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
 
@@ -1054,11 +1051,11 @@ private:
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, /*ref_t& elementRef, */bool declarationMode);
    void declareArgumentList(SNode node, MethodScope& scope/*, bool withoutWeakMessages*/, bool declarationMode);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
-//   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
-//
+   /*bool*/void declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
+
 //////   void declareSingletonClass(SNode node, ClassScope& scope);
-//
-//   void compileActionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope);
+
+   void compileActionMethod(SNode member, MethodScope& scope);
 //   void compileExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope, bool lazyMode);
 //   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
@@ -1088,7 +1085,7 @@ private:
 //   void compilePreloadedCode(_ModuleScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
-//   void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
+   void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
    void compileNestedVMT(SNode& node, InlineClassScope& scope);
 
    void compileVMT(SNode node, ClassScope& scope, bool exclusiveMode = false, bool ignoreAutoMultimethods = false);

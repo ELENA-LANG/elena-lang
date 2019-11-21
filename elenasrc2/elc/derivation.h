@@ -184,7 +184,7 @@ class DerivationWriter : public _DerivationWriter
    void generateExpressionNode(SyntaxWriter& writer, SNode& current, bool& first/*, bool& expressionExpected*/, Scope& derivationScope);
 //   void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
-//   void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
+   void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
    void generateIdentifier(SyntaxWriter& writer, SNode current/*, Scope& derivationScope*/);
    void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 
