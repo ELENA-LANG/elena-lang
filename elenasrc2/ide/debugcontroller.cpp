@@ -1357,86 +1357,86 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
       DebugLineInfo* info = seekClassInfo(selfPtr, className, flags, classPtr);
       if (info) {
          int type = info->addresses.symbol.flags & elDebugMask;
-         if (type==elDebugLiteral) {
-            char value[DEBUG_MAX_STR_LENGTH + 1];
-            int length = 0;
-            getValue(selfPtr - 8, (char*)&length, 4);
+         //if (type==elDebugLiteral) {
+         //   char value[DEBUG_MAX_STR_LENGTH + 1];
+         //   int length = 0;
+         //   getValue(selfPtr - 8, (char*)&length, 4);
 
-            length &= 0xFFFFF;
+         //   length &= 0xFFFFF;
 
-            if (length > DEBUG_MAX_STR_LENGTH) {
-               length = DEBUG_MAX_STR_LENGTH;
-            }
-            getValue(selfPtr, value, length);
-            value[length] = 0;
-            watch->write(this, value);
-         }
-         else if (type == elDebugWideLiteral) {
-            wide_c value[DEBUG_MAX_STR_LENGTH + 1];
-            int length = 0;
-            getValue(selfPtr - 8, (char*)&length, 4);
+         //   if (length > DEBUG_MAX_STR_LENGTH) {
+         //      length = DEBUG_MAX_STR_LENGTH;
+         //   }
+         //   getValue(selfPtr, value, length);
+         //   value[length] = 0;
+         //   watch->write(this, value);
+         //}
+         //else if (type == elDebugWideLiteral) {
+         //   wide_c value[DEBUG_MAX_STR_LENGTH + 1];
+         //   int length = 0;
+         //   getValue(selfPtr - 8, (char*)&length, 4);
 
-            length &= 0xFFFFF;
-            length >>= 1;
+         //   length &= 0xFFFFF;
+         //   length >>= 1;
 
-            if (length > DEBUG_MAX_STR_LENGTH) {
-               length = DEBUG_MAX_STR_LENGTH;
-            }
-            getValue(selfPtr, value, length);
-            value[length] = 0;
-            watch->write(this, value);
-         }
-         else if (type == elDebugDWORD || type == elDebugSubject) {
-            char value[4];
-            getValue(selfPtr, value, 4);
+         //   if (length > DEBUG_MAX_STR_LENGTH) {
+         //      length = DEBUG_MAX_STR_LENGTH;
+         //   }
+         //   getValue(selfPtr, value, length);
+         //   value[length] = 0;
+         //   watch->write(this, value);
+         //}
+         //else if (type == elDebugDWORD || type == elDebugSubject) {
+         //   char value[4];
+         //   getValue(selfPtr, value, 4);
 
-            watch->write(this, *(int*)value);
-         }
-         else if (type == elDebugMessage) {
-            char value[4];
-            getValue(selfPtr, value, 4);
+         //   watch->write(this, *(int*)value);
+         //}
+         //else if (type == elDebugMessage) {
+         //   char value[4];
+         //   getValue(selfPtr, value, 4);
 
-            readMessage(watch, selfPtr, *(int*)value);
-         }
-         else if (type==elDebugReal64) {
-            char value[8];
-            getValue(selfPtr, value, 8);
+         //   readMessage(watch, selfPtr, *(int*)value);
+         //}
+         //else if (type==elDebugReal64) {
+         //   char value[8];
+         //   getValue(selfPtr, value, 8);
 
-            watch->write(this, *(double*)value);
-         }
-         else if (type==elDebugQWORD) {
-            char value[8];
-            getValue(selfPtr, value, 8);
+         //   watch->write(this, *(double*)value);
+         //}
+         //else if (type==elDebugQWORD) {
+         //   char value[8];
+         //   getValue(selfPtr, value, 8);
 
-            watch->write(this, *(long long*)value);
-         }
-         else if (type==elDebugArray) {
-            int list[DEBUG_MAX_LIST_LENGTH];
-            int length = 0;
+         //   watch->write(this, *(long long*)value);
+         //}
+         //else if (type==elDebugArray) {
+         //   int list[DEBUG_MAX_LIST_LENGTH];
+         //   int length = 0;
 
-            // get array size
-            getValue(selfPtr - 8, (char*)&length, 4);
-            if (length == 0x800000)
-               length = 0;
+         //   // get array size
+         //   getValue(selfPtr - 8, (char*)&length, 4);
+         //   if (length == 0x800000)
+         //      length = 0;
 
-            if (length > sizeof(list))
-               length = sizeof(list);
+         //   if (length > sizeof(list))
+         //      length = sizeof(list);
 
-            getValue(selfPtr, (char*)list, length);
+         //   getValue(selfPtr, (char*)list, length);
 
-            length >>= 2;
-            readList(watch, list, length);
-         }
-         else if (type==elDebugBytes) {
-            readByteArray(watch, selfPtr, NULL);
-         }
-         else if (type==elDebugShorts) {
-            readShortArray(watch, selfPtr, NULL);
-         }
-         else if (type == elDebugIntegers) {
-            readIntArray(watch, selfPtr, NULL);
-         }
-         else if (className.compare("system'nil")) {
+         //   length >>= 2;
+         //   readList(watch, list, length);
+         //}
+         //else if (type==elDebugBytes) {
+         //   readByteArray(watch, selfPtr, NULL);
+         //}
+         //else if (type==elDebugShorts) {
+         //   readShortArray(watch, selfPtr, NULL);
+         //}
+         //else if (type == elDebugIntegers) {
+         //   readIntArray(watch, selfPtr, NULL);
+         //}
+         /*else */if (className.compare("system'nil")) {
             watch->write(this, "<nil>");
          }
          else readFields(watch, info, selfPtr);

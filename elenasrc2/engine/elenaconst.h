@@ -318,8 +318,8 @@ namespace _ELENA_
 
 //
 //   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
-//
-//   constexpr int elDebugMask           = 0x001F0000;
+
+   constexpr int elDebugMask           = 0x001F0000;
 //   constexpr int elDebugDWORD          = 0x00010000;
 //   constexpr int elDebugReal64         = 0x00020000;
 //   constexpr int elDebugLiteral        = 0x00030000;

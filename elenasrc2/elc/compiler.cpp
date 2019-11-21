@@ -4478,6 +4478,10 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, EAttr m
          ref_t dummyRef = 0;
          // HOTFIX : recognize property constant
          IdentifierString name(ownerScope.module->resolveReference(ownerScope.getClassRefId()));
+         if (name.ident().endsWith(CLASSCLASS_POSTFIX)) {
+            name.truncate(name.Length() - getlength(CLASSCLASS_POSTFIX));
+         }
+
          name.append('#');
          name.append(ownerScope.module->resolveAction(getAction(ownerMeth->message), dummyRef));
 
