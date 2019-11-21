@@ -319,10 +319,10 @@ private:
       // imported namespaces
       IdentifierList    importedNs;
       ForwardMap        forwards;       // forward declarations
-//
-//      // symbol hints
-//      Map<ref_t, ref_t> constantHints;
-//
+
+      // symbol hints
+      Map<ref_t, ref_t> constantHints;
+
 //      // extensions
 //      ExtensionMap      extensions;
 //      ExtensionTmplMap  extensionTemplates;
@@ -346,10 +346,10 @@ private:
          else return Scope::getScope(level);
       }
 
-//      void defineConstantSymbol(ref_t reference, ref_t classReference)
-//      {
-//         constantHints.add(reference, classReference);
-//      }
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       virtual void raiseError(const char* message)
       {
@@ -519,7 +519,8 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-//      bool  constant;
+      bool  constant;
+      bool  singleton;
 //      bool  staticOne;
 //      bool  preloaded;
       ref_t outputRef;
@@ -892,7 +893,7 @@ private:
    ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, bool declarationMode);
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
 
-   ref_t resolveConstant(ObjectInfo retVal);
+   ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
 
 //   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
@@ -1110,7 +1111,7 @@ private:
    void compileClassClassImplementation(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SNode node, SymbolScope& scope);
-//   bool compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);
+   bool compileSymbolConstant(/*SNode node, */SymbolScope& scope, ObjectInfo retVal/*, bool accumulatorMode, ref_t accumulatorRef*/);
 //   void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
 //   //void compileMetaCategory(SNode node, NamespaceScope& scope);
 //
@@ -1129,7 +1130,7 @@ private:
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope);
-//   void analizeSymbolTree(SNode node, Scope& scope);
+   void analizeSymbolTree(SNode node, Scope& scope);
 //   void analizeMessageParameters(SNode node);
 //
 //   void defineEmbeddableAttributes(ClassScope& scope, SNode node);

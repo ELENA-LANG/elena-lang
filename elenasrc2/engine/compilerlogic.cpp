@@ -1926,13 +1926,13 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    }
 }
 
-bool CompilerLogic :: validateSymbolAttribute(int attrValue, /*bool& constant, bool& staticOne, bool& preloadedOne, */Visibility& visibility)
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, /*bool& staticOne, bool& preloadedOne, */Visibility& visibility)
 {
-//   if (attrValue == (int)V_CONST) {
-//      constant = true;
-//
-//      return true;
-//   }
+   if (attrValue == (int)V_CONST) {
+      constant = true;
+
+      return true;
+   }
 //   else if (attrValue == (int)V_SYMBOLEXPR) {
 //      return true;
 //   }
@@ -1946,7 +1946,7 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, /*bool& constant, b
 //
 //      return true;
 //   }
-   /*else */if (attrValue == (int)V_PUBLIC) {
+   else if (attrValue == (int)V_PUBLIC) {
       visibility = Visibility::Public;
 
       return true;
@@ -1960,8 +1960,8 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, /*bool& constant, b
       visibility = Visibility::Internal;
 
       return true;
-   }
-   else return false;
+   }   
+   else return attrValue == 0;
 }
 
 //////bool CompilerLogic :: validateWarningAttribute(int& attrValue)

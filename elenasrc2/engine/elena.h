@@ -610,29 +610,36 @@ struct ClassInfo
 
 struct SymbolExpressionInfo
 {
+   enum class Type : int
+   {
+      Normal = 0,
+      Constant = 1,
+      Singleton = 2
+   };
+
    ref_t expressionClassRef;
 //   ref_t listRef;
-//   bool  constant;
+   Type  type;
 
    void save(StreamWriter* writer)
    {
       //writer->writeDWord(listRef);
-      //writer->writeDWord(constant ? -1: 0);
+      writer->writeDWord((int)type);
       writer->writeDWord(expressionClassRef);
    }
 
    void load(StreamReader* reader)
    {
       //listRef = reader->getDWord();
-      //constant = (reader->getDWord() != 0);
+      type = (Type)reader->getDWord();
       expressionClassRef = reader->getDWord();
    }
 
    SymbolExpressionInfo()
    {
-//      expressionClassRef = 0;
+      expressionClassRef = 0;
 //      listRef = 0;
-//      constant = false;
+      type = Type::Normal;
    }
 };
 

@@ -220,7 +220,7 @@ inline SNode findParent(SNode node, LexicalType type1, LexicalType type2)
 // --- Compiler::NamespaceScope ---
 
 Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope)
-   : Scope(moduleScope), /*constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), */importedNs(NULL, freestr)//, extensionTemplates(NULL, freestr)
+   : Scope(moduleScope), constantHints(INVALID_REF), /*extensions(Pair<ref_t, ref_t>(0, 0)), */importedNs(NULL, freestr)//, extensionTemplates(NULL, freestr)
 {
    // by default - private visibility
    defaultVisibility = Visibility::Private;
@@ -236,7 +236,7 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope)
 }
 
 Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent)
-   : Scope(parent)/*, constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0))*/, importedNs(NULL, freestr)//, extensionTemplates(NULL, freestr)
+   : Scope(parent), constantHints(INVALID_REF), /*extensions(Pair<ref_t, ref_t>(0, 0)), */importedNs(NULL, freestr)//, extensionTemplates(NULL, freestr)
 {
    defaultVisibility = parent->defaultVisibility;
    sourcePath.copy(parent->sourcePath);
@@ -387,10 +387,10 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
    if (reference == 0) {
       return ObjectInfo();
    }
-//   // check if symbol should be treated like constant one
-//   else if (constantHints.exist(reference)) {
-//      return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
-//   }
+   // check if symbol should be treated like constant one
+   else if (constantHints.exist(reference)) {
+      return ObjectInfo(okConstantSymbol, reference, constantHints.get(reference));
+   }
    else if (checkState) {
       ClassInfo info;
       // check if the object can be treated like a constant object
@@ -416,18 +416,23 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
          // check if the object can be treated like a constant object
          r = moduleScope->loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
          if (r) {
-            //// if it is a constant
-            //if (symbolInfo.constant) {
-            //   ref_t classRef = symbolInfo.expressionClassRef;
+            ref_t outputRef = symbolInfo.expressionClassRef;
 
-            //   if (symbolInfo.listRef != 0) {
-            //      return ObjectInfo(okArrayConst, symbolInfo.listRef, classRef);
-            //   }
-            //   else return ObjectInfo(okConstantSymbol, reference, classRef);
-            //}
+            // if it is a constant
+            if (symbolInfo.type == SymbolExpressionInfo::Type::Constant) {
+               ref_t classRef = symbolInfo.expressionClassRef;
+
+               /*if (symbolInfo.listRef != 0) {
+                  return ObjectInfo(okArrayConst, symbolInfo.listRef, classRef);
+               }
+               else */return ObjectInfo(okConstantSymbol, reference, outputRef);
+            }
+            else if (symbolInfo.type == SymbolExpressionInfo::Type::Singleton) {
+               return ObjectInfo(okSingleton, outputRef, outputRef);
+            }
             // if it is a typed symbol
-            /*else */if (symbolInfo.expressionClassRef != 0) {
-               return ObjectInfo(okSymbol, reference, symbolInfo.expressionClassRef);
+            else if (outputRef != 0) {
+               return ObjectInfo(okSymbol, reference, outputRef);
             }
          }
       }
@@ -553,7 +558,8 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Vi
    : SourceScope(parent, reference, visibility)
 {
    outputRef = 0;
-   //constant = false;
+   constant = false;
+   singleton = false;
    //staticOne = false;
    //preloaded = false;
 }
@@ -567,7 +573,12 @@ void Compiler::SymbolScope :: save()
 {
    SymbolExpressionInfo info;
    info.expressionClassRef = outputRef;
-//   info.constant = constant;
+   if (singleton) {
+      info.type = SymbolExpressionInfo::Type::Singleton;
+   }
+   else if (constant) {
+      info.type = SymbolExpressionInfo::Type::Constant;
+   }   
 
    // save class meta data
    MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
@@ -1761,7 +1772,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value/*, scope.constant, scope.staticOne, scope.preloaded*/, scope.visibility)) {
+         if (!_logic->validateSymbolAttribute(value, scope.constant, /*scope.staticOne, scope.preloaded, */scope.visibility)) {
             current.setArgument(0); // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
@@ -6914,12 +6925,13 @@ void Compiler :: endMethod(SNode node, MethodScope& scope, CodeScope& codeScope,
 //   writer.closeNode();
 }
 
-ref_t Compiler :: resolveConstant(ObjectInfo retVal)
+ref_t Compiler :: resolveConstant(ObjectInfo retVal, ref_t& parentRef)
 {
    if (retVal.kind == okSingleton) {
+      parentRef = retVal.param;
+
       return retVal.param;
    }
-
    //   ref_t parentRef = 0;
    //
    //   _Module* module = scope.moduleScope->module;
@@ -7093,7 +7105,8 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
    if (scope.constMode) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
 
-      ref_t constRef = resolveConstant(retVal);
+      ref_t parentRef = 0;
+      ref_t constRef = resolveConstant(retVal, parentRef);
       if (constRef) {
          classScope->addAttribute(scope.message, maConstant, constRef);
 
@@ -8839,23 +8852,30 @@ void Compiler :: compileClassImplementation(/*SyntaxTree& expressionTree, */SNod
 
 void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 {
-//   bool publicAttr = false;
    declareSymbolAttributes(node, scope, true);
-//   if (publicAttr) {
-//      //scope.
-//   }
-//
+
 //   if (scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == nullptr) {
       scope.save();
 //   }
 }
 
-//bool Compiler :: compileSymbolConstant(SNode node, SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef)
-//{
-//   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//
-//   ref_t parentRef = 0;
-//
+bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, ObjectInfo retVal/*, bool accumulatorMode, ref_t accumulatorRef*/)
+{
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
+
+   ref_t parentRef = 0;
+   ref_t classRef = resolveConstant(retVal,  parentRef);
+   if (classRef) {
+      if (retVal.kind == okSingleton) {
+         // HOTFIX : singleton should be treated differently
+         scope.singleton = true;
+      }
+
+      nsScope->defineConstantSymbol(classRef, parentRef);
+
+      return true;
+   }
+
 //   _Module* module = scope.moduleScope->module;
 //   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 //
@@ -8967,11 +8987,10 @@ void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 //      }
 //      else nsScope->defineConstantSymbol(scope.reference, parentRef);
 //   }
-//
-//   return true;
-//}
-//
-//
+
+   return false;
+}
+
 //void Compiler :: compileSymbolAttribtes(_ModuleScope& moduleScope, ref_t reference, bool publicAttr)
 //{
 //   ClassInfo::CategoryInfoMap mattributes;
@@ -9008,25 +9027,26 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
    if (scope.outputRef == 0) {
       if (resolveObjectReference(*scope.moduleScope, retVal) != 0) {
          // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
-         scope.outputRef = resolveObjectReference(*scope.moduleScope, retVal);
-         scope.save();
+         scope.outputRef = resolveObjectReference(*scope.moduleScope, retVal);         
       }
    }
    else convertObject(node, exprScope, scope.outputRef, retVal, EAttr::eaNone);
-//
-//   analizeSymbolTree(expressionTree.readRoot(), scope);
-//   node.refresh();
-//
-//   // create constant if required
-//   if (scope.constant) {
+
+   expression.refresh();
+   analizeSymbolTree(expression, scope);
+   
+   // create constant if required
+   if (scope.constant) {
 //      // static symbol cannot be constant
 //      if (isStatic)
 //         scope.raiseError(errInvalidOperation, expression);
-//
-//      if (!compileSymbolConstant(expressionTree.readRoot(), scope, retVal, false, 0))
-//         scope.raiseError(errInvalidOperation, expression);
-//   }
-//
+
+      if (!compileSymbolConstant(/*expressionTree.readRoot(), */scope, retVal/*, false, 0*/))
+         scope.raiseError(errInvalidOperation, expression);
+   }
+
+   scope.save();
+
 //   if (scope.preloaded) {
 //      compilePreloadedCode(scope);
 //   }
@@ -9983,20 +10003,13 @@ void Compiler :: analizeClassTree(SNode node, ClassScope& scope)
    }
 }
 
-//void Compiler :: analizeSymbolTree(SNode node, Scope& scope)
-//{
-//   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExprMask)) {
-//         analizeCodePatterns(current, *nsScope);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+void Compiler :: analizeSymbolTree(SNode node, Scope& scope)
+{
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
+
+   analizeCodePatterns(node, *nsScope);
+}
+
 //void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode methodNode)
 //{
 //   // Optimization : subject'get = self / $self

@@ -17,6 +17,7 @@
 [-] #489 : Creating a variadic argument enumerator
 [-] #490 : Passing a variadic argument list in sub call
 [-] #491 : The message target is corrupt when a variadic argument is used in sub call 
+[-] #381 : const static property
 
 ***************************************************************
                              What's New in 4.1.1
