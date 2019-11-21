@@ -40,12 +40,12 @@ constexpr auto HINT_NEWOP           = EAttr::eaNewOp;
 constexpr auto HINT_SILENT          = EAttr::eaSilent;
 constexpr auto HINT_ROOTSYMBOL      = EAttr::eaRootSymbol;
 constexpr auto HINT_ROOT            = EAttr::eaRoot;
+constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
 
 //constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
 //constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
 //constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
-//constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
 //constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 //constexpr auto HINT_LOOP            = EAttr::eaLoop;
 //constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
@@ -3155,11 +3155,10 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
 
 inline EAttr defineBranchingOperandMode(SNode node)
 {
-   EAttr mode = /*HINT_SUBCODE_CLOSURE*/EAttr::eaNone;
+   EAttr mode = /*HINT_SUBCODE_CLOSURE | */HINT_NODEBUGINFO;
    if (node.firstChild() != lxCode) {
-      //   mode = mode | HINT_INLINE_EXPR;
+      mode = mode | HINT_INLINE_EXPR;
    }
-   else mode = mode | HINT_NODEBUGINFO;
 
    return mode;
 }
@@ -4175,17 +4174,11 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //   return lazyExpression;
 }
 
-void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode)
+void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EAttr mode)
 {
-//   SyntaxTree expressionTree;
-//   SyntaxWriter writer(expressionTree);
-//
-//   writer.newNode(lxClass, scope.reference);
-   //node.set(lxClass, scope.reference);
-
    MethodScope methodScope(&scope);
    /*bool lazyExpression = */declareActionScope(scope, argNode, methodScope, mode);
-//   bool inlineExpression = EAttrs::test(mode, HINT_INLINE_EXPR);
+   bool inlineExpression = EAttrs::test(mode, HINT_INLINE_EXPR);
 //   methodScope.functionMode = true;
 //
 //   ref_t multiMethod = resolveMultimethod(scope, methodScope.message);
@@ -4193,12 +4186,21 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, EAt
 //   // HOTFIX : if the closure emulates code brackets
 //   if (EAttrs::test(mode, HINT_SUBCODE_CLOSURE))
 //      methodScope.subCodeMode = true;
-//
-//   // if it is single expression
-//   if (inlineExpression || lazyExpression) {
-//      compileExpressionMethod(writer, node, methodScope, lazyExpression);
-//   }
-//   else {
+
+   // if it is single expression
+   if (inlineExpression/* || lazyExpression*/) {
+      //inject a method
+      node.injectAndReplaceNode(lxClass);
+      SNode current = node.firstChild();
+      current.injectAndReplaceNode(lxClassMethod, methodScope.message);
+
+      compileExpressionMethod(current, methodScope/*, lazyExpression*/);
+   }
+   else {
+      // inject a method
+      SNode current = node.findChild(lxCode, lxReturning);
+      current.injectAndReplaceNode(lxClassMethod, methodScope.message);
+
       initialize(scope, methodScope);
 //      methodScope.closureMode = true;
 //
@@ -4206,12 +4208,8 @@ void Compiler :: compileAction(SNode node, ClassScope& scope, SNode argNode, EAt
 //         // if it is a strong-typed closure, output should be defined by the closure
 //         methodScope.outputRef = V_AUTO;
 
-      // inject a method
-      SNode current = node.findChild(lxCode, lxReturning);
-      current.injectAndReplaceNode(lxClassMethod, methodScope.message);
-
       compileActionMethod(current, methodScope);
-//   }
+   }
 
 //   if (methodScope.outputRef == V_AUTO)
 //      // if the output was not defined - ignore it
@@ -4509,10 +4507,10 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, EAttr m
 
    // if it is a lazy expression / multi-statement closure without parameters
    SNode argNode = node.firstChild();
-//   if (EAttrs::testany(mode, HINT_LAZY_EXPR | HINT_INLINE_EXPR)) {
-//      compileAction(node, scope, SNode(), mode);
-//   }
-   /*else */if (argNode == lxCode) {
+   if (EAttrs::testany(mode, /*HINT_LAZY_EXPR | */HINT_INLINE_EXPR)) {
+      compileAction(node, scope, SNode(), mode);
+   }
+   else if (argNode == lxCode) {
       compileAction(node, scope, SNode(), /*singleton ? mode | HINT_SINGLETON : */mode);
    }
 //   else if (node.existChild(lxCode, lxReturning)) {
@@ -6567,33 +6565,30 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
 //   writer.appendNode(lxReserved, scope.reserved);
 }
 
-//void Compiler :: compileExpressionMethod(SyntaxWriter& writer, SNode node, MethodScope& scope, bool lazyMode)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   declareProcedureDebugInfo(writer, node, scope, false, false);
-//
-//   CodeScope codeScope(&scope);
-//
-//   writer.newNode(lxNewFrame);
-//
-//   // new stack frame
-//   // stack already contains previous $self value
-//   codeScope.level++;
-//
+void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope/*, bool lazyMode*/)
+{
+   declareProcedureDebugInfo(node, scope, false/*, false*/);
+
+   CodeScope codeScope(&scope);
+
+   SNode current = node.findChild(lxExpression);
+   current.injectAndReplaceNode(lxNewFrame);
+   current = current.firstChild();
+
+   // new stack frame
+   // stack already contains previous $self value
+   codeScope.level++;
+   int preallocated = codeScope.level;
+
 //   if (lazyMode) {
 //      compileRetExpression(writer, node, codeScope, EAttr::eaNone);
 //   }
-//   else compileRetExpression(writer, node, codeScope, EAttr::eaNone);
-//
-//   writer.closeNode();
-//
-//   writer.appendNode(lxParamCount, scope.parameters.Count() + 1);
+   /*else */compileRetExpression(current, codeScope, EAttr::eaNone);
+
+   node.insertNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
+   node.insertNode(lxArgCount, getArgCount(scope.message)/* + scope.rootToFree*/);
 //   writer.appendNode(lxReserved, scope.reserved);
-//   writer.appendNode(lxAllocated, codeScope.level - 1);  // allocate the space for the local variables excluding "this" one
-//
-//   writer.closeNode();
-//}
+}
 
 void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 {

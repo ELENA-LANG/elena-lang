@@ -2,8 +2,6 @@
 In development:
 ------         
               dev
-                * branching operator : external implementation - expr 
-
                 * branching operator : native implementation
 
                 * template code : declaration, using

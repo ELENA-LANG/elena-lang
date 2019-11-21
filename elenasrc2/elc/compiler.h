@@ -1056,7 +1056,7 @@ private:
 //////   void declareSingletonClass(SNode node, ClassScope& scope);
 
    void compileActionMethod(SNode member, MethodScope& scope);
-//   void compileExpressionMethod(SyntaxWriter& writer, SNode member, MethodScope& scope, bool lazyMode);
+   void compileExpressionMethod(SNode member, MethodScope& scope/*, bool lazyMode*/);
 //   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void beginMethod(SNode node, MethodScope& scope);
@@ -1085,7 +1085,7 @@ private:
 //   void compilePreloadedCode(_ModuleScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
-   void compileAction(SNode node, ClassScope& scope, SNode argNode, EAttr mode);
+   void compileAction(SNode& node, ClassScope& scope, SNode argNode, EAttr mode);
    void compileNestedVMT(SNode& node, InlineClassScope& scope);
 
    void compileVMT(SNode node, ClassScope& scope, bool exclusiveMode = false, bool ignoreAutoMultimethods = false);
