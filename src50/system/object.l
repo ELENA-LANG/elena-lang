@@ -40,9 +40,9 @@ public interface BoolValue
         /// Executes the action
         if(trueAction) = trueAction();
     
-//        /// Executes then-action
-//        if(trueAction,falseAction) = trueAction();
-//    
+        /// Executes then-action
+        if(trueAction,falseAction) = trueAction();
+    
 //        /// Always returns nil.
 //        ifnot(trueAction) = nil;
 //    
@@ -85,9 +85,9 @@ public interface BoolValue
         /// Always returns nil
         if(trueAction) = nil;
         
-//        /// Executes else-action
-//        if(trueAction,falseAction) = falseAction();
-//    
+        /// Executes else-action
+        if(trueAction,falseAction) = falseAction();
+    
 //        /// Executes the action
 //        ifnot(action) = action();
 //    
@@ -135,8 +135,8 @@ public interface BoolValue
 
     abstract if(trueAction) {}
 
-//    abstract if(trueAction,falseAction) {}
-//
+    abstract if(trueAction,falseAction) {}
+
 //    abstract ifnot(action) {}
 //
 //    abstract iif(object trueVal, object falseVal) {}

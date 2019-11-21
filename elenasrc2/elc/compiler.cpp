@@ -3156,9 +3156,10 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
 inline EAttr defineBranchingOperandMode(SNode node)
 {
    EAttr mode = /*HINT_SUBCODE_CLOSURE*/EAttr::eaNone;
-   //if (node.firstChild() != lxCode) {
-   //   mode = mode | HINT_INLINE_EXPR;
-   //}
+   if (node.firstChild() != lxCode) {
+      //   mode = mode | HINT_INLINE_EXPR;
+   }
+   else mode = mode | HINT_NODEBUGINFO;
 
    return mode;
 }
@@ -3204,7 +3205,7 @@ void Compiler :: compileBranchingOperand(SNode roperandNode, ExprScope& scope, E
          compileClosure(elseNode, scope, defineBranchingOperandMode(elseNode));
       }
 
-      retVal = compileMessage(roperandNode, scope, loperand, message, EAttr::eaNone/*, 0*/);
+      retVal = compileMessage(roperandNode.parentNode(), scope, loperand, message, EAttr::eaNone/*, 0*/);
 
 //      if (loopMode) {
 //         writer.inject(lxLooping);
@@ -4373,7 +4374,7 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
 //   else return reference;
 //}
 
-ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope)
+ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode)
 {
    ref_t closureRef = scope.reference;
 //   if (test(scope.info.header.flags, elVirtualVMT))
@@ -4381,7 +4382,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
 
    if (test(scope.info.header.flags, elStateless)) {
       ObjectInfo retVal = ObjectInfo(okSingleton, closureRef, closureRef);
-      recognizeTerminal(node, retVal, ownerScope, EAttr::eaNone);
+      recognizeTerminal(node, retVal, ownerScope, mode);
 
       // if it is a stateless class
       return retVal;
@@ -4530,7 +4531,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, EAttr m
    // if it is a nested class
    else compileNestedVMT(node, scope);   
 
-   return compileClosure(node, ownerScope, scope);
+   return compileClosure(node, ownerScope, scope, mode);
 }
 
 //ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
@@ -5856,10 +5857,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    while (current != lxNone) {
       switch(current) {
          case lxExpression:
-//            writer.newNode(lxExpression);
-//            writer.appendNode(lxBreakpoint, dsStep);
             compileRootExpression(current, scope);
-//            writer.closeNode();
             break;
          case lxReturning:
          {

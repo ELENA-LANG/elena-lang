@@ -2,9 +2,6 @@
 In development:
 ------         
               dev
-                * make sure the function target is not passed to the stack, and is not freed from it
-
-                * branching operator : external implementation - code 
                 * branching operator : external implementation - expr 
 
                 * branching operator : native implementation

@@ -962,7 +962,7 @@ private:
    void declareVariable(SNode& node, CodeScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/);
 
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);
-   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope);
+   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
 //   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ObjectInfo target);
 //
 //   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
