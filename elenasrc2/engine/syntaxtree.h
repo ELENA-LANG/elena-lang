@@ -97,6 +97,9 @@ enum LexicalType
    lxAssigning                = 0x058120,   // an assigning expression, arg - size
    lxReturning                = 0x059130,
    lxImplicitJump             = 0x058140,
+   lxBranching                = 0x058150,   // branch expression      
+   lxIf                       = 0x058160,   // optional arg - reference
+   lxElse                     = 0x058161,   // optional arg - reference
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -189,7 +192,6 @@ enum LexicalType
 //   lxImplicitCall             = 0x00C00B,
 //   lxTrying                   = 0x00C00C,   // try-catch expression
 //   lxAlt                      = 0x00C00D,   // alt-catch expression
-//   lxBranching                = 0x00C00F,   // branch expression      
 //   lxSwitching                = 0x00C010,
 //   lxLooping                  = 0x00C011,
 //   lxInlineArgCall            = 0x10C012,   // calling a message with the unpacked parameter list
@@ -203,8 +205,6 @@ enum LexicalType
 //   lxIfNotN                   = 0x00C01C,   // arg - value
 //   lxLessN                    = 0x00C01D,   // arg - value
 //   lxNotLessN                 = 0x00C01E,   // arg - value
-//   lxIf                       = 0x00C01F,   // optional arg - reference
-//   lxElse                     = 0x00C020,   // optional arg - reference
 //   lxOption                   = 0x00C021,
 //   lxFieldExpression          = 0x00C022,
 //   lxExternFrame              = 0x004023,

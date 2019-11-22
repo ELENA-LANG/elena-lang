@@ -260,7 +260,7 @@ enum ByteCode
 //   bcIfM             = 0xF8,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcElseM           = 0xF9,   // though in bytecode section they saved in the correct order (jump arg, label)
 //   bcIfR             = 0xFA,
-//   bcElseR           = 0xFB,   
+   bcElseR           = 0xFB,   
 //   bcIfN             = 0xFC,
 //   bcElseN           = 0xFD,   
    bcCallRM          = 0xFE,
@@ -412,7 +412,7 @@ public:
       switch(code) {
          case bcJump:
          //case bcIfR:
-         //case bcElseR:
+         case bcElseR:
          //case bcIfB:
          //case bcElseB:
          //case bcIf:
@@ -467,7 +467,7 @@ public:
    {
       switch(code) {
          //case bcIfR:
-         //case bcElseR:
+         case bcElseR:
          //case bcSelectR:
          //   return true;
          default:

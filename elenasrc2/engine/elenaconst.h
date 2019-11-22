@@ -522,9 +522,9 @@ namespace _ELENA_
    constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
 //   constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
 //   constexpr auto ARGARRAYTEMPLATE_FORWARD= "$varray";
-//   constexpr auto BOOL_FORWARD            = "$bool";
-//   constexpr auto TRUE_FORWARD            = "$true";
-//   constexpr auto FALSE_FORWARD           = "$false";
+   constexpr auto BOOL_FORWARD            = "$bool";
+   constexpr auto TRUE_FORWARD            = "$true";
+   constexpr auto FALSE_FORWARD           = "$false";
 //   constexpr auto WRAP_FORWARD            = "$wrap";
 
    constexpr auto PROGRAM_ENTRY           = "$program";                     // the program entry

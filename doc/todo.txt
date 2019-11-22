@@ -2,9 +2,11 @@
 In development:
 ------         
               dev
-                * branching operator : native implementation
-
                 * template code : declaration, using
+
+                * type alias
+                * message parameters : type, template type, paramter in template
+                * multidispatching : compile-time, run-time
 
                 * resend body
                 * call parent constructor
@@ -17,14 +19,11 @@ In development:
                 * templates based on another template
                 * template variables
 
-                * type alias
                 * variable : auto, template
                 * field : type, template type
 
                 * type should be only one in the token expression - test: int long r := 0;
 
-                * message parameters : type, template type, paramter in template
-                * multidispatching : compile-time, run-time
 
                 * template : inherting another template
                 * template based class, import template (multi-inheritance)
@@ -203,6 +202,7 @@ In development:
                 * it should be possible to turn-off optimization (opL1)
                 * protected default constructor - the class cannot be created using default constructor
                 * test : branching external implementation : returning a value from closure 
+                * sub code - try to reuse stack (e.g. two sub block in two separate statements may reuse the stack)
 
               dev1
                 * write - Programming in ELENA : manual

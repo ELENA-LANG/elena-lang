@@ -351,28 +351,28 @@ void ByteCodeWriter :: allocateStack(CommandTape& tape, int count)
 //
 //   return end;
 //}
-//
-//void ByteCodeWriter :: declareThenBlock(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare then-end label
-//}
-//
-//void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare end label
-//   tape.newLabel();                  // declare else label
-//}
-//
-//void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
-//{
-//   //   jump end
-//   // labElse
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//
-//   //tape.write(bcResetStack);
-//}
-//
+
+void ByteCodeWriter :: declareThenBlock(CommandTape& tape)
+{
+   tape.newLabel();                  // declare then-end label
+}
+
+void ByteCodeWriter :: declareThenElseBlock(CommandTape& tape)
+{
+   tape.newLabel();                  // declare end label
+   tape.newLabel();                  // declare else label
+}
+
+void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
+{
+   //   jump end
+   // labElse
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+
+   //tape.write(bcResetStack);
+}
+
 //void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
 //{
 //   tape.newLabel();                  // declare end label
@@ -1329,20 +1329,20 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
 //   tape.write(bcNLoad);
 //   tape.write(bcNotGreaterN, baCurrentLabel, comparingRef);
 //}
-//
-//void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode, bool jumpToEnd)
-//{
-//   if (!referenceMode) {
-//      tape.write(bcNLoad);
-//      tape.write(bcElseN, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef);
-//   }
-//   // elser then-end, r
-//   else if (comparingRef == 0) {
-//      tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, 0);
-//   }
-//   else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
-//}
-//
+
+void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, /*bool referenceMode, */bool jumpToEnd)
+{
+   //if (!referenceMode) {
+   //   tape.write(bcNLoad);
+   //   tape.write(bcElseN, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef);
+   //}
+   // elser then-end, r
+   /*else */if (comparingRef == 0) {
+      tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, 0);
+   }
+   else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
+}
+
 //////void ByteCodeWriter :: throwCurrent(CommandTape& tape)
 //////{
 //////   // throw
@@ -1380,15 +1380,15 @@ void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
 //   tape.setLabel();
 //   tape.write(bcFreeStack, 3);
 //}
-//
-//void ByteCodeWriter :: endThenBlock(CommandTape& tape)
-//{
-//   // then-end:
-//   //  scopyf  branch-level
-//
-//   tape.setLabel();
-//}
-//
+
+void ByteCodeWriter :: endThenBlock(CommandTape& tape)
+{
+   // then-end:
+   //  scopyf  branch-level
+
+   tape.setLabel();
+}
+
 //void ByteCodeWriter :: endLoop(CommandTape& tape)
 //{
 //   tape.write(bcJump, baPreviousLabel);
@@ -2054,7 +2054,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //   scope.code->writeDWord(stackLevel);
          //   break;
          //case bcIfR:
-         //case bcElseR:
+         case bcElseR:
          //case bcIfB:
          //case bcElseB:
          //case bcIf:
@@ -5936,29 +5936,29 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //
 //   endSwitchBlock(tape);
 //}
-//
-//void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node node)
-//{
+
+void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
 //   bool switchBranching = node.argument == -1;
 //
 //   if (switchBranching) {
 //      // labels already declared in the case of switch
 //   }
-//   else if (node.existChild(lxElse)) {
-//      declareThenElseBlock(tape);
-//   }
-//   else declareThenBlock(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
-//         case lxIf:
+   /*else */if (node.existChild(lxElse)) {
+      declareThenElseBlock(tape);
+   }
+   else declareThenBlock(tape);
+
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxIf:
 //         case lxIfN:
-//            jumpIfNotEqual(tape, current.argument, current == lxIf);
-//
-//            //declareBlock(tape);
-//            generateCodeBlock(tape, current.findSubNode(lxCode));
-//            break;
+            jumpIfNotEqual(tape, current.argument/*, current == lxIf*/);
+
+            //declareBlock(tape);
+            generateCodeBlock(tape, current.findSubNode(lxCode), scope);
+            break;
 //         case lxIfNot:
 //         case lxIfNotN:
 //            jumpIfEqual(tape, current.argument, current == lxIfNot);
@@ -5990,28 +5990,28 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //            //declareBlock(tape);
 //            generateCodeBlock(tape, current.findSubNode(lxCode));
 //            break;
-//         case lxElse:
-//            declareElseBlock(tape);
-//
-//            //declareBlock(tape);
-//            generateCodeBlock(tape, current.findSubNode(lxCode));
-//            break;
-//         default:
+         case lxElse:
+            declareElseBlock(tape);
+
+            //declareBlock(tape);
+            generateCodeBlock(tape, current.findSubNode(lxCode), scope);
+            break;
+         default:
 //            if (test(current.type, lxObjectMask)) {
 //               //HOTFIX : breakpoint should be generated here for better debugging 
 //               declareBlock(tape);
-//               generateObject(tape, current, ACC_REQUIRED);
+               generateObject(tape, current, scope);
 //               declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 //            }
-//            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
+            break;
+      }
+
+      current = current.nextNode(lxObjectMask);
+   }
+
 //   if(!switchBranching)
-//      endThenBlock(tape);
-//}
+      endThenBlock(tape);
+}
 
 inline SNode goToNode(SNode current, LexicalType type)
 {
@@ -6271,9 +6271,10 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxCopying:
 //         generateCopying(tape, node, mode);
 //         break;
-//      case lxBranching:
-//         generateBranching(tape, node);
-//         break;
+      case lxBranching:
+         generateBranching(tape, node, scope);
+         scope.clear();
+         break;
 //      case lxSwitching:
 //         generateSwitching(tape, node);
 //         break;

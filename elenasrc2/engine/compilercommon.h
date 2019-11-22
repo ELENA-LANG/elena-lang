@@ -213,18 +213,18 @@ public:
 
 struct _ModuleScope
 {
-//   struct BranchingInfo
-//   {
-//      ref_t reference;
-//      ref_t trueRef;
-//      ref_t falseRef;
-//
-//      BranchingInfo()
-//      {
-//         reference = 0;
-//         trueRef = falseRef = 0;
-//      }
-//   };
+   struct BranchingInfo
+   {
+      ref_t reference;
+      ref_t trueRef;
+      ref_t falseRef;
+
+      BranchingInfo()
+      {
+         reference = 0;
+         trueRef = falseRef = 0;
+      }
+   };
 
    _ProjectManager*  project;
 
@@ -254,8 +254,8 @@ struct _ModuleScope
 //   ref_t             init_message;
    ref_t             constructor_message;
 
-//   // cached bool values
-//   BranchingInfo     branchingInfo;
+   // cached bool values
+   BranchingInfo     branchingInfo;
 
    // cached paths
    SymbolMap         savedPaths;
@@ -621,10 +621,10 @@ public:
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand) = 0;
-//
-//   // retrieve the branching operation type
-//   virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
-//
+
+   // retrieve the branching operation type
+   virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
+
 //   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info) = 0;
 //   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference) = 0;
 //

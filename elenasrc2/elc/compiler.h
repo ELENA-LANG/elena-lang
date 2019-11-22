@@ -748,7 +748,7 @@ private:
 
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
-//      CodeScope(CodeScope* parent);
+      CodeScope(CodeScope* parent);
    };
 
    struct ExprScope : public Scope
@@ -985,8 +985,8 @@ private:
 //   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode, int operator_id);
    ObjectInfo compileOperator(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand);
-//   void compileBranchingNodes(SyntaxWriter& writer, SNode loperandNode, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
-   void compileBranchingOperand(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
+   void compileBranchingNodes(SNode loperandNode, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
+   void compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
    ObjectInfo compileBranchingOperator(SNode roperand, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
 
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
@@ -1021,9 +1021,9 @@ private:
    ObjectInfo compileRootExpression(SNode node, CodeScope& scope);
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, EAttr mode);
 //   void compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-//   ObjectInfo compileSubCode(SyntaxWriter& writer, SNode thenNode, CodeScope& scope, bool branchingMode);
-//
+
+   ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode);
+
 //   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode/*, int mode*/);
 //   void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal, bool accumulatorMode);
 

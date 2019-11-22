@@ -487,21 +487,21 @@ int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference,
 ////
 ////   return false;
 ////}
-//
-//bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference)
-//{
-//   if (!loperand)
-//      return false;
-//
-//   if (!isCompatible(scope, scope.branchingInfo.reference, loperand)) {
-//      return false;
-//   }
-//
-//   reference = operatorId == IF_OPERATOR_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
-//
-//   return true;
-//}
-//
+
+bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference)
+{
+   if (!loperand)
+      return false;
+
+   if (!isCompatible(scope, scope.branchingInfo.reference, loperand)) {
+      return false;
+   }
+
+   reference = operatorId == IF_OPERATOR_ID ? scope.branchingInfo.trueRef : scope.branchingInfo.falseRef;
+
+   return true;
+}
+
 //int CompilerLogic :: resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand)
 //{
 //   if (isCompatible(scope, V_INT32, roperand)) {

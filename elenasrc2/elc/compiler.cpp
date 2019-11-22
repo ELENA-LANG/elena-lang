@@ -811,17 +811,17 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 //   this->yieldMethod = parent->yieldMethod;
 }
 
-//Compiler::CodeScope :: CodeScope(CodeScope* parent)
-//   : Scope(parent), locals(Parameter(0))
-//{
-//   this->level = parent->level;
+Compiler::CodeScope :: CodeScope(CodeScope* parent)
+   : Scope(parent), locals(Parameter(0))
+{
+   this->level = parent->level;
 //   this->saved = parent->saved;
 //   this->reserved = parent->reserved;
 //   this->genericMethod = parent->genericMethod;
 //   this->yieldMethod = parent->yieldMethod;
 //   this->ignoreDuplicates = false;
-//}
-//
+}
+
 //ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
 //{
 //   NamespaceScope* nsScope = (NamespaceScope*)getScope(Scope::slNamespace);
@@ -2017,7 +2017,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
 //      ObjectInfo operationInfo = compileOperator(writer, node, scope, operator_id, 1, loperand, roperand, ObjectInfo());
 //
 //      ObjectInfo retVal;
-//      compileBranchingOperand(writer, current, scope, HINT_SWITCH, IF_OPERATOR_ID, operationInfo, retVal);
+//      compileBranchingOp(writer, current, scope, HINT_SWITCH, IF_OPERATOR_ID, operationInfo, retVal);
 //
 //      writer.removeBookmark();
 //      writer.closeNode();
@@ -3070,9 +3070,9 @@ ref_t Compiler :: mapMessage(SNode node, ExprScope& scope/*, bool variadicOne*/)
 //
 //   return 0;
 //}
-//
-//void Compiler :: compileBranchingNodes(SyntaxWriter& writer, SNode thenBody, CodeScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
-//{
+
+void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/)
+{
 //   if (loopMode) {
 //      writer.newNode(lxElse, ifReference);
 //
@@ -3080,31 +3080,38 @@ ref_t Compiler :: mapMessage(SNode node, ExprScope& scope/*, bool variadicOne*/)
 //      writer.closeNode();
 //   }
 //   else {
-//      SNode thenCode = thenBody.findSubNode(lxCode);
-//      if (thenCode == lxNone)
-//         //HOTFIX : inline branching operator
-//         thenCode = thenBody;
-//
-//      writer.newNode(lxIf, ifReference);
-//      compileSubCode(writer, thenCode, scope, true);
-//      writer.closeNode();
-//
-//      // HOTFIX : switch mode - ignore else
+      SNode thenCode = node.findSubNode(lxCode);
+      if (thenCode == lxNone) {
+         //HOTFIX : inline branching operator
+         node.injectAndReplaceNode(lxIf, ifReference);
+
+         thenCode = node.firstChild();
+      }
+      else node.set(lxIf, ifReference);
+
+      compileSubCode(thenCode, scope, true);
+
+      // HOTFIX : switch mode - ignore else
 //      if (!switchMode) {
-//         SNode elseNode = thenBody.nextNode();
-//         SNode elseCode = elseNode.findSubNode(lxCode);
-//         if (elseCode == lxNone)
-//            //HOTFIX : inline branching operator
-//            elseCode = elseNode;
-//
-//         if (elseCode != lxNone) {
-//            writer.newNode(lxElse, 0);
-//            compileSubCode(writer, elseCode, scope, true);
-//            writer.closeNode();
-//         }
+         node = node.nextNode(lxObjectMask);
+         if (node != lxNone) {
+            SNode elseCode = node.findSubNode(lxCode);
+            if (elseCode == lxNone) {
+               node.injectAndReplaceNode(lxElse, ifReference);
+
+               elseCode = node.firstChild();
+            }
+            else node.set(lxElse, 0);
+            
+            if (elseCode == lxNone)
+               //HOTFIX : inline branching operator
+               elseCode = node;
+
+            compileSubCode(elseCode, scope, true);
+         }
 //      }
 //   }
-//}
+}
 
 ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int argCount)
 {
@@ -3163,7 +3170,7 @@ inline EAttr defineBranchingOperandMode(SNode node)
    return mode;
 }
 
-void Compiler :: compileBranchingOperand(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, 
+void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, 
    ObjectInfo loperand, ObjectInfo& retVal)
 {
 //   bool loopMode = EAttrs::test(mode, HINT_LOOP);
@@ -3175,19 +3182,19 @@ void Compiler :: compileBranchingOperand(SNode roperandNode, ExprScope& scope, E
 //   if (loopMode) {
 //      operator_id = operator_id == IF_OPERATOR_ID ? IFNOT_OPERATOR_ID : IF_OPERATOR_ID;
 //   }
-//
-//   ref_t ifReference = 0;
-//   ref_t resolved_operator_id = operator_id;
-//   // try to resolve the branching operator directly
-//   if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id,
-//      resolveObjectReference(scope, loperand, false), ifReference)) {
-//      // we are lucky : we can implement branching directly
-//      compileBranchingNodes(writer, roperandNode, scope, ifReference, loopMode, switchMode);
-//
-//      writer.inject(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
-//      writer.closeNode();
-//   }
-//   else {
+
+   ref_t ifReference = 0;
+   ref_t resolved_operator_id = operator_id;
+   // try to resolve the branching operator directly
+   if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id,
+      resolveObjectReference(scope, loperand/*, false*/), ifReference)) 
+   {
+      // we are lucky : we can implement branching directly
+      compileBranchingNodes(roperandNode, scope, ifReference/*, loopMode, switchMode*/);
+
+      roperandNode.parentNode().set(/*loopMode ? lxLooping : */lxBranching, /*switchMode ? -1 : */0);
+   }
+   else {
 //      operator_id = original_id;
 
       // bad luck : we have to create a closure
@@ -3210,14 +3217,14 @@ void Compiler :: compileBranchingOperand(SNode roperandNode, ExprScope& scope, E
 //         writer.inject(lxLooping);
 //         writer.closeNode();
 //      }
-//   }
+   }
 }
 
 ObjectInfo Compiler :: compileBranchingOperator(SNode roperandNode, ExprScope& scope, ObjectInfo loperand, EAttr mode, int operator_id)
 {
    ObjectInfo retVal(okObject);
 
-   compileBranchingOperand(roperandNode, scope, mode, operator_id, loperand, retVal);
+   compileBranchingOp(roperandNode, scope, mode, operator_id, loperand, retVal);
 
    return retVal;
 }
@@ -5799,31 +5806,27 @@ ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInf
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileSubCode(SyntaxWriter& writer, SNode codeNode, CodeScope& scope, bool branchingMode)
-//{
-//   CodeScope subScope(&scope);
-//
-//   if (branchingMode)
-//      writer.newNode(lxCode);
-//
-//   if (branchingMode && codeNode == lxExpression) {
-//      //HOTFIX : inline branching operator
-//      writer.newNode(lxExpression);
-//      writer.appendNode(lxBreakpoint, dsStep);
-//      compileRootExpression(writer, codeNode, scope);
-//      writer.closeNode();
-//   }
-//   else compileCode(writer, codeNode, subScope);
-//
-//   // preserve the allocated space
-//   scope.level = subScope.level;
-//
-//   if (branchingMode)
-//      writer.closeNode();
-//
-//   return ObjectInfo(okObject);
-//}
-//
+ObjectInfo Compiler :: compileSubCode(SNode codeNode, ExprScope& scope, bool branchingMode)
+{  
+   CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
+
+   CodeScope subScope(codeScope);
+
+   if (branchingMode && codeNode == lxExpression) {
+      //HOTFIX : inline branching operator
+      codeNode.injectAndReplaceNode(lxCode);
+
+      //      writer.appendNode(lxBreakpoint, dsStep);
+      compileRootExpression(codeNode.firstChild(), subScope);
+   }
+   else compileCode(codeNode, subScope);
+
+   // preserve the allocated space
+   codeScope->level = subScope.level;
+
+   return ObjectInfo(okObject);
+}
+
 ////void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
 ////{
 ////   // find inner expression
@@ -10621,10 +10624,10 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
 //   scope.wrapReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WRAP_FORWARD));
-//
-//   scope.branchingInfo.reference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
-//   scope.branchingInfo.trueRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(TRUE_FORWARD));
-//   scope.branchingInfo.falseRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(FALSE_FORWARD));
+
+   scope.branchingInfo.reference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(BOOL_FORWARD));
+   scope.branchingInfo.trueRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(TRUE_FORWARD));
+   scope.branchingInfo.falseRef = safeMapReference(scope.module, scope.project, scope.project->resolveForward(FALSE_FORWARD));
 
    // cache the frequently used messages
    scope.dispatch_message = encodeMessage(scope.module->mapAction(DISPATCH_MESSAGE, 0, false), 1, 0);

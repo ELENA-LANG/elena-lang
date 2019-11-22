@@ -163,7 +163,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileElseR, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
 
    //   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &loadMTOp, &loadOneByteOp,
 //   &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDSetVerb,
@@ -231,26 +231,26 @@ inline void compileJump(x86JITScope& scope, int label, bool forwardJump, bool sh
    }
 }
 
-//inline void compileJumpX(x86JITScope& scope, int label, bool forwardJump, bool shortJump, x86Helper::x86JumpType prefix)
-//{
-//   if (!forwardJump) {
-//      scope.lh.writeJxxBack(prefix, label);
-//   }
-//   else {
-//      // if it is forward jump, try to predict if it is short
-//      if (shortJump) {
-//         scope.lh.writeShortJxxForward(label, prefix);
-//      }
-//      else scope.lh.writeJxxForward(label, prefix);
-//   }
-//}
-//
-//inline void compileJumpIf(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-//{
-//   // jnz   lbEnding
-//   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JNZ);
-//}
-//
+inline void compileJumpX(x86JITScope& scope, int label, bool forwardJump, bool shortJump, x86Helper::x86JumpType prefix)
+{
+   if (!forwardJump) {
+      scope.lh.writeJxxBack(prefix, label);
+   }
+   else {
+      // if it is forward jump, try to predict if it is short
+      if (shortJump) {
+         scope.lh.writeShortJxxForward(label, prefix);
+      }
+      else scope.lh.writeJxxForward(label, prefix);
+   }
+}
+
+inline void compileJumpIf(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jnz   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JNZ);
+}
+
 //inline void compileJumpIfNot(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
 //{
 //   // jz   lbEnding
@@ -1423,25 +1423,25 @@ void _ELENA_::compileInvokeVMT(int opcode, x86JITScope& scope)
 //   //NOTE: due to compileJumpX implementation - compileJumpIf is called
 //   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 //}
-//
-//void _ELENA_::compileElseR(int, x86JITScope& scope)
-//{
-//   int jumpOffset = scope.tape->getDWord();
-//
-//   // cmp eax, r
-//   // jz lab
-//
-//   scope.code->writeByte(0x3D);
-//   // HOTFIX : support zero references
-//   if (scope.argument != 0) {
-//      scope.writeReference(*scope.code, scope.argument, 0);
-//   }
-//   else scope.code->writeDWord(0);
-//
-//   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
-//   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-//}
-//
+
+void _ELENA_::compileElseR(int, x86JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+
+   // cmp ebx, r
+   // jz lab
+
+   scope.code->writeWord(0xFB81);
+   // HOTFIX : support zero references
+   if (scope.argument != 0) {
+      scope.writeReference(*scope.code, scope.argument, 0);
+   }
+   else scope.code->writeDWord(0);
+
+   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
+   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
+
 //void _ELENA_::compileIfN(int, x86JITScope& scope)
 //{
 //   int jumpOffset = scope.tape->getDWord();
