@@ -46,6 +46,7 @@ enum LexicalType
    lxTemplate                 = 0x000018,
    lxMethodParameter          = 0x000019,
    lxStaticMethod             = 0x00001A,
+   lxForward                  = 0x00001B,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -57,6 +58,7 @@ enum LexicalType
    lxDispatchCode             = 0x001070,
    lxMessage                  = 0x021080, // arg - message
    lxNewOperation             = 0x021081,
+   lxCastOperation            = 0x021082,
    lxEOP                      = 0x011090, // end of the code block
    lxAssign                   = 0x0210A0,
    lxTemplateArgs             = 0x0010B0,
@@ -452,42 +454,42 @@ public:
 
          return current;
       }
-      //Node findSubNode(LexicalType type1, LexicalType type2)
-      //{
-      //   Node current = firstChild();
-      //   while (current != lxNone && current.type != type1) {
-      //      if (current == lxExpression) {
-      //         Node subNode = current.findSubNode(type1, type2);
-      //         if (subNode != lxNone)
-      //            return subNode;
-      //      }
-      //      else if (current == type2)
-      //         break;
+      Node findSubNode(LexicalType type1, LexicalType type2)
+      {
+         Node current = firstChild();
+         while (current != lxNone && current.type != type1) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type1, type2);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (current == type2)
+               break;
 
-      //      current = current.nextNode();
-      //   }
+            current = current.nextNode();
+         }
 
-      //   return current;
-      //}
-      //Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
-      //{
-      //   Node current = firstChild();
-      //   while (current != lxNone && current.type != type1) {
-      //      if (current == lxExpression) {
-      //         Node subNode = current.findSubNode(type1, type2, type3);
-      //         if (subNode != lxNone)
-      //            return subNode;
-      //      }
-      //      else if (current == type2)
-      //         break;
-      //      else if (current == type3)
-      //         break;
+         return current;
+      }
+      Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         Node current = firstChild();
+         while (current != lxNone && current.type != type1) {
+            if (current == lxExpression) {
+               Node subNode = current.findSubNode(type1, type2, type3);
+               if (subNode != lxNone)
+                  return subNode;
+            }
+            else if (current == type2)
+               break;
+            else if (current == type3)
+               break;
 
-      //      current = current.nextNode();
-      //   }
+            current = current.nextNode();
+         }
 
-      //   return current;
-      //}
+         return current;
+      }
 
       //Node findSubNode(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
       //{
@@ -1371,10 +1373,10 @@ public:
 
 void loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode = false);
 
-//inline bool isSingleStatement(SyntaxTree::Node expr)
-//{
-//   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
-//}
+inline bool isSingleStatement(SyntaxTree::Node expr)
+{
+   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
+}
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;

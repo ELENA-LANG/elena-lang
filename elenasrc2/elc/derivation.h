@@ -25,7 +25,7 @@ class DerivationWriter : public _DerivationWriter
    {
       None,
       Namespace,
-//      daType        = 0x0001,
+      Type,
 //   //      daClass       = 0x0002,
 //      daTemplate    = 0x0004,
 //      daProperty    = 0x0008,
@@ -192,7 +192,7 @@ class DerivationWriter : public _DerivationWriter
    void generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 
-//   void declareType(SNode node);
+   void declareType(SNode node);
    void generateImport(SyntaxWriter& writer, SNode ns);
 
    void raiseError(ident_t err, SNode node);

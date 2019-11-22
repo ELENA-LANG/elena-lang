@@ -1010,6 +1010,7 @@ private:
 
    ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
 
+   ObjectInfo compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, ClassInfo& targetInfo, EAttr mode);
    ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
@@ -1122,7 +1123,6 @@ private:
 //   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, bool fpuMode, ref_t targetRef, ref_t elementRef = 0);
 
    bool convertObject(SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
-//   bool typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source);
    bool sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
 
 //   void compileExternalArguments(SNode node, Scope& scope);

@@ -153,9 +153,9 @@ DerivationWriter::MetaScope DerivationWriter :: recognizeMetaScope(SNode node)
          case V_NAMESPACE:
             scopeType = MetaScope::Namespace;
             break;
-         //         case V_TYPETEMPL:
-         //            declType = (DeclarationAttr)(declType | daType);
-         //            break;
+         case V_TYPETEMPL:
+            scopeType = MetaScope::Type;
+            break;
          //         case V_INLINE:
          //            declType = (DeclarationAttr)(declType | daInline);
          //            break;
@@ -198,6 +198,9 @@ void DerivationWriter :: newNode(LexicalType symbol)
       }
       else if (scopeType == MetaScope::Import) {
          symbol = lxImport;
+      }
+      else if (scopeType == MetaScope::Type) {
+         symbol = lxForward;
       }
       // otherwise it should be cached
    }
@@ -883,9 +886,9 @@ void DerivationWriter :: generateScope(SyntaxWriter& writer, SNode node, Scope& 
          case lxClass:
             generateClassTree(writer, current, scope);
             break;
-//         case lxForward:
-//            declareType(current);
-//            break;
+         case lxForward:
+            declareType(current);
+            break;
 //         //case lxMeta:
 //         //   generateMetaTree(writer, current, scope);
 //         //   break;
@@ -2044,32 +2047,32 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
    writer.removeBookmark();
 }
 
-//void DerivationWriter:: declareType(SNode node)
-//{
-//   SNode nameNode = node.prevNode().firstChild(lxTerminalMask);
-//   SNode typeNameNode;
-//
-//   SNode current = node.firstChild();
-//   bool invalid = true;
-//   if (nameNode == lxIdentifier && isSingleStatement(current)) {
-//      typeNameNode = current.firstChild(lxTerminalMask);
-//
-//      invalid = typeNameNode != lxIdentifier;
-//   }
-//
-//   if (invalid)
-//      _scope->raiseError(errInvalidSyntax, _filePath, current);
-//
-//   ident_t shortcut = nameNode.identifier();
-//
-//   if (_scope->attributes.exist(shortcut))
-//      _scope->raiseError(errDuplicatedDefinition, _ns, nameNode);
-//
-//   ref_t classRef = _scope->mapNewIdentifier(_ns, typeNameNode.identifier(), false);
-//
-//   _scope->attributes.add(shortcut, classRef);
-//   _scope->saveAttribute(shortcut, classRef);
-//}
+void DerivationWriter :: declareType(SNode node)
+{
+   SNode nameNode = node.prevNode().firstChild(lxTerminalMask);
+   SNode typeNameNode;
+
+   SNode current = node.firstChild();
+   bool invalid = true;
+   if (nameNode == lxIdentifier && isSingleStatement(current)) {
+      typeNameNode = current.findChild(lxToken).firstChild(lxTerminalMask);
+
+      invalid = typeNameNode != lxReference;
+   }
+
+   if (invalid)
+      raiseError(errInvalidSyntax, current);
+
+   ident_t shortcut = nameNode.identifier();
+
+   if (_scope->attributes.exist(shortcut))
+      raiseError(errDuplicatedDefinition, nameNode);
+
+   ref_t classRef = _scope->mapFullReference(typeNameNode.identifier());
+
+   _scope->attributes.add(shortcut, classRef);
+   _scope->saveAttribute(shortcut, classRef);
+}
 
 void DerivationWriter :: generateImport(SyntaxWriter& writer, SNode ns)
 {

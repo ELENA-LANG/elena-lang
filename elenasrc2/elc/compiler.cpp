@@ -37,6 +37,7 @@ constexpr auto HINT_SCOPE_MASK      = EAttr::eaScopeMask;
 constexpr auto HINT_OBJECT_MASK     = EAttr::eaObjectMask;
 constexpr auto HINT_MODULESCOPE     = EAttr::eaModuleScope;
 constexpr auto HINT_NEWOP           = EAttr::eaNewOp;
+constexpr auto HINT_CASTOP          = EAttr::eaCast;
 constexpr auto HINT_SILENT          = EAttr::eaSilent;
 constexpr auto HINT_ROOTSYMBOL      = EAttr::eaRootSymbol;
 constexpr auto HINT_ROOT            = EAttr::eaRoot;
@@ -284,12 +285,12 @@ ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
 ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
 {
    ref_t reference = 0;
-//   if (!referenceOne) {
-//      // try resolve as type-alias
-//      reference = moduleScope->attributes.get(identifier);
-//      if (isPrimitiveRef(reference))
-//         reference = 0;
-//   }
+   if (!referenceOne) {
+      // try resolve as type-alias
+      reference = moduleScope->attributes.get(identifier);
+      if (isPrimitiveRef(reference))
+         reference = 0;
+   }
 
    if (!reference)
       reference = resolveImplicitIdentifier(identifier, referenceOne, !EAttrs::test(mode, HINT_NESTEDNS));
@@ -3577,16 +3578,6 @@ bool Compiler :: convertObject(SNode node, ExprScope& scope, ref_t targetRef, Ob
    return true;
 }
 
-//bool Compiler :: typecastObject(SyntaxWriter& writer, CodeScope& scope, ref_t targetRef, ObjectInfo source)
-//{
-//   ref_t sourceRef = resolveObjectReference(scope, source, false);
-//   if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
-//      // if it is not compatible - send type-casting message
-//      return sendTypecast(writer, scope, targetRef, source);
-//   }
-//   return true;
-//}
-
 bool Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source)
 {
    if (targetRef != 0 /*&& !isPrimitiveRef(targetRef)*/) {
@@ -4791,6 +4782,33 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 //	return objectInfo;
 //}
 
+ObjectInfo Compiler :: compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
+{
+   ref_t targetRef = 0;
+   if (target.kind == okClass) {
+      targetRef = target.param;
+   }
+   else targetRef = resolveObjectReference(scope, target);
+
+   ObjectInfo retVal(okObject, 0, targetRef);
+
+   int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
+
+   if (paramCount == 1) {
+      SNode current = node.nextNode();
+
+      // if it is a cast expression
+      ObjectInfo object = compileExpression(current, scope, 
+         mapObject(current, scope, mode), /*targetRef*/0, mode);
+
+      if(!convertObject(node, scope, targetRef, object, mode))
+         scope.raiseError(errInvalidOperation, node);
+   }
+   else scope.raiseError(errInvalidOperation, node.parentNode());
+
+   return retVal;
+}
+
 ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, ClassInfo& targetInfo, EAttr mode)
 {
    ref_t targetRef = 0;
@@ -4821,12 +4839,6 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
       arg = targetInfo.fields.Count();
       //}
    }
-   //   else if (paramCount == 1 && node.argument == V_CONVERSION) {
-   //      // if it is a cast expression
-   //      ObjectInfo object = compileExpression(writer, node.nextNode(), scope, /*targetRef*/0, mode);
-   //      if(!typecastObject(writer, scope, targetRef, object))
-   //         scope.raiseError(errInvalidOperation, node);
-   //   }
    //   else if (node.argument == V_NEWOP) {
    //      // if it is a implicit constructor
    //      if (target.reference == V_OBJARRAY && paramCount == 1) {
@@ -4925,6 +4937,9 @@ ObjectInfo Compiler :: compileOperation(SNode node, ExprScope& scope, ObjectInfo
          break;
       case lxNewOperation:
          objectInfo = compileBoxingExpression(current, scope, objectInfo, mode);
+         break;
+      case lxCastOperation:
+         objectInfo = compileCastingExpression(current, scope, objectInfo, mode);
          break;
 //      case lxTypecast:
 //         objectInfo = compileBoxingExpression(writer, current, scope, objectInfo, mode);
@@ -5629,7 +5644,18 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
       }
       else scope.raiseError(errInvalidOperation, node);
    }
-//   if (mode.testAndExclude(HINT_REFOP)) {
+   else if (mode.testAndExclude(HINT_CASTOP)) {
+      ref_t typeRef = resolveTypeAttribute(current, scope, false);
+
+      result = mapClassSymbol(scope, typeRef);
+
+      SNode mssgNode = node.findChild(lxMessage);
+      if (mssgNode != lxNone) {
+         mssgNode.set(lxCastOperation, 0);
+      }
+      else scope.raiseError(errInvalidOperation, node);
+   }
+   //   if (mode.testAndExclude(HINT_REFOP)) {
 //      result = compileReferenceExpression(writer, node, scope, mode);
 //   }
 //   else if (mode.testAndExclude(HINT_PARAMSOP)) {
@@ -5764,7 +5790,7 @@ ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInf
 //      objectInfo = compileOperation(writer, operationNode, scope, objectInfo, exptectedRef, mode);
 //   }
 
-   ref_t sourceRef = resolveObjectReference(scope, objectInfo/*, false*//*, exptectedRef*/);
+   ref_t sourceRef = resolveObjectReference(scope, retVal/*, false*//*, exptectedRef*/);
 //   if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
 //      if (sourceRef != V_UNBOXEDARGS || inlineArgMode) { // !! temporal box the argument list
 //         // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
@@ -5790,8 +5816,8 @@ ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInf
 //////      if (assignMode && exptectedRef == scope.moduleScope->realReference && (sourceRef == V_INT32 || sourceRef == scope.moduleScope->intReference)) {
 //////         objectInfo = ObjectInfo(okPrimitiveConv, V_REAL64, V_INT32);
 //////      }
-      /*else */if (convertObject(node, scope, exptectedRef, objectInfo, mode)) {
-         objectInfo = ObjectInfo(okObject, 0, exptectedRef);
+      /*else */if (convertObject(node, scope, exptectedRef, retVal, mode)) {
+         retVal = ObjectInfo(okObject, 0, exptectedRef);
       }
       else scope.raiseError(errInvalidOperation, node);
    }

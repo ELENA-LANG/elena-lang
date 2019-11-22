@@ -1864,9 +1864,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_AUTO:
          newVariable = true;
          return true;
-//      case V_CONVERSION:
-//         attributes.include(EAttr::eaCast);
-//         return true;
+      case V_CONVERSION:
+         attributes.include(EAttr::eaCast);
+         return true;
       case V_NEWOP:
          attributes.include(EAttr::eaNewOp);
          return true;

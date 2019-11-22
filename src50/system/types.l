@@ -43,7 +43,7 @@
 #define interface   80001007h
 #define method      80001008h
 #define field       80001009h
-//#define type        8000100Ah
+#define type        8000100Ah
 //#define generic     8000100Bh
 #define function    8000100Ch
 #define var         8000100Dh
@@ -85,10 +85,10 @@
 ///// Provides classes that describe the basic functionality
 //
 //type object     = Object;
-//
-//// === basic logical types ===
-//type bool       = BoolValue;
-//
+
+// === basic logical types ===
+type bool       = system'BoolValue;
+
 //// === basic type aliases ===
 //type byte       = ByteNumber;
 //type short      = ShortNumber;

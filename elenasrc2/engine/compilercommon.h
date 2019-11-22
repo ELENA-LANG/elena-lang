@@ -65,7 +65,7 @@ constexpr auto V_SINGLETON       = 0x80001006u;
 constexpr auto V_LIMITED         = 0x80001007u;
 constexpr auto V_METHOD          = 0x80001008u;
 constexpr auto V_FIELD           = 0x80001009u;
-//constexpr auto V_TYPETEMPL       = 0x8000100Au;
+constexpr auto V_TYPETEMPL       = 0x8000100Au;
 //constexpr auto V_GENERIC         = 0x8000100Bu;
 constexpr auto V_FUNCTION        = 0x8000100Cu;     // a closure attribute
 constexpr auto V_VARIABLE        = 0x8000100Du;
@@ -461,11 +461,11 @@ public:
       eaRootSymbol         = 0x00000000040,
       eaRoot               = 0x00000000080,
       eaInlineExpr         = 0x00000000100,
+      eaCast               = 0x00000000200,
 
       eaScopeMask          = 0x0000000000A,
-      eaObjectMask         = 0x000000000F4,
+      eaObjectMask         = 0x000000002F4,
 
-//      eaCast               = 0x00000000002,
 //      eaForward            = 0x00000000008,
 //      eaExtern             = 0x00000000010,
 //      eaRef                = 0x00000000020,

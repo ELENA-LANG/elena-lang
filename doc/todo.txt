@@ -5,7 +5,6 @@ In development:
                 * typecasting
                 * template : if, if-else
 
-                * type alias
                 * message parameters : type, template type, paramter in template
                 * multidispatching : compile-time, run-time
 
