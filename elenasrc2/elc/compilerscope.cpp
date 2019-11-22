@@ -542,19 +542,19 @@ void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
    }
 }
 
-//void ModuleScope :: generateTemplateCode(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
-//{
-//   SyntaxTree templateTree;
-//
-//   TemplateGenerator transformer(templateTree);
-//   SyntaxWriter writer(templateTree);
-//   writer.newNode(lxRoot);
-//   transformer.generateTemplateCode(writer, *this, reference, parameters);
-//   writer.closeNode();
-//
-//   SyntaxTree::copyNode(output, templateTree.readRoot());
-//}
-//
+void ModuleScope :: generateStatementCode(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
+{
+   SyntaxTree templateTree;
+
+   TemplateGenerator transformer(templateTree);
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   transformer.generateTemplateCode(writer, *this, reference, parameters);
+   writer.closeNode();
+
+   SyntaxTree::copyNode(output, templateTree.readRoot());
+}
+
 //void ModuleScope :: importClassTemplate(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
 //{
 //   SyntaxTree templateTree;

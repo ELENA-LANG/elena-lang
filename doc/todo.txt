@@ -3,6 +3,8 @@ In development:
 ------         
               dev
                 * template code : declaration, using
+                * typecasting
+                * template : if, if-else : code / expression
 
                 * type alias
                 * message parameters : type, template type, paramter in template
@@ -77,7 +79,6 @@ In development:
                 * auto returning
                 * strong typed variables
                 * conversion routines : self, others
-                * typecasting
                 * strong parameters
                 * dispatching in compile time
                 * dispatching in run time

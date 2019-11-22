@@ -64,6 +64,8 @@ enum LexicalType
    lxParameter                = 0x0010D0,
    lxPropertyParam            = 0x0010E0,
    lxOperator                 = 0x0210F0,
+   lxStatementDecl            = 0x001100,
+   lxStatementArgs            = 0x001110,
 
    // derivation terminals
    lxEOF                      = 0x002010, // end of the file
@@ -120,6 +122,7 @@ enum LexicalType
    lxSelfVariable             = 0x000F0F, // debug info only
    lxAutoMultimethod          = 0x000F10,
    lxConstAttr                = 0x000F11,
+   lxTemplateParam            = 0x000F12,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -257,7 +260,6 @@ enum LexicalType
 //   lxIfValue                  = 0x20017, // arg - reference
 //   lxElseValue                = 0x20018, // arg - reference
 //   lxSize                     = 0x20019,
-//   lxTemplateParam            = 0x2001A,
 //   lxIntExtArgument           = 0x2001C,
 //   lxExtArgument              = 0x2001D,
 //   lxExtInteranlRef           = 0x2001E,
@@ -1166,19 +1168,19 @@ public:
       return counter;
    }
 
-//   static int countNode(Node current, LexicalType type)
-//   {
-//      int counter = 0;
-//      while (current != lxNone) {
-//         if (current == type)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
+   static int countNode(Node current, LexicalType type)
+   {
+      int counter = 0;
+      while (current != lxNone) {
+         if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
 //   static int countNode(Node current, LexicalType type1, LexicalType type2)
 //   {
 //      int counter = 0;

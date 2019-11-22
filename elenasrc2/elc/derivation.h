@@ -34,22 +34,22 @@ class DerivationWriter : public _DerivationWriter
 //      daExtension   = 0x8000,
    };
 
-//   enum ScopeType
-//   {
-//      stNormal = 0,
+   enum ScopeType
+   {
+      stNormal = 0,
 //      stClassTemplate,
-//      stCodeTemplate,
+      stCodeTemplate,
 //      stPropertyTemplate,
 //      stExtensionTemplate,
 //      stInlineTemplate
-//   };
+   };
 
    struct Scope
    {
-//      ScopeType      templateMode;
-//      ForwardMap     parameters;
-//      int            nestedLevel;
-//      bool           ignoreTerminalInfo;
+      ScopeType      templateMode;
+      ForwardMap     parameters;
+      int            nestedLevel;
+      bool           ignoreTerminalInfo;
 //
 //      bool isNameParameter(ident_t name, ref_t& argument)
 //      {
@@ -90,20 +90,20 @@ class DerivationWriter : public _DerivationWriter
 //         }
 //         return false;
 //      }
-//
-//      bool isIdentifierParameter(ident_t name, ref_t& argument)
-//      {
-//         if (withTypeParameters()) {
-//            int index = parameters.get(name);
-//            if (index) {
-//               argument = index + nestedLevel;
-//
-//               return true;
-//            }
-//         }
-//         return false;
-//      }
-//
+
+      //bool isIdentifierParameter(ident_t name, ref_t& argument)
+      //{
+      //   if (withTypeParameters()) {
+      //      int index = parameters.get(name);
+      //      if (index) {
+      //         argument = index + nestedLevel;
+
+      //         return true;
+      //      }
+      //   }
+      //   return false;
+      //}
+
 //      bool withTypeParameters() const
 //      {
 //         return templateMode == stClassTemplate || templateMode == stPropertyTemplate 
@@ -112,9 +112,9 @@ class DerivationWriter : public _DerivationWriter
 
       Scope()
       {
-//         templateMode = ScopeType::stNormal;
-//         nestedLevel = 0;
-//         ignoreTerminalInfo = false;
+         templateMode = ScopeType::stNormal;
+         nestedLevel = 0;
+         ignoreTerminalInfo = false;
       }
    };
 
@@ -129,9 +129,9 @@ class DerivationWriter : public _DerivationWriter
 //   ident_t       _ns;
 //   ident_t       _filePath;
 //   IdentifierList _importedNs;
-//
-//   void loadTemplateParameters(Scope& scope, SNode node);
-//   void loadTemplateExprParameters(Scope& scope, SNode node);
+
+   void loadTemplateParameters(Scope& scope, SNode node);
+   void loadTemplateExprParameters(Scope& scope, SNode node);
 
    MetaScope recognizeMetaScope(SNode node);
 
@@ -142,6 +142,7 @@ class DerivationWriter : public _DerivationWriter
    ref_t mapAttribute(SNode terminal, bool allowType, /*bool& allowPropertyTemplate, */ref_t& previusCategory);
 //   ref_t mapInlineAttribute(SNode terminal);
    void declareAttribute(SNode node);
+   void declareStatement(SNode node, ScopeType templateType);
 
    void recognizeAttributes(SNode node, int mode, LexicalType nameType);
 
@@ -155,12 +156,15 @@ class DerivationWriter : public _DerivationWriter
 
    void declareNestedNamespace(SNode node, Scope& derivationScope);
 
+   void saveTemplateParameters(SyntaxWriter& tempWriter, SNode current, Scope& derivationScope);
+
 //   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
    void generateTemplateTree(SNode node/*, ScopeType templateType*/);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
-//   void generateCodeTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope& derivationScope);
-//   void generateCodeTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
+   void generateStatementTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, 
+      Scope& derivationScope);
+   void generateStatementTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
 //   void generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, List<SNode>* parameters, SyntaxTree& buffer);
 //   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode nameNode, Scope& derivationScope, SyntaxTree& buffer);
@@ -185,7 +189,7 @@ class DerivationWriter : public _DerivationWriter
 //   void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
-   void generateIdentifier(SyntaxWriter& writer, SNode current/*, Scope& derivationScope*/);
+   void generateIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 
 //   void declareType(SNode node);
@@ -223,16 +227,16 @@ class TemplateGenerator
    // --- TemplateScope ---
    struct TemplateScope
    {
-//      enum Type
-//      {
-//         ttClassTemplate    = 0,
-//         ttPropertyTemplate = 1,
-////         ttMethodTemplate = 2,
-//         ttCodeTemplate     = 3,
-////         ttExtTemplate    = 4
-//      };
-//
-//      Type          type;
+      enum Type
+      {
+         ttClassTemplate    = 0,
+         ttPropertyTemplate = 1,
+//         ttMethodTemplate = 2,
+         ttCodeTemplate     = 3,
+//         ttExtTemplate    = 4
+      };
+
+      Type          type;
       ref_t         templateRef;
       ref_t         reference;
       NodeMap       parameterValues;
@@ -262,7 +266,7 @@ class TemplateGenerator
 
          this->moduleScope = moduleScope;
 
-//         type = Type::ttClassTemplate;
+         type = Type::ttClassTemplate;
          this->templateRef = templateRef;
          this->reference = 0;
          this->templateModule = nullptr;
@@ -271,8 +275,8 @@ class TemplateGenerator
    };
 
 ////   SNode       _root;
-//
-//   void copyNodes(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+
+   void copyNodes(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyChildren(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 //   void copyFieldInitTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
@@ -288,7 +292,7 @@ public:
    ref_t generateTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters,
                            bool importModuleInfo, bool importMode);
 
-//   void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
+   void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
 //   void generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
 //
 //   void importClass(SyntaxWriter& output, SNode node);
