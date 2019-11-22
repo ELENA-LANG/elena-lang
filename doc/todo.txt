@@ -2,9 +2,8 @@
 In development:
 ------         
               dev
-                * template code : declaration, using
                 * typecasting
-                * template : if, if-else : code / expression
+                * template : if, if-else
 
                 * type alias
                 * message parameters : type, template type, paramter in template
@@ -119,6 +118,8 @@ In development:
                 * constructor dispatching
                 * message dispatching
 
+                * complex message names
+
                 * declaring typed variable : implicit, reference, global
 
                 * static fields / static methods are inherited
@@ -204,6 +205,7 @@ In development:
                 * protected default constructor - the class cannot be created using default constructor
                 * test : branching external implementation : returning a value from closure 
                 * sub code - try to reuse stack (e.g. two sub block in two separate statements may reuse the stack)
+                * it should be possible to extend attributes / template statements from anoter libraries
 
               dev1
                 * write - Programming in ELENA : manual

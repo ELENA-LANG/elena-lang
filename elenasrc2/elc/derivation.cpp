@@ -631,14 +631,14 @@ void DerivationWriter :: declareStatement(SNode node, ScopeType templateType)
 
    SNode nameTerminal = node.firstChild(lxTerminalMask);
    IdentifierString name(nameTerminal.identifier().c_str());
-   //// COMPILER MAGIC : if it is complex code template
-   //SNode subNameNode = nameNode.nextNode().findChild(lxParent);
-   //while (subNameNode == lxParent) {
-   //   name.append(':');
-   //   name.append(subNameNode.findChild(lxToken).firstChild(lxTerminalMask).identifier());
+   // COMPILER MAGIC : if it is complex code template
+   SNode subNameNode = node.findChild(lxBaseDecl);
+   while (subNameNode == lxBaseDecl) {
+      name.append(':');
+      name.append(subNameNode.findChild(lxToken).firstChild(lxTerminalMask).identifier());
 
-   //   subNameNode = subNameNode.nextNode();
-   //}
+      subNameNode = subNameNode.nextNode();
+   }
    name.append('#');
    name.appendInt(exprCounter);
    name.append('#');
@@ -1638,6 +1638,31 @@ void DerivationWriter :: saveTemplateParameters(SyntaxWriter& tempWriter, SNode 
    }
 }
 
+inline void parseStatement(SNode current, IdentifierString& templateName, int& exprCounters, int& blockCounters)
+{
+   while (current != lxNone) {
+      if (current == lxExpression) {
+         //if (blockCounters == 0) {
+         exprCounters++;
+         /*}
+         else blockCounters++;*/
+      }
+      else if (current == lxStatementArgs) {
+         parseStatement(current.firstChild(), templateName, exprCounters, blockCounters);
+      }
+      else if (current == lxCode) {
+         blockCounters++;
+      }
+      else if (current == lxToken) {
+         // COMPILER MAGIC : if it is complex code template
+         templateName.append(':');
+         templateName.append(current.firstChild(lxTerminalMask).identifier());
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void DerivationWriter :: generateStatementTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
 {
    IdentifierString templateName;
@@ -1646,24 +1671,7 @@ void DerivationWriter :: generateStatementTemplateTree(SyntaxWriter& writer, SNo
    int exprCounters = 0;
    int blockCounters = 0;
    SNode current = node.nextNode();
-   while (current != lxNone) {
-      if (current == lxExpression) {
-         //if (blockCounters == 0) {
-            exprCounters++;
-         /*}
-         else blockCounters++;*/
-      }
-      else if (current == lxStatementArgs) {
-         blockCounters += SyntaxTree::countChild(current, lxCode);
-      }
-      //else if (current == lxToken) {
-      //   // COMPILER MAGIC : if it is complex code template
-      //   templateName.append(':');
-      //   templateName.append(current.firstChild(lxTerminalMask).identifier());
-      //}
-
-      current = current.nextNode();
-   }
+   parseStatement(current, templateName, exprCounters, blockCounters);
 
    templateName.append('#');
    templateName.appendInt(exprCounters);
