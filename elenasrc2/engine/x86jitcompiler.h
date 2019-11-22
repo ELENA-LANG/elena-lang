@@ -36,6 +36,7 @@ struct x86JITScope
    // byte code command argument
    int            argument;
    int            extra_arg;
+   int            extra_arg2;
 
    void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
 
@@ -74,7 +75,7 @@ protected:
 //   friend void loadFNOp(int opcode, x86JITScope& scope);
    friend void loadFPOp(int opcode, x86JITScope& scope);
 //   friend void loadROp(int opcode, x86JITScope& scope);
-//   friend void loadMTOp(int opcode, x86JITScope& scope);
+   friend void loadMTOp(int opcode, x86JITScope& scope);
 //   friend void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
 
    // commands
@@ -162,7 +163,7 @@ protected:
 //   friend void compileOr(int opcode, x86JITScope& scope);
 //   friend void compileNot(int opcode, x86JITScope& scope);
 //   friend void compileInit(int opcode, x86JITScope& scope);
-//   friend void compileMTRedirect(int op, x86JITScope& scope);
+   friend void compileMTRedirect(int op, x86JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -304,7 +305,7 @@ void compileQuitN(int opcode, x86JITScope& scope);
 ////void compileLoad(int opcode, x86JITScope& scope);
 //void compileNot(int opcode, x86JITScope& scope);
 //void compileInit(int opcode, x86JITScope& scope);
-//void compileMTRedirect(int op, x86JITScope& scope);
+void compileMTRedirect(int op, x86JITScope& scope);
 
 } // _ELENA_
 

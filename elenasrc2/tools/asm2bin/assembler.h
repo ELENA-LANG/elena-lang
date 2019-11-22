@@ -16,6 +16,7 @@ namespace _ELENA_
 
 #define ARGUMENT1           "__arg1"
 #define ARGUMENT2           "__arg2"
+#define ARGUMENT3           "__arg3"
 
 // --- TokenInfo ---
 

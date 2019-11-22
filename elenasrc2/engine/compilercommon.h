@@ -148,7 +148,7 @@ enum MethodHint
 //   tpTargetSelf  = 0x0000100, // used for script generated classes (self refers to __target)
    tpConstructor  = 0x0200400,
    tpConversion   = 0x0200800,
-//   tpMultimethod = 0x0001000,
+   tpMultimethod  = 0x0001000,
    tpStatic       = 0x0004000,
    tpGetAccessor  = 0x0008000,
 //   tpSpecial     = 0x0010000,
@@ -388,7 +388,7 @@ public:
 //   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/) = 0;
-//   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
+   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef) = 0;
@@ -403,9 +403,9 @@ public:
 //      LexicalType objType, int objArg) = 0;
 ////
 ////   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
-//   virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
-//   virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
-//   virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
+   virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
+   virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
+   virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
 //   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, ref_t* arguments, ident_t ns) = 0;
 //
 //   virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef) = 0;
@@ -649,7 +649,7 @@ public:
 //   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isFunction(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;
 //   //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
@@ -664,8 +664,9 @@ public:
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
 //   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
-//   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
-//   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
+   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
+      List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
+   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
 //   virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
 //   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
 //      ref_t elementRef, ident_t ns, bool noUnboxing) = 0;
@@ -702,8 +703,8 @@ public:
 //   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode) = 0;
 //   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
 //   virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
-//
-//   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;
+
+   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef/*, int& stackSafeAttr*/) = 0;
 //   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns) = 0;
 };
 

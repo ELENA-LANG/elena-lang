@@ -62,13 +62,14 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/20;
+const int gcCommandNumber = /*160*/21;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
    bcReserve, bcPushS, bcStoreSI, bcPeekSI, bcThrow,
    bcCallVI, bcClose, bcNew, bcFill, bcCallRM,
    bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
+   bcMTRedirect,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -98,7 +99,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
 //   bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
 //   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
-//   bcCheck, bcMTRedirect, bcDCopyVerb, bcXCopy, bcXMTRedirect,
+//   bcCheck, bcDCopyVerb, bcXCopy, bcXMTRedirect,
 //   bcSaveFI, bcAddFI, bcSubFI, bcNShiftR, bcLSave,
 //   bcSelect, bcEqualR, bcBLoadAI, bcAndE, bcDMoveVerb,
 //   bcEOrN, bcNewI, bcACopyAI
@@ -160,7 +161,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileElseR, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
@@ -485,40 +486,43 @@ void _ELENA_::loadOneByteLOp(int opcode, x86JITScope& scope)
 //   }
 //   scope.code->seekEOF();
 //}
-//
-//void _ELENA_::loadMTOp(int opcode, x86JITScope& scope)
-//{
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0] == -1) {
-//         scope.writeReference(*scope.code, scope.argument, 0);
-//      }
-//      else if (relocation[0] == -2) {
-//         scope.code->writeDWord(scope.extra_arg);
-//      }
-//      else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
-//         scope.helper->writeMTReference(*scope.code);
-//      }
-//      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
-//
+
+void _ELENA_::loadMTOp(int opcode, x86JITScope& scope)
+{
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.writeReference(*scope.code, scope.argument, 0);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(scope.extra_arg);
+      }
+      else if (relocation[0] == -3) {
+         scope.code->writeDWord(scope.extra_arg2);
+      }
+      else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
+         scope.helper->writeMTReference(*scope.code);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 //void _ELENA_::loadMTOpX(int opcode, x86JITScope& scope, int prefix)
 //{
 //   char* code = NULL;
@@ -1493,34 +1497,40 @@ void _ELENA_::compileElseR(int, x86JITScope& scope)
 //   }
 //   else compileJumpNotGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 //}
-//
-//void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
-//{
-//   ref_t message = scope.tape->getDWord();
-//
-//   if (test(message, SPECIAL_MESSAGE)) {
-//      scope.extra_arg = 0;
-//   }
-//   else scope.extra_arg = 4;
-//
+
+void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
+{
+   scope.extra_arg = scope.tape->getDWord();
+   scope.extra_arg2 = getArgCount(scope.extra_arg);
+
+   int startArg = 1;
+   //if (test(message, FUNCTION_MESSAGE)) {
+   //   scope.extra_arg = 0;
+   //   startArg = 0;
+   //}
+   //else scope.extra_arg = 4;
+
+   // ; lea  eax, [esp + offs]
+   x86Helper::leaRM32disp(scope.code, x86Helper::otEAX, x86Helper::otESP, startArg << 2);
+
 //   if (test(message, VARIADIC_MESSAGE)) {
 //      loadMTOpX(op, scope, 0xC00);
 //   }
 //   else {
-//      switch (getParamCount(message)) {
-//         case 1:
-//            loadMTOpX(op, scope, 0x100);
-//            break;
-//         case 2:
-//            loadMTOpX(op, scope, 0x200);
-//            break;
-//         default:
-//            loadMTOp(op, scope);
-//            break;
-//      }
+      switch (getArgCount(scope.extra_arg) - startArg) {
+         //case 1:
+         //   loadMTOpX(op, scope, 0x100);
+         //   break;
+         //case 2:
+         //   loadMTOpX(op, scope, 0x200);
+         //   break;
+         default:
+            loadMTOp(op, scope);
+            break;
+      }
 //   }
-//}
-//
+}
+
 //void _ELENA_::compileSetVerb(int, x86JITScope& scope)
 //{
 //   // and ecx, PARAM_MASK | ACTION_MASK
@@ -1639,6 +1649,7 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
    this->module = NULL;
    this->extra_arg = 0;
+   this->extra_arg2 = 0;
 
 //   this->prevFSPOffs = 0;
 }

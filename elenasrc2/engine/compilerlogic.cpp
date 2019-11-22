@@ -91,20 +91,20 @@ typedef ClassInfo::Attribute Attribute;
 //         return false;
 //   }
 //}
-//
-//inline ident_t findSourceRef(SNode node)
-//{
-//   while (node != lxNone && node != lxNamespace) {
-//      if (node.compare(lxConstructor, lxStaticMethod, lxClassMethod) && node.existChild(lxSourcePath)) {
-//         return node.findChild(lxSourcePath).identifier();
-//      }
-//
-//      node = node.parentNode();
-//   }
-//
-//   return node.findChild(lxSourcePath).identifier();
-//}
-//
+
+inline ident_t findSourceRef(SNode node)
+{
+   while (node != lxNone && node != lxNamespace) {
+      if (node.compare(lxConstructor, lxStaticMethod, lxClassMethod) && node.existChild(lxSourcePath)) {
+         return node.findChild(lxSourcePath).identifier();
+      }
+
+      node = node.parentNode();
+   }
+
+   return node.findChild(lxSourcePath).identifier();
+}
+
 //// --- CompilerLogic Optimization Ops ---
 //struct EmbeddableOp
 //{
@@ -688,21 +688,21 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpInternal);
 //}
-//
-//bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
-//{
-//   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpPrivate;
-//}
-//
+
+bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
+{
+   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpPrivate;
+}
+
 //bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
 //}
-//
-//bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
-//}
+
+bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
+}
 
 //bool CompilerLogic :: isFunction(ClassInfo& info, ref_t message)
 //{
@@ -713,73 +713,73 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 ////{
 ////   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpDispatcher;
 ////}
-//
-//inline ident_t resolveActionName(_Module* module, ref_t message)
-//{
-//   ref_t signRef = 0;
-//   return module->resolveAction(getAction(message), signRef);
-//}
-//
-//void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
-//{
-//   for (auto it = info.methods.start(); !it.Eof(); it++) {
-//      if (*it && isMultiMethod(info, it.key())) {
-//         ref_t message = it.key();
-//
-//         // create a new overload list
-//         ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
-//
-//         info.methodHints.exclude(Attribute(message, maOverloadlist));
-//         info.methodHints.add(Attribute(message, maOverloadlist), listRef);
-//         if (test(message, STATIC_MESSAGE)) {
-//            info.methodHints.exclude(Attribute(message & ~STATIC_MESSAGE, maOverloadlist));
-//            info.methodHints.add(Attribute(message & ~STATIC_MESSAGE, maOverloadlist), listRef);
-//         }
-//
-//         // sort the overloadlist
-//         int defaultOne[0x20];
-//         int* list = defaultOne;
-//         size_t capcity = 0x20;
-//         size_t len = 0;
-//         for (auto h_it = info.methodHints.start(); !h_it.Eof(); h_it++) {
-//            if (h_it.key().value2 == maMultimethod && *h_it == message) {
-//               if (len == capcity) {
-//                  int* new_list = new int[capcity + 0x10];
-//                  memmove(new_list, list, capcity * 4);
-//                  list = new_list;
-//                  capcity += 0x10;
-//               }
-//
-//               ref_t omsg = h_it.key().value1;
-//               list[len] = omsg;
-//               for (size_t i = 0; i < len; i++) {
-//                  if (isSignatureCompatible(scope, omsg, list[i])) {
-//                     memmove(list + (i + 1) * 4, list + i * 4, (len - i) * 4);
-//                     list[i] = omsg;
-//                     break;
-//                  }
-//               }
-//               len++;
-//            }
-//         }
-//
-//         // fill the overloadlist
-//         for (size_t i = 0; i < len; i++) {
-//            if (test(info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
-//               compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
-//            }
-//            else if (test(info.header.flags, elClosed)) {
-//               compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
-//            }
-//            else compiler.generateOverloadListMember(scope, listRef, list[i]);
-//         }
-//
-//         if (capcity > 0x20)
-//            delete[] list;
-//      }
-//   }
-//}
-//
+
+inline ident_t resolveActionName(_Module* module, ref_t message)
+{
+   ref_t signRef = 0;
+   return module->resolveAction(getAction(message), signRef);
+}
+
+void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
+{
+   for (auto it = info.methods.start(); !it.Eof(); it++) {
+      if (*it && isMultiMethod(info, it.key())) {
+         ref_t message = it.key();
+
+         // create a new overload list
+         ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
+
+         info.methodHints.exclude(Attribute(message, maOverloadlist));
+         info.methodHints.add(Attribute(message, maOverloadlist), listRef);
+         if (test(message, STATIC_MESSAGE)) {
+            info.methodHints.exclude(Attribute(message & ~STATIC_MESSAGE, maOverloadlist));
+            info.methodHints.add(Attribute(message & ~STATIC_MESSAGE, maOverloadlist), listRef);
+         }
+
+         // sort the overloadlist
+         int defaultOne[0x20];
+         int* list = defaultOne;
+         size_t capcity = 0x20;
+         size_t len = 0;
+         for (auto h_it = info.methodHints.start(); !h_it.Eof(); h_it++) {
+            if (h_it.key().value2 == maMultimethod && *h_it == message) {
+               if (len == capcity) {
+                  int* new_list = new int[capcity + 0x10];
+                  memmove(new_list, list, capcity * 4);
+                  list = new_list;
+                  capcity += 0x10;
+               }
+
+               ref_t omsg = h_it.key().value1;
+               list[len] = omsg;
+               for (size_t i = 0; i < len; i++) {
+                  if (isSignatureCompatible(scope, omsg, list[i])) {
+                     memmove(list + (i + 1) * 4, list + i * 4, (len - i) * 4);
+                     list[i] = omsg;
+                     break;
+                  }
+               }
+               len++;
+            }
+         }
+
+         // fill the overloadlist
+         for (size_t i = 0; i < len; i++) {
+            if (test(info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+               compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
+            }
+            else if (test(info.header.flags, elClosed)) {
+               compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
+            }
+            else compiler.generateOverloadListMember(scope, listRef, list[i]);
+         }
+
+         if (capcity > 0x20)
+            delete[] list;
+      }
+   }
+}
+
 //void CompilerLogic :: injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
 //{
 //   // generate yield fields
@@ -868,22 +868,23 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
    }
 }
 
-//void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, List<ref_t>& implicitMultimethods, LexicalType methodType)
-//{
-//   // generate implicit mutli methods
-//   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-//      ref_t message = *it;
-//
-//      if (methodType == lxConstructor && getParamCount(message) == 1 
-//         && getAction(message) == getAction(scope.constructor_message)) 
-//      {
-//         // HOTFIX : implicit multi-method should be compiled differently
-//         compiler.injectVirtualMultimethodConversion(scope, node, *it, methodType);
-//      }
-//      else compiler.injectVirtualMultimethod(scope, node, *it, methodType);
-//   }
-//}
-//
+void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
+   List<ref_t>& implicitMultimethods, LexicalType methodType)
+{
+   // generate implicit mutli methods
+   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
+      ref_t message = *it;
+
+      /*if (methodType == lxConstructor && getParamCount(message) == 1 
+         && getAction(message) == getAction(scope.constructor_message)) 
+      {
+         // HOTFIX : implicit multi-method should be compiled differently
+         compiler.injectVirtualMultimethodConversion(scope, node, *it, methodType);
+      }
+      else */compiler.injectVirtualMultimethod(scope, node, *it, methodType);
+   }
+}
+
 //bool isEmbeddableDispatcher(_ModuleScope& scope, SNode current)
 //{
 //   SNode attr = current.firstChild();
@@ -960,46 +961,46 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 //
 //   dispatchMethodNode = lxIdle;
 //}
-//
-//void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods)
-//{
-//   // HOTFIX : Make sure the multi-method methods have the same output type as generic one
-//   bool needVerification = false;
-//   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-//      ref_t message = *it;
-//
-//      ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
-//      if (outputRef != 0) {
-//         // Bad luck we have to verify all overloaded methods
-//         needVerification = true;
-//         break;
-//      }
-//   }
-//
-//   if (!needVerification)
-//      return;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod) {
-//         ref_t multiMethod = info.methodHints.get(Attribute(current.argument, maMultimethod));
-//         if (multiMethod != lxNone) {
-//            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethod, maReference));
-//            if (outputRefMulti != 0) {
-//               ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
-//               if (outputRef == 0) {
-//                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
-//               }
-//               else if (!isCompatible(scope, outputRefMulti, outputRef)) {
-//                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
-//               }
-//            }            
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
+
+void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods)
+{
+   // HOTFIX : Make sure the multi-method methods have the same output type as generic one
+   bool needVerification = false;
+   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
+      ref_t message = *it;
+
+      ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
+      if (outputRef != 0) {
+         // Bad luck we have to verify all overloaded methods
+         needVerification = true;
+         break;
+      }
+   }
+
+   if (!needVerification)
+      return;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         ref_t multiMethod = info.methodHints.get(Attribute(current.argument, maMultimethod));
+         if (multiMethod != lxNone) {
+            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethod, maReference));
+            if (outputRefMulti != 0) {
+               ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
+               if (outputRef == 0) {
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
+               }
+               else if (!isCompatible(scope, outputRefMulti, outputRef)) {
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
+               }
+            }            
+         }
+      }
+      current = current.nextNode();
+   }
+}
+
 //bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
 //{
 //   return isCompatible(scope, scope.branchingInfo.reference, reference);
@@ -1053,56 +1054,54 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 //{
 //   return test(info.header.flags, elReadOnlyRole);
 //}
-//
-//inline ref_t getSignature(_ModuleScope& scope, ref_t message)
-//{
-//   ref_t actionRef, dummy;
-//   int paramCount;
-//   decodeMessage(message, actionRef, paramCount, dummy);
-//
-//   ref_t signRef = 0;
-//   scope.module->resolveAction(actionRef, signRef);
-//
-//   return signRef;
-//}
-//
-//bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage)
-//{
-//   ref_t sourceSignatures[ARG_COUNT];
-///*   size_t len = */scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
-//
-//   return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures);
-//}
-//
-//bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures)
-//{
-//   ref_t targetSignatures[ARG_COUNT];
-//   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
-//   if (len < 0)
-//      return false;
-//
-//   for (size_t i = 0; i < len; i++) {
-//      if (!isCompatible(scope, targetSignatures[i], sourceSignatures[i]))
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
-//bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures)
-//{
-//   ref_t targetSignatures[ARG_COUNT];
-//   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
-//
-//   for (size_t i = 0; i < len; i++) {
-//      if (!isCompatible(scope, importReference(targetModule, targetSignatures[i], scope.module), sourceSignatures[i]))
-//         return false;
-//   }
-//
-//   return true;
-//
-//}
-//
+
+inline ref_t getSignature(_ModuleScope& scope, ref_t message)
+{
+   ref_t actionRef = getAction(message);
+   ref_t signRef = 0;
+   scope.module->resolveAction(actionRef, signRef);
+
+   return signRef;
+}
+
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage)
+{
+   ref_t sourceSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
+
+   return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
+}
+
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (len < 0)
+      return false;
+
+   for (size_t i = 0; i < len; i++) {
+      if (!isCompatible(scope, targetSignatures[i], sourceSignatures[i]))
+         return false;
+   }
+
+   return true;
+}
+
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, 
+   ref_t* sourceSignatures, size_t sourceLen)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+
+   for (size_t i = 0; i < len; i++) {
+      if (!isCompatible(scope, importReference(targetModule, targetSignatures[i], scope.module), sourceSignatures[i]))
+         return false;
+   }
+
+   return true;
+
+}
+
 //void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr)
 //{
 //   ref_t targetSignatures[ARG_COUNT];
@@ -1589,9 +1588,9 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 //   if (info.methods.exist(scope.dispatch_message, true) && classRef != scope.superReference) {
 //      info.header.flags |= elWithCustomDispatcher;
 //   }
-//
-//   // generate operation list if required
-//   injectOverloadList(scope, info, compiler, classRef);
+
+   // generate operation list if required
+   injectOverloadList(scope, info, compiler, classRef);
 }
 
 bool CompilerLogic :: validateArgumentAttribute(int attrValue/*, bool& byRefArg, bool& paramsArg*/)
@@ -2292,14 +2291,14 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //////   end = signature.find(start, '$', getlength(signature));
 //////   temp.copy(signature.c_str() + start, end - start);
 //////}
-//
-//ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr)
-//{
-//   if (!targetRef)
-//      return 0;
-//
-//   ClassInfo info;
-//   if (defineClassInfo(scope, info, targetRef)) {
+
+ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef/*, int& stackSafeAttr*/)
+{
+   if (!targetRef)
+      return 0;
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, targetRef)) {
 //      if (isMethodInternal(info, multiMessage)) {
 //         // recognize the internal message
 //         ref_t signRef = 0;
@@ -2313,61 +2312,61 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //            // if no signature provided - return the general internal message
 //            return multiMessage;
 //      }
-//
-//      if (!implicitSignatureRef)
-//         return 0;
-//
-//      ref_t signatures[ARG_COUNT];
-//      scope.module->resolveSignature(implicitSignatureRef, signatures);
-//
-//      ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
-//      if (listRef == 0 && isMethodPrivate(info, multiMessage))
-//         listRef = info.methodHints.get(Attribute(multiMessage | STATIC_MESSAGE, maOverloadlist));
-//
-//      if (listRef) {
-//         _Module* argModule = scope.loadReferenceModule(listRef, listRef);
-//
-//         _Memory* section = argModule->mapSection(listRef | mskRDataRef, true);
-//         if (!section || section->Length() < 4)
-//            return 0;
-//
-//         MemoryReader reader(section);
-//         pos_t position = section->Length() - 4;
-//         while (position != 0) {
-//            reader.seek(position - 8);
-//            ref_t argMessage = reader.getDWord();
-//            ref_t argSign = 0;
-//            argModule->resolveAction(getAction(argMessage), argSign);
-//
-//            if (argModule == scope.module) {
-//               if (isSignatureCompatible(scope, argSign, signatures)) {
-//                  if (isEmbeddable(info))
-//                     stackSafeAttr |= 1;
-//
-//                  setSignatureStacksafe(scope, argSign, stackSafeAttr);
-//
-//                  return argMessage;
-//               }                  
-//            }
-//            else {
-//               if (isSignatureCompatible(scope, argModule, argSign, signatures)) {
-//                  if (isEmbeddable(info))
-//                     stackSafeAttr |= 1;
-//
-//                  setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
-//
-//                  return importMessage(argModule, argMessage, scope.module);
-//               }                  
-//            }
-//
-//            position -= 8;
-//         }
-//      }
-//   }
-//
-//   return 0;
-//}
-//
+
+      if (!implicitSignatureRef)
+         return 0;
+
+      ref_t signatures[ARG_COUNT];
+      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
+
+      ref_t listRef = info.methodHints.get(Attribute(multiMessage, maOverloadlist));
+      if (listRef == 0 && isMethodPrivate(info, multiMessage))
+         listRef = info.methodHints.get(Attribute(multiMessage | STATIC_MESSAGE, maOverloadlist));
+
+      if (listRef) {
+         _Module* argModule = scope.loadReferenceModule(listRef, listRef);
+
+         _Memory* section = argModule->mapSection(listRef | mskRDataRef, true);
+         if (!section || section->Length() < 4)
+            return 0;
+
+         MemoryReader reader(section);
+         pos_t position = section->Length() - 4;
+         while (position != 0) {
+            reader.seek(position - 8);
+            ref_t argMessage = reader.getDWord();
+            ref_t argSign = 0;
+            argModule->resolveAction(getAction(argMessage), argSign);
+
+            if (argModule == scope.module) {
+               if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
+                  //if (isEmbeddable(info))
+                  //   stackSafeAttr |= 1;
+
+                  //setSignatureStacksafe(scope, argSign, stackSafeAttr);
+
+                  return argMessage;
+               }                  
+            }
+            else {
+               if (isSignatureCompatible(scope, argModule, argSign, signatures, signatureLen)) {
+                  //if (isEmbeddable(info))
+                  //   stackSafeAttr |= 1;
+
+                  //setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
+
+                  return importMessage(argModule, argMessage, scope.module);
+               }                  
+            }
+
+            position -= 8;
+         }
+      }
+   }
+
+   return 0;
+}
+
 //inline size_t readSignatureMember(ident_t signature, size_t index)
 //{
 //   int level = 0;

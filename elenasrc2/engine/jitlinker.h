@@ -88,17 +88,17 @@ class JITLinker : _JITLoaderListener
 
       virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
       virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
-//      virtual void writeMTReference(MemoryWriter& writer)
-//      {
-//         if (_owner->_virtualMode) {
-//            writer.writeRef(mskMessageTableRef, 0);
-//         }
-//         else {
-//            _Memory* section = _owner->_loader->getTargetSection(mskMessageTableRef);
-//
-//            writer.writeDWord((ref_t)section->get(0));
-//         }
-//      }
+      virtual void writeMTReference(MemoryWriter& writer)
+      {
+         if (_owner->_virtualMode) {
+            writer.writeRef(mskMessageTableRef, 0);
+         }
+         else {
+            _Memory* section = _owner->_loader->getTargetSection(mskMessageTableRef);
+
+            writer.writeDWord((ref_t)section->get(0));
+         }
+      }
 
       //virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
 
@@ -145,7 +145,7 @@ class JITLinker : _JITLoaderListener
 //   void generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask);
 
    void fixReferences(References& relocations, _Memory* image);
-//   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress, bool constArrayMode);
+   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress, bool constArrayMode);
 
    size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 

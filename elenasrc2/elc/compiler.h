@@ -559,7 +559,7 @@ private:
 //      bool         generic;
 //      bool         genericClosure;
 //      bool         extensionMode;
-//      bool         multiMethod;
+      bool         multiMethod;
       bool         functionMode;
 //      bool         nestedMode;
 //      bool         subCodeMode;       
@@ -710,13 +710,13 @@ private:
 //      {
 //         return getMessageID() == moduleScope->init_message;
 //      }
-//
-//      ref_t getMessageID()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(slMethod);
-//
-//         return scope ? scope->message : 0;
-//      }
+
+      ref_t getMessageID()
+      {
+         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
+
+         return scope ? scope->message : 0;
+      }
 
       ref_t getReturningRef()
       {
@@ -876,9 +876,9 @@ private:
    ObjectInfo mapClassSymbol(Scope& scope, int classRef);
 
 //   ref_t resolveTypeAttribute(Scope& scope, SNode node, bool declarationMode);
-//
-//   ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);
-//
+
+   ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);
+
 //   ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef, bool declarationMode);
 //   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode);
 //
@@ -940,8 +940,8 @@ private:
 //
 //   ref_t resolveVariadicMessage(Scope& scope, ref_t message);
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
-//   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
-//                                     bool withExtension, int& stackSafeAttr);
+   ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*,
+                                     bool withExtension, int& stackSafeAttr*/);
 ////   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
 ////   {
 ////      int dummy;
@@ -992,7 +992,7 @@ private:
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
 
-   /*ref_t*/void compileMessageParameters(SNode node, ExprScope& scope, EAttr mode/*, 
+   ref_t compileMessageParameters(SNode node, ExprScope& scope, EAttr mode/*, 
       bool& variadicOne, bool& inlineArg*/);
 
    ObjectInfo compileMessage(SNode node, ExprScope& scope, /*ref_t exptectedRef,*/ ObjectInfo target, EAttr mode);
@@ -1043,9 +1043,9 @@ private:
 //
 //   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
 //   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
-//   void compileResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
+   void compileResendExpression(SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SNode node, CodeScope& scope);
-//   void compileMultidispatch(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classScope);
+   void compileMultidispatch(SNode node, CodeScope& scope, ClassScope& classScope);
 
    ObjectInfo compileCode(SNode node, CodeScope& scope);
 
@@ -1099,7 +1099,7 @@ private:
    void generateClassFlags(ClassScope& scope, SNode node);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
-   void generateMethodDeclaration(SNode current, ClassScope& scope/*, bool hideDuplicates*/, bool closed, 
+   void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, 
       bool allowTypeAttribute/*, bool embeddableClass*/);
    void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, 
       bool allowTypeAttribute/*, bool embeddableClass*/);
@@ -1215,7 +1215,7 @@ public:
 //   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
-//   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
+   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
@@ -1226,10 +1226,10 @@ public:
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode);
 ////   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
-//   virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef);
-//   virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
-//   virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
-//
+   virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef);
+   virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
+   virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
+
 //   virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef);
 //   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, ref_t* arguments, ident_t ns);
 //

@@ -228,6 +228,10 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
          operand.type = x86Helper::otDD;
          operand.reference = -2;
 		}
+      else if (token.check(ARGUMENT3)) {
+         operand.type = x86Helper::otDD;
+         operand.reference = -3;
+      }
       else if (info.parameters.exist(token.value)) {
          if (info.inlineMode) {
             operand.type = x86Helper::addPrefix(x86Helper::otEBP, x86Helper::otM32disp32);

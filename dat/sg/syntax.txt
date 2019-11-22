@@ -17,15 +17,16 @@ __define EMPTY_PARAMETER	4320
 __define STATEMENT_DECLARATION  4352
 __define STATEMENT_ARGS 	4368
 __define BLOCK_END	       69776
+__define MESSAGE	      135296
+__define IMPLICIT_MESSAGE     135297
+__define ASSIGN_OPERATOR      135328
+__define L5_OPERATOR  	      135408
 __define EXPRESSION	      364592
 __define ROOT_EXPRESSION      364593
 __define OPERAND_EXPRESSION   364594
 __define SINGLE_STATEMENT     364595
 __define RET_EXPRESSION	      364848
-__define MESSAGE	      135296
-__define IMPLICIT_MESSAGE     135297
-__define ASSIGN_OPERATOR      135328
-__define L5_OPERATOR  	      135408
+__define RESEND               364912  
 
 __define eof            	8208
 __define identifier 		8209

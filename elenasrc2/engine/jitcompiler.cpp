@@ -163,21 +163,21 @@ void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
 //   writer->write(binary->get(0), length);
 //   writer->align(4, 0);
 //}
-//
-//void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
-//{
-//   size_t length = binary->Length();
-//
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(length);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->write(binary->get(0), length);
-//   writer->align(4, 0);
-//}
+
+void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
+{
+   size_t length = binary->Length();
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(length);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(4, 0);
+}
 
 size_t JITCompiler32 :: findFlags(void* refVMT)
 {

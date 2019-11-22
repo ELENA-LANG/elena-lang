@@ -6539,23 +6539,23 @@ void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool wi
    }
 }
 
-//void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
-//{
-//   tape.write(bcMTRedirect, operationList | mskConstArray, message);
-//}
-//
-//void ByteCodeWriter::doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
+void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
+{
+   tape.write(bcMTRedirect, operationList | mskConstArray, message);
+}
+
+//void ByteCodeWriter :: doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
 //{
 //   tape.write(bcXMTRedirect, operationList | mskConstArray, message);
 //}
-//
-//void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message)
-//{
-//   if (node.type == lxSealedMultiDispatching) {
-//      doSealedMultiDispatch(tape, node.argument, message);
-//   }
-//   else doMultiDispatch(tape, node.argument, message);
-//
+
+void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message)
+{
+   /*if (node.type == lxSealedMultiDispatching) {
+      doSealedMultiDispatch(tape, node.argument, message);
+   }
+   else */doMultiDispatch(tape, node.argument, message);
+
 //   SNode current = node.findChild(lxDispatching, /*lxResending, */lxCalling);
 //   switch (current.type) {
 //      case lxDispatching:
@@ -6573,8 +6573,8 @@ void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool wi
 //      default:
 //         break;
 //   }
-//}
-//
+}
+
 //void ByteCodeWriter :: generateResending(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   if (node.argument != 0) {
@@ -6792,16 +6792,16 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
          //            }
          //            generateDispatching(tape, current);
          //            break;
-         //         case lxMultiDispatching:
-         //         case lxSealedMultiDispatching:
-         //            if (!open) {
-         //               declareIdleMethod(tape, node.argument, sourcePathRef);
-         //               exitLabel = false;
-         //               open = true;
-         //            }               
-         //
-         //            generateMultiDispatching(tape, current, node.argument);
-         //            break;
+         case lxMultiDispatching:
+         case lxSealedMultiDispatching:
+            if (!open) {
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+               exitLabel = false;
+               open = true;
+            }               
+         
+            generateMultiDispatching(tape, current, node.argument);
+            break;
          //         case lxYieldStop:
          //            generateYieldStop(tape, current);
          //            break;

@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   18
+#define REVISION_VERSION   19
 
 using namespace _ELENA_;
 
@@ -1133,7 +1133,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
 
       int hints = info.methodHints.get(ClassInfo::Attribute(entry.message, maHint));
       bool isAbstract = test(hints, tpAbstract);
-      //bool isMultidispatcher = test(hints, tpMultimethod);
+      bool isMultidispatcher = test(hints, tpMultimethod);
       bool isInternal = test(hints, tpInternal);
 
       // print the method name
@@ -1151,8 +1151,8 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       prefix.copy("@method ");
       if (isAbstract)
          prefix.append("@abstract ");
-      //if (isMultidispatcher)
-      //   prefix.append("@multidispatcher ");
+      if (isMultidispatcher)
+         prefix.append("@multidispatcher ");
       if (isInternal)
          prefix.append("@internal ");
 

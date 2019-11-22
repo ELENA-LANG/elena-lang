@@ -104,6 +104,9 @@ enum LexicalType
    lxBranching                = 0x058150,   // branch expression      
    lxIf                       = 0x058160,   // optional arg - reference
    lxElse                     = 0x058161,   // optional arg - reference
+   lxResendExpression         = 0x059170,
+   lxMultiDispatching         = 0x058180,
+   lxSealedMultiDispatching   = 0x058181,
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -224,7 +227,6 @@ enum LexicalType
 //   lxNotGreaterN              = 0x00C02F,   // arg - value
 //
 //   lxIntArrOp                 = 0x08C030,   // arg - operation id
-//   lxResendExpression         = 0x00C031, 
 //   lxByteArrOp                = 0x08C032, // arg - operation id
 //   lxShortArrOp               = 0x08C033, // arg - operation id
 //   lxSeqExpression            = 0x00C034,
@@ -233,8 +235,6 @@ enum LexicalType
 //   lxIntOp                    = 0x18C038,   // arg - operation id
 //   lxLongOp                   = 0x18C039,   // arg - operation id
 //   lxRealOp                   = 0x18C03A,   // arg - operation id
-//   lxMultiDispatching         = 0x00C03B,
-//   lxSealedMultiDispatching   = 0x00C03C,
 //   lxCodeExpression           = 0x00C03D,
 //   lxCollection               = 0x00C03E,
 //   lxYieldReturing            = 0x00C03F,

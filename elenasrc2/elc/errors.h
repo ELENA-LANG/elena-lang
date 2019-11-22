@@ -70,11 +70,11 @@ namespace _ELENA_
    #define errClosedMethod          "%s(%d:%d): error 150: sealed method cannot be overridden\n"
 ////   #define errNoConstructorDefined  "%s(%d:%d): error 151: Class '%s' has no implicit or explicit constructors\n"
    #define errIllegalMethod         "%s(%d:%d): error 152: Illegal method declaration\n"
-//   #define errIllegalOperation      "%s(%d:%d): error 153: Illegal operation\n"
+   #define errIllegalOperation      "%s(%d:%d): error 153: Illegal operation\n"
 //   constexpr auto errInvalidConstant            = "%s(%d:%d): error 154: Invalid constant '%s'\n";
 ////   #define errInvalidMultimethod    "%s(%d:%d): error 155: Invalid multimethod declararion in the class '%s'\n"
    #define errTypeNotAllowed        "%s(%d:%d): error 156: returning type attribute '%s' cannot be specified for this method\n"
-//   #define errNotCompatibleMulti    "%s(%d:%d): error 157: type attribute should be the same for the overloaded method '%s'\n"
+   #define errNotCompatibleMulti    "%s(%d:%d): error 157: type attribute should be the same for the overloaded method '%s'\n"
    #define errTypeAlreadyDeclared   "%s(%d:%d): error 158: type attribute cannot be overridden\n"
    #define errAbstractMethods       "%s(%d:%d): error 159: Class contains abstract methods\n"
    #define errDispatcherInInterface "%s(%d:%d): error 160: Closed class contains a dispatcher method\n"
