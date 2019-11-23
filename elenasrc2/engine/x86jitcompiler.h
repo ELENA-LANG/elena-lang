@@ -76,7 +76,7 @@ protected:
    friend void loadFPOp(int opcode, x86JITScope& scope);
 //   friend void loadROp(int opcode, x86JITScope& scope);
    friend void loadMTOp(int opcode, x86JITScope& scope);
-//   friend void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
+   friend void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
 
    // commands
    friend void compileNop(int opcode, x86JITScope& scope);
@@ -221,8 +221,8 @@ void loadNOp(int opcode, x86JITScope& scope);
 //void loadFNOp(int opcode, x86JITScope& scope);
 void loadFPOp(int opcode, x86JITScope& scope);
 //void loadROp(int opcode, x86JITScope& scope);
-//void loadMTOp(int opcode, x86JITScope& scope);
-//void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
+void loadMTOp(int opcode, x86JITScope& scope);
+void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
 void compileNop(int opcode, x86JITScope& scope);
 void compileBreakpoint(int opcode, x86JITScope& scope);
 //void compilePop(int opcode, x86JITScope& scope);

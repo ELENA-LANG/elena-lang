@@ -105,15 +105,13 @@ const int gcCommands[gcCommandNumber] =
 //   bcEOrN, bcNewI, bcACopyAI
 };
 
-const int gcCommandExNumber = /*6*/0;
-//const int gcCommandExs[gcCommandExNumber] =
-//{
-//   bcNop // !! temporal
-//
-////   bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
-////   bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
-////   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00
-//};
+const int gcCommandExNumber = /*6*/4;
+const int gcCommandExs[gcCommandExNumber] =
+{
+   bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
+   bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
+//   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00
+};
 
 // command table
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
@@ -523,45 +521,48 @@ void _ELENA_::loadMTOp(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
-//void _ELENA_::loadMTOpX(int opcode, x86JITScope& scope, int prefix)
-//{
-//   char* code = NULL;
-//   for (int i = 0; i < gcCommandExNumber; i++) {
-//      if (gcCommandExs[i] == opcode + prefix) {
-//         code = (char*)scope.compiler->_inlineExs[i];
-//         break;
-//      }
-//   }
-//
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0] == -1) {
-//         scope.writeReference(*scope.code, scope.argument, 0);
-//      }
-//      else if (relocation[0] == -2) {
-//         scope.code->writeDWord(scope.extra_arg);
-//      }
-//      else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
-//         scope.helper->writeMTReference(*scope.code);
-//      }
-//      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
+void _ELENA_::loadMTOpX(int opcode, x86JITScope& scope, int prefix)
+{
+   char* code = NULL;
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      if (gcCommandExs[i] == opcode + prefix) {
+         code = (char*)scope.compiler->_inlineExs[i];
+         break;
+      }
+   }
+
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.writeReference(*scope.code, scope.argument, 0);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(scope.extra_arg);
+      }
+      else if (relocation[0] == -3) {
+         scope.code->writeDWord(scope.extra_arg2);
+      }
+      else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
+         scope.helper->writeMTReference(*scope.code);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
 
 void _ELENA_::loadIndexOp(int opcode, x86JITScope& scope)
 {
@@ -1518,12 +1519,12 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
 //   }
 //   else {
       switch (getArgCount(scope.extra_arg) - startArg) {
-         //case 1:
-         //   loadMTOpX(op, scope, 0x100);
-         //   break;
-         //case 2:
-         //   loadMTOpX(op, scope, 0x200);
-         //   break;
+         case 1:
+            loadMTOpX(op, scope, 0x100);
+            break;
+         case 2:
+            loadMTOpX(op, scope, 0x200);
+            break;
          default:
             loadMTOp(op, scope);
             break;
@@ -1798,8 +1799,8 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 
    // preload vm exended commmands
    for (int i = 0; i < gcCommandExNumber; i++) {
-      //SectionInfo info = helper.getCoreSection(gcCommandExs[i]);
-      //_inlineExs.add(gcCommandExs[i], info.section->get(0));
+      SectionInfo info = helper.getCoreSection(gcCommandExs[i]);
+      _inlineExs.add(gcCommandExs[i], info.section->get(0));
    }
 }
 
