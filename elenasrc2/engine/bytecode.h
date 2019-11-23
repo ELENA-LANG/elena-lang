@@ -168,8 +168,8 @@ enum ByteCode
    bcCopyM           = 0x9F,
 
    bcJump            = 0xA0,
-//   bcAJumpVI         = 0xA1,
-   bcCallVI         = 0xA2,
+   bcJumpVI          = 0xA1,
+   bcCallVI          = 0xA2,
    bcCallR           = 0xA3,
 //   bcAJumpI          = 0xA4,
    bcCallExtR        = 0xA5,
@@ -241,7 +241,7 @@ enum ByteCode
 //   bcACopyAI         = 0xE2,
 
    bcMTRedirect      = 0xE8,
-//   bcXMTRedirect     = 0xE9,
+   bcXMTRedirect     = 0xE9,
 //   bcGreaterN        = 0xEA,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcNotGreaterN     = 0xEB,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcNotLessN        = 0xEC,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)

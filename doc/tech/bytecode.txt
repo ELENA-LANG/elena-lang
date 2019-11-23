@@ -102,6 +102,8 @@ ELENA byte codes (or ecodes)
 
  jumprm r, m                - jumps directly the method resolved by JIT by r and m
  
+ jumpvi i                   - redirect to acc::VMT[i] method
+ 
  mtredirect r, m            - search in message table r the message in index and provided parameter list; if found jumps to it;
 
  new vmt, i                 - create the object with the specified
@@ -113,6 +115,8 @@ ELENA byte codes (or ecodes)
 
  vcallrm r, m               - directly resolve message mapping for the specified class
  
+ xmtredirect r,m            - search in message table r the message in ext and provided parameter list; if found jumps to direct address;
+
 
  Jump operations:
  ---------------- 
@@ -381,8 +385,6 @@ ELENA byte codes (or ecodes)
  ------------------
  acallvd                    - call acc::VMT[index]
 
- ajumpvi i                  - redirect to acc::VMT[i] method
- 
  ajumpi i                   - redirect to acc[i] address
  
  bcreate                    - create the object with size=index and vmt=acc, out : acc  (*index and ext affected)
@@ -419,8 +421,6 @@ ELENA byte codes (or ecodes)
  wlen                       - [acc].Length / 2 >> index
 
  xlen                       - [acc].Count >> ext ;
-
- xmtredirect r,m            - search in message table r the message in ext and provided parameter list; if found jumps to direct address;
 
 
  Misc operations:

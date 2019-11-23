@@ -6838,31 +6838,33 @@ void Compiler :: compileMultidispatch(SNode node, CodeScope& scope, ClassScope& 
 {
    ref_t message = scope.getMessageID();
    ref_t overloadRef = classScope.info.methodHints.get(Attribute(message, maOverloadlist));
-   if (overloadRef) {
-      if (test(classScope.info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
-         node.prependSibling(lxSealedMultiDispatching, overloadRef);
-      }
-      else node.prependSibling(lxMultiDispatching, overloadRef);
-   }
-   else scope.raiseError(errIllegalOperation, node);
+   if (!overloadRef)
+      scope.raiseError(errIllegalOperation, node);
 
-//   if (node == lxResendExpression) {
-//      if (node.existChild(lxTypecasting)) {
-//         // if it is multi-method implicit conversion method
-//         ref_t targetRef = scope.getClassRefId();
-//         ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
-//
-//         writer.newNode(lxCalling, encodeAction(scope.module->mapAction(CAST_MESSAGE, signRef, false)));
-//         writer.appendNode(lxCurrent, 2);
-//         writer.closeNode();
-//      }
-//      else {
-//         writer.newNode(lxDispatching, node.argument);
-//         SyntaxTree::copyNode(writer, lxTarget, node);
-//         writer.closeNode();
-//      }
-//   }
-//   writer.closeNode();
+   LexicalType op = lxMultiDispatching;
+   if (test(classScope.info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+      op = lxSealedMultiDispatching;
+   }
+
+   if (node == lxResendExpression) {
+      node.prependSibling(op, overloadRef);
+      //      if (node.existChild(lxTypecasting)) {
+      //         // if it is multi-method implicit conversion method
+      //         ref_t targetRef = scope.getClassRefId();
+      //         ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
+      //
+      //         writer.newNode(lxCalling, encodeAction(scope.module->mapAction(CAST_MESSAGE, signRef, false)));
+      //         writer.appendNode(lxCurrent, 2);
+      //         writer.closeNode();
+      //      }
+      //      else {
+      node.set(lxResending, node.argument);
+      //         writer.newNode(lxDispatching, node.argument);
+      //         SyntaxTree::copyNode(writer, lxTarget, node);
+      //         writer.closeNode();
+      //      }
+   }
+   else node.insertNode(op, overloadRef);
 }
 
 void Compiler :: compileResendExpression(SNode node, CodeScope& scope, bool multiMethod)
@@ -7105,7 +7107,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
    if (scope.multiMethod) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
 
-      compileMultidispatch(node.parentNode(), codeScope, *classScope);
+      compileMultidispatch(node, codeScope, *classScope);
    }
 
    int frameArg = /*scope.generic ? -1 : */0;

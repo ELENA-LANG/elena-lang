@@ -1274,13 +1274,13 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
 //   tape.write(bcElseN, baCurrentLabel, 0);
 //   tape.releaseLabel();
 //}
-//
-//void ByteCodeWriter :: resend(CommandTape& tape)
-//{
-//   // ajumpvi 0
-//   tape.write(bcAJumpVI);
-//}
-//
+
+void ByteCodeWriter :: resend(CommandTape& tape)
+{
+   // jumpvi 0
+   tape.write(bcJumpVI);
+}
+
 //void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
 //{
 //   // callextr ref
@@ -5276,13 +5276,15 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    }
    
    // the function target can be loaded at the end
-   size_t startIndex = 0;
-   if (functionMode && isFirstDirect)
+   size_t startIndex = 0, diff = 1;
+   if (functionMode && isFirstDirect) {
       startIndex = 1;
+      diff = 0;
+   }      
 
    for (size_t i = startIndex; i < argCount; i++) {
       // get parameters in reverse order if required
-      current = getChild(node, directMode ? argCount - i - 1 : i);
+      current = getChild(node, directMode ? argCount - i - diff : i);
 //      if (current == lxExpression) {
 //         current = current.firstChild(lxObjectMask);
 //      }
@@ -6129,9 +6131,9 @@ inline SNode goToNode(SNode current, LexicalType type)
 //      callNode = goToNode(callNode.nextNode(), lxOvreriddenMessage);
 //   }
 //}
-//
-//void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
+
+void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
+{
 //   SNode target = node.findChild(lxTarget);
 //   if (node.argument == 0) {
 //      SNode message = node.findChild(lxMessage);
@@ -6201,9 +6203,9 @@ inline SNode goToNode(SNode current, LexicalType type)
 //      if (target.argument != 0) {
 //         resendResolvedMethod(tape, target.argument, node.argument);
 //      }
-//      else resend(tape);
+      /*else */resend(tape);
 //   }
-//}
+}
 
 void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
 {
@@ -6309,9 +6311,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxNewArrOp:
 //         generateNewArrOperation(tape, node);
 //         break;
-//      case lxResending:
-//         generateResendingExpression(tape, node);
-//         break;
+      case lxResending:
+         generateResendingExpression(tape, node);
+         break;
 //      case lxDispatching:
 //         generateDispatching(tape, node);
 //         break;
@@ -6544,17 +6546,17 @@ void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, r
    tape.write(bcMTRedirect, operationList | mskConstArray, message);
 }
 
-//void ByteCodeWriter :: doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
-//{
-//   tape.write(bcXMTRedirect, operationList | mskConstArray, message);
-//}
+void ByteCodeWriter :: doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
+{
+   tape.write(bcXMTRedirect, operationList | mskConstArray, message);
+}
 
 void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message)
 {
-   /*if (node.type == lxSealedMultiDispatching) {
+   if (node.type == lxSealedMultiDispatching) {
       doSealedMultiDispatch(tape, node.argument, message);
    }
-   else */doMultiDispatch(tape, node.argument, message);
+   else doMultiDispatch(tape, node.argument, message);
 
 //   SNode current = node.findChild(lxDispatching, /*lxResending, */lxCalling);
 //   switch (current.type) {
@@ -6840,6 +6842,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
             if (test(current.type, lxObjectMask)) {
                if (!open) {
                   open = true;
+                  exitLabel = false;
 
                   declareIdleMethod(tape, node.argument, sourcePathRef);
                }

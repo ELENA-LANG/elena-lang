@@ -964,6 +964,15 @@ inline % 98h
 
 end
 
+// ; ajumpvi
+
+inline % 0A1h
+
+  mov  eax, [ebx - 4]
+  jmp  [eax + __arg1]
+
+end
+
 // ; callvi (ecx - offset to VMT entry)
 inline % 0A2h
 
@@ -1081,7 +1090,61 @@ labNextBaseClass:
   and  ebx, ebx
   jnz  labNextOverloadlist
 
-  mov  edx, __arg2
+  pop  ebx
+
+end
+
+
+// ; xmtredirect (__arg3 - number of parameters, eax - points to the stack arg list)
+
+inline % 0E9h
+
+  mov  esi, __arg1
+  xor  edx, edx
+  push ebx
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  edi, rdata : % CORE_MESSAGE_TABLE
+  mov  ebx, [edi + ebx * 8 + 4]
+  mov  ecx, __arg3
+  lea  ebx, [edi + ebx - 4]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  esi, __arg1
+  mov  ecx, edx
+  pop  ebx
+  mov  edx, [esi + ecx * 8]
+  jmp  [esi + ecx * 8 + 4]
+
+labMatching:
+  mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - 4]
+  mov  esi, [ebx + ecx * 4]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  esi, __arg1
+  add  edx, 1
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+
   pop  ebx
 
 end

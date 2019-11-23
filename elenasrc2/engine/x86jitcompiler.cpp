@@ -62,21 +62,21 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/21;
+const int gcCommandNumber = /*160*/23;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
    bcReserve, bcPushS, bcStoreSI, bcPeekSI, bcThrow,
    bcCallVI, bcClose, bcNew, bcFill, bcCallRM,
    bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
-   bcMTRedirect,
+   bcMTRedirect, bcJumpVI, bcXMTRedirect,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
 //   bcALoadBI, bcPushAI, bcPushF, ,
 //   bcHook, bcUnhook, bcClass, bcACallVD,
 //   bcDLoadSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
-//   bcEQuit, bcAJumpVI, bcASaveBI, bcESaveSI,
+//   bcEQuit, bcASaveBI, bcESaveSI,
 //   bcGet, bcSet, bcXSet, bcACallI, bcBReadB,
 //   bcRestore, bcLen, bcIfHeap, bcFlag, bcNCreate,
 //   bcBLoadFI, bcAXSaveBI, bcBLoadSI, bcBWriteB,
@@ -99,7 +99,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
 //   bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
 //   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
-//   bcCheck, bcDCopyVerb, bcXCopy, bcXMTRedirect,
+//   bcCheck, bcDCopyVerb, bcXCopy,
 //   bcSaveFI, bcAddFI, bcSubFI, bcNShiftR, bcLSave,
 //   bcSelect, bcEqualR, bcBLoadAI, bcAndE, bcDMoveVerb,
 //   bcEOrN, bcNewI, bcACopyAI
@@ -148,7 +148,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadIndexOp, &compileNop, &compileNop,
    &compileOpen, &compileQuitN, &compileNop, &compileNop, &compileNop, &compileNop, &compileSetR, &compileMCopy,
 
-   &compileJump, &compileNop, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
+   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compilePush, &compileNop, &compileNop, &compileNop, &compilePushFI, &compileNop,
@@ -161,7 +161,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileElseR, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
@@ -1504,11 +1504,11 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
    scope.extra_arg2 = getArgCount(scope.extra_arg);
 
    int startArg = 1;
-   //if (test(message, FUNCTION_MESSAGE)) {
-   //   scope.extra_arg = 0;
-   //   startArg = 0;
-   //}
-   //else scope.extra_arg = 4;
+   if (test(scope.extra_arg, FUNCTION_MESSAGE)) {
+      startArg = 0;
+      scope.extra_arg2++;
+   }
+//   else scope.extra_arg = 4;
 
    // ; lea  eax, [esp + offs]
    x86Helper::leaRM32disp(scope.code, x86Helper::otEAX, x86Helper::otESP, startArg << 2);

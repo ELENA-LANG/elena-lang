@@ -8,6 +8,7 @@ In development:
                 * multi-dispatch function : 1 arg, 2 arg, 3 arg - runtime / compiletime  , default / not resolved
                 * multi-dispatch sealed funtion : 1 arg, 2 arg, 3 arg - runtime / compiletime , default / not resolved
 
+
                 * compileMultidispatch
                 * Compiler::resolveMessageAtCompileTime
                 * uncomment : Compiler::compileMultidispatch
@@ -141,6 +142,7 @@ In development:
 
                 * multi-methods 
                 * variadic methods
+                * variadic dispatch
                 * yieldable methods
 
                 * extensions

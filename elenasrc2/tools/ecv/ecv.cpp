@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   19
+#define REVISION_VERSION   20
 
 using namespace _ELENA_;
 
@@ -621,7 +621,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.appendHex(argument);
          command.append('h');
          break;
-//      case bcAJumpVI:
+      case bcJumpVI:
       case bcCallVI:
          printCommand(command, opcode);
          command.appendInt(argument);
@@ -646,7 +646,8 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCallRM:
       case bcJumpRM:
       case bcVCallRM:
-//      case bcXMTRedirect:
+      case bcMTRedirect:
+      case bcXMTRedirect:
          printCommand(command, opcode);
          printReference(command, module, argument);
          command.append(" message : \"");

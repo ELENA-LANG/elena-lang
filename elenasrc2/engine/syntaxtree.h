@@ -107,6 +107,7 @@ enum LexicalType
    lxResendExpression         = 0x059170,
    lxMultiDispatching         = 0x058180,
    lxSealedMultiDispatching   = 0x058181,
+   lxResending                = 0x058190,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -196,7 +197,6 @@ enum LexicalType
 //   lxUnboxing                 = 0x00C004,   // boxing and unboxing of the argument, arg - size
 //   lxArgBoxing                = 0x00C005,   // argument list boxing, arg - size
 //   lxArgUnboxing              = 0x00C006,
-//   lxResending                = 0x00C00A,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
 //   lxImplicitCall             = 0x00C00B,
 //   lxTrying                   = 0x00C00C,   // try-catch expression
 //   lxAlt                      = 0x00C00D,   // alt-catch expression
