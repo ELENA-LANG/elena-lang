@@ -75,6 +75,7 @@ enum LexicalType
    lxHexInteger               = 0x002012,
    lxReference                = 0x002013,
    lxGlobalReference          = 0x002014,
+   lxInteger                  = 0x002015,
 
    lxVirtualReference         = 0x00201F,
 
@@ -96,9 +97,12 @@ enum LexicalType
    lxCreatingClass            = 0x0580E0, // arg - count
    lxCreatingStruct           = 0x0580F0, // arg - size
    lxVariable                 = 0x010100,
+   lxIntVariable              = 0x010101,
    lxLocal                    = 0x018110, // arg - offset
    lxSelfLocal                = 0x018111,
+   lxLocalAddress             = 0x018112, // arg - offset
    lxAssigning                = 0x058120,   // an assigning expression, arg - size
+   lxCopying                  = 0x058121,
    lxReturning                = 0x059130,
    lxImplicitJump             = 0x058140,
    lxBranching                = 0x058150,   // branch expression      
@@ -129,6 +133,8 @@ enum LexicalType
    lxAutoMultimethod          = 0x000F10,
    lxConstAttr                = 0x000F11,
    lxTemplateParam            = 0x000F12,
+   lxSize                     = 0x000F13,
+   lxReserved                 = 0x000F14,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -168,7 +174,6 @@ enum LexicalType
 //   lxStruct                   = 0x008103, // arg - count
 //   lxField                    = 0x008105, // arg - offset
 //   lxStaticField              = 0x008106, // arg - reference   // - lxClassStaticField
-//   lxLocalAddress             = 0x00A108, // arg - offset
 //   lxFieldAddress             = 0x008109, // arg - offset
 //   lxBlockLocal               = 0x00A10B, // arg - offset
 //   lxConstantString           = 0x00A10C, // arg - reference
@@ -243,7 +248,6 @@ enum LexicalType
 //   lxOverridden               = 0x004047,
 //   lxFinally                  = 0x004048,
 //
-//   lxIntVariable              = 0x10028,
 //   lxLongVariable             = 0x10029,
 //   lxReal64Variable           = 0x1002A,
 //   lxForward                  = 0x1002E,
@@ -255,13 +259,11 @@ enum LexicalType
 //   lxShortsVariable           = 0x1003D,
 //   lxParamsVariable           = 0x1003E,
 
-//   lxReserved                 = 0x20008,
 //   lxClassName                = 0x20014, // arg - identifier
 //   lxIntValue                 = 0x20015, // arg - integer value
 //   lxTempLocal                = 0x20016,
 //   lxIfValue                  = 0x20017, // arg - reference
 //   lxElseValue                = 0x20018, // arg - reference
-//   lxSize                     = 0x20019,
 //   lxIntExtArgument           = 0x2001C,
 //   lxExtArgument              = 0x2001D,
 //   lxExtInteranlRef           = 0x2001E,

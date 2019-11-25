@@ -48,29 +48,29 @@ public:
    {
       int    offset;
       ref_t  class_ref;
-//      ref_t  element_ref;
-//      int    size;
+      ref_t  element_ref;
+      int    size;
 
       Parameter()
       {
          offset = -1;
          class_ref = 0;
-//         element_ref = 0;
-//         size = 0;
+         element_ref = 0;
+         size = 0;
       }
       Parameter(int offset)
       {
          this->offset = offset;
          this->class_ref = 0;
-//         this->element_ref = 0;
-//         this->size = 0;
+         this->element_ref = 0;
+         this->size = 0;
       }
       Parameter(int offset, ref_t class_ref)
       {
          this->offset = offset;
          this->class_ref = class_ref;
-//         this->element_ref = 0;
-//         this->size = 0;
+         this->element_ref = 0;
+         this->size = 0;
       }
 ////      Parameter(int offset, ref_t class_ref, int size)
 ////      {
@@ -79,13 +79,13 @@ public:
 ////         this->element_ref = 0;
 ////         this->size = size;
 ////      }
-//      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
-//      {
-//         this->offset = offset;
-//         this->class_ref = class_ref;
-//         this->element_ref = element_ref;
-//         this->size = size;
-//      }
+      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->element_ref = element_ref;
+         this->size = size;
+      }
    };
 
    // InheritResult
@@ -140,7 +140,7 @@ public:
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
 //      okSuper,
-//      okLocalAddress,                 // param - local offset
+      okLocalAddress,                 // param - local offset
 //      okParams,                       // param - local offset
 //////      okBlockLocal,                   // param - local offset
 //      okConstantRole,                 // param - role reference
@@ -172,49 +172,49 @@ public:
       ref_t      param;
       // target class reference
       ref_t      reference;
-//      ref_t      element;
-//      ref_t      extraparam;
+      ref_t      element;
+      ref_t      extraparam;
 
       ObjectInfo()
       {
          this->kind = okUnknown;
          this->param = 0;
          this->reference = 0;
-//         this->element = 0;
-//         this->extraparam = 0;
+         this->element = 0;
+         this->extraparam = 0;
       }
       ObjectInfo(ObjectKind kind)
       {
          this->kind = kind;
          this->param = 0;
          this->reference = 0;
-//         this->extraparam = 0;
-//         this->element = 0;
+         this->extraparam = 0;
+         this->element = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param)
       {
          this->kind = kind;
          this->param = param;
          this->reference = 0;
-//         this->element = 0;
-//         this->extraparam = 0;
+         this->element = 0;
+         this->extraparam = 0;
       }
       ObjectInfo(ObjectKind kind, ref_t param, ref_t reference)
       {
          this->kind = kind;
          this->param = param;
          this->reference = reference;
-//         this->element = 0;
-//         this->extraparam = 0;
+         this->element = 0;
+         this->extraparam = 0;
       }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference, ref_t element, ref_t extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->reference = reference;
-//         this->element = element;
-//         this->extraparam = extraparam;
-//      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference, ref_t element, ref_t extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->reference = reference;
+         this->element = element;
+         this->extraparam = extraparam;
+      }
    };
 
    typedef MemoryMap<ident_t, Parameter>  LocalMap;
@@ -550,8 +550,8 @@ private:
       ref_t        message;
       LocalMap     parameters;
 //      EAttr        scopeMode;
-//      int          reserved;           // defines inter-frame stack buffer (excluded from GC frame chain)
-//      int          rootToFree;         // by default is 1, for open argument - contains the list of normal arguments as well
+      int          reserved1;             // defines managed frame size
+      int          reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
       int          hints;
       ref_t        outputRef;
 //      bool         withOpenArg;
@@ -566,7 +566,7 @@ private:
 //      bool         abstractMethod;
 //      bool         yieldMethod;
 //      bool         embeddableRetMode;
-//      bool         targetSelfMode;     // used for script generated methods - self refers to __target
+//      bool         targetSelfMode;        // used for script generated methods - self refers to __target
 ////      bool         dispatchMode;
       bool         constMode;
 
@@ -647,21 +647,21 @@ private:
    {
       // scope local variables
       LocalMap     locals;
-      int          level;
 //      bool         genericMethod;
 //      bool         yieldMethod;
 //
 //      bool         ignoreDuplicates; // used for code templates, should be applied only to the statement
-//
-//      // scope stack allocation
-//      int          reserved;  // allocated for the current statement
-//      int          saved;     // permanently allocated
+      
+      int reserved1, allocated1; // managed scope stack allocation
+      int reserved2, allocated2; // unmanaged scope stack allocation
 
       int newLocal()
       {
-         level++;
+         allocated1++;
+         if (allocated1 > reserved1)
+            reserved1 = allocated1;
 
-         return level;
+         return allocated1;
       }
 
       void mapLocal(ident_t local, int level)
@@ -672,22 +672,17 @@ private:
       {
          locals.add(local, Parameter(level, class_ref/*, size*/));
       }
-//      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
-//      {
-//         locals.add(local, Parameter(level, class_ref, element_ref, size));
-//      }
-//
+      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
+      {
+         locals.add(local, Parameter(level, class_ref, element_ref, size));
+      }
+
 //      // check if a local was declared in one of nested code scopes
 //      bool checkLocal(ident_t local)
 //      {
 //         ObjectInfo info = mapTerminal(local, false, EAttr::eaNone);
 //         return info.kind == okLocal || info.kind == okLocalAddress;
 //      }
-//
-////      void freeSpace()
-////      {
-////         reserved = saved;
-////      }
 //
 //      ObjectInfo mapMember(ident_t identifier);
 //
@@ -744,6 +739,31 @@ private:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
 
          return scope ? scope->info.header.flags : 0;
+      }
+
+      void syncStack(MethodScope* methodScope)
+      {
+         if (reserved1 < allocated1) {
+            reserved1 = allocated1;
+         }
+         if (reserved2 < allocated2) {
+            reserved2 = allocated2;
+         }
+
+         if (reserved1 > methodScope->reserved1)
+            methodScope->reserved1 = reserved1;
+
+         if (reserved2 > methodScope->reserved2)
+            methodScope->reserved2 = reserved2;
+      }
+
+      void syncStack(CodeScope* codeScope)
+      {
+         if (reserved1 > codeScope->reserved1)
+            codeScope->reserved1 = reserved1;
+
+         if (reserved2 > codeScope->reserved2)
+            codeScope->reserved2 = reserved2;
       }
 
       CodeScope(SourceScope* parent);
@@ -911,8 +931,8 @@ private:
    // NOTE : the method is used to set template pseudo variable
    void declareProcedureDebugInfo(SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
 //   void declareCodeDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//
-//   int resolveSize(SNode node, Scope& scope);
+
+   int resolveSize(SNode node, Scope& scope);
    ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
 //   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
 
@@ -921,8 +941,8 @@ private:
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false);
    void compileParentDeclaration(SNode node, ClassScope& scope/*, bool extensionMode*/);
    void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
-//   void validateClassFields(SNode node, ClassScope& scope);
-//
+   void validateClassFields(SNode node, ClassScope& scope);
+
 //   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
    void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode);
    void declareClassAttributes(SNode node, ClassScope& scope, bool visibilityOnly);
@@ -957,7 +977,7 @@ private:
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable/*, ClassInfo& localInfo, int size, bool binaryArray, 
+   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size/*, bool binaryArray, 
                                     int& variableArg, ident_t& className*/);
    void declareVariable(SNode& node, CodeScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/);
 
@@ -1033,11 +1053,11 @@ private:
 //   ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ref_t operator_id);
 //   ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo);
 ////   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
-//
-//   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+
+   int allocateStructure(/*bool bytearray, */int& allocatedSize, int& reserved);
 //   int allocateStructure(SNode node, int& size);
-//   bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
-//
+   bool allocateStructure(CodeScope& scope, int size, /*bool binaryArray, */ObjectInfo& exprOperand);
+
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, EAttr mode);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 //
@@ -1061,7 +1081,7 @@ private:
 //   void compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void beginMethod(SNode node, MethodScope& scope);
-   void endMethod(SNode node, MethodScope& scope, CodeScope& codeScope, int argCount, int preallocated);
+   void endMethod(SNode node, MethodScope& scope, int preallocated);
    void compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope,
       int& preallocated);
 

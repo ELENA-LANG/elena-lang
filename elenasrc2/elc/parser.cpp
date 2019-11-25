@@ -93,9 +93,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
 //    //     }
 //    //     else terminal.symbol = tsPrivate;
 //    //     break;
-//      case dfaInteger:
-//         terminal.symbol = tsInteger;
-//         break;
+      case dfaInteger:
+         terminal.symbol = lxInteger;
+         break;
       case dfaExplicitConst:
          switch (terminal.value[getlength(terminal.value) - 1]) {
             case 'h':

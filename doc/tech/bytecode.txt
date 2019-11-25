@@ -14,9 +14,13 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
+ copyfi i, n                - copy [acc] => [fp+i], n*4-bytes
+
  copym m                    - m => index
 
  putfi i                    - acc => [fp+i][0]
+
+ setf i                     - fp+i => acc
 
  setr r                     - r => acc
 
@@ -37,6 +41,8 @@ ELENA byte codes (or ecodes)
  
  pusha                      - acc => [sp+1] ; sp++                  
 
+ pushf i                    - fp+i => [sp+1] ; sp++
+ 
  pushfi i                   - [fp+i] => [sp+1] ; sp++
  
  pushr r                    - r  => [sp+1] ; sp++
@@ -70,6 +76,8 @@ ELENA byte codes (or ecodes)
  reserve i                  - exclude part of the stack from managed stack frame ;
                               should follow "open" byte code
  
+ restore n                  - remove the excluded stack
+
 
  Call operations:
  ----------------
@@ -137,9 +145,6 @@ ELENA byte codes (or ecodes)
  acopyb                     - base => acc
  
  acopyai i                  - acc+i => acc
-                              does not affect ext register (ECX) 
-
- acopyf i                   - fp+i => acc
                               does not affect ext register (ECX) 
 
  acopys i                   - sp+i => acc
@@ -326,8 +331,6 @@ ELENA byte codes (or ecodes)
  
  pushd                      - index => [sp+1] ; sp++;
 
- pushf i                    - fp+i => [sp+1] ; sp++
- 
  savefi i,n                 - [fp:i] <= n
 
  subfi i,n                  - [fp:i] <= [fp:i] - n
@@ -447,8 +450,6 @@ ELENA byte codes (or ecodes)
 
  exclude                    - should be called before external call, excluding the stack starting from ESP from GC frames
  
- restore n                  - remove the excluded stack
-
  init i                     - allocate the stack block for variables and fill it with zero ; acc,base are undefined
 
 

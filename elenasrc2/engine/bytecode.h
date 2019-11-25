@@ -152,7 +152,7 @@ enum ByteCode
 //
 //   bcDCopy           = 0x90,
 //   bcECopy           = 0x91,
-//   bcRestore         = 0x92,
+   bcRestore         = 0x92,
 //   bcALoadR          = 0x93,
    bcPeekFI          = 0x94,
    bcPeekSI          = 0x95,
@@ -162,7 +162,7 @@ enum ByteCode
    bcQuitN           = 0x99,
 //   bcBCopyR          = 0x9A,
 //   bcBCopyF          = 0x9B,
-//   bcACopyF          = 0x9C,
+   bcSetF            = 0x9C,
 //   bcACopyS          = 0x9D,
    bcSetR            = 0x9E,
    bcCopyM           = 0x9F,
@@ -197,7 +197,7 @@ enum ByteCode
    bcPushSI          = 0xBA,
    bcSaveSI          = 0xBB,
 //   bcELoadSI         = 0xBC,
-//   bcPushF           = 0xBD,
+   bcPushF           = 0xBD,
    bcPushS           = 0xBE,
    bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
 
@@ -240,6 +240,7 @@ enum ByteCode
 //   bcNewI            = 0xE1,
 //   bcACopyAI         = 0xE2,
 
+   bcCopyFI          = 0xE7,
    bcMTRedirect      = 0xE8,
    bcXMTRedirect     = 0xE9,
 //   bcGreaterN        = 0xEA,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
@@ -307,7 +308,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x8F
-#define MAX_DOUBLE_ECODE 0xE7
+#define MAX_DOUBLE_ECODE 0xE6
 
 enum PseudoArg
 {
@@ -520,7 +521,7 @@ public:
          case bcPushSI:
          case bcPushS:
          //case bcPushAI:
-         //case bcPushF:
+         case bcPushF:
          //case bcPushE:
          //case bcPushD:
             return true;

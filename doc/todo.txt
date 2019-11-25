@@ -2,12 +2,11 @@
 In development:
 ------         
               dev
-                * compileMultidispatch
-                * Compiler::resolveMessageAtCompileTime
-                * uncomment : Compiler::compileMultidispatch
+                * structs : boxing, unboxing
+                * primitive operations with int
 
-                * message parameters : type, template type, paramter in template
-                * multidispatching : compile-time, run-time
+                * copying  a buffer with unaligned size
+                * copying 4,8,1,2 bytes
 
                 * resend body
                 * call parent constructor
@@ -24,7 +23,6 @@ In development:
                 * field : type, template type
 
                 * type should be only one in the token expression - test: int long r := 0;
-
 
                 * template : inherting another template
                 * template based class, import template (multi-inheritance)
@@ -50,12 +48,16 @@ In development:
 
                 * singleton nested class - should init method be called?
 
+                * primitive operations with long
+                * primitive operations with real
+                * primitive operations with ptr
+                * primitive operations with dword
+
                 * fields, public / private / internal fields
                 * fields with reference name
                 * strong typed fields
                 * temlate based typed fields
                 * const class \ const field
-                * structs
                 * properties
                 * public / private / internal properties
                 * properties - explicit
@@ -111,6 +113,8 @@ In development:
                 * reference message??
                 * templates, template creating, template inheritance, template import
                 * variable : identifier / reference
+
+                * test primitive numeric operation in the symbol
 
                 * implement sealed, const, struct
                 * analog of C# $ strings
@@ -205,7 +209,6 @@ In development:
                 * it should be possible to turn-off optimization (opL1)
                 * protected default constructor - the class cannot be created using default constructor
                 * test : branching external implementation : returning a value from closure 
-                * sub code - try to reuse stack (e.g. two sub block in two separate statements may reuse the stack)
                 * it should be possible to extend attributes / template statements from anoter libraries
 
               dev1

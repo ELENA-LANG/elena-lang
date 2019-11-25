@@ -35,8 +35,8 @@
 
 /// scope:
 #define class       80001001h
-//#define struct      80001002h
-//#define symbol      80001003h
+#define struct      80001002h
+#define symbol      80001003h
 #define constructor 80001004h
 //#define extension   80001005h
 #define singleton   80001006h
@@ -63,11 +63,11 @@
 //#define attribute   8000101Fh
 //#define yield       80001020h
 #define namespace   80001021h
-//
-///// primitive types
+
+/// primitive types
 //#define __string    80000801h
 //#define __float     80000802h
-//#define __int       80000803h
+#define __int       80000803h
 //#define __raw       80000804h
 //#define __ptr       80000805h
 //#define __mssg      80000806h

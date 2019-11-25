@@ -827,7 +827,7 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
 
             recognizeMethodMebers(current);
          }
-         else if (current.firstChild()/*.compare(lxSizeDecl, lxFieldInit, lxFieldAccum, */ == lxNone/*)*/) {
+         else if (current.firstChild().compare(lxSizeDecl, /*lxFieldInit, lxFieldAccum, */ lxNone)) {
             // if it is a field
             current = lxClassField;
 //            mode = MODE_PROPERTYALLOWED;
@@ -1192,12 +1192,12 @@ void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
 //   }
 //   else if (!isInitializer) {
       writer.newNode(lxClassField/*, templateMode ? -1 : 0*/);
-//      SNode sizeNode = node.findChild(lxSizeDecl);
-//      if (sizeNode != lxNone) {
-//         writer.newNode(lxSize);
-//         copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
-//         writer.closeNode();
-//      }
+      SNode sizeNode = node.findChild(lxSizeDecl);
+      if (sizeNode != lxNone) {
+         writer.newNode(lxSize);
+         copyIdentifier(writer, sizeNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
+         writer.closeNode();
+      }
 
       generateAttributes(writer, node.prevNode(), derivationScope, buffer);
 

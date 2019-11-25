@@ -942,6 +942,13 @@ inline % 2Ah
 
 end
 
+// ; restore
+inline % 92h
+
+  add  ebp, __arg1
+  
+end
+
 // ; peekfi
 inline % 94h
 
@@ -996,6 +1003,14 @@ inline % 0BBh
 
 end
 
+// ; pushf
+inline % 0BDh
+
+  lea  eax, [ebp + __arg1]
+  push eax
+
+end
+
 // ; reserve
 inline % 0BFh
 
@@ -1040,7 +1055,6 @@ inline %0D1h
 end
 
 // ; mtredirect (__arg3 - number of parameters, eax - points to the stack arg list)
-
 inline % 0E8h
 
   mov  esi, __arg1
@@ -1095,7 +1109,6 @@ labNextBaseClass:
 end
 
 // ; xmtredirect (__arg3 - number of parameters, eax - points to the stack arg list)
-
 inline % 0E9h
 
   mov  esi, __arg1
@@ -1149,9 +1162,6 @@ labNextBaseClass:
 end
 
 // ; mtredirect<1>
-
-// edi -> eax, ebx -> ecx
-
 inline % 1E8h
 
   xor  edx, edx
@@ -1202,7 +1212,6 @@ labEnd:
 end
 
 // ; xmtredirect<1>
-
 inline % 1E9h
 
   xor  edx, edx
@@ -1252,7 +1261,6 @@ labEnd:
 end
 
 // ; mtredirect<2> (eax - refer to the stack)
-
 inline % 2E8h 
 
   mov  ecx, __arg1
@@ -1322,9 +1330,7 @@ labNext:
 
 end
 
-
 // ; xmtredirect<2>  (eax - refer to the stack)
-
 inline % 2E9h
 
 // ecx -> eax
@@ -1393,6 +1399,16 @@ labNext:
   mov  ecx, [ecx + edx * 8] // ; message from overload list
   and  ecx, ecx
   jnz  labNextOverloadlist
+
+end
+
+// ; copyfi (__arg1 - index, __arg2 - n)
+inline % 0E7h
+
+  mov  ecx, __arg2	
+  lea  edi, [ebp + __arg1]
+  mov  esi, ebx
+  rep  movsd
 
 end
 

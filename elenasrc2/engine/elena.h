@@ -545,12 +545,12 @@ enum MethodAttribute
 
 struct ClassInfo
 {
-//   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
+   typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
    typedef Pair<ref_t, int>                    Attribute;
    typedef MemoryMap<ref_t, bool, false>       MethodMap;
    typedef MemoryMap<ident_t, int, true>       FieldMap;
 //   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
-//   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
+   typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>  CategoryInfoMap;
 //   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
@@ -560,8 +560,8 @@ struct ClassInfo
    FieldMap        fields;
 //   StaticFieldMap  statics;
 //   StaticInfoMap   staticValues;
-//
-//   FieldTypeMap    fieldTypes;
+
+   FieldTypeMap    fieldTypes;
    CategoryInfoMap methodHints;
 //   CategoryInfoMap mattributes;   
 
@@ -576,7 +576,7 @@ struct ClassInfo
          methods.write(writer);
          methodHints.write(writer);
          fields.write(writer);
-//         fieldTypes.write(writer);
+         fieldTypes.write(writer);
       }
    }
 
@@ -592,13 +592,13 @@ struct ClassInfo
          methodHints.read(reader);
          if (!ignoreFields) {
             fields.read(reader);
-            //fieldTypes.read(reader);
+            fieldTypes.read(reader);
          }
       }
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0)//, fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
+      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0))//, statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;

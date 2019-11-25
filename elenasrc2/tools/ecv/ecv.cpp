@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   20
+#define REVISION_VERSION   22
 
 using namespace _ELENA_;
 
@@ -533,11 +533,11 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPeekFI:
       case bcStoreFI:
 //      case bcDLoadFI:
-//      case bcACopyF:
+      case bcSetF:
 //      case bcSCopyF:
 //      case bcBCopyF:
 //      case bcACopyS:
-//      case bcPushF:
+      case bcPushF:
          printCommand(command, opcode);
          command.appendInt(argument);
          break;
@@ -580,12 +580,12 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //         command.appendHex(argument);
 //         command.append('h');
 //         break;
-//      case bcNop:
-//         printLabel(command, position + argument, labels);
-//         command.append(':');
-//         command.append("   ");
-//         command.append(opcode);
-//         break;
+      case bcNop:
+         printLabel(command, position + argument, labels);
+         command.append(':');
+         command.append("   ");
+         command.append(opcode);
+         break;
       case bcPushR:
 //      case bcALoadR:
       case bcCallR:
@@ -600,7 +600,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printExternReference(command, module, argument);
          break;
       case bcReserve:
-//      case bcRestore:
+      case bcRestore:
 //      case bcPushN:
       case bcFreeI:
       case bcAllocI:
@@ -683,11 +683,12 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcSaveFI:
 //      case bcAddFI:
 //      case bcSubFI:
-//         printCommand(command, opcode);
-//         command.appendInt(argument);
-//         command.append(" ");
-//         command.appendInt(argument2);
-//         break;
+      case bcCopyFI:
+         printCommand(command, opcode);
+         command.appendInt(argument);
+         command.append(" ");
+         command.appendInt(argument2);
+         break;
       default:
          printCommand(command, opcode);
          break;
@@ -889,13 +890,13 @@ void listFields(_Module* module, ClassInfo& info, int& row, int pageSize)
 {
    ClassInfo::FieldMap::Iterator it = info.fields.start();
    while (!it.Eof()) {
-      /*ref_t type = info.fieldTypes.get(*it).value1;
+      ref_t type = info.fieldTypes.get(*it).value1;
       if (type != 0 && !isPrimitiveRef(type)) {
          ident_t typeName = module->resolveReference(type);
 
          printLine("@field ", (const char*)it.key(), " of ", typeName, row, pageSize);
       }
-      else */printLine("@field ", (const char*)it.key(), row, pageSize);
+      else printLine("@field ", (const char*)it.key(), row, pageSize);
    
       it++;
    }
@@ -910,10 +911,10 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elDynamicRole)) {
    //   printLine("@flag ", "elDynamicRole", row, pageSize);
    //}
-   //   
-   //if (test(flags, elStructureRole)) {
-   //   printLine("@flag ", "elStructureRole", row, pageSize);
-   //}      
+      
+   if (test(flags, elStructureRole)) {
+      printLine("@flag ", "elStructureRole", row, pageSize);
+   }      
 
    if (test(flags, elSealed)) {
       printLine("@flag ", "elSealed", row, pageSize);
@@ -944,11 +945,11 @@ void listFlags(int flags, int& row, int pageSize)
    //if (test(flags, elWithVariadics))
    //   printLine("@flag ", "elWithVariadics", row, pageSize);
 
-   //if (test(flags, elReadOnlyRole))
-   //   printLine("@flag ", "elReadOnlyRole", row, pageSize);
+   if (test(flags, elReadOnlyRole))
+      printLine("@flag ", "elReadOnlyRole", row, pageSize);
 
-   //if (test(flags, elNonStructureRole))
-   //   printLine("@flag ", "elNonStructureRole", row, pageSize);
+   if (test(flags, elNonStructureRole))
+      printLine("@flag ", "elNonStructureRole", row, pageSize);
 
    //if (test(flags, elSubject))
    //   printLine("@flag ", "elSubject", row, pageSize);
@@ -978,10 +979,10 @@ void listFlags(int flags, int& row, int pageSize)
    if (test(flags, elNoCustomDispatcher))
       printLine("@flag ", "elNoCustomDispatcher", row, pageSize);
 
-   //switch (flags & elDebugMask) {
-   //   case elDebugDWORD:
-   //      printLine("@flag ", "elDebugDWORD", row, pageSize);
-   //      break;
+   switch (flags & elDebugMask) {
+      case elDebugDWORD:
+         printLine("@flag ", "elDebugDWORD", row, pageSize);
+         break;
    //   case elDebugReal64:
    //      printLine("@flag ", "elDebugReal64", row, pageSize);
    //      break;
@@ -1027,7 +1028,7 @@ void listFlags(int flags, int& row, int pageSize)
    ////   case elEnumList:
    ////      printLine("@flag ", "elEnumList", row, pageSize);
    ////      break;
-   //}
+   }
 }
 
 void printParents(_Module* module, ref_t reference)

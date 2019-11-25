@@ -295,16 +295,16 @@ namespace _ELENA_
    constexpr int elRole                = 0x00000100;
    constexpr int elAbstract            = 0x00000200;
    constexpr int elNoCustomDispatcher  = 0x00000400;
+   constexpr int elStructureRole       = 0x00000838;
+   constexpr int elReadOnlyRole        = 0x00001000;
+   constexpr int elNonStructureRole    = 0x00002000;
 
 //   constexpr int elDynamicRole         = 0x00000004;
 //   constexpr int elWrapper             = 0x00000040;
 //   constexpr int elStructureWrapper    = 0x00000048;
 //   constexpr int elSealed              = 0x00000120;
-//   constexpr int elStructureRole       = 0x00000128;
 //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elWithGenerics        = 0x00000400;
-//   constexpr int elReadOnlyRole        = 0x00000800;
-//   constexpr int elNonStructureRole    = 0x00001000;
 //   constexpr int elSubject             = 0x00002000;
 //   constexpr int elExtension           = 0x00004980;
 //   constexpr int elMessage             = 0x00008000;
@@ -320,7 +320,7 @@ namespace _ELENA_
 //   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
    constexpr int elDebugMask           = 0x001F0000;
-//   constexpr int elDebugDWORD          = 0x00010000;
+   constexpr int elDebugDWORD          = 0x00010000;
 //   constexpr int elDebugReal64         = 0x00020000;
 //   constexpr int elDebugLiteral        = 0x00030000;
 //   constexpr int elDebugIntegers       = 0x00040000;

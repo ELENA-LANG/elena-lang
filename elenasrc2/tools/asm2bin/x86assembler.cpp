@@ -2001,6 +2001,13 @@ void x86Assembler :: compileMOVSB(TokenInfo& token, ProcedureInfo& info, MemoryW
 	token.read();
 }
 
+void x86Assembler :: compileMOVSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   code->writeByte(0xA5);
+
+   token.read();
+}
+
 void x86Assembler :: compileMOVAPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
@@ -3874,7 +3881,10 @@ bool x86Assembler :: compileCommandM(TokenInfo& token, ProcedureInfo& info, Memo
 		compileMOVSB(token, info, &writer);
       return true;
 	}
-
+   else if (token.check("movsd")) {
+      compileMOVSD(token, info, &writer);
+      return true;
+   }
 	// SSE instructions
 	else if (token.check("movaps")) {
 		compileMOVAPS(token, info, &writer);

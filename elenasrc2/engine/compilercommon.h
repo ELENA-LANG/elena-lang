@@ -57,8 +57,8 @@ constexpr auto V_CONST           = 0x80002001u;
 
 /// scope:
 constexpr auto V_CLASS           = 0x80001001u;
-//constexpr auto V_STRUCT          = 0x80001002u;
-//constexpr auto V_SYMBOLEXPR      = 0x80001003u;
+constexpr auto V_STRUCT          = 0x80001002u;
+constexpr auto V_SYMBOLEXPR      = 0x80001003u;
 constexpr auto V_CONSTRUCTOR     = 0x80001004u;
 //constexpr auto V_EXTENSION       = 0x80001005u;
 constexpr auto V_SINGLETON       = 0x80001006u;
@@ -80,7 +80,7 @@ constexpr auto V_INTERN          = 0x80001016u;
 //constexpr auto V_FORWARD         = 0x80001017u;
 constexpr auto V_IMPORT          = 0x80001018u;
 //constexpr auto V_GROUP           = 0x80001019u;
-//constexpr auto V_NOSTRUCT        = 0x8000101Bu;
+constexpr auto V_NOSTRUCT        = 0x8000101Bu;
 //constexpr auto V_AUTO            = 0x8000101Cu;
 //constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
@@ -88,10 +88,10 @@ constexpr auto V_TEMPLATE        = 0x8000101Eu;
 //constexpr auto V_YIELD           = 0x80001020u;
 constexpr auto V_NAMESPACE       = 0x80001021u;
 
-///// primitive type attributes
+/// primitive type attributes
 //constexpr auto V_STRING          = 0x80000801u;
 //constexpr auto V_FLOAT           = 0x80000802u;
-//constexpr auto V_INTBINARY       = 0x80000803u;
+constexpr auto V_INTBINARY       = 0x80000803u;
 //constexpr auto V_BINARY          = 0x80000804u;
 //constexpr auto V_PTRBINARY       = 0x80000805u;
 //constexpr auto V_MESSAGE         = 0x80000806u;
@@ -424,9 +424,9 @@ class _CompilerLogic
 public:
    struct FieldAttributes
    {
-//      ref_t fieldRef;
-//      ref_t elementRef;
-//      int   size;
+      ref_t fieldRef;
+      ref_t elementRef;
+      int   size;
 //      bool  isStaticField;
 //      bool  isEmbeddable;
 //      bool  isConstAttr;
@@ -440,8 +440,8 @@ public:
 
       FieldAttributes()
       {
-//         elementRef = fieldRef = 0;
-//         size = 0;
+         elementRef = fieldRef = 0;
+         size = 0;
 //         isClassAttr = isStaticField = isEmbeddable = isConstAttr = isSealedAttr = false;
 //         isArray = false;
 //
@@ -608,10 +608,10 @@ public:
    // retrieve the class info / size
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 
-//   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
-//   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
-//   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
-//
+   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
+   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
+   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
+
 //   virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
 
    // retrieve the call type
@@ -643,8 +643,8 @@ public:
 //   // check if the class can be used as a fixed-size embeddable array
 //   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
 //   virtual bool isVariable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
+   virtual bool isEmbeddable(ClassInfo& info) = 0;
+   virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
 ////   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
@@ -677,10 +677,10 @@ public:
 
    // auto generate class flags
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
-//   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
+   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
    virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,
-      bool& disptacherNotAllowed/*, bool& emptyStructure*/) = 0;
+      bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
    virtual bool validateNsAttribute(int attrValue, Visibility& visibility) = 0;

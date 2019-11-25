@@ -83,14 +83,14 @@ public:
 
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
-//   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef)
-//   {
-//      bool dummy = false;
-//      return defineStructSizeVariable(scope, reference, elementRef, dummy);
-//   }
-//   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable);
-//   virtual int defineStructSize(ClassInfo& info, bool& variable);
-//
+   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef)
+   {
+      bool dummy = false;
+      return defineStructSizeVariable(scope, reference, elementRef, dummy);
+   }
+   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable);
+   virtual int defineStructSize(ClassInfo& info, bool& variable);
+
 //   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info);
 
    virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
@@ -125,15 +125,15 @@ public:
    virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared);
    virtual bool isValidType(ClassInfo& info);
    virtual bool doesClassExist(_ModuleScope& scope, ref_t targetRef);
-//   virtual bool isEmbeddable(ClassInfo& info);
-//   virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference)
-//   {
-//      ClassInfo info;
-//      if(!defineClassInfo(scope, info, reference, true))
-//         return false;
-//
-//      return isEmbeddable(info);
-//   }
+   virtual bool isEmbeddable(ClassInfo& info);
+   virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      if(!defineClassInfo(scope, info, reference, true))
+         return false;
+
+      return isEmbeddable(info);
+   }
 //   virtual bool isStacksafeArg(ClassInfo& info);
 //   virtual bool isStacksafeArg(_ModuleScope& scope, ref_t reference)
 //   {
@@ -186,7 +186,7 @@ public:
 //   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
 
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
-//   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
+   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool validateNsAttribute(int attrValue, Visibility& visibility);
    virtual bool validateClassAttribute(int& attrValue, Visibility& visibility);
@@ -201,7 +201,7 @@ public:
 
 //////   virtual bool validateClassFlag(ClassInfo& info, int flag);
    virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
-      bool& disptacherNotAllowed/*, bool& emptyStructure*/);
+      bool& disptacherNotAllowed, bool& emptyStructure);
 
 //   virtual bool isDefaultConstructorEnabled(ClassInfo& info)
 //   {

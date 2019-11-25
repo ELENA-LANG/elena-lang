@@ -38,7 +38,7 @@ namespace _ELENA_
    #define errUnknownObject         "%s(%d:%d): error 106: Unknown object '%s'\n"
    #define errInvalidOperation	   "%s(%d:%d): error 107: Invalid operation with '%s'\n"
    #define errDuplicatedField       "%s(%d:%d): error 109: Field '%s' already exists in the class\n"
-//   #define errUnknownVariableType   "%s(%d:%d): error 104: Type of the variable '%s' doesn't exist\n"
+   #define errUnknownVariableType   "%s(%d:%d): error 104: Type of the variable '%s' doesn't exist\n"
    #define errIllegalField          "%s(%d:%d): error 111: Illegal field declaration '%s'\n"
    #define errTooManyParameters     "%s(%d:%d): error 113: Too many parameters for '%s' message\n"
 //////   #define errUnknownRole           "%s(%d:%d): error 117: Unknown role '%s'\n"
@@ -86,7 +86,7 @@ namespace _ELENA_
 //   #define errIllegalPrivate        "%s(%d:%d): error 166: An attribute '%s' cannot be applied for an extension\n"
    constexpr auto errDupPublicMethod            = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
 //   //   #define errOneDefaultConstructor "%s(%d:%d): error 168: a class '%s' should have only one default constructor\n"
-//   constexpr auto errEmptyStructure             = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
+   constexpr auto errEmptyStructure             = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
 //   constexpr auto errReadOnlyField              = "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n";
    constexpr auto errDefaultConstructorNotFound = "%s(%d:%d): error 171: implicit constructor is not found for '%s'\n";
    constexpr auto errInvalidType                = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
