@@ -91,7 +91,8 @@ namespace _ELENA_
    constexpr auto errDefaultConstructorNotFound = "%s(%d:%d): error 171: implicit constructor is not found for '%s'\n";
    constexpr auto errInvalidType                = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
    constexpr auto errDupInternalMethod          = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
-   constexpr auto errInvalidConstAttr = "%s(%d:%d): error 174: A method '%s' cannot be compiled as a constant one\n";
+   constexpr auto errInvalidConstAttr           = "%s(%d:%d): error 174: A method '%s' cannot be compiled as a constant one\n";
+   constexpr auto errInvalidBoxing              = "%s(%d:%d): error 175: An expression at '%s' cannot be boxed\n";
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"

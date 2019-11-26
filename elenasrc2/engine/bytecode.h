@@ -165,7 +165,7 @@ enum ByteCode
    bcSetF            = 0x9C,
 //   bcACopyS          = 0x9D,
    bcSetR            = 0x9E,
-   bcCopyM           = 0x9F,
+   bcSetM            = 0x9F,
 
    bcJump            = 0xA0,
    bcJumpVI          = 0xA1,
@@ -240,7 +240,8 @@ enum ByteCode
 //   bcNewI            = 0xE1,
 //   bcACopyAI         = 0xE2,
 
-   bcCopyFI          = 0xE7,
+   bcCopyFI          = 0xE6,
+   bcCopyF           = 0xE7,
    bcMTRedirect      = 0xE8,
    bcXMTRedirect     = 0xE9,
 //   bcGreaterN        = 0xEA,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
@@ -308,7 +309,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x8F
-#define MAX_DOUBLE_ECODE 0xE6
+#define MAX_DOUBLE_ECODE 0xE5
 
 enum PseudoArg
 {
@@ -492,7 +493,7 @@ public:
    static bool IsMCode(ByteCode code)
    {
       switch (code) {
-         case bcCopyM:
+         case bcSetM:
             return true;
          default:
             return false;

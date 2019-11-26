@@ -556,7 +556,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             compileNCommand(opcode, token, writer);
             break;
          //case bcSetVerb:
-         case bcCopyM:
+         case bcSetM:
             compileMCommand(opcode, token, writer, binary);
             break;
          //case bcIfB:
@@ -597,6 +597,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcSaveFI:
          //case bcAddFI:
          case bcCopyFI:
+         case bcCopyF:
             compileNNCommand(opcode, token, writer);
             break;
          case bcVCallRM:

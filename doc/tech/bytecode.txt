@@ -14,15 +14,30 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
- copyfi i, n                - copy [acc] => [fp+i], n*4-bytes
+ peekfi i                   - [fp+i] => acc;
 
- copym m                    - m => index
+ peeksi i                   - [sp+i] => acc;
 
  putfi i                    - acc => [fp+i][0]
 
  setf i                     - fp+i => acc
 
+ setm m                     - m => index
+
  setr r                     - r => acc
+           
+ savesi i                   - [sp:i] <= index
+
+ storefi i                  - [fp+i] <= acc 
+ 
+ storesi i                  - [sp+i] <= acc
+
+
+ Memory operations:
+ -----------------
+ copyf  i, n                - copy [acc] => fp+i, n*4-bytes
+
+ copyfi i, n               - copy [acc] => [fp+i], n*4-bytes
 
 
  Stack operations:
@@ -31,10 +46,6 @@ ELENA byte codes (or ecodes)
 
  freei i                    - sp-=i; 
  
- peekfi i                   - [fp+i] => acc;
-
- peeksi i                   - [sp+i] => acc;
-
  popa                       - acc <= [sp] ; sp--
  
  popai i                    - acc[i] <= [sp] ; sp--; 
@@ -50,12 +61,6 @@ ELENA byte codes (or ecodes)
  pushs i                    - sp+i => [sp+1] ; sp++
 
  pushsi i                   - [sp+i] => [sp+1] ; sp++
-           
- savesi i                   - [sp:i] <= index
-
- storefi i                  - [fp+i] <= acc 
- 
- storesi i                  - [sp+i] <= acc
  
 
  Frame operations:

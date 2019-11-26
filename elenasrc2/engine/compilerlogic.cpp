@@ -339,8 +339,8 @@ int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference,
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
    int callType = methodHint & tpMask;
 
-//   result.stackSafe = test(methodHint, tpStackSafe);
-//
+   result.stackSafe = test(methodHint, tpStackSafe);
+
 //   if (test(messageRef, SPECIAL_MESSAGE)) {
 //      // HOTFIX : calling closure
 //      result.closure = true;
@@ -646,13 +646,13 @@ bool CompilerLogic :: isEmbeddable(ClassInfo& info)
    return test(info.header.flags, elStructureRole)/* && !test(info.header.flags, elDynamicRole)*/;
 }
 
-//bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
-//{
-//   if (test(info.header.flags, elDynamicRole)) {
-//      return isEmbeddableArray(info);
-//   }
-//   else return isEmbeddable(info);
-//}
+bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
+{
+   /*if (test(info.header.flags, elDynamicRole)) {
+      return isEmbeddableArray(info);
+   }
+   else */return isEmbeddable(info);
+}
 
 bool CompilerLogic :: isRole(ClassInfo& info)
 {
@@ -1102,38 +1102,38 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* target
 
 }
 
-//void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr)
-//{
-//   ref_t targetSignatures[ARG_COUNT];
-//   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
-//   if (len <= 0)
-//      return;
-//
-//   int flag = 1;
-//   for (size_t i = 0; i < len; i++) {
-//      flag <<= 1;
-//
-//      if (isStacksafeArg(scope, targetSignatures[i]))
-//         stackSafeAttr |= flag;
-//   }
-//}
-//
-//void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr)
-//{
-//   ref_t targetSignatures[ARG_COUNT];
-//   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
-//   if (len <= 0)
-//      return;
-//
-//   int flag = 1;
-//   for (size_t i = 0; i < len; i++) {
-//      flag <<= 1;
-//
-//      if (isStacksafeArg(scope, importReference(targetModule, targetSignatures[i], scope.module)))
-//         stackSafeAttr |= flag;
-//   }
-//}
-//
+void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (isStacksafeArg(scope, targetSignatures[i]))
+         stackSafeAttr |= flag;
+   }
+}
+
+void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (isStacksafeArg(scope, importReference(targetModule, targetSignatures[i], scope.module)))
+         stackSafeAttr |= flag;
+   }
+}
+
 //bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message)
 //{
 //   ClassInfo info;
@@ -2292,7 +2292,7 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //////   temp.copy(signature.c_str() + start, end - start);
 //////}
 
-ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef/*, int& stackSafeAttr*/)
+ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr)
 {
    if (!targetRef)
       return 0;
@@ -2340,20 +2340,20 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
 
             if (argModule == scope.module) {
                if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
-                  //if (isEmbeddable(info))
-                  //   stackSafeAttr |= 1;
+                  if (isEmbeddable(info))
+                     stackSafeAttr |= 1;
 
-                  //setSignatureStacksafe(scope, argSign, stackSafeAttr);
+                  setSignatureStacksafe(scope, argSign, stackSafeAttr);
 
                   return argMessage;
                }                  
             }
             else {
                if (isSignatureCompatible(scope, argModule, argSign, signatures, signatureLen)) {
-                  //if (isEmbeddable(info))
-                  //   stackSafeAttr |= 1;
+                  if (isEmbeddable(info))
+                     stackSafeAttr |= 1;
 
-                  //setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
+                  setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
 
                   return importMessage(argModule, argMessage, scope.module);
                }                  

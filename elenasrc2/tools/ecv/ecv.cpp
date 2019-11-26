@@ -654,7 +654,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printMessage(command, module, argument2);
          command.append("\"");
          break;
-      case bcCopyM:
+      case bcSetM:
          printCommand(command, opcode);
          command.append("mssgconst : \"");
          printMessage(command, module, argument);
@@ -684,6 +684,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcAddFI:
 //      case bcSubFI:
       case bcCopyFI:
+      case bcCopyF:
          printCommand(command, opcode);
          command.appendInt(argument);
          command.append(" ");

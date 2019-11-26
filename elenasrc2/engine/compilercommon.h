@@ -141,7 +141,7 @@ enum MethodHint
    tpDispatcher   = 0x0000004,
    tpPrivate      = 0x0000005,
 
-//   tpStackSafe   = 0x0000010,
+   tpStackSafe   = 0x0000010,
 //   tpEmbeddable  = 0x0000020,
 //   tpGeneric     = 0x0000040,
    tpFunction      = 0x0000080,
@@ -462,6 +462,8 @@ public:
       eaRoot               = 0x00000000080,
       eaInlineExpr         = 0x00000000100,
       eaCast               = 0x00000000200,
+      eaNoPrimitives       = 0x00000000400,
+      eaDynamicObject      = 0x00000000800,
 
       eaScopeMask          = 0x0000000000A,
       eaObjectMask         = 0x000000002F4,
@@ -482,7 +484,6 @@ public:
 //      eaIgnoreDuplicates   = 0x00000020000,
 //      eaYield              = 0x00000040000,
 //
-//      eaNoPrimitives       = 0x00000080000,
 //      eaAssigningExpr      = 0x00000100000,
 //      eaPropExpr           = 0x00000200000,
 //      eaCallExpr           = 0x00000400000,
@@ -491,7 +492,6 @@ public:
 //      eaRetExpr            = 0x00004000000,
 //      eaDirectCall         = 0x00008000000,
 //      eaNoBoxing           = 0x00010000000,
-//      eaDynamicObject      = 0x00020000000,
 //      eaNoUnboxing         = 0x00040000000,
 //      eaClosure            = 0x00080000000,
 //      eaSubCodeClosure     = 0x00800000000,
@@ -582,7 +582,7 @@ public:
       bool  found;
       bool  directResolved;
 //      bool  withCustomDispatcher;
-//      bool  stackSafe;
+      bool  stackSafe;
 //      bool  embeddable;
 //      bool  function;
 //      bool  dynamicRequired;
@@ -596,7 +596,7 @@ public:
          outputReference = 0;
          constRef = 0;
 //         withCustomDispatcher = false;
-//         stackSafe = false;
+         stackSafe = false;
 //         function = false;
 //         dynamicRequired = false;
       }
@@ -704,7 +704,7 @@ public:
 //   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
 //   virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 
-   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef/*, int& stackSafeAttr*/) = 0;
+   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;
 //   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns) = 0;
 };
 

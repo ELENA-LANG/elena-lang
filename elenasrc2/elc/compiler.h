@@ -154,18 +154,6 @@ public:
 //      okPrimCollection                // param - length
    };
 
-//   enum ClassType
-//   {
-//      ctUndefined            = 0x100, 
-//      ctClass                = 0x000,
-//      ctClassClass           = 0x001,
-//      ctEmbeddable           = 0x002,
-//
-//      ctUndefinedClass       = 0x100,
-//      ctEmbeddableClass      = 0x002,
-//      ctEmbeddableClassClass = 0x003,
-//   };
-
    struct ObjectInfo
    {
       ObjectKind kind;
@@ -432,7 +420,7 @@ private:
    {
       ClassInfo   info;
 //      ref_t       extensionClassRef;
-//      bool        embeddable;
+      bool        embeddable;
       bool        classClassMode;
       bool        abstractMode;
       bool        abstractBaseMode;
@@ -773,8 +761,11 @@ private:
 
    struct ExprScope : public Scope
    {
-      ExprScope(SourceScope* parent);
-      ExprScope(CodeScope* parent);
+      int tempAllocated1;
+
+      Map<ClassInfo::Attribute, int> tempLocals;
+
+      int newTempLocal();
 
       ref_t getMessageID()
       {
@@ -791,6 +782,9 @@ private:
       }
 
       ObjectInfo mapGlobal(ident_t identifier);
+
+      ExprScope(SourceScope* parent);
+      ExprScope(CodeScope* parent);
    };
 
 //   // --- ResendScope ---
@@ -899,9 +893,9 @@ private:
 
    ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);
 
-//   ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef, bool declarationMode);
-//   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode);
-//
+   ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef, bool declarationMode);
+   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode);
+
 //   ref_t resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns, bool declarationMode);
 //   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef, bool declarationMode);
 //
@@ -910,7 +904,7 @@ private:
 //
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(ExprScope& scope, ObjectInfo object/*, bool noPrimitivesMode, bool unboxWrapper = true*/);
+   ref_t resolveObjectReference(ExprScope& scope, ObjectInfo object, bool noPrimitivesMode/*, bool unboxWrapper = true*/);
 ////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
    ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, bool declarationMode);
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
@@ -960,8 +954,8 @@ private:
 //
 //   ref_t resolveVariadicMessage(Scope& scope, ref_t message);
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
-   ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*,
-                                     bool withExtension, int& stackSafeAttr*/);
+   ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
+                                     /*bool withExtension, */int& stackSafeAttr);
 ////   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
 ////   {
 ////      int dummy;
@@ -979,7 +973,7 @@ private:
 
    LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size/*, bool binaryArray, 
                                     int& variableArg, ident_t& className*/);
-   void declareVariable(SNode& node, CodeScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/);
+   void declareVariable(SNode& node, ExprScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/);
 
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
@@ -996,6 +990,7 @@ private:
 //   void writeVariableTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
+   void appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object);
 //
 //   ObjectInfo compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
@@ -1016,7 +1011,7 @@ private:
       bool& variadicOne, bool& inlineArg*/);
 
    ObjectInfo compileMessage(SNode node, ExprScope& scope, /*ref_t exptectedRef,*/ ObjectInfo target, EAttr mode);
-   ObjectInfo compileMessage(SNode node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode/*, int stackSafeAttr*/);
+   ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode, int stackSafeAttr);
 ////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
 //   SNode injectAttributeIdentidier(SNode current, Scope& scope);
@@ -1120,11 +1115,11 @@ private:
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
 
    void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, 
-      bool allowTypeAttribute/*, bool embeddableClass*/);
+      bool allowTypeAttribute);
    void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, 
-      bool allowTypeAttribute/*, bool embeddableClass*/);
+      bool allowTypeAttribute);
 ////   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
-   void generateClassDeclaration(SNode node, ClassScope& scope/*, ClassType classType*/, bool nestedDeclarationMode = false);
+   void generateClassDeclaration(SNode node, ClassScope& scope, bool nestedDeclarationMode = false);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
 
@@ -1147,14 +1142,15 @@ private:
 
 //   void compileExternalArguments(SNode node, Scope& scope);
 //
-//   void injectBoxingTempLocal(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
+   void injectBoxingTempLocal(SNode node, ExprScope& scope, int tempLocal/*, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal*/);
 //   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope);
    void analizeSymbolTree(SNode node, Scope& scope);
-//   void analizeMessageParameters(SNode node);
-//
+   void boxMessageArgument(SNode node, ExprScope& scope);
+   void analizeMessageArguments(SNode& node, ExprScope& scope, int stackSafeAttr);
+
 //   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 //
 //   void createPackageInfo(_Module* module, _ProjectManager& project);

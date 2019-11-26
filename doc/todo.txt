@@ -2,7 +2,7 @@
 In development:
 ------         
               dev
-                * structs : boxing, unboxing
+                * int wrapper
                 * primitive operations with int
 
                 * copying  a buffer with unaligned size
@@ -19,7 +19,7 @@ In development:
                 * templates based on another template
                 * template variables
 
-                * variable : auto, template
+                * variable : auto, template                                                                                 
                 * field : type, template type
 
                 * type should be only one in the token expression - test: int long r := 0;
@@ -88,6 +88,9 @@ In development:
                 * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
                   signature or default one (if nothing is found - cannot be declared)
 
+                * boxing - implicit constructor with a single argument should be injected if requiered
+                * recognize imlicit conversion
+
                 * auto symbol
                 * auto method
                 * auto field
@@ -106,7 +109,10 @@ In development:
                 * recognize idle constructor
                 * if the parent constructor is idle - do like normal one
 
+                * fields cannot be chaned if the class is declared const (except constructor)
+
                 * properties : explicit
+                * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
 
                 * creating dynamic array / buffers
                 * nested class scope

@@ -81,6 +81,7 @@ enum LexicalType
 
    // expression nodes
    lxExpression               = 0x059030,
+   lxSeqExpression            = 0x059031,
    lxNil                      = 0x018040,
    lxClassSymbol              = 0x018050, // arg - reference
    lxSymbolReference          = 0x058060,
@@ -101,6 +102,7 @@ enum LexicalType
    lxLocal                    = 0x018110, // arg - offset
    lxSelfLocal                = 0x018111,
    lxLocalAddress             = 0x018112, // arg - offset
+   lxTempLocal                = 0x018113,
    lxAssigning                = 0x058120,   // an assigning expression, arg - size
    lxCopying                  = 0x058121,
    lxReturning                = 0x059130,
@@ -135,6 +137,7 @@ enum LexicalType
    lxTemplateParam            = 0x000F12,
    lxSize                     = 0x000F13,
    lxReserved                 = 0x000F14,
+   lxUnboxingAttr             = 0x000F15,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -234,7 +237,6 @@ enum LexicalType
 //   lxIntArrOp                 = 0x08C030,   // arg - operation id
 //   lxByteArrOp                = 0x08C032, // arg - operation id
 //   lxShortArrOp               = 0x08C033, // arg - operation id
-//   lxSeqExpression            = 0x00C034,
 //   lxYieldDispatch            = 0x00C035,
 //   lxDispatching              = 0x00C036,   // dispatching a message, optional arg - message
 //   lxIntOp                    = 0x18C038,   // arg - operation id
@@ -261,7 +263,6 @@ enum LexicalType
 
 //   lxClassName                = 0x20014, // arg - identifier
 //   lxIntValue                 = 0x20015, // arg - integer value
-//   lxTempLocal                = 0x20016,
 //   lxIfValue                  = 0x20017, // arg - reference
 //   lxElseValue                = 0x20018, // arg - reference
 //   lxIntExtArgument           = 0x2001C,

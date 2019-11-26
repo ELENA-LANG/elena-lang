@@ -3865,6 +3865,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          break;
       case lxLocal:
       case lxSelfLocal:
+      case lxTempLocal:
 //      case lxBoxableLocal:
          // pushfi index
          tape.write(bcPushFI, argument, bpFrame);
@@ -3976,6 +3977,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          break;
       case lxLocal:
       case lxSelfLocal:
+      case lxTempLocal:
 ////      //case lxBoxableLocal:
          // aloadfi index
          tape.write(bcPeekFI, argument, bpFrame);
@@ -4109,6 +4111,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
    {
       case lxLocal:
       case lxSelfLocal:
+      case lxTempLocal:
 //      //case lxBoxableLocal:
          // storefi index
          tape.write(bcStoreFI, argument, bpFrame);
@@ -4976,7 +4979,7 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //   if (msg != lxNone)
 //      message = msg.argument;
 
-   tape.write(bcCopyM, message);
+   tape.write(bcSetM, message);
 
 //   bool invokeMode = test(message, SPECIAL_MESSAGE);
 
@@ -5568,6 +5571,13 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, F
 void ByteCodeWriter :: copyObject(CommandTape& tape, int size, SyntaxTree::Node node)
 {
    if (node == lxLocalAddress) {
+      if ((size & 3) == 0) {
+         // if it is a dword aligned
+         tape.write(bcCopyF, node.argument, size >> 2);
+      }
+      else throw InternalError("not yet implemente"); // !! temporal
+   }
+   else if (node.compare(lxLocal, lxTempLocal)) {
       if ((size & 3) == 0) {
          // if it is a dword aligned
          tape.write(bcCopyFI, node.argument, size >> 2);
@@ -6253,7 +6263,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxLocalUnboxing:
 //      case lxFieldExpression:
 //      case lxAltExpression:
-//      case lxSeqExpression:
+      case lxSeqExpression:
          generateExpression(tape, node, scope, mode & ~STACKOP_MODE);
          break;
       case lxCalling_0:
@@ -6502,6 +6512,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
       switch (type)
       {
          case lxExpression:
+         case lxSeqExpression:
             scope.debugBlockStarted = false;
             generateExpression(tape, current, scope);
 

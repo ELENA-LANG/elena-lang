@@ -42,6 +42,8 @@ constexpr auto HINT_SILENT          = EAttr::eaSilent;
 constexpr auto HINT_ROOTSYMBOL      = EAttr::eaRootSymbol;
 constexpr auto HINT_ROOT            = EAttr::eaRoot;
 constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
+constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
+constexpr auto HINT_DYNAMIC_OBJECT  = EAttr::eaDynamicObject;  // indicates that the structure MUST be boxed
 
 //constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
 //constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
@@ -60,14 +62,12 @@ constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
 //constexpr auto HINT_MEMBER          = EAttr::eaMember;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
 //constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
-//constexpr auto HINT_DYNAMIC_OBJECT  = EAttr::eaDynamicObject;  // indicates that the structure MUST be boxed
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
 //constexpr auto HINT_PROP_MODE       = EAttr::eaPropExpr;
 //constexpr auto HINT_FORWARD         = EAttr::eaForward;
 //constexpr auto HINT_REFOP           = EAttr::eaRef;
 //constexpr auto HINT_RETEXPR         = EAttr::eaRetExpr;
 //constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
-//constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
 //constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
 //constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 
@@ -599,7 +599,7 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility vi
    info.size = 0;
 
 //   extensionClassRef = 0;
-//   embeddable = false;
+   embeddable = false;
    classClassMode = false;
    abstractMode = false;
    abstractBaseMode = false;
@@ -902,15 +902,26 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool reference
 // --- Compiler::ExprScope ---
 
 Compiler::ExprScope :: ExprScope(CodeScope* parent)
-   : Scope(parent)
+   : Scope(parent), tempLocals(NOTFOUND_POS)
 {
-
+   tempAllocated1 = parent->allocated1;
 }
 
 Compiler::ExprScope :: ExprScope(SourceScope* parent)
-   : Scope(parent)
+   : Scope(parent), tempLocals(NOTFOUND_POS)
 {
+   tempAllocated1 = -1;
+}
 
+int Compiler::ExprScope :: newTempLocal()
+{
+   CodeScope* codeScope = (CodeScope*)getScope(Scope::ScopeLevel::slCode);
+
+   tempAllocated1++;
+   if (tempAllocated1 > codeScope->reserved1)
+      codeScope->reserved1 = tempAllocated1;
+
+   return tempAllocated1;
 }
 
 ObjectInfo Compiler::ExprScope :: mapGlobal(ident_t identifier)
@@ -1315,10 +1326,10 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   }
 //}
 
-ref_t Compiler :: resolveObjectReference(ExprScope& scope, ObjectInfo object/*, bool noPrimitivesMode, bool unboxWapper*/)
+ref_t Compiler :: resolveObjectReference(ExprScope& scope, ObjectInfo object, bool noPrimitivesMode/*, bool unboxWapper*/)
 {
    ref_t retVal = 0;
-   //ref_t elementRef = object.element;
+   ref_t elementRef = object.element;
    if (object.kind == okSelfParam) {
    //   if (object.extraparam == (ref_t)-2) {
    //      // HOTFIX : to return the primitive array
@@ -1332,10 +1343,10 @@ ref_t Compiler :: resolveObjectReference(ExprScope& scope, ObjectInfo object/*, 
    //}
    else retVal = resolveObjectReference(*scope.moduleScope, object);
 
-   /*if (noPrimitivesMode && isPrimitiveRef(retVal)) {
+   if (noPrimitivesMode && isPrimitiveRef(retVal)) {
       return resolvePrimitiveReference(scope, retVal, elementRef, false);
    }
-   else */return retVal;
+   else return retVal;
 }
 
 ref_t Compiler :: resolveObjectReference(_ModuleScope&, ObjectInfo object)
@@ -2122,8 +2133,10 @@ LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variab
    return variableType;
 }
 
-void Compiler :: declareVariable(SNode& terminal, CodeScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/)
+void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/)
 {
+   CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
+
    ident_t identifier = terminal.identifier();
 //   ident_t className = NULL;
    LexicalType variableType = lxVariable;
@@ -2184,25 +2197,33 @@ void Compiler :: declareVariable(SNode& terminal, CodeScope& scope, ref_t typeRe
    variable.kind = okLocal;
 
    if (size > 0) {
-      if (!allocateStructure(scope, size, /*binaryArray, */variable))
+      if (!allocateStructure(*codeScope, size, /*binaryArray, */variable))
          scope.raiseError(errInvalidOperation, terminal);
 
       // make the reservation permanent
-      if (scope.reserved2 < scope.allocated2)
-         scope.reserved2 = scope.allocated2;
+      if (codeScope->reserved2 < codeScope->allocated2)
+         codeScope->reserved2 = codeScope->allocated2;
    }
    else {
       if (size < 0) {
          size = 0;
       }
 
-      variable.param = scope.newLocal();
+      if (scope.tempAllocated1 > codeScope->allocated1) {
+         codeScope->allocated1 = scope.tempAllocated1;
+         if (codeScope->allocated1 > codeScope->reserved1)
+            codeScope->reserved1 = codeScope->allocated1;
+      }
+         
+
+      variable.param = codeScope->newLocal();
+
    }
 
-   variableType = declareVariableType(scope, variable, localInfo, size/*, binaryArray, variableArg, className*/);
+   variableType = declareVariableType(*codeScope, variable, localInfo, size/*, binaryArray, variableArg, className*/);
 
-   if (!scope.locals.exist(identifier)) {
-      scope.mapLocal(identifier, variable.param, variable.reference, variable.element, size);
+   if (!codeScope->locals.exist(identifier)) {
+      codeScope->mapLocal(identifier, variable.param, variable.reference, variable.element, size);
 
       // injecting variable label
       SNode scopeNode = findParent(terminal, lxNewFrame, lxCode);
@@ -2290,13 +2311,22 @@ void Compiler :: declareVariable(SNode& terminal, CodeScope& scope, ref_t typeRe
 //   writer.appendNode(lxResultField);
 //}
 //
+void Compiler :: appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object)
+{
+   // if the parameter may be stack-allocated
+   ref_t targetRef = resolveObjectReference(scope, object, false);
+   bool variable = false;
+   int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
+
+   node.appendNode(lxType, targetRef);
+   node.appendNode(lxSize, size);
+   if (variable)
+      node.appendNode(lxUnboxingAttr);
+}
+
 //void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
 //{
 //   if (object.extraparam == -1 && !EAttrs::test(mode, HINT_NOBOXING)) {
-//      // if the parameter may be stack-allocated
-//      ref_t targetRef = resolveObjectReference(scope, object, false);
-//      bool variable = false;
-//      int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
 //      writer.newNode((variable && !EAttrs::test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxCondBoxing, size);
 //      writer.appendNode(type, object.param);
 //      if (EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
@@ -3193,7 +3223,7 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
    ref_t resolved_operator_id = operator_id;
    // try to resolve the branching operator directly
    if (_logic->resolveBranchOperation(*scope.moduleScope, resolved_operator_id,
-      resolveObjectReference(scope, loperand/*, false*/), ifReference)) 
+      resolveObjectReference(scope, loperand, false), ifReference)) 
    {
       // we are lucky : we can implement branching directly
       compileBranchingNodes(roperandNode, scope, ifReference/*, loopMode, switchMode*/);
@@ -3217,7 +3247,7 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
          compileClosure(elseNode, scope, defineBranchingOperandMode(elseNode));
       }
 
-      retVal = compileMessage(roperandNode.parentNode(), scope, loperand, message, EAttr::eaNone/*, 0*/);
+      retVal = compileMessage(roperandNode.parentNode(), scope, loperand, message, EAttr::eaNone, 0);
 
 //      if (loopMode) {
 //         writer.inject(lxLooping);
@@ -3410,8 +3440,8 @@ ObjectInfo Compiler :: compileOperator(SNode node, ExprScope& scope, ObjectInfo 
    throw InternalError("Not yet implemented"); // !! temporal
 }
 
-ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ObjectInfo target, int messageRef,
-   EAttr mode/*, int stackSafeAttr*/)
+ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef,
+   EAttr mode, int stackSafeAttr)
 {
    ObjectInfo retVal(okObject);
 
@@ -3419,7 +3449,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ObjectInfo t
    int argument = messageRef;
 
    // try to recognize the operation
-   ref_t classReference = resolveObjectReference(scope, target/*, true*/);
+   ref_t classReference = resolveObjectReference(scope, target, true);
    ref_t constRef = 0;
 
 //   bool inlineArgCall = EAttrs::test(mode, HINT_INLINEARGMODE);
@@ -3469,15 +3499,15 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ObjectInfo t
       operation = callType == tpClosed ? lxSDirectCalling : lxDirectCalling;
       argument = messageRef;
 
-//      if (!EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) {
-//         // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
+      if (!EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) {
+         // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
 //         if (target.kind == okParams) {
 //            // HOTFIX : if variadic argument should not be dynamic, mark it as stacksafe
 //            stackSafeAttr |= 1;
 //         }
-//         else if (_logic->isEmbeddable(*scope.moduleScope, classReference) && result.stackSafe)
-//            stackSafeAttr |= 1;
-//      }
+         /*else*/ if (_logic->isEmbeddable(*scope.moduleScope, classReference) && result.stackSafe)
+            stackSafeAttr |= 1;
+      }
    }
    else {
       // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
@@ -3540,38 +3570,66 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ObjectInfo t
    node.set(operation, argument);
 
 //   // TODO : inject target boxing if it is stack allocated and the message call is not stacksafe
-//
-//   analizeMessageParameters(writer.CurrentNode());
-//
-//   writer.closeNode();
+
+   analizeMessageArguments(node, scope, stackSafeAttr);
 
    return retVal;
 }
 
-//void Compiler :: analizeMessageParameters(SNode node)
-//{
-//   SNode current = node.firstChild();
+void Compiler :: boxMessageArgument(SNode current, ExprScope& scope)
+{
+   if (current == lxLocalAddress) {
+      Attribute key(current.type, current.argument);
+
+      int tempLocal = scope.tempLocals.get(key);
+      if (tempLocal == NOTFOUND_POS) {
+         tempLocal = scope.newTempLocal();
+
+         scope.tempLocals.add(key, tempLocal);
+
+         injectBoxingTempLocal(current, scope, tempLocal);
+      }
+      else current.set(lxTempLocal, tempLocal);
+   }
+   else if (current == lxExpression) {
+      boxMessageArgument(current.firstChild(lxObjectMask), scope);
+   }
+}
+
+void Compiler :: analizeMessageArguments(SNode& node, ExprScope& scope, int stackSafeAttr)
+{
+   // if boxing / unboxing required - insert SeqExpression, prepand boxing, replace operand with boxed arg, append unboxing   
+
+   SNode current = node.firstChild(lxObjectMask);
 //   int nested = 0;
-//   while (current != lxNone) {
+   int argBit = 1;
+   while (current != lxNone) {
+      if (!test(stackSafeAttr, argBit)) {
+         boxMessageArgument(current, scope);
+      }
+
 //      if (test(current.type, lxObjectMask)) {
 //         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
 //            nested++;
 //         }
 //      }
-//      current = current.nextNode();
-//   }
-//
+
+      argBit << 1;
+
+      current = current.nextNode(lxObjectMask);
+   }
+
 //   if (nested > 1) {
 //      // NOTE : it should be the last node to correctly optimize boxing duplicates
 //      node.appendNode(lxDuplicateBoxingAttr);
 //   }
-//}
+}
 
 bool Compiler :: convertObject(SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
-   ref_t sourceRef = resolveObjectReference(scope, source/*, false*/);
+   ref_t sourceRef = resolveObjectReference(scope, source, false);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
       /*if (!_logic->injectImplicitConversion(node, *scope.moduleScope, *this, targetRef, sourceRef,
@@ -3596,7 +3654,7 @@ bool Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, Ob
 
          //writer.appendNode(lxTypecasting);
 
-         compileMessage(node, scope, source, encodeMessage(actionRef, 1, 0), HINT_NODEBUGINFO | HINT_SILENT/*, 0*/);
+         compileMessage(node, scope, source, encodeMessage(actionRef, 1, 0), HINT_NODEBUGINFO | HINT_SILENT, 0);
       }
 
       return true;
@@ -3626,16 +3684,18 @@ bool Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, Ob
 //
 //   return scope.module->mapSignature(argRef, 2, false);
 //}
-//
-//ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef, bool declarationMode)
-//{
-//   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//
-//   return resolvePrimitiveReference(*scope.moduleScope, argRef, elementRef, nsScope->ns.c_str(), declarationMode);
-//}
-//
-//ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode)
-//{
+
+ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef, bool declarationMode)
+{
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
+
+   return resolvePrimitiveReference(*scope.moduleScope, argRef, elementRef, nsScope->ns.c_str(), declarationMode);
+}
+
+ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode)
+{
+   throw InternalError("Not yet implemented"); // !! temporal
+
 //   switch (argRef) {
 //      case V_WRAPPER:
 //         return resolveReferenceTemplate(scope, elementRef, ns, declarationMode);
@@ -3660,7 +3720,7 @@ bool Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, Ob
 //         }
 //         return scope.superReference;
 //   }
-//}
+}
 
 ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr mode/*,
    bool& variadicOne, bool& inlineArg*/)
@@ -3670,7 +3730,7 @@ ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr m
 //   if (EAttrs::test(mode, HINT_EXTERNALOP)) {
 //      externalMode = true;
 //   }
-//   else paramMode = paramMode | HINT_NOPRIMITIVES;
+   /*else */paramMode = paramMode | HINT_NOPRIMITIVES;
 
    SNode current = node;
 
@@ -3686,7 +3746,7 @@ ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr m
 		   ObjectInfo paramInfo = compileExpression(current, scope, 
             mapObject(current, scope, paramMode), 0, paramMode);
 
-         ref_t argRef = resolveObjectReference(scope, paramInfo/*, false*/);
+         ref_t argRef = resolveObjectReference(scope, paramInfo, false);
          if (signatureLen >= ARG_COUNT) {
             signatureLen++;
          }
@@ -3746,14 +3806,14 @@ ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr m
 //   return encodeMessage(scope.module->mapAction(actionName, 0, false), 1, flags | VARIADIC_MESSAGE);
 //}
 
-ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef/*,
-   bool withExtension, int& stackSafeAttr*/)
+ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
+   /*bool withExtension, */int& stackSafeAttr)
 {
    ref_t resolvedMessageRef = 0;
-   ref_t targetRef = resolveObjectReference(scope, target/*, true*/);
+   ref_t targetRef = resolveObjectReference(scope, target, true);
 
    // try to resolve the message as is
-   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef/*, stackSafeAttr*/);
+   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, stackSafeAttr);
    if (resolvedMessageRef != 0) {
       // if the object handles the compile-time resolved message - use it
       return resolvedMessageRef;
@@ -3832,17 +3892,17 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //         retVal = compileMessage(writer, node, scope, target, messageRef, mode | HINT_INLINEARGMODE, 0);
 //      }
 //      else {
-//         int stackSafeAttr = 0;
+         int stackSafeAttr = 0;
 //         if (!EAttrs::test(mode, HINT_DIRECTCALL))
-            messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef/*, true, stackSafeAttr*/);
-//
-//         if (!test(stackSafeAttr, 1)) {
-//            mode = mode | HINT_DYNAMIC_OBJECT;
-//         }
-//         else if (target.kind != okConstantRole)
-//            stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
+            messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef/*, true*/, stackSafeAttr);
 
-         retVal = compileMessage(node.parentNode(), scope, target, messageRef, mode/*, stackSafeAttr*/);
+         if (!test(stackSafeAttr, 1)) {
+            mode = mode | HINT_DYNAMIC_OBJECT;
+         }
+         else /*if (target.kind != okConstantRole)*/
+            stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
+
+         retVal = compileMessage(node.parentNode(), scope, target, messageRef, mode, stackSafeAttr);
 //      }
 //   }
 
@@ -3951,7 +4011,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //      // !! temporally
 //      scope.raiseError(errInvalidOperation, sourceNode);
 
-   ref_t targetRef = resolveObjectReference(scope, target/*, false, false*/);
+   ref_t targetRef = resolveObjectReference(scope, target, false/*, false*/);
 //   bool byRefAssigning = false;
    switch (target.kind) {
       case okLocal:
@@ -4796,7 +4856,7 @@ ObjectInfo Compiler :: compileCastingExpression(SNode node, ExprScope& scope, Ob
    if (target.kind == okClass) {
       targetRef = target.param;
    }
-   else targetRef = resolveObjectReference(scope, target);
+   else targetRef = resolveObjectReference(scope, target, true);
 
    ObjectInfo retVal(okObject, 0, targetRef);
 
@@ -4823,7 +4883,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    if (target.kind == okClass || target.kind == okClassSelf) {
       targetRef = target.param;
    }
-   else targetRef = resolveObjectReference(scope, target);
+   else targetRef = resolveObjectReference(scope, target, true);
 
    EAttr paramsMode = EAttr::eaNone;
    LexicalType op = lxNone;
@@ -4866,7 +4926,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    //      }
    //      else {
    //         EAttr paramsMode = EAttr::eaNone;
-   //         int stackSafeAttr = 0;
+   //         
    //		   bool variadicOne = false;
    //         bool inlineArg = false;
    //         ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne, inlineArg);
@@ -4891,9 +4951,10 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    }
    else scope.raiseError(errInvalidOperation, exprNode);
 
-   ObjectInfo retVal = retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT/*, stackSafeAttr*/);
+   int stackSafeAttr = 0;
+   ObjectInfo retVal = retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT, stackSafeAttr);
 
-   if (resolveObjectReference(scope, retVal/*, false*/) != targetRef)
+   if (resolveObjectReference(scope, retVal, false) != targetRef)
       scope.raiseError(errDefaultConstructorNotFound, exprNode);
 
    return retVal;
@@ -5198,8 +5259,6 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //   }
 
    if (newVariable) {
-      CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
-
 //      if (EAttrs(mode).test(EAttr::eaRetExpr))
 //         scope.raiseError(errInvalidSyntax, current.parentNode());
 
@@ -5210,7 +5269,7 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //      if (scope.ignoreDuplicates && scope.checkLocal(current.identifier())) {
 //         // ignore duplicates
 //      }
-      /*else */declareVariable(current, *codeScope, typeRef/*, dynamicSize, !exprAttr.testany(HINT_REFOP)*/);
+      /*else */declareVariable(current, scope, typeRef/*, dynamicSize, !exprAttr.testany(HINT_REFOP)*/);
    }
 
    return exprAttr;
@@ -5385,6 +5444,7 @@ void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope&
 //      }
       case okLocalAddress:
          terminal.set(lxLocalAddress, object.param);
+         appendBoxingInfo(terminal, scope, object);
          break;
       case okNil:
          terminal.set(lxNil, 0/*object.param*/);
@@ -5736,7 +5796,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 
 ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t exptectedRef, EAttr modeAttrs)
 {
-//   bool noPrimMode = EAttrs::test(modeAttrs, HINT_NOPRIMITIVES);
+   bool noPrimMode = EAttrs::test(modeAttrs, HINT_NOPRIMITIVES);
 //   bool inlineArgMode = false;
 //   bool boxingMode = false;
 //   //   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
@@ -5800,14 +5860,14 @@ ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInf
 //      objectInfo = compileOperation(writer, operationNode, scope, objectInfo, exptectedRef, mode);
 //   }
 
-   ref_t sourceRef = resolveObjectReference(scope, retVal/*, false*//*, exptectedRef*/);
-//   if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
-//      if (sourceRef != V_UNBOXEDARGS || inlineArgMode) { // !! temporal box the argument list
-//         // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
-//         // NOTE : the primitive wrapper is set as an expected type, so later the primitive will be boxed
-//         exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element, false);
-//      }
-//   }
+   ref_t sourceRef = resolveObjectReference(scope, retVal, false/*, exptectedRef*/);
+   if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
+////      if (sourceRef != V_UNBOXEDARGS || inlineArgMode) { // !! temporal box the argument list
+////         // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
+////         // NOTE : the primitive wrapper is set as an expected type, so later the primitive will be boxed
+         exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element, false);
+////      }
+   }
 //   if (boxingMode) {
 //      switch (objectInfo.kind) {
 //         case okLocalAddress:
@@ -7830,6 +7890,9 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
       // dynamic class should not have default constructor
       classClassScope.abstractMode = true;
    }
+   if (classScope.embeddable) {
+      classClassScope.embeddable = true;
+   }
 
    // NOTE : class class is not inheritable
    classClassScope.info.header.parentRef = classScope.moduleScope->superReference;
@@ -8329,7 +8392,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 //}
 
 void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, 
-   bool allowTypeAttribute/*, bool embeddableClass*/)
+   bool allowTypeAttribute)
 {
    ref_t message = current.argument;
 
@@ -8388,19 +8451,17 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       else  if (scope.info.methods.exist(message | STATIC_MESSAGE))
          scope.raiseError(errDuplicatedMethod, current);
 
-//      if (embeddableClass && !test(methodHints, tpMultimethod)) {
-//         // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
-//
-//         methodHints |= tpStackSafe;
-//
-//         scope.info.methodHints.exclude(Attribute(message, maHint));
-//         scope.info.methodHints.add(Attribute(message, maHint), methodHints);
-//
-//         if (privateOne) {
-//            // HOTFIX : if it is private message save its hints as public one
-//            scope.addHint(message & ~STATIC_MESSAGE, tpStackSafe);
-//         }
-//      }
+      if (scope.embeddable && !test(methodHints, tpMultimethod)) {
+         // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
+
+         methodHints |= tpStackSafe;
+
+         scope.addHint(message, tpStackSafe);
+         if (privateOne) {
+            // HOTFIX : if it is private message save its hints as public one
+            scope.addHint(message & ~STATIC_MESSAGE, tpStackSafe);
+         }
+      }
 
       if (!included && test(methodHints, tpAbstract)) {
          scope.removeHint(message, tpAbstract);
@@ -8500,7 +8561,7 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
 }
 
 void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool closed, LexicalType methodType, 
-   bool allowTypeAttribute/*, bool embeddableClass*/)
+   bool allowTypeAttribute)
 {
    bool templateMethods = false;
    List<ref_t> implicitMultimethods;
@@ -8534,7 +8595,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    while (current != lxNone) {
       if (current == methodType) {
          if (!current.existChild(lxAutogenerated)) {
-            generateMethodDeclaration(current, scope, false, closed, allowTypeAttribute/*, embeddableClass*/);
+            generateMethodDeclaration(current, scope, false, closed, allowTypeAttribute);
          }
          else templateMethods = true;
       }
@@ -8551,7 +8612,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
       current = root.firstChild();
       while (current != lxNone) {
          if (current.existChild(lxAutogenerated) && (current == methodType)) {
-            generateMethodDeclaration(current, scope, true, closed, allowTypeAttribute/*, embeddableClass*/);
+            generateMethodDeclaration(current, scope, true, closed, allowTypeAttribute);
          }
          current = current.nextNode();
       }
@@ -8561,17 +8622,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
       _logic->verifyMultimethods(*scope.moduleScope, root, scope.info, implicitMultimethods);
 }
 
-//inline bool isClassClass(Compiler::ClassType classType)
-//{
-//   return test(classType, Compiler::ClassType::ctClassClass);
-//}
-//
-//inline bool isEmbeddable(Compiler::ClassType classType)
-//{
-//   return test(classType, Compiler::ClassType::ctEmbeddable);
-//}
-
-void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope/*, ClassType classType*/, bool nestedDeclarationMode)
+void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool nestedDeclarationMode)
 {
    bool closed = test(scope.info.header.flags, elClosed);
 
@@ -8605,6 +8656,9 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope/*, Class
       // generate fields
       generateClassFields(node, scope/*, countFields(node) == 1*/);
 
+      if (_logic->isEmbeddable(scope.info))
+         scope.embeddable = true;
+
 //      if (scope.extensionClassRef != 0 ? _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef) : _logic->isEmbeddable(scope.info))
 //         classType = ClassType::ctEmbeddableClass;
    }
@@ -8613,10 +8667,10 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope/*, Class
 
    // generate methods
    if (scope.classClassMode) {
-      generateMethodDeclarations(node, scope, closed, lxConstructor, false/*, isEmbeddable(classType)*/);
-      generateMethodDeclarations(node, scope, closed, lxStaticMethod, true/*, isEmbeddable(classType)*/);
+      generateMethodDeclarations(node, scope, closed, lxConstructor, false);
+      generateMethodDeclarations(node, scope, closed, lxStaticMethod, true);
    }
-   else generateMethodDeclarations(node, scope, closed, lxClassMethod, true/*, isEmbeddable(classType)*/);
+   else generateMethodDeclarations(node, scope, closed, lxClassMethod, true);
 
    bool withAbstractMethods = false;
    bool disptacherNotAllowed = false;
@@ -8722,8 +8776,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
    declareVMT(node, scope);
 
-//   ClassType type = ClassType::ctUndefinedClass;
-   generateClassDeclaration(node, scope/*, type*/);
+   generateClassDeclaration(node, scope);
 
    if (_logic->isRole(scope.info)) {
       // class is its own class class
@@ -8860,9 +8913,9 @@ void Compiler :: compileClassImplementation(/*SyntaxTree& expressionTree, */SNod
 //
 //      scope.embeddable = _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef);
 //   }
-//   else if (_logic->isEmbeddable(scope.info)) {
-//      scope.embeddable = true;
-//   }
+   /*else */if (_logic->isEmbeddable(scope.info)) {
+      scope.embeddable = true;
+   }
 
    // validate field types
    if (scope.info.fieldTypes.Count() > 0) {
@@ -9383,9 +9436,46 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 //
 //   return applied;
 //}
-//
-//void Compiler :: injectBoxingTempLocal(SNode node, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
-//{
+
+void Compiler :: injectBoxingTempLocal(SNode node, ExprScope& scope, int tempLocal/*, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals*/)
+{
+   SNode parent = node;
+   SNode current;
+   while (!parent.compare(lxSeqExpression, lxNewFrame)) {
+      current = parent;
+      parent = parent.parentNode();
+   }
+   
+   if (parent != lxSeqExpression) {
+      current.injectAndReplaceNode(lxSeqExpression);
+   }
+   else current = parent;
+   
+   ref_t typeRef = node.findChild(lxType).argument;
+   int size = node.findChild(lxSize).argument;
+   bool isVariable = node.existChild(lxUnboxingAttr);
+   if (typeRef != 0 && size != 0) {
+      // inject copying a boxed object
+      SNode copyingNode = current.insertNode(lxCopying, size);
+      copyingNode.appendNode(lxTempLocal, tempLocal);
+      copyingNode.appendNode(node.type, node.argument);
+
+      // inject creating a boxed object
+      SNode assigningNode = current.insertNode(lxAssigning);
+      assigningNode.appendNode(lxTempLocal, tempLocal);
+      SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
+      newNode.appendNode(lxType, typeRef);
+
+      if (isVariable) {
+         SNode unboxing = current.appendNode(lxCopying, size);
+         unboxing.appendNode(node.type, node.argument);
+         unboxing.appendNode(lxTempLocal, tempLocal);
+      }
+   }
+   else scope.raiseError(errInvalidBoxing, node);
+
+   node.set(lxTempLocal, tempLocal);
+
 //   SNode current = node.firstChild();
 //   while (current != lxNone && tempLocals.Count() > 0) {
 //      if (current == lxNested) {
@@ -9431,8 +9521,8 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 //
 //      current = current.nextNode();
 //   }
-//}
-//
+}
+
 //bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode)
 //{
 //   bool applied = false;

@@ -1403,6 +1403,16 @@ labNext:
 end
 
 // ; copyfi (__arg1 - index, __arg2 - n)
+inline % 0E6h
+
+  mov  ecx, __arg2	
+  mov  edi, [ebp + __arg1]
+  mov  esi, ebx
+  rep  movsd
+
+end
+
+// ; copyf (__arg1 - index, __arg2 - n)
 inline % 0E7h
 
   mov  ecx, __arg2	
