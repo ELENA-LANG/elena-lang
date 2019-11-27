@@ -35,14 +35,20 @@ ELENA byte codes (or ecodes)
 
  Memory operations:
  -----------------
- copyf  i, n                - copy [acc] => fp+i, n*4-bytes
+ copyf  i, n                - copy [acc] << fp+i, n*4-bytes
 
- copyfi i, n                - copy [acc] => [fp+i], n*4-bytes
+ copyfi i, n                - copy [acc] << [fp+i], n*4-bytes
+
+ copytof  i, n              - copy [acc] >> fp+i, n*4-bytes
+
+ copytofi i, n              - copy [acc] >> [fp+i], n*4-bytes
 
 
  Arithmeric operations:
  ----------------------
- addf i                     - dword[fp+i] + dword[acc] => fp + i
+ addf i                     - dword[acc] << dword[acc] + dword[fp+i]
+
+ subf i                     - dword[acc] << dword[acc] - dword[fp+i]
 
 
  Stack operations:

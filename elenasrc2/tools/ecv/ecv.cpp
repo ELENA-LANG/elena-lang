@@ -686,6 +686,8 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcSubFI:
       case bcCopyFI:
       case bcCopyF:
+      case bcCopyToFI:
+      case bcCopyToF:
          printCommand(command, opcode);
          command.appendInt(argument);
          command.append(" ");

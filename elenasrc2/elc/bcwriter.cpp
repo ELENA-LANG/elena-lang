@@ -2993,6 +2993,10 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, Syntax
             // addf i
             tape.write(bcAddF, node.argument);
             break;
+         case SUB_OPERATOR_ID:
+            // subf i
+            tape.write(bcSubF, node.argument);
+            break;
          default:
             throw InternalError("not yet implemente"); // !! temporal
             break;
@@ -4721,15 +4725,17 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 //      }
 //   }
 
-   if (isSubOperation(larg)) {
+   SNode rargObj = rarg == lxExpression ? rarg.findSubNodeMask(lxObjectMask) : rarg;
+
+   if (isSubOperation(rarg)) {
       throw InternalError("not yet implemente"); // !! temporal
    }
    else {
-      loadObject(tape, rarg, scope);
+      loadObject(tape, larg, scope);
    }
 
    if (node.type == lxIntOp) {
-      doIntOperation(tape, node.argument, larg, scope);
+      doIntOperation(tape, node.argument, rargObj, scope);
 
 //      if (rargConst) {
 //         SNode immArg = rarg.findChild(lxIntValue);
@@ -5595,24 +5601,29 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, F
 //      (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp)));
 //}
 
-void ByteCodeWriter :: copyObject(CommandTape& tape, int size, SyntaxTree::Node node)
+void ByteCodeWriter :: copyFromLocalAddress(CommandTape& tape, int size, int argument)
 {
-   if (node == lxLocalAddress) {
-      if ((size & 3) == 0) {
-         // if it is a dword aligned
-         tape.write(bcCopyF, node.argument, size >> 2);
-      }
-      else throw InternalError("not yet implemente"); // !! temporal
+   if ((size & 3) == 0) {
+      // if it is a dword aligned
+      tape.write(bcCopyF, argument, size >> 2);
    }
-   else if (node.compare(lxLocal, lxTempLocal)) {
-      if ((size & 3) == 0) {
-         // if it is a dword aligned
-         tape.write(bcCopyFI, node.argument, size >> 2);
-      }
-      else throw InternalError("not yet implemente"); // !! temporal
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
+void ByteCodeWriter :: copyToLocalAddress(CommandTape& tape, int size, int argument)
+{
+   if ((size & 3) == 0) {
+      // if it is a dword aligned
+      tape.write(bcCopyToF, argument, size >> 2);
    }
-   else if (node == lxExpression) {
-      copyObject(tape, size, node.firstChild(lxObjectMask));
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
+void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
+{
+   if ((size & 3) == 0) {
+      // if it is a dword aligned
+      tape.write(bcCopyToFI, argument, size >> 2);
    }
    else throw InternalError("not yet implemente"); // !! temporal
 }
@@ -5623,13 +5634,22 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
    SNode source;
    assignOpArguments(node, target, source);
 
-   if (isSubOperation(target)) {
-      throw InternalError("not yet implemente"); // !! temporal
+   SNode srcObj = source == lxExpression ? source.findSubNodeMask(lxObjectMask) : source;
+   SNode dstObj = target == lxExpression ? target.findSubNodeMask(lxObjectMask) : target;
+
+   if (srcObj == lxLocalAddress) {
+      loadObject(tape, target, scope);
+      copyFromLocalAddress(tape, node.argument, srcObj.argument);
    }
-   else {
+   else if (dstObj.compare(lxLocal, lxTempLocal)) {
       loadObject(tape, source, scope);
-      copyObject(tape, node.argument, target);
+      copyToLocal(tape, node.argument, dstObj.argument);
    }
+   else if (dstObj == lxLocalAddress) {
+      loadObject(tape, source, scope);
+      copyToLocalAddress(tape, node.argument, dstObj.argument);
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
 }
 
 void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
@@ -6414,6 +6434,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //         break;
       case lxBoxableExpression:
          throw InternalError("Unboxed expression");
+         break;
+      case lxReturning:
+         generateReturnExpression(tape, node, scope);
          break;
       default:
          if (stackOp) {

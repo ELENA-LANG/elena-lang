@@ -2,7 +2,7 @@
 In development:
 ------         
               dev
-                * primitive operations with int : arithmetic
+                * primitive operations with int : arithmetic - subtract, multiply, divide
                 * primitive operations with int : comparision
                 * primitive operations with int : bitwise
                 * high-level opoerations with int

@@ -599,6 +599,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcAddFI:
          case bcCopyFI:
          case bcCopyF:
+         case bcCopyToFI:
+         case bcCopyToF:
             compileNNCommand(opcode, token, writer);
             break;
          case bcVCallRM:

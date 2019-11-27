@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/28;
+const int gcCommandNumber = /*160*/30;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -70,7 +70,7 @@ const int gcCommands[gcCommandNumber] =
    bcCallVI, bcClose, bcNew, bcFill, bcCallRM,
    bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
    bcMTRedirect, bcJumpVI, bcXMTRedirect, bcRestore, bcPushF,
-   bcCopyF, bcCopyFI, bcAddF,
+   bcCopyF, bcCopyFI, bcAddF, bcCopyToF, bcCopyToFI,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -159,7 +159,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFNOp, &loadFNOp,
+   &compileNop, &compileNop, &compileNop, &compileNop, &loadFNOp, &loadFNOp, &loadFNOp, &loadFNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileNop, &compileNop,

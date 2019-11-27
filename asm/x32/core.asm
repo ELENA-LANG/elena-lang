@@ -1046,8 +1046,8 @@ end
 // ; addf
 inline % 0C5h
 
-  mov  ecx, dword ptr [ebx]
-  add  [ebp+__arg1], ecx
+  mov  ecx, dword ptr [ebp+__arg1]
+  add  [ebx], ecx
 
 end
 
@@ -1410,8 +1410,8 @@ labNext:
 
 end
 
-// ; copyfi (__arg1 - index, __arg2 - n)
-inline % 0E6h
+// ; copytofi (__arg1 - index, __arg2 - n)
+inline % 0E4h
 
   mov  ecx, __arg2	
   mov  edi, [ebp + __arg1]
@@ -1420,12 +1420,32 @@ inline % 0E6h
 
 end
 
-// ; copyf (__arg1 - index, __arg2 - n)
-inline % 0E7h
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 0E5h
 
   mov  ecx, __arg2	
   lea  edi, [ebp + __arg1]
   mov  esi, ebx
+  rep  movsd
+
+end
+
+// ; copyfi (__arg1 - index, __arg2 - n)
+inline % 0E6h
+
+  mov  ecx, __arg2	
+  mov  esi, [ebp + __arg1]
+  mov  edi, ebx
+  rep  movsd
+
+end
+
+// ; copyf (__arg1 - index, __arg2 - n)
+inline % 0E7h
+
+  mov  ecx, __arg2	
+  lea  esi, [ebp + __arg1]
+  mov  edi, ebx
   rep  movsd
 
 end

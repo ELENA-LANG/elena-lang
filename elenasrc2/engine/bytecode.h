@@ -240,6 +240,8 @@ enum ByteCode
 //   bcNewI            = 0xE1,
 //   bcACopyAI         = 0xE2,
 
+   bcCopyToFI        = 0xE4,
+   bcCopyToF         = 0xE5,
    bcCopyFI          = 0xE6,
    bcCopyF           = 0xE7,
    bcMTRedirect      = 0xE8,
@@ -309,7 +311,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x8F
-#define MAX_DOUBLE_ECODE 0xE5
+#define MAX_DOUBLE_ECODE 0xE3
 
 enum PseudoArg
 {

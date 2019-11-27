@@ -3185,8 +3185,8 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
 //         return encodeMessage(scope.module->mapAction(NOTGREATER_MESSAGE, 0, false), paramCount, 0);
       case ADD_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(ADD_MESSAGE, 0, false), argCount, 0);
-//      case SUB_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(SUB_MESSAGE, 0, false), paramCount, 0);
+      case SUB_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(SUB_MESSAGE, 0, false), argCount, 0);
 //      case MUL_OPERATOR_ID:
 //         return encodeMessage(scope.module->mapAction(MUL_MESSAGE, 0, false), paramCount, 0);
 //      case DIV_OPERATOR_ID:
@@ -3606,7 +3606,9 @@ void Compiler :: boxArgument(SNode current, ExprScope& scope, bool boxingMode)
 {
    if (current == lxBoxableExpression) {      
       if (boxingMode) {
-         Attribute key(current.type, current.argument);
+         SNode objNode = current.firstChild(lxObjectMask);
+
+         Attribute key(objNode.type, objNode.argument);
 
          int tempLocal = scope.tempLocals.get(key);
          if (tempLocal == NOTFOUND_POS) {
@@ -4708,8 +4710,8 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 //         writer.closeNode();
 //      }
 //   }
-//
-//   writer.removeBookmark();
+
+   analizeOperands(node, exprScope, 0);
 
    return info;
 }
@@ -7255,7 +7257,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
       // adding the code loading self
       SNode retNode = body.appendNode(lxReturning);
       ExprScope exprScope(&codeScope);
-      recognizeTerminal(retNode.appendNode(lxExpression), thisParam, exprScope, HINT_NODEBUGINFO/* | HINT_NOBOXING*/);
+      recognizeTerminal(retNode.appendNode(lxExpression), thisParam, exprScope, HINT_NODEBUGINFO | HINT_NOBOXING);
 
       ref_t resultRef = scope.getReturningRef(false);
       if (resultRef != 0) {
