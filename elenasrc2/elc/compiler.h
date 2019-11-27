@@ -543,7 +543,7 @@ private:
       int          hints;
       ref_t        outputRef;
 //      bool         withOpenArg;
-//      bool         classEmbeddable;
+      bool         classEmbeddable;
 //      bool         generic;
 //      bool         genericClosure;
 //      bool         extensionMode;
@@ -762,6 +762,7 @@ private:
    struct ExprScope : public Scope
    {
       int tempAllocated1;
+      int tempAllocated2;
 
       Map<ClassInfo::Attribute, int> tempLocals;
 
@@ -986,7 +987,7 @@ private:
 //   bool writeSizeArgument(SyntaxWriter& writer);
 //
 //   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
-//   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
+   void setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void setVariableTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
@@ -995,9 +996,9 @@ private:
 //   ObjectInfo compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, EAttr mode);
-//
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
-//   ObjectInfo compileOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, EAttr mode, int operator_id);
+
+   ObjectInfo compileOperator(SNode node, ExprScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
+   ObjectInfo compileOperator(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
    ObjectInfo compileOperator(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand);
    void compileBranchingNodes(SNode loperandNode, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
@@ -1052,6 +1053,7 @@ private:
    int allocateStructure(/*bool bytearray, */int& allocatedSize, int& reserved);
 //   int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, /*bool binaryArray, */ObjectInfo& exprOperand);
+   bool allocateTempStructure(ExprScope& scope, int size/*, bool binaryArray*/, ObjectInfo& exprOperand);
 
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, EAttr mode);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
@@ -1134,8 +1136,8 @@ private:
 //   //void compileMetaCategory(SNode node, NamespaceScope& scope);
 //
 //////   bool validate(_ProjectManager& project, _Module* module, int reference);
-//
-//   ObjectInfo assignResult(SyntaxWriter& writer, CodeScope& scope, bool fpuMode, ref_t targetRef, ref_t elementRef = 0);
+
+   ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef/*, ref_t elementRef = 0*/);
 
    bool convertObject(SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
    bool sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
@@ -1241,6 +1243,7 @@ public:
 ////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode);
+   virtual void injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg);
 ////   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);

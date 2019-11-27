@@ -287,6 +287,7 @@ class ByteCodeWriter
 //   void saveSubject(CommandTape& tape);
 //   void saveIntConstant(CommandTape& tape, int value);
 ////////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
+   void doIntOperation(CommandTape& tape, int operator_id, SyntaxTree::Node node, FlowScope& scope);
 //   void doIntOperation(CommandTape& tape, int operator_id);
 //   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doIndexOperation(CommandTape& tape, int operator_id);
@@ -327,7 +328,7 @@ class ByteCodeWriter
 //
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
-//   void generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
+   void generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
 //   void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node);
 

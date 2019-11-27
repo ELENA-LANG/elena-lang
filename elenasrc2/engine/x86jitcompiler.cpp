@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/27;
+const int gcCommandNumber = /*160*/28;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -70,7 +70,7 @@ const int gcCommands[gcCommandNumber] =
    bcCallVI, bcClose, bcNew, bcFill, bcCallRM,
    bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
    bcMTRedirect, bcJumpVI, bcXMTRedirect, bcRestore, bcPushF,
-   bcCopyF, bcCopyFI,
+   bcCopyF, bcCopyFI, bcAddF,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -153,7 +153,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compilePush, &compileNop, &compileNop, &compileNop, &compilePushFI, &compileNop,
    &compileNop, &compileNop, &compilePushSI, &loadIndexOp, &compileNop, &compilePushF, &loadIndexOp, &loadIndexOp,
 
-   &compileNop, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1650,6 +1650,7 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->withDebugInfo = compiler->isWithDebugInfo();
    this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
    this->module = NULL;
+   this->argument = 0;
    this->extra_arg = 0;
    this->extra_arg2 = 0;
 

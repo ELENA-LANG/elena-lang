@@ -138,9 +138,9 @@ CompilerLogic :: CompilerLogic()
 //   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_NIL, 0, lxNilOp, V_FLAG));
 //   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, 0, V_NIL, lxNilOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, 0, V_NIL, lxNilOp, V_FLAG));
-//
-//   // int32 primitive operations
-//   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+
+   // int32 primitive operations
+   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 //   operators.add(OperatorInfo(SUB_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 //   operators.add(OperatorInfo(MUL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 //   operators.add(OperatorInfo(DIV_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
@@ -349,50 +349,50 @@ int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference,
    return callType;
 }
 
-//int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
-//{
-//   if ((loperand == 0 && roperand != V_NIL) || (roperand == 0 && loperand != V_NIL))
-//      return 0;
-//
-//   OperatorList::Iterator it = operators.start();
-//   while (!it.Eof()) {
-//      OperatorInfo info = *it;
-//
-//      if (info.operatorId == operatorId) {
-//         if (info.loperand == V_NIL) {
-//            if (loperand == V_NIL) {
-//               result = info.result;
-//
-//               return info.operationType;
-//            }
-//         }
-//         else if (info.roperand == V_NIL) {
-//            if (roperand == V_NIL) {
-//               result = info.result;
-//
-//               return info.operationType;
-//            }
-//         }
-//         else if (info.loperand == V_FLAG && info.roperand == V_FLAG) {
-//            if (isBoolean(scope, loperand) && isBoolean(scope, roperand)) {
-//               result = info.result;
-//
-//               return info.operationType;
-//            }
-//         }
-//         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
-//            result = info.result;
-//
-//            return info.operationType;
-//         }
-//      }
-//
-//      it++;
-//   }
-//
-//   return 0;
-//}
-//
+int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
+{
+   if ((loperand == 0 && roperand != V_NIL) || (roperand == 0 && loperand != V_NIL))
+      return 0;
+
+   OperatorList::Iterator it = operators.start();
+   while (!it.Eof()) {
+      OperatorInfo info = *it;
+
+      if (info.operatorId == operatorId) {
+         if (info.loperand == V_NIL) {
+            if (loperand == V_NIL) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (info.roperand == V_NIL) {
+            if (roperand == V_NIL) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (info.loperand == V_FLAG && info.roperand == V_FLAG) {
+            if (isBoolean(scope, loperand) && isBoolean(scope, roperand)) {
+               result = info.result;
+
+               return info.operationType;
+            }
+         }
+         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
+            result = info.result;
+
+            return info.operationType;
+         }
+      }
+
+      it++;
+   }
+
+   return 0;
+}
+
 //int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result)
 //{
 //   if (loperand == 0 || roperand == 0 || (roperand2 == 0 && loperand != V_OBJARRAY))
@@ -542,12 +542,12 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
          if (!defineClassInfo(scope, info, sourceRef))
             return false;
 
-         //// if it is a structure wrapper
-         //if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
-         //   ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-         //   if (isCompatible(scope, targetRef, inner.value1))
-         //      return true;
-         //}
+         // if it is a structure wrapper
+         if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
+            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+            if (isCompatible(scope, targetRef, inner.value1))
+               return true;
+         }
 
          if (test(info.header.flags, elClassClass)) {
             // class class can be compatible only with itself and the super class
@@ -1001,13 +1001,14 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
    }
 }
 
-//bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
-//{
-//   return isCompatible(scope, scope.branchingInfo.reference, reference);
-//}
-//
-//void CompilerLogic :: injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operator_id, int operationType, ref_t& reference, ref_t elementRef)
-//{
+bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
+{
+   return isCompatible(scope, scope.branchingInfo.reference, reference);
+}
+
+void CompilerLogic :: injectOperation(SNode& node, _ModuleScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, 
+   /*ref_t elementRef, */int tempLocal)
+{
 //   int size = 0;
 //   if (operationType == lxBinArrOp) {
 //      // HOTFIX : define an item size for the binary array operations
@@ -1046,9 +1047,13 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
 //      writer.appendNode(lxSize, size);
 //   }
 //
-//   writer.inject((LexicalType)operationType, operator_id);
-//   writer.closeNode();
-//}
+   if (IsExprOperator(operator_id)) {
+      int size = defineStructSize(scope, reference, /*elementRef*/0);
+
+      compiler.injectExprOperation(node, size, tempLocal, (LexicalType)operationType, operator_id);
+   }
+   else throw InternalError("Not yet implemented"); // !! temporal
+}
 
 bool CompilerLogic :: isReadonly(ClassInfo& info)
 {
@@ -1472,11 +1477,19 @@ int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t referen
 //      return -1;
 //   }
 //   else {
-      ClassInfo classInfo;
-      if (defineClassInfo(scope, classInfo, reference)) {
-         return defineStructSize(classInfo, variable);
+      int size = scope.cachedSizes.get(reference);
+      if (!size) {
+         ClassInfo classInfo;
+         if (defineClassInfo(scope, classInfo, reference)) {
+            size = defineStructSize(classInfo, variable);
+
+            scope.cachedSizes.add(reference, size);
+
+            return size;
+         }
+         else return 0;
       }
-      else return 0;      
+      else return size;
 //   }
 }
 

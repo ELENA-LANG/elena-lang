@@ -101,7 +101,7 @@ constexpr auto V_INTBINARY       = 0x80000803u;
 ////constexpr auto V_INLINEATTRIBUTE = 0x8000080Au;
 
 /// primitive types
-//constexpr auto V_FLAG            = 0x80000001u;
+constexpr auto V_FLAG            = 0x80000001u;
 constexpr auto V_NIL             = 0x80000002u;
 constexpr auto V_INT32           = 0x80000003u;
 //constexpr auto V_INT64           = 0x80000004u;
@@ -260,6 +260,9 @@ struct _ModuleScope
    // cached paths
    SymbolMap         savedPaths;
 
+   // cached requests
+   Map<ref_t, int>   cachedSizes;
+
    MessageMap        attributes;
 
    virtual ref_t mapAnonymous(ident_t prefix = nullptr) = 0;
@@ -395,6 +398,7 @@ public:
 //   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode) = 0;
+   virtual void injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg) = 0;
 
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 //
@@ -464,9 +468,10 @@ public:
       eaCast               = 0x00000000200,
       eaNoPrimitives       = 0x00000000400,
       eaDynamicObject      = 0x00000000800,
+      eaNoBoxing           = 0x00000001000,
 
       eaScopeMask          = 0x0000000000A,
-      eaObjectMask         = 0x000000002F4,
+      eaObjectMask         = 0x000000012F4,
 
 //      eaForward            = 0x00000000008,
 //      eaExtern             = 0x00000000010,
@@ -491,7 +496,6 @@ public:
 //      eaParameter          = 0x00001000000,
 //      eaRetExpr            = 0x00004000000,
 //      eaDirectCall         = 0x00008000000,
-//      eaNoBoxing           = 0x00010000000,
 //      eaNoUnboxing         = 0x00040000000,
 //      eaClosure            = 0x00080000000,
 //      eaSubCodeClosure     = 0x00800000000,
@@ -617,8 +621,8 @@ public:
    // retrieve the call type
    virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;
 
-//   // retrieve the operation type
-//   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
+   // retrieve the operation type
+   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
 //   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand) = 0;
 
@@ -667,7 +671,8 @@ public:
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
       List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
-//   virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
+   virtual void injectOperation(SNode& node, _ModuleScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
+      /*ref_t elementRef, */int tempLocal) = 0;
    virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*,
       ref_t elementRef, ident_t ns, bool noUnboxing*/) = 0;
 //   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;

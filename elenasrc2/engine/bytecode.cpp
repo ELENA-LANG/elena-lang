@@ -50,7 +50,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushfi", OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", "addf", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "freei", "alloci", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -733,7 +733,7 @@ inline void addVerb(MessageMap& map, const char* verb, int id)
 
 void ByteCodeCompiler :: loadOperators(MessageMap& operators)
 {
-//   addVerb(operators, ADD_OPERATOR, ADD_OPERATOR_ID);
+   addVerb(operators, ADD_OPERATOR, ADD_OPERATOR_ID);
 //   addVerb(operators, SUB_OPERATOR, SUB_OPERATOR_ID);
 //   addVerb(operators, MUL_OPERATOR, MUL_OPERATOR_ID);
 //   addVerb(operators, DIV_OPERATOR, DIV_OPERATOR_ID);

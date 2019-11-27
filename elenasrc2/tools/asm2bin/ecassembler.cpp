@@ -505,6 +505,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcBLoadFI:
          //case bcACopyS:
          case bcSetF:
+         case bcAddF:
          //case bcSCopyF:
          //case bcBCopyS:
          //case bcBCopyF:

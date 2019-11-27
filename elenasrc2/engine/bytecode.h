@@ -206,7 +206,7 @@ enum ByteCode
 //   bcASwapSI         = 0xC2,
    bcStoreSI         = 0xC3,
    bcStoreFI         = 0xC4,
-//   bcBSwapSI         = 0xC5,
+   bcAddF            = 0xC5,
 //   bcESwapSI         = 0xC6,
 //   bcDSwapSI         = 0xC7,
 //   bcBLoadFI         = 0xC8,

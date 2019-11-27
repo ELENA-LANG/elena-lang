@@ -28,7 +28,15 @@ constexpr auto STACKOP_MODE      = 0x0001;
 ////      current = current.nextNode();
 ////   }
 ////}
-//
+
+inline bool isSubOperation(SNode node)
+{
+   if (node == lxExpression) {
+      return isSubOperation(node.firstChild(lxObjectMask));
+   }
+   else return test(node.type, lxOpScopeMask);
+}
+
 //// check if the node contains only the simple nodes
 //
 //bool isSimpleObject(SNode node, bool ignoreFields = false)
@@ -2029,6 +2037,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcPeekFI:
          case bcStoreFI:
          case bcSetF:
+         case bcAddF:
          //case bcBCopyF:
          //case bcBLoadFI:
          //case bcDLoadFI:
@@ -2975,6 +2984,23 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //   }
 //}
 //
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, SyntaxTree::Node node, FlowScope& scope)
+{
+   if (node == lxLocalAddress) {
+      switch (operator_id)
+      {
+         case ADD_OPERATOR_ID:
+            // addf i
+            tape.write(bcAddF, node.argument);
+            break;
+         default:
+            throw InternalError("not yet implemente"); // !! temporal
+            break;
+      }
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
 //void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
 //{
 //   switch (operator_id) {
@@ -4517,9 +4543,9 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //   }
 //   else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
 //}
-//
-//void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
-//{
+
+void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
 //   int operation = node.argument;
 //   bool basePresaved = test(mode, BASE_PRESAVED);
 //   bool assignMode = test(mode, ASSIGN_MODE);;
@@ -4563,15 +4589,15 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //         directOp = node.type == lxIntOp && !resultExpected;
 //         break;
 //   }
-//
-//   SNode larg;
-//   SNode rarg;
+
+   SNode larg;
+   SNode rarg;
 //   SNode barg;
 //   if (invertMode) {
 //      assignOpArguments(node, rarg, larg);
 //   }
-//   else assignOpArguments(node, larg, rarg);
-//
+   /*else */assignOpArguments(node, larg, rarg);
+
 //   if (assignMode) {
 //      barg = node.parentNode();
 //      while (barg != lxAssigning)
@@ -4694,8 +4720,17 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //         }
 //      }
 //   }
-//
-//   if (node.type == lxIntOp) {
+
+   if (isSubOperation(larg)) {
+      throw InternalError("not yet implemente"); // !! temporal
+   }
+   else {
+      loadObject(tape, rarg, scope);
+   }
+
+   if (node.type == lxIntOp) {
+      doIntOperation(tape, node.argument, larg, scope);
+
 //      if (rargConst) {
 //         SNode immArg = rarg.findChild(lxIntValue);
 //         if (directOp) {
@@ -4710,7 +4745,7 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //      }
 //   //   else if(largSubOp) doIndexOperation(tape, operation);
 //      else doIntOperation(tape, operation);
-//   }
+   }
 //   else if (node == lxLongOp) {
 //      doLongOperation(tape, operation);
 //   }
@@ -4753,8 +4788,8 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //
 //   if (basePresaved)
 //      tape.write(bcPopB);
-//}
-//
+}
+
 //void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
 //{
 //   SNode larg;
@@ -5178,14 +5213,6 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //   pushObject(tape, lxResult);
 //   presavedCount++;
 //}
-
-inline bool isSubOperation(SNode node)
-{
-   if (node == lxExpression) {
-      return isSubOperation(node.firstChild(lxObjectMask));
-   }
-   else return test(node.type, lxOpScopeMask);
-}
 
 void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, FlowScope& scope)
 {
@@ -6340,11 +6367,11 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxNilOp:
 //         generateNilOperation(tape, node);
 //         break;
-//      case lxIntOp:
+      case lxIntOp:
 //      case lxLongOp:
 //      case lxRealOp:
-//         generateOperation(tape, node, mode);
-//         break;
+         generateOperation(tape, node, scope, mode & ~STACKOP_MODE);
+         break;
 //      case lxIntArrOp:
 //      case lxByteArrOp:
 //      case lxShortArrOp:

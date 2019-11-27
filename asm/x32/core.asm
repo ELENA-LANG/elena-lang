@@ -1043,6 +1043,14 @@ inline % 0C4h
 
 end
 
+// ; addf
+inline % 0C5h
+
+  mov  ecx, dword ptr [ebx]
+  add  [ebp+__arg1], ecx
+
+end
+
 // ; alloci
 inline %0D1h
 

@@ -24,6 +24,8 @@ In development:
                 * variable : auto, template                                                                                 
                 * field : type, template type
 
+                * operations in symbol
+
                 * type should be only one in the token expression - test: int long r := 0;
 
                 * template : inherting another template
