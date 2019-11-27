@@ -659,8 +659,8 @@ inline ref_t defineConstantMask(LexicalType type)
       //   return mskWideLiteralRef;
       //case lxConstantChar:
       //   return mskCharRef;
-      //case lxConstantInt:
-      //   return mskInt32Ref;
+      case lxConstantInt:
+         return mskInt32Ref;
       //case lxConstantLong:
       //   return mskInt64Ref;
       //case lxConstantReal:
@@ -3853,7 +3853,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxClassSymbol:
       case lxConstantSymbol:
 //      case lxConstantChar:
-//      case lxConstantInt:
+      case lxConstantInt:
 //      case lxConstantLong:
 //      case lxConstantReal:
 //      case lxMessageConstant:
@@ -3965,7 +3965,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxClassSymbol:
       case lxConstantSymbol:
 //      case lxConstantChar:
-//      case lxConstantInt:
+      case lxConstantInt:
 //      case lxConstantLong:
 //      case lxConstantReal:
 //      case lxMessageConstant:
@@ -5584,6 +5584,9 @@ void ByteCodeWriter :: copyObject(CommandTape& tape, int size, SyntaxTree::Node 
       }
       else throw InternalError("not yet implemente"); // !! temporal
    }
+   else if (node == lxExpression) {
+      copyObject(tape, size, node.firstChild(lxObjectMask));
+   }
    else throw InternalError("not yet implemente"); // !! temporal
 }
 
@@ -6382,6 +6385,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxYieldReturing:
 //         generateYieldReturn(tape, node);
 //         break;
+      case lxBoxableExpression:
+         throw InternalError("Unboxed expression");
+         break;
       default:
          if (stackOp) {
             pushObject(tape, node, scope, mode);

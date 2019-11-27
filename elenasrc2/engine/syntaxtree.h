@@ -82,6 +82,7 @@ enum LexicalType
    // expression nodes
    lxExpression               = 0x059030,
    lxSeqExpression            = 0x059031,
+   lxBoxableExpression        = 0x059032,
    lxNil                      = 0x018040,
    lxClassSymbol              = 0x018050, // arg - reference
    lxSymbolReference          = 0x058060,
@@ -114,6 +115,7 @@ enum LexicalType
    lxMultiDispatching         = 0x058180,
    lxSealedMultiDispatching   = 0x058181,
    lxResending                = 0x058190,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+   lxConstantInt              = 0x0181A0, // arg - reference
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -137,7 +139,7 @@ enum LexicalType
    lxTemplateParam            = 0x000F12,
    lxSize                     = 0x000F13,
    lxReserved                 = 0x000F14,
-   lxUnboxingAttr             = 0x000F15,
+   lxIntValue                 = 0x000F16, // arg - integer value
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -182,7 +184,6 @@ enum LexicalType
 //   lxConstantString           = 0x00A10C, // arg - reference
 //   lxConstantWideStr          = 0x00A10D, // arg - reference
 //   lxConstantChar             = 0x00A10E, // arg - reference
-//   lxConstantInt              = 0x01A10F, // arg - reference
 //   lxConstantLong             = 0x01A110, // arg - reference
 //   lxConstantReal             = 0x01A111, // arg - reference
 //   lxMessageConstant          = 0x00A113, // arg - rererence
@@ -262,7 +263,6 @@ enum LexicalType
 //   lxParamsVariable           = 0x1003E,
 
 //   lxClassName                = 0x20014, // arg - identifier
-//   lxIntValue                 = 0x20015, // arg - integer value
 //   lxIfValue                  = 0x20017, // arg - reference
 //   lxElseValue                = 0x20018, // arg - reference
 //   lxIntExtArgument           = 0x2001C,
@@ -376,6 +376,7 @@ public:
       {
          this->type = type;
          this->argument = argument;
+         this->strArgument = INVALID_REF;
 
          tree->save(*this);
       }

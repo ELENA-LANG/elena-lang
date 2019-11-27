@@ -2,14 +2,16 @@
 In development:
 ------         
               dev
-                * int wrapper
-                * primitive operations with int
+                * primitive operations with int : arithmetic
+                * primitive operations with int : comparision
+                * primitive operations with int : bitwise
+                * high-level opoerations with int
+                * direct operations with int constants
+                * comple-time int expression evaluation
 
-                * copying  a buffer with unaligned size
-                * copying 4,8,1,2 bytes
-
-                * resend body
-                * call parent constructor
+                * resend body - method
+                * resend body - constructor
+                * call the parent constructor
 
                 * countable
 
@@ -39,6 +41,7 @@ In development:
 
                 * implicit default constructor cannot have redirector statement
                 * nested class cannot have constructors
+                * conditional boxing of arguments and self
 
                 * revew internal methods
                   - accessible only inside its own module
@@ -88,8 +91,7 @@ In development:
                 * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
                   signature or default one (if nothing is found - cannot be declared)
 
-                * boxing - implicit constructor with a single argument should be injected if requiered
-                * recognize imlicit conversion
+                * recognize implicit conversion
 
                 * auto symbol
                 * auto method
@@ -125,6 +127,8 @@ In development:
                 * implement sealed, const, struct
                 * analog of C# $ strings
 
+                * no unboxing by assign
+
                 * constructor dispatching
                 * message dispatching
 
@@ -133,7 +137,7 @@ In development:
                 * declaring typed variable : implicit, reference, global
 
                 * static fields / static methods are inherited
-                * const static  - are declared only in-place
+                * const static  - are declared only in-plaby assignce
                 * accum static  - are declared and inherited only in-place
                 * it should be possible to create a class from static method (using self)
 
@@ -183,6 +187,9 @@ In development:
                 * variables
                 * templates
 
+                * long,real,string constant
+                * embeddable method return
+
                 * inheritance
 
                 * nested class scope?
@@ -202,8 +209,9 @@ In development:
                 * uncomment parseMessage, resolveModule, cleanUp, initLoader, loadPrimitiveCategory
                 * declaring unresolved types?
                 * migrate changes from core to corex
-                * test if big alloc is proper working
                 * loops
+                * copying  a buffer with unaligned size
+                * copying 4,8,1,2 bytes
                 * break / contninue
                 * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
                   possible values)
@@ -216,6 +224,7 @@ In development:
                 * protected default constructor - the class cannot be created using default constructor
                 * test : branching external implementation : returning a value from closure 
                 * it should be possible to extend attributes / template statements from anoter libraries
+                * test if big alloc is proper working
 
               dev1
                 * write - Programming in ELENA : manual

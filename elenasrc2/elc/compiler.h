@@ -111,7 +111,7 @@ public:
 //      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
-//      okIntConstant,                  // param - reference, extraparam - imm argument
+      okIntConstant,                  // param - reference, extraparam - imm argument
 //      okUIntConstant,                 // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference
 //      okRealConstant,                 // param - reference
@@ -934,7 +934,7 @@ private:
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false);
    void compileParentDeclaration(SNode node, ClassScope& scope/*, bool extensionMode*/);
-   void generateClassFields(SNode member, ClassScope& scope/*, bool singleField*/);
+   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
    void validateClassFields(SNode node, ClassScope& scope);
 
 //   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
@@ -987,7 +987,7 @@ private:
 //
 //   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
 //   void writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
-//   void writeVariableTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
+   void setVariableTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
    void appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object);
@@ -1018,7 +1018,7 @@ private:
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
    EAttr declareExpressionAttributes(SNode& node, ExprScope& scope, EAttr mode);
 
-   void recognizeTerminal(SNode node, ObjectInfo info, ExprScope& scope, EAttr mode);
+   void recognizeTerminal(SNode& node, ObjectInfo info, ExprScope& scope, EAttr mode);
 
    ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo mapObject(SNode node, ExprScope& scope, EAttr mode);
@@ -1108,7 +1108,7 @@ private:
    void compileClassVMT(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileForward(SNode ns, NamespaceScope& scope);
 
-   void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs/*, bool singleField*/);
+   void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst, bool isArray);
    
    void generateClassFlags(ClassScope& scope, SNode node);
@@ -1148,8 +1148,8 @@ private:
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope);
    void analizeSymbolTree(SNode node, Scope& scope);
-   void boxMessageArgument(SNode node, ExprScope& scope);
-   void analizeMessageArguments(SNode& node, ExprScope& scope, int stackSafeAttr);
+   void boxArgument(SNode node, ExprScope& scope, bool boxingMode);
+   void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr);
 
 //   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 //
@@ -1224,7 +1224,7 @@ public:
 //   void copyStaticFieldValues(SNode node, ClassScope& scope);
 
    // _Compiler interface implementation
-//   virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false);
+   virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode = false*/);
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
 //   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
 //      int stacksafeAttr, bool embeddableAttr);

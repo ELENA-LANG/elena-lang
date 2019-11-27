@@ -298,10 +298,10 @@ namespace _ELENA_
    constexpr int elStructureRole       = 0x00000838;
    constexpr int elReadOnlyRole        = 0x00001000;
    constexpr int elNonStructureRole    = 0x00002000;
+   constexpr int elWrapper             = 0x00004000;
 
 //   constexpr int elDynamicRole         = 0x00000004;
-//   constexpr int elWrapper             = 0x00000040;
-//   constexpr int elStructureWrapper    = 0x00000048;
+   constexpr int elStructureWrapper    = 0x00004800;
 //   constexpr int elSealed              = 0x00000120;
 //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elWithGenerics        = 0x00000400;
@@ -509,7 +509,7 @@ namespace _ELENA_
    // predefined system forwards
    constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
 //   constexpr auto LAZYEXPR_FORWARD        = "$lazyexpression";                // the base lazy expression class
-//   constexpr auto INT_FORWARD             = "$int";
+   constexpr auto INT_FORWARD             = "$int";
 //   constexpr auto LONG_FORWARD            = "$long";
 //   constexpr auto REAL_FORWARD            = "$real";
 //   constexpr auto STR_FORWARD             = "$literal";

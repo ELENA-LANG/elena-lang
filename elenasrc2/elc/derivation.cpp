@@ -2009,6 +2009,10 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
 //         //                  the one with parameters should be handled in default case
 //         generateClosureTree(writer, current, derivationScope);
 //         break;
+      case lxInteger:
+      case lxHexInteger:
+         generateIdentifier(writer, current, derivationScope);
+         break;
 //      default:
 //         if (isTerminal(current.type)) {
 //            generateTokenExpression(writer, current, derivationScope, true);

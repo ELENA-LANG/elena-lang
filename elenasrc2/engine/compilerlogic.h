@@ -71,8 +71,8 @@ class CompilerLogic : public _CompilerLogic
    void setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
 
 ////   bool loadBranchingInfo(_CompilerScope& scope, ref_t reference);
-//   bool injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount);
-//
+   bool injectImplicitConstructor(/*_ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef*//*, ref_t elementRef*//*, ref_t* signatures, int paramCount*/);
+
 //   ref_t getClassClassRef(_ModuleScope& scope, ref_t reference);
 //
 //   bool isBoolean(_ModuleScope& scope, ref_t reference);
@@ -156,14 +156,14 @@ public:
 //   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message);
 //   virtual bool isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message);
 ////   virtual bool isDispatcher(ClassInfo& info, ref_t message);
-//   virtual bool isReadonly(ClassInfo& info);
-//   virtual bool isReadonly(_ModuleScope& scope, ref_t reference)
-//   {
-//      ClassInfo info;
-//      defineClassInfo(scope, info, reference, true);
-//
-//      return isReadonly(info);
-//   }
+   virtual bool isReadonly(ClassInfo& info);
+   virtual bool isReadonly(_ModuleScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      defineClassInfo(scope, info, reference, true);
+
+      return isReadonly(info);
+   }
 //   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
 //   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
 
@@ -173,8 +173,8 @@ public:
       List<ref_t>& implicitMultimethods, LexicalType methodType);
 //   virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef);
 //   virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef);
-//   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-//      ref_t elementRef, ident_t ns, bool noUnboxing);
+   virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*,
+      ref_t elementRef, ident_t ns, bool noUnboxing*/);
 //   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod);
 //
 ////   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef);

@@ -26,7 +26,7 @@
 /// scope_prefix:
 
 #define const       80002001h
-//#define embeddable  80002002h
+#define embeddable  80002002h
 //#define ref         80002003h
 ////#80002004 = __direct;
 //#define __loop      80002005h
@@ -89,10 +89,10 @@
 // === basic logical types ===
 type bool       = system'BoolValue;
 
-//// === basic type aliases ===
+// === basic type aliases ===
 //type byte       = ByteNumber;
 //type short      = ShortNumber;
-//type int        = IntNumber;
+type int        = system'IntNumber;
 //type uint       = UIntNumber;
 //type long       = LongNumber;
 //type real       = RealNumber;

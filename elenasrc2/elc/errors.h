@@ -45,7 +45,7 @@ namespace _ELENA_
    #define errDuplicatedDefinition  "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n"
 //////   #define errInvalidProperty       "%s(%d:%d): error 121: Invalid or none-existing property '%s'\n"
 //////   #define errInvalidRedirectMessage "%s(%d:%d): error 127: It is not possible to use redirect message in this case\n"
-//   #define errInvalidIntNumber      "%s(%d:%d): error 130: Invalid integer value %s\n"
+   #define errInvalidIntNumber      "%s(%d:%d): error 130: Invalid integer value %s\n"
 //   #define errUnknownMessage        "%s(%d:%d): error 131: Unknown message %s\n"
 ////   #define errUnknownSubject        "%s(%d:%d): error 132: Unknown attribute %s\n"
 ////   #define errInvalidSubject        "%s(%d:%d): error 132: Invalid attribute %s\n"

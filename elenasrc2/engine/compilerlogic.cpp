@@ -1049,11 +1049,11 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
 //   writer.inject((LexicalType)operationType, operator_id);
 //   writer.closeNode();
 //}
-//
-//bool CompilerLogic :: isReadonly(ClassInfo& info)
-//{
-//   return test(info.header.flags, elReadOnlyRole);
-//}
+
+bool CompilerLogic :: isReadonly(ClassInfo& info)
+{
+   return test(info.header.flags, elReadOnlyRole);
+}
 
 inline ref_t getSignature(_ModuleScope& scope, ref_t message)
 {
@@ -1142,9 +1142,9 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
 //   }
 //   else return false;
 //}
-//
-//bool CompilerLogic :: injectImplicitConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef/*, ref_t elementRef*/, ref_t* signatures, int paramCount)
-//{
+
+bool CompilerLogic :: injectImplicitConstructor(/*_ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef*//*, ref_t elementRef*//*, ref_t* signatures, int paramCount*/)
+{
 //   ref_t signRef = scope.module->mapSignature(signatures, paramCount, false);
 //
 //   int stackSafeAttr = 0;
@@ -1157,9 +1157,9 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
 //      return true;
 //
 //   }
-//   else return false;
-//}
-//
+   /*else */return false;
+}
+
 //bool CompilerLogic :: injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef)
 //{
 //   int stackSafeAttr = 0;
@@ -1211,10 +1211,10 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
 //
 //   return 0;
 //}
-//
-//bool CompilerLogic :: injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef, 
-//   ref_t elementRef, ident_t ns, bool noUnboxing)
-//{
+
+bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*,
+   ref_t elementRef, ident_t ns, bool noUnboxing*/)
+{
 ////   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
 ////      if (isPrimitiveArrayRef(sourceRef)) {
 ////         // HOTFIX : replace generic object with a generic array
@@ -1239,34 +1239,34 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
 ////         targetRef = scope.signatureReference;
 ////      }
 ////   }
-//
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, targetRef))
-//      return false;
-//
-//   // if the target class is wrapper around the source
-//   if (test(info.header.flags, elWrapper) && !test(info.header.flags, elDynamicRole)) {
-//      ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-//
-//      bool compatible = false;
-//      if (test(info.header.flags, elStructureWrapper)) {
-//         if (isPrimitiveRef(sourceRef)) {
-//            compatible = isCompatible(scope, inner.value1, sourceRef);
-//         }
-//         // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
-//         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef, 0u);
-//      }
-//      else compatible = isCompatible(scope, inner.value1, sourceRef);
-//
-//      if (compatible) {
-//         compiler.injectBoxing(writer, scope, 
-//            noUnboxing || isReadonly(info)  ? lxBoxing : lxUnboxing,
-//            test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
-//
-//         return true;
-//      }
-//   }
-//
+
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, targetRef))
+      return false;
+
+   // if the target class is wrapper around the source
+   if (test(info.header.flags, elWrapper)/* && !test(info.header.flags, elDynamicRole)*/) {
+      ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+
+      bool compatible = false;
+      if (test(info.header.flags, elStructureWrapper)) {
+         if (isPrimitiveRef(sourceRef)) {
+            compatible = isCompatible(scope, inner.value1, sourceRef);
+         }
+         // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
+         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef, 0u);
+      }
+      else compatible = isCompatible(scope, inner.value1, sourceRef);
+
+      if (compatible) {
+         compiler.injectBoxingExpr(node, !isReadonly(info), 
+            test(info.header.flags, elStructureRole) ? info.size : 0, 
+            targetRef);
+
+         return true;
+      }
+   }
+
 ////   // HOTFIX : trying to typecast primitive structure array
 ////   if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
 ////      ClassInfo sourceInfo;      
@@ -1333,10 +1333,10 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
 //   // HOTFIX : recognize primitive data except of a constant literal
 //   /*else */if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
 //      sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, ns, false);
-//
-//   return injectImplicitConstructor(writer, scope, compiler, info, targetRef, /*elementRef, */&sourceRef, 1);
-//}
-//
+
+   return injectImplicitConstructor(/*scope, compiler, info, targetRef, *//*elementRef, *//*&sourceRef, 1*/);
+}
+
 //void CompilerLogic :: injectNewOperation(SyntaxWriter& writer, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef)
 //{
 //   int size = defineStructSize(scope, targetRef, elementRef);
@@ -1663,9 +1663,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
 //////      case V_DYNAMIC:
 //////         attrValue = elDynamicRole;
 //////         return true;
-//      case V_CONST:
-//         attrValue = elReadOnlyRole;
-//         return true;
+      case V_CONST:
+         attrValue = elReadOnlyRole;
+         return true;
 //      case V_EXTENSION:
 //         attrValue = elExtension;
 //         return true;
@@ -1809,10 +1809,10 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
 {
    switch ((size_t)attrValue)
    {
-//      case V_EMBEDDABLE:
-//         attrs.isEmbeddable = true;
-//         attrValue = -1;
-//         return true;
+      case V_EMBEDDABLE:
+         attrs.isEmbeddable = true;
+         attrValue = -1;
+         return true;
 //      case V_STATIC:
 //         attrValue = lxStaticAttr;
 //         return true;

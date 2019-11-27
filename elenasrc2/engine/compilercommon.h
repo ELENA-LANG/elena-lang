@@ -48,7 +48,7 @@ constexpr auto V_GETACCESSOR = 0x80003007u;
 
 /// scope_prefix:
 constexpr auto V_CONST           = 0x80002001u;
-//constexpr auto V_EMBEDDABLE      = 0x80002002u;
+constexpr auto V_EMBEDDABLE      = 0x80002002u;
 //constexpr auto V_WRAPPER         = 0x80002003u;
 //constexpr auto V_DIRECT          = 0x80002004u;
 //constexpr auto V_LOOP            = 0x80002005u;
@@ -233,7 +233,7 @@ struct _ModuleScope
 
    // cached references
    ref_t             superReference;
-//   ref_t             intReference;
+   ref_t             intReference;
 //   ref_t             longReference;
 //   ref_t             realReference;
 //   ref_t             messageNameReference;
@@ -359,7 +359,7 @@ struct _ModuleScope
    {
       project = nullptr;
       debugModule = module = nullptr;
-      /*intReference = */superReference = 0;
+      intReference = superReference = 0;
       /*messageNameReference = */messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      charReference = realReference = 0;
@@ -380,7 +380,7 @@ class _Compiler
 public:
 //   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode) = 0;
 //
-//   virtual void injectBoxing(SyntaxWriter& writer, _ModuleScope& scope, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode = false) = 0;
+   virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode = false*/) = 0;
 //   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
 //      int stacksafeAttr, bool embeddableAttr) = 0;
 //////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
@@ -428,7 +428,7 @@ public:
       ref_t elementRef;
       int   size;
 //      bool  isStaticField;
-//      bool  isEmbeddable;
+      bool  isEmbeddable;
 //      bool  isConstAttr;
 //      bool  isSealedAttr;
 //      bool  isClassAttr;
@@ -442,9 +442,9 @@ public:
       {
          elementRef = fieldRef = 0;
          size = 0;
-//         isClassAttr = isStaticField = isEmbeddable = isConstAttr = isSealedAttr = false;
+         /*isClassAttr = isStaticField = */isEmbeddable = /*isConstAttr = isSealedAttr = */false;
 //         isArray = false;
-//
+
 //         messageRef = messageAttr = 0;
       }
    };
@@ -668,8 +668,8 @@ public:
       List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
 //   virtual void injectOperation(SyntaxWriter& writer, _ModuleScope& scope, int operatorId, int operation, ref_t& reference, ref_t elementRef) = 0;
-//   virtual bool injectImplicitConversion(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-//      ref_t elementRef, ident_t ns, bool noUnboxing) = 0;
+   virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef/*,
+      ref_t elementRef, ident_t ns, bool noUnboxing*/) = 0;
 //   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
 //   virtual void injectNewOperation(SyntaxWriter& writer, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
 //   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;

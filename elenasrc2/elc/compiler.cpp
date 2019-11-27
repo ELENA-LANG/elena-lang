@@ -12,7 +12,7 @@
 // --------------------------------------------------------------------------
 #include "compiler.h"
 #include "errors.h"
-//#include <errno.h>
+#include <errno.h>
 
 using namespace _ELENA_;
 
@@ -2321,7 +2321,7 @@ void Compiler :: appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo objec
    node.appendNode(lxType, targetRef);
    node.appendNode(lxSize, size);
    if (variable)
-      node.appendNode(lxUnboxingAttr);
+      node.setArgument(INVALID_REF);
 }
 
 //void Compiler :: writeParamTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
@@ -2335,8 +2335,14 @@ void Compiler :: appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo objec
 //   else writer.newNode(type, object.param);
 //}
 //
-//void Compiler :: writeVariableTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
-//{
+void Compiler :: setVariableTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
+{
+   node.set(type, object.param);
+
+   node.injectAndReplaceNode(lxBoxableExpression);
+
+   appendBoxingInfo(node, scope, object);
+
 //   if (!EAttrs::test(mode, HINT_NOBOXING) || EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) {
 //      bool variable = false;
 //      int size = _logic->defineStructSizeVariable(*scope.moduleScope,
@@ -2352,8 +2358,8 @@ void Compiler :: appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo objec
 //         writer.appendNode(lxBoxingRequired);
 //   }
 //   else writer.newNode(type, object.param);
-//}
-//
+}
+
 //bool Compiler :: writeSizeArgument(SyntaxWriter& writer)
 //{
 //   SNode current = writer.CurrentNode().lastChild();
@@ -3571,32 +3577,35 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
 
 //   // TODO : inject target boxing if it is stack allocated and the message call is not stacksafe
 
-   analizeMessageArguments(node, scope, stackSafeAttr);
+   analizeOperands(node, scope, stackSafeAttr);
 
    return retVal;
 }
 
-void Compiler :: boxMessageArgument(SNode current, ExprScope& scope)
+void Compiler :: boxArgument(SNode current, ExprScope& scope, bool boxingMode)
 {
-   if (current == lxLocalAddress) {
-      Attribute key(current.type, current.argument);
+   if (current == lxBoxableExpression) {      
+      if (boxingMode) {
+         Attribute key(current.type, current.argument);
 
-      int tempLocal = scope.tempLocals.get(key);
-      if (tempLocal == NOTFOUND_POS) {
-         tempLocal = scope.newTempLocal();
+         int tempLocal = scope.tempLocals.get(key);
+         if (tempLocal == NOTFOUND_POS) {
+            tempLocal = scope.newTempLocal();
 
-         scope.tempLocals.add(key, tempLocal);
+            scope.tempLocals.add(key, tempLocal);
 
-         injectBoxingTempLocal(current, scope, tempLocal);
+            injectBoxingTempLocal(current, scope, tempLocal);
+         }
+         else current.set(lxTempLocal, tempLocal);
       }
-      else current.set(lxTempLocal, tempLocal);
+      else current.set(lxExpression, 0);
    }
    else if (current == lxExpression) {
-      boxMessageArgument(current.firstChild(lxObjectMask), scope);
+      boxArgument(current.firstChild(lxObjectMask), scope, boxingMode);
    }
 }
 
-void Compiler :: analizeMessageArguments(SNode& node, ExprScope& scope, int stackSafeAttr)
+void Compiler :: analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr)
 {
    // if boxing / unboxing required - insert SeqExpression, prepand boxing, replace operand with boxed arg, append unboxing   
 
@@ -3604,9 +3613,7 @@ void Compiler :: analizeMessageArguments(SNode& node, ExprScope& scope, int stac
 //   int nested = 0;
    int argBit = 1;
    while (current != lxNone) {
-      if (!test(stackSafeAttr, argBit)) {
-         boxMessageArgument(current, scope);
-      }
+      boxArgument(current, scope, !test(stackSafeAttr, argBit));
 
 //      if (test(current.type, lxObjectMask)) {
 //         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
@@ -3632,11 +3639,10 @@ bool Compiler :: convertObject(SNode node, ExprScope& scope, ref_t targetRef, Ob
    ref_t sourceRef = resolveObjectReference(scope, source, false);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       // if it can be boxed / implicitly converted
-      /*if (!_logic->injectImplicitConversion(node, *scope.moduleScope, *this, targetRef, sourceRef,
-         source.element, nsScope->ns.c_str(), EAttrs::test(mode, HINT_NOUNBOXING)))
-      {*/
+      if (!_logic->injectImplicitConversion(*scope.moduleScope, node, *this, targetRef, sourceRef/*,source.element*/))
+      {
          return sendTypecast(node, scope, targetRef, source);
-      //}
+      }
    }
    return true;
 }
@@ -3694,15 +3700,14 @@ ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t el
 
 ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode)
 {
-   throw InternalError("Not yet implemented"); // !! temporal
 
-//   switch (argRef) {
+   switch (argRef) {
 //      case V_WRAPPER:
 //         return resolveReferenceTemplate(scope, elementRef, ns, declarationMode);
 //      case V_ARGARRAY:
 //         return resolvePrimitiveArray(scope, scope.argArrayTemplateReference, elementRef, ns, declarationMode);
-//      case V_INT32:
-//         return scope.intReference;
+      case V_INT32:
+         return scope.intReference;
 //      case V_INT64:
 //         return scope.longReference;
 //      case V_REAL64:
@@ -3714,12 +3719,13 @@ ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, r
 //      case V_UNBOXEDARGS:
 //         // HOTFIX : should be returned as is
 //         return argRef;
-//      default:
-//         if (isPrimitiveArrRef(argRef)) {
+      default:
+         throw InternalError("Not yet implemented"); // !! temporal
+      //         if (isPrimitiveArrRef(argRef)) {
 //            return resolvePrimitiveArray(scope, scope.arrayTemplateReference, elementRef, ns, declarationMode);
 //         }
 //         return scope.superReference;
-//   }
+   }
 }
 
 ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr mode/*,
@@ -4100,6 +4106,8 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //   writer.inject(operationType, operand);
 //   writer.closeNode();
    node.set(operationType, operand);
+
+   analizeOperands(node, scope, operationType == lxAssigning ? 0 : 3);
 
    return retVal;
 }
@@ -5314,10 +5322,13 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope)
    return retVal;
 }
 
-void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope& scope, EAttr mode)
+void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope& scope, EAttr mode)
 {
    // injecting an expression node
    terminal.injectAndReplaceNode(lxExpression);
+
+   if (!EAttrs::test(mode, HINT_NODEBUGINFO))
+      terminal.insertNode(lxBreakpoint, dsStep);
 
    switch (object.kind) {
       case okUnknown:
@@ -5345,11 +5356,11 @@ void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope&
 //      case okCharConstant:
 //         writer.newNode(lxConstantChar, object.param);
 //         break;
-//      case okIntConstant:
+      case okIntConstant:
 //      case okUIntConstant:
-//         writer.newNode(lxConstantInt, object.param);
-//         writer.appendNode(lxIntValue, object.extraparam);
-//         break;
+         terminal.set(lxConstantInt, object.param);
+         terminal.appendNode(lxIntValue, object.extraparam);
+         break;
 //      case okLongConstant:
 //         writer.newNode(lxConstantLong, object.param);
 //         break;
@@ -5443,8 +5454,8 @@ void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope&
 //         writeVariableTerminal(writer, scope, object, mode, type);
 //      }
       case okLocalAddress:
-         terminal.set(lxLocalAddress, object.param);
-         appendBoxingInfo(terminal, scope, object);
+         //         LexicalType type = object.kind == okLocalAddress ? lxLocalAddress : lxFieldAddress;
+         setVariableTerminal(terminal, scope, object, mode, lxLocalAddress);
          break;
       case okNil:
          terminal.set(lxNil, 0/*object.param*/);
@@ -5499,9 +5510,6 @@ void Compiler :: recognizeTerminal(SNode terminal, ObjectInfo object, ExprScope&
    //
    //   writeTarget(writer, resolveObjectReference(scope, object, false), object.element);
    //
-   if (!EAttrs::test(mode, HINT_NODEBUGINFO))
-      terminal.insertNode(lxBreakpoint, dsStep);
-
    //      writeTerminalInfo(writer, terminal);
    //
    //   writer.closeNode();
@@ -5548,20 +5556,20 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          //      case lxCharacter:
          //         object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->charReference);
          //         break;
-         //      case lxInteger:
-         //      {
-         //         String<char, 20> s;
-         //
-         //         int integer = token.toInt();
-         //         if (errno == ERANGE)
-         //            scope.raiseError(errInvalidIntNumber, terminal);
-         //
-         //         // convert back to string as a decimal integer
-         //         s.appendHex(integer);
-         //
-         //         object = ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
-         //         break;
-         //      }
+               case lxInteger:
+               {
+                  String<char, 20> s;
+         
+                  int integer = token.toInt();
+                  if (errno == ERANGE)
+                     scope.raiseError(errInvalidIntNumber, terminal);
+         
+                  // convert back to string as a decimal integer
+                  s.appendHex(integer);
+         
+                  object = ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
+                  break;
+               }
          //      case lxLong:
          //      {
          //         String<char, 30> s("_"); // special mark to tell apart from integer constant
@@ -5574,20 +5582,20 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          //         object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT64);
          //         break;
          //      }
-         //      case lxHexInteger:
-         //      {
-         //         String<char, 20> s;
-         //
-         //         int integer = token.toULong(16);
-         //         if (errno == ERANGE)
-         //            scope.raiseError(errInvalidIntNumber, terminal);
-         //
-         //         // convert back to string as a decimal integer
-         //         s.appendHex(integer);
-         //
-         //         object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT32, 0, integer);
-         //         break;
-         //      }
+               //case lxHexInteger:
+               //{
+               //   String<char, 20> s;
+         
+               //   int integer = token.toULong(16);
+               //   if (errno == ERANGE)
+               //      scope.raiseError(errInvalidIntNumber, terminal);
+         
+               //   // convert back to string as a decimal integer
+               //   s.appendHex(integer);
+         
+               //   object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT32, 0, integer);
+               //   break;
+               //}
          //      case lxReal:
          //      {
          //         String<char, 30> s(token, getlength(token) - 1);
@@ -7753,20 +7761,20 @@ void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassS
 //   }
 }
 
-//inline int countFields(SNode node)
-//{
-//   int counter = 0;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassField) {
-//         counter++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   return counter;
-//}
+inline int countFields(SNode node)
+{
+   int counter = 0;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassField) {
+         counter++;
+      }
+
+      current = current.nextNode();
+   }
+
+   return counter;
+}
 
 void Compiler :: validateClassFields(SNode node, ClassScope& scope)
 {
@@ -7801,7 +7809,7 @@ void Compiler :: validateClassFields(SNode node, ClassScope& scope)
 //   /*else */return true;
 //}
 
-void Compiler :: generateClassFields(SNode node, ClassScope& scope/*, bool singleField*/)
+void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleField)
 {
    SNode current = node.firstChild();
 
@@ -7816,7 +7824,7 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope/*, bool singl
 //
 //            generateClassStaticField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.isSealedAttr, attrs.isConstAttr, attrs.isArray);
 //         }
-         /*else */generateClassField(scope, current, attrs/*, singleField*/);
+         /*else */generateClassField(scope, current, attrs, singleField);
       }
       current = current.nextNode();
    }
@@ -7899,8 +7907,7 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
 
    compileParentDeclaration(node, classClassScope, classClassScope.info.header.parentRef/*, true*/);
 
-   generateClassDeclaration(node, classClassScope/*,
-      _logic->isEmbeddable(classScope.info) ? ClassType::ctEmbeddableClassClass : ClassType::ctClassClass*/);
+   generateClassDeclaration(node, classClassScope);
 
    // generate constructor attributes
    ClassInfo::MethodMap::Iterator it = classClassScope.info.methods.start();
@@ -8057,12 +8064,12 @@ void Compiler :: generateClassFlags(ClassScope& scope, SNode root)
 //   }
 }
 
-void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, FieldAttributes& attrs/*, bool singleField*/)
+void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current, FieldAttributes& attrs, bool singleField)
 {
    ref_t classRef = attrs.fieldRef;
    ref_t elementRef = attrs.elementRef;
    int   sizeHint = attrs.size;
-//   bool  embeddable = attrs.isEmbeddable;
+   bool  embeddable = attrs.isEmbeddable;
 
 //   if (sizeHint == -1) {
 //      if (singleField) {
@@ -8103,24 +8110,24 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 //      }
 //      else scope.raiseError(errIllegalField, current);
 //   }
-//
-//   if (test(flags, elWrapper) && scope.info.fields.Count() > 0) {
-//      // wrapper may have only one field
-//      scope.raiseError(errIllegalField, current);
-//   }
-//   // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-//   else if (embeddable && !fieldArray) {
-//      if (!singleField || scope.info.fields.Count() > 0)
-//         scope.raiseError(errIllegalField, current);
-//
-//      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-//      if (test(scope.info.header.flags, elSealed)) {
-//         scope.info.header.flags |= elWrapper;
-//         if (size > 0 && !test(scope.info.header.flags, elNonStructureRole))
-//            scope.info.header.flags |= elStructureRole;
-//      }
-//   }
-//
+
+   if (test(flags, elWrapper) && scope.info.fields.Count() > 0) {
+      // wrapper may have only one field
+      scope.raiseError(errIllegalField, current);
+   }
+   // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+   else if (embeddable/* && !fieldArray*/) {
+      if (!singleField || scope.info.fields.Count() > 0)
+         scope.raiseError(errIllegalField, current);
+
+      // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
+      if (test(scope.info.header.flags, elSealed)) {
+         scope.info.header.flags |= elWrapper;
+         if (size > 0 && !test(scope.info.header.flags, elNonStructureRole))
+            scope.info.header.flags |= elStructureRole;
+      }
+   }
+
 //   // a class with a dynamic length structure must have no fields
 //   if (test(scope.info.header.flags, elDynamicRole)) {
 //      if (scope.info.size == 0 && scope.info.fields.Count() == 0) {
@@ -8654,7 +8661,7 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool ne
 //      _logic->injectVirtualFields(*scope.moduleScope, node, scope.reference, scope.info, *this);
 
       // generate fields
-      generateClassFields(node, scope/*, countFields(node) == 1*/);
+      generateClassFields(node, scope, countFields(node) == 1);
 
       if (_logic->isEmbeddable(scope.info))
          scope.embeddable = true;
@@ -9439,6 +9446,8 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 
 void Compiler :: injectBoxingTempLocal(SNode node, ExprScope& scope, int tempLocal/*, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals*/)
 {
+   SNode objNode = node.firstChild(lxObjectMask);
+
    SNode parent = node;
    SNode current;
    while (!parent.compare(lxSeqExpression, lxNewFrame)) {
@@ -9453,12 +9462,12 @@ void Compiler :: injectBoxingTempLocal(SNode node, ExprScope& scope, int tempLoc
    
    ref_t typeRef = node.findChild(lxType).argument;
    int size = node.findChild(lxSize).argument;
-   bool isVariable = node.existChild(lxUnboxingAttr);
+   bool isVariable = node.argument == INVALID_REF;
    if (typeRef != 0 && size != 0) {
       // inject copying a boxed object
       SNode copyingNode = current.insertNode(lxCopying, size);
       copyingNode.appendNode(lxTempLocal, tempLocal);
-      copyingNode.appendNode(node.type, node.argument);
+      copyingNode.appendNode(objNode.type, objNode.argument);
 
       // inject creating a boxed object
       SNode assigningNode = current.insertNode(lxAssigning);
@@ -9468,7 +9477,7 @@ void Compiler :: injectBoxingTempLocal(SNode node, ExprScope& scope, int tempLoc
 
       if (isVariable) {
          SNode unboxing = current.appendNode(lxCopying, size);
-         unboxing.appendNode(node.type, node.argument);
+         unboxing.appendNode(objNode.type, objNode.argument);
          unboxing.appendNode(lxTempLocal, tempLocal);
       }
    }
@@ -10715,7 +10724,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 
    // cache the frequently used references
    scope.superReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SUPER_FORWARD));
-//   scope.intReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(INT_FORWARD));
+   scope.intReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(INT_FORWARD));
 //   scope.longReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LONG_FORWARD));
 //   scope.realReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REAL_FORWARD));
 //   scope.literalReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(STR_FORWARD));
@@ -10882,9 +10891,14 @@ void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t lis
 ////
 ////   return importReference(extModule, memberRef, scope.module);
 ////}
-//
-//void Compiler :: injectBoxing(SyntaxWriter& writer, _ModuleScope&, LexicalType boxingType, int argument, ref_t targetClassRef, bool arrayMode)
-//{
+
+void Compiler :: injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode*/)
+{
+   node.injectAndReplaceNode(lxBoxableExpression, variable ? INVALID_REF : 0);
+
+   node.appendNode(lxType, targetClassRef);
+   node.appendNode(lxSize, size);
+
 //   if (arrayMode && argument == 0) {
 //      // HOTFIX : to iundicate a primitive array boxing
 //      writer.appendNode(lxBoxableAttr, -1);
@@ -10894,8 +10908,8 @@ void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t lis
 //   writer.inject(boxingType, argument);
 //   writer.appendNode(lxTarget, targetClassRef);
 //   writer.closeNode();
-//}
-//
+}
+
 //void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef, int stackSafeAttr, bool embeddableAttr)
 //{
 //   writer.appendNode(lxCallTarget, targetClassRef);

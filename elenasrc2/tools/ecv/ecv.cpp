@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   22
+#define REVISION_VERSION   23
 
 using namespace _ELENA_;
 
@@ -927,9 +927,9 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elClosed", row, pageSize);
    }      
 
-   //if (test(flags, elWrapper)) {
-   //   printLine("@flag ", "elWrapper", row, pageSize);
-   //}
+   if (test(flags, elWrapper)) {
+      printLine("@flag ", "elWrapper", row, pageSize);
+   }
       
    if (test(flags, elStateless)) {
       printLine("@flag ", "elStateless", row, pageSize);
