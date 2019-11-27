@@ -2,22 +2,29 @@
 In development:
 ------         
               dev
-                * primitive operations with int : arithmetic - subtract, multiply, divide
+                * primitive operations with int : arithmetic - divide
+
+                * fix IntNumber - extra boxing
+                * assign field
+                * get field
+                * in-place intializer
+
+                * resend body - method
+                * resend body - constructor
+                * call the parent constructor
+
+                * high-level opoerations with int : add, sub, mul, div
                 * primitive operations with int : comparision
                 * primitive operations with int : bitwise
                 * high-level opoerations with int
                 * direct operations with int constants
                 * comple-time int expression evaluation
 
-                * resend body - method
-                * resend body - constructor
-                * call the parent constructor
-
-                * countable
-
+                * templates : declaration, using
+                * closures
+                * action closures
                 * nested class should not have static methods and constructors
 
-                * templates : declaration, using
                 * templates based on another template
                 * template variables
 
@@ -27,13 +34,11 @@ In development:
                 * operations in symbol
 
                 * type should be only one in the token expression - test: int long r := 0;
+                * reference identifier name?
 
                 * template : inherting another template
                 * template based class, import template (multi-inheritance)
 
-                * assign field
-                * get field
-                * in-place intializer
                 * explicit constructor
                 * revew implicit constructors - as function? (build script?)
                 * implicit constructor
@@ -52,6 +57,8 @@ In development:
                   - internal sealed can be compiled as static one (outside VMT)
 
                 * singleton nested class - should init method be called?
+
+                * countable
 
                 * primitive operations with long
                 * primitive operations with real

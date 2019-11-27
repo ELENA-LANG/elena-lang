@@ -48,6 +48,10 @@ ELENA byte codes (or ecodes)
  ----------------------
  addf i                     - dword[acc] << dword[acc] + dword[fp+i]
 
+ divf i                     - dword[acc] << dword[acc] / dword[fp+i]
+
+ mulf i                     - dword[acc] << dword[acc] * dword[fp+i]
+
  subf i                     - dword[acc] << dword[acc] - dword[fp+i]
 
 

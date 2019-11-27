@@ -50,8 +50,8 @@ namespace _ELENA_
 //   constexpr auto GREATER_OPERATOR_ID     = 0x0011;
    constexpr auto ADD_OPERATOR_ID         = 0x0012;
    constexpr auto SUB_OPERATOR_ID         = 0x0013;
-//   constexpr auto MUL_OPERATOR_ID         = 0x0014;
-//   constexpr auto DIV_OPERATOR_ID         = 0x0015;
+   constexpr auto MUL_OPERATOR_ID         = 0x0014;
+   constexpr auto DIV_OPERATOR_ID         = 0x0015;
 //   constexpr auto REFER_OPERATOR_ID       = 0x0016;
 //   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
 //   constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
@@ -384,8 +384,8 @@ namespace _ELENA_
 //   constexpr auto NOTGREATER_MESSAGE   = "notgreater";
    constexpr auto ADD_MESSAGE          = "add";
    constexpr auto SUB_MESSAGE          = "subtract";
-//   constexpr auto MUL_MESSAGE          = "multiply";
-//   constexpr auto DIV_MESSAGE          = "divide";
+   constexpr auto MUL_MESSAGE          = "multiply";
+   constexpr auto DIV_MESSAGE          = "divide";
 //   constexpr auto REFER_MESSAGE        = "at";
 //  // #define APPEND_MESSAGE           "append"
 //  // #define REDUCE_MESSAGE           "reduce"
@@ -414,8 +414,8 @@ namespace _ELENA_
 //   constexpr auto XOR_OPERATOR         = "^^";
    constexpr auto ADD_OPERATOR         = "+";
    constexpr auto SUB_OPERATOR         = "-";
-//   constexpr auto MUL_OPERATOR         = "*";
-//   constexpr auto DIV_OPERATOR         = "/";
+   constexpr auto MUL_OPERATOR         = "*";
+   constexpr auto DIV_OPERATOR         = "/";
 //   constexpr auto APPEND_OPERATOR      = "+=";
 //   constexpr auto REDUCE_OPERATOR      = "-=";
 //   constexpr auto INCREASE_OPERATOR    = "*=";

@@ -1051,6 +1051,33 @@ inline % 0C5h
 
 end
 
+// ; mulf
+inline % 0C6h
+
+  mov  eax, [ebx]
+  imul dword ptr [ebp+__arg1]
+  mov  [ebx], eax
+
+end
+
+// ; subf
+inline % 0C8h
+
+  mov  ecx, dword ptr [ebp+__arg1]
+  sub  [ebx], ecx
+
+end
+
+// ; divf
+inline % 0C9h
+
+  mov  eax, [ebx]
+  cdq
+  idiv dword ptr [ebp+__arg1]
+  mov  [ebx], eax
+
+end
+
 // ; alloci
 inline %0D1h
 

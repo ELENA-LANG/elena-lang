@@ -3187,10 +3187,10 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
          return encodeMessage(scope.module->mapAction(ADD_MESSAGE, 0, false), argCount, 0);
       case SUB_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(SUB_MESSAGE, 0, false), argCount, 0);
-//      case MUL_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(MUL_MESSAGE, 0, false), paramCount, 0);
-//      case DIV_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(DIV_MESSAGE, 0, false), paramCount, 0);
+      case MUL_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(MUL_MESSAGE, 0, false), argCount, 0);
+      case DIV_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(DIV_MESSAGE, 0, false), argCount, 0);
 //      case AND_OPERATOR_ID:
 //         return encodeMessage(scope.module->mapAction(AND_MESSAGE, 0, false), paramCount, 0);
 //      case OR_OPERATOR_ID:

@@ -2038,6 +2038,9 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcStoreFI:
          case bcSetF:
          case bcAddF:
+         case bcSubF:
+         case bcMulF:
+         case bcDivF:
          //case bcBCopyF:
          //case bcBLoadFI:
          //case bcDLoadFI:
@@ -2996,6 +2999,14 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, Syntax
          case SUB_OPERATOR_ID:
             // subf i
             tape.write(bcSubF, node.argument);
+            break;
+         case MUL_OPERATOR_ID:
+            // mulf i
+            tape.write(bcMulF, node.argument);
+            break;
+         case DIV_OPERATOR_ID:
+            // divf i
+            tape.write(bcDivF, node.argument);
             break;
          default:
             throw InternalError("not yet implemente"); // !! temporal

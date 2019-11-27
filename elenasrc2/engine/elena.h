@@ -884,8 +884,8 @@ inline bool IsExprOperator(int operator_id)
    switch (operator_id) {
       case ADD_OPERATOR_ID:
       case SUB_OPERATOR_ID:
-//      case MUL_OPERATOR_ID:
-//      case DIV_OPERATOR_ID:
+      case MUL_OPERATOR_ID:
+      case DIV_OPERATOR_ID:
 //      case AND_OPERATOR_ID:
 //      case OR_OPERATOR_ID:
 //      case XOR_OPERATOR_ID:
