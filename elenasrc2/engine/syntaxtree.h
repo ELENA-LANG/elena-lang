@@ -673,6 +673,8 @@ public:
       // inject a node in place of the current one
       void injectAndReplaceNode(LexicalType type, int argument = 0)
       {
+         refresh();
+
          if (this->strArgument != INVALID_REF) {
             injectNode(this->type, this->identifier());
          }

@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -3293,7 +3293,7 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode roperandNode, ExprScope& s
 //   return ObjectInfo(okObject, resultRef);
 //}
 
-ObjectInfo Compiler :: compileOperator(SNode node, ExprScope& scope, int operator_id, int argCount, ObjectInfo loperand, 
+ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operator_id, int argCount, ObjectInfo loperand, 
    ObjectInfo roperand, ObjectInfo roperand2)
 {
    ObjectInfo retVal;
@@ -3365,7 +3365,7 @@ ObjectInfo Compiler :: compileOperator(SNode node, ExprScope& scope, int operato
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperator(SNode node, ExprScope& scope, ObjectInfo loperand, EAttr, int operator_id)
+ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo loperand, EAttr, int operator_id)
 {
    SNode opNode = node.parentNode();
 
@@ -3426,7 +3426,7 @@ inline ident_t resolveOperatorName(SNode node)
    else return node.identifier();
 }
 
-ObjectInfo Compiler :: compileOperator(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
+ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo target, EAttr mode)
 {
    SNode current = node;
    int operator_id = (int)current.argument > 0 ? current.argument : _operators.get(resolveOperatorName(current));
@@ -3607,6 +3607,9 @@ void Compiler :: boxArgument(SNode current, ExprScope& scope, bool boxingMode)
    if (current == lxBoxableExpression) {      
       if (boxingMode) {
          SNode objNode = current.firstChild(lxObjectMask);
+         if (objNode == lxSeqExpression)
+            objNode = objNode.lastChild(lxObjectMask);
+
          if (objNode == lxExpression)
             objNode = objNode.findSubNodeMask(lxObjectMask);
 
@@ -3617,11 +3620,11 @@ void Compiler :: boxArgument(SNode current, ExprScope& scope, bool boxingMode)
             tempLocal = scope.newTempLocal();
             scope.tempLocals.add(key, tempLocal);
 
-            injectBoxingTempLocal(current, scope, lxTempLocal, tempLocal);
+            injectBoxingTempLocal(current, objNode, scope, lxTempLocal, tempLocal);
          }
-         else current.set(lxTempLocal, tempLocal);
+         else objNode.set(lxTempLocal, tempLocal);
       }
-      else current.set(lxExpression, 0);
+      current.set(lxExpression, 0);
    }
    else if (current == lxExpression) {
       boxArgument(current.firstChild(lxObjectMask), scope, boxingMode);
@@ -3658,7 +3661,7 @@ void Compiler :: analizeOperands(SNode& node, ExprScope& scope, int stackSafeAtt
 //   }
 }
 
-ObjectInfo Compiler :: convertObject(SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode)
+ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
@@ -4697,6 +4700,9 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 //
 //   writer.newBookmark();
 //
+   node.injectNode(lxExpression);
+   node = node.findChild(lxExpression);
+
    ExprScope exprScope(&scope);
    ObjectInfo info = compileExpression(node, exprScope,
       mapObject(node, exprScope, mode), targetRef, mode);
@@ -4724,7 +4730,11 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
       stackSafeAttr = 1;
    }
 
+   node = node.parentNode();
+
    analizeOperands(node, exprScope, stackSafeAttr);
+
+   test2(node.parentNode());
 
    return info;
 }
@@ -5026,7 +5036,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    return compileBoxingExpression(node, scope, target, targetInfo, mode);
 }
 
-ObjectInfo Compiler :: compileOperation(SNode node, ExprScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, EAttr mode)
+ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, EAttr mode)
 {
    SNode current = node.firstChild(lxOperatorMask);
 
@@ -5847,7 +5857,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 //   return node == lxMessage;
 //}
 
-ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t exptectedRef, EAttr modeAttrs)
+ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t exptectedRef, EAttr modeAttrs)
 {
    bool noPrimMode = EAttrs::test(modeAttrs, HINT_NOPRIMITIVES);
 //   bool inlineArgMode = false;
@@ -9516,13 +9526,11 @@ ObjectInfo Compiler :: allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t 
 //   return applied;
 //}
 
-void Compiler :: injectBoxingTempLocal(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal)
+void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType, int tempLocal)
 {
-   SNode objNode = node.firstChild(lxObjectMask);
-
    SNode parent = node;
    SNode current;
-   while (!parent.compare(lxSeqExpression, lxNewFrame)) {
+   while (!parent.compare(lxSeqExpression, lxNewFrame/*, lxReturning*/)) {
       current = parent;
       parent = parent.parentNode();
    }
@@ -9536,29 +9544,27 @@ void Compiler :: injectBoxingTempLocal(SNode node, ExprScope& scope, LexicalType
    int size = node.findChild(lxSize).argument;
    bool isVariable = node.argument == INVALID_REF;
    if (typeRef != 0 && size != 0) {
-      // inject copying a boxed object
-      SNode copyingNode = current.insertNode(lxCopying, size);
-      copyingNode.appendNode(tempType, tempLocal);
-      SNode arg = copyingNode.appendNode(objNode.type, objNode.argument);
-      if (objNode.compare(lxFieldExpression, lxExpression)) {
-         SyntaxTree::copyNode(objNode, arg);
-      }
-
       // inject creating a boxed object
       SNode assigningNode = current.insertNode(lxAssigning);
       assigningNode.appendNode(tempType, tempLocal);
       SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
       newNode.appendNode(lxType, typeRef);
 
+      // inject copying to the boxed object
+      SNode copyingNode = objNode;
+      copyingNode.injectAndReplaceNode(lxCopying, size);
+      copyingNode.insertNode(tempType, tempLocal);
+      copyingNode.injectAndReplaceNode(lxSeqExpression);
+
+      copyingNode.appendNode(tempType, tempLocal);
+
       if (isVariable) {
          SNode unboxing = current.appendNode(lxCopying, size);
-         unboxing.appendNode(objNode.type, objNode.argument);
+         SyntaxTree::copyNode(objNode, unboxing.appendNode(objNode.type, objNode.argument));
          unboxing.appendNode(tempType, tempLocal);
       }
    }
    else scope.raiseError(errInvalidBoxing, node);
-
-   node.set(tempType, tempLocal);
 
 //   SNode current = node.firstChild();
 //   while (current != lxNone && tempLocals.Count() > 0) {
@@ -11433,7 +11439,13 @@ void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
 
 void Compiler :: injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg)
 {
-   SNode loperand = node.firstChild(lxObjectMask);
+   SNode current = node;
+   if (current != lxExpression) {
+      current.injectNode(lxExpression);
+      current = current.findChild(lxExpression);
+   }
+
+   SNode loperand = current.firstChild(lxObjectMask);
    loperand.injectAndReplaceNode(lxCopying, size);
    loperand.insertNode(lxLocalAddress, tempLocal);
 
@@ -11441,6 +11453,6 @@ void Compiler :: injectExprOperation(SNode& node, int size, int tempLocal, Lexic
    roperand.injectAndReplaceNode(op, opArg);
    roperand.insertNode(lxLocalAddress, tempLocal);
 
-   node.injectAndReplaceNode(lxSeqExpression);
-   node.appendNode(lxLocalAddress, tempLocal);
+   current = lxSeqExpression;
+   current.appendNode(lxLocalAddress, tempLocal);
 }

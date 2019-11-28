@@ -287,7 +287,7 @@ class ByteCodeWriter
 //   void saveSubject(CommandTape& tape);
 //   void saveIntConstant(CommandTape& tape, int value);
 ////////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
-   void doIntOperation(CommandTape& tape, int operator_id, SyntaxTree::Node node, FlowScope& scope);
+   void doIntOperation(CommandTape& tape, int operator_id, int localOffset, FlowScope& scope);
 //   void doIntOperation(CommandTape& tape, int operator_id);
 //   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doIndexOperation(CommandTape& tape, int operator_id);

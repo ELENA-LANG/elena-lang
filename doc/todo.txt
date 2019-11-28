@@ -2,14 +2,15 @@
 In development:
 ------         
               dev
-                * resend body - method
-                * resend body - constructor
-                * call the parent constructor
-
                 * high-level opoerations with int : add, sub, mul, div
                 * primitive operations with int : comparision
                 * primitive operations with int : bitwise
                 * high-level opoerations with int
+
+                * resend body - method
+                * resend body - constructor
+                * call the parent constructor
+
                 * direct operations with int constants
                 * comple-time int expression evaluation
 

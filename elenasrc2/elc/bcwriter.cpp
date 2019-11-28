@@ -2982,33 +2982,30 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //   }
 //}
 //
-void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, SyntaxTree::Node node, FlowScope& scope)
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset, FlowScope& scope)
 {
-   if (node == lxLocalAddress) {
-      switch (operator_id)
-      {
-         case ADD_OPERATOR_ID:
-            // addf i
-            tape.write(bcAddF, node.argument);
-            break;
-         case SUB_OPERATOR_ID:
-            // subf i
-            tape.write(bcSubF, node.argument);
-            break;
-         case MUL_OPERATOR_ID:
-            // mulf i
-            tape.write(bcMulF, node.argument);
-            break;
-         case DIV_OPERATOR_ID:
-            // divf i
-            tape.write(bcDivF, node.argument);
-            break;
-         default:
-            throw InternalError("not yet implemente"); // !! temporal
-            break;
-      }
+   switch (operator_id)
+   {
+      case ADD_OPERATOR_ID:
+         // addf i
+         tape.write(bcAddF, localOffset);
+         break;
+      case SUB_OPERATOR_ID:
+         // subf i
+         tape.write(bcSubF, localOffset);
+         break;
+      case MUL_OPERATOR_ID:
+         // mulf i
+         tape.write(bcMulF, localOffset);
+         break;
+      case DIV_OPERATOR_ID:
+         // divf i
+         tape.write(bcDivF, localOffset);
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+         break;
    }
-   else throw InternalError("not yet implemente"); // !! temporal
 }
 
 //void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id)
@@ -4719,17 +4716,14 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 //      }
 //   }
 
-   SNode rargObj = rarg == lxExpression ? rarg.findSubNodeMask(lxObjectMask) : rarg;
+   SNode largObj = larg == lxExpression ? larg.findSubNodeMask(lxObjectMask) : larg;
+   if (largObj != lxLocalAddress)
+      throw new InternalError("Not yet implemented"); // temporal
 
-   if (isSubOperation(rarg)) {
-      throw InternalError("not yet implemente"); // !! temporal
-   }
-   else {
-      loadObject(tape, larg, scope);
-   }
+   loadObject(tape, rarg, scope);
 
    if (node.type == lxIntOp) {
-      doIntOperation(tape, node.argument, rargObj, scope);
+      doIntOperation(tape, node.argument, largObj.argument, scope);
 
 //      if (rargConst) {
 //         SNode immArg = rarg.findChild(lxIntValue);

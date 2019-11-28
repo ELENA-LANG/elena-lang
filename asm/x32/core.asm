@@ -1075,35 +1075,35 @@ end
 // ; addf
 inline % 0C5h
 
-  mov  ecx, dword ptr [ebp+__arg1]
-  add  [ebx], ecx
+  mov  ecx, [ebx]
+  add  [ebp+__arg1], ecx
 
 end
 
 // ; mulf
 inline % 0C6h
 
-  mov  eax, [ebx]
-  imul dword ptr [ebp+__arg1]
-  mov  [ebx], eax
+  mov  eax, [ebp+__arg1]
+  imul dword ptr [ebx]
+  mov  [ebp+__arg1], eax
 
 end
 
 // ; subf
 inline % 0C8h
 
-  mov  ecx, dword ptr [ebp+__arg1]
-  sub  [ebx], ecx
+  mov  ecx, dword ptr [ebx]
+  sub  [ebp+__arg1], ecx
 
 end
 
 // ; divf
 inline % 0C9h
 
-  mov  eax, [ebx]
+  mov  eax, [ebp+__arg1]
   cdq
-  idiv dword ptr [ebp+__arg1]
-  mov  [ebx], eax
+  idiv dword ptr [ebx]
+  mov  [ebp+__arg1], eax
 
 end
 

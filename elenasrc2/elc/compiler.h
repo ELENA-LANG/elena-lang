@@ -996,9 +996,9 @@ private:
 //   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, EAttr mode);
 
-   ObjectInfo compileOperator(SNode node, ExprScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
-   ObjectInfo compileOperator(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
-   ObjectInfo compileOperator(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
+   ObjectInfo compileOperator(SNode& node, ExprScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
+   ObjectInfo compileOperator(SNode& node, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
+   ObjectInfo compileOperator(SNode& node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand);
    void compileBranchingNodes(SNode loperandNode, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/);
    void compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
@@ -1023,7 +1023,7 @@ private:
    ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo mapObject(SNode node, ExprScope& scope, EAttr mode);
 
-   ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
+   ObjectInfo compileExpression(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
 
    ObjectInfo compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, ClassInfo& targetInfo, EAttr mode);
@@ -1043,7 +1043,7 @@ private:
 //   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode/*, int mode*/);
 //   void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal, bool accumulatorMode);
 
-   ObjectInfo compileOperation(SNode node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
+   ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
 
 //   ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ref_t operator_id);
 //   ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo);
@@ -1139,12 +1139,12 @@ private:
    ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef/*, ref_t elementRef = 0*/);
 
    // NOTE : if the conversion is not possible - the methods return unknown result
-   ObjectInfo convertObject(SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
+   ObjectInfo convertObject(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
    ObjectInfo sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
 
 //   void compileExternalArguments(SNode node, Scope& scope);
 //
-   void injectBoxingTempLocal(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal);
+   void injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType, int tempLocal);
 //   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);

@@ -50,13 +50,13 @@ ELENA byte codes (or ecodes)
 
  Arithmeric operations:
  ----------------------
- addf i                     - dword[acc] << dword[acc] + dword[fp+i]
+ addf i                     - dword[fp+i] << dword[fp+i] + dword[acc]
 
- divf i                     - dword[acc] << dword[acc] / dword[fp+i]
+ divf i                     - dword[fp+i] << dword[fp+i] / dword[acc]
 
- mulf i                     - dword[acc] << dword[acc] * dword[fp+i]
+ mulf i                     - dword[fp+i] << dword[fp+i] * dword[acc]
 
- subf i                     - dword[acc] << dword[acc] - dword[fp+i]
+ subf i                     - dword[fp+i] << dword[fp+i] - dword[acc]
 
 
  Stack operations:
