@@ -37,7 +37,7 @@ class DerivationWriter : public _DerivationWriter
    enum ScopeType
    {
       stNormal = 0,
-//      stClassTemplate,
+      stClassTemplate,
       stCodeTemplate,
 //      stPropertyTemplate,
 //      stExtensionTemplate,

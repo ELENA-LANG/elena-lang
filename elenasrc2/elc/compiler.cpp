@@ -46,6 +46,7 @@ constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
 constexpr auto HINT_DYNAMIC_OBJECT  = EAttr::eaDynamicObject;  // indicates that the structure MUST be boxed
 constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
 constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
+constexpr auto HINT_MEMBER          = EAttr::eaMember;
 
 //constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
@@ -59,7 +60,6 @@ constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
 //constexpr auto HINT_SUBCODE_CLOSURE = EAttr::eaSubCodeClosure;
 //constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
 //constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
-//constexpr auto HINT_MEMBER          = EAttr::eaMember;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
 //constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
@@ -603,7 +603,7 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility vi
    classClassMode = false;
    abstractMode = false;
    abstractBaseMode = false;
-//   withInitializers = false;
+   withInitializers = false;
 }
 
 //void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
@@ -694,7 +694,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 {
    this->message = 0;
    this->reserved1 = this->reserved2 = 0;
-//   this->scopeMode = EAttr::eaNone;
+   this->scopeMode = EAttr::eaNone;
 //   this->rootToFree = 1;
    this->hints = 0;
    this->outputRef = INVALID_REF; // to indicate lazy load
@@ -846,28 +846,6 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
    else return ObjectInfo();
 }
 
-//ObjectInfo Compiler::CodeScope :: mapMember(ident_t identifier)
-//{
-//   MethodScope* methodScope = (MethodScope*)getScope(Scope::slMethod);
-//   if (identifier.compare(SELF_VAR)) {
-//      if (methodScope != nullptr) {
-//         return methodScope->mapSelf();
-//      }
-//   }
-//   else if (identifier.compare(GROUP_VAR)) {
-//      if (methodScope != NULL) {
-//         return methodScope->mapGroup();
-//      }
-//   }
-//   else {
-//      ClassScope* classScope = (ClassScope*)getScope(Scope::slClass);
-//      if (classScope != nullptr) {
-//         return classScope->mapField(identifier, methodScope->scopeMode);
-//      }
-//   }
-//   return ObjectInfo();
-//}
-//
 //bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
 //{
 //   if (info.kind == okLocal) {
@@ -931,6 +909,28 @@ ObjectInfo Compiler::ExprScope :: mapGlobal(ident_t identifier)
    NamespaceScope* nsScope = (NamespaceScope*)getScope(ScopeLevel::slNamespace);
 
    return nsScope->mapGlobal(identifier);
+}
+
+ObjectInfo Compiler::ExprScope :: mapMember(ident_t identifier)
+{
+   MethodScope* methodScope = (MethodScope*)getScope(Scope::ScopeLevel::slMethod);
+   if (identifier.compare(SELF_VAR)) {
+      if (methodScope != nullptr) {
+         return methodScope->mapSelf();
+      }
+   }
+   //else if (identifier.compare(GROUP_VAR)) {
+   //   if (methodScope != NULL) {
+   //      return methodScope->mapGroup();
+   //   }
+   //}
+   else {
+      ClassScope* classScope = (ClassScope*)getScope(Scope::ScopeLevel::slClass);
+      if (classScope != nullptr) {
+         return classScope->mapField(identifier, methodScope->scopeMode);
+      }
+   }
+   return ObjectInfo();
 }
 
 //// --- Compiler::ResendScope ---
@@ -5563,7 +5563,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    ident_t token = terminal.identifier();
    ObjectInfo object;
 
-   if (EAttrs::testany(mode, HINT_INTERNALOP)) {
+   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER)) {
       bool invalid = false;
       if (EAttrs::test(mode, HINT_INTERNALOP)) {
          if (terminal == lxReference) {
@@ -5573,6 +5573,9 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
             object = ObjectInfo(okInternal, scope.moduleScope->mapFullReference(token), V_INT32);
          }
          else invalid = true;
+      }
+      else if (EAttrs::test(mode, HINT_MEMBER)) {
+         object = scope.mapMember(token);
       }
       if (invalid)
          scope.raiseError(errInvalidOperation, terminal);
@@ -7399,9 +7402,9 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 //
 //   writer.closeNode();
 //}
-//
-//void Compiler :: compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope)
-//{
+
+void Compiler :: copyInitializer(SNode node, CodeScope& codeScope)
+{
 //   writer.newNode(lxClassMethod, scope.message);
 //
 //   declareProcedureDebugInfo(writer, node, scope, true, test(scope.getClassFlags(), elExtension));
@@ -7426,14 +7429,20 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 //   codeScope.level++;
 //
 //   preallocated = codeScope.level;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current.compare(lxFieldInit, lxFieldAccum)) {
-//         SNode sourceNode = current.findChild(lxSourcePath);
-//         if (sourceNode != lxNone)
-//            declareCodeDebugInfo(writer, node, scope);
-//
+
+   SNode parentNode = node.parentNode();
+   SNode frameNode = node.findChild(lxNewFrame);
+
+   SNode current = parentNode.firstChild();
+   while (current != lxNone) {
+      if (current/*.compare(*/ == lxFieldInit/*, lxFieldAccum*//*)*/) {
+         //SNode sourceNode = current.findChild(lxSourcePath);
+         //if (sourceNode != lxNone)
+         //   declareCodeDebugInfo(writer, node, scope);
+
+         SNode exprNode = frameNode.insertNode(lxExpression);
+         SyntaxTree::copyNode(current, exprNode);
+
 //         writer.newNode(lxExpression);
 //
 //         if (current.firstChild() == lxSetTapeArgument) {
@@ -7442,26 +7451,13 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 //         if (current.argument != INVALID_REF)
 //            writer.appendNode(lxBreakpoint, dsStep);
 //
-//         compileRootExpression(writer, current, codeScope);
+//         compileRootExpression(exprNode, codeScope);
 //         writer.closeNode();
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   // adding the code loading $self
-//   writer.newNode(lxExpression);
-//   writer.appendNode(lxLocal, 1);
-//   writer.closeNode();
-//
-//   writer.closeNode();
-//
-//   writer.appendNode(lxParamCount, getParamCount(scope.message));
-//   writer.appendNode(lxReserved, scope.reserved);
-//   writer.appendNode(lxAllocated, codeScope.level - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
-//
-//   writer.closeNode();
-//}
+      }
+
+      current = current.nextNode();
+   }
+}
 
 void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
 {
@@ -7545,7 +7541,11 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
          // stack already contains $self value
          codeScope.allocated1++;
       }
-//
+
+      if (implicitConstructor && classClassScope.withInitializers) {
+         copyInitializer(node, codeScope);
+      }
+
 //      if (retExpr) {
 //         writer.newNode(lxReturning);
 //         //writer.appendNode(lxBreakpoint, dsStep);
@@ -7644,10 +7644,10 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
 
    while (current != lxNone) {
       switch(current) {
-//         case lxFieldInit:
+         case lxFieldInit:
 //         case lxFieldAccum:
-//            scope.withInitializers = true;
-//            break;
+            scope.withInitializers = true;
+            break;
          case lxClassMethod:
          {
             if (exclusiveMode && (ignoreAutoMultimethods == current.existChild(lxAutoMultimethod))) {
@@ -10497,6 +10497,7 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
                ClassScope classClassScope(&scope, classScope.info.header.classRef, classScope.visibility);
                scope.moduleScope->loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
                classClassScope.classClassMode = true;
+               classClassScope.withInitializers = classScope.withInitializers;
 
                compileClassClassImplementation(current, classClassScope, classScope);
             }

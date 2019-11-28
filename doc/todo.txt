@@ -2,8 +2,6 @@
 In development:
 ------         
               dev
-                * in-place intializer
-
                 * resend body - method
                 * resend body - constructor
                 * call the parent constructor
@@ -232,6 +230,7 @@ In development:
                 * test if big alloc is proper working
                 * implicit constructor should clear the object fields
                 * optimization : assigning a field with a local - there should be direct byte code
+                * adding source path link on tempate based classes with field initializers
 
               dev1
                 * write - Programming in ELENA : manual

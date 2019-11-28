@@ -68,6 +68,7 @@ enum LexicalType
    lxOperator                 = 0x0210F0,
    lxStatementDecl            = 0x001100,
    lxStatementArgs            = 0x001110,
+   lxFieldInit                = 0x001120,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -159,7 +160,6 @@ enum LexicalType
 //   lxSizeDecl                 = 0x000068,
 //   lxDynamicSizeDecl          = 0x000069,
 //   lxClosureExpr              = 0x00006E,
-//   lxFieldInit                = 0x000077,
 //   lxSubMessage               = 0x00007D,
 //   lxInlineClosure            = 0x00007F,
 //   lxAttrExpression           = 0x000080,

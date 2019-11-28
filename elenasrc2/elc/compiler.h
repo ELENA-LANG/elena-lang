@@ -424,7 +424,7 @@ private:
       bool        classClassMode;
       bool        abstractMode;
       bool        abstractBaseMode;
-//      bool        withInitializers;
+      bool        withInitializers;
 ////      bool        withImplicitConstructor;
 //
 //      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
@@ -537,7 +537,7 @@ private:
    {
       ref_t        message;
       LocalMap     parameters;
-//      EAttr        scopeMode;
+      EAttr        scopeMode;
       int          reserved1;             // defines managed frame size
       int          reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
       int          hints;
@@ -671,9 +671,7 @@ private:
 //         ObjectInfo info = mapTerminal(local, false, EAttr::eaNone);
 //         return info.kind == okLocal || info.kind == okLocalAddress;
 //      }
-//
-//      ObjectInfo mapMember(ident_t identifier);
-//
+
 //      ObjectInfo mapGlobal(ident_t identifier);
 
       ObjectInfo mapLocal(ident_t identifier);
@@ -783,6 +781,7 @@ private:
       }
 
       ObjectInfo mapGlobal(ident_t identifier);
+      ObjectInfo mapMember(ident_t identifier);
 
       ExprScope(SourceScope* parent);
       ExprScope(CodeScope* parent);
@@ -1087,8 +1086,8 @@ private:
    void compileMethod(/*SyntaxWriter& writer, */SNode node, MethodScope& scope);
 //   void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
-//   void compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//
+   void copyInitializer(SNode node, CodeScope& codeScope);
+
 //   void compileYieldDispatch(SyntaxWriter& writer, int index, int index2, int preallocated);
 //   void compileYieldEnd(SyntaxWriter& writer, int index);
 //   void compileYieldableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);

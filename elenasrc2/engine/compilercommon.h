@@ -69,7 +69,7 @@ constexpr auto V_TYPETEMPL       = 0x8000100Au;
 //constexpr auto V_GENERIC         = 0x8000100Bu;
 constexpr auto V_FUNCTION        = 0x8000100Cu;     // a closure attribute
 constexpr auto V_VARIABLE        = 0x8000100Du;
-//constexpr auto V_MEMBER          = 0x8000100Eu;
+constexpr auto V_MEMBER          = 0x8000100Eu;
 constexpr auto V_STATIC          = 0x8000100Fu;
 constexpr auto V_CONVERSION      = 0x80001011u;
 constexpr auto V_NEWOP           = 0x80001012u;
@@ -470,8 +470,9 @@ public:
       eaDynamicObject      = 0x00000000800,
       eaNoUnboxing         = 0x00000002000,
       eaNoBoxing           = 0x00000003000,
+      eaMember             = 0x00000004000,
 
-      eaScopeMask          = 0x0000000000A,
+      eaScopeMask          = 0x0000000400A,
       eaObjectMask         = 0x000000032F4,
 
 //      eaForward            = 0x00000000008,
@@ -479,7 +480,6 @@ public:
 //      eaRef                = 0x00000000020,
 //      eaParams             = 0x00000000040,
 //      eaLoop               = 0x00000000100,
-//      eaMember             = 0x00000000200,
 //      eaSubj               = 0x00000000400,
 //      eaMssg               = 0x00000000800,
 //      eaWrap               = 0x00000001000,
