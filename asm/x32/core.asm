@@ -1466,6 +1466,16 @@ labNext:
 
 end
 
+// ; copytoai (__arg1 - index, __arg2 - n)
+inline % 0E3h
+
+  mov  ecx, __arg2	
+  lea  edi, [ebx + __arg1]
+  mov  esi, [esp]
+  rep  movsd
+
+end
+
 // ; copytofi (__arg1 - index, __arg2 - n)
 inline % 0E4h
 

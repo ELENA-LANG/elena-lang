@@ -5598,13 +5598,29 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, F
 SyntaxTree::Node ByteCodeWriter :: loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
    SNode current = node.firstChild(lxObjectMask);
-   while (!current.compare(lxField, lxNone)) {
-      loadObject(tape, current, scope);
+   while (current != lxNone) {
+      SNode objNode = current;
+      if (objNode == lxExpression)
+         objNode = current.firstChild(lxObjectMask);
+
+      if (!objNode.compare(lxField, lxFieldAddress)) {
+         loadObject(tape, current, scope);
+      }
+      else return objNode;
 
       current = current.nextNode(lxObjectMask);
    }
 
    return current;
+}
+
+void ByteCodeWriter :: copyToFieldAddress(CommandTape& tape, int size, int argument)
+{
+   if ((size & 3) == 0 && (argument & 3) == 0) {
+      // if it is a dword aligned
+      tape.write(bcCopyToAI, argument, size >> 2);
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
 }
 
 void ByteCodeWriter :: copyFromLocalAddress(CommandTape& tape, int size, int argument)
@@ -5654,6 +5670,17 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
    else if (dstObj == lxLocalAddress) {
       loadObject(tape, source, scope);
       copyToLocalAddress(tape, node.argument, dstObj.argument);
+   }
+   else if (dstObj == lxFieldExpression) {
+      generateObject(tape, source, scope, STACKOP_MODE);
+
+      SNode fieldNode = loadFieldExpression(tape, dstObj, scope);
+      if (fieldNode == lxFieldAddress) {
+         copyToFieldAddress(tape, node.argument, fieldNode.argument);
+      }
+      else throw InternalError("not yet implemente"); // !! temporal
+
+      releaseStack(tape);
    }
    else throw InternalError("not yet implemente"); // !! temporal
 }

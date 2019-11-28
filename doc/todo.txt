@@ -2,8 +2,6 @@
 In development:
 ------         
               dev
-                * assign struct field
-                * get struct field
                 * in-place intializer
 
                 * resend body - method
@@ -230,6 +228,7 @@ In development:
                 * protected default constructor - the class cannot be created using default constructor
                 * test : branching external implementation : returning a value from closure 
                 * it should be possible to extend attributes / template statements from anoter libraries
+                * optimization : saving dword or qword 
                 * test if big alloc is proper working
                 * implicit constructor should clear the object fields
                 * optimization : assigning a field with a local - there should be direct byte code

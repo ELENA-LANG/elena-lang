@@ -468,10 +468,11 @@ public:
       eaCast               = 0x00000000200,
       eaNoPrimitives       = 0x00000000400,
       eaDynamicObject      = 0x00000000800,
-      eaNoBoxing           = 0x00000001000,
+      eaNoUnboxing         = 0x00000002000,
+      eaNoBoxing           = 0x00000003000,
 
       eaScopeMask          = 0x0000000000A,
-      eaObjectMask         = 0x000000012F4,
+      eaObjectMask         = 0x000000032F4,
 
 //      eaForward            = 0x00000000008,
 //      eaExtern             = 0x00000000010,
@@ -496,7 +497,6 @@ public:
 //      eaParameter          = 0x00001000000,
 //      eaRetExpr            = 0x00004000000,
 //      eaDirectCall         = 0x00008000000,
-//      eaNoUnboxing         = 0x00040000000,
 //      eaClosure            = 0x00080000000,
 //      eaSubCodeClosure     = 0x00800000000,
 //      eaSwitch             = 0x08000000000,

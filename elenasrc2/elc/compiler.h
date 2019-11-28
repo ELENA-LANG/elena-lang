@@ -124,8 +124,8 @@ public:
 //      okStaticField,                  // param - reference
 //      okStaticConstantField,          // param - reference
 //      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
-//      okFieldAddress,                 // param - field offset
-//      okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
+      okFieldAddress,                 // param - field offset
+      okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
 //      okOuter,                        // param - field offset
 //      okOuterField,                   // param - field offset, extraparam - outer field offset
 //      okOuterReadOnlyField,           // param - field offset, extraparam - outer field offset
@@ -991,7 +991,7 @@ private:
    void setVariableTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
-   void appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object);
+   void appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object, bool noUnboxing);
 //
 //   ObjectInfo compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
@@ -1145,7 +1145,7 @@ private:
 
 //   void compileExternalArguments(SNode node, Scope& scope);
 //
-   void injectBoxingTempLocal(SNode node, ExprScope& scope, int tempLocal/*, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal*/);
+   void injectBoxingTempLocal(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal);
 //   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);

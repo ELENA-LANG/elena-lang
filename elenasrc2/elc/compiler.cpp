@@ -45,8 +45,8 @@ constexpr auto HINT_INLINE_EXPR     = EAttr::eaInlineExpr;
 constexpr auto HINT_NOPRIMITIVES    = EAttr::eaNoPrimitives;
 constexpr auto HINT_DYNAMIC_OBJECT  = EAttr::eaDynamicObject;  // indicates that the structure MUST be boxed
 constexpr auto HINT_NOBOXING        = EAttr::eaNoBoxing;
+constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
 
-//constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
 //constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
@@ -632,7 +632,7 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, EAttr scopeMode)
       bool readOnlyMode = test(info.header.flags, elReadOnlyRole)/* && !EAttrs::test(scopeMode, INITIALIZER_SCOPE)*/;
       ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
       if (test(info.header.flags, elStructureRole)) {
-         //return ObjectInfo(readOnlyMode ? okReadOnlyFieldAddress : okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2, 0);
+         return ObjectInfo(readOnlyMode ? okReadOnlyFieldAddress : okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2, 0);
       }
       else return ObjectInfo(readOnlyMode ? okReadOnlyField : okField, offset, fieldInfo.value1, fieldInfo.value2, 0);
    }
@@ -2313,7 +2313,7 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
 //   writer.appendNode(lxResultField);
 //}
 //
-void Compiler :: appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object)
+void Compiler :: appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object, bool noUnboxing)
 {
    // if the parameter may be stack-allocated
    ref_t targetRef = resolveObjectReference(scope, object, false);
@@ -2322,7 +2322,7 @@ void Compiler :: appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo objec
 
    node.appendNode(lxType, targetRef);
    node.appendNode(lxSize, size);
-   if (variable)
+   if (variable && !noUnboxing)
       node.setArgument(INVALID_REF);
 }
 
@@ -2333,7 +2333,7 @@ void Compiler :: setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo obje
    if (object.extraparam == -1 && !EAttrs::test(mode, HINT_NOBOXING)) {
       node.injectAndReplaceNode(lxBoxableExpression);
 
-      appendBoxingInfo(node, scope, object);
+      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING));
 
 //      writer.newNode((variable && !EAttrs::test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxCondBoxing, size);
 //      writer.appendNode(type, object.param);
@@ -2349,7 +2349,7 @@ void Compiler :: setVariableTerminal(SNode& node, ExprScope& scope, ObjectInfo o
    if (!EAttrs::test(mode, HINT_NOBOXING)) {
       node.injectAndReplaceNode(lxBoxableExpression);
 
-      appendBoxingInfo(node, scope, object);
+      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING));
    }
 
 //   if (!EAttrs::test(mode, HINT_NOBOXING) || EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) {
@@ -3607,26 +3607,27 @@ void Compiler :: boxArgument(SNode current, ExprScope& scope, bool boxingMode)
    if (current == lxBoxableExpression) {      
       if (boxingMode) {
          SNode objNode = current.firstChild(lxObjectMask);
+         if (objNode == lxExpression)
+            objNode = objNode.findSubNodeMask(lxObjectMask);
 
          Attribute key(objNode.type, objNode.argument);
 
          int tempLocal = scope.tempLocals.get(key);
          if (tempLocal == NOTFOUND_POS) {
             tempLocal = scope.newTempLocal();
-
             scope.tempLocals.add(key, tempLocal);
 
-            injectBoxingTempLocal(current, scope, tempLocal);
+            injectBoxingTempLocal(current, scope, lxTempLocal, tempLocal);
          }
          else current.set(lxTempLocal, tempLocal);
       }
       else current.set(lxExpression, 0);
    }
-   else if (current == lxExpression ) {
+   else if (current == lxExpression) {
       boxArgument(current.firstChild(lxObjectMask), scope, boxingMode);
    }
-   //else if (current == lxCopying) {
-   //   analizeOperands(current, scope, boxingMode ? 0 : 3);
+   //else if (current == lxFieldExpression) {
+   //   analizeOperands(current, scope, boxingMode ? 0 : -1);
    //}
 }
 
@@ -3663,8 +3664,14 @@ ObjectInfo Compiler :: convertObject(SNode node, ExprScope& scope, ref_t targetR
 
    ref_t sourceRef = resolveObjectReference(scope, source, false);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
+      if (source.kind == okIntConstant && targetRef == scope.moduleScope->intReference) {
+         // HOTFIX : allow to pass the constant directly
+         source.reference = scope.moduleScope->intReference;
+
+         return source;
+      }
       // if it can be boxed / implicitly converted
-      if (!_logic->injectImplicitConversion(*scope.moduleScope, node, *this, targetRef, sourceRef/*,source.element*/))
+      else if (!_logic->injectImplicitConversion(*scope.moduleScope, node, *this, targetRef, sourceRef/*,source.element*/))
       {
          return sendTypecast(node, scope, targetRef, source);
       }
@@ -4043,7 +4050,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //      // !! temporally
 //      scope.raiseError(errInvalidOperation, sourceNode);
 
-   EAttr assignMode = /*HINT_NOUNBOXING | HINT_ASSIGNING_EXPR*/EAttr::eaNone;
+   EAttr assignMode = HINT_NOUNBOXING/* | HINT_ASSIGNING_EXPR*/;
    ref_t targetRef = resolveObjectReference(scope, target, false/*, false*/);
 //   bool byRefAssigning = false;
    switch (target.kind) {
@@ -4055,7 +4062,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //      case okOuterStaticField:
          break;
       case okLocalAddress:
-//      case okFieldAddress:
+      case okFieldAddress:
       {
          size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
          if (size != 0) {
@@ -5481,14 +5488,15 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 //         writer.appendNode(lxLocalAddress, object.param);
 //         writer.appendNode(lxTarget, scope.moduleScope->messageNameReference);
 //         break;
-//      case okFieldAddress:
-//      case okReadOnlyFieldAddress:
-         //      {
-//         LexicalType type = object.kind == okLocalAddress ? lxLocalAddress : lxFieldAddress;
-//         writeVariableTerminal(writer, scope, object, mode, type);
-//      }
+      case okFieldAddress:
+      case okReadOnlyFieldAddress:      
+         terminal.set(lxFieldExpression, 0);
+         terminal.appendNode(lxSelfLocal, 1);
+         terminal.appendNode(lxFieldAddress, object.param);
+
+         setVariableTerminal(terminal, scope, object, mode, lxFieldExpression);
+         break;
       case okLocalAddress:
-         //         LexicalType type = object.kind == okLocalAddress ? lxLocalAddress : lxFieldAddress;
          setVariableTerminal(terminal, scope, object, mode, lxLocalAddress);
          break;
       case okNil:
@@ -9508,7 +9516,7 @@ ObjectInfo Compiler :: allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t 
 //   return applied;
 //}
 
-void Compiler :: injectBoxingTempLocal(SNode node, ExprScope& scope, int tempLocal/*, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals*/)
+void Compiler :: injectBoxingTempLocal(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal)
 {
    SNode objNode = node.firstChild(lxObjectMask);
 
@@ -9530,24 +9538,27 @@ void Compiler :: injectBoxingTempLocal(SNode node, ExprScope& scope, int tempLoc
    if (typeRef != 0 && size != 0) {
       // inject copying a boxed object
       SNode copyingNode = current.insertNode(lxCopying, size);
-      copyingNode.appendNode(lxTempLocal, tempLocal);
-      copyingNode.appendNode(objNode.type, objNode.argument);
+      copyingNode.appendNode(tempType, tempLocal);
+      SNode arg = copyingNode.appendNode(objNode.type, objNode.argument);
+      if (objNode.compare(lxFieldExpression, lxExpression)) {
+         SyntaxTree::copyNode(objNode, arg);
+      }
 
       // inject creating a boxed object
       SNode assigningNode = current.insertNode(lxAssigning);
-      assigningNode.appendNode(lxTempLocal, tempLocal);
+      assigningNode.appendNode(tempType, tempLocal);
       SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
       newNode.appendNode(lxType, typeRef);
 
       if (isVariable) {
          SNode unboxing = current.appendNode(lxCopying, size);
          unboxing.appendNode(objNode.type, objNode.argument);
-         unboxing.appendNode(lxTempLocal, tempLocal);
+         unboxing.appendNode(tempType, tempLocal);
       }
    }
    else scope.raiseError(errInvalidBoxing, node);
 
-   node.set(lxTempLocal, tempLocal);
+   node.set(tempType, tempLocal);
 
 //   SNode current = node.firstChild();
 //   while (current != lxNone && tempLocals.Count() > 0) {

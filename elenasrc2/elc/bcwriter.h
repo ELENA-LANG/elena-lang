@@ -306,6 +306,7 @@ class ByteCodeWriter
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope/*, bool ignoreBranching*/);
 
+   void copyToFieldAddress(CommandTape& tape, int size, int argument);
    void copyToLocalAddress(CommandTape& tape, int size, int argument);
    void copyToLocal(CommandTape& tape, int size, int argument);
    void copyFromLocalAddress(CommandTape& tape, int size, int argument);

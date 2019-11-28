@@ -20,8 +20,6 @@ ELENA byte codes (or ecodes)
 
  peeksi i                   - [sp+i] => acc;
 
- putfi i                    - acc => [fp+i][0]
-
  setf i                     - fp+i => acc
 
  setai i                    - [sp] => acc[i]
@@ -42,6 +40,8 @@ ELENA byte codes (or ecodes)
  copyf  i, n                - copy [acc] << fp+i, n*4-bytes
 
  copyfi i, n                - copy [acc] << [fp+i], n*4-bytes
+
+ copytoai i, n              - copy [sp] >> acc[i], n*4-bytes
 
  copytof  i, n              - copy [acc] >> fp+i, n*4-bytes
 

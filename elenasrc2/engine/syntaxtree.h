@@ -120,6 +120,7 @@ enum LexicalType
    lxOp                       = 0x0581B0,
    lxIntOp                    = 0x0581B1,   // arg - operation id
    lxField                    = 0x0181C0, // arg - offset
+   lxFieldAddress             = 0x0181C1, // arg - offset
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -182,7 +183,6 @@ enum LexicalType
 //   lxNested                   = 0x008102, // arg - count
 //   lxStruct                   = 0x008103, // arg - count
 //   lxStaticField              = 0x008106, // arg - reference   // - lxClassStaticField
-//   lxFieldAddress             = 0x008109, // arg - offset
 //   lxBlockLocal               = 0x00A10B, // arg - offset
 //   lxConstantString           = 0x00A10C, // arg - reference
 //   lxConstantWideStr          = 0x00A10D, // arg - reference

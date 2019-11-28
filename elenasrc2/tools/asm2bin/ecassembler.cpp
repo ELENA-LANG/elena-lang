@@ -605,6 +605,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcCopyF:
          case bcCopyToFI:
          case bcCopyToF:
+         case bcCopyToAI:
             compileNNCommand(opcode, token, writer);
             break;
          case bcVCallRM:
