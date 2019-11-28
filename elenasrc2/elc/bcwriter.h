@@ -210,8 +210,8 @@ class ByteCodeWriter
 //   void boxArgList(CommandTape& tape, ref_t vmtReference);
 //   void unboxArgList(CommandTape& tape, bool arrayMode);
 //   void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
-//
-//   void releaseObject(CommandTape& tape, int count = 1);
+
+   void releaseStack(CommandTape& tape, int count = 1);
 //   void releaseArgList(CommandTape& tape);
 //
 //   void setSubject(CommandTape& tape, ref_t subject);
@@ -322,6 +322,8 @@ class ByteCodeWriter
    void pushObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
+
+   SyntaxTree::Node loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
 //   void saveUnboxingVar(CommandTape& tape, SNode member, bool& accTrarget, bool& accPresaving, int& presavedCount);
 //   void loadUnboxingVar(CommandTape& tape, SNode current, int paramCount, int& presavedCount);

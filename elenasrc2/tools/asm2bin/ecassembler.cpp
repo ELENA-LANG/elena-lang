@@ -514,7 +514,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcBCopyF:
          //case bcALoadAI:
          case bcPeekFI:
-         //case bcPushAI:
+         case bcPushAI:
          case bcOpen:
          //case bcAddN:
          //case bcMulN:
@@ -547,6 +547,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcNWriteI:
          case bcPushF:
          //case bcEOrN:
+         case bcGetAI:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:

@@ -2,11 +2,8 @@
 In development:
 ------         
               dev
-                * primitive operations with int : arithmetic - divide
-
-                * fix IntNumber - extra boxing
-                * assign field
-                * get field
+                * assign struct field
+                * get struct field
                 * in-place intializer
 
                 * resend body - method
@@ -234,6 +231,8 @@ In development:
                 * test : branching external implementation : returning a value from closure 
                 * it should be possible to extend attributes / template statements from anoter libraries
                 * test if big alloc is proper working
+                * implicit constructor should clear the object fields
+                * optimization : assigning a field with a local - there should be direct byte code
 
               dev1
                 * write - Programming in ELENA : manual

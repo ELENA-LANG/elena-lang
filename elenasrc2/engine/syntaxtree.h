@@ -83,6 +83,7 @@ enum LexicalType
    lxExpression               = 0x059030,
    lxSeqExpression            = 0x059031,
    lxBoxableExpression        = 0x059032,
+   lxFieldExpression          = 0x059033,
    lxNil                      = 0x018040,
    lxClassSymbol              = 0x018050,   // arg - reference
    lxSymbolReference          = 0x058060,
@@ -118,6 +119,7 @@ enum LexicalType
    lxConstantInt              = 0x0181A0,   // arg - reference
    lxOp                       = 0x0581B0,
    lxIntOp                    = 0x0581B1,   // arg - operation id
+   lxField                    = 0x0181C0, // arg - offset
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -179,7 +181,6 @@ enum LexicalType
 //
 //   lxNested                   = 0x008102, // arg - count
 //   lxStruct                   = 0x008103, // arg - count
-//   lxField                    = 0x008105, // arg - offset
 //   lxStaticField              = 0x008106, // arg - reference   // - lxClassStaticField
 //   lxFieldAddress             = 0x008109, // arg - offset
 //   lxBlockLocal               = 0x00A10B, // arg - offset
@@ -225,7 +226,6 @@ enum LexicalType
 //   lxLessN                    = 0x00C01D,   // arg - value
 //   lxNotLessN                 = 0x00C01E,   // arg - value
 //   lxOption                   = 0x00C021,
-//   lxFieldExpression          = 0x00C022,
 //   lxExternFrame              = 0x004023,
 //   lxNewArrOp                 = 0x00C028,
 //   lxArrOp                    = 0x08C029,   // arg - operation id

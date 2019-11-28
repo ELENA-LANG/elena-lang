@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   24
+#define REVISION_VERSION   25
 
 using namespace _ELENA_;
 
@@ -217,10 +217,10 @@ ref_t resolveMessage(_Module* module, ident_t method)
    if (method.startsWith("#invoke") || method.startsWith("#new")) {
       flags |= FUNCTION_MESSAGE;
    }
-   if (method.startsWith("#private&")) {
+   if (method.startsWith("#static&")) {
       flags |= STATIC_MESSAGE;
 
-      method = method.c_str() + getlength("#private&");
+      method = method.c_str() + getlength("#static&");
    }
    //if (method.compare("#init")) {
    //   flags |= SPECIAL_MESSAGE;
@@ -621,6 +621,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcAddN:
 //      case bcDLoadSI:
 //      case bcBLoadAI:
+      case bcGetAI:
          printCommand(command, opcode);
          command.appendHex(argument);
          command.append('h');
@@ -630,17 +631,17 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printCommand(command, opcode);
          command.appendInt(argument);
          break;
-//      case bcPushAI:
+      case bcPushAI:
 //      case bcALoadAI:
-//         printCommand(command, opcode);
-//         command.appendInt(argument);
-//         break;
-//      case bcASaveBI:
+         printCommand(command, opcode);
+         command.appendInt(argument);
+         break;
+      case bcSetAI:
 //      case bcAXSaveBI:
 //      case bcALoadBI:
-//         printCommand(command, opcode);
-//         command.appendInt(argument);
-//         break;
+         printCommand(command, opcode);
+         command.appendInt(argument);
+         break;
       case bcNew:
          printCommand(command, opcode);
          printReference(command, module, argument);
@@ -1144,6 +1145,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       bool isAbstract = test(hints, tpAbstract);
       bool isMultidispatcher = test(hints, tpMultimethod);
       bool isInternal = test(hints, tpInternal);
+      bool isPrivate = (hints & tpMask) == tpPrivate;
 
       // print the method name
       temp.copy(className);
@@ -1164,6 +1166,8 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          prefix.append("@multidispatcher ");
       if (isInternal)
          prefix.append("@internal ");
+      if (isPrivate)
+         prefix.append("@private ");
 
       printLine(prefix, temp);
 

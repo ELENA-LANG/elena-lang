@@ -151,7 +151,7 @@ enum ByteCode
 //   bcRLoad           = 0x8F,
 //
 //   bcDCopy           = 0x90,
-//   bcECopy           = 0x91,
+   bcGetAI           = 0x91,
    bcRestore         = 0x92,
 //   bcALoadR          = 0x93,
    bcPeekFI          = 0x94,
@@ -188,7 +188,7 @@ enum ByteCode
 //   bcELoadFI         = 0xB1,
    bcPushR           = 0xB2,
 //   bcBSaveSI         = 0xB3,
-//   bcPushAI          = 0xB4,
+   bcPushAI          = 0xB4,
 //   bcESaveFI         = 0xB5,
    bcPushFI          = 0xB6,
 //   bcDLoadFI         = 0xB7,
@@ -201,7 +201,7 @@ enum ByteCode
    bcPushS           = 0xBE,
    bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
 
-//   bcASaveBI         = 0xC0,
+   bcSetAI           = 0xC0,
 //   bcNWriteI         = 0xC1,
 //   bcASwapSI         = 0xC2,
    bcStoreSI         = 0xC3,
@@ -523,7 +523,7 @@ public:
          case bcAllocI:
          case bcPushSI:
          case bcPushS:
-         //case bcPushAI:
+         case bcPushAI:
          case bcPushF:
          //case bcPushE:
          //case bcPushD:

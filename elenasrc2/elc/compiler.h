@@ -119,8 +119,8 @@ public:
 //      okExtMessageConstant,           // param - reference
 //      okMessageNameConstant,          // param - reference
 //      okArrayConst,
-//      okField,                        // param - reference, param - field offset
-//      okReadOnlyField,                // param - reference, param - field offset
+      okField,                        // param - reference, param - field offset
+      okReadOnlyField,                // param - reference, param - field offset
 //      okStaticField,                  // param - reference
 //      okStaticConstantField,          // param - reference
 //      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
@@ -428,10 +428,10 @@ private:
 ////      bool        withImplicitConstructor;
 //
 //      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
-//
-//      ObjectInfo mapField(ident_t identifier, EAttr scopeMode);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+
+      ObjectInfo mapField(ident_t identifier, EAttr scopeMode);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -1139,8 +1139,9 @@ private:
 
    ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef/*, ref_t elementRef = 0*/);
 
-   bool convertObject(SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
-   bool sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
+   // NOTE : if the conversion is not possible - the methods return unknown result
+   ObjectInfo convertObject(SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
+   ObjectInfo sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
 
 //   void compileExternalArguments(SNode node, Scope& scope);
 //

@@ -14,6 +14,8 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
+ getai i                    - acc <= acc[i] ;
+ 
  peekfi i                   - [fp+i] => acc;
 
  peeksi i                   - [sp+i] => acc;
@@ -22,6 +24,8 @@ ELENA byte codes (or ecodes)
 
  setf i                     - fp+i => acc
 
+ setai i                    - [sp] => acc[i]
+                             
  setm m                     - m => index
 
  setr r                     - r => acc
@@ -63,10 +67,10 @@ ELENA byte codes (or ecodes)
  
  popa                       - acc <= [sp] ; sp--
  
- popai i                    - acc[i] <= [sp] ; sp--; 
- 
  pusha                      - acc => [sp+1] ; sp++                  
 
+ pushai i                   - [acc::i] => [sp+1] ; sp++
+ 
  pushf i                    - fp+i => [sp+1] ; sp++
  
  pushfi i                   - [fp+i] => [sp+1] ; sp++
@@ -255,8 +259,6 @@ ELENA byte codes (or ecodes)
 
  copyb                      - {base} >> {acc}, acc.Length
 
- get                        - acc <= base[index] ;
- 
  ncopy                      - int[base] << int[acc]
  
  ncopyb                     - int[base] >> int[acc]
@@ -342,8 +344,6 @@ ELENA byte codes (or ecodes)
  pope                       - ext <= [sp] ; sp--
  
  popi n                     - sp-=i; 
- 
- pushai i                   - [acc::i] => [sp+1] ; sp++
  
  pushb                      - base => [sp+1] ; sp++
  

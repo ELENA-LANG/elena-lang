@@ -624,24 +624,24 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility vi
 //      staticValue_it++;
 //   }
 //}
-//
-//ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, EAttr scopeMode)
-//{
-//   int offset = info.fields.get(terminal);
-//   if (offset >= 0) {
-//      bool readOnlyMode = test(info.header.flags, elReadOnlyRole) && !EAttrs::test(scopeMode, INITIALIZER_SCOPE);
-//      ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
-//      if (test(info.header.flags, elStructureRole)) {
-//         return ObjectInfo(readOnlyMode ? okReadOnlyFieldAddress : okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2, 0);
-//      }
-//      else return ObjectInfo(readOnlyMode ? okReadOnlyField : okField, offset, fieldInfo.value1, fieldInfo.value2, 0);
-//   }
+
+ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, EAttr scopeMode)
+{
+   int offset = info.fields.get(terminal);
+   if (offset >= 0) {
+      bool readOnlyMode = test(info.header.flags, elReadOnlyRole)/* && !EAttrs::test(scopeMode, INITIALIZER_SCOPE)*/;
+      ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
+      if (test(info.header.flags, elStructureRole)) {
+         //return ObjectInfo(readOnlyMode ? okReadOnlyFieldAddress : okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2, 0);
+      }
+      else return ObjectInfo(readOnlyMode ? okReadOnlyField : okField, offset, fieldInfo.value1, fieldInfo.value2, 0);
+   }
 //   else if (offset == -2 && test(info.header.flags, elDynamicRole)) {
 //      auto fieldInfo = info.fieldTypes.get(-1);
 //
 //      return ObjectInfo(okSelfParam, 1, fieldInfo.value1, fieldInfo.value2, (ref_t)-2);
 //   }
-//   else {
+   else {
 //      ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
 //      if (staticInfo.value1 != 0) {
 //         if (!isSealedStaticField(staticInfo.value1)) {
@@ -667,25 +667,25 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility vi
 //         else return ObjectInfo(okStaticField, staticInfo.value1, staticInfo.value2, 0, 0);
 //
 //      }
-//      return ObjectInfo();
-//   }
-//}
-//
-//ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
-//{
+      return ObjectInfo();
+   }
+}
+
+ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
+{
 //   if (!referenceOne && identifier.compare(SUPER_VAR)) {
 //      return ObjectInfo(okSuper, 0, info.header.parentRef);
 //   }
 //   else {
-//      if (!referenceOne) {
-//         ObjectInfo fieldInfo = mapField(identifier, mode);
-//         if (fieldInfo.kind != okUnknown) {
-//            return fieldInfo;
-//         }
-//      }
-//      return Scope::mapTerminal(identifier, referenceOne, mode);
+      if (!referenceOne) {
+         ObjectInfo fieldInfo = mapField(identifier, mode);
+         if (fieldInfo.kind != okUnknown) {
+            return fieldInfo;
+         }
+      }
+      return Scope::mapTerminal(identifier, referenceOne, mode);
 //   }
-//}
+}
 
 // --- Compiler::MetodScope ---
 
@@ -3657,7 +3657,7 @@ void Compiler :: analizeOperands(SNode& node, ExprScope& scope, int stackSafeAtt
 //   }
 }
 
-bool Compiler :: convertObject(SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode)
+ObjectInfo Compiler :: convertObject(SNode node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode)
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
@@ -3668,11 +3668,12 @@ bool Compiler :: convertObject(SNode node, ExprScope& scope, ref_t targetRef, Ob
       {
          return sendTypecast(node, scope, targetRef, source);
       }
+      else return ObjectInfo(okObject, 0, targetRef);
    }
-   return true;
+   return source;
 }
 
-bool Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source)
+ObjectInfo Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source)
 {
    if (targetRef != 0 /*&& !isPrimitiveRef(targetRef)*/) {
       if (targetRef != scope.moduleScope->superReference) {
@@ -3683,14 +3684,14 @@ bool Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, Ob
          if (node != lxExpression)
             node.injectAndReplaceNode(lxExpression);
 
-         //writer.appendNode(lxTypecasting);
-
          compileMessage(node, scope, source, encodeMessage(actionRef, 1, 0), HINT_NODEBUGINFO | HINT_SILENT, 0);
+         
+         return ObjectInfo(okObject, 0, targetRef);
       }
-
-      return true;
+      else return source;
    }
-   else return false;
+   // NOTE : if the typecasting is not possible, it returns unknown result
+   else return ObjectInfo();
 }
 
 //ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info)
@@ -4047,7 +4048,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //   bool byRefAssigning = false;
    switch (target.kind) {
       case okLocal:
-//      case okField:
+      case okField:
 //      case okStaticField:
 //      case okClassStaticField:
 //      case okOuterField:
@@ -4711,7 +4712,12 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 //      }
 //   }
 
-   analizeOperands(node, exprScope, 0);
+   int stackSafeAttr = 0;
+   if (info.kind == okSelfParam) {
+      stackSafeAttr = 1;
+   }
+
+   analizeOperands(node, exprScope, stackSafeAttr);
 
    return info;
 }
@@ -4903,7 +4909,9 @@ ObjectInfo Compiler :: compileCastingExpression(SNode node, ExprScope& scope, Ob
       ObjectInfo object = compileExpression(current, scope, 
          mapObject(current, scope, mode), /*targetRef*/0, mode);
 
-      if(!convertObject(node.parentNode(), scope, targetRef, object, mode))
+      retVal = convertObject(node.parentNode(), scope, targetRef, object, mode);
+
+      if(retVal.kind == okUnknown)
          scope.raiseError(errInvalidOperation, node);
    }
    else scope.raiseError(errInvalidOperation, node.parentNode());
@@ -5412,12 +5420,14 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 //      case okSuper:
 //         writer.newNode(lxLocal, 1);
 //         break;
-//      case okReadOnlyField:
-//      case okField:
+      case okReadOnlyField:
+      case okField:
 //      case okOuter:
 //      case okOuterSelf:
-//         writer.newNode(lxField, object.param);
-//         break;
+         terminal.set(lxFieldExpression, 0);
+         terminal.appendNode(lxSelfLocal, 1);
+         terminal.appendNode(lxField, object.param);
+         break;
 //      case okStaticField:
 //         if ((int)object.param < 0) {
 //            // if it is a normal static field - field expression should be used
@@ -5917,11 +5927,11 @@ ObjectInfo Compiler :: compileExpression(SNode node, ExprScope& scope, ObjectInf
    if (exptectedRef) {
 //////      if (assignMode && exptectedRef == scope.moduleScope->realReference && (sourceRef == V_INT32 || sourceRef == scope.moduleScope->intReference)) {
 //////         objectInfo = ObjectInfo(okPrimitiveConv, V_REAL64, V_INT32);
-//////      }
-      /*else */if (convertObject(node, scope, exptectedRef, retVal, mode)) {
-         retVal = ObjectInfo(okObject, 0, exptectedRef);
+//////      } else {
+      retVal = convertObject(node, scope, exptectedRef, retVal, mode);
+      if (retVal.kind == okUnknown) {
+         scope.raiseError(errInvalidOperation, node);
       }
-      else scope.raiseError(errInvalidOperation, node);
    }
 
 //   if (inlineArgMode) {
@@ -7261,7 +7271,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
 
       ref_t resultRef = scope.getReturningRef(false);
       if (resultRef != 0) {
-         if (!convertObject(retNode, exprScope, resultRef, thisParam, EAttr::eaNone))
+         if (convertObject(retNode, exprScope, resultRef, thisParam, EAttr::eaNone).kind == okUnknown)
             scope.raiseError(errInvalidOperation, node);
       }
    }

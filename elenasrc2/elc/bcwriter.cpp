@@ -1135,21 +1135,16 @@ void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
    }
 }
 
-//void ByteCodeWriter :: freeVirtualStack(CommandTape& tape, int count)
-//{
-//   tape.write(bcFreeStack, count);
-//}
-//
-//void ByteCodeWriter :: releaseObject(CommandTape& tape, int count)
-//{
-//   // popi n
-//   if (count == 1) {
-//      tape.write(bcPop);
-//   }
-//   else if (count > 1)
-//      tape.write(bcPopI, count);
-//}
-//
+void ByteCodeWriter :: releaseStack(CommandTape& tape, int count)
+{
+   // freei n
+   //if (count == 1) {
+   //   tape.write(bcPop);
+   //}
+   //else if (count > 1)
+      tape.write(bcFreeI, count);
+}
+
 //void ByteCodeWriter :: releaseArgList(CommandTape& tape)
 //{
 //   // bcopya
@@ -3923,15 +3918,13 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushsi index
          tape.write(bcPushSI, argument);
          break;
-//      case lxField:
-//         // aloadfi 1
-//         // pushai offset / pusha
-//         tape.write(bcALoadFI, 1, bpFrame);
+      case lxField:
+         // pushai index
 //         if ((int)argument < 0) {
 //            tape.write(bcPushA);
 //         }
-//         else tape.write(bcPushAI, argument);
-//         break;
+         /*else */tape.write(bcPushAI, argument);
+         break;
 //      case lxStaticConstField:
 //         if ((int)argument > 0) {
 //            // aloadr r
@@ -4037,21 +4030,13 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // acopyr 0
          tape.write(bcSetR, argument);
          break;
-//      case lxField:
-//         if (basePresaved)
-//            tape.write(bcPushB);
-//
-//         // bloadfi 1
-//         // aloadbi / acopyb
-//         tape.write(bcBLoadFI, 1, bpFrame);
+      case lxField:
+         // getai index
 //         if ((int)argument < 0) {
 //            tape.write(bcACopyB);
 //         }
-//         else tape.write(bcALoadBI, argument);
-//
-//         if (basePresaved)
-//            tape.write(bcPopB);
-//         break;
+         /*else */tape.write(bcGetAI, argument);
+         break;
 //      case lxStaticConstField:
 //         if ((int)argument > 0) {
 //            // aloadr r
@@ -4161,12 +4146,10 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          // storesi index
          tape.write(bcStoreSI, argument);
          break;
-//      case lxField:
-//         // bloadfi 1
-//         // asavebi index
-//         tape.write(bcBLoadFI, 1, bpFrame);
-//         tape.write(bcASaveBI, argument);
-//         break;
+      case lxField:
+         // setai index
+         tape.write(bcSetAI, argument);
+         break;
 //      case lxStaticField:
 //         if ((int)argument > 0) {
 //            // asaver arg
@@ -5612,6 +5595,18 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, F
 //      (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp)));
 //}
 
+SyntaxTree::Node ByteCodeWriter :: loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   SNode current = node.firstChild(lxObjectMask);
+   while (!current.compare(lxField, lxNone)) {
+      loadObject(tape, current, scope);
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   return current;
+}
+
 void ByteCodeWriter :: copyFromLocalAddress(CommandTape& tape, int size, int argument)
 {
    if ((size & 3) == 0) {
@@ -5676,8 +5671,17 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
    SNode source;
    assignOpArguments(node, target, source);
 
+
    if (isSubOperation(target)) {
-      throw InternalError("not yet implemente"); // !! temporal
+      if (target == lxFieldExpression) {
+         generateObject(tape, source, scope, STACKOP_MODE);
+
+         SNode fieldNode = loadFieldExpression(tape, target, scope);
+         saveObject(tape, fieldNode);
+
+         releaseStack(tape);
+      }
+      else throw InternalError("not yet implemente"); // !! temporal
    }
    else {
       loadObject(tape, source, scope);
@@ -6322,7 +6326,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
    {
       case lxExpression:
 //      case lxLocalUnboxing:
-//      case lxFieldExpression:
+      case lxFieldExpression:
 //      case lxAltExpression:
       case lxSeqExpression:
          generateExpression(tape, node, scope, mode & ~STACKOP_MODE);

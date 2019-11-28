@@ -942,6 +942,13 @@ inline % 2Ah
 
 end
 
+// ; getai
+inline % 91h
+
+  mov  ebx, [ebx+__arg1]
+  
+end
+
 // ; restore
 inline % 92h
 
@@ -996,6 +1003,13 @@ inline % 0A5h
 
 end
 
+// ; pushai
+inline % 0B4h
+
+  push [ebx+__arg1]
+
+end
+
 // ; savesi
 inline % 0BBh
 
@@ -1026,6 +1040,21 @@ inline % 0BEh
 
   lea  eax, [esp + __arg1]
   push eax
+
+end
+
+// ; setai
+inline %0C0h
+
+  mov  esi, ebx
+  mov  eax, [esp]                   
+  // calculate write-barrier address
+  sub  esi, [data : %CORE_GC_TABLE + gc_start]
+  mov  ecx, [data : %CORE_GC_TABLE + gc_header]
+  shr  esi, page_size_order
+  mov  byte ptr [esi + ecx], 1  
+
+  mov [ebx + __arg1], eax
 
 end
 
