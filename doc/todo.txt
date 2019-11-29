@@ -2,23 +2,13 @@
 In development:
 ------         
               dev
-                * test default constructor with initializers
-                * test normal class without default constructor, with initializers
-                * test normal class without default constructor
-                * test normal class with default constructor
-                * test normal class with default constructor, with initializers
 
-
-                * redesign boxing - call default constructor?
-                * redesign constructors - call default one
-
-                * dynamic array - default constructor have a int argument, and creates the array with apropriate length
-
-                * resend body - constructor : only resend, resend + body
+                * resend body - constructor : only resend, resend to the parent, resend + body
                 * call the parent constructor, default constructor cannot have resend
 
                 * resend body - method : only resend, resend + body
                                                                                                  
+                * dynamic array - default constructor have a int argument, and creates the array with apropriate length
                 * templates : declaration, using
                 * closures : default constructor is called for virtual nested class, for normal one - only initializer
                 * action closures
@@ -152,6 +142,8 @@ In development:
                 * if the parent constructor is idle - do like normal one
 
                 * fields cannot be chaned if the class is declared const (except constructor)
+
+                * stack allocated structs, executing field initializers, embeddable constructors?
 
                 * properties : explicit
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument

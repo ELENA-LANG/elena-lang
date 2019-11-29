@@ -6522,10 +6522,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope/*, bool with
       else if (test(scope.hints, tpConstructor) && unnamedMessage) {
          actionStr.copy(CONSTRUCTOR_MESSAGE);
          unnamedMessage = false;
-
-         // NOTE : implicit constructor is a specical case of constructors, which cannot be called directly
-         //        and compiled as a statically linked one
-         flags |= STATIC_MESSAGE;
       }
 //      else if (test(scope.hints, tpSealed | tpGeneric)/* && paramCount < OPEN_ARG_COUNT*/) {
 //         if (signatureLen > 0 || !unnamedMessage)
@@ -7456,7 +7452,7 @@ void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope)
 
 void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
 {
-   bool defaultConstructor = scope.message == scope.moduleScope->constructor_message;
+   bool defaultConstructor = (scope.message & ~STATIC_MESSAGE) == scope.moduleScope->constructor_message;
 
 //   SNode attrNode = node.findChild(lxEmbeddableMssg);
 //   if (attrNode != lxNone) {
@@ -7497,9 +7493,16 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    else if (defaultConstructor) {
       compileDefaultConstructor(node, scope);
    }
-   // if no redirect statement - call implicit constructor
+   // if no redirect statement - call either public or non-public implicit constructor
    else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(scope.moduleScope->constructor_message)) {
-      SNode callNode = bodyNode.prependSibling(lxCalling_1, scope.moduleScope->constructor_message);
+      SNode callNode = node.insertNode(lxCalling_1, scope.moduleScope->constructor_message);
+      callNode.appendNode(lxResult);
+   }
+   else if (!test(classFlags, elDynamicRole) && 
+      classClassScope.info.methods.exist(scope.moduleScope->constructor_message | STATIC_MESSAGE)) 
+   {
+      SNode callNode = node.insertNode(lxDirectCalling, scope.moduleScope->constructor_message | STATIC_MESSAGE);
+      callNode.appendNode(lxCallTarget, classClassScope.reference);
       callNode.appendNode(lxResult);
    }
    // if it is a dynamic object implicit constructor call is not possible
@@ -7998,7 +8001,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
             }
             else current = lxConstructor;
 
-            if (methodScope.message == scope.moduleScope->constructor_message)
+            if ((methodScope.message & ~STATIC_MESSAGE) == scope.moduleScope->constructor_message)
                withDefaultConstructor = true;
          }
 //         else if (test(methodScope.hints, tpPredefined)) {
@@ -10765,7 +10768,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    // cache the frequently used messages
    scope.dispatch_message = encodeMessage(scope.module->mapAction(DISPATCH_MESSAGE, 0, false), 1, 0);
    scope.init_message = encodeMessage(scope.module->mapAction(INIT_MESSAGE, 0, false), 0, FUNCTION_MESSAGE | STATIC_MESSAGE);
-   scope.constructor_message = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), 1, STATIC_MESSAGE);
+   scope.constructor_message = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), 1, 0);
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically
