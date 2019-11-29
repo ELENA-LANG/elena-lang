@@ -1147,7 +1147,7 @@ private:
 //   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
-   void analizeClassTree(SNode node, ClassScope& scope);
+   void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));
    void analizeSymbolTree(SNode node, Scope& scope);
    void boxArgument(SNode node, ExprScope& scope, bool boxingMode);
    void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr);

@@ -54,7 +54,7 @@ enum LexicalType
    lxAttributeDecl            = 0x001030,    
    lxSizeDecl                 = 0x001040,
    lxBaseDecl                 = 0x001050,
-   lxCode                     = 0x001060,
+   lxCode                     = 0x011060,
    lxDispatchCode             = 0x001070,
    lxMessage                  = 0x021080,   // arg - message
    lxNewOperation             = 0x021081,

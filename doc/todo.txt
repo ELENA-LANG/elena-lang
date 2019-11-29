@@ -2,11 +2,6 @@
 In development:
 ------         
               dev
-
-                * resend body - constructor : resend + body
-                * call the parent constructor, default constructor cannot have resend
-                * multi-constructor : compile-time, run-time
-
                 * resend body - method : only resend, resend + body
                                                                                                  
                 * dynamic array - default constructor have a int argument, and creates the array with apropriate length

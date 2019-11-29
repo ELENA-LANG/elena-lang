@@ -6648,7 +6648,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             break;
          case lxCode:
             // HOTFIX : nested code, due to resend implementation 
-            generateCodeBlock(tape, node, scope);
+            generateCodeBlock(tape, current, scope);
             break;
          default:
             generateObject(tape, current, scope);

@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -6916,6 +6916,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
       }
    }
    else resendScope.raiseError(errUnknownMessage, node);
+
+   test2(node);
 }
 
 void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& scope)
@@ -6969,41 +6971,32 @@ void Compiler :: compileMultidispatch(SNode node, CodeScope& scope, ClassScope& 
    else node.insertNode(op, overloadRef);
 }
 
-void Compiler :: compileResendExpression(SNode node, CodeScope& scope, bool multiMethod)
+void Compiler :: compileResendExpression(SNode node, CodeScope& codeScope, bool multiMethod)
 {
    if (node.argument != 0 && multiMethod) {
-      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
+      ClassScope* classScope = (ClassScope*)codeScope.getScope(Scope::ScopeLevel::slClass);
 
-      compileMultidispatch(node, scope, *classScope);
+      compileMultidispatch(node, codeScope, *classScope);
    }
    else {
-      throw InternalError("Not yet implemented"); // !! temporal
+      ExprScope scope(&codeScope);
 
-//      if (multiMethod) {
-//         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//         compileMultidispatch(writer, node.parentNode(), scope, *classScope);
-//      }
-//
-//      writer.newNode(lxNewFrame);
-//
-//      // new stack frame
-//      // stack already contains current $self reference
-//      scope.level++;
-//
-//      writer.newNode(lxExpression);
-//      writer.newBookmark();
-//
-//      SNode messageNode = node.findChild(lxMessage);
-//
-//      ObjectInfo target = scope.mapMember(SELF_VAR);
-//      writeTerminal(writer, node, scope, target, HINT_NODEBUGINFO);
-//      compileMessage(writer, messageNode, scope, 0, target, EAttr::eaNone);
-//
-//      writer.removeBookmark();
-//      writer.closeNode();
-//
-//      writer.closeNode();
+      SNode expr = node.findChild(lxExpression);
+
+      // new stack frame
+      // stack already contains $self value
+      node.set(lxNewFrame, 0);
+      codeScope.allocated1++;
+
+      expr.insertNode(lxSelfLocal, 1);
+
+      SNode messageNode = expr.findChild(lxMessage);
+
+      ObjectInfo target = scope.mapMember(SELF_VAR);
+      compileMessage(messageNode, scope, /*0, */target, EAttr::eaNone);
+
+      if (node.existChild(lxCode))
+         scope.raiseError(errInvalidOperation, node);
    }
 }
 
@@ -7469,6 +7462,9 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
       return;
    }
    else if (bodyNode == lxResendExpression) {
+      if (defaultConstructor)
+         scope.raiseError(errInvalidOperation, bodyNode);
+
       if (scope.multiMethod && bodyNode.argument != 0) {
          compileMultidispatch(bodyNode, codeScope, classClassScope);
 
@@ -7532,6 +7528,8 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    codeScope.syncStack(&scope);
 
    endMethod(node, scope, preallocated);
+
+   test2(node);
 }
 
 void Compiler :: compileSpecialMethodCall(SNode& node, ClassScope& classScope, ref_t message)
@@ -8896,7 +8894,8 @@ bool isClassClassMethod(LexicalType type)
 
 void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 {
-   analizeClassTree(node, scope);
+   analizeClassTree(node, scope,
+      scope.classClassMode ? isClassClassMethod : isClassMethod);
 
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
 
@@ -10135,13 +10134,15 @@ void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
    }
 }
 
-void Compiler :: analizeClassTree(SNode node, ClassScope& scope)
+void Compiler :: analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType))
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
+   LexicalType type = scope.classClassMode ? lxConstructor : lxClassMethod;
+
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxClassMethod) {
+      if (cond(current)) {
          analizeMethod(current, *nsScope);
 
          //if (test(_optFlag, 1)) {

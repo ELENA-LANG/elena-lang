@@ -47,7 +47,7 @@
 //#define generic     8000100Bh
 #define function    8000100Ch
 #define var         8000100Dh
-//#define this        8000100Eh
+#define this        8000100Eh
 #define static      8000100Fh
 #define cast        80001011h
 #define new         80001012h
