@@ -184,39 +184,39 @@ inline SNode findParent(SNode node, LexicalType type1, LexicalType type2)
 //////{
 //////   return node == type && node.argument == argument;
 //////}
-//
-//inline bool isConstantArguments(SNode node)
-//{
-//   if (node == lxNone)
-//      return true;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type)
-//      {
-//         case lxExpression:
-//            if (!isConstantArguments(current))
-//               return false;
-//            break;
-//         case lxLiteral:
-//         case lxWide:
-//         case lxCharacter:
-//         case lxInteger:
-//         //case lxLong:
-//         case lxHexInteger:
-//         //case lxReal:
-//         //case lxExplicitConst:
-//         case lxMessage:
-//            break;
-//         default:
-//            return false;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   return true;
-//}
+
+inline bool isConstantArguments(SNode node)
+{
+   if (node == lxNone)
+      return true;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type)
+      {
+         case lxExpression:
+            if (!isConstantArguments(current))
+               return false;
+            break;
+         //case lxLiteral:
+         //case lxWide:
+         //case lxCharacter:
+         case lxInteger:
+         //case lxLong:
+         case lxHexInteger:
+         //case lxReal:
+         //case lxExplicitConst:
+         case lxMessage:
+            break;
+         default:
+            return false;
+      }
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
 
 // --- Compiler::NamespaceScope ---
 
@@ -6811,16 +6811,18 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
    }
 }
 
-void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame)
+void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeScope, ClassScope& classClassScope, bool& withFrame)
 {
-//   SNode expr = node/*.findChild(lxExpression)*/;
-//
+   ExprScope scope(&codeScope);
+
+   SNode expr = node/*.findChild(lxExpression)*/;
+
 //   _ModuleScope* moduleScope = scope.moduleScope;
 //   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//   ref_t messageRef = 0;
+
+   ref_t messageRef = 0;
 //   bool implicitConstructor = false;
-//   SNode messageNode = expr.findChild(lxMessage);
+   SNode messageNode = expr.findChild(lxMessage);
 //   if (messageNode.firstChild(lxTerminalMask) == lxNone) {
 //      // HOTFIX : support implicit constructors
 //      messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
@@ -6828,19 +6830,21 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& scope
 //
 //      implicitConstructor = true;
 //   }
-//   else messageRef = mapMessage(messageNode, scope, false);
+   /*else */messageRef = mapMessage(messageNode, scope/*, false*/);
 //
 //   ref_t classRef = classClassScope.reference;
-//   bool found = false;
-//
-//   if ((getParamCount(messageRef) != 0 && methodScope->parameters.Count() != 0) || node.existChild(lxCode) || !isConstantArguments(expr)) {
-//      withFrame = true;
-//
-//      // new stack frame
-//      // stack already contains $self value
+   bool found = false;
+
+ //  SNode bodyNode;
+   if (/*(getParamCount(messageRef) != 0 && methodScope->parameters.Count() != 0) || node.existChild(lxCode) || */!isConstantArguments(expr)) {
+      withFrame = true;
+
+      // new stack frame
+      // stack already contains $self value
+//      bodyNode = node.parentNode().
 //      writer.newNode(lxNewFrame);
-//      scope.level++;
-//   }
+      codeScope.allocated1++;
+   }
 //   else writer.newNode(lxExpression);
 //
 //   writer.newBookmark();
@@ -6900,8 +6904,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& scope
 //         else parent = info.header.parentRef;
 //      }
 //   }
-//
-//   if (found) {
+
+   if (found) {
 //      writer.appendNode(lxCallTarget, classRef);
 //
 //      compileMessage(writer, expr, resendScope, target, messageRef, EAttr::eaNone, stackSafeAttr);
@@ -6919,10 +6923,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& scope
 //         }
 //      }
 //      else writer.closeNode();
-//   }
-//   else scope.raiseError(errUnknownMessage, node);
-
-   throw InternalError("Not yet implemented"); // !! temporal
+   }
+   else scope.raiseError(errUnknownMessage, node);
 }
 
 void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& scope)

@@ -5,6 +5,7 @@ In development:
 
                 * resend body - constructor : only resend, resend to the parent, resend + body
                 * call the parent constructor, default constructor cannot have resend
+                * multi-constructor : compile-time, run-time
 
                 * resend body - method : only resend, resend + body
                                                                                                  
