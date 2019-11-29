@@ -5226,11 +5226,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    // analizing a sub tree
    SNode current = node.firstChild(lxObjectMask);
    // check if the message target can be used directly
-   bool isFirstDirect = !isSubOperation(current);
+   bool isFirstDirect = !isSubOperation(current) && current != lxResult;
    while (current != lxNone) {
       argCount++;
 
-      if (isSubOperation(current))
+      if (isSubOperation(current) || current == lxResult)
          directMode = false;
 
 //      SNode member = current;
@@ -6459,12 +6459,6 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxCreatingStruct:
          generateCreating(tape, node, scope);
          break;
-////      //case lxBreakpoint:
-////      //   translateBreakpoint(tape, node);
-////      //   break;
-////      case lxCode:
-////         generateCodeBlock(tape, node);
-////         break;
 //      case lxYieldReturing:
 //         generateYieldReturn(tape, node);
 //         break;
@@ -6651,6 +6645,10 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             scope.debugBlockStarted = false;
             if (current.firstChild() == lxBreakpoint)
                translateBreakpoint(tape, current.findChild(lxBreakpoint), scope);
+            break;
+         case lxCode:
+            // HOTFIX : nested code, due to resend implementation 
+            generateCodeBlock(tape, node, scope);
             break;
          default:
             generateObject(tape, current, scope);

@@ -787,20 +787,20 @@ private:
       ExprScope(CodeScope* parent);
    };
 
-//   // --- ResendScope ---
-//   struct ResendScope : public CodeScope
-//   {
-//      bool withFrame;
-//      bool consructionMode;
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//
-//      ResendScope(CodeScope* parent)
-//         : CodeScope(parent)
-//      {
-//         consructionMode = withFrame = false;
-//      }
-//   };
+   // --- ResendScope ---
+   struct ResendScope : public ExprScope
+   {
+      bool withFrame;
+      bool consructionMode;
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+
+      ResendScope(CodeScope* parent)
+         : ExprScope(parent)
+      {
+         consructionMode = withFrame = false;
+      }
+   };
 
    // - InlineClassScope -
    struct InlineClassScope : public ClassScope

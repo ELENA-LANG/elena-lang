@@ -1307,7 +1307,7 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
       }
       else if (bodyNode == lxResendExpression) {
          writer.newNode(bodyNode.type);
-         generateExpressionTree(writer, bodyNode, derivationScope, EXPRESSION_IMPLICIT_MODE);
+         generateExpressionTree(writer, bodyNode, derivationScope);
          SNode block = bodyNode.nextNode();
 
          if (block == lxCode)

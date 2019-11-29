@@ -3,7 +3,7 @@ In development:
 ------         
               dev
 
-                * resend body - constructor : only resend, resend to the parent, resend + body
+                * resend body - constructor : resend + body
                 * call the parent constructor, default constructor cannot have resend
                 * multi-constructor : compile-time, run-time
 
@@ -242,6 +242,7 @@ In development:
                 * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
                 * review : inheriting private methods (what about the public "shadow one" hints?, should they be removed as well??)
                 * if all constructors are internal - can be inherited only inside the module
+                * implicit multi-constructor : compile-time, run-time
                 * auto conversion methods should be marked as idle
                 * it should be possible to turn-off optimization (opL1)
                 * protected default constructor - the class cannot be created using default constructor
