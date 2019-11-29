@@ -1417,6 +1417,8 @@ void JITLinker :: prepareCompiler()
    SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
    // dispatch message should be the first
    resolveWeakAction(messageTable, DISPATCH_MESSAGE);
+   // constructor message should be the second
+   resolveWeakAction(messageTable, CONSTRUCTOR_MESSAGE);
 
    _compiler->prepareCore(helper, _loader);
 

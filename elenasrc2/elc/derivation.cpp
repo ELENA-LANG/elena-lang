@@ -590,6 +590,22 @@ void DerivationWriter :: raiseWarning(int level, ident_t msg, SNode node)
    _scope->raiseWarning(level, msg, "<not defined>", node);
 }
 
+void DerivationWriter :: appendFilePath(SNode node, IdentifierString& path)
+{
+   SNode parentNode = node.parentNode();
+   while (parentNode != lxNone) {
+      if (parentNode == lxNamespace && parentNode.existChild(lxSourcePath)) {
+         path.append(parentNode.findChild(lxSourcePath).identifier());
+
+         return;
+      }
+
+      parentNode = parentNode.parentNode();
+   }
+
+   path.append("<not defined>");
+}
+
 void DerivationWriter :: declareAttribute(SNode node)
 {
    ident_t name = node.findChild(lxIdentifier).identifier();
@@ -1184,15 +1200,15 @@ void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
 
       bufferWriter.newNode(lxFieldInit);
 
-      //if (derivationScope.templateMode != stNormal) {
-      //   // HOTFIX : save the template source path
-      //   IdentifierString fullPath(_scope->module->Name());
-      //   fullPath.append('\'');
-      //   fullPath.append(_filePath);
+      if (derivationScope.templateMode != stNormal) {
+         // HOTFIX : save the template source path
+         IdentifierString fullPath(_scope->module->Name());
+         fullPath.append('\'');
+         appendFilePath(writer.CurrentNode(), fullPath);
 
-      //   writer.appendNode(lxSourcePath, fullPath.c_str());
-      //   //writer.appendNode(lxTemplate, scope.templateRef);
-      //}
+         writer.appendNode(lxSourcePath, fullPath.c_str());
+         //writer.appendNode(lxTemplate, scope.templateRef);
+      }
 
       SNode attrNode = nameNode.prevNode();
       if (attrNode == lxAttribute && attrNode.argument == V_MEMBER) {

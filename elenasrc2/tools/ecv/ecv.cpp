@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   26
+#define REVISION_VERSION   27
 
 using namespace _ELENA_;
 
@@ -222,9 +222,9 @@ ref_t resolveMessage(_Module* module, ident_t method)
 
       method = method.c_str() + getlength("#static&");
    }
-   //if (method.compare("#init")) {
-   //   flags |= SPECIAL_MESSAGE;
-   //}
+   if (method.compare("#init")) {
+      flags |= FUNCTION_MESSAGE;
+   }
 
    IdentifierString actionName;
    int paramIndex = method.find('[', -1);
@@ -917,9 +917,9 @@ void listFlags(int flags, int& row, int pageSize)
       printLine("@flag ", "elNestedClass", row, pageSize);
    }      
 
-   //if (test(flags, elDynamicRole)) {
-   //   printLine("@flag ", "elDynamicRole", row, pageSize);
-   //}
+   if (test(flags, elDynamicRole)) {
+      printLine("@flag ", "elDynamicRole", row, pageSize);
+   }
       
    if (test(flags, elStructureRole)) {
       printLine("@flag ", "elStructureRole", row, pageSize);

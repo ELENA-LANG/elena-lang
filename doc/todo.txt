@@ -2,21 +2,67 @@
 In development:
 ------         
               dev
-                * high-level opoerations with int : add, sub, mul, div
+                * test default constructor with initializers
+                * test normal class without default constructor, with initializers
+                * test normal class without default constructor
+                * test normal class with default constructor
+                * test normal class with default constructor, with initializers
+
+
+                * redesign boxing - call default constructor?
+                * redesign constructors - call default one
+
+                * dynamic array - default constructor have a int argument, and creates the array with apropriate length
+
+                * resend body - constructor : only resend, resend + body
+                * call the parent constructor, default constructor cannot have resend
+
+                * resend body - method : only resend, resend + body
+                                                                                                 
+                * templates : declaration, using
+                * closures : default constructor is called for virtual nested class, for normal one - only initializer
+                * action closures
+
+                * internal / public / private classes
+                * internal / public / private / proteced methods
+                * internal / public / private / proteced constructors
+                * public / internal fields
+                * properties
+                * public / private / internal properties
+
+                * public / private / internal / protected static fields
+                * static field initialzer
+                * public / private / internal / protected const static fields
+                * public / private / internal / protected const fields
+                * public / private / internal / protected const sealed fields
+                * const field can intialized only in-place
+
+                * analog of attributes : constant fields
+
+                * conversion routines : self, others
+
+                * arrays
+                * creating dynamic array / buffers
+                * fixed-size variable
+                * fixed-size array
+
+                * variadic methods
+                * variadic dispatch
+                * generic methods
+                * custom dispatch
+                * yieldable methods
+
+                * extensions
+                * extension templates
+                * extension dispatching : compile-time, run-time
+
                 * primitive operations with int : comparision
                 * primitive operations with int : bitwise
-                * high-level opoerations with int
-
-                * resend body - method
-                * resend body - constructor
-                * call the parent constructor
+                * high-level opoerations with int : comparision, bitwise
 
                 * direct operations with int constants
                 * comple-time int expression evaluation
 
-                * templates : declaration, using
-                * closures
-                * action closures
                 * nested class should not have static methods and constructors
 
                 * templates based on another template
@@ -64,8 +110,6 @@ In development:
                 * strong typed fields
                 * temlate based typed fields
                 * const class \ const field
-                * properties
-                * public / private / internal properties
                 * properties - explicit
                 * properties - implicit
                 * properties - multi-level
@@ -74,9 +118,6 @@ In development:
                 * static methods
                 * inheriting static fields / methods
                 * sealed static fields
-                * const fields
-                * const sealed fields
-                * analog of attributes : constant fields
                 * inherited only implcit constructors
                 * accumulating static fields
                 * implicit constructor inheritance - if not declared - call the parent one?
@@ -85,7 +126,6 @@ In development:
                 * parameters
                 * auto returning
                 * strong typed variables
-                * conversion routines : self, others
                 * strong parameters
                 * dispatching in compile time
                 * dispatching in run time
@@ -106,9 +146,6 @@ In development:
 
                 * primitive numbers
                 * primitive operations
-                * boxing
-                * structures
-                * unboxing
 
                 * recognize idle method
                 * recognize idle constructor
@@ -119,7 +156,6 @@ In development:
                 * properties : explicit
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
 
-                * creating dynamic array / buffers
                 * nested class scope
                 * reference message??
                 * templates, template creating, template inheritance, template import
@@ -149,15 +185,6 @@ In development:
                 * singleton can be used as a type?
                 * should V_SINGLETON be marked as elNestedClass?
                 * difference between sealed and final?
-
-                * multi-methods 
-                * variadic methods
-                * variadic dispatch
-                * yieldable methods
-
-                * extensions
-                * extension templates
-                * extension dispatching
 
                 * public / internal / private extensions?
 

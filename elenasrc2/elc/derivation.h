@@ -198,6 +198,8 @@ class DerivationWriter : public _DerivationWriter
    void raiseError(ident_t err, SNode node);
    void raiseWarning(int level, ident_t msg, SNode node);
 
+   void appendFilePath(SNode node, IdentifierString& path);
+
 public:
    void newNodeDirectly(LexicalType symbol);
    void newNodeDirectly(LexicalType symbol, ident_t arg);

@@ -82,7 +82,7 @@ constexpr auto V_IMPORT          = 0x80001018u;
 //constexpr auto V_GROUP           = 0x80001019u;
 constexpr auto V_NOSTRUCT        = 0x8000101Bu;
 //constexpr auto V_AUTO            = 0x8000101Cu;
-//constexpr auto V_INITIALIZER     = 0x8000101Du;
+constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
 //constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
 //constexpr auto V_YIELD           = 0x80001020u;
@@ -251,7 +251,7 @@ struct _ModuleScope
 
    // cached messages
    ref_t             dispatch_message;
-//   ref_t             init_message;
+   ref_t             init_message;
    ref_t             constructor_message;
 
    // cached bool values
@@ -371,7 +371,7 @@ struct _ModuleScope
 //      arrayTemplateReference = 0;
 //      wrapReference = argArrayTemplateReference = 0;
 //
-      /*init_message = */dispatch_message = 0;
+      init_message = dispatch_message = 0;
       constructor_message = 0;
    }
 };
@@ -606,8 +606,8 @@ public:
       }
    };
 
-//   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
-//   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result) = 0;
+   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
+   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result) = 0;
 
    // retrieve the class info / size
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
@@ -616,7 +616,7 @@ public:
    virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
    virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
 
-//   virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
+   virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
 
    // retrieve the call type
    virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result) = 0;

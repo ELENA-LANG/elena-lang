@@ -875,14 +875,14 @@ private:
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
 //   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message);
-//
-//   int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message)
-//   {
-//      _CompilerLogic::ChechMethodInfo dummy;
-//
-//      return _logic->checkMethod(scope, reference, message, dummy);
-//   }
-//
+
+   int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      return _logic->checkMethod(scope, reference, message, dummy);
+   }
+
 ////   bool verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount);
 
    bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
@@ -897,8 +897,8 @@ private:
    virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode);
 
 //   ref_t resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns, bool declarationMode);
-//   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef, bool declarationMode);
-//
+   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef, bool declarationMode);
+
 //   ref_t resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t operandRef, ident_t ns, bool declarationMode);
 //   ref_t resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 //
@@ -924,7 +924,7 @@ private:
 
    // NOTE : the method is used to set template pseudo variable
    void declareProcedureDebugInfo(SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
-//   void declareCodeDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void declareCodeDebugInfo(SNode node, MethodScope& scope);
 
    int resolveSize(SNode node, Scope& scope);
    ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
@@ -1004,7 +1004,7 @@ private:
    void compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
    ObjectInfo compileBranchingOperator(SNode roperand, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
 
-//   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo info);
+   ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo info);
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
 
    ref_t compileMessageParameters(SNode node, ExprScope& scope, EAttr mode/*, 
@@ -1026,7 +1026,6 @@ private:
    ObjectInfo compileExpression(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
 
    ObjectInfo compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
-   ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, ClassInfo& targetInfo, EAttr mode);
    ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
@@ -1056,9 +1055,9 @@ private:
 
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, EAttr mode);
 //   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
-//
-//   void compileConstructorResendExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
-//   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
+
+   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+   void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
    void compileResendExpression(SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SNode node, CodeScope& scope);
    void compileMultidispatch(SNode node, CodeScope& scope, ClassScope& classScope);
@@ -1086,15 +1085,15 @@ private:
    void compileMethod(/*SyntaxWriter& writer, */SNode node, MethodScope& scope);
 //   void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
    void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
-   void copyInitializer(SNode node, CodeScope& codeScope);
+   void compileInitializer(SNode node, MethodScope& scope);
 
 //   void compileYieldDispatch(SyntaxWriter& writer, int index, int index2, int preallocated);
 //   void compileYieldEnd(SyntaxWriter& writer, int index);
 //   void compileYieldableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
-//
-//   void compileSpecialMethodCall(SyntaxWriter& writer, ClassScope& classScope, ref_t message);
 
-   //void compileDefaultConstructor(SNode node, MethodScope& scope);
+   void compileSpecialMethodCall(SNode& node, ClassScope& classScope, ref_t message);
+
+   void compileDefaultConstructor(SNode node, MethodScope& scope);
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
 //   ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);

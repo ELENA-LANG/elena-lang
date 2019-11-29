@@ -299,10 +299,9 @@ namespace _ELENA_
    constexpr int elReadOnlyRole        = 0x00001000;
    constexpr int elNonStructureRole    = 0x00002000;
    constexpr int elWrapper             = 0x00004000;
-
-//   constexpr int elDynamicRole         = 0x00000004;
    constexpr int elStructureWrapper    = 0x00004800;
-//   constexpr int elSealed              = 0x00000120;
+   constexpr int elDynamicRole         = 0x00008000;
+   //   constexpr int elSealed              = 0x00000120;
 //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elWithGenerics        = 0x00000400;
 //   constexpr int elSubject             = 0x00002000;
@@ -397,7 +396,7 @@ namespace _ELENA_
 //   constexpr auto IFNOT_MESSAGE        = "ifnot";
 //  // #define SHIFT_MESSAGE            "shift"
 //  // #define IF_ELSE_MESSAGE          "if:else"
-//   constexpr auto INIT_MESSAGE         = "#init";
+   constexpr auto INIT_MESSAGE         = "#init";
 //  // #define ISNIL_MESSAGE            "#isnil"
 
    // ELENA verb operators

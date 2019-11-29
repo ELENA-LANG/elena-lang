@@ -568,12 +568,12 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
 //
 //   return inner.value1;
 //}
-//
-//bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
-//{
-//   return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
-//}
-//
+
+bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
+}
+
 //bool CompilerLogic :: isVariable(_ModuleScope& scope, ref_t classReference)
 //{
 //   ClassInfo info;
@@ -643,15 +643,15 @@ bool CompilerLogic :: isValidType(ClassInfo& info)
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 {
-   return test(info.header.flags, elStructureRole)/* && !test(info.header.flags, elDynamicRole)*/;
+   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
 }
 
 bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
 {
-   /*if (test(info.header.flags, elDynamicRole)) {
+   if (test(info.header.flags, elDynamicRole)) {
       return isEmbeddableArray(info);
    }
-   else */return isEmbeddable(info);
+   else return isEmbeddable(info);
 }
 
 bool CompilerLogic :: isRole(ClassInfo& info)
@@ -1250,7 +1250,7 @@ bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node,
       return false;
 
    // if the target class is wrapper around the source
-   if (test(info.header.flags, elWrapper)/* && !test(info.header.flags, elDynamicRole)*/) {
+   if (test(info.header.flags, elWrapper) && !test(info.header.flags, elDynamicRole)) {
       ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
 
       bool compatible = false;
@@ -1770,9 +1770,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_CONVERSION:
          attrValue = tpConversion;
          return true;
-//      case V_INITIALIZER:
-//         attrValue = (tpSpecial | tpPrivate | tpInitializer);
-//         return true;
+      case V_INITIALIZER:
+         attrValue = (tpFunction | tpPrivate/* | tpInitializer*/);
+         return true;
       case V_METHOD:
          attrValue = 0;
          explicitMode = true;
@@ -2045,12 +2045,12 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 //
 //   return 0;
 //}
-//
-//ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne)
-//{
+
+ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne)
+{
 //   ClassInfo info;
 //   if (!defineClassInfo(scope, info, elementRef, true))
-//      return 0;
+      return 0; // !! temporal
 //
 //   if (isEmbeddable(info) && structOne) {
 //      if (isCompatible(scope, V_INT32, elementRef)) {
@@ -2068,8 +2068,8 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 //      return V_BINARYARRAY;
 //   }
 //   else return V_OBJARRAY;
-//}
-//
+}
+
 ////////bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)
 ////////{
 ////////   if (test(flag, elDynamicRole) && info.fields.Count() != 0)
