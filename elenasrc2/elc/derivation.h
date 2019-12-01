@@ -91,24 +91,24 @@ class DerivationWriter : public _DerivationWriter
 //         return false;
 //      }
 
-      //bool isIdentifierParameter(ident_t name, ref_t& argument)
-      //{
-      //   if (withTypeParameters()) {
-      //      int index = parameters.get(name);
-      //      if (index) {
-      //         argument = index + nestedLevel;
+      bool isIdentifierParameter(ident_t name, ref_t& argument)
+      {
+         if (withTypeParameters()) {
+            int index = parameters.get(name);
+            if (index) {
+               argument = index + nestedLevel;
 
-      //         return true;
-      //      }
-      //   }
-      //   return false;
-      //}
+               return true;
+            }
+         }
+         return false;
+      }
 
-//      bool withTypeParameters() const
-//      {
-//         return templateMode == stClassTemplate || templateMode == stPropertyTemplate 
-//            || templateMode == stExtensionTemplate;
-//      }
+      bool withTypeParameters() const
+      {
+         return templateMode == stClassTemplate/* || templateMode == stPropertyTemplate 
+            || templateMode == stExtensionTemplate*/;
+      }
 
       Scope()
       {
@@ -159,7 +159,7 @@ class DerivationWriter : public _DerivationWriter
    void saveTemplateParameters(SyntaxWriter& tempWriter, SNode current, Scope& derivationScope);
 
 //   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
-   void generateTemplateTree(SNode node/*, ScopeType templateType*/);
+   void generateTemplateTree(SNode node, ScopeType templateType);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generateStatementTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, 

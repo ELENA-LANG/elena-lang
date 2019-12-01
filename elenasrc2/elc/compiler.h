@@ -363,6 +363,7 @@ private:
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       ObjectInfo mapGlobal(ident_t identifier);
+      ObjectInfo mapWeakReference(ident_t identifier);
 
       virtual pos_t saveSourcePath(ByteCodeWriter& writer);
       virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
@@ -991,8 +992,8 @@ private:
 //   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
    void appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object, bool noUnboxing);
-//
-//   ObjectInfo compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
+
+   ObjectInfo compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, EAttr mode);
 
@@ -1013,8 +1014,8 @@ private:
    ObjectInfo compileMessage(SNode node, ExprScope& scope, /*ref_t exptectedRef,*/ ObjectInfo target, EAttr mode);
    ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode, int stackSafeAttr);
 ////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
-//
-//   SNode injectAttributeIdentidier(SNode current, Scope& scope);
+
+   SNode injectAttributeIdentidier(SNode current, Scope& scope);
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
    EAttr declareExpressionAttributes(SNode& node, ExprScope& scope, EAttr mode);
 

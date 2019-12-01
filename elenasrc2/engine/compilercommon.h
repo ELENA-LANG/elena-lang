@@ -295,6 +295,7 @@ struct _ModuleScope
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false) = 0;
+   virtual ref_t mapWeakReference(ident_t referenceName, bool existing = false) = 0;
 
    virtual ref_t resolveImplicitIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
    virtual ref_t resolveImportedIdentifier(ident_t identifier, IdentifierList* importedNs) = 0;

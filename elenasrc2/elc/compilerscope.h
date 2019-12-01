@@ -46,6 +46,7 @@ struct ModuleScope : _ModuleScope
    }
    virtual ref_t loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_t symbolName);
 
+   virtual ref_t mapWeakReference(ident_t referenceName, bool existing = false);
    virtual ref_t mapFullReference(ident_t referenceName, bool existing = false);
    virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility);

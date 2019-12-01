@@ -282,6 +282,13 @@ ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
    else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), false);
 }
 
+ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ident_t identifier)
+{
+   ref_t reference = moduleScope->mapWeakReference(identifier);
+
+   return defineObjectInfo(reference, true);
+}
+
 ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
 {
    ref_t reference = 0;
@@ -1657,7 +1664,10 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalT
    ObjectInfo identInfo;
 
    NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
-   if (type == lxGlobalReference) {
+   if (type == lxReference && isWeakReference(terminal)) {
+      identInfo = ns->mapWeakReference(terminal);
+   }
+   else if (type == lxGlobalReference) {
       identInfo = ns->mapGlobal(terminal);
    }
    else identInfo = ns->mapTerminal(terminal, type == lxReference, EAttr::eaNone);
@@ -2737,16 +2747,16 @@ ObjectInfo Compiler :: mapClassSymbol(Scope& scope, int classRef)
    else return ObjectInfo(okUnknown);
 }
 
-//ObjectInfo Compiler :: compileTemplateSymbol(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode)
-//{
-//   ObjectInfo retVal = mapClassSymbol(scope, resolveTemplateDeclaration(node, scope, false));
-//
-//   if (!EAttrs::test(mode, HINT_VIRTUALEXPR))
-//      writeTerminal(writer, node, scope, retVal, mode);
-//
-//   return retVal;
-//}
-//
+ObjectInfo Compiler :: compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode)
+{
+   ObjectInfo retVal = mapClassSymbol(scope, resolveTemplateDeclaration(node, scope, false));
+
+   //if (!EAttrs::test(mode, HINT_VIRTUALEXPR))
+      recognizeTerminal(node, retVal, scope, mode);
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, EAttr modeAttr)
 //{
 //   EAttrs mode(modeAttr);
@@ -3689,6 +3699,7 @@ ObjectInfo Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetR
          ref_t signRef = scope.module->mapSignature(&targetRef, 1, false);
          ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
 
+         node.refresh();
          if (node != lxExpression)
             node.injectAndReplaceNode(lxExpression);
 
@@ -4996,8 +5007,9 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    int stackSafeAttr = 0;
    ObjectInfo retVal = retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT, stackSafeAttr);
 
-   if (resolveObjectReference(scope, retVal, false) != targetRef)
+   if (!resolveObjectReference(scope, retVal, false)) {
       scope.raiseError(errDefaultConstructorNotFound, exprNode);
+   }      
 
    return retVal;
 }
@@ -5071,7 +5083,8 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
    templateName.append('#');
    templateName.appendInt(paramCounter);
 
-   return resolveTypeIdentifier(scope, templateName.c_str(), terminalNode.type, false);
+   // NOTE : check it in declararion mode - we need only reference
+   return resolveTypeIdentifier(scope, templateName.c_str(), terminalNode.type, true);
 }
 
 //ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
@@ -5082,21 +5095,21 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
 //
 //   return ref;
 //}
-//
-//SNode Compiler :: injectAttributeIdentidier(SNode current, Scope& scope)
-//{
-//   ident_t refName = scope.module->resolveReference(current.argument);
-//
-//   SNode terminalNode = current.firstChild(lxTerminalMask);
-//   if (terminalNode != lxNone) {
-//      if (isWeakReference(refName)) {
-//         terminalNode.set(lxReference, refName);
-//      }
-//      else terminalNode.set(lxGlobalReference, refName);
-//   }
-//
-//   return terminalNode;
-//}
+
+SNode Compiler :: injectAttributeIdentidier(SNode current, Scope& scope)
+{
+   ident_t refName = scope.module->resolveReference(current.argument);
+
+   SNode terminalNode = current.firstChild(lxTerminalMask);
+   if (terminalNode != lxNone) {
+      if (isWeakReference(refName)) {
+         terminalNode.set(lxReference, refName);
+      }
+      else terminalNode.set(lxGlobalReference, refName);
+   }
+
+   return terminalNode;
+}
 
 void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode)
 {
@@ -5106,15 +5119,19 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
 //   ExpressionAttributes attributes;
    while (current != lxNone) {
       if (current == lxType) {
-         ref_t typeRef = resolveTypeAttribute(current, scope, declarationMode);
+         ref_t typeRef = current.argument;
+         if (!typeRef) {
+            typeRef = resolveTypeAttribute(current, scope, declarationMode);
+            current.setArgument(typeRef);
+
+            SNode terminalNode = injectAttributeIdentidier(current, scope);
+         }
 
 //         SNode targetNode = current.firstChild();
 //         bool templateOne = targetNode.argument == V_TEMPLATE;
-//         targetNode.set(lxTarget, typeRef);
-         current.setArgument(typeRef);
+//         targetNode.set(lxTarget, typeRef);         
 
 //         // HOTFIX : inject the reference and comment the target nodes out
-//         SNode terminalNode = injectAttributeIdentidier(targetNode, scope);
 //         if (templateOne) {
 //            do {
 //               terminalNode = terminalNode.nextNode();
@@ -5125,7 +5142,7 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
 //            } while (terminalNode != lxNone);
 //         }
 //
-//         parameters.add(targetNode);
+         parameters.add(/*targetNode*/current);
       }
 
       current = current.nextNode();
@@ -5265,7 +5282,7 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //      exprAttr.exclude(EAttr::eaCast | EAttr::eaNewOp);
 //   }
 
-   if (current == lxType) {
+   if (current == lxType && test(current.nextNode(), lxTerminalMask)) {
 //      if (typeRef == 0) {
          typeRef = resolveTypeAttribute(current, scope, false);
 
@@ -5774,7 +5791,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 //            }
 //            else result = compileSubCode(writer, node, scope, false);
 //            break;
-//         case lxTemplate:
+         case lxType:
 //            if (mode.testAndExclude(HINT_MESSAGEREF)) {
 //               // HOTFIX : if it is an extension message
 //               result = compileMessageReference(writer, node, scope);
@@ -5782,8 +5799,8 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 //               if (!mode.test(HINT_VIRTUALEXPR))
 //                  writeTerminal(writer, node, scope, result, mode);
 //            }
-//            else result = compileTemplateSymbol(writer, node, scope, mode);
-//            break;
+            /*else */result = compileTypeSymbol(current, scope, mode);
+            break;
          case lxNestedClass:
             result = compileClosure(current, scope, mode/* & HINT_CLOSURE_MASK*/);
             break;
@@ -8944,11 +8961,11 @@ void Compiler :: compileClassImplementation(/*SyntaxTree& expressionTree, */SNod
 
    generateClassImplementation(/*expressionTree.readRoot()*/node, scope);
 
-//   // compile explicit symbol
-//   // extension cannot be used stand-alone, so the symbol should not be generated
-//   if (scope.extensionClassRef == 0 && scope.info.header.classRef != 0) {
+   // compile explicit symbol
+   // extension cannot be used stand-alone, so the symbol should not be generated
+   if (/*scope.extensionClassRef == 0 && */scope.info.header.classRef != 0) {
       compileSymbolCode(scope);
-//   }
+   }
 }
 
 void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
@@ -10586,7 +10603,11 @@ void Compiler :: declareMembers(SNode current, NamespaceScope& scope)
             ClassScope classScope(&scope, scope.defaultVisibility);
             declareClassAttributes(current, classScope, true);
 
-            classScope.reference = scope.mapNewTerminal(current.findChild(lxNameAttr), classScope.visibility);
+            if (current.argument == INVALID_REF) {
+               // if it is a template based class - its name was already resolved
+               classScope.reference = current.findChild(lxNameAttr).argument;
+            }
+            else classScope.reference = scope.mapNewTerminal(current.findChild(lxNameAttr), classScope.visibility);
             current.setArgument(classScope.reference);
 
             // NOTE : the symbol section is created even if the class symbol doesn't exist

@@ -2,12 +2,21 @@
 In development:
 ------         
               dev
-                * resend body - method : only resend, resend + body
-                                                                                                 
-                * dynamic array - default constructor have a int argument, and creates the array with apropriate length
                 * templates : declaration, using
+                * template of templates
+                * field - template, template of templates
+                * parameter - template, template of templates
+
+                * dynamic array - default constructor have a int argument, and creates the array with apropriate length
+                * arrays
+                * creating dynamic array / buffers
+                * array of templates
+                * template of arrays
+
                 * closures : default constructor is called for virtual nested class, for normal one - only initializer
                 * action closures
+                * nested class and default constructor
+                * stack allocated class and default constructor
 
                 * internal / public / private classes
                 * internal / public / private / proteced methods
@@ -27,10 +36,10 @@ In development:
 
                 * conversion routines : self, others
 
-                * arrays
-                * creating dynamic array / buffers
                 * fixed-size variable
                 * fixed-size array
+                * arrays of templates
+                * arrays of template of templates
 
                 * variadic methods
                 * variadic dispatch
@@ -248,6 +257,8 @@ In development:
                 * implicit constructor should clear the object fields
                 * optimization : assigning a field with a local - there should be direct byte code
                 * adding source path link on tempate based classes with field initializers
+                * private / internal class templates
+                * invalid operation : var a.test();
 
               dev1
                 * write - Programming in ELENA : manual

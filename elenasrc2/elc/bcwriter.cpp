@@ -3811,6 +3811,12 @@ inline size_t countChildren(SNode node)
 void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowScope& scope/*, bool ignoreBranching*/)
 {
    SNode terminal = node.nextNode(lxTerminalMask);
+   if (terminal == lxNone) {
+      SNode current = node.nextNode();
+      if (current == lxType)
+         terminal = current.firstChild(lxTerminalMask);
+   }
+
    if (terminal != lxNone) {
       if (!scope.debugBlockStarted) {
          declareBlock(tape);

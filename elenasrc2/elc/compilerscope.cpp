@@ -343,6 +343,15 @@ void ModuleScope :: saveAttribute(ident_t name, ref_t attr)
    }
 }
 
+ref_t ModuleScope :: mapWeakReference(ident_t referenceName, bool existing)
+{
+   if (isTemplateWeakReference(referenceName)) {
+      // COMPILER MAGIC : try to find a template implementation
+      return module->mapReference(resolveWeakTemplateReference(referenceName + TEMPLATE_PREFIX_NS_LEN), existing);
+   }
+   else return module->mapReference(referenceName, existing);
+}
+
 _Module* ModuleScope :: loadReferenceModule(ident_t referenceName, ref_t& reference)
 {
    if (isTemplateWeakReference(referenceName)) {
