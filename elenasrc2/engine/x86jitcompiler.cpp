@@ -62,17 +62,17 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/37;
+const int gcCommandNumber = /*160*/39;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
    bcReserve, bcPushS, bcStoreSI, bcPeekSI, bcThrow,
-   bcCallVI, bcClose, bcNew, bcFill, bcCallRM,
+   bcCallVI, bcClose, bcNew, bcFillRI, bcCallRM,
    bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
    bcMTRedirect, bcJumpVI, bcXMTRedirect, bcRestore, bcPushF,
    bcCopyF, bcCopyFI, bcAddF, bcCopyToF, bcCopyToFI,
    bcSubF, bcMulF, bcDivF, bcPushAI, bcGetAI,
-   bcSetAI, bcCopyToAI,
+   bcSetAI, bcCopyToAI, bcCreateR, bcFillR,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -94,7 +94,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcLXor, bcNShiftL, bcNNot, bcLShiftL, bcLShiftR,
 //   bcLNot, bcRCopy, bcRSave, bcREqual, bcBSaveSI,
 //   bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
-//   bcCreate, bcExclude, bcDCopyR, bcInclude,
+//   bcExclude, bcDCopyR, bcInclude,
 //   bcSelectR, bcNext, bcXSelectR, bcCount,
 //   bcRAbs, bcRExp, bcRInt, bcValidate, ,
 //   bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
@@ -147,7 +147,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &loadIndexOp, &loadIndexOp, &compileNop, &loadFPOp, &loadIndexOp, &compileNop, &compileNop,
-   &compileOpen, &compileQuitN, &compileNop, &compileNop, &compileACopyF, &compileNop, &compileSetR, &compileMCopy,
+   &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileNop, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -489,35 +489,35 @@ void _ELENA_::loadOneByteLOp(int opcode, x86JITScope& scope)
    scope.code->write(code, *(int*)(code - 4));
 }
 
-//void _ELENA_::loadROp(int opcode, x86JITScope& scope)
-//{
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0]==-1) {
-//         if (scope.argument == 0) {
-//            scope.code->writeDWord(0);
-//         }
-//         else scope.writeReference(*scope.code, scope.argument, 0);
-//      }
-//      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
+void _ELENA_::loadROp(int opcode, x86JITScope& scope)
+{
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0]==-1) {
+         if (scope.argument == 0) {
+            scope.code->writeDWord(0);
+         }
+         else scope.writeReference(*scope.code, scope.argument, 0);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
 
 void _ELENA_::loadMTOp(int opcode, x86JITScope& scope)
 {

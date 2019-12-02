@@ -595,6 +595,8 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCallR:
 //      case bcASaveR:
       case bcSetR:
+      case bcCreateR:
+      case bcFillR:
 //      case bcBCopyR:
          printCommand(command, opcode);
          printReference(command, module, argument);
@@ -679,7 +681,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //         printReference(command, module, argument2);
 //         break;
       case bcNewN:
-      case bcFill:
+      case bcFillRI:
          printCommand(command, opcode);
          printReference(command, module, argument);
          command.append(", ");

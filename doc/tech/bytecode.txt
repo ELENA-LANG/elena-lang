@@ -47,6 +47,8 @@ ELENA byte codes (or ecodes)
 
  copytofi i, n              - copy [acc] >> [fp+i], n*4-bytes
 
+ creater r                  - create the object with length=[esp], out : acc, index is affected
+
 
  Arithmeric operations:
  ----------------------
@@ -130,7 +132,9 @@ ELENA byte codes (or ecodes)
  
  callvi i                   - call acc::VMT[i] method
 
- fill r, i                  - fill the object with the value i-times
+ fillr r                    - fill the object with the value dword[esp]-times
+
+ fillri r, i                - fill the object with the value i-times
 
  jumprm r, m                - jumps directly the method resolved by JIT by r and m
  

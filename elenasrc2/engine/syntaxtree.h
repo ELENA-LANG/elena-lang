@@ -121,8 +121,9 @@ enum LexicalType
    lxConstantInt              = 0x0181A0,   // arg - reference
    lxOp                       = 0x0581B0,
    lxIntOp                    = 0x0581B1,   // arg - operation id
-   lxField                    = 0x0181C0, // arg - offset
-   lxFieldAddress             = 0x0181C1, // arg - offset
+   lxField                    = 0x0181C0,   // arg - offset
+   lxFieldAddress             = 0x0181C1,   // arg - offset
+   lxNewArrOp                 = 0x0181D0,
 
    // attributes
    lxAttribute                = 0x000F00,

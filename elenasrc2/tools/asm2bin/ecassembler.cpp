@@ -491,6 +491,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       {
          case bcCallR:
          case bcSetR:
+         case bcCreateR:
          //case bcBCopyR:
          case bcPushR:
             compileRCommand(opcode, token, writer, binary);

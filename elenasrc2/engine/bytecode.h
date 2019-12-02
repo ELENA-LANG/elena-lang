@@ -160,8 +160,8 @@ enum ByteCode
 //   bcBCopyS          = 0x97,
    bcOpen            = 0x98,
    bcQuitN           = 0x99,
-//   bcBCopyR          = 0x9A,
-//   bcBCopyF          = 0x9B,
+   bcCreateR         = 0x9A,
+   bcFillR           = 0x9B,
    bcSetF            = 0x9C,
 //   bcACopyS          = 0x9D,
    bcSetR            = 0x9E,
@@ -256,7 +256,7 @@ enum ByteCode
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,
-   bcFill            = 0xF2,
+   bcFillRI          = 0xF2,
 //   bcXSelectR        = 0xF3,
    bcVCallRM         = 0xF4,
    bcJumpRM          = 0xF5,
@@ -453,7 +453,8 @@ public:
          //case bcASaveR:
          case bcSetR:
          case bcNew:
-         case bcFill:
+         case bcFillRI:
+         case bcFillR:
          case bcNewN:
          //case bcBCopyR:
          case bcCallRM:
@@ -462,6 +463,7 @@ public:
          case bcJumpRM:
          case bcVCallRM:
          //case bcBLoadR:
+         case bcCreateR:
             return true;
          default:
             return false;

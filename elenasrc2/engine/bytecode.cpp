@@ -42,7 +42,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, "getai", "restore", OPCODE_UNKNOWN, "peekfi", "peeksi", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   "open", "quitn", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "setf", OPCODE_UNKNOWN, "setr", "setm",
+   "open", "quitn", "creater", "fillr", "setf", OPCODE_UNKNOWN, "setr", "setm",
 
    "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -59,7 +59,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "copytoai", "copytofi", "copytof", "copyfi", "copyf",
    "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "new", "newn", "fill", OPCODE_UNKNOWN, "vcallrm", "jumprm", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "new", "newn", "fillri", OPCODE_UNKNOWN, "vcallrm", "jumprm", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "elser", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "callrm", OPCODE_UNKNOWN,
 
 //   "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",

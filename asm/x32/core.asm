@@ -978,8 +978,40 @@ inline % 98h
 
 end
 
-// ; ajumpvi
+// ; creater
+inline % 9Ah
 
+  mov  eax, [esp]
+  mov  ecx, page_ceil
+  mov  edx, [eax]
+  lea  edx, [ecx + edx*4]
+  and  edx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   eax, [esp]
+  xor   edx, edx
+  mov   [ebx-4], __arg1
+  mov   ecx, [eax]
+  mov   esi, 800000h
+  test  ecx, ecx
+  cmovz edx, esi
+  shl   ecx, 2
+  or    ecx, edx
+  mov   [ebx-8], ecx
+
+end
+
+// ; fillr (__arg1 - r)
+inline % 09Bh
+  mov  esi, [esp]	
+  mov  eax, __arg1	
+  mov  ecx, [esi]
+  rep  stosd
+
+end
+
+// ; ajumpvi
 inline % 0A1h
 
   mov  eax, [ebx - 4]
@@ -1524,7 +1556,7 @@ inline % 0F0h
 
 end
 
-// ; fill (__arg1 - count)
+// ; fillri (__arg1 - count)
 inline % 0F2h
 	
   mov  ecx, __arg1

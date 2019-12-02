@@ -189,7 +189,7 @@ class ByteCodeWriter
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
-//   void newDynamicObject(CommandTape& tape);
+   void newDynamicObject(CommandTape& tape, ref_t reference);
 //   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
 
    void popObject(CommandTape& tape, LexicalType sourceType);
@@ -199,7 +199,8 @@ class ByteCodeWriter
 //   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int mode);
 //   void initBase(CommandTape& tape, int fieldCount);
    void clearObject(CommandTape& tape, int fieldCount);
-//   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
+   void clearDynamicObject(CommandTape& tape);
+   //   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
 //   void saveStructBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int size);
 //   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
@@ -335,7 +336,7 @@ class ByteCodeWriter
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
-//   void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node);
+   void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
 //   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);

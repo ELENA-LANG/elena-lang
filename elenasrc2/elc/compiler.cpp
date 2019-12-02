@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -3620,16 +3620,23 @@ void Compiler :: boxArgument(SNode current, ExprScope& scope, bool boxingMode)
          if (objNode == lxExpression)
             objNode = objNode.findSubNodeMask(lxObjectMask);
 
-         Attribute key(objNode.type, objNode.argument);
+         if (objNode == lxNewArrOp) {
+            ref_t typeRef = current.findChild(lxType).argument;
 
-         int tempLocal = scope.tempLocals.get(key);
-         if (tempLocal == NOTFOUND_POS) {
-            tempLocal = scope.newTempLocal();
-            scope.tempLocals.add(key, tempLocal);
-
-            injectBoxingTempLocal(current, objNode, scope, lxTempLocal, tempLocal);
+            objNode.setArgument(typeRef);
          }
-         else objNode.set(lxTempLocal, tempLocal);
+         else {
+            Attribute key(objNode.type, objNode.argument);
+
+            int tempLocal = scope.tempLocals.get(key);
+            if (tempLocal == NOTFOUND_POS) {
+               tempLocal = scope.newTempLocal();
+               scope.tempLocals.add(key, tempLocal);
+
+               injectBoxingTempLocal(current, objNode, scope, lxTempLocal, tempLocal);
+            }
+            else objNode.set(lxTempLocal, tempLocal);
+         }
       }
       current.set(lxExpression, 0);
    }
@@ -3681,7 +3688,7 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
          return source;
       }
       // if it can be boxed / implicitly converted
-      else if (!_logic->injectImplicitConversion(*scope.moduleScope, node, *this, targetRef, sourceRef/*,source.element*/))
+      else if (!_logic->injectImplicitConversion(*scope.moduleScope, node, *this, targetRef, sourceRef, source.element))
       {
          return sendTypecast(node, scope, targetRef, source);
       }
@@ -4953,25 +4960,29 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    EAttr paramsMode = EAttr::eaNone;
    int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
    ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode/*, variadicOne, inlineArg*/);
+
+   SNode exprNode = node.parentNode();
    ref_t messageRef = 0;
    if (paramCount == 0) {
       // if it is a generic object creation
       messageRef = scope.moduleScope->constructor_message;
    }
    else if (target.reference == V_OBJARRAY && paramCount == 1) {
+      ref_t roperand = 0;
+      scope.module->resolveSignature(implicitSignatureRef, &roperand);
 
-      throw InternalError("not yet implemented"); // !! temporal
+      int operationType = _logic->resolveNewOperationType(*scope.moduleScope, target.reference, roperand);
+      if (operationType != 0) {
+         // if it is a primitive operation
+         _logic->injectNewOperation(exprNode, *scope.moduleScope, operationType, target.reference, target.element);
 
-      //         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef,
-      //                                          resolveObjectReference(scope, roperand, false));
-      //         if (operationType != 0) {
-      //            // if it is a primitive operation
-      //            _logic->injectNewOperation(writer, *scope.moduleScope, operationType, targetRef, target.element);
-      //
-      //            retVal.reference = target.reference;
-      //            retVal.element = target.element;
-      //         }
-      //         else scope.raiseError(errInvalidOperation, node.parentNode());
+         // HOTFIX : remove class symbol - the array will be created directly
+         SNode classNode = exprNode.firstChild(lxObjectMask);
+         classNode = lxIdle;
+
+         return ObjectInfo(okObject, 0, target.reference, target.element, 0);
+      }
+      else scope.raiseError(errInvalidOperation, node.parentNode());
    }
    else throw InternalError("not yet implemented"); // !! temporal
 
@@ -4995,7 +5006,6 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    //      compileCollection(writer, node, scope, target);
    //   }
 
-   SNode exprNode = node.parentNode();
    //SNode targetNode = exprNode.firstChild(lxObjectMask);
    //if (op != lxNone && targetNode != lxNone) {
    //   targetNode.set(op, arg);
@@ -6947,8 +6957,6 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
       }
    }
    else resendScope.raiseError(errUnknownMessage, node);
-
-   test2(node);
 }
 
 void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& scope)
@@ -7559,8 +7567,6 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    codeScope.syncStack(&scope);
 
    endMethod(node, scope, preallocated);
-
-   test2(node);
 }
 
 void Compiler :: compileSpecialMethodCall(SNode& node, ClassScope& classScope, ref_t message)
@@ -10952,7 +10958,7 @@ void Compiler :: injectBoxingExpr(SNode& node, bool variable, int size, ref_t ta
    node.appendNode(lxSize, size);
 
 //   if (arrayMode && argument == 0) {
-//      // HOTFIX : to iundicate a primitive array boxing
+//      // HOTFIX : to indicate a primitive array boxing
 //      writer.appendNode(lxBoxableAttr, -1);
 //   }
 //   else writer.appendNode(lxBoxableAttr);

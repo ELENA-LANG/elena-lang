@@ -581,9 +581,15 @@ void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t refere
 void ByteCodeWriter :: clearObject(CommandTape& tape, int fieldCount)
 {
    if (fieldCount > 0) {
-      // fill 0, fieldCount
-      tape.write(bcFill, 0, fieldCount);
+      // fillri 0, fieldCount
+      tape.write(bcFillRI, 0, fieldCount);
    }
+}
+
+void ByteCodeWriter :: clearDynamicObject(CommandTape& tape)
+{
+   // fillr 0
+   tape.write(bcFillR, 0);
 }
 
 //void ByteCodeWriter :: initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
@@ -611,13 +617,13 @@ void ByteCodeWriter :: clearObject(CommandTape& tape, int fieldCount)
 //   tape.write(bcAXSaveBI, 0);
 //   tape.write(bcACopyB);
 //}
-//
-//void ByteCodeWriter :: newDynamicObject(CommandTape& tape)
-//{
-//   // create
-//   tape.write(bcCreate);
-//}
-//
+
+void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference)
+{
+   // creater
+   tape.write(bcCreateR, reference | mskVMTRef);
+}
+
 //void ByteCodeWriter :: copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode)
 //{
 //   if (swapMode)
@@ -4247,14 +4253,13 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //      current = current.nextNode();
 //   }
 //}
-//
-//void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   generateExpression(tape, node, ACC_REQUIRED);
-//   loadIndex(tape, lxResult);
-//
-//   if (node.argument != 0) {
-//      int size = node.findSubNode(lxSize).argument;
+
+void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   generateObject(tape, node.firstChild(lxObjectMask), scope, STACKOP_MODE);
+
+   if (node.argument != 0) {
+      int size = node.findSubNode(lxSize).argument;
 //
 //      if ((int)node.argument < 0) {
 //         //HOTFIX : recognize primitive object
@@ -4265,18 +4270,21 @@ void assignOpArguments(SNode node, SNode& larg, SNode& rarg)
 //      if (size < 0) {
 //         newDynamicStructure(tape, -size);
 //      }
-//      else if (size == 0) {
-//         newDynamicObject(tape);
-//         initDynamicObject(tape, lxNil);
-//      }
-//   }
+      /*else */if (size == 0) {
+         newDynamicObject(tape, node.argument);
+         clearDynamicObject(tape);
+         releaseStack(tape);
+      }
+      else throw InternalError("not yet implemented"); // !! temporal
+   }
+   else throw InternalError("not yet implemented"); // !! temporal
 //   //else {
 //   //   loadObject(tape, lxSelfLocal, 1);
 //   //   // HOTFIX: -1 indicates the stack is not consumed by the constructor
 //   //   callMethod(tape, 1, -1);
 //   //}
-//}
-//
+}
+
 //void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
 //{
 //   if (test(mode, BASE_PRESAVED))
@@ -6442,9 +6450,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxArgArrOp:
 //         generateArrOperation(tape, node, mode);
 //         break;
-//      case lxNewArrOp:
-//         generateNewArrOperation(tape, node);
-//         break;
+      case lxNewArrOp:
+         generateNewArrOperation(tape, node, scope);
+         break;
       case lxResending:
          generateResendingExpression(tape, node);
          break;
