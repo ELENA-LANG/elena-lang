@@ -1410,23 +1410,23 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 
          //   watch->write(this, *(long long*)value);
          //}
-         //else if (type==elDebugArray) {
-         //   int list[DEBUG_MAX_LIST_LENGTH];
-         //   int length = 0;
+         else if (type==elDebugArray) {
+            int list[DEBUG_MAX_LIST_LENGTH];
+            int length = 0;
 
-         //   // get array size
-         //   getValue(selfPtr - 8, (char*)&length, 4);
-         //   if (length == 0x800000)
-         //      length = 0;
+            // get array size
+            getValue(selfPtr - 8, (char*)&length, 4);
+            if (length == 0x800000)
+               length = 0;
 
-         //   if (length > sizeof(list))
-         //      length = sizeof(list);
+            if (length > sizeof(list))
+               length = sizeof(list);
 
-         //   getValue(selfPtr, (char*)list, length);
+            getValue(selfPtr, (char*)list, length);
 
-         //   length >>= 2;
-         //   readList(watch, list, length);
-         //}
+            length >>= 2;
+            readList(watch, list, length);
+         }
          //else if (type==elDebugBytes) {
          //   readByteArray(watch, selfPtr, NULL);
          //}

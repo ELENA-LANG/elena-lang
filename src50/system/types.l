@@ -65,7 +65,7 @@
 #define namespace   80001021h
 
 /// primitive types
-//#define __string    80000801h
+#define __string    80000801h
 //#define __float     80000802h
 #define __int       80000803h
 //#define __raw       80000804h
@@ -81,10 +81,10 @@
 ////__tape_mixin    = #8209.
 ////dynamic         = #30.
 ////stackunsafe     = #16403.
-//
-///// Provides classes that describe the basic functionality
-//
-//type object     = Object;
+
+/// Provides classes that describe the basic functionality
+
+type object     = system'Object;
 
 // === basic logical types ===
 type bool       = system'BoolValue;

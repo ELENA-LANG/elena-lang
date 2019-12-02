@@ -323,7 +323,7 @@ namespace _ELENA_
 //   constexpr int elDebugReal64         = 0x00020000;
 //   constexpr int elDebugLiteral        = 0x00030000;
 //   constexpr int elDebugIntegers       = 0x00040000;
-//   constexpr int elDebugArray          = 0x00050000;
+   constexpr int elDebugArray          = 0x00050000;
 //   constexpr int elDebugQWORD          = 0x00060000;
 //   constexpr int elDebugBytes          = 0x00070000;
 //   constexpr int elDebugShorts         = 0x00080000;
@@ -519,7 +519,7 @@ namespace _ELENA_
 //   constexpr auto MESSAGENAME_FORWARD     = "$messagename";
 //   constexpr auto REFTEMPLATE_FORWARD     = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
-//   constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
+   constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
 //   constexpr auto ARGARRAYTEMPLATE_FORWARD= "$varray";
    constexpr auto BOOL_FORWARD            = "$bool";
    constexpr auto TRUE_FORWARD            = "$true";

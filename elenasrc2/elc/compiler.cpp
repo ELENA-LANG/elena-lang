@@ -1843,35 +1843,34 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
                // ignore if constant / sealed attribute was set
             }
             else if (!value && isPrimitiveRef(current.argument)) {
-//               if (current.argument == V_STRING) {
-//                  // if it is an inline array attribute
-//                  inlineArray = true;
-//               }
+               if (current.argument == V_STRING) {
+                  // if it is an inline array attribute
+                  inlineArray = true;
+               }
                // if it is a primitive type
-               /*else */attrs.fieldRef = current.argument;
+               else attrs.fieldRef = current.argument;
             }
             else scope.raiseError(errInvalidHint, node);
          }
          else scope.raiseError(errInvalidHint, current);
       }
-      else if (current == lxType) {
-         SNode childNode = current.firstChild();
+      else if (current.compare(lxType, lxArrayType)) {
          if (attrs.fieldRef == 0) {
-//            if (inlineArray) {
-//               // if it is an inline array - it should be compiled differently
-//               if (childNode == lxArrayType) {
-//                  attrs.fieldRef = resolveTypeAttribute(scope, childNode, false);
-//                  attrs.size = -1;
-//               }
-//               else scope.raiseError(errInvalidHint, current);
-//            }
-//            // NOTE : the field type should be already declared only for the structure
-//            else {
+            if (inlineArray) {
+               // if it is an inline array - it should be compiled differently
+               if (current == lxArrayType) {
+                  attrs.fieldRef = resolveTypeAttribute(current.firstChild(), scope, false);
+                  attrs.size = -1;
+               }
+               else scope.raiseError(errInvalidHint, current);
+            }
+            // NOTE : the field type should be already declared only for the structure
+            else {
                attrs.fieldRef = resolveTypeAttribute(current, scope,
                   !test(scope.info.header.flags, elStructureRole));
 
-//               attrs.isArray = childNode == lxArrayType;
-//            }
+               attrs.isArray = current == lxArrayType;
+            }
          }
          else scope.raiseError(errInvalidHint, node);
       }
@@ -4835,40 +4834,38 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 
 ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t elementRef, bool declarationMode)
 {
-   throw InternalError("Not yet implemented"); // !! temporal
+   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
-   //NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
-
-   //return resolvePrimitiveArray(*scope.moduleScope, scope.moduleScope->arrayTemplateReference, elementRef,
-   //   nsScope->ns.c_str(), declarationMode);
+   return resolvePrimitiveArray(*scope.moduleScope, scope.moduleScope->arrayTemplateReference, elementRef,
+      nsScope->ns.c_str(), declarationMode);
 }
 
-//ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns, bool declarationMode)
-//{
-//   if (!elementRef)
-//      elementRef = scope.superReference;
-//
-//   // generate a reference class
-//   List<SNode> parameters;
-//
-//   // HOTFIX : generate a temporal template to pass the type
-//   SyntaxTree dummyTree;
-//   SyntaxWriter dummyWriter(dummyTree);
-//   dummyWriter.newNode(lxRoot);
-//   dummyWriter.newNode(lxTarget, elementRef);
-//   ident_t refName = scope.module->resolveReference(elementRef);
-//   if (isWeakReference(refName)) {
-//      dummyWriter.appendNode(lxReference, refName);
-//   }
-//   else dummyWriter.appendNode(lxGlobalReference, refName);
-//   dummyWriter.closeNode();
-//   dummyWriter.closeNode();
-//
-//   parameters.add(dummyTree.readRoot().firstChild());
-//
-//   return scope.generateTemplate(templateRef, parameters, ns, declarationMode);
-//}
-//
+ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns, bool declarationMode)
+{
+   if (!elementRef)
+      elementRef = scope.superReference;
+
+   // generate a reference class
+   List<SNode> parameters;
+
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
+   SyntaxWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(lxRoot);
+   dummyWriter.newNode(lxType, elementRef);
+   ident_t refName = scope.module->resolveReference(elementRef);
+   if (isWeakReference(refName)) {
+      dummyWriter.appendNode(lxReference, refName);
+   }
+   else dummyWriter.appendNode(lxGlobalReference, refName);
+   dummyWriter.closeNode();
+   dummyWriter.closeNode();
+
+   parameters.add(dummyTree.readRoot().firstChild());
+
+   return scope.generateTemplate(templateRef, parameters, ns, declarationMode);
+}
+
 //ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode)
 //{
 //   writer.newBookmark();
@@ -4955,28 +4952,30 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
 
    EAttr paramsMode = EAttr::eaNone;
    int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
-   /*ref_t implicitSignatureRef = */compileMessageParameters(node, scope, paramsMode/*, variadicOne, inlineArg*/);
+   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode/*, variadicOne, inlineArg*/);
    ref_t messageRef = 0;
    if (paramCount == 0) {
       // if it is a generic object creation
       messageRef = scope.moduleScope->constructor_message;
    }
+   else if (target.reference == V_OBJARRAY && paramCount == 1) {
+
+      throw InternalError("not yet implemented"); // !! temporal
+
+      //         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef,
+      //                                          resolveObjectReference(scope, roperand, false));
+      //         if (operationType != 0) {
+      //            // if it is a primitive operation
+      //            _logic->injectNewOperation(writer, *scope.moduleScope, operationType, targetRef, target.element);
+      //
+      //            retVal.reference = target.reference;
+      //            retVal.element = target.element;
+      //         }
+      //         else scope.raiseError(errInvalidOperation, node.parentNode());
+   }
+   else throw InternalError("not yet implemented"); // !! temporal
+
    //   else if (node.argument == V_NEWOP) {
-   //      // if it is a implicit constructor
-   //      if (target.reference == V_OBJARRAY && paramCount == 1) {
-   //         ObjectInfo roperand = compileExpression(writer, node.findNext(lxObjectMask), scope, 0, EAttr::eaNone);
-   //
-   //         int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef,
-   //                                          resolveObjectReference(scope, roperand, false));
-   //         if (operationType != 0) {
-   //            // if it is a primitive operation
-   //            _logic->injectNewOperation(writer, *scope.moduleScope, operationType, targetRef, target.element);
-   //
-   //            retVal.reference = target.reference;
-   //            retVal.element = target.element;
-   //         }
-   //         else scope.raiseError(errInvalidOperation, node.parentNode());
-   //      }
    //      else {
    //         EAttr paramsMode = EAttr::eaNone;
    //         
@@ -5209,6 +5208,9 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
    if (test(node.type, lxTerminalMask)) {
       typeRef = resolveTypeIdentifier(scope, node, declarationMode);
    }
+   else if (node == lxArrayType) {
+      typeRef = resolvePrimitiveArray(scope, resolveTypeAttribute(node.firstChild(), scope, declarationMode), declarationMode);
+   }
    else {
       typeRef = node.argument;
 
@@ -5285,7 +5287,7 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //      exprAttr.exclude(EAttr::eaCast | EAttr::eaNewOp);
 //   }
 
-   if (current == lxType && test(current.nextNode(), lxTerminalMask)) {
+   if (current.compare(lxType, lxArrayType) && test(current.nextNode(), lxTerminalMask)) {
 //      if (typeRef == 0) {
          typeRef = resolveTypeAttribute(current, scope, false);
 
@@ -5751,9 +5753,18 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
    }
 
    if (mode.testAndExclude(HINT_NEWOP)) {
-      ref_t typeRef = resolveTypeAttribute(current, scope, false);
+      if (current == lxArrayType) {
+         // if it is an array creation
+         result.kind = okClass;
+         result.element = resolveTypeAttribute(current.firstChild(), scope, false);
+         result.param = resolvePrimitiveArray(scope, result.element, false);
+         result.reference = V_OBJARRAY;
+      }
+      else {
+         ref_t typeRef = resolveTypeAttribute(current, scope, false);
 
-      result = mapClassSymbol(scope, typeRef);
+         result = mapClassSymbol(scope, typeRef);
+      }
 
       recognizeTerminal(current, result, scope, mode);
 
@@ -7499,7 +7510,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    else if (bodyNode == lxReturning) {
       retExpr = true;
    }
-   else if (defaultConstructor) {
+   else if (defaultConstructor && !test(classFlags, elDynamicRole)) {
       compileDefaultConstructor(node, scope);
    }
    // if no redirect statement - call either public or non-public implicit constructor
@@ -8116,31 +8127,31 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
       scope.raiseError(errIllegalField, current);
 
    int size = (classRef != 0) ? _logic->defineStructSize(*scope.moduleScope, classRef, elementRef) : 0;
-//   bool fieldArray = false;
-//   if (sizeHint != 0) {
-//      if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
-//         // for primitive types size should be specified
-//         size = sizeHint;
-//      }
-//      else if (size > 0) {
-//         size *= sizeHint;
-//
-//         // HOTFIX : to recognize the fixed length array
-//         if (elementRef == 0 && !isPrimitiveRef(classRef))
-//            elementRef = classRef;
-//
-//         fieldArray = true;
-//         classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef, true);
-//      }
-//      else scope.raiseError(errIllegalField, current);
-//   }
+   bool fieldArray = false;
+   if (sizeHint != 0) {
+      if (isPrimitiveRef(classRef) && (size == sizeHint || (classRef == V_INT32 && sizeHint <= size))) {
+         // for primitive types size should be specified
+         size = sizeHint;
+      }
+      else if (size > 0) {
+         size *= sizeHint;
+
+         // HOTFIX : to recognize the fixed length array
+         if (elementRef == 0 && !isPrimitiveRef(classRef))
+            elementRef = classRef;
+
+         fieldArray = true;
+         classRef = _logic->definePrimitiveArray(*scope.moduleScope, elementRef, true);
+      }
+      else scope.raiseError(errIllegalField, current);
+   }
 
    if (test(flags, elWrapper) && scope.info.fields.Count() > 0) {
       // wrapper may have only one field
       scope.raiseError(errIllegalField, current);
    }
    // if the sealed class has only one strong typed field (structure) it should be considered as a field wrapper
-   else if (embeddable/* && !fieldArray*/) {
+   else if (embeddable && !fieldArray) {
       if (!singleField || scope.info.fields.Count() > 0)
          scope.raiseError(errIllegalField, current);
 
@@ -8206,7 +8217,7 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          scope.info.fields.add(terminal, offset);
 
          if (classRef != 0)
-            scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, /*typeRef*/0));
+            scope.info.fieldTypes.add(offset, ClassInfo::FieldInfo(classRef, 0));
       }
   }
 
@@ -8804,6 +8815,8 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
 
    declareVMT(node, scope);
 
+   // NOTE : generateClassDeclaration should be called for the proper class before a class class one
+   //        due to dynamic array implementation (auto-generated default constructor should be removed)
    generateClassDeclaration(node, scope);
 
    if (_logic->isRole(scope.info)) {
@@ -10771,7 +10784,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
 //   scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
    scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
 //   scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
-//   scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
+   scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
 //   scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
 //   scope.messageNameReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGENAME_FORWARD));
 //   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
@@ -11208,6 +11221,7 @@ void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, re
 void Compiler :: injectDefaultConstructor(_ModuleScope& scope, SNode classNode)
 {
    SNode methNode = classNode.appendNode(lxConstructor, scope.constructor_message);
+   methNode.appendNode(lxAutogenerated);
    methNode.appendNode(lxAttribute, tpConstructor);
 }
 

@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   27
+#define REVISION_VERSION   28
 
 using namespace _ELENA_;
 
@@ -1001,9 +1001,9 @@ void listFlags(int flags, int& row, int pageSize)
    //   case elDebugIntegers:
    //      printLine("@flag ", "elDebugIntegers", row, pageSize);
    //      break;
-   //   case elDebugArray:
-   //      printLine("@flag ", "elDebugArray", row, pageSize);
-   //      break;
+      case elDebugArray:
+         printLine("@flag ", "elDebugArray", row, pageSize);
+         break;
    //   case elDebugQWORD:
    //      printLine("@flag ", "elDebugQWORD", row, pageSize);
    //      break;

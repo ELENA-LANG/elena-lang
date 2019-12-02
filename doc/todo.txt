@@ -3,7 +3,7 @@ In development:
 ------         
               dev
                 * dynamic array - default constructor have a int argument, and creates the array with apropriate length
-                * arrays
+                * declare array, use array
                 * creating dynamic array / buffers
 
                 * template of templates

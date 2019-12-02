@@ -148,6 +148,7 @@ enum LexicalType
    lxReserved                 = 0x000F14,
    lxIntValue                 = 0x000F16,   // arg - integer value
    lxTemplateIdentParam       = 0x000F17,
+   lxArrayType                = 0x000F18,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -287,7 +288,6 @@ enum LexicalType
 //   lxTemplateNameParam        = 0x20046,
 //   lxTemplateMsgParam         = 0x20047,
 //   lxByRefTarget              = 0x20049,
-//   lxArrayType                = 0x2004A,
 //   lxDimensionAttr            = 0x2004B,
 //   lxCheckLocal               = 0x2004C,
 //   lxTapeArgument             = 0x2004D,

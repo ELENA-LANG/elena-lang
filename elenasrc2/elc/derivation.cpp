@@ -725,7 +725,7 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
    //   bool withoutMapping = false;
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current == lxToken) {
-      bool allowType = current.nextNode()/*.compare(lxNameAttr)*/ == nameNodeType;
+      bool allowType = current.nextNode().compare(nameNodeType, lxDynamicSizeDecl);
 
       ref_t attrRef = mapAttribute(current, allowType, /*allowPropertyTemplate, */attributeCategory);
       if (isPrimitiveRef(attrRef)) {
@@ -771,7 +771,7 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
    SNode nameNode = current;
    nameNode = lxNameAttr;
 
-   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken/*, lxInlineAttribute*/), mode, lxNameAttr);
+   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken, lxDynamicSizeDecl), mode, lxNameAttr);
 
    SNode nameTerminal = nameNode.firstChild(lxTerminalMask);
    IdentifierString name(nameTerminal.identifier().c_str());
@@ -1012,20 +1012,20 @@ void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode 
    ref_t attributeCategory = 0u;
    while (current != lxNone) {
       if (current == lxToken) {
-         generateExpressionAttribute(writer, current, derivationScope, attributeCategory, true);
+         generateExpressionAttribute(writer, current, derivationScope, attributeCategory, 0, true);
       }
       current = current.nextNode();
    }
 }
 
-void DerivationWriter :: generateTypeAttribute(SyntaxWriter& writer, SNode node/*, size_t dimensionCounter*/, 
-   ref_t typeRef, Scope& derivationScope)
+void DerivationWriter :: generateTypeAttribute(SyntaxWriter& writer, SNode node, ref_t typeRef, int dimensionCounter, 
+   Scope& derivationScope)
 {
-   SNode terminal = node.firstChild(lxTerminalMask);
+   for (int i = 0; i < dimensionCounter; i++) {
+      writer.newNode(lxArrayType);
+   }
 
-//   writer.newNode(lxTypeAttribute);
-//   for (size_t i = 0; i < dimensionCounter; i++)
-//      writer.newNode(lxArrayType);
+   SNode terminal = node.firstChild(lxTerminalMask);
 
    if (typeRef == V_TEMPLATE) {
       writer.newNode(lxType, V_TEMPLATE);
@@ -1050,10 +1050,9 @@ void DerivationWriter :: generateTypeAttribute(SyntaxWriter& writer, SNode node/
       writer.closeNode();
    }
 
-//   for (size_t i = 0; i < dimensionCounter; i++)
-//      writer.closeNode();
-
-//   writer.closeNode();
+   for (int i = 0; i < dimensionCounter; i++) {
+      writer.closeNode();
+   }
 }
 
 void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
@@ -1063,18 +1062,24 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
       // HOTFIX : skip template arguments
       current = current.prevNode();
 
+   int dimensionCounter = 0;
    SNode nameNode;
    if (current == lxNameAttr) {
       nameNode = current;
 
-      current = goToFirstNode(nameNode.prevNode(), lxAttribute, lxType/*, lxInlineAttribute */);
+      current = current.prevNode();
+      while (current == lxDynamicSizeDecl) {
+         dimensionCounter++;
+
+         current = current.prevNode();
+      }
+
+      current = goToFirstNode(current, lxAttribute, lxType/*, lxInlineAttribute */);
    }
 
    while (true) {
       if (current == lxType/* || (current.argument == V_TEMPLATE && current == lxAttribute)*/) {
-//         size_t dimensionCounter = SyntaxTree::countChild(current, lxDynamicSizeDecl);
-//
-         generateTypeAttribute(writer, current/*, dimensionCounter*/, current.argument, derivationScope);
+         generateTypeAttribute(writer, current, current.argument, dimensionCounter, derivationScope);
       }
 //      //else if (current == lxInlineAttribute) {
 //      //   // COMPILER MAGIC : inject an attribute template
@@ -1084,15 +1089,13 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
          writer.newNode(lxAttribute, current.argument);
          copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
 
-//         if (current.existChild(lxDynamicSizeDecl))
-//            _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
-
          writer.closeNode();
       }
       else break;
 
       current = current.nextNode();
    }
+
    if (nameNode != lxNone) {
 //      if (nameNode.existChild(lxDynamicSizeDecl))
 //         _scope->raiseError(errInvalidSyntax, _filePath, nameNode.findChild(lxDynamicSizeDecl));
@@ -1695,18 +1698,17 @@ void DerivationWriter :: generateStatementTemplateTree(SyntaxWriter& writer, SNo
 //}
 
 void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
-   ref_t& previousCategory, bool templateArgMode/*, bool onlyAttributes*/)
+   ref_t& previousCategory, int dimensionCounter, bool templateArgMode/*, bool onlyAttributes*/)
 {
    bool allowType = /*!onlyAttributes && (*/templateArgMode || current.nextNode().nextNode() != lxToken/*)*/;
 //   bool allowProperty = false;
    
-//   size_t dimensionCounter = SyntaxTree::countChild(current, lxDynamicSizeDecl);
 //   if (dimensionCounter && !allowType)
 //      _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
 
    if (current.nextNode() == lxTemplateArgs) {
       // if it is a template based type
-      generateTypeAttribute(writer, current, /*dimensionCounter, */V_TEMPLATE, derivationScope);
+      generateTypeAttribute(writer, current, dimensionCounter, V_TEMPLATE, derivationScope);
    }
    else {
       ref_t attrRef = mapAttribute(current, allowType, /*allowProperty, */previousCategory);
@@ -1717,7 +1719,7 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
          copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
          writer.closeNode();
       }
-      else generateTypeAttribute(writer, current, /*dimensionCounter, */attrRef, derivationScope);
+      else generateTypeAttribute(writer, current, /*dimensionCounter, */attrRef, dimensionCounter, derivationScope);
    }
 }
 
@@ -1795,7 +1797,11 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
    // find the last token
    SNode lastNode = node;
    node = node.nextNode();   
-   while (node.compare(lxToken, lxTemplateArgs)) {
+   int dimensionCounter = 0;
+   while (node.compare(lxToken, lxTemplateArgs, lxDynamicSizeDecl)) {
+      if (node == lxDynamicSizeDecl)
+         dimensionCounter++;
+
       lastNode = node;
       node = node.nextNode();
    }
@@ -1821,7 +1827,7 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
       while (current != lastNode) {
          if (current == lxToken)
             // skip template args
-            generateExpressionAttribute(writer, current, derivationScope, attributeCategory, false);
+            generateExpressionAttribute(writer, current, derivationScope, attributeCategory, dimensionCounter, false);
 
          current = current.nextNode();
       }

@@ -89,7 +89,7 @@ constexpr auto V_TEMPLATE        = 0x8000101Eu;
 constexpr auto V_NAMESPACE       = 0x80001021u;
 
 /// primitive type attributes
-//constexpr auto V_STRING          = 0x80000801u;
+constexpr auto V_STRING          = 0x80000801u;
 //constexpr auto V_FLOAT           = 0x80000802u;
 constexpr auto V_INTBINARY       = 0x80000803u;
 //constexpr auto V_BINARY          = 0x80000804u;
@@ -109,7 +109,7 @@ constexpr auto V_INT32           = 0x80000003u;
 //constexpr auto V_REAL64          = 0x80000006u;
 //constexpr auto V_EXTMESSAGE      = 0x80000007u;
 //constexpr auto V_PTR32           = 0x80000008u;
-//constexpr auto V_OBJARRAY        = 0x80000009u;
+constexpr auto V_OBJARRAY        = 0x80000009u;
 //constexpr auto V_INT32ARRAY      = 0x8000000Au;
 //constexpr auto V_BINARYARRAY     = 0x8000000Bu;
 //constexpr auto V_INT16ARRAY      = 0x8000000Cu;
@@ -243,7 +243,7 @@ struct _ModuleScope
 //   ref_t             wideReference;
 //   ref_t             charReference;
 //   ref_t             refTemplateReference;
-//   ref_t             arrayTemplateReference;
+   ref_t             arrayTemplateReference;
 //   ref_t             argArrayTemplateReference;
    ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
@@ -369,7 +369,7 @@ struct _ModuleScope
 //      charReference = realReference = 0;
       closureTemplateReference = /*refTemplateReference = */0;
 //      lazyExprReference = extMessageReference = 0;
-//      arrayTemplateReference = 0;
+      arrayTemplateReference = 0;
 //      wrapReference = argArrayTemplateReference = 0;
 //
       init_message = dispatch_message = 0;
@@ -437,7 +437,7 @@ public:
 //      bool  isConstAttr;
 //      bool  isSealedAttr;
 //      bool  isClassAttr;
-//      bool  isArray;
+      bool  isArray;
 
 //      // if the field should be mapped to the message
 //      ref_t messageRef;
@@ -448,7 +448,7 @@ public:
          elementRef = fieldRef = 0;
          size = 0;
          /*isClassAttr = isStaticField = */isEmbeddable = /*isConstAttr = isSealedAttr = */false;
-//         isArray = false;
+         isArray = false;
 
 //         messageRef = messageAttr = 0;
       }

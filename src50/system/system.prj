@@ -18,6 +18,7 @@
        <include>basic.l</include>
        <include>templates.l</include>
        <include>control.l</include>
+       <include>memory.l</include>
        <include>dynamic.l</include>
        <include>exceptions.l</include>
      </module>
