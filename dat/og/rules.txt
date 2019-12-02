@@ -12,3 +12,4 @@ open pusha peekfi := 1 close quitn => nop nop nop nop quitn;
 open pusha peekfi := 1 close quit => nop nop nop nop quit;
 
 pusha peeksi := 0 => pusha nop;
+pushr peeksi := 0 => setr pusha;

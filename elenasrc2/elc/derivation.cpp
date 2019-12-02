@@ -143,7 +143,7 @@ void DerivationWriter :: closeNodeDirectly()
 
 DerivationWriter::MetaScope DerivationWriter :: recognizeMetaScope(SNode node)
 {
-   recognizeScopeAttributes(node.lastChild(), 0);
+   recognizeScopeAttributes(node.lastChild(), MODE_ROOT);
 
    MetaScope scopeType = MetaScope::None;
 
@@ -330,8 +330,11 @@ void DerivationWriter :: generateTemplateTree(SNode node, ScopeType templateType
 //      templateScope.ignoreTerminalInfo = true;
 //   }
 
-   loadTemplateParameters(templateScope, node.findChild(lxTemplateArgs));
+   SNode argsNode = node.prevNode();
+   loadTemplateParameters(templateScope, argsNode);
    
+   SNode nameNode = argsNode.prevNode();
+
    //SyntaxTree templateTree;
    //SyntaxWriter templateWriter(templateTree);
 
@@ -339,9 +342,9 @@ void DerivationWriter :: generateTemplateTree(SNode node, ScopeType templateType
    //
    //templateWriter.closeNode();
 
-   SNode identNode = node.prevNode().firstChild(lxTerminalMask);
+   SNode identNode = nameNode.firstChild(lxTerminalMask);
    IdentifierString name(identNode.identifier());
-   int paramCounter = SyntaxTree::countChild(node.firstChild(), lxToken);
+   int paramCounter = templateScope.parameters.Count();
    //switch (templateMode) {
    //case V_INLINE:
    //   name.append("#inline#");
@@ -467,7 +470,7 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
 //   else if (bodyNode.compare(lxSizeDecl, lxFieldInit)) {
 //      _scope->raiseError(errInvalidSyntax, _filePath, bodyNode);
 //   }
-   else if (bodyNode == lxTemplateArgs) {
+   else if (scopeNode.prevNode() == lxTemplateArgs) {
       scopeNode = lxClass;
 
       recognizeClassMebers(scopeNode);
@@ -757,6 +760,13 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
 
 void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 {
+   if (current == lxTemplateArgs) {
+      if (test(mode, MODE_ROOT)) {
+         current = current.prevNode();
+      }
+      else raiseError(errInvalidSyntax, current);
+   }      
+
    // set name
    SNode nameNode = current;
    nameNode = lxNameAttr;
@@ -1049,6 +1059,9 @@ void DerivationWriter :: generateTypeAttribute(SyntaxWriter& writer, SNode node/
 void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
 {
    SNode current = node;
+   if (current == lxTemplateArgs)
+      // HOTFIX : skip template arguments
+      current = current.prevNode();
 
    SNode nameNode;
    if (current == lxNameAttr) {

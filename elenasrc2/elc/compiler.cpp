@@ -5011,6 +5011,9 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
       scope.raiseError(errDefaultConstructorNotFound, exprNode);
    }      
 
+   // HOTFIX : set the correct template reference (weak template one) if required
+   retVal.reference = targetRef;
+
    return retVal;
 }
 

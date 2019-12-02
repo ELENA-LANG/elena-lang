@@ -2,14 +2,13 @@
 In development:
 ------         
               dev
-                * templates : declaration, using
-                * template of templates
-                * field - template, template of templates
-                * parameter - template, template of templates
-
                 * dynamic array - default constructor have a int argument, and creates the array with apropriate length
                 * arrays
                 * creating dynamic array / buffers
+
+                * template of templates
+                * field - template, template of templates
+                * parameter - template, template of templates
                 * array of templates
                 * template of arrays
 
@@ -259,6 +258,7 @@ In development:
                 * adding source path link on tempate based classes with field initializers
                 * private / internal class templates
                 * invalid operation : var a.test();
+                * debugger : do not copy template parameter terminal info
 
               dev1
                 * write - Programming in ELENA : manual
