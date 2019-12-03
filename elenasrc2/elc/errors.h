@@ -87,7 +87,7 @@ namespace _ELENA_
    constexpr auto errDupPublicMethod            = "%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
 //   //   #define errOneDefaultConstructor "%s(%d:%d): error 168: a class '%s' should have only one default constructor\n"
    constexpr auto errEmptyStructure             = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
-//   constexpr auto errReadOnlyField              = "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n";
+   constexpr auto errReadOnlyField              = "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n";
    constexpr auto errDefaultConstructorNotFound = "%s(%d:%d): error 171: implicit constructor is not found for '%s'\n";
    constexpr auto errInvalidType                = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
    constexpr auto errDupInternalMethod          = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";

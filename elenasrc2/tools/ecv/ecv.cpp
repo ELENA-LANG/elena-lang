@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   28
+#define REVISION_VERSION   29
 
 using namespace _ELENA_;
 
@@ -533,7 +533,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPeekFI:
       case bcStoreFI:
 //      case bcDLoadFI:
-      case bcSetF:
+      case bcMovF:
       case bcAddF:
       case bcSubF:
       case bcMulF:
@@ -594,7 +594,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcALoadR:
       case bcCallR:
 //      case bcASaveR:
-      case bcSetR:
+      case bcMovR:
       case bcCreateR:
       case bcFillR:
 //      case bcBCopyR:
@@ -623,7 +623,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcAddN:
 //      case bcDLoadSI:
 //      case bcBLoadAI:
-      case bcGetAI:
+      case bcGet:
          printCommand(command, opcode);
          command.appendHex(argument);
          command.append('h');
@@ -638,7 +638,8 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printCommand(command, opcode);
          command.appendInt(argument);
          break;
-      case bcSetAI:
+      case bcSet:
+      case bcXSet:
 //      case bcAXSaveBI:
 //      case bcALoadBI:
          printCommand(command, opcode);
@@ -661,7 +662,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printMessage(command, module, argument2);
          command.append("\"");
          break;
-      case bcSetM:
+      case bcLoadM:
          printCommand(command, opcode);
          command.append("mssgconst : \"");
          printMessage(command, module, argument);
@@ -695,6 +696,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCopyToFI:
       case bcCopyToF:
       case bcCopyToAI:
+      case bcXSetFI:
          printCommand(command, opcode);
          command.appendInt(argument);
          command.append(" ");

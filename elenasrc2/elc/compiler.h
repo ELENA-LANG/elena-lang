@@ -126,10 +126,10 @@ public:
 //      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
       okFieldAddress,                 // param - field offset
       okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
-//      okOuter,                        // param - field offset
-//      okOuterField,                   // param - field offset, extraparam - outer field offset
-//      okOuterReadOnlyField,           // param - field offset, extraparam - outer field offset
-//      okOuterSelf,                    // param - field offset, extraparam - outer field offset
+      okOuter,                        // param - field offset
+      okOuterField,                   // param - field offset, extraparam - outer field offset
+      okOuterReadOnlyField,           // param - field offset, extraparam - outer field offset
+      okOuterSelf,                    // param - field offset, extraparam - outer field offset
 //      okOuterStaticField,             // param - field offset, extraparam - outer field offset
 //      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
 ////////      okCurrent,                      // param - stack offset
@@ -139,7 +139,7 @@ public:
 //      okSubject,                      // param - parameter offset
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
-//      okSuper,
+      okSuper,
       okLocalAddress,                 // param - local offset
 //      okParams,                       // param - local offset
 //////      okBlockLocal,                   // param - local offset
@@ -218,6 +218,7 @@ private:
             slSymbol,
             slMethod,
             slCode,
+            slExpression,
             slYieldCode,
             slOwnerClass,
          };
@@ -550,12 +551,12 @@ private:
 //      bool         extensionMode;
       bool         multiMethod;
       bool         functionMode;
-//      bool         nestedMode;
+      bool         nestedMode;
 //      bool         subCodeMode;       
 //      bool         abstractMethod;
 //      bool         yieldMethod;
 //      bool         embeddableRetMode;
-//      bool         targetSelfMode;        // used for script generated methods - self refers to __target
+      bool         targetSelfMode;        // used for script generated methods - self refers to __target
 ////      bool         dispatchMode;
       bool         constMode;
 
@@ -625,7 +626,7 @@ private:
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       ObjectInfo mapSelf(/*bool forced = false*/);
-//      ObjectInfo mapGroup();
+      ObjectInfo mapGroup();
       ObjectInfo mapParameter(Parameter param, EAttr mode);
 
       MethodScope(ClassScope* parent);
@@ -765,6 +766,14 @@ private:
 
       Map<ClassInfo::Attribute, int> tempLocals;
 
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slExpression) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
       int newTempLocal();
 
       ref_t getMessageID()
@@ -806,36 +815,36 @@ private:
    // - InlineClassScope -
    struct InlineClassScope : public ClassScope
    {
-//      struct Outer
-//      {
-//         ref_t      reference;
-//         bool       preserved;
-//         ObjectInfo outerObject;
-//
-//         Outer()
-//         {
-//            reference = INVALID_REF;
-//            preserved = false;
-//         }
-//         Outer(int reference, ObjectInfo outerObject)
-//         {
-//            this->reference = reference;
-//            this->outerObject = outerObject;
-//            this->preserved = false;
-//         }
-//      };
-//
+      struct Outer
+      {
+         ref_t      reference;
+         bool       preserved;
+         ObjectInfo outerObject;
+
+         Outer()
+         {
+            reference = INVALID_REF;
+            preserved = false;
+         }
+         Outer(int reference, ObjectInfo outerObject)
+         {
+            this->reference = reference;
+            this->outerObject = outerObject;
+            this->preserved = false;
+         }
+      };
+
 //      bool                    returningMode;
-//      Map<ident_t, Outer>     outers;
+      Map<ident_t, Outer>     outers;
 //      ClassInfo::FieldTypeMap outerFieldTypes;
-//
-//      Outer mapSelf();
-//      Outer mapOwner();
-//      Outer mapParent();
-//
+
+      Outer mapSelf();
+      Outer mapOwner();
+      Outer mapParent();
+
 //      ObjectInfo allocateRetVar();
-//
-//      bool markAsPresaved(ObjectInfo object);
+
+      bool markAsPresaved(ObjectInfo object);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -845,7 +854,7 @@ private:
          else return Scope::getScope(level);
       }
 
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       InlineClassScope(ExprScope* owner, ref_t reference);
    };

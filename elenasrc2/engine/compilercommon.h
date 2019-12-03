@@ -145,7 +145,7 @@ enum MethodHint
 //   tpEmbeddable  = 0x0000020,
 //   tpGeneric     = 0x0000040,
    tpFunction      = 0x0000080,
-//   tpTargetSelf  = 0x0000100, // used for script generated classes (self refers to __target)
+   tpTargetSelf   = 0x0000100, // used for script generated classes (self refers to __target)
    tpConstructor  = 0x0200400,
    tpConversion   = 0x0200800,
    tpMultimethod  = 0x0001000,

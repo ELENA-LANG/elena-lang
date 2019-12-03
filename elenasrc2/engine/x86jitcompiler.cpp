@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/39;
+const int gcCommandNumber = /*160*/41;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -71,8 +71,9 @@ const int gcCommands[gcCommandNumber] =
    bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
    bcMTRedirect, bcJumpVI, bcXMTRedirect, bcRestore, bcPushF,
    bcCopyF, bcCopyFI, bcAddF, bcCopyToF, bcCopyToFI,
-   bcSubF, bcMulF, bcDivF, bcPushAI, bcGetAI,
-   bcSetAI, bcCopyToAI, bcCreateR, bcFillR,
+   bcSubF, bcMulF, bcDivF, bcPushAI, bcGet,
+   bcSet, bcCopyToAI, bcCreateR, bcFillR, bcXSet,
+   bcXSetFI,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -146,7 +147,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &loadIndexOp, &loadIndexOp, &compileNop, &loadFPOp, &loadIndexOp, &compileNop, &compileNop,
+   &compileNop, &loadIndexOp, &loadIndexOp, &compileNop, &loadFPOp, &loadIndexOp, &compileNop, &loadIndexOp,
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileNop, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
@@ -161,7 +162,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
+   &compileNop, &compileNop, & loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileNop, &compileNop,
@@ -442,6 +443,37 @@ void _ELENA_::loadFPNOp(int opcode, x86JITScope& scope)
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadFPIndexOp(int opcode, x86JITScope& scope)
+{
+   int arg2 = scope.tape->getDWord();
+
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(-(scope.argument << 2));
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2 << 2);
       }
 
       relocation += 2;

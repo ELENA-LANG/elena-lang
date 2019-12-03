@@ -12,7 +12,7 @@ procedure __object."#dispatch[1]"
   savesi   3
   pushs   -3
   pusha
-  setr     class : system'Message
+  movr     class : system'Message
   pushr    class : system'MethodNotFoundException
   storesi  5
   peeksi   0

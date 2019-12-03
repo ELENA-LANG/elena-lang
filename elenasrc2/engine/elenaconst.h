@@ -433,12 +433,12 @@ namespace _ELENA_
   // --- ELENA explicit variables ---
    constexpr auto GROUP_VAR                  = "__target";         // the current method target / closure owner method target
    constexpr auto SELF_VAR                   = "self";             // the current method class reference / closure owner class reference
-//   constexpr auto SUPER_VAR            = "super";            // the predecessor class
+   constexpr auto SUPER_VAR                  = "super";            // the predecessor class
 //   constexpr auto SUBJECT_VAR          = "__received";       // the current message
    constexpr auto NIL_VAR                    = "nil";              // the nil pseudo symbol - representing the null value
-//   constexpr auto RETVAL_VAR           = "$$ret";            // the closure returning value
-//   constexpr auto OWNER_VAR            = "$$owner";          // the nested class / closure owner
-//   constexpr auto PARENT_VAR           = "$$parent";         // the closure parent
+   constexpr auto RETVAL_VAR                 = "$$ret";            // the closure returning value
+   constexpr auto OWNER_VAR                  = "$$owner";          // the nested class / closure owner
+   constexpr auto PARENT_VAR                 = "$$parent";         // the closure parent
 //   constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
 
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name

@@ -151,21 +151,21 @@ enum ByteCode
 //   bcRLoad           = 0x8F,
 //
 //   bcDCopy           = 0x90,
-   bcGetAI           = 0x91,
+   bcGet             = 0x91,
    bcRestore         = 0x92,
 //   bcALoadR          = 0x93,
    bcPeekFI          = 0x94,
    bcPeekSI          = 0x95,
 //   bcIfHeap          = 0x96,
-//   bcBCopyS          = 0x97,
+   bcXSet            = 0x97,
    bcOpen            = 0x98,
    bcQuitN           = 0x99,
    bcCreateR         = 0x9A,
    bcFillR           = 0x9B,
-   bcSetF            = 0x9C,
+   bcMovF            = 0x9C,
 //   bcACopyS          = 0x9D,
-   bcSetR            = 0x9E,
-   bcSetM            = 0x9F,
+   bcMovR            = 0x9E,
+   bcLoadM           = 0x9F,
 
    bcJump            = 0xA0,
    bcJumpVI          = 0xA1,
@@ -201,7 +201,7 @@ enum ByteCode
    bcPushS           = 0xBE,
    bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
 
-   bcSetAI           = 0xC0,
+   bcSet             = 0xC0,
 //   bcNWriteI         = 0xC1,
 //   bcASwapSI         = 0xC2,
    bcStoreSI         = 0xC3,
@@ -240,6 +240,7 @@ enum ByteCode
 //   bcNewI            = 0xE1,
 //   bcACopyAI         = 0xE2,
 
+   bcXSetFI          = 0xE2,
    bcCopyToAI        = 0xE3,
    bcCopyToFI        = 0xE4,
    bcCopyToF         = 0xE5,
@@ -312,7 +313,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x8F
-#define MAX_DOUBLE_ECODE 0xE2
+#define MAX_DOUBLE_ECODE 0xE1
 
 enum PseudoArg
 {
@@ -451,7 +452,7 @@ public:
          case bcCallR:
          //case bcALoadR:
          //case bcASaveR:
-         case bcSetR:
+         case bcMovR:
          case bcNew:
          case bcFillRI:
          case bcFillR:
@@ -498,7 +499,7 @@ public:
    static bool IsMCode(ByteCode code)
    {
       switch (code) {
-         case bcSetM:
+         case bcLoadM:
             return true;
          default:
             return false;

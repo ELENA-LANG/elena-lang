@@ -123,7 +123,8 @@ enum LexicalType
    lxIntOp                    = 0x0581B1,   // arg - operation id
    lxField                    = 0x0181C0,   // arg - offset
    lxFieldAddress             = 0x0181C1,   // arg - offset
-   lxNewArrOp                 = 0x0181D0,
+   lxNewArrOp                 = 0x0581D0,
+   lxInitializing             = 0x0581E0,
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -150,6 +151,7 @@ enum LexicalType
    lxIntValue                 = 0x000F16,   // arg - integer value
    lxTemplateIdentParam       = 0x000F17,
    lxArrayType                = 0x000F18,
+   lxMember                   = 0x000F19,  // a collection member, arg - offset
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -259,7 +261,6 @@ enum LexicalType
 //   lxReal64Variable           = 0x1002A,
 //   lxForward                  = 0x1002E,
 //   lxBinaryVariable           = 0x10038,
-//   lxMember                   = 0x10039,  // a collection member, arg - offset
 //   lxOuterMember              = 0x1003A,  // a collection member, arg - offset
 //   lxIntsVariable             = 0x1003B,
 //   lxBytesVariable            = 0x1003C,

@@ -942,7 +942,7 @@ inline % 2Ah
 
 end
 
-// ; getai
+// ; get
 inline % 91h
 
   mov  ebx, [ebx+__arg1]
@@ -967,6 +967,14 @@ end
 inline % 95h
 
   mov  ebx, [esp+__arg1]
+
+end
+
+// ; xset
+inline %97h
+
+  mov  eax, [esp]                   
+  mov [ebx + __arg1], eax
 
 end
 
@@ -1006,6 +1014,7 @@ end
 inline % 09Bh
   mov  esi, [esp]	
   mov  eax, __arg1	
+  mov  edi, ebx
   mov  ecx, [esi]
   rep  stosd
 
@@ -1075,7 +1084,7 @@ inline % 0BEh
 
 end
 
-// ; setai
+// ; set
 inline %0C0h
 
   mov  esi, ebx
@@ -1495,6 +1504,14 @@ labNext:
   mov  ecx, [ecx + edx * 8] // ; message from overload list
   and  ecx, ecx
   jnz  labNextOverloadlist
+
+end
+
+// ; xsetfi (__arg1 - index, __arg2 - index)
+inline % 0E2h
+
+  mov  eax, [ebp + __arg1]
+  mov  [ebx + __arg2], eax
 
 end
 

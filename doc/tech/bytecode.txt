@@ -14,25 +14,29 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
- getai i                    - acc <= acc[i] ;
- 
+ get i                      - acc <= acc[i] ;
+
  peekfi i                   - [fp+i] => acc;
 
  peeksi i                   - [sp+i] => acc;
 
- setf i                     - fp+i => acc
+ set i                      - [sp] => acc[i]
+                       
+ movf i                     - fp+i => acc
 
- setai i                    - [sp] => acc[i]
-                             
- setm m                     - m => index
+ loadm m                    - m => index
 
- setr r                     - r => acc
+ movr r                     - r => acc
            
  savesi i                   - [sp:i] <= index
 
  storefi i                  - [fp+i] <= acc 
  
  storesi i                  - [sp+i] <= acc
+
+ xset i                     - [sp] => acc[i]; direct operation
+                       
+ xsetfi i1 i2               - [fp+i1] => acc[i2]; direct operation 
 
 
  Memory operations:

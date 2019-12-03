@@ -680,10 +680,10 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, EAttr scopeMode)
 
 ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
 {
-//   if (!referenceOne && identifier.compare(SUPER_VAR)) {
-//      return ObjectInfo(okSuper, 0, info.header.parentRef);
-//   }
-//   else {
+   if (!referenceOne && identifier.compare(SUPER_VAR)) {
+      return ObjectInfo(okSuper, 0, info.header.parentRef);
+   }
+   else {
       if (!referenceOne) {
          ObjectInfo fieldInfo = mapField(identifier, mode);
          if (fieldInfo.kind != okUnknown) {
@@ -691,7 +691,7 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenc
          }
       }
       return Scope::mapTerminal(identifier, referenceOne, mode);
-//   }
+   }
 }
 
 // --- Compiler::MetodScope ---
@@ -711,12 +711,12 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->extensionMode = false;
    this->multiMethod = false;
    this->functionMode = false;
-//   this->nestedMode = parent->getScope(Scope::slOwnerClass) != parent;
+   this->nestedMode = parent->getScope(Scope::ScopeLevel::slOwnerClass) != parent;
 //   this->subCodeMode = false;
 //   this->abstractMethod = false;
 //   this->genericClosure = false;
 //   this->embeddableRetMode = false;
-//   this->targetSelfMode = false;
+   this->targetSelfMode = false;
 //   this->yieldMethod = false;
 ////   this->dispatchMode = false;
    this->constMode = false;
@@ -736,10 +736,10 @@ ObjectInfo Compiler::MethodScope :: mapSelf(/*bool forced*/)
    else return ObjectInfo(okSelfParam, 1, getClassRef());
 }
 
-//ObjectInfo Compiler::MethodScope :: mapGroup()
-//{
-//   return ObjectInfo(okParam, (size_t)-1);
-//}
+ObjectInfo Compiler::MethodScope :: mapGroup()
+{
+   return ObjectInfo(okParam, (size_t)-1);
+}
 
 ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param, EAttr mode)
 {
@@ -767,13 +767,13 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
       }
       else {
          if (terminal.compare(SELF_VAR)) {
-//            if (targetSelfMode) {
-//               return mapGroup();
-//            }
-//            else if (functionMode || nestedMode) {
-//               return parent->mapTerminal(OWNER_VAR, false, mode | scopeMode);
-//            }
-            /*else */return mapSelf();
+            if (targetSelfMode) {
+               return mapGroup();
+            }
+            else if (functionMode || nestedMode) {
+               return parent->mapTerminal(OWNER_VAR, false, mode | scopeMode);
+            }
+            else return mapSelf();
          }
 //         else if (!functionMode && (terminal.compare(GROUP_VAR))) {
 //            if (extensionMode) {
@@ -971,202 +971,202 @@ ObjectInfo Compiler::ResendScope :: mapTerminal(ident_t identifier, bool referen
 // --- Compiler::InlineClassScope ---
 
 Compiler::InlineClassScope :: InlineClassScope(ExprScope* owner, ref_t reference)
-   : ClassScope(owner, reference, Visibility::Internal)//, outers(Outer()), outerFieldTypes(ClassInfo::FieldInfo(0, 0))
+   : ClassScope(owner, reference, Visibility::Internal), outers(Outer())//, outerFieldTypes(ClassInfo::FieldInfo(0, 0))
 {
 //   this->returningMode = false;
 //   //this->parent = owner;
    info.header.flags |= elNestedClass;
 }
 
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapParent()
-//{
-//   Outer parentVar = outers.get(PARENT_VAR);
-//   // if owner reference is not yet mapped, add it
-//   if (parentVar.outerObject.kind == okUnknown) {
-//      parentVar.reference = info.fields.Count();
-//      CodeScope* codeScope = (CodeScope*)parent->getScope(Scope::slCode);
-//      if (codeScope) {
-//         parentVar.outerObject = codeScope->mapMember(SELF_VAR);
-//      }
-//      else parentVar = mapOwner();
-//
-//      outers.add(PARENT_VAR, parentVar);
-//      mapKey(info.fields, PARENT_VAR, (int)parentVar.reference);
-//
-//   }
-//   return parentVar;
-//}
-//
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
-//{
-//   Outer owner = outers.get(SELF_VAR);
-//   // if owner reference is not yet mapped, add it
-//   if (owner.outerObject.kind == okUnknown) {
-//      owner.reference = info.fields.Count();
-//
-//      owner.outerObject = parent->mapTerminal(SELF_VAR, false, EAttr::eaNone);
-//      if (owner.outerObject.kind == okUnknown) {
-//         // HOTFIX : if it is a singleton nested class
-//         owner.outerObject = ObjectInfo(okSelfParam, 1, reference);
-//      }
-//      else if (owner.outerObject.kind == okSelfParam) {
-//         owner.outerObject.reference = ((CodeScope*)parent)->getClassRefId(false);
-//      }
-//
-//      outers.add(SELF_VAR, owner);
-//      mapKey(info.fields, SELF_VAR, (int)owner.reference);
-//   }
-//   return owner;
-//}
-//
-//Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapOwner()
-//{
-//   Outer owner = outers.get(OWNER_VAR);
-//   // if owner reference is not yet mapped, add it
-//   if (owner.outerObject.kind == okUnknown) {
-//      owner.outerObject = parent->mapTerminal(OWNER_VAR, false, EAttr::eaNone);
-//      if (owner.outerObject.kind != okUnknown) {
-//         owner.reference = info.fields.Count();
-//
-//         if (owner.outerObject.extraparam == 0)
-//            owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
-//
-//         outers.add(OWNER_VAR, owner);
-//         mapKey(info.fields, OWNER_VAR, (int)owner.reference);
-//      }
-//      else return mapSelf();
-//   }
-//   return owner;
-//}
-//
-//ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
-//{
-//   if (identifier.compare(SUPER_VAR)) {
-//      return ObjectInfo(okSuper, 0, info.header.parentRef);
-//   }
-//   else if (identifier.compare(OWNER_VAR)) {
-//      Outer owner = mapOwner();
-//
-//      // map as an outer field (reference to outer object and outer object field index)
-//      return ObjectInfo(okOuterSelf, owner.reference, owner.outerObject.reference, owner.outerObject.element, owner.outerObject.extraparam);
-//   }
-//   //else if (identifier.compare(SELF_VAR) && !closureMode) {
-//   //   return ObjectInfo(okParam, (size_t)-1);
-//   //}
-//   else {
-//      Outer outer = outers.get(identifier);
-////
-//      // if object already mapped
-//      if (outer.reference != -1) {
-//         if (outer.outerObject.kind == okSuper) {
-//            return ObjectInfo(okSuper, 0, outer.reference);
-//         }
-//         else return ObjectInfo(okOuter, outer.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
-//      }
-//      else {
-//         outer.outerObject = parent->mapTerminal(identifier, referenceOne, mode);
-//         switch (outer.outerObject.kind) {
-//            case okReadOnlyField:
-//            case okField:
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapParent()
+{
+   Outer parentVar = outers.get(PARENT_VAR);
+   // if owner reference is not yet mapped, add it
+   if (parentVar.outerObject.kind == okUnknown) {
+      parentVar.reference = info.fields.Count();
+      ExprScope* exprScope = (ExprScope*)parent->getScope(Scope::ScopeLevel::slExpression);
+      if (exprScope) {
+         parentVar.outerObject = exprScope->mapMember(SELF_VAR);
+      }
+      else parentVar = mapOwner();
+
+      outers.add(PARENT_VAR, parentVar);
+      mapKey(info.fields, PARENT_VAR, (int)parentVar.reference);
+
+   }
+   return parentVar;
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapSelf()
+{
+   Outer owner = outers.get(SELF_VAR);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.reference = info.fields.Count();
+
+      owner.outerObject = parent->mapTerminal(SELF_VAR, false, EAttr::eaNone);
+      if (owner.outerObject.kind == okUnknown) {
+         // HOTFIX : if it is a singleton nested class
+         owner.outerObject = ObjectInfo(okSelfParam, 1, reference);
+      }
+      else if (owner.outerObject.kind == okSelfParam) {
+         owner.outerObject.reference = ((CodeScope*)parent)->getClassRefId(false);
+      }
+
+      outers.add(SELF_VAR, owner);
+      mapKey(info.fields, SELF_VAR, (int)owner.reference);
+   }
+   return owner;
+}
+
+Compiler::InlineClassScope::Outer Compiler::InlineClassScope :: mapOwner()
+{
+   Outer owner = outers.get(OWNER_VAR);
+   // if owner reference is not yet mapped, add it
+   if (owner.outerObject.kind == okUnknown) {
+      owner.outerObject = parent->mapTerminal(OWNER_VAR, false, EAttr::eaNone);
+      if (owner.outerObject.kind != okUnknown) {
+         owner.reference = info.fields.Count();
+
+         if (owner.outerObject.extraparam == 0)
+            owner.outerObject.extraparam = ((CodeScope*)parent)->getClassRefId(false);
+
+         outers.add(OWNER_VAR, owner);
+         mapKey(info.fields, OWNER_VAR, (int)owner.reference);
+      }
+      else return mapSelf();
+   }
+   return owner;
+}
+
+ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
+{
+   if (identifier.compare(SUPER_VAR)) {
+      return ObjectInfo(okSuper, 0, info.header.parentRef);
+   }
+   else if (identifier.compare(OWNER_VAR)) {
+      Outer owner = mapOwner();
+
+      // map as an outer field (reference to outer object and outer object field index)
+      return ObjectInfo(okOuterSelf, owner.reference, owner.outerObject.reference, owner.outerObject.element, owner.outerObject.extraparam);
+   }
+   //else if (identifier.compare(SELF_VAR) && !closureMode) {
+   //   return ObjectInfo(okParam, (size_t)-1);
+   //}
+   else {
+      Outer outer = outers.get(identifier);
+
+      // if object already mapped
+      if (outer.reference != -1) {
+         if (outer.outerObject.kind == okSuper) {
+            return ObjectInfo(okSuper, 0, outer.reference);
+         }
+         else return ObjectInfo(okOuter, outer.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+      }
+      else {
+         outer.outerObject = parent->mapTerminal(identifier, referenceOne, mode);
+         switch (outer.outerObject.kind) {
+            case okReadOnlyField:
+            case okField:
 //            case okStaticField:
-//            {
-//               // handle outer fields in a special way: save only self
-//               Outer owner = mapParent();
-//
-//               // map as an outer field (reference to outer object and outer object field index)
-//               if (outer.outerObject.kind == okOuterField) {
-//                  return ObjectInfo(okOuterField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
-//               }
-//               else if (outer.outerObject.kind == okOuterReadOnlyField) {
-//                  return ObjectInfo(okOuterReadOnlyField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
-//               }
-//               else if (outer.outerObject.kind == okOuterStaticField) {
-//                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
-//               }
-//               else if (outer.outerObject.kind == okStaticField) {
-//                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
-//               }
-//               else if (outer.outerObject.kind == okReadOnlyField) {
-//                  return ObjectInfo(okOuterReadOnlyField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.param);
-//               }
-//               else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.param);
-//            }
-//            case okParam:
-//            case okLocal:
-//            case okOuter:
-//            case okSuper:
-//            case okSelfParam:
-//            case okLocalAddress:
-//            case okFieldAddress:
-//            case okReadOnlyFieldAddress:
-//            case okOuterField:
-//            case okOuterStaticField:
-//            case okOuterSelf:
-//            case okParams:
-//            {
-//               // map if the object is outer one
-//               outer.reference = info.fields.Count();
-//
-//               outers.add(identifier, outer);
-//               mapKey(info.fields, identifier, (int)outer.reference);
-//
-//               if (outer.outerObject.kind == okOuter && identifier.compare(RETVAL_VAR)) {
-//                  // HOTFIX : quitting several clsoures
-//                  (*outers.getIt(identifier)).preserved = true;
-//               }
-//               else if (outer.outerObject.kind == okOuterSelf) {
-//                  // HOTFIX : to support self in deep nested closures
-//                  return ObjectInfo(okOuterSelf, outer.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
-//               }
-//
-//               return ObjectInfo(okOuter, outer.reference, outer.outerObject.reference);
-//            }
-//            case okUnknown:
-//            {
-//               // check if there is inherited fields
-//               ObjectInfo fieldInfo = mapField(identifier, EAttr::eaNone);
-//               if (fieldInfo.kind != okUnknown) {
-//                  return fieldInfo;
-//               }
-//               else return outer.outerObject;
-//            }
-//            default:
-//               return outer.outerObject;
-//         }
-//      }
-//   }
-//}
-//
-//bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
-//{
-//   if (object.kind == okOuter) {
-//      Map<ident_t, Outer>::Iterator it = outers.start();
-//      while (!it.Eof()) {
-//         if ((*it).reference == object.param) {
-//            if ((*it).outerObject.kind == okLocal || (*it).outerObject.kind == okLocalAddress) {
-//               (*it).preserved = true;
-//
-//               return true;
-//            }
-//            else if ((*it).outerObject.kind == okOuter) {
-//               InlineClassScope* closure = (InlineClassScope*)parent->getScope(Scope::slClass);
-//               if (closure->markAsPresaved((*it).outerObject)) {
-//                  (*it).preserved = true;
-//
-//                  return true;
-//               }
-//               else return false;
-//            }
-//            break;
-//         }
-//
-//         it++;
-//      }
-//   }
-//
-//   return false;
-//}
-//
+            {
+               // handle outer fields in a special way: save only self
+               Outer owner = mapParent();
+
+               // map as an outer field (reference to outer object and outer object field index)
+               if (outer.outerObject.kind == okOuterField) {
+                  return ObjectInfo(okOuterField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+               else if (outer.outerObject.kind == okOuterReadOnlyField) {
+                  return ObjectInfo(okOuterReadOnlyField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+               /*else if (outer.outerObject.kind == okOuterStaticField) {
+                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+               else if (outer.outerObject.kind == okStaticField) {
+                  return ObjectInfo(okOuterStaticField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }*/
+               else if (outer.outerObject.kind == okReadOnlyField) {
+                  return ObjectInfo(okOuterReadOnlyField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.param);
+               }
+               else return ObjectInfo(okOuterField, owner.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.param);
+            }
+            case okParam:
+            case okLocal:
+            case okOuter:
+            case okSuper:
+            case okSelfParam:
+            case okLocalAddress:
+            case okFieldAddress:
+            case okReadOnlyFieldAddress:
+            case okOuterField:
+            //case okOuterStaticField:
+            case okOuterSelf:
+            //case okParams:
+            {
+               // map if the object is outer one
+               outer.reference = info.fields.Count();
+
+               outers.add(identifier, outer);
+               mapKey(info.fields, identifier, (int)outer.reference);
+
+               if (outer.outerObject.kind == okOuter && identifier.compare(RETVAL_VAR)) {
+                  // HOTFIX : quitting several clsoures
+                  (*outers.getIt(identifier)).preserved = true;
+               }
+               else if (outer.outerObject.kind == okOuterSelf) {
+                  // HOTFIX : to support self in deep nested closures
+                  return ObjectInfo(okOuterSelf, outer.reference, outer.outerObject.reference, outer.outerObject.element, outer.outerObject.extraparam);
+               }
+
+               return ObjectInfo(okOuter, outer.reference, outer.outerObject.reference);
+            }
+            case okUnknown:
+            {
+               // check if there is inherited fields
+               ObjectInfo fieldInfo = mapField(identifier, EAttr::eaNone);
+               if (fieldInfo.kind != okUnknown) {
+                  return fieldInfo;
+               }
+               else return outer.outerObject;
+            }
+            default:
+               return outer.outerObject;
+         }
+      }
+   }
+}
+
+bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
+{
+   if (object.kind == okOuter) {
+      Map<ident_t, Outer>::Iterator it = outers.start();
+      while (!it.Eof()) {
+         if ((*it).reference == object.param) {
+            if ((*it).outerObject.kind == okLocal || (*it).outerObject.kind == okLocalAddress) {
+               (*it).preserved = true;
+
+               return true;
+            }
+            else if ((*it).outerObject.kind == okOuter) {
+               InlineClassScope* closure = (InlineClassScope*)parent->getScope(Scope::ScopeLevel::slClass);
+               if (closure->markAsPresaved((*it).outerObject)) {
+                  (*it).preserved = true;
+
+                  return true;
+               }
+               else return false;
+            }
+            break;
+         }
+
+         it++;
+      }
+   }
+
+   return false;
+}
+
 //ObjectInfo Compiler::InlineClassScope :: allocateRetVar()
 //{
 //   returningMode = true;
@@ -3494,7 +3494,7 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
 //   }
 
    if (callType == tpPrivate) {
-      if (target.kind == okSelfParam/* || target.kind == okOuterSelf*/ || target.kind == okClassSelf) {
+      if (target.kind == okSelfParam || target.kind == okOuterSelf || target.kind == okClassSelf) {
          messageRef |= STATIC_MESSAGE;
 
          callType = tpSealed;
@@ -3513,11 +3513,11 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
 ////   else if (classReference == scope.moduleScope->messageReference) {
 ////      dispatchCall = test(mode, HINT_EXTENSION_MODE);
 ////   }
-//   else if (target.kind == okSuper) {
-//      // parent methods are always sealed
-//      callType = tpSealed;
-//   }
-//
+   /*else */if (target.kind == okSuper) {
+      // parent methods are always sealed
+      callType = tpSealed;
+   }
+
 //   if (inlineArgCall) {
 //      operation = lxInlineArgCall;
 //      argument = messageRef;
@@ -4076,7 +4076,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
       case okField:
 //      case okStaticField:
 //      case okClassStaticField:
-//      case okOuterField:
+      case okOuterField:
 //      case okOuterStaticField:
          break;
       case okLocalAddress:
@@ -4091,27 +4091,27 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
          else scope.raiseError(errInvalidOperation, sourceNode);
          break;
       }
-//      case okOuter:
-//      case okOuterSelf:
-//      {
-//         InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::slClass);
-//         //MethodScope* method = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//         if (/*!method->subCodeMode || */!closure->markAsPresaved(target))
-//            scope.raiseError(errInvalidOperation, sourceNode);
-//
-//         size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
-//         if (size != 0 && target.kind == okOuter) {
-//            operand = size;
-//            byRefAssigning = true;
-//         }
-//         break;
-//      }
-//      case okReadOnlyField:
-//      case okReadOnlyFieldAddress:
-//      case okOuterReadOnlyField:
-//         scope.raiseError(errReadOnlyField, node.parentNode());
-//         break;
+      case okOuter:
+      case okOuterSelf:
+      {
+         InlineClassScope* closure = (InlineClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
+         //MethodScope* method = (MethodScope*)scope.getScope(Scope::slMethod);
+
+         if (/*!method->subCodeMode || */!closure->markAsPresaved(target))
+            scope.raiseError(errInvalidOperation, sourceNode);
+
+         //size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
+         //if (size != 0 && target.kind == okOuter) {
+         //   operand = size;
+         //   byRefAssigning = true;
+         //}
+         break;
+      }
+      case okReadOnlyField:
+      case okReadOnlyFieldAddress:
+      case okOuterReadOnlyField:
+         scope.raiseError(errReadOnlyField, node.parentNode());
+         break;
 //      case okParam:
 //         if (targetRef == V_WRAPPER) {
 //            byRefAssigning = true;
@@ -4518,41 +4518,46 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
       return ObjectInfo();
    }
    else {
-      throw InternalError("Temporally not supported"); // !! temporally
- 
 //      //int stackSafeAttr = 0;
 //      //ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, closureRef, 0, 0, stackSafeAttr, true);
 //      //if (messageRef) {
 //      //   // call the constructor if it can be resolved directly
 //      //   compileMessage(writer, node, scope, closureRef, messageRef, HINT_SILENT | HINT_NODEBUGINFO, stackSafeAttr);
 //      //}
-//
-//      // dynamic binary symbol
-//      if (test(scope.info.header.flags, elStructureRole)) {
-//         writer.newNode(lxStruct, scope.info.size);
-//         writer.appendNode(lxTarget, closureRef);
-//
-//         if (scope.outers.Count() > 0)
-//            scope.raiseError(errInvalidInlineClass, node);
-//      }
-//      else {
-//         // dynamic normal symbol
-//         writer.newNode(lxNested, scope.info.fields.Count());
-//         writer.appendNode(lxTarget, closureRef);
-//      }
-//
-//      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
-//      //int toFree = 0;
-//      while(!outer_it.Eof()) {
-//         ObjectInfo info = (*outer_it).outerObject;
-//
+
+      // dynamic binary symbol
+      if (test(scope.info.header.flags, elStructureRole)) {
+         node.set(lxCreatingStruct, scope.info.size);
+         node.appendNode(lxType, closureRef);
+
+         if (scope.outers.Count() > 0)
+            scope.raiseError(errInvalidInlineClass, node);
+      }
+      else {
+         // dynamic normal symbol
+         node.set(lxCreatingClass, scope.info.fields.Count());
+         node.appendNode(lxType, closureRef);
+      }
+
+      node.injectAndReplaceNode(lxInitializing);
+
+      Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
+      //int toFree = 0;
+      while(!outer_it.Eof()) {
+         ObjectInfo info = (*outer_it).outerObject;
+
+         SNode member = node.appendNode(lxMember, (*outer_it).reference);
+         SNode objNode = member.appendNode(lxVirtualReference);
+
+         recognizeTerminal(objNode, info, ownerScope, EAttr::eaNone);
+
 //         writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
 //         writeTerminal(writer, node, ownerScope, info, EAttr::eaNone);
 //         writer.closeNode();
-//
-//         outer_it++;
-//      }
-//
+
+         outer_it++;
+      }
+
 //      if (scope.returningMode) {
 //         // injecting returning code if required
 //         InlineClassScope::Outer retVal = scope.outers.get(RETVAL_VAR);
@@ -5432,13 +5437,13 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 
          setParamTerminal(terminal, scope, object, mode, lxSelfLocal);
          break;
-//      case okSuper:
-//         writer.newNode(lxLocal, 1);
-//         break;
+      case okSuper:
+         terminal.set(lxLocal, 1);
+         break;
       case okReadOnlyField:
       case okField:
-//      case okOuter:
-//      case okOuterSelf:
+      case okOuter:
+      case okOuterSelf:
          terminal.set(lxFieldExpression, 0);
          terminal.appendNode(lxSelfLocal, 1);
          terminal.appendNode(lxField, object.param);
@@ -5477,12 +5482,13 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 //         else writer.appendNode(lxClassSymbol, object.param);
 //         writer.appendNode(lxStaticConstField, object.extraparam);
 //         break;
-//      case okOuterField:
-//      case okOuterReadOnlyField:
-//         writer.newNode(lxFieldExpression, 0);
-//         writer.appendNode(lxField, object.param);
-//         writer.appendNode(lxResultField, object.extraparam);
-//         break;
+      case okOuterField:
+      case okOuterReadOnlyField:
+         terminal.set(lxFieldExpression, 0);
+         terminal.appendNode(lxSelfLocal, 1);
+         terminal.appendNode(lxField, object.param);
+         terminal.appendNode(lxField, object.extraparam);
+         break;
 //      case okOuterStaticField:
 //         writer.newNode(lxFieldExpression, 0);
 //         writer.newNode(lxFieldExpression, 0);
@@ -7996,7 +8002,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 //   methodScope.yieldMethod = _logic->isMethodYieldable(scope.info, methodScope.message);
 //   methodScope.extensionMode = scope.extensionClassRef != 0;
 //   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
-//   methodScope.targetSelfMode = test(methodScope.hints, tpTargetSelf);
+   methodScope.targetSelfMode = test(methodScope.hints, tpTargetSelf);
 //   if (methodScope.withOpenArg && methodScope.functionMode)
 //      methodScope.genericClosure = true;
    methodScope.constMode = test(methodScope.hints, tpConstant);

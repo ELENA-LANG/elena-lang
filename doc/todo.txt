@@ -2,7 +2,12 @@
 In development:
 ------         
               dev
-                * dynamic array - default constructor have a int argument, and creates the array with apropriate length
+
+                * dinitializing - if all members are simple, use direct operation
+                * closures
+                * function closures
+                * closures : default constructor is called for virtual nested class, for normal one - only initializer
+
                 * declare array, use array
                 * creating dynamic array / buffers
                 * test creating an array : non-empty, empty
@@ -12,11 +17,6 @@ In development:
                 * parameter - template, template of templates
                 * array of templates
                 * template of arrays
-
-                * closures : default constructor is called for virtual nested class, for normal one - only initializer
-                * action closures
-                * nested class and default constructor
-                * stack allocated class and default constructor
 
                 * internal / public / private classes
                 * internal / public / private / proteced methods
@@ -31,6 +31,10 @@ In development:
                 * public / private / internal / protected const fields
                 * public / private / internal / protected const sealed fields
                 * const field can intialized only in-place
+
+                * closures: unboxing
+                * closures: presaved arguments
+                * closures: returning a value
 
                 * analog of attributes : constant fields
 
@@ -259,11 +263,15 @@ In development:
                 * adding source path link on tempate based classes with field initializers
                 * private / internal class templates
                 * invalid operation : var a.test();
+                * nested class and default constructor
+                * stack allocated class and default constructor
                 * debugger : do not copy template parameter terminal info
+                * new opcode : setfi
 
               dev - test
                 * create a big list (bigger than YG)
                 * boxing and unboxing a primitive array?
+                * test super (normal, stack unsafe)
 
               dev1
                 * write - Programming in ELENA : manual

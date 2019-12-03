@@ -2037,7 +2037,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcPushF:
          case bcPeekFI:
          case bcStoreFI:
-         case bcSetF:
+         case bcMovF:
          case bcAddF:
          case bcSubF:
          case bcMulF:
@@ -4016,7 +4016,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case lxSubjectConstant:
 //      case lxConstantList:
          // pushr reference
-         tape.write(bcSetR, argument | defineConstantMask(type));
+         tape.write(bcMovR, argument | defineConstantMask(type));
          break;
       case lxLocal:
       case lxSelfLocal:
@@ -4037,14 +4037,14 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //////         break;
       case lxNil:
          // acopyr 0
-         tape.write(bcSetR, argument);
+         tape.write(bcMovR, argument);
          break;
       case lxField:
-         // getai index
+         // get index
 //         if ((int)argument < 0) {
 //            tape.write(bcACopyB);
 //         }
-         /*else */tape.write(bcGetAI, argument);
+         /*else */tape.write(bcGet, argument);
          break;
 //      case lxStaticConstField:
 //         if ((int)argument > 0) {
@@ -4078,7 +4078,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //         break;
       case lxLocalAddress:
          // acopyf n
-         tape.write(bcSetF, argument);
+         tape.write(bcMovF, argument);
          break;
 //      case lxBlockLocalAddr:
 //         // acopyf n
@@ -4156,8 +4156,8 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcStoreSI, argument);
          break;
       case lxField:
-         // setai index
-         tape.write(bcSetAI, argument);
+         // set index
+         tape.write(bcSet, argument);
          break;
 //      case lxStaticField:
 //         if ((int)argument > 0) {
@@ -5022,7 +5022,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 //   if (msg != lxNone)
 //      message = msg.argument;
 
-   tape.write(bcSetM, message);
+   tape.write(bcLoadM, message);
 
 //   bool invokeMode = test(message, SPECIAL_MESSAGE);
 
@@ -6165,8 +6165,59 @@ inline SNode goToNode(SNode current, LexicalType type)
    return current;
 }
 
-//void ByteCodeWriter :: generateNestedExpression(CommandTape& tape, SyntaxTree::Node node)
-//{
+void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   SNode objNode = node.findSubNodeMask(lxObjectMask);
+
+   SNode current = node.findChild(lxMember);
+   bool createMode = objNode == lxCreatingClass;
+   bool onlyLocals = createMode;
+   while (current != lxNone) {
+      if (current == lxMember) {
+         SNode memberNode = current.firstChild(lxObjectMask);
+         if (memberNode != lxLocal) {
+            onlyLocals = false;
+            break;
+         }
+      }
+      current = current.nextNode();
+   }
+
+   if (!onlyLocals) {
+      current = node.lastNode();
+      while (current != lxNone) {
+         if (current == lxMember) {
+            SNode memberNode = current.firstChild(lxObjectMask);
+
+            generateObject(tape, memberNode, scope, STACKOP_MODE);
+         }
+         current = current.prevNode();
+      }
+      generateObject(tape, objNode, scope);
+      current = node.findChild(lxMember);
+      while (current != lxNone) {
+         if (current == lxMember) {
+            SNode memberNode = current.firstChild(lxObjectMask);
+
+            tape.write(createMode ? bcXSet : bcSet, current.argument);
+            releaseStack(tape);
+         }
+         current = current.nextNode();
+      }
+   }
+   else {
+      generateObject(tape, objNode, scope);
+      current = node.findChild(lxMember);
+      while (current != lxNone) {
+         if (current == lxMember) {
+            SNode memberNode = current.firstChild(lxObjectMask);
+
+            tape.write(bcXSetFI, memberNode.argument, current.argument);
+         }
+         current = current.nextNode();
+      }
+   }
+
 //   SNode target = node.findChild(lxTarget);
 //
 //   // presave all the members which could create new objects
@@ -6217,8 +6268,8 @@ inline SNode goToNode(SNode current, LexicalType type)
 //
 //      callNode = goToNode(callNode.nextNode(), lxOvreriddenMessage);
 //   }   
-//}
-//
+}
+
 //void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   SNode target = node.findChild(lxTarget);
@@ -6428,9 +6479,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxStruct:
 //         generateStructExpression(tape, node);
 //         break;
-//      case lxNested:
-//         generateNestedExpression(tape, node);
-//         break;
+      case lxInitializing:
+         generateInitializingExpression(tape, node, scope);
+         break;
 //      case lxBoolOp:
 //         generateBoolOperation(tape, node, mode);
 //         break;
