@@ -4322,7 +4322,7 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
 //   else {
       NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
-      ref_t closureRef = scope.moduleScope->resolveClosure(methodScope.message, methodScope.outputRef, nsScope->ns);
+      ref_t closureRef = scope.moduleScope->resolveClosure(methodScope.message, methodScope.outputRef, nsScope->nsName);
       //      ref_t actionRef = scope.moduleScope->actionHints.get(methodScope.message);
       if (closureRef) {
          parentRef = closureRef;
@@ -4333,34 +4333,36 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
    // NOTE : the fields are presaved, so the closure parent should be stateless
    compileParentDeclaration(SNode(), scope, parentRef, true);
 
-   // include the message, it is done after the compilation due to the implemetation
-   scope.include(methodScope.message);
-   scope.addHint(methodScope.message, tpFunction);
-
-   // exclude abstract flag if presented
-   scope.removeHint(methodScope.message, tpAbstract);
-
-   // set the message output if available
-   if (methodScope.outputRef)
-      scope.info.methodHints.add(Attribute(methodScope.message, maReference), methodScope.outputRef);
-
    if (multiMethod) {
-      throw InternalError("Not yet implemented"); // !! temporal
+      // inject a virtual invoke multi-method if required
+      List<ref_t> implicitMultimethods;
+      implicitMultimethods.add(multiMethod);
 
-      //// inject a virtual invoke multi-method if required
-      //SyntaxTree virtualTree;
-      //virtualTree.createRoot(lxClass, 0);
+      _logic->injectVirtualMultimethods(*scope.moduleScope, node, *this, implicitMultimethods, lxClassMethod);
 
-      //List<ref_t> implicitMultimethods;
-      //implicitMultimethods.add(multiMethod);
+      // HOTFIX : exclude, because it will be injected once again
+      scope.info.methodHints.exclude(Attribute(methodScope.message, maReference));
 
-      //_logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), *this, implicitMultimethods, lxClassMethod);
+      generateClassDeclaration(node, scope);
 
-      //generateClassDeclaration(virtualTree.readRoot(), scope);
-
-      //compileVMT(writer, virtualTree.readRoot(), scope);
+      // HOTFIX : temporally commenting out the function code, to prevent if from double compiling
+      SNode current = node.findChild(lxClassMethod);
+      current = lxIdle;
+      compileVMT(node, scope);
+      current = lxClassMethod;
    }
    else {
+      // include the message, it is done after the compilation due to the implemetation
+      scope.include(methodScope.message);
+      scope.addHint(methodScope.message, tpFunction);
+
+      // exclude abstract flag if presented
+      scope.removeHint(methodScope.message, tpAbstract);
+
+      // set the message output if available
+      if (methodScope.outputRef)
+         scope.info.methodHints.add(Attribute(methodScope.message, maReference), methodScope.outputRef);
+
       generateClassDeclaration(SNode(), scope);
    }
 
@@ -4567,8 +4569,8 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
 //      }
 //
 //      writer.closeNode();
-//
-//      return ObjectInfo(okObject, 0, closureRef);
+
+      return ObjectInfo(okObject, 0, closureRef);
    }
 }
 
@@ -5160,7 +5162,7 @@ ref_t Compiler :: resolveTemplateDeclaration/*Unsafe*/(SNode node, Scope& scope,
       scope.raiseError(errInvalidHint, node);
 
    NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
-   return scope.moduleScope->generateTemplate(templateRef, parameters, ns->ns.c_str(), declarationMode);
+   return scope.moduleScope->generateTemplate(templateRef, parameters, ns->nsName.c_str(), declarationMode);
 }
 
 //ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode)

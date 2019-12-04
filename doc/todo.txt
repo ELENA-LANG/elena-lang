@@ -2,8 +2,11 @@
 In development:
 ------         
               dev
-                * function closures : weak one
-                * function closures : strong one
+                * function closures : strong one - should be resolved directly if possible
+                * function closures : strong one - multi-table should use direct operation (xmtredirect)
+
+                * function closures : weak one - several argumentd
+                * function closures : strong one - several argumentd
 
                 * extensions
                 * extension dispatching : run-time, compile-time

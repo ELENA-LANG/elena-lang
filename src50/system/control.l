@@ -262,11 +262,11 @@ public interface Func1
 //    }
 }
 
-//public interface Func<T, TResult>
-//{
-//    /// Executes the action
-//    abstract TResult closure(T param) {}
-//    
+public interface Func<T, TResult>
+{
+    /// Executes the action
+    abstract TResult function(T param) {}
+    
 //    run(Enumerator<T> e)
 //    {
 //        while(e.next())
@@ -274,8 +274,8 @@ public interface Func1
 //            self(e.get())
 //        }
 //    }
-//}
-//
+}
+
 ///// A base two variable function
 //public interface Func2
 //{

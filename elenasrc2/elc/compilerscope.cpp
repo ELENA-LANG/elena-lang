@@ -658,47 +658,45 @@ ref_t ModuleScope :: resolveClosure(ref_t closureMessage, ref_t outputRef, ident
       else return mapFullReference(closureName, true);
    }
    else {   
-      throw InternalError("Not yet implemented"); // !! temporal
+      ref_t signatures[ARG_COUNT];
+      size_t signLen = module->resolveSignature(signRef, signatures);
 
-//      ref_t signatures[ARG_COUNT];
-//      size_t signLen = module->resolveSignature(signRef, signatures);
-//
-//      List<SNode> parameters;
-//      SyntaxTree dummyTree;
-//      SyntaxWriter dummyWriter(dummyTree);
-//      dummyWriter.newNode(lxRoot);
-//      
-//      for (size_t i = 0; i < signLen; i++) {
-//         dummyWriter.appendNode(lxTarget, signatures[i]);
-//      }
-//      if (outputRef) {
-//         dummyWriter.appendNode(lxTarget, outputRef);
-//      }
-//      // if the output signature is not provided - use the super class
-//      else dummyWriter.appendNode(lxTarget, superReference);
-//
-//      dummyWriter.closeNode();
-//
-//      SNode paramNode = dummyTree.readRoot().firstChild();
-//      while (paramNode != lxNone) {
-//         parameters.add(paramNode);
-//
-//         paramNode = paramNode.nextNode();
-//      }
-//
-//      closureName.append('#');
-//      closureName.appendInt(paramCount + 1);
-//
-//      ref_t templateReference = 0;
-//      if (isWeakReference(closureName)) {
-//         templateReference = module->mapReference(closureName, true);
-//      }
-//      else templateReference = mapFullReference(closureName, true);
-//
-//      if (templateReference) {
-//         return generateTemplate(templateReference, parameters, ns, false);
-//      }
-//      else return superReference;
+      List<SNode> parameters;
+      SyntaxTree dummyTree;
+      SyntaxWriter dummyWriter(dummyTree);
+      dummyWriter.newNode(lxRoot);
+      
+      for (size_t i = 0; i < signLen; i++) {
+         dummyWriter.appendNode(lxType, signatures[i]);
+      }
+      if (outputRef) {
+         dummyWriter.appendNode(lxType, outputRef);
+      }
+      // if the output signature is not provided - use the super class
+      else dummyWriter.appendNode(lxType, superReference);
+
+      dummyWriter.closeNode();
+
+      SNode paramNode = dummyTree.readRoot().firstChild();
+      while (paramNode != lxNone) {
+         parameters.add(paramNode);
+
+         paramNode = paramNode.nextNode();
+      }
+
+      closureName.append('#');
+      closureName.appendInt(paramCount + 1);
+
+      ref_t templateReference = 0;
+      if (isWeakReference(closureName)) {
+         templateReference = module->mapReference(closureName, true);
+      }
+      else templateReference = mapFullReference(closureName, true);
+
+      if (templateReference) {
+         return generateTemplate(templateReference, parameters, ns, false);
+      }
+      else return superReference;
    }
 }
 
