@@ -1071,9 +1071,9 @@ private:
 
    ObjectInfo compileCode(SNode node, CodeScope& scope);
 
-   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, /*ref_t& elementRef, */bool declarationMode);
+   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
    void declareArgumentList(SNode node, MethodScope& scope/*, bool withoutWeakMessages*/, bool declarationMode);
-//   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
+   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
    /*bool*/void declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
 
 //////   void declareSingletonClass(SNode node, ClassScope& scope);

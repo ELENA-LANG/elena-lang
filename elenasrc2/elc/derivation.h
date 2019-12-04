@@ -161,7 +161,7 @@ class DerivationWriter : public _DerivationWriter
 //   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
    void generateTemplateTree(SNode node, ScopeType templateType);
    void generateScope(SyntaxWriter& writer, SNode node, Scope& scope);
-//   void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
+   void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generateStatementTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, 
       Scope& derivationScope);
    void generateStatementTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);

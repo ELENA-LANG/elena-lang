@@ -1536,47 +1536,47 @@ void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode curr
 //
 //   _scope->generateTemplateProperty(writer, templateRef, parameters);
 //}
-//
-//void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
-//{
+
+void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope)
+{
 //   if (node == lxInlineClosure) {
 //      node = node.firstChild();
 //   }
-//   else if (node != lxClosureExpr) {
-//      writer.inject(lxMethodParameter);
-//      writer.closeNode();
-//
-//      node = node.nextNode();
-//      while (node == lxParameter) {
-//         writer.newNode(lxMethodParameter);
-//         writer.newBookmark();
-//
-//         SNode tokenNode = node.findChild(lxToken);
-//         generateTokenExpression(writer, tokenNode, derivationScope, false);
-//
-//         writer.removeBookmark();
-//         writer.closeNode();;
-//
-//         node = node.nextNode();
-//      }
-//   }
-//
+   /*else */if (node != lxClosureExpr) {
+      writer.inject(lxMethodParameter);
+      writer.closeNode();
+
+      node = node.nextNode();
+      while (node == lxParameter) {
+         writer.newNode(lxMethodParameter);
+         writer.newBookmark();
+
+         SNode tokenNode = node.findChild(lxToken);
+         generateTokenExpression(writer, tokenNode, derivationScope/*, false*/);
+
+         writer.removeBookmark();
+         writer.closeNode();;
+
+         node = node.nextNode();
+      }
+   }
+
 //   if (node == lxReturning) {
 //      writer.newNode(lxReturning);
 //      generateExpressionTree(writer, node, derivationScope);
 //      writer.closeNode();
 //   }
-//   else if (node == lxClosureExpr) {
-//      generateCodeTree(writer, node.findChild(lxCode), derivationScope);
-//   }
-//
-//   writer.inject(lxClosureExpr);
-//   writer.closeNode();
-//
-//   while (node.nextNode() != lxNone)
-//      node = node.nextNode();
-//}
-//
+   /*else */if (node == lxClosureExpr) {
+      generateCodeTree(writer, node.findChild(lxCode), derivationScope);
+   }
+
+   writer.inject(lxClosureExpr);
+   writer.closeNode();
+
+   while (node.nextNode() != lxNone)
+      node = node.nextNode();
+}
+
 //ref_t DerivationWriter :: resolveTemplate(ident_t templateName)
 //{
 //   for (auto it = _importedNs.start(); !it.Eof(); it++) {
@@ -1813,7 +1813,7 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
       lastNode = node.nextNode();
    }
    else if (node == lxMessage && SyntaxTree::existSibling(node, lxStatementArgs)) {
-      // COMPILER MAGIC : recognize the statemnt template
+      // COMPILER MAGIC : recognize the statement template
       generateStatementTemplateTree(writer, current, derivationScope);
       lastNode = current;
       node = current;
@@ -1831,6 +1831,19 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
 
          current = current.nextNode();
       }
+
+      if (lastNode == lxToken) {
+         generateIdentifier(writer, lastNode.firstChild(lxTerminalMask), derivationScope);
+         // if (current.nextNode().compare(lxClosureExpr, lxParameter, lxReturning)) {
+         if (lastNode.nextNode() == lxClosureExpr) {
+            // COMPILER MAGIC : recognize the closure
+            generateClosureTree(writer, current, derivationScope);
+            lastNode = current;
+            node = current;
+         }
+      }
+         
+
 //      if (rootMode) {
 //         if (goToNode(node, lxCode/*, lxClosureExpr*/, lxOperator) == lxCode) {
 //            // COMPILER MAGIC : recognize the code template
@@ -1838,8 +1851,6 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
 //            return;
 //         }
 //      }
-      if (lastNode == lxToken)
-         generateIdentifier(writer, lastNode.firstChild(lxTerminalMask), derivationScope);
 //
 //      size_t dimensionCounter = SyntaxTree::countChild(node, lxDynamicSizeDecl);
 //      if (dimensionCounter > 0) {

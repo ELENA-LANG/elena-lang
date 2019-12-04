@@ -267,7 +267,7 @@ In development:
                 * stack allocated class and default constructor
                 * debugger : do not copy template parameter terminal info
                 * new opcode : setfi
-                * double boxing - see for example system'IntNumber.add<system'IntNumber>[2]
+                * double boxing - n * (m + k), n,m,k - local integers
 
               dev - test
                 * create a big list (bigger than YG)

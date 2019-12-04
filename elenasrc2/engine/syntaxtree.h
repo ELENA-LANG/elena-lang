@@ -70,6 +70,7 @@ enum LexicalType
    lxStatementArgs            = 0x001110,
    lxFieldInit                = 0x001120,
    lxDynamicSizeDecl          = 0x001130,
+   lxClosureExpr              = 0x001140,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
