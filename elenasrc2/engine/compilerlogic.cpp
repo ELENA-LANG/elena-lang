@@ -620,21 +620,21 @@ bool CompilerLogic :: doesClassExist(_ModuleScope& scope, ref_t targetRef)
    return defineClassInfo(scope, info, targetRef, true);
 }
 
-//bool CompilerLogic :: validateAutoType(_ModuleScope& scope, ref_t& reference)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, reference))
-//      return false;
-//
-//   while (isRole(info)) {
-//      reference = info.header.parentRef;
-//
-//      if (!defineClassInfo(scope, info, reference))
-//         return false;
-//   }
-//
-//   return true;
-//}
+bool CompilerLogic :: validateAutoType(_ModuleScope& scope, ref_t& reference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, reference))
+      return false;
+
+   while (isRole(info)) {
+      reference = info.header.parentRef;
+
+      if (!defineClassInfo(scope, info, reference))
+         return false;
+   }
+
+   return true;
+}
 
 bool CompilerLogic :: isValidType(ClassInfo& info)
 {
@@ -1013,8 +1013,8 @@ bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
    return isCompatible(scope, scope.branchingInfo.reference, reference);
 }
 
-void CompilerLogic :: injectOperation(SNode& node, _ModuleScope& scope, _Compiler& compiler, int operator_id, int operationType, ref_t& reference, 
-   /*ref_t elementRef, */int tempLocal)
+void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operator_id, 
+   int operationType, ref_t& reference, /*ref_t elementRef, */int tempLocal)
 {
 //   int size = 0;
 //   if (operationType == lxBinArrOp) {
@@ -1055,9 +1055,9 @@ void CompilerLogic :: injectOperation(SNode& node, _ModuleScope& scope, _Compile
 //   }
 //
    if (IsExprOperator(operator_id)) {
-      int size = defineStructSize(scope, reference, /*elementRef*/0);
+      int size = defineStructSize(*scope.moduleScope, reference, /*elementRef*/0);
 
-      compiler.injectExprOperation(node, size, tempLocal, (LexicalType)operationType, operator_id);
+      compiler.injectExprOperation(scope, node, size, tempLocal, (LexicalType)operationType, operator_id, reference);
    }
    else throw InternalError("Not yet implemented"); // !! temporal
 }
@@ -1887,7 +1887,7 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //         attributes.include(EAttr::eaAutoSize);
 //         return true;
       case V_VARIABLE:
-//      case V_AUTO:
+      case V_AUTO:
          newVariable = true;
          return true;
       case V_CONVERSION:

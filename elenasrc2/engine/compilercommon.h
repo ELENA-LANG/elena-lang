@@ -81,7 +81,7 @@ constexpr auto V_INTERN          = 0x80001016u;
 constexpr auto V_IMPORT          = 0x80001018u;
 //constexpr auto V_GROUP           = 0x80001019u;
 constexpr auto V_NOSTRUCT        = 0x8000101Bu;
-//constexpr auto V_AUTO            = 0x8000101Cu;
+constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
 //constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
@@ -377,6 +377,14 @@ struct _ModuleScope
    }
 };
 
+// --- _CompileScope ---
+
+struct _CompileScope
+{
+   _ModuleScope* moduleScope;
+   ident_t       ns;
+};
+
 // --- _Compiler ---
 
 class _Compiler
@@ -399,7 +407,8 @@ public:
 //   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode) = 0;
-   virtual void injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg) = 0;
+   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op, 
+      int opArg, ref_t reference) = 0;
 
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 //
@@ -662,8 +671,8 @@ public:
    // class is considered to be a role if it cannot be initiated
    virtual bool isRole(ClassInfo& info) = 0;
    virtual bool isAbstract(ClassInfo& info) = 0;
-//   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
-//
+   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
+
 //   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
 
    // auto generate virtual methods / fields
@@ -672,7 +681,7 @@ public:
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
       List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
-   virtual void injectOperation(SNode& node, _ModuleScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
+   virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
       /*ref_t elementRef, */int tempLocal) = 0;
    virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
       ref_t elementRef/*, ident_t ns, bool noUnboxing*/) = 0;

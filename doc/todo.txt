@@ -2,11 +2,11 @@
 In development:
 ------         
               dev
+                * function closures : weak one
+                * function closures : strong one
 
-                * dinitializing - if all members are simple, use direct operation
-                * closures
-                * function closures
-                * closures : default constructor is called for virtual nested class, for normal one - only initializer
+                * extensions
+                * extension dispatching : run-time, compile-time
 
                 * declare array, use array
                 * creating dynamic array / buffers
@@ -35,6 +35,8 @@ In development:
                 * closures: unboxing
                 * closures: presaved arguments
                 * closures: returning a value
+                * closures : virtual one
+                * closures : default constructor is called for virtual nested class, for normal one - only initializer
 
                 * analog of attributes : constant fields
 
@@ -51,9 +53,7 @@ In development:
                 * custom dispatch
                 * yieldable methods
 
-                * extensions
                 * extension templates
-                * extension dispatching : compile-time, run-time
 
                 * primitive operations with int : comparision
                 * primitive operations with int : bitwise
@@ -267,6 +267,7 @@ In development:
                 * stack allocated class and default constructor
                 * debugger : do not copy template parameter terminal info
                 * new opcode : setfi
+                * double boxing - see for example system'IntNumber.add<system'IntNumber>[2]
 
               dev - test
                 * create a big list (bigger than YG)

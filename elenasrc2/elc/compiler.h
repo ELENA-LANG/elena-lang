@@ -209,7 +209,7 @@ public:
 
 private:
    // - Scope -
-   struct Scope
+   struct Scope : _CompileScope
    {
          enum class ScopeLevel
          {
@@ -223,7 +223,6 @@ private:
             slOwnerClass,
          };
    
-         _ModuleScope* moduleScope;
          _Module*      module;
          Scope*        parent;
 
@@ -257,20 +256,20 @@ private:
             return parent->saveSourcePath(writer, path);
          }
 
-//         virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
-//         {
-//            if (parent) {
-//               return parent->resolveAutoType(info, reference, element);
-//            }
-//            else return false;
-//         }
-//         virtual bool resolveAutoOutput(ref_t reference)
-//         {
-//            if (parent) {
-//               return parent->resolveAutoOutput(reference);
-//            }
-//            else return false;
-//         }
+         virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+         {
+            if (parent) {
+               return parent->resolveAutoType(info, reference, element);
+            }
+            else return false;
+         }
+         virtual bool resolveAutoOutput(ref_t reference)
+         {
+            if (parent) {
+               return parent->resolveAutoOutput(reference);
+            }
+            else return false;
+         }
 
          virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
          {
@@ -290,14 +289,15 @@ private:
    
          Scope(_ModuleScope* moduleScope)
          {
-            this->parent = NULL;
             this->moduleScope = moduleScope;
+            this->parent = NULL;
             this->module = moduleScope->module;
          }
          Scope(Scope* parent)
          {
-            this->parent = parent;
             this->moduleScope = parent->moduleScope;
+            this->ns = parent->ns;
+            this->parent = parent;
             this->module = parent->module;
          }
    };
@@ -323,7 +323,7 @@ private:
 
       Visibility        defaultVisibility;
 
-      IdentifierString  ns;
+      IdentifierString  nsName;
       IdentifierString  name;
       IdentifierString  sourcePath;
 
@@ -613,15 +613,15 @@ private:
          return scope ? scope->reference : 0;
       }
 
-//      virtual bool resolveAutoOutput(ref_t reference)
-//      {
-//         if (outputRef == V_AUTO) {
-//            outputRef = reference;
-//
-//            return true;
-//         }
-//         else return Scope::resolveAutoOutput(reference);
-//      }
+      virtual bool resolveAutoOutput(ref_t reference)
+      {
+         if (outputRef == V_AUTO) {
+            outputRef = reference;
+
+            return true;
+         }
+         else return Scope::resolveAutoOutput(reference);
+      }
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
@@ -679,7 +679,7 @@ private:
       ObjectInfo mapLocal(ident_t identifier);
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
+      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -903,18 +903,15 @@ private:
 
    ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);
 
-   ref_t resolvePrimitiveReference(Scope& scope, ref_t reference, ref_t elementRef, bool declarationMode);
-   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode);
+   virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode);
 
-   ref_t resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns, bool declarationMode);
-   ref_t resolvePrimitiveArray(Scope& scope, ref_t elementRef, bool declarationMode);
+   ref_t resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
 
 //   ref_t resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t operandRef, ident_t ns, bool declarationMode);
 //   ref_t resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 //
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(_ModuleScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(ExprScope& scope, ObjectInfo object, bool noPrimitivesMode/*, bool unboxWrapper = true*/);
+   ref_t resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode);
 ////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
    ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, bool declarationMode);
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
@@ -958,8 +955,8 @@ private:
    ref_t mapTemplateAttribute(SNode node, Scope& scope);
    void declareMethodAttributes(SNode member, MethodScope& scope);
 
-//   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope);
-//
+   bool resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope);
+
 //   bool isTemplateParameterDeclared(SNode node, Scope& scope);
 //
 //   ref_t resolveVariadicMessage(Scope& scope, ref_t message);
@@ -997,10 +994,10 @@ private:
 //
 //   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
    void setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
-   void setVariableTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
+   void setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
-   void appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object, bool noUnboxing);
+   void appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing);
 
    ObjectInfo compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
@@ -1153,13 +1150,14 @@ private:
 
 //   void compileExternalArguments(SNode node, Scope& scope);
 //
-   void injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType, int tempLocal);
+   void injectBoxingTempLocal(SNode boxExprNode, SNode objNode, ExprScope& scope, LexicalType tempType, int tempLocal);
 //   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));
    void analizeSymbolTree(SNode node, Scope& scope);
-   void boxArgument(SNode node, ExprScope& scope, bool boxingMode);
+   void boxArgument(SNode boxExprNode, SNode node, ExprScope& scope, bool boxingMode);
+   void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode);
    void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr);
 
 //   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
@@ -1252,7 +1250,8 @@ public:
 ////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode);
-   virtual void injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg);
+   virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
+      int opArg, ref_t reference);
 ////   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);

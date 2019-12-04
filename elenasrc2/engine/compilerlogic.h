@@ -165,14 +165,14 @@ public:
       return isReadonly(info);
    }
 //   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
-//   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
+   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
 
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
 //   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
       List<ref_t>& implicitMultimethods, LexicalType methodType);
-   virtual void injectOperation(SNode& node, _ModuleScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
-      /*ref_t elementRef, */int tempLocal);
+   virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, 
+      ref_t& reference, /*ref_t elementRef, */int tempLocal);
 //   virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef);
    virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
       ref_t elementRef/*, ident_t ns, bool noUnboxing*/);

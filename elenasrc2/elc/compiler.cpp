@@ -241,7 +241,7 @@ Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent)
 {
    defaultVisibility = parent->defaultVisibility;
    sourcePath.copy(parent->sourcePath);
-   ns.copy(parent->ns);
+   nsName.copy(parent->ns);
 }
 
 pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
@@ -743,7 +743,7 @@ ObjectInfo Compiler::MethodScope :: mapGroup()
 
 ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param, EAttr mode)
 {
-   int prefix = /*functionMode ? 0 : */-1;
+   int prefix = functionMode ? 0 : -1;
 
 //   if (withOpenArg && param.class_ref == V_ARGARRAY) {
 //      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref, 0);
@@ -853,27 +853,6 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
    else return ObjectInfo();
 }
 
-//bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
-//{
-//   if (info.kind == okLocal) {
-//      for (auto it = locals.start(); !it.Eof(); it++) {
-//         if ((*it).offset == (int)info.param) {
-//            if ((*it).class_ref == V_AUTO) {
-//               (*it).class_ref = reference;
-//               (*it).element_ref = element;
-//
-//               info.extraparam = reference;
-//               info.element = element;
-//
-//               return true;
-//            }
-//         }
-//      }
-//   }
-//
-//   return Scope::resolveAutoType(info, reference, element);
-//}
-
 ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
 {
    if (!referenceOne && !EAttrs::test(mode, HINT_MODULESCOPE)) {
@@ -882,6 +861,27 @@ ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool reference
          return info;
    }
    return Scope::mapTerminal(identifier, referenceOne, mode);
+}
+
+bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+{
+   if (info.kind == okLocal) {
+      for (auto it = locals.start(); !it.Eof(); it++) {
+         if ((*it).offset == (int)info.param) {
+            if ((*it).class_ref == V_AUTO) {
+               (*it).class_ref = reference;
+               (*it).element_ref = element;
+
+               info.extraparam = reference;
+               info.element = element;
+
+               return true;
+            }
+         }
+      }
+   }
+
+   return Scope::resolveAutoType(info, reference, element);
 }
 
 // --- Compiler::ExprScope ---
@@ -1050,9 +1050,6 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
       // map as an outer field (reference to outer object and outer object field index)
       return ObjectInfo(okOuterSelf, owner.reference, owner.outerObject.reference, owner.outerObject.element, owner.outerObject.extraparam);
    }
-   //else if (identifier.compare(SELF_VAR) && !closureMode) {
-   //   return ObjectInfo(okParam, (size_t)-1);
-   //}
    else {
       Outer outer = outers.get(identifier);
 
@@ -1335,39 +1332,19 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //   }
 //}
 
-ref_t Compiler :: resolveObjectReference(ExprScope& scope, ObjectInfo object, bool noPrimitivesMode/*, bool unboxWapper*/)
+ref_t Compiler :: resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode)
 {
-   ref_t retVal = 0;
-   ref_t elementRef = object.element;
-   if (object.kind == okSelfParam) {
-   //   if (object.extraparam == (ref_t)-2) {
-   //      // HOTFIX : to return the primitive array
-   //      retVal = object.reference;
-   //   }
-      /*else */retVal = scope.getClassRefId(false);
-   }
-   //else if (unboxWapper && object.reference == V_WRAPPER) {
-   //   elementRef = 0;
-   //   retVal = object.element;
-   //}
-   else retVal = resolveObjectReference(*scope.moduleScope, object);
-
-   if (noPrimitivesMode && isPrimitiveRef(retVal)) {
-      return resolvePrimitiveReference(scope, retVal, elementRef, false);
-   }
-   else return retVal;
-}
-
-ref_t Compiler :: resolveObjectReference(_ModuleScope&, ObjectInfo object)
-{
-   // if static message is sent to a class class
-   switch (object.kind)
-   {
+   ref_t retVal = object.reference;
+   switch (object.kind) {
       case okNil:
          return V_NIL;
-      default:
-         return object.reference;
    }
+
+   if (noPrimitivesMode && isPrimitiveRef(retVal)) {
+      return resolvePrimitiveReference(scope, retVal, object.element, false);
+   }
+   else return retVal;
+
 }
 
 //inline void writeClassNameInfo(SyntaxWriter& writer, _Module* module, ref_t reference)
@@ -1410,7 +1387,7 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
 
    writeMessageInfo(node, *moduleScope, scope.message);
 
-   int prefix = /*scope.functionMode ? 0 : */-1;
+   int prefix = scope.functionMode ? 0 : -1;
 
    SNode current = node.firstChild();
    // method parameter debug info
@@ -2322,7 +2299,7 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
 //   writer.appendNode(lxResultField);
 //}
 //
-void Compiler :: appendBoxingInfo(SNode node, ExprScope& scope, ObjectInfo object, bool noUnboxing)
+void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing)
 {
    // if the parameter may be stack-allocated
    ref_t targetRef = resolveObjectReference(scope, object, false);
@@ -2351,7 +2328,7 @@ void Compiler :: setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo obje
    }
 }
 
-void Compiler :: setVariableTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
+void Compiler :: setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
 {
    node.set(type, object.param);
 
@@ -3346,7 +3323,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
       analizeOperands(node, scope, 3);
 
       // if it is a primitive operation
-      _logic->injectOperation(node, *scope.moduleScope, *this, operator_id, operationType, resultClassRef, /*loperand.element*/retVal.param);
+      _logic->injectOperation(node, scope, *this, operator_id, operationType, resultClassRef, /*loperand.element, */retVal.param);
    }
    // if not , replace with appropriate method call
    else {
@@ -3609,70 +3586,71 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
    return retVal;
 }
 
-void Compiler :: boxArgument(SNode current, ExprScope& scope, bool boxingMode)
+void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope, bool boxingMode)
 {
-   if (current == lxBoxableExpression) {      
-      if (boxingMode) {
-         SNode objNode = current.firstChild(lxObjectMask);
-         if (objNode == lxSeqExpression)
-            objNode = objNode.lastChild(lxObjectMask);
+   if (current == lxExpression) {
+      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode);
+   }
+   else if (current == lxSeqExpression) {
+      boxArgument(boxExprNode, current.lastChild(lxObjectMask), scope, boxingMode);
+   }
+   else if (current == lxBoxableExpression) {
+      // resolving double boxing
 
-         if (objNode == lxExpression)
-            objNode = objNode.findSubNodeMask(lxObjectMask);
-
-         if (objNode == lxNewArrOp) {
-            ref_t typeRef = current.findChild(lxType).argument;
-
-            objNode.setArgument(typeRef);
-         }
-         else {
-            Attribute key(objNode.type, objNode.argument);
-
-            int tempLocal = scope.tempLocals.get(key);
-            if (tempLocal == NOTFOUND_POS) {
-               tempLocal = scope.newTempLocal();
-               scope.tempLocals.add(key, tempLocal);
-
-               injectBoxingTempLocal(current, objNode, scope, lxTempLocal, tempLocal);
-            }
-            else objNode.set(lxTempLocal, tempLocal);
-         }
-      }
       current.set(lxExpression, 0);
+
+   //   boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode);
    }
-   else if (current == lxExpression) {
-      boxArgument(current.firstChild(lxObjectMask), scope, boxingMode);
+   else {
+      if (current == lxNewArrOp) {
+         ref_t typeRef = boxExprNode.findChild(lxType).argument;
+
+         current.setArgument(typeRef);
+      }
+      else {
+         Attribute key(current.type, current.argument);
+
+         int tempLocal = scope.tempLocals.get(key);
+         if (tempLocal == NOTFOUND_POS) {
+            tempLocal = scope.newTempLocal();
+            scope.tempLocals.add(key, tempLocal);
+
+            injectBoxingTempLocal(boxExprNode, current, scope, lxTempLocal, tempLocal);
+         }
+         else current.set(lxTempLocal, tempLocal);
+      }
    }
-   //else if (current == lxFieldExpression) {
-   //   analizeOperands(current, scope, boxingMode ? 0 : -1);
-   //}
+}
+
+void Compiler :: analizeOperand(SNode& current, ExprScope& scope, bool boxingMode)
+{
+   switch (current.type) {
+      case lxBoxableExpression:
+         boxArgument(current, current.firstChild(lxObjectMask), scope, boxingMode);
+         current.set(lxExpression, 0);
+         break;
+      case lxExpression:
+         analizeOperand(current.firstChild(lxObjectMask), scope, boxingMode);
+         break;
+      case lxSeqExpression:
+         analizeOperand(current.lastChild(lxObjectMask), scope, boxingMode);
+         break;
+      default:
+         break;
+   }
 }
 
 void Compiler :: analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr)
 {
    // if boxing / unboxing required - insert SeqExpression, prepand boxing, replace operand with boxed arg, append unboxing   
-
    SNode current = node.firstChild(lxObjectMask);
-//   int nested = 0;
    int argBit = 1;
    while (current != lxNone) {
-      boxArgument(current, scope, !test(stackSafeAttr, argBit));
-
-//      if (test(current.type, lxObjectMask)) {
-//         if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
-//            nested++;
-//         }
-//      }
+      analizeOperand(current, scope, !test(stackSafeAttr, argBit));
 
       argBit << 1;
-
       current = current.nextNode(lxObjectMask);
    }
-
-//   if (nested > 1) {
-//      // NOTE : it should be the last node to correctly optimize boxing duplicates
-//      node.appendNode(lxDuplicateBoxingAttr);
-//   }
 }
 
 ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode)
@@ -3742,14 +3720,7 @@ ref_t Compiler :: resolveStrongArgument(ExprScope& scope, ObjectInfo info)
 //   return scope.module->mapSignature(argRef, 2, false);
 //}
 
-ref_t Compiler :: resolvePrimitiveReference(Scope& scope, ref_t argRef, ref_t elementRef, bool declarationMode)
-{
-   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
-
-   return resolvePrimitiveReference(*scope.moduleScope, argRef, elementRef, nsScope->ns.c_str(), declarationMode);
-}
-
-ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode)
+ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode)
 {
 
    switch (argRef) {
@@ -3758,7 +3729,7 @@ ref_t Compiler :: resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, r
 //      case V_ARGARRAY:
 //         return resolvePrimitiveArray(scope, scope.argArrayTemplateReference, elementRef, ns, declarationMode);
       case V_INT32:
-         return scope.intReference;
+         return scope.moduleScope->intReference;
 //      case V_INT64:
 //         return scope.longReference;
 //      case V_REAL64:
@@ -4016,16 +3987,16 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //   }
 //   else scope.raiseError(errInvalidOperation, node);
 //}
-//
-//bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, CodeScope& scope)
-//{
-//   ref_t sourceRef = resolveObjectReference(scope, source, true);
-//
-//   if (!_logic->validateAutoType(*scope.moduleScope, sourceRef))
-//      return false;
-//
-//   return scope.resolveAutoType(target, sourceRef, source.element);
-//}
+
+bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope)
+{
+   ref_t sourceRef = resolveObjectReference(scope, source, true);
+
+   if (!_logic->validateAutoType(*scope.moduleScope, sourceRef))
+      return false;
+
+   return scope.resolveAutoType(target, sourceRef, source.element);
+}
 
 ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo target/*,
    bool accumulateMode*/)
@@ -4141,15 +4112,17 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //      compileOperator(writer, node, scope, target, assignMode);
 //      writer.removeBookmark();
 //   }
-//   else if (targetRef == V_AUTO) {
-//      // support auto attribute
-//      ObjectInfo exprVal = compileExpression(writer, sourceNode, scope, 0, assignMode);
-//      if (resolveAutoType(exprVal, target, scope)) {
-//         targetRef = resolveObjectReference(scope, exprVal, false);
-//      }
-//      else scope.raiseError(errInvalidOperation, node);
-//   }
-   /*else */compileExpression(sourceNode, scope,
+   /*else */if (targetRef == V_AUTO) {
+      // support auto attribute
+      ObjectInfo exprVal = compileExpression(sourceNode, scope, 
+         mapObject(sourceNode, scope, assignMode), 0, assignMode);
+
+      if (resolveAutoType(exprVal, target, scope)) {
+         targetRef = resolveObjectReference(scope, exprVal, false);
+      }
+      else scope.raiseError(errInvalidOperation, node);
+   }
+   else compileExpression(sourceNode, scope,
       mapObject(sourceNode, scope, assignMode), targetRef, assignMode);
 //
 //   if (byRefAssigning)
@@ -4305,9 +4278,9 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
    MethodScope methodScope(&scope);
    /*bool lazyExpression = */declareActionScope(scope, argNode, methodScope, mode);
    bool inlineExpression = EAttrs::test(mode, HINT_INLINE_EXPR);
-//   methodScope.functionMode = true;
-//
-//   ref_t multiMethod = resolveMultimethod(scope, methodScope.message);
+   methodScope.functionMode = true;
+
+   ref_t multiMethod = resolveMultimethod(scope, methodScope.message);
 
 //   // HOTFIX : if the closure emulates code brackets
 //   if (EAttrs::test(mode, HINT_SUBCODE_CLOSURE))
@@ -4328,18 +4301,18 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
       current.injectAndReplaceNode(lxClassMethod, methodScope.message);
 
       initialize(scope, methodScope);
-//      methodScope.closureMode = true;
-//
-//      if (multiMethod)
-//         // if it is a strong-typed closure, output should be defined by the closure
-//         methodScope.outputRef = V_AUTO;
+      methodScope.functionMode = true;
+
+      if (multiMethod)
+         // if it is a strong-typed closure, output should be defined by the closure
+         methodScope.outputRef = V_AUTO;
 
       compileActionMethod(current, methodScope);
    }
 
-//   if (methodScope.outputRef == V_AUTO)
-//      // if the output was not defined - ignore it
-//      methodScope.outputRef = 0;
+   if (methodScope.outputRef == V_AUTO)
+      // if the output was not defined - ignore it
+      methodScope.outputRef = 0;
 
    // the parent is defined after the closure compilation to define correctly the output type
    ref_t parentRef = scope.info.header.parentRef;
@@ -4371,32 +4344,25 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
    if (methodScope.outputRef)
       scope.info.methodHints.add(Attribute(methodScope.message, maReference), methodScope.outputRef);
 
-//   if (multiMethod) {
-//      // inject a virtual invoke multi-method if required
-//      SyntaxTree virtualTree;
-//      virtualTree.createRoot(lxClass, 0);
-//
-//      List<ref_t> implicitMultimethods;
-//      implicitMultimethods.add(multiMethod);
-//
-//      _logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), *this, implicitMultimethods, lxClassMethod);
-//
-//      generateClassDeclaration(virtualTree.readRoot(), scope, ClassType::ctClass);
-//
-//      compileVMT(writer, virtualTree.readRoot(), scope);
-//   }
-//   else {
-      generateClassDeclaration(SNode(), scope/*, ClassType::ctClass*/);
+   if (multiMethod) {
+      throw InternalError("Not yet implemented"); // !! temporal
 
-      //if (test(scope.info.header.flags, elWithMuti)) {
-      //   // HOTFIX: temporally the closure does not generate virtual multi-method
-      //   // so the class should be turned into limited one (to fix bug in multi-method dispatcher)
-      //   scope.info.header.flags &= ~elSealed;
-      //   scope.info.header.flags |= elClosed;
-      //}
-//   }
-//
-//   writer.closeNode();
+      //// inject a virtual invoke multi-method if required
+      //SyntaxTree virtualTree;
+      //virtualTree.createRoot(lxClass, 0);
+
+      //List<ref_t> implicitMultimethods;
+      //implicitMultimethods.add(multiMethod);
+
+      //_logic->injectVirtualMultimethods(*scope.moduleScope, virtualTree.readRoot(), *this, implicitMultimethods, lxClassMethod);
+
+      //generateClassDeclaration(virtualTree.readRoot(), scope);
+
+      //compileVMT(writer, virtualTree.readRoot(), scope);
+   }
+   else {
+      generateClassDeclaration(SNode(), scope);
+   }
 
    scope.save();
 
@@ -4708,18 +4674,16 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, EAttr m
 
 ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr mode)
 {
-//   bool autoMode = false;
+   bool autoMode = false;
    ref_t targetRef = 0;
-//   if (EAttrs::test(mode, HINT_ROOT)) {
+   if (EAttrs::test(mode, HINT_ROOT)) {
       targetRef = scope.getReturningRef();
-//      if (targetRef == V_AUTO) {
-//         autoMode = true;
-//         targetRef = 0;
-//      }
-//   }
-//
-//   writer.newBookmark();
-//
+      if (targetRef == V_AUTO) {
+         autoMode = true;
+         targetRef = 0;
+      }
+   }
+
    node.injectNode(lxExpression);
    node = node.findChild(lxExpression);
 
@@ -4727,14 +4691,14 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
    ObjectInfo info = compileExpression(node, exprScope,
       mapObject(node, exprScope, mode), targetRef, mode);
 
-//   if (autoMode) {
-//      targetRef = resolveObjectReference(scope, info, true);
-//
-//     _logic->validateAutoType(*scope.moduleScope, targetRef);
-//
-//      scope.resolveAutoOutput(targetRef);
-//   }
-//
+   if (autoMode) {
+      targetRef = resolveObjectReference(exprScope, info, true);
+
+     _logic->validateAutoType(*scope.moduleScope, targetRef);
+
+      scope.resolveAutoOutput(targetRef);
+   }
+
 //   // HOTFIX : implementing closure exit
 //   if (EAttrs::test(mode, HINT_ROOT)) {
 //      ObjectInfo retVar = scope.mapTerminal(RETVAL_VAR, false, EAttr::eaNone);
@@ -4844,18 +4808,12 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 //   return resolveReferenceTemplate(*scope.moduleScope, elementRef, nsScope->ns.c_str(), declarationMode);
 //}
 
-ref_t Compiler :: resolvePrimitiveArray(Scope& scope, ref_t elementRef, bool declarationMode)
+ref_t Compiler :: resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode)
 {
-   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
+   _ModuleScope* moduleScope = scope.moduleScope;
 
-   return resolvePrimitiveArray(*scope.moduleScope, scope.moduleScope->arrayTemplateReference, elementRef,
-      nsScope->ns.c_str(), declarationMode);
-}
-
-ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, ref_t elementRef, ident_t ns, bool declarationMode)
-{
    if (!elementRef)
-      elementRef = scope.superReference;
+      elementRef = moduleScope->superReference;
 
    // generate a reference class
    List<SNode> parameters;
@@ -4865,7 +4823,7 @@ ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, 
    SyntaxWriter dummyWriter(dummyTree);
    dummyWriter.newNode(lxRoot);
    dummyWriter.newNode(lxType, elementRef);
-   ident_t refName = scope.module->resolveReference(elementRef);
+   ident_t refName = moduleScope->module->resolveReference(elementRef);
    if (isWeakReference(refName)) {
       dummyWriter.appendNode(lxReference, refName);
    }
@@ -4875,7 +4833,7 @@ ref_t Compiler :: resolvePrimitiveArray(_ModuleScope& scope, ref_t templateRef, 
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   return scope.generateTemplate(templateRef, parameters, ns, declarationMode);
+   return moduleScope->generateTemplate(templateRef, parameters, scope.ns, declarationMode);
 }
 
 //ObjectInfo Compiler :: compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode)
@@ -5224,7 +5182,9 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
       typeRef = resolveTypeIdentifier(scope, node, declarationMode);
    }
    else if (node == lxArrayType) {
-      typeRef = resolvePrimitiveArray(scope, resolveTypeAttribute(node.firstChild(), scope, declarationMode), declarationMode);
+      typeRef = resolvePrimitiveArray(scope, 
+         scope.moduleScope->arrayTemplateReference,
+         resolveTypeAttribute(node.firstChild(), scope, declarationMode), declarationMode);
    }
    else {
       typeRef = node.argument;
@@ -5258,9 +5218,9 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //      if (!newVariable && exprAttr.test(EAttr::eaType) && !exprAttr.test(EAttr::eaCast)) {
 //         // if it is a variable declaration
 //         newVariable = true;
-//
-//         if (value == V_AUTO)
-//            typeRef = value;
+
+         if (value == V_AUTO)
+            typeRef = value;
 //      }
 
       current = current.nextNode();
@@ -5303,15 +5263,15 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //   }
 
    if (current.compare(lxType, lxArrayType) && test(current.nextNode(), lxTerminalMask)) {
-//      if (typeRef == 0) {
+      if (typeRef == 0) {
          typeRef = resolveTypeAttribute(current, scope, false);
 
          newVariable = true;
 //         //if (current.existChild(lxArrayType)) {
 //         //   dynamicSize = true;
 //         //}
-//      }
-//      else scope.raiseError(errIllegalOperation, current);
+      }
+      else scope.raiseError(errIllegalOperation, current);
 
       current = current.nextNode();
    }
@@ -5773,7 +5733,8 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          // if it is an array creation
          result.kind = okClass;
          result.element = resolveTypeAttribute(current.firstChild(), scope, false);
-         result.param = resolvePrimitiveArray(scope, result.element, false);
+         result.param = resolvePrimitiveArray(scope, 
+            scope.moduleScope->arrayTemplateReference, result.element, false);
          result.reference = V_OBJARRAY;
       }
       else {
@@ -8123,7 +8084,9 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
          scope.info.header.flags |= elDynamicRole;
       }
       else if (!test(scope.info.header.flags, elStructureRole)) {
-         classRef = resolvePrimitiveArray(scope, classRef, false);
+         classRef = resolvePrimitiveArray(scope,
+            scope.moduleScope->arrayTemplateReference,
+            classRef, false);
       }
       else scope.raiseError(errIllegalField, current);
 
@@ -9171,9 +9134,10 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
       mapObject(expression, exprScope, HINT_ROOTSYMBOL), 0, EAttr::eaNone);
 
    if (scope.outputRef == 0) {
-      if (resolveObjectReference(*scope.moduleScope, retVal) != 0) {
+      ref_t ref = resolveObjectReference(scope, retVal, true);
+      if (ref != 0) {
          // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
-         scope.outputRef = resolveObjectReference(*scope.moduleScope, retVal);         
+         scope.outputRef = ref;         
       }
    }
    else convertObject(node, exprScope, scope.outputRef, retVal, EAttr::eaNone);
@@ -9521,6 +9485,9 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
    int size = node.findChild(lxSize).argument;
    bool isVariable = node.argument == INVALID_REF;
    if (typeRef != 0 && size != 0) {
+      if (isPrimitiveRef(typeRef))
+         typeRef = resolvePrimitiveReference(scope, typeRef, 0, false);
+
       // inject creating a boxed object
       SNode assigningNode = current.insertNode(lxAssigning);
       assigningNode.appendNode(tempType, tempLocal);
@@ -10577,12 +10544,14 @@ void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool ig
          scope.sourcePath.copy(current.identifier());
       }
       else if (current == lxNameAttr) {
+         // overwrite the parent namespace name
          scope.name.copy(current.firstChild(lxTerminalMask).identifier());
 
-         if (scope.ns.Length() > 0)
-            scope.ns.append('\'');
+         if (scope.nsName.Length() > 0)
+            scope.nsName.append('\'');
 
-         scope.ns.append(scope.name.c_str());
+         scope.nsName.append(scope.name.c_str());
+         scope.ns = scope.nsName.c_str();
       }
       else if (current == lxAttribute) {
          if (!_logic->validateNsAttribute(current.argument, scope.defaultVisibility))
@@ -11420,7 +11389,8 @@ void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
 //   return moduleScope.generateTemplate(templateRef, parameters, ns, false);
 //}
 
-void Compiler :: injectExprOperation(SNode& node, int size, int tempLocal, LexicalType op, int opArg)
+void Compiler :: injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
+   int opArg, ref_t reference)
 {
    SNode current = node;
    if (current != lxExpression) {
@@ -11437,5 +11407,7 @@ void Compiler :: injectExprOperation(SNode& node, int size, int tempLocal, Lexic
    roperand.insertNode(lxLocalAddress, tempLocal);
 
    current = lxSeqExpression;
-   current.appendNode(lxLocalAddress, tempLocal);
+   SNode retNode = current.appendNode(lxVirtualReference);
+
+   setVariableTerminal(retNode, scope, ObjectInfo(okLocalAddress, tempLocal, reference), EAttr::eaNone, lxLocalAddress);
 }
