@@ -276,12 +276,12 @@ public interface Func<T, TResult>
 //    }
 }
 
-///// A base two variable function
-//public interface Func2
-//{
-//    /// Executes the action
-//    abstract closure(param1, param2) {}
-//    
+/// A base two variable function
+public interface Func2
+{
+    /// Executes the action
+    abstract function(param1, param2) {}
+    
 //    /// Executes the function for parameters and every enumeration item
 //    sealed run(object param, Enumerator enumerator)
 //    {
@@ -304,18 +304,18 @@ public interface Func<T, TResult>
 //        
 //        ^ nil
 //    }
-//}
-//
-//public interface Func<T1,T2,TResult>
-//{
-//    /// Executes the action
-//    abstract TResult closure(T1 param1, T2 param2) {}
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
+}
+
+public interface Func<T1,T2,TResult>
+{
+    /// Executes the action
+    abstract TResult function(T1 param1, T2 param2) {}
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 ///// A base three variable function
 //public interface Func3
 //{

@@ -2203,9 +2203,7 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
             codeScope->reserved1 = codeScope->allocated1;
       }
          
-
       variable.param = codeScope->newLocal();
-
    }
 
    variableType = declareVariableType(*codeScope, variable, localInfo, size/*, binaryArray, variableArg, className*/);
@@ -6709,7 +6707,7 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
    codeScope.allocated1++;
    int preallocated = codeScope.allocated1;
 
-   ObjectInfo retVal = compileCode(body == lxReturning ? node : body, codeScope);
+   ObjectInfo retVal = compileCode(body == lxReturning ? body.parentNode() : body, codeScope);
 
    codeScope.syncStack(&scope);
 

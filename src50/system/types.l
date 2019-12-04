@@ -59,7 +59,7 @@
 #define import      80001018h
 //#define mixin       80001019h
 ////#8000101B = nonstructural;
-//#define auto        8000101Ch
+#define auto        8000101Ch
 //#define attribute   8000101Fh
 //#define yield       80001020h
 #define namespace   80001021h

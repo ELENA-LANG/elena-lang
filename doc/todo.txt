@@ -2,9 +2,6 @@
 In development:
 ------         
               dev
-                * function closures : strong one - should be resolved directly if possible
-                * function closures : strong one - multi-table should use direct operation (xmtredirect)
-
                 * function closures : weak one - several argumentd
                 * function closures : strong one - several argumentd
 
@@ -271,6 +268,7 @@ In development:
                 * debugger : do not copy template parameter terminal info
                 * new opcode : setfi
                 * double boxing - n * (m + k), n,m,k - local integers
+                * function closures : strong one - should be resolved directly if possible
 
               dev - test
                 * create a big list (bigger than YG)
