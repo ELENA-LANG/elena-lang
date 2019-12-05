@@ -3070,14 +3070,14 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
       int resolvedStackSafeAttr = 0;
       while (!it.Eof()) {
          auto extInfo = *it;
-         ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value2);
+         ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
 
-         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value1, signaturues,
+         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2, signaturues,
             signatureLen, resolvedStackSafeAttr)) 
          {
             if (!resolvedMessage) {
-               resolvedMessage = extInfo.value1;
-               resolvedExtRef = extInfo.value2;               
+               resolvedMessage = extInfo.value2;
+               resolvedExtRef = extInfo.value1;               
             }
             else {
                resolvedMessage = 0;

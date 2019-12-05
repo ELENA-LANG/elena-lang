@@ -2,8 +2,6 @@
 In development:
 ------         
               dev
-                * extension dispatching : compile-time
-
                 * internal / public / private classes
                 * internal / public / private / proteced methods
                 * internal / public / private / proteced constructors
