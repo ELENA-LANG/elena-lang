@@ -720,6 +720,63 @@ inline ident_t resolveActionName(_Module* module, ref_t message)
    return module->resolveAction(getAction(message), signRef);
 }
 
+ref_t CompilerLogic :: generateOverloadList(_ModuleScope& scope, _Compiler& compiler, ref_t message, 
+   ClassInfo::CategoryInfoMap& methodHints, void* param, ref_t(*resolve)(void*,ref_t), int flags)
+{
+   // create a new overload list
+   ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
+
+   // sort the overloadlist
+   int defaultOne[0x20];
+   int* list = defaultOne;
+   size_t capcity = 0x20;
+   size_t len = 0;
+   for (auto h_it = methodHints.start(); !h_it.Eof(); h_it++) {
+      if (h_it.key().value2 == maMultimethod && *h_it == message) {
+         if (len == capcity) {
+            int* new_list = new int[capcity + 0x10];
+            memmove(new_list, list, capcity * 4);
+            list = new_list;
+            capcity += 0x10;
+         }
+
+         ref_t omsg = h_it.key().value1;
+         list[len] = omsg;
+         for (size_t i = 0; i < len; i++) {
+            if (isSignatureCompatible(scope, omsg, list[i])) {
+               memmove(list + (i + 1) * 4, list + i * 4, (len - i) * 4);
+               list[i] = omsg;
+               break;
+            }
+         }
+         len++;
+      }
+   }
+
+   // fill the overloadlist
+   for (size_t i = 0; i < len; i++) {
+      ref_t classRef = resolve(param, list[i]);
+
+      if (test(flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+         compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
+      }
+      else if (test(flags, elClosed)) {
+         compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
+      }
+      else compiler.generateOverloadListMember(scope, listRef, list[i]);
+   }
+
+   if (capcity > 0x20)
+      delete[] list;
+
+   return listRef;
+}
+
+ref_t paramFeedback(void* param, ref_t)
+{
+   return (ref_t)param;
+}
+
 void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
 {
    for (auto it = info.methods.start(); !it.Eof(); it++) {
@@ -727,7 +784,8 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
          ref_t message = it.key();
 
          // create a new overload list
-         ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
+         ref_t listRef = generateOverloadList(scope, compiler, message, info.methodHints, (void*)classRef, 
+            paramFeedback, info.header.flags);
 
          info.methodHints.exclude(Attribute(message, maOverloadlist));
          info.methodHints.add(Attribute(message, maOverloadlist), listRef);
@@ -735,47 +793,6 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
             info.methodHints.exclude(Attribute(message & ~STATIC_MESSAGE, maOverloadlist));
             info.methodHints.add(Attribute(message & ~STATIC_MESSAGE, maOverloadlist), listRef);
          }
-
-         // sort the overloadlist
-         int defaultOne[0x20];
-         int* list = defaultOne;
-         size_t capcity = 0x20;
-         size_t len = 0;
-         for (auto h_it = info.methodHints.start(); !h_it.Eof(); h_it++) {
-            if (h_it.key().value2 == maMultimethod && *h_it == message) {
-               if (len == capcity) {
-                  int* new_list = new int[capcity + 0x10];
-                  memmove(new_list, list, capcity * 4);
-                  list = new_list;
-                  capcity += 0x10;
-               }
-
-               ref_t omsg = h_it.key().value1;
-               list[len] = omsg;
-               for (size_t i = 0; i < len; i++) {
-                  if (isSignatureCompatible(scope, omsg, list[i])) {
-                     memmove(list + (i + 1) * 4, list + i * 4, (len - i) * 4);
-                     list[i] = omsg;
-                     break;
-                  }
-               }
-               len++;
-            }
-         }
-
-         // fill the overloadlist
-         for (size_t i = 0; i < len; i++) {
-            if (test(info.header.flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
-               compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
-            }
-            else if (test(info.header.flags, elClosed)) {
-               compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
-            }
-            else compiler.generateOverloadListMember(scope, listRef, list[i]);
-         }
-
-         if (capcity > 0x20)
-            delete[] list;
       }
    }
 }
@@ -815,8 +832,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 
    if (test(info.header.flags, elClassClass)) {
    }
-   else if (!test(info.header.flags, elNestedClass) && !test(info.header.flags, elRole)
-      /*&& !test(info.header.flags, elExtension)*/) 
+   else if (!test(info.header.flags, elNestedClass) && !test(info.header.flags, elRole)) 
    {
       if (test(info.header.flags, elDynamicRole)) {
          // HOTFIX : remove auto generated default constructor for a dynamic object
@@ -1542,11 +1558,11 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
       // nested class is sealed
       info.header.flags |= elSealed;
    }
-//
-//   if (test(info.header.flags, elExtension)) {
-//      info.header.flags |= elSealed;
-//   }
-//
+
+   if (test(info.header.flags, elExtension)) {
+      info.header.flags |= elSealed;
+   }
+
 ////   // verify if the class may be a wrapper
 ////   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
 ////      test(info.methodHints.get(Attribute(encodeAction(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
@@ -1693,9 +1709,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
       case V_CONST:
          attrValue = elReadOnlyRole;
          return true;
-//      case V_EXTENSION:
-//         attrValue = elExtension;
-//         return true;
+      case V_EXTENSION:
+         attrValue = elExtension;
+         return true;
       case V_NOSTRUCT:
          attrValue = elNonStructureRole;
          return true;

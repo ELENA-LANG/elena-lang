@@ -60,7 +60,7 @@ constexpr auto V_CLASS           = 0x80001001u;
 constexpr auto V_STRUCT          = 0x80001002u;
 constexpr auto V_SYMBOLEXPR      = 0x80001003u;
 constexpr auto V_CONSTRUCTOR     = 0x80001004u;
-//constexpr auto V_EXTENSION       = 0x80001005u;
+constexpr auto V_EXTENSION       = 0x80001005u;
 constexpr auto V_SINGLETON       = 0x80001006u;
 constexpr auto V_LIMITED         = 0x80001007u;
 constexpr auto V_METHOD          = 0x80001008u;
@@ -678,6 +678,8 @@ public:
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
 //   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
+   virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, ref_t message,
+      ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags) = 0;
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
       List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;

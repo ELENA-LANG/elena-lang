@@ -2,15 +2,24 @@
 In development:
 ------         
               dev
-                * function closures : weak one - several argumentd
-                * function closures : strong one - several argumentd
+                * do not generate a multi-methods for extensions
+                * extension message is a function, where the first argument is the extension target
 
+                * Run-time extension dispatching #380
                 * extensions
                 * extension dispatching : run-time, compile-time
+
+                * internal / public / private classes
+                * internal / public / private / proteced methods
+                * internal / public / private / proteced constructors
+
+                * by ref argument
 
                 * declare array, use array
                 * creating dynamic array / buffers
                 * test creating an array : non-empty, empty
+
+                * externals
 
                 * template of templates
                 * field - template, template of templates
@@ -18,9 +27,6 @@ In development:
                 * array of templates
                 * template of arrays
 
-                * internal / public / private classes
-                * internal / public / private / proteced methods
-                * internal / public / private / proteced constructors
                 * public / internal fields
                 * properties
                 * public / private / internal properties
@@ -269,6 +275,7 @@ In development:
                 * new opcode : setfi
                 * double boxing - n * (m + k), n,m,k - local integers
                 * function closures : strong one - should be resolved directly if possible
+                * public / private / internal extensions
 
               dev - test
                 * create a big list (bigger than YG)

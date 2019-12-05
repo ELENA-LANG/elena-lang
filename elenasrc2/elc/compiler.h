@@ -143,7 +143,7 @@ public:
       okLocalAddress,                 // param - local offset
 //      okParams,                       // param - local offset
 //////      okBlockLocal,                   // param - local offset
-//      okConstantRole,                 // param - role reference
+      okConstantRole,                 // param - overridden message, reference - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
       okExtension,
       okClassSelf,                    // param - class reference; used in class resending expression
@@ -312,8 +312,10 @@ private:
       // symbol hints
       Map<ref_t, ref_t> constantHints;
 
-//      // extensions
-//      ExtensionMap      extensions;
+      // extensions
+      Map<ref_t, ref_t> extensionDispatchers;
+      //Map<ref_t, ref_t> extensionTargets;
+      ExtensionMap      extensions;
 //      ExtensionTmplMap  extensionTemplates;
 //
 //      ref_t             packageReference;
@@ -375,28 +377,30 @@ private:
 
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
-//      void loadExtensions(ident_t ns);
-//      void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
-//      {
-//         IdentifierString fullName(ns);
-//         if (internalOne)
-//            fullName.append(PRIVATE_PREFIX_NS, getlength(PRIVATE_PREFIX_NS) - 1); // HOTFIX : to exclude the tailing quote symbol
-//
-//         if (!emptystr(subns)) {
-//            fullName.append("'");
-//            fullName.append(subns);
-//         }
-//         loadExtensions(fullName.c_str());
-//      }
-//
-//      void saveExtension(ref_t message, ref_t type, ref_t role, bool internalOne);
+      void loadExtensions(ident_t ns);
+      void loadExtensions(ident_t ns, ident_t subns/*, bool internalOne*/)
+      {
+         IdentifierString fullName(ns);
+         //if (internalOne)
+         //   fullName.append(PRIVATE_PREFIX_NS, getlength(PRIVATE_PREFIX_NS) - 1); // HOTFIX : to exclude the tailing quote symbol
+
+         if (!emptystr(subns)) {
+            fullName.append("'");
+            fullName.append(subns);
+         }
+         loadExtensions(fullName.c_str());
+      }
+
+      //ref_t resolveExtensionTarget(ref_t reference);
+
+      void saveExtension(ref_t message, ref_t extRef, ref_t strongMessage/*, bool internalOne*/);
 //      void saveExtensionTemplate(ref_t message, ident_t pattern);
-//
-//      void loadModuleInfo(ident_t name)
-//      {
-//         loadExtensions(name);
-//      }
-//
+
+      void loadModuleInfo(ident_t name)
+      {
+         loadExtensions(name);
+      }
+
 //      bool defineForward(ident_t forward, ident_t referenceName)
 //      {
 //         ObjectInfo info = mapTerminal(referenceName, true, EAttr::eaNone);
@@ -421,7 +425,7 @@ private:
    struct ClassScope : public SourceScope
    {
       ClassInfo   info;
-//      ref_t       extensionClassRef;
+      ref_t       extensionClassRef;
       bool        embeddable;
       bool        classClassMode;
       bool        abstractMode;
@@ -548,7 +552,7 @@ private:
       bool         classEmbeddable;
 //      bool         generic;
 //      bool         genericClosure;
-//      bool         extensionMode;
+      bool         extensionMode;
       bool         multiMethod;
       bool         functionMode;
       bool         nestedMode;
@@ -625,7 +629,7 @@ private:
 
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
-      ObjectInfo mapSelf(/*bool forced = false*/);
+      ObjectInfo mapSelf();
       ObjectInfo mapGroup();
       ObjectInfo mapParameter(Parameter param, EAttr mode);
 
@@ -918,9 +922,9 @@ private:
 
    ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
 
-//   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
+   void saveExtension(ClassScope& scope, ref_t message/*, bool internalOne*/);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
-//   ref_t mapExtension(CodeScope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
+   ref_t mapExtension(Scope& scope, ref_t& messageRef/*, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr*/);
 
    void importCode(SNode node, Scope& scope, ref_t reference, ref_t message);
 
@@ -940,7 +944,7 @@ private:
 //   bool isValidAttributeType(Scope& scope, _CompilerLogic::FieldAttributes& attrs);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false);
-   void compileParentDeclaration(SNode node, ClassScope& scope/*, bool extensionMode*/);
+   void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode);
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);
    void validateClassFields(SNode node, ClassScope& scope);
 
@@ -962,7 +966,7 @@ private:
 //   ref_t resolveVariadicMessage(Scope& scope, ref_t message);
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
-                                     /*bool withExtension, */int& stackSafeAttr);
+                                     bool withExtension, int& stackSafeAttr);
 ////   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
 ////   {
 ////      int dummy;
@@ -1072,7 +1076,7 @@ private:
    ObjectInfo compileCode(SNode node, CodeScope& scope);
 
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
-   void declareArgumentList(SNode node, MethodScope& scope/*, bool withoutWeakMessages*/, bool declarationMode);
+   void declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode);
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
    /*bool*/void declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
 
@@ -1114,6 +1118,8 @@ private:
    void compileVMT(SNode node, ClassScope& scope, bool exclusiveMode = false, bool ignoreAutoMultimethods = false);
    void compileClassVMT(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileForward(SNode ns, NamespaceScope& scope);
+
+   ref_t compileExtensionDispatcher(NamespaceScope& scope, ref_t genericMessageRef);
 
    void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
 //   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst, bool isArray);
@@ -1176,7 +1182,7 @@ private:
    void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
 //   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
 
-   void declareNamespace(SNode& node, NamespaceScope& scope, bool withImports);
+   void declareNamespace(SNode& node, NamespaceScope& scope, bool withImports, bool withFullInfo);
 
 //   void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);
 //   void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
@@ -1241,6 +1247,7 @@ public:
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
+   void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t resendMessage);
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);

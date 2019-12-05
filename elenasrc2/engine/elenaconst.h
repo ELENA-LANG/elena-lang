@@ -301,11 +301,10 @@ namespace _ELENA_
    constexpr int elWrapper             = 0x00004000;
    constexpr int elStructureWrapper    = 0x00004800;
    constexpr int elDynamicRole         = 0x00008000;
-   //   constexpr int elSealed              = 0x00000120;
+   constexpr int elExtension           = 0x0000110C;
 //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elWithGenerics        = 0x00000400;
 //   constexpr int elSubject             = 0x00002000;
-//   constexpr int elExtension           = 0x00004980;
 //   constexpr int elMessage             = 0x00008000;
 //   constexpr int elSymbol              = 0x00100000;
 //   constexpr int elExtMessage          = 0x00208000;
@@ -448,7 +447,7 @@ namespace _ELENA_
   // --- ELENA special sections ---
 //   constexpr auto METAINFO_SECTION     = "#metainfo";
    constexpr auto ATTRIBUTE_SECTION          = "#attributes";
-//   constexpr auto EXTENSION_SECTION    = "#extensions";
+   constexpr auto EXTENSION_SECTION          = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
 //   constexpr auto PACKAGE_SECTION      = "#package";
    constexpr auto IMPORTS_SECTION            = "#import";
