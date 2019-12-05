@@ -222,7 +222,7 @@ inline bool isConstantArguments(SNode node)
 
 Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope)
    : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr),
-   extensionDispatchers(INVALID_REF)/*, extensionTargets(INVALID_REF)*///, extensionTemplates(NULL, freestr)
+   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF)//, extensionTemplates(NULL, freestr)
 {
    // by default - private visibility
    defaultVisibility = Visibility::Private;
@@ -239,28 +239,28 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope)
 
 Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent)
    : Scope(parent), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr),
-   extensionDispatchers(INVALID_REF)/*, extensionTargets(INVALID_REF)*///, extensionTemplates(NULL, freestr)
+   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF)//, extensionTemplates(NULL, freestr)
 {
    defaultVisibility = parent->defaultVisibility;
    sourcePath.copy(parent->sourcePath);
    nsName.copy(parent->ns);
 }
 
-//ref_t Compiler::NamespaceScope :: resolveExtensionTarget(ref_t reference)
-//{
-//   ref_t resolved = extensionTargets.get(reference);
-//   if (resolved == INVALID_REF) {
-//      ClassInfo info;
-//      moduleScope->loadClassInfo(info, reference);
-//
-//      auto key = info.fieldTypes.get(-1);
-//      resolved = key.value1;
-//      if (resolved)
-//         extensionTargets.add(reference, resolved);
-//   }
-//
-//   return resolved;
-//}
+ref_t Compiler::NamespaceScope :: resolveExtensionTarget(ref_t reference)
+{
+   ref_t resolved = extensionTargets.get(reference);
+   if (resolved == INVALID_REF) {
+      ClassInfo info;
+      moduleScope->loadClassInfo(info, reference);
+
+      auto key = info.fieldTypes.get(-1);
+      resolved = key.value1;
+      if (resolved)
+         extensionTargets.add(reference, resolved);
+   }
+
+   return resolved;
+}
 
 pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer)
 {
@@ -3024,13 +3024,13 @@ ref_t Compiler :: mapMessage(SNode node, ExprScope& scope/*, bool variadicOne*/)
    return encodeMessage(actionRef, argCount, actionFlags);
 }
 
-ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef/*, ref_t implicitSignatureRef, ObjectInfo object, int& stackSafeAttr*/)
+ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, int& stackSafeAttr)
 {
-//   ref_t objectRef = resolveObjectReference(scope, object, true);
-//   if (objectRef == scope.moduleScope->superReference) {
-//      objectRef = 0;
-//   }
-//
+   ref_t objectRef = resolveObjectReference(scope, object, true);
+   if (objectRef == 0) {
+      objectRef = scope.moduleScope->superReference;
+   }
+
 //   // general extension
 //   ref_t generalRoleRef1 = 0;
 //   ref_t roleRef1 = 0;
@@ -3049,11 +3049,72 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef/*, ref_t implicit
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
    auto it = nsScope->extensions.getIt(messageRef);
    bool found = !it.Eof();
-   //while (!it.Eof()) {
-
-   //}
-
    if (found) {
+      // generate an extension signature
+      ref_t signaturues[ARG_COUNT];
+      ref_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signaturues);
+      for (size_t i = signatureLen; i > 0; i--)
+         signaturues[i] = signaturues[i - 1];
+      signaturues[0] = objectRef;
+      signatureLen++;
+
+      int argCount = getArgCount(messageRef);
+      while (signatureLen < argCount) {
+         signaturues[signatureLen] = scope.moduleScope->superReference;
+         signatureLen++;
+      }
+
+      ref_t full_sign = scope.module->mapSignature(signaturues, signatureLen, false);
+      ref_t resolvedMessage = 0;
+      ref_t resolvedExtRef = 0;
+      int resolvedStackSafeAttr = 0;
+      while (!it.Eof()) {
+         auto extInfo = *it;
+         ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value2);
+
+         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value1, signaturues,
+            signatureLen, resolvedStackSafeAttr)) 
+         {
+            if (!resolvedMessage) {
+               resolvedMessage = extInfo.value1;
+               resolvedExtRef = extInfo.value2;               
+            }
+            else {
+               resolvedMessage = 0;
+               break;
+            }
+         }
+
+         it = nsScope->extensions.nextIt(messageRef, it);
+      }
+
+      if (resolvedMessage) {
+         // if we are lucky - use the resolved one
+         messageRef = resolvedMessage;
+         stackSafeAttr = resolvedStackSafeAttr;
+
+         return resolvedExtRef;
+      }
+
+      //ref_t targetRef = scope.resolveExtensionTarget(extInfo.value1);
+
+      
+
+      // inject an extension target into the implicit signature
+      
+      
+
+      /*ref_t dummyRef = 0;
+      ident_t actionName = scope.module->resolveAction(getAction(extInfo.value2), signRef);*/
+
+      //
+      //ref_t full_mssg = encodeMessage(scope.module->mapAction(actionName, full_sign, false), signatureLen, FUNCTION_MESSAGE);
+
+
+
+
+
+      // bad luck - we have to generate run-time extension dispatcher
       ref_t extRef = nsScope->extensionDispatchers.get(messageRef);
       if (extRef == INVALID_REF) {
          extRef = compileExtensionDispatcher(*nsScope, messageRef);
@@ -3912,7 +3973,7 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
 //         return generalMessageRef;
 //      }
 
-      ref_t extensionRef = mapExtension(scope, resolvedMessageRef/*, implicitSignatureRef, target, stackSafeAttr*/);
+      ref_t extensionRef = mapExtension(scope, resolvedMessageRef, implicitSignatureRef, target, stackSafeAttr);
       if (extensionRef != 0) {
          // if there is an extension to handle the compile-time resolved message - use it
          target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
@@ -9302,20 +9363,6 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t generi
    auto it = scope.extensions.getIt(genericMessageRef);
    while (!it.Eof()) {
       auto extInfo = *it;
-      //ref_t targetRef = scope.resolveExtensionTarget(extInfo.value1);
-
-      //// inject an extension target into the signature
-      //ref_t signRef = 0;
-      //ident_t actionName = scope.module->resolveAction(getAction(extInfo.value2), signRef);
-      //ref_t signaturues[ARG_COUNT];
-      //ref_t signatureLen = scope.module->resolveSignature(getAction(extInfo.value2), signaturues);
-      //for (size_t i = signatureLen; i > 0; i--)
-      //   signaturues[i] = signaturues[i - 1];
-      //signaturues[0] = targetRef;
-      //signatureLen++;
-
-      //ref_t full_sign = scope.module->mapSignature(signaturues, signatureLen, false);
-      //ref_t full_mssg = encodeMessage(scope.module->mapAction(actionName, full_sign, false), signatureLen, FUNCTION_MESSAGE);
 
       methods.add(Attribute(extInfo.value2, maMultimethod), genericMessageRef | FUNCTION_MESSAGE);
       taregts.add(extInfo.value2, extInfo.value1);

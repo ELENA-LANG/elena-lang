@@ -12,6 +12,7 @@
 [+] Explicit namespaces
 [+] Flat library hierarchy
 [+] #492 : Yield statement 
+[+] #380 : Run-time extension dispatching 
 
 [ELC]
 [!] deep code refactoring - treamlining code generation, increasing 

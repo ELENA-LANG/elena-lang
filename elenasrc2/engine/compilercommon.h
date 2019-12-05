@@ -710,6 +710,9 @@ public:
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, int hints) = 0;
    virtual bool validateArgumentAttribute(int attrValue/*, bool& byRefArg, bool& paramsArg*/) = 0;
 
+   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage, 
+      ref_t* sourceSignatures, size_t len, int& stackSafeAttr) = 0;
+
 //   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 //
 //   // optimization

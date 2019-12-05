@@ -63,9 +63,9 @@ class CompilerLogic : public _CompilerLogic
 
    OperatorList operators;
 
-   bool isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage);
-   bool isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t len);
+   bool isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage);   
    bool isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures, size_t len);
+   bool isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t len);
 
    void setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr);
    void setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
@@ -78,6 +78,9 @@ class CompilerLogic : public _CompilerLogic
    bool isBoolean(_ModuleScope& scope, ref_t reference);
 
 public:
+   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage, 
+      ref_t* sourceSignatures, size_t len, int& stackSafeAttr);
+
    virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
    virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
 

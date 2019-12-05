@@ -314,7 +314,7 @@ private:
 
       // extensions
       Map<ref_t, ref_t> extensionDispatchers;
-      //Map<ref_t, ref_t> extensionTargets;
+      Map<ref_t, ref_t> extensionTargets;
       ExtensionMap      extensions;
 //      ExtensionTmplMap  extensionTemplates;
 //
@@ -391,7 +391,7 @@ private:
          loadExtensions(fullName.c_str());
       }
 
-      //ref_t resolveExtensionTarget(ref_t reference);
+      ref_t resolveExtensionTarget(ref_t reference);
 
       void saveExtension(ref_t message, ref_t extRef, ref_t strongMessage/*, bool internalOne*/);
 //      void saveExtensionTemplate(ref_t message, ident_t pattern);
@@ -924,7 +924,7 @@ private:
 
    void saveExtension(ClassScope& scope, ref_t message/*, bool internalOne*/);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
-   ref_t mapExtension(Scope& scope, ref_t& messageRef/*, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr*/);
+   ref_t mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
 
    void importCode(SNode node, Scope& scope, ref_t reference, ref_t message);
 

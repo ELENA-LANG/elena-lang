@@ -1130,6 +1130,22 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* target
 
 }
 
+bool CompilerLogic :: isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage, 
+   ref_t* sourceSignatures, size_t len, int& stackSafeAttr)
+{
+   ref_t targetSignRef = getSignature(scope, targetMessage);
+
+   if (isSignatureCompatible(scope, targetSignRef, sourceSignatures, len)) {
+      if (isEmbeddable(scope, targetRef))
+         stackSafeAttr |= 1;
+
+      setSignatureStacksafe(scope, targetSignRef, stackSafeAttr);
+
+      return true;
+   }
+   else return false;
+}
+
 void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr)
 {
    ref_t targetSignatures[ARG_COUNT];
