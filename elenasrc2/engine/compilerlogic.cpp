@@ -1501,10 +1501,10 @@ int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t referen
 //
 //      return -defineStructSizeVariable(scope, elementRef, 0, variable);
 //   }
-//   else if (reference == V_WRAPPER && elementRef != 0) {
-//      return defineStructSizeVariable(scope, elementRef, 0, variable);
-//   }
-   /*else */if (reference == V_OBJARRAY && elementRef != 0) {
+   /*else */if (reference == V_WRAPPER && elementRef != 0) {
+      return defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
+   else if (reference == V_OBJARRAY && elementRef != 0) {
       return -defineStructSizeVariable(scope, elementRef, 0, variable);
    }
 //   else if (reference == V_INT32ARRAY) {
@@ -1652,24 +1652,24 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
    injectOverloadList(scope, info, compiler, classRef);
 }
 
-bool CompilerLogic :: validateArgumentAttribute(int attrValue/*, bool& byRefArg, bool& paramsArg*/)
+bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg/*, bool& paramsArg*/)
 {
-//   switch ((size_t)attrValue) {
-//      case V_WRAPPER:
-//         if (!byRefArg) {
-//            byRefArg = true;
-//            return true;
-//         }
-//         else return false;
+   switch ((size_t)attrValue) {
+      case V_WRAPPER:
+         if (!byRefArg) {
+            byRefArg = true;
+            return true;
+         }
+         else return false;
 //      case V_ARGARRAY:
 //         if (!paramsArg) {
 //            paramsArg = true;
 //            return true;
 //         }
 //         else return false;
-//      case V_VARIABLE:
-//         return true;
-//   }
+      case V_VARIABLE:
+         return true;
+   }
    return false;
 }
 
@@ -1872,9 +1872,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
          attrs.isEmbeddable = true;
          attrValue = -1;
          return true;
-//      case V_STATIC:
-//         attrValue = lxStaticAttr;
-//         return true;
+      case V_STATIC:
+         attrValue = lxStaticAttr;
+         return true;
 //      case V_SEALED:
 //         attrValue = -1;
 //         attrs.isSealedAttr = true;
@@ -1934,9 +1934,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_EXTERN:
 //         attributes.include(EAttr::eaExtern);
 //         return true;
-//      case V_WRAPPER:
-//         attributes.include(EAttr::eaRef);
-//         return true;
+      case V_WRAPPER:
+         attributes.include(EAttr::eaRef);
+         return true;
 //	  case V_ARGARRAY:
 //         attributes.include(EAttr::eaParams);
 //			return true;

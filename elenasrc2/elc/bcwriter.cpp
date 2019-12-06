@@ -2033,15 +2033,20 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             //stackLevel = 0;
             (*it).save(scope.code);
             break;
-         case bcPushFI:
-         case bcPushF:
          case bcPeekFI:
+         case bcPushFI:
          case bcStoreFI:
-         case bcMovF:
-         case bcAddF:
-         case bcSubF:
-         case bcMulF:
-         case bcDivF:
+         case bcXSetFI:
+         case bcCopyToFI:
+         case bcCopyFI:
+         //case bcPushF:
+         //case bcMovF:
+         //case bcAddF:
+         //case bcSubF:
+         //case bcMulF:
+         //case bcDivF:
+         //case bcCopyToF:
+         //case bcCopyF:
          //case bcBCopyF:
          //case bcBLoadFI:
          //case bcDLoadFI:
@@ -2056,6 +2061,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
                scope.code->writeDWord((*it).argument - frameLevel);
             }
             else scope.code->writeDWord((*it).argument);
+
+            (*it).saveAditional(scope.code);
             break;
          //case bcSCopyF:
          //   (*it).save(scope.code, true);
@@ -5653,7 +5660,7 @@ void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
 {
    if ((size & 3) == 0) {
       // if it is a dword aligned
-      tape.write(bcCopyToFI, argument, size >> 2);
+      tape.write(bcCopyToFI, argument, size >> 2, bpFrame);
    }
    else throw InternalError("not yet implemente"); // !! temporal
 }
@@ -5671,7 +5678,7 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
       loadObject(tape, target, scope);
       copyFromLocalAddress(tape, node.argument, srcObj.argument);
    }
-   else if (dstObj.compare(lxLocal, lxTempLocal)) {
+   else if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
       loadObject(tape, source, scope);
       copyToLocal(tape, node.argument, dstObj.argument);
    }
@@ -5691,6 +5698,18 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
       releaseStack(tape);
    }
    else throw InternalError("not yet implemente"); // !! temporal
+}
+
+void ByteCodeWriter :: generateByRefAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   SNode target;
+   SNode source;
+   assignOpArguments(node, target, source);
+
+   generateObject(tape, source, scope, STACKOP_MODE);
+   loadObject(tape, target, scope);
+   saveObject(tape, lxField, 0);
+   releaseStack(tape);
 }
 
 void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
@@ -6212,7 +6231,7 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
          if (current == lxMember) {
             SNode memberNode = current.firstChild(lxObjectMask);
 
-            tape.write(bcXSetFI, memberNode.argument, current.argument);
+            tape.write(bcXSetFI, memberNode.argument, current.argument, bpFrame);
          }
          current = current.nextNode();
       }
@@ -6422,6 +6441,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxDirectCalling:
       case lxSDirectCalling:
          generateCallExpression(tape, node, scope);         
+         break;
+      case lxByRefAssigning:
+         generateByRefAssigningExpression(tape, node, scope);
          break;
       case lxAssigning:
          generateAssigningExpression(tape, node, scope);         

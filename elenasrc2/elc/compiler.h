@@ -135,7 +135,7 @@ public:
 ////////      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
-//      okParamField,
+      okParamField,
 //      okSubject,                      // param - parameter offset
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
@@ -911,11 +911,13 @@ private:
 
    ref_t resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
 
-//   ref_t resolveReferenceTemplate(_ModuleScope& moduleScope, ref_t operandRef, ident_t ns, bool declarationMode);
+   ref_t resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode);
 //   ref_t resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 //
 //   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
-   ref_t resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode);
+   ref_t resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode, 
+      bool unboxWrapper = true);
+
 ////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
    ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, bool declarationMode);
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
@@ -999,7 +1001,7 @@ private:
 //   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
    void setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
-//   void writeParamFieldTerminal(SyntaxWriter& writer, CodeScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
+   void setParamFieldTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
 //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
    void appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing);
 
@@ -1035,10 +1037,11 @@ private:
    ObjectInfo mapObject(SNode node, ExprScope& scope, EAttr mode);
 
    ObjectInfo compileExpression(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
+   ObjectInfo compileExpression(SNode& node, ExprScope& scope, ref_t targetRef, EAttr mode);
 
    ObjectInfo compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
-//   ObjectInfo compileReferenceExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
+   ObjectInfo compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
    ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target/*, 
       bool accumulateMode*/);

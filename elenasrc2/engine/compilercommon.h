@@ -49,7 +49,7 @@ constexpr auto V_GETACCESSOR = 0x80003007u;
 /// scope_prefix:
 constexpr auto V_CONST           = 0x80002001u;
 constexpr auto V_EMBEDDABLE      = 0x80002002u;
-//constexpr auto V_WRAPPER         = 0x80002003u;
+constexpr auto V_WRAPPER         = 0x80002003u;
 //constexpr auto V_DIRECT          = 0x80002004u;
 //constexpr auto V_LOOP            = 0x80002005u;
 //constexpr auto V_PRELOADED       = 0x80002006u;
@@ -242,7 +242,7 @@ struct _ModuleScope
 //   ref_t             literalReference;
 //   ref_t             wideReference;
 //   ref_t             charReference;
-//   ref_t             refTemplateReference;
+   ref_t             refTemplateReference;
    ref_t             arrayTemplateReference;
 //   ref_t             argArrayTemplateReference;
    ref_t             closureTemplateReference;
@@ -367,7 +367,7 @@ struct _ModuleScope
       /*messageNameReference = */messageReference = 0;
 //      longReference = literalReference = wideReference = 0;
 //      charReference = realReference = 0;
-      closureTemplateReference = /*refTemplateReference = */0;
+      closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;
 //      wrapReference = argArrayTemplateReference = 0;
@@ -441,7 +441,7 @@ public:
       ref_t fieldRef;
       ref_t elementRef;
       int   size;
-//      bool  isStaticField;
+      bool  isStaticField;
       bool  isEmbeddable;
 //      bool  isConstAttr;
 //      bool  isSealedAttr;
@@ -456,7 +456,7 @@ public:
       {
          elementRef = fieldRef = 0;
          size = 0;
-         /*isClassAttr = isStaticField = */isEmbeddable = /*isConstAttr = isSealedAttr = */false;
+         /*isClassAttr = */isStaticField = isEmbeddable = /*isConstAttr = isSealedAttr = */false;
          isArray = false;
 
 //         messageRef = messageAttr = 0;
@@ -481,13 +481,14 @@ public:
       eaNoUnboxing         = 0x00000002000,
       eaNoBoxing           = 0x00000003000,
       eaMember             = 0x00000004000,
+      eaRef                = 0x00000008000,
+      eaPropExpr           = 0x00000010000,
 
-      eaScopeMask          = 0x0000000400A,
-      eaObjectMask         = 0x000000032F4,
+      eaScopeMask          = 0x0000001400A,
+      eaObjectMask         = 0x0000001B2F4,
 
 //      eaForward            = 0x00000000008,
 //      eaExtern             = 0x00000000010,
-//      eaRef                = 0x00000000020,
 //      eaParams             = 0x00000000040,
 //      eaLoop               = 0x00000000100,
 //      eaSubj               = 0x00000000400,
@@ -501,7 +502,6 @@ public:
 //      eaYield              = 0x00000040000,
 //
 //      eaAssigningExpr      = 0x00000100000,
-//      eaPropExpr           = 0x00000200000,
 //      eaCallExpr           = 0x00000400000,
 //      eaVirtualExpr        = 0x00000800000,
 //      eaParameter          = 0x00001000000,
@@ -708,7 +708,7 @@ public:
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, /*bool& staticOne, bool& preloadedOne, */Visibility& visibility) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, int hints) = 0;
-   virtual bool validateArgumentAttribute(int attrValue/*, bool& byRefArg, bool& paramsArg*/) = 0;
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg/*, bool& paramsArg*/) = 0;
 
    virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage, 
       ref_t* sourceSignatures, size_t len, int& stackSafeAttr) = 0;

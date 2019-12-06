@@ -597,7 +597,7 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
    TemplateGenerator transformer(templateTree);
    SyntaxWriter writer(templateTree);
    writer.newNode(lxRoot);
-   writer.newNode(lxNamespace, ns);
+   writer.newNode(lxNamespace, ns ? ns : "");
 
    ref_t generatedReference = 0;
 

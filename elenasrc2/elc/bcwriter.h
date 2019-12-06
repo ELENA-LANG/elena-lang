@@ -357,6 +357,7 @@ class ByteCodeWriter
    void generateBranching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
+   void generateByRefAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);

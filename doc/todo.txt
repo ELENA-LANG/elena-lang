@@ -2,11 +2,15 @@
 In development:
 ------         
               dev
-                * internal / public / private classes
-                * internal / public / private / proteced methods
-                * internal / public / private / proteced constructors
-
-                * by ref argument
+                * static fields
+                * static field initialzer
+                * const static fields
+                * const fields
+                * virtual const fields
+                * const field can intialized only in-place
+                * analog of attributes : constant fields
+                * strings
+                * built-in class constants
 
                 * declare array, use array
                 * creating dynamic array / buffers
@@ -20,16 +24,7 @@ In development:
                 * array of templates
                 * template of arrays
 
-                * public / internal fields
                 * properties
-                * public / private / internal properties
-
-                * public / private / internal / protected static fields
-                * static field initialzer
-                * public / private / internal / protected const static fields
-                * public / private / internal / protected const fields
-                * public / private / internal / protected const sealed fields
-                * const field can intialized only in-place
 
                 * closures: unboxing
                 * closures: presaved arguments
@@ -37,7 +32,7 @@ In development:
                 * closures : virtual one
                 * closures : default constructor is called for virtual nested class, for normal one - only initializer
 
-                * analog of attributes : constant fields
+                * custom dispatch
 
                 * conversion routines : self, others
 
@@ -58,13 +53,12 @@ In development:
                 * primitive operations with int : bitwise
                 * high-level opoerations with int : comparision, bitwise
 
-                * direct operations with int constants
-                * comple-time int expression evaluation
 
                 * nested class should not have static methods and constructors
 
                 * templates based on another template
                 * template variables
+                * interfaces
 
                 * variable : auto, template                                                                                 
                 * field : type, template type
@@ -76,10 +70,6 @@ In development:
 
                 * template : inherting another template
                 * template based class, import template (multi-inheritance)
-
-                * explicit constructor
-                * revew implicit constructors - as function? (build script?)
-                * implicit constructor
 
                 * default implcit constructor should be embeddable?
                 * embeddable constructor
@@ -251,6 +241,9 @@ In development:
                 * if all constructors are internal - can be inherited only inside the module
                 * implicit multi-constructor : compile-time, run-time
                 * auto conversion methods should be marked as idle
+                * passing byref further
+
+              dev - test
                 * it should be possible to turn-off optimization (opL1)
                 * protected default constructor - the class cannot be created using default constructor
                 * test : branching external implementation : returning a value from closure 
@@ -271,11 +264,20 @@ In development:
                 * public / private / internal extensions
                 * resolving extension : if two extension passed to the argument try to find if one of them is
                   "more precise" than another - use the more precise directly
-
-              dev - test
                 * create a big list (bigger than YG)
                 * boxing and unboxing a primitive array?
                 * test super (normal, stack unsafe)
+                * test internal / public / private classes
+                * protected methods
+                * protected constructors
+                * test internal / public / private / proteced methods
+                * test internal / public / private / proteced constructors
+                * public / internal fields
+                * public / private / internal properties
+                * direct operations with int constants
+                * comple-time int expression evaluation
+                * boxing byref variable : use intializing, direct assinging after creation without filling with nils
+                * test static fields with singleton
 
               dev1
                 * write - Programming in ELENA : manual

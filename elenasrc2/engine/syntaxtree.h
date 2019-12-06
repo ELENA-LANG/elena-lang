@@ -110,6 +110,7 @@ enum LexicalType
    lxTempLocal                = 0x018113,
    lxAssigning                = 0x058120,   // an assigning expression, arg - size
    lxCopying                  = 0x058121,
+   lxByRefAssigning           = 0x058122,
    lxReturning                = 0x059130,
    lxImplicitJump             = 0x058140,
    lxBranching                = 0x058150,   // branch expression      
@@ -153,6 +154,7 @@ enum LexicalType
    lxTemplateIdentParam       = 0x000F17,
    lxArrayType                = 0x000F18,
    lxMember                   = 0x000F19,  // a collection member, arg - offset
+   lxStaticAttr               = 0x000F1A,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -284,7 +286,6 @@ enum LexicalType
 //   lxExtArgumentRef           = 0x20031,
 //   lxEmbeddableMssg           = 0x20034,
 //   lxBoxingRequired           = 0x20035,
-//   lxStaticAttr               = 0x2003B,
 //   lxElement                  = 0x20043,
 //   lxTypecasting              = 0x20044,
 //   lxIntConversion            = 0x20045,

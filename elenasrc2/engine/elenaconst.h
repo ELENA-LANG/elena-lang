@@ -516,7 +516,7 @@ namespace _ELENA_
    constexpr auto MESSAGE_FORWARD         = "$message";
 //   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
 //   constexpr auto MESSAGENAME_FORWARD     = "$messagename";
-//   constexpr auto REFTEMPLATE_FORWARD     = "$reference";
+   constexpr auto REFTEMPLATE_FORWARD     = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
    constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
 //   constexpr auto ARGARRAYTEMPLATE_FORWARD= "$varray";

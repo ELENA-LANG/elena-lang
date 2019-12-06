@@ -6,11 +6,11 @@
 //    
 //    abstract set Value(o) {}
 //}
-//
-//public sealed ref<T> : BaseVariable
-//{
-//    embeddable T theValue;
-//    
+
+public sealed ref<T> //: BaseVariable
+{
+    embeddable T theValue;
+    
 //    constructor(T val)
 //    {
 //        theValue := val
@@ -35,8 +35,8 @@
 //        => theValue;
 //        
 //    dispatch() => theValue;
-//}
-//
+}
+
 //
 //// === Boolean values ===
 //

@@ -399,6 +399,14 @@ struct ByteCommand
          writer->writeDWord(additional);
       }
    }
+
+   // save additional argument if required
+   void saveAditional(MemoryWriter* writer)
+   {
+      if (code > MAX_DOUBLE_ECODE) {
+         writer->writeDWord(additional);
+      }
+   }
 };
 
 // --- ByteCodeCompiler ---
