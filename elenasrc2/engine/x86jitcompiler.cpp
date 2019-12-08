@@ -147,7 +147,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &loadIndexOp, &loadIndexOp, &compileNop, &loadFPOp, &loadIndexOp, &compileNop, &loadIndexOp,
+   &compileNop, &loadIndexOp, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileNop, &loadIndexOp,
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileNop, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
@@ -157,7 +157,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compilePushSI, &loadIndexOp, &compileNop, &compilePushF, &loadIndexOp, &loadIndexOp,
 
    &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop,
-   &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileASaveR, &compileNop, &compileNop, &compileNop,
 
    &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1266,14 +1266,14 @@ void _ELENA_::compileSetR(int, x86JITScope& scope)
 ////   scope.code->writeWord(0x048B);
 ////   scope.code->writeByte(0xB7);
 ////}
-//
-//void _ELENA_::compileALoadR(int, x86JITScope& scope)
-//{
-//   // mov eax, [r]
-//   scope.code->writeByte(0xA1);
-//   scope.writeReference(*scope.code, scope.argument, 0);
-//}
-//
+
+void _ELENA_::compileALoadR(int, x86JITScope& scope)
+{
+   // mov ebx, [r]
+   scope.code->writeWord(0x1D8B);
+   scope.writeReference(*scope.code, scope.argument, 0);
+}
+
 //void _ELENA_ :: compileBLoadR(int, x86JITScope& scope)
 //{
 //   // mov edi, [r]
@@ -1387,15 +1387,15 @@ void _ELENA_ :: compileAllocI(int opcode, x86JITScope& scope)
 //   // mov eax, edi
 //   scope.code->writeWord(0xF889);
 //}
-//
-//void _ELENA_::compileASaveR(int, x86JITScope& scope)
-//{
-//   // mov [ref], eax
-//
-//   scope.code->writeWord(0x0589);
-//   scope.writeReference(*scope.code, scope.argument, 0);
-//}
-//
+
+void _ELENA_::compileASaveR(int, x86JITScope& scope)
+{
+   // mov [ref], ebx
+   
+   scope.code->writeWord(0x1D89);
+   scope.writeReference(*scope.code, scope.argument, 0);
+}
+
 //void _ELENA_::compileIndexInc(int, x86JITScope& scope)
 //{
 //   // add ebx, 1

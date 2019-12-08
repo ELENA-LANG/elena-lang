@@ -89,18 +89,18 @@ struct SectionInfo
 {
    _Module* module;
    _Memory* section;
-   //_Memory* attrSection;
+   _Memory* attrSection;
 
    SectionInfo()
    {
       module = nullptr;
-      /*attrSection = */section = nullptr;
+      attrSection = section = nullptr;
    }
-   SectionInfo(_Module* module, _Memory* section/*, _Memory* attrSection*/)
+   SectionInfo(_Module* module, _Memory* section, _Memory* attrSection)
    {
       this->module = module;
       this->section = section;
-      //this->attrSection = attrSection;
+      this->attrSection = attrSection;
    }
 };
 
@@ -111,13 +111,13 @@ struct ClassSectionInfo
    _Module* module;
    _Memory* codeSection;
    _Memory* vmtSection;
-   //_Memory* attrSection;
+   _Memory* attrSection;
 
    ClassSectionInfo()
    {
       module = nullptr;
       codeSection = vmtSection = nullptr;
-      //attrSection = nullptr;
+      attrSection = nullptr;
    }
 };
 
@@ -532,16 +532,16 @@ enum MethodAttribute
 //   maYieldPreallocated  = 0x00E,
 };
 
-//enum ClassAttribute
-//{
-//   caNone               = 0x000,
-//   caInitializer        = 0x001,
+enum ClassAttribute
+{
+   caNone               = 0x000,
+   caInitializer        = 0x001,
 //   // if the class can be loaded dynamically
 //   caSerializable       = 0x002,
 //   // if the symbol can be loaded dynamically
 //   caSymbolSerializable = 0x003,
 //   caInfo               = 0x004
-//};
+};
 
 struct ClassInfo
 {
@@ -549,7 +549,7 @@ struct ClassInfo
    typedef Pair<ref_t, int>                    Attribute;
    typedef MemoryMap<ref_t, bool, false>       MethodMap;
    typedef MemoryMap<ident_t, int, true>       FieldMap;
-//   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
+   typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
    typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>  CategoryInfoMap;
 //   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
@@ -558,20 +558,20 @@ struct ClassInfo
    int             size;           // Object size
    MethodMap       methods;        // list of methods, true means the method was declared in this instance
    FieldMap        fields;
-//   StaticFieldMap  statics;
+   StaticFieldMap  statics;
 //   StaticInfoMap   staticValues;
 
    FieldTypeMap    fieldTypes;
    CategoryInfoMap methodHints;
-//   CategoryInfoMap mattributes;   
+   CategoryInfoMap mattributes;   
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {
       writer->write((void*)this, sizeof(ClassHeader));
       writer->writeDWord(size);
       if (!headerAndSizeOnly) {
-//         mattributes.write(writer);
-//         statics.write(writer);
+         mattributes.write(writer);
+         statics.write(writer);
 //         staticValues.write(writer);
          methods.write(writer);
          methodHints.write(writer);
@@ -585,8 +585,8 @@ struct ClassInfo
       reader->read((void*)&header, sizeof(ClassHeader));
       size = reader->getDWord();
       if (!headerOnly) {
-//         mattributes.read(reader);
-//         statics.read(reader);
+         mattributes.read(reader);
+         statics.read(reader);
 //         staticValues.read(reader);
          methods.read(reader);
          methodHints.read(reader);
@@ -598,7 +598,7 @@ struct ClassInfo
    }
 
    ClassInfo()
-      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0))//, statics(FieldInfo(0, 0))
+      : fields(-1), methods(0), methodHints(0), fieldTypes(FieldInfo(0, 0)), statics(FieldInfo(0, 0))
    {
       header.flags = 0;
       header.classRef = 0;
@@ -772,10 +772,10 @@ typedef MemoryHashTable<ref_t, int, tableRule, cnHashSize>  TableHash;
 
 // --- miscellaneous routines ---
 
-//inline bool isSealedStaticField(ref_t ref)
-//{
-//   return (int)ref >= 0;
-//}
+inline bool isSealedStaticField(ref_t ref)
+{
+   return (int)ref >= 0;
+}
 
 inline bool isTemplateWeakReference(ident_t referenceName)
 {

@@ -2,8 +2,6 @@
 In development:
 ------         
               dev
-                * static fields
-                * static field initialzer
                 * const static fields
                 * const fields
                 * virtual const fields

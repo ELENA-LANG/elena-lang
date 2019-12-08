@@ -112,11 +112,11 @@ pos_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
    else return 0;
 }
 
-//void ByteCodeWriter :: declareInitializer(CommandTape& tape, ref_t reference)
-//{
-//   // symbol-begin:
-//   tape.write(blBegin, bsInitializer, reference);
-//}
+void ByteCodeWriter :: declareInitializer(CommandTape& tape, ref_t reference)
+{
+   // symbol-begin:
+   tape.write(blBegin, bsInitializer, reference);
+}
 
 void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef)
 {
@@ -1469,12 +1469,12 @@ void ByteCodeWriter :: endSymbol(CommandTape& tape)
    tape.write(blEnd, bsSymbol);
 }
 
-//void ByteCodeWriter :: endInitializer(CommandTape& tape)
-//{
-//   // symbol-end:
-//   tape.write(blEnd, bsInitializer);
-//}
-//
+void ByteCodeWriter :: endInitializer(CommandTape& tape)
+{
+   // symbol-end:
+   tape.write(blEnd, bsInitializer);
+}
+
 //void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
 //{
 //   // finally block - should free the lock if the exception was thrown
@@ -1762,9 +1762,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, _ModuleScope& scope)
          else if ((*it).Argument() == bsSymbol) {
             writeSymbol(reference, ++it, scope.module, scope.debugModule, false);
          }
-//         else if ((*it).Argument() == bsInitializer) {
-//            writeSymbol(reference, ++it, scope.module, scope.debugModule, true);
-//         }
+         else if ((*it).Argument() == bsInitializer) {
+            writeSymbol(reference, ++it, scope.module, scope.debugModule, true);
+         }
       }
       it++;
    }
@@ -1778,8 +1778,8 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
    // initialize vmt section writers
    MemoryWriter vmtWriter(compilerScope.mapSection(reference | mskVMTRef, false));
 
-//   // initialize attribute section writers
-//   MemoryWriter attrWriter(compilerScope.mapSection(reference | mskAttributeRef, false));
+   // initialize attribute section writers
+   MemoryWriter attrWriter(compilerScope.mapSection(reference | mskAttributeRef, false));
 
    vmtWriter.writeDWord(0);                              // save size place holder
    size_t classPosition = vmtWriter.Position();
@@ -1821,12 +1821,12 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
       writeDebugInfoStopper(&debugWriter);
    }
    else writeVMT(classPosition, it, scope);
-//   // save Static table
-//
+   // save Static table
+
 //   info.staticValues.write(&vmtWriter);
-//
-//   // save attributes
-//   info.mattributes.write(&attrWriter);
+
+   // save attributes
+   info.mattributes.write(&attrWriter);
 }
 
 void ByteCodeWriter :: writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope)
@@ -3955,12 +3955,12 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
 //            tape.write(bcPushA);
 //         }
 //         break;
-//      case lxStaticField:
+      case lxStaticField:
 //         if ((int)argument > 0) {
-//            // aloadr r
-//            // pusha
-//            tape.write(bcALoadR, argument | mskStatSymbolRef);
-//            tape.write(bcPushA);
+            // peekr r
+            // pusha
+            loadObject(tape, type, argument | mskStatSymbolRef, scope, 0);
+            tape.write(bcPushA);
 //         }
 //         else {
 //            // aloadai -offset
@@ -3970,7 +3970,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
 //            tape.write(bcALoadAI, 0);
 //            tape.write(bcPushA);
 //         }
-//         break;
+         break;
 //      case lxBlockLocal:
 //         // pushfi index
 //         tape.write(bcPushFI, argument, bpBlock);
@@ -4063,10 +4063,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //            tape.write(bcALoadAI, argument);
 //         }
 //         break;
-//      case lxStaticField:
+      case lxStaticField:
 //         if ((int)argument > 0) {
-//            // aloadr r
-//            tape.write(bcALoadR, argument | mskStatSymbolRef);
+            // peekr r
+            tape.write(bcPeekR, argument | mskStatSymbolRef);
 //         }
 //         else {
 //            // aloadai -offset
@@ -4074,7 +4074,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //            tape.write(bcALoadAI, argument);
 //            tape.write(bcALoadAI, 0);
 //         }
-//         break;
+         break;
 //      case lxFieldAddress:
 //         // aloadfi 1
 //         tape.write(bcALoadFI, 1, bpFrame);
@@ -4166,10 +4166,10 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          // set index
          tape.write(bcSet, argument);
          break;
-//      case lxStaticField:
+      case lxStaticField:
 //         if ((int)argument > 0) {
-//            // asaver arg
-//            tape.write(bcASaveR, argument | mskStatSymbolRef);
+            // storer arg
+            tape.write(bcStoreR, argument | mskStatSymbolRef);
 //         }
 //         else {
 //            // pusha
@@ -4183,7 +4183,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
 //            tape.write(bcPopA);
 //            tape.write(bcAXSaveBI, 0);
 //         }
-//         break;
+         break;
 //      //case lxLocalReference:
 //      //   // bcopyf param
 //      //   // axsavebi 0
@@ -7135,13 +7135,15 @@ void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root, ref_t refere
 //   loadObject(tape, type, argument, 0);
 //   endInitializer(tape);
 //}
-//
-//void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, SNode root)
-//{
-//   declareInitializer(tape, reference);
-//   generateCodeBlock(tape, root);
-//   endInitializer(tape);
-//}
+
+void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, SNode root)
+{
+   FlowScope scope;
+
+   declareInitializer(tape, reference);
+   generateCodeBlock(tape, root, scope);
+   endInitializer(tape);
+}
 
 void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root/*, bool isStatic*/, pos_t sourcePathRef)
 {

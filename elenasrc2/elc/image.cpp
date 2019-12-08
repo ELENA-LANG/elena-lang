@@ -121,7 +121,7 @@ SectionInfo ExecutableImage :: getSectionInfo(ReferenceInfo referenceInfo, size_
 
    if (sectionInfo.module != NULL && referenceID != 0) {
       sectionInfo.section = sectionInfo.module->mapSection(referenceID | mask, true);
-      //sectionInfo.attrSection = sectionInfo.module->mapSection(referenceID | mskSymbolAttributeRef, true);
+      sectionInfo.attrSection = sectionInfo.module->mapSection(referenceID | mskSymbolAttributeRef, true);
    }
 
    if (sectionInfo.section == NULL && !silentMode) {
@@ -171,7 +171,7 @@ ClassSectionInfo ExecutableImage :: getClassSectionInfo(ReferenceInfo referenceI
    else {
       sectionInfo.codeSection = sectionInfo.module->mapSection(referenceID | codeMask, true);
       sectionInfo.vmtSection = sectionInfo.module->mapSection(referenceID | vmtMask, true);
-      //sectionInfo.attrSection = sectionInfo.module->mapSection(referenceID | mskAttributeRef, true);
+      sectionInfo.attrSection = sectionInfo.module->mapSection(referenceID | mskAttributeRef, true);
    }
 
    return sectionInfo;

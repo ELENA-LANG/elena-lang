@@ -28,10 +28,14 @@ ELENA byte codes (or ecodes)
 
  movr r                     - r => acc
            
+ peekr r                   - [r] => acc
+
  savesi i                   - [sp:i] <= index
 
  storefi i                  - [fp+i] <= acc 
  
+ storer r                   - [r] <= acc[i]
+                       
  storesi i                  - [sp+i] <= acc
 
  xset i                     - [sp] => acc[i]; direct operation
@@ -234,8 +238,6 @@ ELENA byte codes (or ecodes)
  aloadai i                  - [acc::i] => acc 
 
  aloadbi i                  - [base::i] => acc
-
- aloadr r                   - [r] => acc
 
  asavebi i                  - [base::i] <= acc;
                                use GC reference bit masks

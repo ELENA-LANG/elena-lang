@@ -154,8 +154,8 @@ class JITLinker : _JITLoaderListener
    ref_t resolveMessage(_Module* module, ref_t reference);
    ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne);
 
-//   void createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes);
-//
+   void createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes);
+
 //   void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
 ////   void* resolveConstVariable(ident_t  reference, int mask);
    void* resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
@@ -163,7 +163,7 @@ class JITLinker : _JITLoaderListener
    void* createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references);
    void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo);
    void* resolveConstant(ReferenceInfo referenceInfo, int mask);
-//   void* resolveStaticVariable(ReferenceInfo referenceInfo, int mask);
+   void* resolveStaticVariable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveAnonymousStaticVariable();
    void* resolveMessageTable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveMetaAttributeTable(ReferenceInfo referenceInfo, int mask);

@@ -121,7 +121,7 @@ public:
 //      okArrayConst,
       okField,                        // param - reference, param - field offset
       okReadOnlyField,                // param - reference, param - field offset
-//      okStaticField,                  // param - reference
+      okStaticField,                  // param - reference
 //      okStaticConstantField,          // param - reference
 //      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
       okFieldAddress,                 // param - field offset
@@ -693,11 +693,6 @@ private:
          else return parent->getScope(level);
       }
 
-//      bool isInitializer()
-//      {
-//         return getMessageID() == moduleScope->init_message;
-//      }
-
       ref_t getMessageID()
       {
          MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
@@ -792,6 +787,11 @@ private:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
       
          return scope ? scope->reference : 0;
+      }
+
+      bool isInitializer()
+      {
+         return getMessageID() == moduleScope->init_message;
       }
 
       ObjectInfo mapGlobal(ident_t identifier);
@@ -1053,7 +1053,7 @@ private:
 
    ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode);
 
-//   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode/*, int mode*/);
+   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*//*, int mode*/);
 //   void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal, bool accumulatorMode);
 
    ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
@@ -1110,7 +1110,7 @@ private:
    void compileDefaultConstructor(SNode node, MethodScope& scope);
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
-//   ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
+   ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
 //   void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedCode(_ModuleScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
@@ -1125,7 +1125,7 @@ private:
    ref_t compileExtensionDispatcher(NamespaceScope& scope, ref_t genericMessageRef);
 
    void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
-//   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isSealed, bool isConst, bool isArray);
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef/*, bool isSealed, bool isConst, bool isArray*/);
    
    void generateClassFlags(ClassScope& scope, SNode node);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);

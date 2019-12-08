@@ -104,18 +104,18 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
          mtype_it++;
       }
 
-//      // import static fields
-//      ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
-//      while (!static_it.Eof()) {
-//         ClassInfo::FieldInfo info(
-//            isSealedStaticField((*static_it).value1) ? importReference(exporter, (*static_it).value1, module) : (*static_it).value1,
-//            importReference(exporter, (*static_it).value2, module));
-//
-//         target.statics.add(static_it.key(), info);
-//
-//         static_it++;
-//      }
-//
+      // import static fields
+      ClassInfo::StaticFieldMap::Iterator static_it = copy.statics.start();
+      while (!static_it.Eof()) {
+         ClassInfo::FieldInfo info(
+            isSealedStaticField((*static_it).value1) ? importReference(exporter, (*static_it).value1, module) : (*static_it).value1,
+            importReference(exporter, (*static_it).value2, module));
+
+         target.statics.add(static_it.key(), info);
+
+         static_it++;
+      }
+
 //      // import static field values
 //      auto staticValue_it = copy.staticValues.start();
 //      while (!staticValue_it.Eof()) {
@@ -128,22 +128,22 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
 //
 //         staticValue_it++;
 //      }
-//
-//      // meta attributes are not inherited
-//      auto attribute_it = copy.mattributes.start();
-//      while (!attribute_it.Eof()) {
-//         auto key = attribute_it.key();
-//         if (key.value2 != 0)
-//            key.value2 = importMessage(exporter, key.value2, module);
-//
-//         ref_t val = *attribute_it;
-//         if (val != INVALID_REF)
-//            val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);
-//
-//         target.mattributes.add(key, val);
-//         
-//         attribute_it++;
-//      }
+
+      // meta attributes are not inherited
+      auto attribute_it = copy.mattributes.start();
+      while (!attribute_it.Eof()) {
+         auto key = attribute_it.key();
+         if (key.value2 != 0)
+            key.value2 = importMessage(exporter, key.value2, module);
+
+         ref_t val = *attribute_it;
+         if (val != INVALID_REF)
+            val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);
+
+         target.mattributes.add(key, val);
+         
+         attribute_it++;
+      }
 
       if (!ignoreFields) {
          target.fields.add(copy.fields);

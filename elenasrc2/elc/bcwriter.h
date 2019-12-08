@@ -143,7 +143,7 @@ class ByteCodeWriter
    void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode);
    void writeClass(ref_t reference, ByteCodeIterator& it, _ModuleScope& scope);
 
-//   void declareInitializer(CommandTape& tape, ref_t reference);
+   void declareInitializer(CommandTape& tape, ref_t reference);
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
 //   void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
@@ -264,7 +264,7 @@ class ByteCodeWriter
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
-//   void endInitializer(CommandTape& tape);
+   void endInitializer(CommandTape& tape);
 //   void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
@@ -389,7 +389,7 @@ public:
 
    void generateClass(CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, bool(*cond)(LexicalType));
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
-//   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
+   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root/*, bool isStatic*/, pos_t sourcePathBookmark);
 //   void generateConstantList(SNode node, _Module* module, ref_t reference);
 //   void generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument);

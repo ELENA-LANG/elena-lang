@@ -153,7 +153,7 @@ enum ByteCode
 //   bcDCopy           = 0x90,
    bcGet             = 0x91,
    bcRestore         = 0x92,
-//   bcALoadR          = 0x93,
+   bcPeekR           = 0x93,
    bcPeekFI          = 0x94,
    bcPeekSI          = 0x95,
 //   bcIfHeap          = 0x96,
@@ -213,7 +213,7 @@ enum ByteCode
    bcDivF            = 0xC9,
 //   bcNLoadI          = 0xCA,
 //   bcNSaveI          = 0xCB,
-//   bcASaveR          = 0xCC,
+   bcStoreR          = 0xCC,
 //   bcALoadAI         = 0xCD,
 //   bcALoadBI         = 0xCE,
 //   bcAXSaveBI        = 0xCF,
@@ -458,8 +458,8 @@ public:
          case bcPushR:
          ////case bcEvalR:
          case bcCallR:
-         //case bcALoadR:
-         //case bcASaveR:
+         case bcPeekR:
+         case bcStoreR:
          case bcMovR:
          case bcNew:
          case bcFillRI:

@@ -585,16 +585,16 @@ void* JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, int mask,
    // fix not loaded references
    fixReferences(references, image);
 
-   //if (sectionInfo.attrSection != nullptr) {
-   //   MemoryReader attrReader(sectionInfo.attrSection);
+   if (sectionInfo.attrSection != nullptr) {
+      MemoryReader attrReader(sectionInfo.attrSection);
 
-   //   // generate run-time attributes
-   //   ClassInfo::CategoryInfoMap attributes;
-   //   attributes.read(&attrReader);
+      // generate run-time attributes
+      ClassInfo::CategoryInfoMap attributes;
+      attributes.read(&attrReader);
 
-   //   referenceInfo.module = sectionInfo.module;
-   //   createAttributes(referenceInfo, attributes);
-   //}
+      referenceInfo.module = sectionInfo.module;
+      createAttributes(referenceInfo, attributes);
+   }
 
    return vaddress;
 }
@@ -606,7 +606,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
 
    ReferenceHelper refHelper(this, sectionInfo.module, &references);
 
-//   MemoryReader attrReader(sectionInfo.attrSection);
+   MemoryReader attrReader(sectionInfo.attrSection);
 
    // VMT just in time compilation
    MemoryReader vmtReader(sectionInfo.vmtSection);
@@ -680,8 +680,8 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       // fix VMT
       _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
 
-//      if (!test(header.flags, elVirtualVMT)) {
-//         // fix VMT Static table
+      if (!test(header.flags, elVirtualVMT)) {
+         // fix VMT Static table
 //         // NOTE : ignore virtual VMT
 //         ClassInfo::StaticInfoMap staticValues;
 //         staticValues.read(&vmtReader);
@@ -709,14 +709,14 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
 //               resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
 //            }
 //         }
-//
-//         // generate run-time attributes
-//         ClassInfo::CategoryInfoMap attributes;
-//         attributes.read(&attrReader);
-//
-//         referenceInfo.module = sectionInfo.module;
-//         createAttributes(referenceInfo, attributes);
-//      }
+
+         // generate run-time attributes
+         ClassInfo::CategoryInfoMap attributes;
+         attributes.read(&attrReader);
+
+         referenceInfo.module = sectionInfo.module;
+         createAttributes(referenceInfo, attributes);
+      }
    }
 
    return vaddress;
@@ -746,29 +746,29 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
 //   }
 //   else writer.writeRef((ref_t)address, 0);
 //}
-//
-//void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes)
-//{
-//   auto it = attributes.start();
-//   while (!it.Eof()) {
-//      ClassInfo::Attribute attr = it.key();
-//      switch (attr.value1) {
-//         case caInitializer:
-//            _initializers.add(ModuleReference(referenceInfo.module, *it));
-//            break;
+
+void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes)
+{
+   auto it = attributes.start();
+   while (!it.Eof()) {
+      ClassInfo::Attribute attr = it.key();
+      switch (attr.value1) {
+         case caInitializer:
+            _initializers.add(ModuleReference(referenceInfo.module, *it));
+            break;
 //         case caSymbolSerializable:
 //            generateMetaAttribute(attr.value1, referenceInfo, mskSymbolRef);
 //            break;
 //         case caSerializable:
 //            generateMetaAttribute(attr.value1, referenceInfo, mskVMTRef);
 //            break;
-//         default:
-//            break;
-//      }
-//
-//      it++;
-//   }
-//}
+         default:
+            break;
+      }
+
+      it++;
+   }
+}
 
 void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo)
 {
@@ -962,22 +962,22 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 //
 //   return (void*)vaddress;
 //}
-//
-//void* JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, int mask)
-//{
-//   // get target image & resolve virtual address
-//   MemoryWriter writer(_loader->getTargetSection(mask));
-//
-//   size_t vaddress = (_virtualMode ? writer.Position() | mask : (size_t)writer.Address());
-//
-//   _compiler->allocateVariable(writer);
-//
-//   _statLength++;
-//
-//   _loader->mapReference(referenceInfo, (void*)vaddress, mask);
-//
-//   return (void*)vaddress;
-//}
+
+void* JITLinker :: resolveStaticVariable(ReferenceInfo referenceInfo, int mask)
+{
+   // get target image & resolve virtual address
+   MemoryWriter writer(_loader->getTargetSection(mask));
+
+   size_t vaddress = (_virtualMode ? writer.Position() | mask : (size_t)writer.Address());
+
+   _compiler->allocateVariable(writer);
+
+   _statLength++;
+
+   _loader->mapReference(referenceInfo, (void*)vaddress, mask);
+
+   return (void*)vaddress;
+}
 
 void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
 {
@@ -1364,9 +1364,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskConstArray:
             vaddress = resolveConstant(referenceInfo, mask);
             break;
-//         case mskStatSymbolRef:
-//            vaddress = resolveStaticVariable(referenceInfo, mskStatRef);
-//            break;
+         case mskStatSymbolRef:
+            vaddress = resolveStaticVariable(referenceInfo, mskStatRef);
+            break;
          case mskMessage:
             vaddress = resolveMessage(referenceInfo, _loader->getMessageClass(), false);
             break;
