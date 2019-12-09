@@ -600,7 +600,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcSelectR:
          //   compileRRCommand(opcode, token, writer, binary);
          //   break;
-         //case bcSaveFI:
+         case bcXSaveFI:
          //case bcAddFI:
          case bcCopyFI:
          case bcCopyF:

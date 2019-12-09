@@ -108,7 +108,7 @@ public:
       okConstantSymbol,               // param - reference
       okClass,                        // param - reference
       okSingleton,                    // param - reference
-//      okLiteralConstant,              // param - reference
+      okLiteralConstant,              // param - reference
 //      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
@@ -984,8 +984,8 @@ private:
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size/*, bool binaryArray, 
-                                    int& variableArg, ident_t& className*/);
+   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, /*bool binaryArray,*/ 
+                                    int& variableArg/*, ident_t& className*/);
    void declareVariable(SNode& node, ExprScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/);
 
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);

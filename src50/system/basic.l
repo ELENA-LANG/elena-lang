@@ -530,13 +530,13 @@ public sealed const struct ByteNumber : IntBaseNumber
 //    byte clone() = new ByteNumber(self);
 }
 
-//// --- ShortNumber ---
-//
-///// A signed 16 bit integer
-//public sealed const struct ShortNumber : IntBaseNumber
-//{
-//    embeddable __int theValue[2];
-//
+// --- ShortNumber ---
+
+/// A signed 16 bit integer
+public sealed const struct ShortNumber : IntBaseNumber
+{
+    embeddable __int theValue[2];
+
 //    constructor(int n)
 //    {
 //        (n < 0)
@@ -841,7 +841,7 @@ public sealed const struct ByteNumber : IntBaseNumber
 //
 //    /// Clones the value
 //    short clone() = new ShortNumber(self);
-//}
+}
 
 // --- IntNumber ---
 

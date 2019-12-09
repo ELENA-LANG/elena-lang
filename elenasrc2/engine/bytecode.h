@@ -253,7 +253,7 @@ enum ByteCode
 //   bcNotLessN        = 0xEC,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcSubFI           = 0xED,
 //   bcAddFI           = 0xEE,
-//   bcSaveFI          = 0xEF,
+   bcXSaveFI         = 0xEF,
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,

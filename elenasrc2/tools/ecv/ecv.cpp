@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   32
+#define REVISION_VERSION   34
 
 using namespace _ELENA_;
 
@@ -688,7 +688,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append(", ");
          command.appendInt(argument2);
          break;
-//      case bcSaveFI:
+      case bcXSaveFI:
 //      case bcAddFI:
 //      case bcSubFI:
       case bcCopyFI:
@@ -999,30 +999,30 @@ void listFlags(int flags, int& row, int pageSize)
    //   case elDebugReal64:
    //      printLine("@flag ", "elDebugReal64", row, pageSize);
    //      break;
-   //   case elDebugLiteral:
-   //      printLine("@flag ", "elDebugLiteral", row, pageSize);
-   //      break;
-   //   case elDebugIntegers:
-   //      printLine("@flag ", "elDebugIntegers", row, pageSize);
-   //      break;
+      case elDebugLiteral:
+         printLine("@flag ", "elDebugLiteral", row, pageSize);
+         break;
+      case elDebugIntegers:
+         printLine("@flag ", "elDebugIntegers", row, pageSize);
+         break;
       case elDebugArray:
          printLine("@flag ", "elDebugArray", row, pageSize);
          break;
    //   case elDebugQWORD:
    //      printLine("@flag ", "elDebugQWORD", row, pageSize);
    //      break;
-   //   case elDebugBytes:
-   //      printLine("@flag ", "elDebugBytes", row, pageSize);
-   //      break;
-   //   case elDebugShorts:
-   //      printLine("@flag ", "elDebugShorts", row, pageSize);
-   //      break;
+      case elDebugBytes:
+         printLine("@flag ", "elDebugBytes", row, pageSize);
+         break;
+      case elDebugShorts:
+         printLine("@flag ", "elDebugShorts", row, pageSize);
+         break;
    //   case elDebugPTR:
    //      printLine("@flag ", "elDebugPTR");
    //      break;
-   //   case elDebugWideLiteral:
-   //      printLine("@flag ", "elDebugWideLiteral", row, pageSize);
-   //      break;
+      case elDebugWideLiteral:
+         printLine("@flag ", "elDebugWideLiteral", row, pageSize);
+         break;
    //   case elDebugReference:
    //      printLine("@flag ", "elDebugReference", row, pageSize);
    //      break;

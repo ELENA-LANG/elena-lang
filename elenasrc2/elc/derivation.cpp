@@ -235,6 +235,19 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
    if (terminal.symbol == lxGlobalReference) {
       writer.newNode(terminal.symbol, terminal.value + 1);
    }
+   else if (terminal.symbol == lxLiteral/* || terminal == tsCharacter || terminal == tsWide*/) {
+      // try to use local storage if the quote is not too big
+      if (getlength(terminal.value) < 0x100) {
+         QuoteTemplate<IdentifierString> quote(terminal.value);
+      
+         writer.newNode(terminal.symbol, quote.ident());
+      }
+      else {
+         QuoteTemplate<DynamicString<char> > quote(terminal.value);
+      
+         writer.newNode(terminal.symbol, quote.ident());
+      }
+   }
    else writer.newNode(terminal.symbol, terminal.value);
 
    writer.appendNode(lxCol, terminal.col);
@@ -252,25 +265,12 @@ void DerivationWriter :: appendTerminal(TerminalInfo& terminal)
 //      terminal.symbol = tsLiteral;
 //   }
 
-//   if (terminal==tsLiteral || terminal==tsCharacter || terminal==tsWide) {
-//      // try to use local storage if the quote is not too big
-//      if (getlength(terminal.value) < 0x100) {
-//         QuoteTemplate<IdentifierString> quote(terminal.value);
-//
-//         _cacheWriter.newNode(type, quote.ident());
-//      }
-//      else {
-//         QuoteTemplate<DynamicString<char> > quote(terminal.value);
-//
-//         _cacheWriter.newNode(type, quote.ident());
-//      }
-//   }
 //   else if (terminal == tsGlobal) {
 //      // HOTFIX : skip the leading symbol for the global reference
 //      _cacheWriter.newNode(type, terminal.value + 1);
 //   }
 //   else _cacheWriter.newNode(type, terminal.value);
-//
+
    saveTerminal(_cacheWriter, terminal);
 
 //   _cacheWriter.closeNode();
@@ -2024,6 +2024,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
 //         break;
       case lxInteger:
       case lxHexInteger:
+      case lxLiteral:
          generateIdentifier(writer, current, derivationScope);
          break;
 //      default:

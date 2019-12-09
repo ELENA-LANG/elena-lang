@@ -320,14 +320,14 @@ namespace _ELENA_
    constexpr int elDebugMask           = 0x001F0000;
    constexpr int elDebugDWORD          = 0x00010000;
 //   constexpr int elDebugReal64         = 0x00020000;
-//   constexpr int elDebugLiteral        = 0x00030000;
-//   constexpr int elDebugIntegers       = 0x00040000;
+   constexpr int elDebugLiteral        = 0x00030000;
+   constexpr int elDebugIntegers       = 0x00040000;
    constexpr int elDebugArray          = 0x00050000;
 //   constexpr int elDebugQWORD          = 0x00060000;
-//   constexpr int elDebugBytes          = 0x00070000;
-//   constexpr int elDebugShorts         = 0x00080000;
+   constexpr int elDebugBytes          = 0x00070000;
+   constexpr int elDebugShorts         = 0x00080000;
 //   constexpr int elDebugPTR            = 0x00090000;
-//   constexpr int elDebugWideLiteral    = 0x000A0000;
+   constexpr int elDebugWideLiteral    = 0x000A0000;
 //   constexpr int elDebugReference      = 0x000B0000;   // symbol reference
 //   constexpr int elDebugSubject        = 0x000C0000;
 ////////   const int elDebugReals          = 0x000D0000;
@@ -474,8 +474,8 @@ namespace _ELENA_
 //   constexpr auto EMBEDDAMLE_PREFIX          = "auto#";
 
   // --- ELENA Standard module references ---
-   #define DLL_NAMESPACE            "$dlls"
-   #define RTDLL_FORWARD            "$rt"
+   constexpr auto DLL_NAMESPACE              = "$dlls";
+      constexpr auto RTDLL_FORWARD           = "$rt";
 
 ////   #define STANDARD_MODULE_LEN      6
 //   #define INTERNAL_MASK_LEN        12
@@ -505,28 +505,28 @@ namespace _ELENA_
    constexpr auto NAMESPACE_KEY              = "$elena'@rootnamespace";          // The project namespace
 
    // predefined system forwards
-   constexpr auto SUPER_FORWARD           = "$super";                         // the common class predecessor
+   constexpr auto SUPER_FORWARD              = "$super";                         // the common class predecessor
 //   constexpr auto LAZYEXPR_FORWARD        = "$lazyexpression";                // the base lazy expression class
-   constexpr auto INT_FORWARD             = "$int";
+   constexpr auto INT_FORWARD                = "$int";
 //   constexpr auto LONG_FORWARD            = "$long";
 //   constexpr auto REAL_FORWARD            = "$real";
-//   constexpr auto STR_FORWARD             = "$literal";
-//   constexpr auto WIDESTR_FORWARD         = "$wideliteral";
+   constexpr auto STR_FORWARD                = "$literal";
+   constexpr auto WIDESTR_FORWARD            = "$wideliteral";
 //   constexpr auto CHAR_FORWARD            = "$char";
-   constexpr auto MESSAGE_FORWARD         = "$message";
+   constexpr auto MESSAGE_FORWARD            = "$message";
 //   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
 //   constexpr auto MESSAGENAME_FORWARD     = "$messagename";
-   constexpr auto REFTEMPLATE_FORWARD     = "$reference";
-   constexpr auto CLOSURETEMPLATE_FORWARD = "$closure";
-   constexpr auto ARRAYTEMPLATE_FORWARD   = "$parray";
+   constexpr auto REFTEMPLATE_FORWARD        = "$reference";
+   constexpr auto CLOSURETEMPLATE_FORWARD    = "$closure";
+   constexpr auto ARRAYTEMPLATE_FORWARD      = "$parray";
 //   constexpr auto ARGARRAYTEMPLATE_FORWARD= "$varray";
-   constexpr auto BOOL_FORWARD            = "$bool";
-   constexpr auto TRUE_FORWARD            = "$true";
-   constexpr auto FALSE_FORWARD           = "$false";
+   constexpr auto BOOL_FORWARD               = "$bool";
+   constexpr auto TRUE_FORWARD               = "$true";
+   constexpr auto FALSE_FORWARD              = "$false";
 //   constexpr auto WRAP_FORWARD            = "$wrap";
 
-   constexpr auto PROGRAM_ENTRY           = "$program";                     // the program entry
-   constexpr auto SYSTEM_ENTRY            = "$system_entry";                // the system entry
+   constexpr auto PROGRAM_ENTRY              = "$program";                     // the program entry
+   constexpr auto SYSTEM_ENTRY               = "$system_entry";                // the system entry
 
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)

@@ -2,14 +2,17 @@
 In development:
 ------         
               dev
-                * strings
                 * built-in class constants
+                * meta attributes
+                * wide string
+                * strings to wide string conversion
+
+                * externals
+                * console operations
 
                 * declare array, use array
                 * creating dynamic array / buffers
                 * test creating an array : non-empty, empty
-
-                * externals
 
                 * template of templates
                 * field - template, template of templates

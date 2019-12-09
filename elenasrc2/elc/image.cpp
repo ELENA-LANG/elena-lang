@@ -27,8 +27,8 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
    messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 8); // write dummy place holder
    messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
 
-  //// load default forwards
-  // _literal = project->resolveForward(STR_FORWARD);
+  // load default forwards
+   _literal = project->resolveForward(STR_FORWARD);
   // _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
   // _character = project->resolveForward(CHAR_FORWARD);
    _int = project->resolveForward(INT_FORWARD);
@@ -193,11 +193,11 @@ size_t ExecutableImage :: getLinkerConstant(int id)
    }
 }
 
-//ident_t ExecutableImage::getLiteralClass()
-//{
-//   return _literal;
-//}
-//
+ident_t ExecutableImage :: getLiteralClass()
+{
+   return _literal;
+}
+
 //ident_t ExecutableImage :: getWideLiteralClass()
 //{
 //   return _wideLiteral;

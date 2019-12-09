@@ -78,7 +78,7 @@ public:
 
    virtual size_t getLinkerConstant(int id);
 
-   //virtual ident_t getLiteralClass();
+   virtual ident_t getLiteralClass();
    //virtual ident_t getWideLiteralClass();
    //virtual ident_t getCharacterClass();
    virtual ident_t getIntegerClass();

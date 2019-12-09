@@ -784,14 +784,14 @@ public sealed Array<T> //: Indexable<T>
 //
 ///// An empty literal value
 //public const string emptyString = "";
-//
-//// --- String ---
-//
-///// A UTF-8 literal value
-//public sealed const struct String : BaseValue
-//{
-//    __string byte[] theArray;
-//
+
+// --- String ---
+
+/// A UTF-8 literal value
+public sealed const struct String : BaseValue
+{
+    __string byte[] theArray;
+
 //    /// Creates the empty literal
 //    static string Default
 //        = emptyString;
@@ -992,8 +992,8 @@ public sealed Array<T> //: Indexable<T>
 //    
 //    /// Clones the value
 //    string clone() = String.copy(self);
-//}
-//
+}
+
 //// --- emptyWideString ---
 //
 ///// An empty wide literal value

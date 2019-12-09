@@ -79,6 +79,7 @@ enum LexicalType
    lxReference                = 0x002013,
    lxGlobalReference          = 0x002014,
    lxInteger                  = 0x002015,
+   lxLiteral                  = 0x002016,
 
    lxVirtualReference         = 0x00201F,
 
@@ -104,6 +105,9 @@ enum LexicalType
    lxCreatingStruct           = 0x0580F0,   // arg - size
    lxVariable                 = 0x010100,
    lxIntVariable              = 0x010101,
+   lxIntsVariable             = 0x010102,
+   lxBytesVariable            = 0x010103,
+   lxShortsVariable           = 0x010104,
    lxLocal                    = 0x018110,   // arg - offset
    lxSelfLocal                = 0x018111,
    lxLocalAddress             = 0x018112,   // arg - offset
@@ -121,6 +125,7 @@ enum LexicalType
    lxSealedMultiDispatching   = 0x058181,
    lxResending                = 0x058190,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
    lxConstantInt              = 0x0181A0,   // arg - reference
+   lxConstantString           = 0x0181A1,   // arg - reference
    lxOp                       = 0x0581B0,
    lxIntOp                    = 0x0581B1,   // arg - operation id
    lxField                    = 0x0181C0,   // arg - offset
@@ -182,7 +187,6 @@ enum LexicalType
 //   lxClassProperty            = 0x000101,
 //
 //   // parameters
-//   lxLiteral                  = 0x018004,
 //   lxInteger                  = 0x018008,
 //   lxReal                     = 0x01800A,
 //   lxCharacter                = 0x01800B,
@@ -194,7 +198,6 @@ enum LexicalType
 //   lxNested                   = 0x008102, // arg - count
 //   lxStruct                   = 0x008103, // arg - count
 //   lxBlockLocal               = 0x00A10B, // arg - offset
-//   lxConstantString           = 0x00A10C, // arg - reference
 //   lxConstantWideStr          = 0x00A10D, // arg - reference
 //   lxConstantChar             = 0x00A10E, // arg - reference
 //   lxConstantLong             = 0x01A110, // arg - reference
@@ -267,9 +270,6 @@ enum LexicalType
 //   lxForward                  = 0x1002E,
 //   lxBinaryVariable           = 0x10038,
 //   lxOuterMember              = 0x1003A,  // a collection member, arg - offset
-//   lxIntsVariable             = 0x1003B,
-//   lxBytesVariable            = 0x1003C,
-//   lxShortsVariable           = 0x1003D,
 //   lxParamsVariable           = 0x1003E,
 
 //   lxClassName                = 0x20014, // arg - identifier

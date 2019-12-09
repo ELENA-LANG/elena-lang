@@ -29,9 +29,9 @@ inline bool isPrimitiveArrayRef(ref_t classRef)
 {
    switch (classRef) {
       case V_OBJARRAY:
-      //case V_INT32ARRAY:
-      //case V_INT16ARRAY:
-      //case V_INT8ARRAY:
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
       //case V_BINARYARRAY:
          return true;
       default:
@@ -1451,21 +1451,21 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //         info.header.flags = elDebugReference | elStructureRole | elReadOnlyRole;
 //         info.size = 4;
 //         break;
-//      case V_INT32ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elWrapper;
-//         info.size = -4;
-//         break;
-//      case V_INT16ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elWrapper;
-//         info.size = -2;
-//         break;
-//      case V_INT8ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
-//         info.size = -1;
-//         break;
+      case V_INT32ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elWrapper;
+         info.size = -4;
+         break;
+      case V_INT16ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elWrapper;
+         info.size = -2;
+         break;
+      case V_INT8ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
+         info.size = -1;
+         break;
       case V_OBJARRAY:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugArray | elDynamicRole;
@@ -1507,21 +1507,21 @@ int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t referen
    else if (reference == V_OBJARRAY && elementRef != 0) {
       return -defineStructSizeVariable(scope, elementRef, 0, variable);
    }
-//   else if (reference == V_INT32ARRAY) {
-//      variable = true;
-//
-//      return -4;
-//   }
-//   else if (reference == V_INT16ARRAY) {
-//      variable = true;
-//
-//      return -2;
-//   }
-//   else if (reference == V_INT8ARRAY) {
-//      variable = true;
-//
-//      return -1;
-//   }
+   else if (reference == V_INT32ARRAY) {
+      variable = true;
+
+      return -4;
+   }
+   else if (reference == V_INT16ARRAY) {
+      variable = true;
+
+      return -2;
+   }
+   else if (reference == V_INT8ARRAY) {
+      variable = true;
+
+      return -1;
+   }
    else {
       int size = scope.cachedSizes.get(reference);
       if (!size) {
@@ -1597,21 +1597,21 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
 ////      }
 ////      else info.header.flags |= elWrapper;
 ////   }
-//
-//   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
-//      if (classRef == scope.literalReference) {
-//         // recognize string constant
-//         if (info.size == -1) {
-//            info.header.flags |= elDebugLiteral;
-//         }
-//      }
-//      else if (classRef == scope.wideReference) {
-//         // recognize wide string constant
-//         if (info.size == -2) {
-//            info.header.flags |= elDebugWideLiteral;
-//         }
-//      }
-//   }
+
+   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
+      if (classRef == scope.literalReference) {
+         // recognize string constant
+         if (info.size == -1) {
+            info.header.flags |= elDebugLiteral;
+         }
+      }
+      else if (classRef == scope.wideReference) {
+         // recognize wide string constant
+         if (info.size == -2) {
+            info.header.flags |= elDebugWideLiteral;
+         }
+      }
+   }
 
    // adjust array
    if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole/* | elNonStructureRole*/)) {
@@ -1622,27 +1622,27 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
       }
    }
 
-//   // adjust binary array
-//   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
-//      if ((info.header.flags & elDebugMask) == 0) {
-//         ref_t itemRef = info.fieldTypes.get(-1).value1;
-//         switch (itemRef) {
-//            case V_INT32ARRAY:
-//               info.header.flags |= elDebugIntegers;
-//               break;
-//            case V_INT16ARRAY:
-//               info.header.flags |= elDebugShorts;
-//               break;
-//            case V_INT8ARRAY:
-//               info.header.flags |= elDebugBytes;
-//               break;
-//            default:
-//               info.header.flags |= elDebugBytes;
-//               break;
-//         }
-//      }
-//   }
-//
+   // adjust binary array
+   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
+      if ((info.header.flags & elDebugMask) == 0) {
+         ref_t itemRef = info.fieldTypes.get(-1).value1;
+         switch (itemRef) {
+            case V_INT32ARRAY:
+               info.header.flags |= elDebugIntegers;
+               break;
+            case V_INT16ARRAY:
+               info.header.flags |= elDebugShorts;
+               break;
+            case V_INT8ARRAY:
+               info.header.flags |= elDebugBytes;
+               break;
+            default:
+               info.header.flags |= elDebugBytes;
+               break;
+         }
+      }
+   }
+
 //   // adjust objects with custom dispatch handler
 //   if (info.methods.exist(scope.dispatch_message, true) && classRef != scope.superReference) {
 //      info.header.flags |= elWithCustomDispatcher;
@@ -2099,18 +2099,18 @@ ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRe
       return 0;
 
    if (isEmbeddable(info) && structOne) {
-//      if (isCompatible(scope, V_INT32, elementRef)) {
-//         switch (info.size) {
-//            case 4:
-//               return V_INT32ARRAY;
-//            case 2:
-//               return V_INT16ARRAY;
-//            case 1:
-//               return V_INT8ARRAY;
-//            default:
-//               break;
-//         }
-//      }
+      if (isCompatible(scope, V_INT32, elementRef)) {
+         switch (info.size) {
+            case 4:
+               return V_INT32ARRAY;
+            case 2:
+               return V_INT16ARRAY;
+            case 1:
+               return V_INT8ARRAY;
+            default:
+               break;
+         }
+      }
 //      return V_BINARYARRAY;
       throw InternalError("not yet implemented"); // !! temporal
    }

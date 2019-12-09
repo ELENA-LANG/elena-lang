@@ -110,10 +110,10 @@ constexpr auto V_INT32           = 0x80000003u;
 //constexpr auto V_EXTMESSAGE      = 0x80000007u;
 //constexpr auto V_PTR32           = 0x80000008u;
 constexpr auto V_OBJARRAY        = 0x80000009u;
-//constexpr auto V_INT32ARRAY      = 0x8000000Au;
+constexpr auto V_INT32ARRAY      = 0x8000000Au;
 //constexpr auto V_BINARYARRAY     = 0x8000000Bu;
-//constexpr auto V_INT16ARRAY      = 0x8000000Cu;
-//constexpr auto V_INT8ARRAY       = 0x8000000Du;
+constexpr auto V_INT16ARRAY      = 0x8000000Cu;
+constexpr auto V_INT8ARRAY       = 0x8000000Du;
 //constexpr auto V_OBJECT          = 0x8000000Eu;
 //constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
 //
@@ -239,8 +239,8 @@ struct _ModuleScope
 //   ref_t             messageNameReference;
    ref_t             messageReference;
 //   ref_t             extMessageReference;
-//   ref_t             literalReference;
-//   ref_t             wideReference;
+   ref_t             literalReference;
+   ref_t             wideReference;
 //   ref_t             charReference;
    ref_t             refTemplateReference;
    ref_t             arrayTemplateReference;
@@ -365,7 +365,7 @@ struct _ModuleScope
       debugModule = module = nullptr;
       intReference = superReference = 0;
       /*messageNameReference = */messageReference = 0;
-//      longReference = literalReference = wideReference = 0;
+      /*longReference = */literalReference = wideReference = 0;
 //      charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;

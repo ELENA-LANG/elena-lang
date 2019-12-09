@@ -90,8 +90,8 @@ type object     = system'Object;
 type bool       = system'BoolValue;
 
 // === basic type aliases ===
-//type byte       = ByteNumber;
-//type short      = ShortNumber;
+type byte       = system'ByteNumber;
+type short      = system'ShortNumber;
 type int        = system'IntNumber;
 //type uint       = UIntNumber;
 //type long       = LongNumber;
@@ -99,7 +99,7 @@ type int        = system'IntNumber;
 //type char       = CharValue;
 //type mssg       = Message;
 ////type ext_mssg   = system'ExtensionMessage.
-//type string     = String;
+type string     = system'String;
 //type wide       = WideString;
 //type handle     = Handle;
 //type rt_ptr     = RTPointer;

@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/42;
+const int gcCommandNumber = /*160*/43;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -73,7 +73,7 @@ const int gcCommands[gcCommandNumber] =
    bcCopyF, bcCopyFI, bcAddF, bcCopyToF, bcCopyToFI,
    bcSubF, bcMulF, bcDivF, bcPushAI, bcGet,
    bcSet, bcCopyToAI, bcCreateR, bcFillR, bcXSet,
-   bcXSetFI, bcClass,
+   bcXSetFI, bcClass, bcXSaveFI,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -104,7 +104,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
 //   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
 //   bcCheck, bcDCopyVerb, bcXCopy,
-//   bcSaveFI, bcAddFI, bcSubFI, bcNShiftR, bcLSave,
+//   bcAddFI, bcSubFI, bcNShiftR, bcLSave,
 //   bcSelect, bcEqualR, bcBLoadAI, bcAndE, bcDMoveVerb,
 //   bcEOrN, bcNewI, bcACopyAI
 };
@@ -163,7 +163,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, & loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
-   &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileElseR, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,

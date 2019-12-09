@@ -1573,6 +1573,13 @@ inline % 0E7h
 
 end
 
+// ; xsavefi (__arg1 - index, __arg2 - n)
+inline % 0EFh
+
+  mov dword ptr [ebp + __arg1], __arg2
+
+end
+
 // ; new (__arg1 - size)
 inline % 0F0h
 	

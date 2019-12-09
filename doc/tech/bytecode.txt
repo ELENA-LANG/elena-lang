@@ -57,6 +57,8 @@ ELENA byte codes (or ecodes)
 
  creater r                  - create the object with length=[esp], out : acc, index is affected
 
+ xsavefi i,n                - [fp:i] <= n
+
 
  Arithmeric operations:
  ----------------------
@@ -362,8 +364,6 @@ ELENA byte codes (or ecodes)
  pushn n                    - n  => [sp+1] ; sp++
  
  pushd                      - index => [sp+1] ; sp++;
-
- savefi i,n                 - [fp:i] <= n
 
  subfi i,n                  - [fp:i] <= [fp:i] - n
 

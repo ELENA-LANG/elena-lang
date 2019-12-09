@@ -262,22 +262,22 @@ void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName,
 //{
 //   tape.write(bdRealLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
 //}
-//
-//void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdByteArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdShortArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
-//void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
+
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdByteArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdShortArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
+void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
 //void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
 //{
 //   tape.write(bdParamsLocal, writeString(localName), level);
@@ -667,8 +667,8 @@ inline ref_t defineConstantMask(LexicalType type)
    switch (type) {
       case lxClassSymbol:
          return mskVMTRef;
-      //case lxConstantString:
-      //   return mskLiteralRef;
+      case lxConstantString:
+         return mskLiteralRef;
       //case lxConstantWideStr:
       //   return mskWideLiteralRef;
       //case lxConstantChar:
@@ -2830,9 +2830,16 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //   tape.write(bcDCopyE);
 //   tape.write(bcNSave);
 //}
-//
-//void ByteCodeWriter :: saveIntConstant(CommandTape& tape, int value)
-//{
+
+void ByteCodeWriter :: saveIntConstant(CommandTape& tape, LexicalType target, int targetArg, int value)
+{
+   if (target == lxLocalAddress) {
+      // xsavefi arg, value
+
+      tape.write(bcXSaveFI, targetArg, value, bpFrame);
+   }
+   else throw InternalError("Not yet implemented");
+
 //   // bcopya
 //   // dcopy value
 //   // nsave
@@ -2840,8 +2847,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 //   tape.write(bcBCopyA);
 //   tape.write(bcDCopy, value);
 //   tape.write(bcNSave);
-//}
-//
+}
+
 ////////void ByteCodeWriter :: invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef)
 ////////{
 ////////   // pushr trueRef
@@ -3900,7 +3907,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
 
          scope.clear();
          break;
-//      case lxConstantString:
+      case lxConstantString:
 //      case lxConstantWideStr:
       case lxClassSymbol:
       case lxConstantSymbol:
@@ -4017,7 +4024,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcCallR, argument | mskSymbolRef);
          type = lxNone; // acc content is undefined
          break;
-//      case lxConstantString:
+      case lxConstantString:
 //      case lxConstantWideStr:
       case lxClassSymbol:
       case lxConstantSymbol:
@@ -6599,11 +6606,10 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, FlowSco
    }
 }
 
-//void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
-//{
-//   loadObject(tape, lxLocalAddress, offset + 2, 0);
-//   saveIntConstant(tape, 0x800000 + node.argument);
-//}
+void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
+{
+   saveIntConstant(tape, lxLocalAddress, offset + 2, 0x800000 + node.argument);
+}
 
 void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node current)
 {
@@ -6638,37 +6644,37 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
 //            current.firstChild(lxTerminalMask).identifier(),
 //            current.findChild(lxLevel).argument);
 //         break;
-//      case lxBytesVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//         
-//         generateBinary(tape, current, level);
-//         declareLocalByteArrayInfo(tape,
-//            current.findChild(lxIdentifier).identifier(),
-//            level, false);
-//         break;
-//      }
-//      case lxShortsVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//         
-//         generateBinary(tape, current, level);
-//         declareLocalShortArrayInfo(tape,
-//            current.findChild(lxIdentifier).identifier(),
-//            level, false);
-//         break;
-//      }
-//      case lxIntsVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//         
-//         generateBinary(tape, current, level);
-//         
-//         declareLocalIntArrayInfo(tape,
-//            current.findChild(lxIdentifier).identifier(),
-//            level, false);
-//         break;
-//      }
+      case lxBytesVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         declareLocalByteArrayInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            level, false);
+         break;
+      }
+      case lxShortsVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         declareLocalShortArrayInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            level, false);
+         break;
+      }
+      case lxIntsVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+         
+         generateBinary(tape, current, level);
+         
+         declareLocalIntArrayInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            level, false);
+         break;
+      }
 //      case lxBinaryVariable:
 //      {
 //         int level = current.findChild(lxLevel).argument;
@@ -6730,9 +6736,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxReal64Variable:
 //////         case lxMessageVariable:
 //         case lxParamsVariable:
-//         case lxBytesVariable:
-//         case lxShortsVariable:
-//         case lxIntsVariable:
+         case lxBytesVariable:
+         case lxShortsVariable:
+         case lxIntsVariable:
 //         case lxBinaryVariable:
             generateDebugInfo(tape, current);
             break;

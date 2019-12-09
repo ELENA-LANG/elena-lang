@@ -843,10 +843,10 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    bool constantValue = true;
    ident_t value = NULL;
    ReferenceInfo vmtReferenceInfo = referenceInfo;
-//   if (mask == mskLiteralRef) {
-//      value = vmtReferenceInfo.referenceName;
-//      vmtReferenceInfo.referenceName = _loader->getLiteralClass();
-//   }
+   if (mask == mskLiteralRef) {
+      value = vmtReferenceInfo.referenceName;
+      vmtReferenceInfo.referenceName = _loader->getLiteralClass();
+   }
 //   else if (mask == mskWideLiteralRef) {
 //      value = vmtReferenceInfo.referenceName;
 //      vmtReferenceInfo.referenceName = _loader->getWideLiteralClass();
@@ -855,7 +855,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 //      value = vmtReferenceInfo.referenceName;
 //      vmtReferenceInfo.referenceName = _loader->getCharacterClass();
 //   }
-   /*else */if (mask == mskInt32Ref) {
+   else if (mask == mskInt32Ref) {
       value = vmtReferenceInfo.referenceName;
       vmtReferenceInfo.referenceName = _loader->getIntegerClass();
    }
@@ -889,9 +889,9 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    _loader->mapReference(referenceInfo, vaddress, mask);
 
    size_t position = writer.Position();
-//   if (mask == mskLiteralRef) {
-//      _compiler->compileLiteral(&writer, value);
-//   }
+   if (mask == mskLiteralRef) {
+      _compiler->compileLiteral(&writer, value);
+   }
 //   else if (mask == mskWideLiteralRef) {
 //      WideString wideValue(value);
 //
@@ -900,7 +900,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 //   else if (mask == mskCharRef) {
 //      _compiler->compileChar32(&writer, value);
 //   }
-   /*else */if (mask == mskInt32Ref) {
+   else if (mask == mskInt32Ref) {
       _compiler->compileInt32(&writer, value.toULong(16));
    }
 //   else if (mask == mskInt64Ref) {
@@ -1350,7 +1350,7 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //            vaddress = resolveNativeSection(referenceInfo, mskNativeCodeRef, _loader->getSectionInfo(referenceInfo, mskNativeCodeRef, silentMode));
 //            break;
          case mskConstantRef:
-//         case mskLiteralRef:
+         case mskLiteralRef:
 //         case mskWideLiteralRef:
 //         case mskCharRef:
          case mskInt32Ref:

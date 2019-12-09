@@ -2096,8 +2096,8 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
 //   return 0; // !! dummy returning statement, the code never reaches this point
 //}
 
-LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size/*, bool binaryArray,
-   int& variableArg, ident_t& className*/)
+LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size/*, bool binaryArray*/,
+   int& variableArg/*, ident_t& className*/)
 {
    LexicalType variableType = lxVariable;
 
@@ -2112,18 +2112,18 @@ LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variab
    //      case elDebugReal64:
    //         variableType = lxReal64Variable;
    //         break;
-   //      case elDebugIntegers:
-   //         variableType = lxIntsVariable;
-   //         variableArg = size;
-   //         break;
-   //      case elDebugShorts:
-   //         variableType = lxShortsVariable;
-   //         variableArg = size;
-   //         break;
-   //      case elDebugBytes:
-   //         variableType = lxBytesVariable;
-   //         variableArg = size;
-   //         break;
+         case elDebugIntegers:
+            variableType = lxIntsVariable;
+            variableArg = size;
+            break;
+         case elDebugShorts:
+            variableType = lxShortsVariable;
+            variableArg = size;
+            break;
+         case elDebugBytes:
+            variableType = lxBytesVariable;
+            variableArg = size;
+            break;
          default:
    //         if (isPrimitiveRef(variable.extraparam)) {
    //            variableType = lxBytesVariable;
@@ -2233,7 +2233,7 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
       variable.param = codeScope->newLocal();
    }
 
-   variableType = declareVariableType(*codeScope, variable, localInfo, size/*, binaryArray, variableArg, className*/);
+   variableType = declareVariableType(*codeScope, variable, localInfo, size/*, binaryArray*/, variableArg/*, className*/);
 
    if (!codeScope->locals.exist(identifier)) {
       codeScope->mapLocal(identifier, variable.param, variable.reference, variable.element, size);
@@ -5468,9 +5468,9 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okSingleton:
          terminal.set(lxConstantSymbol, object.param);
          break;
-//      case okLiteralConstant:
-//         writer.newNode(lxConstantString, object.param);
-//         break;
+      case okLiteralConstant:
+         terminal.set(lxConstantString, object.param);
+         break;
 //      case okWideLiteralConstant:
 //         writer.newNode(lxConstantWideStr, object.param);
 //         break;
@@ -5674,29 +5674,29 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          //      case lxPrimCollection:
          //         object = ObjectInfo(okPrimCollection, terminal.argument);
          //         break;
-         //      case lxLiteral:
-         //         object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
-         //         break;
+         case lxLiteral:
+            object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
+            break;
          //      case lxWide:
          //         object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->wideReference);
          //         break;
          //      case lxCharacter:
          //         object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->charReference);
          //         break;
-               case lxInteger:
-               {
-                  String<char, 20> s;
+         case lxInteger:
+         {
+            String<char, 20> s;
          
-                  int integer = token.toInt();
-                  if (errno == ERANGE)
-                     scope.raiseError(errInvalidIntNumber, terminal);
+            int integer = token.toInt();
+            if (errno == ERANGE)
+               scope.raiseError(errInvalidIntNumber, terminal);
          
-                  // convert back to string as a decimal integer
-                  s.appendHex(integer);
+            // convert back to string as a decimal integer
+            s.appendHex(integer);
          
-                  object = ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
-                  break;
-               }
+            object = ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
+            break;
+         }
          //      case lxLong:
          //      {
          //         String<char, 30> s("_"); // special mark to tell apart from integer constant
@@ -9193,13 +9193,13 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 //
 //         parentRef = scope.moduleScope->realReference;
 //      }
-//      else if (retVal.kind == okLiteralConstant) {
-//         ident_t value = module->resolveConstant(retVal.param);
-//
-//         dataWriter.writeLiteral(value, getlength(value) + 1);
-//
-//         parentRef = scope.moduleScope->literalReference;
-//      }
+      else if (retVal.kind == okLiteralConstant) {
+         ident_t value = module->resolveConstant(retVal.param);
+
+         dataWriter.writeLiteral(value, getlength(value) + 1);
+
+         parentRef = scope.moduleScope->literalReference;
+      }
 //      else if (retVal.kind == okWideLiteralConstant) {
 //         WideString wideValue(module->resolveConstant(retVal.param));
 //
@@ -11002,8 +11002,8 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.intReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(INT_FORWARD));
 //   scope.longReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LONG_FORWARD));
 //   scope.realReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REAL_FORWARD));
-//   scope.literalReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(STR_FORWARD));
-//   scope.wideReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WIDESTR_FORWARD));
+   scope.literalReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(STR_FORWARD));
+   scope.wideReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WIDESTR_FORWARD));
 //   scope.charReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(CHAR_FORWARD));
    scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
