@@ -65,8 +65,9 @@ namespace _ELENA_
 //   constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
 //   constexpr auto CATCH_OPERATOR_ID       = 0x0023;
 //   constexpr auto ALT_OPERATOR_ID         = 0x0024;
-//
-//   // built-in class attributes
+
+   // built-in class attributes values
+   constexpr auto CLASSNAME_CONST         = 0x62000001u;
 //   constexpr auto PACKAGE_ATTR_INDEX      = -5;
 //   constexpr auto NAME_ATTR_INDEX         = -6;
 //   constexpr auto MAX_ATTR_INDEX          = -6;
@@ -173,6 +174,7 @@ namespace _ELENA_
       mskDebugRef            = 0x60000000u,
       mskMetaAttributes      = 0x61000000u,
       mskMessageTableRef     = 0x62000000u,
+      mskMetaConstant        = 0x62000000u,
    };
 
    // --- ELENA Debug symbol constants ---
@@ -439,6 +441,9 @@ namespace _ELENA_
    constexpr auto OWNER_VAR                  = "$$owner";          // the nested class / closure owner
    constexpr auto PARENT_VAR                 = "$$parent";         // the closure parent
 //   constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
+
+  // --- ELENA meta variables ---
+   constexpr auto CLASSNAME_VAR              = "@classname";       // the class name
 
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 

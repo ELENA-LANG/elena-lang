@@ -171,6 +171,8 @@ class JITLinker : _JITLoaderListener
 //   void* resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt);
 //////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
+   void* resolveClassName(ReferenceInfo referenceInfo);
+
 public:
    void prepareCompiler();
 

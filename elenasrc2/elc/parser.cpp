@@ -86,7 +86,10 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
       case dfaGlobal:
          terminal.symbol = lxGlobalReference;
          break;
-//    //  case dfaPrivate:
+      case dfaMetaConstant:
+         terminal.symbol = lxMetaConstant;
+         break;
+         //    //  case dfaPrivate:
 //    //     if (terminal.value[1] == 0) {
 //    //        //HOTFIX : if it is $ symbol
 //    //        terminal.symbol = (Symbol)table.defineSymbol(terminal);

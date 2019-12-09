@@ -2025,6 +2025,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
       case lxInteger:
       case lxHexInteger:
       case lxLiteral:
+      case lxMetaConstant:
          generateIdentifier(writer, current, derivationScope);
          break;
 //      default:

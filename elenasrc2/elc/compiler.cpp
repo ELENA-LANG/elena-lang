@@ -4072,28 +4072,25 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 
 void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/)
 {
-//   if (scope.isInitializer() && classScope != NULL) {
-      ref_t valueRef = scope.info.staticValues.get(target.param);
+   ref_t valueRef = scope.info.staticValues.get(target.param);
 
-      SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace), valueRef & ~mskAnyRef, Visibility::Public);
-      ExprScope exprScope(&constantScope);
+   SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace), valueRef & ~mskAnyRef, Visibility::Public);
+   ExprScope exprScope(&constantScope);
 
-      ObjectInfo source = mapObject(node, exprScope, EAttr::eaNone);
-      ref_t targetRef = /*accumulatorMode ? retVal.element : */target.reference;
-//      if (accumulatorMode && !targetRef)
-//         targetRef = _logic->resolveArrayElement(*scope.moduleScope, retVal.reference);
+   ObjectInfo source = mapObject(node, exprScope, EAttr::eaNone);
+   ref_t targetRef = /*accumulatorMode ? retVal.element : */target.reference;
+   //      if (accumulatorMode && !targetRef)
+   //         targetRef = _logic->resolveArrayElement(*scope.moduleScope, retVal.reference);
 
-      ref_t sourceRef = resolveConstantObjectReference(scope, source);
-      if (isPrimitiveRef(sourceRef))
-         sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
+   ref_t sourceRef = resolveConstantObjectReference(scope, source);
+   if (isPrimitiveRef(sourceRef))
+      sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
 
-      if (compileSymbolConstant(/*node, */constantScope, source/*, accumulatorMode, retVal.reference*/) 
-         && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) 
-      {
-      }
-      else scope.raiseError(errInvalidOperation, node);
-//   }
-//   else scope.raiseError(errInvalidOperation, node);
+   if (compileSymbolConstant(/*node, */constantScope, source/*, accumulatorMode, retVal.reference*/)
+      && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef))
+   {
+   }
+   else scope.raiseError(errInvalidOperation, node);
 }
 
 bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope)
@@ -5740,6 +5737,10 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          //      }
          case lxGlobalReference:
             object = scope.mapGlobal(token.c_str());
+            break;
+         case lxMetaConstant:
+            // NOTE : is not allowed to be used outside const initialization
+            scope.raiseError(errIllegalOperation, terminal);
             break;
          ////      case lxLocal:
          ////         // if it is a temporal variable
@@ -7718,14 +7719,12 @@ void Compiler :: compileSpecialMethodCall(SNode& node, ClassScope& classScope, r
 
 void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, bool ignoreAutoMultimethods)
 {
+   scope.withInitializers = scope.info.methods.exist(scope.moduleScope->init_message, true);
+
    SNode current = node.firstChild();
 
    while (current != lxNone) {
       switch(current) {
-         case lxFieldInit:
-//         case lxFieldAccum:
-            scope.withInitializers = true;
-            break;
          case lxClassMethod:
          {
             if (exclusiveMode && (ignoreAutoMultimethods == current.existChild(lxAutoMultimethod))) {
@@ -8343,6 +8342,22 @@ inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference/*, bool i
 
 }
 
+inline SNode findInitNode(SNode node, ident_t name)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxFieldInit) {
+         SNode terminalNode = current.firstChild(lxTerminalMask);
+         if (terminalNode.identifier().compare(name))
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   return current;
+}
+
 void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t, bool isStatic, bool isConst/*, bool isArray*/)
 {
    _Module* module = scope.module;
@@ -8383,7 +8398,29 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
 
       if (isConst) {
-         ref_t statRef = mapStaticField(scope.moduleScope, scope.reference/*, isArray*/);
+         ref_t statRef = 0;
+
+         // HOTFIX : constant must have initialization part
+         SNode initNode = findInitNode(current.parentNode(), terminal);
+         if (initNode != lxNone) {
+            SNode assignNode = initNode.findChild(lxAssign).nextNode(lxObjectMask);
+            if (assignNode == lxExpression)
+               assignNode = assignNode.firstChild();
+
+            if (assignNode == lxMetaConstant) {
+               // HOTFIX : recognize meta constants
+               if (assignNode.identifier().compare(CLASSNAME_VAR)) {
+                  statRef = CLASSNAME_CONST;
+
+                  // comment out the initializer
+                  initNode = lxIdle;
+               }
+               else scope.raiseError(errInvalidOperation, current);
+            }
+            else statRef = mapStaticField(scope.moduleScope, scope.reference/*, isArray*/);
+         }
+         else scope.raiseError(errInvalidOperation, current);
+
          scope.info.staticValues.add(index, statRef);
          //if (isArray) {
          //   //HOTFIX : allocate an empty array

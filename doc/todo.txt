@@ -2,7 +2,8 @@
 In development:
 ------         
               dev
-                * built-in class constants
+                * built-in class constants : class name,package info 
+                * extension to read the class name, package info
                 * meta attributes
                 * wide string
                 * strings to wide string conversion
@@ -239,6 +240,7 @@ In development:
                 * auto conversion methods should be marked as idle
                 * passing byref further
                 * should child have an access to the parent static fields?
+                * public const fields?
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)
@@ -276,6 +278,7 @@ In development:
                 * boxing byref variable : use intializing, direct assinging after creation without filling with nils
                 * test static fields with singleton
                 * test const fields : override the parent constant value
+                * test global references : with new, var, cast, parent, symbol
 
               dev1
                 * write - Programming in ELENA : manual

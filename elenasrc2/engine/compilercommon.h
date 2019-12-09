@@ -116,7 +116,8 @@ constexpr auto V_INT16ARRAY      = 0x8000000Cu;
 constexpr auto V_INT8ARRAY       = 0x8000000Du;
 //constexpr auto V_OBJECT          = 0x8000000Eu;
 //constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
-//
+//constexpr auto V_CLASSNAME       = 0x80000010u;
+
 ////#define V_PARAMETER      (ref_t)-02
 //constexpr auto V_STRCONSTANT     = 0x80000010u; // used for explicit constant operations
 ////#define V_TAPEGROUP      (ref_t)-8209

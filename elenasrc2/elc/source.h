@@ -39,10 +39,9 @@ constexpr char dfaReal           = 'Q';
 constexpr char dfaSignStart      = 'U';
 constexpr char dfaQuoteStart     = 'V';
 constexpr char dfaQuote          = 'W';
-constexpr char dfaPrivate        = 'X';
 constexpr char dfaCharacter      = ']';
 constexpr char dfaWideQuote      = '^';
-constexpr char dfaMember         = 'a';
+constexpr char dfaMetaConstant   = 'a';
 constexpr char dfaGlobal         = 'b';
 constexpr char dfaAltOperator    = 'c';
 

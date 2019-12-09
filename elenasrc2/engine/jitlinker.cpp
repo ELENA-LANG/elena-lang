@@ -599,6 +599,18 @@ void* JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, int mask,
    return vaddress;
 }
 
+void* JITLinker :: resolveClassName(ReferenceInfo referenceInfo)
+{
+   IdentifierString fullName;
+   if (referenceInfo.isRelative()) {
+      fullName.copy(referenceInfo.module->Name());
+      fullName.append(referenceInfo.referenceName);
+   }
+   else fullName.copy(referenceInfo.referenceName);
+
+   return resolve(ReferenceInfo(fullName.c_str()), mskLiteralRef, false);
+}
+
 void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references)
 {
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
@@ -697,10 +709,15 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
                // HOTFIX : ignore read-only sealed static field
             }
             else {
+               if (*it == CLASSNAME_CONST) {
+                  refVAddress = resolveClassName(referenceInfo);
+
+                  currentMask = mskLiteralRef;
+               }
                /*if (currentMask == mskStatRef && currentRef == 0) {
                   refVAddress = resolveAnonymousStaticVariable();
-               }
-               else */if (currentRef != 0)
+               }*/
+               else if (currentRef != 0)
                   refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
 
                resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);

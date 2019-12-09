@@ -80,6 +80,7 @@ enum LexicalType
    lxGlobalReference          = 0x002014,
    lxInteger                  = 0x002015,
    lxLiteral                  = 0x002016,
+   lxMetaConstant             = 0x002017,
 
    lxVirtualReference         = 0x00201F,
 
