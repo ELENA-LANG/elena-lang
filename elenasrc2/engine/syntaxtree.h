@@ -47,6 +47,7 @@ enum LexicalType
    lxMethodParameter          = 0x000019,
    lxStaticMethod             = 0x00001A,
    lxForward                  = 0x00001B,
+   lxClassProperty            = 0x00001C,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -81,6 +82,7 @@ enum LexicalType
    lxInteger                  = 0x002015,
    lxLiteral                  = 0x002016,
    lxMetaConstant             = 0x002017,
+   lxWide                     = 0x002018,
 
    lxVirtualReference         = 0x00201F,
 
@@ -128,6 +130,7 @@ enum LexicalType
    lxConstantInt              = 0x0181A0,   // arg - reference
    lxConstantString           = 0x0181A1,   // arg - reference
    lxConstantList             = 0x0181A2,   // arg - reference
+   lxConstantWideStr          = 0x0181A3,   // arg - reference
    lxOp                       = 0x0581B0,
    lxIntOp                    = 0x0581B1,   // arg - operation id
    lxField                    = 0x0181C0,   // arg - offset
@@ -200,7 +203,6 @@ enum LexicalType
 //   lxNested                   = 0x008102, // arg - count
 //   lxStruct                   = 0x008103, // arg - count
 //   lxBlockLocal               = 0x00A10B, // arg - offset
-//   lxConstantWideStr          = 0x00A10D, // arg - reference
 //   lxConstantChar             = 0x00A10E, // arg - reference
 //   lxConstantLong             = 0x01A110, // arg - reference
 //   lxConstantReal             = 0x01A111, // arg - reference
@@ -710,27 +712,11 @@ public:
 
       Node prependSibling(LexicalType type, int argument = 0)
       {
-         pos_t prevSibl = tree->getPrevious(position);
-         if (prevSibl != INVALID_REF) {
-            return tree->read(tree->insertSibling(prevSibl, type, argument, INVALID_REF));
-         }
-         else {
-            pos_t parent = tree->getParent(position);
-
-            return tree->read(tree->insertChild(parent, type, argument, INVALID_REF));
-         }
+         return tree->read(tree->insertSibling(position, type, argument, INVALID_REF));
       }
       Node prependSibling(LexicalType type, ident_t argument)
       {
-         pos_t prevSibl = tree->getPrevious(position);
-         if (prevSibl != INVALID_REF) {
-            return tree->read(tree->insertSibling(prevSibl, type, 0, tree->saveStrArgument(argument)));
-         }
-         else {
-            pos_t parent = tree->getParent(position);
-
-            return tree->read(tree->insertChild(parent, type, 0, tree->saveStrArgument(argument)));
-         }
+         return tree->read(tree->insertSibling(position, type, 0, tree->saveStrArgument(argument)));
       }
 
       void refresh()

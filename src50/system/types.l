@@ -18,9 +18,9 @@
 #define closed      80004003h
 //#define predefined  80004005h
 //#define yieldable   80004006h
-//
-///// scope_accessors:
-//#define get         80003007h
+
+/// scope_accessors:
+#define get         80003007h
 //#define set         80003008h
 
 /// scope_prefix:

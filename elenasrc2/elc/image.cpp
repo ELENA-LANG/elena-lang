@@ -29,7 +29,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
 
   // load default forwards
    _literal = project->resolveForward(STR_FORWARD);
-  // _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
+   _wideLiteral = project->resolveForward(WIDESTR_FORWARD);
   // _character = project->resolveForward(CHAR_FORWARD);
    _int = project->resolveForward(INT_FORWARD);
   // _long = project->resolveForward(LONG_FORWARD);
@@ -198,11 +198,11 @@ ident_t ExecutableImage :: getLiteralClass()
    return _literal;
 }
 
-//ident_t ExecutableImage :: getWideLiteralClass()
-//{
-//   return _wideLiteral;
-//}
-//
+ident_t ExecutableImage :: getWideLiteralClass()
+{
+   return _wideLiteral;
+}
+
 //ident_t ExecutableImage :: getCharacterClass()
 //{
 //   return _character;

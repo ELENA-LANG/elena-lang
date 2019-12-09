@@ -669,8 +669,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskVMTRef;
       case lxConstantString:
          return mskLiteralRef;
-      //case lxConstantWideStr:
-      //   return mskWideLiteralRef;
+      case lxConstantWideStr:
+         return mskWideLiteralRef;
       //case lxConstantChar:
       //   return mskCharRef;
       case lxConstantInt:
@@ -3908,7 +3908,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          scope.clear();
          break;
       case lxConstantString:
-//      case lxConstantWideStr:
+      case lxConstantWideStr:
       case lxClassSymbol:
       case lxConstantSymbol:
 //      case lxConstantChar:
@@ -4025,7 +4025,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          type = lxNone; // acc content is undefined
          break;
       case lxConstantString:
-//      case lxConstantWideStr:
+      case lxConstantWideStr:
       case lxClassSymbol:
       case lxConstantSymbol:
 //      case lxConstantChar:
@@ -7193,7 +7193,7 @@ void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType 
       case lxConstantList:
       //case lxConstantReal:
       case lxConstantString:
-      //case lxConstantWideStr:
+      case lxConstantWideStr:
       case lxConstantSymbol:
          writer.writeRef(argument | defineConstantMask(type), 0);
          break;

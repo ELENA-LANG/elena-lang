@@ -109,7 +109,7 @@ public:
       okClass,                        // param - reference
       okSingleton,                    // param - reference
       okLiteralConstant,              // param - reference
-//      okWideLiteralConstant,          // param - reference
+      okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
 //      okUIntConstant,                 // param - reference, extraparam - imm argument

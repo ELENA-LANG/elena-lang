@@ -23,6 +23,15 @@ constexpr auto MODE_PROPERTYMETHOD        = -4;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
+
 // --- DerivationWriter ---
 
 //inline SNode goToLastNode(SNode current)
@@ -235,7 +244,7 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
    if (terminal.symbol == lxGlobalReference) {
       writer.newNode(terminal.symbol, terminal.value + 1);
    }
-   else if (terminal.symbol == lxLiteral/* || terminal == tsCharacter || terminal == tsWide*/) {
+   else if (terminal.symbol == lxLiteral/* || terminal == tsCharacter*/ || terminal == lxWide) {
       // try to use local storage if the quote is not too big
       if (getlength(terminal.value) < 0x100) {
          QuoteTemplate<IdentifierString> quote(terminal.value);
@@ -826,10 +835,10 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
             current = lxClassField;
 //            mode = MODE_PROPERTYALLOWED;
          }
-//         else if (current.existChild(lxScope)) {
-//            // if it is a property
-//            current = lxClassProperty;
-//         }
+         else if (current.existChild(lxScope)) {
+            // if it is a property
+            current = lxClassProperty;
+         }
 //         else raiseError(errInvalidSyntax, current);
 
          recognizeScopeAttributes(current.prevNode(), mode);
@@ -982,9 +991,9 @@ void DerivationWriter :: generateClassTree(SyntaxWriter& writer, SNode node, Sco
          else if (current == lxClassField/* || current == lxFieldInit*/) {
             generateFieldTree(writer, current, derivationScope, buffer);
          }
-//         else if (current == lxClassProperty) {
-//            generatePropertyTree(writer, current, derivationScope, buffer);
-//         }
+         else if (current == lxClassProperty) {
+            generatePropertyTree(writer, current, derivationScope, buffer);
+         }
 //         else if (current == lxInlineAttribute) {
 //            generateInlineTemplateTree(writer, current, goToNode(current, lxNameAttr), derivationScope, buffer);
 //         }
@@ -1149,17 +1158,33 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //      current = current.prevNode();
 //   }
 //}
-//
-//void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
-//{
+
+void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
+{
 //   //// COMPILER MAGIC : property declaration
 //   //bool withPropertyTemplate = false;
 //   //bool withAttributes = false;
 //   //bool withInitializer = false;
 //   //checkFieldPropAttributes(node, withPropertyTemplate, withInitializer, withAttributes);
-//
-//   recognizeClassMebers(node);
-//
+
+   // inject property info
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxScope) {
+         SNode prev = current;
+         SNode nameNode = node.prevNode();
+         while (nameNode.compare(lxNameAttr, lxType, lxAttribute)) {
+            prev = prev.prependSibling(lxToken);
+            SyntaxTree::copyNode(nameNode, prev);
+
+            nameNode = nameNode.prevNode();
+         }
+      }
+      current = current.nextNode();
+   }
+   
+   recognizeClassMebers(node);
+
 //   //if (withPropertyTemplate) {
 //   //   // COMPILER MAGIC : inject an attribute template
 //   //   generatePropertyTemplateTree(writer, node, derivationScope);
@@ -1175,9 +1200,9 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 //   //   ::copyIdentifier(writer, nameNode);
 //   //   writer.closeNode();
 //   //}
-//   
-//   generatePropertyBody(writer, node, derivationScope, nullptr, buffer);
-//}
+   
+   generatePropertyBody(writer, node, derivationScope, /*nullptr, */buffer);
+}
 
 void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
 {   
@@ -1424,27 +1449,27 @@ void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode curr
 //
 //   node = lxIdle;
 //}
-//
-//void DerivationWriter :: generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, 
-//   List<SNode>* parameters, SyntaxTree& buffer)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod) {
+
+void DerivationWriter :: generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, 
+   /*List<SNode>* parameters, */SyntaxTree& buffer)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
 //         SNode subNameNode = current.prevNode();
 //
 //         subNameNode.setArgument(MODE_COMPLEXMESSAGE);
-//
-//         generateMethodTree(writer, current, derivationScope, false, current.argument == MODE_PROPERTYMETHOD, buffer);
-//
+
+         generateMethodTree(writer, current, derivationScope, false, current.argument == MODE_PROPERTYMETHOD, buffer);
+
 //         if (parameters)
 //            parameters->add(subNameNode);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //void DerivationWriter :: generateInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode nameNode, Scope& derivationScope, SyntaxTree& buffer)
 //{
 //   List<SNode> parameters;
@@ -2025,6 +2050,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
       case lxInteger:
       case lxHexInteger:
       case lxLiteral:
+      case lxWide:
       case lxMetaConstant:
          generateIdentifier(writer, current, derivationScope);
          break;

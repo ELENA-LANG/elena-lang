@@ -2,7 +2,6 @@
 In development:
 ------         
               dev
-                * wide string
                 * strings to wide string conversion
 
                 * externals
@@ -19,8 +18,6 @@ In development:
                 * parameter - template, template of templates
                 * array of templates
                 * template of arrays
-
-                * properties
 
                 * closures: unboxing
                 * closures: presaved arguments

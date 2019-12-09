@@ -405,14 +405,14 @@ pos_t SyntaxTree :: insertChild(pos_t position, LexicalType type, int argument, 
 
 pos_t SyntaxTree :: insertSibling(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
 {
-   pos_t child = ::newChild(_body, position, type, argument, strArgumentRef);
+   pos_t parent = ::readParent(_body, position);
+   pos_t child = ::newChild(_body, parent, type, argument, strArgumentRef);
 
    pos_t prev = getPrevious(position);
    if (prev != INVALID_REF) {
-      ::insertSibling(_body, position, child);
+      ::insertSibling(_body, prev, child);
    }
    else {
-      pos_t parent = ::readParent(_body, position);
       if (parent != INVALID_REF)
          ::insertChild(_body, parent, child);
    }

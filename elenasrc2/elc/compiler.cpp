@@ -198,8 +198,8 @@ inline bool isConstantArguments(SNode node)
             if (!isConstantArguments(current))
                return false;
             break;
-         //case lxLiteral:
-         //case lxWide:
+         case lxLiteral:
+         case lxWide:
          //case lxCharacter:
          case lxInteger:
          //case lxLong:
@@ -5468,9 +5468,9 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okLiteralConstant:
          terminal.set(lxConstantString, object.param);
          break;
-//      case okWideLiteralConstant:
-//         writer.newNode(lxConstantWideStr, object.param);
-//         break;
+      case okWideLiteralConstant:
+         terminal.set(lxConstantWideStr, object.param);
+         break;
 //      case okCharConstant:
 //         writer.newNode(lxConstantChar, object.param);
 //         break;
@@ -5674,9 +5674,9 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          case lxLiteral:
             object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
             break;
-         //      case lxWide:
-         //         object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->wideReference);
-         //         break;
+         case lxWide:
+            object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->wideReference);
+            break;
          //      case lxCharacter:
          //         object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->charReference);
          //         break;
