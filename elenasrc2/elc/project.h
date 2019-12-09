@@ -185,21 +185,21 @@ public:
    virtual bool HasWarnings() const { return _hasWarning; }
 
 //   virtual int getTabSize() { return 4; }
-//
-//   virtual ident_t getManinfestName()
-//   {
-//      return StrSetting(opManifestName);
-//   }
-//
-//   virtual ident_t getManinfestVersion()
-//   {
-//      return StrSetting(opManifestVersion);
-//   }
-//
-//   virtual ident_t getManinfestAuthor()
-//   {
-//      return StrSetting(opManifestAuthor);
-//   }
+
+   virtual ident_t getManinfestName()
+   {
+      return StrSetting(opManifestName);
+   }
+
+   virtual ident_t getManinfestVersion()
+   {
+      return StrSetting(opManifestVersion);
+   }
+
+   virtual ident_t getManinfestAuthor()
+   {
+      return StrSetting(opManifestAuthor);
+   }
 
    bool indicateWarning()
    {

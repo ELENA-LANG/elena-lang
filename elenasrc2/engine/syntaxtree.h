@@ -127,6 +127,7 @@ enum LexicalType
    lxResending                = 0x058190,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
    lxConstantInt              = 0x0181A0,   // arg - reference
    lxConstantString           = 0x0181A1,   // arg - reference
+   lxConstantList             = 0x0181A2,   // arg - reference
    lxOp                       = 0x0581B0,
    lxIntOp                    = 0x0581B1,   // arg - operation id
    lxField                    = 0x0181C0,   // arg - offset
@@ -210,7 +211,6 @@ enum LexicalType
 //   lxResultField              = 0x00A11A, // arg -offset
 //   lxCurrentMessage           = 0x00A11B,
 //   lxResultFieldIndex         = 0x00A11D, // arg -offset
-//   lxConstantList             = 0x00A11E, // arg - reference
 //   lxBlockLocalAddr           = 0x00A11F, // arg - offset
 //   lxClassRefField            = 0x008120, // arg - self instance offset
 //   lxBaseField                = 0x00A122,

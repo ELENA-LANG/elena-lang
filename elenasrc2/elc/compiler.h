@@ -1171,8 +1171,8 @@ private:
    void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr);
 
 //   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
-//
-//   void createPackageInfo(_Module* module, _ProjectManager& project);
+
+   void createPackageInfo(_Module* module, _ProjectManager& project);
 
    void declareMembers(SNode node, NamespaceScope& scope);
 

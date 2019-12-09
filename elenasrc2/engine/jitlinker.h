@@ -172,6 +172,10 @@ class JITLinker : _JITLoaderListener
 //////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
    void* resolveClassName(ReferenceInfo referenceInfo);
+   void* resolvePackage(_Module* module);
+
+   void resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader& vmtReader, MemoryReader& attrReader, 
+      _Memory* vmtImage, ref_t position);
 
 public:
    void prepareCompiler();

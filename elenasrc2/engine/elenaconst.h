@@ -68,9 +68,8 @@ namespace _ELENA_
 
    // built-in class attributes values
    constexpr auto CLASSNAME_CONST         = 0x62000001u;
+   constexpr auto PACKAGE_CONST           = 0x62000002u;
 //   constexpr auto PACKAGE_ATTR_INDEX      = -5;
-//   constexpr auto NAME_ATTR_INDEX         = -6;
-//   constexpr auto MAX_ATTR_INDEX          = -6;
 //
 ////   // virtual operator
 ////   #define SETNIL_REFER_MESSAGE_ID 0x1019
@@ -444,6 +443,7 @@ namespace _ELENA_
 
   // --- ELENA meta variables ---
    constexpr auto CLASSNAME_VAR              = "@classname";       // the class name
+   constexpr auto PACKAGE_VAR                = "@package";       // the class name
 
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 
@@ -454,7 +454,7 @@ namespace _ELENA_
    constexpr auto ATTRIBUTE_SECTION          = "#attributes";
    constexpr auto EXTENSION_SECTION          = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
-//   constexpr auto PACKAGE_SECTION      = "#package";
+   constexpr auto PACKAGE_SECTION            = "#package";
    constexpr auto IMPORTS_SECTION            = "#import";
    constexpr auto NAMESPACES_SECTION         = "#namespaces";
    constexpr auto NAMESPACE_REF              = "#namespace";

@@ -998,14 +998,14 @@ public sealed const struct String : BaseValue
 //
 ///// An empty wide literal value
 //public const wide emptyWideString = ""w;
-//
-//// --- WideString ---
-//
-///// A UTF-18 literal value
-//public sealed const struct WideString : BaseValue
-//{
-//    __string short[] theArray;
-//
+
+// --- WideString ---
+
+/// A UTF-18 literal value
+public sealed const struct WideString : BaseValue
+{
+    __string short[] theArray;
+
 //    /// return the default value
 //    static wide Default
 //        = emptyWideString;
@@ -1199,8 +1199,8 @@ public sealed const struct String : BaseValue
 //    
 //    /// Clones the value
 //    wide clone() = WideString.copy(self);
-//}
-//
+}
+
 //// --- Variant ---
 //
 ///// A basic type variant class

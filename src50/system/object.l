@@ -4,6 +4,12 @@
 
 public class Object
 {
+    /// class constant - a class name 
+    const string __className := @classname;
+    
+    /// class constant - a package info
+    const __packageInfo      := @package; 
+    
     /// Creates the object
     constructor() {}
     
@@ -19,8 +25,8 @@ public class Object
 //    predefined bool greater(o) {}
 //    predefined bool notless(o) {}
 //    predefined bool notgreater(o) {}
-//                
-//    string Printable = self.__getClassName();
+                
+    string Printable = /*self.__getClassName()*/__className;
                 
     /// Implements a message dispatching in VMT
     dispatch() => intern system'core_routines'__object;

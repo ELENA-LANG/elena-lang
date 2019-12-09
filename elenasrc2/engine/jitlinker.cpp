@@ -611,6 +611,59 @@ void* JITLinker :: resolveClassName(ReferenceInfo referenceInfo)
    return resolve(ReferenceInfo(fullName.c_str()), mskLiteralRef, false);
 }
 
+void* JITLinker :: resolvePackage(_Module* module)
+{
+   ReferenceNs packageInfo("'", PACKAGE_SECTION);
+
+   return resolve(ReferenceInfo(module, packageInfo.c_str()), mskConstArray, false);
+}
+
+void JITLinker :: resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader& vmtReader, MemoryReader& attrReader, 
+   _Memory* vmtImage, ref_t position)
+{
+   // fix VMT Static table
+   // NOTE : ignore virtual VMT
+   ClassInfo::StaticInfoMap staticValues;
+   staticValues.read(&vmtReader);
+
+   ref_t currentMask = 0;
+   ref_t currentRef = 0;
+   for (auto it = staticValues.start(); !it.Eof(); it++) {
+      currentMask = *it & mskAnyRef;
+      currentRef = *it & ~mskAnyRef;
+
+      void* refVAddress = NULL;
+      if (currentMask == mskConstantRef && currentRef == 0) {
+         // HOTFIX : ignore read-only sealed static field
+      }
+      else {
+         if (*it == CLASSNAME_CONST) {
+            refVAddress = resolveClassName(referenceInfo);
+
+            currentMask = mskLiteralRef;
+         }
+         else if (*it == PACKAGE_CONST) {
+            refVAddress = resolvePackage(referenceInfo.module);
+
+            currentMask = mskConstArray;
+         }
+         /*if (currentMask == mskStatRef && currentRef == 0) {
+            refVAddress = resolveAnonymousStaticVariable();
+         }*/
+         else if (currentRef != 0)
+            refVAddress = resolve(_loader->retrieveReference(referenceInfo.module, currentRef, currentMask), currentMask, false);
+
+         resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
+      }
+   }
+
+   // generate run-time attributes
+   ClassInfo::CategoryInfoMap attributes;
+   attributes.read(&attrReader);
+
+   createAttributes(referenceInfo, attributes);
+}
+
 void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references)
 {
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
@@ -693,43 +746,9 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
 
       if (!test(header.flags, elVirtualVMT)) {
-         // fix VMT Static table
-         // NOTE : ignore virtual VMT
-         ClassInfo::StaticInfoMap staticValues;
-         staticValues.read(&vmtReader);
-
-         ref_t currentMask = 0;
-         ref_t currentRef = 0;
-         for (auto it = staticValues.start(); !it.Eof(); it++) {
-            currentMask = *it & mskAnyRef;
-            currentRef = *it & ~mskAnyRef;
-
-            void* refVAddress = NULL;
-            if (currentMask == mskConstantRef && currentRef == 0) {
-               // HOTFIX : ignore read-only sealed static field
-            }
-            else {
-               if (*it == CLASSNAME_CONST) {
-                  refVAddress = resolveClassName(referenceInfo);
-
-                  currentMask = mskLiteralRef;
-               }
-               /*if (currentMask == mskStatRef && currentRef == 0) {
-                  refVAddress = resolveAnonymousStaticVariable();
-               }*/
-               else if (currentRef != 0)
-                  refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
-
-               resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
-            }
-         }
-
-         // generate run-time attributes
-         ClassInfo::CategoryInfoMap attributes;
-         attributes.read(&attrReader);
-
          referenceInfo.module = sectionInfo.module;
-         createAttributes(referenceInfo, attributes);
+
+         resolveStaticValues(referenceInfo, vmtReader, attrReader, vmtImage, position);
       }
    }
 

@@ -8415,6 +8415,12 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
                   // comment out the initializer
                   initNode = lxIdle;
                }
+               else if (assignNode.identifier().compare(PACKAGE_VAR)) {
+                  statRef = PACKAGE_CONST;
+
+                  // comment out the initializer
+                  initNode = lxIdle;
+               }
                else scope.raiseError(errInvalidOperation, current);
             }
             else statRef = mapStaticField(scope.moduleScope, scope.reference/*, isArray*/);
@@ -10491,55 +10497,55 @@ void Compiler :: analizeSymbolTree(SNode node, Scope& scope)
 ////   //   }
 ////   //}
 ////}
-//
-//inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
-//{
-//   writer.newNode(lxMember);
-//   if (!emptystr(str)) {
-//      writer.appendNode(lxConstantString, module->mapConstant(str));
-//   }
-//   else writer.appendNode(lxNil);
-//   writer.closeNode();
-//}
-//
-//inline ref_t mapForwardRef(_Module* module, _ProjectManager& project, ident_t forward)
-//{
-//   ident_t name = project.resolveForward(forward);
-//
-//   return emptystr(name) ? 0 : module->mapReference(name);
-//}
-//
-//void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
-//{
-//   ReferenceNs sectionName("'", PACKAGE_SECTION);
-//   ref_t reference = module->mapReference(sectionName);
-//   ref_t vmtReference = mapForwardRef(module, project, SUPER_FORWARD);
-//   if (vmtReference == 0)
-//      return;
-//
-//   SyntaxTree tree;
-//   SyntaxWriter writer(tree);
-//
-//   writer.newNode(lxConstantList, reference);
-//   writer.appendNode(lxTarget, vmtReference);
-//
-//   // namespace
-//   addPackageItem(writer, module, module->Name());
-//
-//   // package name
-//   addPackageItem(writer, module, project.getManinfestName());
-//
-//   // package version
-//   addPackageItem(writer, module, project.getManinfestVersion());
-//
-//   // package author
-//   addPackageItem(writer, module, project.getManinfestAuthor());
-//
-//   writer.closeNode();
-//
-//   _writer.generateConstantList(tree.readRoot(), module, reference);
-//}
-//
+
+inline void addPackageItem(SyntaxWriter& writer, _Module* module, ident_t str)
+{
+   writer.newNode(lxMember);
+   if (!emptystr(str)) {
+      writer.appendNode(lxConstantString, module->mapConstant(str));
+   }
+   else writer.appendNode(lxNil);
+   writer.closeNode();
+}
+
+inline ref_t mapForwardRef(_Module* module, _ProjectManager& project, ident_t forward)
+{
+   ident_t name = project.resolveForward(forward);
+
+   return emptystr(name) ? 0 : module->mapReference(name);
+}
+
+void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
+{
+   ReferenceNs sectionName("'", PACKAGE_SECTION);
+   ref_t reference = module->mapReference(sectionName);
+   ref_t vmtReference = mapForwardRef(module, project, SUPER_FORWARD);
+   if (vmtReference == 0)
+      return;
+
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxConstantList, reference);
+   writer.appendNode(lxType, vmtReference);
+
+   // namespace
+   addPackageItem(writer, module, module->Name());
+
+   // package name
+   addPackageItem(writer, module, project.getManinfestName());
+
+   // package version
+   addPackageItem(writer, module, project.getManinfestVersion());
+
+   // package author
+   addPackageItem(writer, module, project.getManinfestAuthor());
+
+   writer.closeNode();
+
+   _writer.generateConstantList(tree.readRoot(), module, reference);
+}
+
 ////void Compiler :: declareMetaAttributes(SNode node, NamespaceScope& scope)
 ////{
 ////   bool declared = false;
@@ -11067,7 +11073,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
          scope.printInfo(wrnInvalidModule, STANDARD_MODULE);
    }
 
-//   createPackageInfo(scope.module, *scope.project);
+   createPackageInfo(scope.module, *scope.project);
 }
 
 //void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex,

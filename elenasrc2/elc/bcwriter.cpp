@@ -685,8 +685,8 @@ inline ref_t defineConstantMask(LexicalType type)
       //   return mskExtMessage;
       //case lxSubjectConstant:
       //   return mskMessageName;
-      //case lxConstantList:
-      //   return mskConstArray;
+      case lxConstantList:
+         return mskConstArray;
       default:
          return mskConstantRef;
    }
@@ -3918,7 +3918,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case lxMessageConstant:
 //      case lxExtMessageConstant:
 //      case lxSubjectConstant:
-//      case lxConstantList:
+      case lxConstantList:
          // pushr reference
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
@@ -4035,7 +4035,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //      case lxMessageConstant:
 //      case lxExtMessageConstant:
 //      case lxSubjectConstant:
-//      case lxConstantList:
+      case lxConstantList:
          // pushr reference
          tape.write(bcMovR, argument | defineConstantMask(type));
          break;
@@ -7183,40 +7183,40 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root/*, bool isSt
    /*else */endSymbol(tape);
 }
 
-//void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument)
-//{
-//   switch (type) {
-//      case lxConstantChar:
-//      //case lxConstantClass:
-//      case lxConstantInt:
-//      case lxConstantLong:
-//      case lxConstantList:
-//      case lxConstantReal:
-//      case lxConstantString:
-//      case lxConstantWideStr:
-//      case lxConstantSymbol:
-//         writer.writeRef(argument | defineConstantMask(type), 0);
-//         break;
-//      case lxNil:
-//         writer.writeDWord(0);
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t reference)
-//{
-//   SNode target = node.findChild(lxTarget);
-//   MemoryWriter writer(module->mapSection(reference | mskRDataRef, false));
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      SNode object = current.findSubNodeMask(lxObjectMask);
-//
-//      generateConstantMember(writer, object.type, object.argument);
-//
-//      current = current.nextNode();
-//   }
-//
-//   // add vmt reference
-//   if (target != lxNone)
-//      writer.Memory()->addReference(target.argument | mskVMTRef, (pos_t)-4);
-//}
+void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument)
+{
+   switch (type) {
+      //case lxConstantChar:
+      //case lxConstantClass:
+      case lxConstantInt:
+      //case lxConstantLong:
+      case lxConstantList:
+      //case lxConstantReal:
+      case lxConstantString:
+      //case lxConstantWideStr:
+      case lxConstantSymbol:
+         writer.writeRef(argument | defineConstantMask(type), 0);
+         break;
+      case lxNil:
+         writer.writeDWord(0);
+         break;
+   }
+}
+
+void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t reference)
+{
+   SNode target = node.findChild(lxType);
+   MemoryWriter writer(module->mapSection(reference | mskRDataRef, false));
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      SNode object = current.findSubNodeMask(lxObjectMask);
+
+      generateConstantMember(writer, object.type, object.argument);
+
+      current = current.nextNode();
+   }
+
+   // add vmt reference
+   if (target != lxNone)
+      writer.Memory()->addReference(target.argument | mskVMTRef, (pos_t)-4);
+}
