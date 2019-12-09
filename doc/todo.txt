@@ -2,11 +2,6 @@
 In development:
 ------         
               dev
-                * const static fields
-                * const fields
-                * virtual const fields
-                * const field can intialized only in-place
-                * analog of attributes : constant fields
                 * strings
                 * built-in class constants
 
@@ -240,6 +235,7 @@ In development:
                 * implicit multi-constructor : compile-time, run-time
                 * auto conversion methods should be marked as idle
                 * passing byref further
+                * should child have an access to the parent static fields?
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)
@@ -276,6 +272,7 @@ In development:
                 * comple-time int expression evaluation
                 * boxing byref variable : use intializing, direct assinging after creation without filling with nils
                 * test static fields with singleton
+                * test const fields : override the parent constant value
 
               dev1
                 * write - Programming in ELENA : manual

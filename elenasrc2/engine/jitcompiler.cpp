@@ -148,21 +148,21 @@ void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
 //   // object body
 //   writer->writeDWord(ch);
 //}
-//
-//void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
-//{
-//   size_t length = binary->Length();
-//
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800000 | length);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->write(binary->get(0), length);
-//   writer->align(4, 0);
-//}
+
+void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
+{
+   size_t length = binary->Length();
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800000 | length);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(binary->get(0), length);
+   writer->align(4, 0);
+}
 
 void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
 {
@@ -239,10 +239,10 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
    writer.writeBytes(0, count * 4);
 }
 
-void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength/*, size_t staticSize*/)
+void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize)
 {
-   //// create VMT static table
-   //vmtWriter.writeBytes(0, staticSize << 2);
+   // create VMT static table
+   vmtWriter.writeBytes(0, staticSize << 2);
 
    alignCode(&vmtWriter, VA_ALIGNMENT, false);
 

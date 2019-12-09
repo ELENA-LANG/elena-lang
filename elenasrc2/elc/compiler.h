@@ -122,7 +122,7 @@ public:
       okField,                        // param - reference, param - field offset
       okReadOnlyField,                // param - reference, param - field offset
       okStaticField,                  // param - reference
-//      okStaticConstantField,          // param - reference
+      okStaticConstantField,          // param - reference
 //      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
       okFieldAddress,                 // param - field offset
       okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
@@ -913,8 +913,8 @@ private:
 
    ref_t resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode);
 //   ref_t resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
-//
-//   ref_t resolveConstantObjectReference(CodeScope& scope, ObjectInfo object);
+
+   ref_t resolveConstantObjectReference(_CompileScope& scope, ObjectInfo object);
    ref_t resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode, 
       bool unboxWrapper = true);
 
@@ -1054,7 +1054,7 @@ private:
    ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode);
 
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*//*, int mode*/);
-//   void compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal, bool accumulatorMode);
+   void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/);
 
    ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
 
@@ -1125,7 +1125,8 @@ private:
    ref_t compileExtensionDispatcher(NamespaceScope& scope, ref_t genericMessageRef);
 
    void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
-   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef/*, bool isSealed, bool isConst, bool isArray*/);
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isStatic, 
+      bool isConst/*, bool isArray*/);
    
    void generateClassFlags(ClassScope& scope, SNode node);
    void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);

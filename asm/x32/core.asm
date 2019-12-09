@@ -942,6 +942,14 @@ inline % 2Ah
 
 end
 
+// ; class
+
+inline % 36h
+
+  mov ebx, [ebx - elVMTOffset]
+
+end
+
 // ; get
 inline % 91h
 

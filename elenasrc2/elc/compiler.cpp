@@ -620,7 +620,7 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility vi
    info.header.flags = elStandartVMT;
    info.header.count = 0;
    info.header.classRef = 0;
-//   info.header.staticSize = 0;
+   info.header.staticSize = 0;
    info.size = 0;
 
    extensionClassRef = 0;
@@ -669,22 +669,22 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, EAttr scopeMode)
    else {
       ClassInfo::FieldInfo staticInfo = info.statics.get(terminal);
       if (staticInfo.value1 != 0) {
-//         if (!isSealedStaticField(staticInfo.value1)) {
-            //            ref_t val = info.staticValues.get(staticInfo.value1);
+         if (!isSealedStaticField(staticInfo.value1)) {
+            ref_t val = info.staticValues.get(staticInfo.value1);
             //            if (val != mskStatRef) {
             //               if (classClassMode) {
             //                  return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value2, 0, staticInfo.value1);
             //               }
-            //               else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
+            /*else */return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
             //            }
-//         }
-//         else if(info.staticValues.exist(staticInfo.value1, mskConstantRef)) {
+         }
+         else if(info.staticValues.exist(staticInfo.value1, mskConstantRef)) {
 //            // if it is a constant static sealed field
 //            if (classClassMode) {
 //               return ObjectInfo(okClassStaticConstantField, 0, staticInfo.value2, 0, staticInfo.value1);
 //            }
-//            else return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
-//         }
+            /*else */return ObjectInfo(okStaticConstantField, staticInfo.value1, staticInfo.value2);
+         }
 //
 //         if (classClassMode) {
 //            return ObjectInfo(okClassStaticField, 0, staticInfo.value2, 0, staticInfo.value1);
@@ -1337,18 +1337,18 @@ void Compiler :: optimizeTape(CommandTape& tape)
 //
 //   return true;
 //}
-//
-//ref_t Compiler :: resolveConstantObjectReference(CodeScope& scope, ObjectInfo object)
-//{
-//   switch (object.kind) {
-//      case okIntConstant:
-//         return scope.moduleScope->intReference;
-//      //case okSignatureConstant:
-//      //   return scope.moduleScope->signatureReference;
-//      default:
-//         return resolveObjectReference(scope, object, false);
-//   }
-//}
+
+ref_t Compiler :: resolveConstantObjectReference(_CompileScope& scope, ObjectInfo object)
+{
+   switch (object.kind) {
+      case okIntConstant:
+         return scope.moduleScope->intReference;
+      //case okSignatureConstant:
+      //   return scope.moduleScope->signatureReference;
+      default:
+         return resolveObjectReference(scope, object, false);
+   }
+}
 
 ref_t Compiler :: resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode, bool unboxWapper)
 {
@@ -1577,25 +1577,25 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
          }
       }
 
-//      // inherit static field values
-//      auto staticValue_it = scope.info.staticValues.start();
-//      while (!staticValue_it.Eof()) {
-//         if (staticValue_it.key() < MAX_ATTR_INDEX) {
-//            // NOTE : the built-in attributes will be set later
-//            ref_t ref = *staticValue_it;
-//            if (ref != mskStatRef) {
-//               int mask = ref & mskAnyRef;
-//               IdentifierString name(module->resolveReference(scope.reference));
-//               name.append(STATICFIELD_POSTFIX);
-//
-//               ref_t newRef = scope.moduleScope->mapAnonymous(name.c_str());
-//
-//               *staticValue_it = newRef | mask;
-//            }
-//         }
-//
-//         staticValue_it++;
-//      }
+      //// inherit static field values
+      //auto staticValue_it = scope.info.staticValues.start();
+      //while (!staticValue_it.Eof()) {
+      //   if (staticValue_it.key() < MAX_ATTR_INDEX) {
+      //      // NOTE : the built-in attributes will be set later
+      //      ref_t ref = *staticValue_it;
+      //      if (ref != mskStatRef) {
+      //         int mask = ref & mskAnyRef;
+      //         IdentifierString name(module->resolveReference(scope.reference));
+      //         name.append(STATICFIELD_POSTFIX);
+
+      //         ref_t newRef = scope.moduleScope->mapAnonymous(name.c_str());
+
+      //         *staticValue_it = newRef | mask;
+      //      }
+      //   }
+
+      //   staticValue_it++;
+      //}
 
       // meta attributes are not directly inherited
       scope.info.mattributes.clear();
@@ -4069,31 +4069,32 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //      it++;
 //   }
 //}
-//
-//void Compiler :: compileClassConstantAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo retVal, bool accumulatorMode)
-//{
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
+
+void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/)
+{
 //   if (scope.isInitializer() && classScope != NULL) {
-//      ref_t valueRef = classScope->info.staticValues.get(retVal.param);
-//
-//      SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::slNamespace), valueRef & ~mskAnyRef);
-//
-//      ObjectInfo source = compileObject(writer, node, scope, 0, EAttr::eaNone);
-//      ref_t targetRef = accumulatorMode ? retVal.element : retVal.reference;
+      ref_t valueRef = scope.info.staticValues.get(target.param);
+
+      SymbolScope constantScope((NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace), valueRef & ~mskAnyRef, Visibility::Public);
+      ExprScope exprScope(&constantScope);
+
+      ObjectInfo source = mapObject(node, exprScope, EAttr::eaNone);
+      ref_t targetRef = /*accumulatorMode ? retVal.element : */target.reference;
 //      if (accumulatorMode && !targetRef)
 //         targetRef = _logic->resolveArrayElement(*scope.moduleScope, retVal.reference);
-//
-//      ref_t sourceRef = resolveConstantObjectReference(scope, source);
-//      if (isPrimitiveRef(sourceRef))
-//         sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
-//
-//      if (compileSymbolConstant(node, constantScope, source, accumulatorMode, retVal.reference) && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
-//      }
-//      else scope.raiseError(errInvalidOperation, node);
+
+      ref_t sourceRef = resolveConstantObjectReference(scope, source);
+      if (isPrimitiveRef(sourceRef))
+         sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
+
+      if (compileSymbolConstant(/*node, */constantScope, source/*, accumulatorMode, retVal.reference*/) 
+         && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) 
+      {
+      }
+      else scope.raiseError(errInvalidOperation, node);
 //   }
 //   else scope.raiseError(errInvalidOperation, node);
-//}
+}
 
 bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScope& scope)
 {
@@ -4127,12 +4128,12 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 
    if (scope.isInitializer()) {
       // HOTFIX : recognize static field initializer
-      if (target.kind == okStaticField/* || target.kind == okStaticConstantField*/) {
+      if (target.kind == okStaticField || target.kind == okStaticConstantField) {
          // HOTFIX : static field initializer should be compiled as preloaded symbol
-//         if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
-//            compileClassConstantAssigning(writer, sourceNode, scope, target, accumulateMode);
-//         }
-         /*else */compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
+         if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
+            compileClassConstantAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
+         }
+         else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
 
          // NOTE : should not be compiled twice
          node = lxIdle;
@@ -5532,14 +5533,15 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 //         else writer.appendNode(lxClassSymbol, object.param);
 //         writer.appendNode(lxStaticField, object.extraparam);
 //         break;
-//      case okStaticConstantField:
-//         if ((int)object.param < 0) {
-//            writer.newNode(lxFieldExpression, 0);
-//            writer.appendNode(lxClassRefField, 1);
-//            writer.appendNode(lxStaticConstField, object.param);
-//         }
-//         else writer.newNode(lxStaticField, object.param);
-//         break;
+      case okStaticConstantField:
+         if ((int)object.param < 0) {
+            terminal.set(lxFieldExpression, 0);
+            terminal.appendNode(lxSelfLocal, 1);
+            terminal.appendNode(lxClassRef, scope.getClassRefId());
+            terminal.appendNode(lxStaticConstField, object.param);
+         }
+         else terminal.set(lxStaticField, object.param);
+         break;
 //      case okClassStaticConstantField:
 //         writer.newNode(lxFieldExpression, 0);
 //         if (!object.param) {
@@ -7211,120 +7213,120 @@ ref_t Compiler :: resolveConstant(ObjectInfo retVal, ref_t& parentRef)
 
       return retVal.param;
    }
-   //   ref_t parentRef = 0;
-   //
-   //   _Module* module = scope.moduleScope->module;
-   //   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-   //
-   //   if (accumulatorMode) {
-   //      if (dataWriter.Position() == 0) {
-   //         dataWriter.Memory()->addReference(accumulatorRef | mskVMTRef, (ref_t)-4);
-   //      }
-   //
-   //      if (retVal.kind == okMessageConstant) {
-   //         dataWriter.Memory()->addReference(retVal.param | mskMessage, dataWriter.Position());
-   //
-   //         dataWriter.writeDWord(0);
-   //      }
-   //      else if (retVal.kind == okMessageNameConstant) {
-   //         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
-   //
-   //         dataWriter.writeDWord(0);
-   //      }
-   //      else if (retVal.kind == okClass) {
-   //         dataWriter.Memory()->addReference(retVal.param | mskVMTRef, dataWriter.Position());
-   //         dataWriter.writeDWord(0);
-   //      }
-   //      else {
-   //         SymbolScope memberScope(nsScope, nsScope->moduleScope->mapAnonymous());
-   //         if (!compileSymbolConstant(node, memberScope, retVal, false, 0))
-   //            return false;
-   //
-   //         dataWriter.Memory()->addReference(memberScope.reference | mskConstantRef, dataWriter.Position());
-   //         dataWriter.writeDWord(0);
-   //      }
-   //
-   //      return true;
-   //   }
-   //   else {
-   //      if (dataWriter.Position() > 0)
-   //         return false;
-   //
-   //      if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
-   //         size_t value = module->resolveConstant(retVal.param).toULong(16);
-   //
-   //         dataWriter.writeDWord(value);
-   //
-   //         parentRef = scope.moduleScope->intReference;
-   //      }
-   //      else if (retVal.kind == okLongConstant) {
-   //         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
-   //
-   //         dataWriter.write(&value, 8u);
-   //
-   //         parentRef = scope.moduleScope->longReference;
-   //      }
-   //      else if (retVal.kind == okRealConstant) {
-   //         double value = module->resolveConstant(retVal.param).toDouble();
-   //
-   //         dataWriter.write(&value, 8u);
-   //
-   //         parentRef = scope.moduleScope->realReference;
-   //      }
-   //      else if (retVal.kind == okLiteralConstant) {
-   //         ident_t value = module->resolveConstant(retVal.param);
-   //
-   //         dataWriter.writeLiteral(value, getlength(value) + 1);
-   //
-   //         parentRef = scope.moduleScope->literalReference;
-   //      }
-   //      else if (retVal.kind == okWideLiteralConstant) {
-   //         WideString wideValue(module->resolveConstant(retVal.param));
-   //
-   //         dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
-   //
-   //         parentRef = scope.moduleScope->wideReference;
-   //      }
-   //      else if (retVal.kind == okCharConstant) {
-   //         ident_t value = module->resolveConstant(retVal.param);
-   //
-   //         dataWriter.writeLiteral(value, getlength(value));
-   //
-   //         parentRef = scope.moduleScope->charReference;
-   //      }
-   //      else if (retVal.kind == okMessageNameConstant) {
-   //         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
-   //         dataWriter.writeDWord(0);
-   //
-   //         parentRef = scope.moduleScope->messageNameReference;
-   //      }
-   //      else if (retVal.kind == okObject) {
-   //         SNode root = node.findSubNodeMask(lxObjectMask);
-   //
-   //         if (root == lxConstantList/* && !accumulatorMode*/) {
-   //            SymbolExpressionInfo info;
-   //            info.expressionClassRef = scope.outputRef;
-   //            info.constant = scope.constant;
-   //            info.listRef = root.argument;
-   //
-   //            // save class meta data
-   //            MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-   //            info.save(&metaWriter);
-   //
-   //            return true;
-   //         }
-   //         else return false;
-   //      }
-   //      else return false;
-   //
-   //      dataWriter.Memory()->addReference(parentRef | mskVMTRef, (ref_t)-4);
-   //
-   //      if (parentRef == scope.moduleScope->intReference) {
-   //         nsScope->defineConstantSymbol(scope.reference, V_INT32);
-   //      }
-   //      else nsScope->defineConstantSymbol(scope.reference, parentRef);
-   //   }
-   //
+   //ref_t parentRef = 0;
+
+   //_Module* module = scope.moduleScope->module;
+   //MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
+//   if (accumulatorMode) {
+//      if (dataWriter.Position() == 0) {
+//         dataWriter.Memory()->addReference(accumulatorRef | mskVMTRef, (ref_t)-4);
+//      }
+//
+//      if (retVal.kind == okMessageConstant) {
+//         dataWriter.Memory()->addReference(retVal.param | mskMessage, dataWriter.Position());
+//
+//         dataWriter.writeDWord(0);
+//      }
+//      else if (retVal.kind == okMessageNameConstant) {
+//         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
+//
+//         dataWriter.writeDWord(0);
+//      }
+//      else if (retVal.kind == okClass) {
+//         dataWriter.Memory()->addReference(retVal.param | mskVMTRef, dataWriter.Position());
+//         dataWriter.writeDWord(0);
+//      }
+//      else {
+//         SymbolScope memberScope(nsScope, nsScope->moduleScope->mapAnonymous());
+//         if (!compileSymbolConstant(node, memberScope, retVal, false, 0))
+//            return false;
+//
+//         dataWriter.Memory()->addReference(memberScope.reference | mskConstantRef, dataWriter.Position());
+//         dataWriter.writeDWord(0);
+//      }
+//
+//      return true;
+//   }
+//   else {
+//      if (dataWriter.Position() > 0)
+//         return false;
+//
+//      if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
+//         size_t value = module->resolveConstant(retVal.param).toULong(16);
+//
+//         dataWriter.writeDWord(value);
+//
+//         parentRef = scope.moduleScope->intReference;
+//      }
+//      else if (retVal.kind == okLongConstant) {
+//         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
+//
+//         dataWriter.write(&value, 8u);
+//
+//         parentRef = scope.moduleScope->longReference;
+//      }
+//      else if (retVal.kind == okRealConstant) {
+//         double value = module->resolveConstant(retVal.param).toDouble();
+//
+//         dataWriter.write(&value, 8u);
+//
+//         parentRef = scope.moduleScope->realReference;
+//      }
+//      else if (retVal.kind == okLiteralConstant) {
+//         ident_t value = module->resolveConstant(retVal.param);
+//
+//         dataWriter.writeLiteral(value, getlength(value) + 1);
+//
+//         parentRef = scope.moduleScope->literalReference;
+//      }
+//      else if (retVal.kind == okWideLiteralConstant) {
+//         WideString wideValue(module->resolveConstant(retVal.param));
+//
+//         dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
+//
+//         parentRef = scope.moduleScope->wideReference;
+//      }
+//      else if (retVal.kind == okCharConstant) {
+//         ident_t value = module->resolveConstant(retVal.param);
+//
+//         dataWriter.writeLiteral(value, getlength(value));
+//
+//         parentRef = scope.moduleScope->charReference;
+//      }
+//      else if (retVal.kind == okMessageNameConstant) {
+//         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
+//         dataWriter.writeDWord(0);
+//
+//         parentRef = scope.moduleScope->messageNameReference;
+//      }
+//      else if (retVal.kind == okObject) {
+//         SNode root = node.findSubNodeMask(lxObjectMask);
+//
+//         if (root == lxConstantList/* && !accumulatorMode*/) {
+//            SymbolExpressionInfo info;
+//            info.expressionClassRef = scope.outputRef;
+//            info.constant = scope.constant;
+//            info.listRef = root.argument;
+//
+//            // save class meta data
+//            MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+//            info.save(&metaWriter);
+//
+//            return true;
+//         }
+//         else return false;
+//      }
+//      else return false;
+//
+//      dataWriter.Memory()->addReference(parentRef | mskVMTRef, (ref_t)-4);
+//
+//      if (parentRef == scope.moduleScope->intReference) {
+//         nsScope->defineConstantSymbol(scope.reference, V_INT32);
+//      }
+//      else nsScope->defineConstantSymbol(scope.reference, parentRef);
+//   }
+//
    return 0;
 }
 
@@ -7955,11 +7957,11 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
          FieldAttributes attrs;
          declareFieldAttributes(current, scope, attrs);
 
-         if (attrs.isStaticField/* || attrs.isClassAttr*/) {
+         if (attrs.isStaticField || (attrs.isConstAttr && !isClassClassMode)) {
             //if (!isValidAttributeType(scope, attrs))
             //   scope.raiseError(errIllegalField, current);
                
-            generateClassStaticField(scope, current, attrs.fieldRef, attrs.elementRef/*, attrs.isSealedAttr, attrs.isConstAttr, attrs.isArray*/);
+            generateClassStaticField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.isStaticField, attrs.isConstAttr/*, attrs.isArray*/);
          }
          else if (!isClassClassMode) 
             generateClassField(scope, current, attrs, singleField);
@@ -8331,17 +8333,17 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 //   }
 }
 
-//inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference, bool isArray)
-//{
-//   int mask = isArray ? mskConstArray : mskConstantRef;
-//   IdentifierString name(moduleScope->module->resolveReference(reference));
-//   name.append(STATICFIELD_POSTFIX);
-//
-//   return moduleScope->mapAnonymous(name.c_str()) | mask;
-//
-//}
+inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference/*, bool isArray*/)
+{
+   int mask = /*isArray ? mskConstArray : */mskConstantRef;
+   IdentifierString name(moduleScope->module->resolveReference(reference));
+   name.append(STATICFIELD_POSTFIX);
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t/*, bool isSealed, bool isConst, bool isArray*/)
+   return moduleScope->mapAnonymous(name.c_str()) | mask;
+
+}
+
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t, bool isStatic, bool isConst/*, bool isArray*/)
 {
    _Module* module = scope.module;
 
@@ -8355,7 +8357,7 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
       /*else */scope.raiseError(errDuplicatedField, current);
    }
 
-//   if (isSealed) {
+   if (isStatic) {
       // if it is a static field
       ref_t ref = current.argument;
       if (!ref) {
@@ -8364,33 +8366,33 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
          name.append(STATICFIELD_POSTFIX);
 
          ref = scope.moduleScope->mapAnonymous(name.c_str());
-         //module->mapReference(name);
 
          current.setArgument(ref);
       }
 
       scope.info.statics.add(terminal, ClassInfo::FieldInfo(ref, fieldRef));
-//      if (isConst) {
-//         // HOTFIX : add read-only attribute (!= mskStatRef)
-//         scope.info.staticValues.add(ref, mskConstantRef);
-//      }
-//   }
-//   else {
-//      int index = ++scope.info.header.staticSize;
-//      index = -index - 4;
-//
-//      scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
-//
-//      if (isConst) {
-//         ref_t statRef = mapStaticField(scope.moduleScope, scope.reference, isArray);
-//         scope.info.staticValues.add(index, statRef);
-//         if (isArray) {
-//            //HOTFIX : allocate an empty array
-//            scope.module->mapSection((statRef & ~mskAnyRef) | mskRDataRef, false);
-//         }
-//      }
-//      else scope.info.staticValues.add(index, (ref_t)mskStatRef);
-//   }
+      if (isConst) {
+         // HOTFIX : add read-only attribute (!= mskStatRef)
+         scope.info.staticValues.add(ref, mskConstantRef);
+      }
+   }
+   else {
+      int index = ++scope.info.header.staticSize;
+      index = -index - 4;
+
+      scope.info.statics.add(terminal, ClassInfo::FieldInfo(index, fieldRef));
+
+      if (isConst) {
+         ref_t statRef = mapStaticField(scope.moduleScope, scope.reference/*, isArray*/);
+         scope.info.staticValues.add(index, statRef);
+         //if (isArray) {
+         //   //HOTFIX : allocate an empty array
+         //   scope.module->mapSection((statRef & ~mskAnyRef) | mskRDataRef, false);
+         //}
+      }
+      else scope.raiseError(errDuplicatedField, current);
+      //else scope.info.staticValues.add(index, (ref_t)mskStatRef);
+   }
 }
 
 inline SNode findName(SNode node)
@@ -9133,9 +9135,9 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
       return true;
    }
 
-//   _Module* module = scope.moduleScope->module;
-//   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
-//
+   _Module* module = scope.moduleScope->module;
+   MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+
 //   if (accumulatorMode) {
 //      if (dataWriter.Position() == 0) {
 //         dataWriter.Memory()->addReference(accumulatorRef | mskVMTRef, (ref_t)-4);
@@ -9167,16 +9169,16 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 //      return true;
 //   }
 //   else {
-//      if (dataWriter.Position() > 0)
-//         return false;
-//
-//      if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
-//         size_t value = module->resolveConstant(retVal.param).toULong(16);
-//
-//         dataWriter.writeDWord(value);
-//
-//         parentRef = scope.moduleScope->intReference;
-//      }
+      if (dataWriter.Position() > 0)
+         return false;
+
+      if (retVal.kind == okIntConstant/* || retVal.kind == okUIntConstant*/) {
+         size_t value = module->resolveConstant(retVal.param).toULong(16);
+
+         dataWriter.writeDWord(value);
+
+         parentRef = scope.moduleScope->intReference;
+      }
 //      else if (retVal.kind == okLongConstant) {
 //         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
 //
@@ -9235,17 +9237,17 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 //         }
 //         else return false;
 //      }
-//      else return false;
-//
-//      dataWriter.Memory()->addReference(parentRef | mskVMTRef, (ref_t)-4);
-//
-//      if (parentRef == scope.moduleScope->intReference) {
-//         nsScope->defineConstantSymbol(scope.reference, V_INT32);
-//      }
-//      else nsScope->defineConstantSymbol(scope.reference, parentRef);
+      else return false;
+
+      dataWriter.Memory()->addReference(parentRef | mskVMTRef, (ref_t)-4);
+
+      if (parentRef == scope.moduleScope->intReference) {
+         nsScope->defineConstantSymbol(scope.reference, V_INT32);
+      }
+      else nsScope->defineConstantSymbol(scope.reference, parentRef);
 //   }
 
-   return false;
+   return true;
 }
 
 //void Compiler :: compileSymbolAttribtes(_ModuleScope& moduleScope, ref_t reference, bool publicAttr)

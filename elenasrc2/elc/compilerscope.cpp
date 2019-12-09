@@ -116,18 +116,18 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
          static_it++;
       }
 
-//      // import static field values
-//      auto staticValue_it = copy.staticValues.start();
-//      while (!staticValue_it.Eof()) {
-//         ref_t val = *staticValue_it;
-//         if (val != mskStatRef) {
-//            val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);
-//         }
-//
-//         target.staticValues.add(staticValue_it.key(), val);
-//
-//         staticValue_it++;
-//      }
+      // import static field values
+      auto staticValue_it = copy.staticValues.start();
+      while (!staticValue_it.Eof()) {
+         ref_t val = *staticValue_it;
+         if (val != mskStatRef) {
+            val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);
+         }
+
+         target.staticValues.add(staticValue_it.key(), val);
+
+         staticValue_it++;
+      }
 
       // meta attributes are not inherited
       auto attribute_it = copy.mattributes.start();

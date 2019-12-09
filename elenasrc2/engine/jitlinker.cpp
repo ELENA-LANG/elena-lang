@@ -624,7 +624,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
    MemoryWriter vmtWriter(vmtImage);
 
    // allocate space and make VTM offset
-   _compiler->allocateVMT(vmtWriter, header.flags, header.count/*, header.staticSize*/);
+   _compiler->allocateVMT(vmtWriter, header.flags, header.count, header.staticSize);
 
    void* vaddress = calculateVAddress(&vmtWriter, mask & mskImageMask);
 
@@ -682,33 +682,30 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
 
       if (!test(header.flags, elVirtualVMT)) {
          // fix VMT Static table
-//         // NOTE : ignore virtual VMT
-//         ClassInfo::StaticInfoMap staticValues;
-//         staticValues.read(&vmtReader);
-//
-//         if (referenceInfo.referenceName.endsWith("Base#class"))
-//            size -= 0;
-//
-//         ref_t currentMask = 0;
-//         ref_t currentRef = 0;
-//         for (auto it = staticValues.start(); !it.Eof(); it++) {
-//            currentMask = *it & mskAnyRef;
-//            currentRef = *it & ~mskAnyRef;
-//
-//            void* refVAddress = NULL;
-//            if (currentMask == mskConstantRef && currentRef == 0) {
-//               // HOTFIX : ignore read-only sealed static field
-//            }
-//            else {
-//               if (currentMask == mskStatRef && currentRef == 0) {
-//                  refVAddress = resolveAnonymousStaticVariable();
-//               }
-//               else if (currentRef != 0)
-//                  refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
-//
-//               resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
-//            }
-//         }
+         // NOTE : ignore virtual VMT
+         ClassInfo::StaticInfoMap staticValues;
+         staticValues.read(&vmtReader);
+
+         ref_t currentMask = 0;
+         ref_t currentRef = 0;
+         for (auto it = staticValues.start(); !it.Eof(); it++) {
+            currentMask = *it & mskAnyRef;
+            currentRef = *it & ~mskAnyRef;
+
+            void* refVAddress = NULL;
+            if (currentMask == mskConstantRef && currentRef == 0) {
+               // HOTFIX : ignore read-only sealed static field
+            }
+            else {
+               /*if (currentMask == mskStatRef && currentRef == 0) {
+                  refVAddress = resolveAnonymousStaticVariable();
+               }
+               else */if (currentRef != 0)
+                  refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
+
+               resolveReference(vmtImage, position + it.key() * 4, (ref_t)refVAddress, currentMask, _virtualMode);
+            }
+         }
 
          // generate run-time attributes
          ClassInfo::CategoryInfoMap attributes;
@@ -922,14 +919,14 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
       fixSectionReferences(sectionInfo, image, position, vmtVAddress, true);
       constantValue = true;
    }
-//   else if (vmtVAddress == LOADER_NOTLOADED) {
-//      // resolve constant value
-//      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
-//      _compiler->compileBinary(&writer, sectionInfo.section);
-//
-//      fixSectionReferences(sectionInfo, image, position, vmtVAddress, false);
-//      constantValue = true;
-//   }
+   else if (vmtVAddress == LOADER_NOTLOADED) {
+      // resolve constant value
+      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+      _compiler->compileBinary(&writer, sectionInfo.section);
+
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress, false);
+      constantValue = true;
+   }
 
    if (vmtVAddress == LOADER_NOTLOADED)
       throw JITUnresolvedException(referenceInfo);

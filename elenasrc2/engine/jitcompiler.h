@@ -63,7 +63,7 @@ public:
 //   virtual void compileLiteral(MemoryWriter* writer, const char* value) = 0;
 //   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value) = 0;
 //   virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
-//   virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
+   virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
    virtual void compileCollection(MemoryWriter* writer, _Memory* binary) = 0;
 
    virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
@@ -77,7 +77,7 @@ public:
 //   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length) = 0;
 
    virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
-   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength/*, size_t staticSize*/) = 0;
+   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize) = 0;
 
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
 
@@ -117,7 +117,7 @@ public:
 //   virtual void compileLiteral(MemoryWriter* writer, const char* value);
 //   virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
 //   virtual void compileChar32(MemoryWriter* writer, const char* value);
-//   virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
+   virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
    virtual void compileCollection(MemoryWriter* writer, _Memory* binary);
 
    virtual void allocateVariable(MemoryWriter& writer);
@@ -131,7 +131,7 @@ public:
    virtual pos_t findMethodAddress(void* refVMT, ref_t messageID, size_t vmtLength);
    virtual int findMethodIndex(void* refVMT, ref_t messageID, size_t vmtLength);
 
-   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength/*, size_t staticSize*/);
+   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
    virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(ref_t message, size_t codePosition, VMTEntry* entries, size_t& count);
    virtual void fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode);

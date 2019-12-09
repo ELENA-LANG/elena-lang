@@ -503,7 +503,7 @@ struct VMTEntry
 
 struct ClassHeader
 {
-//   ref_t  staticSize;      // static table size
+   ref_t  staticSize;      // static table size
    ref_t  classRef;        // class class reference
    size_t count;
    size_t flags;
@@ -552,14 +552,14 @@ struct ClassInfo
    typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
    typedef MemoryMap<int, FieldInfo>           FieldTypeMap;
    typedef MemoryMap<Attribute, ref_t, false>  CategoryInfoMap;
-//   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
+   typedef MemoryMap<int, ref_t, false>        StaticInfoMap;
 
    ClassHeader     header;
    int             size;           // Object size
    MethodMap       methods;        // list of methods, true means the method was declared in this instance
    FieldMap        fields;
    StaticFieldMap  statics;
-//   StaticInfoMap   staticValues;
+   StaticInfoMap   staticValues;
 
    FieldTypeMap    fieldTypes;
    CategoryInfoMap methodHints;
@@ -572,7 +572,7 @@ struct ClassInfo
       if (!headerAndSizeOnly) {
          mattributes.write(writer);
          statics.write(writer);
-//         staticValues.write(writer);
+         staticValues.write(writer);
          methods.write(writer);
          methodHints.write(writer);
          fields.write(writer);
@@ -587,7 +587,7 @@ struct ClassInfo
       if (!headerOnly) {
          mattributes.read(reader);
          statics.read(reader);
-//         staticValues.read(reader);
+         staticValues.read(reader);
          methods.read(reader);
          methodHints.read(reader);
          if (!ignoreFields) {

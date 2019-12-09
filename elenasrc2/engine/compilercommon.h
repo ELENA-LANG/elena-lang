@@ -443,7 +443,7 @@ public:
       int   size;
       bool  isStaticField;
       bool  isEmbeddable;
-//      bool  isConstAttr;
+      bool  isConstAttr;
 //      bool  isSealedAttr;
 //      bool  isClassAttr;
       bool  isArray;
@@ -456,7 +456,7 @@ public:
       {
          elementRef = fieldRef = 0;
          size = 0;
-         /*isClassAttr = */isStaticField = isEmbeddable = /*isConstAttr = isSealedAttr = */false;
+         /*isClassAttr = */isStaticField = isEmbeddable = isConstAttr = /*isSealedAttr = */false;
          isArray = false;
 
 //         messageRef = messageAttr = 0;

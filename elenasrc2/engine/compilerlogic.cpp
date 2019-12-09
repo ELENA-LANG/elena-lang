@@ -1879,10 +1879,10 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
 //         attrValue = -1;
 //         attrs.isSealedAttr = true;
 //         return true;
-//      case V_CONST:
-//         attrValue = -1;
-//         attrs.isConstAttr = true;
-//         return true;
+      case V_CONST:
+         attrValue = -1;
+         attrs.isConstAttr = true;
+         return true;
 //      case V_ATTRIBUTE:
 //         attrValue = -1;
 //         attrs.isClassAttr = true;

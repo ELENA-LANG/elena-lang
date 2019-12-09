@@ -72,7 +72,7 @@ enum ByteCode
 //   bcFlag            = 0x33, 
 //   bcNLen            = 0x34,
 //   bcParent          = 0x35,
-//   bcClass           = 0x36,
+   bcClass           = 0x36,
 //   bcMIndex          = 0x37,
 //   bcCheck           = 0x38,
 //   bcACallVD         = 0x39,

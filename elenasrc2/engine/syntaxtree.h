@@ -126,6 +126,8 @@ enum LexicalType
    lxField                    = 0x0181C0,   // arg - offset
    lxFieldAddress             = 0x0181C1,   // arg - offset
    lxStaticField              = 0x0181C2,   // arg - reference   // - lxClassStaticField
+   lxClassRef                 = 0x0181C3,
+   lxStaticConstField         = 0x0181C4,
    lxNewArrOp                 = 0x0581D0,
    lxInitializing             = 0x0581E0,
 

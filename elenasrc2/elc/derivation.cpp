@@ -760,8 +760,10 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
 
 void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
 {
+   bool templateMode = false;
    if (current == lxTemplateArgs) {
       if (test(mode, MODE_ROOT)) {
+         templateMode = true;
          current = current.prevNode();
       }
       else raiseError(errInvalidSyntax, current);
@@ -777,7 +779,7 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
    IdentifierString name(nameTerminal.identifier().c_str());
    
    // verify if there is an attribute with the same name
-   if (test(mode, MODE_ROOT) && _scope->attributes.exist(name))
+   if (test(mode, MODE_ROOT) && _scope->attributes.exist(name) && !templateMode)
       raiseWarning(WARNING_LEVEL_2, wrnAmbiguousIdentifier, nameNode);
 }
 

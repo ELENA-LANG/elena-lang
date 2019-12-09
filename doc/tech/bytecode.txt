@@ -140,6 +140,8 @@ ELENA byte codes (or ecodes)
  
  callvi i                   - call acc::VMT[i] method
 
+ class                      - acc::VMT >> acc 
+ 
  fillr r                    - fill the object with the value dword[esp]-times
 
  fillri r, i                - fill the object with the value i-times
@@ -424,8 +426,6 @@ ELENA byte codes (or ecodes)
  
  blen                       - [acc].Length >> index ; where acc is a object
 
- class                      - base::VMT >> acc 
- 
  check                      - acc is-instance-of base ? -1 : 0
  
  parent                     - base::Parent >> acc ; returns parent or package depending on the class flag

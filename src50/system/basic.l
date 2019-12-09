@@ -231,13 +231,13 @@ public abstract class IntBaseNumber : BaseNumber
 //        = 0 != self.and:operand;
 }
 
-//// --- ByteNumber ---
-//
-///// An unsigned 8 bit integer
-//public sealed const struct ByteNumber : IntBaseNumber
-//{
-//    embeddable __int theValue[1];
-//
+// --- ByteNumber ---
+
+/// An unsigned 8 bit integer
+public sealed const struct ByteNumber : IntBaseNumber
+{
+    embeddable __int theValue[1];
+
 //    constructor(int n)
 //    {
 //        theValue := n && 255
@@ -528,8 +528,8 @@ public abstract class IntBaseNumber : BaseNumber
 //        
 //    /// Clones the value
 //    byte clone() = new ByteNumber(self);
-//}
-//
+}
+
 //// --- ShortNumber ---
 //
 ///// A signed 16 bit integer
