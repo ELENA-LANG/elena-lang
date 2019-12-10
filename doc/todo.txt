@@ -2,6 +2,10 @@
 In development:
 ------         
               dev
+                * get string length
+
+                * meta fields, inline templates : #{...}
+
                 * strings to wide string conversion
 
                 * externals
@@ -201,7 +205,6 @@ In development:
                 * templates
 
                 * long,real,string constant
-                * embeddable method return
 
                 * inheritance
 
@@ -276,6 +279,8 @@ In development:
                 * test static fields with singleton
                 * test const fields : override the parent constant value
                 * test global references : with new, var, cast, parent, symbol
+                * test property with template-based type, array type
+                * test embeddable method return with by ref variable
 
               dev1
                 * write - Programming in ELENA : manual

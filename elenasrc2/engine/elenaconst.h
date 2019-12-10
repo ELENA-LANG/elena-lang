@@ -439,7 +439,7 @@ namespace _ELENA_
    constexpr auto RETVAL_VAR                 = "$$ret";            // the closure returning value
    constexpr auto OWNER_VAR                  = "$$owner";          // the nested class / closure owner
    constexpr auto PARENT_VAR                 = "$$parent";         // the closure parent
-//   constexpr auto RETVAL_ARG           = "$$retarg";         // the closure returning value
+   constexpr auto RETVAL_ARG                 = "$$retarg";         // the embedded returning arg
 
   // --- ELENA meta variables ---
    constexpr auto CLASSNAME_VAR              = "@classname";       // the class name
@@ -476,7 +476,7 @@ namespace _ELENA_
 //      ////   #define TARGET_POSTFIX           "##"
    constexpr auto STATICFIELD_POSTFIX        = "#static";
 
-//   constexpr auto EMBEDDAMLE_PREFIX          = "auto#";
+   constexpr auto EMBEDDAMLE_PREFIX          = "auto#";
 
   // --- ELENA Standard module references ---
    constexpr auto DLL_NAMESPACE              = "$dlls";

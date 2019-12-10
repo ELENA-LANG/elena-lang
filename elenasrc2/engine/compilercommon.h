@@ -142,10 +142,10 @@ enum MethodHint
    tpDispatcher   = 0x0000004,
    tpPrivate      = 0x0000005,
 
-   tpStackSafe   = 0x0000010,
-//   tpEmbeddable  = 0x0000020,
+   tpStackSafe    = 0x0000010,
+   tpEmbeddable   = 0x0000020,
 //   tpGeneric     = 0x0000040,
-   tpFunction      = 0x0000080,
+   tpFunction     = 0x0000080,
    tpTargetSelf   = 0x0000100, // used for script generated classes (self refers to __target)
    tpConstructor  = 0x0200400,
    tpConversion   = 0x0200800,
@@ -153,7 +153,7 @@ enum MethodHint
    tpStatic       = 0x0004000,
    tpGetAccessor  = 0x0008000,
 //   tpSpecial     = 0x0010000,
-   tpAbstract    = 0x0020000,
+   tpAbstract     = 0x0020000,
    tpInternal     = 0x0040000,
 //   tpPredefined  = 0x0080000, // virtual class declaration
 //   tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
@@ -397,8 +397,8 @@ public:
 //   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
 //      int stacksafeAttr, bool embeddableAttr) = 0;
 //////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
-//
-//   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
+
+   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef/*, ref_t genericMessage*/) = 0;
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
@@ -411,8 +411,8 @@ public:
    virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op, 
       int opArg, ref_t reference) = 0;
 
-//   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
-//
+   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
+
 ////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef) = 0;
 //   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex,
 //      LexicalType objType, int objArg) = 0;
@@ -598,7 +598,7 @@ public:
       bool  directResolved;
 //      bool  withCustomDispatcher;
       bool  stackSafe;
-//      bool  embeddable;
+      bool  embeddable;
 //      bool  function;
 //      bool  dynamicRequired;
       ref_t outputReference;
@@ -607,7 +607,7 @@ public:
       ChechMethodInfo()
       {
          directResolved = false;
-         /*embeddable = */found = false;
+         embeddable = found = false;
          outputReference = 0;
          constRef = 0;
 //         withCustomDispatcher = false;
@@ -661,7 +661,7 @@ public:
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
 ////   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
@@ -720,9 +720,9 @@ public:
 //   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne) = 0;
 //   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef) = 0;
 //   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope) = 0;
-//
-//   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode) = 0;
-//   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
+
+   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode) = 0;
+   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
 //   virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;

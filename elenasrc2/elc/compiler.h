@@ -557,9 +557,9 @@ private:
       bool         functionMode;
       bool         nestedMode;
 //      bool         subCodeMode;       
-//      bool         abstractMethod;
+      bool         abstractMethod;
 //      bool         yieldMethod;
-//      bool         embeddableRetMode;
+      bool         embeddableRetMode;
       bool         targetSelfMode;        // used for script generated methods - self refers to __target
 ////      bool         dispatchMode;
       bool         constMode;
@@ -707,13 +707,6 @@ private:
          return scope ? scope->getReturningRef() : 0;
       }
 
-//      bool withEmbeddableRet()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(slMethod);
-//
-//         return scope ? scope->embeddableRetMode : false;
-//      }
-
       ref_t getClassRefId(bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
@@ -726,6 +719,13 @@ private:
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
 
          return scope ? scope->info.header.flags : 0;
+      }
+
+      bool withEmbeddableRet()
+      {
+         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
+
+         return scope ? scope->embeddableRetMode : false;
       }
 
       void syncStack(MethodScope* methodScope)
@@ -882,8 +882,8 @@ private:
 
 //   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
-//
-//   bool isMethodEmbeddable(MethodScope& scope, SNode node);
+
+   bool isMethodEmbeddable(MethodScope& scope, SNode node);
 
    void writeMessageInfo(SNode node, _ModuleScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
@@ -1049,7 +1049,7 @@ private:
 //   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
    ObjectInfo compileRootExpression(SNode node, CodeScope& scope);
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, EAttr mode);
-//   void compileEmbeddableRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileEmbeddableRetExpression(SNode node, ExprScope& scope);
 
    ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode);
 
@@ -1063,12 +1063,12 @@ private:
 ////   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    int allocateStructure(/*bool bytearray, */int& allocatedSize, int& reserved);
-//   int allocateStructure(SNode node, int& size);
+   int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, /*bool binaryArray, */ObjectInfo& exprOperand);
    bool allocateTempStructure(ExprScope& scope, int size/*, bool binaryArray*/, ObjectInfo& exprOperand);
 
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, EAttr mode);
-//   ObjectInfo compileInternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t message, ref_t signature, ObjectInfo info);
+   ObjectInfo compileInternalCall(SNode node, ExprScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 
    void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
    void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
@@ -1095,9 +1095,9 @@ private:
       int& preallocated);
 
 //   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
-//   void compileEmbeddableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void compileEmbeddableMethod(SNode node, MethodScope& scope);
    void compileMethod(/*SyntaxWriter& writer, */SNode node, MethodScope& scope);
-//   void compileAbstractMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void compileAbstractMethod(SNode node, MethodScope& scope);
    void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
    void compileInitializer(SNode node, MethodScope& scope);
 
@@ -1195,7 +1195,7 @@ private:
    bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
    bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
-//   bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode);
+   bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode);
 //   bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
 //   bool optimizeAssigningBoxing(_ModuleScope& scope, SNode& node);
 //   void optimizeBoxing(_ModuleScope& scope, SNode& node);
@@ -1244,10 +1244,10 @@ public:
 
    // _Compiler interface implementation
    virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode = false*/);
-//   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
+   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
 //   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
 //      int stacksafeAttr, bool embeddableAttr);
-//   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
+   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);

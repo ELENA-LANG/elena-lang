@@ -21,7 +21,18 @@ procedure __object."#dispatch[1]"
   throw
 
 end
+/*
+procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2]"
 
+  peeksi 1
+  blen
+  dec
+  bloadsi 2
+  nsave
+  quitn 2
+
+end
+*/
 // ; system routines
 
 symbol sta_start

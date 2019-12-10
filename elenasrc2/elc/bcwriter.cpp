@@ -4117,9 +4117,6 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //         // acopyai
 //         tape.write(bcACopyAI, argument);
 //         break;
-//      case lxInternalCall:
-//         tape.write(bcCallR, argument | mskInternalRef);
-//         break;
 //      case lxClassRefField:
 //         // pushb
 //         // bloadfi 1
@@ -5078,43 +5075,35 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    //return message;
 }
 
-//void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node)
-//{
-//   int paramCount = 0;
-//
-//   // analizing a sub tree
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         paramCount++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   allocateStack(tape, paramCount);
-//
-//   int index = 0;
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         paramCount++;
-//      }
-//
-//      if (test(current.type, lxObjectMask)) {
-//         generateObject(tape, current, ACC_REQUIRED);
-//
-//         saveObject(tape, lxCurrent, index);
-//         index++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   loadObject(tape, node);
-//   freeVirtualStack(tape, paramCount);
-//}
-//
+void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node, FlowScope& scope)
+{
+   int paramCount = 0;
+
+   // analizing a sub tree
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      paramCount++;
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   allocateStack(tape, paramCount);
+
+   int index = 0;
+   current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      generateObject(tape, current, scope);
+
+      saveObject(tape, lxCurrent, index);
+      index++;
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   tape.write(bcCallR, node.argument | mskInternalRef);
+   scope.clear();
+}
+
 //void ByteCodeWriter :: generateInlineArgCallExpression(CommandTape& tape, SNode node)
 //{
 //   SNode larg;
@@ -6495,9 +6484,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxExternalCall:
 //         generateExternalCall(tape, node);
 //         break;
-//      case lxInternalCall:
-//         generateInternalCall(tape, node);
-//         break;
+      case lxInternalCall:
+         generateInternalCall(tape, node, scope);
+         break;
 //      case lxBoxing:
 //      case lxCondBoxing:
 //      case lxArgBoxing:

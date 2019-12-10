@@ -140,6 +140,7 @@ enum LexicalType
    lxStaticConstField         = 0x0181C4,
    lxNewArrOp                 = 0x0581D0,
    lxInitializing             = 0x0581E0,
+   lxInternalCall             = 0x0581F0,   // calling an internal function, arg - reference
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -168,6 +169,7 @@ enum LexicalType
    lxArrayType                = 0x000F18,
    lxMember                   = 0x000F19,  // a collection member, arg - offset
    lxStaticAttr               = 0x000F1A,
+   lxEmbeddableAttr           = 0x000F1B,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -236,7 +238,6 @@ enum LexicalType
 //   lxCoreAPICall              = 0x00C016,   // calling an external function, arg - reference
 //   lxAltExpression            = 0x00C018,
 //   lxIfNot                    = 0x00C019,   // optional arg - reference
-//   lxInternalCall             = 0x00C01A,   // calling an internal function, arg - reference
 //   lxIfN                      = 0x00C01B,   // arg - value
 //   lxIfNotN                   = 0x00C01C,   // arg - value
 //   lxLessN                    = 0x00C01D,   // arg - value
@@ -286,7 +287,6 @@ enum LexicalType
 //   lxInclude                  = 0x20027,
 //   lxTemplateField            = 0x20028,
 //   lxStacksafeAttr            = 0x2002B,
-//   lxEmbeddableAttr           = 0x2002D,
 //   lxBoxableAttr              = 0x2002E,
 //   lxExtArgumentRef           = 0x20031,
 //   lxEmbeddableMssg           = 0x20034,

@@ -150,7 +150,7 @@ public:
    virtual bool isAbstract(ClassInfo& info);
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
-//   virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
+   virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
 //   virtual bool isMethodYieldable(ClassInfo& info, ref_t message);
 //   virtual bool isMethodInternal(ClassInfo& info, ref_t message);
    virtual bool isMethodPrivate(ClassInfo& info, ref_t message);
@@ -218,8 +218,8 @@ public:
 //   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef);
 //
 //   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope);
-//   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode);
-//   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
+   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode);
+   virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
 //   virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node);
 //
 //////   virtual void optimizeDuplicateBoxing(SNode node);

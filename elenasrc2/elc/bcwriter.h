@@ -347,7 +347,7 @@ class ByteCodeWriter
 //   void generateYieldStop(CommandTape& tape, SyntaxTree::Node node);
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
-//   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node);
+   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    /*ref_t*/void generateCall(CommandTape& tape, SyntaxTree::Node node/*, int paramCount, int presavedCount*/);
 
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);

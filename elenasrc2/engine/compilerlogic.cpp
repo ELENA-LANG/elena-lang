@@ -262,8 +262,8 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
 
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
       result.constRef = info.methodHints.get(Attribute(message, maConstant));
-//
-//      result.embeddable = test(hint, tpEmbeddable);
+
+      result.embeddable = test(hint, tpEmbeddable);
 //      result.function = test(hint, tpFunction);
 //      result.dynamicRequired = test(hint, tpDynamic);
 
@@ -668,12 +668,12 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
 //}
-//
-//bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
-//}
-//
+
+bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
+}
+
 //bool CompilerLogic :: isMethodYieldable(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpYieldable);
@@ -2168,57 +2168,56 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //   }
 //   else return false;
 //}
-//
-//inline bool isMethodTree(SNode node)
-//{
-//   while (!node.compare(lxClassMethod, lxNone))
-//      node = node.parentNode();
-//
-//   return (node != lxNone);
-//}
-//
-//bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode)
-//{
-//   // validate if it is a method
-//   if (!isMethodTree(node))
-//      return false;
-//
-//   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirectCalling, lxCalling);
-//   if (callNode == lxNone)
-//      return false;
-//
-//   SNode callTarget = callNode.findChild(lxCallTarget);
-//
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, callTarget.argument))
-//      return false;
-//
-//   ref_t messageRef = info.methodHints.get(Attribute(callNode.argument, maEmbeddableRet));
-//   // if it is possible to replace get&subject operation with eval&subject2:local
-//   if (messageRef != 0) {
-//      if (argMode) {
-//         // allocate & inject temporal variable
-//         ref_t argRef = info.methodHints.get(Attribute(callNode.argument, maReference));
-//         int size = defineStructSize(scope, argRef, 0);
-//         SNode tempLocal = compiler.injectTempLocal(callNode, size, false);
-//
-//         // inject byref arg
-//         callNode.setArgument(messageRef);
-//
-//         // inject sequence expr
-//         callNode.injectNode(callNode.type, callNode.argument);
-//         callNode.set(lxSeqExpression, 0);
-//         callNode.appendNode(tempLocal.type, tempLocal.argument);
-//      }
-//      else compiler.injectEmbeddableRet(node, callNode, messageRef);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool CompilerLogic :: optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node)
-//{
+
+inline bool isMethodTree(SNode node)
+{
+   while (!node.compare(lxClassMethod, lxNone))
+      node = node.parentNode();
+
+   return (node != lxNone);
+}
+
+bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode)
+{
+   // validate if it is a method
+   if (!isMethodTree(node))
+      return false;
+
+   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirectCalling, lxCalling_0);
+   if (callNode == lxNone)
+      return false;
+
+   SNode callTarget = callNode.findChild(lxCallTarget);
+
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, callTarget.argument))
+      return false;
+
+   ref_t messageRef = info.methodHints.get(Attribute(callNode.argument, maEmbeddableRet));
+   if (messageRef != 0) {
+      if (argMode) {
+         // allocate & inject temporal variable
+         ref_t argRef = info.methodHints.get(Attribute(callNode.argument, maReference));
+         int size = defineStructSize(scope, argRef, 0);
+         SNode tempLocal = compiler.injectTempLocal(callNode, size, false);
+
+         // inject byref arg
+         callNode.setArgument(messageRef);
+
+         // inject sequence expr
+         callNode.injectNode(callNode.type, callNode.argument);
+         callNode.set(lxSeqExpression, 0);
+         callNode.appendNode(tempLocal.type, tempLocal.argument);
+      }
+      else compiler.injectEmbeddableRet(node, callNode, messageRef);
+
+      return true;
+   }
+   else return false;
+}
+
+bool CompilerLogic :: optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node)
+{
 //   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirectCalling);
 //   SNode callTarget = callNode.findChild(lxCallTarget);
 //
@@ -2239,10 +2238,10 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 //         return true;
 //      }
 //   }
-//
-//   return false;
-//}
-//
+
+   return false;
+}
+
 //////void CompilerLogic :: injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode)
 //////{
 //////   ClassInfo info;
