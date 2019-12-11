@@ -2,8 +2,6 @@
 In development:
 ------         
               dev
-                * const - accumulators
-
                 * get string length
 
                 * strings to wide string conversion
@@ -280,6 +278,7 @@ In development:
                 * test global references : with new, var, cast, parent, symbol
                 * test property with template-based type, array type
                 * test embeddable method return with by ref variable
+                * test accumulating constants
 
               dev1
                 * move all description to meta info using descr inline template

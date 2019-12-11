@@ -288,14 +288,14 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
    }
 }
 
-//ref_t CompilerLogic :: resolveArrayElement(_ModuleScope& scope, ref_t reference)
-//{
-//   ClassInfo info;
-//   if (defineClassInfo(scope, info, reference)) {
-//      return info.fieldTypes.get(-1).value2;
-//   }
-//   else return 0;
-//}
+ref_t CompilerLogic :: resolveArrayElement(_ModuleScope& scope, ref_t reference)
+{
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      return info.fieldTypes.get(-1).value2;
+   }
+   else return 0;
+}
 
 int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
 {

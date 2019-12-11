@@ -643,8 +643,8 @@ public:
    virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference) = 0;
 
 //   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info) = 0;
-//   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference) = 0;
-//
+   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference) = 0;
+
 //   virtual bool isDeclared(_ModuleScope& scope, ref_t reference) = 0;
 
    // check if the classes is compatible

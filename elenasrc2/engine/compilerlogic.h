@@ -227,7 +227,7 @@ public:
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr);
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
 //   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns);
-//   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference);
+   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference);
 
    CompilerLogic();
 };

@@ -934,7 +934,7 @@ private:
 //   int defineFieldSize(CodeScope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed);
-//   void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
+   void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
 
    // NOTE : the method is used to set template pseudo variable
    void declareProcedureDebugInfo(SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
@@ -1044,8 +1044,7 @@ private:
    ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
-   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target/*, 
-      bool accumulateMode*/);
+   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
 //   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
    ObjectInfo compileRootExpression(SNode node, CodeScope& scope);
@@ -1055,7 +1054,7 @@ private:
    ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode);
 
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*//*, int mode*/);
-   void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/);
+   void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode);
    void compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope);
 
    ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
@@ -1148,7 +1147,7 @@ private:
    void compileClassClassImplementation(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SNode node, SymbolScope& scope);
-   bool compileSymbolConstant(/*SNode node, */SymbolScope& scope, ObjectInfo retVal/*, bool accumulatorMode, ref_t accumulatorRef*/);
+   bool compileSymbolConstant(/*SNode node, */SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);
 //   void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
 //   //void compileMetaCategory(SNode node, NamespaceScope& scope);
 //

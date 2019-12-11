@@ -843,7 +843,7 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
 
             recognizeMethodMebers(current);
          }
-         else if (current.firstChild().compare(lxSizeDecl, lxFieldInit, /*lxFieldAccum, */ lxNone)) {
+         else if (current.firstChild().compare(lxSizeDecl, lxFieldInit, lxFieldAccum, lxNone)) {
             // if it is a field
             current = lxClassField;
 //            mode = MODE_PROPERTYALLOWED;
@@ -1248,7 +1248,7 @@ void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
    }
 
    // copy inplace initialization
-   SNode bodyNode = node.findChild(lxFieldInit/*, lxFieldAccum*/);
+   SNode bodyNode = node.findChild(lxFieldInit, lxFieldAccum);
    if (bodyNode != lxNone) {
       SyntaxWriter bufferWriter(buffer);
       if (buffer.isEmpty()) {
@@ -1281,7 +1281,7 @@ void DerivationWriter :: generateFieldTree(SyntaxWriter& writer, SNode node, Sco
 
       ::copyIdentifier(bufferWriter, nameNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
       
-      bufferWriter.appendNode(lxAssign, /*bodyNode == lxFieldAccum ? -1 : */0);
+      bufferWriter.appendNode(lxAssign, bodyNode == lxFieldAccum ? -1 : 0);
 
       generateExpressionTree(bufferWriter, bodyNode.findChild(lxExpression), derivationScope);
       bufferWriter.closeNode();

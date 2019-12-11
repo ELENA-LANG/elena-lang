@@ -74,6 +74,7 @@ enum LexicalType
    lxClosureExpr              = 0x001140,
    lxInlineDecl               = 0x001150,
    lxInlineAttribute          = 0x001160,
+   lxFieldAccum               = 0x001170,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
