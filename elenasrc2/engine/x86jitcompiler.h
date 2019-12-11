@@ -113,7 +113,7 @@ protected:
    friend void compileFill(int opcode, x86JITScope& scope);
    friend void compileCreateN(int opcode, x86JITScope& scope);
 //   friend void compileCreateI(int opcode, x86JITScope& scope);
-//   friend void compileSelectR(int opcode, x86JITScope& scope);
+   friend void compileSelectR(int opcode, x86JITScope& scope);
    friend void compileSetR(int opcode, x86JITScope& scope);
 //   friend void compileBCopyR(int opcode, x86JITScope& scope);
    friend void compileALoadR(int opcode, x86JITScope& scope);
@@ -252,7 +252,7 @@ void compileCreate(int opcode, x86JITScope& scope);
 void compileFill(int opcode, x86JITScope& scope);
 //void compileCreateI(int opcode, x86JITScope& scope);
 void compileCreateN(int opcode, x86JITScope& scope);
-//void compileSelectR(int opcode, x86JITScope& scope);
+void compileSelectR(int opcode, x86JITScope& scope);
 void compileSetR(int opcode, x86JITScope& scope);
 //void compileBCopyR(int opcode, x86JITScope& scope);
 void compileALoadR(int opcode, x86JITScope& scope);

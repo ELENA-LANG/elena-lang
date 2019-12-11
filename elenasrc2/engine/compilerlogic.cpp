@@ -70,27 +70,27 @@ inline bool isPrimitiveArrayRef(ref_t classRef)
 ////         return false;
 ////   }
 ////}
-//
-//inline bool IsInvertedOperator(int& operator_id)
-//{
-//   switch (operator_id)
-//   {
-//      case NOTEQUAL_OPERATOR_ID:
-//         operator_id = EQUAL_OPERATOR_ID;
-//
-//         return true;
-//      case NOTLESS_OPERATOR_ID:
-//         operator_id = LESS_OPERATOR_ID;
-//
-//         return true;
-//      case NOTGREATER_OPERATOR_ID:
-//         operator_id = GREATER_OPERATOR_ID;
-//
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+
+inline bool IsInvertedOperator(int& operator_id)
+{
+   switch (operator_id)
+   {
+      case NOTEQUAL_OPERATOR_ID:
+         operator_id = EQUAL_OPERATOR_ID;
+
+         return true;
+      case NOTLESS_OPERATOR_ID:
+         operator_id = LESS_OPERATOR_ID;
+
+         return true;
+      case NOTGREATER_OPERATOR_ID:
+         operator_id = GREATER_OPERATOR_ID;
+
+         return true;
+      default:
+         return false;
+   }
+}
 
 inline ident_t findSourceRef(SNode node)
 {
@@ -149,14 +149,14 @@ CompilerLogic :: CompilerLogic()
 //   operators.add(OperatorInfo(XOR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 //   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 //   operators.add(OperatorInfo(SHIFTL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//
-//   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(LESS_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTLESS_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_FLAG));
-//
+
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(LESS_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTLESS_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
+
 //   // subject primitive operations
 //   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntOp, V_FLAG));
@@ -1044,26 +1044,26 @@ void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compil
 //   else if (reference == V_OBJECT && elementRef != 0) {
 //      reference = elementRef;
 //   }
-//
-//   bool inverting = IsInvertedOperator(operator_id);
-//
-//   if (reference == V_FLAG) {      
-//      if (!scope.branchingInfo.reference) {
-//         // HOTFIX : resolve boolean symbols
-//         ref_t dummy;
-//         resolveBranchOperation(scope, IF_OPERATOR_ID, scope.branchingInfo.reference, dummy);
-//      }
-//
-//      reference = scope.branchingInfo.reference;
-//      if (inverting) {
-//         writer.appendNode(lxIfValue, scope.branchingInfo.falseRef);
-//         writer.appendNode(lxElseValue, scope.branchingInfo.trueRef);
-//      }
-//      else {
-//         writer.appendNode(lxIfValue, scope.branchingInfo.trueRef);
-//         writer.appendNode(lxElseValue, scope.branchingInfo.falseRef);
-//      }
-//   }
+
+   bool inverting = IsInvertedOperator(operator_id);
+
+   if (reference == V_FLAG) {
+      if (!scope.moduleScope->branchingInfo.reference) {
+         // HOTFIX : resolve boolean symbols
+         ref_t dummy;
+         resolveBranchOperation(*scope.moduleScope, IF_OPERATOR_ID, scope.moduleScope->branchingInfo.reference, dummy);
+      }
+
+      reference = scope.moduleScope->branchingInfo.reference;
+      if (inverting) {
+         node.appendNode(lxIfValue, scope.moduleScope->branchingInfo.falseRef);
+         node.appendNode(lxElseValue, scope.moduleScope->branchingInfo.trueRef);
+      }
+      else {
+         node.appendNode(lxIfValue, scope.moduleScope->branchingInfo.trueRef);
+         node.appendNode(lxElseValue, scope.moduleScope->branchingInfo.falseRef);
+      }
+   }
 //
 //   if (size != 0) {
 //      // HOTFIX : inject an item size for the binary array operations
@@ -1075,7 +1075,7 @@ void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compil
 
       compiler.injectExprOperation(scope, node, size, tempLocal, (LexicalType)operationType, operator_id, reference);
    }
-   else throw InternalError("Not yet implemented"); // !! temporal
+   else node.set((LexicalType)operationType, operator_id);
 }
 
 bool CompilerLogic :: isReadonly(ClassInfo& info)

@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/45;
+const int gcCommandNumber = /*160*/48;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -74,6 +74,7 @@ const int gcCommands[gcCommandNumber] =
    bcSubF, bcMulF, bcDivF, bcPushAI, bcGet,
    bcSet, bcCopyToAI, bcCreateR, bcFillR, bcXSet,
    bcXSetFI, bcClass, bcXSaveFI, bcLen, bcSave,
+   bcSelect, bcEqual, bcLess,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -84,7 +85,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcGet, bcSet, bcXSet, bcACallI, bcBReadB,
 //   bcLen, bcIfHeap, bcFlag, bcNCreate,
 //   bcBLoadFI, bcAXSaveBI, bcBLoadSI, bcBWriteB,
-//   bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
+//   bcNCopy, bcNAdd, bcBSwapSI,
 //   bcNSub, bcNMul, bcNDiv, bcNLoadE, bcDivN,
 //   bcWLen, bcNLoad, bcWCreate, bcCopy,
 //   bcBCreate, bcBWrite, bcBReadW, bcXLen,
@@ -96,7 +97,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcLNot, bcRCopy, bcRSave, bcREqual, bcBSaveSI,
 //   bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
 //   bcExclude, bcDCopyR, bcInclude,
-//   bcSelectR, bcNext, bcXSelectR, bcCount,
+//   bcNext, bcXSelectR, bcCount,
 //   bcRAbs, bcRExp, bcRInt, bcValidate, ,
 //   bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
 //   bcAddress, bcBWriteW, bcRLoad, bcNLen,
@@ -132,7 +133,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
+   &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -165,7 +166,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, & loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
 
-   &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileNop, &compileNop,
+   &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileElseR, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
 
    //   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &loadMTOp, &loadOneByteOp,
@@ -1138,26 +1139,26 @@ void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
 //
 //   loadNOp(opcode, scope);
 //}
-//
-//void _ELENA_::compileSelectR(int opcode, x86JITScope& scope)
-//{
-//   // HOT FIX : reverse the argument order
-//   ref_t r1 = scope.argument;
-//   scope.argument = scope.tape->getDWord();
-//
-//   if (opcode == bcSelectR) {
-//      // mov  eax, r1
-//      scope.code->writeByte(0xB8);
-//      scope.writeReference(*scope.code, r1, 0);
-//   }
+
+void _ELENA_::compileSelectR(int opcode, x86JITScope& scope)
+{
+   // HOT FIX : reverse the argument order
+   ref_t r1 = scope.argument;
+   scope.argument = scope.tape->getDWord();
+
+   if (opcode == bcSelect) {
+      // mov ebx, r1
+      scope.code->writeByte(0xBB);
+      scope.writeReference(*scope.code, r1, 0);
+   }
 //   else {
 //      // mov  edx, r1
 //      scope.code->writeByte(0xBA);
 //      scope.writeReference(*scope.code, r1, 0);
 //   }
-//
-//   loadROp(opcode, scope);
-//}
+
+   loadROp(opcode, scope);
+}
 
 void _ELENA_::compileSetR(int, x86JITScope& scope)
 {

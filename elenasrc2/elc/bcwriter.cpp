@@ -3001,8 +3001,21 @@ void ByteCodeWriter :: saveIntConstant(CommandTape& tape, LexicalType target, in
 //         break;
 //   }
 //}
-//
-void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset, FlowScope& scope)
+
+void ByteCodeWriter :: doIntBoolOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id)
+   {
+      case EQUAL_OPERATOR_ID:
+         tape.write(bcEqual);
+         break;
+      case LESS_OPERATOR_ID:
+         tape.write(bcLess);
+         break;
+   }
+}
+
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset)
 {
    switch (operator_id)
    {
@@ -3764,12 +3777,12 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
-//{
-//   tape.write(bcSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
-//}
-//
+
+void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
+{
+   tape.write(bcSelect, r1 | mskConstantRef, r2 | mskConstantRef);
+}
+
 //void ByteCodeWriter :: selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
 //{
 //   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
@@ -4759,7 +4772,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    loadObject(tape, rarg, scope);
 
    if (node.type == lxIntOp) {
-      doIntOperation(tape, node.argument, largObj.argument, scope);
+      doIntOperation(tape, node.argument, largObj.argument);
 
 //      if (rargConst) {
 //         SNode immArg = rarg.findChild(lxIntValue);
@@ -4818,6 +4831,50 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 //
 //   if (basePresaved)
 //      tape.write(bcPopB);
+}
+
+void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
+   int operation = node.argument;
+   bool invertSelectMode = false;
+   bool invertMode = false;
+   
+   switch (node.argument) {
+      case NOTEQUAL_OPERATOR_ID:
+         invertSelectMode = true;
+         break;
+      case GREATER_OPERATOR_ID:
+         invertMode = true;
+         operation = LESS_OPERATOR_ID;
+         break;
+   }
+
+   SNode larg;
+   SNode rarg;
+   if (invertMode) {
+      assignOpArguments(node, rarg, larg);
+   }
+   else assignOpArguments(node, larg, rarg);
+
+   generateObject(tape, rarg, scope, STACKOP_MODE);
+   generateObject(tape, larg, scope);
+
+   if (node.type == lxIntBoolOp) {
+      doIntBoolOperation(tape, operation);
+   }
+   
+   if (invertSelectMode) {
+      selectByIndex(tape,
+         node.findChild(lxIfValue).argument,
+         node.findChild(lxElseValue).argument);
+   }
+   else {
+      selectByIndex(tape,
+         node.findChild(lxElseValue).argument,
+         node.findChild(lxIfValue).argument);
+   }
+   
+   releaseStack(tape);
 }
 
 //void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
@@ -6521,7 +6578,10 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxRealOp:
          generateOperation(tape, node, scope, mode & ~STACKOP_MODE);
          break;
-//      case lxIntArrOp:
+      case lxIntBoolOp:
+         generateBoolOperation(tape, node, scope, mode & ~STACKOP_MODE);
+         break;
+         //      case lxIntArrOp:
 //      case lxByteArrOp:
 //      case lxShortArrOp:
 //      case lxArrOp:

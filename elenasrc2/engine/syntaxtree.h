@@ -137,6 +137,7 @@ enum LexicalType
    lxConstantWideStr          = 0x0181A3,   // arg - reference
    lxOp                       = 0x0581B0,
    lxIntOp                    = 0x0581B1,   // arg - operation id
+   lxIntBoolOp                = 0x0581B2,   // arg - operation id
    lxField                    = 0x0181C0,   // arg - offset
    lxFieldAddress             = 0x0181C1,   // arg - offset
    lxStaticField              = 0x0181C2,   // arg - reference   // - lxClassStaticField
@@ -178,6 +179,8 @@ enum LexicalType
    lxBookmarkReference        = 0x000F1D,
    lxInternalRef              = 0x000F1E,
    lxClassName                = 0x000F1F, // arg - identifier
+   lxIfValue                  = 0x000F20, // arg - reference
+   lxElseValue                = 0x000F21, // arg - reference
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -282,8 +285,6 @@ enum LexicalType
 //   lxOuterMember              = 0x1003A,  // a collection member, arg - offset
 //   lxParamsVariable           = 0x1003E,
 
-//   lxIfValue                  = 0x20017, // arg - reference
-//   lxElseValue                = 0x20018, // arg - reference
 //   lxIntExtArgument           = 0x2001C,
 //   lxExtArgument              = 0x2001D,
 //   lxExtInteranlRef           = 0x2001E,

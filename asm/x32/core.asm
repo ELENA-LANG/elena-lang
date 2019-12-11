@@ -958,6 +958,28 @@ inline % 36h
 
 end
 
+// ; nequal
+inline % 40h
+
+  mov  eax, [esp]
+  xor  edx, edx
+  mov  ecx, [ebx]
+  cmp  ecx, [eax]
+  setz dl
+
+end
+
+// ; nless
+inline % 41h
+
+  mov  eax, [esp]
+  xor  edx, edx
+  mov  ecx, [ebx]
+  cmp  ecx, [eax]
+  setl dl
+
+end
+
 // ; save
 inline % 47h
 
@@ -1625,6 +1647,15 @@ inline % 0F5h
 
   cmp [ebx], ebx
   jmp __arg1
+
+end
+
+// ; selectr (ebx - r1, __arg1 - r2)
+inline % 0F6h
+
+  mov    ecx, __arg1
+  test   edx, edx
+  cmovnz ebx, ecx
 
 end
 

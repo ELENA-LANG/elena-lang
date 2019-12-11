@@ -36,18 +36,18 @@ namespace _ELENA_
 
    constexpr auto INVALID_REF             = 0xFFFFFFFFu;
 
-//   constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
+   constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
 //   constexpr auto SET_OPERATOR_ID         = 0x0007;
-//   constexpr auto LESS_OPERATOR_ID        = 0x0008;
+   constexpr auto LESS_OPERATOR_ID        = 0x0008;
    constexpr auto IF_OPERATOR_ID          = 0x0009;
 //   constexpr auto AND_OPERATOR_ID         = 0x000A;
 //   constexpr auto OR_OPERATOR_ID          = 0x000B;
 //   constexpr auto XOR_OPERATOR_ID         = 0x000C;
-//   constexpr auto IFNOT_OPERATOR_ID       = 0x000D;
-//   constexpr auto NOTEQUAL_OPERATOR_ID    = 0x000E;
-//   constexpr auto NOTLESS_OPERATOR_ID     = 0x000F;
-//   constexpr auto NOTGREATER_OPERATOR_ID  = 0x0010;
-//   constexpr auto GREATER_OPERATOR_ID     = 0x0011;
+   constexpr auto IFNOT_OPERATOR_ID       = 0x000D;
+   constexpr auto NOTEQUAL_OPERATOR_ID    = 0x000E;
+   constexpr auto NOTLESS_OPERATOR_ID     = 0x000F;
+   constexpr auto NOTGREATER_OPERATOR_ID  = 0x0010;
+   constexpr auto GREATER_OPERATOR_ID     = 0x0011;
    constexpr auto ADD_OPERATOR_ID         = 0x0012;
    constexpr auto SUB_OPERATOR_ID         = 0x0013;
    constexpr auto MUL_OPERATOR_ID         = 0x0014;
@@ -372,15 +372,15 @@ namespace _ELENA_
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
    constexpr auto INVOKE_MESSAGE          = "#invoke";
-//   constexpr auto EQUAL_MESSAGE        = "equal";
-//   constexpr auto NOTEQUAL_MESSAGE     = "notequal";
-//   constexpr auto LESS_MESSAGE         = "less";
+   constexpr auto EQUAL_MESSAGE        = "equal";
+   constexpr auto NOTEQUAL_MESSAGE     = "notequal";
+   constexpr auto LESS_MESSAGE         = "less";
 //   constexpr auto AND_MESSAGE          = "and";
 //   constexpr auto OR_MESSAGE           = "or";
 //   constexpr auto XOR_MESSAGE          = "xor";
-//   constexpr auto GREATER_MESSAGE      = "greater";
-//   constexpr auto NOTLESS_MESSAGE      = "notless";
-//   constexpr auto NOTGREATER_MESSAGE   = "notgreater";
+   constexpr auto GREATER_MESSAGE      = "greater";
+   constexpr auto NOTLESS_MESSAGE      = "notless";
+   constexpr auto NOTGREATER_MESSAGE   = "notgreater";
    constexpr auto ADD_MESSAGE          = "add";
    constexpr auto SUB_MESSAGE          = "subtract";
    constexpr auto MUL_MESSAGE          = "multiply";
@@ -393,21 +393,21 @@ namespace _ELENA_
 //   constexpr auto READ_MESSAGE         = "read";
 //   constexpr auto WRITE_MESSAGE        = "write";
    constexpr auto IF_MESSAGE           = "if";
-//   constexpr auto IFNOT_MESSAGE        = "ifnot";
+   constexpr auto IFNOT_MESSAGE        = "ifnot";
 //  // #define SHIFT_MESSAGE            "shift"
 //  // #define IF_ELSE_MESSAGE          "if:else"
    constexpr auto INIT_MESSAGE         = "#init";
 //  // #define ISNIL_MESSAGE            "#isnil"
 
    // ELENA verb operators
-//   constexpr auto EQUAL_OPERATOR       = "==";
-//   constexpr auto NOTEQUAL_OPERATOR		= "!=";
-//   constexpr auto NOTLESS_OPERATOR     = ">=";
-//   constexpr auto NOTGREATER_OPERATOR  = "<=";
-//   constexpr auto GREATER_OPERATOR     = ">";
-//   constexpr auto LESS_OPERATOR        = "<";
+   constexpr auto EQUAL_OPERATOR       = "==";
+   constexpr auto NOTEQUAL_OPERATOR		= "!=";
+   constexpr auto NOTLESS_OPERATOR     = ">=";
+   constexpr auto NOTGREATER_OPERATOR  = "<=";
+   constexpr auto GREATER_OPERATOR     = ">";
+   constexpr auto LESS_OPERATOR        = "<";
    constexpr auto IF_OPERATOR          = "?";
-//   constexpr auto IFNOT_OPERATOR       = "!";
+   constexpr auto IFNOT_OPERATOR       = "!";
 //   constexpr auto AND_OPERATOR         = "&&";
 //   constexpr auto OR_OPERATOR          = "||";
 //   constexpr auto XOR_OPERATOR         = "^^";

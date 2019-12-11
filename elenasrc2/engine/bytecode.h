@@ -80,9 +80,9 @@ enum ByteCode
 //   bcAndE            = 0x3B,
 //   bcDMoveVerb       = 0x3C,
 //   // 0x3F should be reserved for command
-//
-//   bcNEqual          = 0x40,
-//   bcNLess           = 0x41,
+
+   bcEqual           = 0x40,
+   bcLess            = 0x41,
 //   bcNCopy           = 0x42,
 //   bcNAdd            = 0x43,
 //   bcNSub            = 0x44,
@@ -261,7 +261,7 @@ enum ByteCode
 //   bcXSelectR        = 0xF3,
    bcVCallRM         = 0xF4,
    bcJumpRM          = 0xF5,
-//   bcSelectR         = 0xF6,
+   bcSelect          = 0xF6,
 //   bcLessN           = 0xF7,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcIfM             = 0xF8,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcElseM           = 0xF9,   // though in bytecode section they saved in the correct order (jump arg, label)
@@ -468,7 +468,7 @@ public:
          //case bcBCopyR:
          case bcCallRM:
          case bcCallExtR:
-         //case bcSelectR:
+         case bcSelect:
          case bcJumpRM:
          case bcVCallRM:
          //case bcBLoadR:
@@ -484,8 +484,8 @@ public:
       switch(code) {
          //case bcIfR:
          case bcElseR:
-         //case bcSelectR:
-         //   return true;
+         case bcSelect:
+            return true;
          default:
             return false;
       }

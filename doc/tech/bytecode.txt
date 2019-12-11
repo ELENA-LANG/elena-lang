@@ -36,6 +36,8 @@ ELENA byte codes (or ecodes)
 
  savesi i                   - [sp:i] <= index
 
+ select r1, r2              - acc = (index = 0 ? r1 : r2)
+
  storefi i                  - [fp+i] <= acc 
  
  storer r                   - [r] <= acc[i]
@@ -72,9 +74,13 @@ ELENA byte codes (or ecodes)
 
  divf i                     - dword[fp+i] << dword[fp+i] / dword[acc]
 
+ equal                      - int[acc] == int[sp] ; if true - index = 1, if false - index = 0
+
+ less                       - int[acc] < int[sp]  ; if true - index = 1, if false - index = 0
+
  mulf i                     - dword[fp+i] << dword[fp+i] * dword[acc]
 
- subf i                     - dword[fp+i] << dword[fp+i] - dword[acc]
+ subf i                     - dword[fp+i] << dword[fp+i] - dword[acc] 
 
 
  Stack operations:
@@ -234,8 +240,6 @@ ELENA byte codes (or ecodes)
  
  scopyf i                   - sp <= fp + i
  
- select                     - index = 0 ? acc : base
-
  selectr r1, r2             - acc = (index = 0 ? r1 : r2)
  
  setverb m                  - ext.verb << m
@@ -587,10 +591,6 @@ ELENA byte codes (or ecodes)
  lequal                     - long[acc] == long[base] ; if true - index = 1, if false - index = 0
 
  lless                      - long[acc] < [base] ; if true - index = 1, if false - index = 0
- 
- nequal                     - int[acc] == int[base] ; if true - index = 1, if false - index = 0
-
- nless                      - int[acc] < int[base] ; if true - index = 1, if false - index = 0
  
  requal                     - real[acc] == real[base] ; if true - index = 1, if false - index = 0
  

@@ -3267,8 +3267,8 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
 //         return encodeMessage(scope.module->mapAction(EQUAL_MESSAGE, 0, false), paramCount, 0);
 //      case NOTEQUAL_OPERATOR_ID:
 //         return encodeMessage(scope.module->mapAction(NOTEQUAL_MESSAGE, 0, false), paramCount, 0);
-//      case LESS_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(LESS_MESSAGE, 0, false), paramCount, 0);
+      case LESS_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(LESS_MESSAGE, 0, false), argCount, 0);
 //      case NOTLESS_OPERATOR_ID:
 //         return encodeMessage(scope.module->mapAction(NOTLESS_MESSAGE, 0, false), paramCount, 0);
 //      case GREATER_OPERATOR_ID:
@@ -3411,13 +3411,13 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
 //   }
    /*else */operationType = _logic->resolveOperationType(*scope.moduleScope, operator_id, loperandRef, roperandRef, 
       resultClassRef);
-//
-//   // HOTFIX : primitive operations can be implemented only in the method
-//   // because the symbol implementations do not open a new stack frame
-//   if (operationType != 0 && resultClassRef != V_FLAG && scope.getScope(Scope::slMethod) == NULL) {
-//      operationType = 0;
-//   }
-//
+
+   // HOTFIX : primitive operations can be implemented only in the method
+   // because the symbol implementations do not open a new stack frame
+   if (operationType != 0 && resultClassRef != V_FLAG && scope.getScope(Scope::ScopeLevel::slMethod) == NULL) {
+      operationType = 0;
+   }
+
 //   //bool assignMode = false;
    if (operationType != 0) {
       if (IsExprOperator(operator_id)) {

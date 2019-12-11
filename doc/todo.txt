@@ -44,7 +44,6 @@ In development:
 
                 * extension templates
 
-                * primitive operations with int : comparision
                 * primitive operations with int : bitwise
                 * high-level opoerations with int : comparision, bitwise
 
