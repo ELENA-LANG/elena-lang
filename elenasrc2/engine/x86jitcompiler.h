@@ -153,7 +153,7 @@ protected:
 //   friend void compileDOrN(int opcode, x86JITScope& scope);
 //   friend void compileDAddN(int opcode, x86JITScope& scope);
 //   friend void compileDMulN(int opcode, x86JITScope& scope);
-//   friend void compileEAddN(int opcode, x86JITScope& scope);
+   friend void compileDec(int opcode, x86JITScope& scope);
 //   friend void compileDCopyCount(int opcode, x86JITScope& scope);
 //   friend void compileDSetVerb(int opcode, x86JITScope& scope);
 //   friend void compileIndexInc(int opcode, x86JITScope& scope);
@@ -297,7 +297,7 @@ void compileACopyF(int opcode, x86JITScope& scope);
 //void compileDOrN(int opcode, x86JITScope& scope);
 //void compileDAddN(int opcode, x86JITScope& scope);
 //void compileDMulN(int opcode, x86JITScope& scope);
-//void compileEAddN(int opcode, x86JITScope& scope);
+void compileDec(int opcode, x86JITScope& scope);
 //void compileDCopyCount(int opcode, x86JITScope& scope);
 //void compileDSetVerb(int opcode, x86JITScope& scope);
 //void compileIndexInc(int opcode, x86JITScope& scope);

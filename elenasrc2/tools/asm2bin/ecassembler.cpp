@@ -540,7 +540,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcESaveFI:
          //case bcShiftLN:
          //case bcShiftRN:
-         //case bcEAddN:
+         case bcDec:
          //case bcDSwapSI:
          //case bcAJumpI:
          //case bcACallI:

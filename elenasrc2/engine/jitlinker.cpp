@@ -1370,10 +1370,10 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 //         case mskClassRelRef:
             vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelCodeRef, _loader->getSectionInfo(referenceInfo, mask & ~mskRelCodeRef, silentMode));
             break;
-//         case mskInternalRef:
-//         case mskInternalRelRef:
-//            vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelCodeRef, _loader->getSectionInfo(referenceInfo, 0, silentMode));
-//            break;
+         case mskInternalRef:
+         case mskInternalRelRef:
+            vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelCodeRef, _loader->getSectionInfo(referenceInfo, 0, silentMode));
+            break;
          case mskVMTRef:
             vaddress = resolveBytecodeVMTSection(referenceInfo, mask, _loader->getClassSectionInfo(referenceInfo, mskClassRef, mskVMTRef, silentMode));
             break;

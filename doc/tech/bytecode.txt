@@ -14,6 +14,8 @@ ELENA byte codes (or ecodes)
 
  Register operations:
  --------------------
+ dec i                      - index -= i
+ 
  get i                      - acc <= acc[i] ;
 
  peekfi i                   - [fp+i] => acc;
@@ -29,6 +31,8 @@ ELENA byte codes (or ecodes)
  movr r                     - r => acc
            
  peekr r                   - [r] => acc
+
+ save                       - [acc] <= index
 
  savesi i                   - [sp:i] <= index
 
@@ -56,6 +60,8 @@ ELENA byte codes (or ecodes)
  copytofi i, n              - copy [acc] >> [fp+i], n*4-bytes
 
  creater r                  - create the object with length=[esp], out : acc, index is affected
+
+ len                        - [acc].Length >> index ; where acc is a object
 
  xsavefi i,n                - [fp:i] <= n
 
@@ -287,8 +293,6 @@ ELENA byte codes (or ecodes)
  
  nread                      - acc[index * 4] >> ext                               
  
- nsave                      - int[base] << index
- 
  nsavei                     - int[base+i*4] << index
  
  nwrite                     - base[index * 4] << ext
@@ -424,8 +428,6 @@ ELENA byte codes (or ecodes)
  
  bcreate                    - create the object with size=index and vmt=acc, out : acc  (*index and ext affected)
  
- blen                       - [acc].Length >> index ; where acc is a object
-
  check                      - acc is-instance-of base ? -1 : 0
  
  parent                     - base::Parent >> acc ; returns parent or package depending on the class flag
@@ -492,8 +494,6 @@ ELENA byte codes (or ecodes)
  addn n                     - index += n
  
  andn n                     - index && n => index
- 
- dec                        - index--
  
  eaddn                      - ext += n
 

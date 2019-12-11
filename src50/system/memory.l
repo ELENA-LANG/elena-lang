@@ -965,18 +965,18 @@ public sealed const struct String : BaseValue
 //    /// Returns the substring
 //    string Substring(int index, int length)
 //        => system'core_routines'__literal;
-//
-//    Length
-//    {
-//        /// Reads the literal length into an output parameter
-//        int get()
-//        {
-//            intern system'core_routines'__literal.readLengthTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//
+
+    int Length
+    {
+        /// Reads the literal length into an output parameter
+        get()
+        {
+            intern system'core_routines'__literal.readLengthTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+
 //    /// Saves the literal into a UTF-32 character array
 //    save(int index, char[] array, ref int retVal)
 //        => system'core_routines'__literal;

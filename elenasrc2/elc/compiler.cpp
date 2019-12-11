@@ -6381,13 +6381,13 @@ ObjectInfo Compiler :: compileInternalCall(SNode node, ExprScope& scope, ref_t m
    IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
    virtualReference.append('.');
 
-   int paramCount;
+   int argCount;
    ref_t actionRef, flags;
    ref_t dummy = 0;
-   decodeMessage(message, actionRef, paramCount, flags);
+   decodeMessage(message, actionRef, argCount, flags);
 
    size_t signIndex = virtualReference.Length();
-   virtualReference.append('0' + (char)paramCount);
+   virtualReference.append('0' + (char)(argCount - 1));
    virtualReference.append(moduleScope->module->resolveAction(actionRef, dummy));
 
    ref_t signatures[ARG_COUNT];

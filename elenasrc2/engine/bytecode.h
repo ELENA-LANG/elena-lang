@@ -67,7 +67,7 @@ enum ByteCode
 //   bcXSet            = 0x2F,
 //
 //   bcXLen            = 0x30,
-//   bcBLen            = 0x31,
+   bcLen             = 0x31,
 //   bcWLen            = 0x32,
 //   bcFlag            = 0x33, 
 //   bcNLen            = 0x34,
@@ -88,7 +88,7 @@ enum ByteCode
 //   bcNSub            = 0x44,
 //   bcNMul            = 0x45,
 //   bcNDiv            = 0x46,
-//   bcNSave           = 0x47,
+   bcSave            = 0x47,
 //   bcNLoad           = 0x48,
 //   bcDCopyR          = 0x49,
 //   bcNAnd            = 0x4A,
@@ -149,8 +149,8 @@ enum ByteCode
 //   bcRRound          = 0x8D,
 //   bcRInt            = 0x8E,
 //   bcRLoad           = 0x8F,
-//
-//   bcDCopy           = 0x90,
+
+   bcDec             = 0x90,
    bcGet             = 0x91,
    bcRestore         = 0x92,
    bcPeekR           = 0x93,

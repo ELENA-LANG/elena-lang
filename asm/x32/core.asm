@@ -942,11 +942,26 @@ inline % 2Ah
 
 end
 
-// ; class
+// ; len
+inline % 31h
 
+  mov  edx, 0FFFFFh
+  mov  ecx, [ebx-8]
+  and  edx, ecx
+
+end
+
+// ; class
 inline % 36h
 
   mov ebx, [ebx - elVMTOffset]
+
+end
+
+// ; save
+inline % 47h
+
+  mov [ebx], edx
 
 end
 

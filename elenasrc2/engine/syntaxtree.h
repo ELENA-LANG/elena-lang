@@ -98,7 +98,6 @@ enum LexicalType
    lxClassSymbol              = 0x018050,   // arg - reference
    lxSymbolReference          = 0x058060,
    lxConstantSymbol           = 0x018070,   // arg - reference
-   lxInternalRef              = 0x018080,
    lxImporting                = 0x018090,
    lxCalling_0                = 0x0580A0,   // calling a method, arg - message
    lxCalling_1                = 0x0580A1,
@@ -175,6 +174,7 @@ enum LexicalType
    lxEmbeddableAttr           = 0x000F1B,
    lxBookmark                 = 0x000F1C,
    lxBookmarkReference        = 0x000F1D,
+   lxInternalRef              = 0x000F1E,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,

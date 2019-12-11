@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/43;
+const int gcCommandNumber = /*160*/45;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -73,7 +73,7 @@ const int gcCommands[gcCommandNumber] =
    bcCopyF, bcCopyFI, bcAddF, bcCopyToF, bcCopyToFI,
    bcSubF, bcMulF, bcDivF, bcPushAI, bcGet,
    bcSet, bcCopyToAI, bcCreateR, bcFillR, bcXSet,
-   bcXSetFI, bcClass, bcXSaveFI,
+   bcXSetFI, bcClass, bcXSaveFI, bcLen, bcSave,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -86,8 +86,8 @@ const int gcCommands[gcCommandNumber] =
 //   bcBLoadFI, bcAXSaveBI, bcBLoadSI, bcBWriteB,
 //   bcNEqual, bcNLess, bcNCopy, bcNAdd, bcBSwapSI,
 //   bcNSub, bcNMul, bcNDiv, bcNLoadE, bcDivN,
-//   bcWLen, bcNSave, bcNLoad, bcWCreate, bcCopy,
-//   bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
+//   bcWLen, bcNLoad, bcWCreate, bcCopy,
+//   bcBCreate, bcBWrite, bcBReadW, bcXLen,
 //   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
 //   bcNAnd, bcNOr, bcNXor, bcTryLock, bcFreeLock,
 //   bcLCopy, bcLEqual, bcLLess, bcLAdd, bcRethrow,
@@ -129,7 +129,10 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
+   &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -144,10 +147,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-
-   &compileNop, &loadIndexOp, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileNop, &loadIndexOp,
+   &compileDec, &loadIndexOp, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileNop, &loadIndexOp,
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileNop, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
@@ -1230,14 +1230,14 @@ void _ELENA_::compileSetR(int, x86JITScope& scope)
 //   // sub ebx, ecx
 //   scope.code->writeWord(0xD92B);
 //}
-//
-//void _ELENA_::compileEAddN(int, x86JITScope& scope)
-//{
-//   // add ecx, n
-//   scope.code->writeWord(0xC181);
-//   scope.code->writeDWord(scope.argument);
-//}
-//
+
+void _ELENA_::compileDec(int, x86JITScope& scope)
+{
+   // sub edx, n
+   scope.code->writeWord(0xEA81);
+   scope.code->writeDWord(scope.argument);
+}
+
 //void _ELENA_::compileDCopyCount(int, x86JITScope& scope)
 //{
 //   // and ebx, VERB_MASK
