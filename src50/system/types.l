@@ -63,6 +63,7 @@
 //#define attribute   8000101Fh
 //#define yield       80001020h
 #define namespace   80001021h
+#define meta        80001022h
 
 /// primitive types
 #define __string    80000801h

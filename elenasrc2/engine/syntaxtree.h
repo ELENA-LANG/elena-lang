@@ -72,6 +72,8 @@ enum LexicalType
    lxFieldInit                = 0x001120,
    lxDynamicSizeDecl          = 0x001130,
    lxClosureExpr              = 0x001140,
+   lxInlineDecl               = 0x001150,
+   lxInlineAttribute          = 0x001160,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -170,6 +172,8 @@ enum LexicalType
    lxMember                   = 0x000F19,  // a collection member, arg - offset
    lxStaticAttr               = 0x000F1A,
    lxEmbeddableAttr           = 0x000F1B,
+   lxBookmark                 = 0x000F1C,
+   lxBookmarkReference        = 0x000F1D,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -188,7 +192,6 @@ enum LexicalType
 //   lxAttrExpression           = 0x000080,
 //   lxTemplateOperator         = 0x000081,
 //   lxFieldAccum               = 0x000083,
-//   lxInlineAttribute          = 0x000084,
 //
 //   lxTypecast                 = 0x000100,
 //   lxClassProperty            = 0x000101,

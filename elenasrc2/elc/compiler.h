@@ -1055,6 +1055,7 @@ private:
 
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*//*, int mode*/);
    void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/);
+   void compileMetaConstantAssigning();
 
    ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
 

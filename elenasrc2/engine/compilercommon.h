@@ -87,6 +87,7 @@ constexpr auto V_TEMPLATE        = 0x8000101Eu;
 //constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
 //constexpr auto V_YIELD           = 0x80001020u;
 constexpr auto V_NAMESPACE       = 0x80001021u;
+constexpr auto V_META            = 0x80001022u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -352,7 +353,7 @@ struct _ModuleScope
 
    virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode) = 0;
    virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
-//   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
+   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, int bookmark) = 0;
 //   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef) = 0;
 //   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 

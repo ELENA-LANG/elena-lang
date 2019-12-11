@@ -1,7 +1,7 @@
 // --- super object ---
 
 /// a common ancestor
-
+//#{desc:"a common ancestor"}
 public class Object
 {
     /// class constant - a class name 

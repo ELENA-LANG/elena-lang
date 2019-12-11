@@ -4070,6 +4070,10 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //   }
 //}
 
+void Compiler :: compileMetaConstantAssigning()
+{
+}
+
 void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/)
 {
    ref_t valueRef = scope.info.staticValues.get(target.param);
@@ -4125,9 +4129,12 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 
    if (scope.isInitializer()) {
       // HOTFIX : recognize static field initializer
-      if (target.kind == okStaticField || target.kind == okStaticConstantField) {
-         // HOTFIX : static field initializer should be compiled as preloaded symbol
-         if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
+      if (target.kind == okStaticField || target.kind == okStaticConstantField || target.kind == okMetaField) {
+         if (target.kind == okMetaField) {
+            compileMetaConstantAssigning(/*target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))*//*, accumulateMode*/);
+         }
+         else if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
+            // HOTFIX : static field initializer should be compiled as preloaded symbol
             compileClassConstantAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
          }
          else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
@@ -7483,7 +7490,7 @@ void Compiler :: compileAbstractMethod(SNode node, MethodScope& scope)
    SNode body = node.findChild(lxCode);
    // abstract method should have an empty body
    if (body != lxNone) {
-      if (body.firstChild() != lxEOF)
+      if (body.firstChild() != lxEOP)
          scope.raiseError(errAbstractMethodCode, node);
    }
    else scope.raiseError(errAbstractMethodCode, node);
@@ -9130,11 +9137,9 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope)
 //   if (scope.info.staticValues.Count() > 0)
 //      copyStaticFieldValues(node, scope);
 //
-//   writer.newNode(lxClass, node.argument);
-   compileVMT(/*writer, */node, scope);
-//   writer.closeNode();
+   compileVMT(node, scope);
 
-   generateClassImplementation(/*expressionTree.readRoot()*/node, scope);
+   generateClassImplementation(node, scope);
 
    // compile explicit symbol
    // extension cannot be used stand-alone, so the symbol should not be generated

@@ -2,9 +2,12 @@
 In development:
 ------         
               dev
-                * get string length
+                * support constant class meta attributes
+                * inline template : meta descr
+                * const - accumulators
+                * inline template : category
 
-                * meta fields, inline templates : #{...}
+                * get string length
 
                 * strings to wide string conversion
 
@@ -240,7 +243,6 @@ In development:
                 * passing byref further
                 * should child have an access to the parent static fields?
                 * public const fields?
-                * meta attributes
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)
@@ -312,7 +314,6 @@ In development:
                 * do not allow to write something like
                   A{ int dump[4] := 3; }  // !! error
                 * (re)implement manifest
-                * support constant class meta attributes
                 * support class / method / field / static field meta description
                 * do-while - if the second agrument is code brackets?
                 * static fields should be accessaible from storng typed extensions

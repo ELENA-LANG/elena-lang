@@ -576,19 +576,19 @@ void ModuleScope :: generateStatementCode(SyntaxWriter& output, ref_t reference,
 //
 //   transformer.importClass(output, templateTree.readRoot());
 //}
-//
-//void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
-//{
-//   SyntaxTree templateTree;
-//
-//   TemplateGenerator transformer(templateTree);
-//   SyntaxWriter writer(templateTree);
-//   writer.newNode(lxRoot);
-//   transformer.generateTemplateProperty(writer, *this, reference, parameters);
-//   writer.closeNode();
-//
-//   SyntaxTree::copyNode(output, templateTree.readRoot());
-//}
+
+void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t reference, List<SNode>& parameters, int bookmark)
+{
+   SyntaxTree templateTree;
+
+   TemplateGenerator transformer(templateTree);
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   transformer.generateTemplateProperty(writer, *this, reference, parameters, bookmark);
+   writer.closeNode();
+
+   SyntaxTree::copyNode(output, templateTree.readRoot());
+}
 
 ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode)
 {

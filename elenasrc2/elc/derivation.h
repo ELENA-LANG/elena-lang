@@ -41,7 +41,7 @@ class DerivationWriter : public _DerivationWriter
       stCodeTemplate,
 //      stPropertyTemplate,
 //      stExtensionTemplate,
-//      stInlineTemplate
+      stInlineTemplate
    };
 
    struct Scope
@@ -50,6 +50,7 @@ class DerivationWriter : public _DerivationWriter
       ForwardMap     parameters;
       int            nestedLevel;
       bool           ignoreTerminalInfo;
+      int            bookmark;
 //
 //      bool isNameParameter(ident_t name, ref_t& argument)
 //      {
@@ -115,6 +116,7 @@ class DerivationWriter : public _DerivationWriter
          templateMode = ScopeType::stNormal;
          nestedLevel = 0;
          ignoreTerminalInfo = false;
+         bookmark = 0;
       }
    };
 
@@ -140,7 +142,7 @@ class DerivationWriter : public _DerivationWriter
 //   ref_t resolveTemplate(ident_t templateName);
 
    ref_t mapAttribute(SNode terminal, bool allowType, /*bool& allowPropertyTemplate, */ref_t& previusCategory);
-//   ref_t mapInlineAttribute(SNode terminal);
+   ref_t mapInlineAttribute(SNode terminal);
    void declareAttribute(SNode node);
    void declareStatement(SNode node, ScopeType templateType);
 
@@ -167,7 +169,7 @@ class DerivationWriter : public _DerivationWriter
    void generateStatementTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, /*List<SNode>* parameters, */SyntaxTree& buffer);
 //   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
-//   void generateInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode nameNode, Scope& derivationScope, SyntaxTree& buffer);
+   void generateInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode owner, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void generateSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
@@ -280,14 +282,15 @@ class TemplateGenerator
 
    void copyNodes(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyChildren(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-//   void copyFieldInitTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyFieldInitTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, int bookmark);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyModuleInfo(SyntaxWriter& writer, SNode node, TemplateScope& scope);
 
-   bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool declaringClass, bool importModuleInfo);
+   bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool declaringClass, 
+      bool importModuleInfo, int bookmark);
 
 public:
    ref_t declareTemplate(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
@@ -295,8 +298,9 @@ public:
                            bool importModuleInfo, bool importMode);
 
    void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
-//   void generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
-//
+   void generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, 
+      List<SNode>& parameters, int bookmark);
+
 //   void importClass(SyntaxWriter& output, SNode node);
 
    TemplateGenerator(SyntaxTree& tree);
