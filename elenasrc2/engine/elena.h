@@ -532,7 +532,7 @@ enum MethodAttribute
 //   maYieldPreallocated  = 0x00E,
 };
 
-enum ClassAttribute
+enum ClassAttribute : int
 {
    caNone               = 0x000,
    caInitializer        = 0x001,
@@ -540,7 +540,7 @@ enum ClassAttribute
 //   caSerializable       = 0x002,
 //   // if the symbol can be loaded dynamically
 //   caSymbolSerializable = 0x003,
-//   caInfo               = 0x004
+   caInfo               = 0x004
 };
 
 struct ClassInfo

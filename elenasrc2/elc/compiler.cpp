@@ -49,6 +49,7 @@ constexpr auto HINT_NOUNBOXING      = EAttr::eaNoUnboxing;
 constexpr auto HINT_MEMBER          = EAttr::eaMember;
 constexpr auto HINT_REFOP           = EAttr::eaRef;
 constexpr auto HINT_PROP_MODE       = EAttr::eaPropExpr;
+constexpr auto HINT_METAFIELD       = EAttr::eaMetaField;
 
 //constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
@@ -4070,8 +4071,60 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //   }
 //}
 
-void Compiler :: compileMetaConstantAssigning()
+inline SNode findBookmarkOwner(SNode node, int bookmark)
 {
+   while (!node.compare(lxClass, lxNone))
+      node = node.parentNode();
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.compare(lxClassMethod, lxConstructor, lxClassField, lxStaticMethod)) {
+         SNode bm = current.findChild(lxBookmark);
+         if (bm.argument == bookmark)
+            return current;
+      }
+
+      current = current.nextNode();
+   }
+
+   return node;
+}
+
+void Compiler :: compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope)
+{
+   int bm = node.parentNode().findChild(lxBookmarkReference).argument;
+
+   ExprScope exprScope(&scope);
+
+   ObjectInfo source = mapObject(node, exprScope, EAttr::eaNone);
+   ref_t sourceRef = resolveConstantObjectReference(scope, source);
+   if (isPrimitiveRef(sourceRef))
+      sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
+
+   bool valid = false;
+   ident_t info;
+   if (sourceRef == scope.moduleScope->literalReference) {
+      if (source.kind == okLiteralConstant) {
+         info = scope.module->resolveConstant(source.param);
+         valid = true;
+      }
+   }
+
+   if (valid) {
+      // resolve the meta field target
+      SNode targetNode = findBookmarkOwner(node.parentNode(), bm);
+      Attribute key;
+      if (targetNode == lxClass) {
+         key = Attribute(caInfo, 0);
+      }
+      else if (targetNode.compare(lxClassMethod, lxConstructor, lxStaticMethod)) {
+         key = Attribute(caInfo, targetNode.argument);
+      }
+
+      scope.info.mattributes.add(key, saveMetaInfo(*scope.moduleScope, info)); 
+      scope.save();
+   }
+   else scope.raiseError(errIllegalOperation, node);
 }
 
 void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/)
@@ -4131,7 +4184,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
       // HOTFIX : recognize static field initializer
       if (target.kind == okStaticField || target.kind == okStaticConstantField || target.kind == okMetaField) {
          if (target.kind == okMetaField) {
-            compileMetaConstantAssigning(/*target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))*//*, accumulateMode*/);
+            compileMetaConstantAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
          }
          else if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
             // HOTFIX : static field initializer should be compiled as preloaded symbol
@@ -5322,6 +5375,10 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //   bool  dynamicSize = false;
    ref_t typeRef = 0;
 
+   // HOTFIX : skip bookmark reference
+   if (current == lxBookmarkReference)
+      current = current.nextNode();
+
    while (current == lxAttribute) {
       int value = current.argument;
       if (!_logic->validateExpressionAttribute(value, exprAttr, newVariable))
@@ -5649,7 +5706,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    ident_t token = terminal.identifier();
    ObjectInfo object;
 
-   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER)) {
+   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD)) {
       bool invalid = false;
       if (EAttrs::test(mode, HINT_INTERNALOP)) {
          if (terminal == lxReference) {
@@ -5662,6 +5719,11 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
       }
       else if (EAttrs::test(mode, HINT_MEMBER)) {
          object = scope.mapMember(token);
+      }
+      else if (EAttrs::test(mode, HINT_METAFIELD)) {
+         if (token.compare(META_INFO_NAME)) {
+            object = ObjectInfo(okMetaField, ClassAttribute::caInfo);
+         }         
       }
       if (invalid)
          scope.raiseError(errInvalidOperation, terminal);
@@ -5831,7 +5893,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
    ObjectInfo result;
 
    SNode current = node.firstChild();
-   if (current.compare(lxAttribute, lxType)) {
+   if (current.compare(lxAttribute, lxType, lxBookmarkReference)) {
       mode.include(declareExpressionAttributes(current, scope, exprMode));
       //      if (targetMode.testany(HINT_DIRECTCALL)) {
       //         // HOTFIX : direct call attribute should be applied to the operation
@@ -10560,57 +10622,23 @@ void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
 ////      current = current.nextNode();
 ////   }
 ////}
-//
-////int Compiler :: saveMetaInfo(_ModuleScope& scope, ident_t info)
-////{
-////   int position = 0;
-////
-////   ReferenceNs sectionName("'", METAINFO_SECTION);
-////   _Memory* section = scope.module->mapSection(scope.module->mapReference(sectionName, false) | mskMetaRDataRef, false);
-////   if (section) {
-////      MemoryWriter metaWriter(section);
-////
-////      position = metaWriter.Position();
-////
-////      metaWriter.writeLiteral(info);
-////   }
-////
-////   return position;
-////}
-//
-////void Compiler :: compileMetaCategory(SNode node, NamespaceScope& scope)
-////{
-////   ObjectInfo target;
-////   ident_t    info;
-////
-////   declareMetaAttributes(node, scope);
-////
-////   SNode identNode = node.findChild(lxNameAttr).firstChild(lxTerminalMask);
-////   if (identNode == lxIdentifier) {
-////      target = scope.mapTerminal(identNode.identifier(), false, 0);
-////      if (target.kind == okUnknown)
-////         scope.raiseError(errUnknownClass, identNode);
-////   }
-////
-////   SNode current = node.firstChild(lxObjectMask);
-////   if (isSingleStatement(current))
-////      current = current.findSubNodeMask(lxObjectMask);
-////
-////   switch (current.type) {
-////      case lxLiteral:
-////         info = current.identifier();
-////         break;
-////   }
-////
-////   if (target.kind == okClass && !emptystr(info)) {
-////      ClassScope classScope(&scope, target.param);
-////      _logic->defineClassInfo(*scope.moduleScope, classScope.info, classScope.reference);
-////
-////      classScope.info.mattributes.add(Attribute(caInfo, 0), saveMetaInfo(*scope.moduleScope, info));
-////      classScope.save();
-////   }
-////   else scope.raiseError(errInvalidSyntax, current);
-////}
+
+int Compiler :: saveMetaInfo(_ModuleScope& scope, ident_t info)
+{
+   int position = 0;
+
+   ReferenceNs sectionName("'", METAINFO_SECTION);
+   _Memory* section = scope.module->mapSection(scope.module->mapReference(sectionName, false) | mskMetaRDataRef, false);
+   if (section) {
+      MemoryWriter metaWriter(section);
+
+      position = metaWriter.Position();
+
+      metaWriter.writeLiteral(info);
+   }
+
+   return position;
+}
 
 void Compiler :: saveNamespaceInfo(SNode node, NamespaceScope& scope, bool innerMost)
 {

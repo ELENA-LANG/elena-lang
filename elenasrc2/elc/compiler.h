@@ -147,6 +147,7 @@ public:
 //      okExplicitConstant,             // param - reference, extraparam - subject
       okExtension,
       okClassSelf,                    // param - class reference; used in class resending expression
+      okMetaField,                    // param - meta attribute id
 
 //      okExternal,
       okInternal,
@@ -1055,7 +1056,7 @@ private:
 
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*//*, int mode*/);
    void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/);
-   void compileMetaConstantAssigning();
+   void compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope);
 
    ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
 
@@ -1218,8 +1219,8 @@ private:
 //   bool optimizeNestedExpression(_ModuleScope& scope, SNode& node);
 //   bool optimizeNewArrBoxing(_ModuleScope& scope, SNode& node);
 //   bool optimizeAssigningTargetBoxing(_ModuleScope& scope, SNode& node);
-//
-//   //int saveMetaInfo(_ModuleScope& scope, ident_t info);
+
+   int saveMetaInfo(_ModuleScope& scope, ident_t info);
 
    void saveNamespaceInfo(SNode node, NamespaceScope& scope, bool innerMost);
    void declareTemplate(SNode node, NamespaceScope& scope);

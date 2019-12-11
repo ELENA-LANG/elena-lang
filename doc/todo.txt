@@ -2,10 +2,7 @@
 In development:
 ------         
               dev
-                * support constant class meta attributes
-                * inline template : meta descr
                 * const - accumulators
-                * inline template : category
 
                 * get string length
 
@@ -285,6 +282,7 @@ In development:
                 * test embeddable method return with by ref variable
 
               dev1
+                * move all description to meta info using descr inline template
                 * write - Programming in ELENA : manual
                 * migrate tutorials from reddit
                 * duck typing tutorial

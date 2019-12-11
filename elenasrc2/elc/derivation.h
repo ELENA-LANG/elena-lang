@@ -282,7 +282,7 @@ class TemplateGenerator
 
    void copyNodes(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyChildren(SyntaxWriter& writer, SNode node, TemplateScope& scope);
-   void copyFieldInitTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyFieldInitTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, int bookmark);
    void copyFieldTree(SyntaxWriter& writer, SNode node, TemplateScope& scope, int bookmark);
    void copyExpressionTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope);

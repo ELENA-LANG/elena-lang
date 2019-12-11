@@ -441,6 +441,9 @@ namespace _ELENA_
    constexpr auto PARENT_VAR                 = "$$parent";         // the closure parent
    constexpr auto RETVAL_ARG                 = "$$retarg";         // the embedded returning arg
 
+  // --- Meta fields ---
+   constexpr auto META_INFO_NAME             = "info";
+
   // --- ELENA meta variables ---
    constexpr auto CLASSNAME_VAR              = "@classname";       // the class name
    constexpr auto PACKAGE_VAR                = "@package";       // the class name
@@ -450,7 +453,7 @@ namespace _ELENA_
 //   constexpr auto VIRTUAL_FIELD        = "$virtual#";
 
   // --- ELENA special sections ---
-//   constexpr auto METAINFO_SECTION     = "#metainfo";
+   constexpr auto METAINFO_SECTION           = "#metainfo";
    constexpr auto ATTRIBUTE_SECTION          = "#attributes";
    constexpr auto EXTENSION_SECTION          = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
