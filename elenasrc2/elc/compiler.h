@@ -977,17 +977,17 @@ private:
 ////   }
    ref_t mapMessage(SNode node, ExprScope& scope/*, bool variadicOne*/);
 
-//   size_t resolveArraySize(SNode node, Scope& scope);
-//
+   size_t resolveArraySize(SNode node, Scope& scope);
+
    ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode);
    //ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 
 //   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, /*bool binaryArray,*/ 
-                                    int& variableArg/*, ident_t& className*/);
-   void declareVariable(SNode& node, ExprScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/);
+   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
+                                    int& variableArg, ident_t& className);
+   void declareVariable(SNode& node, ExprScope& scope, ref_t typeRef/*, bool dynamicArray*/, bool canBeIdle);
 
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
@@ -1063,10 +1063,10 @@ private:
 //   ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo);
 ////   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-   int allocateStructure(/*bool bytearray, */int& allocatedSize, int& reserved);
+   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(SNode node, int& size);
-   bool allocateStructure(CodeScope& scope, int size, /*bool binaryArray, */ObjectInfo& exprOperand);
-   bool allocateTempStructure(ExprScope& scope, int size/*, bool binaryArray*/, ObjectInfo& exprOperand);
+   bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
+   bool allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
 //   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, EAttr mode);
    ObjectInfo compileInternalCall(SNode node, ExprScope& scope, ref_t message, ref_t signature, ObjectInfo info);

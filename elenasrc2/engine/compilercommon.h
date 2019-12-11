@@ -658,7 +658,7 @@ public:
 //   virtual bool isWrapper(ClassInfo& info) = 0;
 //   virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element) = 0;
 //   // check if the class can be used as a fixed-size embeddable array
-//   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
+   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
 //   virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;

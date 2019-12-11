@@ -1370,19 +1370,19 @@ ref_t Compiler :: resolveObjectReference(_CompileScope& scope, ObjectInfo object
 
 }
 
-//inline void writeClassNameInfo(SyntaxWriter& writer, _Module* module, ref_t reference)
-//{
-//   ident_t className = module->resolveReference(reference);
-//   if (isTemplateWeakReference(className)) {
-//      // HOTFIX : save weak template-based class name directly
-//      writer.appendNode(lxClassName, className);
-//   }
-//   else {
-//      IdentifierString fullName(module->Name(), className);
-//
-//      writer.appendNode(lxClassName, fullName.c_str());
-//   }
-//}
+inline void writeClassNameInfo(SNode& node, _Module* module, ref_t reference)
+{
+   ident_t className = module->resolveReference(reference);
+   if (isTemplateWeakReference(className)) {
+      // HOTFIX : save weak template-based class name directly
+      node.appendNode(lxClassName, className);
+   }
+   else {
+      IdentifierString fullName(module->Name(), className);
+
+      node.appendNode(lxClassName, fullName.c_str());
+   }
+}
 
 void Compiler :: declareCodeDebugInfo(SNode node, MethodScope& scope)
 {
@@ -1430,25 +1430,25 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
 //               if (param.class_ref == V_ARGARRAY) {
 //                  writer.newNode(lxParamsVariable);
 //               }
-//               else if (param.class_ref == moduleScope->intReference) {
-//                  writer.newNode(lxIntVariable);
-//               }
+               /*else */if (param.class_ref == moduleScope->intReference) {
+                  varNode = node.appendNode(lxIntVariable);
+               }
 //               else if (param.class_ref == moduleScope->longReference) {
 //                  writer.newNode(lxLongVariable);
 //               }
 //               else if (param.class_ref == moduleScope->realReference) {
 //                  writer.newNode(lxReal64Variable);
 //               }
-//               else if (param.size != 0 && param.class_ref != 0) {
-//                  ref_t classRef = param.class_ref;
-//                  if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
-//
-//                     writer.newNode(lxBinaryVariable);
-//                     writeClassNameInfo(writer, scope.module, classRef);
-//                  }
-//                  else writer.newNode(lxVariable);
-//               }
-               /*else */varNode = node.appendNode(lxVariable);
+               else if (param.size != 0 && param.class_ref != 0) {
+                  ref_t classRef = param.class_ref;
+                  if (classRef != 0 && _logic->isEmbeddable(*moduleScope, classRef)) {
+
+                     varNode = node.appendNode(lxBinaryVariable);
+                     writeClassNameInfo(node, scope.module, classRef);
+                  }
+                  else varNode = node.appendNode(lxVariable);
+               }
+               else varNode = node.appendNode(lxVariable);
 
                varNode.appendNode(lxLevel, prefix - param.offset);
                varNode.appendNode(lxIdentifier, name);
@@ -2082,23 +2082,23 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
 //
 //   writer.removeBookmark();
 //}
-//
-//size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
-//{
-//   if (isSingleStatement(node)) {
-//      SNode terminal = node.findSubNodeMask(lxTerminalMask);
-//      if (terminal.type == lxInteger) {
-//         return terminal.identifier().toInt();
-//      }
-//      else scope.raiseError(errInvalidSyntax, node);
-//   }
-//   else scope.raiseError(errInvalidSyntax, node);
-//
-//   return 0; // !! dummy returning statement, the code never reaches this point
-//}
 
-LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size/*, bool binaryArray*/,
-   int& variableArg/*, ident_t& className*/)
+size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
+{
+   if (isSingleStatement(node)) {
+      SNode terminal = node.findSubNodeMask(lxTerminalMask);
+      if (terminal.type == lxInteger) {
+         return terminal.identifier().toInt();
+      }
+      else scope.raiseError(errInvalidSyntax, node);
+   }
+   else scope.raiseError(errInvalidSyntax, node);
+
+   return 0; // !! dummy returning statement, the code never reaches this point
+}
+
+LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray,
+   int& variableArg, ident_t& className)
 {
    LexicalType variableType = lxVariable;
 
@@ -2126,20 +2126,20 @@ LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variab
             variableArg = size;
             break;
          default:
-   //         if (isPrimitiveRef(variable.extraparam)) {
-   //            variableType = lxBytesVariable;
-   //            variableArg = size;
-   //         }
-   //         else {
-   //            variableType = lxBinaryVariable;
-   //            // HOTFIX : size should be provide only for dynamic variables
-   //            if (binaryArray)
-   //               variableArg = size;
-   //
-   //            if (variable.reference != 0 && !isPrimitiveRef(variable.reference)) {
-   //               className = scope.moduleScope->module->resolveReference(variable.reference);
-   //            }
-   //         }
+            if (isPrimitiveRef(variable.extraparam)) {
+               variableType = lxBytesVariable;
+               variableArg = size;
+            }
+            else {
+               variableType = lxBinaryVariable;
+               // HOTFIX : size should be provide only for dynamic variables
+               if (binaryArray)
+                  variableArg = size;
+   
+               if (variable.reference != 0 && !isPrimitiveRef(variable.reference)) {
+                  className = scope.moduleScope->module->resolveReference(variable.reference);
+               }
+            }
             break;
       }
    }
@@ -2149,61 +2149,61 @@ LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variab
    return variableType;
 }
 
-void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRef/*, bool dynamicArray, bool canBeIdle*/)
+void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRef/*, bool dynamicArray*/, bool canBeIdle)
 {
    CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
 
    ident_t identifier = terminal.identifier();
-//   ident_t className = NULL;
+   ident_t className = NULL;
    LexicalType variableType = lxVariable;
    int variableArg = 0;
    int size = /*dynamicArray ? -1 : */0;
 
-//   // COMPILER MAGIC : if it is a fixed-sized array
-//   SNode opNode = terminal.nextNode();
-//   if (opNode == lxOperator && opNode.argument == REFER_OPERATOR_ID) {
-//      if (size)
-//         scope.raiseError(errInvalidSyntax, terminal);
-//
-//      SNode sizeExprNode = opNode.nextNode();
-//
-//      size = resolveArraySize(sizeExprNode, scope);
-//
-//      // HOTFIX : remove the size attribute
-//      opNode = lxIdle;
-//      sizeExprNode = lxIdle;
-//
-//      opNode = sizeExprNode.nextNode();
-//   }
+   // COMPILER MAGIC : if it is a fixed-sized array
+   SNode opNode = terminal.nextNode();
+   if (opNode == lxArrOperator/* && opNode.argument == REFER_OPERATOR_ID*/) {
+      if (size && opNode.nextNode() != lxNone)
+         scope.raiseError(errInvalidSyntax, terminal);
+
+      SNode sizeExprNode = opNode.nextNode();
+
+      size = resolveArraySize(sizeExprNode, scope);
+
+      // HOTFIX : remove the size attribute
+      opNode = lxIdle;
+      sizeExprNode = lxIdle;
+
+      opNode = sizeExprNode.nextNode();
+   }
    ObjectInfo variable;
    variable.reference = typeRef;
 
-//   if (size != 0 && variable.reference != 0) {
-//      if (!isPrimitiveRef(variable.reference)) {
-//         // if it is a primitive array
-//         variable.element = variable.reference;
-//         variable.reference = _logic->definePrimitiveArray(*scope.moduleScope, variable.element, true);
-//      }
-//      else scope.raiseError(errInvalidHint, terminal);
-//   }
+   if (size != 0 && variable.reference != 0) {
+      if (!isPrimitiveRef(variable.reference)) {
+         // if it is a primitive array
+         variable.element = variable.reference;
+         variable.reference = _logic->definePrimitiveArray(*scope.moduleScope, variable.element, true);
+      }
+      else scope.raiseError(errInvalidHint, terminal);
+   }
 
    ClassInfo localInfo;
-//   bool binaryArray = false;
+   bool binaryArray = false;
    if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.reference))
       scope.raiseError(errUnknownVariableType, terminal);
 
 //   if (variable.reference == V_BINARYARRAY && variable.element != 0) {
 //      localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
 //   }
-//
-//   if (_logic->isEmbeddableArray(localInfo) && size != 0) {
-//      binaryArray = true;
-//      size = size * (-((int)localInfo.size));
-//   }
-//   else if (variable.reference == V_OBJARRAY && size == -1) {
-//      // if it is a primitive dynamic array
-//   }
-   /*else */if (_logic->isEmbeddable(localInfo) && size == 0) {
+
+   if (_logic->isEmbeddableArray(localInfo) && size != 0) {
+      binaryArray = true;
+      size = size * (-((int)localInfo.size));
+   }
+   else if (variable.reference == V_OBJARRAY && size == -1) {
+      // if it is a primitive dynamic array
+   }
+   else if (_logic->isEmbeddable(localInfo) && size == 0) {
       bool dummy = false;
       size = _logic->defineStructSize(localInfo, dummy);
    }
@@ -2213,7 +2213,7 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
    variable.kind = okLocal;
 
    if (size > 0) {
-      if (!allocateStructure(*codeScope, size, /*binaryArray, */variable))
+      if (!allocateStructure(*codeScope, size, binaryArray, variable))
          scope.raiseError(errInvalidOperation, terminal);
 
       // make the reservation permanent
@@ -2234,7 +2234,7 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
       variable.param = codeScope->newLocal();
    }
 
-   variableType = declareVariableType(*codeScope, variable, localInfo, size/*, binaryArray*/, variableArg/*, className*/);
+   variableType = declareVariableType(*codeScope, variable, localInfo, size, binaryArray, variableArg, className);
 
    if (!codeScope->locals.exist(identifier)) {
       codeScope->mapLocal(identifier, variable.param, variable.reference, variable.element, size);
@@ -2246,27 +2246,27 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
       varNode.appendNode(lxLevel, variable.param);
       varNode.appendNode(lxIdentifier, identifier);
 
-//      if (!emptystr(className)) {
-//         if (isWeakReference(className)) {
-//            if (isTemplateWeakReference(className)) {
-//               // HOTFIX : save weak template-based class name directly
-//               varNode.appendNode(lxClassName, className);
-//            }
-//            else {
-//               IdentifierString fullName(scope.module->Name(), className);
-//
-//               varNode.appendNode(lxClassName, fullName);
-//            }
-//         }
-//         else varNode.appendNode(lxClassName, className);
-//      }
+      if (!emptystr(className)) {
+         if (isWeakReference(className)) {
+            if (isTemplateWeakReference(className)) {
+               // HOTFIX : save weak template-based class name directly
+               varNode.appendNode(lxClassName, className);
+            }
+            else {
+               IdentifierString fullName(scope.module->Name(), className);
+
+               varNode.appendNode(lxClassName, fullName);
+            }
+         }
+         else varNode.appendNode(lxClassName, className);
+      }
    }
    else scope.raiseError(errDuplicatedLocal, terminal);
 
-//   if (opNode == lxNone && canBeIdle) {
-//      // HOTFIX : remove the variable if the statement contains only a declaration
-//      terminal = lxIdle;
-//   }
+   if (opNode == lxNone && canBeIdle) {
+      // HOTFIX : remove the variable if the statement contains only a declaration
+      terminal = lxIdle;
+   }
 }
 
 //void Compiler :: writeTerminalInfo(SyntaxWriter& writer, SNode terminal)
@@ -4127,6 +4127,16 @@ void Compiler :: compileMetaConstantAssigning(ObjectInfo target, SNode node, Cla
    else scope.raiseError(errIllegalOperation, node);
 }
 
+inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference/*, bool isArray*/)
+{
+   int mask = /*isArray ? mskConstArray : */mskConstantRef;
+   IdentifierString name(moduleScope->module->resolveReference(reference));
+   name.append(STATICFIELD_POSTFIX);
+
+   return moduleScope->mapAnonymous(name.c_str()) | mask;
+
+}
+
 void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode)
 {
    ref_t valueRef = scope.info.staticValues.get(target.param);
@@ -4138,7 +4148,11 @@ void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, Cl
       ref_t targtListRef = valueRef & ~mskAnyRef;
       ref_t parentListRef = parentInfo.staticValues.get(target.param) & ~mskAnyRef;
    
-      if (parentListRef != 0) {
+      if (parentListRef != 0 && parentListRef == valueRef) {
+         valueRef = mapStaticField(scope.moduleScope, scope.reference/*, isArray*/);
+         scope.info.staticValues.add(target.param, valueRef);
+         scope.save();
+
          // inherit the parent list
          inheritClassConstantList(*scope.moduleScope, parentListRef, targtListRef);
       }
@@ -5472,7 +5486,7 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //      if (scope.ignoreDuplicates && scope.checkLocal(current.identifier())) {
 //         // ignore duplicates
 //      }
-      /*else */declareVariable(current, scope, typeRef/*, dynamicSize, !exprAttr.testany(HINT_REFOP)*/);
+      /*else */declareVariable(current, scope, typeRef/*, dynamicSize*/, !exprAttr.testany(HINT_REFOP));
    }
 
    return exprAttr;
@@ -5999,9 +6013,9 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 //
 //            result = ObjectInfo(okObject);
 //            break;
-//         case lxIdle:
-//            result = ObjectInfo(okUnknown);
-//            break;
+         case lxIdle:
+            result = ObjectInfo(okUnknown);
+            break;
          default:
             result = mapTerminal(current, scope, mode);
       }
@@ -6423,13 +6437,13 @@ ObjectInfo Compiler :: compileInternalCall(SNode node, ExprScope& scope, ref_t m
    return ObjectInfo(okObject);
 }
 
-int Compiler :: allocateStructure(/*bool bytearray, */int& allocatedSize, int& reserved)
+int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reserved)
 {
-   /*if (bytearray) {
+   if (bytearray) {
       // plus space for size
       allocatedSize = ((allocatedSize + 3) >> 2) + 2;
    }
-   else */allocatedSize = (allocatedSize + 3) >> 2;
+   else allocatedSize = (allocatedSize + 3) >> 2;
 
    int retVal = reserved;
    reserved += allocatedSize;
@@ -6437,14 +6451,14 @@ int Compiler :: allocateStructure(/*bool bytearray, */int& allocatedSize, int& r
    // the offset should include frame header offset
    retVal = -2 - retVal;
 
-   //// reserve place for byte array header if required
-   //if (bytearray)
-   //   retVal -= 2;
+   // reserve place for byte array header if required
+   if (bytearray)
+      retVal -= 2;
 
    return retVal;
 }
 
-bool Compiler :: allocateStructure(CodeScope& scope, int size, /*bool binaryArray, */ObjectInfo& exprOperand)
+bool Compiler :: allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand)
 {
    if (size <= 0)
       return false;
@@ -6453,7 +6467,7 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, /*bool binaryArra
    if (methodScope == NULL)
       return false;
 
-   int offset = allocateStructure(/*binaryArray, */size, scope.allocated2);
+   int offset = allocateStructure(binaryArray, size, scope.allocated2);
 
    exprOperand.kind = okLocalAddress;
    exprOperand.param = offset;
@@ -6461,14 +6475,14 @@ bool Compiler :: allocateStructure(CodeScope& scope, int size, /*bool binaryArra
    return true;
 }
 
-bool Compiler :: allocateTempStructure(ExprScope& scope, int size/*, bool binaryArray*/, ObjectInfo& exprOperand)
+bool Compiler :: allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand)
 {
    if (size <= 0 || scope.tempAllocated2 == -1)
       return false;
 
    CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
 
-   int offset = allocateStructure(/*binaryArray, */size, scope.tempAllocated2);
+   int offset = allocateStructure(binaryArray, size, scope.tempAllocated2);
 
    if (scope.tempAllocated2 > codeScope->reserved2)
       codeScope->reserved2 = scope.tempAllocated2;
@@ -8404,16 +8418,6 @@ void Compiler :: generateClassField(ClassScope& scope, SyntaxTree::Node current,
 //   }
 }
 
-inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference/*, bool isArray*/)
-{
-   int mask = /*isArray ? mskConstArray : */mskConstantRef;
-   IdentifierString name(moduleScope->module->resolveReference(reference));
-   name.append(STATICFIELD_POSTFIX);
-
-   return moduleScope->mapAnonymous(name.c_str()) | mask;
-
-}
-
 inline SNode findInitNode(SNode node, ident_t name)
 {
    SNode current = node.firstChild();
@@ -9545,7 +9549,7 @@ ObjectInfo Compiler :: allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t 
    if (size > 0) {
       ObjectInfo retVal;
 
-      allocateTempStructure(scope, size, retVal);
+      allocateTempStructure(scope, size, false, retVal);
       retVal.reference = targetRef;
 
       return retVal;
@@ -9621,7 +9625,7 @@ int Compiler :: allocateStructure(SNode node, int& size)
    }
 
    // allocating space
-   int offset = allocateStructure(/*false, */size, reserved);
+   int offset = allocateStructure(false, size, reserved);
 
    // HOT FIX : size should be in bytes
    size *= 4;

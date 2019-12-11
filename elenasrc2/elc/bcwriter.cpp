@@ -224,16 +224,16 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
 //   tape.write(bcSNop);
 //   tape.write(bcFreeStack, 1);
 //}
-//
-//void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
-//{
-//   if (!emptystr(localName)) {
-//      tape.write(bdStruct, writeString(localName), level);
-//      if (!emptystr(className))
-//         tape.write(bdLocalInfo, writeString(className));
-//   }
-//}
-//
+
+void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
+{
+   if (!emptystr(localName)) {
+      tape.write(bdStruct, writeString(localName), level);
+      if (!emptystr(className))
+         tape.write(bdLocalInfo, writeString(className));
+   }
+}
+
 //void ByteCodeWriter :: declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
 //{
 //   if (!emptystr(localName)) {
@@ -5656,11 +5656,10 @@ void ByteCodeWriter :: copyFromLocalAddress(CommandTape& tape, int size, int arg
 
 void ByteCodeWriter :: copyToLocalAddress(CommandTape& tape, int size, int argument)
 {
-   if ((size & 3) == 0) {
-      // if it is a dword aligned
-      tape.write(bcCopyToF, argument, size >> 2);
-   }
-   else throw InternalError("not yet implemente"); // !! temporal
+   // stack operations are always 4-byte aligned
+   size = align(size, 4);
+
+   tape.write(bcCopyToF, argument, size >> 2);
 }
 
 void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
@@ -6664,19 +6663,19 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
             level, false);
          break;
       }
-//      case lxBinaryVariable:
-//      {
-//         int level = current.findChild(lxLevel).argument;
-//
-//         // HOTFIX : only for dynamic objects
-//         if (current.argument != 0)
-//            generateBinary(tape, current, level);
-//
-//         declareStructInfo(tape,
-//            current.findChild(lxIdentifier).identifier(),
-//            level, current.findChild(lxClassName).identifier());
-//         break;
-//      }
+      case lxBinaryVariable:
+      {
+         int level = current.findChild(lxLevel).argument;
+
+         // HOTFIX : only for dynamic objects
+         if (current.argument != 0)
+            generateBinary(tape, current, level);
+
+         declareStructInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            level, current.findChild(lxClassName).identifier());
+         break;
+      }
 //      case lxBreakpoint:
 //         translateBreakpoint(tape, current, false);
 //         break;
@@ -6728,7 +6727,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxBytesVariable:
          case lxShortsVariable:
          case lxIntsVariable:
-//         case lxBinaryVariable:
+         case lxBinaryVariable:
             generateDebugInfo(tape, current);
             break;
 //         case lxYieldDispatch:
@@ -6888,19 +6887,19 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
 //               current.firstChild(lxTerminalMask).identifier(),
 //               current.findChild(lxLevel).argument);
 //            break;
-//         case lxBinaryVariable:
-//         {
-//            int level = current.findChild(lxLevel).argument;
-//
-//            // HOTFIX : only for dynamic objects
-//            if (current.argument != 0)
-//               generateBinary(tape, current, level);
-//
-//            declareStructInfo(tape,
-//               current.findChild(lxIdentifier).identifier(),
-//               level, current.findChild(lxClassName).identifier());
-//            break;
-//         }
+         case lxBinaryVariable:
+         {
+            int level = current.findChild(lxLevel).argument;
+
+            // HOTFIX : only for dynamic objects
+            if (current.argument != 0)
+               generateBinary(tape, current, level);
+
+            declareStructInfo(tape,
+               current.findChild(lxIdentifier).identifier(),
+               level, current.findChild(lxClassName).identifier());
+            break;
+         }
       }
 
       current = current.nextNode();

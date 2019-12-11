@@ -75,6 +75,7 @@ enum LexicalType
    lxInlineDecl               = 0x001150,
    lxInlineAttribute          = 0x001160,
    lxFieldAccum               = 0x001170,
+   lxArrOperator              = 0x021180,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -113,6 +114,7 @@ enum LexicalType
    lxIntsVariable             = 0x010102,
    lxBytesVariable            = 0x010103,
    lxShortsVariable           = 0x010104,
+   lxBinaryVariable           = 0x010105,
    lxLocal                    = 0x018110,   // arg - offset
    lxSelfLocal                = 0x018111,
    lxLocalAddress             = 0x018112,   // arg - offset
@@ -175,6 +177,7 @@ enum LexicalType
    lxBookmark                 = 0x000F1C,
    lxBookmarkReference        = 0x000F1D,
    lxInternalRef              = 0x000F1E,
+   lxClassName                = 0x000F1F, // arg - identifier
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -276,11 +279,9 @@ enum LexicalType
 //   lxLongVariable             = 0x10029,
 //   lxReal64Variable           = 0x1002A,
 //   lxForward                  = 0x1002E,
-//   lxBinaryVariable           = 0x10038,
 //   lxOuterMember              = 0x1003A,  // a collection member, arg - offset
 //   lxParamsVariable           = 0x1003E,
 
-//   lxClassName                = 0x20014, // arg - identifier
 //   lxIfValue                  = 0x20017, // arg - reference
 //   lxElseValue                = 0x20018, // arg - reference
 //   lxIntExtArgument           = 0x2001C,

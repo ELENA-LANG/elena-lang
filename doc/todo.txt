@@ -2,11 +2,14 @@
 In development:
 ------         
               dev
-                * get string length
-
                 * strings to wide string conversion
 
                 * externals
+
+                * conversion routines : others
+                * implicit conversion
+                * recognize implicit conversion
+
                 * console operations
 
                 * extension to read the class name, package info
@@ -29,10 +32,7 @@ In development:
 
                 * custom dispatch
 
-                * conversion routines : self, others
 
-                * fixed-size variable
-                * fixed-size array
                 * arrays of templates
                 * arrays of template of templates
 
@@ -113,11 +113,9 @@ In development:
                 * dispatching in compile time
                 * dispatching in run time
 
-                * implicit conversion
                 * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
                   signature or default one (if nothing is found - cannot be declared)
 
-                * recognize implicit conversion
 
                 * auto symbol
                 * auto method
@@ -279,6 +277,7 @@ In development:
                 * test property with template-based type, array type
                 * test embeddable method return with by ref variable
                 * test accumulating constants
+                * assigning a big number to short / byte local variable - should be truncated?
 
               dev1
                 * move all description to meta info using descr inline template
