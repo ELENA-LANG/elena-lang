@@ -110,6 +110,32 @@ labEnd:
     
 end
 
+// wsubcopyz(target,index,size,arr)
+procedure coreapi'wsubcopyz
+
+  mov  eax, [esp+16]
+  mov  edx, [esp+12]
+  mov  esi, [esp+4]
+  mov  ecx, [edx]
+  mov  edi, [esp+8]
+  test ecx, ecx
+  mov  ebx, [edi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, [eax + ebx*2]
+  mov  word ptr [esi], dx
+  add  ebx, 1
+  lea  esi, [esi + 2]
+  sub  ecx, 1
+  jnz  short labNext
+  mov  word ptr [esi], cx
+
+labEnd:
+  ret
+
+end
+
 // ; === internal ===
 
 procedure coreapi'default_handler                                                       

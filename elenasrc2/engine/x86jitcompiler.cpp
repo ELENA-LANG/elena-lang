@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/49;
+const int gcCommandNumber = /*160*/50;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -72,9 +72,9 @@ const int gcCommands[gcCommandNumber] =
    bcMTRedirect, bcJumpVI, bcXMTRedirect, bcRestore, bcPushF,
    bcCopyF, bcCopyFI, bcAddF, bcCopyToF, bcCopyToFI,
    bcSubF, bcMulF, bcDivF, bcPushAI, bcGet,
-   bcSet, bcCopyToAI, bcCreateR, bcFillR, bcXSet,
+   bcSet, bcCopyToAI, bcCreate, bcFillR, bcXSet,
    bcXSetFI, bcClass, bcXSaveFI, bcLen, bcSave,
-   bcSelect, bcEqual, bcLess, bcSNop,
+   bcSelect, bcEqual, bcLess, bcSNop, bcCreateN,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -110,12 +110,13 @@ const int gcCommands[gcCommandNumber] =
 //   bcEOrN, bcNewI, bcACopyAI
 };
 
-const int gcCommandExNumber = /*6*/4;
+const int gcCommandExNumber = 8;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
    bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
-//   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00
+   //   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
+   bcCreateN + 0x100, bcCreateN + 0x200, bcCreateN + 0x300, bcCreateN + 0x400
 };
 
 // command table
@@ -163,7 +164,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, & loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
+   &compileNop, &compileDynamicCreateN, & loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileNop,
@@ -619,6 +620,43 @@ void _ELENA_::loadMTOpX(int opcode, x86JITScope& scope, int prefix)
       }
       else if (relocation[0] == -3) {
          scope.code->writeDWord(scope.extra_arg2);
+      }
+      else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
+         scope.helper->writeMTReference(*scope.code);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadNOpX(int opcode, x86JITScope& scope, int prefix)
+{
+   char* code = nullptr;
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      if (gcCommandExs[i] == opcode + prefix) {
+         code = (char*)scope.compiler->_inlineExs[i];
+         break;
+      }
+   }
+
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.writeReference(*scope.code, scope.argument, 0);
       }
       else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
          scope.helper->writeMTReference(*scope.code);
@@ -1117,6 +1155,39 @@ void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
    scope.code->writeWord(0x43C7);
    scope.code->writeByte(0xF8);
    scope.code->writeDWord(length);
+
+   if (vmtRef) {
+      // ; set vmt reference
+      // mov [ebx-4], vmt
+      scope.code->writeWord(0x43C7);
+      scope.code->writeByte(0xFC);
+      scope.writeReference(*scope.code, vmtRef, 0);
+   }
+}
+
+void _ELENA_::compileDynamicCreateN(int opcode, x86JITScope& scope)
+{
+   // HOT FIX : reverse the argument order
+   ref_t vmtRef = scope.argument;
+   scope.argument = scope.tape->getDWord(); // item size
+
+   switch (scope.argument) {
+      case 1:
+         loadNOpX(opcode, scope, 0x100);
+         break;
+      case 2:
+         loadNOpX(opcode, scope, 0x200);
+         break;
+      case 4:
+         loadNOpX(opcode, scope, 0x300);
+         break;
+      case 8:
+         loadNOpX(opcode, scope, 0x400);
+         break;
+      default:
+         loadNOp(opcode, scope);
+         break;
+   }
 
    if (vmtRef) {
       // ; set vmt reference

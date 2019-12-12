@@ -129,21 +129,21 @@ rstructure %VOIDPTR
 end
 
 // --- GC_ALLOC ---
-// in: edx - size ; out: ebx - created object
+// in: ecx - size ; out: ebx - created object
 procedure %GC_ALLOC
 
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_yg_end]
-  add  edx, eax
-  cmp  edx, ecx
+  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
+  add  ecx, eax
+  cmp  ecx, edx
   jae  short labYGCollect
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], edx
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   lea  ebx, [eax + elObjectOffset]
   ret
 
 labYGCollect:
   // ; restore ecx
-  sub  edx, eax
+  sub  ecx, eax
 
   // ; save registers
   push ebp
@@ -151,7 +151,7 @@ labYGCollect:
   // ; lock frame
   mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
 
-  push edx
+  push ecx
   
   // ; create set of roots
   mov  ebp, esp
@@ -304,14 +304,14 @@ labCollectFrame:
   mov  esp, ebp             
   
   // ; restore registers
-  pop  edx
+  pop  ecx
   pop  ebp
 
   // ; try to allocate once again
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  add  edx, eax
+  add  ecx, eax
   lea  ebx, [eax + elObjectOffset]
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], edx
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   ret
 
 labFullCollect:
@@ -524,7 +524,7 @@ labFixRoot:
 labError:
   // ; restore stack
   mov  esp, [esp]
-  pop  edx
+  pop  ecx
   pop  ebp
 
 labError2:
@@ -534,7 +534,7 @@ labError2:
 
 // ; bad luck, we have to expand GC
 labBigAlloc2:
-  push edx
+  push ecx
 
   mov  eax, [data : %CORE_GC_TABLE + gc_end]
   mov  ecx, 2A000h
@@ -552,20 +552,20 @@ labBigAlloc2:
   add  ecx, 15000h
   mov  [data : %CORE_GC_TABLE + gc_end], ecx
 
-  pop  edx
+  pop  ecx
 
 labBigAlloc:
   // ; try to allocate in the mg
-  sub  edx, eax
-  cmp  edx, 800000h
+  sub  ecx, eax
+  cmp  ecx, 800000h
   jae  labError2
 
   mov  eax, [data : %CORE_GC_TABLE + gc_mg_current]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
-  add  edx, eax
-  cmp  edx, ecx
+  mov  edx, [data : %CORE_GC_TABLE + gc_end]
+  add  ecx, eax
+  cmp  ecx, edx
   jae  labBigAlloc2
-  mov  [data : %CORE_GC_TABLE + gc_mg_current], edx
+  mov  [data : %CORE_GC_TABLE + gc_mg_current], ecx
   lea  ebx, [eax + elObjectOffset]
 
   ret  
@@ -901,8 +901,8 @@ end
 // ; throw
 inline % 7
 
-  mov  esi, [data : %CORE_GC_TABLE + gc_et_current]
-  jmp  [esi]
+  mov  eax, [data : %CORE_GC_TABLE + gc_et_current]
+  jmp  [eax]
 
 end
 
@@ -1038,14 +1038,14 @@ inline % 98h
 
 end
 
-// ; creater
+// ; create
 inline % 9Ah
 
   mov  eax, [esp]
   mov  ecx, page_ceil
   mov  edx, [eax]
-  lea  edx, [ecx + edx*4]
-  and  edx, page_mask 
+  lea  ecx, [ecx + edx*4]
+  and  ecx, page_mask 
  
   call code : %GC_ALLOC
 
@@ -1559,6 +1559,109 @@ labNext:
 
 end
 
+// ; createn (__arg1 - item size)
+inline % 0E1h
+
+  mov  eax, [esp]
+  mov  ecx, page_ceil
+  mov  eax, [eax]
+  mov  ebx, __arg1
+  imul ebx
+  add  ecx, eax
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   eax, [esp]
+  mov   ecx, 800000h
+  mov   eax, [eax]
+  mov   esi, __arg1
+  imul  esi
+  or    ecx, eax
+  mov   [ebx-8], ecx
+  
+end
+
+// ; createn (__arg1 = 1)
+inline % 1E1h
+
+  mov  eax, [esp]
+  mov  ecx, page_ceil
+  add  ecx, [eax]
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   eax, [esp]
+  mov   ecx, 800000h
+  or    ecx, [eax]
+  mov   [ebx-8], ecx
+  
+end
+
+// ; createn (__arg1 = 2)
+inline % 2E1h
+
+  mov  eax, [esp]
+  mov  ecx, page_ceil
+  mov  eax, [eax]
+  shl  eax, 1
+  add  ecx, eax
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   eax, [esp]
+  mov   ecx, 800000h
+  mov   eax, [eax]
+  shl  eax, 1
+  or    ecx, eax
+  mov   [ebx-8], ecx
+  
+end
+
+// ; createn (__arg1 = 4)
+inline % 3E1h
+
+  mov  eax, [esp]
+  mov  ecx, page_ceil
+  mov  eax, [eax]
+  shl  eax, 2
+  add  ecx, eax
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   eax, [esp]
+  mov   ecx, 800000h
+  mov   eax, [eax]
+  shl  eax, 2
+  or    ecx, eax
+  mov   [ebx-8], ecx
+  
+end
+
+// ; createn (__arg1 = 8)
+inline % 4E1h
+
+  mov  eax, [esp]
+  mov  ecx, page_ceil
+  mov  eax, [eax]
+  shl  eax, 3
+  add  ecx, eax
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   eax, [esp]
+  mov   ecx, 800000h
+  mov   eax, [eax]
+  shl  eax, 3
+  or    ecx, eax
+  mov   [ebx-8], ecx
+  
+end
+
 // ; xsetfi (__arg1 - index, __arg2 - index)
 inline % 0E2h
 
@@ -1627,7 +1730,7 @@ end
 // ; new (__arg1 - size)
 inline % 0F0h
 	
-  mov  edx, __arg1
+  mov  ecx, __arg1
   call code : %GC_ALLOC
 
 end

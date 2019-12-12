@@ -595,7 +595,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCallR:
       case bcStoreR:
       case bcMovR:
-      case bcCreateR:
+      case bcCreate:
       case bcFillR:
 //      case bcBCopyR:
          printCommand(command, opcode);
@@ -683,6 +683,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcNewN:
       case bcFillRI:
+      case bcCreateN:
          printCommand(command, opcode);
          printReference(command, module, argument);
          command.append(", ");
@@ -976,8 +977,8 @@ void listFlags(int flags, int& row, int pageSize)
    if (test(flags, elExtension))
       printLine("@flag ", "elExtension", row, pageSize);
 
-   //if (test(flags, elMessage))
-   //   printLine("@flag ", "elMessage", row, pageSize);
+   if (test(flags, elMessage))
+      printLine("@flag ", "elMessage", row, pageSize);
 
    //if (test(flags, elExtMessage))
    //   printLine("@flag ", "elExtMessage", row, pageSize);

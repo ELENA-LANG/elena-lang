@@ -994,11 +994,6 @@ public sealed const struct String : BaseValue
 //    string clone() = String.copy(self);
 }
 
-//// --- emptyWideString ---
-//
-///// An empty wide literal value
-//public const wide emptyWideString = ""w;
-
 // --- WideString ---
 
 /// A UTF-18 literal value
@@ -1009,15 +1004,15 @@ public sealed const struct WideString : BaseValue
 //    /// return the default value
 //    static wide Default
 //        = emptyWideString;
-//
-////    /// Creates the empty literal
-////    constructor min
-////        = emptyWideLiteral.
-//        
-//    /// Creates the literal string with specified length
-//    constructor allocate(int size)
-//        = new short[](size + 1);
-//
+
+    /// Creates the empty literal
+    const static MinValue
+        = ""w;
+        
+    /// Creates the literal string with specified length
+    constructor allocate(int size)
+        = new short[](size + 1);
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    constructor copy(int size, wide s)
 //        <= allocate(size)
@@ -1036,13 +1031,13 @@ public sealed const struct WideString : BaseValue
 //    /// Creates the copy of a subarray
 //    constructor new(int index, int size, char[] array)
 //        => system'core_routines'__wide;
-//
-//    internal constructor fromShortArray(int anIndex, int aSize, short[] anArray)
-//        <= allocate(aSize)
-//    {
-//        intern system'core_routines'__wide.copy(self, anIndex, aSize, anArray)
-//    }
-//
+
+    /*internal*/ constructor fromShortArray(int index, int size, short[] array)
+        <= allocate(size)
+    {
+        intern system'core_routines'__wide.copy(self, index, size, array)
+    }
+
 //    /// Converts to UTF-8 literal
 //    string cast() = stringConvertor.convert(self);
 //
@@ -1200,6 +1195,11 @@ public sealed const struct WideString : BaseValue
 //    /// Clones the value
 //    wide clone() = WideString.copy(self);
 }
+
+// --- emptyWideString ---
+
+/// An empty wide literal value
+public const wide emptyWideString = WideString.MinValue;
 
 //// --- Variant ---
 //

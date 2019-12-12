@@ -540,25 +540,10 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated/*
 //   tape.write(bcClose);
 //}
 
-//void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize)
-//{
-//   if (itemSize == 4) {
-//      // ncreate
-//      tape.write(bcNCreate);
-//   }
-//   else if (itemSize == 2) {
-//      // wcreate
-//      tape.write(bcWCreate);
-//   }
-//   else {
-//      if (itemSize != 1) {
-//         // muln itemSize
-//         tape.write(bcMulN, itemSize);
-//      }
-//      // bcreate
-//      tape.write(bcBCreate);
-//   }
-//}
+void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference)
+{
+   tape.write(bcCreateN, reference, itemSize);
+}
 
 void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)
 {
@@ -621,7 +606,7 @@ void ByteCodeWriter :: clearDynamicObject(CommandTape& tape)
 void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference)
 {
    // creater
-   tape.write(bcCreateR, reference | mskVMTRef);
+   tape.write(bcCreate, reference | mskVMTRef);
 }
 
 //void ByteCodeWriter :: copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode)
@@ -4294,18 +4279,22 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
    generateObject(tape, node.firstChild(lxObjectMask), scope, STACKOP_MODE);
 
    if (node.argument != 0) {
-      int size = node.findSubNode(lxSize).argument;
+      if (!node.existChild(lxSize))
+         throw InternalError("size is not defined"); // !! temporal
+
+      int size = node.findChild(lxSize).argument;
 //
 //      if ((int)node.argument < 0) {
 //         //HOTFIX : recognize primitive object
 //         loadObject(tape, lxNil, 0, 0);
 //      }
 //      else loadObject(tape, lxClassSymbol, node.argument, 0);
-//
-//      if (size < 0) {
-//         newDynamicStructure(tape, -size);
-//      }
-      /*else */if (size == 0) {
+
+      if (size < 0) {
+         newDynamicStructure(tape, -size, node.argument);
+         releaseStack(tape);
+      }
+      else if (size == 0) {
          newDynamicObject(tape, node.argument);
          clearDynamicObject(tape);
          releaseStack(tape);

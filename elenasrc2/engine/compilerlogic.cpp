@@ -1436,11 +1436,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //         info.header.flags = elDebugSubject | elStructureRole | elReadOnlyRole;
 //         info.size = 4;
 //         break;
-//      case V_MESSAGE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
-//         info.size = 4;
-//         break;
+      case V_MESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
 //      case V_EXTMESSAGE:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
@@ -1893,7 +1893,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
       case V_INTBINARY:
 //      case V_PTRBINARY:
       case V_STRING:
-//      case V_MESSAGE:
+      case V_MESSAGE:
 //      case V_SUBJECT:
 //      case V_EXTMESSAGE:
 //      case V_SYMBOL:
@@ -2069,9 +2069,9 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 //         case V_SUBJECT:
 //            info.header.flags |= elDebugSubject | elSubject;
 //            break;
-//         case V_MESSAGE:
-//            info.header.flags |= (elDebugMessage | elMessage);
-//            break;
+         case V_MESSAGE:
+            info.header.flags |= (elDebugMessage | elMessage);
+            break;
 //         case V_EXTMESSAGE:
 //            info.header.flags |= (elDebugMessage | elExtMessage);
 //            break;

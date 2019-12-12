@@ -320,6 +320,16 @@ void ECodesAssembler::compileRMCommand(ByteCode code, TokenInfo& token, MemoryWr
    writeCommand(ByteCommand(code, reference1 & ~mskAnyRef, reference2), writer);
 }
 
+void ECodesAssembler::compileRNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+{
+   size_t reference1 = compileRArg(token, binary);
+
+   token.read();
+   int n = token.readInteger(constants);
+
+   writeCommand(ByteCommand(code, reference1 & ~mskAnyRef, n), writer);
+}
+
 void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
 {
 	int n = token.readInteger(constants);
@@ -612,6 +622,9 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcVCallRM:
          case bcCallRM:
             compileRMCommand(opcode, token, writer, binary);
+            break;
+         case bcCreateN:
+            compileRNCommand(opcode, token, writer, binary);
             break;
          default:
             writeCommand(ByteCommand(opcode), writer);

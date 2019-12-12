@@ -79,6 +79,7 @@ protected:
    friend void loadROp(int opcode, x86JITScope& scope);
    friend void loadMTOp(int opcode, x86JITScope& scope);
    friend void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
+   friend void loadNOpX(int opcode, x86JITScope& scope, int prefix);
 
    // commands
    friend void compileNop(int opcode, x86JITScope& scope);
@@ -112,6 +113,7 @@ protected:
    friend void compileCreate(int opcode, x86JITScope& scope);
    friend void compileFill(int opcode, x86JITScope& scope);
    friend void compileCreateN(int opcode, x86JITScope& scope);
+   friend void compileDynamicCreateN(int opcode, x86JITScope& scope);
 //   friend void compileCreateI(int opcode, x86JITScope& scope);
    friend void compileSelectR(int opcode, x86JITScope& scope);
    friend void compileSetR(int opcode, x86JITScope& scope);
@@ -227,6 +229,7 @@ void loadFPOp(int opcode, x86JITScope& scope);
 void loadROp(int opcode, x86JITScope& scope);
 void loadMTOp(int opcode, x86JITScope& scope);
 void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
+void loadNOpX(int opcode, x86JITScope& scope, int prefix);
 void compileNop(int opcode, x86JITScope& scope);
 void compileBreakpoint(int opcode, x86JITScope& scope);
 //void compilePop(int opcode, x86JITScope& scope);
@@ -252,6 +255,7 @@ void compileCreate(int opcode, x86JITScope& scope);
 void compileFill(int opcode, x86JITScope& scope);
 //void compileCreateI(int opcode, x86JITScope& scope);
 void compileCreateN(int opcode, x86JITScope& scope);
+void compileDynamicCreateN(int opcode, x86JITScope& scope);
 void compileSelectR(int opcode, x86JITScope& scope);
 void compileSetR(int opcode, x86JITScope& scope);
 //void compileBCopyR(int opcode, x86JITScope& scope);

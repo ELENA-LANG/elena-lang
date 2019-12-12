@@ -2,6 +2,8 @@
 In development:
 ------         
               dev
+                * createn : there should be optimized versions for i=1,2,4,8
+
                 * strings to wide string conversion
 
                 * externals

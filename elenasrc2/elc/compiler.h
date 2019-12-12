@@ -514,11 +514,7 @@ private:
    // - SymbolScope -
    struct SymbolScope : public SourceScope
    {
-      bool  constant;
-      bool  singleton;
-//      bool  staticOne;
-//      bool  preloaded;
-      ref_t outputRef;
+      SymbolExpressionInfo info;
 
 ////      virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -924,6 +920,7 @@ private:
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
 
    ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
+   ref_t generateConstant(_CompileScope& scope, ObjectInfo retVal);
 
    void saveExtension(ClassScope& scope, ref_t message/*, bool internalOne*/);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
@@ -1047,7 +1044,7 @@ private:
    ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
 //   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
-   ObjectInfo compileRootExpression(SNode node, CodeScope& scope);
+   ObjectInfo compileRootExpression(SNode node, CodeScope& scope, ref_t targetRef, EAttr mode);
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, EAttr mode);
    void compileEmbeddableRetExpression(SNode node, ExprScope& scope);
 

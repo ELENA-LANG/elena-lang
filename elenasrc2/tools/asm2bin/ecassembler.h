@@ -78,6 +78,7 @@ class ECodesAssembler : public Assembler
    void compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileRRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   void compileRNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileCreateCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
 

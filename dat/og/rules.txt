@@ -15,3 +15,4 @@ pusha peeksi := 0 => pusha nop;
 pushr peeksi := 0 => movr pusha;
 
 movf pusha movr => pushf nop movr;
+movr pusha movr => pushr nop movr;

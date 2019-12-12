@@ -443,11 +443,11 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
          // check if the object can be treated like a constant object
          r = moduleScope->loadSymbolExpressionInfo(symbolInfo, module->resolveReference(reference));
          if (r) {
-            ref_t outputRef = symbolInfo.expressionClassRef;
+            ref_t outputRef = symbolInfo.exprRef;
 
             // if it is a constant
             if (symbolInfo.type == SymbolExpressionInfo::Type::Constant) {
-               ref_t classRef = symbolInfo.expressionClassRef;
+               ref_t classRef = symbolInfo.exprRef;
 
                /*if (symbolInfo.listRef != 0) {
                   return ObjectInfo(okArrayConst, symbolInfo.listRef, classRef);
@@ -456,6 +456,9 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
             }
             else if (symbolInfo.type == SymbolExpressionInfo::Type::Singleton) {
                return ObjectInfo(okSingleton, outputRef, outputRef);
+            }
+            else if (symbolInfo.type == SymbolExpressionInfo::Type::ConstantSymbol) {
+               return defineObjectInfo(outputRef, true);
             }
             // if it is a typed symbol
             else if (outputRef != 0) {
@@ -584,9 +587,6 @@ Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference, Visibi
 Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Visibility visibility)
    : SourceScope(parent, reference, visibility)
 {
-   outputRef = 0;
-   constant = false;
-   singleton = false;
    //staticOne = false;
    //preloaded = false;
 }
@@ -598,15 +598,6 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Vi
 
 void Compiler::SymbolScope :: save()
 {
-   SymbolExpressionInfo info;
-   info.expressionClassRef = outputRef;
-   if (singleton) {
-      info.type = SymbolExpressionInfo::Type::Singleton;
-   }
-   else if (constant) {
-      info.type = SymbolExpressionInfo::Type::Constant;
-   }   
-
    // save class meta data
    MemoryWriter metaWriter(moduleScope->module->mapSection(reference | mskMetaRDataRef, false), 0);
    info.save(&metaWriter);
@@ -1801,21 +1792,27 @@ void Compiler :: validateType(Scope& scope, SNode current, ref_t typeRef, bool i
 
 void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode)
 {
+   bool constant = false;
+   ref_t outputRef = 0;
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value, scope.constant, /*scope.staticOne, scope.preloaded, */scope.visibility)) {
+         if (!_logic->validateSymbolAttribute(value, constant, /*scope.staticOne, scope.preloaded, */scope.visibility)) {
             current.setArgument(0); // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
       }
       else if (current == lxType) {
-         scope.outputRef = resolveTypeAttribute(current, scope, declarationMode);
+         outputRef = resolveTypeAttribute(current, scope, declarationMode);
       }
 
       current = current.nextNode();
    }
+
+   scope.info.exprRef = outputRef;
+   if (constant)
+      scope.info.type = SymbolExpressionInfo::Type::Constant;
 }
 
 int Compiler :: resolveSize(SNode node, Scope& scope)
@@ -1937,14 +1934,14 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
 //            break;
 //      }
 //   }
-//   else if (attrs.fieldRef == V_MESSAGE || attrs.fieldRef == V_SUBJECT) {
-//      if (attrs.size == 8 && attrs.fieldRef == V_MESSAGE) {
-//         attrs.fieldRef = V_EXTMESSAGE;
-//      }
-//      else if (attrs.size != 4) {
-//         scope.raiseError(errInvalidHint, node);
-//      }
-//   }
+   else if (attrs.fieldRef == V_MESSAGE/* || attrs.fieldRef == V_SUBJECT*/) {
+      //if (attrs.size == 8 && attrs.fieldRef == V_MESSAGE) {
+      //   attrs.fieldRef = V_EXTMESSAGE;
+      //}
+      /*else*/ if (attrs.size != 4) {
+         scope.raiseError(errInvalidHint, node);
+      }
+   }
 //   else if (attrs.fieldRef == V_FLOAT) {
 //      switch (attrs.size) {
 //         case 8:
@@ -3852,8 +3849,8 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
 //         return scope.realReference;
 //      case V_SUBJECT:
 //         return scope.messageNameReference;
-//      case V_MESSAGE:
-//         return scope.messageReference;
+      case V_MESSAGE:
+         return scope.moduleScope->messageReference;
 //      case V_UNBOXEDARGS:
 //         // HOTFIX : should be returned as is
 //         return argRef;
@@ -5143,6 +5140,9 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
          SNode classNode = exprNode.firstChild(lxObjectMask);
          classNode = lxIdle;
 
+         // mark the argument as a stack safe
+         analizeOperands(exprNode, scope, 1);
+
          return ObjectInfo(okObject, 0, target.reference, target.element, 0);
       }
       else scope.raiseError(errInvalidOperation, node.parentNode());
@@ -5515,15 +5515,18 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //   else return current;
 //}
 
-ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope)
+ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t targetRef, EAttr mode)
 {
-   EAttr rootMode = HINT_ROOT;
-
    // inject a root expression
    node = node.injectNode(lxExpression);
 
    ExprScope exprScope(&scope);
-   ObjectInfo retVal = compileExpression(node, exprScope, 0, rootMode);
+   ObjectInfo retVal = compileExpression(node, exprScope, targetRef, mode);
+
+   node = node.parentNode();
+
+   int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
+   analizeOperands(node, exprScope, stackSafeAttr);
 
 //   // HOTFIX:to ignore duplicates in some code templates
 //   scope.ignoreDuplicates = false;
@@ -6165,7 +6168,7 @@ ObjectInfo Compiler :: compileSubCode(SNode codeNode, ExprScope& scope, bool bra
       codeNode.injectAndReplaceNode(lxCode);
 
       //      writer.appendNode(lxBreakpoint, dsStep);
-      compileRootExpression(codeNode.firstChild(), subScope);
+      compileRootExpression(codeNode.firstChild(), subScope, 0, HINT_ROOT);
    }
    else compileCode(codeNode, subScope);
 
@@ -6209,7 +6212,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    while (current != lxNone) {
       switch(current) {
          case lxExpression:
-            compileRootExpression(current, scope);
+            compileRootExpression(current, scope, 0, HINT_ROOT);
             break;
          case lxReturning:
          {
@@ -6577,9 +6580,7 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, bool 
 void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode)
 {
    bool byRefArg = false;
-//   bool arrayArg = false;
 //   bool paramsArg = false;
-   bool typeSet = false;
 
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -6588,13 +6589,10 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
-      else if (current == lxType) {
-         typeSet = true;
+      else if (current.compare(lxType, lxArrayType)) {
 //         if (paramsArg) {
 //            SNode argNode = current.firstChild();
 //            if (argNode == lxArrayType) {
-//               arrayArg = true;
-//               classRef = resolveTypeAttribute(scope, argNode, declarationMode);
 //            }
 //            else scope.raiseError(errIllegalMethod, node);
 //         }
@@ -7300,126 +7298,114 @@ void Compiler :: endMethod(SNode node, MethodScope& scope, int preallocated)
 
 ref_t Compiler :: resolveConstant(ObjectInfo retVal, ref_t& parentRef)
 {
-   if (retVal.kind == okSingleton) {
-      parentRef = retVal.param;
-
-      return retVal.param;
+   switch (retVal.kind) {
+      case okSingleton:
+         parentRef = retVal.param;
+         return retVal.param;
+      case okConstantSymbol:
+         parentRef = retVal.reference;
+         return retVal.param;
+      default:
+         return 0;
    }
-   //ref_t parentRef = 0;
+}
 
-   //_Module* module = scope.moduleScope->module;
-   //MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
+ref_t Compiler :: generateConstant(_CompileScope& scope, ObjectInfo retVal)
+{
+   switch (retVal.kind) {
+      case okSingleton:
+         return retVal.param;
+      case okLiteralConstant:
+      case okWideLiteralConstant:
+      case okIntConstant:
+         break;
+      default:
+         return 0;
+   }
 
-//   if (accumulatorMode) {
-//      if (dataWriter.Position() == 0) {
-//         dataWriter.Memory()->addReference(accumulatorRef | mskVMTRef, (ref_t)-4);
-//      }
-//
-//      if (retVal.kind == okMessageConstant) {
-//         dataWriter.Memory()->addReference(retVal.param | mskMessage, dataWriter.Position());
-//
-//         dataWriter.writeDWord(0);
-//      }
-//      else if (retVal.kind == okMessageNameConstant) {
-//         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
-//
-//         dataWriter.writeDWord(0);
-//      }
-//      else if (retVal.kind == okClass) {
-//         dataWriter.Memory()->addReference(retVal.param | mskVMTRef, dataWriter.Position());
-//         dataWriter.writeDWord(0);
-//      }
-//      else {
-//         SymbolScope memberScope(nsScope, nsScope->moduleScope->mapAnonymous());
-//         if (!compileSymbolConstant(node, memberScope, retVal, false, 0))
-//            return false;
-//
-//         dataWriter.Memory()->addReference(memberScope.reference | mskConstantRef, dataWriter.Position());
-//         dataWriter.writeDWord(0);
-//      }
-//
-//      return true;
-//   }
-//   else {
-//      if (dataWriter.Position() > 0)
-//         return false;
-//
-//      if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
-//         size_t value = module->resolveConstant(retVal.param).toULong(16);
-//
-//         dataWriter.writeDWord(value);
-//
-//         parentRef = scope.moduleScope->intReference;
-//      }
-//      else if (retVal.kind == okLongConstant) {
-//         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
-//
-//         dataWriter.write(&value, 8u);
-//
-//         parentRef = scope.moduleScope->longReference;
-//      }
-//      else if (retVal.kind == okRealConstant) {
-//         double value = module->resolveConstant(retVal.param).toDouble();
-//
-//         dataWriter.write(&value, 8u);
-//
-//         parentRef = scope.moduleScope->realReference;
-//      }
-//      else if (retVal.kind == okLiteralConstant) {
-//         ident_t value = module->resolveConstant(retVal.param);
-//
-//         dataWriter.writeLiteral(value, getlength(value) + 1);
-//
-//         parentRef = scope.moduleScope->literalReference;
-//      }
-//      else if (retVal.kind == okWideLiteralConstant) {
-//         WideString wideValue(module->resolveConstant(retVal.param));
-//
-//         dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
-//
-//         parentRef = scope.moduleScope->wideReference;
-//      }
-//      else if (retVal.kind == okCharConstant) {
-//         ident_t value = module->resolveConstant(retVal.param);
-//
-//         dataWriter.writeLiteral(value, getlength(value));
-//
-//         parentRef = scope.moduleScope->charReference;
-//      }
-//      else if (retVal.kind == okMessageNameConstant) {
-//         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
-//         dataWriter.writeDWord(0);
-//
-//         parentRef = scope.moduleScope->messageNameReference;
-//      }
-//      else if (retVal.kind == okObject) {
-//         SNode root = node.findSubNodeMask(lxObjectMask);
-//
-//         if (root == lxConstantList/* && !accumulatorMode*/) {
-//            SymbolExpressionInfo info;
-//            info.expressionClassRef = scope.outputRef;
-//            info.constant = scope.constant;
-//            info.listRef = root.argument;
-//
-//            // save class meta data
-//            MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-//            info.save(&metaWriter);
-//
-//            return true;
-//         }
-//         else return false;
-//      }
-//      else return false;
-//
-//      dataWriter.Memory()->addReference(parentRef | mskVMTRef, (ref_t)-4);
-//
-//      if (parentRef == scope.moduleScope->intReference) {
-//         nsScope->defineConstantSymbol(scope.reference, V_INT32);
-//      }
-//      else nsScope->defineConstantSymbol(scope.reference, parentRef);
-//   }
-//
-   return 0;
+   ref_t parentRef = 0;
+   ref_t constRef = scope.moduleScope->mapAnonymous("const");
+
+   _Module* module = scope.moduleScope->module;
+   MemoryWriter dataWriter(module->mapSection(constRef | mskRDataRef, false));
+
+   if (retVal.kind == okIntConstant/* || retVal.kind == okUIntConstant*/) {
+      size_t value = module->resolveConstant(retVal.param).toULong(16);
+
+      dataWriter.writeDWord(value);
+
+      parentRef = scope.moduleScope->intReference;
+   }
+   //      else if (retVal.kind == okLongConstant) {
+   //         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
+   //
+   //         dataWriter.write(&value, 8u);
+   //
+   //         parentRef = scope.moduleScope->longReference;
+   //      }
+   //      else if (retVal.kind == okRealConstant) {
+   //         double value = module->resolveConstant(retVal.param).toDouble();
+   //
+   //         dataWriter.write(&value, 8u);
+   //
+   //         parentRef = scope.moduleScope->realReference;
+   //      }
+   else if (retVal.kind == okLiteralConstant) {
+      ident_t value = module->resolveConstant(retVal.param);
+
+      dataWriter.writeLiteral(value, getlength(value) + 1);
+
+      parentRef = scope.moduleScope->literalReference;
+   }
+   else if (retVal.kind == okWideLiteralConstant) {
+      WideString wideValue(module->resolveConstant(retVal.param));
+
+      dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
+
+      parentRef = scope.moduleScope->wideReference;
+   }
+   //      else if (retVal.kind == okCharConstant) {
+   //         ident_t value = module->resolveConstant(retVal.param);
+   //
+   //         dataWriter.writeLiteral(value, getlength(value));
+   //
+   //         parentRef = scope.moduleScope->charReference;
+   //      }
+   //      else if (retVal.kind == okMessageNameConstant) {
+   //         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
+   //         dataWriter.writeDWord(0);
+   //
+   //         parentRef = scope.moduleScope->messageNameReference;
+   //      }
+   //      else if (retVal.kind == okObject) {
+   //         SNode root = node.findSubNodeMask(lxObjectMask);
+   //
+   //         if (root == lxConstantList/* && !accumulatorMode*/) {
+   //            SymbolExpressionInfo info;
+   //            info.expressionClassRef = scope.outputRef;
+   //            info.constant = scope.constant;
+   //            info.listRef = root.argument;
+   //
+   //            // save class meta data
+   //            MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+   //            info.save(&metaWriter);
+   //
+   //            return true;
+   //         }
+   //         else return false;
+   //      }
+
+   dataWriter.Memory()->addReference(parentRef | mskVMTRef, (ref_t)-4);
+
+   SymbolExpressionInfo info;
+   info.type = SymbolExpressionInfo::Type::Constant;
+   info.exprRef = parentRef;
+
+   // save constant meta data
+   MemoryWriter metaWriter(scope.moduleScope->module->mapSection(constRef | mskMetaRDataRef, false), 0);
+   info.save(&metaWriter);
+
+   return constRef;
 }
 
 void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope, int& preallocated)
@@ -7478,8 +7464,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
    if (scope.constMode) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
 
-      ref_t parentRef = 0;
-      ref_t constRef = resolveConstant(retVal, parentRef);
+      ref_t constRef = generateConstant(scope, retVal);
       if (constRef) {
          classScope->addAttribute(scope.message, maConstant, constRef);
 
@@ -7624,7 +7609,7 @@ void Compiler :: compileInitializer(SNode node, MethodScope& scope)
          SNode exprNode = frameNode.insertNode(lxExpression);
          SyntaxTree::copyNode(current, exprNode);
 
-         compileRootExpression(exprNode, codeScope);
+         compileRootExpression(exprNode, codeScope, 0, HINT_ROOT);
       }
 
       current = current.nextNode();
@@ -7737,7 +7722,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
       }
 
       if (retExpr) {
-         compileRetExpression(bodyNode, codeScope, HINT_DYNAMIC_OBJECT);
+         compileRootExpression(bodyNode, codeScope, codeScope.getClassRefId(), HINT_DYNAMIC_OBJECT);
       }
       else {
          preallocated = codeScope.allocated1;
@@ -9237,7 +9222,12 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
    if (classRef) {
       if (retVal.kind == okSingleton) {
          // HOTFIX : singleton should be treated differently
-         scope.singleton = true;
+         scope.info.type = SymbolExpressionInfo::Type::Singleton;
+         scope.info.exprRef = classRef;
+      }
+      else if (retVal.kind == okConstantSymbol) {
+         scope.info.type = SymbolExpressionInfo::Type::ConstantSymbol;
+         scope.info.exprRef = classRef;
       }
 
       nsScope->defineConstantSymbol(classRef, parentRef);
@@ -9255,6 +9245,13 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 
       if (retVal.kind == okLiteralConstant) {
          dataWriter.Memory()->addReference(retVal.param | mskLiteralRef, dataWriter.Position());
+
+         ident_t value = module->resolveConstant(retVal.param);
+
+         dataWriter.writeLiteral(value, getlength(value) + 1);
+      }
+      else if (retVal.kind == okWideLiteralConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskWideLiteralRef, dataWriter.Position());
 
          ident_t value = module->resolveConstant(retVal.param);
 
@@ -9317,13 +9314,13 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 
          parentRef = scope.moduleScope->literalReference;
       }
-//      else if (retVal.kind == okWideLiteralConstant) {
-//         WideString wideValue(module->resolveConstant(retVal.param));
-//
-//         dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
-//
-//         parentRef = scope.moduleScope->wideReference;
-//      }
+      else if (retVal.kind == okWideLiteralConstant) {
+         WideString wideValue(module->resolveConstant(retVal.param));
+
+         dataWriter.writeLiteral(wideValue, getlength(wideValue) + 1);
+
+         parentRef = scope.moduleScope->wideReference;
+      }
 //      else if (retVal.kind == okCharConstant) {
 //         ident_t value = module->resolveConstant(retVal.param);
 //
@@ -9400,25 +9397,25 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
    ObjectInfo retVal = compileExpression(expression, exprScope, 
       mapObject(expression, exprScope, HINT_ROOTSYMBOL), 0, EAttr::eaNone);
 
-   if (scope.outputRef == 0) {
+   if (scope.info.exprRef == 0) {
       ref_t ref = resolveObjectReference(scope, retVal, true);
       if (ref != 0) {
          // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
-         scope.outputRef = ref;         
+         scope.info.exprRef = ref;
       }
    }
-   else convertObject(node, exprScope, scope.outputRef, retVal, EAttr::eaNone);
+   else convertObject(node, exprScope, scope.info.exprRef, retVal, EAttr::eaNone);
 
    expression.refresh();
    analizeSymbolTree(expression, scope);
    
    // create constant if required
-   if (scope.constant) {
+   if (scope.info.type == SymbolExpressionInfo::Type::Constant) {
 //      // static symbol cannot be constant
 //      if (isStatic)
 //         scope.raiseError(errInvalidOperation, expression);
 
-      if (!compileSymbolConstant(/*expressionTree.readRoot(), */scope, retVal, false, 0))
+      if (!compileSymbolConstant(scope, retVal, false, 0))
          scope.raiseError(errInvalidOperation, expression);
    }
 

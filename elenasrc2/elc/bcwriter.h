@@ -185,7 +185,7 @@ class ByteCodeWriter
 
    void newFrame(CommandTape& tape, int reserved, int allocated/*, bool withPresavedMessage*/);
    void newStructure(CommandTape& tape, int size, ref_t reference);
-   //void newDynamicStructure(CommandTape& tape, int itemSize);
+   void newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference);
 
    void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);

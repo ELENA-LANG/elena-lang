@@ -160,7 +160,7 @@ enum ByteCode
    bcXSet            = 0x97,
    bcOpen            = 0x98,
    bcQuitN           = 0x99,
-   bcCreateR         = 0x9A,
+   bcCreate          = 0x9A,
    bcFillR           = 0x9B,
    bcMovF            = 0x9C,
 //   bcACopyS          = 0x9D,
@@ -240,6 +240,7 @@ enum ByteCode
 //   bcNewI            = 0xE1,
 //   bcACopyAI         = 0xE2,
 
+   bcCreateN         = 0xE1,
    bcXSetFI          = 0xE2,
    bcCopyToAI        = 0xE3,
    bcCopyToFI        = 0xE4,
@@ -313,7 +314,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x8F
-#define MAX_DOUBLE_ECODE 0xE1
+#define MAX_DOUBLE_ECODE 0xE0
 
 enum PseudoArg
 {
@@ -472,7 +473,8 @@ public:
          case bcJumpRM:
          case bcVCallRM:
          //case bcBLoadR:
-         case bcCreateR:
+         case bcCreate:
+         case bcCreateN:
             return true;
          default:
             return false;

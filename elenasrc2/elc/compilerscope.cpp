@@ -199,7 +199,7 @@ ref_t ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_
 
    if (argModule != module) {
       // import type
-      info.expressionClassRef = importReference(argModule, info.expressionClassRef, module);
+      info.exprRef = importReference(argModule, info.exprRef, module);
    }
    return moduleRef;
 }

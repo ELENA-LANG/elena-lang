@@ -42,7 +42,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "dec", "get", "restore", "peekr", "peekfi", "peeksi", OPCODE_UNKNOWN, "xset",
-   "open", "quitn", "creater", "fillr", "movf", OPCODE_UNKNOWN, "movr", "loadm",
+   "open", "quitn", "create", "fillr", "movf", OPCODE_UNKNOWN, "movr", "loadm",
 
    "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -56,7 +56,7 @@ const char* _fnOpcodes[256] =
    "freei", "alloci", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
+   OPCODE_UNKNOWN, "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
    "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavefi",
 
    "new", "newn", "fillri", OPCODE_UNKNOWN, "vcallrm", "jumprm", "select", OPCODE_UNKNOWN,

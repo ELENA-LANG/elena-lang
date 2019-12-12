@@ -61,7 +61,9 @@ ELENA byte codes (or ecodes)
 
  copytofi i, n              - copy [acc] >> [fp+i], n*4-bytes
 
- creater r                  - create the object with length=[esp], out : acc, index is affected
+ create r                   - create the object with length=[esp], out : acc, index is affected
+
+ createn r, i               - create the object with size=[esp]*i, out : acc, index is affected
 
  len                        - [acc].Length >> index ; where acc is a object
 

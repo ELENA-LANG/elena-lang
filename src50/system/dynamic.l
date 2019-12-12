@@ -32,10 +32,10 @@
 // --- Message ---
 
 /// A message constant
-public /*sealed const struct*/ Message
+public sealed const struct Message
 {
-//    embeddable __mssg theValue[4];
-//
+    embeddable __mssg theValue[4];
+
 //    constructor(string name)
 //    {
 //        intern system'core_routines'__message.load(self, name)

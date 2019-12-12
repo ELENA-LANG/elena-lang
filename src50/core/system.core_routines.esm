@@ -33,6 +33,20 @@ procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2
 
 end
 
+procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$@system@Array#1&system@ShortNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pusha
+  
+  callextr api : wsubcopyz
+  
+  peeksi 1
+  quitn 4
+
+end
+
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 
   pushsi 1

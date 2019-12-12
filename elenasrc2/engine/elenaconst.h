@@ -303,10 +303,10 @@ namespace _ELENA_
    constexpr int elStructureWrapper    = 0x00004800;
    constexpr int elDynamicRole         = 0x00008000;
    constexpr int elExtension           = 0x0000110C;
-//   constexpr int elGroup               = 0x00000200;
+   constexpr int elMessage             = 0x00200000;
+   //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elWithGenerics        = 0x00000400;
 //   constexpr int elSubject             = 0x00002000;
-//   constexpr int elMessage             = 0x00008000;
 //   constexpr int elSymbol              = 0x00100000;
 //   constexpr int elExtMessage          = 0x00208000;
 //   constexpr int elWithYieldable       = 0x00400000;
@@ -332,7 +332,7 @@ namespace _ELENA_
 //   constexpr int elDebugReference      = 0x000B0000;   // symbol reference
 //   constexpr int elDebugSubject        = 0x000C0000;
 ////////   const int elDebugReals          = 0x000D0000;
-//   constexpr int elDebugMessage        = 0x000E0000;
+   constexpr int elDebugMessage        = 0x000E0000;
 ////////   const int elDebugDPTR           = 0x000F0000;
 ////   const int elEnumList            = 0x00100000;
 
