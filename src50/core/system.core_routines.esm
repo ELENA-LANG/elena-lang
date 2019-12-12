@@ -33,6 +33,18 @@ procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2
 
 end
 
+procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
+
+  pushsi 1
+  pushsi 3
+  callextr api : strtowstr
+  freei 2
+  peeksi 3
+  save
+  quitn 3
+
+end
+
 // ; system routines
 
 symbol sta_start

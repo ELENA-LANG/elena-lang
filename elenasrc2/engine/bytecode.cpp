@@ -14,7 +14,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 
 const char* _fnOpcodes[256] =
 {
-   "nop", "breakpoint", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "throw",
+   "nop", "breakpoint", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "snop", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "throw",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pusha", "popa", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "bsredirect", OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", OPCODE_UNKNOWN, "quit",
@@ -60,7 +60,7 @@ const char* _fnOpcodes[256] =
    "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavefi",
 
    "new", "newn", "fillri", OPCODE_UNKNOWN, "vcallrm", "jumprm", "select", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "elser", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "callrm", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "callrm", OPCODE_UNKNOWN,
 
 //   "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
 //   "get", "set", "inc", "equit", "count", "unhook", "add", "create",
@@ -377,7 +377,7 @@ inline bool removeIdleJump(ByteCodeIterator it)
    while (true) {
       switch((ByteCode)*it) {
          case bcJump:
-         //case bcIfR:
+         case bcIfR:
          case bcElseR:
          //case bcIfB:
          //case bcElseB:
@@ -457,7 +457,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
                break;
             case bcJump:
                blocks.add(index + 1, 0);
-//            case bcIfR:
+            case bcIfR:
             case bcElseR:              
 //            case bcIfB:
 //            case bcElseB:              

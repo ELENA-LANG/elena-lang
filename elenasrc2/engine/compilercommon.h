@@ -51,7 +51,7 @@ constexpr auto V_CONST           = 0x80002001u;
 constexpr auto V_EMBEDDABLE      = 0x80002002u;
 constexpr auto V_WRAPPER         = 0x80002003u;
 //constexpr auto V_DIRECT          = 0x80002004u;
-//constexpr auto V_LOOP            = 0x80002005u;
+constexpr auto V_LOOP            = 0x80002005u;
 //constexpr auto V_PRELOADED       = 0x80002006u;
 //constexpr auto V_LAZY            = 0x80002009u;
 
@@ -112,7 +112,7 @@ constexpr auto V_INT32           = 0x80000003u;
 //constexpr auto V_PTR32           = 0x80000008u;
 constexpr auto V_OBJARRAY        = 0x80000009u;
 constexpr auto V_INT32ARRAY      = 0x8000000Au;
-//constexpr auto V_BINARYARRAY     = 0x8000000Bu;
+constexpr auto V_BINARYARRAY     = 0x8000000Bu;
 constexpr auto V_INT16ARRAY      = 0x8000000Cu;
 constexpr auto V_INT8ARRAY       = 0x8000000Du;
 //constexpr auto V_OBJECT          = 0x8000000Eu;
@@ -486,6 +486,7 @@ public:
       eaRef                = 0x00000008000,
       eaPropExpr           = 0x00000010000,
       eaMetaField          = 0x00000020000,
+      eaLoop               = 0x00000040000,
 
       eaScopeMask          = 0x0000001400A,
       eaObjectMask         = 0x0000001B2F4,
@@ -493,7 +494,6 @@ public:
 //      eaForward            = 0x00000000008,
 //      eaExtern             = 0x00000000010,
 //      eaParams             = 0x00000000040,
-//      eaLoop               = 0x00000000100,
 //      eaSubj               = 0x00000000400,
 //      eaMssg               = 0x00000000800,
 //      eaWrap               = 0x00000001000,

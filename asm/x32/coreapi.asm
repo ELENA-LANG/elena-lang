@@ -2,6 +2,114 @@
 
 define CORE_ET_TABLE     2000Bh
 
+define elSizeOffset      0008h
+
+// strtowstr(target,source)
+procedure coreapi'strtowstr
+
+  mov  eax, [esp+8]
+  mov  edi, [esp+4]
+  mov  esi, [eax - elSizeOffset]
+  and  esi, 0FFFFFh
+  sub  esi, 1
+  jz   labEnd
+
+labNext:  
+
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  cmp  ebx, 00000080h
+  jl   short lab1
+  cmp  ebx, 000000E0h
+  jl   short lab2
+  cmp  ebx, 000000F0h
+  jl   short lab3
+
+  mov  ecx, ebx
+  shl  ecx, 18
+  
+  lea  eax, [eax + 1]
+  sub  esi, 1  
+  mov  bl, byte ptr [eax]
+  shl  ebx, 12
+  add  ecx, ebx
+
+  xor  ebx, ebx
+  lea  eax, [eax + 1]
+  sub  esi, 1  
+  mov  bl, byte ptr [eax]
+  shl  ebx, 6
+  add  ecx, ebx
+
+  xor  ebx, ebx
+  lea  eax, [eax + 1]
+  sub  esi, 1  
+  mov  bl, byte ptr [eax]
+  add  ecx, ebx
+  sub  ecx, 3C82080h
+  jmp  short labCont
+
+lab2:  
+  mov  ecx, ebx
+  shl  ecx, 6
+
+  lea  eax, [eax + 1]
+  sub  esi, 1  
+  mov  bl, byte ptr [eax]
+  add  ecx, ebx
+  sub  ecx, 3080h
+  jmp  short labCont
+  
+lab3:
+  mov  ecx, ebx
+  shl  ecx, 12
+
+  lea  eax, [eax + 1]
+  sub  esi, 1  
+  mov  bl, byte ptr [eax]
+  shl  ebx, 6
+  add  ecx, ebx
+
+  xor  ebx, ebx
+  lea  eax, [eax + 1]
+  sub  esi, 1  
+  mov  bl, byte ptr [eax]
+  add  ecx, ebx
+  sub  ecx, 0E2080h
+  jmp  short labCont
+
+lab1:
+  mov  ecx, ebx
+
+labCont:
+  cmp  ecx, 010000h
+  jl   short labw1
+
+  mov  edx, ecx
+  shr  edx, 10
+  add  edx, 0D7C0h
+  mov  word ptr [edi], dx
+  add  edi, 2
+  
+  and  ecx, 03FFh
+  add  ecx, 0DC00h
+   
+labw1:
+  mov  word ptr [edi], ecx
+  add  edi, 2  
+
+  lea  eax, [eax + 1]
+  sub  esi, 1
+  jnz  labNext
+labEnd:
+  mov  ebx, [esp+4]
+  mov  edx, edi
+  sub  edx, ebx
+  shr  edx, 1
+  ret
+    
+end
+
 // ; === internal ===
 
 procedure coreapi'default_handler                                                       

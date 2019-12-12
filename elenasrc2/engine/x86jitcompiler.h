@@ -131,7 +131,7 @@ protected:
 //   friend void compileNotLessE(int opcode, x86JITScope& scope);
 //   friend void compileIfB(int opcode, x86JITScope& scope);
 //   friend void compileElseB(int opcode, x86JITScope& scope);
-//   friend void compileIfR(int opcode, x86JITScope& scope);
+   friend void compileIfR(int opcode, x86JITScope& scope);
    friend void compileElseR(int opcode, x86JITScope& scope);
 //   friend void compileIfN(int opcode, x86JITScope& scope);
 //   friend void compileElseN(int opcode, x86JITScope& scope);
@@ -272,7 +272,7 @@ void compileInvokeVMTOffset(int opcode, x86JITScope& scope);
 //void compileNotLessE(int opcode, x86JITScope& scope);
 //void compileIfB(int opcode, x86JITScope& scope);
 //void compileElseB(int opcode, x86JITScope& scope);
-//void compileIfR(int opcode, x86JITScope& scope);
+void compileIfR(int opcode, x86JITScope& scope);
 void compileElseR(int opcode, x86JITScope& scope);
 //void compileIfN(int opcode, x86JITScope& scope);
 //void compileElseN(int opcode, x86JITScope& scope);

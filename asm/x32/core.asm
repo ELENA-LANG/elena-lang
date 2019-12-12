@@ -891,6 +891,13 @@ end
 
 // ; ==== Command Set ==
 
+// ; snop
+inline % 4
+
+  nop
+
+end
+
 // ; throw
 inline % 7
 

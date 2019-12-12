@@ -32,7 +32,7 @@ inline bool isPrimitiveArrayRef(ref_t classRef)
       case V_INT32ARRAY:
       case V_INT16ARRAY:
       case V_INT8ARRAY:
-      //case V_BINARYARRAY:
+      case V_BINARYARRAY:
          return true;
       default:
          return false;
@@ -1471,13 +1471,13 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
          info.header.flags = elDebugArray | elDynamicRole;
          info.size = 0;
          break;
-//      case V_BINARYARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDynamicRole | elStructureRole | elWrapper;
-//         info.size = -1;
-//         break;
-//      case V_AUTO:
-//         break;
+      case V_BINARYARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDynamicRole | elStructureRole | elWrapper;
+         info.size = -1;
+         break;
+      case V_AUTO:
+         break;
       default:
          if (reference != 0) {
             if (!scope.loadClassInfo(info, reference, headerOnly))
@@ -1496,12 +1496,12 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 
 int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable)
 {
-//   if (reference == V_BINARYARRAY && elementRef != 0) {
-//      variable = true;
-//
-//      return -defineStructSizeVariable(scope, elementRef, 0, variable);
-//   }
-   /*else */if (reference == V_WRAPPER && elementRef != 0) {
+   if (reference == V_BINARYARRAY && elementRef != 0) {
+      variable = true;
+
+      return -defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
+   else if (reference == V_WRAPPER && elementRef != 0) {
       return defineStructSizeVariable(scope, elementRef, 0, variable);
    }
    else if (reference == V_OBJARRAY && elementRef != 0) {
@@ -1943,9 +1943,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 	  case V_INTERN:
          attributes.include(EAttr::eaIntern);
          return true;
-//      case V_LOOP:
-//         attributes.include(EAttr::eaLoop);
-//         return true;
+      case V_LOOP:
+         attributes.include(EAttr::eaLoop);
+         return true;
       case V_MEMBER:
          attributes.include(EAttr::eaMember);
          return true;
@@ -2114,8 +2114,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRe
                break;
          }
       }
-//      return V_BINARYARRAY;
-      throw InternalError("not yet implemented"); // !! temporal
+      return V_BINARYARRAY;
    }
    else return V_OBJARRAY;
 }

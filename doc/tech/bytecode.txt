@@ -143,6 +143,8 @@ ELENA byte codes (or ecodes)
 
  nop                        - idle command  
 
+ snop                       - thread safe nop operation
+ 
 
  Object operations:
  ------------------
@@ -183,6 +185,8 @@ ELENA byte codes (or ecodes)
  elser r, label             - jumps to the label if acc != r
 
  jump label                 - jumps to the label
+ 
+ ifr r, label               - jumps to the label if acc == r
  
 
 
@@ -409,8 +413,6 @@ ELENA byte codes (or ecodes)
  
  ifn n, label               - jump to the label if index == n
  
- ifr r, label               - jumps to the label if acc == r
- 
  less label                 - jump to the label if index < ext
 
  lessn n, label             - jump to the label if index < n
@@ -472,8 +474,6 @@ ELENA byte codes (or ecodes)
 
  unhook                     - remove the current exception handler
 
- snop                       - thread safe nop operation
- 
  trylock                    - try to lock [esp], if already locked - index = 1, otherwise index = 0
  
  freelock                   - free eax

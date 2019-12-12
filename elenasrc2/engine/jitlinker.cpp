@@ -1382,9 +1382,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskNativeRDataRef:
             vaddress = resolveNativeSection(referenceInfo, mask, _loader->getSectionInfo(referenceInfo, mask, silentMode));
             break;
-//         case mskNativeRelCodeRef:
-//            vaddress = resolveNativeSection(referenceInfo, mskNativeCodeRef, _loader->getSectionInfo(referenceInfo, mskNativeCodeRef, silentMode));
-//            break;
+         case mskNativeRelCodeRef:
+            vaddress = resolveNativeSection(referenceInfo, mskNativeCodeRef, _loader->getSectionInfo(referenceInfo, mskNativeCodeRef, silentMode));
+            break;
          case mskConstantRef:
          case mskLiteralRef:
          case mskWideLiteralRef:

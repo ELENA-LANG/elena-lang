@@ -1866,7 +1866,7 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
    }
 
    // NOTE : set the node back to the last one due to implementation
-   if (node == lxNestedClass) {
+   if (node.compare(/*lxCollection, */lxNestedClass, lxAttrExpression)) {
       // NOTE : nested class is considered as a last token
       node = lastNode;
       lastNode = node.nextNode();
@@ -1879,7 +1879,7 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
    }
    else node = lastNode;
 
-//   if (node.nextNode().compare(lxCollection, lxNestedClass, lxAttrExpression)) {
+//   if (node.nextNode().compare(lxNestedClass, lxAttrExpression)) {
 //      generateExpressionAttribute(writer, node, derivationScope, attributeCategory, false, true);
 //   }
 //   else {
@@ -2045,9 +2045,9 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
 //      case lxSubMessage:
 //         generateMesage(writer, current, derivationScope);
 //         break;
-//      case lxAttrExpression:
-//         generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
-//         break;
+      case lxAttrExpression:
+         generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
+         break;
       case lxNestedClass:
          recognizeClassMebers(current);
          generateClassTree(writer, current, derivationScope, true);
@@ -2407,10 +2407,10 @@ void TemplateGenerator :: copyFieldTree(SyntaxWriter& writer, SNode node, Templa
 //      else if (current == lxDimensionAttr) {
 //         writer.appendNode(current.type, current.argument);
 //      }
-      else if (current == lxAttribute) {
+      else if (current.compare(lxType, lxArrayType)) {
          copyTreeNode(writer, current, scope);
       }
-      else if (current == lxType) {
+      else if (current == lxAttribute) {
          copyTreeNode(writer, current, scope);
       }
 

@@ -50,11 +50,11 @@ constexpr auto HINT_MEMBER          = EAttr::eaMember;
 constexpr auto HINT_REFOP           = EAttr::eaRef;
 constexpr auto HINT_PROP_MODE       = EAttr::eaPropExpr;
 constexpr auto HINT_METAFIELD       = EAttr::eaMetaField;
+constexpr auto HINT_LOOP            = EAttr::eaLoop;
 
 //constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
-//constexpr auto HINT_LOOP            = EAttr::eaLoop;
 //constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
 //constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 //constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
@@ -90,21 +90,21 @@ EAttr operator & (const EAttr& l, const EAttr& r)
    return (EAttr)((uint64_t)l & (uint64_t)r);
 }
 
-//// --- Auxiliary routines ---
-//
-//inline bool isPrimitiveArrRef(ref_t reference)
-//{
-//   switch (reference) {
-//      case V_OBJARRAY:
-//      case V_INT32ARRAY:
-//      case V_INT16ARRAY:
-//      case V_INT8ARRAY:
-//      case V_BINARYARRAY:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
+// --- Auxiliary routines ---
+
+inline bool isPrimitiveArrRef(ref_t reference)
+{
+   switch (reference) {
+      case V_OBJARRAY:
+      case V_INT32ARRAY:
+      case V_INT16ARRAY:
+      case V_INT8ARRAY:
+      case V_BINARYARRAY:
+         return true;
+      default:
+         return false;
+   }
+}
 
 inline SNode findParent(SNode node, LexicalType type)
 {
@@ -2192,9 +2192,9 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
    if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.reference))
       scope.raiseError(errUnknownVariableType, terminal);
 
-//   if (variable.reference == V_BINARYARRAY && variable.element != 0) {
-//      localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
-//   }
+   if (variable.reference == V_BINARYARRAY && variable.element != 0) {
+      localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.element, 0);
+   }
 
    if (_logic->isEmbeddableArray(localInfo) && size != 0) {
       binaryArray = true;
@@ -3214,15 +3214,21 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
    return 0;
 }
 
-void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifReference/*, bool loopMode, bool switchMode*/)
+void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifReference, bool loopMode/*, bool switchMode*/)
 {
-//   if (loopMode) {
-//      writer.newNode(lxElse, ifReference);
-//
-//      compileSubCode(writer, thenBody.findSubNode(lxCode), scope, true);
-//      writer.closeNode();
-//   }
-//   else {
+   if (loopMode) {
+      SNode thenCode = node.findSubNode(lxCode);
+      if (thenCode == lxNone) {
+         //HOTFIX : inline branching operator
+         node.injectAndReplaceNode(lxElse, ifReference);
+
+         thenCode = node.firstChild();
+      }
+      else node.set(lxElse, ifReference);
+
+      compileSubCode(thenCode, scope, true);
+   }
+   else {
       SNode thenCode = node.findSubNode(lxCode);
       if (thenCode == lxNone) {
          //HOTFIX : inline branching operator
@@ -3253,7 +3259,7 @@ void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifRef
             compileSubCode(elseCode, scope, true);
          }
 //      }
-//   }
+   }
 }
 
 ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int argCount)
@@ -3316,15 +3322,15 @@ inline EAttr defineBranchingOperandMode(SNode node)
 void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, 
    ObjectInfo loperand, ObjectInfo& retVal)
 {
-//   bool loopMode = EAttrs::test(mode, HINT_LOOP);
+   bool loopMode = EAttrs::test(mode, HINT_LOOP);
 //   bool switchMode = EAttrs::test(mode, HINT_SWITCH);
-//
-//   // HOTFIX : in loop expression, else node is used to be similar with branching code
-//   // because of optimization rules
-//   ref_t original_id = operator_id;
-//   if (loopMode) {
-//      operator_id = operator_id == IF_OPERATOR_ID ? IFNOT_OPERATOR_ID : IF_OPERATOR_ID;
-//   }
+
+   // HOTFIX : in loop expression, else node is used to be similar with branching code
+   // because of optimization rules
+   ref_t original_id = operator_id;
+   if (loopMode) {
+      operator_id = operator_id == IF_OPERATOR_ID ? IFNOT_OPERATOR_ID : IF_OPERATOR_ID;
+   }
 
    ref_t ifReference = 0;
    ref_t resolved_operator_id = operator_id;
@@ -3333,12 +3339,12 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
       resolveObjectReference(scope, loperand, false), ifReference)) 
    {
       // we are lucky : we can implement branching directly
-      compileBranchingNodes(roperandNode, scope, ifReference/*, loopMode, switchMode*/);
+      compileBranchingNodes(roperandNode, scope, ifReference, loopMode/*, switchMode*/);
 
-      roperandNode.parentNode().set(/*loopMode ? lxLooping : */lxBranching, /*switchMode ? -1 : */0);
+      roperandNode.parentNode().set(loopMode ? lxLooping : lxBranching, /*switchMode ? -1 : */0);
    }
    else {
-//      operator_id = original_id;
+      operator_id = original_id;
 
       // bad luck : we have to create a closure
       int message = resolveOperatorMessage(scope, operator_id, 2);
@@ -3354,12 +3360,12 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
          compileClosure(elseNode, scope, defineBranchingOperandMode(elseNode));
       }
 
-      retVal = compileMessage(roperandNode.parentNode(), scope, loperand, message, EAttr::eaNone, 0);
+      SNode parentNode = roperandNode.parentNode();
+      retVal = compileMessage(parentNode, scope, loperand, message, EAttr::eaNone, 0);
 
-//      if (loopMode) {
-//         writer.inject(lxLooping);
-//         writer.closeNode();
-//      }
+      if (loopMode) {
+         parentNode.injectAndReplaceNode(lxLooping);
+      }
    }
 }
 
@@ -3430,6 +3436,9 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
 
       // if it is a primitive operation
       _logic->injectOperation(node, scope, *this, operator_id, operationType, resultClassRef, /*loperand.element, */retVal.param);
+
+      // HOTFIX : update the result type
+      retVal.reference = resultClassRef;
    }
    // if not , replace with appropriate method call
    else {
@@ -3849,10 +3858,10 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
 //         // HOTFIX : should be returned as is
 //         return argRef;
       default:
+         if (isPrimitiveArrRef(argRef)) {
+            return resolvePrimitiveArray(scope, scope.moduleScope->arrayTemplateReference, elementRef, declarationMode);
+         }
          throw InternalError("Not yet implemented"); // !! temporal
-      //         if (isPrimitiveArrRef(argRef)) {
-//            return resolvePrimitiveArray(scope, scope.arrayTemplateReference, elementRef, ns, declarationMode);
-//         }
 //         return scope.superReference;
    }
 }
@@ -5203,10 +5212,16 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
 //         else scope.raiseError(errIllegalOperation, current);
 //         break;
       case lxMessage:
+         if (EAttrs::test(mode, HINT_LOOP)) {
+            EAttrs subMode(mode, HINT_LOOP);
+
+            objectInfo = compileMessage(current, scope, /*expectedRef, */objectInfo, subMode);
+            current.parentNode().injectAndReplaceNode(lxLooping);
+         }
 //         if (EAttrs::test(mode, HINT_PROP_MODE)) {
 //            objectInfo = compilePropAssigning(writer, current, scope, objectInfo);
 //         }
-         /*else */objectInfo = compileMessage(current, scope, /*expectedRef, */objectInfo, mode);
+         else objectInfo = compileMessage(current, scope, /*expectedRef, */objectInfo, mode);
          break;
       case lxNewOperation:
          objectInfo = compileBoxingExpression(current, scope, objectInfo, mode);
@@ -5503,20 +5518,6 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope)
 {
    EAttr rootMode = HINT_ROOT;
-
-//   //// COMPILER MAGIC : recognize root attributes
-//   //SNode current = findLeftMostNode(node.firstChild(), lxAttribute);
-//   //while (current == lxAttribute) {
-//   //   ExpressionAttributes attributes;
-//   //   if (_logic->validateExpressionAttribute(current.argument, attributes)) {
-//   //      if (attributes.loopAttr) {
-//   //         rootMode |= HINT_LOOP;
-//
-//   //         current.setArgument(0);
-//   //      }
-//   //   }
-//   //   current = current.nextNode();
-//   //}
 
    // inject a root expression
    node = node.injectNode(lxExpression);

@@ -19,7 +19,7 @@ enum ByteCode
    bcBreakpoint      = 0x01,
 //   bcPushB           = 0x02,
 //   bcPop             = 0x03,
-//   bcSNop            = 0x04,
+   bcSNop            = 0x04,
 //   bcPushE           = 0x05,
 //   bcDCopyVerb       = 0x06,
    bcThrow           = 0x07,
@@ -265,7 +265,7 @@ enum ByteCode
 //   bcLessN           = 0xF7,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcIfM             = 0xF8,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcElseM           = 0xF9,   // though in bytecode section they saved in the correct order (jump arg, label)
-//   bcIfR             = 0xFA,
+   bcIfR             = 0xFA,
    bcElseR           = 0xFB,   
 //   bcIfN             = 0xFC,
 //   bcElseN           = 0xFD,   
@@ -425,7 +425,7 @@ public:
    {
       switch(code) {
          case bcJump:
-         //case bcIfR:
+         case bcIfR:
          case bcElseR:
          //case bcIfB:
          //case bcElseB:
@@ -482,7 +482,7 @@ public:
    static bool IsR2Code(ByteCode code)
    {
       switch(code) {
-         //case bcIfR:
+         case bcIfR:
          case bcElseR:
          case bcSelect:
             return true;

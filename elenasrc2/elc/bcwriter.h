@@ -155,7 +155,7 @@ class ByteCodeWriter
 //   void includeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
    void allocateStack(CommandTape& tape, int count);
-//   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
+   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
    void declareThenBlock(CommandTape& tape);
    void declareThenElseBlock(CommandTape& tape);
    void declareElseBlock(CommandTape& tape);
@@ -236,7 +236,7 @@ class ByteCodeWriter
 //   void jumpIfNotLess(CommandTape& tape, ref_t ref);
 //   void jumpIfGreater(CommandTape& tape, ref_t ref);
 //   void jumpIfNotGreater(CommandTape& tape, ref_t ref);
-//   void jumpIfEqual(CommandTape& tape, ref_t ref, bool referenceMode);
+   void jumpIfEqual(CommandTape& tape, ref_t ref/*, bool referenceMode*/);
    void jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, /*bool referenceMode, */bool jumpToEnd = false);
 
 //////   void throwCurrent(CommandTape& tape);
@@ -256,8 +256,8 @@ class ByteCodeWriter
 //   void endSafeCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);
-//   void endLoop(CommandTape& tape);
-//   void endLoop(CommandTape& tape, ref_t comparingRef);
+   void endLoop(CommandTape& tape);
+   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   void endExternalBlock(CommandTape& tape, bool idle = false);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
    void endMethod(CommandTape& tape, int argCount, int reserved, bool withFrame = true);
@@ -355,7 +355,7 @@ class ByteCodeWriter
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
 //   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
-//   void generateLooping(CommandTape& tape, SyntaxTree::Node node);
+   void generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateBranching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);

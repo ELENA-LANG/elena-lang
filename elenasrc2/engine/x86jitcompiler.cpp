@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/48;
+const int gcCommandNumber = /*160*/49;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -74,7 +74,7 @@ const int gcCommands[gcCommandNumber] =
    bcSubF, bcMulF, bcDivF, bcPushAI, bcGet,
    bcSet, bcCopyToAI, bcCreateR, bcFillR, bcXSet,
    bcXSetFI, bcClass, bcXSaveFI, bcLen, bcSave,
-   bcSelect, bcEqual, bcLess,
+   bcSelect, bcEqual, bcLess, bcSNop,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -89,7 +89,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcNSub, bcNMul, bcNDiv, bcNLoadE, bcDivN,
 //   bcWLen, bcNLoad, bcWCreate, bcCopy,
 //   bcBCreate, bcBWrite, bcBReadW, bcXLen,
-//   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
+//   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI,
 //   bcNAnd, bcNOr, bcNXor, bcTryLock, bcFreeLock,
 //   bcLCopy, bcLEqual, bcLLess, bcLAdd, bcRethrow,
 //   bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,
@@ -121,7 +121,7 @@ const int gcCommandExs[gcCommandExNumber] =
 // command table
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
-   &compileNop, &compileBreakpoint, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
+   &compileNop, &compileBreakpoint, &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp,
    &compileNop, &compileNop, &compilePushA, &compilePopA, &compileNop, &compileNop, &loadOneByteOp, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileQuit,
@@ -167,7 +167,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileElseR, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
+   &compileNop, &compileNop, &compileIfR, &compileElseR, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
 
    //   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &loadMTOp, &loadOneByteOp,
 //   &compileDCopyCount, &compileOr, &compilePushA, &compilePopA, &compileACopyB, &compilePopE, &loadOneByteOp, &compileDSetVerb,
@@ -255,12 +255,12 @@ inline void compileJumpIf(x86JITScope& scope, int label, bool forwardJump, bool 
    compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JNZ);
 }
 
-//inline void compileJumpIfNot(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-//{
-//   // jz   lbEnding
-//   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JZ);
-//}
-//
+inline void compileJumpIfNot(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jz   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JZ);
+}
+
 //inline void compileJumpAbove(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
 //{
 //   // ja   lbEnding
@@ -1475,26 +1475,26 @@ void _ELENA_::compileInvokeVMT(int opcode, x86JITScope& scope)
 //   x86Helper::leaRM32disp(
 //      scope.code, x86Helper::otEAX, x86Helper::otESP, scope.argument << 2);
 //}
-//
-//void _ELENA_::compileIfR(int, x86JITScope& scope)
-//{
-//   int jumpOffset = scope.tape->getDWord();
-//
-//   // cmp eax, r
-//   // jz lab
-//
-//   scope.code->writeByte(0x3D);
-//   // HOTFIX : support zero references
-//   if (scope.argument == 0) {
-//      scope.code->writeDWord(0);
-//   }
-//   else if (scope.argument == -1) {
-//      scope.code->writeDWord((pos_t)-1);
-//   }
-//   else scope.writeReference(*scope.code, scope.argument, 0);
-//   //NOTE: due to compileJumpX implementation - compileJumpIf is called
-//   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-//}
+
+void _ELENA_::compileIfR(int, x86JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+
+   // cmp ebx, r
+   // jz lab
+
+   scope.code->writeWord(0xFB81);
+   // HOTFIX : support zero references
+   if (scope.argument == 0) {
+      scope.code->writeDWord(0);
+   }
+   else if (scope.argument == -1) {
+      scope.code->writeDWord((pos_t)-1);
+   }
+   else scope.writeReference(*scope.code, scope.argument, 0);
+   //NOTE: due to compileJumpX implementation - compileJumpIf is called
+   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
 
 void _ELENA_::compileElseR(int, x86JITScope& scope)
 {

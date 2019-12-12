@@ -76,6 +76,7 @@ enum LexicalType
    lxInlineAttribute          = 0x001160,
    lxFieldAccum               = 0x001170,
    lxArrOperator              = 0x021180,
+   lxAttrExpression           = 0x001190,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -127,6 +128,7 @@ enum LexicalType
    lxBranching                = 0x058150,   // branch expression      
    lxIf                       = 0x058160,   // optional arg - reference
    lxElse                     = 0x058161,   // optional arg - reference
+   lxLooping                  = 0x058162,
    lxResendExpression         = 0x059170,
    lxMultiDispatching         = 0x058180,
    lxSealedMultiDispatching   = 0x058181,
@@ -196,7 +198,6 @@ enum LexicalType
 //   lxClosureExpr              = 0x00006E,
 //   lxSubMessage               = 0x00007D,
 //   lxInlineClosure            = 0x00007F,
-//   lxAttrExpression           = 0x000080,
 //   lxTemplateOperator         = 0x000081,
 //   lxFieldAccum               = 0x000083,
 //
@@ -241,7 +242,6 @@ enum LexicalType
 //   lxTrying                   = 0x00C00C,   // try-catch expression
 //   lxAlt                      = 0x00C00D,   // alt-catch expression
 //   lxSwitching                = 0x00C010,
-//   lxLooping                  = 0x00C011,
 //   lxInlineArgCall            = 0x10C012,   // calling a message with the unpacked parameter list
 //   lxStdExternalCall          = 0x00C014,   // calling an external function, arg - reference
 //   lxExternalCall             = 0x00C015,   // calling an external function, arg - reference
