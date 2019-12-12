@@ -824,10 +824,42 @@ public sealed const struct String : BaseValue
 //    {
 //        intern system'core_routines'__literal.copy(self, index, size, buffer)
 //    }
-//    
-//    /// Converts to UTF-16 literal
-//    wide cast() = wideConvertor.convert(self);
-//
+    
+    /// Converts to UTF-16 literal
+    wide cast()
+    {
+        int        i := 0;
+        int        m := 0;
+        int        page := 0;
+        int        l := self.Length;
+        short buffer[256];            
+        if (l < 256)
+        {
+            intern system'core_routines'__wideconvertor.convert(self, buffer, ref m);
+
+            ^ WideString.fromShortArray(0, m, buffer)
+        };
+
+        wide retVal := WideString.MinValue;
+//        while(l > 0)
+//        {
+//            page := l;
+//            if (page > 256)
+//            {
+//                page := 256
+//            };
+//            
+//            intern system'core_routines'__wideconvertor.convert(self.Substring(i,page), buffer, ref m);
+//            
+//            retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
+//            
+//            i := i + page;
+//            l := l - page
+//        };
+        
+        ^ retVal
+    }
+     
 //    Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
 //
 //    string Printable = self;
@@ -1761,38 +1793,7 @@ public const wide emptyWideString = WideString.MinValue;
 //
 //    /// Converts UTF-8 literal to UTF-16e
 //    wide convert(string s)
-//    {
-//        int        i := 0;
-//        int        m := 0;
-//        int        page := 0;
-//        int        l := s.Length;
-//        short buffer[256];            
-//        if (l < 256)
-//        {
-//            intern system'core_routines'__wideconvertor.convert(s, buffer, ref m);
-//
-//            ^ WideString.fromShortArray(0, m, buffer)
-//        };
-//
-//        wide retVal := emptyWideString;
-//        while(l > 0)
-//        {
-//            page := l;
-//            if (page > 256)
-//            {
-//                page := 256
-//            };
-//            
-//            intern system'core_routines'__wideconvertor.convert(s.Substring(i,page), buffer, ref m);
-//            
-//            retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
-//            
-//            i := i + page;
-//            l := l - page
-//        };
-//        
-//        ^ retVal
-//    }
+//        = s
 //        
 //    /// Returns a parameter
 //    wide convert(wide s)

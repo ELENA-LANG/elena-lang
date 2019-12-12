@@ -85,23 +85,23 @@
 
 /// Provides classes that describe the basic functionality
 
-type object     = system'Object;
+type object     = Object;
 
 // === basic logical types ===
-type bool       = system'BoolValue;
+type bool       = BoolValue;
 
 // === basic type aliases ===
-type byte       = system'ByteNumber;
-type short      = system'ShortNumber;
-type int        = system'IntNumber;
+type byte       = ByteNumber;
+type short      = ShortNumber;
+type int        = IntNumber;
 //type uint       = UIntNumber;
 //type long       = LongNumber;
 //type real       = RealNumber;
 //type char       = CharValue;
 //type mssg       = Message;
 ////type ext_mssg   = system'ExtensionMessage.
-type string     = system'String;
-type wide       = system'WideString;
+type string     = String;
+type wide       = WideString;
 //type handle     = Handle;
 //type rt_ptr     = RTPointer;
 //type dirty_ptr  = UnsafePointer;

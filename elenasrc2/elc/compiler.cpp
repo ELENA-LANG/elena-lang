@@ -6,7 +6,7 @@
 //                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
-//#define FULL_OUTOUT_INFO 1
+#define FULL_OUTOUT_INFO 1
 
 #include "elena.h"
 // --------------------------------------------------------------------------
@@ -6231,7 +6231,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
                current.injectAndReplaceNode(lxSeqExpression);
                SNode retNode = current.appendNode(lxReturning);
                retNode.appendNode(lxExpression);
-               recognizeTerminal(retNode.firstChild(), retVal, exprScope, HINT_NODEBUGINFO/* | HINT_NOBOXING*/);
+               recognizeTerminal(retNode.firstChild(), retVal, exprScope, HINT_NODEBUGINFO | HINT_NOBOXING);
             }
             else retVal = compileRetExpression(current, scope, HINT_ROOT/* | HINT_RETEXPR*/);
             break;

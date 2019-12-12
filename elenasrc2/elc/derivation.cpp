@@ -2127,6 +2127,21 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
 
 void DerivationWriter :: declareType(SNode node)
 {
+   IdentifierString ns;
+
+   SNode parentNode = _output.CurrentNode();
+   while (parentNode != lxNone) {
+      if (parentNode == lxNamespace) {
+         SNode nameNode = parentNode.findChild(lxNameAttr);
+         if (nameNode != lxNone) {
+            ns.insert(nameNode.firstChild(lxTerminalMask).identifier(), 0);
+            ns.insert("'", 0);
+         }
+      }
+
+      parentNode = parentNode.parentNode();
+   }
+
    SNode nameNode = node.prevNode().firstChild(lxTerminalMask);
    SNode typeNameNode;
 
@@ -2135,7 +2150,7 @@ void DerivationWriter :: declareType(SNode node)
    if (nameNode == lxIdentifier && isSingleStatement(current)) {
       typeNameNode = current.findChild(lxToken).firstChild(lxTerminalMask);
 
-      invalid = typeNameNode != lxReference;
+      invalid = typeNameNode != lxIdentifier;
    }
 
    if (invalid)
@@ -2146,7 +2161,7 @@ void DerivationWriter :: declareType(SNode node)
    if (_scope->attributes.exist(shortcut))
       raiseError(errDuplicatedDefinition, nameNode);
 
-   ref_t classRef = _scope->mapFullReference(typeNameNode.identifier());
+   ref_t classRef = _scope->mapNewIdentifier(ns.c_str(), typeNameNode.identifier(), Visibility::Public);
 
    _scope->attributes.add(shortcut, classRef);
    _scope->saveAttribute(shortcut, classRef);
