@@ -76,6 +76,8 @@ rem bin\elc src40\xforms\xforms.prj
 
 rem bin\elc src40\system\system_64.prj
 
+echo Done
+
 @echo off 
 goto:eof
 @echo on

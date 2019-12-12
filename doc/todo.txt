@@ -2,11 +2,10 @@
 In development:
 ------         
               dev
-                * uncomment String.cast<WideString>
-                * strings to wide string conversion
-
                 * externals
                 * predefined operations
+
+                * uncomment String.cast<WideString>
 
                 * conversion routines : others
                 * implicit conversion
@@ -237,6 +236,7 @@ In development:
                 * should child have an access to the parent static fields?
                 * public const fields?
                 * emptyWideString cannot be used before its declaration (see String)
+                * using direct passing the arguments for internal call when it is possible
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)

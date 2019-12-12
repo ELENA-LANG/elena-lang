@@ -542,7 +542,7 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated/*
 
 void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference)
 {
-   tape.write(bcCreateN, reference, itemSize);
+   tape.write(bcCreateN, reference | mskVMTRef, itemSize);
 }
 
 void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference)

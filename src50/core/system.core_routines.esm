@@ -38,12 +38,13 @@ procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$@syst
   pushsi 4
   pushsi 4
   pushsi 4
-  pusha
+  pushsi 4
   
   callextr api : wsubcopyz
   
-  peeksi 1
-  quitn 4
+  peeksi 0
+  freei  4
+  quitn  4
 
 end
 
