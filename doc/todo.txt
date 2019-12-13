@@ -2,9 +2,9 @@
 In development:
 ------         
               dev
-                * console operations
+                * exceptions : try, alt
 
-                * exceptions
+                * app entry
                 * hello world sample
 
                 * predefined operations

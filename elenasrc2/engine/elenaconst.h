@@ -63,8 +63,8 @@ namespace _ELENA_
 //   constexpr auto FINALLY_OPERATOR_ID     = 0x001E;
 //
 //   constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
-//   constexpr auto CATCH_OPERATOR_ID       = 0x0023;
-//   constexpr auto ALT_OPERATOR_ID         = 0x0024;
+   constexpr auto CATCH_OPERATOR_ID       = 0x0023;
+   constexpr auto ALT_OPERATOR_ID         = 0x0024;
 
    // built-in class attributes values
    constexpr auto CLASSNAME_CONST         = 0x62000001u;
@@ -422,8 +422,8 @@ namespace _ELENA_
 //   constexpr auto SHIFTL_OPERATOR      = "$shl";
 //   constexpr auto SHIFTR_OPERATOR      = "$shr";
 //   constexpr auto ISNIL_OPERATOR       = "??";
-//   constexpr auto CATCH_OPERATOR       = "|";
-//   constexpr auto ALT_OPERATOR         = "\\";
+   constexpr auto CATCH_OPERATOR       = "|";
+   constexpr auto ALT_OPERATOR         = "\\";
 //   constexpr auto FINALLY_OPERATOR     = "$fnl";
 //
 //  // operator templates

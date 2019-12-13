@@ -162,9 +162,9 @@ class ByteCodeWriter
 //   void declareSwitchBlock(CommandTape& tape);
 //   void declareSwitchOption(CommandTape& tape);
    void declareTry(CommandTape& tape);
-//   int declareSafeTry(CommandTape& tape);
+   int declareSafeTry(CommandTape& tape);
    void declareCatch(CommandTape& tape);
-//   void declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel);
+   void declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel, FlowScope& scope);
    void doCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
 
@@ -253,7 +253,7 @@ class ByteCodeWriter
 
    void endTry(CommandTape& tape);
    void endCatch(CommandTape& tape);
-//   void endSafeCatch(CommandTape& tape);
+   void endSafeCatch(CommandTape& tape);
 //   void endAlt(CommandTape& tape);
    void endThenBlock(CommandTape& tape);
    void endLoop(CommandTape& tape);
@@ -356,7 +356,7 @@ class ByteCodeWriter
    /*ref_t*/void generateCall(CommandTape& tape, SyntaxTree::Node node/*, int paramCount, int presavedCount*/);
 
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
-//   void generateTrying(CommandTape& tape, SyntaxTree::Node node);
+   void generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
    void generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateBranching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);

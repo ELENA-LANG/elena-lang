@@ -154,6 +154,7 @@ enum LexicalType
    lxCoreAPICall              = 0x058202,   // calling an external function, arg - reference
    lxExtIntConst              = 0x018210,
    lxExtIntArg                = 0x018211,
+   lxTrying                   = 0x058220,   // try-catch expression
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -245,7 +246,6 @@ enum LexicalType
 //   lxArgBoxing                = 0x00C005,   // argument list boxing, arg - size
 //   lxArgUnboxing              = 0x00C006,
 //   lxImplicitCall             = 0x00C00B,
-//   lxTrying                   = 0x00C00C,   // try-catch expression
 //   lxAlt                      = 0x00C00D,   // alt-catch expression
 //   lxSwitching                = 0x00C010,
 //   lxInlineArgCall            = 0x10C012,   // calling a message with the unpacked parameter list

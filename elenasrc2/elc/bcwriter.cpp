@@ -412,19 +412,18 @@ void ByteCodeWriter :: declareTry(CommandTape& tape)
    tape.write(bcHook, baCurrentLabel);
 }
 
-//int ByteCodeWriter :: declareSafeTry(CommandTape& tape)
-//{
-//   int label = tape.newLabel();                  // declare ret-end-label
-//   tape.newLabel();                  // declare end-label
-//   tape.newLabel();                  // declare alternative-label
-//
-//   // hook labAlt
-//
-//   tape.write(bcHook, baCurrentLabel);
-//   tape.write(bcAllocStack, 3);
-//
-//   return tape.exchangeFirstsLabel(label);
-//}
+int ByteCodeWriter :: declareSafeTry(CommandTape& tape)
+{
+   int label = tape.newLabel();                  // declare ret-end-label
+   tape.newLabel();                  // declare end-label
+   tape.newLabel();                  // declare alternative-label
+
+   // hook labAlt
+
+   tape.write(bcHook, baCurrentLabel);
+
+   return tape.exchangeFirstsLabel(label);
+}
 
 void ByteCodeWriter :: endTry(CommandTape& tape)
 {
@@ -432,30 +431,30 @@ void ByteCodeWriter :: endTry(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-//void ByteCodeWriter :: declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel)
-//{
-//   //   jump labEnd
-//   tape.write(bcJump, baPreviousLabel);
-//
-//   // restore the original ret label and return the overridden one
-//   retLabel = tape.exchangeFirstsLabel(retLabel);
-//
-//   if (finallyNode != lxNone) {
-//      // tryRet:
-//      tape.setPredefinedLabel(retLabel);
-//      tape.write(bcUnhook);
-//
-//      // generate finally
-//      pushObject(tape, lxResult);
-//      generateCodeBlock(tape, finallyNode);
-//      popObject(tape, lxResult);
-//
-//      gotoEnd(tape, baFirstLabel);
-//   }
-//
-//   // labErr:
-//   tape.setLabel();
-//}
+void ByteCodeWriter :: declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel, FlowScope& scope)
+{
+   //   jump labEnd
+   tape.write(bcJump, baPreviousLabel);
+
+   // restore the original ret label and return the overridden one
+   retLabel = tape.exchangeFirstsLabel(retLabel);
+
+   if (finallyNode != lxNone) {
+      // tryRet:
+      tape.setPredefinedLabel(retLabel);
+      tape.write(bcUnhook);
+
+      // generate finally
+      pushObject(tape, lxResult, 0, scope, 0);
+      generateCodeBlock(tape, finallyNode, scope);
+      popObject(tape, lxResult);
+
+      gotoEnd(tape, baFirstLabel);
+   }
+
+   // labErr:
+   tape.setLabel();
+}
 
 void ByteCodeWriter :: declareCatch(CommandTape& tape)
 {
@@ -1352,16 +1351,15 @@ void ByteCodeWriter :: endCatch(CommandTape& tape)
    tape.setLabel();
 }
 
-//void ByteCodeWriter :: endSafeCatch(CommandTape& tape)
-//{
-//   // labEnd
-//
-//   tape.setLabel();
-//   tape.write(bcFreeStack, 3);
-//
-//   tape.releaseLabel(); // retCatch is aleady set
-//}
-//
+void ByteCodeWriter :: endSafeCatch(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+
+   tape.releaseLabel(); // retCatch is aleady set
+}
+
 //void ByteCodeWriter :: endAlt(CommandTape& tape)
 //{
 //   // labEnd
@@ -6041,28 +6039,31 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //
 //   includeFrame(tape);
 //}
-//
-//void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   int retLabel = declareSafeTry(tape);
-//
-//   SNode finallyNode = node.findChild(lxFinally);
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxObjectMask)) {
-//         if (first) {
-//            generateCodeBlock(tape, current);
-//            endTry(tape);
+
+void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   bool first = true;
+
+   int retLabel = declareSafeTry(tape);
+
+   SNode finallyNode/* = node.findChild(lxFinally)*/;
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      if (first) {
+         if (current == lxCode) {
+            generateCodeBlock(tape, current, scope);
+         }
+         else generateObject(tape, current, scope);
+            
+         endTry(tape);
 //            if (finallyNode != lxNone) {
 //               // generate finally
 //               pushObject(tape, lxResult);
 //               generateCodeBlock(tape, finallyNode);
 //               popObject(tape, lxResult);
 //            }
-//            declareSafeCatch(tape, finallyNode, retLabel);
-//            doCatch(tape);
+         declareSafeCatch(tape, finallyNode, retLabel, scope);
+         doCatch(tape);
 //            if (finallyNode != lxNone) {
 //               // generate finally
 //               pushObject(tape, lxResult);
@@ -6072,16 +6073,16 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //
 //            // ...
 //
-//            first = false;
-//         }
-//         else generateObject(tape, current);
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endSafeCatch(tape);
-//}
-//
+         first = false;
+      }
+      else generateObject(tape, current, scope);
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   endSafeCatch(tape);
+}
+
 //void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   bool first = true;
@@ -6572,9 +6573,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxImplicitJump:
          resendResolvedMethod(tape, node.findChild(lxCallTarget).argument, node.argument);
          break;
-//      case lxTrying:
-//         generateTrying(tape, node);
-//         break;
+      case lxTrying:
+         generateTrying(tape, node, scope);
+         break;
 //      case lxAlt:
 //         generateAlt(tape, node);
 //         break;

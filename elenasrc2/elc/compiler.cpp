@@ -3536,14 +3536,14 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
 
    switch (operator_id) {
       case IF_OPERATOR_ID:
-//      case IFNOT_OPERATOR_ID:
+      case IFNOT_OPERATOR_ID:
          // if it is branching operators
          return compileBranchingOperator(roperand, scope, target, mode, operator_id);
-//      case CATCH_OPERATOR_ID:
+      case CATCH_OPERATOR_ID:
 //      case FINALLY_OPERATOR_ID:
-//         return compileCatchOperator(writer, roperand, scope/*, target, mode*/, operator_id);
-//      case ALT_OPERATOR_ID:
-//         return compileAltOperator(writer, roperand, scope, target/*, mode, operator_id*/);
+         return compileCatchOperator(roperand, scope/*, target, mode*/, operator_id);
+      case ALT_OPERATOR_ID:
+         return compileAltOperator(roperand, scope, target/*, mode, operator_id*/);
 //      case APPEND_OPERATOR_ID:
 //         node.setArgument(ADD_OPERATOR_ID);
 //         return compileAssigning(writer, node, scope, target, false);
@@ -4935,11 +4935,13 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
    return info;
 }
 
-//ObjectInfo Compiler :: compileCatchOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t operator_id)
-//{
+ObjectInfo Compiler :: compileCatchOperator(SNode node, ExprScope& scope, ref_t operator_id)
+{
+   SNode opNode = node.parentNode();
+
 //   writer.inject(lxExpression);
 //   writer.closeNode();
-//
+
 //   SNode current = node.firstChild();
 //   if (operator_id == FINALLY_OPERATOR_ID) {
 //      writer.newNode(lxFinally);
@@ -4951,21 +4953,19 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 //      // HOTFIX : catch operation follow the finally operation
 //      current = node.nextNode().firstChild();
 //   }
-//
-//   writer.newBookmark();
-//   writer.appendNode(lxResult);
-//   compileOperation(writer, current, scope, ObjectInfo(okObject), 0, EAttr::eaNone);
-//
-//   writer.removeBookmark();
-//
-//   writer.inject(lxTrying);
-//   writer.closeNode();
-//
-//   return ObjectInfo(okObject);
-//}
-//
-//ObjectInfo Compiler :: compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo)
-//{
+
+   node.insertNode(lxResult);
+   compileOperation(node, scope, ObjectInfo(okObject), /*0, */EAttr::eaNone);
+
+   opNode.set(lxTrying, 0);
+
+   return ObjectInfo(okObject);
+}
+
+ObjectInfo Compiler :: compileAltOperator(SNode node, ExprScope& scope, ObjectInfo)
+{
+   throw InternalError("Not yet implemented"); // !! temporal
+
 //   // allocate a temporal local
 //   int tempLocal = scope.newLocal();
 //
@@ -4988,7 +4988,7 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
 //   writer.closeNode();
 //
 //   return ObjectInfo(okObject);
-//}
+}
 
 ref_t Compiler :: resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode)
 {

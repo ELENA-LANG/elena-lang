@@ -1057,8 +1057,8 @@ private:
 
    ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
 
-//   ObjectInfo compileCatchOperator(SyntaxWriter& writer, SNode roperand, CodeScope& scope, ref_t operator_id);
-//   ObjectInfo compileAltOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo objectInfo);
+   ObjectInfo compileCatchOperator(SNode roperand, ExprScope& scope, ref_t operator_id);
+   ObjectInfo compileAltOperator(SNode node, ExprScope& scope, ObjectInfo objectInfo);
 ////   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
