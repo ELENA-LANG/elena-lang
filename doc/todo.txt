@@ -3,9 +3,9 @@ In development:
 ------         
               dev
                 * externals
-                * predefined operations
 
-                * uncomment String.cast<WideString>
+                * predefined operations
+                * intern import
 
                 * conversion routines : others
                 * implicit conversion
@@ -279,6 +279,7 @@ In development:
                 * test embeddable method return with by ref variable
                 * test accumulating constants
                 * assigning a big number to short / byte local variable - should be truncated?
+                * boxing ext call result
 
               dev1
                 * move all description to meta info using descr inline template

@@ -75,7 +75,7 @@ constexpr auto V_CONVERSION      = 0x80001011u;
 constexpr auto V_NEWOP           = 0x80001012u;
 constexpr auto V_DISPATCHER      = 0x80001013u;
 //constexpr auto V_ARGARRAY        = 0x80001014u;
-//constexpr auto V_EXTERN          = 0x80001015u;
+constexpr auto V_EXTERN          = 0x80001015u;
 constexpr auto V_INTERN          = 0x80001016u;
 //constexpr auto V_FORWARD         = 0x80001017u;
 constexpr auto V_IMPORT          = 0x80001018u;
@@ -205,7 +205,7 @@ public:
 
    virtual bool addForward(ident_t forward, ident_t reference) = 0;
 
-//   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
+   virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
 
 //// class forward declaration
@@ -487,12 +487,12 @@ public:
       eaPropExpr           = 0x00000010000,
       eaMetaField          = 0x00000020000,
       eaLoop               = 0x00000040000,
+      eaExtern             = 0x00000080000,
 
       eaScopeMask          = 0x0000001400A,
       eaObjectMask         = 0x0000001B2F4,
 
 //      eaForward            = 0x00000000008,
-//      eaExtern             = 0x00000000010,
 //      eaParams             = 0x00000000040,
 //      eaSubj               = 0x00000000400,
 //      eaMssg               = 0x00000000800,

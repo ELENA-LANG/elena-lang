@@ -211,7 +211,7 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
 //{
 //   tape.write(blDeclare, bsBranch);
 //}
-//
+
 //void ByteCodeWriter :: excludeFrame(CommandTape& tape)
 //{
 //   tape.write(bcExclude);
@@ -1275,17 +1275,17 @@ void ByteCodeWriter :: resend(CommandTape& tape)
    tape.write(bcJumpVI);
 }
 
-//void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount)
-//{
-//   // callextr ref
-//   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount);
-//}
-//
-//void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int paramCount)
-//{
-//   // callextr ref
-//   tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount);
-//}
+void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference/*, int paramCount*/)
+{
+   // callextr ref
+   tape.write(bcCallExtR, functionReference | mskImportRef/*, paramCount*/);
+}
+
+void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference/*, int paramCount*/)
+{
+   // callextr ref
+   tape.write(bcCallExtR, functionReference | mskNativeCodeRef/*, paramCount*/);
+}
 
 void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef/*, bool referenceMode*/)
 {
@@ -2035,7 +2035,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //case bcBCopyF:
          //case bcBLoadFI:
          //case bcDLoadFI:
-         //case bcDSaveFI:
+         case bcSaveFI:
          //case bcELoadFI:
          //case bcESaveFI:
             (*it).save(scope.code, true);
@@ -4008,6 +4008,18 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
    }
 }
 
+void ByteCodeWriter :: pushIntConstant(CommandTape& tape, int value)
+{
+   tape.write(bcPushN, value);
+}
+
+void ByteCodeWriter :: pushIntValue(CommandTape& tape)
+{
+   // pushai 0
+
+   tape.write(bcPushAI, 0);
+}
+
 void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode)
 {
 //   bool basePresaved = test(mode, BASE_PRESAVED);
@@ -4973,15 +4985,20 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
 //      current = current.nextNode();
 //   }
 //}
-//
-//int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope)
-//{
-//   int paramCount = 0;
-//
+
+int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   int paramCount = 0;
+
 //   // save function parameters
 //   Stack<ExternalScope::ParamInfo>::Iterator out_it = externalScope.operands.start();
-//   SNode current = node.lastChild();
-//   while (current != lxNone) {
+   SNode current = node.lastChild();
+   while (current != lxNone) {
+      if (test(current.type, lxObjectMask)) {
+         generateObject(tape, current, scope, STACKOP_MODE);
+
+         paramCount++;
+      }
 //      if (current == lxExtInteranlRef) {
 //         // HOTFIX : ignore call operation
 //         SNode ref = current.findSubNode(lxInternalRef);
@@ -5028,52 +5045,56 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
 //         }
 //         paramCount++;
 //      }
-//
-//      current = current.prevNode();
-//   }
-//
-//   return paramCount;
-//}
-//
-//void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node)
-//{
+
+      current = current.prevNode();
+   }
+
+   return paramCount;
+}
+
+void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowScope& scope)
+{
 //   SNode bpNode = node.findChild(lxBreakpoint);
 //   if (bpNode != lxNone) {
 //      translateBreakpoint(tape, bpNode, false);
 //
 //      declareBlock(tape);
 //   }
-//
-//   bool apiCall = (node == lxCoreAPICall);
-//
-//   // compile argument list
-//   ExternalScope externalScope;
-//   declareExternalBlock(tape);
-//
+
+   bool apiCall = (node == lxCoreAPICall);
+   bool cleaned = (node != lxStdExternalCall);
+
+   // compile argument list
+   //ExternalScope externalScope;
+  // declareExternalBlock(tape);
+
 //   generateExternalArguments(tape, node, externalScope);
-//
-//   // save function parameters
-//   int paramCount = saveExternalParameters(tape, node, externalScope);
-//
-//   // call the function
-//   if (apiCall) {
+
+   // save function parameters
+   int paramCount = saveExternalParameters(tape, node, scope);
+
+   // call the function
+   if (apiCall) {
 //      // if it is an API call
 //      // simply release parameters from the stack
 //      // without setting stack pointer directly - due to optimization
-//      callCore(tape, node.argument, externalScope.frameSize);
-//
+      callCore(tape, node.argument/*, externalScope.frameSize*/);
+
 //      endExternalBlock(tape, true);
-//      releaseObject(tape, paramCount);
-//   }
-//   else {
-//      callExternal(tape, node.argument, externalScope.frameSize);
-//
-//      endExternalBlock(tape);
-//   }
-//
+//      
+   }
+   else {
+      callExternal(tape, node.argument/*, externalScope.frameSize*/);
+
+  //    endExternalBlock(tape);
+   }
+
+   if (!cleaned)
+      releaseStack(tape, paramCount);
+
 //   if (bpNode != lxNone)
 //      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-//}
+}
 
 /*ref_t*/void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode/*, int paramCount, int presavedCount*/)
 {
@@ -5708,6 +5729,15 @@ void ByteCodeWriter :: copyToLocalAddress(CommandTape& tape, int size, int argum
    tape.write(bcCopyToF, argument, size >> 2);
 }
 
+void ByteCodeWriter :: saveToLocalAddress(CommandTape& tape, int size, int argument)
+{
+   if (size == 4) {
+      // savefi arg
+      tape.write(bcSaveFI, argument);
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
 void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
 {
    if ((size & 3) == 0) {
@@ -5749,6 +5779,41 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
 
       releaseStack(tape);
    }
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
+void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
+   SNode target;
+   SNode source;
+   assignOpArguments(node, target, source);
+
+   SNode srcObj = source == lxExpression ? source.findSubNodeMask(lxObjectMask) : source;
+   SNode dstObj = target == lxExpression ? target.findSubNodeMask(lxObjectMask) : target;
+
+   //if (srcObj == lxLocalAddress) {
+   //   loadObject(tape, target, scope);
+   //   copyFromLocalAddress(tape, node.argument, srcObj.argument);
+   //}
+   //else if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
+   //   loadObject(tape, source, scope);
+   //   copyToLocal(tape, node.argument, dstObj.argument);
+   //}
+   /*else */if (dstObj == lxLocalAddress) {
+      loadObject(tape, source, scope);
+      saveToLocalAddress(tape, node.argument, dstObj.argument);
+   }
+   //else if (dstObj == lxFieldExpression) {
+   //   generateObject(tape, source, scope, STACKOP_MODE);
+
+   //   SNode fieldNode = loadFieldExpression(tape, dstObj, scope);
+   //   if (fieldNode == lxFieldAddress) {
+   //      copyToFieldAddress(tape, node.argument, fieldNode.argument);
+   //   }
+   //   else throw InternalError("not yet implemente"); // !! temporal
+
+   //   releaseStack(tape);
+   //}
    else throw InternalError("not yet implemente"); // !! temporal
 }
 
@@ -6500,7 +6565,10 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxCopying:
          generateCopyingExpression(tape, node, scope);
          break;
-//      case lxInlineArgCall:
+      case lxSaving:
+         generateSavingExpression(tape, node, scope);
+         break;
+         //      case lxInlineArgCall:
 //         generateInlineArgCallExpression(tape, node);
 //         break;
 //      //case lxImplicitCall:
@@ -6521,11 +6589,11 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 ////      case lxThrowing:
 ////         generateThrowExpression(tape, node);
 ////         break;
-//      case lxCoreAPICall:
-//      case lxStdExternalCall:
-//      case lxExternalCall:
-//         generateExternalCall(tape, node);
-//         break;
+      case lxCoreAPICall:
+      case lxStdExternalCall:
+      case lxExternalCall:
+         generateExternalCall(tape, node, scope);
+         break;
       case lxInternalCall:
          generateInternalCall(tape, node, scope);
          break;
@@ -6606,6 +6674,21 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          break;
       case lxReturning:
          generateReturnExpression(tape, node, scope);
+         break;
+      case lxExtIntConst:
+         if (stackOp) {
+            pushIntConstant(tape, node.findChild(lxIntValue).argument);
+            stackOp = false;
+         }
+         else throw InternalError("Not yet implemented"); // !! temporal
+         break;
+      case lxExtIntArg:
+         if (stackOp) {
+            loadObject(tape, node.firstChild(lxObjectMask), scope);
+            pushIntValue(tape);
+            stackOp = false;
+         }
+         else throw InternalError("Not yet implemented"); // !! temporal
          break;
       default:
          if (stackOp) {

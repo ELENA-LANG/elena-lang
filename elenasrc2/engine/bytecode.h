@@ -183,8 +183,8 @@ enum ByteCode
 //   bcIf              = 0xAD,
 //   bcElse            = 0xAE,
 //   bcNext            = 0xAF,
-//
-//   bcPushN           = 0xB0,
+
+   bcPushN           = 0xB0,
 //   bcELoadFI         = 0xB1,
    bcPushR           = 0xB2,
 //   bcBSaveSI         = 0xB3,
@@ -193,7 +193,7 @@ enum ByteCode
    bcPushFI          = 0xB6,
 //   bcDLoadFI         = 0xB7,
 //   bcDLoadSI         = 0xB8,
-//   bcDSaveFI         = 0xB9,
+   bcSaveFI          = 0xB9,
    bcPushSI          = 0xBA,
    bcSaveSI          = 0xBB,
 //   bcELoadSI         = 0xBC,
@@ -532,7 +532,7 @@ public:
          case bcPushA:
          //case bcPushB:
          case bcPushFI:
-         //case bcPushN:
+         case bcPushN:
          case bcPushR:
          case bcAllocI:
          case bcPushSI:

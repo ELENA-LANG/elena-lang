@@ -51,8 +51,8 @@ constexpr auto HINT_REFOP           = EAttr::eaRef;
 constexpr auto HINT_PROP_MODE       = EAttr::eaPropExpr;
 constexpr auto HINT_METAFIELD       = EAttr::eaMetaField;
 constexpr auto HINT_LOOP            = EAttr::eaLoop;
+constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 
-//constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 //constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
@@ -3772,10 +3772,18 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
 
    ref_t sourceRef = resolveObjectReference(scope, source, false);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
-      if (source.kind == okIntConstant && targetRef == scope.moduleScope->intReference) {
+      if ((source.kind == okIntConstant || source.kind == okUIntConstant) 
+         && targetRef == scope.moduleScope->intReference) 
+      {
          // HOTFIX : allow to pass the constant directly
          source.reference = scope.moduleScope->intReference;
 
+         return source;
+      }
+      else if (source.kind == okExternal && 
+         _logic->isCompatible(*scope.moduleScope, targetRef, resolvePrimitiveReference(scope, sourceRef, 0, false))) 
+      {
+         // HOTFIX : allow to pass the result of external operation directly
          return source;
       }
       // if it can be boxed / implicitly converted
@@ -4018,13 +4026,13 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //   bool inlineArg = false;
    ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode/*, variadicOne, inlineArg*/);
 
-//   //   bool externalMode = false;
-//   if (target.kind == okExternal) {
-//      EAttr extMode = mode & HINT_ROOT;
-//
-//      retVal = compileExternalCall(writer, node.prevNode(), scope, exptectedRef, extMode);
-//   }
-//   else {
+   //   bool externalMode = false;
+   if (target.kind == okExternal) {
+      EAttr extMode = mode & HINT_ROOT;
+
+      retVal = compileExternalCall(node, scope/*, exptectedRef*/, extMode);
+   }
+   else {
       ref_t messageRef = mapMessage(node, scope/*, variadicOne*/);
 
       if (target.kind == okInternal) {
@@ -4046,7 +4054,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 
          retVal = compileMessage(node.parentNode(), scope, target, messageRef, mode, stackSafeAttr);
       }
-//   }
+   }
 
    return retVal;
 }
@@ -4237,6 +4245,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 
    EAttr assignMode = HINT_NOUNBOXING/* | HINT_ASSIGNING_EXPR*/;
    ref_t targetRef = resolveObjectReference(scope, target, false, false);
+   int stackSafeAttr = 0;
 //   bool byRefAssigning = false;
    switch (target.kind) {
       case okLocal:
@@ -4251,6 +4260,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
       {
          size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
          if (size != 0) {
+            stackSafeAttr = 3;
             operationType = lxCopying;
             operand = size;
             assignMode = assignMode | HINT_NOBOXING;
@@ -4287,6 +4297,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
             if (size != 0) {
                operand = size;
                operationType = lxCopying;
+               stackSafeAttr = 3;
             }
             else operationType = lxByRefAssigning;
 
@@ -4297,6 +4308,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
          break;
    }
 
+   ObjectInfo exprVal;
 //   if (operand == 0)
 //      assignMode = assignMode | HINT_DYNAMIC_OBJECT | HINT_NOPRIMITIVES;
 //
@@ -4312,18 +4324,23 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //   }
    /*else */if (targetRef == V_AUTO) {
       // support auto attribute
-      ObjectInfo exprVal = compileExpression(sourceNode, scope, 0, assignMode);
+      exprVal = compileExpression(sourceNode, scope, 0, assignMode);
 
       if (resolveAutoType(exprVal, target, scope)) {
          targetRef = resolveObjectReference(scope, exprVal, false);
       }
       else scope.raiseError(errInvalidOperation, node);
    }
-   else compileExpression(sourceNode, scope, targetRef, assignMode);
+   else exprVal = compileExpression(sourceNode, scope, targetRef, assignMode);
+
+   if (exprVal.kind == okExternal) {
+      stackSafeAttr = 3;
+      operationType = lxSaving;
+   }      
 
    node.set(operationType, operand);
 
-   analizeOperands(node, scope, operationType == lxCopying ? 3 : 0);
+   analizeOperands(node, scope, stackSafeAttr);
 
    return retVal;
 }
@@ -5569,7 +5586,7 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 //         writer.newNode(lxConstantChar, object.param);
 //         break;
       case okIntConstant:
-//      case okUIntConstant:
+      case okUIntConstant:
          terminal.set(lxConstantInt, object.param);
          terminal.appendNode(lxIntValue, object.extraparam);
          break;
@@ -5706,8 +5723,8 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 //      case okConstantRole:
 //         writer.newNode(lxConstantSymbol, object.param);
 //         break;
-//      case okExternal:
-//         return;
+      case okExternal:
+         return;
       case okInternal:
          terminal.set(lxInternalRef, object.param);
          return;
@@ -5736,7 +5753,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    ident_t token = terminal.identifier();
    ObjectInfo object;
 
-   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD)) {
+   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP)) {
       bool invalid = false;
       if (EAttrs::test(mode, HINT_INTERNALOP)) {
          if (terminal == lxReference) {
@@ -5746,6 +5763,9 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
             object = ObjectInfo(okInternal, scope.moduleScope->mapFullReference(token), V_INT32);
          }
          else invalid = true;
+      }
+      else if (EAttrs::test(mode, HINT_EXTERNALOP)) {
+         object = ObjectInfo(okExternal, 0, V_INT32);
       }
       else if (EAttrs::test(mode, HINT_MEMBER)) {
          object = scope.mapMember(token);
@@ -5805,20 +5825,20 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          //         object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT64);
          //         break;
          //      }
-               //case lxHexInteger:
-               //{
-               //   String<char, 20> s;
+         case lxHexInteger:
+         {
+            String<char, 20> s;
          
-               //   int integer = token.toULong(16);
-               //   if (errno == ERANGE)
-               //      scope.raiseError(errInvalidIntNumber, terminal);
+            int integer = token.toULong(16);
+            if (errno == ERANGE)
+               scope.raiseError(errInvalidIntNumber, terminal);
          
-               //   // convert back to string as a decimal integer
-               //   s.appendHex(integer);
+            // convert back to string as a decimal integer
+            s.appendHex(integer);
          
-               //   object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT32, 0, integer);
-               //   break;
-               //}
+            object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT32, 0, integer);
+            break;
+         }
          //      case lxReal:
          //      {
          //         String<char, 30> s(token, getlength(token) - 1);
@@ -5866,9 +5886,6 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          //               IdentifierString forwardName(FORWARD_MODULE, "'", token);
          //
          //               object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
-         //            }
-         //            else if (mode.test(HINT_EXTERNALOP)) {
-         //               object = ObjectInfo(okExternal, 0, V_INT32);
          //            }
          //            else if (mode.test(HINT_MEMBER)) {
          //               object = scope.mapMember(token);
@@ -6256,10 +6273,41 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    return retVal;
 }
 
-//void Compiler :: compileExternalArguments(SNode node, Scope& nsScope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
+void Compiler :: compileExternalArguments(SNode node, Scope& nsScope, SNode callNode)
+{
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone && current != callNode) {
+      SNode objNode = current;
+      if (objNode == lxExpression) {
+         objNode = current.findSubNodeMask(lxObjectMask);
+      }
+
+      if (objNode == lxConstantInt) {
+         // move constant directly to ext call
+         SyntaxTree::copyNode(objNode, callNode.appendNode(lxExtIntConst));
+
+         current = lxIdle;
+      }
+      else if (objNode == lxBoxableExpression) {
+         objNode = lxExpression;
+         ref_t typeRef = objNode.findChild(lxType).argument;
+         objNode = objNode.firstChild(lxObjectMask);
+         if (objNode == lxLocalAddress && typeRef == nsScope.moduleScope->intReference) {
+            // if it is a integer variable
+            SyntaxTree::copyNode(objNode, callNode
+               .appendNode(lxExtIntArg)
+               .appendNode(objNode.type, objNode.argument));
+
+            current = lxIdle;
+         }
+         else throw InternalError("Not yet implemented"); // !! temporal
+      }
+      else if(!test(objNode.type, lxOpScopeMask)) {
+         SyntaxTree::copyNode(objNode, callNode
+            .appendNode(objNode.type, objNode.argument));
+      }
+      else throw InternalError("Not yet implemented"); // !! temporal
+
 //      if (current == lxExtArgument) {
 //         ref_t classReference = current.findChild(lxExtArgumentRef).argument;
 //         ClassInfo classInfo;
@@ -6312,85 +6360,107 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 //         }
 //         else nsScope.raiseError(errInvalidOperation, current);
 //      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
-//ObjectInfo Compiler :: compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, EAttr mode)
-//{
-//   ObjectInfo retVal(okExternal);
-//
-//   _ModuleScope* moduleScope = scope.moduleScope;
-//
+
+      current = current.nextNode(lxObjectMask);
+   }
+}
+
+ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope/*, ref_t expectedRef*/, EAttr mode)
+{
+   ObjectInfo retVal(okExternal);
+
+   _ModuleScope* moduleScope = scope.moduleScope;
+
 ////   bool rootMode = test(mode, HINT_ROOT);
-//   bool stdCall = false;
-//   bool apiCall = false;
-//
-//   SNode targetNode = node;
+   bool stdCall = false;
+   bool apiCall = false;
+
+   SNode targetNode = node.prevNode();
 //   // HOTFIX : comment out dll reference
 //   //targetNode = lxIdle;
 //
 //   //SNode messageNode = node.findChild(lxMessage);
 //   writer.appendNode(lxBreakpoint, dsAtomicStep);
-//
-//   ident_t dllAlias = targetNode.identifier();
-//   ident_t functionName = node.nextNode().firstChild(lxTerminalMask).identifier();
-//
-//   ident_t dllName = NULL;
-//   if (dllAlias.compare(RT_MODULE)) {
-//      // if run time dll is used
-//      dllName = RTDLL_FORWARD;
-//
-//      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
-//         apiCall = true;
-//   }
-//   else dllName = moduleScope->project->resolveExternalAlias(dllAlias, stdCall);
-//
-//   // legacy : if dll is not mapped, use the name directly
-//   if (emptystr(dllName))
-//      dllName = dllAlias;
-//
-//   ReferenceNs name;
-//   if (!apiCall) {
-//      name.copy(DLL_NAMESPACE);
-//      name.combine(dllName);
-//      name.append(".");
-//      name.append(functionName);
-//   }
-//   else {
-//      name.copy(NATIVE_MODULE);
-//      name.combine(CORE_MODULE);
-//      name.combine(functionName);
-//   }
-//
-//   ref_t reference = moduleScope->module->mapReference(name);
-//
+
+   ident_t dllAlias = targetNode.findSubNodeMask(lxTerminalMask).identifier();
+   ident_t functionName = node.firstChild(lxTerminalMask).identifier();
+
+   ident_t dllName = NULL;
+   if (dllAlias.compare(RT_MODULE)) {
+      // if run time dll is used
+      dllName = RTDLL_FORWARD;
+
+      if (functionName.compare(COREAPI_MASK, COREAPI_MASK_LEN))
+         apiCall = true;
+   }
+   else dllName = moduleScope->project->resolveExternalAlias(dllAlias, stdCall);
+
+   // legacy : if dll is not mapped, use the name directly
+   if (emptystr(dllName))
+      dllName = dllAlias;
+
+   ReferenceNs name;
+   if (!apiCall) {
+      name.copy(DLL_NAMESPACE);
+      name.combine(dllName);
+      name.append(".");
+      name.append(functionName);
+   }
+   else {
+      name.copy(NATIVE_MODULE);
+      name.combine(CORE_MODULE);
+      name.combine(functionName);
+   }
+
+   ref_t reference = moduleScope->module->mapReference(name);
+
+   SNode exprNode = node.parentNode();
+   exprNode.set(lxSeqExpression, 0);
+   SNode callNode = exprNode.appendNode(lxVirtualReference);
+
 ////   if (!rootMode)
 ////      scope.writer->appendNode(lxTarget, -1);
-//
-//   // To tell apart coreapi calls, the name convention is used
-//   if (apiCall) {
-//      writer.inject(lxCoreAPICall, reference);
-//   }
-//   else writer.inject(stdCall ? lxStdExternalCall : lxExternalCall, reference);
-//
-//   compileExternalArguments(writer.CurrentNode(), scope);
-//
+
+   // To tell apart coreapi calls, the name convention is used
+   if (apiCall) {
+      callNode.set(lxCoreAPICall, reference);
+   }
+   else callNode.set(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+
+   // HOTFIX : remove the dll identifier
+   targetNode = lxIdle;
+
+   compileExternalArguments(exprNode, scope, callNode);
+
+   callNode.injectAndReplaceNode(lxBoxableExpression);
+
+   //   /*if (expectedRef == scope.moduleScope->realReference || expectedRef == V_REAL64) {
+   //      retVal = assignResult(writer, scope, true, V_REAL64);
+   //   }
+   //   else if (expectedRef == V_INT64) {
+   //      retVal = assignResult(writer, scope, false, expectedRef);
+   //   }
+   //else {
+      retVal.reference = V_INT32;
+      callNode.appendNode(lxSize, 4);
+   //}
+
+   callNode.appendNode(lxType, retVal.reference);
+
 //   writer.closeNode();
-//
-//   if (!EAttrs::test(mode, HINT_ROOT)) {
-//      if (expectedRef == scope.moduleScope->realReference || expectedRef == V_REAL64) {
-//         retVal = assignResult(writer, scope, true, V_REAL64);
-//      }
-//      else if (expectedRef == V_INT64) {
-//         retVal = assignResult(writer, scope, false, expectedRef);
-//      }
-//      else retVal = assignResult(writer, scope, false, V_INT32);
-//   }
-//
-//   return retVal;
-//}
+
+   //if (!EAttrs::test(mode, HINT_ROOT)) {
+   //   /*if (expectedRef == scope.moduleScope->realReference || expectedRef == V_REAL64) {
+   //      retVal = assignResult(writer, scope, true, V_REAL64);
+   //   }
+   //   else if (expectedRef == V_INT64) {
+   //      retVal = assignResult(writer, scope, false, expectedRef);
+   //   }
+   //   else */retVal = assignResult(node, scope, false, V_INT32);
+   //}
+
+   return retVal;
+}
 
 ObjectInfo Compiler :: compileInternalCall(SNode node, ExprScope& scope, ref_t message, ref_t signature, ObjectInfo routine)
 {
@@ -7329,7 +7399,7 @@ ref_t Compiler :: generateConstant(_CompileScope& scope, ObjectInfo retVal)
    _Module* module = scope.moduleScope->module;
    MemoryWriter dataWriter(module->mapSection(constRef | mskRDataRef, false));
 
-   if (retVal.kind == okIntConstant/* || retVal.kind == okUIntConstant*/) {
+   if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
       size_t value = module->resolveConstant(retVal.param).toULong(16);
 
       dataWriter.writeDWord(value);
@@ -9286,7 +9356,7 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
       if (dataWriter.Position() > 0)
          return false;
 
-      if (retVal.kind == okIntConstant/* || retVal.kind == okUIntConstant*/) {
+      if (retVal.kind == okIntConstant || retVal.kind == okUIntConstant) {
          size_t value = module->resolveConstant(retVal.param).toULong(16);
 
          dataWriter.writeDWord(value);

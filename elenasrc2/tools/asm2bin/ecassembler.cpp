@@ -501,7 +501,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
       {
          case bcCallR:
          case bcMovR:
-         case bcCreateR:
+         case bcCreate:
          //case bcBCopyR:
          case bcPushR:
             compileRCommand(opcode, token, writer, binary);
@@ -531,7 +531,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcMulN:
          //case bcDLoadFI:
          //case bcDLoadSI:
-         //case bcDSaveFI:
+         case bcSaveFI:
          case bcSaveSI:
          case bcRestore:
          case bcReserve:
@@ -568,7 +568,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcECopy:
          //case bcAndN:
          //case bcOrN:
-         //case bcPushN:
+         case bcPushN:
             compileNCommand(opcode, token, writer);
             break;
          //case bcSetVerb:

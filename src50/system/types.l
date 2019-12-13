@@ -53,7 +53,7 @@
 #define new         80001012h
 #define dispatch    80001013h
 //#define params      80001014h
-//#define extern      80001015h
+#define extern      80001015h
 #define intern      80001016h
 //#define forward     80001017h
 #define import      80001018h

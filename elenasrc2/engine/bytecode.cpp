@@ -47,8 +47,8 @@ const char* _fnOpcodes[256] =
    "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushr", OPCODE_UNKNOWN, "pushai", OPCODE_UNKNOWN, "pushfi", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
+   "pushn", OPCODE_UNKNOWN, "pushr", OPCODE_UNKNOWN, "pushai", OPCODE_UNKNOWN, "pushfi", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, "pushfi", "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
 
    "set", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", "addf", "mulf", OPCODE_UNKNOWN,
    "subf", "divf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storer", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,

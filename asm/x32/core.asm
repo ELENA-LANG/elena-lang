@@ -1103,6 +1103,13 @@ inline % 0B4h
 
 end
 
+// ; savefi
+inline % 0B9h
+
+  mov  [ebp + __arg1], edx
+
+end
+
 // ; savesi
 inline % 0BBh
 

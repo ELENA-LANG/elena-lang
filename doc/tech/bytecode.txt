@@ -26,6 +26,8 @@ ELENA byte codes (or ecodes)
                        
  movf i                     - fp+i => acc
 
+ load                       - int[acc] => index
+
  loadm m                    - m => index
 
  movr r                     - r => acc
@@ -34,7 +36,9 @@ ELENA byte codes (or ecodes)
 
  save                       - [acc] <= index
 
- savesi i                   - [sp:i] <= index
+ savefi i                   - [fp+i] <= index
+
+ savesi i                   - [sp+i] <= index
 
  select r1, r2              - acc = (index = 0 ? r1 : r2)
 
@@ -101,6 +105,8 @@ ELENA byte codes (or ecodes)
  
  pushfi i                   - [fp+i] => [sp+1] ; sp++
  
+ pushn n                    - n  => [sp+1] ; sp++
+
  pushr r                    - r  => [sp+1] ; sp++
 
  pushs i                    - sp+i => [sp+1] ; sp++

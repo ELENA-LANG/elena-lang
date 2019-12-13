@@ -1931,9 +1931,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_FORWARD:
 //         attributes.include(EAttr::eaForward);
 //         return true;
-//      case V_EXTERN:
-//         attributes.include(EAttr::eaExtern);
-//         return true;
+      case V_EXTERN:
+         attributes.include(EAttr::eaExtern);
+         return true;
       case V_WRAPPER:
          attributes.include(EAttr::eaRef);
          return true;

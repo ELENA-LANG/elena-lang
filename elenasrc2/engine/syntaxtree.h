@@ -123,6 +123,7 @@ enum LexicalType
    lxAssigning                = 0x058120,   // an assigning expression, arg - size
    lxCopying                  = 0x058121,
    lxByRefAssigning           = 0x058122,
+   lxSaving                   = 0x058123,
    lxReturning                = 0x059130,
    lxImplicitJump             = 0x058140,
    lxBranching                = 0x058150,   // branch expression      
@@ -148,6 +149,11 @@ enum LexicalType
    lxNewArrOp                 = 0x0581D0,
    lxInitializing             = 0x0581E0,
    lxInternalCall             = 0x0581F0,   // calling an internal function, arg - reference
+   lxStdExternalCall          = 0x058200,   // calling an external function, arg - reference
+   lxExternalCall             = 0x058201,   // calling an external function, arg - reference
+   lxCoreAPICall              = 0x058202,   // calling an external function, arg - reference
+   lxExtIntConst              = 0x018210,
+   lxExtIntArg                = 0x018211,
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -243,9 +249,6 @@ enum LexicalType
 //   lxAlt                      = 0x00C00D,   // alt-catch expression
 //   lxSwitching                = 0x00C010,
 //   lxInlineArgCall            = 0x10C012,   // calling a message with the unpacked parameter list
-//   lxStdExternalCall          = 0x00C014,   // calling an external function, arg - reference
-//   lxExternalCall             = 0x00C015,   // calling an external function, arg - reference
-//   lxCoreAPICall              = 0x00C016,   // calling an external function, arg - reference
 //   lxAltExpression            = 0x00C018,
 //   lxIfNot                    = 0x00C019,   // optional arg - reference
 //   lxIfN                      = 0x00C01B,   // arg - value

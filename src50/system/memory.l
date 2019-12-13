@@ -795,11 +795,11 @@ public sealed const struct String : BaseValue
 //    /// Creates the empty literal
 //    static string Default
 //        = emptyString;
-//        
-//    /// Creates the literal string with specified length        
-//    constructor allocate(int size)
-//        = new byte[](size + 1);
-//
+        
+    /// Creates the literal string with specified length        
+    constructor allocate(int size)
+        = new byte[](size + 1);
+
 //    /// Creates the literal string with specified length and copies the parameter value
 //    constructor copy(int size, string s)
 //        <= allocate(size)
@@ -818,12 +818,12 @@ public sealed const struct String : BaseValue
 //    /// Creates the copy of a subarray        
 //    constructor new(int index, int length, char[] array)
 //        => system'core_routines'__literal;
-//
-//    internal constructor fromByteArray(int index, int size, byte[] buffer)
-//        <= allocate(size)
-//    {
-//        intern system'core_routines'__literal.copy(self, index, size, buffer)
-//    }
+
+    internal constructor fromByteArray(int index, int size, byte[] buffer)
+        <= allocate(size)
+    {
+        intern system'core_routines'__literal.copy(self, index, size, buffer)
+    }
     
     /// Converts to UTF-16 literal
     wide cast()
@@ -841,21 +841,21 @@ public sealed const struct String : BaseValue
         };
 
         wide retVal := WideString.MinValue;
-//        while(l > 0)
-//        {
-//            page := l;
-//            if (page > 256)
-//            {
-//                page := 256
-//            };
-//            
-//            intern system'core_routines'__wideconvertor.convert(self.Substring(i,page), buffer, ref m);
-//            
-//            retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
-//            
-//            i := i + page;
-//            l := l - page
-//        };
+        while(l > 0)
+        {
+            page := l;
+            if (page > 256)
+            {
+                page := 256
+            };
+            
+            intern system'core_routines'__wideconvertor.convert(self.Substring(i,page), buffer, ref m);
+            
+            retVal := retVal.add(WideString.fromShortArray(0, m, buffer));
+            
+            i := i + page;
+            l := l - page
+        };
         
         ^ retVal
     }
@@ -993,10 +993,16 @@ public sealed const struct String : BaseValue
 //    /// Deletes the substring from the object and returns the new one
 //    string delete(int index, int length)
 //        => system'core_routines'__literal;
-//
-//    /// Returns the substring
-//    string Substring(int index, int length)
-//        => system'core_routines'__literal;
+
+    /// Returns the substring
+    string Substring(int index, int length)
+    {
+        auto subs := String.allocate(length);
+        
+        intern system'core_routines'__literal.copy(subs, index, length, self);
+        
+        ^ subs
+    }
 
     int Length
     {

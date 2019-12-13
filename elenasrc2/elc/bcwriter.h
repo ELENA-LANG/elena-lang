@@ -150,7 +150,7 @@ class ByteCodeWriter
    void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
    void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated/*, bool withPresavedMessage*/, 
       bool withNewFrame = true);
-//   void declareExternalBlock(CommandTape& tape);
+   //void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
@@ -229,9 +229,9 @@ class ByteCodeWriter
 //   void changeMessageCounter(CommandTape& tape, int paramCount, int flags);
    void resend(CommandTape& tape);
    void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
-//   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount);
-//   void callCore(CommandTape& tape, ref_t functionReference, int paramCount);
-//
+   void callExternal(CommandTape& tape, ref_t functionReference/*, int paramCount*/);
+   void callCore(CommandTape& tape, ref_t functionReference/*, int paramCount*/);
+
 //   void jumpIfLess(CommandTape& tape, ref_t ref);
 //   void jumpIfNotLess(CommandTape& tape, ref_t ref);
 //   void jumpIfGreater(CommandTape& tape, ref_t ref);
@@ -258,7 +258,7 @@ class ByteCodeWriter
    void endThenBlock(CommandTape& tape);
    void endLoop(CommandTape& tape);
    void endLoop(CommandTape& tape, ref_t comparingRef);
-//   void endExternalBlock(CommandTape& tape, bool idle = false);
+   //void endExternalBlock(CommandTape& tape, bool idle = false);
    void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
    void endMethod(CommandTape& tape, int argCount, int reserved, bool withFrame = true);
    void endIdleMethod(CommandTape& tape);
@@ -310,14 +310,15 @@ class ByteCodeWriter
 
    void copyToFieldAddress(CommandTape& tape, int size, int argument);
    void copyToLocalAddress(CommandTape& tape, int size, int argument);
+   void saveToLocalAddress(CommandTape& tape, int size, int argument);
    void copyToLocal(CommandTape& tape, int size, int argument);
    void copyFromLocalAddress(CommandTape& tape, int size, int argument);
 
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
    void saveObject(CommandTape& tape, SNode node);
 //   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal, int mode);
-//
-//   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
+
+   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 //   void unboxCallParameter(CommandTape& tape, SNode current);
 
@@ -325,6 +326,8 @@ class ByteCodeWriter
    void pushObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
+   void pushIntConstant(CommandTape& tape, int value);
+   void pushIntValue(CommandTape& tape);
 
    SyntaxTree::Node loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
@@ -348,7 +351,7 @@ class ByteCodeWriter
 //   void generateYieldReturn(CommandTape& tape, SyntaxTree::Node node);
 //   void generateYieldStop(CommandTape& tape, SyntaxTree::Node node);
 //   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
-//   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node);
+   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateInternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    /*ref_t*/void generateCall(CommandTape& tape, SyntaxTree::Node node/*, int paramCount, int presavedCount*/);
 
@@ -361,7 +364,8 @@ class ByteCodeWriter
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateByRefAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
-//   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
+   void generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
+   //   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateInlineArgCallExpression(CommandTape& tape, SyntaxTree::Node node);

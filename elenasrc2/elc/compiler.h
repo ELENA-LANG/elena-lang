@@ -112,7 +112,7 @@ public:
       okWideLiteralConstant,          // param - reference
 //      okCharConstant,                 // param - reference
       okIntConstant,                  // param - reference, extraparam - imm argument
-//      okUIntConstant,                 // param - reference, extraparam - imm argument
+      okUIntConstant,                 // param - reference, extraparam - imm argument
 //      okLongConstant,                 // param - reference
 //      okRealConstant,                 // param - reference
 //      okMessageConstant,              // param - reference
@@ -149,7 +149,7 @@ public:
       okClassSelf,                    // param - class reference; used in class resending expression
       okMetaField,                    // param - meta attribute id
 
-//      okExternal,
+      okExternal,
       okInternal,
 //      okPrimitive,                    // param * 4 = size 
 //      okPrimCollection                // param - length
@@ -1065,7 +1065,7 @@ private:
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
    bool allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
-//   ObjectInfo compileExternalCall(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t expectedRef, EAttr mode);
+   ObjectInfo compileExternalCall(SNode node, ExprScope& scope/*, ref_t expectedRef*/, EAttr mode);
    ObjectInfo compileInternalCall(SNode node, ExprScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 
    void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
@@ -1156,8 +1156,8 @@ private:
    ObjectInfo convertObject(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
    ObjectInfo sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
 
-//   void compileExternalArguments(SNode node, Scope& scope);
-//
+   void compileExternalArguments(SNode node, Scope& scope, SNode callNode);
+
    void injectBoxingTempLocal(SNode boxExprNode, SNode objNode, ExprScope& scope, LexicalType tempType, int tempLocal);
 //   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);

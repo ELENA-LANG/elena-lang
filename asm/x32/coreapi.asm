@@ -136,6 +136,32 @@ labEnd:
 
 end
 
+// subcopyz(target,index,size,arr)
+procedure coreapi'subcopyz
+
+  mov  eax, [esp+16]
+  mov  edx, [esp+12]
+  mov  esi, [esp+4]
+  mov  ecx, [edx]
+  mov  edi, [esp+8]
+  test ecx, ecx
+  mov  ebx, [edi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, [eax + ebx]
+  mov  byte ptr [esi], dl
+  add  ebx, 1
+  add  esi, 1
+  sub  ecx, 1
+  jnz  short labNext
+  mov  byte ptr [esi], cl
+
+labEnd:
+  ret
+
+end
+
 // ; === internal ===
 
 procedure coreapi'default_handler                                                       
