@@ -100,12 +100,12 @@ sealed class ConsoleWriter
 //        self.write(cast wide(s));
 //        self.write(theNewLineSymbol);
 //    }
-//
-//    write(string s)
-//    {
-//        self.write(cast wide(s))
-//    }
-//
+
+    write(string s)
+    {
+        self.write(cast wide(s))
+    }
+
 //    writeLine(wide s)
 //    {
 //        self.write(s);

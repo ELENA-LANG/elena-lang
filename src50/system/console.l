@@ -12,22 +12,22 @@
 //    
 //    abstract get bool KeyAvailable() {}
 //}
-//
-//// --- Console ---
-//
-///// A console
-//sealed class Console
-//{
-//    object         theWriter;
-//    IConsoleReader theReader;
-//
-//    /// Creates a console
-//    constructor(reader, writer)
-//    {
-//        theWriter := writer;
-//        theReader := reader
-//    }
-//
+
+// --- Console ---
+
+/// A console
+sealed class Console
+{
+    object         writer;
+    //IConsoleReader theReader;
+
+    /// Creates a console
+    constructor(/*reader, */writer)
+    {
+        this writer := writer;
+        //theReader := reader
+    }
+
 //    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
 //    writeLine(o)
 //    {
@@ -39,23 +39,23 @@
 //    {
 //        self.write(o.Printable)
 //    }
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    write(string s)
-//    {
-//        theWriter.write(s);
-//        
+
+    /// Writes the specified literal value to the standard output stream.
+    write(string s)
+    {
+        writer.write(s);
+        
 //        theWriter.refresh();
-//    }
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    write(wide s)
-//    {
-//        theWriter.write(s);
-//        
+    }
+
+    /// Writes the specified literal value to the standard output stream.
+    write(wide s)
+    {
+        writer.write(s);
+        
 //        theWriter.refresh()
-//    }
-//
+    }
+
 //    /// the current line terminator to the standard output stream.
 //    writeLine(string s)
 //    {
@@ -115,8 +115,8 @@
 ////        
 ////        ^ key
 ////    ]
-//}
-//
-///// A standard console
-//public static Console console = new Console(io'stdConsoleReader, io'stdConsoleWriter);
-//
+}
+
+/// A standard console
+public static Console console = new Console(/*io'stdConsoleReader, */io'stdConsoleWriter);
+

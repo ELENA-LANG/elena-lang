@@ -9,7 +9,7 @@
 
 public sealed ref<T> //: BaseVariable
 {
-    embeddable T theValue;
+    embeddable T value;
     
 //    constructor(T val)
 //    {

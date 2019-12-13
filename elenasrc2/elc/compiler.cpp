@@ -5678,7 +5678,8 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okReadOnlyFieldAddress:      
          terminal.set(lxFieldExpression, 0);
          terminal.appendNode(lxSelfLocal, 1);
-         terminal.appendNode(lxFieldAddress, object.param);
+         if (object.param)
+            terminal.appendNode(lxFieldAddress, object.param);
 
          setVariableTerminal(terminal, scope, object, mode, lxFieldExpression);
          break;

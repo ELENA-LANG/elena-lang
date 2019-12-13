@@ -4133,6 +4133,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //         if (basePresaved)
 //            tape.write(bcPopB);
 //         break;
+      case lxResult:
+         break;
       default:
          throw InternalError("Not yet implemented"); // !! temporal
          return;
