@@ -158,7 +158,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compilePush, &compileNop, &compilePush, &compileNop, &loadIndexOp, &compileNop, &compilePushFI, &compileNop,
-   &compileNop, &loadFPOp, &compilePushSI, &loadIndexOp, &compileNop, &compilePushF, &loadIndexOp, &loadIndexOp,
+   &compileNop, &loadFPOp, &compilePushSI, &loadIndexOp, &compileNop, &compilePushF, &loadFPOp, &loadIndexOp,
 
    &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop,
    &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileASaveR, &compileNop, &compileNop, &compileNop,

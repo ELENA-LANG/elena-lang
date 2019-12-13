@@ -16,7 +16,7 @@ procedure __object."#dispatch[1]"
   pushr    class : system'MethodNotFoundException
   storesi  5
   peeksi   0
-  pushr    mssgconst : "new[2]"
+  pushr    mssgconst : "new[3]"
 
   throw
 

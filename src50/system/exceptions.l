@@ -77,8 +77,6 @@ public class Exception
 //    /// Returns the message
 //    string Message = theMessage;
 //    
-    on() {} // !! temporal test
-
 //    on(handler)
 //        => system'core_routines'__exception;
 //
@@ -174,7 +172,7 @@ public class Exception
 
 // --- MethodNotFound ---
 
-public /*sealed*/ class MethodNotFoundException : Exception
+public sealed class MethodNotFoundException : Exception
 {
     /// Creates the exception
 //    constructor new()
@@ -186,8 +184,10 @@ public /*sealed*/ class MethodNotFoundException : Exception
 //    constructor new(mssg missingMessage)
 ////        <= ("Method " + missingMessage.Printable + " not found");
 //        <= new(cast string("Method " + missingMessage.Printable + " not found"));
-//        
-//    constructor new(object object, mssg missingMessage)
+        
+    constructor new(object object, mssg missingMessage)
+    {
+    }
 ////        <= (object.__getClassName() + " : Method " + missingMessage.Printable + " not found");
 //        <= new(object.__getClassName() + " : Method " + missingMessage.Printable + " not found");
 }
