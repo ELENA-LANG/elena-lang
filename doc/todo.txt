@@ -2,8 +2,6 @@
 In development:
 ------         
               dev
-                * implicit constructor
-                * static symbols
                 * console operations
 
                 * exceptions
@@ -243,6 +241,9 @@ In development:
                 * emptyWideString cannot be used before its declaration (see String)
                 * using direct passing the arguments for internal call when it is possible
                 * allow to pass field to the external routines - see system'io'ConsoleWriter
+                * run-time implicit constructor resolving, should it be allowed? auto-generated multi-constructors
+                  hide the error if there is no appropriate handler for the given argument list 
+                * step over external / message / loop / if call?
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)

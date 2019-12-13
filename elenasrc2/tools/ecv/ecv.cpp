@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   39
+#define REVISION_VERSION   40
 
 using namespace _ELENA_;
 
@@ -547,7 +547,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.appendInt(argument);
          break;
       case bcJump:
-//      case bcHook:
+      case bcHook:
 //      case bcIf:
 //      case bcIfB:
 //      case bcElse:
@@ -573,18 +573,18 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append(' ');
          printLabel(command, position + argument2 + 9, labels);
          break;
-//      case bcIfN:
-//      case bcElseN:
+      case bcIfN:
+      case bcElseN:
 //      case bcLessN:
 //      case bcNotLessN:
 //      case bcGreaterN:
 //      case bcNotGreaterN:
-//         printCommand(command, opcode);
-//         printLabel(command, position + argument2 + 9, labels);
-//         command.append(' ');
-//         command.appendHex(argument);
-//         command.append('h');
-//         break;
+         printCommand(command, opcode);
+         printLabel(command, position + argument2 + 9, labels);
+         command.append(' ');
+         command.appendHex(argument);
+         command.append('h');
+         break;
       case bcNop:
          printLabel(command, position + argument, labels);
          command.append(':');
@@ -615,7 +615,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcQuitN:
       case bcDec:
 //      case bcECopy:
-//      case bcAndN:
+      case bcAnd:
 //      case bcOrN:
 //      case bcInit:
 //      case bcNLoadI:

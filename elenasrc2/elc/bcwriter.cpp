@@ -127,35 +127,35 @@ void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t s
       tape.write(bdSourcePath, sourcePathRef);
 }
 
-//void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef)
-//{
-//   // symbol-begin:
-//
-//   // aloadr static
-//   // elser procedure-end
-//   // acopyr ref
-//   // pusha
-//
-//   tape.newLabel();     // declare symbol-end label
-//
-//   if (sourcePathRef != INVALID_REF)
-//      tape.write(blBegin, bsSymbol, staticReference);
-//
-//   tape.write(bdSourcePath, sourcePathRef);
-//
-//   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.write(bcACopyR, staticReference | mskLockVariable);
-//   tape.write(bcPushA);
-//
-//   tryLock(tape);
-//   declareTry(tape);
-//
-//   // check if the symbol was not created while in the lock
-//   // aloadr static
-//   tape.write(bcALoadR, staticReference | mskStatSymbolRef);
-//   jumpIfNotEqual(tape, 0, true, true);
-//}
+void ByteCodeWriter :: declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef)
+{
+   // symbol-begin:
+
+   // peekr static
+   // elser procedure-end
+   // movr ref
+   // pusha
+
+   tape.newLabel();     // declare symbol-end label
+
+   if (sourcePathRef != INVALID_REF)
+      tape.write(blBegin, bsSymbol, staticReference);
+
+   tape.write(bdSourcePath, sourcePathRef);
+
+   tape.write(bcPeekR, staticReference | mskStatSymbolRef);
+   tape.write(bcElseR, baCurrentLabel, 0);
+   tape.write(bcMovR, staticReference | mskLockVariable);
+   tape.write(bcPushA);
+
+   tryLock(tape);
+   declareTry(tape);
+
+   // check if the symbol was not created while in the lock
+   // peekr static
+   tape.write(bcPeekR, staticReference | mskStatSymbolRef);
+   jumpIfNotEqual(tape, 0, true, true);
+}
 
 void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
 {
@@ -401,18 +401,17 @@ void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
 //{
 //   tape.setLabel();
 //}
-//
-//void ByteCodeWriter :: declareTry(CommandTape& tape)
-//{
-//   tape.newLabel();                  // declare end-label
-//   tape.newLabel();                  // declare alternative-label
-//
-//   // hook labAlt
-//
-//   tape.write(bcHook, baCurrentLabel);
-//   tape.write(bcAllocStack, 3);
-//}
-//
+
+void ByteCodeWriter :: declareTry(CommandTape& tape)
+{
+   tape.newLabel();                  // declare end-label
+   tape.newLabel();                  // declare alternative-label
+
+   // hook labAlt
+
+   tape.write(bcHook, baCurrentLabel);
+}
+
 //int ByteCodeWriter :: declareSafeTry(CommandTape& tape)
 //{
 //   int label = tape.newLabel();                  // declare ret-end-label
@@ -426,13 +425,13 @@ void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
 //
 //   return tape.exchangeFirstsLabel(label);
 //}
-//
-//void ByteCodeWriter :: endTry(CommandTape& tape)
-//{
-//   //   unhook
-//   tape.write(bcUnhook);
-//}
-//
+
+void ByteCodeWriter :: endTry(CommandTape& tape)
+{
+   //   unhook
+   tape.write(bcUnhook);
+}
+
 //void ByteCodeWriter :: declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel)
 //{
 //   //   jump labEnd
@@ -457,47 +456,44 @@ void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
 //   // labErr:
 //   tape.setLabel();
 //}
-//
-//void ByteCodeWriter :: declareCatch(CommandTape& tape)
-//{
-//   //   jump labEnd
-//   // labErr:
-//
-//   tape.write(bcJump, baPreviousLabel);
-//   tape.setLabel();
-//}
-//
-//void ByteCodeWriter :: doCatch(CommandTape& tape)
-//{
-//   //   popa
-//   //   flag
-//   //   andn elMessage
-//   //   ifn labSkip
-//   //   nload
-//   //   ecopyd
-//   //   aloadsi 0
-//   //   acallvi 0
-//   // labSkip:
-//   //   unhook
-//
-//   tape.newLabel();
-//
-//   // HOT FIX: to compensate the unpaired pop
-//   tape.write(bcAllocStack, 1);
-//   tape.write(bcPopA);
-//   tape.write(bcFlag);
-//   tape.write(bcAndN, elMessage);
-//   tape.write(bcIfN, baCurrentLabel, 0);
-//   tape.write(bcNLoad);
-//   tape.write(bcECopyD);
-//   tape.write(bcALoadSI, 0);
-//   tape.write(bcACallVI, 0);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
-//
+
+void ByteCodeWriter :: declareCatch(CommandTape& tape)
+{
+   //   jump labEnd
+   // labErr:
+
+   tape.write(bcJump, baPreviousLabel);
+   tape.setLabel();
+}
+
+void ByteCodeWriter :: doCatch(CommandTape& tape)
+{
+   //   popa
+   //   flag
+   //   and elMessage
+   //   ifn labSkip
+   //   load
+   //   peeksi 0
+   //   callvi 0
+   // labSkip:
+   //   unhook
+
+   tape.newLabel();
+
+   // HOT FIX: to compensate the unpaired pop
+   tape.write(bcPopA);
+   tape.write(bcFlag);
+   tape.write(bcAnd, elMessage);
+   tape.write(bcIfN, baCurrentLabel, 0);
+   tape.write(bcLoad);
+   tape.write(bcPeekSI, 0);
+   tape.write(bcCallVI, 0);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
+
 //void ByteCodeWriter :: declareAlt(CommandTape& tape)
 //{
 //   //   unhook
@@ -1324,14 +1320,14 @@ void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef/*, bool
 //   tape.write(bcNotGreaterN, baCurrentLabel, comparingRef);
 //}
 
-void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, /*bool referenceMode, */bool jumpToEnd)
+void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode, bool jumpToEnd)
 {
-   //if (!referenceMode) {
-   //   tape.write(bcNLoad);
-   //   tape.write(bcElseN, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef);
-   //}
+   if (!referenceMode) {
+      tape.write(bcLoad);
+      tape.write(bcElseN, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef);
+   }
    // elser then-end, r
-   /*else */if (comparingRef == 0) {
+   else if (comparingRef == 0) {
       tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, 0);
    }
    else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
@@ -1349,14 +1345,13 @@ void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
    tape.write(bcJump, label);
 }
 
-//void ByteCodeWriter :: endCatch(CommandTape& tape)
-//{
-//   // labEnd
-//
-//   tape.setLabel();
-//   tape.write(bcFreeStack, 3);
-//}
-//
+void ByteCodeWriter :: endCatch(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+}
+
 //void ByteCodeWriter :: endSafeCatch(CommandTape& tape)
 //{
 //   // labEnd
@@ -1460,36 +1455,33 @@ void ByteCodeWriter :: endInitializer(CommandTape& tape)
    tape.write(blEnd, bsInitializer);
 }
 
-//void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
-//{
-//   // finally block - should free the lock if the exception was thrown
-//   endTry(tape);
-//   declareCatch(tape);
-//   doCatch(tape);
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcPopA);
-//   freeLock(tape);
-//   tape.write(bcPushB);
-//
-//   // throw
-//   tape.write(bcThrow);
-//
-//   endCatch(tape);
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcPopA);
-//   freeLock(tape);
-//   tape.write(bcACopyB);
-//
-//   // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
-//   // asaver static
-//   tape.write(bcASaveR, staticReference | mskStatSymbolRef);
-//   tape.setLabel();
-//
-//   // symbol-end:
-//   tape.write(blEnd, bsSymbol);
-//}
+void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
+{
+   // finally block - should free the lock if the exception was thrown
+   endTry(tape);
+   declareCatch(tape);
+   doCatch(tape);
+
+   freeLock(tape);
+   releaseStack(tape);
+   tape.write(bcPushA);
+
+   // throw
+   tape.write(bcThrow);
+
+   endCatch(tape);
+
+   freeLock(tape);
+   releaseStack(tape);
+
+   // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
+   // storer static
+   tape.write(bcStoreR, staticReference | mskStatSymbolRef);
+   tape.setLabel();
+
+   // symbol-end:
+   tape.write(blEnd, bsSymbol);
+}
 
 void ByteCodeWriter :: writeProcedureDebugInfo(Scope& scope, ref_t sourceRef)
 {
@@ -2066,8 +2058,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //case bcElse:
          //case bcLess:
          //case bcNotLess:
-         //case bcIfN:
-         //case bcElseN:
+         case bcIfN:
+         case bcElseN:
          //case bcLessN:
          //case bcNotLessN:
          //case bcGreaterN:
@@ -2076,7 +2068,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //case bcElseM:
          //case bcNext:
          case bcJump:
-         //case bcHook:
+         case bcHook:
          //case bcAddress:
          //case bcIfHeap:
             (*it).save(scope.code, true);
@@ -3772,27 +3764,27 @@ void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
 //{
 //   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
 //}
-//
-//void ByteCodeWriter :: tryLock(CommandTape& tape)
-//{
-//   // labWait:
-//   // snop
-//   // trylock
-//   // elsen labWait
-//
-//   int labWait = tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcSNop);
-//   tape.write(bcTryLock);
-//   tape.write(bcElseN, labWait, 0);
-//   tape.releaseLabel();
-//}
-//
-//void ByteCodeWriter::freeLock(CommandTape& tape)
-//{
-//   // freelock
-//   tape.write(bcFreeLock);
-//}
+
+void ByteCodeWriter :: tryLock(CommandTape& tape)
+{
+   // labWait:
+   // snop
+   // trylock
+   // elsen labWait
+
+   int labWait = tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcSNop);
+   tape.write(bcTryLock);
+   tape.write(bcElseN, labWait, 0);
+   tape.releaseLabel();
+}
+
+void ByteCodeWriter :: freeLock(CommandTape& tape)
+{
+   // freelock
+   tape.write(bcFreeLock);
+}
 
 inline SNode getChild(SNode node, size_t index)
 {
@@ -4142,6 +4134,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //            tape.write(bcPopB);
 //         break;
       default:
+         throw InternalError("Not yet implemented"); // !! temporal
          return;
    }
 
@@ -6229,7 +6222,7 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
       switch (current.type) {
          case lxIf:
 //         case lxIfN:
-            jumpIfNotEqual(tape, current.argument/*, current == lxIf*/);
+            jumpIfNotEqual(tape, current.argument, current == lxIf);
 
             //declareBlock(tape);
             generateCodeBlock(tape, current.findSubNode(lxCode), scope);
@@ -6692,10 +6685,10 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          break;
       default:
          if (stackOp) {
-            pushObject(tape, node, scope, mode);
+            pushObject(tape, node.type, node.argument, scope, mode);
             stackOp = false;
          }
-         else loadObject(tape, node, scope, mode);
+         else loadObject(tape, node.type, node.argument, scope, mode);
          break;
    }
 
@@ -7279,12 +7272,12 @@ void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, S
    endInitializer(tape);
 }
 
-void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root/*, bool isStatic*/, pos_t sourcePathRef)
+void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathRef)
 {
-//   if (isStatic) {
-//      declareStaticSymbol(tape, root.argument, sourcePathRef);
-//   }
-   /*else */declareSymbol(tape, root.argument, sourcePathRef);
+   if (isStatic) {
+      declareStaticSymbol(tape, root.argument, sourcePathRef);
+   }
+   else declareSymbol(tape, root.argument, sourcePathRef);
 
    FlowScope scope;
 
@@ -7294,10 +7287,10 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root/*, bool isSt
    if (scope.debugBlockStarted)
       declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 
-//   if (isStatic) {
-//      endStaticSymbol(tape, root.argument);
-//   }
-   /*else */endSymbol(tape);
+   if (isStatic) {
+      endStaticSymbol(tape, root.argument);
+   }
+   else endSymbol(tape);
 }
 
 void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument)

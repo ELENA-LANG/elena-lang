@@ -18,16 +18,16 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pusha", "popa", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "bsredirect", OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", OPCODE_UNKNOWN, "quit",
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "unhook", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "trylock",
+   "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, "len", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "class", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, "len", OPCODE_UNKNOWN, "flag", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "class", OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "equal", "less", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "save",
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "load", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -44,7 +44,7 @@ const char* _fnOpcodes[256] =
    "dec", "get", "restore", "peekr", "peekfi", "peeksi", OPCODE_UNKNOWN, "xset",
    "open", "quitn", "create", "fillr", "movf", OPCODE_UNKNOWN, "movr", "loadm",
 
-   "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", "hook", OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "pushn", OPCODE_UNKNOWN, "pushr", OPCODE_UNKNOWN, "pushai", OPCODE_UNKNOWN, "pushfi", OPCODE_UNKNOWN,
@@ -53,14 +53,14 @@ const char* _fnOpcodes[256] =
    "set", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", "addf", "mulf", OPCODE_UNKNOWN,
    "subf", "divf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storer", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "freei", "alloci", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "shl", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "freei", "alloci", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "shl", "and", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
    "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavefi",
 
    "new", "newn", "fillri", OPCODE_UNKNOWN, "vcallrm", "jumprm", "select", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "callrm", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", OPCODE_UNKNOWN,
 
 //   "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
 //   "get", "set", "inc", "equit", "count", "unhook", "add", "create",
@@ -385,8 +385,8 @@ inline bool removeIdleJump(ByteCodeIterator it)
          //case bcElse:
          //case bcLess:
          //case bcNotLess:
-         //case bcIfN:
-         //case bcElseN:
+         case bcIfN:
+         case bcElseN:
          //case bcLessN:
          //case bcNotLessN:
          //case bcGreaterN:
@@ -465,8 +465,8 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 //            case bcElse:              
 //            case bcLess:
 //            case bcNotLess:
-//            case bcIfN:
-//            case bcElseN:              
+            case bcIfN:
+            case bcElseN:              
 //            case bcLessN:
 //            case bcNotLessN:
 //            case bcGreaterN:
@@ -474,7 +474,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 //            case bcIfM:
 //            case bcElseM:              
 //            case bcNext:
-//            case bcHook:
+            case bcHook:
 //            case bcAddress:
 //            case bcIfHeap:
                // remove the label from idle list

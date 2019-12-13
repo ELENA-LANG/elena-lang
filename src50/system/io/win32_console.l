@@ -58,7 +58,7 @@ namespace io
 
 // --- ConsoleHandleFactory --
 
-public singleton ConsoleHandleFactory
+singleton ConsoleHandleFactory
 {
     handle new(int attrs)
     {
@@ -73,7 +73,7 @@ public singleton ConsoleHandleFactory
 //        int    dwMode := extern KERNEL32.GetFileType(h);
 //        if (dwMode == FILE_TYPE_CHAR)
 //        {
-//            ^ new ConsoleWriter(h)
+            ^ new ConsoleWriter(h)
 //        }
 //        else
 //        {
@@ -84,7 +84,7 @@ public singleton ConsoleHandleFactory
 
 // --- ConsoleWriter ---
 
-public sealed class ConsoleWriter
+sealed class ConsoleWriter
 {
     handle handle;
     wide   newLineSymbol;
@@ -121,7 +121,9 @@ public sealed class ConsoleWriter
     {
         int len := s.Length;
         
-        //extern KERNEL32.WriteConsoleW(handle,s,len,0,0)
+        // !! temporally - use local variable
+        handle h := handle;        
+        extern KERNEL32.WriteConsoleW(/*handle*/h,s,len,0,0)
 
         // !!check the result of the operation
     }
@@ -432,11 +434,11 @@ public sealed class ConsoleWriter
 //        extern KERNEL32.CloseHandle(theHandle)
 //    }
 //}
-//
-//// --- Console Standard Symbols
-//
-//public symbol stdConsoleWriter = ConsoleHandleFactory.newWriter();
-//
+
+// --- Console Standard Symbols
+
+public symbol stdConsoleWriter = ConsoleHandleFactory.newWriter();
+
 //public symbol stdConsoleReader = new ConsoleReader(ConsoleHandleFactory.new(0FFFFFFF6h));
 }
 

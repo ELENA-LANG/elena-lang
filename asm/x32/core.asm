@@ -942,6 +942,31 @@ inline % 15h
   
 end
 
+// ; unhook
+inline % 1Dh
+
+  mov  esi, [data : %CORE_GC_TABLE + gc_et_current]
+  mov  esp, [esi + 4]
+  mov  ebp, [esi + 8]
+  pop  ecx
+  mov  [data : %CORE_GC_TABLE + gc_et_current], ecx
+  
+end
+
+// ; trylock
+inline % 27h
+
+  xor  edx, edx
+
+end
+
+// ; freelock
+inline % 28h
+
+  nop
+
+end
+
 // ; loadenv
 inline % 2Ah
 
@@ -956,6 +981,14 @@ inline % 31h
   mov  ecx, [ebx-8]
   and  edx, ecx
 
+end
+
+// ; flag
+inline % 33h
+
+  mov  eax, [ebx - 4]
+  mov  edx, [eax - elVMTFlagOffset]
+  
 end
 
 // ; class
@@ -991,6 +1024,13 @@ end
 inline % 47h
 
   mov [ebx], edx
+
+end
+
+// ; load
+inline % 48h
+
+  mov edx, [ebx]
 
 end
 
@@ -1094,6 +1134,23 @@ inline % 0A5h
   call extern __arg1
   mov  edx, eax
 
+end
+
+// ; hook label (ecx - offset)
+// ; NOTE : hook calling should be the first opcode
+inline % 0A6h
+
+  call code : %HOOK
+
+  push [data : %CORE_GC_TABLE + gc_et_current]
+
+  mov  edx, esp 
+  push ebp
+  push edx
+  push ecx
+
+  mov  [data : %CORE_GC_TABLE + gc_et_current], esp
+  
 end
 
 // ; pushai

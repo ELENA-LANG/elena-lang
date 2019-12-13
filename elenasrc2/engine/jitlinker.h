@@ -156,7 +156,7 @@ class JITLinker : _JITLoaderListener
 
    void createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes);
 
-//   void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
+   void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
 ////   void* resolveConstVariable(ident_t  reference, int mask);
    void* resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
    void* resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);

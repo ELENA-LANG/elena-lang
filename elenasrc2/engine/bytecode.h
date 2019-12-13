@@ -45,7 +45,7 @@ enum ByteCode
 //   bcInc             = 0x1A,
 //   bcEQuit           = 0x1B,
 //   bcCount           = 0x1C,
-//   bcUnhook          = 0x1D,
+   bcUnhook          = 0x1D,
 //   bcAdd             = 0x1E,
 //   bcCreate          = 0x1F,
 //
@@ -56,8 +56,8 @@ enum ByteCode
 //   bcXCopy           = 0x24,
 //   bcInclude         = 0x25,     // should immediately follow exclude (after callextr)
 //   bcExclude         = 0x26,   
-//   bcTryLock         = 0x27,
-//   bcFreeLock        = 0x28,
+   bcTryLock         = 0x27,
+   bcFreeLock        = 0x28,
 //   bcRethrow         = 0x29,
    bcLoadEnv         = 0x2A,
 //   bcSelect          = 0x2B,
@@ -69,7 +69,7 @@ enum ByteCode
 //   bcXLen            = 0x30,
    bcLen             = 0x31,
 //   bcWLen            = 0x32,
-//   bcFlag            = 0x33, 
+   bcFlag            = 0x33, 
 //   bcNLen            = 0x34,
 //   bcParent          = 0x35,
    bcClass           = 0x36,
@@ -89,7 +89,7 @@ enum ByteCode
 //   bcNMul            = 0x45,
 //   bcNDiv            = 0x46,
    bcSave            = 0x47,
-//   bcNLoad           = 0x48,
+   bcLoad            = 0x48,
 //   bcDCopyR          = 0x49,
 //   bcNAnd            = 0x4A,
 //   bcNOr             = 0x4B,
@@ -173,7 +173,7 @@ enum ByteCode
    bcCallR           = 0xA3,
 //   bcAJumpI          = 0xA4,
    bcCallExtR        = 0xA5,
-//   bcHook            = 0xA6,
+   bcHook            = 0xA6,
 //   bcAddress         = 0xA7,
 //   bcACallI          = 0xA8,
 //   bcLess            = 0xA9,
@@ -224,11 +224,14 @@ enum ByteCode
 //   bcSCopyF          = 0xD2,
 //   bcSetVerb         = 0xD3,
    bcShl             = 0xD4,
-//   bcAndN            = 0xD5,
+   bcAnd             = 0xD5,
 //   bcAddN            = 0xD6,
 //   bcOrN             = 0xD7,
 //   bcEAddN           = 0xD8,
    bcShr             = 0xD9,
+
+
+
 //   bcMulN            = 0xDA,
 //   bcDivN            = 0xDB,
 //   bcBLoadR          = 0xDC,
@@ -268,8 +271,8 @@ enum ByteCode
 //   bcElseM           = 0xF9,   // though in bytecode section they saved in the correct order (jump arg, label)
    bcIfR             = 0xFA,
    bcElseR           = 0xFB,   
-//   bcIfN             = 0xFC,
-//   bcElseN           = 0xFD,   
+   bcIfN             = 0xFC,
+   bcElseN           = 0xFD,   
    bcCallRM          = 0xFE,
    bcReserved        = 0xFF,
 
@@ -434,8 +437,8 @@ public:
          //case bcElse:
          //case bcLess:
          //case bcNotLess:
-         //case bcIfN:
-         //case bcElseN:
+         case bcIfN:
+         case bcElseN:
          //case bcLessN:
          //case bcNotLessN:
          //case bcGreaterN:
@@ -444,7 +447,7 @@ public:
          //case bcElseM:
          //case bcNext:
          //case bcIfHeap:
-         //case bcHook:
+         case bcHook:
          //case bcAddress:
          case bcJumpRM:
             return true;

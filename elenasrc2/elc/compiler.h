@@ -515,6 +515,7 @@ private:
    struct SymbolScope : public SourceScope
    {
       SymbolExpressionInfo info;
+      bool                 staticOne;
 
 ////      virtual ObjectInfo mapTerminal(ident_t identifier);
 

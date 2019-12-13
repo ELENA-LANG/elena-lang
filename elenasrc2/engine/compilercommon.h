@@ -709,7 +709,7 @@ public:
    virtual bool validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/) = 0;
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
-   virtual bool validateSymbolAttribute(int attrValue, bool& constant, /*bool& staticOne, bool& preloadedOne, */Visibility& visibility) = 0;
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, /*bool& preloadedOne, */Visibility& visibility) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, int hints) = 0;
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg/*, bool& paramsArg*/) = 0;
 

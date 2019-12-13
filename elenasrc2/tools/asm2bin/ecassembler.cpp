@@ -566,7 +566,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcAllocI:
          //case bcDCopy:
          //case bcECopy:
-         //case bcAndN:
+         case bcAnd:
          //case bcOrN:
          case bcPushN:
             compileNCommand(opcode, token, writer);
@@ -583,7 +583,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcNotLess:
          //case bcNext:
          case bcJump:
-         //case bcHook:
+         case bcHook:
          //case bcAddress:
             compileJump(opcode, token, writer, info);
             break;
@@ -591,14 +591,14 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcElseM:
          //   compileMccJump(opcode, token, writer, info, binary);
          //   break;
-         //case bcIfN:
-         //case bcElseN:
+         case bcIfN:
+         case bcElseN:
          //case bcLessN:
          //case bcNotLessN:
          //case bcGreaterN:
          //case bcNotGreaterN:
-         //   compileNJump(opcode, token, writer, info);
-         //   break;
+            compileNJump(opcode, token, writer, info);
+            break;
          case bcIfR:
          case bcElseR:
             compileRJump(opcode, token, writer, info, binary);

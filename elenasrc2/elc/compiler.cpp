@@ -587,7 +587,7 @@ Compiler::SourceScope :: SourceScope(Scope* moduleScope, ref_t reference, Visibi
 Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Visibility visibility)
    : SourceScope(parent, reference, visibility)
 {
-   //staticOne = false;
+   staticOne = false;
    //preloaded = false;
 }
 
@@ -1798,7 +1798,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value, constant, /*scope.staticOne, scope.preloaded, */scope.visibility)) {
+         if (!_logic->validateSymbolAttribute(value, constant, scope.staticOne, /*scope.preloaded, */scope.visibility)) {
             current.setArgument(0); // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
@@ -5139,12 +5139,10 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode/*, variadicOne, inlineArg*/);
 
    SNode exprNode = node.parentNode();
-   ref_t messageRef = 0;
-   if (paramCount == 0) {
-      // if it is a generic object creation
-      messageRef = scope.moduleScope->constructor_message;
-   }
-   else if (target.reference == V_OBJARRAY && paramCount == 1) {
+   ref_t messageRef = overwriteArgCount(scope.moduleScope->constructor_message, paramCount + 1);
+   int stackSafeAttr = 0;
+   if (target.reference == V_OBJARRAY && paramCount == 1) {
+      // HOTFIX : if it is an array creation
       ref_t roperand = 0;
       scope.module->resolveSignature(implicitSignatureRef, &roperand);
 
@@ -5164,7 +5162,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
       }
       else scope.raiseError(errInvalidOperation, node.parentNode());
    }
-   else throw InternalError("not yet implemented"); // !! temporal
+   else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
 
    //   else if (node.argument == V_NEWOP) {
    //      else {
@@ -5174,7 +5172,6 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    //         bool inlineArg = false;
    //         ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne, inlineArg);
    //
-   //         ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, targetRef, implicitSignatureRef, paramCount, stackSafeAttr, false);
    //         if (messageRef) {
    //            // call the constructor if it can be resolved directly
    //            compileMessage(writer, node, scope, target, messageRef, HINT_SILENT | HINT_NODEBUGINFO, stackSafeAttr);
@@ -5193,8 +5190,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    //}
    //else scope.raiseError(errInvalidOperation, exprNode);
 
-   int stackSafeAttr = 0;
-   ObjectInfo retVal = retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT, stackSafeAttr);
+   ObjectInfo retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT, stackSafeAttr);
 
    if (!resolveObjectReference(scope, retVal, false)) {
       scope.raiseError(errDefaultConstructorNotFound, exprNode);
@@ -8121,7 +8117,7 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    SyntaxWriter writer(tree);
    generateClassSymbol(writer, scope);
 
-   _writer.generateSymbol(tape, tree.readRoot(), /*false, */INVALID_REF);
+   _writer.generateSymbol(tape, tree.readRoot(), false, INVALID_REF);
 
    // create byte code sections
    _writer.saveTape(tape, *scope.moduleScope);
@@ -9452,11 +9448,7 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 
 void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 {
-//   expressionTree.clear();
-//
-//   SyntaxWriter writer(expressionTree);
-//
-//   bool isStatic = scope.staticOne;
+   bool isStatic = scope.staticOne;
 
    SNode expression = node.findChild(lxExpression);
 
@@ -9481,9 +9473,9 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
    
    // create constant if required
    if (scope.info.type == SymbolExpressionInfo::Type::Constant) {
-//      // static symbol cannot be constant
-//      if (isStatic)
-//         scope.raiseError(errInvalidOperation, expression);
+      // static symbol cannot be constant
+      if (isStatic)
+         scope.raiseError(errInvalidOperation, expression);
 
       if (!compileSymbolConstant(scope, retVal, false, 0))
          scope.raiseError(errInvalidOperation, expression);
@@ -9497,7 +9489,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
    CommandTape tape;
-   _writer.generateSymbol(tape, node/*, isStatic*/, sourcePathRef);
+   _writer.generateSymbol(tape, node, isStatic, sourcePathRef);
 
    // optimize
    optimizeTape(tape);
