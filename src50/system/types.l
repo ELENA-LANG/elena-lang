@@ -69,7 +69,7 @@
 #define __string    80000801h
 //#define __float     80000802h
 #define __int       80000803h
-//#define __raw       80000804h
+#define __raw       80000804h
 //#define __ptr       80000805h
 #define __mssg      80000806h
 //#define __subj      80000807h
@@ -102,7 +102,7 @@ type int        = IntNumber;
 ////type ext_mssg   = system'ExtensionMessage.
 type string     = String;
 type wide       = WideString;
-//type handle     = Handle;
+type handle     = Handle;
 //type rt_ptr     = RTPointer;
 //type dirty_ptr  = UnsafePointer;
 

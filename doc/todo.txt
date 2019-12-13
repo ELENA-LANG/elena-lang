@@ -2,7 +2,11 @@
 In development:
 ------         
               dev
-                * externals
+                * statuc symbols
+                * console operations
+
+                * exceptions
+                * hello world sample
 
                 * predefined operations
                 * intern import

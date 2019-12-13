@@ -514,16 +514,16 @@ int CompilerLogic :: resolveNewOperationType(_ModuleScope& scope, ref_t loperand
    return 0;
 }
 
-//inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
-//{
-//   switch (targetRef) {
-//      case V_PTR32:
-//      case V_DWORD:
-//         return sourceRef == V_INT32;
-//      default:
-//         return false;
-//   }
-//}
+inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
+{
+   switch (targetRef) {
+      //case V_PTR32:
+      case V_DWORD:
+         return sourceRef == V_INT32;
+      default:
+         return false;
+   }
+}
 
 bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef)
 {
@@ -533,8 +533,8 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
    if (sourceRef == V_NIL)
       return true;
 
-   //if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
-   //   return true;
+   if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
+      return true;
 
    while (sourceRef != 0) {
       if (targetRef != sourceRef) {
@@ -1426,11 +1426,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //         info.header.flags = elStructureRole;
 //         info.size = 4;
 //         break;
-//      case V_DWORD:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elStructureRole | elReadOnlyRole;
-//         info.size = 4;
-//         break;
+      case V_DWORD:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
 //      case V_SUBJECT:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elDebugSubject | elStructureRole | elReadOnlyRole;
@@ -1889,7 +1889,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
 //         attrs.isConstAttr = true;
 //         return true;
 //      case V_FLOAT:
-//      case V_BINARY:
+      case V_BINARY:
       case V_INTBINARY:
 //      case V_PTRBINARY:
       case V_STRING:
@@ -2049,7 +2049,7 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
    // if it is a primitive field
    if (info.fields.Count() == 1) {
       switch (classRef) {
-//         case V_DWORD:
+         case V_DWORD:
          case V_INT32:
             info.header.flags |= elDebugDWORD;
             break;

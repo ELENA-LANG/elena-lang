@@ -1912,17 +1912,17 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
             break;
       }
    }
-//   else if (attrs.fieldRef == V_BINARY) {
-//      switch (attrs.size) {
-//         case 4:
-//            // treat it like dword
-//            attrs.fieldRef = V_DWORD;
-//            break;
-//         default:
-//            scope.raiseError(errInvalidHint, node);
-//            break;
-//      }
-//   }
+   else if (attrs.fieldRef == V_BINARY) {
+      switch (attrs.size) {
+         case 4:
+            // treat it like dword
+            attrs.fieldRef = V_DWORD;
+            break;
+         default:
+            scope.raiseError(errInvalidHint, node);
+            break;
+      }
+   }
 //   else if (attrs.fieldRef == V_PTRBINARY) {
 //      switch (attrs.size) {
 //         case 4:
@@ -3781,7 +3781,7 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
          return source;
       }
       else if (source.kind == okExternal && 
-         _logic->isCompatible(*scope.moduleScope, targetRef, resolvePrimitiveReference(scope, sourceRef, 0, false))) 
+         _logic->isCompatible(*scope.moduleScope, sourceRef, targetRef)) 
       {
          // HOTFIX : allow to pass the result of external operation directly
          return source;
@@ -6292,7 +6292,7 @@ void Compiler :: compileExternalArguments(SNode node, Scope& nsScope, SNode call
          objNode = lxExpression;
          ref_t typeRef = objNode.findChild(lxType).argument;
          objNode = objNode.firstChild(lxObjectMask);
-         if (objNode == lxLocalAddress && typeRef == nsScope.moduleScope->intReference) {
+         if (objNode == lxLocalAddress && _logic->isCompatible(*nsScope.moduleScope, V_DWORD, typeRef)) {
             // if it is a integer variable
             SyntaxTree::copyNode(objNode, callNode
                .appendNode(lxExtIntArg)
@@ -6441,7 +6441,7 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope/*, ref_t
    //      retVal = assignResult(writer, scope, false, expectedRef);
    //   }
    //else {
-      retVal.reference = V_INT32;
+      retVal.reference = V_DWORD;
       callNode.appendNode(lxSize, 4);
    //}
 
@@ -10982,7 +10982,7 @@ void Compiler :: declareMembers(SNode current, NamespaceScope& scope)
 
             NamespaceScope namespaceScope(&scope);
             declareNamespace(node, namespaceScope, true, false);
-            scope.moduleScope->declareNamespace(scope.ns.c_str());
+            scope.moduleScope->declareNamespace(namespaceScope.ns.c_str());
 
             declareMembers(node, namespaceScope);
             break;

@@ -19,8 +19,10 @@
        <include>templates.l</include>
        <include>control.l</include>
        <include>memory.l</include>
+       <include>win32_pointers.l</include>
        <include>dynamic.l</include>
        <include>exceptions.l</include>
+       <include>io\win32_console.l</include>
      </module>
   </files>
 </configuration>
