@@ -18,21 +18,19 @@ ELENA byte codes (or ecodes)
  
  get i                      - acc <= acc[i] ;
 
- peekfi i                   - [fp+i] => acc;
-
- peeksi i                   - [sp+i] => acc;
-
- set i                      - [sp] => acc[i]
-                       
- movf i                     - fp+i => acc
-
  load                       - int[acc] => index
 
  loadm m                    - m => index
 
+ movf i                     - fp+i => acc
+
  movr r                     - r => acc
            
+ peekfi i                   - [fp+i] => acc;
+
  peekr r                   - [r] => acc
+
+ peeksi i                   - [sp+i] => acc;
 
  save                       - [acc] <= index
 
@@ -42,6 +40,12 @@ ELENA byte codes (or ecodes)
 
  select r1, r2              - acc = (index = 0 ? r1 : r2)
 
+ set i                      - [sp] => acc[i]
+
+ shl n                      - index << n  => index
+ 
+ shr n                      - index >> n  => index
+                       
  storefi i                  - [fp+i] <= acc 
  
  storer r                   - [r] <= acc[i]

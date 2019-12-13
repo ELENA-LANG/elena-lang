@@ -1204,19 +1204,19 @@ public sealed const struct WideString : BaseValue
 //    /// Returns the substring
 //    wide Substring(int n, int length)
 //        => system'core_routines'__wide;
-//
-//    /// Reads the literal length into an output parameter
-//    Length
-//    {
-//        /// Reads the literal length into an output parameter
-//        int get()
-//        {
-//           intern system'core_routines'__wide.readLengthTo(self, ref int retVal);
-//           
-//            ^ retVal 
-//        }
-//    }
-//
+
+    /// Reads the literal length into an output parameter
+    int Length
+    {
+        /// Reads the literal length into an output parameter
+        get()
+        {
+           intern system'core_routines'__wide.readLengthTo(self, ref int retVal);
+           
+            ^ retVal 
+        }
+    }
+
 //    /// Saves the literal into a UTF-32 character array
 //    save(int index, char[] array, ref int length)
 //        => system'core_routines'__wide;

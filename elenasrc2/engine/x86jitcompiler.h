@@ -160,7 +160,7 @@ protected:
 //   friend void compileDSetVerb(int opcode, x86JITScope& scope);
 //   friend void compileIndexInc(int opcode, x86JITScope& scope);
 //   friend void compileIndexDec(int opcode, x86JITScope& scope);
-//   friend void compileDShiftN(int opcode, x86JITScope& scope);
+   friend void compileDShiftN(int opcode, x86JITScope& scope);
 //   //friend void compileLoad(int opcode, x86JITScope& scope);
 //   friend void compileDAdd(int opcode, x86JITScope& scope);
 //   friend void compileDSub(int opcode, x86JITScope& scope);
@@ -306,7 +306,7 @@ void compileDec(int opcode, x86JITScope& scope);
 //void compileDSetVerb(int opcode, x86JITScope& scope);
 //void compileIndexInc(int opcode, x86JITScope& scope);
 //void compileIndexDec(int opcode, x86JITScope& scope);
-//void compileDShiftN(int opcode, x86JITScope& scope);
+void compileDShiftN(int opcode, x86JITScope& scope);
 //void compileDAdd(int opcode, x86JITScope& scope);
 //void compileDSub(int opcode, x86JITScope& scope);
 //void compileOr(int opcode, x86JITScope& scope);

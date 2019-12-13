@@ -55,21 +55,21 @@ namespace io
 //        r.write(x, y)
 //    }
 //}
-//
-//// --- ConsoleHandleFactory --
-//
-//singleton ConsoleHandleFactory
-//{
-//    handle new(int attrs)
-//    {
-//        handle aHandle := extern KERNEL32.GetStdHandle(attrs);
-//        
-//        ^ aHandle
-//    }
-//    
-//    newWriter()
-//    {
-//        handle h := ConsoleHandleFactory.new(0FFFFFFF5h);
+
+// --- ConsoleHandleFactory --
+
+public singleton ConsoleHandleFactory
+{
+    handle new(int attrs)
+    {
+        handle h := extern KERNEL32.GetStdHandle(attrs);
+        
+        ^ h
+    }
+    
+    newWriter()
+    {
+        handle h := ConsoleHandleFactory.new(0FFFFFFF5h);
 //        int    dwMode := extern KERNEL32.GetFileType(h);
 //        if (dwMode == FILE_TYPE_CHAR)
 //        {
@@ -79,22 +79,22 @@ namespace io
 //        {
 //            ^ new FileWriter(h)
 //        }
-//    }
-//}
-//
-//// --- ConsoleWriter ---
-//
-//sealed class ConsoleWriter
-//{
-//    handle theHandle;
-//    wide   theNewLineSymbol;
-//
-//    constructor(handle aHandle)
-//    {
-//        theHandle := aHandle;
+    }
+}
+
+// --- ConsoleWriter ---
+
+public sealed class ConsoleWriter
+{
+    handle handle;
+    wide   newLineSymbol;
+
+    constructor(handle h)
+    {
+        handle := h;
 //        theNewLineSymbol := forward newLine;
-//    }
-//
+    }
+
 //    writeLine(string s)
 //    {
 //        self.write(cast wide(s));
@@ -116,16 +116,16 @@ namespace io
 //    {
 //        self.write(theNewLineSymbol);
 //    }
-//
-//    write(wide s)
-//    {
-//        int len := s.Length;
-//        
-//        extern KERNEL32.WriteConsoleW(theHandle,s,len,0,0)
-//
-//        // !!check the result of the operation
-//    }
-//    
+
+    write(wide s)
+    {
+        int len := s.Length;
+        
+        //extern KERNEL32.WriteConsoleW(handle,s,len,0,0)
+
+        // !!check the result of the operation
+    }
+    
 //    clear()
 //    {
 //        auto buffer := new CONSOLE_SCREEN_BUFFER_INFO();
@@ -159,8 +159,8 @@ namespace io
 //    {
 //        extern KERNEL32.CloseHandle(theHandle)
 //    }
-//}
-//
+}
+
 //// --- FileWriter ---
 //
 //sealed class FileWriter

@@ -78,6 +78,18 @@ procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$@syst
 
 end
 
+procedure __wide."readLengthTo$system@WideString$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  len
+  shr 1
+  dec 1
+  peeksi 2
+  save
+  quitn 2
+
+end
+
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 
   pushsi 1

@@ -6292,7 +6292,7 @@ void Compiler :: compileExternalArguments(SNode node, Scope& nsScope, SNode call
          objNode = lxExpression;
          ref_t typeRef = objNode.findChild(lxType).argument;
          objNode = objNode.firstChild(lxObjectMask);
-         if (objNode == lxLocalAddress && _logic->isCompatible(*nsScope.moduleScope, V_DWORD, typeRef)) {
+         if (objNode.compare(lxLocalAddress, lxLocal) && _logic->isCompatible(*nsScope.moduleScope, V_DWORD, typeRef)) {
             // if it is a integer variable
             SyntaxTree::copyNode(objNode, callNode
                .appendNode(lxExtIntArg)

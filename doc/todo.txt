@@ -2,7 +2,8 @@
 In development:
 ------         
               dev
-                * statuc symbols
+                * implicit constructor
+                * static symbols
                 * console operations
 
                 * exceptions
@@ -241,6 +242,7 @@ In development:
                 * public const fields?
                 * emptyWideString cannot be used before its declaration (see String)
                 * using direct passing the arguments for internal call when it is possible
+                * allow to pass field to the external routines - see system'io'ConsoleWriter
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)

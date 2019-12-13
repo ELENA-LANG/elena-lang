@@ -162,8 +162,8 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop,
    &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileASaveR, &compileNop, &compileNop, &compileNop,
 
-   &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileDShiftN, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileDShiftN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileDynamicCreateN, & loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
@@ -1749,21 +1749,21 @@ void _ELENA_::compileACopyF(int, x86JITScope& scope)
 //   }
 //   else loadNOp(opcode, scope);
 //}
-//
-//void _ELENA_ :: compileDShiftN(int op, x86JITScope& scope)
-//{
-//   if (op == bcShiftLN) {
-//      // shl ebx, n
-//      scope.code->writeWord(0xE3C1);
-//      scope.code->writeByte((unsigned char)scope.argument);
-//   }
-//   else {
-//      // shr ebx, n
-//      scope.code->writeWord(0xEBC1);
-//      scope.code->writeByte((unsigned char)scope.argument);
-//   }
-//}
-//
+
+void _ELENA_ :: compileDShiftN(int op, x86JITScope& scope)
+{
+   if (op == bcShl) {
+      // shl edx, n
+      scope.code->writeWord(0xE2C1);
+      scope.code->writeByte((unsigned char)scope.argument);
+   }
+   else {
+      // shr edx, n
+      scope.code->writeWord(0xEAC1);
+      scope.code->writeByte((unsigned char)scope.argument);
+   }
+}
+
 //void _ELENA_::compileDAdd(int, x86JITScope& scope)
 //{
 //   // add ebx, ecx
