@@ -785,9 +785,9 @@ bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Modu
    int argCount = 0;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
-   //if (test(flags, VARIADIC_MESSAGE)) {
-   //   messageName.append("params#");
-   //}
+   if (test(flags, VARIADIC_MESSAGE)) {
+      messageName.append("params#");
+   }
    if (test(flags, PROPERTY_MESSAGE)) {
       messageName.append("prop#");
    }

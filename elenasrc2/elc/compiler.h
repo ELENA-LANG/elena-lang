@@ -141,7 +141,7 @@ public:
       okNil,
       okSuper,
       okLocalAddress,                 // param - local offset
-//      okParams,                       // param - local offset
+      okParams,                       // param - local offset
 //////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - overridden message, reference - role reference
 //      okExplicitConstant,             // param - reference, extraparam - subject
@@ -546,7 +546,7 @@ private:
       int          reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
       int          hints;
       ref_t        outputRef;
-//      bool         withOpenArg;
+      bool         withOpenArg;
       bool         classEmbeddable;
 //      bool         generic;
 //      bool         genericClosure;
@@ -964,7 +964,7 @@ private:
 
 //   bool isTemplateParameterDeclared(SNode node, Scope& scope);
 //
-//   ref_t resolveVariadicMessage(Scope& scope, ref_t message);
+   ref_t resolveVariadicMessage(Scope& scope, ref_t message);
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
                                      bool withExtension, int& stackSafeAttr);
@@ -973,7 +973,7 @@ private:
 ////      int dummy;
 ////      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
 ////   }
-   ref_t mapMessage(SNode node, ExprScope& scope/*, bool variadicOne*/);
+   ref_t mapMessage(SNode node, ExprScope& scope, bool variadicOne);
 
    size_t resolveArraySize(SNode node, Scope& scope);
 
@@ -1001,7 +1001,8 @@ private:
    void setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void setParamFieldTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
-//   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
+   void setParamsTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, ref_t wrapRef);
+   //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
    void appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing);
 
    ObjectInfo compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode);
@@ -1019,8 +1020,7 @@ private:
    ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo info);
 //   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
 
-   ref_t compileMessageParameters(SNode node, ExprScope& scope, EAttr mode/*, 
-      bool& variadicOne, bool& inlineArg*/);
+   ref_t compileMessageParameters(SNode node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/);
 
    ObjectInfo compileMessage(SNode node, ExprScope& scope, /*ref_t exptectedRef,*/ ObjectInfo target, EAttr mode);
    ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode, int stackSafeAttr);
@@ -1041,7 +1041,7 @@ private:
    ObjectInfo compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode);
-//   ObjectInfo compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
+   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
 //   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
 //   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);

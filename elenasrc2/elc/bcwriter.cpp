@@ -278,10 +278,10 @@ void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t local
    tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
 }
 
-//void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
-//{
-//   tape.write(bdParamsLocal, writeString(localName), level);
-//}
+void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
+{
+   tape.write(bdParamsLocal, writeString(localName), level);
+}
 
 void ByteCodeWriter :: declareSelfInfo(CommandTape& tape, int level)
 {
@@ -3981,6 +3981,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushn 0
          tape.write(bcPushR, 0);
          break;
+      case lxStopper:
+         // pushn -1
+         tape.write(bcPushN, -1);
+         break;
       case lxResult:
          // pusha
          tape.write(bcPushA);
@@ -5302,7 +5306,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    bool directMode = true;
 //   bool argUnboxMode = false;
 //   bool unboxMode = false;
-//   bool openArg = false;
+   bool openArg = false;
 //   bool accTarget = false;
 //   bool accPresaving = false; // if the message target is in acc
 
@@ -5373,11 +5377,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       current = current.nextNode(lxObjectMask);
    }
 
-//   if (!argUnboxMode && isOpenArg(node.argument)) {
-//      // NOTE : do not add trailing nil for result of unboxing operation
-//      pushObject(tape, lxNil);
-//      openArg = true;
-//   }      
+   if (/*!argUnboxMode && */isOpenArg(node.argument)) {
+      // NOTE : do not add trailing nil for result of unboxing operation
+      pushObject(tape, lxStopper, 0, scope, 0);
+      openArg = true;
+   }      
 
    if ((argCount == 2 && isFirstDirect) || argCount == 1) {
       // if message target can be used directly or it has no arguments - direct mode is allowed
@@ -5449,15 +5453,15 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 //   if (argUnboxMode) {
 //      releaseArgList(tape);
 //   }
-//   else if (openArg) {
-//      // clear open argument list, including trailing nil and subtracting normal arguments
-//      if (test(node.argument, SPECIAL_MESSAGE)) {
-//         // HOTFIX : self is not in the stack
-//         releaseObject(tape, paramCount - getParamCount(node.argument) + 1);
-//      }
-//      else releaseObject(tape, paramCount - getParamCount(node.argument));
-//   }
-//
+   /*else */if (openArg) {
+      //// clear open argument list, including trailing nil and subtracting normal arguments
+      //if (test(node.argument, SPECIAL_MESSAGE)) {
+      //   // HOTFIX : self is not in the stack
+      //   releaseObject(tape, paramCount - getParamCount(node.argument) + 1);
+      //}
+      /*else */releaseStack(tape, argCount - getArgCount(node.argument));
+   }
+
 //   // unbox the arguments
 //   if (unboxMode)
 //      unboxCallParameters(tape, node);
@@ -6752,11 +6756,11 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
       //case lxMessageVariable:
       //   declareMessageInfo(tape, current.identifier());
       //   break;
-//      case lxParamsVariable:
-//         declareLocalParamsInfo(tape,
-//            current.firstChild(lxTerminalMask).identifier(),
-//            current.findChild(lxLevel).argument);
-//         break;
+      case lxParamsVariable:
+         declareLocalParamsInfo(tape,
+            current.firstChild(lxTerminalMask).identifier(),
+            current.findChild(lxLevel).argument);
+         break;
       case lxBytesVariable:
       {
          int level = current.findChild(lxLevel).argument;
@@ -6848,7 +6852,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxLongVariable:
 //         case lxReal64Variable:
 //////         case lxMessageVariable:
-//         case lxParamsVariable:
+         case lxParamsVariable:
          case lxBytesVariable:
          case lxShortsVariable:
          case lxIntsVariable:
@@ -7007,11 +7011,11 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
 //               current.firstChild(lxTerminalMask).identifier(),
 //               current.findChild(lxLevel).argument, true);
 //            break;
-//         case lxParamsVariable:
-//            declareLocalParamsInfo(tape,
-//               current.firstChild(lxTerminalMask).identifier(),
-//               current.findChild(lxLevel).argument);
-//            break;
+         case lxParamsVariable:
+            declareLocalParamsInfo(tape,
+               current.firstChild(lxTerminalMask).identifier(),
+               current.findChild(lxLevel).argument);
+            break;
          case lxBinaryVariable:
          {
             int level = current.findChild(lxLevel).argument;

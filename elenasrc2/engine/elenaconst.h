@@ -304,14 +304,14 @@ namespace _ELENA_
    constexpr int elDynamicRole         = 0x00008000;
    constexpr int elExtension           = 0x0000110C;
    constexpr int elMessage             = 0x00200000;
-   //   constexpr int elGroup               = 0x00000200;
+   constexpr int elWithVariadics       = 0x00400000;
+      //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elWithGenerics        = 0x00000400;
 //   constexpr int elSubject             = 0x00002000;
 //   constexpr int elSymbol              = 0x00100000;
 //   constexpr int elExtMessage          = 0x00208000;
 //   constexpr int elWithYieldable       = 0x00400000;
 //   constexpr int elWithCustomDispatcher= 0x00800000;
-//   constexpr int elWithVariadics       = 0x01000000;
 //////   const int elTapeGroup           = 0x02000200;
 ////   const int elWithMuti            = 0x08000000;
 
@@ -491,7 +491,7 @@ namespace _ELENA_
 
    constexpr auto CORE_MODULE                = "coreapi";
    constexpr auto STANDARD_MODULE            = "system";               // the standard module name
-//   #define FORWARD_MODULE           "$forwards"
+   constexpr auto FORWARD_MODULE             = "$forwards";
    constexpr auto RT_MODULE                  = "elenart";              // ELENART / ELENAVM dll
    constexpr auto COREAPI_MASK               = "core_";                // core api mask : any function starting with it
 //                                                                     // will be treated like internal core api one
@@ -527,7 +527,7 @@ namespace _ELENA_
    constexpr auto REFTEMPLATE_FORWARD        = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD    = "$closure";
    constexpr auto ARRAYTEMPLATE_FORWARD      = "$parray";
-//   constexpr auto ARGARRAYTEMPLATE_FORWARD= "$varray";
+   constexpr auto ARGARRAYTEMPLATE_FORWARD   = "$varray";
    constexpr auto BOOL_FORWARD               = "$bool";
    constexpr auto TRUE_FORWARD               = "$true";
    constexpr auto FALSE_FORWARD              = "$false";

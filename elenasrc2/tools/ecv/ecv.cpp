@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   40
+#define REVISION_VERSION   41
 
 using namespace _ELENA_;
 
@@ -204,11 +204,11 @@ ref_t resolveMessage(_Module* module, ident_t method)
    ref_t actionRef = 0;
    ref_t flags = 0;
 
-   //if (method.startsWith("params#")) {
-   //   flags |= VARIADIC_MESSAGE;
+   if (method.startsWith("params#")) {
+      flags |= VARIADIC_MESSAGE;
 
-   //   method = method.c_str() + getlength("params#");
-   //}
+      method = method.c_str() + getlength("params#");
+   }
    if (method.startsWith("prop#")) {
       flags |= PROPERTY_MESSAGE;
 
@@ -957,8 +957,8 @@ void listFlags(int flags, int& row, int pageSize)
    //   printLine("@flag ", "elWithGenerics", row, pageSize);
    //}      
 
-   //if (test(flags, elWithVariadics))
-   //   printLine("@flag ", "elWithVariadics", row, pageSize);
+   if (test(flags, elWithVariadics))
+      printLine("@flag ", "elWithVariadics", row, pageSize);
 
    if (test(flags, elReadOnlyRole))
       printLine("@flag ", "elReadOnlyRole", row, pageSize);

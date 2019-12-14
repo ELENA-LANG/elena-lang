@@ -2,13 +2,14 @@
 In development:
 ------         
               dev
-                * exceptions : try, alt
+                * variadic arguments : compile-time dispatching, run-time dispatching, boxing / unboxing
 
-                * app entry
                 * hello world sample
 
                 * predefined operations
                 * intern import
+
+                * exceptions : alt
 
                 * conversion routines : others
                 * implicit conversion
@@ -27,6 +28,12 @@ In development:
                 * parameter - template, template of templates
                 * array of templates
                 * template of arrays
+
+                * method not found exception
+                * call stack
+
+                * try / finally / catch exception
+                * register exceptions
 
                 * closures: unboxing
                 * closures: presaved arguments

@@ -183,19 +183,19 @@ ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
       int paramCount = message[0] - '0';
       int flags = 0;
 
-      //IdentifierString subject(token.value);
-      //subject.copy(message.c_str() + 1);
+      IdentifierString subject(token.value);
+      subject.copy(message.c_str() + 1);
 
-      //if (subject.ident().startsWith("params#")) {
-      //   subject.cut(0, 7);
-      //   flags |= VARIADIC_MESSAGE;
-      //}
+      if (subject.ident().startsWith("params#")) {
+         subject.cut(0, 7);
+         flags |= VARIADIC_MESSAGE;
+      }
 
-      //if (subject.compare(INVOKE_MESSAGE)) {
-      //   flags |= SPECIAL_MESSAGE;
-      //}
+      if (subject.compare(INVOKE_MESSAGE)) {
+         flags |= FUNCTION_MESSAGE;
+      }
 
-      ref_t subj = /*binary->mapAction(subject, signRef, false)*/0;
+      ref_t subj = binary->mapAction(subject, signRef, false);
 
       return encodeMessage(subj, paramCount, flags);
    }

@@ -74,10 +74,10 @@ constexpr auto V_STATIC          = 0x8000100Fu;
 constexpr auto V_CONVERSION      = 0x80001011u;
 constexpr auto V_NEWOP           = 0x80001012u;
 constexpr auto V_DISPATCHER      = 0x80001013u;
-//constexpr auto V_ARGARRAY        = 0x80001014u;
+constexpr auto V_ARGARRAY        = 0x80001014u;
 constexpr auto V_EXTERN          = 0x80001015u;
 constexpr auto V_INTERN          = 0x80001016u;
-//constexpr auto V_FORWARD         = 0x80001017u;
+constexpr auto V_FORWARD         = 0x80001017u;
 constexpr auto V_IMPORT          = 0x80001018u;
 //constexpr auto V_GROUP           = 0x80001019u;
 constexpr auto V_NOSTRUCT        = 0x8000101Bu;
@@ -246,7 +246,7 @@ struct _ModuleScope
 //   ref_t             charReference;
    ref_t             refTemplateReference;
    ref_t             arrayTemplateReference;
-//   ref_t             argArrayTemplateReference;
+   ref_t             argArrayTemplateReference;
    ref_t             closureTemplateReference;
 //   ref_t             lazyExprReference;
 //   ref_t             wrapReference;
@@ -372,8 +372,8 @@ struct _ModuleScope
       closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;
-//      wrapReference = argArrayTemplateReference = 0;
-//
+      /*wrapReference = */argArrayTemplateReference = 0;
+
       init_message = dispatch_message = 0;
       constructor_message = 0;
    }
@@ -488,12 +488,12 @@ public:
       eaMetaField          = 0x00000020000,
       eaLoop               = 0x00000040000,
       eaExtern             = 0x00000080000,
+      eaForward            = 0x00000100000,
+      eaParams             = 0x00000200000,
 
       eaScopeMask          = 0x0000001400A,
-      eaObjectMask         = 0x0000001B2F4,
+      eaObjectMask         = 0x0000021B2F4,
 
-//      eaForward            = 0x00000000008,
-//      eaParams             = 0x00000000040,
 //      eaSubj               = 0x00000000400,
 //      eaMssg               = 0x00000000800,
 //      eaWrap               = 0x00000001000,
@@ -711,7 +711,7 @@ public:
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, /*bool& preloadedOne, */Visibility& visibility) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, int hints) = 0;
-   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg/*, bool& paramsArg*/) = 0;
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
 
    virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage, 
       ref_t* sourceSignatures, size_t len, int& stackSafeAttr) = 0;

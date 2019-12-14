@@ -203,7 +203,7 @@ public:
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, /*bool& preloadedOne, */Visibility& visibility);
 ////////   virtual bool validateWarningAttribute(int& attrValue);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, int hints);
-   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg/*, bool& paramsArg*/);
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg);
 
 //////   virtual bool validateClassFlag(ClassInfo& info, int flag);
    virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 

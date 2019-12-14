@@ -1652,7 +1652,7 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
    injectOverloadList(scope, info, compiler, classRef);
 }
 
-bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg/*, bool& paramsArg*/)
+bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg)
 {
    switch ((size_t)attrValue) {
       case V_WRAPPER:
@@ -1661,12 +1661,12 @@ bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg/*,
             return true;
          }
          else return false;
-//      case V_ARGARRAY:
-//         if (!paramsArg) {
-//            paramsArg = true;
-//            return true;
-//         }
-//         else return false;
+      case V_ARGARRAY:
+         if (!paramsArg) {
+            paramsArg = true;
+            return true;
+         }
+         else return false;
       case V_VARIABLE:
          return true;
    }
@@ -1928,18 +1928,18 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_NEWOP:
          attributes.include(EAttr::eaNewOp);
          return true;
-//      case V_FORWARD:
-//         attributes.include(EAttr::eaForward);
-//         return true;
+      case V_FORWARD:
+         attributes.include(EAttr::eaForward);
+         return true;
       case V_EXTERN:
          attributes.include(EAttr::eaExtern);
          return true;
       case V_WRAPPER:
          attributes.include(EAttr::eaRef);
          return true;
-//	  case V_ARGARRAY:
-//         attributes.include(EAttr::eaParams);
-//			return true;
+	  case V_ARGARRAY:
+         attributes.include(EAttr::eaParams);
+			return true;
 	  case V_INTERN:
          attributes.include(EAttr::eaIntern);
          return true;

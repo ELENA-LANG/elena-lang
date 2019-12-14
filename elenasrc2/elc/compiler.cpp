@@ -52,12 +52,13 @@ constexpr auto HINT_PROP_MODE       = EAttr::eaPropExpr;
 constexpr auto HINT_METAFIELD       = EAttr::eaMetaField;
 constexpr auto HINT_LOOP            = EAttr::eaLoop;
 constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
+constexpr auto HINT_FORWARD         = EAttr::eaForward;
+constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
 
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 //constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
 //constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
-//constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
 //constexpr auto HINT_PARAMETER		   = EAttr::eaParameter;
 //constexpr auto HINT_SUBCODE_CLOSURE = EAttr::eaSubCodeClosure;
@@ -66,7 +67,6 @@ constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
 //constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
-//constexpr auto HINT_FORWARD         = EAttr::eaForward;
 //constexpr auto HINT_RETEXPR         = EAttr::eaRetExpr;
 //constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 //constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
@@ -285,12 +285,12 @@ pos_t Compiler::NamespaceScope :: saveSourcePath(ByteCodeWriter& writer, ident_t
 
 ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
 {
-   //if (NamespaceName::isIncluded(FORWARD_MODULE, identifier)) {
-   //   IdentifierString forwardName(FORWARD_PREFIX_NS, identifier + getlength(FORWARD_MODULE) + 1);
+   if (NamespaceName::isIncluded(FORWARD_MODULE, identifier)) {
+      IdentifierString forwardName(FORWARD_PREFIX_NS, identifier + getlength(FORWARD_MODULE) + 1);
 
-   //   // if it is a forward reference
-   //   return defineObjectInfo(moduleScope->mapFullReference(forwardName.c_str(), false), false);
-   //}
+      // if it is a forward reference
+      return defineObjectInfo(moduleScope->mapFullReference(forwardName.c_str(), false), false);
+   }
 
    // if it is an existing full reference
    ref_t reference = moduleScope->mapFullReference(identifier, true);
@@ -715,7 +715,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->rootToFree = 1;
    this->hints = 0;
    this->outputRef = INVALID_REF; // to indicate lazy load
-//   this->withOpenArg = false;
+   this->withOpenArg = false;
    this->classEmbeddable = false;
 //   this->generic = false;
    this->extensionMode = false;
@@ -755,10 +755,10 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param, EAttr mode)
 {
    int prefix = functionMode ? 0 : -1;
 
-//   if (withOpenArg && param.class_ref == V_ARGARRAY) {
-//      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref, 0);
-//   }
-   /*else */if (param.class_ref != 0 && param.size != 0) {
+   if (withOpenArg && param.class_ref == V_ARGARRAY) {
+      return ObjectInfo(okParams, prefix - param.offset, param.class_ref, param.element_ref, 0);
+   }
+   else if (param.class_ref != 0 && param.size != 0) {
       // if the parameter may be stack-allocated
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
@@ -1109,7 +1109,7 @@ ObjectInfo Compiler::InlineClassScope :: mapTerminal(ident_t identifier, bool re
             case okOuterField:
             //case okOuterStaticField:
             case okOuterSelf:
-            //case okParams:
+            case okParams:
             {
                // map if the object is outer one
                outer.reference = info.fields.Count();
@@ -1418,10 +1418,10 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
             Parameter param = scope.parameters.get(name);
             if (param.offset != -1) {
                SNode varNode;
-//               if (param.class_ref == V_ARGARRAY) {
-//                  writer.newNode(lxParamsVariable);
-//               }
-               /*else */if (param.class_ref == moduleScope->intReference) {
+               if (param.class_ref == V_ARGARRAY) {
+                  varNode = node.appendNode(lxParamsVariable);
+               }
+               else if (param.class_ref == moduleScope->intReference) {
                   varNode = node.appendNode(lxIntVariable);
                }
 //               else if (param.class_ref == moduleScope->longReference) {
@@ -2351,6 +2351,17 @@ void Compiler :: setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo obje
    }
 }
 
+void Compiler :: setParamsTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, ref_t wrapRef)
+{
+   throw InternalError("Not yet implemented");
+
+   //         writer.newNode(lxArgBoxing, 0);
+   //         writer.appendNode(lxBlockLocalAddr, object.param);
+   //         writer.appendNode(lxTarget, r);
+   //         if (EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
+   //            writer.appendNode(lxBoxingRequired);
+}
+
 void Compiler :: setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
 {
    node.set(type, object.param);
@@ -2960,9 +2971,9 @@ ObjectInfo Compiler :: compileTypeSymbol(SNode node, ExprScope& scope, EAttr mod
 //   return retVal;
 //}
 
-ref_t Compiler :: mapMessage(SNode node, ExprScope& scope/*, bool variadicOne*/)
+ref_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool variadicOne)
 {
-   ref_t actionFlags = /*variadicOne ? VARIADIC_MESSAGE : */0;
+   ref_t actionFlags = variadicOne ? VARIADIC_MESSAGE : 0;
 
 //   IdentifierString signature;
    IdentifierString messageStr;
@@ -3003,10 +3014,10 @@ ref_t Compiler :: mapMessage(SNode node, ExprScope& scope/*, bool variadicOne*/)
       current = current.nextNode();
    }
 
-//   if (paramCount > ARG_COUNT) {
-//      actionFlags |= VARIADIC_MESSAGE;
-//      paramCount = 1;
-//   }
+   if (argCount >= ARG_COUNT) {
+      actionFlags |= VARIADIC_MESSAGE;
+      argCount = 2;
+   }
 
    if (messageStr.Length() == 0) {
       actionFlags |= FUNCTION_MESSAGE;
@@ -3622,11 +3633,11 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
 
       if (!EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) {
          // if the method directly resolved and the target is not required to be dynamic, mark it as stacksafe
-//         if (target.kind == okParams) {
-//            // HOTFIX : if variadic argument should not be dynamic, mark it as stacksafe
-//            stackSafeAttr |= 1;
-//         }
-         /*else*/ if (_logic->isEmbeddable(*scope.moduleScope, classReference) && result.stackSafe)
+         if (target.kind == okParams) {
+            // HOTFIX : if variadic argument should not be dynamic, mark it as stacksafe
+            stackSafeAttr |= 1;
+         }
+         else if (_logic->isEmbeddable(*scope.moduleScope, classReference) && result.stackSafe)
             stackSafeAttr |= 1;
       }
    }
@@ -3847,8 +3858,8 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
    switch (argRef) {
       case V_WRAPPER:
          return resolveReferenceTemplate(scope, elementRef, declarationMode);
-//      case V_ARGARRAY:
-//         return resolvePrimitiveArray(scope, scope.argArrayTemplateReference, elementRef, ns, declarationMode);
+      case V_ARGARRAY:
+         return resolvePrimitiveArray(scope, scope.moduleScope->argArrayTemplateReference, elementRef, declarationMode);
       case V_INT32:
          return scope.moduleScope->intReference;
 //      case V_INT64:
@@ -3871,8 +3882,7 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
    }
 }
 
-ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr mode/*,
-   bool& variadicOne, bool& inlineArg*/)
+ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/)
 {
    EAttr paramMode = /*HINT_PARAMETER*/EAttr::eaNone;
 //   bool externalMode = false;
@@ -3936,23 +3946,23 @@ ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr m
             break;
          }
       }
-      if (!anonymous/* || variadicOne*/)
+      if (!anonymous || variadicOne)
          return scope.module->mapSignature(signatures, signatureLen, false);
    }
 
    return 0;
 }
 
-//ref_t Compiler :: resolveVariadicMessage(Scope& scope, ref_t message)
-//{
-//   int paramCount = 0;
-//   ref_t actionRef = 0, flags = 0, dummy = 0;
-//   decodeMessage(message, actionRef, paramCount, flags);
-//
-//   ident_t actionName = scope.module->resolveAction(actionRef, dummy);
-//
-//   return encodeMessage(scope.module->mapAction(actionName, 0, false), 1, flags | VARIADIC_MESSAGE);
-//}
+ref_t Compiler :: resolveVariadicMessage(Scope& scope, ref_t message)
+{
+   int paramCount = 0;
+   ref_t actionRef = 0, flags = 0, dummy = 0;
+   decodeMessage(message, actionRef, paramCount, flags);
+
+   ident_t actionName = scope.module->resolveAction(actionRef, dummy);
+
+   return encodeMessage(scope.module->mapAction(actionName, 0, false), 1, flags | VARIADIC_MESSAGE);
+}
 
 ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
    bool withExtension, int& stackSafeAttr)
@@ -3967,16 +3977,16 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
       return resolvedMessageRef;
    }
 
-//   // check if the object handles the variadic message
-//   if (targetRef) {
-//      resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, resolveVariadicMessage(scope, generalMessageRef),
-//         targetRef, implicitSignatureRef, stackSafeAttr);
-//
-//      if (resolvedMessageRef != 0) {
-//         // if the object handles the compile-time resolved variadic message - use it
-//         return resolvedMessageRef;
-//      }
-//   }
+   // check if the object handles the variadic message
+   if (targetRef) {
+      resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, resolveVariadicMessage(scope, generalMessageRef),
+         targetRef, implicitSignatureRef, stackSafeAttr);
+
+      if (resolvedMessageRef != 0) {
+         // if the object handles the compile-time resolved variadic message - use it
+         return resolvedMessageRef;
+      }
+   }
 
    if (withExtension) {
       resolvedMessageRef = generalMessageRef;
@@ -3998,16 +4008,16 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
          return resolvedMessageRef;
       }
 
-//      // check if the extension handles the variadic message
-//      ref_t variadicMessage = resolveVariadicMessage(scope, generalMessageRef);
-//
-//      extensionRef = mapExtension(scope, variadicMessage, implicitSignatureRef, target, stackSafeAttr);
-//      if (extensionRef != 0) {
-//         // if there is an extension to handle the compile-time resolved message - use it
-//         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
-//
-//         return variadicMessage;
-//      }
+      // check if the extension handles the variadic message
+      ref_t variadicMessage = resolveVariadicMessage(scope, generalMessageRef);
+
+      extensionRef = mapExtension(scope, variadicMessage, implicitSignatureRef, target, stackSafeAttr);
+      if (extensionRef != 0) {
+         // if there is an extension to handle the compile-time resolved message - use it
+         target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
+
+         return variadicMessage;
+      }
    }
 
    // otherwise - use the general message
@@ -4022,9 +4032,9 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
 //   }
 
    ObjectInfo retVal;
-//   bool variadicOne = false;
+   bool variadicOne = false;
 //   bool inlineArg = false;
-   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode/*, variadicOne, inlineArg*/);
+   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, variadicOne/*, inlineArg*/);
 
    //   bool externalMode = false;
    if (target.kind == okExternal) {
@@ -4033,7 +4043,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
       retVal = compileExternalCall(node, scope/*, exptectedRef*/, extMode);
    }
    else {
-      ref_t messageRef = mapMessage(node, scope/*, variadicOne*/);
+      ref_t messageRef = mapMessage(node, scope, variadicOne);
 
       if (target.kind == okInternal) {
          retVal = compileInternalCall(node.parentNode(), scope, messageRef, implicitSignatureRef, target);
@@ -5076,8 +5086,10 @@ ObjectInfo Compiler :: compileReferenceExpression(SNode node, ExprScope& scope, 
    return ObjectInfo(okObject, 0, targetRef);
 }
 
-//ObjectInfo Compiler :: compileVariadicUnboxing(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode)
-//{
+ObjectInfo Compiler :: compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode)
+{
+   throw InternalError("Not yet implemented"); // !! temporal
+
 //	writer.newBookmark();
 //
 //	ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode);
@@ -5096,7 +5108,7 @@ ObjectInfo Compiler :: compileReferenceExpression(SNode node, ExprScope& scope, 
 //
 //	writer.removeBookmark();
 //	return objectInfo;
-//}
+}
 
 ObjectInfo Compiler :: compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
 {
@@ -5135,8 +5147,9 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    else throw InternalError("Not implemented"); // !! temporal
 
    EAttr paramsMode = EAttr::eaNone;
+   bool variadicOne = false;
    int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
-   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode/*, variadicOne, inlineArg*/);
+   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, variadicOne/*, inlineArg*/);
 
    SNode exprNode = node.parentNode();
    ref_t messageRef = overwriteArgCount(scope.moduleScope->constructor_message, paramCount + 1);
@@ -5701,19 +5714,15 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 //////      case okBlockLocal:
 //////         terminal.set(lxBlockLocal, object.param);
 //////         break;
-//      case okParams:
-//      {
-//         ref_t r = resolvePrimitiveReference(scope, object.reference, object.element, false);
-//         if (!r)
-//            throw InternalError("Cannot resolve variadic argument template");
-//
-//         writer.newNode(lxArgBoxing, 0);
-//         writer.appendNode(lxBlockLocalAddr, object.param);
-//         writer.appendNode(lxTarget, r);
-//         if (EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
-//            writer.appendNode(lxBoxingRequired);
-//         break;
-//      }
+      case okParams:
+      {
+         ref_t r = resolvePrimitiveReference(scope, object.reference, object.element, false);
+         if (!r)
+            throw InternalError("Cannot resolve variadic argument template");
+
+         setParamsTerminal(terminal, scope, object, mode, r);
+         break;
+      }
 //      case okObject:
 //         writer.newNode(lxResult, 0);
 //         break;
@@ -5750,7 +5759,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    ident_t token = terminal.identifier();
    ObjectInfo object;
 
-   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP)) {
+   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | HINT_FORWARD)) {
       bool invalid = false;
       if (EAttrs::test(mode, HINT_INTERNALOP)) {
          if (terminal == lxReference) {
@@ -5771,6 +5780,11 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          if (token.compare(META_INFO_NAME)) {
             object = ObjectInfo(okMetaField, ClassAttribute::caInfo);
          }         
+      }
+      else if (EAttrs::test(mode, HINT_FORWARD)) {
+         IdentifierString forwardName(FORWARD_MODULE, "'", token);
+      
+         object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
       }
       if (invalid)
          scope.raiseError(errInvalidOperation, terminal);
@@ -5987,9 +6001,9 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
    else if (mode.testAndExclude(HINT_REFOP)) {
       result = compileReferenceExpression(current, scope, mode);
    }
-//   else if (mode.testAndExclude(HINT_PARAMSOP)) {
-//	   result = compileVariadicUnboxing(writer, node, scope, mode);
-//   }
+   else if (mode.testAndExclude(HINT_PARAMSOP)) {
+	   result = compileVariadicUnboxing(node, scope, mode);
+   }
    else {
       switch (current.type) {
 //         case lxCollection:
@@ -6647,23 +6661,21 @@ ref_t Compiler :: declareInlineArgumentList(SNode arg, MethodScope& scope, bool 
 void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode)
 {
    bool byRefArg = false;
-//   bool paramsArg = false;
+   bool paramsArg = false;
 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxAttribute) {
-         if (_logic->validateArgumentAttribute(current.argument, byRefArg/*, paramsArg*/)) {
+         if (_logic->validateArgumentAttribute(current.argument, byRefArg, paramsArg)) {
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
       }
       else if (current.compare(lxType, lxArrayType)) {
-//         if (paramsArg) {
-//            SNode argNode = current.firstChild();
-//            if (argNode == lxArrayType) {
-//            }
-//            else scope.raiseError(errIllegalMethod, node);
-//         }
-         /*else */classRef = resolveTypeAttribute(current, scope, declarationMode);
+         if (paramsArg) {
+            if (current != lxArrayType)
+               scope.raiseError(errIllegalMethod, node);
+         }
+         else classRef = resolveTypeAttribute(current, scope, declarationMode);
       }
 
       current = current.nextNode();
@@ -6673,10 +6685,10 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
       elementRef = classRef;
       classRef = V_WRAPPER;
    }
-//   if (paramsArg) {
-//      elementRef = classRef;
-//      classRef = V_ARGARRAY;
-//   }
+   if (paramsArg) {
+      elementRef = classRef;
+      classRef = V_ARGARRAY;
+   }
 }
 
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode)
@@ -6752,16 +6764,16 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          if (paramCount >= ARG_COUNT || test(flags, VARIADIC_MESSAGE))
             scope.raiseError(errTooManyParameters, current);
 
-//         if (classRef == V_ARGARRAY) {
-//            // to indicate open argument list
-//            flags |= VARIADIC_MESSAGE;
-//
-//            // the generic arguments should be free by the method exit
-//            scope.withOpenArg = true;
-//
-//            signature[signatureLen++] = elementRef;
-//         }
-         /*else */if (isPrimitiveRef(classRef)) {
+         if (classRef == V_ARGARRAY) {
+            // to indicate open argument list
+            flags |= VARIADIC_MESSAGE;
+
+            // the generic arguments should be free by the method exit
+            scope.withOpenArg = true;
+
+            signature[signatureLen++] = elementRef;
+         }
+         else if (isPrimitiveRef(classRef)) {
             // primitive arguments should be replaced with wrapper classes
             signature[signatureLen++] = resolvePrimitiveReference(scope, classRef, elementRef, declarationMode);
          }
@@ -6876,8 +6888,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       }
       else scope.raiseError(errIllegalMethod, node);
 
-//      if (test(flags, VARIADIC_MESSAGE) && !test(flags, SPECIAL_MESSAGE))
-//         paramCount = 1;
+      if (test(flags, VARIADIC_MESSAGE) && !test(flags, FUNCTION_MESSAGE))
+         paramCount = 1;
 
       // NOTE : a message target should be included as well for a normal message
       int argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
@@ -7129,7 +7141,7 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
 //
 //      implicitConstructor = true;
 //   }
-   /*else */messageRef = mapMessage(messageNode, resendScope/*, false*/);
+   /*else */messageRef = mapMessage(messageNode, resendScope, false);
 
    ref_t classRef = classClassScope.reference;
    bool found = false;
@@ -7153,10 +7165,10 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
 
    resendScope.withFrame = withFrame;
 
-//   bool variadicOne = false;
+   bool variadicOne = false;
 //   bool inlineArg = false;
-   ref_t implicitSignatureRef = compileMessageParameters(expr.findChild(lxMessage).nextNode(), resendScope, EAttr::eaNone/*,
-      variadicOne, inlineArg*/);
+   ref_t implicitSignatureRef = compileMessageParameters(expr.findChild(lxMessage).nextNode(), resendScope, EAttr::eaNone,
+      variadicOne/*, inlineArg*/);
 
    ObjectInfo target(okClassSelf, resendScope.getClassRefId(), classRef);
    int stackSafeAttr = 0;
@@ -8226,7 +8238,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 //
 ////   methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
-//   methodScope.withOpenArg = isOpenArg(methodScope.message);
+   methodScope.withOpenArg = isOpenArg(methodScope.message);
    methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
@@ -8743,16 +8755,16 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    generateMethodAttributes(scope, current, message, allowTypeAttribute);
 
    int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
-//   if (isOpenArg(message)) {
-////      if (_logic->isMethodGeneric(scope.info, message)) {
-////         // HOTFIX : verify that only generics with similar argument signature available
-////         //int extraParamCount = retrieveGenericArgParamCount(scope);
-////         //if (extraParamCount != -1 && getParamCount(message) != extraParamCount)
-////         //   scope.raiseError(errIllegalMethod, current);
-////
-//         scope.info.header.flags |= elWithVariadics;
-////      }
-//   }
+   if (isOpenArg(message)) {
+//      if (_logic->isMethodGeneric(scope.info, message)) {
+//         // HOTFIX : verify that only generics with similar argument signature available
+//         //int extraParamCount = retrieveGenericArgParamCount(scope);
+//         //if (extraParamCount != -1 && getParamCount(message) != extraParamCount)
+//         //   scope.raiseError(errIllegalMethod, current);
+//
+         scope.info.header.flags |= elWithVariadics;
+//      }
+   }
 //   else if (_logic->isMethodGeneric(scope.info, message)) {
 //      scope.info.header.flags |= elWithGenerics;
 //   }
@@ -8879,14 +8891,14 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
 
    ident_t actionStr = scope.module->resolveAction(actionRef, signRef);
 
-   /*if (test(flags, VARIADIC_MESSAGE)) {
+   if (test(flags, VARIADIC_MESSAGE)) {
       // COMPILER MAGIC : for variadic message - use the most general message
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
       ref_t genericMessage = encodeMessage(genericActionRef, 1, flags);
 
       return genericMessage;
    }
-   else */if (signRef) {
+   else if (signRef) {
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
       ref_t genericMessage = encodeMessage(genericActionRef, argCount, flags);
 
@@ -11151,7 +11163,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.messageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGE_FORWARD));
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
    scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
-//   scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
+   scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
 //   scope.messageNameReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGENAME_FORWARD));
 //   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
 //   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
@@ -11455,9 +11467,6 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
    if (test(message, FUNCTION_MESSAGE))
       methNode.appendNode(lxAttribute, tpFunction);
 
-   //if (test(message, VARIADIC_MESSAGE))
-   //   methNode.appendNode(lxAttribute, lxArgDispatcherAttr);
-
    methNode.appendNode(lxResendExpression, resendMessage);
 }
 
@@ -11475,18 +11484,18 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
    ref_t signatures[ARG_COUNT];
 
    int firstArg = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
-   /*if (test(message, VARIADIC_MESSAGE)) {
+   if (test(message, VARIADIC_MESSAGE)) {
    //   for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
    //      signatures[signatureLen++] = scope.superReference;
    //   }
    //   signatures[signatureLen++] = scope.superReference;
    }
-   else {*/
+   else {
       for (int i = firstArg; i < argCount; i++) {
          signatureLen++;
          signatures[i] = scope.superReference;
       }
-   //}
+   }
    ref_t signRef = scope.module->mapAction(actionName, scope.module->mapSignature(signatures, signatureLen, false), false);
 
    resendMessage = encodeMessage(signRef, argCount, flags);

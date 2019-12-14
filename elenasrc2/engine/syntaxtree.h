@@ -97,6 +97,7 @@ enum LexicalType
    lxBoxableExpression        = 0x059032,
    lxFieldExpression          = 0x059033,
    lxNil                      = 0x018040,
+   lxStopper                  = 0x018041,   // used for variadic arguments as a last argument
    lxClassSymbol              = 0x018050,   // arg - reference
    lxSymbolReference          = 0x058060,
    lxConstantSymbol           = 0x018070,   // arg - reference
@@ -116,6 +117,7 @@ enum LexicalType
    lxBytesVariable            = 0x010103,
    lxShortsVariable           = 0x010104,
    lxBinaryVariable           = 0x010105,
+   lxParamsVariable           = 0x010106,
    lxLocal                    = 0x018110,   // arg - offset
    lxSelfLocal                = 0x018111,
    lxLocalAddress             = 0x018112,   // arg - offset
@@ -286,7 +288,6 @@ enum LexicalType
 //   lxReal64Variable           = 0x1002A,
 //   lxForward                  = 0x1002E,
 //   lxOuterMember              = 0x1003A,  // a collection member, arg - offset
-//   lxParamsVariable           = 0x1003E,
 
 //   lxIntExtArgument           = 0x2001C,
 //   lxExtArgument              = 0x2001D,

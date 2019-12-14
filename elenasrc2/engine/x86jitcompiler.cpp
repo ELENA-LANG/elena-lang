@@ -112,12 +112,12 @@ const int gcCommands[gcCommandNumber] =
 //   bcEOrN, bcNewI, bcACopyAI
 };
 
-const int gcCommandExNumber = 8;
+const int gcCommandExNumber = 10;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
    bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
-   //   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
+   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
    bcCreateN + 0x100, bcCreateN + 0x200, bcCreateN + 0x300, bcCreateN + 0x400
 };
 
@@ -1654,10 +1654,10 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
    // ; lea  eax, [esp + offs]
    x86Helper::leaRM32disp(scope.code, x86Helper::otEAX, x86Helper::otESP, startArg << 2);
 
-//   if (test(message, VARIADIC_MESSAGE)) {
-//      loadMTOpX(op, scope, 0xC00);
-//   }
-//   else {
+   if (test(scope.extra_arg, VARIADIC_MESSAGE)) {
+      loadMTOpX(op, scope, 0xC00);
+   }
+   else {
       switch (getArgCount(scope.extra_arg) - startArg) {
          case 1:
             loadMTOpX(op, scope, 0x100);
@@ -1669,7 +1669,7 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
             loadMTOp(op, scope);
             break;
       }
-//   }
+   }
 }
 
 //void _ELENA_::compileSetVerb(int, x86JITScope& scope)
