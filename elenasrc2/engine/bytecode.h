@@ -40,7 +40,7 @@ enum ByteCode
    bcClose           = 0x15,
 //   bcSub             = 0x16,
    bcQuit            = 0x17,
-//   bcGet             = 0x18,
+   bcGet             = 0x18,
 //   bcSet             = 0x19,
 //   bcInc             = 0x1A,
 //   bcEQuit           = 0x1B,
@@ -151,7 +151,7 @@ enum ByteCode
 //   bcRLoad           = 0x8F,
 
    bcDec             = 0x90,
-   bcGet             = 0x91,
+   bcGetI            = 0x91,
    bcRestore         = 0x92,
    bcPeekR           = 0x93,
    bcPeekFI          = 0x94,

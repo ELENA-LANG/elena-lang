@@ -2027,9 +2027,10 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
 
          generateMesage(writer, current, derivationScope);
          break;
+      case lxArrOperator:
+         current.argument = REFER_OPERATOR_ID;
       case lxOperator:
       case lxAssign:
-      case lxArrOperator:
          if (!first) {
             writer.inject(lxExpression);
             writer.closeNode();

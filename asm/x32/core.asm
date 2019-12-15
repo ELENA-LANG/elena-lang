@@ -942,6 +942,13 @@ inline % 15h
   
 end
 
+// ; get
+inline % 18h
+
+   mov  ebx, [ebx + edx * 4]
+
+end
+
 // ; unhook
 inline % 1Dh
 
@@ -1034,7 +1041,7 @@ inline % 48h
 
 end
 
-// ; get
+// ; geti
 inline % 91h
 
   mov  ebx, [ebx+__arg1]

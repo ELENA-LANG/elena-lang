@@ -2353,7 +2353,10 @@ void Compiler :: setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo obje
 
 void Compiler :: setParamsTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, ref_t wrapRef)
 {
-   throw InternalError("Not yet implemented");
+   node.set(lxBlockLocalAddr, object.param);
+
+   node.injectAndReplaceNode(lxArgBoxableExpression);
+   node.appendNode(lxType, wrapRef);
 
    //         writer.newNode(lxArgBoxing, 0);
    //         writer.appendNode(lxBlockLocalAddr, object.param);
@@ -3307,8 +3310,8 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
 //         return encodeMessage(scope.module->mapAction(SHIFTR_OPERATOR, 0, false), paramCount, 0);
 //      case SHIFTL_OPERATOR_ID:
 //         return encodeMessage(scope.module->mapAction(SHIFTL_OPERATOR, 0, false), paramCount, 0);
-//      case REFER_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(REFER_MESSAGE, 0, false), paramCount, 0);
+      case REFER_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(REFER_MESSAGE, 0, false), argCount, 0);
 //      case SET_REFER_OPERATOR_ID:
 //         return encodeMessage(scope.module->mapAction(SET_REFER_MESSAGE, 0, false), paramCount, 0);
       default:
@@ -3725,6 +3728,9 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
 
    //   boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode);
    }
+   else if (current == lxArgBoxableExpression) {
+      throw InternalError("Not yet implemented");
+   }
    else {
       if (current == lxNewArrOp) {
          ref_t typeRef = boxExprNode.findChild(lxType).argument;
@@ -3749,6 +3755,7 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
 void Compiler :: analizeOperand(SNode& current, ExprScope& scope, bool boxingMode)
 {
    switch (current.type) {
+      case lxArgBoxableExpression:
       case lxBoxableExpression:
          boxArgument(current, current.firstChild(lxObjectMask), scope, boxingMode);
          current.set(lxExpression, 0);
@@ -5261,6 +5268,7 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
       case lxAssign:
          objectInfo = compileAssigning(current, scope, objectInfo, current.argument == -1);
          break;
+      case lxArrOperator:
       case lxOperator:
          objectInfo = compileOperator(current, scope, objectInfo, mode);
          break;
@@ -6674,6 +6682,8 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
          if (paramsArg) {
             if (current != lxArrayType)
                scope.raiseError(errIllegalMethod, node);
+
+            classRef = resolveTypeAttribute(current.firstChild(), scope, declarationMode);
          }
          else classRef = resolveTypeAttribute(current, scope, declarationMode);
       }

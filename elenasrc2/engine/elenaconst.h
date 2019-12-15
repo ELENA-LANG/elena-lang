@@ -52,7 +52,7 @@ namespace _ELENA_
    constexpr auto SUB_OPERATOR_ID         = 0x0013;
    constexpr auto MUL_OPERATOR_ID         = 0x0014;
    constexpr auto DIV_OPERATOR_ID         = 0x0015;
-//   constexpr auto REFER_OPERATOR_ID       = 0x0016;
+   constexpr auto REFER_OPERATOR_ID       = 0x0016;
 //   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
 //   constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
 //   constexpr auto SET_REFER_OPERATOR_ID   = 0x0019;
@@ -385,7 +385,7 @@ namespace _ELENA_
    constexpr auto SUB_MESSAGE          = "subtract";
    constexpr auto MUL_MESSAGE          = "multiply";
    constexpr auto DIV_MESSAGE          = "divide";
-//   constexpr auto REFER_MESSAGE        = "at";
+   constexpr auto REFER_MESSAGE        = "at";
 //  // #define APPEND_MESSAGE           "append"
 //  // #define REDUCE_MESSAGE           "reduce"
 //   constexpr auto SET_REFER_MESSAGE    = "setAt";

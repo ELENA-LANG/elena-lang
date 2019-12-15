@@ -300,7 +300,7 @@ class ByteCodeWriter
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
-//   void doArgArrayOperation(CommandTape& tape, int operator_id);
+   void doArgArrayOperation(CommandTape& tape, int operator_id);
 //   void doIntArrayOperation(CommandTape& tape, int operator_id);
 //   void doByteArrayOperation(CommandTape& tape, int operator_id);
 //   void doShortArrayOperation(CommandTape& tape, int operator_id);
@@ -340,7 +340,7 @@ class ByteCodeWriter
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node);
    void generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
-   //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, int mode);
+   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);

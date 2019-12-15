@@ -1,0 +1,19 @@
+<configuration>
+    <project>
+        <template>lib</template>
+        <namespace>extensions</namespace>
+        <debuginfo>-1</debuginfo>
+        <options>-w3</options>
+        <output>..\..\lib50</output>
+    </project>
+    <manifest>
+        <name>ELENA Extension Library</name>
+        <version>5.0.0</version>
+        <author>Alex Rakov</author>
+    </manifest>
+    <files>
+        <module>
+            <include>console.l</include>                                                        
+        </module>
+    </files>
+</configuration>

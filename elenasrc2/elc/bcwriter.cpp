@@ -2014,8 +2014,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcXSetFI:
          case bcCopyToFI:
          case bcCopyFI:
-         //case bcPushF:
-         //case bcMovF:
+         case bcPushF:
+         case bcMovF:
          //case bcAddF:
          //case bcSubF:
          //case bcMulF:
@@ -3332,25 +3332,23 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
 //         break;
 //   }
 //}
-//
-//void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      case REFER_OPERATOR_ID:
-//         // bcopya
-//         // get
-//         tape.write(bcBCopyA);
-//         tape.write(bcGet);
-//         break;
+
+void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // get
+         tape.write(bcGet);
+         break;
 //      case SET_REFER_OPERATOR_ID:
 //         // xset
 //         tape.write(bcXSet);
 //         break;
-//      default:
-//         break;
-//   }
-//}
-//
+      default:
+         break;
+   }
+}
+
 //void ByteCodeWriter :: doIntArrayOperation(CommandTape& tape, int operator_id)
 //{
 //   switch (operator_id) {
@@ -3926,10 +3924,10 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushf n
          tape.write(bcPushF, argument);
          break;
-//      case lxBlockLocalAddr:
-//         // pushf n
-//         tape.write(bcPushF, argument, bpFrame);
-//         break;
+      case lxBlockLocalAddr:
+         // pushf n
+         tape.write(bcPushF, argument, bpFrame);
+         break;
       case lxCurrent:
          // pushsi index
          tape.write(bcPushSI, argument);
@@ -4065,11 +4063,11 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcMovR, argument);
          break;
       case lxField:
-         // get index
+         // geti index
 //         if ((int)argument < 0) {
 //            tape.write(bcACopyB);
 //         }
-         /*else */tape.write(bcGet, argument);
+         /*else */tape.write(bcGetI, argument);
          break;
       case lxStaticConstField:
 //         if ((int)argument > 0) {
@@ -4077,8 +4075,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //            tape.write(bcALoadR, argument | mskStatSymbolRef);
 //         }
 //         else {
-            // get -offset
-            tape.write(bcGet, argument);
+            // geti -offset
+            tape.write(bcGetI, argument);
 //         }
          break;
       case lxStaticField:
@@ -4109,10 +4107,10 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          // class
          tape.write(bcClass);
          break;
-//      case lxBlockLocalAddr:
-//         // acopyf n
-//         tape.write(bcACopyF, argument, bpFrame);
-//         break;
+      case lxBlockLocalAddr:
+         // acopyf n
+         tape.write(bcMovF, argument, bpFrame);
+         break;
 //      case lxResultField:
 //         // aloadai
 //         tape.write(bcALoadAI, argument);
@@ -4318,20 +4316,20 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
 //   //}
 }
 
-//void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
-//{
+void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
 //   if (test(mode, BASE_PRESAVED))
 //      tape.write(bcPushB);
 //
 //   bool lenMode = node.argument == SHIFTR_OPERATOR_ID;
 //   bool setMode = (node.argument == SET_REFER_OPERATOR_ID/* || node.argument == SETNIL_REFER_MESSAGE_ID*/);
 //   //bool assignMode = node != lxArrOp/* && node != lxArgArrOp*/;
-//
-//   SNode larg, rarg, rarg2;
-//   assignOpArguments(node, larg, rarg, rarg2);
-//
-//   if (larg == lxExpression)
-//      larg = larg.findSubNodeMask(lxObjectMask);
+
+   SNode larg, rarg/*, rarg2*/;
+   assignOpArguments(node, larg, rarg/*, rarg2*/);
+
+   if (larg == lxExpression)
+      larg = larg.findSubNodeMask(lxObjectMask);
 //   if (rarg == lxExpression)
 //      rarg = rarg.findSubNodeMask(lxObjectMask);
 //   if (rarg2 == lxExpression)
@@ -4424,6 +4422,14 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
 //      }
 //   }
 //   else {
+      if (!test(larg.type, lxOpScopeMask)) {
+         generateObject(tape, rarg, scope);
+         tape.write(bcLoad);
+
+         loadObject(tape, larg.type, larg.argument, scope, 0);
+      }
+      else throw InternalError("Not yet implemented"); // !! temporal
+
 //      SNode barg;
 //      if (test(mode, ASSIGN_MODE)) {
 //         barg = node.parentNode();
@@ -4554,7 +4560,7 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
 //         doArrayOperation(tape, node.argument);
 //         break;
 //      case lxArgArrOp:
-//         doArgArrayOperation(tape, node.argument);
+         doArgArrayOperation(tape, node.argument);
 //         break;
 //   }
 //
@@ -4567,8 +4573,8 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
 //
 //   if (test(mode, BASE_PRESAVED))
 //      tape.write(bcPopB);
-//}
-//
+}
+
 //void ByteCodeWriter :: unboxLocal(CommandTape& tape, SNode larg, SNode rarg)
 //{
 //   SNode assignNode = larg.findChild(lxAssigning);
@@ -6640,9 +6646,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxShortArrOp:
 //      case lxArrOp:
 //      case lxBinArrOp:
-//      case lxArgArrOp:
-//         generateArrOperation(tape, node, mode);
-//         break;
+      case lxArgArrOp:
+         generateArrOperation(tape, node, scope, mode);
+         break;
       case lxNewArrOp:
          generateNewArrOperation(tape, node, scope);
          break;
@@ -6670,6 +6676,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //         generateYieldReturn(tape, node);
 //         break;
       case lxBoxableExpression:
+      case lxArgBoxableExpression:
          throw InternalError("Unboxed expression");
          break;
       case lxReturning:

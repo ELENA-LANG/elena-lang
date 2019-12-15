@@ -624,7 +624,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcAddN:
 //      case bcDLoadSI:
 //      case bcBLoadAI:
-      case bcGet:
+      case bcGetI:
          printCommand(command, opcode);
          command.appendHex(argument);
          command.append('h');

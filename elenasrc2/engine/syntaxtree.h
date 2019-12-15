@@ -96,6 +96,7 @@ enum LexicalType
    lxSeqExpression            = 0x059031,
    lxBoxableExpression        = 0x059032,
    lxFieldExpression          = 0x059033,
+   lxArgBoxableExpression     = 0x059034,
    lxNil                      = 0x018040,
    lxStopper                  = 0x018041,   // used for variadic arguments as a last argument
    lxClassSymbol              = 0x018050,   // arg - reference
@@ -122,6 +123,7 @@ enum LexicalType
    lxSelfLocal                = 0x018111,
    lxLocalAddress             = 0x018112,   // arg - offset
    lxTempLocal                = 0x018113,
+   lxBlockLocalAddr           = 0x018114, // arg - offset
    lxAssigning                = 0x058120,   // an assigning expression, arg - size
    lxCopying                  = 0x058121,
    lxByRefAssigning           = 0x058122,
@@ -157,6 +159,7 @@ enum LexicalType
    lxExtIntConst              = 0x018210,
    lxExtIntArg                = 0x018211,
    lxTrying                   = 0x058220,   // try-catch expression
+   lxArgArrOp                 = 0x058230,
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -235,7 +238,6 @@ enum LexicalType
 //   lxResultField              = 0x00A11A, // arg -offset
 //   lxCurrentMessage           = 0x00A11B,
 //   lxResultFieldIndex         = 0x00A11D, // arg -offset
-//   lxBlockLocalAddr           = 0x00A11F, // arg - offset
 //   lxClassRefField            = 0x008120, // arg - self instance offset
 //   lxBaseField                = 0x00A122,
 //   lxPrimitive                = 0x00A123, // arg * 4 = size

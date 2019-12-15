@@ -17,8 +17,10 @@ ELENA byte codes (or ecodes)
  and n                      - index && n => index
  
  dec i                      - index -= i
- 
- get i                      - acc <= acc[i] ;
+
+ get                        - acc[index] => acc
+
+ geti i                     - acc <= acc[i] ;
 
  load                       - int[acc] => index
 
@@ -30,7 +32,7 @@ ELENA byte codes (or ecodes)
            
  peekfi i                   - [fp+i] => acc;
 
- peekr r                   - [r] => acc
+ peekr r                    - [r] => acc
 
  peeksi i                   - [sp+i] => acc;
 
@@ -50,7 +52,7 @@ ELENA byte codes (or ecodes)
                        
  storefi i                  - [fp+i] <= acc 
  
- storer r                   - [r] <= acc[i]
+ storer r                   - [r] <= acc
                        
  storesi i                  - [sp+i] <= acc
 

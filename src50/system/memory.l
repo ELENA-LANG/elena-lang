@@ -145,12 +145,12 @@ public sealed Array<T> //: Indexable<T>
 //    }
 }
 
-//// --- Array template ---
-//
-//public sealed nonstructural VariadicArray<T> : Indexable<T>
-//{
-//    embeddable __string T[] theArray;
-//
+// --- Array template ---
+
+public sealed nonstructural VariadicArray<T> //: Indexable<T>
+{
+    embeddable __string T[] theArray;
+
 //    readLengthTo(ref int retVal)
 //        => system'core_routines'__args;
 //
@@ -215,8 +215,8 @@ public sealed Array<T> //: Indexable<T>
 //    {
 //        theArray[n] := item;
 //    }    
-//}
-//
+}
+
 //// --- matrixof ---
 //
 //public sealed Matrix<T>

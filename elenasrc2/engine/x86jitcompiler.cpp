@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/57;
+const int gcCommandNumber = /*160*/58;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -71,12 +71,12 @@ const int gcCommands[gcCommandNumber] =
    bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
    bcMTRedirect, bcJumpVI, bcXMTRedirect, bcRestore, bcPushF,
    bcCopyF, bcCopyFI, bcAddF, bcCopyToF, bcCopyToFI,
-   bcSubF, bcMulF, bcDivF, bcPushAI, bcGet,
+   bcSubF, bcMulF, bcDivF, bcPushAI, bcGetI,
    bcSet, bcCopyToAI, bcCreate, bcFillR, bcXSet,
    bcXSetFI, bcClass, bcXSaveFI, bcLen, bcSave,
    bcSelect, bcEqual, bcLess, bcSNop, bcCreateN,
    bcSaveFI, bcTryLock, bcLoad, bcHook, bcUnhook,
-   bcFlag, bcFreeLock,
+   bcFlag, bcFreeLock, bcGet,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -84,7 +84,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcClass, bcACallVD,
 //   bcDLoadSI, bcDLoadFI, bcELoadSI,
 //   bcEQuit, bcESaveSI,
-//   bcGet, bcSet, bcXSet, bcACallI, bcBReadB,
+//   bcSet, bcXSet, bcACallI, bcBReadB,
 //   bcLen, bcIfHeap, bcNCreate,
 //   bcBLoadFI, bcAXSaveBI, bcBLoadSI, bcBWriteB,
 //   bcNCopy, bcNAdd, bcBSwapSI,
@@ -128,7 +128,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compilePushA, &compilePopA, &compileNop, &compileNop, &loadOneByteOp, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileQuit,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop,
+   &loadOneByteOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
    &loadOneByteOp, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,

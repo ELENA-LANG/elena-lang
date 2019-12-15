@@ -1205,8 +1205,8 @@ void DebugController::readParams(_DebuggerWatch* watch, size_t address, ident_t 
 
          size_t memberPtr = 0;
          getValue(address, (char*)&memberPtr, 4);
-         // break if zero is found
-         if (memberPtr == 0)
+         // break if terminal token is found
+         if (memberPtr == -1)
             break;
 
          size_t flags = 0;
