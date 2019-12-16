@@ -861,9 +861,9 @@ public sealed const struct String : BaseValue
     }
      
 //    Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
-//
-//    string Printable = self;
-//
+
+    string Printable = self;
+
 //    bool equal(o)
 //    {
 //        var s := cast string(o) ?? nil;
@@ -1454,14 +1454,14 @@ public const wide emptyWideString = WideString.MinValue;
 //    Array clone()
 //        = new Array(self);
 //}
-//
-//// === Convertors ===
-//
-//// --- stringConvertor ---
-//
-///// A literal convertor
-//public singleton stringConvertor
-//{
+
+// === Convertors ===
+
+// --- stringConvertor ---
+
+/// A literal convertor
+public singleton stringConvertor
+{
 //    string convert(BaseVariable v)
 //        <= convert(v.Value);
 //    
@@ -1652,12 +1652,12 @@ public const wide emptyWideString = WideString.MinValue;
 //    /// Returns a parameter                
 //    string convert(string s)
 //        = s;
-//        
-//    /// Returns the literal presentation of the parameter
-//    string convert(o)
-//        = o.Printable;
-//}
-//
+        
+    /// Returns the literal presentation of the parameter
+    string convert(o)
+        = o.Printable;
+}
+
 //// --- wideConvertor ---
 //
 ///// A wide literal convertor

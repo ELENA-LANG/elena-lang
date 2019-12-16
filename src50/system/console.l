@@ -56,22 +56,22 @@ sealed class Console
 //        theWriter.refresh()
     }
 
-//    /// the current line terminator to the standard output stream.
-//    writeLine(string s)
-//    {
-//        theWriter.writeLine(s);
-//        
+    /// the current line terminator to the standard output stream.
+    writeLine(string s)
+    {
+        writer.writeLine(s);
+        
 //        theWriter.refresh();
-//    }
-//
-//    /// the current line terminator to the standard output stream.
-//    writeLine(wide s)
-//    {
-//        theWriter.writeLine(s);
-//        
+    }
+
+    /// the current line terminator to the standard output stream.
+    writeLine(wide s)
+    {
+        writer.writeLine(s);
+        
 //        theWriter.refresh();
-//    }
-//    
+    }
+    
 //    /// the current line terminator to the standard output stream.
 //    writeLine()
 //    {

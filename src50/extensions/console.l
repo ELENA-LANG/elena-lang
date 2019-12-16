@@ -1,21 +1,21 @@
 //import system'routines;
 //import system'text;
-//
-//// --- outputOp ---
-//
-//public extension outputOp
-//{
-//    print(params object[] list)
-//    {
-//        int len := list.Length;
-//        for(int i := 0, i < len, i := i + 1)
-//        {
-//            object obj := list[i];
-//            
-//            self.write(obj.toString())
-//        }
-//    }
-////    
+
+// --- outputOp ---
+
+public extension outputOp
+{
+    print(params object[] list)
+    {
+        int len := list.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            object obj := list[i];
+            
+            self.write(obj.toString())
+        }
+    }
+//    
 //////    generic printWide(object<> list)
 //////    [
 //////        int len := list length.
@@ -49,8 +49,8 @@
 //        
 //        self.writeLine();
 //    }    
-//}
-//
+}
+
 //public extension outputFormatterOp
 //{
 //    printPaddingRight(int width, params object[] list)

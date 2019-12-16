@@ -212,7 +212,7 @@ inline bool isConstantArguments(SNode node)
             break;
          case lxLiteral:
          case lxWide:
-         //case lxCharacter:
+         case lxCharacter:
          case lxInteger:
          //case lxLong:
          case lxHexInteger:
@@ -6758,15 +6758,22 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
    else unnamedMessage = true;
 
    bool weakSignature = true;
+   int paramCount = 0;
    if (scope.extensionMode) {
+      // COMPILER MAGIC : for an extension method, self is a parameter
+      paramCount++;
+
       signature[0] = ((ClassScope*)scope.parent)->extensionClassRef;
       signatureLen++;
 
       weakSignature = false;
+
+      scope.parameters.add(SELF_VAR, Parameter(1, signature[0]));
+
+      flags |= FUNCTION_MESSAGE;
    }
 
    bool noSignature = true; // NOTE : is similar to weakSignature except if withoutWeakMessages=true
-   int paramCount = 0;
    // if method has an argument list
    while (current != lxNone) {
       if (current == lxMethodParameter) {
@@ -6926,11 +6933,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       // NOTE : a message target should be included as well for a normal message
       int argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
       argCount += paramCount;
-
-      if (scope.extensionMode) {
-         // NOTE : for an extenion - argCount should include the message target, in constrast to a normal function
-         flags |= FUNCTION_MESSAGE;
-      }
 
       scope.message = encodeMessage(actionRef, argCount, flags);
 
@@ -8273,9 +8275,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.withOpenArg = isOpenArg(methodScope.message);
 
    methodScope.extensionMode = scope.extensionClassRef != 0;
-   if (!methodScope.extensionMode)
-      // NOTE : an extension is a special case of function, it does contain SELF variable in the stack
-      methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
+   methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
 
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);

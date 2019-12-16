@@ -88,6 +88,7 @@ enum LexicalType
    lxLiteral                  = 0x002016,
    lxMetaConstant             = 0x002017,
    lxWide                     = 0x002018,
+   lxCharacter                = 0x002019,
 
    lxVirtualReference         = 0x00201F,
 

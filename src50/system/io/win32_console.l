@@ -87,19 +87,19 @@ singleton ConsoleHandleFactory
 sealed class ConsoleWriter
 {
     handle handle;
-    wide   newLineSymbol;
+    wide   newLine;
 
     constructor(handle h)
     {
         handle := h;
-//        theNewLineSymbol := forward newLine;
+        newLine := forward newLine;
     }
 
-//    writeLine(string s)
-//    {
-//        self.write(cast wide(s));
-//        self.write(theNewLineSymbol);
-//    }
+    writeLine(string s)
+    {
+        self.write(cast wide(s));
+        self.write(newLine);
+    }
 
     write(string s)
     {

@@ -1,3 +1,4 @@
+import system;
 //import system'collections;
 //import system'routines;
 //import system'calendar;
@@ -30,9 +31,9 @@
 ////        ^ retVal.
 ////    ]
 ////} 
-//
-//singleton stringExConvertor
-//{
+
+singleton stringExConvertor
+{
 ////    literal convert(RealMatrix a)
 ////        = realmatrixExConvertor toLiteral(a).
 //
@@ -82,11 +83,11 @@
 //
 //    string convert(Indexable o)
 //        <= convert(o.indexer());
-//
-//    string convert(o)
-//        = stringConvertor.convert(o);
-//}
-//
+
+    string convert(o)
+        = stringConvertor.convert(o);
+}
+
 ////class wideExConvertor =
 ////{
 ////    wide convert(Indexer it)
@@ -347,11 +348,11 @@
 ////    convert void:val
 ////        = Array min.                        
 //}
-//
-//// --- convertorOp ---
-//
-//public extension convertorOp
-//{
+
+// --- convertorOp ---
+
+public extension convertorOp
+{
 //    Array toArray()
 //        = arrayConvertorEx.convert(self);
 //
@@ -363,10 +364,10 @@
 //    
 ////    T<IntMatrix> toIntMatrix
 ////        = intmatrixExConvertor convert:self.
-//    
-//    string toString()
-//        = stringExConvertor.convert(self);
-//    
+    
+    string toString()
+        = stringExConvertor.convert(self);
+    
 //    string toString(int radix)
 //        = stringConvertor.convert(self, radix);
 //        
@@ -414,8 +415,8 @@
 //
 //    convertTo(target)
 //        = new Variant(self).saveTo(target);
-//}
-//
+}
+
 //public convertor 
 //    = new::{ generic(n) = __received(mixin extensions'convertorOp(n)); };
 //

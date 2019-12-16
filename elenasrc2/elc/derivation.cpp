@@ -244,7 +244,7 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
    if (terminal.symbol == lxGlobalReference) {
       writer.newNode(terminal.symbol, terminal.value + 1);
    }
-   else if (terminal.symbol == lxLiteral/* || terminal == tsCharacter*/ || terminal == lxWide) {
+   else if (terminal.symbol == lxLiteral || terminal == lxCharacter || terminal == lxWide) {
       // try to use local storage if the quote is not too big
       if (getlength(terminal.value) < 0x100) {
          QuoteTemplate<IdentifierString> quote(terminal.value);
@@ -269,10 +269,10 @@ inline void saveTerminal(SyntaxWriter& writer, TerminalInfo& terminal)
 
 void DerivationWriter :: appendTerminal(TerminalInfo& terminal)
 {
-//   // HOT FIX : if there are several constants e.g. $10$13, it should be treated like literal terminal
-//   if (terminal == tsCharacter && terminal.value.findSubStr(1, '$', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
-//      terminal.symbol = tsLiteral;
-//   }
+   // HOT FIX : if there are several constants e.g. $10$13, it should be treated like literal terminal
+   if (terminal == lxCharacter && terminal.value.findSubStr(1, '$', terminal.length, NOTFOUND_POS) != NOTFOUND_POS) {
+      terminal.symbol = lxLiteral;
+   }
 
 //   else if (terminal == tsGlobal) {
 //      // HOTFIX : skip the leading symbol for the global reference
@@ -2085,6 +2085,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
       case lxHexInteger:
       case lxLiteral:
       case lxWide:
+      case lxCharacter:
       case lxMetaConstant:
          generateIdentifier(writer, current, derivationScope);
          break;

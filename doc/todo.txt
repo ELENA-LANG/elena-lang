@@ -2,6 +2,8 @@
 In development:
 ------         
               dev
+                * system auto included
+
                 * hello world sample
 
                 * predefined operations
@@ -180,8 +182,6 @@ In development:
 
                 * methods with reference name
                 * fields with reference name
-
-                * system auto included
 
                 * class template
                 * template base class
