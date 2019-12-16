@@ -36,19 +36,19 @@ public extension outputOp
 ////    [
 ////        self writeLine.
 ////    ]
-//            
-//    printLine(params object[] list)
-//    {
-//        int len := list.Length;
-//        for(int i := 0, i < len, i := i + 1)
-//        {
-//            object obj := list[i];
-//            
-//            self.write(obj.toString())
-//        };        
-//        
-//        self.writeLine();
-//    }    
+            
+    printLine(params object[] list)
+    {
+        int len := list.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            object obj := list[i];
+            
+            self.write(obj.toString())
+        };        
+        
+        self.writeLine();
+    }    
 }
 
 //public extension outputFormatterOp

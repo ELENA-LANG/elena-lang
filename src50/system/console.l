@@ -72,14 +72,14 @@ sealed class Console
 //        theWriter.refresh();
     }
     
-//    /// the current line terminator to the standard output stream.
-//    writeLine()
-//    {
-//        theWriter.writeLine();
-//        
+    /// the current line terminator to the standard output stream.
+    writeLine()
+    {
+        writer.writeLine();
+        
 //        theWriter.refresh();
-//    }
-//
+    }
+
 //    /// Clears the console
 //    clear()
 //        => theWriter;

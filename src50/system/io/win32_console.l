@@ -111,11 +111,11 @@ sealed class ConsoleWriter
 //        self.write(s);
 //        self.write(theNewLineSymbol);
 //    }
-//
-//    writeLine()
-//    {
-//        self.write(theNewLineSymbol);
-//    }
+
+    writeLine()
+    {
+        self.write(newLine);
+    }
 
     write(wide s)
     {
