@@ -2096,14 +2096,14 @@ public sealed const struct IntNumber : IntBaseNumber
 //    Negative
 //        = 0.0r - theValue;
 //}
-//
-//// --- CharValue ---
-//
-///// An UTF-32 character symbol
-//public sealed const struct CharValue : BaseValue
-//{
-//    embeddable __raw theValue[4];
-//
+
+// --- CharValue ---
+
+/// An UTF-32 character symbol
+public sealed const struct CharValue : BaseValue
+{
+    embeddable __raw theValue[4];
+
 //    static char Default
 //        = $0;
 //
@@ -2226,8 +2226,8 @@ public sealed const struct IntNumber : IntBaseNumber
 //
 //        ^ length
 //    }
-//}
-//
+}
+
 //// --- nil constant ---
 //
 ///// A nil value

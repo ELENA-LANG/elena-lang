@@ -62,7 +62,7 @@ public:
 //   virtual void compileReal64(MemoryWriter* writer, double number) = 0;
    virtual void compileLiteral(MemoryWriter* writer, const char* value) = 0;
    virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value) = 0;
-//   virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
+   virtual void compileChar32(MemoryWriter* writer, const char* value) = 0;
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
    virtual void compileCollection(MemoryWriter* writer, _Memory* binary) = 0;
 
@@ -116,7 +116,7 @@ public:
 //   virtual void compileReal64(MemoryWriter* writer, double number);
    virtual void compileLiteral(MemoryWriter* writer, const char* value);
    virtual void compileWideLiteral(MemoryWriter* writer, const wide_c* value);
-//   virtual void compileChar32(MemoryWriter* writer, const char* value);
+   virtual void compileChar32(MemoryWriter* writer, const char* value);
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary);
    virtual void compileCollection(MemoryWriter* writer, _Memory* binary);
 

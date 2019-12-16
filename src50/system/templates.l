@@ -105,13 +105,13 @@
     __loop: cast bool(expr) ? loop_block
 }    
 
-//// --- until statement ---
-//
-//public until<loop_block>(expr)
-//{
-//    (__loop: cast bool(expr) ! loop_block)
-//}
-//
+// --- until statement ---
+
+#declare until<expr>(loop_block)
+{
+    __loop: cast bool(expr) ! loop_block
+}
+
 //public until<loop_body>(step_expr, cond_expr)
 //{
 //    step_expr;

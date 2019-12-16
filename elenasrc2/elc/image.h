@@ -80,7 +80,7 @@ public:
 
    virtual ident_t getLiteralClass();
    virtual ident_t getWideLiteralClass();
-   //virtual ident_t getCharacterClass();
+   virtual ident_t getCharacterClass();
    virtual ident_t getIntegerClass();
    //virtual ident_t getRealClass();
    //virtual ident_t getLongClass();

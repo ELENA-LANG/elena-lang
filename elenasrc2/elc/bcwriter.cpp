@@ -654,8 +654,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskLiteralRef;
       case lxConstantWideStr:
          return mskWideLiteralRef;
-      //case lxConstantChar:
-      //   return mskCharRef;
+      case lxConstantChar:
+         return mskCharRef;
       case lxConstantInt:
          return mskInt32Ref;
       //case lxConstantLong:
@@ -3932,7 +3932,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantWideStr:
       case lxClassSymbol:
       case lxConstantSymbol:
-//      case lxConstantChar:
+      case lxConstantChar:
       case lxConstantInt:
 //      case lxConstantLong:
 //      case lxConstantReal:
@@ -4066,7 +4066,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantWideStr:
       case lxClassSymbol:
       case lxConstantSymbol:
-//      case lxConstantChar:
+      case lxConstantChar:
       case lxConstantInt:
 //      case lxConstantLong:
 //      case lxConstantReal:
@@ -7384,7 +7384,7 @@ void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStat
 void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument)
 {
    switch (type) {
-      //case lxConstantChar:
+      case lxConstantChar:
       //case lxConstantClass:
       case lxConstantInt:
       //case lxConstantLong:

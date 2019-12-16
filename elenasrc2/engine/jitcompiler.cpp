@@ -133,21 +133,21 @@ void JITCompiler32 :: compileWideLiteral(MemoryWriter* writer, const wide_c* val
    writer->align(4, 0);
 }
 
-//void JITCompiler32 :: compileChar32(MemoryWriter* writer, const char* value)
-//{
-//   size_t len = 1;
-//   unic_c ch = 0;
-//   Convertor::copy(&ch, value, getlength(value), len);
-//
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800004);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->writeDWord(ch);
-//}
+void JITCompiler32 :: compileChar32(MemoryWriter* writer, const char* value)
+{
+   size_t len = 1;
+   unic_c ch = 0;
+   Convertor::copy(&ch, value, getlength(value), len);
+
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800004);
+   writer->writeDWord(0);
+
+   // object body
+   writer->writeDWord(ch);
+}
 
 void JITCompiler32 :: compileBinary(MemoryWriter* writer, _Memory* binary)
 {

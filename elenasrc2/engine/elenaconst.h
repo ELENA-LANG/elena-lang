@@ -521,7 +521,7 @@ namespace _ELENA_
 //   constexpr auto REAL_FORWARD            = "$real";
    constexpr auto STR_FORWARD                = "$literal";
    constexpr auto WIDESTR_FORWARD            = "$wideliteral";
-//   constexpr auto CHAR_FORWARD            = "$char";
+   constexpr auto CHAR_FORWARD               = "$char";
    constexpr auto MESSAGE_FORWARD            = "$message";
 //   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
 //   constexpr auto MESSAGENAME_FORWARD     = "$messagename";

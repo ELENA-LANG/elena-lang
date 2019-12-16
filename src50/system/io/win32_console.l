@@ -56,112 +56,112 @@ namespace io
 //    }
 //}
 
-// --- ConsoleHandleFactory --
-
-singleton ConsoleHandleFactory
-{
-    handle new(int attrs)
+    // --- ConsoleHandleFactory --
+    
+    singleton ConsoleHandleFactory
     {
-        handle h := extern KERNEL32.GetStdHandle(attrs);
+        handle new(int attrs)
+        {
+            handle h := extern KERNEL32.GetStdHandle(attrs);
+            
+            ^ h
+        }
         
-        ^ h
+        newWriter()
+        {
+            handle h := ConsoleHandleFactory.new(0FFFFFFF5h);
+    //        int    dwMode := extern KERNEL32.GetFileType(h);
+    //        if (dwMode == FILE_TYPE_CHAR)
+    //        {
+                ^ new ConsoleWriter(h)
+    //        }
+    //        else
+    //        {
+    //            ^ new FileWriter(h)
+    //        }
+        }
     }
     
-    newWriter()
-    {
-        handle h := ConsoleHandleFactory.new(0FFFFFFF5h);
-//        int    dwMode := extern KERNEL32.GetFileType(h);
-//        if (dwMode == FILE_TYPE_CHAR)
-//        {
-            ^ new ConsoleWriter(h)
-//        }
-//        else
-//        {
-//            ^ new FileWriter(h)
-//        }
-    }
-}
-
-// --- ConsoleWriter ---
-
-sealed class ConsoleWriter
-{
-    handle handle;
-    wide   newLine;
-
-    constructor(handle h)
-    {
-        handle := h;
-        newLine := forward newLine;
-    }
-
-    writeLine(string s)
-    {
-        self.write(cast wide(s));
-        self.write(newLine);
-    }
-
-    write(string s)
-    {
-        self.write(cast wide(s))
-    }
-
-//    writeLine(wide s)
-//    {
-//        self.write(s);
-//        self.write(theNewLineSymbol);
-//    }
-
-    writeLine()
-    {
-        self.write(newLine);
-    }
-
-    write(wide s)
-    {
-        int len := s.Length;
-        
-        // !! temporally - use local variable
-        handle h := handle;        
-        extern KERNEL32.WriteConsoleW(/*handle*/h,s,len,0,0)
-
-        // !!check the result of the operation
-    }
+    // --- ConsoleWriter ---
     
-//    clear()
-//    {
-//        auto buffer := new CONSOLE_SCREEN_BUFFER_INFO();
-//        int  length := 0;
-//        int  retVal := 0;
-//
-//        extern KERNEL32.GetConsoleScreenBufferInfo(theHandle, buffer);
-//
-//        short sizeX := buffer.SizeX;
-//        short sizeY := buffer.SizeY;
-//                
-//        length := sizeX * sizeY;
-//        
-//        extern KERNEL32.FillConsoleOutputCharacterW(theHandle, cast short(32), length, 0, ref retVal);
-//        
-//        extern KERNEL32.SetConsoleCursorPosition(theHandle, 0)
-//    }
-//
-//    setCursorPosition(int x, int y)
-//    {
-//        int coord := y * 10000h + x;
-//                
-//        extern KERNEL32.SetConsoleCursorPosition(theHandle, coord)
-//    }
-//
-//    refresh()
-//    {
-//    }    
-//
-//    close()
-//    {
-//        extern KERNEL32.CloseHandle(theHandle)
-//    }
-}
+    sealed class ConsoleWriter
+    {
+        handle handle;
+        wide   newLine;
+    
+        constructor(handle h)
+        {
+            handle := h;
+            newLine := forward newLine;
+        }
+    
+        writeLine(string s)
+        {
+            self.write(cast wide(s));
+            self.write(newLine);
+        }
+    
+        write(string s)
+        {
+            self.write(cast wide(s))
+        }
+    
+    //    writeLine(wide s)
+    //    {
+    //        self.write(s);
+    //        self.write(theNewLineSymbol);
+    //    }
+    
+        writeLine()
+        {
+            self.write(newLine);
+        }
+    
+        write(wide s)
+        {
+            int len := s.Length;
+            
+            // !! temporally - use local variable
+            handle h := handle;        
+            extern KERNEL32.WriteConsoleW(/*handle*/h,s,len,0,0)
+    
+            // !!check the result of the operation
+        }
+        
+    //    clear()
+    //    {
+    //        auto buffer := new CONSOLE_SCREEN_BUFFER_INFO();
+    //        int  length := 0;
+    //        int  retVal := 0;
+    //
+    //        extern KERNEL32.GetConsoleScreenBufferInfo(theHandle, buffer);
+    //
+    //        short sizeX := buffer.SizeX;
+    //        short sizeY := buffer.SizeY;
+    //                
+    //        length := sizeX * sizeY;
+    //        
+    //        extern KERNEL32.FillConsoleOutputCharacterW(theHandle, cast short(32), length, 0, ref retVal);
+    //        
+    //        extern KERNEL32.SetConsoleCursorPosition(theHandle, 0)
+    //    }
+    //
+    //    setCursorPosition(int x, int y)
+    //    {
+    //        int coord := y * 10000h + x;
+    //                
+    //        extern KERNEL32.SetConsoleCursorPosition(theHandle, coord)
+    //    }
+    //
+    //    refresh()
+    //    {
+    //    }    
+    //
+    //    close()
+    //    {
+    //        extern KERNEL32.CloseHandle(theHandle)
+    //    }
+    }
 
 //// --- FileWriter ---
 //
@@ -264,181 +264,181 @@ sealed class ConsoleWriter
 //        extern KERNEL32.CloseHandle(theHandle)
 //    }
 //}
-//
-//// --- ConsoleReader ---
-//
-//sealed struct ConsoleReader : Object, interface<IConsoleReader>
-//{
-//    handle theHandle;
+
+    // --- ConsoleReader ---
+    
+    sealed /*struct*/class ConsoleReader //: Object, interface<IConsoleReader>
+    {
+        handle handle;
+        
+        constructor(handle h)
+        {
+            handle := h
+        }
+    
+        read(ref char retVal)
+        {
+//            byte  dump[20];
+//            int   numberRead := 0;
+//            short eventType := 0;
+//            int   keyDown := 0;
 //    
-//    constructor(handle h)
-//    {
-//        theHandle := h
-//    }
-//
-//    read(ref char retVal)
-//    {
-//        byte  dump[20];
-//        int   numberRead := 0;
-//        short eventType := 0;
-//        int   keyDown := 0;
-//
-//        bool found := false;
-//        until (found)
-//        {
-//            extern
+//            bool found := false;
+//            until (found)
 //            {
-//                extern KERNEL32.ReadConsoleInputW(theHandle, dump, 1, ref numberRead);
-//            };
-//
-//            dump.read(0, ref eventType);
-//            if (eventType == 1)
-//            {
-//                    dump.read(4, ref keyDown);
-//                    
-//                    found := keyDown == 1
-//            }
-//            else
-//            {
-//                found := false 
-//            };
-//        };
-//
-//        dump.read(14, ref retVal)
-//    }
-//
-////    read(ref<int> aKey)
-////    [
-////        T<byte,20> aDump.
-////        int        aNumberRead := 0.
-////        short      anEventType := 0.
-////        int        aKeyDown := 0.
-////        
-////        bool found := false.
-////        until (found)
-////        [
-////            extern()
-////            [
-////                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
-////            ].
-////
-////            byteArrayHelper read(T<ByteArray>(aDump), 0, &anEventType).
-////            if (anEventType == 1)
-////                [  
-////                    byteArrayHelper read(T<ByteArray>(aDump), 4, &aKeyDown).
-////                    
-////                    found := aKeyDown == 1
-////                ];
-////                [ found := false ]
-////        ].
-////                    
-////        byteArrayHelper read(T<ByteArray>(aDump), 8, aKey)
-////    ]
-//
-//    get bool KeyAvailable()
-//    {
-//        byte  dump[20];
-//        int   numberRead := 0;
-//        short eventType := 0;
-//        int   keyDown := 0;
-//        
-//        while (true)
-//        {
-//            numberRead := 0;
-//            
-//            extern
-//            {
-//                extern KERNEL32.PeekConsoleInputW(theHandle, dump, 1, ref numberRead)
-//            };
-//                        
-//            if (0 == numberRead)
-//                { ^ false };
-//                            
-//            dump.read(0, ref eventType);
-//            if (eventType == 1)
-//            {
-//                dump.read(4, ref keyDown);
-//                    
-//                if (keyDown == 1)
-//                    { ^ true }
-//            };
-//
-//            extern
-//            {
-//                extern KERNEL32.ReadConsoleInputW(theHandle, dump, 1, ref numberRead)
-//            }                
-//        };
-//        
-//        ^ false
-//    }
-//
-//    read(short[] dump, ref int retVal)
-//    {
-//        int len := retVal;
-//        
-//        extern
-//        {
-//            extern KERNEL32.ReadConsoleW(theHandle, dump, len, ref retVal, 0)
-//        }
-//    }
+//    //            extern
+//    //            {
+//                    extern KERNEL32.ReadConsoleInputW(handle, dump, 1, ref numberRead);
+//    //            };
 //    
-//    wide readWideLine()
-//    {
-//        short dump[127];
-//        int   len := 0;
-//        wide  output := emptyWideString;
-//        
-//        bool continue := true;
-//        while (continue)
-//        {
-//            len := 127;
-//            self.read(dump, ref len);
-//            
-//            short sh := dump[len - 1];
-//            if (sh == 0Ah)
+//                dump.read(0, ref eventType);
+//                if (eventType == 1)
 //                {
-//                    len := len - 2;
-//                    
-//                    continue := false
+//                        dump.read(4, ref keyDown);
+//                        
+//                        found := keyDown == 1
+//                }
+//                else
+//                {
+//                    found := false 
 //                };
-//            
-//            wide temp := WideString.fromShortArray(0, len, dump);
-//            
-//            output := output + temp;
-//        };
-//
-//        ^ output
-//    }
-//
-//    string readLine()
-//        = self.readWideLine();
-//
-////    int
-////    [
-////        int aRetVal := 0.
-////        $self read vint:aRetVal.
-////        
-////        ^ IntNumber new int:aRetVal
-////    ]
-////            
-////    char
-////    [
-////        char aRetVal := $0.
-////        $self read vchar:aRetVal.
-////        
-////        ^ CharValue new char:aRetVal
-////    ]
-//
-//    close()
-//    {
-//        extern KERNEL32.CloseHandle(theHandle)
-//    }
-//}
+//            };
+    //
+    //        dump.read(14, ref retVal)
+        }
+    
+    ////    read(ref<int> aKey)
+    ////    [
+    ////        T<byte,20> aDump.
+    ////        int        aNumberRead := 0.
+    ////        short      anEventType := 0.
+    ////        int        aKeyDown := 0.
+    ////        
+    ////        bool found := false.
+    ////        until (found)
+    ////        [
+    ////            extern()
+    ////            [
+    ////                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
+    ////            ].
+    ////
+    ////            byteArrayHelper read(T<ByteArray>(aDump), 0, &anEventType).
+    ////            if (anEventType == 1)
+    ////                [  
+    ////                    byteArrayHelper read(T<ByteArray>(aDump), 4, &aKeyDown).
+    ////                    
+    ////                    found := aKeyDown == 1
+    ////                ];
+    ////                [ found := false ]
+    ////        ].
+    ////                    
+    ////        byteArrayHelper read(T<ByteArray>(aDump), 8, aKey)
+    ////    ]
+    //
+    //    get bool KeyAvailable()
+    //    {
+    //        byte  dump[20];
+    //        int   numberRead := 0;
+    //        short eventType := 0;
+    //        int   keyDown := 0;
+    //        
+    //        while (true)
+    //        {
+    //            numberRead := 0;
+    //            
+    //            extern
+    //            {
+    //                extern KERNEL32.PeekConsoleInputW(theHandle, dump, 1, ref numberRead)
+    //            };
+    //                        
+    //            if (0 == numberRead)
+    //                { ^ false };
+    //                            
+    //            dump.read(0, ref eventType);
+    //            if (eventType == 1)
+    //            {
+    //                dump.read(4, ref keyDown);
+    //                    
+    //                if (keyDown == 1)
+    //                    { ^ true }
+    //            };
+    //
+    //            extern
+    //            {
+    //                extern KERNEL32.ReadConsoleInputW(theHandle, dump, 1, ref numberRead)
+    //            }                
+    //        };
+    //        
+    //        ^ false
+    //    }
+    //
+    //    read(short[] dump, ref int retVal)
+    //    {
+    //        int len := retVal;
+    //        
+    //        extern
+    //        {
+    //            extern KERNEL32.ReadConsoleW(theHandle, dump, len, ref retVal, 0)
+    //        }
+    //    }
+    //    
+    //    wide readWideLine()
+    //    {
+    //        short dump[127];
+    //        int   len := 0;
+    //        wide  output := emptyWideString;
+    //        
+    //        bool continue := true;
+    //        while (continue)
+    //        {
+    //            len := 127;
+    //            self.read(dump, ref len);
+    //            
+    //            short sh := dump[len - 1];
+    //            if (sh == 0Ah)
+    //                {
+    //                    len := len - 2;
+    //                    
+    //                    continue := false
+    //                };
+    //            
+    //            wide temp := WideString.fromShortArray(0, len, dump);
+    //            
+    //            output := output + temp;
+    //        };
+    //
+    //        ^ output
+    //    }
+    //
+    //    string readLine()
+    //        = self.readWideLine();
+    //
+    ////    int
+    ////    [
+    ////        int aRetVal := 0.
+    ////        $self read vint:aRetVal.
+    ////        
+    ////        ^ IntNumber new int:aRetVal
+    ////    ]
+    ////            
+    ////    char
+    ////    [
+    ////        char aRetVal := $0.
+    ////        $self read vchar:aRetVal.
+    ////        
+    ////        ^ CharValue new char:aRetVal
+    ////    ]
+    //
+    //    close()
+    //    {
+    //        extern KERNEL32.CloseHandle(theHandle)
+    //    }
+    }
 
-// --- Console Standard Symbols
+    // --- Console Standard Symbols
+    
+    public symbol stdConsoleWriter = ConsoleHandleFactory.newWriter();
+    
+    public symbol stdConsoleReader = new ConsoleReader(ConsoleHandleFactory.new(0FFFFFFF6h));
 
-public symbol stdConsoleWriter = ConsoleHandleFactory.newWriter();
-
-//public symbol stdConsoleReader = new ConsoleReader(ConsoleHandleFactory.new(0FFFFFFF6h));
 }
-

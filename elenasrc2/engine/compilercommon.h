@@ -243,7 +243,7 @@ struct _ModuleScope
 //   ref_t             extMessageReference;
    ref_t             literalReference;
    ref_t             wideReference;
-//   ref_t             charReference;
+   ref_t             charReference;
    ref_t             refTemplateReference;
    ref_t             arrayTemplateReference;
    ref_t             argArrayTemplateReference;
@@ -368,7 +368,7 @@ struct _ModuleScope
       intReference = superReference = 0;
       /*messageNameReference = */messageReference = 0;
       /*longReference = */literalReference = wideReference = 0;
-//      charReference = realReference = 0;
+      charReference /*= realReference */= 0;
       closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;
