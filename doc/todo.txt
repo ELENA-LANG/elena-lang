@@ -2,9 +2,11 @@
 In development:
 ------         
               dev
-                * variadic arguments : compile-time dispatching, run-time dispatching, boxing / unboxing
-
+                * variadic arguments : boxing
                 * hello world sample
+
+                * variadic extension
+                * variadic arguments : run-time dispatching, unboxing
 
                 * predefined operations
                 * intern import
@@ -47,7 +49,6 @@ In development:
                 * arrays of templates
                 * arrays of template of templates
 
-                * variadic methods
                 * variadic dispatch
                 * generic methods
                 * custom dispatch
@@ -294,6 +295,7 @@ In development:
                 * test accumulating constants
                 * assigning a big number to short / byte local variable - should be truncated?
                 * boxing ext call result
+                * Length operation with variadic argument should not be boxed
 
               dev1
                 * move all description to meta info using descr inline template

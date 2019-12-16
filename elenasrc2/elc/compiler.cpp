@@ -921,6 +921,17 @@ int Compiler::ExprScope :: newTempLocal()
    return tempAllocated1;
 }
 
+int Compiler::ExprScope :: newTempLocalAddress()
+{
+   CodeScope* codeScope = (CodeScope*)getScope(Scope::ScopeLevel::slCode);
+
+   tempAllocated2++;
+   if (tempAllocated2 > codeScope->reserved2)
+      codeScope->reserved2 = tempAllocated2;
+
+   return tempAllocated2;
+}
+
 ObjectInfo Compiler::ExprScope :: mapGlobal(ident_t identifier)
 {
    NamespaceScope* nsScope = (NamespaceScope*)getScope(ScopeLevel::slNamespace);
@@ -3306,10 +3317,10 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
 //         return encodeMessage(scope.module->mapAction(OR_MESSAGE, 0, false), paramCount, 0);
 //      case XOR_OPERATOR_ID:
 //         return encodeMessage(scope.module->mapAction(XOR_MESSAGE, 0, false), paramCount, 0);
-//      case SHIFTR_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(SHIFTR_OPERATOR, 0, false), paramCount, 0);
-//      case SHIFTL_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(SHIFTL_OPERATOR, 0, false), paramCount, 0);
+      case SHIFTR_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(SHIFTR_MESSAGE, 0, false), argCount, 0);
+      case SHIFTL_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(SHIFTL_MESSAGE, 0, false), argCount, 0);
       case REFER_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(REFER_MESSAGE, 0, false), argCount, 0);
 //      case SET_REFER_OPERATOR_ID:
@@ -9898,6 +9909,7 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
    ref_t typeRef = node.findChild(lxType).argument;
    int size = node.findChild(lxSize).argument;
    bool isVariable = node.argument == INVALID_REF;
+   bool variadic = node == lxArgBoxableExpression;
    if (typeRef != 0) {
       if (isPrimitiveRef(typeRef))
          typeRef = resolvePrimitiveReference(scope, typeRef, 0, false);
@@ -9906,7 +9918,17 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
       SNode assigningNode = current.insertNode(lxAssigning);
       assigningNode.appendNode(tempType, tempLocal);
       SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
-      if (!size) {
+      if (variadic) {
+         int tempSizeLocal = scope.newTempLocalAddress();
+         SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, SHIFTR_OPERATOR_ID);
+         sizeSetNode.appendNode(objNode.type, objNode.argument);
+         sizeSetNode.appendNode(lxLocalAddress, tempSizeLocal);
+
+         newNode.set(lxNewArrOp, typeRef);
+         newNode.appendNode(lxSize, 0);
+         newNode.appendNode(lxLocalAddress, tempSizeLocal);
+      }
+      else if (!size) {
          // HOTFIX : recognize byref boxing
          newNode.set(lxCreatingClass, 1);
       }
@@ -9914,7 +9936,11 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
 
       // inject copying to the boxed object if it is a structure
       SNode copyingNode = objNode;
-      if (size != 0) {
+      if (variadic) {
+         // NOTE : structure command is used to copy variadic argument list
+         copyingNode.injectAndReplaceNode(lxCloning);
+      }
+      else if (size != 0) {
          copyingNode.injectAndReplaceNode(lxCopying, size);
       }
       // otherwise consider it as a byref variable

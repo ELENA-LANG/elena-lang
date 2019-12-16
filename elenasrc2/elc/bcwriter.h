@@ -300,7 +300,7 @@ class ByteCodeWriter
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
-   void doArgArrayOperation(CommandTape& tape, int operator_id);
+   void doArgArrayOperation(CommandTape& tape, int operator_id, int rargument);
 //   void doIntArrayOperation(CommandTape& tape, int operator_id);
 //   void doByteArrayOperation(CommandTape& tape, int operator_id);
 //   void doShortArrayOperation(CommandTape& tape, int operator_id);
@@ -375,7 +375,8 @@ class ByteCodeWriter
 //   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);
 //   void generateBoxingExpression(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateInitializingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
+   void generateCloningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);

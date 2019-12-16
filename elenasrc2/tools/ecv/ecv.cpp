@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   41
+#define REVISION_VERSION   42
 
 using namespace _ELENA_;
 
@@ -418,7 +418,7 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       command.append("0");
    }
    else if (reference == -1) {
-      command.append("undefined");
+      command.append("-1");
    }
    
    if (reference == 0 || reference == -1) {
@@ -539,6 +539,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcSubF:
       case bcMulF:
       case bcDivF:
+      case bcCloneF:
 //      case bcSCopyF:
 //      case bcBCopyF:
 //      case bcACopyS:
@@ -614,17 +615,18 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcOpen:
       case bcQuitN:
       case bcDec:
-//      case bcECopy:
+      case bcInc:
+         //      case bcECopy:
       case bcAnd:
 //      case bcOrN:
 //      case bcInit:
 //      case bcNLoadI:
 //      case bcNSaveI:
 //      case bcMulN:
-//      case bcAddN:
 //      case bcDLoadSI:
 //      case bcBLoadAI:
       case bcGetI:
+      case bcMovN:
          printCommand(command, opcode);
          command.appendHex(argument);
          command.append('h');
@@ -663,7 +665,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printMessage(command, module, argument2);
          command.append("\"");
          break;
-      case bcLoadM:
+      case bcMovM:
          printCommand(command, opcode);
          command.append("mssgconst : \"");
          printMessage(command, module, argument);

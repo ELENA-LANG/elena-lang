@@ -520,6 +520,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcSubF:
          case bcMulF:
          case bcDivF:
+         case bcCloneF:
             //case bcSCopyF:
          //case bcBCopyS:
          //case bcBCopyF:
@@ -527,7 +528,6 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcPeekFI:
          case bcPushAI:
          case bcOpen:
-         //case bcAddN:
          //case bcMulN:
          //case bcDLoadFI:
          //case bcDLoadSI:
@@ -548,8 +548,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcPushS:
          case bcPushSI:
          //case bcESaveFI:
-         case bcShl:
-         case bcShr:
+         case bcShlF:
+         case bcShrF:
          case bcDec:
          //case bcDSwapSI:
          //case bcAJumpI:
@@ -564,15 +564,16 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcQuitN:
          case bcFreeI:
          case bcAllocI:
-         //case bcDCopy:
+         case bcMovN:
          //case bcECopy:
          case bcAnd:
          //case bcOrN:
          case bcPushN:
+         case bcInc:
             compileNCommand(opcode, token, writer);
             break;
          //case bcSetVerb:
-         case bcLoadM:
+         case bcMovM:
             compileMCommand(opcode, token, writer, binary);
             break;
          //case bcIfB:

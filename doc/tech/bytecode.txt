@@ -22,9 +22,13 @@ ELENA byte codes (or ecodes)
 
  geti i                     - acc <= acc[i] ;
 
+ inc i                      - index += 1
+ 
  load                       - int[acc] => index
 
- loadm m                    - m => index
+ movm m                     - m => index
+
+ movn n                     - n => index
 
  movf i                     - fp+i => acc
 
@@ -63,6 +67,8 @@ ELENA byte codes (or ecodes)
 
  Memory operations:
  -----------------
+ clonef i                   - copy [acc] << fp+i, acc.Length bytes ; NOTE : should support a reference array as well
+
  copyf  i, n                - copy [acc] << fp+i, n*4-bytes
 
  copyfi i, n                - copy [acc] << [fp+i], n*4-bytes
@@ -93,6 +99,10 @@ ELENA byte codes (or ecodes)
  less                       - int[acc] < int[sp]  ; if true - index = 1, if false - index = 0
 
  mulf i                     - dword[fp+i] << dword[fp+i] * dword[acc]
+
+ shlf i                     - dword[fp+i] << dword[fp+i] $shl dword[acc] 
+
+ shrf i                     - dword[fp+i] << dword[fp+i] $shr dword[acc] 
 
  subf i                     - dword[fp+i] << dword[fp+i] - dword[acc] 
 
@@ -519,8 +529,6 @@ ELENA byte codes (or ecodes)
 
  eorn n                     - ext || n
 
- inc                        - index++
- 
  ladd                       - long[base] += long[acc]
  
  land                       - long[base] && long[acc]   (*index and ext affected)

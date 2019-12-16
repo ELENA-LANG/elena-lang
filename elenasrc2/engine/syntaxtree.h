@@ -152,6 +152,7 @@ enum LexicalType
    lxStaticConstField         = 0x0181C4,
    lxNewArrOp                 = 0x0581D0,
    lxInitializing             = 0x0581E0,
+   lxCloning                  = 0x0581E1,
    lxInternalCall             = 0x0581F0,   // calling an internal function, arg - reference
    lxStdExternalCall          = 0x058200,   // calling an external function, arg - reference
    lxExternalCall             = 0x058201,   // calling an external function, arg - reference

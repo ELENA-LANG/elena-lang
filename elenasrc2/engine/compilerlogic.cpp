@@ -147,8 +147,8 @@ CompilerLogic :: CompilerLogic()
 //   operators.add(OperatorInfo(AND_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 //   operators.add(OperatorInfo(OR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 //   operators.add(OperatorInfo(XOR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
-//   operators.add(OperatorInfo(SHIFTL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
+   operators.add(OperatorInfo(SHIFTL_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));
 
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
@@ -220,6 +220,7 @@ CompilerLogic :: CompilerLogic()
    // array of arg list
    operators.add(OperatorInfo(REFER_OPERATOR_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
 //   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
+   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
 
 //   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 //

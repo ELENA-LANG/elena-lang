@@ -52,6 +52,7 @@ define page_size_order_minus2   2h
 define page_mask        0FFFFFFF0h
 define page_ceil               17h
 define struct_mask         800000h
+define struct_mask_inv     7FFFFFh
 
 // Object header fields
 define elObjectOffset        0008h
@@ -1041,6 +1042,26 @@ inline % 48h
 
 end
 
+// ; shlf
+inline % 5Eh
+
+  mov eax, [ebp+__arg1]
+  mov ecx, [ebx]
+  shl eax, cl
+  mov [ebp+__arg1], eax
+
+end
+
+// ; shrf
+inline % 5Fh
+
+  mov eax, [ebp+__arg1]
+  mov ecx, [ebx]
+  shr eax, cl
+  mov [ebp+__arg1], eax
+
+end
+
 // ; geti
 inline % 91h
 
@@ -1160,6 +1181,13 @@ inline % 0A6h
   
 end
 
+// ; movn
+inline % 0B1h
+
+  mov  edx, __arg1
+
+end
+
 // ; pushai
 inline % 0B4h
 
@@ -1271,6 +1299,18 @@ inline % 0C9h
 
 end
 
+// ; clonef
+inline % 0CEh
+
+  mov  ecx, [ebx - elSizeOffset]
+  and  ecx, struct_mask_inv
+  lea  esi, [ebp+__arg1]
+  shr  ecx, 2
+  mov  edi, ebx
+  rep  movsd
+
+end
+
 // ; alloci
 inline %0D1h
 
@@ -1279,6 +1319,13 @@ inline %0D1h
   xor  eax, eax
   mov  edi, esp
   rep  stos
+
+end
+
+// ; inc
+inline %0D6h
+
+  add  edx, __arg1
 
 end
 

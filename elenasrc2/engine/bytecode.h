@@ -107,8 +107,9 @@ enum ByteCode
 //   bcWWrite          = 0x5A,
 //   bcNRead           = 0x5B,
 //   bcNWrite          = 0x5C,
-//   bcWCreate         = 0x5F,
-//
+   bcShlF            = 0x5E,
+   bcShrF            = 0x5F,
+
 //   bcBReadW          = 0x60,
 //   bcBRead           = 0x61,
 //   bcBReadB          = 0x65,
@@ -165,7 +166,7 @@ enum ByteCode
    bcMovF            = 0x9C,
 //   bcACopyS          = 0x9D,
    bcMovR            = 0x9E,
-   bcLoadM           = 0x9F,
+   bcMovM            = 0x9F,
 
    bcJump            = 0xA0,
    bcJumpVI          = 0xA1,
@@ -185,14 +186,14 @@ enum ByteCode
 //   bcNext            = 0xAF,
 
    bcPushN           = 0xB0,
-//   bcELoadFI         = 0xB1,
+   bcMovN            = 0xB1,
    bcPushR           = 0xB2,
 //   bcBSaveSI         = 0xB3,
    bcPushAI          = 0xB4,
 //   bcESaveFI         = 0xB5,
    bcPushFI          = 0xB6,
 //   bcDLoadFI         = 0xB7,
-//   bcDLoadSI         = 0xB8,
+   //bcLoadSI          = 0xB8,
    bcSaveFI          = 0xB9,
    bcPushSI          = 0xBA,
    bcSaveSI          = 0xBB,
@@ -215,17 +216,17 @@ enum ByteCode
 //   bcNSaveI          = 0xCB,
    bcStoreR          = 0xCC,
 //   bcALoadAI         = 0xCD,
-//   bcALoadBI         = 0xCE,
+   bcCloneF          = 0xCE,
 //   bcAXSaveBI        = 0xCF,
 
    bcFreeI           = 0xD0,
    bcAllocI          = 0xD1, 
-//   bcNReadI          = 0xD1??,
+//   bcNReadI          = 0xD1,
 //   bcSCopyF          = 0xD2,
 //   bcSetVerb         = 0xD3,
    bcShl             = 0xD4,
    bcAnd             = 0xD5,
-//   bcAddN            = 0xD6,
+   bcInc             = 0xD6,
 //   bcOrN             = 0xD7,
 //   bcEAddN           = 0xD8,
    bcShr             = 0xD9,
@@ -316,7 +317,7 @@ enum ByteCode
    bdStructSelf     = 0x8484,
 };
 
-#define MAX_SINGLE_ECODE 0x8F
+#define MAX_SINGLE_ECODE 0x5C
 #define MAX_DOUBLE_ECODE 0xE0
 
 enum PseudoArg
@@ -512,7 +513,7 @@ public:
    static bool IsMCode(ByteCode code)
    {
       switch (code) {
-         case bcLoadM:
+         case bcMovM:
             return true;
          default:
             return false;

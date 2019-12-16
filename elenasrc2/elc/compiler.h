@@ -772,6 +772,7 @@ private:
       }
 
       int newTempLocal();
+      int newTempLocalAddress();
 
       ref_t getMessageID()
       {

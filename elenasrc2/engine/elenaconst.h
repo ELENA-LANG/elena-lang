@@ -56,8 +56,8 @@ namespace _ELENA_
 //   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
 //   constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
 //   constexpr auto SET_REFER_OPERATOR_ID   = 0x0019;
-//   constexpr auto SHIFTR_OPERATOR_ID      = 0x001A;
-//   constexpr auto SHIFTL_OPERATOR_ID      = 0x001B;
+   constexpr auto SHIFTR_OPERATOR_ID      = 0x001A;
+   constexpr auto SHIFTL_OPERATOR_ID      = 0x001B;
 //   constexpr auto INCREASE_OPERATOR_ID    = 0x001C;
 //   constexpr auto SEPARATE_OPERATOR_ID    = 0x001D;
 //   constexpr auto FINALLY_OPERATOR_ID     = 0x001E;
@@ -394,8 +394,9 @@ namespace _ELENA_
 //   constexpr auto WRITE_MESSAGE        = "write";
    constexpr auto IF_MESSAGE           = "if";
    constexpr auto IFNOT_MESSAGE        = "ifnot";
-//  // #define SHIFT_MESSAGE            "shift"
-//  // #define IF_ELSE_MESSAGE          "if:else"
+   constexpr auto SHIFTL_MESSAGE       = "shiftLeft";
+   constexpr auto SHIFTR_MESSAGE       = "shiftRight";
+   //  // #define IF_ELSE_MESSAGE          "if:else"
    constexpr auto INIT_MESSAGE         = "#init";
 //  // #define ISNIL_MESSAGE            "#isnil"
 
@@ -419,8 +420,8 @@ namespace _ELENA_
 //   constexpr auto REDUCE_OPERATOR      = "-=";
 //   constexpr auto INCREASE_OPERATOR    = "*=";
 //   constexpr auto SEPARATE_OPERATOR    = "/=";
-//   constexpr auto SHIFTL_OPERATOR      = "$shl";
-//   constexpr auto SHIFTR_OPERATOR      = "$shr";
+   constexpr auto SHIFTL_OPERATOR      = "$shl"; 
+   constexpr auto SHIFTR_OPERATOR      = "$shr";
 //   constexpr auto ISNIL_OPERATOR       = "??";
    constexpr auto CATCH_OPERATOR       = "|";
    constexpr auto ALT_OPERATOR         = "\\";

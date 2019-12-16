@@ -152,18 +152,18 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
     embeddable __string T[] theArray;
 
 //    readLengthTo(ref int retVal)
-//        => system'core_routines'__args;
-//
-//    Length
-//    {
-//        int get()
-//        {
-//            self.readLengthTo(ref int retVal);
-//            
-//            ^ retVal
-//        }            
-//    }
-//    
+//        => intern system'core_routines'__args;
+
+    int Length
+    {
+        get()
+        {
+            self.readLengthTo(ref int retVal);
+            
+            ^ retVal
+        }            
+    }
+    
 //    T[] cast()
 //    {
 //        int len := self.Length;

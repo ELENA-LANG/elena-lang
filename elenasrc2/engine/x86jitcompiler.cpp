@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/58;
+const int gcCommandNumber = /*160*/63;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -76,13 +76,14 @@ const int gcCommands[gcCommandNumber] =
    bcXSetFI, bcClass, bcXSaveFI, bcLen, bcSave,
    bcSelect, bcEqual, bcLess, bcSNop, bcCreateN,
    bcSaveFI, bcTryLock, bcLoad, bcHook, bcUnhook,
-   bcFlag, bcFreeLock, bcGet,
+   bcFlag, bcFreeLock, bcGet, bcShlF, bcShrF,
+   bcMovN, bcCloneF, bcInc,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
 //   bcALoadBI,
 //   bcClass, bcACallVD,
-//   bcDLoadSI, bcDLoadFI, bcELoadSI,
+//   bcDLoadFI, bcELoadSI,
 //   bcEQuit, bcESaveSI,
 //   bcSet, bcXSet, bcACallI, bcBReadB,
 //   bcLen, bcIfHeap, bcNCreate,
@@ -107,7 +108,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
 //   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
 //   bcCheck, bcDCopyVerb, bcXCopy,
-//   bcAddFI, bcSubFI, bcNShiftR, bcLSave,
+//   bcAddFI, bcSubFI, bcLSave,
 //   bcSelect, bcEqualR, bcBLoadAI, bcAndE, bcDMoveVerb,
 //   bcEOrN, bcNewI, bcACopyAI
 };
@@ -140,7 +141,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadFPOp,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -157,13 +158,13 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileHook, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compilePush, &compileNop, &compilePush, &compileNop, &loadIndexOp, &compileNop, &compilePushFI, &compileNop,
+   &compilePush, &loadNOp, &compilePush, &compileNop, &loadIndexOp, &compileNop, &compilePushFI, &compileNop,
    &compileNop, &loadFPOp, &compilePushSI, &loadIndexOp, &compileNop, &compilePushF, &loadFPOp, &loadIndexOp,
 
    &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop,
-   &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileASaveR, &compileNop, &compileNop, &compileNop,
+   &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileASaveR, &compileNop, &loadFPOp, &compileNop,
 
-   &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileDShiftN, &compileDAndN, &compileNop, &compileNop,
+   &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileDShiftN, &compileDAndN, &loadNOp, &compileNop,
    &compileNop, &compileDShiftN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileDynamicCreateN, & loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
@@ -1578,10 +1579,13 @@ void _ELENA_::compileElseR(int, x86JITScope& scope)
 
    scope.code->writeWord(0xFB81);
    // HOTFIX : support zero references
-   if (scope.argument != 0) {
-      scope.writeReference(*scope.code, scope.argument, 0);
+   if (scope.argument == -1) {
+      scope.code->writeDWord((pos_t)-1);
    }
-   else scope.code->writeDWord(0);
+   else if (scope.argument == 0) {
+      scope.code->writeDWord(0);
+   }
+   else scope.writeReference(*scope.code, scope.argument, 0);
 
    //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
    compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
