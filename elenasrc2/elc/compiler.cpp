@@ -124,6 +124,17 @@ inline SNode findParent(SNode node, LexicalType type1, LexicalType type2)
    return node;
 }
 
+inline SNode findRootNode(SNode node, LexicalType type1, LexicalType type2, LexicalType type3)
+{
+   SNode lastNode = node;
+   while (!node.compare(type1, type2, type3, lxNone)) {
+      lastNode = node;
+      node = node.parentNode();
+   }
+
+   return lastNode;
+}
+
 //inline bool isImportRedirect(SNode node)
 //{
 //   SNode terminal = node.firstChild(lxObjectMask);
@@ -2247,9 +2258,9 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
       codeScope->mapLocal(identifier, variable.param, variable.reference, variable.element, size);
 
       // injecting variable label
-      SNode scopeNode = findParent(terminal, lxNewFrame, lxCode);
+      SNode rootNode = findRootNode(terminal, lxNewFrame, lxCode, lxCodeExpression);
 
-      SNode varNode = scopeNode.lastChild().prependSibling(variableType, variableArg);
+      SNode varNode = rootNode.prependSibling(variableType, variableArg);
       varNode.appendNode(lxLevel, variable.param);
       varNode.appendNode(lxIdentifier, identifier);
 
@@ -3972,13 +3983,13 @@ ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr m
 
 ref_t Compiler :: resolveVariadicMessage(Scope& scope, ref_t message)
 {
-   int paramCount = 0;
+   int argCount = 0;
    ref_t actionRef = 0, flags = 0, dummy = 0;
-   decodeMessage(message, actionRef, paramCount, flags);
+   decodeMessage(message, actionRef, argCount, flags);
 
    ident_t actionName = scope.module->resolveAction(actionRef, dummy);
 
-   return encodeMessage(scope.module->mapAction(actionName, 0, false), 1, flags | VARIADIC_MESSAGE);
+   return encodeMessage(scope.module->mapAction(actionName, 0, false), 2, flags | VARIADIC_MESSAGE);
 }
 
 ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
@@ -6285,7 +6296,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
          }
          case lxEOP:
             needVirtualEnd = false;
-            current.injectNode(lxTerminalMask); // injecting virtual terminal token 
+            current.injectNode(lxTerminalMask); // injecting virtual terminal token
             current.insertNode(lxBreakpoint, dsEOP);
             break;
       }
@@ -8260,11 +8271,15 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 ////   methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
    methodScope.withOpenArg = isOpenArg(methodScope.message);
-   methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
+
+   methodScope.extensionMode = scope.extensionClassRef != 0;
+   if (!methodScope.extensionMode)
+      // NOTE : an extension is a special case of function, it does contain SELF variable in the stack
+      methodScope.functionMode = test(methodScope.message, FUNCTION_MESSAGE);
+
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
 //   methodScope.yieldMethod = _logic->isMethodYieldable(scope.info, methodScope.message);
-   methodScope.extensionMode = scope.extensionClassRef != 0;
 //   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
    methodScope.targetSelfMode = test(methodScope.hints, tpTargetSelf);
 //   if (methodScope.withOpenArg && methodScope.functionMode)
@@ -8915,7 +8930,7 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
    if (test(flags, VARIADIC_MESSAGE)) {
       // COMPILER MAGIC : for variadic message - use the most general message
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
-      ref_t genericMessage = encodeMessage(genericActionRef, 1, flags);
+      ref_t genericMessage = encodeMessage(genericActionRef, 2, flags);
 
       return genericMessage;
    }

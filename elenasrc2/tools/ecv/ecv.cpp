@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   42
+#define REVISION_VERSION   43
 
 using namespace _ELENA_;
 
@@ -198,17 +198,21 @@ _Memory* findSymbolCode(_Module* module, ident_t referenceName)
    return module->mapSection(reference | mskSymbolRef, true);
 }
 
-ref_t resolveMessage(_Module* module, ident_t method)
+ref_t resolveMessage(_Module* module, ident_t method, bool extension)
 {
    int argCount = 0;
    ref_t actionRef = 0;
    ref_t flags = 0;
+
+   if (extension)
+      flags |= FUNCTION_MESSAGE;
 
    if (method.startsWith("params#")) {
       flags |= VARIADIC_MESSAGE;
 
       method = method.c_str() + getlength("params#");
    }
+
    if (method.startsWith("prop#")) {
       flags |= PROPERTY_MESSAGE;
 
@@ -763,7 +767,7 @@ ref_t resolveMessageByIndex(_Module* module, ident_t className, int index)
          IdentifierString temp;
          printMessage(temp, module, entry.message);
 
-         return resolveMessage(module, temp.c_str());
+         return resolveMessage(module, temp.c_str(), test(header.flags, elExtension));
       }
 
       size -= sizeof(VMTEntry);
@@ -788,15 +792,6 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
    ident_t methodName = methodReference + separator + 1;
    ref_t message = 0;
 
-   // resolve method
-   if (methodName[0] >= '0' && methodName[0] <= '9') {
-      message = resolveMessageByIndex(module, className.ident(), methodName.toInt());
-   }
-   else message = resolveMessage(module, methodName);
-   
-   if (message == 0)
-      return;
-
    // find class VMT
    _Memory* vmt = findClassVMT(module, className);
    _Memory* code = findClassCode(module, className);
@@ -814,6 +809,15 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
    // read VMT header
    ClassHeader header;
    vmtReader.read((void*)&header, sizeof(ClassHeader));
+
+   // resolve method
+   if (methodName[0] >= '0' && methodName[0] <= '9') {
+      message = resolveMessageByIndex(module, className.ident(), methodName.toInt());
+   }
+   else message = resolveMessage(module, methodName, test(header.flags, elExtension));
+   
+   if (message == 0)
+      return;
 
    VMTEntry        entry;
 

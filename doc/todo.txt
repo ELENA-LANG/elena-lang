@@ -2,9 +2,6 @@
 In development:
 ------         
               dev
-                * variadic extension
-
-                * debugger : for-loop
                 * hello world sample
 
                 * predefined operations
@@ -294,7 +291,6 @@ In development:
                 * test accumulating constants
                 * assigning a big number to short / byte local variable - should be truncated?
                 * boxing ext call result
-                * Length operation with variadic argument should not be boxed, optimize the routine
 
               dev1
                 * move all description to meta info using descr inline template

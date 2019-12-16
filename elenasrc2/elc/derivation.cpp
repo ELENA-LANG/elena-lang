@@ -1403,13 +1403,13 @@ void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node, Scop
          case lxEOP:
          {
             writer.newNode(lxEOP);
-            //if (!derivationScope.ignoreTerminalInfo)
-            //{
+
+            if (!derivationScope.ignoreTerminalInfo) {
                SNode terminal = current.firstChild();
                SyntaxTree::copyNode(writer, lxRow, terminal);
                SyntaxTree::copyNode(writer, lxCol, terminal);
                SyntaxTree::copyNode(writer, lxLength, terminal);
-            //}
+            }
 
             writer.closeNode();
             break;

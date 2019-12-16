@@ -298,10 +298,12 @@ void ByteCodeWriter :: declareMessageInfo(CommandTape& tape, ident_t message)
 
 void ByteCodeWriter :: declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType)
 {
-   tape.write(bcBreakpoint);
+   if (disp >= 0 || stepType == dsVirtualEnd) {
+      tape.write(bcBreakpoint);
 
-   tape.write(bdBreakpoint, stepType, row);
-   tape.write(bdBreakcoord, disp, length);
+      tape.write(bdBreakpoint, stepType, row);
+      tape.write(bdBreakcoord, disp, length);
+   }
 }
 
 void ByteCodeWriter :: declareBlock(CommandTape& tape)
@@ -3868,7 +3870,7 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowSc
          terminal.findChild(lxCol).argument - 1,
          terminal.findChild(lxLength).argument, node.argument);
    }
-   else declareBreakpoint(tape, 0, 0, 0, node.argument);
+   //else declareBreakpoint(tape, 0, 0, 0, node.argument);
 
  //  if (node != lxNone) {
 //      // try to find the terminal symbol
@@ -6220,8 +6222,10 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node,
          scope.debugBlockStarted = false;
          generateObject(tape, current, scope);
 
-         if (scope.debugBlockStarted)
+         if (scope.debugBlockStarted) {
             declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+            scope.debugBlockStarted = false;
+         }
       }
 
       current = current.nextNode();
@@ -6896,16 +6900,19 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             scope.debugBlockStarted = false;
             generateExpression(tape, current, scope);
 
-            if (scope.debugBlockStarted)
+            if (scope.debugBlockStarted) {
                declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-
+               scope.debugBlockStarted = false;
+            }
             break;
          case lxReturning:
             scope.debugBlockStarted = false;
             generateReturnExpression(tape, current, scope);
 
-            if (scope.debugBlockStarted)
+            if (scope.debugBlockStarted) {
                declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
+               scope.debugBlockStarted = false;
+            }               
             break;
 //         case lxExternFrame:
 //            generateExternFrame(tape, current);
@@ -6936,9 +6943,10 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //            generateYieldDispatch(tape, current);
 //            break;
          case lxEOP:
-            scope.debugBlockStarted = false;
+            scope.debugBlockStarted = true;
             if (current.firstChild() == lxBreakpoint)
                translateBreakpoint(tape, current.findChild(lxBreakpoint), scope);
+            scope.debugBlockStarted = false;
             break;
          case lxCode:
             // HOTFIX : nested code, due to resend implementation 

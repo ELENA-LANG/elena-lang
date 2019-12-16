@@ -36,45 +36,45 @@ rem bin\asm2binx -amd64 asm\amd64\core.asm bin\amd64
 rem bin\asm2binx -amd64 asm\amd64\core_win.asm bin\amd64
 rem bin\asm2binx -amd64 asm\amd64\coreapi.asm bin\amd64
 
-bin\elc src40\system\system.prj
+bin\elc src50\system\system.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src40\extensions\extensions.prj
+bin\elc src50\extensions\extensions.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+rem bin\elc src50\net\net.prj
 rem @echo off 
 rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
 rem @echo on
 
-rem bin\elc src40\net\net.prj
+rem bin\elc src50\forms\forms.prj
 rem @echo off 
 rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
 rem @echo on
 
-rem bin\elc src40\forms\forms.prj
+rem bin\elc src50\sqlite\sqlite.prj
 rem @echo off 
 rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
 rem @echo on
 
-rem bin\elc src40\sqlite\sqlite.prj
+rem bin\elc src50\cellular\cellular.prj
 rem @echo off 
 rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
 rem @echo on
 
-rem bin\elc src40\cellular\cellular.prj
+rem bin\elc src50\algorithms\algorithms.prj
 rem @echo off 
 rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
 rem @echo on
 
-rem bin\elc src40\algorithms\algorithms.prj
-rem @echo off 
-rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
-rem @echo on
+rem bin\elc src50\graphics\graphics.prj
+rem bin\elc src50\xforms\xforms.prj
 
-rem bin\elc src40\graphics\graphics.prj
-rem bin\elc src40\xforms\xforms.prj
-
-rem bin\elc src40\system\system_64.prj
+rem bin\elc src50\system\system_64.prj
 
 echo Done
 
