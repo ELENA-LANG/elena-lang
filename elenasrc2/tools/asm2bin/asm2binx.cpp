@@ -67,29 +67,29 @@ int main(int argc, char* argv[])
    }
    else target.changeExtension("bin");
 
-   _ELENA_::PreProcessor pp(amd64Mode ? argv[2] : argv[1]);
-   if (!pp.isOpened()) {
-      printf("Cannot open the file %s", amd64Mode ? argv[2] : argv[1]);
-      return -1;
-   }
-   try
-   {
-	   pp.preProcess();
-   }
-   catch (_ELENA_::PreProcessorException& e)
-   {
-	   if (e.macroName == NULL)
-		   printf(e.message);
-	   else if (e.macroName == NULL && e.row >= 0)
-		   printf(e.message, e.row);
-	   else if (e.row == -1)
-		   printf(e.message, e.macroName);
-	   else
-		   printf(e.message, e.macroName, e.row);
-	   return -1;
-   }
+   //_ELENA_::PreProcessor pp(amd64Mode ? argv[2] : argv[1]);
+   //if (!pp.isOpened()) {
+   //   printf("Cannot open the file %s", amd64Mode ? argv[2] : argv[1]);
+   //   return -1;
+   //}
+   //try
+   //{
+	  // pp.preProcess();
+   //}
+   //catch (_ELENA_::PreProcessorException& e)
+   //{
+	  // if (e.macroName == NULL)
+		 //  printf(e.message);
+	  // else if (e.macroName == NULL && e.row >= 0)
+		 //  printf(e.message, e.row);
+	  // else if (e.row == -1)
+		 //  printf(e.message, e.macroName);
+	  // else
+		 //  printf(e.message, e.macroName, e.row);
+	  // return -1;
+   //}
 
-   _ELENA_::Path source(pp.getTempFileName());
+   _ELENA_::Path source(/*pp.getTempFileName()*/amd64Mode ? argv[2] : argv[1]);
    _ELENA_::TextFileReader reader(source.c_str(), _ELENA_::feUTF8, true);
    if (!reader.isOpened()) {
       printf("Cannot open the temporal file %s", source.c_str());

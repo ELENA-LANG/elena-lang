@@ -151,8 +151,8 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 {
     embeddable __string T[] theArray;
 
-//    readLengthTo(ref int retVal)
-//        => intern system'core_routines'__args;
+    readLengthTo(ref int retVal)
+        => intern system'core_routines'__args;
 
     int Length
     {

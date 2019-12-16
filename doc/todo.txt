@@ -2,14 +2,12 @@
 In development:
 ------         
               dev
-                * variadic arguments : boxing
+                * variadic extension
+
+                * debugger : for-loop
                 * hello world sample
 
-                * variadic extension
-                * variadic arguments : run-time dispatching, unboxing
-
                 * predefined operations
-                * intern import
 
                 * exceptions : alt
 
@@ -79,6 +77,7 @@ In development:
 
                 * default implcit constructor should be embeddable?
                 * embeddable constructor
+                * variadic arguments : run-time dispatching, unboxing
 
                 * implicit default constructor cannot have redirector statement
                 * nested class cannot have constructors
@@ -295,7 +294,7 @@ In development:
                 * test accumulating constants
                 * assigning a big number to short / byte local variable - should be truncated?
                 * boxing ext call result
-                * Length operation with variadic argument should not be boxed
+                * Length operation with variadic argument should not be boxed, optimize the routine
 
               dev1
                 * move all description to meta info using descr inline template

@@ -1499,29 +1499,28 @@ void Compiler :: importCode(SNode node, Scope& scope, ref_t functionRef, ref_t m
 
    ref_t signature = 0;
    virtualReference.append(moduleScope->module->resolveAction(actionRef, signature));
+   if (signature) {
+      ref_t signatures[ARG_COUNT];
+      size_t len = moduleScope->module->resolveSignature(signature, signatures);
+      for (size_t i = 0; i < len; i++) {
+         ident_t paramName = moduleScope->module->resolveReference(signatures[i]);
 
-//   if (signature) {
-//      ref_t signatures[ARG_COUNT];
-//      size_t len = moduleScope->module->resolveSignature(signature, signatures);
-//      for (size_t i = 0; i < len; i++) {
-//         ident_t paramName = moduleScope->module->resolveReference(signatures[i]);
-//
-//         NamespaceName ns(paramName);
-//         if (isTemplateWeakReference(paramName)) {
-//            virtualReference.append('$');
-//            virtualReference.append(paramName + getlength(ns));
-//         }
-//         else if (isWeakReference(paramName)) {
-//            virtualReference.append('$');
-//            virtualReference.append(scope.module->Name());
-//            virtualReference.append(paramName);
-//         }
-//         else {
-//            virtualReference.append('$');
-//            virtualReference.append(paramName);
-//         }
-//      }
-//   }
+         NamespaceName ns(paramName);
+         if (isTemplateWeakReference(paramName)) {
+            virtualReference.append('$');
+            virtualReference.append(paramName + getlength(ns));
+         }
+         else if (isWeakReference(paramName)) {
+            virtualReference.append('$');
+            virtualReference.append(scope.module->Name());
+            virtualReference.append(paramName);
+         }
+         else {
+            virtualReference.append('$');
+            virtualReference.append(paramName);
+         }
+      }
+   }
 
    virtualReference.replaceAll('\'', '@', signIndex);
 
@@ -6028,15 +6027,16 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 //         case lxCollection:
 //            result = compileCollection(writer, node, scope, ObjectInfo(okObject, 0, V_OBJARRAY, scope.moduleScope->superReference, 0));
 //            break;
-//         case lxCodeExpression:
-//         case lxCode:
+         case lxCode:
+            current = lxCodeExpression;
+         case lxCodeExpression:
 //            if (mode.test(HINT_EXTERNALOP)) {
 //               writer.newNode(lxExternFrame);
 //               result = compileSubCode(writer, node, scope, false);
 //               writer.closeNode();
 //            }
-//            else result = compileSubCode(writer, node, scope, false);
-//            break;
+            /*else */result = compileSubCode(current, scope, false);
+            break;
          case lxType:
 //            if (mode.testAndExclude(HINT_MESSAGEREF)) {
 //               // HOTFIX : if it is an extension message

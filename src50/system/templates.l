@@ -118,9 +118,9 @@
 //    
 //    (__loop: cast bool(cond_expr) ! { loop_body; __ignore_duplicates step_expr })
 //}
-//    
-//// --- for statement ---
-//
+    
+// --- for statement ---
+
 //public for<loop_body>(step_expr, cond_expr)
 //{
 //    step_expr;
@@ -128,13 +128,14 @@
 //    (__loop: cast bool(cond_expr) ? { loop_body; __ignore_duplicates step_expr })
 //}
 //
-//public for<loop_body>(init_expr, cond_expr, step_expr)
-//{
-//    init_expr;
-//    
-//    (__loop: cast bool(cond_expr) ? { loop_body; step_expr })
-//}
-//
+//public for<loop_body>()
+#declare for<init_expr, cond_expr, step_expr>(loop_body)
+{
+    init_expr;
+    
+    __loop: cast bool(cond_expr) ? { loop_body; step_expr }
+}
+
 //// --- for statement ---
 //
 //public for<loop_body>(init_expr, cond_expr, step1_expr, step2_expr)

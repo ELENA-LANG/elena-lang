@@ -418,7 +418,7 @@ void printReference(IdentifierString& command, _Module* module, size_t reference
       command.append("0");
    }
    else if (reference == -1) {
-      command.append("-1");
+      command.append("terminal");
    }
    
    if (reference == 0 || reference == -1) {

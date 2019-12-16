@@ -30,21 +30,24 @@ struct TokenInfo
 
    void raiseErr(const char* err)
    {
-	   if (!emptystr(err))
-	   {
-		   int rowNumber;
+      if (!emptystr(err))
+         throw AssemblerException(err, terminal.row);
 
-		   // get the real line number...
-		   while (!check("#") && !Eof())
-			   read();
-		   read();
-		   rowNumber = ident_t(read()).toInt();
-		   throw AssemblerException(err, rowNumber);
-	   }
+    //  if (!emptystr(err))
+	   //{
+		  // int rowNumber;
+
+		  // // get the real line number...
+		  // while (!check("#") && !Eof())
+			 //  read();
+		  // read();
+		  // rowNumber = ident_t(read()).toInt();
+		  // throw AssemblerException(err, rowNumber);
+	   //}
    }
 
-	bool getInteger(int& integer, Map<ident_t, size_t>& constants)
-	{
+   bool getInteger(int& integer, Map<ident_t, size_t>& constants)
+   {
       if (terminal.state==dfaInteger) {
          integer = ident_t(value).toInt();
          return true;

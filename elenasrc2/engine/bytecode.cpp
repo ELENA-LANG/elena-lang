@@ -112,14 +112,14 @@ using namespace _ELENA_;
 
 inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
 {
-   if (ref != 0) {
+   if (ref != 0 && ref != -1) {
       int mask = ref & mskAnyRef;
       if (mask == mskInt32Ref) {
          return importConstant(sour, ref & ~mskAnyRef, dest) | mask;
       }
       else return importReference(sour, ref & ~mskAnyRef, dest) | mask;
    }
-   else return 0;
+   else return ref;
 }
 
 // --- CommandTape ---

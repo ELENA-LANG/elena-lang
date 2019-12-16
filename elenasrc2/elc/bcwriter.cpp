@@ -4058,6 +4058,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxSymbolReference:
          tape.write(bcCallR, argument | mskSymbolRef);
          type = lxNone; // acc content is undefined
+         scope.clear();
          break;
       case lxConstantString:
       case lxConstantWideStr:
@@ -4358,7 +4359,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 //   bool setMode = (node.argument == SET_REFER_OPERATOR_ID/* || node.argument == SETNIL_REFER_MESSAGE_ID*/);
 //   //bool assignMode = node != lxArrOp/* && node != lxArgArrOp*/;
 
-   int arguemnt = 0;
+   int argument = 0;
 
    SNode larg, rarg/*, rarg2*/;
    assignOpArguments(node, larg, rarg/*, rarg2*/);
@@ -4436,7 +4437,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 //   }
    /*else */if (lenMode) {
       if (rarg == lxLocalAddress) {
-         arguemnt = rarg.argument;
+         argument = rarg.argument;
 
          generateObject(tape, larg, scope);
       }
@@ -4601,7 +4602,8 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 //         doArrayOperation(tape, node.argument);
 //         break;
 //      case lxArgArrOp:
-         doArgArrayOperation(tape, node.argument, rarg.argument);
+         doArgArrayOperation(tape, node.argument, argument);
+         scope.clear();
 //         break;
 //   }
 //
@@ -4919,6 +4921,8 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
          node.findChild(lxIfValue).argument);
    }
    
+   scope.clear();
+
    releaseStack(tape);
 }
 
@@ -6755,6 +6759,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
             stackOp = false;
          }
          else throw InternalError("Not yet implemented"); // !! temporal
+         break;
+      case lxCodeExpression:
+         generateCodeBlock(tape, node, scope);
          break;
       default:
          if (stackOp) {

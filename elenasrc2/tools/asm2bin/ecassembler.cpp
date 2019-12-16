@@ -224,6 +224,9 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
    else if (word.compare("0")) {
       return 0;
    }
+   else if (word.compare("terminal")) {
+      return -1;
+   }
    else if (word.compare("mssgconst")) {
       token.read(":", "Invalid operand (%d)");
       token.read();

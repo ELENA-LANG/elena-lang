@@ -2592,14 +2592,14 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
          copyFieldInitTree(writer, current, scope, bookmark);
       }
       else if (current == lxExpression) {
-         /*if (current.nextNode() == lxExpression) {
+         if (current.nextNode() == lxExpression) {
             // HOTFIX : if the code template contains several expressions
             writer.newNode(lxCodeExpression);
             copyNodes(writer, current, scope);
             writer.closeNode();
             break;
          }
-         else */copyExpressionTree(writer, current, scope);
+         else copyExpressionTree(writer, current, scope);
       }
       current = current.nextNode();
    }
