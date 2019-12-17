@@ -5,460 +5,460 @@
 
 #include <windows.h>
 
-//#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-//
-//using namespace _ELENA_;
-//
-//static x86ELENAVMMachine* _Machine = NULL;
-//static Path rootPath;
-//
-//// --- getAppPath ---
-//
-//void loadDLLPath(HMODULE hModule)
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
+using namespace _ELENA_;
+
+static x86ELENAVMMachine* _Machine = NULL;
+static Path rootPath;
+
+// --- getAppPath ---
+
+void loadDLLPath(HMODULE hModule)
+{
+   TCHAR path[MAX_PATH + 1];
+
+   ::GetModuleFileName(hModule, path, MAX_PATH);
+
+   rootPath.copySubPath(path);
+   rootPath.lower();
+}
+
+// ==== DLL entries ====
+
+EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape)
+{
+   ProgramHeader header;
+   // initialize the exception handler
+   __asm {
+      mov header.root_exception_struct.core_catch_frame, ebp
+      mov header.root_exception_struct.core_catch_level, esp
+   }
+   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+
+   // initialize the critical exception handler
+   if (criticalHandler != nullptr)
+      __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
+
+   //// initialize system env variable
+   //_SystemEnv = systemEnv;
+
+   // start the system
+   _Machine->startSTA(&header, (SystemEnv*)systemEnv, sehTable, vmTape);
+}
+
+EXTERN_DLL_EXPORT void OpenFrame(void* systemEnv, void* frameHeader)
+{
+   SystemRoutineProvider::OpenFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+}
+
+EXTERN_DLL_EXPORT void CloseFrame(void* systemEnv, void* frameHeader)
+{
+   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+}
+
+EXTERN_DLL_EXPORT void Exit(int exitCode)
+{
+   _Machine->Exit(exitCode);
+}
+
+// !! temporally
+
+//EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
 //{
-//   TCHAR path[MAX_PATH + 1];
-//
-//   ::GetModuleFileName(hModule, path, MAX_PATH);
-//
-//   rootPath.copySubPath(path);
-//   rootPath.lower();
+//   return 0; // !! temporally
 //}
-//
-//// ==== DLL entries ====
-//
-//EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape)
+
+EXTERN_DLL_EXPORT int LoadAddressInfo(void* retPoint, char* buffer, size_t maxLength)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      if (instance->loadAddressInfo(retPoint, buffer, maxLength)) {
+         return maxLength;
+      }
+      else return 0;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLength)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      size_t length = maxLength;
+
+      int packagePtr = *(int*)((int)vmtAddress - 20);
+      int namePtr = *(int*)((int)vmtAddress - 24);
+
+      char* name = (char*)namePtr;
+      char* ns = ((char**)packagePtr)[0];
+
+      size_t ns_len = length;
+      if (!ident_t(ns).copyTo(buffer, ns_len))
+         return 0;
+
+      maxLength -= ns_len;
+      if (!ident_t(name).copyTo(buffer + ns_len, length))
+         return 0;
+
+      return length + ns_len;
+
+
+      //ident_t className = instance->getClassName(vmtAddress);
+      //size_t length = getlength(className);
+      //if (length > 0) {
+      //   if (maxLength >= (int)length) {
+      //      Convertor::copy(buffer, className, length, length);
+      //   }
+      //   else buffer[0] = 0;
+      //}
+
+      //return length;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, char* buffer, int maxLength)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      size_t subj_id = (size_t)subjectRef;
+
+      ident_t subjectName = instance->getSubject(subj_id);
+      size_t length = getlength(subjectName);
+      if (length > 0) {
+         if (maxLength >= (int)length) {
+            Convertor::copy(buffer, subjectName, length, length);
+         }
+         else buffer[0] = 0;
+      }
+
+      return length;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      ref_t subj_id = instance->getSubjectRef((const char*)subjectName);
+
+      return (void*)subj_id;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      ref_t action, flags;
+      int count;
+      decodeMessage((ref_t)message, action, count, flags);
+
+      size_t used = 0;
+      //if (test((ref_t)message, encodeAction(SIGNATURE_FLAG))) {
+      //   ImageSection messageSection;
+      //   messageSection.init(_messageSection, 0x10000); // !! dummy size
+
+      //   ref_t verb = messageSection[action];
+      //   used += manager.readSubjectName(reader, verb, buffer + used, length - used);
+      //}
+      //else {
+         ident_t subjectName = instance->getSubject(action);
+         size_t length = getlength(subjectName);
+         if (length > 0) {
+            if (maxLength >= (int)(length + used)) {
+               Convertor::copy(buffer + used, subjectName, length, length);
+
+               used += length;
+            }
+            else buffer[used] = 0;
+         }
+      //}
+
+      if (count > 0) {
+         size_t dummy = 10;
+         String<char, 10>temp;
+         temp.appendInt(count);
+
+         buffer[used++] = '[';
+         Convertor::copy(buffer + used, temp, getlength(temp), dummy);
+         used += dummy;
+         buffer[used++] = ']';
+      }
+      buffer[used] = 0;
+
+      return used;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      return (void*)(instance->getMessageRef((const char*)messageName));
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      return instance->getSymbolRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName, index, length);
+
+      return LoadSymbolByString(systemEnv, (void*)str.c_str());
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadSymbolByString(systemEnv, (void*)str.str());
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadClassByString(void* systemEnv, void* referenceName)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   try {
+      return instance->getClassVMTRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch (InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName, index, length);
+
+      return LoadClassByString(systemEnv, (void*)str.c_str());
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadClassByString(systemEnv, (void*)str.str());
+   }
+}
+
+EXTERN_DLL_EXPORT int EvaluateTape(void* systemEnv, void* sehTable, void* tape)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+   
+   try {
+      int retVal = instance->interprete((SystemEnv*)systemEnv, sehTable, tape, false);
+
+      return retVal;
+   }
+   catch (JITUnresolvedException& e)
+   {
+      instance->setStatus("Cannot load ", e.referenceInfo);
+
+      return 0;
+   }
+   catch(InternalError& e)
+   {
+      instance->setStatus(e.message);
+
+      return 0;
+   }
+   catch (EAbortException&)
+   {
+      return 0;
+   }
+}
+
+//EXTERN_DLL_EXPORT size_t SetDebugMode()
 //{
-//   ProgramHeader header;
-//   // initialize the exception handler
-//   __asm {
-//      mov header.root_exception_struct.core_catch_frame, ebp
-//      mov header.root_exception_struct.core_catch_level, esp
-//   }
-//   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
-//
-//   // initialize the critical exception handler
-//   if (criticalHandler != nullptr)
-//      __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
-//
-//   //// initialize system env variable
-//   //_SystemEnv = systemEnv;
-//
-//   // start the system
-//   _Machine->startSTA(&header, (SystemEnv*)systemEnv, sehTable, vmTape);
-//}
-//
-//EXTERN_DLL_EXPORT void OpenFrame(void* systemEnv, void* frameHeader)
-//{
-//   SystemRoutineProvider::OpenFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
-//}
-//
-//EXTERN_DLL_EXPORT void CloseFrame(void* systemEnv, void* frameHeader)
-//{
-//   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
-//}
-//
-//EXTERN_DLL_EXPORT void Exit(int exitCode)
-//{
-//   _Machine->Exit(exitCode);
-//}
-//
-//// !! temporally
-//
-////EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
-////{
-////   return 0; // !! temporally
-////}
-//
-//EXTERN_DLL_EXPORT int LoadAddressInfo(void* retPoint, char* buffer, size_t maxLength)
-//{
-//   Instance* instance = _Machine->getInstance();
+//   Instance* instance = getCurrentInstance();
 //   if (instance == NULL)
 //      return 0;
 //
-//   try {
-//      if (instance->loadAddressInfo(retPoint, buffer, maxLength)) {
-//         return maxLength;
-//      }
-//      else return 0;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
+//   instance->setDebugMode();
 //
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
+//   return (size_t)instance->loadDebugSection();
 //}
-//
-//EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLength)
-//{
-//   Instance* instance = _Machine->getInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      size_t length = maxLength;
-//
-//      int packagePtr = *(int*)((int)vmtAddress - 20);
-//      int namePtr = *(int*)((int)vmtAddress - 24);
-//
-//      char* name = (char*)namePtr;
-//      char* ns = ((char**)packagePtr)[0];
-//
-//      size_t ns_len = length;
-//      if (!ident_t(ns).copyTo(buffer, ns_len))
-//         return 0;
-//
-//      maxLength -= ns_len;
-//      if (!ident_t(name).copyTo(buffer + ns_len, length))
-//         return 0;
-//
-//      return length + ns_len;
-//
-//
-//      //ident_t className = instance->getClassName(vmtAddress);
-//      //size_t length = getlength(className);
-//      //if (length > 0) {
-//      //   if (maxLength >= (int)length) {
-//      //      Convertor::copy(buffer, className, length, length);
-//      //   }
-//      //   else buffer[0] = 0;
-//      //}
-//
-//      //return length;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT int LoadSubjectName(void* subjectRef, char* buffer, int maxLength)
-//{
-//   Instance* instance = _Machine->getInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      size_t subj_id = (size_t)subjectRef;
-//
-//      ident_t subjectName = instance->getSubject(subj_id);
-//      size_t length = getlength(subjectName);
-//      if (length > 0) {
-//         if (maxLength >= (int)length) {
-//            Convertor::copy(buffer, subjectName, length, length);
-//         }
-//         else buffer[0] = 0;
-//      }
-//
-//      return length;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
-//{
-//   Instance* instance = _Machine->getInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      ref_t subj_id = instance->getSubjectRef((const char*)subjectName);
-//
-//      return (void*)subj_id;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength)
-//{
-//   Instance* instance = _Machine->getInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      ref_t action, flags;
-//      int count;
-//      decodeMessage((ref_t)message, action, count, flags);
-//
-//      size_t used = 0;
-//      //if (test((ref_t)message, encodeAction(SIGNATURE_FLAG))) {
-//      //   ImageSection messageSection;
-//      //   messageSection.init(_messageSection, 0x10000); // !! dummy size
-//
-//      //   ref_t verb = messageSection[action];
-//      //   used += manager.readSubjectName(reader, verb, buffer + used, length - used);
-//      //}
-//      //else {
-//         ident_t subjectName = instance->getSubject(action);
-//         size_t length = getlength(subjectName);
-//         if (length > 0) {
-//            if (maxLength >= (int)(length + used)) {
-//               Convertor::copy(buffer + used, subjectName, length, length);
-//
-//               used += length;
-//            }
-//            else buffer[used] = 0;
-//         }
-//      //}
-//
-//      if (count > 0) {
-//         size_t dummy = 10;
-//         String<char, 10>temp;
-//         temp.appendInt(count);
-//
-//         buffer[used++] = '[';
-//         Convertor::copy(buffer + used, temp, getlength(temp), dummy);
-//         used += dummy;
-//         buffer[used++] = ']';
-//      }
-//      buffer[used] = 0;
-//
-//      return used;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
-//{
-//   Instance* instance = _Machine->getInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      return (void*)(instance->getMessageRef((const char*)messageName));
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
-//{
-//   Instance* instance = _Machine->getInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      return instance->getSymbolRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
-//{
-//   if (length < 0x100) {
-//      IdentifierString str((const char*)referenceName, index, length);
-//
-//      return LoadSymbolByString(systemEnv, (void*)str.c_str());
-//   }
-//   else {
-//      DynamicString<char> str((const char*)referenceName, index, length);
-//
-//      return LoadSymbolByString(systemEnv, (void*)str.str());
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadClassByString(void* systemEnv, void* referenceName)
-//{
-//   Instance* instance = _Machine->getInstance();
-//   if (instance == NULL)
-//      return 0;
-//
-//   try {
-//      return instance->getClassVMTRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch (InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
-//{
-//   if (length < 0x100) {
-//      IdentifierString str((const char*)referenceName, index, length);
-//
-//      return LoadClassByString(systemEnv, (void*)str.c_str());
-//   }
-//   else {
-//      DynamicString<char> str((const char*)referenceName, index, length);
-//
-//      return LoadClassByString(systemEnv, (void*)str.str());
-//   }
-//}
-//
-//EXTERN_DLL_EXPORT int EvaluateTape(void* systemEnv, void* sehTable, void* tape)
-//{
-//   Instance* instance = _Machine->getInstance();
-//   if (instance == NULL)
-//      return 0;
-//   
-//   try {
-//      int retVal = instance->interprete((SystemEnv*)systemEnv, sehTable, tape, false);
-//
-//      return retVal;
-//   }
-//   catch (JITUnresolvedException& e)
-//   {
-//      instance->setStatus("Cannot load ", e.referenceInfo);
-//
-//      return 0;
-//   }
-//   catch(InternalError& e)
-//   {
-//      instance->setStatus(e.message);
-//
-//      return 0;
-//   }
-//   catch (EAbortException&)
-//   {
-//      return 0;
-//   }
-//}
-//
-////EXTERN_DLL_EXPORT size_t SetDebugMode()
-////{
-////   Instance* instance = getCurrentInstance();
-////   if (instance == NULL)
-////      return 0;
-////
-////   instance->setDebugMode();
-////
-////   return (size_t)instance->loadDebugSection();
-////}
-//
-//EXTERN_DLL_EXPORT const char* GetVMLastError()
-//{
-//   Instance* instance = _Machine->getInstance();
-//
-//   return  instance ? instance->getStatus() : "Not initialized";
-//}
-//
-//// --- initmachine ---
-//
-//void initMachine(path_t rootPath)
-//{
-//   _Machine = new x86ELENAVMMachine(rootPath);
-//
-//   if (::IsDebuggerPresent()) {
-//      _Machine->getInstance()->setDebugMode();
-//   }
-//}
-//
-//// --- freeMachine ---
-//
-//void freeMachine()
-//{
-//   freeobj(_Machine);
-//   _Machine = nullptr;
-//}
+
+EXTERN_DLL_EXPORT const char* GetVMLastError()
+{
+   Instance* instance = _Machine->getInstance();
+
+   return  instance ? instance->getStatus() : "Not initialized";
+}
+
+// --- initmachine ---
+
+void initMachine(path_t rootPath)
+{
+   _Machine = new x86ELENAVMMachine(rootPath);
+
+   if (::IsDebuggerPresent()) {
+      _Machine->getInstance()->setDebugMode();
+   }
+}
+
+// --- freeMachine ---
+
+void freeMachine()
+{
+   freeobj(_Machine);
+   _Machine = nullptr;
+}
 
 // --- dllmain ---
 
@@ -468,20 +468,20 @@ BOOL APIENTRY DllMain( HMODULE hModule,
                        LPVOID lpReserved
                )
 {
-//   switch (ul_reason_for_call)
-//   {
-//   case DLL_PROCESS_ATTACH:
-//   {
-//      loadDLLPath(hModule);
-//      initMachine(rootPath.c_str());
-//      return TRUE;
-//   }
-//   case DLL_THREAD_ATTACH:
-//   case DLL_THREAD_DETACH:
-//      return TRUE;
-//   case DLL_PROCESS_DETACH:
-//      freeMachine();
-//      break;
-//   }
+   switch (ul_reason_for_call)
+   {
+      case DLL_PROCESS_ATTACH:
+      {
+         loadDLLPath(hModule);
+         initMachine(rootPath.c_str());
+         return TRUE;
+      }
+      case DLL_THREAD_ATTACH:
+      case DLL_THREAD_DETACH:
+         return TRUE;
+      case DLL_PROCESS_DETACH:
+         freeMachine();
+         break;
+   }
    return TRUE;
 }

@@ -117,41 +117,41 @@ void SystemRoutineProvider :: InitSTA(SystemEnv* env, ProgramHeader* frameHeader
    env->Table->gc_stack_frame = 0;
 }
 
-//void SystemRoutineProvider :: InitMTA(SystemEnv* env, ProgramHeader* frameHeader)
-//{
-//   Init(env);
-//   InitTLSEntry(0, *env->TLSIndex, frameHeader, env->ThreadTable);
-//
-//   // set the thread table size
-//   env->ThreadTable[-1] = env->MaxThread;
-//}
-//
-//inline TLSEntry* GetTLSEntry(pos_t tlsIndex)
-//{
-//   TLSEntry* entry = nullptr;
-//
-//   // ; GCXT: assign tls entry
-//   __asm {
-//      mov  ebx, tlsIndex
-//      mov  ecx, fs:[2Ch]
-//      mov  edx, [ecx + ebx * 4]
-//      mov  entry, edx
-//   }
-//
-//   return entry;
-//}
-//
-//void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, ProgramHeader* frameHeader, pos_t* threadTable)
-//{
-//   TLSEntry* entry = GetTLSEntry(tlsIndex);
-//
-//   entry->tls_flags = 0;
-//   entry->tls_sync_event = ::CreateEvent(0, -1, 0, 0);
-//   entry->tls_et_current =  &frameHeader->root_exception_struct;
-//   entry->tls_threadindex = threadIndex;
-//
-//   threadTable[threadIndex] = (pos_t)entry;
-//}
+void SystemRoutineProvider :: InitMTA(SystemEnv* env, ProgramHeader* frameHeader)
+{
+   Init(env);
+   InitTLSEntry(0, *env->TLSIndex, frameHeader, env->ThreadTable);
+
+   // set the thread table size
+   env->ThreadTable[-1] = env->MaxThread;
+}
+
+inline TLSEntry* GetTLSEntry(pos_t tlsIndex)
+{
+   TLSEntry* entry = nullptr;
+
+   // ; GCXT: assign tls entry
+   __asm {
+      mov  ebx, tlsIndex
+      mov  ecx, fs:[2Ch]
+      mov  edx, [ecx + ebx * 4]
+      mov  entry, edx
+   }
+
+   return entry;
+}
+
+void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, ProgramHeader* frameHeader, pos_t* threadTable)
+{
+   TLSEntry* entry = GetTLSEntry(tlsIndex);
+
+   entry->tls_flags = 0;
+   entry->tls_sync_event = ::CreateEvent(0, -1, 0, 0);
+   entry->tls_et_current =  &frameHeader->root_exception_struct;
+   entry->tls_threadindex = threadIndex;
+
+   threadTable[threadIndex] = (pos_t)entry;
+}
 
 void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler)
 {
@@ -169,86 +169,86 @@ void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, pos_t c
    header->handler = criticalHandler;
 }
 
-//inline void entryCriticalSection(void* tt_lock)
-//{
-//   __asm {
-//      mov  esi, tt_lock
-//
-//      labWait :
-//      // ; set lock
-//      xor  eax, eax
-//      mov  edx, 1
-//      lock cmpxchg dword ptr[esi], edx
-//      jnz  short labWait
-//   }
-//}
-//
-//inline void leaveCriticalSection(void* tt_lock)
-//{
-//   // ; free lock
-//   __asm {
-//      mov  esi, tt_lock
-//
-//      // ; could we use mov [esi], 0 instead?
-//      mov  edx, -1
-//      lock xadd[esi], edx
-//   }
-//}
-//
-//bool SystemRoutineProvider :: NewThread(SystemEnv* env, ProgramHeader* frameHeader)
-//{
-//   entryCriticalSection(&env->Table->tt_lock);
-//
-//   bool valid = false;
-//   pos_t threadIndex = 0;
-//   for (pos_t i = 0; i < env->MaxThread; i++) {
-//      if (env->ThreadTable[i] == 0) {
-//         threadIndex = i;
-//         valid = true;
-//         break;
-//      }
-//   }
-//
-//   if (valid) {
-//      InitTLSEntry(threadIndex, *env->TLSIndex, frameHeader, env->ThreadTable);
-//   }
-//
-//   leaveCriticalSection(&env->Table->tt_lock);
-//
-//   return valid;
-//}
+inline void entryCriticalSection(void* tt_lock)
+{
+   __asm {
+      mov  esi, tt_lock
+
+      labWait :
+      // ; set lock
+      xor  eax, eax
+      mov  edx, 1
+      lock cmpxchg dword ptr[esi], edx
+      jnz  short labWait
+   }
+}
+
+inline void leaveCriticalSection(void* tt_lock)
+{
+   // ; free lock
+   __asm {
+      mov  esi, tt_lock
+
+      // ; could we use mov [esi], 0 instead?
+      mov  edx, -1
+      lock xadd[esi], edx
+   }
+}
+
+bool SystemRoutineProvider :: NewThread(SystemEnv* env, ProgramHeader* frameHeader)
+{
+   entryCriticalSection(&env->Table->tt_lock);
+
+   bool valid = false;
+   pos_t threadIndex = 0;
+   for (pos_t i = 0; i < env->MaxThread; i++) {
+      if (env->ThreadTable[i] == 0) {
+         threadIndex = i;
+         valid = true;
+         break;
+      }
+   }
+
+   if (valid) {
+      InitTLSEntry(threadIndex, *env->TLSIndex, frameHeader, env->ThreadTable);
+   }
+
+   leaveCriticalSection(&env->Table->tt_lock);
+
+   return valid;
+}
 
 void SystemRoutineProvider :: Exit(pos_t exitCode)
 {
    ::ExitProcess(exitCode);
 }
 
-//void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool withExit)
-//{
-//   entryCriticalSection(&env->Table->tt_lock);
-//
-//   TLSEntry* entry = GetTLSEntry(*env->TLSIndex);
-//
-//   env->ThreadTable[entry->tls_threadindex] = 0;
-//
-//   leaveCriticalSection(&env->Table->tt_lock);
-//
-//   ::CloseHandle(entry->tls_sync_event);
-//
-//   if (withExit)
-//      ::ExitThread(exitCode);
-//}
-//
-//inline void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
-//{
-//   frameHeader->previousFrame = env->Table->gc_stack_frame;
-//   frameHeader->reserved = 0;
-//}
-//
-//inline void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
-//{
-//   env->Table->gc_stack_frame = frameHeader->previousFrame;
-//}
+void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool withExit)
+{
+   entryCriticalSection(&env->Table->tt_lock);
+
+   TLSEntry* entry = GetTLSEntry(*env->TLSIndex);
+
+   env->ThreadTable[entry->tls_threadindex] = 0;
+
+   leaveCriticalSection(&env->Table->tt_lock);
+
+   ::CloseHandle(entry->tls_sync_event);
+
+   if (withExit)
+      ::ExitThread(exitCode);
+}
+
+inline void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
+{
+   frameHeader->previousFrame = env->Table->gc_stack_frame;
+   frameHeader->reserved = 0;
+}
+
+inline void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
+{
+   env->Table->gc_stack_frame = frameHeader->previousFrame;
+}
 
 int Execute(void* address, FrameHeader* framePtr)
 {
@@ -283,21 +283,21 @@ int Execute(void* address, FrameHeader* framePtr)
    return retVal;
 }
 
-//int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry)
-//{
-//   FrameHeader frameHeader;
-//   if (env->MaxThread <= 1) {
-//      OpenSTAFrame(env, &frameHeader);
-//   }
-//   
-//   int retVal = Execute(entry.address, &frameHeader);
-//
-//   if (env->MaxThread <= 1) {
-//      CloseSTAFrame(env, &frameHeader);
-//   }
-//
-//   return retVal;
-//}
+int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry)
+{
+   FrameHeader frameHeader;
+   if (env->MaxThread <= 1) {
+      OpenSTAFrame(env, &frameHeader);
+   }
+   
+   int retVal = Execute(entry.address, &frameHeader);
+
+   if (env->MaxThread <= 1) {
+      CloseSTAFrame(env, &frameHeader);
+   }
+
+   return retVal;
+}
 
 int SystemRoutineProvider :: ExecuteInNewFrame(SystemEnv* env, _Entry& entry)
 {
@@ -308,16 +308,16 @@ int SystemRoutineProvider :: ExecuteInNewFrame(SystemEnv* env, _Entry& entry)
    return retVal;
 }
 
-//void SystemRoutineProvider :: OpenFrame(SystemEnv* env, FrameHeader* frameHeader)
-//{
-//   if (env->MaxThread <= 1) {
-//      OpenSTAFrame(env, frameHeader);
-//   }
-//}
-//
-//void SystemRoutineProvider :: CloseFrame(SystemEnv* env, FrameHeader* frameHeader)
-//{
-//   if (env->MaxThread <= 1) {
-//      CloseSTAFrame(env, frameHeader);
-//   }
-//}
+void SystemRoutineProvider :: OpenFrame(SystemEnv* env, FrameHeader* frameHeader)
+{
+   if (env->MaxThread <= 1) {
+      OpenSTAFrame(env, frameHeader);
+   }
+}
+
+void SystemRoutineProvider :: CloseFrame(SystemEnv* env, FrameHeader* frameHeader)
+{
+   if (env->MaxThread <= 1) {
+      CloseSTAFrame(env, frameHeader);
+   }
+}

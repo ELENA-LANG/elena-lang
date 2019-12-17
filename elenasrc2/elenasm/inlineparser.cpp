@@ -88,14 +88,16 @@ bool VMTapeParser :: writeArgument(TapeWriter& writer, int state, ident_t token)
 
 bool VMTapeParser :: writeArray(TapeWriter& writer, int state, ident_t token)
 {
-   if (state == dfaInteger) {
-      int value = token.toInt();
+   throw InternalError("Not yet implemented"); // !! temporal
 
-      writer.writeCommand(NEW_TAPE_MESSAGE_ID, value);
+   //if (state == dfaInteger) {
+   //   int value = token.toInt();
 
-      return true;
-   }
-   else return false;
+   //   writer.writeCommand(NEW_TAPE_MESSAGE_ID, value);
+
+   //   return true;
+   //}
+   //else return false;
 }
 
 bool VMTapeParser :: parseMessage(ident_t message, IdentifierString& reference)
@@ -166,7 +168,9 @@ void VMTapeParser:: parseStatement(_ScriptReader& reader, ScriptBookmark& bm, Ta
    else if (reader.compare("^")) {
       bm = reader.read();
 
-      writeMessage(writer, reader.lookup(bm), SEND_TAPE_MESSAGE_ID);
+      //writeMessage(writer, reader.lookup(bm), SEND_TAPE_MESSAGE_ID);
+
+      throw InternalError("Not yet implemened"); // !! temporal
    }
    else if (reader.compare("%")) {
       bm = reader.read();

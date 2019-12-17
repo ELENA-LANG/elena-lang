@@ -73,10 +73,10 @@ namespace _ELENA_
 //
 ////   // virtual operator
 ////   #define SETNIL_REFER_MESSAGE_ID 0x1019
-//
-//   // ---- ELENAVM command masks ---
-//   constexpr auto VM_MASK                 = 0x0200;             // vm command mask
-//   constexpr auto LITERAL_ARG_MASK        = 0x0400;             // indicates that the command has a literal argument
+
+   // ---- ELENAVM command masks ---
+   constexpr auto VM_MASK                 = 0x0200;             // vm command mask
+   constexpr auto LITERAL_ARG_MASK        = 0x0400;             // indicates that the command has a literal argument
 
    // ---- ELENAVM commands ---
    constexpr auto START_VM_MESSAGE_ID     = 0x02F1;             // restart VM
@@ -98,11 +98,11 @@ namespace _ELENA_
    constexpr auto PUSHM_TAPE_MESSAGE_ID   = 0x05E9;             // push message reference
    constexpr auto PUSHG_TAPE_MESSAGE_ID   = 0x05EA;             // push the subject reference
    constexpr auto POP_TAPE_MESSAGE_ID     = 0x01EB;             // free the stack content
-   constexpr auto SEND_TAPE_MESSAGE_ID    = 0x05EC;             // send the message
+ //  constexpr auto SEND_TAPE_MESSAGE_ID    = 0x05EC;             // send the message
 //   constexpr auto REVERSE_TAPE_MESSAGE_ID = 0x01ED;             // reverse the stack
    constexpr auto PUSHE_TAPE_MESSAGE_ID   = 0x05EE;             // push message reference
 
-   constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
+   //constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
 
    constexpr auto VA_ALIGNMENT            = 0x08;
    constexpr auto VA_ALIGNMENT_POWER      = 0x03;
@@ -505,8 +505,8 @@ namespace _ELENA_
    constexpr auto MESSAGEBODY_TABLE          = "$meta'$messagebody";
    constexpr auto MATTRIBUTE_TABLE           = "$meta'$attributes";
 
-//  // VM temporal code
-//   constexpr auto TAPE_SYMBOL             = "$tape";
+  // VM temporal code
+   constexpr auto TAPE_SYMBOL                = "$tape";
 
    constexpr auto GC_THREADTABLE             = "$elena'@gcthreadroot";           // thread table
    constexpr auto TLS_KEY                    = "$elena'@tlskey";                 // TLS key

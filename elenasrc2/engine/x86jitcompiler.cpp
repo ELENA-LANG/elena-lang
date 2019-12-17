@@ -1986,25 +1986,25 @@ void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, 
    }
 }
 
-//void x86JITCompiler :: setTLSKey(void* ptr)
-//{
-//   _preloaded.add(CORE_TLS_INDEX, ptr);
-//}
-//
-//void x86JITCompiler :: setThreadTable(void* ptr)
-//{
-//   _preloaded.add(CORE_THREADTABLE, ptr);
-//}
-//
-//void x86JITCompiler :: setEHTable(void* ptr)
-//{
-//   _preloaded.add(CORE_EH_TABLE, ptr);
-//}
-//
-//void x86JITCompiler :: setGCTable(void* ptr)
-//{
-//   _preloaded.add(CORE_GC_TABLE, ptr);
-//}
+void x86JITCompiler :: setTLSKey(void* ptr)
+{
+   _preloaded.add(CORE_TLS_INDEX, ptr);
+}
+
+void x86JITCompiler :: setThreadTable(void* ptr)
+{
+   _preloaded.add(CORE_THREADTABLE, ptr);
+}
+
+void x86JITCompiler :: setEHTable(void* ptr)
+{
+   _preloaded.add(CORE_EH_TABLE, ptr);
+}
+
+void x86JITCompiler :: setGCTable(void* ptr)
+{
+   _preloaded.add(CORE_GC_TABLE, ptr);
+}
 
 void* x86JITCompiler :: getPreloadedReference(ref_t reference)
 {

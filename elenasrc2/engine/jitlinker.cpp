@@ -269,13 +269,13 @@ ref_t JITLinker :: resolveWeakAction(SectionInfo& messageTable, ident_t actionNa
    return resolvedAction;
 }
 
-//ident_t JITLinker :: retrieveResolvedAction(ref_t reference)
-//{
-//   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
-//
-//   ref_t signature;
-//   return messageTable.module->resolveAction(reference, signature);
-//}
+ident_t JITLinker :: retrieveResolvedAction(ref_t reference)
+{
+   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
+
+   ref_t signature;
+   return messageTable.module->resolveAction(reference, signature);
+}
 
 ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
 {

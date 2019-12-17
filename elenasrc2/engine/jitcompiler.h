@@ -95,10 +95,10 @@ public:
    virtual void* getPreloadedReference(ref_t reference) = 0;
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode) = 0;
-//   virtual void setTLSKey(void* ptr) = 0;
-//   virtual void setThreadTable(void* ptr) = 0;
-//   virtual void setEHTable(void* ptr) = 0;
-//   virtual void setGCTable(void* ptr) = 0;
+   virtual void setTLSKey(void* ptr) = 0;
+   virtual void setThreadTable(void* ptr) = 0;
+   virtual void setEHTable(void* ptr) = 0;
+   virtual void setGCTable(void* ptr) = 0;
 
    virtual void generateProgramStart(MemoryDump& tape) = 0;
    virtual void generateSymbolCall(MemoryDump& tape, void* address) = 0;
