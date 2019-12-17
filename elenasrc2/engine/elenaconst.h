@@ -77,32 +77,32 @@ namespace _ELENA_
 //   // ---- ELENAVM command masks ---
 //   constexpr auto VM_MASK                 = 0x0200;             // vm command mask
 //   constexpr auto LITERAL_ARG_MASK        = 0x0400;             // indicates that the command has a literal argument
-//
-//   // ---- ELENAVM commands ---
-//   constexpr auto START_VM_MESSAGE_ID     = 0x02F1;             // restart VM
-//   constexpr auto MAP_VM_MESSAGE_ID       = 0x06F2;             // map forward reference
-//   constexpr auto USE_VM_MESSAGE_ID       = 0x06F3;             // set current package
-//   constexpr auto LOAD_VM_MESSAGE_ID      = 0x06F4;             // load template
-//   constexpr auto OPEN_VM_CONSOLE         = 0x02F5;             // open console
-//
-//   // ---- ELENAVM interpreter commands ---
-//   constexpr auto CALL_TAPE_MESSAGE_ID    = 0x05E0;             // call symbol
-//   constexpr auto ARG_TAPE_MESSAGE_ID     = 0x05E1;             // define the second parameter
+
+   // ---- ELENAVM commands ---
+   constexpr auto START_VM_MESSAGE_ID     = 0x02F1;             // restart VM
+   constexpr auto MAP_VM_MESSAGE_ID       = 0x06F2;             // map forward reference
+   constexpr auto USE_VM_MESSAGE_ID       = 0x06F3;             // set current package
+   constexpr auto LOAD_VM_MESSAGE_ID      = 0x06F4;             // load template
+   constexpr auto OPEN_VM_CONSOLE         = 0x02F5;             // open console
+
+   // ---- ELENAVM interpreter commands ---
+   constexpr auto CALL_TAPE_MESSAGE_ID    = 0x05E0;             // call symbol
+   constexpr auto ARG_TAPE_MESSAGE_ID     = 0x05E1;             // define the second parameter
 //   constexpr auto PUSH_VAR_MESSAGE_ID     = 0x01E2;             // copy the data
 //   constexpr auto ASSIGN_VAR_MESSAGE_ID   = 0x01E3;             // assign the data
-//   constexpr auto PUSH_TAPE_MESSAGE_ID    = 0x05E4;             // push constant
-//   constexpr auto PUSHS_TAPE_MESSAGE_ID   = 0x05E5;             // push literal constant
-//   constexpr auto PUSHN_TAPE_MESSAGE_ID   = 0x05E6;             // push integer constant
-//   constexpr auto PUSHR_TAPE_MESSAGE_ID   = 0x05E7;             // push floating numeric constant
-//   constexpr auto PUSHL_TAPE_MESSAGE_ID   = 0x05E8;             // push long integer constant
-//   constexpr auto PUSHM_TAPE_MESSAGE_ID   = 0x05E9;             // push message reference
-//   constexpr auto PUSHG_TAPE_MESSAGE_ID   = 0x05EA;             // push the subject reference
-//   constexpr auto POP_TAPE_MESSAGE_ID     = 0x01EB;             // free the stack content
-//   constexpr auto SEND_TAPE_MESSAGE_ID    = 0x05EC;             // send the message
+   constexpr auto PUSH_TAPE_MESSAGE_ID    = 0x05E4;             // push constant
+   constexpr auto PUSHS_TAPE_MESSAGE_ID   = 0x05E5;             // push literal constant
+   constexpr auto PUSHN_TAPE_MESSAGE_ID   = 0x05E6;             // push integer constant
+   constexpr auto PUSHR_TAPE_MESSAGE_ID   = 0x05E7;             // push floating numeric constant
+   constexpr auto PUSHL_TAPE_MESSAGE_ID   = 0x05E8;             // push long integer constant
+   constexpr auto PUSHM_TAPE_MESSAGE_ID   = 0x05E9;             // push message reference
+   constexpr auto PUSHG_TAPE_MESSAGE_ID   = 0x05EA;             // push the subject reference
+   constexpr auto POP_TAPE_MESSAGE_ID     = 0x01EB;             // free the stack content
+   constexpr auto SEND_TAPE_MESSAGE_ID    = 0x05EC;             // send the message
 //   constexpr auto REVERSE_TAPE_MESSAGE_ID = 0x01ED;             // reverse the stack
-//   constexpr auto PUSHE_TAPE_MESSAGE_ID   = 0x05EE;             // push message reference
-//
-//   constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
+   constexpr auto PUSHE_TAPE_MESSAGE_ID   = 0x05EE;             // push message reference
+
+   constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
 
    constexpr auto VA_ALIGNMENT            = 0x08;
    constexpr auto VA_ALIGNMENT_POWER      = 0x03;
