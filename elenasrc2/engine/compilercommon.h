@@ -650,7 +650,7 @@ public:
    // check if the classes is compatible
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 
-//   virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
+      virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
    virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared) = 0;
    virtual bool doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;

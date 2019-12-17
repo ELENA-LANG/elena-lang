@@ -110,7 +110,7 @@ enum ByteCode
    bcShlF            = 0x5E,
    bcShrF            = 0x5F,
 
-//   bcBReadW          = 0x60,
+   bcRead            = 0x60,
 //   bcBRead           = 0x61,
 //   bcBReadB          = 0x65,
 //   bcRSin            = 0x66,
@@ -178,7 +178,7 @@ enum ByteCode
 //   bcAddress         = 0xA7,
 //   bcACallI          = 0xA8,
 //   bcLess            = 0xA9,
-//   bcNotLess         = 0xAA,
+   bcNotLess         = 0xAA,
 //   bcIfB             = 0xAB,
 //   bcElseB           = 0xAC,
 //   bcIf              = 0xAD,
@@ -267,7 +267,7 @@ enum ByteCode
    bcVCallRM         = 0xF4,
    bcJumpRM          = 0xF5,
    bcSelect          = 0xF6,
-//   bcLessN           = 0xF7,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcLessN           = 0xF7,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcIfM             = 0xF8,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcElseM           = 0xF9,   // though in bytecode section they saved in the correct order (jump arg, label)
    bcIfR             = 0xFA,
@@ -437,10 +437,10 @@ public:
          //case bcIf:
          //case bcElse:
          //case bcLess:
-         //case bcNotLess:
+         case bcNotLess:
          case bcIfN:
          case bcElseN:
-         //case bcLessN:
+         case bcLessN:
          //case bcNotLessN:
          //case bcGreaterN:
          //case bcNotGreaterN:

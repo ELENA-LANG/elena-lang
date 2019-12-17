@@ -278,33 +278,38 @@ namespace io
     
         read(ref char retVal)
         {
-//            byte  dump[20];
-//            int   numberRead := 0;
-//            short eventType := 0;
-//            int   keyDown := 0;
-//    
-//            bool found := false;
-//            until (found)
-//            {
-//    //            extern
-//    //            {
-//                    extern KERNEL32.ReadConsoleInputW(handle, dump, 1, ref numberRead);
-//    //            };
-//    
-//                dump.read(0, ref eventType);
-//                if (eventType == 1)
-//                {
-//                        dump.read(4, ref keyDown);
-//                        
-//                        found := keyDown == 1
-//                }
-//                else
-//                {
-//                    found := false 
-//                };
-//            };
-    //
-    //        dump.read(14, ref retVal)
+            byte  dump[20];
+            int   numberRead := 0;
+            short eventType := 0;
+            int   keyDown := 0;
+    
+            bool found := false;
+            until (found)
+            {
+    //            extern
+    //            {
+                    handle h := handle; // !! temporal
+                    extern KERNEL32.ReadConsoleInputW(/*handle*/h, dump, 1, ref numberRead);
+    //            };
+    
+               // dump.read(0, ref eventType);
+                if (eventType == 1)
+                {
+                 //       dump.read(4, ref keyDown);
+                        
+                        found := keyDown == 1
+                }
+                else
+                {
+                    found := false 
+                };
+            };
+    
+//            char tmp;
+//            dump.read(14, tmp);
+            //retVal := tmp
+    
+            //dump.read(14, ref retVal)
         }
     
     ////    read(ref<int> aKey)

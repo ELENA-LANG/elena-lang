@@ -575,20 +575,20 @@ bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
    return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
 }
 
-//bool CompilerLogic :: isVariable(_ModuleScope& scope, ref_t classReference)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, classReference))
-//      return false;
-//
-//   return isVariable(info);
-//}
-//
-//bool CompilerLogic :: isVariable(ClassInfo& info)
-//{
-//   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
-//}
-//
+bool CompilerLogic :: isVariable(_ModuleScope& scope, ref_t classReference)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference))
+      return false;
+
+   return isVariable(info);
+}
+
+bool CompilerLogic :: isVariable(ClassInfo& info)
+{
+   return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
+}
+
 //bool CompilerLogic :: isArray(_ModuleScope& scope, ref_t classReference)
 //{
 //   ClassInfo info;
@@ -1137,7 +1137,7 @@ bool CompilerLogic :: isMessageCompatibleWithSignature(_ModuleScope& scope, ref_
    ref_t targetSignRef = getSignature(scope, targetMessage);
 
    if (isSignatureCompatible(scope, targetSignRef, sourceSignatures, len)) {
-      if (isEmbeddable(scope, targetRef))
+      if (isStacksafeArg(scope, targetRef))
          stackSafeAttr |= 1;
 
       setSignatureStacksafe(scope, targetSignRef, stackSafeAttr);

@@ -747,34 +747,38 @@ void DerivationWriter :: recognizeAttributes(SNode current, int mode, LexicalTyp
    //   bool withoutMapping = false;
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current == lxToken) {
-      bool allowType = current.nextNode().compare(nameNodeType, lxDynamicSizeDecl);
-
-      ref_t attrRef = mapAttribute(current, allowType, /*allowPropertyTemplate, */attributeCategory);
-      if (isPrimitiveRef(attrRef)) {
-         current.set(lxAttribute, attrRef);
-         //         if (test(mode, MODE_ROOT)) {
-         //            if ((attrRef == V_PUBLIC || attrRef == V_INTERNAL)) {
-         //               // the symbol visibility should be provided only once
-         //               if (!visibilitySet) {
-         //                  privateOne = attrRef == V_INTERNAL;
-         //                  visibilitySet = true;
-         //               }
-         //               else _scope->raiseError(errInvalidHint, _filePath, current);
-         //            }
-         //            else if(attrRef == V_INLINE || attrRef == V_PROPERTY) {
-         //               templateMode = attrRef;
-         //            }
-         //            else if (attrRef == V_TYPETEMPL || attrRef == V_META) {
-         //               // NOTE : the type alias should not be mapped in the module
-         //               withoutMapping = true;
-         //            }
-         //         }
+      bool allowType = current.nextNode().compare(nameNodeType, lxDynamicSizeDecl, lxTemplateArgs);
+      if (current.nextNode() == lxTemplateArgs) {
+         current.set(lxType, V_TEMPLATE);
       }
-      else if (attrRef != 0 || allowType) {
-         current.set(lxType, attrRef);
-         allowType = false;
+      else {
+         ref_t attrRef = mapAttribute(current, allowType, /*allowPropertyTemplate, */attributeCategory);
+         if (isPrimitiveRef(attrRef)) {
+            current.set(lxAttribute, attrRef);
+            //         if (test(mode, MODE_ROOT)) {
+            //            if ((attrRef == V_PUBLIC || attrRef == V_INTERNAL)) {
+            //               // the symbol visibility should be provided only once
+            //               if (!visibilitySet) {
+            //                  privateOne = attrRef == V_INTERNAL;
+            //                  visibilitySet = true;
+            //               }
+            //               else _scope->raiseError(errInvalidHint, _filePath, current);
+            //            }
+            //            else if(attrRef == V_INLINE || attrRef == V_PROPERTY) {
+            //               templateMode = attrRef;
+            //            }
+            //            else if (attrRef == V_TYPETEMPL || attrRef == V_META) {
+            //               // NOTE : the type alias should not be mapped in the module
+            //               withoutMapping = true;
+            //            }
+            //         }
+         }
+         else if (attrRef != 0 || allowType) {
+            current.set(lxType, attrRef);
+            allowType = false;
+         }
+         else raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, current);
       }
-      else raiseWarning(WARNING_LEVEL_2, wrnUnknownHint, current);
 
       current = current.nextNode();
    }

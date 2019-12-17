@@ -32,7 +32,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "shlf", "shrf",
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "read", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -45,7 +45,7 @@ const char* _fnOpcodes[256] =
    "open", "quitn", "create", "fillr", "movf", OPCODE_UNKNOWN, "movr", "movm",
 
    "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", "hook", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "notless", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "pushn", "movn", "pushr", OPCODE_UNKNOWN, "pushai", OPCODE_UNKNOWN, "pushfi", OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, "savefi", "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
@@ -59,7 +59,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
    "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavefi",
 
-   "new", "newn", "fillri", OPCODE_UNKNOWN, "vcallrm", "jumprm", "select", OPCODE_UNKNOWN,
+   "new", "newn", "fillri", OPCODE_UNKNOWN, "vcallrm", "jumprm", "select", "lessn",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", OPCODE_UNKNOWN,
 
 //   "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
@@ -384,10 +384,10 @@ inline bool removeIdleJump(ByteCodeIterator it)
          //case bcIf:
          //case bcElse:
          //case bcLess:
-         //case bcNotLess:
+         case bcNotLess:
          case bcIfN:
          case bcElseN:
-         //case bcLessN:
+         case bcLessN:
          //case bcNotLessN:
          //case bcGreaterN:
          //case bcNotGreaterN:
@@ -464,10 +464,10 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 //            case bcIf:
 //            case bcElse:              
 //            case bcLess:
-//            case bcNotLess:
+            case bcNotLess:
             case bcIfN:
             case bcElseN:              
-//            case bcLessN:
+            case bcLessN:
 //            case bcNotLessN:
 //            case bcGreaterN:
 //            case bcNotGreaterN:

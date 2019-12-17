@@ -3914,10 +3914,10 @@ ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr m
 {
    EAttr paramMode = /*HINT_PARAMETER*/EAttr::eaNone;
 //   bool externalMode = false;
-//   if (EAttrs::test(mode, HINT_EXTERNALOP)) {
+   if (EAttrs::test(mode, HINT_EXTERNALOP)) {
 //      externalMode = true;
-//   }
-   /*else */paramMode = paramMode | HINT_NOPRIMITIVES;
+   }
+   else paramMode = paramMode | HINT_NOPRIMITIVES;
 
    SNode current = node;
 
@@ -4055,9 +4055,9 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
 ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t exptectedRef, */ObjectInfo target, EAttr mode)
 {
    EAttr paramsMode = EAttr::eaNone;
-//   if (target.kind == okExternal) {
-//      paramsMode = paramsMode | HINT_EXTERNALOP;
-//   }
+   if (target.kind == okExternal) {
+      paramsMode = paramsMode | HINT_EXTERNALOP;
+   }
 
    ObjectInfo retVal;
    bool variadicOne = false;
@@ -5091,7 +5091,6 @@ ref_t Compiler :: resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef,
 ObjectInfo Compiler :: compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode)
 {
    ObjectInfo objectInfo = mapTerminal(node, scope, mode/* | HINT_REFEXPR*/);
-   //ObjectInfo objectInfo = mapObject(node, scope, /*0, */mode/* | HINT_REFEXPR*/);
    ref_t operandRef = resolveObjectReference(scope, objectInfo, true, false);
    if (!operandRef)
       operandRef = scope.moduleScope->superReference;
@@ -6314,7 +6313,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    return retVal;
 }
 
-void Compiler :: compileExternalArguments(SNode node, Scope& nsScope, SNode callNode)
+void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode callNode)
 {
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone && current != callNode) {
@@ -6329,25 +6328,29 @@ void Compiler :: compileExternalArguments(SNode node, Scope& nsScope, SNode call
 
          current = lxIdle;
       }
-      else if (objNode == lxBoxableExpression) {
-         objNode = lxExpression;
-         ref_t typeRef = objNode.findChild(lxType).argument;
-         objNode = objNode.firstChild(lxObjectMask);
-         if (objNode.compare(lxLocalAddress, lxLocal) && _logic->isCompatible(*nsScope.moduleScope, V_DWORD, typeRef)) {
-            // if it is a integer variable
-            SyntaxTree::copyNode(objNode, callNode
-               .appendNode(lxExtIntArg)
+      else {
+         ref_t typeRef = 0;
+         if (objNode == lxBoxableExpression) {
+            typeRef = objNode.findChild(lxType).argument;
+
+            analizeOperand(objNode, scope, false);
+
+            objNode = objNode.findSubNodeMask(lxObjectMask);
+         }
+         if (!test(objNode.type, lxOpScopeMask)) {
+            if (_logic->isCompatible(*scope.moduleScope, V_DWORD, typeRef) && !_logic->isVariable(*scope.moduleScope, typeRef)) {
+                  // if it is a integer variable
+                  SyntaxTree::copyNode(objNode, callNode
+                     .appendNode(lxExtIntArg)
+                     .appendNode(objNode.type, objNode.argument));
+            }
+            else SyntaxTree::copyNode(objNode, callNode
                .appendNode(objNode.type, objNode.argument));
 
             current = lxIdle;
          }
          else throw InternalError("Not yet implemented"); // !! temporal
       }
-      else if(!test(objNode.type, lxOpScopeMask)) {
-         SyntaxTree::copyNode(objNode, callNode
-            .appendNode(objNode.type, objNode.argument));
-      }
-      else throw InternalError("Not yet implemented"); // !! temporal
 
 //      if (current == lxExtArgument) {
 //         ref_t classReference = current.findChild(lxExtArgumentRef).argument;
@@ -10811,7 +10814,7 @@ void Compiler :: declareTemplate(SNode node, NamespaceScope& scope)
 
    // check for duplicate declaration
    if (scope.module->mapSection(templateRef | mskSyntaxTreeRef, true))
-      scope.raiseError(errDuplicatedSymbol, current);
+      scope.raiseError(errDuplicatedSymbol, current.findChild(lxNameAttr));
 
   // SNode nameNode = node.prevNode();
    //// if it is a template identifier      
@@ -10855,6 +10858,9 @@ void Compiler :: declareTemplate(SNode node, NamespaceScope& scope)
 //   }
 
    SyntaxTree::saveNode(node, target);
+
+   // HOTFIX : to prevent template double declaration in repeating mode
+   node = lxIdle;
 }
 
 void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)

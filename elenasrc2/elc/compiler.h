@@ -1158,7 +1158,7 @@ private:
    ObjectInfo convertObject(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
    ObjectInfo sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
 
-   void compileExternalArguments(SNode node, Scope& scope, SNode callNode);
+   void compileExternalArguments(SNode node, ExprScope& scope, SNode callNode);
 
    void injectBoxingTempLocal(SNode boxExprNode, SNode objNode, ExprScope& scope, LexicalType tempType, int tempLocal);
 //   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);

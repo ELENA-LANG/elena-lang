@@ -133,11 +133,11 @@ public class Exception
 //    constructor new(string message)
 //        <= new(message);
 //}
-//
-//// --- InvalidArgumentException ---
-//
-//public class InvalidArgumentException : Exception
-//{
+
+// --- InvalidArgumentException ---
+
+public class InvalidArgumentException : Exception
+{
 //    /// Creates the exception
 //    constructor new()
 //        <= new("Invalid argument");
@@ -150,8 +150,8 @@ public class Exception
 //    {
 //        InvalidArgumentException.new().raise()
 //    }
-//}
-//
+}
+
 //// --- InvalidOperationException ---
 //
 //public class InvalidOperationException : Exception

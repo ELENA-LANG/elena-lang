@@ -1062,6 +1062,48 @@ inline % 5Fh
 
 end
 
+// ; read
+inline % 60h
+
+  mov  ecx, __arg1
+  mov  eax, edx
+  imul ecx
+  mov  edx, [ebx + eax]
+
+end
+
+// ; read
+inline % 160h
+
+  mov  eax, edx
+  mov edx, [ebx + eax]
+
+end
+
+// ; read
+inline % 260h
+
+  mov  eax, edx
+  mov edx, [ebx + eax*2]
+
+end
+
+// ; read
+inline % 360h
+
+  mov  eax, edx
+  mov edx, [ebx + eax*4]
+
+end
+
+// ; read
+inline % 460h
+
+  mov  eax, edx
+  mov edx, [ebx + eax*8]
+
+end
+
 // ; geti
 inline % 91h
 

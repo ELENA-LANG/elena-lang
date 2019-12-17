@@ -85,6 +85,8 @@ ELENA byte codes (or ecodes)
 
  len                        - [acc].Length >> index ; where acc is a object
 
+ read i                     - acc[index * i] >> index
+ 
  xsavefi i,n                - [fp:i] <= n
 
 
@@ -230,6 +232,10 @@ ELENA byte codes (or ecodes)
  
  ifr r, label               - jumps to the label if acc == r
  
+ lessn n, label             - jump to the label if index < n
+
+ notless label              - jump to the label if acc[0] >= index
+
 
 
 
@@ -314,8 +320,6 @@ ELENA byte codes (or ecodes)
  bread                      - acc[index] >> ext                               
  
  breadb                     - acc[index] >> [byte]ext
- 
- breadw                     - acc[index] >> [short]ext
  
  bwrite                     - base[index] << ext
  
@@ -455,14 +459,10 @@ ELENA byte codes (or ecodes)
  
  less label                 - jump to the label if index < ext
 
- lessn n, label             - jump to the label if index < n
-
  next label                 - index++; if index < ext, jump to the label
  
  notgreatern n, label      - jump to the label if index <= n
  
- notless label              - jump to the label if index >= ext
-
  notlessn n, label          - jump to the label if index >= n
 
  

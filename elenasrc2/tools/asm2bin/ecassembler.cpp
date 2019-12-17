@@ -563,6 +563,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcPushF:
          //case bcEOrN:
          case bcGetI:
+         case bcRead:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:
@@ -585,7 +586,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcIf:
          //case bcElse:
          //case bcLess:
-         //case bcNotLess:
+         case bcNotLess:
          //case bcNext:
          case bcJump:
          case bcHook:
@@ -598,7 +599,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //   break;
          case bcIfN:
          case bcElseN:
-         //case bcLessN:
+         case bcLessN:
          //case bcNotLessN:
          //case bcGreaterN:
          //case bcNotGreaterN:

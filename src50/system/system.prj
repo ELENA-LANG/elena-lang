@@ -22,6 +22,7 @@
        <include>win32_pointers.l</include>
        <include>win32_strings.l</include>
        <include>dynamic.l</include>
+       <include>extensions.l</include>
        <include>exceptions.l</include>
        <include>console.l</include>
        <include>win32_app.l</include>

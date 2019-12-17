@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   43
+#define REVISION_VERSION   44
 
 using namespace _ELENA_;
 
@@ -557,7 +557,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcIfB:
 //      case bcElse:
 //      case bcIfHeap:
-//      case bcNotLess:
+      case bcNotLess:
 ////      case bcAddress:
          printCommand(command, opcode);
          printLabel(command, position + argument + 5, labels);
@@ -580,7 +580,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcIfN:
       case bcElseN:
-//      case bcLessN:
+      case bcLessN:
 //      case bcNotLessN:
 //      case bcGreaterN:
 //      case bcNotGreaterN:
@@ -631,6 +631,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcBLoadAI:
       case bcGetI:
       case bcMovN:
+      case bcRead:
          printCommand(command, opcode);
          command.appendHex(argument);
          command.append('h');

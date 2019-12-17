@@ -117,6 +117,82 @@ labSearch:
 
 end
 
+procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@system@ref#1&system@ShortNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr 0
+ 
+  peeksi  2
+  load
+  peeksi  1
+  read    1
+  and     0FFFFh
+  peeksi  3
+  save
+
+  quitn   3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[3]"
+  throw  
+
+end
+
+procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@system@ref#1&system@IntNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr 0
+
+  peeksi  2
+  load
+  peeksi  1
+  read    1
+  peeksi  3
+  save
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[3]"
+  throw  
+
+end
+
+procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@system@ref#1&system@CharValue[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr 0
+
+  peeksi  2
+  load
+  peeksi  1
+  read    1
+  peeksi  3
+  save
+
+  quitn 3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[3]"
+  throw  
+
+end
+
 // ; system routines
 
 symbol sta_start

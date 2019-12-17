@@ -2,7 +2,7 @@
 In development:
 ------         
               dev
-                * system auto included
+                * system auto included - a project option (on by default)
 
                 * hello world sample
 
