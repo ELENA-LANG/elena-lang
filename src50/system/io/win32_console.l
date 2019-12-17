@@ -1,6 +1,7 @@
 namespace io
-{
-    
+{    
+    import system;
+
 //import system'text;
 //
 //const int FILE_TYPE_CHAR = 2;
@@ -276,7 +277,7 @@ namespace io
             handle := h
         }
     
-        read(ref char retVal)
+        read(/*ref char retVal*/)
         {
             byte  dump[20];
             int   numberRead := 0;
@@ -292,22 +293,18 @@ namespace io
                     extern KERNEL32.ReadConsoleInputW(/*handle*/h, dump, 1, ref numberRead);
     //            };
     
-               // dump.read(0, ref eventType);
+                dump.read(0, ref eventType);
                 if (eventType == 1)
                 {
-                 //       dump.read(4, ref keyDown);
-                        
-                        found := keyDown == 1
+                    dump.read(4, ref keyDown);
+                    
+                    found := keyDown == 1
                 }
                 else
                 {
                     found := false 
                 };
             };
-    
-//            char tmp;
-//            dump.read(14, tmp);
-            //retVal := tmp
     
             //dump.read(14, ref retVal)
         }

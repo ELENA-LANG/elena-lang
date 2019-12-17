@@ -53,6 +53,7 @@ constexpr auto RULES_FILE           = "/usr/share/elena/rules.dat";
 #define ELC_PRM_CODEPAGE            "xcp"
 #define ELC_PRM_OPTOFF              "xo-"
 #define ELC_PRM_OPT1OFF             "xo1-"
+#define ELC_PRM_AUTOSTANDARDOFF     "xa-"
 
 // --- ELC config categories ---
 #define SOURCE_CATEGORY             "configuration/files/*"
@@ -276,11 +277,6 @@ class Project : public _ELENA_::Project
             writer.newNodeDirectly(_ELENA_::lxNamespace);            
             writer.newNodeDirectly(_ELENA_::lxSourcePath, filePath);
             writer.closeNodeDirectly();
-
-            //   // system module should be included by default
-            //   if (!module->Name().compare(STANDARD_MODULE)) {
-            //      writer.importModule(STANDARD_MODULE);
-            //   }
 
             parser.parse(&sourceFile, writer, getTabSize());
 
@@ -540,6 +536,9 @@ public:
             else if (valueName.compare(ELC_PRM_OPT1OFF)) {
                _settings.add(_ELENA_::opL1, 0);
             }
+            else if (valueName.compare(ELC_PRM_AUTOSTANDARDOFF)) {
+               _settings.add(_ELENA_::opAutoSystemImport, 0);
+            }
             else raiseError(ELC_ERR_INVALID_OPTION, valueName);
             break;
          case ELC_PRM_WARNING:
@@ -668,9 +667,12 @@ public:
          }
          else compiler.loadSourceRules(&sourceRulesFile);
       }
-      //if (IntSetting(_ELENA_::opL1, -1) != 0) {
-      //   compiler.turnOnOptimiation(1);
-      //}
+      if (IntSetting(_ELENA_::opL1, -1) != 0) {
+         compiler.turnOnOptimiation(1);
+      }
+      if (IntSetting(_ELENA_::opAutoSystemImport, -1) != 0) {
+         compiler.turnAutoImport(true);
+      }
    }
 
    void cleanUp();

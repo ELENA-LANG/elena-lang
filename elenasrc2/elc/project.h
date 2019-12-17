@@ -57,6 +57,7 @@ enum ProjectSetting
 
    // compiler engine options
    opWarnOnWeakUnresolved  = 0x0042,
+   opAutoSystemImport      = 0x0043,
 
    // compiler optimization options
    opL0                    = 0x0050,   // byte-code optimization

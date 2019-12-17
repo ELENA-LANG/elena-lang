@@ -867,7 +867,8 @@ private:
    MessageMap        _operators;                        // list of operators
 
    // optimization rules
-//   int            _optFlag;
+   int               _optFlag;
+   bool              _autoSystemImport;
    TransformTape     _rules;
    SyntaxTrie        _sourceRules;
 
@@ -1224,12 +1225,17 @@ private:
    void declareTemplate(SNode node, NamespaceScope& scope);
 
 public:
+   void turnAutoImport(bool value)
+   {
+      _autoSystemImport = value;
+   }
+
    void loadRules(StreamReader* optimization);
    void loadSourceRules(StreamReader* optimization);
-//   void turnOnOptimiation(int level)
-//   {
-//      _optFlag |= level;
-//   }
+   void turnOnOptimiation(int level)
+   {
+      _optFlag |= level;
+   }
 
    void declareModuleIdentifiers(SyntaxTree& tree, _ModuleScope& scope);
 

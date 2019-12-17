@@ -1795,9 +1795,9 @@ public extension byteArrayHelper : Array<byte>
     read(int index, ref int retVal)
         => intern system'core_routines'__bytearray;
 
-//    /// Reads a character value at the specified position and saves it into an output variable
-//    read(int index, ref char retVal)
-//        => intern system'core_routines'__bytearray;                
+    /// Reads a character value at the specified position and saves it into an output variable
+    read(int index, ref char retVal)
+        => intern system'core_routines'__bytearray;                
         
 //    move(int index, int length, int offset)
 //        => system'core_routines'__bytearray;

@@ -99,7 +99,7 @@ sealed class Console
     char readChar()
     {
         char ch := $0;
-        reader.read(ref ch);
+        reader.read(/*ref ch*/);
         
         ^  ch
     }

@@ -2,8 +2,8 @@
 In development:
 ------         
               dev
-                * system auto included - a project option (on by default)
-
+                * support vm client
+                * uncommenr console.readChar method
                 * hello world sample
 
                 * predefined operations
@@ -15,6 +15,7 @@ In development:
                 * recognize implicit conversion
 
                 * console operations
+                * no need to include system for system'io module, it should be included automatically!?
 
                 * extension to read the class name, package info
 

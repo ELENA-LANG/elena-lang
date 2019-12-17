@@ -1215,7 +1215,8 @@ bool Compiler::InlineClassScope :: markAsPresaved(ObjectInfo object)
 Compiler :: Compiler(_CompilerLogic* logic)
    : _sourceRules(SNodePattern(lxNone))
 {
-//   _optFlag = 0;
+   _optFlag = 0;
+   _autoSystemImport = false;
 
    this->_logic = logic;
 
@@ -10595,19 +10596,21 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
 
 void Compiler :: analizeCodePatterns(SNode node, NamespaceScope& scope)
 {
-   //test2(node);
+   if (test(_optFlag, 1)) {
+      //test2(node);
 
-   bool applied = true;
-   List<SyntaxTrieNode> matched;
-   while (applied) {
-      matched.clear();
-      SyntaxTrieNode rootTrieNode(&_sourceRules._trie);
-      matched.add(rootTrieNode);
+      bool applied = true;
+      List<SyntaxTrieNode> matched;
+      while (applied) {
+         matched.clear();
+         SyntaxTrieNode rootTrieNode(&_sourceRules._trie);
+         matched.add(rootTrieNode);
 
-      applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
+         applied = matchTriePatterns(*scope.moduleScope, node, _sourceRules, matched);
+      }
+
+      //test2(node);
    }
-
-   //test2(node);
 }
 
 void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
@@ -10983,6 +10986,11 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
 
 void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool ignoreImports, bool withFullInfo)
 {
+   if (!ignoreImports && !scope.module->Name().compare(STANDARD_MODULE) && _autoSystemImport) {
+      bool dummy = false;
+      scope.moduleScope->includeNamespace(scope.importedNs, STANDARD_MODULE, dummy);
+   }      
+
    while (current != lxNone) {
       if (current == lxSourcePath) {
          scope.sourcePath.copy(current.identifier());
