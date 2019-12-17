@@ -185,7 +185,9 @@ EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
 
 EXTERN_DLL_EXPORT void* LoadClassByString(void* systemEnv, void* referenceName)
 {
-   return _Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
+   throw InternalError("Not yet implemented"); // !! temporal 
+
+   //return _Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
 }
 
 EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
@@ -204,7 +206,9 @@ EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, 
 
 EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
 {
-   return _Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
+   throw InternalError("Not yet implemented"); // !! temporal 
+
+   //return _Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
 }
 
 EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
