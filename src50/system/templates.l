@@ -60,13 +60,13 @@
 //{
 //    this __dto_properties += subjconst __name;
 //}
-//
-//// --- extern statement ---
-//
-//public extern<extern_block>()
-//{
-//    extern extern_block
-//}
+
+// --- extern statement ---
+
+#declare extern(extern_block)
+{
+    extern extern_block
+}
 
 // --- if statement ---
 

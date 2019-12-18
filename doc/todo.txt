@@ -2,8 +2,10 @@
 In development:
 ------         
               dev
+                * extern
                 * uncomment ConsoleReader.read method
-                * uncomment console.write<WideString>
+                * custom dispatch
+                * interfaces
                 * Console.reader should implement an interface - IConsoleReader
 
                 * int sum
@@ -48,7 +50,6 @@ In development:
                 * closures : virtual one
                 * closures : default constructor is called for virtual nested class, for normal one - only initializer
 
-                * custom dispatch
 
 
                 * arrays of templates
@@ -56,7 +57,6 @@ In development:
 
                 * variadic dispatch
                 * generic methods
-                * custom dispatch
                 * yieldable methods
 
                 * extension templates
@@ -69,7 +69,6 @@ In development:
 
                 * templates based on another template
                 * template variables
-                * interfaces
 
                 * variable : auto, template                                                                                 
                 * field : type, template type
@@ -84,7 +83,7 @@ In development:
 
                 * default implcit constructor should be embeddable?
                 * embeddable constructor
-                * variadic arguments : run-time dispatching, unboxing
+                * variadic arguments : unboxing
 
                 * implicit default constructor cannot have redirector statement
                 * nested class cannot have constructors
@@ -123,12 +122,7 @@ In development:
                 * implicit constructor inheritance - if not declared - call the parent one?
                 * optimization : do not call idle method
 
-                * parameters
                 * auto returning
-                * strong typed variables
-                * strong parameters
-                * dispatching in compile time
-                * dispatching in run time
 
                 * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
                   signature or default one (if nothing is found - cannot be declared)
@@ -195,13 +189,6 @@ In development:
                 * template base class
                 * "multi-inheritance"
                 * replacing embeddable constructor call with direct operarions
-
-                * abstract classes
-                * sealed classes
-                * closed classes
-                * interfaces
-
-                * constructors
 
                 * using a type before it declaration
 
@@ -634,6 +621,7 @@ Pipeline:
                  * vm client : incorrect error if the program entry is not defined
                  * support static prefix to allow operations with static field only
                  * sealed static fields, cannot be changed in the child classes?!
+                 * remove all temporal exceptions
  
               dev - debugger
                  * debugger : step over message operation

@@ -1875,7 +1875,7 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
       node = lastNode;
       lastNode = node.nextNode();
    }
-   else if (node == lxMessage && SyntaxTree::existSibling(node, lxStatementArgs)) {
+   else if ((node == lxMessage && SyntaxTree::existSibling(node, lxStatementArgs)) || node == lxCode) {
       // COMPILER MAGIC : recognize the statement template
       generateStatementTemplateTree(writer, current, derivationScope);
       lastNode = current;

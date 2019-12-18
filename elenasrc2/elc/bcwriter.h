@@ -151,8 +151,8 @@ class ByteCodeWriter
    void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated/*, bool withPresavedMessage*/, 
       bool withNewFrame = true);
    //void declareExternalBlock(CommandTape& tape);
-//   void excludeFrame(CommandTape& tape);
-//   void includeFrame(CommandTape& tape);
+   void excludeFrame(CommandTape& tape);
+   void includeFrame(CommandTape& tape);
 //   void declareVariable(CommandTape& tape, int value);
    void allocateStack(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
@@ -355,7 +355,7 @@ class ByteCodeWriter
    void generateInternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    /*ref_t*/void generateCall(CommandTape& tape, SyntaxTree::Node node/*, int paramCount, int presavedCount*/);
 
-//   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node);
+   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node);
    void generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);

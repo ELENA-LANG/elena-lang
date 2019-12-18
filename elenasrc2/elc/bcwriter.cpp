@@ -212,18 +212,16 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sou
 //   tape.write(blDeclare, bsBranch);
 //}
 
-//void ByteCodeWriter :: excludeFrame(CommandTape& tape)
-//{
-//   tape.write(bcExclude);
-//   tape.write(bcAllocStack, 1);
-//}
-//
-//void ByteCodeWriter :: includeFrame(CommandTape& tape)
-//{
-//   tape.write(bcInclude);
-//   tape.write(bcSNop);
-//   tape.write(bcFreeStack, 1);
-//}
+void ByteCodeWriter :: excludeFrame(CommandTape& tape)
+{
+   tape.write(bcExclude);
+}
+
+void ByteCodeWriter :: includeFrame(CommandTape& tape)
+{
+   tape.write(bcInclude);
+   tape.write(bcSNop);
+}
 
 void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
 {
@@ -6086,15 +6084,15 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //   if (test(mode, BASE_PRESAVED))
 //      tape.write(bcPopB);
 //}
-//
-//void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   excludeFrame(tape);
-//
-//   generateCodeBlock(tape, node);
-//
-//   includeFrame(tape);
-//}
+
+void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   excludeFrame(tape);
+
+   generateCodeBlock(tape, node, scope);
+
+   includeFrame(tape);
+}
 
 void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
@@ -6784,10 +6782,10 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, FlowSco
 {
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone) {
-      generateObject(tape, current, scope, mode);
-//      else if (current == lxExternFrame) {
-//         generateExternFrame(tape, current);
-//      }
+      if (current == lxExternFrame) {
+         generateExternFrame(tape, current, scope);
+      }
+      else generateObject(tape, current, scope, mode);
 //      else if (current == lxTapeArgument) {
 //         SNode nextNode = current.nextNode();
 //
@@ -6949,6 +6947,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             scope.debugBlockStarted = false;
             break;
          case lxCode:
+         case lxCodeExpression:
             // HOTFIX : nested code, due to resend implementation 
             generateCodeBlock(tape, current, scope);
             break;

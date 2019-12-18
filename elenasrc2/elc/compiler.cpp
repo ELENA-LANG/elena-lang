@@ -6043,12 +6043,10 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          case lxCode:
             current = lxCodeExpression;
          case lxCodeExpression:
-//            if (mode.test(HINT_EXTERNALOP)) {
-//               writer.newNode(lxExternFrame);
-//               result = compileSubCode(writer, node, scope, false);
-//               writer.closeNode();
-//            }
-            /*else */result = compileSubCode(current, scope, false);
+            if (EAttrs::test(exprMode, HINT_EXTERNALOP)) {
+               current.injectAndReplaceNode(lxExternFrame);
+            }
+            result = compileSubCode(current.firstChild(lxObjectMask), scope, false);
             break;
          case lxType:
 //            if (mode.testAndExclude(HINT_MESSAGEREF)) {

@@ -961,6 +961,21 @@ inline % 1Dh
   
 end
 
+// ; include
+inline % 25h
+
+  add  esp, 4                                                       
+
+end
+
+// ; exclude
+inline % 26h
+                                                       
+  push ebp     
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
+
+end
+
 // ; trylock
 inline % 27h
 
