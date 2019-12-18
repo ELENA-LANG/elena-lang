@@ -2,9 +2,16 @@
 In development:
 ------         
               dev
+                * uncomment console.readChar method
+                * uncomment console.write<WideString>
+                * Console.reader should implement an interface - IConsoleReader
+
+                * int sum
+
                 * support vm client
-                * uncommenr console.readChar method
                 * hello world sample
+
+                * samples
 
                 * predefined operations
 

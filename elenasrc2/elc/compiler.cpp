@@ -6,7 +6,7 @@
 //                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
-//#define FULL_OUTOUT_INFO 1
+#define FULL_OUTOUT_INFO 1
 
 #include "elena.h"
 // --------------------------------------------------------------------------
@@ -3745,10 +3745,9 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
    }
    else if (current == lxBoxableExpression) {
       // resolving double boxing
-
       current.set(lxExpression, 0);
 
-   //   boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode);
+      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode);
    }
    else if (current == lxArgBoxableExpression) {
       throw InternalError("Not yet implemented");
@@ -3801,7 +3800,7 @@ void Compiler :: analizeOperands(SNode& node, ExprScope& scope, int stackSafeAtt
    while (current != lxNone) {
       analizeOperand(current, scope, !test(stackSafeAttr, argBit));
 
-      argBit << 1;
+      argBit <<= 1;
       current = current.nextNode(lxObjectMask);
    }
 }
@@ -11016,7 +11015,13 @@ void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool ig
             //   scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
          }
          else if (duplicateInclusion) {
-            scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
+            if (current.identifier().compare(STANDARD_MODULE) && _autoSystemImport) {
+               // HOTFIX : ignore the auto loaded module
+            }
+            else scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
+
+            // HOTFIX : comment out, to prevent duplicate warnings
+            current = lxIdle;
          }
          else {
             scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current);

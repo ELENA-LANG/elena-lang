@@ -1511,7 +1511,7 @@ labNextBaseClass:
   mov  eax, [esi + edx * 8 + 4]
   mov  ecx, [ebx - 4]
   mov  edx, [esi + edx * 8]
-  jmp  [edx + eax * 8 + 4]
+  jmp  [ecx + eax * 8 + 4]
 
 labContinue:
   mov  edi, [edi - elPackageOffset]
