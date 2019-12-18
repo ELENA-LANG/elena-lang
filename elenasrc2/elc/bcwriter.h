@@ -224,7 +224,7 @@ class ByteCodeWriter
 
    void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
    void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
-//   void doGenericHandler(CommandTape& tape);
+   void doGenericHandler(CommandTape& tape);
 //   void unboxMessage(CommandTape& tape);
 //   void changeMessageCounter(CommandTape& tape, int paramCount, int flags);
    void resend(CommandTape& tape);
@@ -343,8 +343,8 @@ class ByteCodeWriter
    void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
-   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateDispatching(CommandTape& tape, SyntaxTree::Node node);
+   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateResending(CommandTape& tape, SyntaxTree::Node node);
    void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
 //   void generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node);

@@ -2,13 +2,11 @@
 In development:
 ------         
               dev
-                * extern
-                * uncomment ConsoleReader.read method
-                * custom dispatch
                 * interfaces
                 * Console.reader should implement an interface - IConsoleReader
 
                 * int sum
+                * dispatch expression
 
                 * support vm client
                 * hello world sample

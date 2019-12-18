@@ -1217,13 +1217,13 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
    tape.write(bcVCallRM, reference | mskVMTEntryOffset, message);
 }
 
-//void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
-//{
-//   // bsredirect
-//
-//   tape.write(bcBSRedirect);
-//}
-//
+void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
+{
+   // bsredirect
+
+   tape.write(bcBSRedirect);
+}
+
 //void ByteCodeWriter :: changeMessageCounter(CommandTape& tape, int paramCount, int flags)
 //{
 //   // ; change param count
@@ -6526,10 +6526,11 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
 //   }
 //}
 
-void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node)
+void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
 //   SNode target = node.findChild(lxTarget);
-//   if (node.argument == 0) {
+   if (node.argument == 0) {
+      throw InternalError("Not yet implemented"); // !! temporal
 //      SNode message = node.findChild(lxMessage);
 //      if (isOpenArg(message.argument)/* && getAction(message.argument) == DISPATCH_MESSAGE_ID*/) {
 //         // if it is open argument dispatching
@@ -6568,10 +6569,10 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
 //         setSubject(tape, message.argument);
 //         resendResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument);
 //      }
-//   }
-//   else {
-//      SNode current = node.firstChild();
-//      while (current != lxNone) {
+   }
+   else {
+      SNode current = node.firstChild();
+      while (current != lxNone) {
 //         if (current == lxNewFrame) {
 //            // new frame
 //            newFrame(tape, 0, 0, false);
@@ -6587,18 +6588,18 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
 //            // close frame
 //            closeFrame(tape);
 //         }
-//         else if (current == lxExpression) {
-//            generateExpression(tape, current);
-//         }
-//
-//         current = current.nextNode();
-//      }
-//
+         /*else */if (test(current.type, lxObjectMask)) {
+            generateObject(tape, current, scope);
+         }
+
+         current = current.nextNode();
+      }
+
 //      if (target.argument != 0) {
 //         resendResolvedMethod(tape, target.argument, node.argument);
 //      }
       /*else */resend(tape);
-//   }
+   }
 }
 
 void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
@@ -6718,7 +6719,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          generateNewArrOperation(tape, node, scope);
          break;
       case lxResending:
-         generateResendingExpression(tape, node);
+         generateResendingExpression(tape, node, scope);
          break;
 //      case lxDispatching:
 //         generateDispatching(tape, node);
@@ -7023,9 +7024,9 @@ void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::N
 //      else resend(tape);
 //   }
 //}
-//
-//void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node)
-//{
+
+void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
 //   if (node.argument != 0) {
 //      // obsolete : old-style dispatching
 //      pushObject(tape, lxCurrentMessage);
@@ -7033,10 +7034,10 @@ void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::N
 //      doGenericHandler(tape);
 //      popObject(tape, lxCurrentMessage);
 //   }
-//   else doGenericHandler(tape);
-//
-//   generateExpression(tape, node);
-//}
+   /*else */doGenericHandler(tape);
+
+   generateExpression(tape, node, scope);
+}
 
 void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
@@ -7219,15 +7220,15 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
          //               callResolvedMethod(tape, current.findChild(lxTarget).argument, current.argument, false, false);
          //            }
          //            break;
-         //         case lxDispatching:
-         //            exit = true;
-         //            if (!open) {
-                  // open = true;
-         //               exitLabel = false;
-                        //declareIdleMethod(tape, node.argument, sourcePathRef);
-         //            }
-         //            generateDispatching(tape, current);
-         //            break;
+         case lxDispatching:
+            exit = true;
+            if (!open) {
+               open = true;
+               exitLabel = false;
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+            }
+            generateDispatching(tape, current, scope);
+            break;
          case lxMultiDispatching:
          case lxSealedMultiDispatching:
             if (!open) {

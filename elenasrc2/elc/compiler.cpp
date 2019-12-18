@@ -6956,30 +6956,18 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 //   }
 }
 
-//void Compiler :: compileDispatcher(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
-//{
-//   writer.newNode(lxClassMethod, scope.message);
-//
-//   CodeScope codeScope(&scope);
-//
-//   if (isImportRedirect(node)) {
-//      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.message);
-//   }
-//   else {
-//      writer.newNode(lxDispatching);
-//
-//      // if it is generic handler with redirect statement / redirect statement
-//      if (node != lxNone && node.firstChild(lxObjectMask) != lxNone) {
-//         // !! temporally
-//         if (withOpenArgGenerics)
-//            scope.raiseError(errInvalidOperation, node);
-//
-//         if (withGenericMethods) {
-//            writer.appendNode(lxDispatching, encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
-//         }
-//
-//         compileDispatchExpression(writer, node, codeScope);
-//      }
+void Compiler :: compileDispatcher(SNode node, MethodScope& scope, /*bool withGenericMethods, */bool withOpenArgGenerics)
+{
+   node.set(lxClassMethod, scope.message);
+
+   SNode dispatchNode = node.findChild(lxDispatchCode);
+
+   CodeScope codeScope(&scope);
+
+   if (dispatchNode != lxNone) {
+      compileDispatchExpression(dispatchNode, codeScope);
+   }
+   else throw InternalError("Not yet implemented"); // !! temporal
 //      // if it is generic handler without redirect statement
 //      else if (withGenericMethods) {
 //         // !! temporally
@@ -7014,10 +7002,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 //      }
 //
 //      writer.closeNode();
-//   }
-//
-//   writer.closeNode();
-//}
+
+}
 
 void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
 {
@@ -7079,49 +7065,46 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 {
    ExprScope exprScope(&scope);
 
-   ObjectInfo dispatchInfo = mapObject(node, exprScope, EAttr::eaNone);
-   if (dispatchInfo.kind == okInternal) {
-      importCode(node, exprScope, dispatchInfo.param, exprScope.getMessageID());
+   ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
+   if (target.kind == okInternal) {
+      importCode(node, exprScope, target.param, exprScope.getMessageID());
    }
    else {
-//      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//
-//      // try to implement light-weight resend operation
-//      ObjectInfo target;
-//      ref_t targetRef = methodScope->getReturningRef(false);
-//
+      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
+
+      // try to implement light-weight resend operation
+      
+      ref_t targetRef = methodScope->getReturningRef(false);
+
 //      int stackSafeAttrs = 0;
-//      bool directOp = _logic->isCompatible(*scope.moduleScope, targetRef, scope.moduleScope->superReference);
-//      if (isSingleStatement(node)) {
-//         SNode terminal = node.firstChild(lxTerminalMask);
-//
-//         target = scope.mapTerminal(terminal.identifier(), terminal == lxReference, EAttr::eaNone);
-//         if (!directOp) {
-//            // try to find out if direct dispatch is possible
-//            ref_t sourceRef = resolveObjectReference(scope, target, false, false);
-//
-//            _CompilerLogic::ChechMethodInfo methodInfo;
-//            if (_logic->checkMethod(*scope.moduleScope, sourceRef, methodScope->message, methodInfo) != tpUnknown) {
-//               directOp = _logic->isCompatible(*scope.moduleScope, targetRef, methodInfo.outputReference);
-//            }
-//         }
-//      }
-//
-//      // check if direct dispatch can be done
-//      if (directOp) {
-//         // we are lucky and can dispatch the message directly
-//         if (target.kind == okConstantSymbol || target.kind == okField || target.kind == okReadOnlyField) {
-//            writer.newNode(lxResending, methodScope->message);
-//            writer.newNode(lxExpression);
-//            if (target.kind == okField || target.kind == okReadOnlyField) {
-//               writer.appendNode(lxResultField, target.param);
-//            }
-//            else writer.appendNode(lxConstantSymbol, target.param);
-//
-//            writer.closeNode();
-//            writer.closeNode();
-//         }
-//         else {
+      bool directOp = _logic->isCompatible(*scope.moduleScope, targetRef, scope.moduleScope->superReference);
+      if (isSingleStatement(node)) {
+         if (!directOp) {
+            // try to find out if direct dispatch is possible
+            ref_t sourceRef = resolveObjectReference(scope, target, false, false);
+
+            _CompilerLogic::ChechMethodInfo methodInfo;
+            if (_logic->checkMethod(*scope.moduleScope, sourceRef, methodScope->message, methodInfo) != tpUnknown) {
+               directOp = _logic->isCompatible(*scope.moduleScope, targetRef, methodInfo.outputReference);
+            }
+         }
+      }
+
+      // check if direct dispatch can be done
+      if (directOp) {
+         // we are lucky and can dispatch the message directly
+         if (target.kind == okConstantSymbol || target.kind == okField || target.kind == okReadOnlyField) {
+            node.set(lxResending, methodScope->message);
+            if (target.kind == okField || target.kind == okReadOnlyField) {
+               SNode fieldExpr = node.findChild(lxFieldExpression);
+               if (fieldExpr != lxNone) {
+                  fieldExpr.set(lxField, target.param);
+               }
+            }
+         }
+         else {
+            throw InternalError("Not yet implemented"); // !! temporal
+
 //            writer.newNode(lxResending, methodScope->message);
 //            writer.newNode(lxNewFrame);
 //
@@ -7129,9 +7112,9 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 //
 //            writer.closeNode();
 //            writer.closeNode();
-//         }
-//      }
-//      else {
+         }
+      }
+      else {
 //         EAttr mode = EAttr::eaNone;
 //
 //         // bad luck - we have to dispatch and type cast the result
@@ -7149,13 +7132,13 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 //         ObjectInfo retVal = compileMessage(writer, node, scope, target, methodScope->message, mode | HINT_NODEBUGINFO, stackSafeAttrs);
 //
 //         if (!convertObject(writer, scope, targetRef, retVal, mode)) {
-            scope.raiseError(errInvalidOperation, node);
+            throw InternalError("Not yet implemented"); // !! temporal
 //         }
 //
 //         writer.removeBookmark();
 //
 //         writer.closeNode();
-//      }
+      }
    }
 }
 
@@ -7944,17 +7927,17 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
                else validateType(scope, current, methodScope.outputRef, false);
             }
 
-//            // if it is a dispatch handler
-//            if (methodScope.message == scope.moduleScope->dispatch_message) {
-//               //if (test(scope.info.header.flags, elRole))
-//               //   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-//
-//               compileDispatcher(writer, current.findChild(lxDispatchCode), methodScope,
-//                  test(scope.info.header.flags, elWithGenerics),
-//                  test(scope.info.header.flags, elWithVariadics));
-//            }
+            // if it is a dispatch handler
+            if (methodScope.message == scope.moduleScope->dispatch_message) {
+               //if (test(scope.info.header.flags, elRole))
+               //   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
+
+               compileDispatcher(current, methodScope,
+                  /*test(scope.info.header.flags, elWithGenerics),*/
+                  test(scope.info.header.flags, elWithVariadics));
+            }
             // if it is a normal method
-//            else {
+            else {
                declareArgumentList(current, methodScope, false, false);
 
                if (methodScope.abstractMethod) {
@@ -7971,7 +7954,7 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
 //                  compileYieldableMethod(writer, current, methodScope);
 //               }
                else compileMethod(current, methodScope);
-//            }
+            }
 
             break;
          }

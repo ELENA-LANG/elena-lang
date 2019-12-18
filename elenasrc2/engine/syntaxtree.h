@@ -137,6 +137,7 @@ enum LexicalType
    lxElse                     = 0x058161,   // optional arg - reference
    lxLooping                  = 0x058162,
    lxResendExpression         = 0x059170,
+   lxDispatching              = 0x059171,   // dispatching a message, optional arg - message
    lxMultiDispatching         = 0x058180,
    lxSealedMultiDispatching   = 0x058181,
    lxResending                = 0x058190,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
@@ -165,7 +166,6 @@ enum LexicalType
    lxTrying                   = 0x058220,   // try-catch expression
    lxArgArrOp                 = 0x058230,
    lxExternFrame              = 0x058240,
-
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -279,7 +279,6 @@ enum LexicalType
 //   lxByteArrOp                = 0x08C032, // arg - operation id
 //   lxShortArrOp               = 0x08C033, // arg - operation id
 //   lxYieldDispatch            = 0x00C035,
-//   lxDispatching              = 0x00C036,   // dispatching a message, optional arg - message
 //   lxLongOp                   = 0x18C039,   // arg - operation id
 //   lxRealOp                   = 0x18C03A,   // arg - operation id
 //   lxCodeExpression           = 0x00C03D,
@@ -1404,7 +1403,7 @@ void loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode = false);
 
 inline bool isSingleStatement(SyntaxTree::Node expr)
 {
-   return expr.findSubNode(lxMessage, lxAssign, lxOperator) == lxNone;
+   return expr.findSubNodeMask(lxOperatorMask) == lxNone;
 }
 
 typedef SyntaxTree::Writer       SyntaxWriter;
