@@ -6,7 +6,7 @@
 //                                              (C)2005-2019, by Alexei Rakov
 //---------------------------------------------------------------------------
 
-#define FULL_OUTOUT_INFO 1
+//#define FULL_OUTOUT_INFO 1
 
 #include "elena.h"
 // --------------------------------------------------------------------------
@@ -3913,9 +3913,9 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
 ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/)
 {
    EAttr paramMode = /*HINT_PARAMETER*/EAttr::eaNone;
-//   bool externalMode = false;
+   bool externalMode = false;
    if (EAttrs::test(mode, HINT_EXTERNALOP)) {
-//      externalMode = true;
+      externalMode = true;
    }
    else paramMode = paramMode | HINT_NOPRIMITIVES;
 
@@ -3954,6 +3954,9 @@ ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr m
 //         }
          else if (argRef) {
             signatures[signatureLen++] = argRef;
+
+            if (externalMode && !current.existChild(lxType))
+               current.appendNode(lxType, argRef);
          }
          else signatures[signatureLen++] = scope.moduleScope->superReference;
 
@@ -6318,6 +6321,7 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone && current != callNode) {
       SNode objNode = current;
+      ref_t typeRef = current.findChild(lxType).argument;
       if (objNode == lxExpression) {
          objNode = current.findSubNodeMask(lxObjectMask);
       }
@@ -6329,7 +6333,6 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
          current = lxIdle;
       }
       else {
-         ref_t typeRef = 0;
          if (objNode == lxBoxableExpression) {
             typeRef = objNode.findChild(lxType).argument;
 
@@ -6337,7 +6340,7 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
 
             objNode = objNode.findSubNodeMask(lxObjectMask);
          }
-         if (!test(objNode.type, lxOpScopeMask)) {
+         if (objNode.type != lxSymbolReference && (!test(objNode.type, lxOpScopeMask) || objNode == lxFieldExpression)) {
             if (_logic->isCompatible(*scope.moduleScope, V_DWORD, typeRef) && !_logic->isVariable(*scope.moduleScope, typeRef)) {
                   // if it is a integer variable
                   SyntaxTree::copyNode(objNode, callNode

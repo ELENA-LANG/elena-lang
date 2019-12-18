@@ -122,9 +122,7 @@ namespace io
         {
             int len := s.Length;
             
-            // !! temporally - use local variable
-            handle h := handle;        
-            extern KERNEL32.WriteConsoleW(/*handle*/h,s,len,0,0)
+            extern KERNEL32.WriteConsoleW(handle,s,len,0,0)
     
             // !!check the result of the operation
         }
@@ -277,7 +275,7 @@ namespace io
             handle := h
         }
     
-        read(/*ref char retVal*/)
+        read(ref char retVal)
         {
             byte  dump[20];
             int   numberRead := 0;
@@ -289,8 +287,7 @@ namespace io
             {
     //            extern
     //            {
-                    handle h := handle; // !! temporal
-                    extern KERNEL32.ReadConsoleInputW(/*handle*/h, dump, 1, ref numberRead);
+                    extern KERNEL32.ReadConsoleInputW(handle, dump, 1, ref numberRead);
     //            };
     
                 dump.read(0, ref eventType);
@@ -306,7 +303,7 @@ namespace io
                 };
             };
     
-            //dump.read(14, ref retVal)
+            dump.read(14, ref retVal)
         }
     
     ////    read(ref<int> aKey)

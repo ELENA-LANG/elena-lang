@@ -2,7 +2,7 @@
 In development:
 ------         
               dev
-                * uncomment console.readChar method
+                * uncomment ConsoleReader.read method
                 * uncomment console.write<WideString>
                 * Console.reader should implement an interface - IConsoleReader
 

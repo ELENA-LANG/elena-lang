@@ -98,10 +98,9 @@ sealed class Console
     /// Reads the next character from the input stream
     char readChar()
     {
-        char ch := $0;
-        reader.read(/*ref ch*/);
+        reader.read(ref char retVal);
         
-        ^  ch
+        ^ retVal
     }
 
 //    get bool KeyAvailable()
