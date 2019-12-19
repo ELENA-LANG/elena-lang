@@ -167,7 +167,7 @@ public:
 
       return isReadonly(info);
    }
-//   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
+   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
    virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
 
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
@@ -189,7 +189,7 @@ public:
       ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags);
    virtual void injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
 
-//   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
+   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
 
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
    virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);

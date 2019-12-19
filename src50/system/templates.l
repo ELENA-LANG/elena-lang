@@ -1,11 +1,11 @@
-//public interface<T>
-//{
-//    T cast() = new T::
-//    {
-//        embeddable dispatch() => self;
-//    };
-//}
-//
+public interface<T>
+{
+    T cast() = new T::
+    {
+        embeddable dispatch() => self;
+    };
+}
+
 //property prop<__name>
 //{
 //    __name;

@@ -3671,7 +3671,7 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
       if (EAttrs::test(mode, HINT_SILENT)) {
          // do nothing in silent mode
       }
-      else if (result.found/* && !result.withCustomDispatcher*/ && callType == tpUnknown && result.directResolved) {
+      else if (result.found && !result.withCustomDispatcher && callType == tpUnknown && result.directResolved) {
 //         if (EAttrs::test(mode, HINT_ASSIGNING_EXPR)) {
 //            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
 //         }
@@ -4669,14 +4669,14 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
 
       compileParentDeclaration(node.findChild(lxParent), scope, false);
 
-//      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
-//         // COMPILER MAGIC : inject interface implementation
-//         _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef);
-//      }
+      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
+         // COMPILER MAGIC : inject interface implementation
+         _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef);
+      }
 
       declareVMT(node, scope);
 
-      generateClassDeclaration(node, scope/*, ClassType::ctClass*/, true);
+      generateClassDeclaration(node, scope, true);
 
       scope.save();
 //   }
@@ -4685,8 +4685,6 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
 //   if (!test(scope.info.header.flags, elVirtualVMT) && scope.info.staticValues.Count() > 0)
 //      // do not inherit the static fields for the virtual class declaration
 //      copyStaticFieldValues(node, scope);
-//
-//   writer.newNode(lxClass, scope.reference);
 
    // NOTE : ignore auto generated methods - multi methods should be compiled after the class flags are set
    compileVMT(node, scope, true, true);
@@ -7093,25 +7091,33 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
       // check if direct dispatch can be done
       if (directOp) {
          // we are lucky and can dispatch the message directly
-         if (target.kind == okConstantSymbol || target.kind == okField || target.kind == okReadOnlyField) {
-            node.set(lxResending, methodScope->message);
-            if (target.kind == okField || target.kind == okReadOnlyField) {
-               SNode fieldExpr = node.findChild(lxFieldExpression);
-               if (fieldExpr != lxNone) {
-                  fieldExpr.set(lxField, target.param);
+         switch (target.kind) {
+            case okConstantSymbol:
+            case okField:
+            case okReadOnlyField:
+            case okOuterSelf:
+            case okOuter:
+            {
+               node.set(lxResending, methodScope->message);
+               if (target.kind != okConstantSymbol) {
+                  SNode fieldExpr = node.findChild(lxFieldExpression);
+                  if (fieldExpr != lxNone) {
+                     fieldExpr.set(lxField, target.param);
+                  }
                }
+               break;
             }
-         }
-         else {
-            throw InternalError("Not yet implemented"); // !! temporal
+            default:
+               throw InternalError("Not yet implemented"); // !! temporal
 
-//            writer.newNode(lxResending, methodScope->message);
-//            writer.newNode(lxNewFrame);
-//
-//            target = compileExpression(writer, node, scope, 0, EAttr::eaNone);
-//
-//            writer.closeNode();
-//            writer.closeNode();
+   //            writer.newNode(lxResending, methodScope->message);
+   //            writer.newNode(lxNewFrame);
+   //
+   //            target = compileExpression(writer, node, scope, 0, EAttr::eaNone);
+   //
+   //            writer.closeNode();
+   //            writer.closeNode();
+               break;
          }
       }
       else {
@@ -7929,9 +7935,6 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
 
             // if it is a dispatch handler
             if (methodScope.message == scope.moduleScope->dispatch_message) {
-               //if (test(scope.info.header.flags, elRole))
-               //   scope.raiseError(errInvalidRoleDeclr, member.Terminal());
-
                compileDispatcher(current, methodScope,
                   /*test(scope.info.header.flags, elWithGenerics),*/
                   test(scope.info.header.flags, elWithVariadics));
@@ -9133,6 +9136,37 @@ ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
 //      scope.raiseError(errUnknownClass, node);
 
    return parentRef;
+}
+
+void Compiler :: importClassMembers(SNode classNode, SNode importNode, NamespaceScope& scope)
+{
+   SNode nameNode = importNode.firstChild(lxTerminalMask);
+   
+   List<SNode> parameters;
+   IdentifierString templateName;
+   templateName.copy(nameNode.identifier());
+   
+   SNode current = importNode.findChild(lxType);
+   while (current == lxType) {
+      parameters.add(current);
+   
+      current = current.nextNode();
+   }
+   
+   templateName.append('#');
+   templateName.appendInt(parameters.Count());
+   
+   ref_t templateRef = scope.resolveImplicitIdentifier(templateName.c_str(), false, true);
+   if (!templateRef)
+      scope.raiseError(errInvalidSyntax, importNode);
+   
+   SyntaxTree bufferTree;
+   SyntaxWriter bufferWriter(bufferTree);
+   bufferWriter.newNode(lxRoot);
+   scope.moduleScope->importClassTemplate(bufferWriter, templateRef, parameters);
+   bufferWriter.closeNode();
+
+   SyntaxTree::copyNode(bufferTree.readRoot(), classNode);
 }
 
 void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
@@ -10935,6 +10969,14 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
                if (forced || !current.findChild(lxParent)
                   || _logic->doesClassExist(*scope.moduleScope, resolveParentRef(current.findChild(lxParent), scope, true)))
                {
+                  // HOTFIX : import template classes
+                  SNode importNode = current.findChild(lxClassImport);
+                  while (importNode == lxClassImport) {
+                     importClassMembers(current, importNode, scope);
+
+                     importNode = importNode.nextNode();
+                  }
+
                   ClassScope classScope(&scope, current.argument, scope.defaultVisibility);
                   declareClassAttributes(current, classScope, false);
 
@@ -11600,31 +11642,23 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
 ////   SNode codeNode = methNode.appendNode(lxResendExpression, message);
 ////   codeNode.appendNode(lxArgDispatcherAttr);
 ////}
-//
-//void Compiler :: injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument)
-//{
-//   SyntaxTree subTree;
-//   SyntaxWriter subWriter(subTree);
-//   subWriter.newNode(lxRoot);
-//   subWriter.newNode(lxClassMethod, message);
-//   subWriter.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
-//   subWriter.appendNode(lxAttribute, V_EMBEDDABLE);
-//   subWriter.newNode(lxDispatchCode);
-//   subWriter.appendNode(type, argument);
-//   subWriter.closeNode();
-//   subWriter.closeNode();
-//   subWriter.closeNode();
-//
-//   SyntaxTree::copyNode(subTree.readRoot(), classNode);
-//
-////   SNode methNode = classNode.appendNode(lxClassMethod, message);
-////   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
-////   methNode.appendNode(lxAttribute, V_EMBEDDABLE);
-//////   methNode.appendNode(lxAttribute, V_SEALED);
-////
-////   SNode expr = methNode.appendNode(lxDispatchCode);
-////   expr.appendNode(type, argument);
-//}
+
+void Compiler :: injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument)
+{
+   SyntaxTree subTree;
+   SyntaxWriter subWriter(subTree);
+   subWriter.newNode(lxRoot);
+   subWriter.newNode(lxClassMethod, message);
+   subWriter.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
+   subWriter.appendNode(lxAttribute, V_EMBEDDABLE);
+   subWriter.newNode(lxDispatchCode);
+   subWriter.appendNode(type, argument);
+   subWriter.closeNode();
+   subWriter.closeNode();
+   subWriter.closeNode();
+
+   SyntaxTree::copyNode(subTree.readRoot(), classNode);
+}
 
 void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, ref_t message, ident_t variable, ref_t outputRef)
 {

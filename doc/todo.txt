@@ -2,7 +2,8 @@
 In development:
 ------         
               dev
-                * interfaces
+                * import template (multi-inheritance)
+
                 * Console.reader should implement an interface - IConsoleReader
 
                 * int sum
@@ -77,7 +78,7 @@ In development:
                 * reference identifier name?
 
                 * template : inherting another template
-                * template based class, import template (multi-inheritance)
+                * template based class
 
                 * default implcit constructor should be embeddable?
                 * embeddable constructor
@@ -150,7 +151,7 @@ In development:
 
                 * nested class scope
                 * reference message??
-                * templates, template creating, template inheritance, template import
+                * templates, template inheritance
                 * variable : identifier / reference
 
                 * test primitive numeric operation in the symbol
@@ -284,6 +285,7 @@ In development:
                 * test accumulating constants
                 * assigning a big number to short / byte local variable - should be truncated?
                 * boxing ext call result
+                * optimize interface implementation . try to use direct / semi-direct call when possible
 
               dev1
                 * move all description to meta info using descr inline template

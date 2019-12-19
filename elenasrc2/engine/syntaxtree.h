@@ -48,6 +48,7 @@ enum LexicalType
    lxStaticMethod             = 0x00001A,
    lxForward                  = 0x00001B,
    lxClassProperty            = 0x00001C,
+   lxClassImport              = 0x00001D,
 
    // derivation symbols
    lxToken                    = 0x001010,

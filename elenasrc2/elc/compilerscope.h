@@ -98,7 +98,7 @@ struct ModuleScope : _ModuleScope
    virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, int bookmark);
 //   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef);
-//   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
+   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
 
    virtual void saveAttribute(ident_t typeName, ref_t classReference);
 

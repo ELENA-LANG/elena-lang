@@ -792,19 +792,7 @@ bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Modu
       messageName.append("prop#");
    }
 
-   //if (actionRef == DISPATCH_MESSAGE_ID) {
-   //   command.append("#dispatch");
-   //}
-   /////*else */if (actionRef == NEWOBJECT_MESSAGE_ID) {
-   ////   if (test(reference, CONVERSION_MESSAGE)) {
-   ////      command.append("#init");
-   ////   }
-   ////   else command.append("#new");
-   ////}
-   //   if (test(reference, SPECIAL_MESSAGE)) {
-   //      command.append("#conversion&");
-   //   }
-   /*else */if (test(messageRef, STATIC_MESSAGE)) {
+   if (test(messageRef, STATIC_MESSAGE)) {
       messageName.append("#static&");
    }
 

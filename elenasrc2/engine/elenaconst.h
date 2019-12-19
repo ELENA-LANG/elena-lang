@@ -305,13 +305,13 @@ namespace _ELENA_
    constexpr int elExtension           = 0x0000110C;
    constexpr int elMessage             = 0x00200000;
    constexpr int elWithVariadics       = 0x00400000;
-      //   constexpr int elGroup               = 0x00000200;
+   constexpr int elWithCustomDispatcher= 0x00800000;
+         //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elWithGenerics        = 0x00000400;
 //   constexpr int elSubject             = 0x00002000;
 //   constexpr int elSymbol              = 0x00100000;
 //   constexpr int elExtMessage          = 0x00208000;
 //   constexpr int elWithYieldable       = 0x00400000;
-//   constexpr int elWithCustomDispatcher= 0x00800000;
 //////   const int elTapeGroup           = 0x02000200;
 ////   const int elWithMuti            = 0x08000000;
 

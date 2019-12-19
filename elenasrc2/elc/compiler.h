@@ -1063,6 +1063,8 @@ private:
    ObjectInfo compileAltOperator(SNode node, ExprScope& scope, ObjectInfo objectInfo);
 ////   void compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
+   void importClassMembers(SNode classNode, SNode importNode, NamespaceScope& scope);
+
    int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
    int allocateStructure(SNode node, int& size);
    bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
@@ -1261,7 +1263,7 @@ public:
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
-//   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);
+   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);
 //   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex, 
 //      LexicalType objType, int objArg);
 ////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);

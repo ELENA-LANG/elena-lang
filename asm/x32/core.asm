@@ -2068,9 +2068,9 @@ end
 // ; vcallrm
 inline % 0F4h
 
-  mov  edx, __arg1
-  mov  ecx, [ebx - 4]
-  call [ecx + edx * 8 + 4]
+  mov  ecx, __arg1
+  mov  eax, [ebx - 4]
+  call [eax + ecx * 8 + 4]
   
 end
 

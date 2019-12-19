@@ -564,18 +564,18 @@ void ModuleScope :: generateStatementCode(SyntaxWriter& output, ref_t reference,
    SyntaxTree::copyNode(output, templateTree.readRoot());
 }
 
-//void ModuleScope :: importClassTemplate(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
-//{
-//   SyntaxTree templateTree;
-//
-//   TemplateGenerator transformer(templateTree);
-//   SyntaxWriter writer(templateTree);
-//   writer.newNode(lxRoot);
-//   transformer.generateTemplate(writer, *this, reference, parameters, false, true);
-//   writer.closeNode();
-//
-//   transformer.importClass(output, templateTree.readRoot());
-//}
+void ModuleScope :: importClassTemplate(SyntaxWriter& output, ref_t reference, List<SNode>& parameters)
+{
+   SyntaxTree templateTree;
+
+   TemplateGenerator transformer(templateTree);
+   SyntaxWriter writer(templateTree);
+   writer.newNode(lxRoot);
+   transformer.generateTemplate(writer, *this, reference, parameters, false, true);
+   writer.closeNode();
+
+   transformer.importClass(output, templateTree.readRoot());
+}
 
 void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t reference, List<SNode>& parameters, int bookmark)
 {

@@ -355,7 +355,7 @@ struct _ModuleScope
    virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, int bookmark) = 0;
 //   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef) = 0;
-//   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
+   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 
    virtual void declareNamespace(ident_t name) = 0;
    virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
@@ -406,7 +406,7 @@ public:
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef) = 0;
-//   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
+   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode) = 0;
    virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op, 
@@ -598,7 +598,7 @@ public:
    {
       bool  found;
       bool  directResolved;
-//      bool  withCustomDispatcher;
+      bool  withCustomDispatcher;
       bool  stackSafe;
       bool  embeddable;
 //      bool  function;
@@ -612,7 +612,7 @@ public:
          embeddable = found = false;
          outputReference = 0;
          constRef = 0;
-//         withCustomDispatcher = false;
+         withCustomDispatcher = false;
          stackSafe = false;
 //         function = false;
 //         dynamicRequired = false;
@@ -676,7 +676,7 @@ public:
    virtual bool isAbstract(ClassInfo& info) = 0;
    virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
 
-//   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
+   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
@@ -692,7 +692,7 @@ public:
       ref_t elementRef/*, ident_t ns, bool noUnboxing*/) = 0;
 //   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
    virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
-//   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
+   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
 //   virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef) = 0;
 
    // auto generate class flags
