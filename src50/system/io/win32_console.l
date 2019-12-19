@@ -266,7 +266,7 @@ namespace io
 
     // --- ConsoleReader ---
     
-    sealed /*struct*/class ConsoleReader //: Object, interface<IConsoleReader>
+    sealed /*struct*/class ConsoleReader : Object, interface<IConsoleReader>
     {
         handle handle;
         

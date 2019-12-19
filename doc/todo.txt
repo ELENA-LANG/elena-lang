@@ -2,10 +2,6 @@
 In development:
 ------         
               dev
-                * import template (multi-inheritance)
-
-                * Console.reader should implement an interface - IConsoleReader
-
                 * int sum
                 * dispatch expression
 

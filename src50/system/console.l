@@ -1,17 +1,15 @@
-//// --- IConsoleReader ---
-//
-//public interface IConsoleReader
-//{
+// --- IConsoleReader ---
+
+public interface IConsoleReader
+{
 //    abstract string readLine() {}
 //    
 //    abstract wide readWideLine() {}
-//    
-////    abstract read(ref<int> retVal) []
-//    
-//    abstract read(ref char retVal) {}
-//    
+    
+    abstract read(ref char retVal) {}
+    
 //    abstract get bool KeyAvailable() {}
-//}
+}
 
 // --- Console ---
 
@@ -19,7 +17,7 @@
 sealed class Console
 {
     object         writer;
-    /*IConsoleReader*/object reader;
+    IConsoleReader reader;
 
     /// Creates a console
     constructor(reader, writer)
