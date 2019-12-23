@@ -3442,6 +3442,8 @@ inline bool IsArrExprOperator(int operator_id, LexicalType type)
 {
    switch (type) {
       case lxIntArrOp:
+      case lxShortArrOp:
+      case lxByteArrOp:
          return operator_id == REFER_OPERATOR_ID;
       default:
          return false;

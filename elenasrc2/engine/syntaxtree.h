@@ -167,6 +167,8 @@ enum LexicalType
    lxTrying                   = 0x058220,   // try-catch expression
    lxArgArrOp                 = 0x058230,
    lxIntArrOp                 = 0x058231,   // arg - operation id
+   lxShortArrOp               = 0x058232,
+   lxByteArrOp                = 0x058233,
    lxExternFrame              = 0x058240,
 
    // attributes

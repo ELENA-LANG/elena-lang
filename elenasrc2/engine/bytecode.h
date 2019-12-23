@@ -62,7 +62,7 @@ enum ByteCode
    bcLoadEnv         = 0x2A,
 //   bcSelect          = 0x2B,
 //   bcESwap           = 0x2C,
-//   bcBSwap           = 0x2D,
+   bcRead            = 0x2D,
 //   bcCopy            = 0x2E,           
 //   bcXSet            = 0x2F,
 //
@@ -106,12 +106,11 @@ enum ByteCode
 //   bcWRead           = 0x59,
 //   bcWWrite          = 0x5A,
    bcDiv             = 0x5B,
-   bcWrite           = 0x5C,
+   bcXWrite          = 0x5C,
    bcCopyTo          = 0x5D,
    bcShlF            = 0x5E,
    bcShrF            = 0x5F,
 
-   bcRead            = 0x60,
 //   bcBRead           = 0x61,
 //   bcBReadB          = 0x65,
 //   bcRSin            = 0x66,
@@ -314,7 +313,7 @@ enum ByteCode
    bdStructSelf     = 0x8484,
 };
 
-#define MAX_SINGLE_ECODE 0x5C
+#define MAX_SINGLE_ECODE 0x5A
 #define MAX_DOUBLE_ECODE 0xDF
 
 enum PseudoArg

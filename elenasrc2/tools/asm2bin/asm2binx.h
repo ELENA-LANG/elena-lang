@@ -1,1 +1,1 @@
-#define REVISION_NUMBER   23
+#define REVISION_NUMBER   24

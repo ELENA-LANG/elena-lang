@@ -128,7 +128,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   peeksi  2
   load
   peeksi  1
-  read    1
+  read
   and     0FFFFh
   peeksi  3
   save
@@ -154,7 +154,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   peeksi  2
   load
   peeksi  1
-  read    1
+  read
   peeksi  3
   save
 
@@ -179,7 +179,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   peeksi  2
   load
   peeksi  1
-  read    1
+  read
   peeksi  3
   save
 

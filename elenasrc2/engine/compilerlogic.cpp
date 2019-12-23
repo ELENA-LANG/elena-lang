@@ -197,16 +197,16 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
    operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_INT32ARRAY, lxIntArrOp, 0));
 
-//   // array of int16 primitive operations
-//   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, V_INT32));
-//   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
-//   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, 0));
-//
-//   // array of int8 primitive operations
-//   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, V_INT32));
-//   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
-//   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, 0));
-//
+   // array of int16 primitive operations
+   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, V_INT32));
+   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
+   operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_INT16ARRAY, lxShortArrOp, 0));
+
+   // array of int8 primitive operations
+   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT8ARRAY, V_INT32, lxByteArrOp, V_INT32));
+   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
+   operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_INT8ARRAY, lxByteArrOp, 0));
+
 //   // array of object primitive operations
 //   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
 //   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));

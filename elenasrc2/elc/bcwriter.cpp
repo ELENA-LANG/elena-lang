@@ -3465,43 +3465,67 @@ void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, i
 
 void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target, int immValue)
 {
-   if (itemSize == 4) {
-      switch (operator_id) {
-         case REFER_OPERATOR_ID:
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // movn immValue
+         tape.write(bcMovN, immValue);
+         doBinaryArrayOperation(tape, operator_id, itemSize, target);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         if ((itemSize & 3) == 0 && (immValue & 3) == 0) {
+            // copytoai itemSize
+            tape.write(bcCopyToAI, immValue >> 2, itemSize >> 2);
+         }
+         else {
             // movn immValue
             tape.write(bcMovN, immValue);
             doBinaryArrayOperation(tape, operator_id, itemSize, target);
-            break;
-         case SET_REFER_OPERATOR_ID:
-            if ((itemSize & 3) == 0 && (immValue & 3) == 0) {
-               // copytoai itemSize
-               tape.write(bcCopyToAI, immValue >> 2, itemSize >> 2);
-            }
-            else {
-               // movn immValue
-               tape.write(bcMovN, immValue);
-               doBinaryArrayOperation(tape, operator_id, itemSize, target);
-            }
-            break;
-      }
+         }
+         break;
    }
-   else throw InternalError("Not yet implemented"); // !! temporal 
 }
 
 void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target)
 {
    switch (operator_id) {
       case REFER_OPERATOR_ID:
-         // NOTE : operations with the stack should always be aligned
-         tape.write(bcReadToF, target, align(itemSize, 4) >> 2);
+         switch (itemSize) {
+            case 1:
+               // read
+               // and 0FFh
+               // savef target
+               tape.write(bcRead);
+               tape.write(bcAnd, 0xFF);
+               tape.write(bcSaveF, target);
+               break;
+            case 2:
+               // read
+               // and 0FFFFh
+               // savef target
+               tape.write(bcRead);
+               tape.write(bcAnd, 0xFFFF);
+               tape.write(bcSaveF, target);
+               break;
+            case 4:
+               // read itemSize
+               // savef target
+               tape.write(bcRead);
+               tape.write(bcSaveF, target);
+               break;
+            default:
+               // NOTE : operations with the stack should always be aligned for efficiency
+               // readtof target itemSize / 4
+               tape.write(bcReadToF, target, align(itemSize, 4) >> 2);
+               break;
+         }
          break;
       case SET_REFER_OPERATOR_ID:
          if ((itemSize & 3) == 0) {
             // copyto itemSize
             tape.write(bcCopyTo, itemSize);
          }
-         // write itemSize
-         else tape.write(bcWrite, itemSize);
+         // xwrite itemSize
+         else tape.write(bcXWrite, itemSize);
          break;
       case LEN_OPERATOR_ID:
          // len
@@ -4181,18 +4205,12 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          case lxIntArrOp:
             doBinaryArrayOperation(tape, node.argument, 4, argument, immValue * 4);
             break;
-         //      case lxByteArrOp:
-         //         doByteArrayOperation(tape, node.argument);
-         //
-         //         if (node.argument == REFER_OPERATOR_ID)
-         //            assignBaseTo(tape, lxResult);
-         //         break;
-         //      case lxShortArrOp:
-         //         doShortArrayOperation(tape, node.argument);
-         //
-         //         if (node.argument == REFER_OPERATOR_ID)
-         //            assignBaseTo(tape, lxResult);
-         //         break;
+         case lxByteArrOp:
+            doBinaryArrayOperation(tape, node.argument, 1, argument, immValue);
+            break;
+         case lxShortArrOp:
+            doBinaryArrayOperation(tape, node.argument, 2, argument, immValue * 2);
+            break;
          //      case lxBinArrOp:
          //         doBinaryArrayOperation(tape, node.argument, node.findChild(lxSize).argument);
          //
@@ -4216,18 +4234,16 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
             }
             doBinaryArrayOperation(tape, node.argument, 4, argument);
             break;
-         //      case lxByteArrOp:
-         //         doByteArrayOperation(tape, node.argument);
-         //
-         //         if (node.argument == REFER_OPERATOR_ID)
-         //            assignBaseTo(tape, lxResult);
-         //         break;
-         //      case lxShortArrOp:
-         //         doShortArrayOperation(tape, node.argument);
-         //
-         //         if (node.argument == REFER_OPERATOR_ID)
-         //            assignBaseTo(tape, lxResult);
-         //         break;
+         case lxByteArrOp:
+            doBinaryArrayOperation(tape, node.argument, 1, argument);
+            break;
+         case lxShortArrOp:
+            if (!lenMode) {
+               // shl 1
+               tape.write(bcShl, 1);
+            }
+            doBinaryArrayOperation(tape, node.argument, 2, argument);
+            break;
          //      case lxBinArrOp:
          //         doBinaryArrayOperation(tape, node.argument, node.findChild(lxSize).argument);
          //
@@ -6535,8 +6551,8 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          generateBoolOperation(tape, node, scope, mode & ~STACKOP_MODE);
          break;
       case lxIntArrOp:
-//      case lxByteArrOp:
-//      case lxShortArrOp:
+      case lxByteArrOp:
+      case lxShortArrOp:
 //      case lxArrOp:
 //      case lxBinArrOp:
       case lxArgArrOp:

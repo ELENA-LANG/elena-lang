@@ -91,13 +91,13 @@ ELENA byte codes (or ecodes)
 
  len                        - [acc].Length >> index ; where acc is a object
 
- read n                     - acc[index * n] >> index
+ read                       - acc[index] >> index
 
  readtof i, n               - copy acc[index] >> fp+i, n*4-bytes
-                                                                                                               
- write n                    - copy [sp] >> acc[index], n-bytes  
  
  xsavef i,n                 - fp:i <= n
+                                                                                                               
+ xwrite n                   - copy [sp] >> acc[index], n-bytes  
 
 
  Arithmeric operations:
