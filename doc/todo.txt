@@ -2,10 +2,9 @@
 In development:
 ------         
               dev
-                * operations with arrays : set / get
-
                 * int sum
                 * dispatch expression
+                * calling internal constructor (String and WideString)
 
                 * support vm client
                 * vm hello world sample
@@ -240,6 +239,7 @@ In development:
                 * run-time implicit constructor resolving, should it be allowed? auto-generated multi-constructors
                   hide the error if there is no appropriate handler for the given argument list 
                 * step over external / message / loop / if call?
+                * call inernal function directly (without intermediate step in system'routines) when it is possible
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)

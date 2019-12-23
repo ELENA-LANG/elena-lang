@@ -795,7 +795,11 @@ public sealed const struct String : BaseValue
 //    /// Creates the empty literal
 //    static string Default
 //        = emptyString;
-        
+
+    /// Creates the empty literal
+    const static string MinValue
+        = "";
+                
     /// Creates the literal string with specified length        
     constructor allocate(int size)
         = new byte[](size + 1);
@@ -819,7 +823,7 @@ public sealed const struct String : BaseValue
 //    constructor new(int index, int length, char[] array)
 //        => system'core_routines'__literal;
 
-    internal constructor fromByteArray(int index, int size, byte[] buffer)
+    /*internal*/ constructor fromByteArray(int index, int size, byte[] buffer)
         <= allocate(size)
     {
         intern system'core_routines'__literal.copy(self, index, size, buffer)
@@ -1044,7 +1048,7 @@ public sealed const struct WideString : BaseValue
 //        = emptyWideString;
 
     /// Creates the empty literal
-    const static MinValue
+    const static wide MinValue
         = ""w;
         
     /// Creates the literal string with specified length
@@ -1076,9 +1080,41 @@ public sealed const struct WideString : BaseValue
         intern system'core_routines'__wide.copy(self, index, size, array)
     }
 
-//    /// Converts to UTF-8 literal
-//    string cast() = stringConvertor.convert(self);
-//
+    /// Converts to UTF-16 literal
+    string cast()
+    {
+        int  i := 0;
+        int  m := 0;
+        int  page := 0;
+        int  l := self.Length;
+        byte buffer[256];
+        if (l < 128)
+        {
+            intern system'core_routines'__literalconvertor.convert(self, buffer, ref m);
+            
+            ^ String.fromByteArray(0, m, buffer)
+        };
+
+        string retVal := String.MinValue;
+        while(l > 0)
+        {
+            page := l;
+            if (page > 127)
+            {
+               page := 127
+            };
+            
+            intern system'core_routines'__literalconvertor.convert(self.Substring(i, page), buffer, ref m);
+            
+            retVal := retVal.add(String.fromByteArray(0, m, buffer));
+            
+            i := i + page;
+            l := l - page
+        };
+        
+        ^ retVal
+    }
+
 //    bool equal(o)
 //    {
 //        var s := cast wide(o) ?? nil;
@@ -1130,11 +1166,24 @@ public sealed const struct WideString : BaseValue
 ////    /// Concatinates the values
 ////    wide add(BaseVariable v)
 ////        <= add(v value).
-//    
-//    /// Concatinates the values
-//    wide add(wide s)
-//        => system'core_routines'__wide;
-//
+    
+    /// Concatinates the values
+    wide add(wide s)
+    {
+        int len1 := self.Length;
+        int len2 := s.Length;
+        
+        int newlen := len1 + len2;
+        
+        auto r := WideString.allocate(newlen);
+        
+        intern system'core_routines'__wide.concat(r, self, 0, len1);
+        
+        intern system'core_routines'__wide.concat(r, s, len1, len2);
+        
+        ^ r
+    }
+
 //    /// Concatinates the values
 //    wide add(char ch)
 //        = self.add(wideConvertor.convert(ch));
@@ -1201,9 +1250,15 @@ public sealed const struct WideString : BaseValue
 //    wide delete(int index, int length)
 //        => system'core_routines'__wide;
 //
-//    /// Returns the substring
-//    wide Substring(int n, int length)
-//        => system'core_routines'__wide;
+    /// Returns the substring
+    wide Substring(int index, int length)
+    {
+        auto subs := WideString.allocate(length);
+        
+        intern system'core_routines'__wide.copy(subs, index, length, self);
+        
+        ^ subs
+    }
 
     /// Reads the literal length into an output parameter
     int Length

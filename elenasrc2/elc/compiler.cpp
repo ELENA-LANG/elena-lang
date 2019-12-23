@@ -6368,7 +6368,8 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
       }
       else {
          if (objNode == lxBoxableExpression) {
-            typeRef = objNode.findChild(lxType).argument;
+            if (!typeRef)
+               typeRef = objNode.findChild(lxType).argument;
 
             analizeOperand(objNode, scope, false);
 

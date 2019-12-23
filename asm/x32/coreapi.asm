@@ -110,6 +110,121 @@ labEnd:
     
 end
 
+
+// strtowstr(target,source)
+procedure coreapi'wstrtostr
+
+  mov  eax, [esp+8]
+  mov  edi, [esp+4]
+  mov  esi, [eax - elSizeOffset]
+  and  esi, 0FFFFFh
+  sub  esi, 2
+  jz   labEnd
+
+labNext:  
+  mov  ebx, [eax]
+  and  ebx, 0FFFFh
+  cmp  ebx, 0D800h
+  jb   short lab1
+
+  mov  ecx, ebx
+  shl  ecx, 10
+  lea  eax, [eax + 2]
+  sub  esi, 2
+  mov  ebx, dword ptr [eax]
+  and  ebx, 0FFFFh
+  add  ebx, ecx
+  sub  ebx, 35FDC00h
+
+lab1:
+  mov  ecx, ebx
+
+  cmp  ebx, 00000080h
+  jl   short labs1
+  cmp  ebx, 0800h
+  jl   short labs2
+  cmp  ebx, 10000h
+  jl   short labs3
+  
+  mov  edx, ebx
+  shr  edx, 18
+  add  edx, 0F0h 
+  mov  byte ptr [edi], dl
+  add  edi, 1
+   
+  mov  edx, ecx
+  shr  edx, 12
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+   
+  mov  edx, ecx
+  shr  edx, 6
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+   
+  mov  edx, ecx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  jmp  short labSave
+
+labs2:
+  mov  edx, ecx
+  shr  edx, 6
+  add  edx, 0C0h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  
+  mov  edx, ecx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  jmp  short labSave
+
+labs3:
+  mov  edx, ecx
+  shr  edx, 12
+  add  edx, 0E0h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+
+  mov  edx, ecx
+  shr  edx, 6
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  
+  mov  edx, ecx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  jmp  short labSave
+  
+labs1:
+  mov  byte ptr [edi], bl
+  add  edi, 1
+  
+labSave:  
+  lea  eax, [eax + 2]
+  sub  esi, 2
+  jnz  labNext
+
+labEnd:
+  mov  ebx, [esp+4]
+  mov  edx, edi
+  sub  edx, ebx
+  ret
+
+end
+
 // wsubcopyz(target,index,size,arr)
 procedure coreapi'wsubcopyz
 
@@ -158,6 +273,32 @@ labNext:
   mov  byte ptr [esi], cl
 
 labEnd:
+  ret
+
+end
+
+// winsert(target,source,index,len)
+procedure coreapi'winsert
+
+  mov  edx, [esp+12]
+  mov  eax, [esp+16]
+  mov  edi, [esp+4]
+  mov  ecx, [eax]
+  mov  esi, [esp+8]
+  mov  ebx, [edx]
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, [esi]
+  mov  word ptr [edi + ebx*2], dx
+  add  ebx, 1
+  lea  esi, [esi + 2]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  mov  ebx, edi
   ret
 
 end

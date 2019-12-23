@@ -63,6 +63,22 @@ procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$system
 
 end
 
+
+procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$system@WideString[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : wsubcopyz
+  
+  peeksi 0
+  freei  4
+  quitn  4
+
+end
+
 procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$@system@Array#1&system@ShortNumber[4]"
 
   pushsi 4
@@ -90,11 +106,38 @@ procedure __wide."readLengthTo$system@WideString$@system@ref#1&system@IntNumber[
 
 end
 
+procedure __wide."concat$system@WideString$system@WideString$system@IntNumber$system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : winsert
+  
+  peeksi 0
+  freei  4
+  quitn  4
+
+end                                                
+
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 
   pushsi 1
   pushsi 3
   callextr api : strtowstr
+  freei 2
+  peeksi 3
+  save
+  quitn 3
+
+end
+
+procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"
+
+  pushsi 1
+  pushsi 3
+  callextr api : wstrtostr
   freei 2
   peeksi 3
   save
