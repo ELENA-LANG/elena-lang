@@ -7107,6 +7107,9 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
       importCode(node, exprScope, target.param, exprScope.getMessageID());
    }
    else {
+      node.injectAndReplaceNode(lxDispatching);
+      node = node.firstChild();
+
       MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
 
       // try to implement light-weight resend operation

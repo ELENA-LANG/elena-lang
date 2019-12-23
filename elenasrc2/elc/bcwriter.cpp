@@ -7104,7 +7104,6 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
                declareIdleMethod(tape, node.argument, sourcePathRef);
             }
             importCode(tape, *imports.get(current.argument - 1), true);
-            endIdleMethod(tape);
             exit = true; // NOTE : the imported code should already contain an exit command
             break;
          case lxNewFrame:
@@ -7154,6 +7153,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
 
       endMethod(tape, argCount, reserved, withNewFrame);
    }
+   else endIdleMethod(tape);
 }
 
 //////void ByteCodeWriter :: generateTemplateMethods(CommandTape& tape, SNode root)

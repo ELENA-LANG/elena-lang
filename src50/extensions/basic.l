@@ -1,18 +1,18 @@
 
-//// --- variables ---
-//
-//public sealed class Integer : BaseVariable, ref<int>
-//{
-//    constructor()
-//    {
-//        theValue := 0
-//    }
-//    
-//    constructor(int n) 
-//    {
-//        theValue := n
-//    }
-//    
+// --- variables ---
+
+public sealed class Integer : BaseVariable, ref<int>
+{
+    constructor()
+    {
+        value := 0
+    }
+    
+    constructor(int n) 
+    {
+        value := n
+    }
+    
 //    constructor new()
 //        <= ();
 //    
@@ -40,9 +40,9 @@
 //        
 //        theValue := v
 //    }
-//    
-//    dispatch() => theValue;
-//}
+    
+    dispatch() => value;
+}
 
 //public sealed class Real : BaseVariable, ref<real>
 //{
