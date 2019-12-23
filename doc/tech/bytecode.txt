@@ -28,6 +28,8 @@ ELENA byte codes (or ecodes)
  
  load                       - int[acc] => index
 
+ loadfi i                   - [fp+i] => index
+
  movm m                     - m => index
 
  movn n                     - n => index

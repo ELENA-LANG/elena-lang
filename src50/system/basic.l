@@ -1,28 +1,28 @@
-//// base variable mixin
-//public abstract class BaseVariable
-//{
-//    // should be overridden
-//    abstract get Value() {}
-//    
+// base variable mixin
+public abstract class BaseVariable
+{
+    // should be overridden
+    abstract get Value() {}
+    
 //    abstract set Value(o) {}
-//}
+}
 
-public sealed ref<T> //: BaseVariable
+public sealed ref<T> : BaseVariable
 {
     embeddable T value;
     
-//    constructor(T val)
-//    {
-//        theValue := val
-//    }
-//    
-//    T cast() = theValue;
-//    
-//    get T Value()
-//    {
-//         ^ theValue
-//    }
-//    
+    constructor(T val)
+    {
+        value := val
+    }
+    
+    T cast() = value;
+    
+    get T Value()
+    {
+         ^ value
+    }
+    
 //    set Value(T val)
 //    {
 //        theValue := val

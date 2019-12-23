@@ -529,11 +529,14 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated/*
    }      
 }
 
-//void ByteCodeWriter :: closeFrame(CommandTape& tape)
-//{
-//   // close
-//   tape.write(bcClose);
-//}
+void ByteCodeWriter :: closeFrame(CommandTape& tape, int reserved)
+{
+   if (reserved > 0) {
+      tape.write(bcRestore, 2 + reserved);
+   }
+   // close
+   tape.write(bcClose);
+}
 
 void ByteCodeWriter :: newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference)
 {
@@ -2027,7 +2030,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //case bcCopyF:
          //case bcBCopyF:
          //case bcBLoadFI:
-         //case bcDLoadFI:
+         case bcLoadFI:
          case bcSaveF:
          //case bcELoadFI:
          //case bcESaveFI:
@@ -5581,14 +5584,16 @@ SyntaxTree::Node ByteCodeWriter :: loadFieldExpression(CommandTape& tape, Syntax
    while (current != lxNone) {
       SNode objNode = current;
       if (objNode == lxExpression)
-         objNode = current.firstChild(lxObjectMask);
+         objNode = current.findSubNodeMask(lxObjectMask);
 
-      if (!objNode.compare(lxField, lxFieldAddress)) {
+      SNode nextNode = current.nextNode(lxObjectMask);
+
+      if (nextNode != lxNone) {
          loadObject(tape, current, scope);
       }
       else return objNode;
 
-      current = current.nextNode(lxObjectMask);
+      current = nextNode;
    }
 
    return current;
@@ -5660,15 +5665,17 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
       copyToLocalAddress(tape, node.argument, dstObj.argument);
    }
    else if (dstObj == lxFieldExpression) {
-      generateObject(tape, source, scope, STACKOP_MODE);
-
       SNode fieldNode = loadFieldExpression(tape, dstObj, scope);
       if (fieldNode == lxFieldAddress) {
+         generateObject(tape, source, scope, STACKOP_MODE);
          copyToFieldAddress(tape, node.argument, fieldNode.argument);
+         releaseStack(tape);
+      }
+      else if (fieldNode == lxSelfLocal) {
+         loadObject(tape, source, scope);
+         copyToLocal(tape, node.argument, fieldNode.argument);
       }
       else throw InternalError("not yet implemente"); // !! temporal
-
-      releaseStack(tape);
    }
    else throw InternalError("not yet implemente"); // !! temporal
 }
@@ -6416,22 +6423,22 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
    else {
       SNode current = node.firstChild();
       while (current != lxNone) {
-//         if (current == lxNewFrame) {
-//            // new frame
-//            newFrame(tape, 0, 0, false);
-//
-//            // save message
-//            pushObject(tape, lxCurrentMessage);
-//
-//            generateExpression(tape, current);
-//
-//            // restore message
-//            popObject(tape, lxCurrentMessage);
-//
-//            // close frame
-//            closeFrame(tape);
-//         }
-         /*else */if (test(current.type, lxObjectMask)) {
+         if (current == lxNewFrame) {
+            // new frame
+            newFrame(tape, 1, 0/*, false*/);
+
+            // save message
+            tape.write(bcSaveF, -2);
+
+            generateExpression(tape, current, scope);
+
+            // restore message
+            tape.write(bcLoadFI, -2);
+
+            // close frame
+            closeFrame(tape, 1);
+         }
+         else if (test(current.type, lxObjectMask)) {
             generateObject(tape, current, scope);
          }
 

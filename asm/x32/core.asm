@@ -1290,6 +1290,13 @@ inline % 0B4h
 
 end
 
+// ; loadfi
+inline % 0B7h
+
+  mov  edx, [ebp + __arg1]
+
+end
+
 // ; savef
 inline % 0B9h
 

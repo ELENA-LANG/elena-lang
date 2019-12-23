@@ -537,7 +537,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPushFI:
       case bcPeekFI:
       case bcStoreFI:
-//      case bcDLoadFI:
+      case bcLoadFI:
       case bcMovF:
       case bcAddF:
       case bcSubF:

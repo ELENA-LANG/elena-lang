@@ -240,6 +240,7 @@ In development:
                   hide the error if there is no appropriate handler for the given argument list 
                 * step over external / message / loop / if call?
                 * call inernal function directly (without intermediate step in system'routines) when it is possible
+                * uncomment cleanUp code
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)

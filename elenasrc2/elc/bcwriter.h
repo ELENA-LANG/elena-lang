@@ -268,8 +268,8 @@ class ByteCodeWriter
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
-//   void closeFrame(CommandTape& tape);
-//
+   void closeFrame(CommandTape& tape, int reserved);
+
 //   void assignBaseTo(CommandTape& tape, LexicalType target);
 //
 //   void assignInt(CommandTape& tape, LexicalType target, int offset, bool& accRequired);

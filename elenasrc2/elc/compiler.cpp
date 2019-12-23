@@ -7147,16 +7147,16 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
                break;
             }
             default:
-               throw InternalError("Not yet implemented"); // !! temporal
+            {
+               node.set(lxResending, methodScope->message);
+               SNode frameNode = node.injectNode(lxNewFrame);
+               SNode exprNode = frameNode.injectNode(lxExpression);
 
-   //            writer.newNode(lxResending, methodScope->message);
-   //            writer.newNode(lxNewFrame);
-   //
-   //            target = compileExpression(writer, node, scope, 0, EAttr::eaNone);
-   //
-   //            writer.closeNode();
-   //            writer.closeNode();
+               target = compileExpression(exprNode, exprScope, target, 0, EAttr::eaNone);
+               analizeOperands(exprNode, exprScope, 0);
+
                break;
+            }
          }
       }
       else {

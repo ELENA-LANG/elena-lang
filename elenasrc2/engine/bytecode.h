@@ -192,7 +192,7 @@ enum ByteCode
    bcPushAI          = 0xB4,
 //   bcESaveFI         = 0xB5,
    bcPushFI          = 0xB6,
-//   bcDLoadFI         = 0xB7,
+   bcLoadFI          = 0xB7,
    //bcLoadSI          = 0xB8,
    bcSaveF           = 0xB9,
    bcPushSI          = 0xBA,
