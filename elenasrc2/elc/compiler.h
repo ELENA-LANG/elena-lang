@@ -1011,7 +1011,8 @@ private:
 //   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, EAttr mode);
 
-   ObjectInfo compileOperator(SNode& node, ExprScope& scope, int operator_id, int paramCount, ObjectInfo loperand, ObjectInfo roperand, ObjectInfo roperand2);
+   ObjectInfo compileOperator(SNode& node, ExprScope& scope, int operator_id, int paramCount, ObjectInfo loperand, 
+      ObjectInfo roperand, ObjectInfo roperand2, EAttr mode);
    ObjectInfo compileOperator(SNode& node, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
    ObjectInfo compileOperator(SNode& node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileIsNilOperator(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand);
@@ -1057,7 +1058,8 @@ private:
    void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode);
    void compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope);
 
-   ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/ EAttr mode);
+   ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/
+      EAttr mode, bool propMode);
 
    ObjectInfo compileCatchOperator(SNode roperand, ExprScope& scope, ref_t operator_id);
    ObjectInfo compileAltOperator(SNode node, ExprScope& scope, ObjectInfo objectInfo);

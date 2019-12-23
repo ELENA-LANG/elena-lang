@@ -166,6 +166,7 @@ enum LexicalType
    lxExtIntArg                = 0x018211,
    lxTrying                   = 0x058220,   // try-catch expression
    lxArgArrOp                 = 0x058230,
+   lxIntArrOp                 = 0x058231,   // arg - operation id
    lxExternFrame              = 0x058240,
 
    // attributes
@@ -276,7 +277,6 @@ enum LexicalType
 //   lxGreaterN                 = 0x00C02E,   // arg - value
 //   lxNotGreaterN              = 0x00C02F,   // arg - value
 //
-//   lxIntArrOp                 = 0x08C030,   // arg - operation id
 //   lxByteArrOp                = 0x08C032, // arg - operation id
 //   lxShortArrOp               = 0x08C033, // arg - operation id
 //   lxYieldDispatch            = 0x00C035,

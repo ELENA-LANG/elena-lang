@@ -105,8 +105,9 @@ enum ByteCode
 //   bcNShiftR         = 0x54,
 //   bcWRead           = 0x59,
 //   bcWWrite          = 0x5A,
-//   bcNRead           = 0x5B,
-//   bcNWrite          = 0x5C,
+   bcDiv             = 0x5B,
+   bcWrite           = 0x5C,
+   bcCopyTo          = 0x5D,
    bcShlF            = 0x5E,
    bcShrF            = 0x5F,
 
@@ -158,7 +159,7 @@ enum ByteCode
    bcPeekFI          = 0x94,
    bcPeekSI          = 0x95,
 //   bcIfHeap          = 0x96,
-   bcXSet            = 0x97,
+   bcXSetI           = 0x97,
    bcOpen            = 0x98,
    bcQuitN           = 0x99,
    bcCreate          = 0x9A,
@@ -194,7 +195,7 @@ enum ByteCode
    bcPushFI          = 0xB6,
 //   bcDLoadFI         = 0xB7,
    //bcLoadSI          = 0xB8,
-   bcSaveFI          = 0xB9,
+   bcSaveF           = 0xB9,
    bcPushSI          = 0xBA,
    bcSaveSI          = 0xBB,
 //   bcELoadSI         = 0xBC,
@@ -202,7 +203,7 @@ enum ByteCode
    bcPushS           = 0xBE,
    bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
 
-   bcSet             = 0xC0,
+   bcSetI            = 0xC0,
 //   bcNWriteI         = 0xC1,
 //   bcASwapSI         = 0xC2,
    bcStoreSI         = 0xC3,
@@ -234,16 +235,12 @@ enum ByteCode
 
 
 //   bcMulN            = 0xDA,
-//   bcDivN            = 0xDB,
 //   bcBLoadR          = 0xDC,
 //   bcInit            = 0xDD,
 //   bcEqualR          = 0xDE,
 //   bcBLoadAI         = 0xDF,
-//
-//   bcEOrN            = 0xE0,
-//   bcNewI            = 0xE1,
-//   bcACopyAI         = 0xE2,
 
+   bcReadToF         = 0xE0,
    bcCreateN         = 0xE1,
    bcXSetFI          = 0xE2,
    bcCopyToAI        = 0xE3,
@@ -258,7 +255,7 @@ enum ByteCode
 //   bcNotLessN        = 0xEC,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcSubFI           = 0xED,
 //   bcAddFI           = 0xEE,
-   bcXSaveFI         = 0xEF,
+   bcXSaveF          = 0xEF,
 
    bcNew             = 0xF0,
    bcNewN            = 0xF1,
@@ -318,7 +315,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x5C
-#define MAX_DOUBLE_ECODE 0xE0
+#define MAX_DOUBLE_ECODE 0xDF
 
 enum PseudoArg
 {

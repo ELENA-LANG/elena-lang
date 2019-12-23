@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/66;
+const int gcCommandNumber = /*160*/70;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -72,13 +72,13 @@ const int gcCommands[gcCommandNumber] =
    bcMTRedirect, bcJumpVI, bcXMTRedirect, bcRestore, bcPushF,
    bcCopyF, bcCopyFI, bcAddF, bcCopyToF, bcCopyToFI,
    bcSubF, bcMulF, bcDivF, bcPushAI, bcGetI,
-   bcSet, bcCopyToAI, bcCreate, bcFillR, bcXSet,
-   bcXSetFI, bcClass, bcXSaveFI, bcLen, bcSave,
+   bcSetI, bcCopyToAI, bcCreate, bcFillR, bcXSetI,
+   bcXSetFI, bcClass, bcXSaveF, bcLen, bcSave,
    bcSelect, bcEqual, bcLess, bcSNop, bcCreateN,
-   bcSaveFI, bcTryLock, bcLoad, bcHook, bcUnhook,
+   bcSaveF, bcTryLock, bcLoad, bcHook, bcUnhook,
    bcFlag, bcFreeLock, bcGet, bcShlF, bcShrF,
    bcMovN, bcCloneF, bcInc, bcRead, bcExclude,
-   bcInclude,
+   bcInclude, bcCopyTo, bcReadToF, bcWrite, bcDiv,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -90,7 +90,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcLen, bcIfHeap, bcNCreate,
 //   bcBLoadFI, bcAXSaveBI, bcBLoadSI, bcBWriteB,
 //   bcNCopy, bcNAdd, bcBSwapSI,
-//   bcNSub, bcNMul, bcNDiv, bcNLoadE, bcDivN,
+//   bcNSub, bcNMul, bcNDiv, bcNLoadE,
 //   bcWLen, bcWCreate, bcCopy,
 //   bcBCreate, bcBWrite, bcXLen,
 //   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI,
@@ -114,14 +114,16 @@ const int gcCommands[gcCommandNumber] =
 //   bcEOrN, bcNewI, bcACopyAI
 };
 
-const int gcCommandExNumber = 14;
+const int gcCommandExNumber = 22;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
    bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
    bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
    bcCreateN + 0x100, bcCreateN + 0x200, bcCreateN + 0x300, bcCreateN + 0x400,
-   bcRead + 0x100, bcRead + 0x200, bcRead + 0x300, bcRead + 0x400
+   bcRead + 0x100, bcRead + 0x200, bcRead + 0x300, bcRead + 0x400,
+   bcWrite + 0x100, bcWrite + 0x200, bcWrite + 0x300, bcWrite + 0x400,
+   bcReadToF + 0x100, bcReadToF + 0x200, bcReadToF + 0x300, bcReadToF + 0x400,
 };
 
 // command table
@@ -143,7 +145,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadFPOp,
+   &compileNop, &compileNop, &compileNop, &loadNOp, &loadNOpX, &loadNOp, &loadFPOp, &loadFPOp,
 
    &loadNOpX, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -169,7 +171,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileDShiftN, &compileDAndN, &loadNOp, &compileNop,
    &compileNop, &compileDShiftN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileDynamicCreateN, & loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
+   &loadFPIndexOpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileLessN,
@@ -456,6 +458,70 @@ void _ELENA_::loadFPNOp(int opcode, x86JITScope& scope)
       count--;
    }
    scope.code->seekEOF();
+}
+
+void _ELENA_::loadFPIndexOpX(int opcode, x86JITScope& scope, int prefix)
+{
+   char* code = nullptr;
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      if (gcCommandExs[i] == opcode + prefix) {
+         code = (char*)scope.compiler->_inlineExs[i];
+         break;
+      }
+   }
+
+   int arg2 = scope.tape->getDWord();
+
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(-(scope.argument << 2));
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2 << 2);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadFPIndexOpX(int opcode, x86JITScope& scope)
+{
+   pos_t pos = scope.tape->Position();
+   int arg2 = scope.tape->getDWord();
+   scope.tape->seek(pos);
+
+   switch (arg2) {
+      case 1:
+         loadFPIndexOpX(opcode, scope, 0x100);
+         break;
+      case 2:
+         loadFPIndexOpX(opcode, scope, 0x200);
+         break;
+      case 4:
+         loadFPIndexOpX(opcode, scope, 0x300);
+         break;
+      case 8:
+         loadFPIndexOpX(opcode, scope, 0x400);
+         break;
+      default:
+         loadFPIndexOp(opcode, scope);
+         break;
+   }
+
 }
 
 void _ELENA_::loadFPIndexOp(int opcode, x86JITScope& scope)
@@ -1173,21 +1239,21 @@ void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
 void _ELENA_::loadNOpX(int opcode, x86JITScope& scope)
 {
    switch (scope.argument) {
-   case 1:
-      loadNOpX(opcode, scope, 0x100);
-      break;
-   case 2:
-      loadNOpX(opcode, scope, 0x200);
-      break;
-   case 4:
-      loadNOpX(opcode, scope, 0x300);
-      break;
-   case 8:
-      loadNOpX(opcode, scope, 0x400);
-      break;
-   default:
-      loadNOp(opcode, scope);
-      break;
+      case 1:
+         loadNOpX(opcode, scope, 0x100);
+         break;
+      case 2:
+         loadNOpX(opcode, scope, 0x200);
+         break;
+      case 4:
+         loadNOpX(opcode, scope, 0x300);
+         break;
+      case 8:
+         loadNOpX(opcode, scope, 0x400);
+         break;
+      default:
+         loadNOp(opcode, scope);
+         break;
    }
 }
 

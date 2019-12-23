@@ -534,7 +534,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcMulN:
          //case bcDLoadFI:
          //case bcDLoadSI:
-         case bcSaveFI:
+         case bcSaveF:
          case bcSaveSI:
          case bcRestore:
          case bcReserve:
@@ -616,7 +616,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcSelect:
             compileRRCommand(opcode, token, writer, binary);
             break;
-         case bcXSaveFI:
+         case bcXSaveF:
          //case bcAddFI:
          case bcCopyFI:
          case bcCopyF:

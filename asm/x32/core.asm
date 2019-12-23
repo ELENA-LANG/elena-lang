@@ -1057,6 +1057,79 @@ inline % 48h
 
 end
 
+// ; div
+inline %05Bh
+
+  mov  eax, edx
+  mov  ecx, __arg1
+  xor  edx, edx
+  idiv ecx
+  mov  edx, eax
+
+end
+
+// ; write
+inline % 5Ch
+
+  mov  esi, [esp]
+  mov  ecx, __arg1
+  lea  edi, [ebx+edx]
+  rep  movsb
+
+end
+
+// ; write
+inline % 15Ch
+
+  mov  ecx, [esp]
+  lea  edi, [ebx+edx]
+  mov  eax, [ecx]
+  mov  byte ptr [edi], al
+
+end
+
+// ; write
+inline % 25Ch
+
+  mov  ecx, [esp]
+  lea  edi, [ebx+edx]
+  mov  eax, [ecx]
+  mov  word ptr [edi], ax
+
+end
+
+// ; write
+inline % 35Ch
+
+  mov  ecx, [esp]
+  lea  edi, [ebx+edx]
+  mov  eax, [ecx]
+  mov  dword ptr [edi], eax
+
+end
+
+// ; write
+inline % 45Ch
+
+  mov  ecx, [esp]
+  lea  edi, [ebx+edx]
+  mov  esi, [ecx+4]
+  mov  eax, [ecx]
+  mov  dword ptr [edi], eax
+  mov  dword ptr [edi+4], esi
+
+end
+
+// ; copyto
+inline % 5Dh
+
+  lea edi, [ebx+edx]
+  mov  ecx, __arg1
+  mov esi, [esp]
+  rep movsd
+
+end
+
 // ; shlf
 inline % 5Eh
 
@@ -1147,7 +1220,7 @@ inline % 95h
 
 end
 
-// ; xset
+// ; xseti
 inline %97h
 
   mov  eax, [esp]                   
@@ -1252,7 +1325,7 @@ inline % 0B4h
 
 end
 
-// ; savefi
+// ; savef
 inline % 0B9h
 
   mov  [ebp + __arg1], edx
@@ -1292,7 +1365,7 @@ inline % 0BEh
 
 end
 
-// ; set
+// ; seti
 inline %0C0h
 
   mov  esi, ebx
@@ -1881,6 +1954,64 @@ labNextBaseClass:
 
 end
 
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 0E0h
+
+  mov  ecx, __arg2	
+  lea  edi, [ebp + __arg1]
+  lea  esi, [ebx+edx]
+  rep  movsd
+
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 1E0h
+
+  mov  ecx, [ebx+edx]
+  lea  edi, [ebp + __arg1]
+  mov  dword ptr [edi], ecx
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 2E0h
+
+  mov  ecx, __arg2	
+  lea  edi, [ebp + __arg1]
+  lea  esi, [ebx+edx]
+  rep  movsd
+
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 3E0h
+
+  mov  ecx, __arg2	
+  lea  edi, [ebp + __arg1]
+  lea  esi, [ebx+edx]
+  rep  movsd
+
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 4E0h
+
+  mov  ecx, __arg2	
+  lea  edi, [ebp + __arg1]
+  lea  esi, [ebx+edx]
+  rep  movsd
+
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 5E0h
+
+  mov  ecx, __arg2	
+  lea  edi, [ebp + __arg1]
+  lea  esi, [ebx+edx]
+  rep  movsd
+
+end
+
 // ; createn (__arg1 - item size)
 inline % 0E1h
 
@@ -2042,7 +2173,7 @@ inline % 0E7h
 
 end
 
-// ; xsavefi (__arg1 - index, __arg2 - n)
+// ; xsavef (__arg1 - index, __arg2 - n)
 inline % 0EFh
 
   mov dword ptr [ebp + __arg1], __arg2

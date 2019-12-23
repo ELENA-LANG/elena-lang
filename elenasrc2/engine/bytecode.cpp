@@ -30,7 +30,7 @@ const char* _fnOpcodes[256] =
    "load", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "shlf", "shrf",
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "div", "write", "copyto", "shlf", "shrf",
 
    "read", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -41,23 +41,23 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "dec", "geti", "restore", "peekr", "peekfi", "peeksi", OPCODE_UNKNOWN, "xset",
+   "dec", "geti", "restore", "peekr", "peekfi", "peeksi", OPCODE_UNKNOWN, "xseti",
    "open", "quitn", "create", "fillr", "movf", OPCODE_UNKNOWN, "movr", "movm",
 
    "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", "hook", OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "notless", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "pushn", "movn", "pushr", OPCODE_UNKNOWN, "pushai", OPCODE_UNKNOWN, "pushfi", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, "savefi", "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
+   OPCODE_UNKNOWN, "savef", "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
 
-   "set", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", "addf", "mulf", OPCODE_UNKNOWN,
+   "seti", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", "addf", "mulf", OPCODE_UNKNOWN,
    "subf", "divf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storer", OPCODE_UNKNOWN, "clonef", OPCODE_UNKNOWN,
 
    "freei", "alloci", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "shl", "and", "inc", OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
-   "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavefi",
+   "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
+   "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavef",
 
    "new", "newn", "fillri", OPCODE_UNKNOWN, "vcallrm", "jumprm", "select", "lessn",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", OPCODE_UNKNOWN,
@@ -754,6 +754,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
 //   addVerb(operators, SEPARATE_OPERATOR, SEPARATE_OPERATOR_ID);
    addVerb(operators, SHIFTR_OPERATOR, SHIFTR_OPERATOR_ID);
    addVerb(operators, SHIFTL_OPERATOR, SHIFTL_OPERATOR_ID);
+   addVerb(operators, LEN_OPERATOR, LEN_OPERATOR_ID);
 //   addVerb(operators, ISNIL_OPERATOR, ISNIL_OPERATOR_ID);
    addVerb(operators, CATCH_OPERATOR, CATCH_OPERATOR_ID);
    addVerb(operators, ALT_OPERATOR, ALT_OPERATOR_ID);

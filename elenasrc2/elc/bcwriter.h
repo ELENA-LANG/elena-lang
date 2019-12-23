@@ -301,7 +301,10 @@ class ByteCodeWriter
 //   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doArrayOperation(CommandTape& tape, int operator_id);
    void doArgArrayOperation(CommandTape& tape, int operator_id, int rargument);
-//   void doIntArrayOperation(CommandTape& tape, int operator_id);
+   void doArgArrayOperation(CommandTape& tape, int operator_id, int rargument, int immValue);
+   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target);
+   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target, int immValue);
+   //   void doIntArrayOperation(CommandTape& tape, int operator_id);
 //   void doByteArrayOperation(CommandTape& tape, int operator_id);
 //   void doShortArrayOperation(CommandTape& tape, int operator_id);
 //   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);

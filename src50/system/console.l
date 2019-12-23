@@ -2,8 +2,8 @@
 
 public interface IConsoleReader
 {
-//    abstract string readLine() {}
-//    
+    abstract string readLine() {}
+    
 //    abstract wide readWideLine() {}
     
     abstract read(ref char retVal) {}
@@ -84,11 +84,11 @@ sealed class Console
 //
 //    setCursorPosition(int x, int y)
 //        => theWriter;
-//
-//    /// Reads the next line of characters from the standard input stream.
-//    string readLine()
-//        = theReader.readLine();
-//
+
+    /// Reads the next line of characters from the standard input stream.
+    string readLine()
+        = reader.readLine();
+
 ////    /// Reads the next line of characters from the standard input stream.
 ////    wide readWideLine
 ////        = theReader readWide.

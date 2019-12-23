@@ -18,6 +18,8 @@ ELENA byte codes (or ecodes)
  
  dec i                      - index -= i
 
+ div n                      - index /= n
+ 
  get                        - acc[index] => acc
 
  geti i                     - acc <= acc[i] ;
@@ -42,13 +44,15 @@ ELENA byte codes (or ecodes)
 
  save                       - [acc] <= index
 
- savefi i                   - [fp+i] <= index
+ savef i                    - fp+i <= index
 
  savesi i                   - [sp+i] <= index
 
  select r1, r2              - acc = (index = 0 ? r1 : r2)
 
- set i                      - [sp] => acc[i]
+ set i                      - [sp] => acc[index]
+
+ seti i                     - [sp] => acc[i]
 
  shl n                      - index << n  => index
  
@@ -60,7 +64,7 @@ ELENA byte codes (or ecodes)
                        
  storesi i                  - [sp+i] <= acc
 
- xset i                     - [sp] => acc[i]; direct operation
+ xseti i                    - [sp] => acc[i]; direct operation
                        
  xsetfi i1 i2               - [fp+i1] => acc[i2]; direct operation 
 
@@ -72,6 +76,8 @@ ELENA byte codes (or ecodes)
  copyf  i, n                - copy [acc] << fp+i, n*4-bytes
 
  copyfi i, n                - copy [acc] << [fp+i], n*4-bytes
+
+ copyto n                   - copy [sp] >> acc[index], n*4-bytes (index ~ dword-aligned)
 
  copytoai i, n              - copy [sp] >> acc[i], n*4-bytes
 
@@ -85,9 +91,13 @@ ELENA byte codes (or ecodes)
 
  len                        - [acc].Length >> index ; where acc is a object
 
- read i                     - acc[index * i] >> index
+ read n                     - acc[index * n] >> index
+
+ readtof i, n               - copy acc[index] >> fp+i, n*4-bytes
+                                                                                                               
+ write n                    - copy [sp] >> acc[index], n-bytes  
  
- xsavefi i,n                - [fp:i] <= n
+ xsavef i,n                 - fp:i <= n
 
 
  Arithmeric operations:
@@ -554,8 +564,6 @@ ELENA byte codes (or ecodes)
  lxor                       - long[base] ~~ long[acc]     (*index and ext affected)
 
  muln n                     - index * n => index
- 
- divn n                     - index / n => index
  
  nadd                       - int[base] += int[acc]
  

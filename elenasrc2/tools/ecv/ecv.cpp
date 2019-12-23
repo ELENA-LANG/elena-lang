@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   44
+#define REVISION_VERSION   46
 
 using namespace _ELENA_;
 
@@ -530,7 +530,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcPeekSI:
       case bcStoreSI:
       case bcSaveSI:
-      case bcSaveFI:
+      case bcSaveF:
 //      case bcBLoadSI:
 //      case bcBSaveSI:
 //      case bcBLoadFI:
@@ -632,6 +632,8 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcGetI:
       case bcMovN:
       case bcRead:
+      case bcShl:
+      case bcShr:
          printCommand(command, opcode);
          command.appendHex(argument);
          command.append('h');
@@ -646,8 +648,8 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printCommand(command, opcode);
          command.appendInt(argument);
          break;
-      case bcSet:
-      case bcXSet:
+      case bcSetI:
+      case bcXSetI:
 //      case bcAXSaveBI:
 //      case bcALoadBI:
          printCommand(command, opcode);
@@ -697,7 +699,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append(", ");
          command.appendInt(argument2);
          break;
-      case bcXSaveFI:
+      case bcXSaveF:
 //      case bcAddFI:
 //      case bcSubFI:
       case bcCopyFI:
@@ -706,6 +708,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCopyToF:
       case bcCopyToAI:
       case bcXSetFI:
+      case bcReadToF:
          printCommand(command, opcode);
          command.appendInt(argument);
          command.append(" ");

@@ -2,11 +2,13 @@
 In development:
 ------         
               dev
+                * operations with arrays : set / get
+
                 * int sum
                 * dispatch expression
 
                 * support vm client
-                * hello world sample
+                * vm hello world sample
 
                 * samples
 
@@ -282,6 +284,7 @@ In development:
                 * assigning a big number to short / byte local variable - should be truncated?
                 * boxing ext call result
                 * optimize interface implementation . try to use direct / semi-direct call when possible
+                * optimize operations with int[], short[], byte[] arrays
 
               dev1
                 * move all description to meta info using descr inline template

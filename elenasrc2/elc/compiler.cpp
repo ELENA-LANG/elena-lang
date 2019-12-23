@@ -2232,12 +2232,22 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
    variable.kind = okLocal;
 
    if (size > 0) {
+      if (scope.tempAllocated2 > codeScope->allocated2) {
+         codeScope->allocated2 = scope.tempAllocated2;
+         if (codeScope->allocated2 > codeScope->reserved2)
+            codeScope->reserved2 = codeScope->allocated2;
+      }
+
       if (!allocateStructure(*codeScope, size, binaryArray, variable))
          scope.raiseError(errInvalidOperation, terminal);
 
       // make the reservation permanent
       if (codeScope->reserved2 < codeScope->allocated2)
          codeScope->reserved2 = codeScope->allocated2;
+      
+      // take into account allocated space if requiered
+      if (scope.tempAllocated2 < codeScope->allocated2)
+         scope.tempAllocated2 = codeScope->allocated2;
    }
    else {
       if (size < 0) {
@@ -2251,6 +2261,10 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
       }
          
       variable.param = codeScope->newLocal();
+
+      // take into account allocated space if requiered
+      if (scope.tempAllocated1 < codeScope->allocated1)
+         scope.tempAllocated1 = codeScope->allocated1;
    }
 
    variableType = declareVariableType(*codeScope, variable, localInfo, size, binaryArray, variableArg, className);
@@ -3334,8 +3348,8 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
          return encodeMessage(scope.module->mapAction(SHIFTL_MESSAGE, 0, false), argCount, 0);
       case REFER_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(REFER_MESSAGE, 0, false), argCount, 0);
-//      case SET_REFER_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(SET_REFER_MESSAGE, 0, false), paramCount, 0);
+      case SET_REFER_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(SET_REFER_MESSAGE, 0, false), argCount, 0);
       default:
          throw InternalError("Not supported operator");
          break;
@@ -3424,8 +3438,18 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode roperandNode, ExprScope& s
 //   return ObjectInfo(okObject, resultRef);
 //}
 
+inline bool IsArrExprOperator(int operator_id, LexicalType type)
+{
+   switch (type) {
+      case lxIntArrOp:
+         return operator_id == REFER_OPERATOR_ID;
+      default:
+         return false;
+   }
+}
+
 ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operator_id, int argCount, ObjectInfo loperand, 
-   ObjectInfo roperand, ObjectInfo roperand2)
+   ObjectInfo roperand, ObjectInfo roperand2, EAttr mode)
 {
    ObjectInfo retVal;
 
@@ -3459,16 +3483,27 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
 
 //   //bool assignMode = false;
    if (operationType != 0) {
-      if (IsExprOperator(operator_id)) {
+      if (IsExprOperator(operator_id) || IsArrExprOperator(operator_id, (LexicalType)operationType)) {
          retVal = allocateResult(scope, /*false, */resultClassRef/*, loperand.element*/);
       }
       else retVal = ObjectInfo(okObject, 0, resultClassRef, loperand.element, 0);
 
       // HOTFIX : remove boxing expressions
-      analizeOperands(node, scope, 3);
+      analizeOperands(node, scope, -1);
 
       // if it is a primitive operation
       _logic->injectOperation(node, scope, *this, operator_id, operationType, resultClassRef, /*loperand.element, */retVal.param);
+
+      if (IsArrExprOperator(operator_id, (LexicalType)operationType)) {
+         // inject to target for array operation
+         node.appendNode(lxLocalAddress, retVal.param);
+
+         node.injectAndReplaceNode(lxSeqExpression);
+         
+         SNode valExpr = node.appendNode(lxBoxableExpression);
+         valExpr.appendNode(lxLocalAddress, retVal.param);
+         appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING));
+      }
 
       // HOTFIX : update the result type
       retVal.reference = resultClassRef;
@@ -3497,7 +3532,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo loperand, EAttr, int operator_id)
+ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo loperand, EAttr mode, int operator_id)
 {
    SNode opNode = node.parentNode();
 
@@ -3509,25 +3544,26 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
 
    ObjectInfo roperand;
    ObjectInfo roperand2;
-//   if (operator_id == SET_REFER_OPERATOR_ID) {
-//      // HOTFIX : overwrite the assigning part
-//      SNode exprNode = node;
-//      SNode expr2Node = node.parentNode().nextNode();
-//      expr2Node = lxIdle;
-//      expr2Node = expr2Node.nextNode(lxObjectMask);
-//
-//      //SNode thirdNode = exprNode.nextNode(lxObjectMask);
-//      //SyntaxTree::copyNodeSafe(exprNode.nextNode(lxObjectMask), exprNode.appendNode(lxExpression), true);
-//
-//      roperand = compileObject(writer, exprNode, scope, 0, EAttr::eaNone);
-//      roperand2 = compileExpression(writer, expr2Node, scope, 0, EAttr::eaNone);
-//
-//      node = exprNode;
-//
-//      argCount++;
-//   }
-//   else {
-      SNode roperandNode = node;
+   SNode roperandNode = node;
+   if (operator_id == SET_REFER_OPERATOR_ID) {
+      // HOTFIX : overwrite the assigning part
+      SNode roperand2Node = node.parentNode().nextNode();
+      if (roperand2Node == lxAssign) {
+         roperand2Node = lxIdle;
+         roperand2Node = roperand2Node.nextNode();
+      }
+
+      SyntaxTree::copyNode(roperand2Node, opNode.appendNode(roperand2Node.type, roperand2Node.argument));
+
+      roperand2Node = lxIdle;
+      roperand2Node = node.nextNode();
+
+      roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
+      roperand2 = compileExpression(roperand2Node, scope, 0, EAttr::eaNone);
+
+      argCount++;
+   }
+   else {
 //      /*if (roperandNode == lxLocal) {
 //         // HOTFIX : to compile switch statement
 //         roperand = ObjectInfo(okLocal, roperandNode.argument);
@@ -3536,12 +3572,12 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
 //         roperand = compileObject(writer, roperandNode, scope, 0, EAttr::eaNone);
 //      }
       /*else */roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
-//   }
+   }
 
 //   if (operator_id == ISNIL_OPERATOR_ID) {
 //      retVal = compileIsNilOperator(writer, node, scope, loperand, roperand);
 //   }
-   /*else */retVal = compileOperator(opNode, scope, operator_id, argCount, loperand, roperand, roperand2);
+   /*else */retVal = compileOperator(opNode, scope, operator_id, argCount, loperand, roperand, roperand2, mode);
 //
 ////   writer.removeBookmark();
 
@@ -3565,10 +3601,6 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
    SNode roperand = node.nextNode();
 //   if (operatorNode.prevNode() == lxNone)
 //      roperand = roperand.nextNode(lxObjectMask);
-
-//   if (EAttrs::test(mode, HINT_PROP_MODE) && operator_id == REFER_OPERATOR_ID) {
-//      operator_id = SET_REFER_OPERATOR_ID;
-//   }
 
    switch (operator_id) {
       case IF_OPERATOR_ID:
@@ -4994,7 +5026,7 @@ ObjectInfo Compiler :: compileCatchOperator(SNode node, ExprScope& scope, ref_t 
 //   }
 
    node.insertNode(lxResult);
-   compileOperation(node, scope, ObjectInfo(okObject), /*0, */EAttr::eaNone);
+   compileOperation(node, scope, ObjectInfo(okObject), /*0, */EAttr::eaNone, false);
 
    opNode.set(lxTrying, 0);
 
@@ -5243,7 +5275,8 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, EAttr mode)
+ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/, 
+   EAttr mode, bool propMode)
 {
    SNode current = node.firstChild(lxOperatorMask);
 
@@ -5290,6 +5323,9 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
          objectInfo = compileAssigning(current, scope, objectInfo, current.argument == -1);
          break;
       case lxArrOperator:
+         if (propMode) {
+            current.setArgument(SET_REFER_OPERATOR_ID);
+         }
       case lxOperator:
          objectInfo = compileOperator(current, scope, objectInfo, mode);
          break;
@@ -6113,7 +6149,7 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectIn
 //   //   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
 //
    EAttrs mode(modeAttrs, HINT_OBJECT_MASK);
-   ObjectInfo retVal = compileOperation(node, scope, objectInfo, mode);
+   ObjectInfo retVal = compileOperation(node, scope, objectInfo, mode, EAttrs::test(modeAttrs, HINT_PROP_MODE));
 
 //   writer.newBookmark();
 //

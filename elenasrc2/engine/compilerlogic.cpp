@@ -191,12 +191,12 @@ CompilerLogic :: CompilerLogic()
 //   operators.add(OperatorInfo(NOTLESS_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
 //   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//
-//   // array of int32 primitive operations
-//   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, V_INT32));
-//   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
-//   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, 0));
-//
+
+   // array of int32 primitive operations
+   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, V_INT32));
+   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT32ARRAY, V_INT32, V_INT32, lxIntArrOp, 0));
+   operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_INT32ARRAY, lxIntArrOp, 0));
+
 //   // array of int16 primitive operations
 //   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT16ARRAY, V_INT32, lxShortArrOp, V_INT32));
 //   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT16ARRAY, V_INT32, V_INT32, lxShortArrOp, 0));
@@ -220,7 +220,7 @@ CompilerLogic :: CompilerLogic()
    // array of arg list
    operators.add(OperatorInfo(REFER_OPERATOR_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
 //   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_ARGARRAY, V_INT32, 0, lxArgArrOp, 0));
-   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
+   operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_ARGARRAY, lxArgArrOp, 0));
 
 //   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
 //
