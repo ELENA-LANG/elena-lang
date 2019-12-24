@@ -5636,11 +5636,11 @@ void ByteCodeWriter :: saveToLocalAddress(CommandTape& tape, int size, int argum
 
 void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
 {
-   if ((size & 3) == 0) {
-      // if it is a dword aligned
-      tape.write(bcCopyToFI, argument, size >> 2, bpFrame);
-   }
-   else throw InternalError("not yet implemente"); // !! temporal
+   // stack operations are always 4-byte aligned
+   size = align(size, 4);
+
+   // if it is a dword aligned
+   tape.write(bcCopyToFI, argument, size >> 2, bpFrame);
 }
 
 void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)

@@ -7000,9 +7000,15 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, /*bool withGe
    SNode dispatchNode = node.findChild(lxDispatchCode);
 
    CodeScope codeScope(&scope);
+   ExprScope exprScope(&codeScope);
+   ObjectInfo target = mapObject(dispatchNode, exprScope, EAttr::eaNone);
+   if (target.kind != okInternal) {
+      node.injectAndReplaceNode(lxDispatching);
+      node = node.firstChild();
+   }
 
    if (dispatchNode != lxNone) {
-      compileDispatchExpression(dispatchNode, codeScope);
+      compileDispatchExpression(dispatchNode, target, exprScope);
    }
    else throw InternalError("Not yet implemented"); // !! temporal
 //      // if it is generic handler without redirect statement
@@ -7101,31 +7107,32 @@ void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope/*, bool 
 void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 {
    ExprScope exprScope(&scope);
-
    ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
+
+   compileDispatchExpression(node, target, exprScope);
+}
+
+void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprScope& exprScope)
+{
    if (target.kind == okInternal) {
       importCode(node, exprScope, target.param, exprScope.getMessageID());
    }
    else {
-      node.injectAndReplaceNode(lxDispatching);
-      node = node.firstChild();
+      MethodScope* methodScope = (MethodScope*)exprScope.getScope(Scope::ScopeLevel::slMethod);
 
-      MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
-
-      // try to implement light-weight resend operation
-      
+      // try to implement light-weight resend operation      
       ref_t targetRef = methodScope->getReturningRef(false);
 
 //      int stackSafeAttrs = 0;
-      bool directOp = _logic->isCompatible(*scope.moduleScope, targetRef, scope.moduleScope->superReference);
+      bool directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, exprScope.moduleScope->superReference);
       if (isSingleStatement(node)) {
          if (!directOp) {
             // try to find out if direct dispatch is possible
-            ref_t sourceRef = resolveObjectReference(scope, target, false, false);
+            ref_t sourceRef = resolveObjectReference(exprScope, target, false, false);
 
             _CompilerLogic::ChechMethodInfo methodInfo;
-            if (_logic->checkMethod(*scope.moduleScope, sourceRef, methodScope->message, methodInfo) != tpUnknown) {
-               directOp = _logic->isCompatible(*scope.moduleScope, targetRef, methodInfo.outputReference);
+            if (_logic->checkMethod(*exprScope.moduleScope, sourceRef, methodScope->message, methodInfo) != tpUnknown) {
+               directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, methodInfo.outputReference);
             }
          }
       }
