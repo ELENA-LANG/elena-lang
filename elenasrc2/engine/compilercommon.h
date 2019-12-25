@@ -44,7 +44,7 @@ constexpr auto V_CLOSED          = 0x80004003u;
 
 /// accessors:
 constexpr auto V_GETACCESSOR = 0x80003007u;
-//constexpr auto V_SETACCESSOR = 0x80003008u;
+constexpr auto V_SETACCESSOR = 0x80003008u;
 
 /// scope_prefix:
 constexpr auto V_CONST           = 0x80002001u;
@@ -159,7 +159,7 @@ enum MethodHint
 //   tpPredefined  = 0x0080000, // virtual class declaration
 //   tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
 //   tpInitializer = 0x0200000,
-//   tpSetAccessor = 0x0400000,
+   tpSetAccessor  = 0x0400000,
    tpCast         = 0x0800000,
 //   tpYieldable   = 0x1000000
    tpConstant     = 0x2000000,

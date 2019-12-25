@@ -1774,7 +1774,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue/*, bool com
       case V_FUNCTION:
          return validateMethodAttribute(attrValue, dummy);
       case V_GETACCESSOR:
-//      case V_SETACCESSOR:
+      case V_SETACCESSOR:
 //         if (complexName) {
 //            return validateMethodAttribute(attrValue, dummy);
 //         }
@@ -1846,9 +1846,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_GETACCESSOR:
          attrValue = tpGetAccessor;
          return true;
-//      case V_SETACCESSOR:
-//         attrValue = tpSetAccessor;
-//         return true;
+      case V_SETACCESSOR:
+         attrValue = tpSetAccessor;
+         return true;
 //      case V_SCRIPTSELFMODE:
 //         attrValue = tpTargetSelf;
 //         return true;

@@ -412,9 +412,9 @@ public extension convertorOp
 //
 //    real toReal()
 //        = realConvertor.convert:self;
-//
-//    convertTo(target)
-//        = new Variant(self).saveTo(target);
+
+    convertTo(target)
+        = new Variant(self).saveTo(target);
 }
 
 //public convertor 

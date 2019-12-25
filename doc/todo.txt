@@ -2,6 +2,7 @@
 In development:
 ------         
               dev
+                * property - set
                 * int sum
                 * dispatch expression
                 * calling internal constructor (String and WideString)
@@ -45,8 +46,6 @@ In development:
                 * closures: returning a value
                 * closures : virtual one
                 * closures : default constructor is called for virtual nested class, for normal one - only initializer
-
-
 
                 * arrays of templates
                 * arrays of template of templates
@@ -105,8 +104,6 @@ In development:
                 * strong typed fields
                 * temlate based typed fields
                 * const class \ const field
-                * properties - explicit
-                * properties - implicit
                 * properties - multi-level
                 * property - methods
                 * static fields
@@ -241,6 +238,7 @@ In development:
                 * step over external / message / loop / if call?
                 * call inernal function directly (without intermediate step in system'routines) when it is possible
                 * uncomment cleanUp code
+                * property - append, ...
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)

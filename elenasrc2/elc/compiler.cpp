@@ -4420,42 +4420,47 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
    return retVal;
 }
 
-//ObjectInfo Compiler :: compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
-//{
-//   ObjectInfo retVal;
-//
-//   // tranfer the message into the property set one
-//   ref_t messageRef = mapMessage(node, scope, false);
-//   ref_t actionRef, flags;
-//   int paramCount;
-//   decodeMessage(messageRef, actionRef, paramCount, flags);
-//   if (paramCount == 0 && test(flags, PROPERTY_MESSAGE)) {
-//      messageRef = encodeMessage(actionRef, 1, flags);
-//   }
-//   else scope.raiseError(errInvalidOperation, node);
-//
-//   // find and compile the parameter
-//   SNode current = node.parentNode().parentNode().findChild(lxAssign);
-//   SNode sourceNode = current.nextNode(lxObjectMask);
-//
-//   ObjectInfo source = compileExpression(writer, sourceNode, scope, 0, EAttr::eaNone);
-//
-//   //messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source));
-//   //
-//   EAttr mode = HINT_NODEBUGINFO;
-//   int stackSafeAttr = 0;
-//   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source), true, stackSafeAttr);
-//   if (!test(stackSafeAttr, 1))
-//      mode = mode | HINT_DYNAMIC_OBJECT;
-//
-//   retVal = compileMessage(writer, node, scope, target, messageRef, mode, stackSafeAttr);
-//
-//   // remove the assign node to prevent the duplication
-//   current = lxIdle;
-//
-//   return retVal;
-//}
-//
+ObjectInfo Compiler :: compilePropAssigning(SNode node, ExprScope& scope, ObjectInfo target)
+{
+   ObjectInfo retVal;
+
+   // tranfer the message into the property set one
+   ref_t messageRef = mapMessage(node, scope, false);
+   ref_t actionRef, flags;
+   int argCount;
+   decodeMessage(messageRef, actionRef, argCount, flags);
+   if (argCount == 1 && test(flags, PROPERTY_MESSAGE)) {
+      messageRef = encodeMessage(actionRef, 2, flags);
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   // find and compile the parameter
+   SNode roperand2Node = node.parentNode().nextNode();
+   if (roperand2Node == lxAssign) {
+      roperand2Node = lxIdle;
+      roperand2Node = roperand2Node.nextNode();
+   }
+
+   SNode opNode = node.parentNode();
+   SyntaxTree::copyNode(roperand2Node, opNode.appendNode(roperand2Node.type, roperand2Node.argument));
+
+   // remove the assign node to prevent the duplication
+   roperand2Node = lxIdle;
+   roperand2Node = node.nextNode().nextNode();
+
+   ObjectInfo source = compileExpression(roperand2Node, scope, 0, EAttr::eaNone);
+
+   EAttr mode = HINT_NODEBUGINFO;
+   int stackSafeAttr = 0;
+   messageRef = resolveMessageAtCompileTime(target, scope, messageRef, resolveStrongArgument(scope, source), true, stackSafeAttr);
+   if (!test(stackSafeAttr, 1))
+      mode = mode | HINT_DYNAMIC_OBJECT;
+
+   retVal = compileMessage(opNode, scope, target, messageRef, mode, stackSafeAttr);
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, bool callMode)
 //{
 //   ref_t expectedClassRef = 0;
@@ -5307,9 +5312,9 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
             objectInfo = compileMessage(current, scope, /*expectedRef, */objectInfo, subMode);
             current.parentNode().injectAndReplaceNode(lxLooping);
          }
-//         if (EAttrs::test(mode, HINT_PROP_MODE)) {
-//            objectInfo = compilePropAssigning(writer, current, scope, objectInfo);
-//         }
+         else if (propMode) {
+            objectInfo = compilePropAssigning(current, scope, objectInfo);
+         }
          else objectInfo = compileMessage(current, scope, /*expectedRef, */objectInfo, mode);
          break;
       case lxNewOperation:
@@ -6933,8 +6938,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          //}
       }
 
-      if (testany(scope.hints, tpGetAccessor/* | tpSetAccessor*/)) {
-         if ((paramCount == 0 && test(scope.hints, tpGetAccessor))/* || (paramCount == 1 && test(scope.hints, tpSetAccessor))*/) {
+      if (testany(scope.hints, tpGetAccessor | tpSetAccessor)) {
+         if ((paramCount == 0 && test(scope.hints, tpGetAccessor)) || (paramCount == 1 && test(scope.hints, tpSetAccessor))) {
             flags |= PROPERTY_MESSAGE;
          }
          else scope.raiseError(errIllegalMethod, node);

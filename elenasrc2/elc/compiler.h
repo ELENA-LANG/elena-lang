@@ -1046,7 +1046,7 @@ private:
    ObjectInfo compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
-//   ObjectInfo compilePropAssigning(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target);
+   ObjectInfo compilePropAssigning(SNode node, ExprScope& scope, ObjectInfo target);
 //   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
    ObjectInfo compileRootExpression(SNode node, CodeScope& scope, ref_t targetRef, EAttr mode);
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, EAttr mode);

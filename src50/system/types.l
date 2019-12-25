@@ -21,7 +21,7 @@
 
 /// scope_accessors:
 #define get         80003007h
-//#define set         80003008h
+#define set         80003008h
 
 /// scope_prefix:
 

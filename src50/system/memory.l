@@ -1294,18 +1294,18 @@ public sealed const struct WideString : BaseValue
 /// An empty wide literal value
 public const wide emptyWideString = WideString.MinValue;
 
-//// --- Variant ---
-//
-///// A basic type variant class
-//public sealed class Variant
-//{
-//    object theValue;
-//    
-//    constructor(object)
-//    {
-//        theValue := object
-//    }
-//    
+// --- Variant ---
+
+/// A basic type variant class
+public sealed class Variant
+{
+    object value;
+    
+    constructor(object)
+    {
+        value := object
+    }
+    
 ////    /// Tries to convert the value to a byte number
 ////    cast T<byte>
 ////        = byteConvertor convert:theValue.
@@ -1399,14 +1399,14 @@ public const wide emptyWideString = WideString.MinValue;
 //            eval(wide val)
 //                = cast wide(self);
 //        }.eval(target);
-//
+
 //    saveTo(target)
 //    {
 //        target.Value := self.castValueTo(target.Value);
 //        
 //        ^ target
 //    }
-//
+
 //////    add : aTarget
 //////        = aTarget add($self $castValueTo:aTarget).
 //////
@@ -1421,8 +1421,8 @@ public const wide emptyWideString = WideString.MinValue;
 //////
 //////    bool equal : aTarget
 //////        = $self $castValueTo:aTarget; equal:aTarget.
-//}
-//
+}
+
 //// --- Array ---
 //
 ///// An array
