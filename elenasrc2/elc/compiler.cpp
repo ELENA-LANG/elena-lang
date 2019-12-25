@@ -4669,9 +4669,6 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
 
 void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
 {
-//   SyntaxTree expressionTree;
-//   SyntaxWriter writer(expressionTree);
-//
 //   // check if the class was already compiled
 //   if (!node.argument) {
       // COMPILER MAGIC : check if it is a virtual vmt (only for the class initialization)
@@ -6953,6 +6950,13 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          flags |= STATIC_MESSAGE;
       }
 
+      if (test(flags, VARIADIC_MESSAGE) && !test(flags, FUNCTION_MESSAGE))
+         paramCount = 1;
+
+      // NOTE : a message target should be included as well for a normal message
+      int argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
+      argCount += paramCount;
+
       if (actionRef != 0) {
          // HOTFIX : if the action was already resolved - do nothing
       }
@@ -6963,22 +6967,15 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
          actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), signatureRef, false);
 
-//         if (withoutWeakMessages && noSignature && test(scope.getClassFlags(false), elClosed)) {
-//            // HOTFIX : for the nested closed class - special handling is requiered
-//            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//            if (!classScope->info.methods.exist(encodeMessage(actionRef, paramCount, flags))) {
-//               actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
-//            }
-//         }
+         if (withoutWeakMessages && noSignature && test(scope.getClassFlags(false), elClosed)) {
+            // HOTFIX : for the nested closed class - special handling is requiered
+            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
+            if (!classScope->info.methods.exist(encodeMessage(actionRef, argCount, flags))) {
+               actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
+            }
+         }
       }
       else scope.raiseError(errIllegalMethod, node);
-
-      if (test(flags, VARIADIC_MESSAGE) && !test(flags, FUNCTION_MESSAGE))
-         paramCount = 1;
-
-      // NOTE : a message target should be included as well for a normal message
-      int argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
-      argCount += paramCount;
 
       scope.message = encodeMessage(actionRef, argCount, flags);
 
@@ -7761,7 +7758,7 @@ void Compiler :: compileInitializer(SNode node, MethodScope& scope)
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current/*.compare(*/ == lxFieldInit/*, lxFieldAccum)*/) {
+      if (current.compare(lxFieldInit, lxFieldAccum)) {
          SNode sourceNode = current.findChild(lxSourcePath);
          if (sourceNode != lxNone)
             declareCodeDebugInfo(frameNode, scope);
@@ -8337,7 +8334,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current/*.compare(*/ == lxFieldInit/*, lxFieldAccum)*/) {
+      if (current.compare(lxFieldInit, lxFieldAccum)) {
          scope.withInitializers = true;
       }
       else if (current == lxClassMethod) {
@@ -8350,7 +8347,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
                methodScope.extensionMode = true;
 
             // NOTE : an extension message must be strong-resolved
-            declareArgumentList(current, methodScope, methodScope.extensionMode/*| test(scope.info.header.flags, elNestedClass)*/, true);
+            declareArgumentList(current, methodScope, methodScope.extensionMode | test(scope.info.header.flags, elNestedClass), true);
             current.setArgument(methodScope.message);
          }
          else methodScope.message = current.argument;

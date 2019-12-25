@@ -866,7 +866,7 @@ public sealed const struct String : BaseValue
      
 //    Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
 
-    string Printable = self;
+    string toPrintable() = self;
 
 //    bool equal(o)
 //    {
@@ -1317,11 +1317,11 @@ public sealed class Variant
 ////    /// Tries to convert the value to a character
 ////    cast T<char>
 ////        = charConvertor convert:theValue.
-////
-//    /// Tries to convert the literal value to the integer number
-//    int cast()
-//        = intConvertor.convert(theValue);
-//
+
+    /// Tries to convert the literal value to the integer number
+    int cast()
+        = intConvertor.convert(value);
+
 ////    /// Tries to convert the literal value to the long integer number
 ////    cast T<long>
 ////        = longConvertor convert:theValue.
@@ -1369,36 +1369,36 @@ public sealed class Variant
 ////    [
 ////        theValue := aValue.
 ////    ]    
-//
-//    private castValueTo(target)
-//        = new::{
-//            eval(o)
-//                = o.Printable;
-//            
+
+    private castValueTo(target)
+        = new::{
+            castTo(o)
+                = o.toPrintable();
+            
 ////            eval(BaseVariable v)
-////                <= eval(v value).
-////            
-//            eval(int val)
-//                = cast int(self);
-//                
-//            eval(byte val)
-//                = cast byte(self);
-//                
-//            eval(short val)
-//                = cast short(self);
-//                
-//            eval(long val)
-//                = cast long(self);
-//                
-//            eval(real val)
-//                = cast real(self);
-//                
-//            eval(string val)
-//                = cast string(self);
-//                
-//            eval(wide val)
-//                = cast wide(self);
-//        }.eval(target);
+//////                <= eval(v value).
+//////            
+            castTo(int val)
+                = cast int(self);
+                
+////            eval(byte val)
+////                = cast byte(self);
+////                
+////            eval(short val)
+////                = cast short(self);
+////                
+////            eval(long val)
+////                = cast long(self);
+////                
+////            eval(real val)
+////                = cast real(self);
+////                
+////            eval(string val)
+////                = cast string(self);
+////                
+////            eval(wide val)
+////                = cast wide(self);
+        }.castTo(target);
 
 //    saveTo(target)
 //    {
@@ -1710,7 +1710,7 @@ public singleton stringConvertor
         
     /// Returns the literal presentation of the parameter
     string convert(o)
-        = o.Printable;
+        = o.toPrintable();
 }
 
 //// --- wideConvertor ---
@@ -1862,7 +1862,7 @@ public singleton stringConvertor
 //
 //    /// Returns the literal presentation of the parameter
 //    wide convert(o)
-//        = cast wide(o.Printable);
+//        = cast wide(o.toPrintable());
 //}
 //
 ///// An Unicode character convertor

@@ -2,7 +2,6 @@
 In development:
 ------         
               dev
-                * property - set
                 * int sum
                 * dispatch expression
                 * calling internal constructor (String and WideString)

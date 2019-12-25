@@ -236,6 +236,26 @@ labErr:
 
 end
 
+procedure __intconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@IntNumber[3]"
+
+  pushsi 2
+  pushsi 2  
+  callextr api : strtoint
+  freei 2
+
+  ifr      labErr 0
+  peeksi 3
+  save
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : %new[0]
+  throw
+
+end
+
 // ; system routines
 
 symbol sta_start

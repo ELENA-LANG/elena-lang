@@ -2522,21 +2522,21 @@ public sealed const struct CharValue : BaseValue
 //    short convert(o)
 //        = cast short(o);
 //}
-//
-///// An integer convertor
-//public singleton intConvertor
-//{
+
+/// An integer convertor
+public singleton intConvertor
+{
 //    int convert(BaseVariable v)
 //        <= convert(v.Value);
-//        
-//    /// Converts a literal string into an integer
-//    int convert(string s)
-//    {
-//        intern system'core_routines'__intconvertor.convert(s, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//        
+        
+    /// Converts a literal string into an integer
+    int convert(string s)
+    {
+        intern system'core_routines'__intconvertor.convert(s, 10, ref int retVal);
+        
+        ^ retVal
+    }
+        
 //    /// Converts a literal string into an integer
 //    int convertUnsigned(string s)
 //    {
@@ -2615,11 +2615,11 @@ public sealed const struct CharValue : BaseValue
 //
 //    int convert(uint n)
 //        = new IntNumber(n);
-//                        
-//    int convert(o)
-//        = cast int(o);
-//}
-//
+                        
+    int convert(o)
+        = cast int(o);
+}
+
 ///// A unsigned integer convertor
 //public singleton uintConvertor
 //{

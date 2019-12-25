@@ -26,7 +26,7 @@ public class Object
 //    predefined bool notless(o) {}
 //    predefined bool notgreater(o) {}
                 
-    string Printable = /*self.__getClassName()*/__className;
+    string toPrintable() = /*self.__getClassName()*/__className;
                 
     /// Implements a message dispatching in VMT
     dispatch() => intern system'core_routines'__object;
@@ -37,9 +37,9 @@ public interface BoolValue
 {
     private constructor() {}
     
-//    /// return the default value
-//    static bool Default
-//        = false;
+    /// return the default value
+    static bool MinValue
+        = BoolValue.false;
 
     const static true = BoolValue::
     {
@@ -78,10 +78,10 @@ public interface BoolValue
 //    
 //        /// Always returns false.
 //        bool Inverted = false;
-//    
-//        /// Returns literal representation.
-//        string Printable = "true";
-//    
+    
+        /// Returns literal representation.
+        string toPrintable() = "true";
+    
 //        /// Returns itself.
 //        bool clone() = self;        
     };
@@ -129,10 +129,10 @@ public interface BoolValue
 //    
 //        /// Always returns true
 //        bool Inverted = true;
-//    
-//        /// Returns literal representation
-//        string Printable = "false";
-//        
+    
+        /// Returns literal representation
+        string toPrintable() = "false";
+        
 //        /// Returns itself
 //        bool clone() = self;        
     };

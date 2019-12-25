@@ -745,7 +745,7 @@ ref_t CompilerLogic :: generateOverloadList(_ModuleScope& scope, _Compiler& comp
          list[len] = omsg;
          for (size_t i = 0; i < len; i++) {
             if (isSignatureCompatible(scope, omsg, list[i])) {
-               memmove(list + (i + 1) * 4, list + i * 4, (len - i) * 4);
+               memmove((void*)((size_t)list + (i + 1) * 4), (void*)((size_t)list + i * 4), (len - i) * 4);
                list[i] = omsg;
                break;
             }

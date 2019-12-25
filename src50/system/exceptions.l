@@ -105,17 +105,17 @@ public class Exception
 ////    }
 }
 
-//// --- FormatException ---
-//
-//public class FormatException : Exception
-//{
+// --- FormatException ---
+
+public class FormatException : Exception
+{
 //    constructor new()
 //        <= new("A number is not in the correct format");
 //        
 //    constructor new(string message)
 //        <= new(message);
-//}
-//
+}
+
 //// --- OutOfRangeException ---
 //
 //public class OutOfRangeException : Exception
