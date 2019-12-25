@@ -6226,7 +6226,7 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
    while (current != lxNone) {
       if (current == lxMember) {
          SNode memberNode = current.firstChild(lxObjectMask);
-         if (memberNode != lxLocal) {
+         if (!memberNode.compare(lxLocal, lxSelfLocal)) {
             onlyLocals = false;
             break;
          }
@@ -6235,7 +6235,7 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
    }
 
    if (!onlyLocals) {
-      current = node.lastNode();
+      current = node.lastChild();
       while (current != lxNone) {
          if (current == lxMember) {
             SNode memberNode = current.firstChild(lxObjectMask);

@@ -1400,12 +1400,12 @@ public sealed class Variant
 ////                = cast wide(self);
         }.castTo(target);
 
-//    saveTo(target)
-//    {
-//        target.Value := self.castValueTo(target.Value);
-//        
-//        ^ target
-//    }
+    saveTo(target)
+    {
+        target.Value := self.castValueTo(target.Value);
+        
+        ^ target
+    }
 
 //////    add : aTarget
 //////        = aTarget add($self $castValueTo:aTarget).

@@ -23,11 +23,11 @@ public sealed ref<T> : BaseVariable
          ^ value
     }
     
-//    set Value(T val)
-//    {
-//        theValue := val
-//    }
-//
+    set Value(T val)
+    {
+        value := val
+    }
+
 //    bool equal(o)
 //        => theValue;
 //
