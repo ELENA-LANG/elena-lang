@@ -1100,7 +1100,7 @@ private:
    void compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope,
       int& preallocated);
 
-//   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
+   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
    void compileEmbeddableMethod(SNode node, MethodScope& scope);
    void compileMethod(/*SyntaxWriter& writer, */SNode node, MethodScope& scope);
    void compileAbstractMethod(SNode node, MethodScope& scope);

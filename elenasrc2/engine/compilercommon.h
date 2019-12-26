@@ -39,7 +39,7 @@ constexpr auto V_INTERNAL        = 0x80005003u;
 constexpr auto V_SEALED          = 0x80004001u;
 constexpr auto V_ABSTRACT        = 0x80004002u;
 constexpr auto V_CLOSED          = 0x80004003u;
-//constexpr auto V_PREDEFINED      = 0x80004005u;
+constexpr auto V_PREDEFINED      = 0x80004005u;
 //constexpr auto V_YIELDABLE       = 0x80004006u;
 
 /// accessors:
@@ -156,7 +156,7 @@ enum MethodHint
 //   tpSpecial     = 0x0010000,
    tpAbstract     = 0x0020000,
    tpInternal     = 0x0040000,
-//   tpPredefined  = 0x0080000, // virtual class declaration
+   tpPredefined   = 0x0080000, // virtual class declaration
 //   tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
 //   tpInitializer = 0x0200000,
    tpSetAccessor  = 0x0400000,

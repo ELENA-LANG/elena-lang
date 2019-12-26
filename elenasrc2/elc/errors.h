@@ -79,7 +79,7 @@ namespace _ELENA_
    #define errAbstractMethods       "%s(%d:%d): error 159: Class contains abstract methods\n"
    #define errDispatcherInInterface "%s(%d:%d): error 160: Closed class contains a dispatcher method\n"
    #define errAbstractMethodCode    "%s(%d:%d): error 161: An abstract method cannot have an explicit body\n"
-//   #define errPedefineMethodCode    "%s(%d:%d): error 162: A predefined method cannot have an explicit body\n"
+   #define errPedefineMethodCode    "%s(%d:%d): error 162: A predefined method cannot have an explicit body\n"
 ////   #define errUnknownTemplate       "%s(%d:%d): error 163: Unrecognized template %s\n"
    #define errNotAbstractClass      "%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n"
    #define errNoMethodOverload      "%s(%d:%d): error 165: An attribute '%s' cannot be applied for an already existing method\n"

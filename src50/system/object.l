@@ -20,11 +20,11 @@ public class Object
     
     bool notequal(o) = self.equal(o).Inverted;
     
-//    // virtual method declarations : forcing the output type                            
-//    predefined bool less(o) {}
-//    predefined bool greater(o) {}
-//    predefined bool notless(o) {}
-//    predefined bool notgreater(o) {}
+    // virtual method declarations : forcing the output type                            
+    predefined bool less(o) {}
+    predefined bool greater(o) {}
+    predefined bool notless(o) {}
+    predefined bool notgreater(o) {}
                 
     string toPrintable() = /*self.__getClassName()*/__className;
                 
@@ -49,32 +49,30 @@ public interface BoolValue
         /// Executes then-action
         if(trueAction,falseAction) = trueAction();
     
-//        /// Always returns nil.
-//        ifnot(trueAction) = nil;
-//    
-//        iif(object trueVal, object falseVal) = trueVal;
-//        
-//        /// Executes logical OR operation
-//        ///
-//        /// Always return true
-//        bool or(expr) = self;
-//    
-//        /// Executes logical AND operation
-//        bool and(expr) = expr;
-//    
-//        /// Executes logical XOR operation
-//        bool xor(expr)
-//        {
-//            cast bool(expr) ? { ^ false };
-//            
-//            ^ self
-//        }
-//    
-//        /// Determines whether the specified object is equal to the current object boolean value.
-//        bool equal(expr) = expr;
-//    
-//        /// Determines whether the specified object is equal to the current object boolean value.
-//        bool equal(bool b) = b;
+        /// Always returns nil.
+        ifnot(trueAction) = nil;
+    
+        iif(object trueVal, object falseVal) = trueVal;
+        
+        /// Executes logical OR operation
+        ///
+        /// Always return true
+        bool or(expr) = this self;
+    
+        /// Executes logical AND operation
+        bool and(expr) = expr;
+    
+        /// Executes logical XOR operation
+        bool xor(expr)
+        {
+            cast bool(expr) ? { ^ BoolValue.false };
+        }
+    
+        /// Determines whether the specified object is equal to the current object boolean value.
+        bool equal(expr) = expr;
+    
+        /// Determines whether the specified object is equal to the current object boolean value.
+        bool equal(bool b) = b;
     
         /// Always returns false.
         bool Inverted = BoolValue.false;
@@ -82,8 +80,8 @@ public interface BoolValue
         /// Returns literal representation.
         string toPrintable() = "true";
     
-//        /// Returns itself.
-//        bool clone() = self;        
+        /// Returns itself.
+        bool clone() = this self;        
     };
                         
     const static false = BoolValue::
@@ -94,38 +92,38 @@ public interface BoolValue
         /// Executes else-action
         if(trueAction,falseAction) = falseAction();
     
-//        /// Executes the action
-//        ifnot(action) = action();
-//    
-//        iif(object trueVal, object falseVal) = falseVal;
-//    
-//        /// Executes logical OR operation
-//        bool or(expr) = expr;
-//    
-//        /// Executes logical AND operation
-//        ///
-//        /// Always return false
-//        bool and(expr) = self;
-//    
-//        /// Executes logical XOR operation
-//        bool xor(expr)
-//        {
-//            cast bool(expr) ? { ^ true };
-//            
-//            ^ self
-//        }
-//    
-//        /// Determines whether the specified object is equal to the current object boolean value
-//        bool equal(expr)
-//        {
-//            cast bool(expr) ? { ^ self } : { ^ true }
-//        }
-//    
-//        /// Determines whether the specified object is equal to the current object boolean value
-//        bool equal(bool f)
-//        {
-//            ^ f.Inverted
-//        }
+        /// Executes the action
+        ifnot(action) = action();
+    
+        iif(object trueVal, object falseVal) = falseVal;
+    
+        /// Executes logical OR operation
+        bool or(expr) = expr;
+    
+        /// Executes logical AND operation
+        ///
+        /// Always return false
+        bool and(expr) = this self;
+    
+        /// Executes logical XOR operation
+        bool xor(expr)
+        {
+            cast bool(expr) ? { ^ BoolValue.true };
+            
+            ^ this self
+        }
+    
+        /// Determines whether the specified object is equal to the current object boolean value
+        bool equal(expr)
+        {
+            cast bool(expr) ? { ^ this self } : { ^ BoolValue.true }
+        }
+    
+        /// Determines whether the specified object is equal to the current object boolean value
+        bool equal(bool f)
+        {
+            ^ f.Inverted
+        }
     
         /// Always returns true
         bool Inverted = BoolValue.true;
@@ -133,29 +131,29 @@ public interface BoolValue
         /// Returns literal representation
         string toPrintable() = "false";
         
-//        /// Returns itself
-//        bool clone() = self;        
+        /// Returns itself
+        bool clone() = this self;        
     };
                         
-//    abstract bool equal(bool f) {}
+    abstract bool equal(bool f) {}
 
     abstract if(trueAction) {}
 
     abstract if(trueAction,falseAction) {}
 
-//    abstract ifnot(action) {}
-//
-//    abstract iif(object trueVal, object falseVal) {}
-//
-//    abstract bool or(expr) {}
-//
-//    abstract bool and(expr) {}
-//
-//    abstract bool xor(expr) {}
+    abstract ifnot(action) {}
+
+    abstract iif(object trueVal, object falseVal) {}
+
+    abstract bool or(expr) {}
+
+    abstract bool and(expr) {}
+
+    abstract bool xor(expr) {}
 
     abstract get bool Inverted() {}
 
-//    abstract bool clone() {}
+    abstract bool clone() {}
 }
 
 public const true = BoolValue.true;

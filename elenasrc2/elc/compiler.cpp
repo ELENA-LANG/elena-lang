@@ -3314,20 +3314,20 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
    switch (operator_id) {
       case IF_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(IF_MESSAGE, 0, false), argCount, 0);
-//      case IFNOT_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(IFNOT_MESSAGE, 0, false), paramCount, 0);
+      case IFNOT_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(IFNOT_MESSAGE, 0, false), argCount, 0);
       case EQUAL_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(EQUAL_MESSAGE, 0, false), argCount, 0);
       case NOTEQUAL_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(NOTEQUAL_MESSAGE, 0, false), argCount, 0);
       case LESS_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(LESS_MESSAGE, 0, false), argCount, 0);
-//      case NOTLESS_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(NOTLESS_MESSAGE, 0, false), paramCount, 0);
-//      case GREATER_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(GREATER_MESSAGE, 0, false), paramCount, 0);
-//      case NOTGREATER_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(NOTGREATER_MESSAGE, 0, false), paramCount, 0);
+      case NOTLESS_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(NOTLESS_MESSAGE, 0, false), argCount, 0);
+      case GREATER_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(GREATER_MESSAGE, 0, false), argCount, 0);
+      case NOTGREATER_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(NOTGREATER_MESSAGE, 0, false), argCount, 0);
       case ADD_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(ADD_MESSAGE, 0, false), argCount, 0);
       case SUB_OPERATOR_ID:
@@ -3336,12 +3336,12 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
          return encodeMessage(scope.module->mapAction(MUL_MESSAGE, 0, false), argCount, 0);
       case DIV_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(DIV_MESSAGE, 0, false), argCount, 0);
-//      case AND_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(AND_MESSAGE, 0, false), paramCount, 0);
-//      case OR_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(OR_MESSAGE, 0, false), paramCount, 0);
-//      case XOR_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(XOR_MESSAGE, 0, false), paramCount, 0);
+      case AND_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(AND_MESSAGE, 0, false), argCount, 0);
+      case OR_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(OR_MESSAGE, 0, false), argCount, 0);
+      case XOR_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(XOR_MESSAGE, 0, false), argCount, 0);
       case SHIFTR_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(SHIFTR_MESSAGE, 0, false), argCount, 0);
       case SHIFTL_OPERATOR_ID:
@@ -8369,12 +8369,12 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope)
             if ((methodScope.message & ~STATIC_MESSAGE) == scope.moduleScope->constructor_message)
                withDefaultConstructor = true;
          }
-//         else if (test(methodScope.hints, tpPredefined)) {
-//            // recognize predefined message signatures
-//            predefineMethod(current, scope, methodScope);
-//
-//            current = lxIdle;
-//         }
+         else if (test(methodScope.hints, tpPredefined)) {
+            // recognize predefined message signatures
+            predefineMethod(current, scope, methodScope);
+
+            current = lxIdle;
+         }
          else if (test(methodScope.hints, tpStatic)) {
             current = lxStaticMethod;
          }
@@ -8799,30 +8799,30 @@ void Compiler :: saveExtension(ClassScope& scope, ref_t message/*, bool internal
 //      return signRef == 0;
 //   }
 //}
-//
-//void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope)
-//{
-//   SNode body = node.findChild(lxCode);
-//   if (body != lxCode || body.firstChild() != lxEOF)
-//      scope.raiseError(errPedefineMethodCode, node);
-//
-//   if (test(scope.hints, tpAbstract) || (scope.hints & tpMask) == tpPrivate) 
-//      // abstract or private methods cannot be predefined
-//      scope.raiseError(errIllegalMethod, node);
-//
-//   if (scope.extensionMode)
-//      // an extension cannot have predefined methods
-//      scope.raiseError(errIllegalMethod, node);
-//
-//   ref_t signRef;
-//   scope.module->resolveAction(scope.message, signRef);
-//   if (signRef)
-//      // a predefine method should not contain a strong typed signature
-//      scope.raiseError(errIllegalMethod, node);
-//
-//   generateMethodAttributes(classScope, node, scope.message, true);
-//
-//}
+
+void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope)
+{
+   SNode body = node.findChild(lxCode);
+   if (body != lxCode || body.firstChild() != lxEOP)
+      scope.raiseError(errPedefineMethodCode, node);
+
+   if (test(scope.hints, tpAbstract) || (scope.hints & tpMask) == tpPrivate) 
+      // abstract or private methods cannot be predefined
+      scope.raiseError(errIllegalMethod, node);
+
+   if (scope.extensionMode)
+      // an extension cannot have predefined methods
+      scope.raiseError(errIllegalMethod, node);
+
+   ref_t signRef;
+   scope.module->resolveAction(scope.message, signRef);
+   if (signRef)
+      // a predefine method should not contain a strong typed signature
+      scope.raiseError(errIllegalMethod, node);
+
+   generateMethodAttributes(classScope, node, scope.message, true);
+
+}
 
 void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, 
    bool allowTypeAttribute)
@@ -8900,10 +8900,10 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.removeHint(message, tpAbstract);
       }
 
-//      if (test(methodHints, tpPredefined)) {
-//         // exclude the predefined attribute from declared method
-//         scope.removeHint(message, tpPredefined);
-//      }
+      if (test(methodHints, tpPredefined)) {
+         // exclude the predefined attribute from declared method
+         scope.removeHint(message, tpPredefined);
+      }
 
       if (test(scope.info.header.flags, elExtension) && (privateOne || test(methodHints, tpInternal)))
          // private / internal methods cannot be declared in the extension

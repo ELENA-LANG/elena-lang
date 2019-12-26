@@ -16,7 +16,7 @@
 #define sealed      80004001h
 #define abstract    80004002h
 #define closed      80004003h
-//#define predefined  80004005h
+#define predefined  80004005h
 //#define yieldable   80004006h
 
 /// scope_accessors:
