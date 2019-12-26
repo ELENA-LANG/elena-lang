@@ -108,10 +108,6 @@ ELENA byte codes (or ecodes)
 
  divf i                     - dword[fp+i] << dword[fp+i] / dword[acc]
 
- equal                      - int[acc] == int[sp] ; if true - index = 1, if false - index = 0
-
- less                       - int[acc] < int[sp]  ; if true - index = 1, if false - index = 0
-
  mulf i                     - dword[fp+i] << dword[fp+i] * dword[acc]
 
  shlf i                     - dword[fp+i] << dword[fp+i] $shl dword[acc] 
@@ -119,6 +115,15 @@ ELENA byte codes (or ecodes)
  shrf i                     - dword[fp+i] << dword[fp+i] $shr dword[acc] 
 
  subf i                     - dword[fp+i] << dword[fp+i] - dword[acc] 
+
+
+ Comparision operations:
+ ----------------------- 
+ equal                       - acc == [sp] ; if true - index = 1, if false - index = 0
+
+ nequal                      - int[acc] == int[sp] ; if true - index = 1, if false - index = 0
+
+ nless                       - int[acc] < int[sp]  ; if true - index = 1, if false - index = 0
 
 
  Stack operations:
@@ -304,8 +309,6 @@ ELENA byte codes (or ecodes)
  
  scopyf i                   - sp <= fp + i
  
- selectr r1, r2             - acc = (index = 0 ? r1 : r2)
- 
  setverb m                  - ext.verb << m
  
  xselectr r1, r2            - acc = (acc = 0 ? r1 : r2)
@@ -463,8 +466,6 @@ ELENA byte codes (or ecodes)
  
  if label                   - jump to the label if index == ext                                                   
 
- ifb label                  - jump to the label if acc == base
- 
  ifheap label               - jump to the label if acc is allocated in heap (more precisely - not in the stack) (*index affected)
 
  ifm m, label               - jump to the label if ext == message

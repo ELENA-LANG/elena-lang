@@ -2,14 +2,15 @@
 In development:
 ------         
               dev
+                * migrate basic classes
+                * calling internal constructor (String and WideString)
                 * call stack
                 * method not found - test
                 * int sum : test exception handling
 
-                * calling internal constructor (String and WideString)
-
                 * support vm client
                 * vm hello world sample
+                * realsum
 
                 * samples
 

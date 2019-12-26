@@ -81,8 +81,8 @@ enum ByteCode
 //   bcDMoveVerb       = 0x3C,
 //   // 0x3F should be reserved for command
 
-   bcEqual           = 0x40,
-   bcLess            = 0x41,
+   bcNEqual          = 0x40,
+   bcNLess           = 0x41,
 //   bcNCopy           = 0x42,
 //   bcNAdd            = 0x43,
 //   bcNSub            = 0x44,

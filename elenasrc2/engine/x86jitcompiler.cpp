@@ -74,7 +74,7 @@ const int gcCommands[gcCommandNumber] =
    bcSubF, bcMulF, bcDivF, bcPushAI, bcGetI,
    bcSetI, bcCopyToAI, bcCreate, bcFillR, bcXSetI,
    bcXSetFI, bcClass, bcXSaveF, bcLen, bcSave,
-   bcSelect, bcEqual, bcLess, bcSNop, bcCreateN,
+   bcSelect, bcNEqual, bcNLess, bcSNop, bcCreateN,
    bcSaveF, bcTryLock, bcLoad, bcHook, bcUnhook,
    bcFlag, bcFreeLock, bcGet, bcShlF, bcShrF,
    bcMovN, bcCloneF, bcInc, bcRead, bcExclude,

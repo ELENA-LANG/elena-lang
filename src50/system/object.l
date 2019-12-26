@@ -13,13 +13,13 @@ public class Object
     /// Creates the object
     constructor() {}
     
-//    /// Returns true if the specified object is equal to the current object; otherwise, false.
-//    ///
-//    /// By default compares the object references.
-//    bool equal(o) => system'core_routines'__object;
-//    
-//    bool notequal(o) = self.equal(o).Inverted;
-//    
+    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    ///
+    /// By default compares the object references.
+    bool equal(o) => intern system'core_routines'__object;
+    
+    bool notequal(o) = self.equal(o).Inverted;
+    
 //    // virtual method declarations : forcing the output type                            
 //    predefined bool less(o) {}
 //    predefined bool greater(o) {}

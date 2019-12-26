@@ -2988,10 +2988,10 @@ void ByteCodeWriter :: doIntBoolOperation(CommandTape& tape, int operator_id)
    switch (operator_id)
    {
       case EQUAL_OPERATOR_ID:
-         tape.write(bcEqual);
+         tape.write(bcNEqual);
          break;
       case LESS_OPERATOR_ID:
-         tape.write(bcLess);
+         tape.write(bcNLess);
          break;
    }
 }
