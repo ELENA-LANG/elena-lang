@@ -871,10 +871,10 @@ public sealed const struct IntNumber : IntBaseNumber
 //    /// Creates the object with the maximal value
 //    static int MaxValue
 //        = 2147483647;
-//
+
 //    constructor()
 //        = 0;
-//    
+    
 //    /// Creates the object with specified value
 //    constructor(int value)
 //        = value;

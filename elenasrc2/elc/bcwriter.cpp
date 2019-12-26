@@ -6424,8 +6424,10 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
       SNode current = node.firstChild();
       while (current != lxNone) {
          if (current == lxNewFrame) {
+            int reserved = current.findChild(lxReserved).argument;
+
             // new frame
-            newFrame(tape, 1, 0/*, false*/);
+            newFrame(tape, 1, reserved/*, false*/);
 
             // save message
             tape.write(bcSaveF, -2);

@@ -7007,8 +7007,8 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, /*bool withGe
    ExprScope exprScope(&codeScope);
    ObjectInfo target = mapObject(dispatchNode, exprScope, EAttr::eaNone);
    if (target.kind != okInternal) {
-      node.injectAndReplaceNode(lxDispatching);
-      node = node.firstChild();
+      dispatchNode.injectAndReplaceNode(lxDispatching);
+      dispatchNode = dispatchNode.firstChild();
    }
 
    if (dispatchNode != lxNone) {
@@ -7165,9 +7165,14 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
                node.set(lxResending, methodScope->message);
                SNode frameNode = node.injectNode(lxNewFrame);
                SNode exprNode = frameNode.injectNode(lxExpression);
+               exprScope.tempAllocated1++;              
 
+               int preserved = exprScope.tempAllocated1;
                target = compileExpression(exprNode, exprScope, target, 0, EAttr::eaNone);
                analizeOperands(exprNode, exprScope, 0);
+               // HOTFIX : allocate temporal variables
+               if (exprScope.tempAllocated1 != preserved)
+                  frameNode.appendNode(lxReserved, exprScope.tempAllocated1 - preserved);
 
                break;
             }
@@ -8913,7 +8918,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          && !test(message, VARIADIC_MESSAGE)
          && !current.existChild(lxDispatchCode, lxResendExpression))
       {
-//         // COMPILER MAGIC : if embeddable returning argument is allowed
+         // COMPILER MAGIC : if embeddable returning argument is allowed
          ref_t outputRef = scope.info.methodHints.get(Attribute(message, maReference));
 
          bool embeddable = false;

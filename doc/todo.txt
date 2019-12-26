@@ -2,12 +2,14 @@
 In development:
 ------         
               dev
+                * resend expression
+                * intnumber default constructor
+
                 * int sum
                 * call stack
                 * method not found - test
                 * int sum : test exception handling
 
-                * dispatch expression
                 * calling internal constructor (String and WideString)
 
                 * support vm client
@@ -40,6 +42,8 @@ In development:
 
                 * method not found exception
                 * call stack
+
+                * calling default constructor - see extensions'Integer.#constructor<IntNumber> - double initialization 
 
                 * try / finally / catch exception
                 * register exceptions
@@ -242,6 +246,7 @@ In development:
                 * call inernal function directly (without intermediate step in system'routines) when it is possible
                 * uncomment cleanUp code
                 * property - append, ...
+                * boxArgument - fieldexpr should be better mapped
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)
