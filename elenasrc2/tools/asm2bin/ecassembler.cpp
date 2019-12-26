@@ -237,7 +237,13 @@ ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
       token.read(":", "Invalid operand (%d)");
       token.read();
 
-      if (token.terminal.state == dfaInteger || token.terminal.state == dfaHexInteger) {
+      if (token.check("false")) {
+         return binary->mapReference("system'BoolValue#false") | mskConstantRef;
+      }
+      else if (token.check("true")) {
+         return binary->mapReference("system'BoolValue#true") | mskConstantRef;
+      }
+      else if (token.terminal.state == dfaInteger || token.terminal.state == dfaHexInteger) {
          int n = 0;
          token.getInteger(n, constants);
 

@@ -75,9 +75,9 @@ public interface BoolValue
 //    
 //        /// Determines whether the specified object is equal to the current object boolean value.
 //        bool equal(bool b) = b;
-//    
-//        /// Always returns false.
-//        bool Inverted = false;
+    
+        /// Always returns false.
+        bool Inverted = BoolValue.false;
     
         /// Returns literal representation.
         string toPrintable() = "true";
@@ -126,9 +126,9 @@ public interface BoolValue
 //        {
 //            ^ f.Inverted
 //        }
-//    
-//        /// Always returns true
-//        bool Inverted = true;
+    
+        /// Always returns true
+        bool Inverted = BoolValue.true;
     
         /// Returns literal representation
         string toPrintable() = "false";
@@ -152,9 +152,9 @@ public interface BoolValue
 //    abstract bool and(expr) {}
 //
 //    abstract bool xor(expr) {}
-//
-//    abstract get bool Inverted() {}
-//
+
+    abstract get bool Inverted() {}
+
 //    abstract bool clone() {}
 }
 

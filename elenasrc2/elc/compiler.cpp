@@ -3316,10 +3316,10 @@ ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int ar
          return encodeMessage(scope.module->mapAction(IF_MESSAGE, 0, false), argCount, 0);
 //      case IFNOT_OPERATOR_ID:
 //         return encodeMessage(scope.module->mapAction(IFNOT_MESSAGE, 0, false), paramCount, 0);
-//      case EQUAL_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(EQUAL_MESSAGE, 0, false), paramCount, 0);
-//      case NOTEQUAL_OPERATOR_ID:
-//         return encodeMessage(scope.module->mapAction(NOTEQUAL_MESSAGE, 0, false), paramCount, 0);
+      case EQUAL_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(EQUAL_MESSAGE, 0, false), argCount, 0);
+      case NOTEQUAL_OPERATOR_ID:
+         return encodeMessage(scope.module->mapAction(NOTEQUAL_MESSAGE, 0, false), argCount, 0);
       case LESS_OPERATOR_ID:
          return encodeMessage(scope.module->mapAction(LESS_MESSAGE, 0, false), argCount, 0);
 //      case NOTLESS_OPERATOR_ID:

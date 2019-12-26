@@ -1028,6 +1028,16 @@ inline % 36h
 
 end
 
+// ; equal
+inline % 3Eh
+
+  mov  eax, [esp]
+  xor  edx, edx
+  cmp  eax, ebx
+  setz dl
+
+end
+
 // ; nequal
 inline % 40h
 

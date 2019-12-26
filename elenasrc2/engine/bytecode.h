@@ -79,7 +79,7 @@ enum ByteCode
 //   bcValidate        = 0x3A,
 //   bcAndE            = 0x3B,
 //   bcDMoveVerb       = 0x3C,
-//   // 0x3F should be reserved for command
+   bcEqual           = 0x3E,
 
    bcNEqual          = 0x40,
    bcNLess           = 0x41,
@@ -98,6 +98,8 @@ enum ByteCode
 //   bcNNot            = 0x4E,
 //   bcNCreate         = 0x4F,
 //
+
+
 //   bcNCopyB          = 0x50,
 //   bcLCopyB          = 0x51,
 //   bcCopyB           = 0x52,
