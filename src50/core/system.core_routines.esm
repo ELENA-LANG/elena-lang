@@ -145,6 +145,22 @@ procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@B
 
 end
 
+procedure __literalconvertor."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3
+
+  callextr api : inttostr
+  freei 3
+
+  peeksi 4
+  save
+
+  quitn 4
+
+end
+
 procedure __args."readLengthTo$@system@ref#1&system@IntNumber[2]"
 
   movn   0

@@ -1131,15 +1131,13 @@ public sealed const struct IntNumber : IntBaseNumber
     /// Returns the literal presentation
     string toPrintable()
     {
-//        byte buffer[12];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)        
+        byte buffer[12];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(self, 10, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)        
     }
-     
-       = stringConvertor.convert(self);
 
 //    /// Clones the value
 //    int clone() = new IntNumber(self);
