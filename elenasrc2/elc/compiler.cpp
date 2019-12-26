@@ -3846,7 +3846,7 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
    ref_t sourceRef = resolveObjectReference(scope, source, false);
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       if ((source.kind == okIntConstant || source.kind == okUIntConstant) 
-         && targetRef == scope.moduleScope->intReference) 
+         && targetRef == scope.moduleScope->intReference && !EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) 
       {
          // HOTFIX : allow to pass the constant directly
          source.reference = scope.moduleScope->intReference;

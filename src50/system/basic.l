@@ -872,8 +872,8 @@ public sealed const struct IntNumber : IntBaseNumber
 //    static int MaxValue
 //        = 2147483647;
 
-//    constructor()
-//        = 0;
+    constructor()
+        = 0;
     
 //    /// Creates the object with specified value
 //    constructor(int value)
@@ -937,18 +937,18 @@ public sealed const struct IntNumber : IntBaseNumber
 //
 //    divide(n)
 //        <= divide(cast int(n));
-//        
-//    int add(BaseVariable v)
-//        <= add(v.Value);
-//
-//    int subtract(BaseVariable v)
-//        <= subtract(v.Value);
-//
-//    int multiply(BaseVariable v)
-//        <= multiply(v.Value);
-//
-//    int divide(BaseVariable v)
-//        <= divide(v.Value);
+        
+    int add(BaseVariable v)
+        <= add(v.Value);
+
+    int subtract(BaseVariable v)
+        <= subtract(v.Value);
+
+    int multiply(BaseVariable v)
+        <= multiply(v.Value);
+
+    int divide(BaseVariable v)
+        <= divide(v.Value);
         
     /// Returns the sum
     int add(int n)
@@ -1127,10 +1127,20 @@ public sealed const struct IntNumber : IntBaseNumber
 //    /// Returns the result of bitwise XOR operation
 //    xor(long n)
 //        = new LongNumber(self).xor(n);
-//
-//    /// Returns the literal presentation
-//    string Printable = stringConvertor.convert(self);
-//
+
+    /// Returns the literal presentation
+    string toPrintable()
+    {
+//        byte buffer[12];
+//        int  length := 0;
+//        
+//        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
+//        
+//        ^ String.fromByteArray(0, length, buffer)        
+    }
+     
+       = stringConvertor.convert(self);
+
 //    /// Clones the value
 //    int clone() = new IntNumber(self);
 //

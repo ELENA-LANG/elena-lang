@@ -1532,8 +1532,8 @@ public singleton stringConvertor
 //        
 //        ^ String.fromByteArray(0, length, buffer)
 //    }
-//    
-//    /// Converts the parameter to the literal value
+    
+    /// Converts the parameter to the literal value
 //    string convert(int n)
 //    {
 //        byte buffer[12];
@@ -1543,7 +1543,7 @@ public singleton stringConvertor
 //        
 //        ^ String.fromByteArray(0, length, buffer)
 //    }
-//    
+    
 //    /// Converts the parameter to the literal value
 //    string convert(uint n)
 //    {
@@ -1703,10 +1703,10 @@ public singleton stringConvertor
 //    {
 //        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length)
 //    }
-//
-//    /// Returns a parameter                
-//    string convert(string s)
-//        = s;
+
+    /// Returns a parameter                
+    string convert(string s)
+        = s;
         
     /// Returns the literal presentation of the parameter
     string convert(o)

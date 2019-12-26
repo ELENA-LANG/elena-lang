@@ -2,9 +2,6 @@
 In development:
 ------         
               dev
-                * resend expression
-                * intnumber default constructor
-
                 * int sum
                 * call stack
                 * method not found - test
@@ -292,6 +289,7 @@ In development:
                 * boxing ext call result
                 * optimize interface implementation . try to use direct / semi-direct call when possible
                 * optimize operations with int[], short[], byte[] arrays
+                * optimize IntNumber#class.#constructor[1]
 
               dev1
                 * move all description to meta info using descr inline template
