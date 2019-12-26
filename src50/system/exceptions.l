@@ -209,12 +209,12 @@ public sealed class MethodNotFoundException : Exception
 //    constructor new(string message)
 //        <= new(message);
 //}
-//
-//// --- AbortException ---
-//
-///// An abort exception 
-//public class AbortException : Exception
-//{
+
+// --- AbortException ---
+
+/// An abort exception 
+public class AbortException : Exception
+{
 //    static raise()
 //    {
 //        AbortException.new().raise()
@@ -223,8 +223,8 @@ public sealed class MethodNotFoundException : Exception
 //    /// Creates the exception
 //    constructor new()
 //        <= new("The process terminated");
-//}
-//
+}
+
 //// --- CriticalException ---
 //
 //public class CriticalException : Exception

@@ -6083,8 +6083,10 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          case lxCodeExpression:
             if (EAttrs::test(exprMode, HINT_EXTERNALOP)) {
                current.injectAndReplaceNode(lxExternFrame);
+
+               current = current.firstChild(lxObjectMask);
             }
-            result = compileSubCode(current.firstChild(lxObjectMask), scope, false);
+            result = compileSubCode(current, scope, false);
             break;
          case lxType:
 //            if (mode.testAndExclude(HINT_MESSAGEREF)) {
@@ -10007,9 +10009,9 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
       SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
       if (variadic) {
          int tempSizeLocal = scope.newTempLocalAddress();
-         SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, SHIFTR_OPERATOR_ID);
-         sizeSetNode.appendNode(objNode.type, objNode.argument);
+         SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, LEN_OPERATOR_ID);
          sizeSetNode.appendNode(lxLocalAddress, tempSizeLocal);
+         sizeSetNode.appendNode(objNode.type, objNode.argument);
 
          newNode.set(lxNewArrOp, typeRef);
          newNode.appendNode(lxSize, 0);

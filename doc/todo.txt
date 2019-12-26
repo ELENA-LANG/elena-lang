@@ -3,6 +3,10 @@ In development:
 ------         
               dev
                 * int sum
+                * call stack
+                * method not found - test
+                * int sum : test exception handling
+
                 * dispatch expression
                 * calling internal constructor (String and WideString)
 

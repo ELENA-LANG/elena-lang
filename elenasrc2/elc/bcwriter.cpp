@@ -3354,7 +3354,7 @@ void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, i
          // get
          tape.write(bcGet);
          break;
-      case SHIFTR_OPERATOR_ID:
+      case LEN_OPERATOR_ID:
          // pusha
          // movn 0
          // labSearch
@@ -3374,7 +3374,7 @@ void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, i
          tape.write(bcElseR, baCurrentLabel, -1);
          tape.releaseLabel();
          tape.write(bcFreeI, 1);
-         tape.write(bcSaveF, argument);
+         tape.write(bcSaveF, argument, bpFrame);
 
          break;
 //      case SET_REFER_OPERATOR_ID:
@@ -4223,9 +4223,9 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          //      case lxArrOp:
          //         doArrayOperation(tape, node.argument);
          //         break;
-      case lxArgArrOp:
-         doArgArrayOperation(tape, node.argument, argument, immValue);
-         break;
+         case lxArgArrOp:
+            doArgArrayOperation(tape, node.argument, argument, immValue);
+            break;
       }
    }
    else {

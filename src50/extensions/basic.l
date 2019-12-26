@@ -13,9 +13,10 @@ public sealed class Integer : BaseVariable, ref<int>
         value := n
     }
     
-//    constructor new()
-//        <= ();
-//    
+    constructor new()
+    {
+    }
+    
 ////    constructor new : n
 ////        <= new(T<int>(n)).
 //        
