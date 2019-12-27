@@ -2,7 +2,6 @@
 In development:
 ------         
               dev
-                * ?? operator : a ?? b, a.msg() ?? b
                 * migrate basic classes
                 * calling internal constructor (String and WideString)
                 * call stack
