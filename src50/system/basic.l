@@ -4,7 +4,7 @@ public abstract class BaseVariable
     // should be overridden
     abstract get Value() {}
     
-//    abstract set Value(o) {}
+    abstract set Value(o) {}
 }
 
 public sealed ref<T> : BaseVariable
@@ -28,119 +28,14 @@ public sealed ref<T> : BaseVariable
         value := val
     }
 
-//    bool equal(o)
-//        => theValue;
-//
-//    get string Printable()
-//        => theValue;
-//        
-//    dispatch() => theValue;
-}
+    bool equal(o)
+        => value;
 
-//
-//// === Boolean values ===
-//
-//// --- true ---
-//
-///// A true value symbol
-//public sealed singleton true : BoolValue
-//{
-//    /// Executes the action
-//    if(trueAction) = trueAction();
-//
-//    /// Executes then-action
-//    if(trueAction,falseAction) = trueAction();
-//
-//    /// Always returns nil.
-//    ifnot(trueAction) = nil;
-//
-//    iif(object trueVal, object falseVal) = trueVal;
-//    
-//    /// Executes logical OR operation
-//    ///
-//    /// Always return true
-//    bool or(expr) = self;
-//
-//    /// Executes logical AND operation
-//    bool and(expr) = expr;
-//
-//    /// Executes logical XOR operation
-//    bool xor(expr)
-//    {
-//        cast bool(expr) ? { ^ false };
-//        
-//        ^ self
-//    }
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    bool equal(expr) = expr;
-//
-//    /// Determines whether the specified object is equal to the current object boolean value.
-//    bool equal(bool b) = b;
-//
-//    /// Always returns false.
-//    bool Inverted = false;
-//
-//    /// Returns literal representation.
-//    string Printable = "true";
-//
-//    /// Returns itself.
-//    bool clone() = self;
-//}
-//
-//// --- false ---
-//
-///// A false value symbol
-//public sealed singleton false : BoolValue
-//{
-//    /// Always returns nil
-//    if(trueAction) = nil;
-//    
-//    /// Executes else-action
-//    if(trueAction,falseAction) = falseAction();
-//
-//    /// Executes the action
-//    ifnot(action) = action();
-//
-//    iif(object trueVal, object falseVal) = falseVal;
-//
-//    /// Executes logical OR operation
-//    bool or(expr) = expr;
-//
-//    /// Executes logical AND operation
-//    ///
-//    /// Always return false
-//    bool and(expr) = self;
-//
-//    /// Executes logical XOR operation
-//    bool xor(expr)
-//    {
-//        cast bool(expr) ? { ^ true };
-//        
-//        ^ self
-//    }
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    bool equal(expr)
-//    {
-//        cast bool(expr) ? { ^ self } : { ^ true }
-//    }
-//
-//    /// Determines whether the specified object is equal to the current object boolean value
-//    bool equal(bool f)
-//    {
-//        ^ f.Inverted
-//    }
-//
-//    /// Always returns true
-//    bool Inverted = true;
-//
-//    /// Returns literal representation
-//    string Printable = "false";
-//    
-//    /// Returns itself
-//    bool clone() = self;
-//}
+    string toPrintable()
+        => value;
+        
+    dispatch() => value;
+}
 
 // === basic data classes ===
 
@@ -149,21 +44,21 @@ public sealed ref<T> : BaseVariable
 /// A base value
 public abstract class BaseValue
 {
-//    bool equal(BaseVariable var)
-//        <= equal(var.Value);
-//    
-//    bool less(BaseVariable var)
-//        <= equal(var.Value);
-//    
+    bool equal(BaseVariable var)
+        <= equal(var.Value);
+    
+    bool less(BaseVariable var)
+        <= equal(var.Value);
+    
 //    /// Compares the values
 //    abstract bool less(o) {}
-//
-//    /// Compares the values
-//    bool greater(o) = o.less(self);
-//
-//    bool notless(o) = self.less(o).Inverted;
-//
-//    bool notgreater(o) = self.greater(o).Inverted;
+
+    /// Compares the values
+    bool greater(o) = o.less(self);
+
+    bool notless(o) = self.less(o).Inverted;
+
+    bool notgreater(o) = self.greater(o).Inverted;
 }
 
 // --- BaseNumber ---
@@ -171,18 +66,18 @@ public abstract class BaseValue
 /// A base numeric value
 public abstract class BaseNumber : BaseValue
 {
-//    add(BaseVariable var)
-//        <= add(var.Value);
-//
-//    subtract(BaseVariable var)
-//        <= subtract(var.Value);
-//    
-//    multiply(BaseVariable var)
-//        <= multiply(var.Value);
-//
-//    divide(BaseVariable var)
-//        <= divide(var.Value);
-//    
+    add(BaseVariable var)
+        <= add(var.Value);
+
+    subtract(BaseVariable var)
+        <= subtract(var.Value);
+    
+    multiply(BaseVariable var)
+        <= multiply(var.Value);
+
+    divide(BaseVariable var)
+        <= divide(var.Value);
+    
 //    /// Adds the value
 //    abstract add(o) {}
 //
@@ -194,9 +89,9 @@ public abstract class BaseNumber : BaseValue
 //
 //    /// Divides into the value
 //    abstract divide(o) {}
-//    
-//    Negative
-//        = 0 - self;
+    
+    Negative
+        = 0 - self;
 }
 
 // --- IntBaseNumber ---
@@ -204,31 +99,31 @@ public abstract class BaseNumber : BaseValue
 /// A base integer value
 public abstract class IntBaseNumber : BaseNumber
 {
-//    and(BaseVariable var)
-//        <= and(var.Value);
-//        
-//    or(BaseVariable var)
-//        <= or(var.Value);
-//        
-//    xor(BaseVariable var)
-//        <= xor(var.Value);
-//    
+    and(BaseVariable var)
+        <= and(var.Value);
+        
+    or(BaseVariable var)
+        <= or(var.Value);
+        
+    xor(BaseVariable var)
+        <= xor(var.Value);
+    
 //    /// Execute bitwise AND operation
 //    abstract and(o) {}
-//
+
 //    /// Execute bitwise OR operation
 //    abstract or(o) {}
 //    
 //    /// Execute bitwise XOR operation
 //    abstract xor(o) {}
-//    
-//    /// Returns true if all the mask bits are set
-//    bool allMask(operand)
-//        = self.and:operand == operand;
-//        
-//    /// Returns true if any of the mask bits are set    
-//    bool anyMask(operand)
-//        = 0 != self.and:operand;
+    
+    /// Returns true if all the mask bits are set
+    bool allMask(operand)
+        = self.and:operand == operand;
+        
+    /// Returns true if any of the mask bits are set    
+    bool anyMask(operand)
+        = 0 != self.and:operand;
 }
 
 // --- ByteNumber ---
@@ -238,35 +133,29 @@ public sealed const struct ByteNumber : IntBaseNumber
 {
     embeddable __int theValue[1];
 
-//    constructor(int n)
-//    {
-//        theValue := n && 255
-//    }
-//
-//    /// Creates the object with a default value (0)
-//    static byte Default
-//        = 0;
-//
-//    /// return the default value
-//    constructor()
-//        = 0;
-//
-//    /// Returns the minimal value (0)
-//    static byte MinValue
-//        = 0;
-//
-//    /// Returns the maxial value (255)
-//    static byte MaxValue
-//        = 255;
-//    
-//    /// Creates the object with a specified value
-//    constructor(byte value)
-//        = value;
-//
+    constructor(int n)
+        = n && 255;
+
+    /// return the default value
+    constructor()
+        = 0;
+
+    /// Returns the minimal value (0)
+    static byte MinValue
+        = 0;
+
+    /// Returns the maxial value (255)
+    static byte MaxValue
+        = 255;
+    
+    /// Creates the object with a specified value
+    constructor(byte value)
+        = value;
+
 //    /// Creates the object with a specified value
 //    constructor new(val)
 //        <= (cast byte(val));
-//
+
 //    /// Returns the value as a short integer
 //    short cast() = new ShortNumber(self);
 //
@@ -306,10 +195,10 @@ public sealed const struct ByteNumber : IntBaseNumber
 //            ? { ^ false }
 //            : { ^ self.equal(n) }
 //    }
-//
-//    bool less(n)
-//        <= less(cast byte(n));
-//
+
+    bool less(n)
+        <= less(cast byte(n));
+
 //    bool less(BaseVariable v)
 //        <= less(v.Value);
 //
@@ -524,8 +413,8 @@ public sealed const struct ByteNumber : IntBaseNumber
 //    }
 //        
 //    /// Returns the literal presentation
-//    string Printable = stringConvertor.convert(self);
-//        
+//    string getPrintable() = stringConvertor.convert(self);
+        
 //    /// Clones the value
 //    byte clone() = new ByteNumber(self);
 }

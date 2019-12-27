@@ -104,17 +104,23 @@ ELENA byte codes (or ecodes)
 
  Arithmeric operations:
  ----------------------
- addf i                     - dword[fp+i] << dword[fp+i] + dword[acc]
+ naddf i                    - dword[fp+i] << dword[fp+i] + dword[acc]
 
- divf i                     - dword[fp+i] << dword[fp+i] / dword[acc]
+ nandf                      - dword[fp+i] << dword[fp+i] && dword[acc]
+ 
+ ndivf i                    - dword[fp+i] << dword[fp+i] / dword[acc]
 
- mulf i                     - dword[fp+i] << dword[fp+i] * dword[acc]
+ nmulf i                    - dword[fp+i] << dword[fp+i] * dword[acc]
 
- shlf i                     - dword[fp+i] << dword[fp+i] $shl dword[acc] 
+ norf                       - dword[fp+i] << dword[fp+i] || dword[acc]
 
- shrf i                     - dword[fp+i] << dword[fp+i] $shr dword[acc] 
+ nshlf i                    - dword[fp+i] << dword[fp+i] $shl dword[acc] 
 
- subf i                     - dword[fp+i] << dword[fp+i] - dword[acc] 
+ nshrf i                    - dword[fp+i] << dword[fp+i] $shr dword[acc] 
+
+ nsubf i                    - dword[fp+i] << dword[fp+i] - dword[acc] 
+
+ nxorf                      - dword[fp+i] << dword[fp+i] ~~ dword[acc]
 
 
  Comparision operations:
@@ -568,28 +574,14 @@ ELENA byte codes (or ecodes)
 
  muln n                     - index * n => index
  
- nadd                       - int[base] += int[acc]
- 
- nand                       - int[base] && int[acc]
- 
- ndiv                       - int[base] /= int[acc]
- 
- nmul                       - int[base] *= int[acc]
- 
  nnot                       - int[base] << not int[acc]
  
- nor                        - int[base] || int[acc]
-
  not                        - !index => index
  
  nshiftl                    - int[base] <<= index
  
  nshiftr                    - int[base] >>= index
  
- nsub                       - int[base] -= int[acc]
- 
- nxor                       - int[base] ~~ int[acc]
-
  or                         - index || ext => index
 
  orn n                      - index || n => index

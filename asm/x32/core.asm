@@ -1074,6 +1074,30 @@ inline % 48h
 
 end
 
+// ; nxorf
+inline % 52h
+
+  mov  ecx, [ebx]
+  xor  [ebp+__arg1], ecx
+
+end
+
+// ; norf
+inline % 53h
+
+  mov  ecx, [ebx]
+  or   [ebp+__arg1], ecx
+
+end
+
+// ; nandf
+inline % 54h
+
+  mov  ecx, [ebx]
+  and  [ebp+__arg1], ecx
+
+end
+
 // ; div
 inline %05Bh
 
@@ -1147,7 +1171,7 @@ inline % 5Dh
 
 end
 
-// ; shlf
+// ; nshlf
 inline % 5Eh
 
   mov eax, [ebp+__arg1]
@@ -1157,7 +1181,7 @@ inline % 5Eh
 
 end
 
-// ; shrf
+// ; nshrf
 inline % 5Fh
 
   mov eax, [ebp+__arg1]
@@ -1376,7 +1400,7 @@ inline % 0C4h
 
 end
 
-// ; addf
+// ; naddf
 inline % 0C5h
 
   mov  ecx, [ebx]
@@ -1384,7 +1408,7 @@ inline % 0C5h
 
 end
 
-// ; mulf
+// ; nmulf
 inline % 0C6h
 
   mov  eax, [ebp+__arg1]
@@ -1393,7 +1417,7 @@ inline % 0C6h
 
 end
 
-// ; subf
+// ; nsubf
 inline % 0C8h
 
   mov  ecx, dword ptr [ebx]
@@ -1401,7 +1425,7 @@ inline % 0C8h
 
 end
 
-// ; divf
+// ; ndivf
 inline % 0C9h
 
   mov  eax, [ebp+__arg1]

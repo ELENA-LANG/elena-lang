@@ -3001,28 +3001,40 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
    switch (operator_id)
    {
       case ADD_OPERATOR_ID:
-         // addf i
-         tape.write(bcAddF, localOffset);
+         // naddf i
+         tape.write(bcNAddF, localOffset);
          break;
       case SUB_OPERATOR_ID:
-         // subf i
-         tape.write(bcSubF, localOffset);
+         // nsubf i
+         tape.write(bcNSubF, localOffset);
          break;
       case MUL_OPERATOR_ID:
-         // mulf i
-         tape.write(bcMulF, localOffset);
+         // nmulf i
+         tape.write(bcNMulF, localOffset);
          break;
       case DIV_OPERATOR_ID:
-         // divf i
-         tape.write(bcDivF, localOffset);
+         // ndivf i
+         tape.write(bcNDivF, localOffset);
          break;
       case SHIFTL_OPERATOR_ID:
-         // shlf i
-         tape.write(bcShlF, localOffset);
+         // nshlf i
+         tape.write(bcNShlF, localOffset);
          break;
       case SHIFTR_OPERATOR_ID:
-         // shrf i
-         tape.write(bcShrF, localOffset);
+         // nshrf i
+         tape.write(bcNShrF, localOffset);
+         break;
+      case AND_OPERATOR_ID:
+         // nandf i
+         tape.write(bcNAndF, localOffset);
+         break;
+      case OR_OPERATOR_ID:
+         // norf i
+         tape.write(bcNOrF, localOffset);
+         break;
+      case XOR_OPERATOR_ID:
+         // nxorf i
+         tape.write(bcNXorF, localOffset);
          break;
       default:
          throw InternalError("not yet implemente"); // !! temporal
@@ -5610,11 +5622,11 @@ void ByteCodeWriter :: copyToFieldAddress(CommandTape& tape, int size, int argum
 
 void ByteCodeWriter :: copyFromLocalAddress(CommandTape& tape, int size, int argument)
 {
-   if ((size & 3) == 0) {
-      // if it is a dword aligned
-      tape.write(bcCopyF, argument, size >> 2);
-   }
-   else throw InternalError("not yet implemente"); // !! temporal
+   // stack operations are always 4-byte aligned
+   size = align(size, 4);
+
+   // if it is a dword aligned
+   tape.write(bcCopyF, argument, size >> 2);
 }
 
 void ByteCodeWriter :: copyToLocalAddress(CommandTape& tape, int size, int argument)

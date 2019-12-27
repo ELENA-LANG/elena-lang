@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/72;
+const int gcCommandNumber = /*160*/75;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -70,16 +70,16 @@ const int gcCommands[gcCommandNumber] =
    bcCallVI, bcClose, bcNew, bcFillRI, bcCallRM,
    bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
    bcMTRedirect, bcJumpVI, bcXMTRedirect, bcRestore, bcPushF,
-   bcCopyF, bcCopyFI, bcAddF, bcCopyToF, bcCopyToFI,
-   bcSubF, bcMulF, bcDivF, bcPushAI, bcGetI,
+   bcCopyF, bcCopyFI, bcNAddF, bcCopyToF, bcCopyToFI,
+   bcNSubF, bcNMulF, bcNDivF, bcPushAI, bcGetI,
    bcSetI, bcCopyToAI, bcCreate, bcFillR, bcXSetI,
    bcXSetFI, bcClass, bcXSaveF, bcLen, bcSave,
    bcSelect, bcNEqual, bcNLess, bcSNop, bcCreateN,
    bcSaveF, bcTryLock, bcLoad, bcHook, bcUnhook,
-   bcFlag, bcFreeLock, bcGet, bcShlF, bcShrF,
+   bcFlag, bcFreeLock, bcGet, bcNShlF, bcNShrF,
    bcMovN, bcCloneF, bcInc, bcRead, bcExclude,
    bcInclude, bcCopyTo, bcReadToF, bcXWrite, bcDiv,
-   bcLoadFI, bcEqual,
+   bcLoadFI, bcEqual, bcNAndF, bcNOrF, bcNXorF,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -144,7 +144,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
    &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &loadNOp, &loadNOpX, &loadNOp, &loadFPOp, &loadFPOp,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,

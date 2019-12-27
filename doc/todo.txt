@@ -2,6 +2,8 @@
 In development:
 ------         
               dev
+                * native operation : and, or, xor
+                * constructor default class resend
                 * migrate basic classes
                 * calling internal constructor (String and WideString)
                 * call stack
@@ -11,6 +13,7 @@ In development:
                 * support vm client
                 * vm hello world sample
                 * realsum
+                * migrate basic classes : enumerators, indexers
 
                 * samples
 

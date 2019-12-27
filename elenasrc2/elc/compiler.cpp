@@ -7127,7 +7127,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
       // try to implement light-weight resend operation      
       ref_t targetRef = methodScope->getReturningRef(false);
 
-//      int stackSafeAttrs = 0;
+      int stackSafeAttrs = 0;
       bool directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, exprScope.moduleScope->superReference);
       if (isSingleStatement(node)) {
          if (!directOp) {
@@ -7179,29 +7179,25 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
          }
       }
       else {
-//         EAttr mode = EAttr::eaNone;
-//
-//         // bad luck - we have to dispatch and type cast the result
-//         writer.newNode(lxNewFrame);
-//
-//         writer.newBookmark();
-//
-//         target = compileExpression(writer, node, scope, 0, mode);
-//         for (auto it = methodScope->parameters.start(); !it.Eof(); it++) {
-//            ObjectInfo param = methodScope->mapParameter(*it, EAttr::eaNone);
-//
-//            writeParamTerminal(writer, scope, param, mode, lxLocal);
-//         }
-//
-//         ObjectInfo retVal = compileMessage(writer, node, scope, target, methodScope->message, mode | HINT_NODEBUGINFO, stackSafeAttrs);
-//
-//         if (!convertObject(writer, scope, targetRef, retVal, mode)) {
-            throw InternalError("Not yet implemented"); // !! temporal
-//         }
-//
-//         writer.removeBookmark();
-//
-//         writer.closeNode();
+         EAttr mode = EAttr::eaNone;
+
+         // bad luck - we have to dispatch and type cast the result
+         node.set(lxNewFrame, 0);
+
+         node.injectNode(lxExpression);
+         SNode exprNode = node.firstChild(lxObjectMask);
+
+         for (auto it = methodScope->parameters.start(); !it.Eof(); it++) {
+            ObjectInfo param = methodScope->mapParameter(*it, EAttr::eaNone);
+
+            setParamTerminal(exprNode.appendNode(lxVirtualReference), exprScope, param, mode, lxLocal);
+         }
+
+         ObjectInfo retVal = compileMessage(exprNode, exprScope, target, methodScope->message, mode | HINT_NODEBUGINFO, stackSafeAttrs);
+         retVal = convertObject(exprNode, exprScope, targetRef, retVal, mode);
+         if (retVal.kind == okUnknown) {
+            exprScope.raiseError(errInvalidOperation, node);
+         }
       }
    }
 }
@@ -7411,7 +7407,8 @@ void Compiler :: compileEmbeddableMethod(SNode node, MethodScope& scope)
    MethodScope privateScope(ownerScope);
    privateScope.message = ownerScope->info.methodHints.get(Attribute(scope.message, maEmbeddableRet));
 
-   resolvePrimitiveReference(scope, V_WRAPPER, scope.outputRef, false);
+   ref_t ref = resolvePrimitiveReference(scope, V_WRAPPER, scope.outputRef, false);
+   validateType(scope, node, ref, false);
 
    declareArgumentList(node, privateScope, true, false);
    privateScope.parameters.add(RETVAL_ARG, Parameter(1 + scope.parameters.Count(), V_WRAPPER, scope.outputRef, 0));
