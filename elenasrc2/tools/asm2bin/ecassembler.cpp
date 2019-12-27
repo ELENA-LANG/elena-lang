@@ -525,10 +525,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcBLoadFI:
          //case bcACopyS:
          case bcMovF:
-         case bcAddF:
-         case bcSubF:
-         case bcMulF:
-         case bcDivF:
+         case bcNAddF:
+         case bcNSubF:
+         case bcNMulF:
+         case bcNDivF:
          case bcCloneF:
             //case bcSCopyF:
          //case bcBCopyS:
@@ -557,8 +557,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcPushS:
          case bcPushSI:
          //case bcESaveFI:
-         case bcShlF:
-         case bcShrF:
+         case bcNShlF:
+         case bcNShrF:
          case bcShr:
          case bcDec:
          //case bcDSwapSI:
