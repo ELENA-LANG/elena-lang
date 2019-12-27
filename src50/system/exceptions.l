@@ -116,10 +116,10 @@ public class FormatException : Exception
 //        <= new(message);
 }
 
-//// --- OutOfRangeException ---
-//
-//public class OutOfRangeException : Exception
-//{
+// --- OutOfRangeException ---
+
+public class OutOfRangeException : Exception
+{
 //    static raise()
 //    {
 //        OutOfRangeException.new().raise()
@@ -132,7 +132,7 @@ public class FormatException : Exception
 //    /// Creates the exception
 //    constructor new(string message)
 //        <= new(message);
-//}
+}
 
 // --- InvalidArgumentException ---
 

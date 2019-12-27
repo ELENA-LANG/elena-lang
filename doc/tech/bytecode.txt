@@ -42,6 +42,8 @@ ELENA byte codes (or ecodes)
 
  movr r                     - r => acc
            
+ not                        - !index => index
+ 
  peekfi i                   - [fp+i] => acc;
 
  peekr r                    - [r] => acc
@@ -579,8 +581,6 @@ ELENA byte codes (or ecodes)
  muln n                     - index * n => index
  
  nnot                       - int[base] << not int[acc]
- 
- not                        - !index => index
  
  nshiftl                    - int[base] <<= index
  

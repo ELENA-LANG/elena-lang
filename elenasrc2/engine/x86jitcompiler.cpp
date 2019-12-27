@@ -133,7 +133,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileBreakpoint, &loadOneByteOp, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp,
    &compileNop, &compileNop, &compilePushA, &compilePopA, &compileNop, &compileNop, &loadOneByteOp, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileQuit,
+   &compileNot, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileQuit,
    &loadOneByteOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
@@ -1817,12 +1817,12 @@ void _ELENA_::compileACopyF(int, x86JITScope& scope)
    scope.code->writeDWord(-(scope.argument << 2));
 }
 
-//void _ELENA_ :: compileNot(int, x86JITScope& scope)
-//{
-//   // not ebx
-//   scope.code->writeWord(0xD3F7);
-//}
-//
+void _ELENA_ :: compileNot(int, x86JITScope& scope)
+{
+   // not edx
+   scope.code->writeWord(0xD2F7);
+}
+
 //void _ELENA_::compileInit(int opcode, x86JITScope& scope)
 //{
 //   if (scope.argument == 1) {

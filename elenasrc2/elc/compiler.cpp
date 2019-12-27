@@ -6294,12 +6294,12 @@ void Compiler :: compileEmbeddableRetExpression(SNode node, ExprScope& scope)
 {
    node.injectNode(lxExpression);
    node = node.findChild(lxExpression);
-
-   SNode current = node.firstChild(lxObjectMask);
+   node.injectNode(lxExpression);
 
    ObjectInfo retVar = scope.mapTerminal(RETVAL_ARG, false, HINT_PROP_MODE);
 
    recognizeTerminal(node.insertNode(lxVirtualReference), retVar, scope, HINT_NOBOXING);
+
    compileAssigning(node.firstChild(), scope, retVar, false);
 }
 

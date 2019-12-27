@@ -316,6 +316,47 @@ labErr:
 
 end
 
+procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quitn 2  
+
+end
+
+procedure __byte."readInvertedTo$system@ByteNumber$@system@ref#1&system@ByteNumber[2]"
+
+  peeksi 1
+  load
+  not
+  peeksi 2
+  save
+  quitn 2
+  
+end
+
+procedure __byteconvertor."convert$system@ShortNumber$@system@ref#1&system@ByteNumber[2]"
+
+  peeksi 1
+  load
+
+  lessn labErr 0  
+  lessn labCopy 0FFh
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : %new[0]
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quitn 2  
+
+end
+
 // ; system routines
 
 symbol sta_start

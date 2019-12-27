@@ -31,8 +31,8 @@ enum ByteCode
 //   bcPopE            = 0x0D,
    bcBSRedirect      = 0x0E,
 //   bcDSetVerb        = 0x0F,
-//
-//   bcNot             = 0x10,
+
+   bcNot             = 0x10,
 //   bcLen             = 0x11,
 //   bcBCopyA          = 0x12,
 //   bcDec             = 0x13,
