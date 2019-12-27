@@ -4813,9 +4813,26 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
 //   if (!test(mode, BOOL_ARG_EXPR))
 //      tape.setLabel();
 //}
-//
-//void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node)
-//{
+
+inline bool isConstant(LexicalType type)
+{
+   switch (type) {
+      case _ELENA_::lxNil:
+      case _ELENA_::lxClassSymbol:
+      case _ELENA_::lxConstantSymbol:
+      case _ELENA_::lxConstantInt:
+      case _ELENA_::lxConstantString:
+      case _ELENA_::lxConstantList:
+      case _ELENA_::lxConstantWideStr:
+      case _ELENA_::lxConstantChar:
+         return true;
+   default:
+      return false;
+   }
+}
+
+void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
 //   if (node.argument == EQUAL_OPERATOR_ID) {
 //      SNode larg;
 //      SNode rarg;
@@ -4834,39 +4851,43 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
 //
 //      selectByAcc(tape, elseParam.argument, ifParam.argument);
 //   }
-//   else if (node.argument == ISNIL_OPERATOR_ID) {
-//      SNode larg;
-//      SNode rarg;
-//      assignOpArguments(node, larg, rarg);
-//      if (larg.compare(lxCalling, lxDirectCalling, lxSDirectCalling) && getParamCount(larg.argument) == 0 && larg.existChild(lxTypecasting)) {
-//         declareTry(tape);
-//
-//         generateObject(tape, larg, ACC_REQUIRED);
-//
-//         declareAlt(tape);
-//
-//         generateObject(tape, rarg, ACC_REQUIRED);
-//
-//         endAlt(tape);
-//      }
-//      else {
-//         generateObject(tape, rarg, ACC_REQUIRED);
-//         if (isSimpleObject(larg)) {
-//            loadBase(tape, lxResult, 0, 0);
-//            generateObject(tape, larg, ACC_REQUIRED);
-//         }
-//         else {
-//            pushObject(tape, lxResult);
-//            generateObject(tape, larg, ACC_REQUIRED);
-//            tape.write(bcPopB);
-//         }
-//
-//         tape.write(bcEqualR, 0);
-//         tape.write(bcSelect);
-//      }
-//   }
-//}
-//
+   /*else */if (node.argument == ISNIL_OPERATOR_ID) {
+
+      SNode larg;
+      SNode rarg;
+      assignOpArguments(node, larg, rarg);
+
+      if (rarg == lxExpression)
+         rarg = rarg.findSubNodeMask(lxObjectMask);
+
+      switch (rarg.type) {
+         case lxConstantChar:
+            //case lxConstantClass:
+         case lxConstantInt:
+            //case lxConstantLong:
+         case lxConstantList:
+            //case lxConstantReal:
+         case lxConstantString:
+         case lxConstantWideStr:
+         case lxConstantSymbol:
+            loadObject(tape, larg, scope);
+            tape.write(bcCoalesceR, rarg.argument | defineConstantMask(rarg.type));
+            break;
+         case lxNil:
+            loadObject(tape, larg, scope);
+            tape.write(bcCoalesceR, 0);
+            break;
+         default:
+            generateObject(tape, rarg, scope, STACKOP_MODE);
+            loadObject(tape, larg, scope);
+            tape.write(bcCoalesce);
+            releaseStack(tape);
+            break;
+      }
+   }
+   else throw new InternalError("Not yet implemented"); // temporal
+}
+
 //void ByteCodeWriter :: generateExternalArguments(CommandTape& tape, SNode node, ExternalScope& externalScope)
 //{
 //   SNode current = node.firstChild();
@@ -6557,9 +6578,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          //      case lxBoolOp:
 //         generateBoolOperation(tape, node, mode);
 //         break;
-//      case lxNilOp:
-//         generateNilOperation(tape, node);
-//         break;
+      case lxNilOp:
+         generateNilOperation(tape, node, scope);
+         break;
       case lxIntOp:
 //      case lxLongOp:
 //      case lxRealOp:

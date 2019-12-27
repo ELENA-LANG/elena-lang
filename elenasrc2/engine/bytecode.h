@@ -17,7 +17,7 @@ enum ByteCode
    // commands:
    bcNop             = 0x00,
    bcBreakpoint      = 0x01,
-//   bcPushB           = 0x02,
+   bcCoalesce        = 0x02,
 //   bcPop             = 0x03,
    bcSNop            = 0x04,
 //   bcPushE           = 0x05,
@@ -230,7 +230,7 @@ enum ByteCode
    bcAnd             = 0xD5,
    bcInc             = 0xD6,
 //   bcOrN             = 0xD7,
-//   bcEAddN           = 0xD8,
+   bcCoalesceR       = 0xD8,
    bcShr             = 0xD9,
 
 
@@ -477,6 +477,7 @@ public:
          //case bcBLoadR:
          case bcCreate:
          case bcCreateN:
+         case bcCoalesceR:
             return true;
          default:
             return false;

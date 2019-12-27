@@ -170,6 +170,7 @@ enum LexicalType
    lxIntArrOp                 = 0x058231,   // arg - operation id
    lxShortArrOp               = 0x058232,
    lxByteArrOp                = 0x058233,
+   lxNilOp                    = 0x058234,   // arg - operation id
    lxExternFrame              = 0x058240,
 
    // attributes
@@ -273,7 +274,6 @@ enum LexicalType
 //   lxArrOp                    = 0x08C029,   // arg - operation id
 //   lxBinArrOp                 = 0x08C02A,   // arg - operation id
 //   lxArgArrOp                 = 0x08C02B,   // arg - operation id
-//   lxNilOp                    = 0x08C02C,   // arg - operation id
 //   lxBoolOp                   = 0x00C02D,   // arg - operation id
 //
 //   lxGreaterN                 = 0x00C02E,   // arg - value

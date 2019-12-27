@@ -14,7 +14,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 
 const char* _fnOpcodes[256] =
 {
-   "nop", "breakpoint", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "snop", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "throw",
+   "nop", "breakpoint", "coalesce", OPCODE_UNKNOWN, "snop", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "throw",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pusha", "popa", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "bsredirect", OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", OPCODE_UNKNOWN, "quit",
@@ -54,7 +54,7 @@ const char* _fnOpcodes[256] =
    "nsubf", "ndivf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storer", OPCODE_UNKNOWN, "clonef", OPCODE_UNKNOWN,
 
    "freei", "alloci", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "shl", "and", "inc", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "coalescer", "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
    "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavef",

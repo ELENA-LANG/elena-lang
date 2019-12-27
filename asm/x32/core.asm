@@ -892,6 +892,15 @@ end
 
 // ; ==== Command Set ==
 
+// ; coalesce
+inline % 2
+
+  mov    eax, [esp]
+  test   ebx, ebx
+  cmovz  ebx, eax
+
+end
+
 // ; snop
 inline % 4
 
@@ -1462,6 +1471,15 @@ end
 inline %0D6h
 
   add  edx, __arg1
+
+end
+
+// ; coalescer
+inline % 0D8h
+
+  mov    eax, __arg1
+  test   ebx, ebx
+  cmovz  ebx, eax
 
 end
 

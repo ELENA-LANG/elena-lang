@@ -3425,24 +3425,27 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode roperandNode, ExprScope& s
    return retVal;
 }
 
-ObjectInfo Compiler :: compileIsNilOperator(SNode current, /*CodeScope& scope, */ObjectInfo loperand)
+ObjectInfo Compiler :: compileIsNilOperator(SNode current, ExprScope& scope, ObjectInfo loperand)
 {
-   // SNode exprNode = current.parentNode();
-   //if (loperand.kind == okObject) {
-   //   SNode altNode = exprNode.injectNode(lxAlt);
-   //}
+   SNode exprNode = current.parentNode();
+   if (loperand.kind == okObject) {
+      SNode firstNode = exprNode.firstChild(lxObjectMask);
+      firstNode.injectAndReplaceNode(lxAlt);
+      firstNode.appendNode(lxExpression).appendNode(lxNil);
+   }
 
-//   ref_t loperandRef = resolveObjectReference(scope, loperand, false);
-//   ref_t roperandRef = resolveObjectReference(scope, roperand, false);
-//
-//   ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef) ? loperandRef : 0;
-//
-//   writer.inject(lxNilOp, ISNIL_OPERATOR_ID);
-//   writer.closeNode();
-//
-//   return ObjectInfo(okObject, resultRef);
+   ObjectInfo roperand = compileExpression(current, scope, 0, EAttr::eaNone);
 
-   throw InternalError("Not yet implemented");
+   exprNode.set(lxNilOp, ISNIL_OPERATOR_ID);
+
+   test2(exprNode);
+
+   ref_t loperandRef = resolveObjectReference(scope, loperand, false);
+   ref_t roperandRef = resolveObjectReference(scope, roperand, false);
+
+   ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef) ? loperandRef : 0;
+
+   return ObjectInfo(okObject, resultRef);
 }
 
 inline bool IsArrExprOperator(int operator_id, LexicalType type)
@@ -3612,7 +3615,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
       case ALT_OPERATOR_ID:
          return compileAltOperator(roperand, scope, target/*, mode, operator_id*/);
       case ISNIL_OPERATOR_ID:
-         return compileIsNilOperator(roperand, target);
+         return compileIsNilOperator(roperand, scope, target);
 //      case APPEND_OPERATOR_ID:
 //         node.setArgument(ADD_OPERATOR_ID);
 //         return compileAssigning(writer, node, scope, target, false);
@@ -5063,8 +5066,6 @@ ObjectInfo Compiler :: compileAltOperator(SNode node, ExprScope& scope, ObjectIn
    altNode.insertNode(lxTempLocal, tempLocal);
 
    compileMessage(op, scope, target, EAttr::eaNone);
-
-   test2(opNode);
 
    return ObjectInfo(okObject);
 }

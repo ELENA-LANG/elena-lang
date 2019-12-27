@@ -16,6 +16,10 @@ ELENA byte codes (or ecodes)
  --------------------
  and n                      - index && n => index
  
+ coalesce                   - acc ? [sp]
+
+ coalescer r                - acc ? r
+
  dec i                      - index -= i
 
  div n                      - index /= n
