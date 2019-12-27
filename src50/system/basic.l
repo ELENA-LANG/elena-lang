@@ -411,9 +411,9 @@ public sealed const struct ByteNumber : IntBaseNumber
 //        
 //        ^ retVal
 //    }
-//        
-//    /// Returns the literal presentation
-//    string getPrintable() = stringConvertor.convert(self);
+        
+    /// Returns the literal presentation
+    string toPrintable() = stringConvertor.convert(self);
         
     /// Clones the value
     byte clone() = new ByteNumber(self);
@@ -720,9 +720,9 @@ public sealed const struct ShortNumber : IntBaseNumber
 //        
 //        ^ retVal
 //    }
-//
-//    /// Returns the literal presentation
-//    string Printable = stringConvertor.convert(self);
+
+    /// Returns the literal presentation
+    string toPrintable() = stringConvertor.convert(self);
 
     /// Clones the value
     short clone() = new ShortNumber(self);
