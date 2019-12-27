@@ -464,9 +464,9 @@ public sealed const struct ShortNumber : IntBaseNumber
     /// Returns the byte value        
     byte cast() = byteConvertor.convert(self);
     
-//    /// Returns the integer value
-//    int cast() = new IntNumber(self);
-//    
+    /// Returns the integer value
+    int cast() = new IntNumber(self);
+    
 //    /// Returns the integer value
 //    uint cast() = new UIntNumber(self);
 //    
@@ -501,22 +501,22 @@ public sealed const struct ShortNumber : IntBaseNumber
     bool less(short n)
         = theValue < n;
         
-//    /// Compares the value
-//    bool equal(int n)
-//        = new IntNumber(self).equal(n);
-//        
-//    /// Compares the value
-//    bool less(int n)
-//        = new IntNumber(self).less(n);
-//    
-//    /// Compares the value
-//    bool equal(byte n)
-//        = self.equal(new ShortNumber(n));
-//        
-//    /// Compares the value
-//    bool less (byte n)
-//        = self.less(new ShortNumber(n));
-//    
+    /// Compares the value
+    bool equal(int n)
+        = new IntNumber(self).equal(n);
+        
+    /// Compares the value
+    bool less(int n)
+        = new IntNumber(self).less(n);
+    
+    /// Compares the value
+    bool equal(byte n)
+        = self.equal(new ShortNumber(n));
+        
+    /// Compares the value
+    bool less (byte n)
+        = self.less(new ShortNumber(n));
+    
 //    /// Compares the value
 //    bool equal(long n)
 //        = new LongNumber(self).equal(n);
@@ -573,38 +573,38 @@ public sealed const struct ShortNumber : IntBaseNumber
     short divide(short n)
         = theValue / n;
 
-//    /// Returns the sum
-//    add(byte n)
-//        = self.add(new ShortNumber(n));
-//
-//    /// Returns the difference
-//    subtract(byte n)
-//        = self.subtract(new ShortNumber(n));
-//
-//    /// Returns the product
-//    multiply(byte n)
-//        = self.multiply(new ShortNumber(n));
-//
-//    /// Returns the result of integer division
-//    divide(byte n)
-//        = self.divide(new ShortNumber(n));
-//
-//    /// Returns the sum
-//    add(int n)
-//        = new IntNumber(self).add(n);
-//
-//    /// Returns the difference
-//    subtract(int n)
-//        = new IntNumber(self).subtract(n);
-//
-//    /// Returns the product
-//    multiply(int n)
-//        = new IntNumber(self).multiply(n);
-//        
-//    /// Returns the result of integer division
-//    divide(int n)
-//        = new IntNumber(self).divide(n);
-//
+    /// Returns the sum
+    add(byte n)
+        = self.add(new ShortNumber(n));
+
+    /// Returns the difference
+    subtract(byte n)
+        = self.subtract(new ShortNumber(n));
+
+    /// Returns the product
+    multiply(byte n)
+        = self.multiply(new ShortNumber(n));
+
+    /// Returns the result of integer division
+    divide(byte n)
+        = self.divide(new ShortNumber(n));
+
+    /// Returns the sum
+    add(int n)
+        = new IntNumber(self).add(n);
+
+    /// Returns the difference
+    subtract(int n)
+        = new IntNumber(self).subtract(n);
+
+    /// Returns the product
+    multiply(int n)
+        = new IntNumber(self).multiply(n);
+        
+    /// Returns the result of integer division
+    divide(int n)
+        = new IntNumber(self).divide(n);
+
 //    /// Returns the sum
 //    add(long n)
 //        = new LongNumber(self).add(n);
@@ -667,30 +667,30 @@ public sealed const struct ShortNumber : IntBaseNumber
     short xor(short n)
         = theValue ^^ n;
         
-//    /// Returns the result of bitwise AND operation
-//    and(byte n)
-//        = self.and(new ShortNumber(n));
-//
-//    /// Returns the result of bitwise OR operation
-//    or(byte n)
-//        = self.or(new ShortNumber(n));
-//
-//    /// Returns the result of bitwise XOR operation
-//    xor(byte n)
-//        = self.xor(new ShortNumber(n));
-//        
-//    /// Returns the result of bitwise AND operation
-//    and(int n)
-//        = new IntNumber(self).and(n);
-//        
-//    /// Returns the result of bitwise OR operation
-//    or(int n)
-//        = new IntNumber(self).or(n);
-//        
-//    /// Returns the result of bitwise XOR operation
-//    xor(int n)
-//        = new IntNumber(self).xor(n);
-//        
+    /// Returns the result of bitwise AND operation
+    and(byte n)
+        = self.and(new ShortNumber(n));
+
+    /// Returns the result of bitwise OR operation
+    or(byte n)
+        = self.or(new ShortNumber(n));
+
+    /// Returns the result of bitwise XOR operation
+    xor(byte n)
+        = self.xor(new ShortNumber(n));
+        
+    /// Returns the result of bitwise AND operation
+    and(int n)
+        = new IntNumber(self).and(n);
+        
+    /// Returns the result of bitwise OR operation
+    or(int n)
+        = new IntNumber(self).or(n);
+        
+    /// Returns the result of bitwise XOR operation
+    xor(int n)
+        = new IntNumber(self).xor(n);
+        
 //    /// Returns the result of bitwise AND operation
 //    and(long n)
 //        = new LongNumber(self).and(n);
@@ -713,13 +713,13 @@ public sealed const struct ShortNumber : IntBaseNumber
         ^ theValue $shr val
     }
     
-//    /// Bitwise inversion
-//    get short Inverted()
-//    {
-//        intern system'core_routines'__short.readInvertedTo(self, ref short retVal);
-//        
-//        ^ retVal
-//    }
+    /// Bitwise inversion
+    get short Inverted()
+    {
+        intern system'core_routines'__short.readInvertedTo(self, ref short retVal);
+        
+        ^ retVal
+    }
 
     /// Returns the literal presentation
     string toPrintable() = stringConvertor.convert(self);
@@ -731,7 +731,7 @@ public sealed const struct ShortNumber : IntBaseNumber
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-public sealed const struct IntNumber //: IntBaseNumber
+public sealed const struct IntNumber : IntBaseNumber
 {
     embeddable __int theValue[4];
     
@@ -740,10 +740,10 @@ public sealed const struct IntNumber //: IntBaseNumber
         theValue := n
     }
     
-//    constructor(short n)
-//    {
-//        theValue := n
-//    }
+    constructor(short n)
+    {
+        theValue := n
+    }
     
     /// Creates the object with the minimal value
     static int MinValue
@@ -768,12 +768,12 @@ public sealed const struct IntNumber //: IntBaseNumber
     constructor new(o)
         = cast int(o);
 
-//    /// Returns the value as a short integer    
-//    short cast() = shortConvertor.convert(self);
-//
-//    /// Returns the byte value    
-//    byte cast() = byteConvertor.convert(self);
-//
+    /// Returns the value as a short integer    
+    short cast() = shortConvertor.convert(self);
+
+    /// Returns the byte value    
+    byte cast() = byteConvertor.convert(self);
+
 //    /// Returns the long integer
 //    long cast() = new LongNumber(self);
 //
@@ -877,14 +877,14 @@ public sealed const struct IntNumber //: IntBaseNumber
     int xor(int n)
         = theValue ^^ n;
 
-//    /// Compares the integer value
-//    bool equal(short value)
-//        = self.equal(new IntNumber(value));
-//
-//    /// Compares the integer value
-//    bool equal(byte value)
-//        = self.equal(new IntNumber(value));
-//        
+    /// Compares the integer value
+    bool equal(short value)
+        = self.equal(new IntNumber(value));
+
+    /// Compares the integer value
+    bool equal(byte value)
+        = self.equal(new IntNumber(value));
+        
 //    /// Compares the integer value
 //    bool equal(long n)
 //        = new LongNumber(self).equal(n);
@@ -892,31 +892,31 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    /// Compares the integer value
 //    bool equal(real n)
 //        = new RealNumber(self).equal(n);
-//
-//    /// Compares the integer value
-//    bool less(short value)
-//        = self.equal(new IntNumber(value));
-//
-//    /// Compares the integer value
-//    bool less(byte value)
-//        = self.less(new IntNumber(value));
-//        
+
+    /// Compares the integer value
+    bool less(short value)
+        = self.equal(new IntNumber(value));
+
+    /// Compares the integer value
+    bool less(byte value)
+        = self.less(new IntNumber(value));
+        
 //    /// Compares the integer value
 //    bool less(long n)
 //        = new LongNumber(self).less(n);
-//
+
 //    /// Compares the integer value
 //    bool less(real n)
 //        = new RealNumber(self).less(n);
-//
-//    /// Returns the sum of integers
-//    add(short value)
-//        = self.add(new IntNumber(value));
-//        
-//    /// Returns the sum of integers
-//    add(byte value)
-//        = self.add(new IntNumber(value));
-//
+
+    /// Returns the sum of integers
+    add(short value)
+        = self.add(new IntNumber(value));
+        
+    /// Returns the sum of integers
+    add(byte value)
+        = self.add(new IntNumber(value));
+
 //    /// Returns the sum of integers
 //    long add(long n)
 //        = new LongNumber(self).add(n);
@@ -924,15 +924,15 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    /// Returns the sum of integers
 //    real add(real n)
 //        = new RealNumber(self).add(n);
-//
-//    /// Returns the difference of integers
-//    subtract(short value)
-//        = self.subtract(new IntNumber(value));
-//
-//    /// Returns the difference of integers
-//    subtract(byte value)
-//        = self.subtract(new IntNumber(value));
-//
+
+    /// Returns the difference of integers
+    subtract(short value)
+        = self.subtract(new IntNumber(value));
+
+    /// Returns the difference of integers
+    subtract(byte value)
+        = self.subtract(new IntNumber(value));
+
 //    /// Returns the difference of integers
 //    long subtract(long n)
 //        = new LongNumber(self).subtract(n);
@@ -940,15 +940,15 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    /// Returns the difference of integers
 //    real subtract(real n)
 //        = new RealNumber(self).subtract(n);
-//
-//    /// Returns the product of integers
-//    multiply(short value)
-//        = self.multiply(new IntNumber(value));
-//
-//    /// Returns the product of integers
-//    multiply(byte value)
-//        = self.multiply(new IntNumber(value));
-//
+
+    /// Returns the product of integers
+    multiply(short value)
+        = self.multiply(new IntNumber(value));
+
+    /// Returns the product of integers
+    multiply(byte value)
+        = self.multiply(new IntNumber(value));
+
 //    /// Returns the product of integers
 //    long multiply(long n)
 //        = new LongNumber(self).multiply(n);
@@ -956,15 +956,15 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    /// Returns the product of integers
 //    real multiply(real n)
 //        = new RealNumber(self).multiply(n);
-//
-//    /// Returns the result of integer division
-//    divide(short value)
-//        = self.divide(new IntNumber(value));
-//
-//    /// Returns the result of integer division
-//    divide(byte value)
-//        = self.divide(new IntNumber(value));        
-//
+
+    /// Returns the result of integer division
+    divide(short value)
+        = self.divide(new IntNumber(value));
+
+    /// Returns the result of integer division
+    divide(byte value)
+        = self.divide(new IntNumber(value));        
+
 //    /// Returns the result of integer division
 //    long divide(long n)
 //        = new LongNumber(self).divide(n);
@@ -972,39 +972,39 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    /// Returns the result of integer division
 //    real divide(real n)
 //        = new RealNumber(self).divide(n);
-//
-//    /// Returns the result of bitwise AND operation
-//    and(short n)
-//        = self.and(new IntNumber(n));
-//
-//    /// Returns the result of bitwise AND operation
-//    and(byte n)
-//        = self.and(new IntNumber(n));
-//
+
+    /// Returns the result of bitwise AND operation
+    and(short n)
+        = self.and(new IntNumber(n));
+
+    /// Returns the result of bitwise AND operation
+    and(byte n)
+        = self.and(new IntNumber(n));
+
 //    /// Returns the result of bitwise AND operation
 //    and(long n)
 //        = new LongNumber(self).and(n);
-//
-//    /// Returns the result of bitwise OR operation
-//    or(short n)
-//        = self.or(new IntNumber(n));
-//
-//    /// Returns the result of bitwise OR operation
-//    or(byte n)
-//        = self.or(new IntNumber(n));
-//
+
+    /// Returns the result of bitwise OR operation
+    or(short n)
+        = self.or(new IntNumber(n));
+
+    /// Returns the result of bitwise OR operation
+    or(byte n)
+        = self.or(new IntNumber(n));
+
 //    /// Returns the result of bitwise OR operation
 //    or(long n)
 //        = new LongNumber(self).or(n);
-//
-//    /// Returns the result of bitwise XOR operation
-//    xor(short n)
-//        = self.xor(new IntNumber(n));
-//
-//    /// Returns the result of bitwise XOR operation
-//    xor(byte n)
-//        = self.xor(new IntNumber(n));
-//
+
+    /// Returns the result of bitwise XOR operation
+    xor(short n)
+        = self.xor(new IntNumber(n));
+
+    /// Returns the result of bitwise XOR operation
+    xor(byte n)
+        = self.xor(new IntNumber(n));
+
 //    /// Returns the result of bitwise XOR operation
 //    xor(long n)
 //        = new LongNumber(self).xor(n);
@@ -1039,17 +1039,17 @@ public sealed const struct IntNumber //: IntBaseNumber
         ^ theValue $shr val
     }
     
-//    /// Bitwise inversion
-//    get int Inverted()
-//    {
-//        intern system'core_routines'__int.readInvertedTo(theValue, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Negates the value
-//    int Negative
-//        = 0 - theValue;
+    /// Bitwise inversion
+    get int Inverted()
+    {
+        intern system'core_routines'__int.readInvertedTo(theValue, ref int retVal);
+        
+        ^ retVal
+    }
+        
+    /// Negates the value
+    int Negative
+        = 0 - theValue;
         
     /// Returns true if all the mask bits are set
     bool allMask(int operand)
@@ -2282,14 +2282,14 @@ public singleton byteConvertor
         ^ retVal
     }
         
-//    /// Converts an integer into a byte value
-//    byte convert(int val)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//        
+    /// Converts an integer into a byte value
+    byte convert(int val)
+    {
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
+        
+        ^ retVal
+    }
+        
 //    /// Converts an integer into a byte value
 //    byte convert(uint val)
 //    {
@@ -2352,14 +2352,14 @@ public singleton shortConvertor
         ^ retVal
     }
 
-//    /// Converts an integer into a short integer value
-//    short convert(int n)
-//    {
-//        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
-//        
-//        ^ retVal
-//    }
-//
+    /// Converts an integer into a short integer value
+    short convert(int n)
+    {
+        intern system'core_routines'__shortconvertor.convert(n, ref short retVal);
+        
+        ^ retVal
+    }
+
 //    /// Converts an integer into a short integer value
 //    short convert(uint n)
 //    {

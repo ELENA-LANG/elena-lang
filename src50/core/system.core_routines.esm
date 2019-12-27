@@ -326,7 +326,53 @@ procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&system@Short
 
 end
 
+
+procedure __shortconvertor."convert$system@IntNumber$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi 1
+
+  load
+  lessn labNegative 0
+  lessn labCopy 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : %new[0]
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quitn 2
+  
+labNegative:
+  not
+
+  lessn labCopyNeg 8000h
+
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : %new[0]
+  throw    
+  
+labCopyNeg:
+  not
+  peeksi 2
+  save
+  quitn 2  
+
+end
+
 procedure __byte."readInvertedTo$system@ByteNumber$@system@ref#1&system@ByteNumber[2]"
+
+  peeksi 1
+  load
+  not
+  peeksi 2
+  save
+  quitn 2
+  
+end
+
+procedure __short."readInvertedTo$system@ShortNumber$@system@ref#1&system@ShortNumber[2]"
 
   peeksi 1
   load
@@ -354,6 +400,37 @@ labCopy:
   peeksi 2
   save
   quitn 2  
+
+end
+
+procedure __byteconvertor."convert$system@IntNumber$@system@ref#1&system@ByteNumber[2]"
+
+  peeksi 1
+  load
+  
+  lessn labErr 0  
+  lessn labCopy 100h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : %new[0]
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quitn 2  
+
+end
+
+procedure __int."readInvertedTo$system@IntNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  not
+  peeksi 2
+  save
+  quitn 2
 
 end
 
