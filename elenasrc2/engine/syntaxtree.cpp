@@ -635,12 +635,12 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
    SNode current = source.firstChild();
    while (current != lxNone) {
       if (current.strArgument != INVALID_REF) {
-         //if (source.tree == destination.tree) {
-         //   // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
-         //   // so the special routine should be used
-         //   copyNode(current, destination.appendStrNode(current.type, current.strArgument));
-         //}
-         /*else */copyNode(current, destination.appendNode(current.type, current.identifier()));
+         if (source.tree == destination.tree) {
+            // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
+            // so the special routine should be used
+            copyNode(current, destination.appendStrNode(current.type, current.strArgument));
+         }
+         else copyNode(current, destination.appendNode(current.type, current.identifier()));
       }
       else copyNode(current, destination.appendNode(current.type, current.argument));
 

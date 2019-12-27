@@ -346,12 +346,19 @@ public:
 
       Node(SyntaxTree* tree, pos_t position, LexicalType type, ref_t argument, int strArgument);
 
-      //Node appendStrNode(LexicalType nodeType, int strOffset)
-      //{
-      //   int end_position = tree->seekNodeEnd(position);
+      Node appendStrNode(LexicalType nodeType, int strOffset)
+      {
+         return tree->read(tree->appendChild(position, nodeType, 0, strOffset));
+      }
+      Node injectStrNode(LexicalType nodeType, int strOffset)
+      {
+         pos_t child = tree->getChild(position);
+         if (child != INVALID_REF) {
+            return tree->read(tree->injectChild(child, nodeType, 0, strOffset));
+         }
+         else return appendNode(type, argument);
+      }
 
-      //   return tree->insertStrNode(end_position, nodeType, strOffset);
-      //}
 
    public:
       LexicalType   type;
@@ -703,7 +710,7 @@ public:
          refresh();
 
          if (this->strArgument != INVALID_REF) {
-            injectNode(this->type, this->identifier());
+            injectStrNode(this->type, this->strArgument);
          }
          else injectNode(this->type, this->argument);
 
