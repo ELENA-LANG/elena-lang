@@ -261,7 +261,7 @@ enum ByteCode
    bcNew             = 0xF0,
    bcNewN            = 0xF1,
    bcFillRI          = 0xF2,
-//   bcXSelectR        = 0xF3,
+   bcXSelectR        = 0xF3,
    bcVCallRM         = 0xF4,
    bcJumpRM          = 0xF5,
    bcSelect          = 0xF6,
@@ -478,6 +478,7 @@ public:
          case bcCreate:
          case bcCreateN:
          case bcCoalesceR:
+         case bcXSelectR:
             return true;
          default:
             return false;
@@ -490,6 +491,7 @@ public:
          case bcIfR:
          case bcElseR:
          case bcSelect:
+         case bcXSelectR:
             return true;
          default:
             return false;

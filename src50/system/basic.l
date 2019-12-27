@@ -129,7 +129,7 @@ public abstract class IntBaseNumber : BaseNumber
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-public sealed const struct ByteNumber //: IntBaseNumber
+public sealed const struct ByteNumber : IntBaseNumber
 {
     embeddable __int theValue[1];
 
@@ -187,14 +187,14 @@ public sealed const struct ByteNumber //: IntBaseNumber
 //    /// Compares the value
 //    bool equal(real n)
 //        = new RealNumber(self).equal(n);
-//        
-//    bool equal(o)
-//    {
-//        var n := cast byte(o) ?? nil;
-//        (nil == n)
-//            ? { ^ false }
-//            : { ^ self.equal(n) }
-//    }
+        
+    bool equal(o)
+    {
+        var n := cast byte(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
 
     bool less(n)
         <= less(cast byte(n));
@@ -223,47 +223,47 @@ public sealed const struct ByteNumber //: IntBaseNumber
 //    /// Compares the value
 //    bool less(real n)
 //        = new RealNumber(self).less(n);
-//
-//    add(n)
-//        <= add(cast byte(n));
-//
-//    subtract(n)
-//        <= subtract(cast byte(n));
-//
-//    multiply(n)
-//        <= multiply(cast byte(n));
-//
-//    divide(n)
-//        <= divide(cast byte(n));
-//
-//    byte add(BaseVariable v)
-//        <= add(v.Value);
-//
-//    byte subtract(BaseVariable v)
-//        <= subtract(v.Value);
-//
-//    byte multiply(BaseVariable v)
-//        <= multiply(v.Value);
-//
-//    byte divide(BaseVariable v)
-//        <= divide(v.Value);
-//
-//    /// Returns the sum
-//    byte add(byte n)
-//        = theValue + n;
-//
-//    /// Returns the sum
-//    byte subtract(byte n)
-//        = theValue - n;
-//
-//    /// Returns the product
-//    byte multiply(byte n)
-//        = theValue * n;
-//
-//    /// Returns the result of integer division
-//    byte divide(byte n)
-//        = theValue / n;
-//
+
+    add(n)
+        <= add(cast byte(n));
+
+    subtract(n)
+        <= subtract(cast byte(n));
+
+    multiply(n)
+        <= multiply(cast byte(n));
+
+    divide(n)
+        <= divide(cast byte(n));
+
+    byte add(BaseVariable v)
+        <= add(v.Value);
+
+    byte subtract(BaseVariable v)
+        <= subtract(v.Value);
+
+    byte multiply(BaseVariable v)
+        <= multiply(v.Value);
+
+    byte divide(BaseVariable v)
+        <= divide(v.Value);
+
+    /// Returns the sum
+    byte add(byte n)
+        = theValue + n;
+
+    /// Returns the sum
+    byte subtract(byte n)
+        = theValue - n;
+
+    /// Returns the product
+    byte multiply(byte n)
+        = theValue * n;
+
+    /// Returns the result of integer division
+    byte divide(byte n)
+        = theValue / n;
+
 //    /// Returns the sum
 //    short add(short n)
 //        = new ShortNumber(self).add(n);
@@ -327,37 +327,37 @@ public sealed const struct ByteNumber //: IntBaseNumber
 //    /// Returns the result of integer division
 //    real divide(real n)
 //        = new RealNumber(self).divide(n);
-//
-//    and(n)
-//        <= and(cast byte(n));
-//        
-//    or(n)
-//        <= or(cast byte(n));
-//        
-//    xor(n)
-//        <= xor(cast byte(n));
-//        
-//    byte and(BaseVariable v)
-//        <= and(v.Value);
-//        
-//    byte or(BaseVariable v)
-//        <= or(v.Value);
-//        
-//    byte xor(BaseVariable v)
-//        <= xor(v.Value);
-//        
-//    /// Returns the result of bitwise AND operation
-//    byte and(byte n)
-//        = theValue && n;
-//
-//    /// Returns the result of bitwise OR operation
-//    byte or(byte n)
-//        = theValue || n;
-//
-//    /// Returns the result of bitwise XOR operation
-//    byte xor(byte n)
-//        = theValue ^^ n;
-//
+
+    and(n)
+        <= and(cast byte(n));
+        
+    or(n)
+        <= or(cast byte(n));
+        
+    xor(n)
+        <= xor(cast byte(n));
+        
+    byte and(BaseVariable v)
+        <= and(v.Value);
+        
+    byte or(BaseVariable v)
+        <= or(v.Value);
+        
+    byte xor(BaseVariable v)
+        <= xor(v.Value);
+        
+    /// Returns the result of bitwise AND operation
+    byte and(byte n)
+        = theValue && n;
+
+    /// Returns the result of bitwise OR operation
+    byte or(byte n)
+        = theValue || n;
+
+    /// Returns the result of bitwise XOR operation
+    byte xor(byte n)
+        = theValue ^^ n;
+
 //    /// Returns the result of bitwise AND operation
 //    short and(short n)
 //        = new ShortNumber(self).and(n);
@@ -393,17 +393,17 @@ public sealed const struct ByteNumber //: IntBaseNumber
 //    /// Returns the result of bitwise XOR operation
 //    long xor(long n)
 //        = new LongNumber(self).xor(n);
-//
-//    byte shiftLeft(int val)
-//    {
-//        ^ theValue $shl val;
-//    }
-//
-//    byte shiftRight(int val)
-//    {
-//        ^ theValue $shr val;
-//    }
-//    
+
+    byte shiftLeft(int val)
+    {
+        ^ theValue $shl val;
+    }
+
+    byte shiftRight(int val)
+    {
+        ^ theValue $shr val;
+    }
+    
 //    /// Bitwise inversion
 //    get byte Inverted()
 //    {
@@ -415,8 +415,8 @@ public sealed const struct ByteNumber //: IntBaseNumber
 //    /// Returns the literal presentation
 //    string getPrintable() = stringConvertor.convert(self);
         
-//    /// Clones the value
-//    byte clone() = new ByteNumber(self);
+    /// Clones the value
+    byte clone() = new ByteNumber(self);
 }
 
 // --- ShortNumber ---

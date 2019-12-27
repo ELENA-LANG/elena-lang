@@ -247,8 +247,8 @@ class ByteCodeWriter
    void gotoEnd(CommandTape& tape, PseudoArg label);
 
    void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
-//   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
-//
+   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
+
 //   void freeVirtualStack(CommandTape& tape, int count);
 
    void endTry(CommandTape& tape);

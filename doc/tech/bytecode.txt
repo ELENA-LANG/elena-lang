@@ -70,6 +70,8 @@ ELENA byte codes (or ecodes)
                        
  storesi i                  - [sp+i] <= acc
 
+ xselectr r1, r2            - acc = (acc = 0 ? r1 : r2) 
+
  xseti i                    - [sp] => acc[i]; direct operation
                        
  xsetfi i1 i2               - [fp+i1] => acc[i2]; direct operation 
@@ -320,8 +322,6 @@ ELENA byte codes (or ecodes)
  scopyf i                   - sp <= fp + i
  
  setverb m                  - ext.verb << m
- 
- xselectr r1, r2            - acc = (acc = 0 ? r1 : r2)
  
 
  Memory operations:

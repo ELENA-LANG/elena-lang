@@ -619,6 +619,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             compileCreateCommand(opcode, token, writer, binary);
             break;
          case bcSelect:
+         case bcXSelectR:
             compileRRCommand(opcode, token, writer, binary);
             break;
          case bcXSaveF:

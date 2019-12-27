@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/77;
+const int gcCommandNumber = /*160*/78;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -80,7 +80,7 @@ const int gcCommands[gcCommandNumber] =
    bcMovN, bcCloneF, bcInc, bcRead, bcExclude,
    bcInclude, bcCopyTo, bcReadToF, bcXWrite, bcDiv,
    bcLoadFI, bcEqual, bcNAndF, bcNOrF, bcNXorF,
-   bcCoalesce, bcCoalesceR,
+   bcCoalesce, bcCoalesceR, bcXSelectR,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -103,7 +103,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcLNot, bcRCopy, bcRSave, bcREqual, bcBSaveSI,
 //   bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
 //   bcDCopyR, 
-//   bcNext, bcXSelectR, bcCount,
+//   bcNext, bcCount,
 //   bcRAbs, bcRExp, bcRInt, bcValidate, ,
 //   bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
 //   bcAddress, bcBWriteW, bcRLoad, bcNLen,
@@ -175,7 +175,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPIndexOpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
 
-   &compileCreate, &compileCreateN, &compileFill, &compileNop, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileLessN,
+   &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileNop, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop,
 
    //   &compileNop, &compileBreakpoint, &compilePushB, &compilePop, &loadOneByteOp, &compilePushE, &loadMTOp, &loadOneByteOp,
@@ -1316,11 +1316,11 @@ void _ELENA_::compileSelectR(int opcode, x86JITScope& scope)
       scope.code->writeByte(0xBB);
       scope.writeReference(*scope.code, r1, 0);
    }
-//   else {
-//      // mov  edx, r1
-//      scope.code->writeByte(0xBA);
-//      scope.writeReference(*scope.code, r1, 0);
-//   }
+   else {
+      // mov  eax, r1
+      scope.code->writeByte(0xB8);
+      scope.writeReference(*scope.code, r1, 0);
+   }
 
    loadROp(opcode, scope);
 }

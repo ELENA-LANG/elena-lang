@@ -133,11 +133,11 @@ inline ident_t findSourceRef(SNode node)
 
 CompilerLogic :: CompilerLogic()
 {
-//   // nil
-//   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_NIL, 0, lxNilOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_NIL, 0, lxNilOp, V_FLAG));
-//   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, 0, V_NIL, lxNilOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, 0, V_NIL, lxNilOp, V_FLAG));
+   // nil
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_NIL, 0, lxNilOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_NIL, 0, lxNilOp, V_FLAG));
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, 0, V_NIL, lxNilOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, 0, V_NIL, lxNilOp, V_FLAG));
 
    // int32 primitive operations
    operators.add(OperatorInfo(ADD_OPERATOR_ID, V_INT32, V_INT32, lxIntOp, V_INT32));

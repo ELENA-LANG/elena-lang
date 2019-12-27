@@ -3597,10 +3597,10 @@ void ByteCodeWriter :: selectByIndex(CommandTape& tape, ref_t r1, ref_t r2)
    tape.write(bcSelect, r1 | mskConstantRef, r2 | mskConstantRef);
 }
 
-//void ByteCodeWriter :: selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
-//{
-//   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
-//}
+void ByteCodeWriter :: selectByAcc(CommandTape& tape, ref_t r1, ref_t r2)
+{
+   tape.write(bcXSelectR, r1 | mskConstantRef, r2 | mskConstantRef);
+}
 
 void ByteCodeWriter :: tryLock(CommandTape& tape)
 {
@@ -4833,25 +4833,26 @@ inline bool isConstant(LexicalType type)
 
 void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
-//   if (node.argument == EQUAL_OPERATOR_ID) {
-//      SNode larg;
-//      SNode rarg;
-//      assignOpArguments(node, larg, rarg);
-//
-//      if (larg == lxNil) {
-//         generateObject(tape, rarg, ACC_REQUIRED);
-//      }
-//      else if (rarg == lxNil) {
-//         generateObject(tape, larg, ACC_REQUIRED);
-//      }
-//      else generateExpression(tape, node, ACC_REQUIRED); // ?? is this code reachable
-//
-//      SNode ifParam = node.findChild(lxIfValue);
-//      SNode elseParam = node.findChild(lxElseValue);
-//
-//      selectByAcc(tape, elseParam.argument, ifParam.argument);
-//   }
-   /*else */if (node.argument == ISNIL_OPERATOR_ID) {
+   if (node.argument == EQUAL_OPERATOR_ID) {
+      SNode larg;
+      SNode rarg;
+      assignOpArguments(node, larg, rarg);
+
+      if (larg == lxNil) {
+         generateObject(tape, rarg, scope);
+      }
+      else if (rarg == lxNil) {
+         generateObject(tape, larg, scope);
+      }
+      else throw new InternalError("Not yet implemented"); // temporal
+      //else generateExpression(tape, node, ACC_REQUIRED); // ?? is this code reachable
+
+      SNode ifParam = node.findChild(lxIfValue);
+      SNode elseParam = node.findChild(lxElseValue);
+
+      selectByAcc(tape, elseParam.argument, ifParam.argument);
+   }
+   else if (node.argument == ISNIL_OPERATOR_ID) {
 
       SNode larg;
       SNode rarg;

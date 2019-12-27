@@ -59,7 +59,7 @@ const char* _fnOpcodes[256] =
    "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
    "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavef",
 
-   "new", "newn", "fillri", OPCODE_UNKNOWN, "vcallrm", "jumprm", "select", "lessn",
+   "new", "newn", "fillri", "xselectr", "vcallrm", "jumprm", "select", "lessn",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", OPCODE_UNKNOWN,
 
 //   "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",

@@ -2220,6 +2220,15 @@ inline % 0F2h
 
 end
 
+// ; xselectr (eax - r1, __arg1 - r2)
+inline % 0F3h
+
+  test   ebx, ebx
+  mov    ebx, __arg1
+  cmovnz ebx, eax
+
+end
+
 // ; vcallrm
 inline % 0F4h
 

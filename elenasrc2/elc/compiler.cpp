@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -3438,8 +3438,6 @@ ObjectInfo Compiler :: compileIsNilOperator(SNode current, ExprScope& scope, Obj
 
    exprNode.set(lxNilOp, ISNIL_OPERATOR_ID);
 
-   test2(exprNode);
-
    ref_t loperandRef = resolveObjectReference(scope, loperand, false);
    ref_t roperandRef = resolveObjectReference(scope, roperand, false);
 
@@ -3764,8 +3762,6 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
    // inserting calling expression
    node.set(operation, argument);
 
-//   // TODO : inject target boxing if it is stack allocated and the message call is not stacksafe
-
    analizeOperands(node, scope, stackSafeAttr);
 
    return retVal;
@@ -3821,6 +3817,7 @@ void Compiler :: analizeOperand(SNode& current, ExprScope& scope, bool boxingMod
          analizeOperand(current.firstChild(lxObjectMask), scope, boxingMode);
          break;
       case lxSeqExpression:
+      case lxFieldExpression:
          analizeOperand(current.lastChild(lxObjectMask), scope, boxingMode);
          break;
       default:
@@ -4810,6 +4807,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
          SNode objNode = member.appendNode(lxVirtualReference);
 
          recognizeTerminal(objNode, info, ownerScope, EAttr::eaNone);
+         analizeOperand(objNode, ownerScope, true);
 
 //         writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
 //         writeTerminal(writer, node, ownerScope, info, EAttr::eaNone);
