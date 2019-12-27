@@ -1811,14 +1811,14 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          explicitMode = true;
          return true;
       case V_CONSTRUCTOR:
-         attrValue = tpConstructor;
+         attrValue = tpConstructor | tpInitializer;
          explicitMode = true;
          return true;
       case V_CONVERSION:
          attrValue = tpConversion;
          return true;
       case V_INITIALIZER:
-         attrValue = (tpFunction | tpPrivate/* | tpInitializer*/);
+         attrValue = (tpFunction | tpPrivate | tpInitializer);
          return true;
       case V_METHOD:
          attrValue = 0;

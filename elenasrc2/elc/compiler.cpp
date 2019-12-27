@@ -72,8 +72,8 @@ constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
 //constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
 //constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 
-//// scope modes
-//constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
+// scope modes
+constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
 
 typedef Compiler::ObjectInfo                 ObjectInfo;       // to simplify code, ommiting compiler qualifier
 typedef ClassInfo::Attribute                 Attribute;
@@ -657,7 +657,7 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, EAttr scopeMode)
 {
    int offset = info.fields.get(terminal);
    if (offset >= 0) {
-      bool readOnlyMode = test(info.header.flags, elReadOnlyRole)/* && !EAttrs::test(scopeMode, INITIALIZER_SCOPE)*/;
+      bool readOnlyMode = test(info.header.flags, elReadOnlyRole) && !EAttrs::test(scopeMode, INITIALIZER_SCOPE);
       ClassInfo::FieldInfo fieldInfo = info.fieldTypes.get(offset);
       if (test(info.header.flags, elStructureRole)) {
          return ObjectInfo(readOnlyMode ? okReadOnlyFieldAddress : okFieldAddress, offset, fieldInfo.value1, fieldInfo.value2, 0);
@@ -815,7 +815,7 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
       }
    }
 
-   return Scope::mapTerminal(terminal, referenceOne, mode/* | scopeMode*/);
+   return Scope::mapTerminal(terminal, referenceOne, mode | scopeMode);
 }
 
 // --- Compiler::CodeScope ---
@@ -8315,9 +8315,9 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 {
    methodScope.hints = scope.info.methodHints.get(Attribute(methodScope.message, maHint));
    methodScope.outputRef = scope.info.methodHints.get(ClassInfo::Attribute(methodScope.message, maReference));
-//   if (test(methodScope.hints, tpInitializer))
-//      methodScope.scopeMode = methodScope.scopeMode | INITIALIZER_SCOPE;
-//
+   if (test(methodScope.hints, tpInitializer))
+      methodScope.scopeMode = methodScope.scopeMode | INITIALIZER_SCOPE;
+
 ////   methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
    methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
    methodScope.withOpenArg = isOpenArg(methodScope.message);

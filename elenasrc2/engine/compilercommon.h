@@ -158,7 +158,7 @@ enum MethodHint
    tpInternal     = 0x0040000,
    tpPredefined   = 0x0080000, // virtual class declaration
 //   tpDynamic     = 0x0100000, // indicates that the method does not accept stack allocated parameters
-//   tpInitializer = 0x0200000,
+   tpInitializer  = 0x0200000,
    tpSetAccessor  = 0x0400000,
    tpCast         = 0x0800000,
 //   tpYieldable   = 0x1000000
@@ -490,8 +490,9 @@ public:
       eaExtern             = 0x00000080000,
       eaForward            = 0x00000100000,
       eaParams             = 0x00000200000,
+      eaInitializerScope   = 0x00000400000,
 
-      eaScopeMask          = 0x0000001400A,
+      eaScopeMask          = 0x0000041400A,
       eaObjectMask         = 0x0000021B2F4,
 
 //      eaSubj               = 0x00000000400,
@@ -513,7 +514,6 @@ public:
 //      eaClosure            = 0x00080000000,
 //      eaSubCodeClosure     = 0x00800000000,
 //      eaSwitch             = 0x08000000000,
-//      eaInitializerScope   = 0x10000000000,
 //      eaRefExpr            = 0x20000000000,
 //      eaYieldExpr          = 0x40000000000,
 //      eaAutoSize           = 0x80000000000,

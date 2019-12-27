@@ -422,49 +422,45 @@ public sealed const struct ByteNumber : IntBaseNumber
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-public sealed const struct ShortNumber //: IntBaseNumber
+public sealed const struct ShortNumber : IntBaseNumber
 {
     embeddable __int theValue[2];
 
-//    constructor(int n)
-//    {
-//        (n < 0)
-//            ? {
-//                theValue := n && 0FFFFh;
-//                
-//                theValue := theValue || 0FFFF0000h
-//            }
-//            : { theValue := n && 0FFFFh }
-//    }
-//    
-//    /// returns the default value
-//    static short Default
-//        = 0;
-//    
-//    /// Returns the minimal value (-32768)
-//    static short MinValue
-//        = -32768;
-//
-//    /// Returns the maxial value (32767)
-//    static short MaxValue
-//        = 32767;
-//
+    constructor(int n)
+    {
+        (n < 0)
+            ? {
+                theValue := n && 0FFFFh;
+                
+                theValue := theValue || 0FFFF0000h
+            }
+            : { theValue := n && 0FFFFh }
+    }
+    
+    /// Returns the minimal value (-32768)
+    static short MinValue
+        = -32768;
+
+    /// Returns the maxial value (32767)
+    static short MaxValue
+        = 32767;
+
 //    /// Creates the object with specified value
 //    constructor(byte value)
 //        = shortConvertor.convert(value);
-//        
-//    /// Creates the object with specified value
-//    constructor(short value)
-//        = value;
-//
-//    /// Creates the object with a default value (0)
-//    constructor()
-//        = 0;
-//
-//    /// Creates the object with specified value
-//    constructor new(o)
-//        <= (cast short(o));
-//
+        
+    /// Creates the object with specified value
+    constructor(short value)
+        = value;
+
+    /// Creates the object with a default value (0)
+    constructor()
+        = 0;
+
+    /// Creates the object with specified value
+    constructor new(o)
+        = cast short(o);
+
 //    /// Returns the byte value        
 //    byte cast() = byteConvertor.convert(self);
 //    
@@ -479,32 +475,32 @@ public sealed const struct ShortNumber //: IntBaseNumber
 //    
 //    /// Returns the value as a real number
 //    real cast() = new RealNumber(self);
-//
-//    bool equal(o)
-//    {
-//        var n := cast short(o) ?? nil;
-//        (nil == n)
-//            ? { ^ false }
-//            : { ^ self.equal(n) }
-//    }
-//
-//    bool less(n)
-//        <= less(cast short(n));
-//
-//    bool equal(BaseVariable v)
-//        <= equal(v.Value);
-//                
-//    bool less(BaseVariable v)
-//        <= equal(v.Value);
-//
-//    /// Compares the value
-//    bool equal(short n)
-//        = theValue == n;
-//        
-//    /// Compares the value
-//    bool less(short n)
-//        = theValue < n;
-//        
+
+    bool equal(o)
+    {
+        var n := cast short(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast short(n));
+
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+                
+    bool less(BaseVariable v)
+        <= equal(v.Value);
+
+    /// Compares the value
+    bool equal(short n)
+        = theValue == n;
+        
+    /// Compares the value
+    bool less(short n)
+        = theValue < n;
+        
 //    /// Compares the value
 //    bool equal(int n)
 //        = new IntNumber(self).equal(n);
@@ -536,47 +532,47 @@ public sealed const struct ShortNumber //: IntBaseNumber
 //    /// Compares the value
 //    bool less(real n)
 //        = new RealNumber(self).less(n);
-//
-//    add(n)
-//        <= add(cast short(n));
-//
-//    subtract(n)
-//        <= subtract(cast short(n));
-//
-//    multiply(n)
-//        <= multiply(cast short(n));
-//
-//    divide(n)
-//        <= divide(cast short(n));
-//
-//    short add(BaseVariable v)
-//        <= add(v.Value);
-//
-//    short subtract(BaseVariable v)
-//        <= subtract(v.Value);
-//
-//    short multiply(BaseVariable v)
-//        <= multiply(v.Value);
-//
-//    short divide(BaseVariable v)
-//        <= divide(v.Value);
-//
-//    /// Returns the sum
-//    short add(short n)
-//        = theValue + n;
-//
-//    /// Returns the sum
-//    short subtract(short n)
-//        = theValue - n;
-//
-//    /// Returns the product
-//    short multiply(short n)
-//        = theValue * n;
-//
-//    /// Returns the result of integer division
-//    short divide(short n)
-//        = theValue / n;
-//
+
+    add(n)
+        <= add(cast short(n));
+
+    subtract(n)
+        <= subtract(cast short(n));
+
+    multiply(n)
+        <= multiply(cast short(n));
+
+    divide(n)
+        <= divide(cast short(n));
+
+    short add(BaseVariable v)
+        <= add(v.Value);
+
+    short subtract(BaseVariable v)
+        <= subtract(v.Value);
+
+    short multiply(BaseVariable v)
+        <= multiply(v.Value);
+
+    short divide(BaseVariable v)
+        <= divide(v.Value);
+
+    /// Returns the sum
+    short add(short n)
+        = theValue + n;
+
+    /// Returns the sum
+    short subtract(short n)
+        = theValue - n;
+
+    /// Returns the product
+    short multiply(short n)
+        = theValue * n;
+
+    /// Returns the result of integer division
+    short divide(short n)
+        = theValue / n;
+
 //    /// Returns the sum
 //    add(byte n)
 //        = self.add(new ShortNumber(n));
@@ -640,37 +636,37 @@ public sealed const struct ShortNumber //: IntBaseNumber
 //    /// Returns the result of integer division
 //    divide(real n)
 //        = new RealNumber(self).divide(n);
-//
-//    and(n)
-//        <= and(cast short(n));
-//        
-//    or(n)
-//        <= divide(cast short(n));
-//        
-//    xor(n)
-//        <= xor(cast short(n));
-//        
-//    short and(BaseVariable v)
-//        <= and(v.Value);
-//        
-//    short or(BaseVariable v)
-//        <= divide(v.Value);
-//        
-//    short xor(BaseVariable v)
-//        <= xor(v.Value);
-//        
-//    /// Returns the result of bitwise AND operation
-//    short and(short n)
-//        = theValue && n;
-//
-//    /// Returns the result of bitwise OR operation
-//    short or(short n)
-//        = theValue || n;
-//
-//    /// Returns the result of bitwise XOR operation
-//    short xor(short n)
-//        = theValue ^^ n;
-//        
+
+    and(n)
+        <= and(cast short(n));
+        
+    or(n)
+        <= divide(cast short(n));
+        
+    xor(n)
+        <= xor(cast short(n));
+        
+    short and(BaseVariable v)
+        <= and(v.Value);
+        
+    short or(BaseVariable v)
+        <= divide(v.Value);
+        
+    short xor(BaseVariable v)
+        <= xor(v.Value);
+        
+    /// Returns the result of bitwise AND operation
+    short and(short n)
+        = theValue && n;
+
+    /// Returns the result of bitwise OR operation
+    short or(short n)
+        = theValue || n;
+
+    /// Returns the result of bitwise XOR operation
+    short xor(short n)
+        = theValue ^^ n;
+        
 //    /// Returns the result of bitwise AND operation
 //    and(byte n)
 //        = self.and(new ShortNumber(n));
@@ -706,17 +702,17 @@ public sealed const struct ShortNumber //: IntBaseNumber
 //    /// Returns the result of bitwise XOR operation
 //    xor(long n)
 //        = new LongNumber(self).xor(n);
-//
-//    short shiftLeft(int val)
-//    {
-//        ^ theValue $shl val
-//    }
-//
-//    short shiftRight(int val)
-//    {
-//        ^ theValue $shr val
-//    }
-//    
+
+    short shiftLeft(int val)
+    {
+        ^ theValue $shl val
+    }
+
+    short shiftRight(int val)
+    {
+        ^ theValue $shr val
+    }
+    
 //    /// Bitwise inversion
 //    get short Inverted()
 //    {
@@ -727,9 +723,9 @@ public sealed const struct ShortNumber //: IntBaseNumber
 //
 //    /// Returns the literal presentation
 //    string Printable = stringConvertor.convert(self);
-//
-//    /// Clones the value
-//    short clone() = new ShortNumber(self);
+
+    /// Clones the value
+    short clone() = new ShortNumber(self);
 }
 
 // --- IntNumber ---
@@ -748,34 +744,30 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    {
 //        theValue := n
 //    }
-//
-//    /// return the default value
-//    static int Default
-//        = 0;
-//    
-//    /// Creates the object with the minimal value
-//    static int MinValue
-//        = -2147483648;
-//
-//    /// Creates the object with the maximal value
-//    static int MaxValue
-//        = 2147483647;
+    
+    /// Creates the object with the minimal value
+    static int MinValue
+        = -2147483648;
+
+    /// Creates the object with the maximal value
+    static int MaxValue
+        = 2147483647;
 
     constructor()
         = 0;
     
-//    /// Creates the object with specified value
-//    constructor(int value)
-//        = value;
-//
+    /// Creates the object with specified value
+    constructor(int value)
+        = value;
+
 //    /// Creates the object with specified value
 //    constructor(uint value)
 //        = value;
-//
-//    /// Creates the object with specified value
-//    constructor new(o)
-//        <= (cast int(o));
-//
+
+    /// Creates the object with specified value
+    constructor new(o)
+        = cast int(o);
+
 //    /// Returns the value as a short integer    
 //    short cast() = shortConvertor.convert(self);
 //
@@ -790,42 +782,42 @@ public sealed const struct IntNumber //: IntBaseNumber
 //
 //    /// Returns the real number
 //    uint cast() = new UIntNumber(self);
-//    
-//    bool equal(o)
-//    {
-//        var n := cast int(o) ?? nil;
-//        (nil == n)
-//            ? { ^ false } : { ^ self.equal(n) }
-//    }
-//
-//    bool less(n)
-//        <= less(cast int(n));
-//        
-//    bool equal(BaseVariable v)
-//        <= equal(v.Value);
-//        
-//    bool less(BaseVariable v)
-//        <= less(v.Value);
-//        
-//    /// Compares the value
-//    bool equal(int n)
-//        = theValue == n;
-//        
-//    /// Compares the value
-//    bool less(int n)
-//        = theValue < n;
-//        
-//    add(n)
-//        <= add(cast int(n));
-//
-//    subtract(n)
-//        <= subtract(cast int(n));
-//
-//    multiply(n)
-//        <= multiply(cast int(n));
-//
-//    divide(n)
-//        <= divide(cast int(n));
+    
+    bool equal(o)
+    {
+        var n := cast int(o) ?? nil;
+        (nil == n)
+            ? { ^ false } : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast int(n));
+        
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+        
+    bool less(BaseVariable v)
+        <= less(v.Value);
+        
+    /// Compares the value
+    bool equal(int n)
+        = theValue == n;
+        
+    /// Compares the value
+    bool less(int n)
+        = theValue < n;
+        
+    add(n)
+        <= add(cast int(n));
+
+    subtract(n)
+        <= subtract(cast int(n));
+
+    multiply(n)
+        <= multiply(cast int(n));
+
+    divide(n)
+        <= divide(cast int(n));
         
     int add(BaseVariable v)
         <= add(v.Value);
@@ -855,36 +847,36 @@ public sealed const struct IntNumber //: IntBaseNumber
     int divide(int n)
         = theValue / n;
 
-//    and(n)
-//        <= and(cast int(n));
-//        
-//    or(n)
-//        <= divide(cast int(n));
-//        
-//    xor(n)
-//        <= xor(cast int(n));
-//        
-//    int and(BaseVariable v)
-//        <= and(v.Value);
-//        
-//    int or(BaseVariable v)
-//        <= or(v.Value);
-//        
-//    int xor(BaseVariable v)
-//        <= xor(v.Value);
-//        
-//    /// Returns the result of bitwise AND operation
-//    int and(int n)
-//        = theValue && n;
-//
-//    /// Returns the result of bitwise OR operation
-//    int or(int n)
-//        = theValue || n;
-//
-//    /// Returns the result of bitwise XOR operation
-//    int xor(int n)
-//        = theValue ^^ n;
-//
+    and(n)
+        <= and(cast int(n));
+        
+    or(n)
+        <= divide(cast int(n));
+        
+    xor(n)
+        <= xor(cast int(n));
+        
+    int and(BaseVariable v)
+        <= and(v.Value);
+        
+    int or(BaseVariable v)
+        <= or(v.Value);
+        
+    int xor(BaseVariable v)
+        <= xor(v.Value);
+        
+    /// Returns the result of bitwise AND operation
+    int and(int n)
+        = theValue && n;
+
+    /// Returns the result of bitwise OR operation
+    int or(int n)
+        = theValue || n;
+
+    /// Returns the result of bitwise XOR operation
+    int xor(int n)
+        = theValue ^^ n;
+
 //    /// Compares the integer value
 //    bool equal(short value)
 //        = self.equal(new IntNumber(value));
@@ -1028,25 +1020,25 @@ public sealed const struct IntNumber //: IntBaseNumber
         ^ String.fromByteArray(0, length, buffer)        
     }
 
-//    /// Clones the value
-//    int clone() = new IntNumber(self);
-//
-//    int shiftLeft(BaseVariable v)
-//        <= shiftLeft(v.Value);
-//
-//    int shiftLeft(int val)
-//    {
-//        ^ theValue $shl val
-//    }
-//
-//    int shiftRight(BaseVariable v)
-//        <= shiftRight(v.Value);
-//
-//    int shiftRight(int val)
-//    {
-//        ^ theValue $shr val
-//    }
-//    
+    /// Clones the value
+    int clone() = new IntNumber(self);
+
+    int shiftLeft(BaseVariable v)
+        <= shiftLeft(v.Value);
+
+    int shiftLeft(int val)
+    {
+        ^ theValue $shl val
+    }
+
+    int shiftRight(BaseVariable v)
+        <= shiftRight(v.Value);
+
+    int shiftRight(int val)
+    {
+        ^ theValue $shr val
+    }
+    
 //    /// Bitwise inversion
 //    get int Inverted()
 //    {
@@ -1058,22 +1050,22 @@ public sealed const struct IntNumber //: IntBaseNumber
 //    /// Negates the value
 //    int Negative
 //        = 0 - theValue;
-//        
-//    /// Returns true if all the mask bits are set
-//    bool allMask(int operand)
-//    {
-//        int v := operand && theValue;
-//        
-//        ^ v == operand
-//    }
-//        
-//    /// Returns true if any of the mask bits are set    
-//    bool anyMask(int operand)
-//    {
-//        int v := operand && theValue;
-//        
-//        ^ v != 0
-//    }        
+        
+    /// Returns true if all the mask bits are set
+    bool allMask(int operand)
+    {
+        int v := operand && theValue;
+        
+        ^ v == operand
+    }
+        
+    /// Returns true if any of the mask bits are set    
+    bool anyMask(int operand)
+    {
+        int v := operand && theValue;
+        
+        ^ v != 0
+    }        
 }
 
 //// --- UIntNumber ---
