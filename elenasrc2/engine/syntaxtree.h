@@ -165,6 +165,7 @@ enum LexicalType
    lxExtIntConst              = 0x018210,
    lxExtIntArg                = 0x018211,
    lxTrying                   = 0x058220,   // try-catch expression
+   lxAlt                      = 0x058221,   // alt-catch expression
    lxArgArrOp                 = 0x058230,
    lxIntArrOp                 = 0x058231,   // arg - operation id
    lxShortArrOp               = 0x058232,
@@ -259,7 +260,6 @@ enum LexicalType
 //   lxArgBoxing                = 0x00C005,   // argument list boxing, arg - size
 //   lxArgUnboxing              = 0x00C006,
 //   lxImplicitCall             = 0x00C00B,
-//   lxAlt                      = 0x00C00D,   // alt-catch expression
 //   lxSwitching                = 0x00C010,
 //   lxInlineArgCall            = 0x10C012,   // calling a message with the unpacked parameter list
 //   lxAltExpression            = 0x00C018,

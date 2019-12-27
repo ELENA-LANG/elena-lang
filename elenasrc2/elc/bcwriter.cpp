@@ -493,20 +493,20 @@ void ByteCodeWriter :: doCatch(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
-//void ByteCodeWriter :: declareAlt(CommandTape& tape)
-//{
-//   //   unhook
-//   //   jump labEnd
-//   // labErr:
-//   //   unhook
-//
-//   tape.write(bcUnhook);
-//   tape.write(bcJump, baPreviousLabel);
-//
-//   tape.setLabel();
-//
-//   tape.write(bcUnhook);
-//}
+void ByteCodeWriter :: declareAlt(CommandTape& tape)
+{
+   //   unhook
+   //   jump labEnd
+   // labErr:
+   //   unhook
+
+   tape.write(bcUnhook);
+   tape.write(bcJump, baPreviousLabel);
+
+   tape.setLabel();
+
+   tape.write(bcUnhook);
+}
 
 void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated/*, bool withPresavedMessage*/)
 {
@@ -1364,13 +1364,12 @@ void ByteCodeWriter :: endSafeCatch(CommandTape& tape)
    tape.releaseLabel(); // retCatch is aleady set
 }
 
-//void ByteCodeWriter :: endAlt(CommandTape& tape)
-//{
-//   // labEnd
-//
-//   tape.setLabel();
-//   tape.write(bcFreeStack, 3);
-//}
+void ByteCodeWriter :: endAlt(CommandTape& tape)
+{
+   // labEnd
+
+   tape.setLabel();
+}
 
 void ByteCodeWriter :: endThenBlock(CommandTape& tape)
 {
@@ -5999,28 +5998,26 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
    endSafeCatch(tape);
 }
 
-//void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   bool first = true;
-//
-//   declareTry(tape);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (test(current.type, lxExprMask)) {
-//         generateObject(tape, current);
-//
-//         if (first) {
-//            declareAlt(tape);
-//
-//            first = false;
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   endAlt(tape);
-//}
+void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   bool first = true;
+
+   declareTry(tape);
+
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      generateObject(tape, current, scope);
+
+      if (first) {
+         declareAlt(tape);
+
+         first = false;
+      }
+      current = current.nextNode(lxObjectMask);
+   }
+
+   endAlt(tape);
+}
 
 void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
@@ -6513,9 +6510,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxTrying:
          generateTrying(tape, node, scope);
          break;
-//      case lxAlt:
-//         generateAlt(tape, node);
-//         break;
+      case lxAlt:
+         generateAlt(tape, node, scope);
+         break;
 ////      case lxReturning:
 ////         generateReturnExpression(tape, node);
 ////         break;

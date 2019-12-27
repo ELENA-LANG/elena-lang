@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -3425,8 +3425,13 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode roperandNode, ExprScope& s
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileIsNilOperator(SyntaxWriter& writer, SNode, CodeScope& scope, ObjectInfo loperand, ObjectInfo roperand)
-//{
+ObjectInfo Compiler :: compileIsNilOperator(SNode current, /*CodeScope& scope, */ObjectInfo loperand)
+{
+   // SNode exprNode = current.parentNode();
+   //if (loperand.kind == okObject) {
+   //   SNode altNode = exprNode.injectNode(lxAlt);
+   //}
+
 //   ref_t loperandRef = resolveObjectReference(scope, loperand, false);
 //   ref_t roperandRef = resolveObjectReference(scope, roperand, false);
 //
@@ -3436,7 +3441,9 @@ ObjectInfo Compiler :: compileBranchingOperator(SNode roperandNode, ExprScope& s
 //   writer.closeNode();
 //
 //   return ObjectInfo(okObject, resultRef);
-//}
+
+   throw InternalError("Not yet implemented");
+}
 
 inline bool IsArrExprOperator(int operator_id, LexicalType type)
 {
@@ -3541,9 +3548,6 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
    ObjectInfo retVal(okObject);
    int argCount = 2;
 
-////   writer.newBookmark();
-////   writer.appendNode(lxOperatorAttr);
-
    ObjectInfo roperand;
    ObjectInfo roperand2;
    SNode roperandNode = node;
@@ -3576,14 +3580,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
       /*else */roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
    }
 
-//   if (operator_id == ISNIL_OPERATOR_ID) {
-//      retVal = compileIsNilOperator(writer, node, scope, loperand, roperand);
-//   }
-   /*else */retVal = compileOperator(opNode, scope, operator_id, argCount, loperand, roperand, roperand2, mode);
-//
-////   writer.removeBookmark();
-
-   return retVal;
+   return compileOperator(opNode, scope, operator_id, argCount, loperand, roperand, roperand2, mode);
 }
 
 inline ident_t resolveOperatorName(SNode node)
@@ -3614,6 +3611,8 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
          return compileCatchOperator(roperand, scope/*, target, mode*/, operator_id);
       case ALT_OPERATOR_ID:
          return compileAltOperator(roperand, scope, target/*, mode, operator_id*/);
+      case ISNIL_OPERATOR_ID:
+         return compileIsNilOperator(roperand, target);
 //      case APPEND_OPERATOR_ID:
 //         node.setArgument(ADD_OPERATOR_ID);
 //         return compileAssigning(writer, node, scope, target, false);
@@ -3935,6 +3934,8 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
 //      case V_UNBOXEDARGS:
 //         // HOTFIX : should be returned as is
 //         return argRef;
+      case V_NIL:
+         return scope.moduleScope->superReference;
       default:
          if (isPrimitiveArrRef(argRef)) {
             return resolvePrimitiveArray(scope, scope.moduleScope->arrayTemplateReference, elementRef, declarationMode);
@@ -5037,32 +5038,35 @@ ObjectInfo Compiler :: compileCatchOperator(SNode node, ExprScope& scope, ref_t 
    return ObjectInfo(okObject);
 }
 
-ObjectInfo Compiler :: compileAltOperator(SNode node, ExprScope& scope, ObjectInfo)
+ObjectInfo Compiler :: compileAltOperator(SNode node, ExprScope& scope, ObjectInfo target)
 {
-   throw InternalError("Not yet implemented"); // !! temporal
+   SNode opNode = node.parentNode();
+   SNode targetNode = opNode.firstChild(lxObjectMask);
+   while (test(targetNode.type, lxOpScopeMask)) {
+      targetNode = targetNode.firstChild(lxObjectMask);
+   }
 
-//   // allocate a temporal local
-//   int tempLocal = scope.newLocal();
-//
-//   writer.newBookmark();
-//   writer.appendNode(lxLocal, tempLocal);
-//   compileOperation(writer, node.firstChild(), scope, ObjectInfo(okObject), 0, EAttr::eaNone);
-//
-//   writer.removeBookmark();
-//
-//   writer.inject(lxAlt);
-//   // inject a temporal variable
-//   writer.closeNode();
-//
-//   // inject a nested expression
-//   writer.inject(lxAltExpression);
-//   writer.newPrependedNode(lxAssigning, 0);
-//   writer.appendNode(lxLocal, tempLocal);
-//   writer.appendNode(lxIdle, 0);  // NOTE : place holder to be replaced with correct one later on (in analizeAltExpression)
-//   writer.closeNode();
-//   writer.closeNode();
-//
-//   return ObjectInfo(okObject);
+   SNode altNode = node;
+
+   opNode.injectNode(lxAlt);
+   opNode.set(lxSeqExpression, 0);
+
+   SNode assignNode = opNode.insertNode(lxAssigning);
+   // allocate a temporal local
+   int tempLocal = scope.newTempLocal();
+   assignNode.appendNode(lxTempLocal, tempLocal);
+   SyntaxTree::copyNode(assignNode.appendNode(targetNode.type, targetNode.argument), targetNode);
+
+   targetNode.set(lxTempLocal, tempLocal);
+
+   SNode op = node.firstChild(lxOperatorMask);
+   altNode.insertNode(lxTempLocal, tempLocal);
+
+   compileMessage(op, scope, target, EAttr::eaNone);
+
+   test2(opNode);
+
+   return ObjectInfo(okObject);
 }
 
 ref_t Compiler :: resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode)

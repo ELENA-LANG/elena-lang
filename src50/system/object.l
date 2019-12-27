@@ -159,11 +159,11 @@ public interface BoolValue
 public const true = BoolValue.true;
 public const false = BoolValue.false;
 
-//public extension commonOp
-//{
-//    /// Returns the parameter        
-//    back(o) = o;
-// 
+public extension commonOp
+{
+    /// Returns the parameter        
+    back(o) = o;
+ 
 //    then(Func code)
 //        = code();
-//}
+}

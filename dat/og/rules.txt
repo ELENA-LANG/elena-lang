@@ -1,3 +1,14 @@
+open pusha peekfi := 1 close quitn => nop nop nop nop quitn;
+open pusha peekfi := 1 close quit => nop nop nop nop quit;
+
+peekfi pusha peekfi => pushfi nop peekfi;
+
+pusha peeksi := 0 => pusha nop;
+pushr peeksi := 0 => movr pusha;
+
+movf pusha movr => pushf nop movr;
+movr pusha movr => pushr nop movr;
+
 storefi := 1 peekfi := 1 => storefi nop;
 storefi := 2 peekfi := 2 => storefi nop;
 storefi := 3 peekfi := 3 => storefi nop;
@@ -7,12 +18,3 @@ storefi := 6 peekfi := 6 => storefi nop;
 storefi := 7 peekfi := 7 => storefi nop;
 storefi := 8 peekfi := 8 => storefi nop;
 storefi := 9 peekfi := 9 => storefi nop;
-
-open pusha peekfi := 1 close quitn => nop nop nop nop quitn;
-open pusha peekfi := 1 close quit => nop nop nop nop quit;
-
-pusha peeksi := 0 => pusha nop;
-pushr peeksi := 0 => movr pusha;
-
-movf pusha movr => pushf nop movr;
-movr pusha movr => pushr nop movr;

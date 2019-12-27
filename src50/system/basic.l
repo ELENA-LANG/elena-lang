@@ -50,8 +50,8 @@ public abstract class BaseValue
     bool less(BaseVariable var)
         <= equal(var.Value);
     
-//    /// Compares the values
-//    abstract bool less(o) {}
+    /// Compares the values
+    abstract bool less(o) {}
 
     /// Compares the values
     bool greater(o) = o.less(self);
@@ -78,17 +78,17 @@ public abstract class BaseNumber : BaseValue
     divide(BaseVariable var)
         <= divide(var.Value);
     
-//    /// Adds the value
-//    abstract add(o) {}
-//
-//    /// Subtracts the value
-//    abstract subtract(o) {}
-//
-//    /// Multiply by the value
-//    abstract multiply(o) {}
-//
-//    /// Divides into the value
-//    abstract divide(o) {}
+    /// Adds the value
+    abstract add(o) {}
+
+    /// Subtracts the value
+    abstract subtract(o) {}
+
+    /// Multiply by the value
+    abstract multiply(o) {}
+
+    /// Divides into the value
+    abstract divide(o) {}
     
     Negative
         = 0 - self;
@@ -108,14 +108,14 @@ public abstract class IntBaseNumber : BaseNumber
     xor(BaseVariable var)
         <= xor(var.Value);
     
-//    /// Execute bitwise AND operation
-//    abstract and(o) {}
+    /// Execute bitwise AND operation
+    abstract and(o) {}
 
-//    /// Execute bitwise OR operation
-//    abstract or(o) {}
-//    
-//    /// Execute bitwise XOR operation
-//    abstract xor(o) {}
+    /// Execute bitwise OR operation
+    abstract or(o) {}
+    
+    /// Execute bitwise XOR operation
+    abstract xor(o) {}
     
     /// Returns true if all the mask bits are set
     bool allMask(operand)
@@ -129,7 +129,7 @@ public abstract class IntBaseNumber : BaseNumber
 // --- ByteNumber ---
 
 /// An unsigned 8 bit integer
-public sealed const struct ByteNumber : IntBaseNumber
+public sealed const struct ByteNumber //: IntBaseNumber
 {
     embeddable __int theValue[1];
 
@@ -152,9 +152,9 @@ public sealed const struct ByteNumber : IntBaseNumber
     constructor(byte value)
         = value;
 
-//    /// Creates the object with a specified value
-//    constructor new(val)
-//        <= (cast byte(val));
+    /// Creates the object with a specified value
+    constructor new(val)
+        = cast byte(val);
 
 //    /// Returns the value as a short integer
 //    short cast() = new ShortNumber(self);
@@ -170,13 +170,13 @@ public sealed const struct ByteNumber : IntBaseNumber
 //
 //    /// Returns the value as a real number
 //    real cast() = new RealNumber(self);
-//
-//    bool equal(BaseVariable v)
-//        <= equal(v.Value);
-//
-//    bool equal(byte n)
-//        = theValue == n;
-//
+
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+
+    bool equal(byte n)
+        = theValue == n;
+
 //    bool equal(short n)
 //        = new ShortNumber(self).equal(n);
 //        
@@ -199,12 +199,12 @@ public sealed const struct ByteNumber : IntBaseNumber
     bool less(n)
         <= less(cast byte(n));
 
-//    bool less(BaseVariable v)
-//        <= less(v.Value);
-//
-//    bool less(byte n)
-//        = theValue < n;
-//
+    bool less(BaseVariable v)
+        <= less(v.Value);
+
+    bool less(byte n)
+        = theValue < n;
+
 //    bool less(short n)
 //        = new ShortNumber(self).less(n);
 //
@@ -422,7 +422,7 @@ public sealed const struct ByteNumber : IntBaseNumber
 // --- ShortNumber ---
 
 /// A signed 16 bit integer
-public sealed const struct ShortNumber : IntBaseNumber
+public sealed const struct ShortNumber //: IntBaseNumber
 {
     embeddable __int theValue[2];
 
@@ -735,7 +735,7 @@ public sealed const struct ShortNumber : IntBaseNumber
 // --- IntNumber ---
 
 /// A signed 32 bit integer
-public sealed const struct IntNumber : IntBaseNumber
+public sealed const struct IntNumber //: IntBaseNumber
 {
     embeddable __int theValue[4];
     
@@ -1997,7 +1997,7 @@ public sealed const struct IntNumber : IntBaseNumber
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-public sealed const struct CharValue : BaseValue
+public sealed const struct CharValue //: BaseValue
 {
     embeddable __raw theValue[4];
 

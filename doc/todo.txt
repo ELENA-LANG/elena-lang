@@ -2,8 +2,7 @@
 In development:
 ------         
               dev
-                * native operation : and, or, xor
-                * constructor default class resend
+                * ?? operator : a ?? b, a.msg() ?? b
                 * migrate basic classes
                 * calling internal constructor (String and WideString)
                 * call stack
@@ -15,15 +14,17 @@ In development:
                 * realsum
                 * migrate basic classes : enumerators, indexers
 
+                * constructor default class resend?
+                * constructor - calling a parent one - currently implicit, should explicit be allowed?
+
                 * samples
 
-                * predefined operations
-
-                * exceptions : alt
+                * stack allocated variables : assigning nil, default constructor call, ...
 
                 * conversion routines : others
                 * implicit conversion
                 * recognize implicit conversion
+                * run-time extension dispatching : if no extension was found - send the message to the target
 
                 * console operations
                 * no need to include system for system'io module, it should be included automatically!?
@@ -293,6 +294,8 @@ In development:
                 * optimize interface implementation . try to use direct / semi-direct call when possible
                 * optimize operations with int[], short[], byte[] arrays
                 * optimize IntNumber#class.#constructor[1]
+                * ByteNumber#class.new[2] - idle command - "pushr 0"
+                * alt - no need to assign temp local for local / field / param
 
               dev1
                 * move all description to meta info using descr inline template

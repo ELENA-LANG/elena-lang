@@ -788,7 +788,7 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 // --- String ---
 
 /// A UTF-8 literal value
-public sealed const struct String : BaseValue
+public sealed const struct String //: BaseValue
 {
     __string byte[] theArray;
 
@@ -1039,7 +1039,7 @@ public sealed const struct String : BaseValue
 // --- WideString ---
 
 /// A UTF-18 literal value
-public sealed const struct WideString : BaseValue
+public sealed const struct WideString //: BaseValue
 {
     __string short[] theArray;
 

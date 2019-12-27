@@ -755,7 +755,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    addVerb(operators, SHIFTR_OPERATOR, SHIFTR_OPERATOR_ID);
    addVerb(operators, SHIFTL_OPERATOR, SHIFTL_OPERATOR_ID);
    addVerb(operators, LEN_OPERATOR, LEN_OPERATOR_ID);
-//   addVerb(operators, ISNIL_OPERATOR, ISNIL_OPERATOR_ID);
+   addVerb(operators, ISNIL_OPERATOR, ISNIL_OPERATOR_ID);
    addVerb(operators, CATCH_OPERATOR, CATCH_OPERATOR_ID);
    addVerb(operators, ALT_OPERATOR, ALT_OPERATOR_ID);
 //   addVerb(operators, FINALLY_OPERATOR, FINALLY_OPERATOR_ID);
