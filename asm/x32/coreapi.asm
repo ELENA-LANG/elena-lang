@@ -418,6 +418,52 @@ Lab8:
 
 end
 
+// ; uinttostr(s,b,t)
+procedure coreapi'uinttostr
+
+   mov  ebx, [esp+8]
+   mov  eax, [esp+4]
+   mov  esi, [ebx]
+   mov  edi, [esp+12]
+
+   push ebp
+   mov  ebp, esp
+   xor  ecx, ecx
+   cmp  eax, esi
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv esi
+   push edx
+   add  ecx, 1
+   cmp  eax, esi
+   jae  short Lab1
+Lab5:   
+   add  ecx, 2
+   push eax
+   sub  ecx, 1
+   mov  esi, edi
+   mov  edx, 0FFh
+Lab2:
+   pop  eax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  byte ptr [esi], al
+   add  esi, 1
+   sub  ecx, 1
+   jnz  short Lab2
+   mov  ecx, esi
+   sub  ecx, edi
+   pop  ebp
+
+   ret
+
+end
+
 // ; === internal ===
 
 procedure coreapi'default_handler                                                       

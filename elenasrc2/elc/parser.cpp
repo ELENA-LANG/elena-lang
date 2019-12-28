@@ -104,9 +104,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
             case 'h':
                terminal.symbol = lxHexInteger;
                break;
-//            case 'l':
-//               terminal.symbol = tsLong;
-//               break;
+            case 'l':
+               terminal.symbol = lxLong;
+               break;
 //            case 'r':
 //               terminal.symbol = tsReal;
 //               break;

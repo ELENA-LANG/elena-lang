@@ -214,7 +214,7 @@ inline bool isConstantArguments(SNode node)
          case lxWide:
          case lxCharacter:
          case lxInteger:
-         //case lxLong:
+         case lxLong:
          case lxHexInteger:
          //case lxReal:
          //case lxExplicitConst:
@@ -1437,8 +1437,7 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
 //         else identNode = current.firstChild(lxTerminalMask);
 
          if (identNode != lxNone) {
-            ident_t name = identNode.identifier();
-            Parameter param = scope.parameters.get(name);
+            Parameter param = scope.parameters.get(identNode.identifier());
             if (param.offset != -1) {
                SNode varNode;
                if (param.class_ref == V_ARGARRAY) {
@@ -1447,9 +1446,9 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
                else if (param.class_ref == moduleScope->intReference) {
                   varNode = node.appendNode(lxIntVariable);
                }
-//               else if (param.class_ref == moduleScope->longReference) {
-//                  writer.newNode(lxLongVariable);
-//               }
+               else if (param.class_ref == moduleScope->longReference) {
+                  varNode = node.appendNode(lxLongVariable);
+               }
 //               else if (param.class_ref == moduleScope->realReference) {
 //                  writer.newNode(lxReal64Variable);
 //               }
@@ -1465,7 +1464,7 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
                else varNode = node.appendNode(lxVariable);
 
                varNode.appendNode(lxLevel, prefix - param.offset);
-               varNode.appendNode(lxIdentifier, name);
+               varNode.appendNode(lxIdentifier, identNode.identifier());
             }
          }
       }
@@ -1925,10 +1924,10 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
             // treat it like dword
             attrs.fieldRef = V_INT32;
             break;
-//         case 8:
-//            // treat it like qword
-//            attrs.fieldRef = V_INT64;
-//            break;
+         case 8:
+            // treat it like qword
+            attrs.fieldRef = V_INT64;
+            break;
          default:
             scope.raiseError(errInvalidHint, node);
             break;
@@ -2126,9 +2125,9 @@ LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variab
          case elDebugDWORD:
             variableType = lxIntVariable;
             break;
-   //      case elDebugQWORD:
-   //         variableType = lxLongVariable;
-   //         break;
+         case elDebugQWORD:
+            variableType = lxLongVariable;
+            break;
    //      case elDebugReal64:
    //         variableType = lxReal64Variable;
    //         break;
@@ -3923,8 +3922,8 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
          return resolvePrimitiveArray(scope, scope.moduleScope->argArrayTemplateReference, elementRef, declarationMode);
       case V_INT32:
          return scope.moduleScope->intReference;
-//      case V_INT64:
-//         return scope.longReference;
+      case V_INT64:
+         return scope.moduleScope->longReference;
 //      case V_REAL64:
 //         return scope.realReference;
 //      case V_SUBJECT:
@@ -5671,9 +5670,9 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
          terminal.set(lxConstantInt, object.param);
          terminal.appendNode(lxIntValue, object.extraparam);
          break;
-//      case okLongConstant:
-//         writer.newNode(lxConstantLong, object.param);
-//         break;
+      case okLongConstant:
+         terminal.set(lxConstantLong, object.param);
+         break;
 //      case okRealConstant:
 //         writer.newNode(lxConstantReal, object.param);
 //         break;
@@ -5896,18 +5895,18 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
             object = ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
             break;
          }
-         //      case lxLong:
-         //      {
-         //         String<char, 30> s("_"); // special mark to tell apart from integer constant
-         //         s.append(token, getlength(token) - 1);
-         //
-         //         token.toULongLong(10, 1);
-         //         if (errno == ERANGE)
-         //            scope.raiseError(errInvalidIntNumber, terminal);
-         //
-         //         object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT64);
-         //         break;
-         //      }
+         case lxLong:
+         {
+            String<char, 30> s("_"); // special mark to tell apart from integer constant
+            s.append(token, getlength(token) - 1);
+         
+            token.toULongLong(10, 1);
+            if (errno == ERANGE)
+               scope.raiseError(errInvalidIntNumber, terminal);
+         
+            object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT64);
+            break;
+         }
          case lxHexInteger:
          {
             String<char, 20> s;
@@ -7500,13 +7499,13 @@ ref_t Compiler :: generateConstant(_CompileScope& scope, ObjectInfo retVal)
 
       parentRef = scope.moduleScope->intReference;
    }
-   //      else if (retVal.kind == okLongConstant) {
-   //         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
-   //
-   //         dataWriter.write(&value, 8u);
-   //
-   //         parentRef = scope.moduleScope->longReference;
-   //      }
+   else if (retVal.kind == okLongConstant) {
+      long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
+   
+      dataWriter.write(&value, 8u);
+   
+      parentRef = scope.moduleScope->longReference;
+   }
    //      else if (retVal.kind == okRealConstant) {
    //         double value = module->resolveConstant(retVal.param).toDouble();
    //
@@ -9487,13 +9486,13 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 
          parentRef = scope.moduleScope->intReference;
       }
-//      else if (retVal.kind == okLongConstant) {
-//         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
-//
-//         dataWriter.write(&value, 8u);
-//
-//         parentRef = scope.moduleScope->longReference;
-//      }
+      else if (retVal.kind == okLongConstant) {
+         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
+
+         dataWriter.write(&value, 8u);
+
+         parentRef = scope.moduleScope->longReference;
+      }
 //      else if (retVal.kind == okRealConstant) {
 //         double value = module->resolveConstant(retVal.param).toDouble();
 //
@@ -11309,7 +11308,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    // cache the frequently used references
    scope.superReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(SUPER_FORWARD));
    scope.intReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(INT_FORWARD));
-//   scope.longReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LONG_FORWARD));
+   scope.longReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LONG_FORWARD));
 //   scope.realReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REAL_FORWARD));
    scope.literalReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(STR_FORWARD));
    scope.wideReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WIDESTR_FORWARD));

@@ -582,7 +582,7 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
    _characterClass.copy(_config.forwards.get(CHAR_FORWARD));
    _intClass.copy(_config.forwards.get(INT_FORWARD));
    //_realClass.copy(_config.forwards.get(REAL_FORWARD));
-   //_longClass.copy(_config.forwards.get(LONG_FORWARD));
+   _longClass.copy(_config.forwards.get(LONG_FORWARD));
    _msgClass.copy(_config.forwards.get(MESSAGE_FORWARD));
    //_extMsgClass.copy(_config.forwards.get(EXT_MESSAGE_FORWARD));
    //_subjClass.copy(_config.forwards.get(MESSAGENAME_FORWARD));

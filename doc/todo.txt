@@ -2,6 +2,7 @@
 In development:
 ------         
               dev
+                * long
                 * migrate basic classes
                 * calling internal constructor (String and WideString)
                 * call stack
@@ -11,6 +12,7 @@ In development:
                 * support vm client
                 * vm hello world sample
                 * realsum
+                * literal convertor (UIntNumber)
                 * migrate basic classes : enumerators, indexers
 
                 * constructor default class resend?
@@ -39,6 +41,7 @@ In development:
                 * parameter - template, template of templates
                 * array of templates
                 * template of arrays
+                * external code : long, real ret value
 
                 * method not found exception
                 * call stack
@@ -101,7 +104,6 @@ In development:
 
                 * countable
 
-                * primitive operations with long
                 * primitive operations with real
                 * primitive operations with ptr
                 * primitive operations with dword
@@ -295,6 +297,7 @@ In development:
                 * optimize IntNumber#class.#constructor[1]
                 * ByteNumber#class.new[2] - idle command - "pushr 0"
                 * alt - no need to assign temp local for local / field / param
+                * test long / real arithmetic, comparision
 
               dev1
                 * move all description to meta info using descr inline template

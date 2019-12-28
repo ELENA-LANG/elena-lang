@@ -1404,12 +1404,12 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 
          //   watch->write(this, *(double*)value);
          //}
-         //else if (type==elDebugQWORD) {
-         //   char value[8];
-         //   getValue(selfPtr, value, 8);
+         else if (type==elDebugQWORD) {
+            char value[8];
+            getValue(selfPtr, value, 8);
 
-         //   watch->write(this, *(long long*)value);
-         //}
+            watch->write(this, *(long long*)value);
+         }
          else if (type==elDebugArray) {
             int list[DEBUG_MAX_LIST_LENGTH];
             int length = 0;

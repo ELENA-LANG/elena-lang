@@ -105,7 +105,7 @@ constexpr auto V_MESSAGE         = 0x80000806u;
 constexpr auto V_FLAG            = 0x80000001u;
 constexpr auto V_NIL             = 0x80000002u;
 constexpr auto V_INT32           = 0x80000003u;
-//constexpr auto V_INT64           = 0x80000004u;
+constexpr auto V_INT64           = 0x80000004u;
 constexpr auto V_DWORD           = 0x80000005u;
 //constexpr auto V_REAL64          = 0x80000006u;
 //constexpr auto V_EXTMESSAGE      = 0x80000007u;
@@ -236,7 +236,7 @@ struct _ModuleScope
    // cached references
    ref_t             superReference;
    ref_t             intReference;
-//   ref_t             longReference;
+   ref_t             longReference;
 //   ref_t             realReference;
 //   ref_t             messageNameReference;
    ref_t             messageReference;
@@ -367,7 +367,7 @@ struct _ModuleScope
       debugModule = module = nullptr;
       intReference = superReference = 0;
       /*messageNameReference = */messageReference = 0;
-      /*longReference = */literalReference = wideReference = 0;
+      longReference = literalReference = wideReference = 0;
       charReference /*= realReference */= 0;
       closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;

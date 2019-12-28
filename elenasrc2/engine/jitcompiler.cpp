@@ -53,18 +53,18 @@ void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
    writer->writeDWord(integer);
 }
 
-//void JITCompiler32 :: compileInt64(MemoryWriter* writer, long long integer)
-//{
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800008);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->write(&integer, 8u);
-//}
-//
+void JITCompiler32 :: compileInt64(MemoryWriter* writer, long long integer)
+{
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800008);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(&integer, 8u);
+}
+
 //void JITCompiler32 :: compileInt64(MemoryWriter* writer, int low, ref_t ref, int refOffset)
 //{
 //   writer->seek(writer->Position() - 8);

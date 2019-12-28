@@ -112,6 +112,18 @@ ELENA byte codes (or ecodes)
 
  Arithmeric operations:
  ----------------------
+ laddf i                    - qword[fp+i] << qword[fp+i] + qword[acc]
+
+ ldivf i                    - qword[fp+i] << qword[fp+i] / qword[acc]
+
+ lmulf i                    - qword[fp+i] << qword[fp+i] * qword[acc]
+
+ lsubf i                    - qword[fp+i] << qword[fp+i] - qword[acc] 
+
+ lshlf i                    - qword[fp+i] << qword[fp+i] $shl qword[acc] 
+
+ lshrf i                    - qword[fp+i] << qword[fp+i] $shr qword[acc] 
+
  naddf i                    - dword[fp+i] << dword[fp+i] + dword[acc]
 
  nandf                      - dword[fp+i] << dword[fp+i] && dword[acc]
@@ -134,6 +146,10 @@ ELENA byte codes (or ecodes)
  Comparision operations:
  ----------------------- 
  equal                       - acc == [sp] ; if true - index = 1, if false - index = 0
+
+ lequal                      - long[acc] == long[sp] ; if true - index = 1, if false - index = 0
+
+ lless                       - long[acc] < long[sp]  ; if true - index = 1, if false - index = 0
 
  nequal                      - int[acc] == int[sp] ; if true - index = 1, if false - index = 0
 

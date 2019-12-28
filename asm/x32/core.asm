@@ -1069,6 +1069,38 @@ inline % 41h
 
 end
 
+// ; lequal
+
+inline % 43h
+
+  mov  edi, [esp]
+  mov  ecx, [ebx]
+  xor  edx, edx
+  mov  esi, [ebx+4]  
+  cmp  ecx, [edi]
+  setz dl
+  cmp  esi, [edi+4]
+  setz cl
+  and  dl, cl
+
+end
+
+// ; lless(lo, ro, tr, fr)
+inline % 44h
+
+  mov  edi, [esp]
+  xor  edx, edx
+  xor  ecx, ecx
+  mov  esi, [ebx]
+  cmp  esi, [edi]
+  setl cl
+  mov  esi, [ebx+4]  
+  cmp  esi, [edi+4]
+  setl dl
+  cmovz edx, ecx
+
+end
+
 // ; save
 inline % 47h
 
@@ -1197,6 +1229,306 @@ inline % 5Fh
   mov ecx, [ebx]
   shr eax, cl
   mov [ebp+__arg1], eax
+
+end
+
+// ; laddf
+inline % 74h
+
+  lea  edi, [ebp+__arg1]
+  mov  eax, [ebx+4]
+  mov  ecx, [ebx]
+  add  [edi], ecx
+  adc  [edi+4], eax
+
+end
+
+// ; lsubf
+inline % 75h
+
+  lea  edi, [ebp+__arg1]
+  mov  esi, [edi]
+  mov  ecx, [edi+4]
+  sub  esi, [ebx]
+  sbb  ecx, [ebx+4]
+  mov  [edi], esi
+  mov  [edi+4], ecx
+
+end
+
+// ; lmulf
+inline % 76h
+
+  lea  edi, [ebp+__arg1]
+  mov  esi, ebx        // sour
+  mov  edx, edi        // dest
+
+  push ebx
+  
+  mov  ecx, [edx+4]   // DHI
+  mov  eax, [esi+4]   // SHI
+  or   eax, ecx
+  mov  ecx, [edx]     // DLO
+  jnz  short lLong
+  mov  eax, [esi]
+  mul  ecx
+  jmp  short lEnd
+
+lLong:
+  mov  eax, [esi+4]
+  mov  edi, edx
+  mul  ecx               // SHI * DLO
+  mov  ebx, eax
+  mov  eax, dword ptr [esi]
+  mul  dword ptr [edi+4]  // SLO * DHI
+  add  ebx, eax     
+  mov  eax, dword ptr [esi] // SLO * DLO
+  mul  ecx
+  add  edx, ebx 
+
+lEnd:
+  mov  [edi], eax
+  mov  [edi+4], edx
+  pop  ebx
+
+end
+
+// ; ldiv
+inline % 77h
+               
+  lea  edi, [ebp+__arg1]
+  mov  esi, edi   // ; esi - DVND, ebx - DVSR
+
+  push ebx
+
+  push [esi+4]    // ; DVND hi dword
+  push [esi]      // ; DVND lo dword
+  push [ebx+4]    // ; DVSR hi dword
+  push [ebx]      // ; DVSR lo dword
+
+  xor  edi, edi
+
+  mov  eax, [esp+0Ch]    // hi DVND
+  or   eax, eax
+  jge  short L1
+  add  edi, 1
+  mov  edx, [esp+8]      // lo DVND
+  neg  eax
+  neg  edx
+  sbb  eax, 0
+  mov  [esp+0Ch], eax    // hi DVND
+  mov  [esp+8], edx      // lo DVND
+
+L1:                                                               
+  mov  eax, [esp+4]      // hi DVSR
+  or   eax, eax
+  jge  short L2
+  add  edi, 1
+  mov  edx, [esp]        // lo DVSR
+  neg  eax
+  neg  edx
+  sbb  eax, 0
+  mov  [esp+4], eax      // hi DVSR
+  mov  [esp], edx        // lo DVSR
+
+L2:
+  or   eax, eax
+  jnz  short L3
+  mov  ecx, [esp]        // lo DVSR
+  mov  eax, [esp+0Ch]    // hi DVND
+  xor  edx, edx
+  div  ecx
+  mov  ebx, eax 
+  mov  eax, [esp+8]      // lo DVND
+  div  ecx
+
+  mov  esi, eax          // result
+  jmp  short L4
+
+L3:
+  mov  ebx, eax 
+  mov  ecx, [esp]        // lo DVSR
+  mov  edx, [esp+0Ch]    // hi DVND
+  mov  eax, [esp+8]      // lo DVDN
+L5:
+  shr  ebx, 1 
+  rcr  ecx, 1
+  shr  edx, 1 
+  rcr  eax, 1
+  or   ebx, ebx 
+  jnz  short L5
+  div  ecx
+  mov  esi, eax          // result
+
+  // check the result with the original
+  mul  [esp+4]           // hi DVSR
+  mov  ecx, eax 
+  mov  eax, [esp]        // lo DVSR
+  mul  esi
+  add  edx, ecx
+
+  // carry means Quotient is off by 1
+  jb   short L6
+
+  cmp  edx, [esp+0Ch]    // hi DVND
+  ja   short L6
+  jb   short L7
+  cmp  eax, [esp+8]      // lo DVND
+  jbe  short L7
+
+L6:
+  sub  esi, 1
+
+L7:
+  xor  ebx, ebx
+
+L4:
+  mov  edx, ebx
+  mov  eax, esi
+
+  sub  edi, 1
+  jnz  short L8
+  neg  edx
+  neg  eax
+  sbb  edx, 0
+
+L8:
+  lea  esp, [esp+10h]
+  lea  edi, [ebp+__arg1]
+
+  mov  [edi], eax
+  mov  [edi+4], edx
+  pop  ebx
+                                    
+end
+
+
+// ; landf
+inline % 78h
+  lea edi, [ebp+__arg1]
+  mov eax, ebx 
+  mov ebx, [edi]
+  mov edx, [eax]
+
+  mov ecx, [edi+4]
+  mov esi, [eax+4]
+
+  and ebx, edx
+  and ecx, esi
+
+  mov [edi], ebx
+  mov [edi+4], ecx
+  mov ebx, eax
+end
+
+// ; lorf
+inline % 79h
+  lea edi, [ebp+__arg1]
+  mov eax, ebx 
+  mov ebx, [edi]
+  mov edx, [eax]
+
+  mov ecx, [edi+4]
+  mov esi, [eax+4]
+
+  or  ebx, edx
+  or  ecx, esi
+
+  mov [edi], ebx
+  mov [edi+4], ecx
+  mov ebx, eax
+end
+
+// ; lxorf
+inline % 7Ah
+  lea edi, [ebp+__arg1]
+  mov eax, ebx 
+  mov ebx, [edi]
+  mov edx, [eax]
+
+  mov ecx, [edi+4]
+  mov esi, [eax+4]
+
+  xor ebx, edx
+  xor ecx, esi
+
+  mov [edi], ebx
+  mov [edi+4], ecx
+  mov ebx, eax
+end
+
+// ; lshlf
+inline % 7Bh
+
+  mov  eax, ebx 
+  lea  edi, [ebp+__arg1]
+  mov  ecx, edx
+  mov  edx, [edi]
+  mov  ebx, [edi+4]
+
+  cmp  cl, 40h 
+  jae  short lErr
+  cmp  cl, 20h
+  jae  short LL32
+  shld edx, ebx, cl
+  shl  ebx, cl
+  jmp  short lEnd
+
+LL32:
+  mov  ebx, edx
+  xor  edx, edx
+  sub  cl, 20h
+  shl  ebx, cl 
+  jmp  short lEnd
+  
+lErr:
+  xor  eax, eax
+  jmp  short lEnd2
+
+lEnd:
+  mov  [edi], edx
+  mov  [edi+4], ebx
+
+lEnd2:
+  mov   ebx, eax
+
+end
+
+// ; lshrf
+inline % 7Dh
+
+  mov  eax, ebx 
+  lea  edi, [ebp+__arg1]
+  mov  ecx, edx
+  mov  edx, [edi]
+  mov  ebx, [edi+4]
+
+  cmp  cl, 64
+  jae  short lErr
+
+  cmp  cl, 32
+  jae  short LR32
+  shrd edx, ebx, cl
+  sar  ebx, cl
+  jmp  short lEnd
+
+LR32:
+  mov  edx, ebx
+  xor  ebx, ebx
+  sub  cl, 20h
+  shr  edx, cl 
+  jmp  short lEnd
+  
+lErr:
+  xor  eax, eax
+  jmp  short lEnd2
+
+lEnd:
+  mov  [edi], edx
+  mov  [edi+4], ebx
+
+lEnd2:
+  mov   ebx, eax
 
 end
 

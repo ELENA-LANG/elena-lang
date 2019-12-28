@@ -251,11 +251,11 @@ void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName,
    tape.write(bdIntLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
 }
 
-//void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdLongLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
-//
+void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdLongLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
+
 //void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 //{
 //   tape.write(bdRealLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
@@ -659,8 +659,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskCharRef;
       case lxConstantInt:
          return mskInt32Ref;
-      //case lxConstantLong:
-      //   return mskInt64Ref;
+      case lxConstantLong:
+         return mskInt64Ref;
       //case lxConstantReal:
       //   return mskRealRef;
       //case lxMessageConstant:
@@ -2995,10 +2995,22 @@ void ByteCodeWriter :: doIntBoolOperation(CommandTape& tape, int operator_id)
    }
 }
 
-void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset)
+void ByteCodeWriter :: doLongBoolOperation(CommandTape& tape, int operator_id)
 {
    switch (operator_id)
    {
+      case EQUAL_OPERATOR_ID:
+         tape.write(bcLEqual);
+         break;
+      case LESS_OPERATOR_ID:
+         tape.write(bcLLess);
+         break;
+   }
+}
+
+void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset)
+{
+   switch (operator_id) {
       case ADD_OPERATOR_ID:
          // naddf i
          tape.write(bcNAddF, localOffset);
@@ -3034,6 +3046,51 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
       case XOR_OPERATOR_ID:
          // nxorf i
          tape.write(bcNXorF, localOffset);
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+         break;
+   }
+}
+
+void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id, int localOffset)
+{
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+         // laddf i
+         tape.write(bcLAddF, localOffset);
+         break;
+      case SUB_OPERATOR_ID:
+         // lsubf i
+         tape.write(bcLSubF, localOffset);
+         break;
+      case MUL_OPERATOR_ID:
+         // lmulf i
+         tape.write(bcLMulF, localOffset);
+         break;
+      case DIV_OPERATOR_ID:
+         // ldivf i
+         tape.write(bcLDivF, localOffset);
+         break;
+      case SHIFTL_OPERATOR_ID:
+         // lshlf i
+         tape.write(bcLShlF, localOffset);
+         break;
+      case SHIFTR_OPERATOR_ID:
+         // lshrf i
+         tape.write(bcLShrF, localOffset);
+         break;
+      case AND_OPERATOR_ID:
+         // landf i
+         tape.write(bcLAndF, localOffset);
+         break;
+      case OR_OPERATOR_ID:
+         // lorf i
+         tape.write(bcLOrF, localOffset);
+         break;
+      case XOR_OPERATOR_ID:
+         // lxorf i
+         tape.write(bcLXorF, localOffset);
          break;
       default:
          throw InternalError("not yet implemente"); // !! temporal
@@ -3242,57 +3299,6 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
 //            tape.write(bcDCopy, offset);
 //            tape.write(bcBWrite);
 //         }
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id)
-//{
-//   switch (operator_id) {
-//      // Note read / write operator is used for bitwise operations
-//      case SHIFTL_OPERATOR_ID:
-//         // nload
-//         // lshiftl
-//         tape.write(bcNLoad);
-//         tape.write(bcLShiftL);
-//         break;
-//      // Note read / write operator is used for bitwise operations
-//      case SHIFTR_OPERATOR_ID:
-//         // nload
-//         // lshiftr
-//         tape.write(bcNLoad);
-//         tape.write(bcLShiftR);
-//         break;
-//      case ADD_OPERATOR_ID:
-//      case APPEND_OPERATOR_ID:
-//         tape.write(bcLAdd);
-//         break;
-//      case SUB_OPERATOR_ID:
-//      case REDUCE_OPERATOR_ID:
-//         tape.write(bcLSub);
-//         break;
-//      case MUL_OPERATOR_ID:
-//         tape.write(bcLMul);
-//         break;
-//      case DIV_OPERATOR_ID:
-//         tape.write(bcLDiv);
-//         break;
-//      case AND_OPERATOR_ID:
-//         tape.write(bcLAnd);
-//         break;
-//      case OR_OPERATOR_ID:
-//         tape.write(bcLOr);
-//         break;
-//      case XOR_OPERATOR_ID:
-//         tape.write(bcLXor);
-//         break;
-//      case EQUAL_OPERATOR_ID:
-//         tape.write(bcLEqual);
-//         break;
-//      case LESS_OPERATOR_ID:
-//         tape.write(bcLLess);
 //         break;
 //      default:
 //         break;
@@ -3740,7 +3746,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantSymbol:
       case lxConstantChar:
       case lxConstantInt:
-//      case lxConstantLong:
+      case lxConstantLong:
 //      case lxConstantReal:
 //      case lxMessageConstant:
 //      case lxExtMessageConstant:
@@ -3874,7 +3880,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantSymbol:
       case lxConstantChar:
       case lxConstantInt:
-//      case lxConstantLong:
+      case lxConstantLong:
 //      case lxConstantReal:
 //      case lxMessageConstant:
 //      case lxExtMessageConstant:
@@ -4693,9 +4699,9 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 //   //   else if(largSubOp) doIndexOperation(tape, operation);
 //      else doIntOperation(tape, operation);
    }
-//   else if (node == lxLongOp) {
-//      doLongOperation(tape, operation);
-//   }
+   else if (node == lxLongOp) {
+      doLongOperation(tape, node.argument, largObj.argument);
+   }
 //   else if (node == lxRealOp) {
 //      if (operation == SET_OPERATOR_ID) {
 //         if (rargConst) {
@@ -4766,7 +4772,10 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
    if (node.type == lxIntBoolOp) {
       doIntBoolOperation(tape, operation);
    }
-   
+   else if (node.type == lxLongBoolOp) {
+      doLongBoolOperation(tape, operation);
+   }
+
    if (invertSelectMode) {
       selectByIndex(tape,
          node.findChild(lxIfValue).argument,
@@ -4865,7 +4874,7 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
          case lxConstantChar:
             //case lxConstantClass:
          case lxConstantInt:
-            //case lxConstantLong:
+         case lxConstantLong:
          case lxConstantList:
             //case lxConstantReal:
          case lxConstantString:
@@ -6583,11 +6592,12 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          generateNilOperation(tape, node, scope);
          break;
       case lxIntOp:
-//      case lxLongOp:
+      case lxLongOp:
 //      case lxRealOp:
          generateOperation(tape, node, scope, mode & ~STACKOP_MODE);
          break;
       case lxIntBoolOp:
+      case lxLongBoolOp:
          generateBoolOperation(tape, node, scope, mode & ~STACKOP_MODE);
          break;
       case lxIntArrOp:
@@ -6702,11 +6712,11 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
             current.findChild(lxIdentifier/*, lxPrivate*/).identifier(),
             current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
          break;
-//      case lxLongVariable:
-//         declareLocalLongInfo(tape,
-//            current.findChild(lxIdentifier).identifier(),
-//            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-//         break;
+      case lxLongVariable:
+         declareLocalLongInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+         break;
 //      case lxReal64Variable:
 //         declareLocalRealInfo(tape,
 //            current.findChild(lxIdentifier).identifier(),
@@ -6811,7 +6821,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //            break;
          case lxVariable:
          case lxIntVariable:
-//         case lxLongVariable:
+         case lxLongVariable:
 //         case lxReal64Variable:
 //////         case lxMessageVariable:
          case lxParamsVariable:
@@ -6966,10 +6976,10 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
             declareLocalIntInfo(tape,
                current.firstChild(lxTerminalMask).identifier(),
                current.findChild(lxLevel).argument, true);
-//         case lxLongVariable:
-//            declareLocalLongInfo(tape,
-//               current.firstChild(lxTerminalMask).identifier(),
-//               current.findChild(lxLevel).argument, true);
+         case lxLongVariable:
+            declareLocalLongInfo(tape,
+               current.firstChild(lxTerminalMask).identifier(),
+               current.findChild(lxLevel).argument, true);
 //         case lxReal64Variable:
 //            declareLocalRealInfo(tape,
 //               current.firstChild(lxTerminalMask).identifier(),
@@ -7270,7 +7280,7 @@ void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType 
       case lxConstantChar:
       //case lxConstantClass:
       case lxConstantInt:
-      //case lxConstantLong:
+      case lxConstantLong:
       case lxConstantList:
       //case lxConstantReal:
       case lxConstantString:

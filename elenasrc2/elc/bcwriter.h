@@ -172,7 +172,7 @@ class ByteCodeWriter
    void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
 //   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -290,13 +290,14 @@ class ByteCodeWriter
 ////////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id, int localOffset);
    void doIntBoolOperation(CommandTape& tape, int operator_id);
-//   void doIntOperation(CommandTape& tape, int operator_id);
+   void doLongOperation(CommandTape& tape, int operator_id, int localOffset);
+   void doLongBoolOperation(CommandTape& tape, int operator_id);
+   //   void doIntOperation(CommandTape& tape, int operator_id);
 //   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doIndexOperation(CommandTape& tape, int operator_id);
 //   void doIndexOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doIntDirectOperation(CommandTape& tape, int operator_id, int immArg, int indexArg);
 //   void doFieldIntOperation(CommandTape& tape, int operator_id, int offset, int immArg);
-//   void doLongOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id);
 //   void doRealOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doArrayOperation(CommandTape& tape, int operator_id);

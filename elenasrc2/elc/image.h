@@ -83,7 +83,7 @@ public:
    virtual ident_t getCharacterClass();
    virtual ident_t getIntegerClass();
    //virtual ident_t getRealClass();
-   //virtual ident_t getLongClass();
+   virtual ident_t getLongClass();
    virtual ident_t getMessageClass();
    //virtual ident_t getExtMessageClass();
    //virtual ident_t getMessageNameClass();

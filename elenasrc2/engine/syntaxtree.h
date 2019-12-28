@@ -90,6 +90,7 @@ enum LexicalType
    lxMetaConstant             = 0x002017,
    lxWide                     = 0x002018,
    lxCharacter                = 0x002019,
+   lxLong                     = 0x00201A,
 
    lxVirtualReference         = 0x00201F,
 
@@ -122,6 +123,7 @@ enum LexicalType
    lxShortsVariable           = 0x010104,
    lxBinaryVariable           = 0x010105,
    lxParamsVariable           = 0x010106,
+   lxLongVariable             = 0x010107,
    lxLocal                    = 0x018110,   // arg - offset
    lxSelfLocal                = 0x018111,
    lxLocalAddress             = 0x018112,   // arg - offset
@@ -146,10 +148,13 @@ enum LexicalType
    lxConstantString           = 0x0181A1,   // arg - reference
    lxConstantList             = 0x0181A2,   // arg - reference
    lxConstantWideStr          = 0x0181A3,   // arg - reference
-   lxConstantChar             = 0x0181A4, // arg - reference
+   lxConstantChar             = 0x0181A4,   // arg - reference
+   lxConstantLong             = 0x0181A5,   // arg - reference
    lxOp                       = 0x0581B0,
    lxIntOp                    = 0x0581B1,   // arg - operation id
    lxIntBoolOp                = 0x0581B2,   // arg - operation id
+   lxLongOp                   = 0x0581B3,   // arg - operation id
+   lxLongBoolOp               = 0x0581B4,   // arg - operation id
    lxField                    = 0x0181C0,   // arg - offset
    lxFieldAddress             = 0x0181C1,   // arg - offset
    lxStaticField              = 0x0181C2,   // arg - reference   // - lxClassStaticField
@@ -240,7 +245,6 @@ enum LexicalType
 //   lxNested                   = 0x008102, // arg - count
 //   lxStruct                   = 0x008103, // arg - count
 //   lxBlockLocal               = 0x00A10B, // arg - offset
-//   lxConstantLong             = 0x01A110, // arg - reference
 //   lxConstantReal             = 0x01A111, // arg - reference
 //   lxMessageConstant          = 0x00A113, // arg - rererence
 //   lxExtMessageConstant       = 0x00A114, // arg -reference
@@ -292,7 +296,6 @@ enum LexicalType
 //   lxOverridden               = 0x004047,
 //   lxFinally                  = 0x004048,
 //
-//   lxLongVariable             = 0x10029,
 //   lxReal64Variable           = 0x1002A,
 //   lxForward                  = 0x1002E,
 //   lxOuterMember              = 0x1003A,  // a collection member, arg - offset

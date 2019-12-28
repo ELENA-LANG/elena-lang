@@ -551,6 +551,15 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 //      case bcBCopyF:
 //      case bcACopyS:
       case bcPushF:
+      case bcLAddF:
+      case bcLSubF:
+      case bcLMulF:
+      case bcLDivF:
+      case bcLShlF:
+      case bcLShrF:
+      case bcLAndF:
+      case bcLOrF:
+      case bcLXorF:
          printCommand(command, opcode);
          command.appendInt(argument);
          break;
@@ -1024,9 +1033,9 @@ void listFlags(int flags, int& row, int pageSize)
       case elDebugArray:
          printLine("@flag ", "elDebugArray", row, pageSize);
          break;
-   //   case elDebugQWORD:
-   //      printLine("@flag ", "elDebugQWORD", row, pageSize);
-   //      break;
+      case elDebugQWORD:
+         printLine("@flag ", "elDebugQWORD", row, pageSize);
+         break;
       case elDebugBytes:
          printLine("@flag ", "elDebugBytes", row, pageSize);
          break;
