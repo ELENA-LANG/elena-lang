@@ -1472,8 +1472,8 @@ public sealed const struct LongNumber : IntBaseNumber
     /// Returns the byte value
     byte cast() = byteConvertor.convert(self);
 
-//    /// Returns a real value
-//    real cast() = new RealNumber(self);
+    /// Returns a real value
+    real cast() = new RealNumber(self);
     
     bool equal(o)
     {
@@ -1582,9 +1582,9 @@ public sealed const struct LongNumber : IntBaseNumber
     bool equal(byte n)
         = self.equal(new LongNumber(n));
 
-//    /// Compares the integer value
-//    bool equal(real n)
-//        = new RealNumber(self).equal(n);
+    /// Compares the integer value
+    bool equal(real n)
+        = new RealNumber(self).equal(n);
 
     /// Compares the integer value
     bool less(int n)
@@ -1598,9 +1598,9 @@ public sealed const struct LongNumber : IntBaseNumber
     bool less(byte n)
         = self.less(new LongNumber(n));
 
-//    /// Compares the integer value
-//    bool less(real n)
-//        = new RealNumber(self).less(n);
+    /// Compares the integer value
+    bool less(real n)
+        = new RealNumber(self).less(n);
 
     /// Returns the sum of integers
     add(int n)
@@ -1614,9 +1614,9 @@ public sealed const struct LongNumber : IntBaseNumber
     add(byte n)
         = self.add(new LongNumber(n));
 
-//    /// Returns the sum of integers
-//    add(real n)
-//        = new RealNumber(self).add(n);
+    /// Returns the sum of integers
+    add(real n)
+        = new RealNumber(self).add(n);
 
     /// Returns the difference of integers
     subtract(int n)
@@ -1630,13 +1630,13 @@ public sealed const struct LongNumber : IntBaseNumber
     subtract(byte n)
         = self.subtract(new LongNumber(n));
 
-//    /// Returns the difference of integers
-//    subtract(real n)
-//        = new RealNumber(self).subtract(n);
-//
-//    /// Returns the product of integers
-//    multiply(real n)
-//        = new RealNumber(self).multiply(n);
+    /// Returns the difference of integers
+    subtract(real n)
+        = new RealNumber(self).subtract(n);
+
+    /// Returns the product of integers
+    multiply(real n)
+        = new RealNumber(self).multiply(n);
 
     /// Returns the product of integers
     multiply(int n)
@@ -1662,9 +1662,9 @@ public sealed const struct LongNumber : IntBaseNumber
     divide(byte n)
         = self.divide(new LongNumber(n));
 
-//    /// Returns the result of integer division
-//    divide(real n)
-//        = new RealNumber(self).divide(n);
+    /// Returns the result of integer division
+    divide(real n)
+        = new RealNumber(self).divide(n);
         
     /// Returns the result of bitwise AND operation
     and(int n)
@@ -1981,128 +1981,125 @@ public sealed const struct CharValue //: BaseValue
 {
     embeddable __raw theValue[4];
 
-//    static char Default
-//        = $0;
-//
 //    /// Creates the object with a default value (0)
 //    constructor()
-//        <= ($0);
-//
-//    /// Creates the object with specified value
-//    constructor(char value)
-//        = value;
-//
-//    /// Creates the object with specified numeric value
-//    constructor load(int n)
-//        = charConvertor.convert(n);
-//
-//    /// Returns the minimal possible character value (0)
-//    static char MinValue
 //        = $0;
-//
-//    /// Returns the maximal possible character value (010FFFFh)
-//    static char MaxValue
-//        = $010FFFFh;
-//
-//    internal get Value()
-//    {
-//        intConvertor.convert(self, ref int val);
-//        
-//        ^ val
-//    }
-//
-//    bool equal(o)
-//    {
-//        var n := cast char(o) ?? nil;
-//        (nil == n)
-//            ? { ^ false }
-//            : { ^ self.equal(n) }
-//    }
-//
-//    bool less(n)
-//        <= less(cast char(n));
-//        
-//    bool equal(BaseVariable v)
-//        <= equal(v.Value);
-//        
-//    bool less(BaseVariable v)
-//        <= less(v.Value);
-//        
-//    bool equal(int val)
-//        = theValue == val;
-//
-//    bool equal(string val)
-//    {
-//        int chLen := self.Length;        
-//        int ln := val.Length;
-//        (ln == chLen)?
-//        {
-//            char ch := val[0];
-//            
-//            ^ self == ch;
-//        };
-//        
-//        ^ false
-//    }
-//
-//    bool equal(wide val)
-//    {
-//        int chLen := self.WideLength;        
-//        int ln := val.Length;
-//        (ln == chLen)?
-//        {
-//            char ch := val[0];
-//            
-//            ^ self == ch;
-//        };
-//        
-//        ^ false
-//    }
-//
-//    bool equal(char val)
-//        = theValue == val;
-//
-//    bool less(char val)
-//    {
-//        ^ theValue < val;
-//    }
-//    
-//    bool less(string val)
-//        = val < (cast string(self));
-//
-//    bool less(wide val)
-//        = val < (cast wide(self));
-//
-//    /// Clones the value
-//    char clone() = new CharValue(self);
-//
-//    /// Returns the literal value
-//    string Printable = stringConvertor.convert(self);
-//
-//    /// Returns the literal value
-//    string cast() = stringConvertor.convert(self);
-//    
-//    /// Returns the wide literal value
-//    wide cast() = wideConvertor.convert(self);
-//
-//    /// Retuns the number of bytes to represent the symbol        
-//    get int Length()
-//    {
-//        intern system'core_routines'__char.readLengthTo(self, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//    
-//    /// Reads the number of bytes to represent the symbol
-//    get int WideLength()
-//    {
-//        int length := self.Length;
-//        
-//        length := length + 1;
-//        length := length / 2;
-//
-//        ^ length
-//    }
+
+    /// Creates the object with specified value
+    constructor(char value)
+        = value;
+
+    /// Creates the object with specified numeric value
+    constructor load(int n)
+        = charConvertor.convert(n);
+
+    /// Returns the minimal possible character value (0)
+    static char MinValue
+        = $0;
+
+    /// Returns the maximal possible character value (010FFFFh)
+    static char MaxValue
+        = $010FFFFh;
+
+    internal get Value()
+    {
+        int val := intConvertor.convert(self);
+        
+        ^ val
+    }
+
+    bool equal(o)
+    {
+        var n := cast char(o) ?? nil;
+        (nil == n)
+            ? { ^ false }
+            : { ^ self.equal(n) }
+    }
+
+    bool less(n)
+        <= less(cast char(n));
+        
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+        
+    bool less(BaseVariable v)
+        <= less(v.Value);
+        
+    bool equal(int val)
+        = theValue == val;
+
+    bool equal(string val)
+    {
+        int chLen := self.Length;        
+        int ln := val.Length;
+        (ln == chLen)?
+        {
+            char ch := val[0];
+            
+            ^ self == ch;
+        };
+        
+        ^ false
+    }
+
+    bool equal(wide val)
+    {
+        int chLen := self.WideLength;        
+        int ln := val.Length;
+        (ln == chLen)?
+        {
+            char ch := val[0];
+            
+            ^ self == ch;
+        };
+        
+        ^ false
+    }
+
+    bool equal(char val)
+        = theValue == val;
+
+    bool less(char val)
+    {
+        ^ theValue < val;
+    }
+    
+    bool less(string val)
+        = val < (cast string(self));
+
+    bool less(wide val)
+        = val < (cast wide(self));
+
+    /// Clones the value
+    char clone() = new CharValue(self);
+
+    /// Returns the literal value
+    string toPrintable() = stringConvertor.convert(self);
+
+    /// Returns the literal value
+    string cast() = stringConvertor.convert(self);
+    
+    /// Returns the wide literal value
+    wide cast() = wideConvertor.convert(self);
+
+    /// Retuns the number of bytes to represent the symbol        
+    get int Length()
+    {
+        intern system'core_routines'__char.readLengthTo(self, ref int retVal);
+        
+        ^ retVal
+    }
+    
+    /// Reads the number of bytes to represent the symbol
+    get int WideLength()
+    {
+        int length := self.Length;
+        
+        length := length + 1;
+        length := length / 2;
+
+        ^ length
+    }
 }
 
 //// --- nil constant ---
@@ -2254,13 +2251,13 @@ public singleton byteConvertor
     byte convert(byte n)
         = n;
         
-//    /// Converts a character into a byte value
-//    byte convert(char val)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a character into a byte value
+    byte convert(char val)
+    {
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
+        
+        ^ retVal
+    }
 
     /// Converts a short integer into a byte value
     byte convert(short n)
@@ -2286,22 +2283,22 @@ public singleton byteConvertor
         ^ retVal
     }
 
-//    /// Converts a long integer into a byte value
-//    byte convert(long val)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Converts a real number into a byte value
-//    byte convert(real val)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//
+    /// Converts a long integer into a byte value
+    byte convert(long val)
+    {
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
+        
+        ^ retVal
+    }
+
+    /// Converts a real number into a byte value
+    byte convert(real val)
+    {
+        intern system'core_routines'__byteconvertor.convert(val, ref byte retVal);
+        
+        ^ retVal
+    }
+
 //    /// Converts a literal value into a byte value
 //    byte convert(string s)
 //    {
@@ -2445,15 +2442,15 @@ public singleton intConvertor
 //        
 //        ^ retVal
 //    }
-//        
-//    /// Converts a character value into an integer
-//    int convert(char ch)
-//    {
-//        intern system'core_routines'__intconvertor.convert(ch, ref int retVal);
-//        
-//        ^ retVal
-//    }
-//        
+        
+    /// Converts a character value into an integer
+    int convert(char ch)
+    {
+        intern system'core_routines'__intconvertor.convert(ch, ref int retVal);
+        
+        ^ retVal
+    }
+        
 //    /// Converts a byte value into an integer
 //    int convert(byte val)
 //    {
@@ -2485,13 +2482,13 @@ public singleton intConvertor
 //        
 //        ^ retVal
 //    }
-//
-//    /// Returns a parameter                                    
-//    int convert(int n)
-//        = new IntNumber(n);
-//
-//    int convert(uint n)
-//        = new IntNumber(n);
+
+    /// Returns a parameter                                    
+    int convert(int n)
+        = new IntNumber(n);
+
+    int convert(uint n)
+        = new IntNumber(n);
                         
     int convert(o)
         = cast int(o);

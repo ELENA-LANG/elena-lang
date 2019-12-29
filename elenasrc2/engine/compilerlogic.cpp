@@ -227,25 +227,25 @@ CompilerLogic :: CompilerLogic()
 //   // boolean primitive operations
 //   operators.add(OperatorInfo(AND_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
 //   operators.add(OperatorInfo(OR_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
-//
-//   // pointer primitive operations
-//   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
-//   operators.add(OperatorInfo(SUB_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
-//
-//   // dword primitive operations
-//   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_DWORD, V_INT32, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(LESS_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTLESS_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntOp, V_FLAG));
-//
+
+   //// pointer primitive operations
+   //operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
+   //operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntBoolOp, V_FLAG));
+   //operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntBoolOp, V_FLAG));
+   //operators.add(OperatorInfo(ADD_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
+   //operators.add(OperatorInfo(SUB_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
+
+   // dword primitive operations
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_INT32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_DWORD, V_INT32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(LESS_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTLESS_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
+
 }
 
 int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)

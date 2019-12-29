@@ -1522,16 +1522,16 @@ public singleton stringConvertor
 //    
 //    string convert(BaseVariable v, int radix)
 //        <= convert(v.Value, radix);
-//    
-//    string convert(char ch)
-//    {
-//        byte buffer[4];
-//        int  length := 0;
-//
-//        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
+    
+    string convert(char ch)
+    {
+        byte buffer[4];
+        int  length := 0;
+
+        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
     
     /// Converts the parameter to the literal value
     string convert(int n)
@@ -1713,24 +1713,24 @@ public singleton stringConvertor
         = o.toPrintable();
 }
 
-//// --- wideConvertor ---
-//
-///// A wide literal convertor
-//public singleton wideConvertor
-//{
-//    wide convert(BaseVariable v)
-//        <= convert(v.Value);
-//    
-//    wide convert(char ch)
-//    {
-//        short buffer[2];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(ch, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }    
-//    
+// --- wideConvertor ---
+
+/// A wide literal convertor
+public singleton wideConvertor
+{
+    wide convert(BaseVariable v)
+        <= convert(v.Value);
+    
+    wide convert(char ch)
+    {
+        short buffer[2];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(ch, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }    
+    
 //    /// Converts the parameter to the literal value
 //    wide convert(int n)
 //    {
@@ -1851,26 +1851,26 @@ public singleton stringConvertor
 //        
 //        ^ WideString.fromShortArray(0, length, buffer)
 //    }
-//
-//    /// Converts UTF-8 literal to UTF-16e
-//    wide convert(string s)
-//        = s
-//        
-//    /// Returns a parameter
-//    wide convert(wide s)
-//        = s;
-//
-//    /// Returns the literal presentation of the parameter
-//    wide convert(o)
-//        = cast wide(o.toPrintable());
-//}
-//
-///// An Unicode character convertor
-//public singleton charConvertor
-//{
-////    char convert(BaseVariable v)
-////        <= convert(v value).
-//        
+
+    /// Converts UTF-8 literal to UTF-16e
+    wide convert(string s)
+        = s;
+        
+    /// Returns a parameter
+    wide convert(wide s)
+        = s;
+
+    /// Returns the literal presentation of the parameter
+    wide convert(o)
+        = cast wide(o.toPrintable());
+}
+
+/// An Unicode character convertor
+public singleton charConvertor
+{
+//    char convert(BaseVariable v)
+//        <= convert(v value).
+        
 //    internal save(char ch, int index, short[] charArray, ref int length)
 //    {
 //        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
@@ -1956,19 +1956,19 @@ public singleton stringConvertor
 //        
 //        ^ retVal
 //    }
-//        
-//    /// Converts an integer into a character
-//    char convert(int n)
-//    {
-//        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    char convert(o)
-//        = cast char(o);
-//}
-//
+        
+    /// Converts an integer into a character
+    char convert(int n)
+    {
+        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
+        
+        ^ retVal
+    }
+        
+    char convert(o)
+        = cast char(o);
+}
+
 //// === Enumerators / Indexers
 //
 //// --- StringEnumerator ---

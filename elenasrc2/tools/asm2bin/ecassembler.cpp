@@ -582,6 +582,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcRSubF:
          case bcRMulF:
          case bcRDivF:
+         case bcRIntF:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:

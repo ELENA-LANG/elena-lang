@@ -1022,6 +1022,13 @@ inline % 31h
 
 end
 
+// ; rload
+inline %32h
+
+  fld   qword ptr [ebx]
+
+end
+
 // ; flag
 inline % 33h
 
@@ -1101,7 +1108,7 @@ inline % 44h
 
 end
 
-// ; rcopy (src, tgt)
+// ; rset (src, tgt)
 inline % 45h
 
   push edx
@@ -1128,6 +1135,16 @@ end
 inline % 48h
 
   mov edx, [ebx]
+
+end
+
+// ; rget
+inline % 49h
+
+  push 0
+  mov  esi, esp
+  fistp dword ptr [esi]
+  pop edx
 
 end
 
@@ -1612,6 +1629,42 @@ inline % 88h
   fld  qword ptr [edi]
   fdiv qword ptr [ebx] 
   fstp qword ptr [edi]
+
+end
+
+// ; rintf
+
+inline % 8Eh
+
+  lea  edi, [ebp+__arg1]
+  mov   ecx, 0
+  fld   qword ptr [ebx]
+
+  push  ecx                // reserve space on stack
+  fstcw word ptr [esp]     // get current control word
+  mov   dx, [esp]
+  or    dx,0c00h           // code it for truncating
+  push  edx
+  fldcw word ptr [esp]    // change rounding code of FPU to truncate
+
+  frndint                  // truncate the number
+  pop   edx                // remove modified CW from CPU stack
+  fldcw word ptr [esp]     // load back the former control word
+  pop   edx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [edi]    // store result
+  mov   edx, 1
+  jmp   short labEnd
+  
+labErr:
+  ffree st(1)
+  
+labEnd:
 
 end
 

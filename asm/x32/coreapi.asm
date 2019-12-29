@@ -553,6 +553,123 @@ procedure coreapi'longtoreal
 
 end
 
+// ; chartostr (char,target, out edx - length)
+procedure coreapi'chartostr
+
+   mov  eax, [esp+4]
+   mov  edi, [esp+8]
+
+   xor  ecx, ecx
+   mov  [edi], ecx
+   mov  [edi+4], ecx
+
+   mov  ebx, [eax]
+   cmp  ebx, 00000080h
+   jl   short lab1
+   cmp  ebx, 0800h
+   jl   short lab2
+   cmp  ebx, 10000h
+   jl   short lab3
+   
+   mov  edx, ebx
+   and  edx, 03Fh
+   add  edx, 00000080h
+   shl  edx, 24
+   mov  ecx, edx
+
+   mov  edx, ebx
+   and  edx, 0FC0h   
+   shl  edx, 10
+   add  edx, 800000h 
+   or   ecx, edx
+
+   mov  edx, ebx
+   and  edx, 03F000h
+   shr  edx, 4
+   add  edx, 08000h 
+   or   ecx, edx
+
+   mov  edx, ebx
+   shr  edx, 18
+   and  edx, 03Fh
+   add  edx, 0F0h 
+   or   ecx, edx
+
+   mov  [edi], ecx
+   mov  edx, 4
+   ret
+   
+lab1:
+   mov  [edi], ebx
+   mov  edx, 1
+   ret
+
+lab2:
+   mov  edx, ebx
+   shr  edx, 6
+   add  edx, 0C0h
+   mov  byte ptr [edi], dl
+   
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [edi+1], bl
+
+   mov  edx, 2
+   ret
+
+lab3:
+   mov  edx, ebx
+   shr  edx, 12
+   add  edx, 0E0h
+   mov  byte ptr [edi], dl
+
+   mov  edx, ebx
+   shr  edx, 6
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi+1], dl
+
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [edi+2], bl
+
+   mov  edx, 3
+   ret
+
+end
+
+// ; chartowstr (char, target, out edx - length)
+procedure coreapi'chartowstr
+
+   mov  eax, [esp+4]
+   mov  edi, [esp+8]
+   xor  ecx, ecx
+   mov  [edi], ecx
+   mov  [edi+4], ecx
+
+   mov  ebx, [eax]
+   cmp  ebx, 010000h
+   jl   short lab1
+
+   mov  edx, ebx
+   shr  edx, 10
+   add  edx, 0D7C0h
+   mov  word ptr [edi], dx
+
+   mov  edx, ebx
+   and  edx, 03FFh
+   add  edx, 0DC00h
+   mov  word ptr [edi+2], dx
+   mov edx, 2
+   ret
+   
+lab1:
+   mov  [edi], ebx
+   mov  edx, 1
+   ret
+
+end
+
 // ; === internal ===
 
 procedure coreapi'default_handler                                                       

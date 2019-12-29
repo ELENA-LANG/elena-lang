@@ -54,9 +54,13 @@ ELENA byte codes (or ecodes)
 
  peeksi i                   - [sp+i] => acc;
 
- rcopy                      - real index << index
+ rset                       - real index << index
+ 
+ rload                      - real index << real[acc]
  
  rsave                      - real[acc] << real index
+ 
+ rget                       - index << real index
  
  save                       - [acc] <= index
 
@@ -345,8 +349,6 @@ ELENA byte codes (or ecodes)
  
  dcopye                     - index << ext
  
- dcopyr                     - index << real index
- 
  dcopyverb                  - index << ext.verb
  
  dsetverb                   - index >> ext.verb
@@ -634,8 +636,6 @@ ELENA byte codes (or ecodes)
                                                                                                      
  rln                        - base << ln(real:acc)
 
- rload                      - real index << real[acc]
- 
  rmul                       - real[base] *= real[acc]
 
  rround                     - base << round(real:acc)
