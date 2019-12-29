@@ -354,6 +354,203 @@ Lab3:
 end
 
 // ; rcopyl (eax:src, ecx : base, esi - result)
+procedure coreapi'strtolong
+
+  mov  eax, [esp+8]                 // ; radix
+  mov  esi, [esp+4]                 // ; get str
+  mov  ecx, [eax]
+
+  push ecx
+  mov  ecx, [esi-8]
+  xor  edx, edx
+  and  ecx, 0FFFFFh
+
+  cmp  byte ptr [esi], 2Dh
+  lea  ecx, [ecx-1]
+  jnz  short labStart
+
+  lea  esi, [esi+1]
+  lea  ecx, [ecx-1]
+  mov  edx, 1        // set flag in ebx
+
+labStart:
+  push edx           // save sign flag
+  xor  edi, edi      // edi   - DHI
+  xor  ebx, ebx      // ebx   - DLO
+
+labConvert:
+  mov  edx, [esp+4]
+  mov  eax, edi
+  mul  edx           // DHI * 10
+  mov  edi, eax
+
+  mov  eax, ebx
+  mov  edx, [esp+4]
+  mul  edx           // DLO * 10
+  add  edi, edx
+  mov  ebx, eax
+
+  xor  eax, eax
+  lodsb
+  cmp  eax, 3Ah
+  jl   short lab11
+  sub  al, 7
+lab11:
+  sub  al, 30h
+  jb   short labErr
+  mov  edx, [esp+4]
+  cmp  dl, al
+  ja   short labErr
+
+  add ebx, eax       // DLO + EAX
+  adc edi, 0         // DHI + CF
+
+  sub  ecx, 1
+  jnz  short labConvert
+
+  pop  eax           // restore flag
+  test eax, eax
+  jz   short labSave
+
+  not  edi           // invert number
+  neg  ebx
+
+labSave:
+
+  mov  edx, edi
+  pop  esi
+
+  mov  eax, [esp+12]
+  mov  [eax], ebx
+  mov  [eax+4], edx
+
+  jmp  short labEnd
+
+labErr:
+  xor  ebx, ebx
+  pop  edx
+
+labEnd:
+  ret
+
+end
+
+// ; rcopyl (eax:src, ecx : base, esi - result)
+procedure coreapi'wstrtolong
+
+  mov  eax, [esp+8]                 // ; radix
+  mov  esi, [esp+4]                 // ; get str
+  mov  ecx, [eax]
+
+  push ecx
+  mov  esi, eax
+  mov  ecx, [esi-8]
+  xor  edx, edx
+  and  ecx, 0FFFFFh
+
+  cmp  byte ptr [esi], 2Dh
+  lea  ecx, [ecx-2]
+  jnz  short labStart
+
+  lea  esi, [esi+2]
+  lea  ecx, [ecx-2]
+  mov  edx, 1        // set flag in ebx
+
+labStart:
+  push edx           // save sign flag
+  xor  edi, edi      // edi   - DHI
+  xor  ebx, ebx      // ebx   - DLO
+
+labConvert:
+  mov  edx, [esp+4]
+  mov  eax, edi
+  mul  edx           // DHI * 10
+  mov  edi, eax
+
+  mov  eax, ebx
+  mov  edx, [esp+4]
+  mul  edx           // DLO * 10
+  add  edi, edx
+  mov  ebx, eax
+
+  xor  eax, eax
+  lodsw
+  sub  al, 30h
+  jb   short labErr
+  cmp  al, 9
+  ja   short labErr
+
+  add ebx, eax       // DLO + EAX
+  adc edi, 0         // DHI + CF
+
+  sub  ecx, 2
+  jnz  short labConvert
+
+  pop  eax           // restore flag
+  test eax, eax
+  jz   short labSave
+
+  not  edi           // invert number
+  neg  ebx
+
+labSave:
+
+  mov  edx, edi
+  pop  esi
+
+  mov  eax, [esp+12]
+  mov  [eax], ebx
+  mov  [eax+4], edx
+
+  jmp  short labEnd
+
+labErr:
+  xor  ebx, ebx
+  pop  ebx
+
+labEnd:
+  ret
+
+end
+
+procedure coreapi'strtouint
+
+  mov  eax, [esp+8]                 // ; radix
+  mov  esi, [esp+4]                 // ; get str
+
+  mov  ebx, [eax]                   // ; radix
+  mov  ecx, [esi-8]
+  and  ecx, 0FFFFFh
+  xor  eax, eax
+  lea  ecx, [ecx-1]                 // ; to skip zero
+Lab1:
+  mov  edx, ebx
+  mul  edx
+  mov  edx, eax
+  xor  eax, eax
+  lodsb
+  cmp  eax, 3Ah
+  jl   short lab11
+  sub  al, 7
+lab11:
+  sub  al, 30h
+  jb   short Lab2
+  cmp  eax, ebx
+  ja   short Lab2
+  add  eax, edx
+  sub  ecx, 1
+  jnz  short Lab1
+  mov  edx, eax
+  jmp  short Lab3
+Lab2:
+  add  esp, 4
+  xor  ebx, ebx
+Lab3:
+  ret
+
+end
+
+// ; rcopyl (eax:src, ecx : base, esi - result)
 procedure coreapi'wstrtoint
 
   mov  eax, [esp+8]                 // ; radix

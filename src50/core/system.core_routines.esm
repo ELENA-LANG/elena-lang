@@ -389,7 +389,47 @@ procedure __intconvertor."convert$system@String$system@IntNumber$@system@ref#1&s
 labErr:
   open 1
   pushr class : system'FormatException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
+  throw
+
+end
+
+procedure __intconvertor."convertUnsigned$system@String$system@IntNumber$@system@ref#1&system@IntNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : strtouint
+  freei 2
+
+  ifr      labErr 0
+  peeksi 3
+  save
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : "new[0]"
+  throw
+
+end
+
+procedure __intconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@IntNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : wstrtoint
+  freei 2
+
+  ifr      labErr 0
+  peeksi 3
+  save
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : "new[0]"
   throw
 
 end
@@ -416,7 +456,7 @@ labNegative:
 
 labErr:
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 end
@@ -427,6 +467,38 @@ procedure __intconvertor."convert$system@CharValue$@system@ref#1&system@IntNumbe
   load
   peeksi 2
   save
+  quitn 2
+
+end
+
+procedure __intconvertor."convert$system@ShortNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quitn 2
+
+end
+
+procedure __intconvertor."convert$system@ByteNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quitn 2
+
+end
+
+procedure __intconvertor."convert$system@RealNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  rload
+  rget
+  peeksi 2  
+  save
+  peeksi 1
   quitn 2
 
 end
@@ -451,7 +523,7 @@ procedure __shortconvertor."convert$system@IntNumber$@system@ref#1&system@ShortN
   lessn labCopy 8000h
 
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labCopy:
@@ -465,7 +537,7 @@ labNegative:
   lessn labCopyNeg 8000h
 
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
   
 labCopyNeg:
@@ -484,13 +556,158 @@ procedure __shortconvertor."convert$system@UIntNumber$@system@ref#1&system@Short
   lessn labCopy 8000h
 
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labCopy:
   peeksi 2
   save
   quitn 2
+
+end
+
+procedure __shortconvertor."convert$system@LongNumber$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi 1
+  loadi 1
+  lessn labNegative 0  
+  elsen labErr 0  
+
+  load
+  lessn labCopy 8000h  
+  jump  labErr
+
+labCopy:
+  peeksi 2
+  save
+  quitn 2  
+
+labNegative:
+  elsen labErr 0FFFFFFFFh
+  load
+  not
+  lessn labCopyNegative 8000h  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[0]"
+  throw    
+
+labCopyNegative:
+  load
+  peeksi 2
+  save
+  quitn 2  
+
+end
+
+
+procedure __shortconvertor."convert$system@RealNumber$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi   1
+  open     4
+  reserve  2
+
+  rintf    1
+  movf     1
+  rload
+  rget
+
+  restore 2
+  close
+  
+  lessn labErr 0FFFF8000h
+  lessn labCopy 08000h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[0]"
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quitn 2  
+
+end
+
+procedure __shortconvertor."convert$system@CharValue$@system@ref#1&system@ShortNumber[2]"
+
+  peeksi 1
+  load
+  
+  lessn labErr 0  
+  lessn labCopy 08000h
+
+labErr:  
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[0]"
+  throw    
+
+labCopy:
+  peeksi 2
+  save
+  quitn 2  
+
+end
+
+procedure __shortconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@ShortNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : strtoint
+  freei 2
+
+  ifr      labErr 0
+  peeksi 3
+  save
+  
+  lessn labErr2 0FFFF8000h
+  lessn labExit 08000h
+  
+labErr2:  
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[0]"
+  throw    
+
+labExit:
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : "new[0]"
+  throw
+
+end
+
+procedure __shortconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@ShortNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : wstrtoint
+  freei 2
+
+  ifr      labErr 0
+  peeksi 3
+  save
+  
+  lessn labErr2 0FFFF8000h
+  lessn labExit 08000h
+  
+labErr2:  
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[0]"
+  throw    
+
+labExit:
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : "new[0]"
+  throw
 
 end
 
@@ -526,7 +743,7 @@ procedure __byteconvertor."convert$system@ShortNumber$@system@ref#1&system@ByteN
 
 labErr:  
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labCopy:
@@ -546,7 +763,7 @@ procedure __byteconvertor."convert$system@CharValue$@system@ref#1&system@ByteNum
 
 labErr:  
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labCopy:
@@ -566,7 +783,7 @@ procedure __byteconvertor."convert$system@IntNumber$@system@ref#1&system@ByteNum
 
 labErr:  
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labCopy:
@@ -585,7 +802,7 @@ procedure __byteconvertor."convert$system@UIntNumber$@system@ref#1&system@ByteNu
 
 labErr:  
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labCopy:
@@ -608,7 +825,7 @@ procedure __byteconvertor."convert$system@LongNumber$@system@ref#1&system@ByteNu
 
 labErr:  
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labCopy:
@@ -638,7 +855,7 @@ procedure __byteconvertor."convert$system@RealNumber$@system@ref#1&system@ByteNu
 
 labErr:  
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labCopy:
@@ -664,7 +881,7 @@ procedure __byteconvertor."convert$system@String$system@IntNumber$@system@ref#1&
   
 labErr2:  
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labExit:
@@ -673,7 +890,7 @@ labExit:
 labErr:
   open 1
   pushr class : system'FormatException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw
 
 end
@@ -694,7 +911,7 @@ procedure __byteconvertor."convert$system@WideString$system@IntNumber$@system@re
   
 labErr2:  
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 labExit:
@@ -703,7 +920,7 @@ labExit:
 labErr:
   open 1
   pushr class : system'FormatException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw
 
 end
@@ -783,6 +1000,58 @@ procedure __longconvertor."convert$system@ByteNumber$@system@ref#1&system@LongNu
 
 end
 
+procedure __longconvertor."convert$system@RealNumber$@system@ref#1&system@LongNumber[2]"
+
+  peeksi 1
+  rload
+  rget
+  peeksi 2
+
+  save
+  movn 0
+  savei 1
+  quitn 2
+
+end
+
+procedure __longconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@LongNumber[3]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3  
+  callextr api : strtolong
+  freei 3
+
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : "new[0]"
+  throw
+
+end
+
+procedure __longconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@LongNumber[3]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3  
+  callextr api : wstrtolong
+  freei 3
+
+  ifr      labErr 0
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : "new[0]"
+  throw
+
+end
+
 procedure __uintconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1
@@ -796,7 +1065,7 @@ procedure __uintconvertor."convert$system@LongNumber$@system@ref#1&system@IntNum
 
 labErr:
   pushr class : system'OutOfRangeException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw    
 
 end
@@ -870,7 +1139,7 @@ procedure __charconvertor."convert$system@IntNumber$@system@ref#1&system@CharVal
 labErr:
   open 1
   pushr class : system'InvalidArgumentException
-  pushr mssgconst : %new[0]
+  pushr mssgconst : "new[0]"
   throw  
 
 labCopy:

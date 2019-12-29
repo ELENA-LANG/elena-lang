@@ -301,6 +301,7 @@ In development:
                 * test long / real arithmetic, comparision
                 * test negative long to int conversion
                 * test int/byte/short/long to real conversion
+                * test real to byte/short/int/uint/long conversion
 
               dev1
                 * move all description to meta info using descr inline template
