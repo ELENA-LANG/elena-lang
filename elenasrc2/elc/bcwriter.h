@@ -173,7 +173,7 @@ class ByteCodeWriter
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -292,6 +292,8 @@ class ByteCodeWriter
    void doIntBoolOperation(CommandTape& tape, int operator_id);
    void doLongOperation(CommandTape& tape, int operator_id, int localOffset);
    void doLongBoolOperation(CommandTape& tape, int operator_id);
+   void doRealOperation(CommandTape& tape, int operator_id, int localOffset);
+   void doRealBoolOperation(CommandTape& tape, int operator_id);
    //   void doIntOperation(CommandTape& tape, int operator_id);
 //   void doIntOperation(CommandTape& tape, int operator_id, int immArg);
 //   void doIndexOperation(CommandTape& tape, int operator_id);

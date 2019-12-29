@@ -2,7 +2,7 @@
 In development:
 ------         
               dev
-                * long
+                * real : literal, arithmetic operations, comparision operations
                 * migrate basic classes
                 * calling internal constructor (String and WideString)
                 * call stack
@@ -12,6 +12,7 @@ In development:
                 * support vm client
                 * vm hello world sample
                 * realsum
+                * int to real conversion
                 * literal convertor (UIntNumber)
                 * migrate basic classes : enumerators, indexers
 
@@ -298,6 +299,7 @@ In development:
                 * ByteNumber#class.new[2] - idle command - "pushr 0"
                 * alt - no need to assign temp local for local / field / param
                 * test long / real arithmetic, comparision
+                * test negative long to int conversion
 
               dev1
                 * move all description to meta info using descr inline template

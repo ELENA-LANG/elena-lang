@@ -1398,12 +1398,12 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 
             readMessage(watch, selfPtr, *(int*)value);
          }
-         //else if (type==elDebugReal64) {
-         //   char value[8];
-         //   getValue(selfPtr, value, 8);
+         else if (type==elDebugReal64) {
+            char value[8];
+            getValue(selfPtr, value, 8);
 
-         //   watch->write(this, *(double*)value);
-         //}
+            watch->write(this, *(double*)value);
+         }
          else if (type==elDebugQWORD) {
             char value[8];
             getValue(selfPtr, value, 8);

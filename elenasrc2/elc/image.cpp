@@ -33,7 +33,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
    _character = project->resolveForward(CHAR_FORWARD);
    _int = project->resolveForward(INT_FORWARD);
    _long = project->resolveForward(LONG_FORWARD);
-  // _real = project->resolveForward(REAL_FORWARD);
+   _real = project->resolveForward(REAL_FORWARD);
    _message = project->resolveForward(MESSAGE_FORWARD);
   // _ext_message = project->resolveForward(EXT_MESSAGE_FORWARD);
   // _messageName = project->resolveForward(MESSAGENAME_FORWARD);
@@ -218,10 +218,10 @@ ident_t ExecutableImage :: getLongClass()
    return _long;
 }
 
-//ident_t ExecutableImage :: getRealClass()
-//{
-//   return _real;
-//}
+ident_t ExecutableImage :: getRealClass()
+{
+   return _real;
+}
 
 ident_t ExecutableImage :: getMessageClass()
 {

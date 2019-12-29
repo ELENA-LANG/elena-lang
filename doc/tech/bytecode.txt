@@ -32,6 +32,8 @@ ELENA byte codes (or ecodes)
  
  load                       - int[acc] => index
 
+ loadi i                    - acc[i] => index
+
  loadfi i                   - [fp+i] => index
 
  movm m                     - m => index
@@ -43,6 +45,8 @@ ELENA byte codes (or ecodes)
  movr r                     - r => acc
            
  not                        - !index => index
+
+ or n                       - index && n => index
  
  peekfi i                   - [fp+i] => acc;
 
@@ -50,7 +54,13 @@ ELENA byte codes (or ecodes)
 
  peeksi i                   - [sp+i] => acc;
 
+ rcopy                      - real index << index
+ 
+ rsave                      - real[acc] << real index
+ 
  save                       - [acc] <= index
+
+ savei i                    - acc[i] <= index
 
  savef i                    - fp+i <= index
 
@@ -142,6 +152,14 @@ ELENA byte codes (or ecodes)
 
  nxorf                      - dword[fp+i] << dword[fp+i] ~~ dword[acc]
 
+ raddf i                    - real[fp+i] << real[fp+i] + real[acc]
+
+ rdivf i                    - real[fp+i] << real[fp+i] / real[acc]
+
+ rmulf i                    - real[fp+i] << real[fp+i] * real[acc]
+
+ rsubf i                    - real[fp+i] << real[fp+i] - real[acc] 
+
 
  Comparision operations:
  ----------------------- 
@@ -154,6 +172,10 @@ ELENA byte codes (or ecodes)
  nequal                      - int[acc] == int[sp] ; if true - index = 1, if false - index = 0
 
  nless                       - int[acc] < int[sp]  ; if true - index = 1, if false - index = 0
+
+ requal                      - real[acc] == real[sp] ; if true - index = 1, if false - index = 0
+
+ rless                       - real[acc] < real[sp]  ; if true - index = 1, if false - index = 0
 
 
  Stack operations:
@@ -400,10 +422,6 @@ ELENA byte codes (or ecodes)
  
  nreadi                     - acc[i * 4] >> ext
  
- rcopy                      - real index << index
- 
- rsave                      - real[base] << real index
- 
  set                        - acc => base[index] ; (*ext affected)
                               
  wread                      - [acc][index*2] >> [short]ext
@@ -581,8 +599,6 @@ ELENA byte codes (or ecodes)
  ldiv                       - long[base] /= long[acc]   (*index and ext affected)
  
  lmul                       - long[base] *= long[acc]   (*index and ext affected)
- 
- lnot                       - long[base] << not long[acc]
  
  lor                        - long[base] || long[acc]    (*index and ext affected)
  

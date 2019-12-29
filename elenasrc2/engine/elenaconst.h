@@ -321,7 +321,7 @@ namespace _ELENA_
 
    constexpr int elDebugMask           = 0x001F0000;
    constexpr int elDebugDWORD          = 0x00010000;
-//   constexpr int elDebugReal64         = 0x00020000;
+   constexpr int elDebugReal64         = 0x00020000;
    constexpr int elDebugLiteral        = 0x00030000;
    constexpr int elDebugIntegers       = 0x00040000;
    constexpr int elDebugArray          = 0x00050000;
@@ -520,7 +520,7 @@ namespace _ELENA_
 //   constexpr auto LAZYEXPR_FORWARD        = "$lazyexpression";                // the base lazy expression class
    constexpr auto INT_FORWARD                = "$int";
    constexpr auto LONG_FORWARD               = "$long";
-//   constexpr auto REAL_FORWARD            = "$real";
+   constexpr auto REAL_FORWARD               = "$real";
    constexpr auto STR_FORWARD                = "$literal";
    constexpr auto WIDESTR_FORWARD            = "$wideliteral";
    constexpr auto CHAR_FORWARD               = "$char";

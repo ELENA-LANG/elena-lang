@@ -256,10 +256,10 @@ void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName
    tape.write(bdLongLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
 }
 
-//void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
-//{
-//   tape.write(bdRealLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
-//}
+void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+{
+   tape.write(bdRealLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+}
 
 void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
@@ -661,8 +661,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskInt32Ref;
       case lxConstantLong:
          return mskInt64Ref;
-      //case lxConstantReal:
-      //   return mskRealRef;
+      case lxConstantReal:
+         return mskRealRef;
       //case lxMessageConstant:
       //   return mskMessage;
       //case lxExtMessageConstant:
@@ -3008,6 +3008,19 @@ void ByteCodeWriter :: doLongBoolOperation(CommandTape& tape, int operator_id)
    }
 }
 
+void ByteCodeWriter :: doRealBoolOperation(CommandTape& tape, int operator_id)
+{
+   switch (operator_id)
+   {
+      case EQUAL_OPERATOR_ID:
+         tape.write(bcREqual);
+         break;
+      case LESS_OPERATOR_ID:
+         tape.write(bcRLess);
+         break;
+   }
+}
+
 void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int localOffset)
 {
    switch (operator_id) {
@@ -3091,6 +3104,31 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id, int l
       case XOR_OPERATOR_ID:
          // lxorf i
          tape.write(bcLXorF, localOffset);
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+         break;
+   }
+}
+
+void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id, int localOffset)
+{
+   switch (operator_id) {
+      case ADD_OPERATOR_ID:
+         // raddf i
+         tape.write(bcRAddF, localOffset);
+         break;
+      case SUB_OPERATOR_ID:
+         // rsubf i
+         tape.write(bcRSubF, localOffset);
+         break;
+      case MUL_OPERATOR_ID:
+         // rmulf i
+         tape.write(bcRMulF, localOffset);
+         break;
+      case DIV_OPERATOR_ID:
+         // rdivf i
+         tape.write(bcRDivF, localOffset);
          break;
       default:
          throw InternalError("not yet implemente"); // !! temporal
@@ -3747,7 +3785,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantChar:
       case lxConstantInt:
       case lxConstantLong:
-//      case lxConstantReal:
+      case lxConstantReal:
 //      case lxMessageConstant:
 //      case lxExtMessageConstant:
 //      case lxSubjectConstant:
@@ -3881,7 +3919,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantChar:
       case lxConstantInt:
       case lxConstantLong:
-//      case lxConstantReal:
+      case lxConstantReal:
 //      case lxMessageConstant:
 //      case lxExtMessageConstant:
 //      case lxSubjectConstant:
@@ -4702,7 +4740,10 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    else if (node == lxLongOp) {
       doLongOperation(tape, node.argument, largObj.argument);
    }
-//   else if (node == lxRealOp) {
+   else if (node == lxRealOp) {
+      doRealOperation(tape, node.argument, largObj.argument);
+   }
+   //   else if (node == lxRealOp) {
 //      if (operation == SET_OPERATOR_ID) {
 //         if (rargConst) {
 //            SNode immArg = rarg.findChild(lxIntValue);
@@ -4774,6 +4815,9 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
    }
    else if (node.type == lxLongBoolOp) {
       doLongBoolOperation(tape, operation);
+   }
+   else if (node.type == lxRealBoolOp) {
+      doRealBoolOperation(tape, operation);
    }
 
    if (invertSelectMode) {
@@ -4876,7 +4920,7 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
          case lxConstantInt:
          case lxConstantLong:
          case lxConstantList:
-            //case lxConstantReal:
+         case lxConstantReal:
          case lxConstantString:
          case lxConstantWideStr:
          case lxConstantSymbol:
@@ -6593,11 +6637,12 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          break;
       case lxIntOp:
       case lxLongOp:
-//      case lxRealOp:
+      case lxRealOp:
          generateOperation(tape, node, scope, mode & ~STACKOP_MODE);
          break;
       case lxIntBoolOp:
       case lxLongBoolOp:
+      case lxRealBoolOp:
          generateBoolOperation(tape, node, scope, mode & ~STACKOP_MODE);
          break;
       case lxIntArrOp:
@@ -6717,11 +6762,11 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
             current.findChild(lxIdentifier).identifier(),
             current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
          break;
-//      case lxReal64Variable:
-//         declareLocalRealInfo(tape,
-//            current.findChild(lxIdentifier).identifier(),
-//            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
-//         break;
+      case lxReal64Variable:
+         declareLocalRealInfo(tape,
+            current.findChild(lxIdentifier).identifier(),
+            current.findChild(lxLevel).argument, /*SyntaxTree::existChild(current, lxFrameAttr)*/false);
+         break;
       //case lxMessageVariable:
       //   declareMessageInfo(tape, current.identifier());
       //   break;
@@ -6822,7 +6867,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxVariable:
          case lxIntVariable:
          case lxLongVariable:
-//         case lxReal64Variable:
+         case lxReal64Variable:
 //////         case lxMessageVariable:
          case lxParamsVariable:
          case lxBytesVariable:
@@ -6980,11 +7025,11 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
             declareLocalLongInfo(tape,
                current.firstChild(lxTerminalMask).identifier(),
                current.findChild(lxLevel).argument, true);
-//         case lxReal64Variable:
-//            declareLocalRealInfo(tape,
-//               current.firstChild(lxTerminalMask).identifier(),
-//               current.findChild(lxLevel).argument, true);
-//            break;
+         case lxReal64Variable:
+            declareLocalRealInfo(tape,
+               current.firstChild(lxTerminalMask).identifier(),
+               current.findChild(lxLevel).argument, true);
+            break;
          case lxParamsVariable:
             declareLocalParamsInfo(tape,
                current.firstChild(lxTerminalMask).identifier(),
@@ -7282,7 +7327,7 @@ void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType 
       case lxConstantInt:
       case lxConstantLong:
       case lxConstantList:
-      //case lxConstantReal:
+      case lxConstantReal:
       case lxConstantString:
       case lxConstantWideStr:
       case lxConstantSymbol:

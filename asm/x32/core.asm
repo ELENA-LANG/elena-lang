@@ -1101,6 +1101,22 @@ inline % 44h
 
 end
 
+// ; rcopy (src, tgt)
+inline % 45h
+
+  push edx
+  fild dword ptr [esp]
+  pop  edx
+
+end
+
+// ; rsave
+inline % 46h
+
+  fstp qword ptr [ebx]
+
+end
+
 // ; save
 inline % 47h
 
@@ -1532,6 +1548,73 @@ lEnd2:
 
 end
 
+// ; requal
+
+inline % 83h
+
+  mov    edi, [esp]
+  fld    qword ptr [edi]
+  fld    qword ptr [ebx]
+  xor    edx, edx
+  fcomip st, st(1)
+  sete   dl
+  fstp  st(0)
+
+end
+
+// ; rless(lo, ro, tr, fr)
+inline % 84h
+
+  mov    edi, [esp]
+  fld    qword ptr [edi]
+  fld    qword ptr [ebx]
+  xor    edx, edx
+  fcomip st, st(1)
+  setb   dl
+  fstp  st(0)
+
+end
+
+// ; raddf
+inline % 85h
+
+  lea  edi, [ebp+__arg1]
+  fld  qword ptr [ebx]
+  fadd qword ptr [edi] 
+  fstp qword ptr [edi]
+
+end
+
+// ; rsubf
+inline % 86h
+
+  lea  edi, [ebp+__arg1]
+  fld  qword ptr [edi]
+  fsub qword ptr [ebx] 
+  fstp qword ptr [edi]
+
+end
+
+// ; rmulf
+inline % 87h
+
+  lea  edi, [ebp+__arg1]
+  fld  qword ptr [edi]
+  fmul qword ptr [ebx] 
+  fstp qword ptr [edi]
+
+end
+
+// ; rdivf
+inline % 88h
+                                                   
+  lea  edi, [ebp+__arg1]
+  fld  qword ptr [edi]
+  fdiv qword ptr [ebx] 
+  fstp qword ptr [edi]
+
+end
+
 // ; geti
 inline % 91h
 
@@ -1773,6 +1856,20 @@ inline % 0C9h
   cdq
   idiv dword ptr [ebx]
   mov  [ebp+__arg1], eax
+
+end
+
+// ; loadi
+inline % 0CAh
+
+  mov  edx, [ebx + __arg1]
+
+end
+
+// ; savei
+inline % 0CBh
+
+  mov  [ebx + __arg1], edx
 
 end
 

@@ -107,23 +107,23 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
             case 'l':
                terminal.symbol = lxLong;
                break;
-//            case 'r':
-//               terminal.symbol = tsReal;
-//               break;
+            case 'r':
+               terminal.symbol = lxReal;
+               break;
 //            default:
 //               terminal.symbol = tsExplicitConst;
 //               break;
          }
          break;
-//      case dfaLong:
-//         terminal.symbol = tsLong;
-//         break;
+      case dfaLong:
+         terminal.symbol = lxLong;
+         break;
 	   case dfaHexInteger:
          terminal.symbol = lxHexInteger;
          break;
-//	   case dfaReal:
-//         terminal.symbol = tsReal;
-//         break;
+	   case dfaReal:
+         terminal.symbol = lxReal;
+         break;
       case dfaWideQuote:
          terminal.symbol = lxWide;
          break;

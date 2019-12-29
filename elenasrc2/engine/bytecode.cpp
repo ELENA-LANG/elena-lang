@@ -26,7 +26,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, "len", OPCODE_UNKNOWN, "flag", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "class", OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "equal", OPCODE_UNKNOWN,
 
-   "nequal", "nless", OPCODE_UNKNOWN, "lequal", "lless", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "save",
+   "nequal", "nless", OPCODE_UNKNOWN, "lequal", "lless", "rcopy", "rsave", "save",
    "load", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "nxorf", "norf", "nandf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -38,8 +38,8 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "laddf", "lsubf", "lmulf", "ldivf",
    "landf", "lorf", "lxorf", "lshlf", OPCODE_UNKNOWN, "lshrf", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "requal", "rless", "raddf", "rsubf", "rmulf",
+   "rdivf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "dec", "geti", "restore", "peekr", "peekfi", "peeksi", OPCODE_UNKNOWN, "xseti",
    "open", "quitn", "create", "fillr", "movf", OPCODE_UNKNOWN, "movr", "movm",
@@ -51,7 +51,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, "savef", "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
 
    "seti", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", "naddf", "nmulf", OPCODE_UNKNOWN,
-   "nsubf", "ndivf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storer", OPCODE_UNKNOWN, "clonef", OPCODE_UNKNOWN,
+   "nsubf", "ndivf", "loadi", "savei", "storer", OPCODE_UNKNOWN, "clonef", OPCODE_UNKNOWN,
 
    "freei", "alloci", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "shl", "and", "inc", OPCODE_UNKNOWN,
    "coalescer", "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,

@@ -2103,6 +2103,7 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
       case lxCharacter:
       case lxMetaConstant:
       case lxLong:
+      case lxReal:
          generateIdentifier(writer, current, derivationScope);
          break;
 //      default:

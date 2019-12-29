@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   50
+#define REVISION_VERSION   51
 
 using namespace _ELENA_;
 
@@ -560,6 +560,10 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcLAndF:
       case bcLOrF:
       case bcLXorF:
+      case bcRAddF:
+      case bcRSubF:
+      case bcRMulF:
+      case bcRDivF:
          printCommand(command, opcode);
          command.appendInt(argument);
          break;
@@ -637,8 +641,8 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcAnd:
 //      case bcOrN:
 //      case bcInit:
-//      case bcNLoadI:
-//      case bcNSaveI:
+      case bcLoadI:
+      case bcSaveI:
 //      case bcMulN:
 //      case bcDLoadSI:
 //      case bcBLoadAI:
@@ -1021,9 +1025,9 @@ void listFlags(int flags, int& row, int pageSize)
       case elDebugDWORD:
          printLine("@flag ", "elDebugDWORD", row, pageSize);
          break;
-   //   case elDebugReal64:
-   //      printLine("@flag ", "elDebugReal64", row, pageSize);
-   //      break;
+      case elDebugReal64:
+         printLine("@flag ", "elDebugReal64", row, pageSize);
+         break;
       case elDebugLiteral:
          printLine("@flag ", "elDebugLiteral", row, pageSize);
          break;

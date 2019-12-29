@@ -91,7 +91,7 @@ constexpr auto V_META            = 0x80001022u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
-//constexpr auto V_FLOAT           = 0x80000802u;
+constexpr auto V_FLOAT           = 0x80000802u;
 constexpr auto V_INTBINARY       = 0x80000803u;
 constexpr auto V_BINARY          = 0x80000804u;
 //constexpr auto V_PTRBINARY       = 0x80000805u;
@@ -107,7 +107,7 @@ constexpr auto V_NIL             = 0x80000002u;
 constexpr auto V_INT32           = 0x80000003u;
 constexpr auto V_INT64           = 0x80000004u;
 constexpr auto V_DWORD           = 0x80000005u;
-//constexpr auto V_REAL64          = 0x80000006u;
+constexpr auto V_REAL64          = 0x80000006u;
 //constexpr auto V_EXTMESSAGE      = 0x80000007u;
 //constexpr auto V_PTR32           = 0x80000008u;
 constexpr auto V_OBJARRAY        = 0x80000009u;
@@ -237,7 +237,7 @@ struct _ModuleScope
    ref_t             superReference;
    ref_t             intReference;
    ref_t             longReference;
-//   ref_t             realReference;
+   ref_t             realReference;
 //   ref_t             messageNameReference;
    ref_t             messageReference;
 //   ref_t             extMessageReference;
@@ -368,7 +368,7 @@ struct _ModuleScope
       intReference = superReference = 0;
       /*messageNameReference = */messageReference = 0;
       longReference = literalReference = wideReference = 0;
-      charReference /*= realReference */= 0;
+      charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
 //      lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;

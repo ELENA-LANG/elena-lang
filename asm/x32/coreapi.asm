@@ -418,6 +418,84 @@ Lab8:
 
 end
 
+procedure coreapi'longtostr
+
+   mov  ebx, [esp+8]
+   mov  eax, [esp+4]
+   mov  ecx, [ebx]
+   mov  edi, [esp+12]
+
+   push ebp
+   push [eax+4]
+   mov  ebp, esp
+   mov  edx, [eax]     // NLO
+   mov  eax, [eax+4]   // NHI
+   push 0
+   or   eax, eax
+   jge  short Lab6
+
+   neg  eax 
+   neg  edx 
+   sbb  eax, 0
+
+Lab6:                 // convert 
+   mov  esi, edx      // NLO
+   mov  edi, eax      // NHI
+
+Lab1:
+   test edi, edi
+   jnz  short labConvert
+   cmp  esi, ecx
+   jb   short Lab5
+
+labConvert:
+   mov  eax, edi      // NHI
+   xor  edx, edx
+   div  ecx
+   mov  ebx, eax
+   mov  eax, esi      // NLO
+   div  ecx
+   mov  edi,ebx 
+   mov  esi,eax
+
+   push edx
+   add  [ebp-4], 1
+   jmp  short Lab1
+
+Lab5:   
+   push esi
+
+   mov  ecx, [ebp-4]
+   add  ecx, 1
+
+   mov  eax, [ebp]
+   cmp  eax, 0
+   jns  short Lab7
+   push 0F6h      // to get "-" after adding 0x30
+   add  ecx, 1                  
+Lab7:
+   mov  esi, [ebp+8]
+   mov  ebx, 0FFh
+Lab2:
+   pop  eax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, ebx
+   mov  byte ptr [esi], al
+   add  esi, 1
+   sub  ecx, 1
+   jnz  short Lab2
+   mov  edx, esi
+   lea  esp, [esp+8]
+   pop  ebp
+   sub  edx, [esp+12]
+   ret
+   
+end
+
 // ; uinttostr(s,b,t)
 procedure coreapi'uinttostr
 
@@ -461,6 +539,17 @@ Lab8:
    pop  ebp
 
    ret
+
+end
+
+// ; rcopyl (src,tgt)
+procedure coreapi'longtoreal
+
+  mov  eax, [esp+4]
+  mov  edi, [esp+8]
+  fild qword ptr [eax]
+  fstp qword ptr [edi]
+  ret
 
 end
 

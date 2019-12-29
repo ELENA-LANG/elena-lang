@@ -1577,17 +1577,17 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
 
-//    /// Converts the parameter to the literal value
-//    string convert(long n)
-//    {
-//        byte buffer[64];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
+    /// Converts the parameter to the literal value
+    string convert(long n)
+    {
+        byte buffer[64];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
 //    /// Converts the parameter to the literal value with the provided radix
 //    string convert(int n, int radix)
 //    {

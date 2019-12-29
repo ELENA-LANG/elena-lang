@@ -179,18 +179,18 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_INT64, V_INT64, lxLongBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_INT64, V_INT64, lxLongBoolOp, V_FLAG));
 
-//   // real64 primitive operations
-//   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
-//   operators.add(OperatorInfo(SUB_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
-//   operators.add(OperatorInfo(MUL_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
-//   operators.add(OperatorInfo(DIV_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
-//
-//   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   operators.add(OperatorInfo(LESS_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTLESS_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_FLAG));
+   // real64 primitive operations
+   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+   operators.add(OperatorInfo(SUB_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+   operators.add(OperatorInfo(MUL_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+   operators.add(OperatorInfo(DIV_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
+
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_REAL64, V_REAL64, lxRealBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_REAL64, V_REAL64, lxRealBoolOp, V_FLAG));
+   operators.add(OperatorInfo(LESS_OPERATOR_ID, V_REAL64, V_REAL64, lxRealBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTLESS_OPERATOR_ID, V_REAL64, V_REAL64, lxRealBoolOp, V_FLAG));
+   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_REAL64, V_REAL64, lxRealBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_REAL64, V_REAL64, lxRealBoolOp, V_FLAG));
 
    // array of int32 primitive operations
    operators.add(OperatorInfo(REFER_OPERATOR_ID, V_INT32ARRAY, V_INT32, lxIntArrOp, V_INT32));
@@ -1417,11 +1417,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
          info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
          info.size = 8;
          break;
-//      case V_REAL64:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugReal64 | elStructureRole | elReadOnlyRole;
-//         info.size = 8;
-//         break;
+      case V_REAL64:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugReal64 | elStructureRole | elReadOnlyRole;
+         info.size = 8;
+         break;
 //      case V_PTR32:
 //         info.header.parentRef = scope.superReference;
 //         info.header.flags = elStructureRole;
@@ -1889,7 +1889,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
 //         attrs.isClassAttr = true;
 //         attrs.isConstAttr = true;
 //         return true;
-//      case V_FLOAT:
+      case V_FLOAT:
       case V_BINARY:
       case V_INTBINARY:
 //      case V_PTRBINARY:
@@ -2060,9 +2060,9 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
          case V_INT64:
             info.header.flags |= elDebugQWORD;
             break;
-//         case V_REAL64:
-//            info.header.flags |= elDebugReal64;
-//            break;
+         case V_REAL64:
+            info.header.flags |= elDebugReal64;
+            break;
 ////         case V_PTR:
 ////            info.header.flags |= (elDebugPTR | elWrapper);
 ////            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));

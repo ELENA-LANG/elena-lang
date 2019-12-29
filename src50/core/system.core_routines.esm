@@ -172,6 +172,23 @@ procedure __literalconvertor."convert$system@IntNumber$system@IntNumber$@system@
 
 end
 
+
+procedure __literalconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3
+  
+  callextr api : longtostr
+
+  peeksi 4
+  save
+
+  quitn 4
+
+
+end
+
 procedure __literalconvertor."convert$system@UIntNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   pushsi 3
@@ -332,6 +349,33 @@ labErr:
 
 end
 
+procedure __intconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  loadi 1
+  lessn labNegative 0  
+  elsen labErr 0  
+
+  load
+  peeksi 2
+  save
+  quitn 2  
+
+labNegative:
+  elsen labErr 0FFFFFFFFh
+
+  load
+  peeksi 2
+  save
+  quitn 2  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : %new[0]
+  throw    
+
+end
+
 procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&system@ShortNumber[2]"
 
   peeksi 1
@@ -483,6 +527,146 @@ procedure __int."readInvertedTo$system@IntNumber$@system@ref#1&system@IntNumber[
   not
   peeksi 2
   save
+  quitn 2
+
+end
+
+procedure __longconvertor."convert$system@IntNumber$@system@ref#1&system@LongNumber[2]"
+  
+  peeksi 1
+  load
+  peeksi 2
+  save
+  lessn labNegative 0
+  movn 0
+  savei 1
+  peeksi 1
+  quitn 2
+
+labNegative:
+  movn 0FFFFFFFFh
+  savei 1
+  peeksi 1
+  quitn 2
+
+end
+
+procedure __longconvertor."convert$system@UIntNumber$@system@ref#1&system@LongNumber[2]"
+  
+  peeksi 1
+  load
+  peeksi 2
+  save
+  movn 0
+  savei 1
+  quitn 2
+
+end
+
+procedure __longconvertor."convert$system@ShortNumber$@system@ref#1&system@LongNumber[2]"
+  
+  peeksi 1
+  load
+  peeksi 2
+  save
+  lessn labNegative 0
+  movn 0
+  savei 1
+  peeksi 1
+  quitn 2
+
+labNegative:
+  movn 0FFFFFFFFh
+  savei 1
+  peeksi 1
+  quitn 2
+
+end
+
+procedure __longconvertor."convert$system@ByteNumber$@system@ref#1&system@LongNumber[2]"
+  
+  peeksi 1
+  load
+  peeksi 2
+  save
+  movn 0
+  savei 1
+  quitn 2
+
+end
+
+procedure __uintconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  loadi 1
+  elsen labErr 0  
+
+  load
+  peeksi 2
+  save
+  quitn 2  
+
+labErr:
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : %new[0]
+  throw    
+
+end
+
+procedure __long."readInvertedTo$system@LongNumber$@system@ref#1&system@LongNumber[2]"
+
+  peeksi 1
+  load
+  not
+  peeksi 2
+  save
+  peeksi 1
+  loadi 1
+  peeksi 2
+  savei 1
+  quitn 2
+
+end
+
+procedure __realconvertor."convert$system@IntNumber$@system@ref#1&system@RealNumber[2]"
+  
+  peeksi 1
+  load
+  rcopy
+  peeksi 2
+  rsave
+  quitn 2
+
+end
+
+procedure __realconvertor."convert$system@ByteNumber$@system@ref#1&system@RealNumber[2]"
+  
+  peeksi 1
+  load
+  rcopy
+  peeksi 2
+  rsave
+  quitn 2
+
+end
+
+procedure __realconvertor."convert$system@ShortNumber$@system@ref#1&system@RealNumber[2]"
+  
+  peeksi 1
+  load
+  rcopy
+  peeksi 2
+  rsave
+  quitn 2
+
+end
+
+procedure __realconvertor."convert$system@LongNumber$@system@ref#1&system@RealNumber[2]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : longtoreal
+  freei 2
   quitn 2
 
 end

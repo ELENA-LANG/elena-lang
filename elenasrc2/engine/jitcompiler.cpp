@@ -90,18 +90,18 @@ void JITCompiler32 :: compileInt64(MemoryWriter* writer, long long integer)
 //   writer->writeDWord(low);
 //   writer->writeDWord(high);
 //}
-//
-//void JITCompiler32 :: compileReal64(MemoryWriter* writer, double number)
-//{
-//   writer->seek(writer->Position() - 8);
-//
-//   // object header
-//   writer->writeDWord(0x800008);
-//   writer->writeDWord(0);
-//
-//   // object body
-//   writer->write(&number, 8u);
-//}
+
+void JITCompiler32 :: compileReal64(MemoryWriter* writer, double number)
+{
+   writer->seek(writer->Position() - 8);
+
+   // object header
+   writer->writeDWord(0x800008);
+   writer->writeDWord(0);
+
+   // object body
+   writer->write(&number, 8u);
+}
 
 void JITCompiler32 :: compileLiteral(MemoryWriter* writer, const char* value)
 {

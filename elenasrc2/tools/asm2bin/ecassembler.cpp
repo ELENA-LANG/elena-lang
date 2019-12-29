@@ -547,8 +547,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcALoadBI:
          case bcStoreSI:
          case bcStoreFI:
-         //case bcNSaveI:
-         //case bcNLoadI:
+         case bcSaveI:
+         case bcLoadI:
          //case bcESwapSI:
          //case bcBSwapSI:
          //case bcAXSaveBI:
@@ -578,6 +578,10 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcLAndF:
          case bcLOrF:
          case bcLXorF:
+         case bcRAddF:
+         case bcRSubF:
+         case bcRMulF:
+         case bcRDivF:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:
