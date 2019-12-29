@@ -1977,7 +1977,7 @@ public sealed const struct RealNumber : BaseNumber
 // --- CharValue ---
 
 /// An UTF-32 character symbol
-public sealed const struct CharValue //: BaseValue
+public sealed const struct CharValue : BaseValue
 {
     embeddable __raw theValue[4];
 
@@ -2299,21 +2299,21 @@ public singleton byteConvertor
         ^ retVal
     }
 
-//    /// Converts a literal value into a byte value
-//    byte convert(string s)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(s, ref byte retVal);
-//        
-//        ^ retVal
-//    }
-//                
-//    /// Converts a wide literal value into a byte value
-//    byte convert(wide s)
-//    {
-//        intern system'core_routines'__byteconvertor.convert(s, ref byte retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a literal value into a byte value
+    byte convert(string s)
+    {
+        intern system'core_routines'__byteconvertor.convert(s, 10, ref byte retVal);
+        
+        ^ retVal
+    }
+                
+    /// Converts a wide literal value into a byte value
+    byte convert(wide s)
+    {
+        intern system'core_routines'__byteconvertor.convert(s, 10, ref byte retVal);
+        
+        ^ retVal
+    }
 
     byte convert(o)
         = cast byte(o);

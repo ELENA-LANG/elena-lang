@@ -344,11 +344,61 @@ lab11:
   neg  eax
 Lab5:
   mov  edx, eax
-  mov  ebx, [esp+4]
   jmp  short Lab3
 Lab2:
   add  esp, 4
+  xor  ebx, ebx
+Lab3:
+  ret
+
+end
+
+// ; rcopyl (eax:src, ecx : base, esi - result)
+procedure coreapi'wstrtoint
+
+  mov  eax, [esp+8]                 // ; radix
+  mov  esi, [esp+4]                 // ; get str
+
+  mov  ebx, [eax]                   // ; radix
+  mov  ecx, [esi-8]
+  xor  edx, edx                     // ; clear flag
+  and  ecx, 0FFFFFh
+  cmp  byte ptr [esi], 2Dh
+  lea  ecx, [ecx-2]                 // ; to skip zero
+  jnz  short Lab4
+  lodsw
+  mov  edx, 1                        // ; set flag
+  lea  ecx, [ecx-2]                 //  ; to skip minus
+Lab4:
+  push edx
   xor  eax, eax
+Lab1:
+  mov  edx, ebx
+  mul  edx                                                                                                                                                  
+  mov  edx, eax
+  xor  eax, eax
+  lodsw
+  cmp  eax, 3Ah
+  jb   short lab11
+  sub  al, 7
+lab11:
+  sub  al, 30h
+  jb   short Lab2
+  cmp  ax, bx
+  ja   short Lab2
+  add  eax, edx
+  sub  ecx, 2
+  jnz  short Lab1
+  nop
+  pop  ebx
+  test ebx, ebx                                
+  jz   short Lab5
+  neg  eax
+Lab5:
+  mov  edx, eax
+  jmp  short Lab3
+Lab2:
+  xor  ebx, ebx
 Lab3:
   ret
 

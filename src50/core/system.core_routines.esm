@@ -648,6 +648,66 @@ labCopy:
 
 end
 
+procedure __byteconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@ByteNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : strtoint
+  freei 2
+
+  ifr      labErr 0
+  peeksi 3
+  save
+  
+  lessn labErr2 0  
+  lessn labExit 0FFh
+  
+labErr2:  
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : %new[0]
+  throw    
+
+labExit:
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : %new[0]
+  throw
+
+end
+
+procedure __byteconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@ByteNumber[3]"
+  
+  pushsi 2
+  pushsi 2  
+  callextr api : wstrtoint
+  freei 2
+
+  ifr      labErr 0
+  peeksi 3
+  save
+  
+  lessn labErr2 0  
+  lessn labExit 0FFh
+  
+labErr2:  
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : %new[0]
+  throw    
+
+labExit:
+  quitn    3
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : %new[0]
+  throw
+
+end
+
 procedure __int."readInvertedTo$system@IntNumber$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1
