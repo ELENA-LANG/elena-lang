@@ -2620,21 +2620,21 @@ public singleton realConvertor
     real convert(BaseVariable v)
         <= convert(v.Value);
         
-//    /// Converts a literal string into a real number
-//    real convert(string s)
-//    {
-//        intern system'core_routines'__realconvertor.convert(s, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    /// Converts a wide literal string into a real number
-//    real convert(wide s)
-//    {
-//        intern system'core_routines'__realconvertor.convert(s, ref real retVal);
-//        
-//        ^ retVal
-//    }
+    /// Converts a literal string into a real number
+    real convert(string s)
+    {
+        intern system'core_routines'__realconvertor.convert(s, 19, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    /// Converts a wide literal string into a real number
+    real convert(wide s)
+    {
+        intern system'core_routines'__realconvertor.convert(s, 19, ref real retVal);
+        
+        ^ retVal
+    }
 
     /// Returns a parameter
     real convert(real r)

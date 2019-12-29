@@ -1128,6 +1128,42 @@ procedure __realconvertor."convert$system@LongNumber$@system@ref#1&system@RealNu
 
 end
 
+procedure __realconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@RealNumber[3]"
+  
+  pushsi 3
+  pushsi 3
+  pushsi 3  
+  callextr api : strtoreal
+  freei 3
+  ifr      labErr 0
+  quitn    2
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : "new[0]"
+  throw
+
+end
+
+procedure __realconvertor."convert$system@WideString$system@IntNumber$@system@ref#1&system@RealNumber[3]"
+  
+  pushsi 3
+  pushsi 3
+  pushsi 3  
+  callextr api : wstrtoreal
+  freei 3
+  ifr      labErr 0
+  quitn    2
+
+labErr:
+  open 1
+  pushr class : system'FormatException
+  pushr mssgconst : "new[0]"
+  throw
+
+end
+
 procedure __charconvertor."convert$system@IntNumber$@system@ref#1&system@CharValue[2]"
   
   peeksi 1

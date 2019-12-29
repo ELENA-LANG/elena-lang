@@ -917,6 +917,606 @@ lab1:
 
 end
 
+// ; rcopyl (eax:src, ecx : base, ebx - result)
+procedure coreapi'strtoreal
+
+  mov  eax, [esp+8]                 // ; radix
+  mov  esi, [esp+4]                 // ; get str
+  mov  ecx, [eax]
+
+  sub   esp, 12
+  xor   edx, edx
+  xor   eax, eax
+  xor   ebx, ebx
+  mov   edi, esp
+  stosd
+  stosd
+  mov   [edi], eax
+
+atof1:
+  lodsb
+  cmp   eax, 32                  // " "
+  jz    short atof1
+  or    eax, eax
+  jnz   short atof2
+
+atoflerr:
+  add   esp, 12
+  xor   ebx, ebx
+  jmp   atoflend
+
+  //----------------------
+  // check for leading sign
+  //----------------------
+
+atof2:
+
+  cmp   eax, 43                  // +
+  jz    short atof3
+  cmp   eax,45                   // -
+  jnz   short integer
+  mov   dh,80h
+atof3:
+  mov   byte ptr [edi+1], dh    // put sign byte in bcd string
+  xor   edx,edx
+  lodsb
+
+  //------------------------------------
+  // convert the digits to packed decimal
+  //------------------------------------
+integer:
+
+  cmp   eax, 46                  // .
+  jnz   short atof4
+  test  bh, 1
+  jnz   short atoflerr           // only one decimal point allowed
+  or    bh, 1
+  lodsb
+atof4:
+  cmp   eax, 101                 // "e"
+  jnz   short atof5 
+  cmp   cl, 19
+  jnz   short atof41
+  test  bh, 4
+  jz    short atoflerr
+atof41:  
+  jmp   scient
+atof5:
+  cmp   eax,69                  // "E" 
+  jnz   short atof6
+  cmp   cl, 19
+  jnz   short atof51
+  test  bh, 4
+  jz    short atoflerr
+atof51:  
+  jmp   scient
+atof6:
+  or    eax,eax
+  jnz   short atof7
+  cmp   cl, 19
+  jnz   atof61
+  test  bh, 4
+  jz    short atoflerr
+atof61:
+  jmp   laststep1
+atof7:
+  sub   eax,48                 // "0"
+  jc    short atoflerr          // unacceptable character
+  cmp   eax,9
+  ja    short atoflerr          // unacceptable character
+  or    bh,4                   // at least 1 numerical character
+  test  bh,1
+  jz    short atof8
+  add   bl,1                   // bl holds number of decimal digits
+  jc    atoflerr               // more than 255 decimal digits
+atof8:
+  test  eax, eax
+  jnz   short atof9
+  test  bh,2
+  jnz   short atof9
+  lodsb
+  jmp   short integer
+atof9:
+  or    bh,2                   // at least 1 non-zero numerical character
+  sub   ecx, 1
+  jnz   short atof10
+  test  bh,1                   // check if decimal point
+  jz    atoflerr               // error if more than 18 integer digits in number
+  test  eax, eax
+  jnz   short atof91            // if trailing decimal 0
+  add   ecx, 1
+  sub   bl, 1
+  lodsb
+  jmp   integer
+atof91:
+  jmp   atoflerr
+atof10:
+  mov   dh,al
+  
+integer1:
+  lodsb
+  cmp   eax, 46                 // "."
+  jnz   short atof20
+  test  bh,1
+  jnz   atoflerr               // only one decimal point allowed
+  or    bh, 1                  // use bh bit0 as the decimal point flag
+  lodsb
+atof20:
+  cmp   eax, 101                // "e"
+  jnz   short atof30
+  mov   ah, dh
+  mov   al,0
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  jmp   scient
+atof30:
+  cmp   eax, 69                 // "E"
+  jnz   short atof40
+  mov   ah, dh
+  mov   al,0
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  jmp   scient
+atof40:  
+  or    eax,eax
+  jnz   short atof50
+  mov   ah, dh
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  jmp   short laststep1
+atof50:
+  sub   eax, 48               // "0"
+  jc    atoflerr             // unacceptable character
+  cmp   eax,9
+  ja    atoflerr             // unacceptable character
+  test  bh,1            
+  jz    short atof60
+  add   bl, 1                // processing decimal digits
+atof60:
+  sub   ecx, 1
+  jnz   short atof70
+  test  bh,1                // check if decimal point
+  jz    atoflerr            // error if more than 18 integer digits in number
+  test  eax, eax
+  jnz   short atof602
+  add   ecx, 1
+  sub   bl, 1
+  jmp   integer1
+atof602:
+  jmp   atoflerr
+atof70:
+  mov   ah, dh
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  sub   edi, 1
+  lodsb
+  jmp   integer
+
+laststep1:
+  cmp   cl,19
+  jnz   short laststep
+  fldz
+  jmp   short laststep2
+
+laststep:
+
+  mov   ah, dh
+/*  
+      push  eax               //;reserve space on stack
+      fstcw word ptr [esp]             // ;get current control word
+      pop   eax
+      or    eax,0300h          // ;code it for truncating
+      push  eax
+      fldcw word ptr [esp]             // ;change rounding code of FPU to truncate
+      pop   eax
+*/    
+  xor   edx, edx
+  fbld  [esp]
+  sub   cl, 1
+  add   bl,cl
+  movzx eax,bl
+  sub   edx,eax
+
+  push  edx
+  fild  dword ptr [esp]     // load the exponent
+  fldl2t                    // load log2(10)
+  fmulp                     // ->log2(10)*exponent
+  pop   edx
+
+  // at this point, only the log base 2 of the 10^exponent is on the FPU
+  // the FPU can compute the antilog only with the mantissa
+  // the characteristic of the logarithm must thus be removed
+     
+  fld   st(0)             // copy the logarithm
+  frndint                 // keep only the characteristic
+  fsub  st(1),st(0)       // keeps only the mantissa
+  fxch st(1)              // get the mantissa on top
+
+  f2xm1                   // ->2^(mantissa)-1
+  fld1
+  faddp                   // add 1 back
+
+  // the number must now be readjusted for the characteristic of the logarithm
+
+  fscale                  // scale it with the characteristic
+      
+  // the characteristic is still on the FPU and must be removed
+
+  fstp  st(1)             // clean-up the register
+
+  fmulp
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    atoflerr          // clean-up and return error
+
+laststep2:
+
+  add   esp, 12
+  mov   edi, [esp+12]
+  fstp  qword ptr[edi]    // store result at specified address
+  jmp   short atoflend
+
+scient:
+  cmp   cl,19
+  jnz   short atof80
+  fldz
+  jmp   short laststep2
+  xor   edx, edx
+
+atof80:
+  xor   eax,eax
+  lodsb
+  cmp   ax, 43            // "+"
+  jz    atof90
+  cmp   ax, 45            // "-"
+  jnz   short scient1
+  stc
+  rcr   eax,1             // keep sign of exponent in most significant bit of EAX
+     
+atof90:
+
+  lodsb                   // get next digit after sign
+
+scient1:
+  push  eax
+  and   eax,0ffh
+  jnz   short atof100      // continue if 1st byte of exponent is not terminating 0
+
+scienterr:
+  xor   ebx, ebx
+  jmp   atoflerr         // no exponent
+
+atof100:
+  sub   eax,30h
+  jc    short scienterr    // unacceptable character
+  cmp   eax,9
+  ja    short scienterr    // unacceptable character
+  imul  edx,10
+  add   edx,eax
+  cmp   edx,4931h
+  ja    short scienterr    // exponent too large
+  lodsb
+  or    eax,eax
+  jnz   short atof100
+  pop   eax               // retrieve exponent sign flag
+  rcl   eax,1             // is most significant bit set?
+  jnc   short atof200
+  neg   edx
+
+atof200:
+  jmp   laststep  
+
+atoflend:
+   ret
+
+end
+
+// ; rcopyl (eax:src, ecx : base, esi - result)
+procedure coreapi'wstrtoreal
+
+  mov  edi, [esp+12]                 
+  mov  eax, [esp+8]                 // ; radix
+  mov  esi, [esp+4]                 // ; get str
+  mov  ecx, [eax]
+
+  push  edi
+  sub   esp, 12
+  xor   edx, edx
+  xor   eax, eax
+  xor   ebx, ebx
+  mov   edi, esp
+  stosd
+  stosd
+  mov   word ptr [edi], ax
+  mov   ecx, 19
+
+atof1:
+  lodsw
+  cmp   eax, 32                  // " "
+  jz    short atof1
+  or    eax, eax
+  jnz   short atof2
+
+atoflerr:
+  add   esp, 12
+  pop   edi
+  xor   esi, esi
+  jmp   atoflend
+
+  //----------------------
+  // check for leading sign
+  //----------------------
+
+atof2:
+
+  cmp   eax, 43                  // +
+  jz    short atof3
+  cmp   eax,45                   // -
+  jnz   short integer
+  mov   dh,80h
+atof3:
+  mov   byte ptr [edi+1], dh    // put sign byte in bcd string
+  xor   edx,edx
+  lodsw
+
+  //------------------------------------
+  // convert the digits to packed decimal
+  //------------------------------------
+integer:
+
+  cmp   eax, 46                  // .
+  jnz   short atof4
+  test  bh, 1
+  jnz   short atoflerr           // only one decimal point allowed
+  or    bh, 1
+  lodsw
+atof4:
+  cmp   eax, 101                 // "e"
+  jnz   short atof5 
+  cmp   cl, 19
+  jnz   short atof41
+  test  bh, 4
+  jz    short atoflerr
+atof41:  
+  jmp   scient
+atof5:
+  cmp   eax,69                  // "E" 
+  jnz   short atof6
+  cmp   cl, 19
+  jnz   short atof51
+  test  bh, 4
+  jz    short atoflerr
+atof51:  
+  jmp   scient
+atof6:
+  or    eax,eax
+  jnz   short atof7
+  cmp   cl, 19
+  jnz   atof61
+  test  bh, 4
+  jz    short atoflerr
+atof61:
+  jmp   laststep1
+atof7:
+  sub   eax,48                 // "0"
+  jc    short atoflerr          // unacceptable character
+  cmp   eax,9
+  ja    short atoflerr          // unacceptable character
+  or    bh,4                   // at least 1 numerical character
+  test  bh,1
+  jz    short atof8
+  add   bl,1                   // bl holds number of decimal digits
+  jc    atoflerr               // more than 255 decimal digits
+atof8:
+  test  eax, eax
+  jnz   short atof9
+  test  bh,2
+  jnz   short atof9
+  lodsw
+  jmp   short integer
+atof9:
+  or    bh,2                   // at least 1 non-zero numerical character
+  sub   ecx, 1
+  jnz   short atof10
+  test  bh,1                   // check if decimal point
+  jz    atoflerr               // error if more than 18 integer digits in number
+  test  eax, eax
+  jnz   short atof91            // if trailing decimal 0
+  add   ecx, 1
+  sub   bl, 1
+  lodsw
+  jmp   integer
+atof91:
+  jmp   atoflerr
+atof10:
+  mov   dh,al
+  
+integer1:
+  lodsw
+  cmp   eax, 46                 // "."
+  jnz   short atof20
+  test  bh,1
+  jnz   atoflerr               // only one decimal point allowed
+  or    bh, 1                  // use bh bit0 as the decimal point flag
+  lodsw
+atof20:
+  cmp   eax, 101                // "e"
+  jnz   short atof30
+  mov   ah, dh
+  mov   al,0
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  jmp   scient
+atof30:
+  cmp   eax, 69                 // "E"
+  jnz   short atof40
+  mov   ah, dh
+  mov   al,0
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  jmp   scient
+atof40:  
+  or    eax,eax
+  jnz   short atof50
+  mov   ah, dh
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  jmp   short laststep1
+atof50:
+  sub   eax, 48               // "0"
+  jc    atoflerr             // unacceptable character
+  cmp   eax,9
+  ja    atoflerr             // unacceptable character
+  test  bh,1            
+  jz    short atof60
+  add   bl, 1                // processing decimal digits
+atof60:
+  sub   ecx, 1
+  jnz   short atof70
+  test  bh,1                // check if decimal point
+  jz    atoflerr            // error if more than 18 integer digits in number
+  test  eax, eax
+  jnz   short atof602
+  add   ecx, 1
+  sub   bl, 1
+  jmp   integer1
+atof602:
+  jmp   atoflerr
+atof70:
+  mov   ah, dh
+  rol   al,4
+  ror   ax,4
+  mov   byte ptr [edi],al
+  mov   dh, ah
+  sub   edi, 1
+  lodsw
+  jmp   integer
+
+laststep1:
+  cmp   cl,19
+  jnz   short laststep
+  fldz
+  jmp   short laststep2
+
+laststep:
+  mov   ah, dh
+  xor   edx, edx
+  fbld  [esp]
+  sub   cl, 1
+  add   bl,cl
+  movzx eax,bl
+  sub   edx,eax
+
+  push  edx
+  fild  dword ptr [esp]     // load the exponent
+  fldl2t                    // load log2(10)
+  fmulp                     // ->log2(10)*exponent
+  pop   edx
+
+  // at this point, only the log base 2 of the 10^exponent is on the FPU
+  // the FPU can compute the antilog only with the mantissa
+  // the characteristic of the logarithm must thus be removed
+     
+  fld   st(0)             // copy the logarithm
+  frndint                 // keep only the characteristic
+  fsub  st(1),st(0)       // keeps only the mantissa
+  fxch st(1)              // get the mantissa on top
+
+  f2xm1                   // ->2^(mantissa)-1
+  fld1
+  faddp                   // add 1 back
+
+  // the number must now be readjusted for the characteristic of the logarithm
+
+  fscale                  // scale it with the characteristic
+      
+  // the characteristic is still on the FPU and must be removed
+
+  fstp  st(1)             // clean-up the register
+
+  fmulp
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    atoflerr          // clean-up and return error
+
+laststep2:
+
+  add   esp, 12
+  pop   edi
+  fstp  qword ptr[edi]    // store result at specified address
+  jmp   short atoflend
+
+scient:
+  cmp   cl,19
+  jnz   short atof80
+  fldz
+  jmp   short laststep2
+  xor   edx, edx
+
+atof80:
+  xor   eax,eax
+  lodsw
+  cmp   ax, 43            // "+"
+  jz    atof90
+  cmp   ax, 45            // "-"
+  jnz   short scient1
+  stc
+  rcr   eax,1             // keep sign of exponent in most significant bit of EAX
+     
+atof90:
+
+  lodsw                   // get next digit after sign
+
+scient1:
+  push  eax
+  and   eax,0ffh
+  jnz   short atof100      // continue if 1st byte of exponent is not terminating 0
+
+scienterr:
+  pop   edi
+  xor   esi, esi
+  jmp   atoflerr         // no exponent
+
+atof100:
+  sub   eax,30h
+  jc    short scienterr    // unacceptable character
+  cmp   eax,9
+  ja    short scienterr    // unacceptable character
+  imul  edx,10
+  add   edx,eax
+  cmp   edx,4931h
+  ja    short scienterr    // exponent too large
+  lodsw
+  or    eax,eax
+  jnz   short atof100
+  pop   eax               // retrieve exponent sign flag
+  rcl   eax,1             // is most significant bit set?
+  jnc   short atof200
+  neg   edx
+
+atof200:
+  jmp   laststep  
+
+atoflend:
+   mov  eax, esi
+   ret
+
+end
+
 // ; === internal ===
 
 procedure coreapi'default_handler                                                       
@@ -983,6 +1583,5 @@ lab6:
   mov esp, ebp
   pop ebp
   ret
-
 end
 
