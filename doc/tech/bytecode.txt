@@ -246,11 +246,13 @@ ELENA byte codes (or ecodes)
 
  Misc operations:
  ---------------- 
+ address label              - load label address to index
+ 
  breakpoint                 - used for debugging
 
  freelock                   - free [esp]
 
- hook label                 - assign a new exception handler ; ext affected (*index and ext affected)
+ hook label                 - assign a new exception handler ; (index affected)
 
  loadenv                    - %SYSTEM_ENV => index 
 
@@ -303,6 +305,8 @@ ELENA byte codes (or ecodes)
 
  Jump operations:
  ---------------- 
+ else label                 - jump to the label if index != acc[0]
+ 
  elsen n, label             - jump to the label if index != n
  
  elser r, label             - jumps to the label if acc != r

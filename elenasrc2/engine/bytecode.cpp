@@ -44,8 +44,8 @@ const char* _fnOpcodes[256] =
    "dec", "geti", "restore", "peekr", "peekfi", "peeksi", OPCODE_UNKNOWN, "xseti",
    "open", "quitn", "create", "fillr", "movf", "movs", "movr", "movm",
 
-   "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", "hook", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "notless", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", "hook", "address",
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "notless", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "else", OPCODE_UNKNOWN,
 
    "pushn", "movn", "pushr", OPCODE_UNKNOWN, "pushai", OPCODE_UNKNOWN, "pushfi", "loadfi",
    OPCODE_UNKNOWN, "savef", "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
@@ -382,7 +382,7 @@ inline bool removeIdleJump(ByteCodeIterator it)
          //case bcIfB:
          //case bcElseB:
          //case bcIf:
-         //case bcElse:
+         case bcElse:
          //case bcLess:
          case bcNotLess:
          case bcIfN:
@@ -462,7 +462,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 //            case bcIfB:
 //            case bcElseB:              
 //            case bcIf:
-//            case bcElse:              
+            case bcElse:              
 //            case bcLess:
             case bcNotLess:
             case bcIfN:
@@ -475,7 +475,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 //            case bcElseM:              
 //            case bcNext:
             case bcHook:
-//            case bcAddress:
+            case bcAddress:
 //            case bcIfHeap:
                // remove the label from idle list
                idleLabels.exclude((*it).argument);

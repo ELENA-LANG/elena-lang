@@ -2058,12 +2058,12 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //case bcIfB:
          //case bcElseB:
          //case bcIf:
-         //case bcElse:
+         case bcElse:
          //case bcLess:
-         //case bcNotLess:
          case bcIfN:
          case bcElseN:
          case bcLessN:
+         case bcNotLess:
          //case bcNotLessN:
          //case bcGreaterN:
          //case bcNotGreaterN:
@@ -2072,7 +2072,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //case bcNext:
          case bcJump:
          case bcHook:
-         //case bcAddress:
+         case bcAddress:
          //case bcIfHeap:
             (*it).save(scope.code, true);
 

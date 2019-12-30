@@ -127,8 +127,7 @@ public interface<T>
 //    
 //    (__loop: cast bool(cond_expr) ? { loop_body; __ignore_duplicates step_expr })
 //}
-//
-//public for<loop_body>()
+
 #declare for<init_expr, cond_expr, step_expr>(loop_body)
 {
     init_expr;
@@ -161,14 +160,13 @@ public interface<T>
 //    
 //    (__loop: cast bool(cond_expr) ? { loop_body })
 //}
-//
-//// -- try-catch statement ---
-//
-//public try<try_block,catch_block>:catch()
-//{
-//    try_block | on(catch_block);
-//}
-//
+
+// -- try-catch statement ---
+#declare try:catch(try_block,catch_block)
+{
+    try_block | on(catch_block);
+}
+
 //public try<try_block,catch_block1,catch_block2>:catch,catch()
 //{
 //    try_block | on(catch_block1,catch_block2);

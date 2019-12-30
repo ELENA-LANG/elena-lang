@@ -1815,6 +1815,14 @@ inline % 0A6h
   
 end
 
+// ; address label (ecx - offset)
+inline % 0A7h
+
+  call code : %HOOK
+  mov  edx, ecx
+
+end
+
 // ; movn
 inline % 0B1h
 

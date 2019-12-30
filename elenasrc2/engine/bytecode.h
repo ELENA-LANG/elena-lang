@@ -174,14 +174,14 @@ enum ByteCode
 //   bcAJumpI          = 0xA4,
    bcCallExtR        = 0xA5,
    bcHook            = 0xA6,
-//   bcAddress         = 0xA7,
+   bcAddress         = 0xA7,
 //   bcACallI          = 0xA8,
 //   bcLess            = 0xA9,
    bcNotLess         = 0xAA,
 //   bcIfB             = 0xAB,
 //   bcElseB           = 0xAC,
 //   bcIf              = 0xAD,
-//   bcElse            = 0xAE,
+   bcElse            = 0xAE,
 //   bcNext            = 0xAF,
 
    bcPushN           = 0xB0,
@@ -444,7 +444,7 @@ public:
          //case bcNext:
          //case bcIfHeap:
          case bcHook:
-         //case bcAddress:
+         case bcAddress:
          case bcJumpRM:
             return true;
          default:

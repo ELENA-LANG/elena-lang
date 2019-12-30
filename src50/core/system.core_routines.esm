@@ -1722,6 +1722,42 @@ labEnd3:
 
 end
 
+procedure __exception."on[2]"
+
+  open   1
+  hook   labNotFound
+  pusha
+  peekfi -3
+  movm   mssgconst : "#invoke[1]"
+  callvi 0
+
+labReturn:
+
+  unhook
+
+  close
+  quitn 2
+
+labNotFound:
+
+  movs    9
+  address labReturn
+  else    labContinueError
+
+  restore 1
+
+  close
+  pushsi 4
+
+labContinueError:
+
+  popa
+  unhook
+  pusha
+  throw
+
+end
+
 // ; system routines
 
 symbol sta_start

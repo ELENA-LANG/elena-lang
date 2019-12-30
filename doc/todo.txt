@@ -2,6 +2,10 @@
 In development:
 ------         
               dev
+                * on handler - handle, not handle, error in handle
+
+                * try / catch,try / catch / catch  - see system'entry
+                * try / finally / catch - see system'entry
                 * exception handling
                 * call stack
                 * method not found - test
@@ -16,6 +20,8 @@ In development:
                 * int to real conversion
                 * literal convertor (UIntNumber)
                 * String, WideString- fill, new
+
+                * stringConvertor, wideConvertor, charConvertor
                 * array, variadicarray
                 * migrate basic classes : enumerators, indexers
 

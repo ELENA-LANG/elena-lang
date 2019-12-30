@@ -31,7 +31,7 @@
 entry()
 {
 //    intern system'core_routines'__exception.register();
-//    
+    
 //    try
 //    {
         forward program()
@@ -45,7 +45,7 @@ entry()
 //    }   
 //    catch:(Exception e)
 //    {
-//        console.writeLine(e.Printable);
+//        console.writeLine(e.toPrintable());
 //        
 //        extern elenart.Exit(-1);
 //    }

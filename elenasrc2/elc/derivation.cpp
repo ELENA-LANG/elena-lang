@@ -1715,10 +1715,10 @@ inline void parseStatement(SNode current, IdentifierString& templateName, int& e
 {
    while (current != lxNone) {
       if (current == lxExpression) {
-         //if (blockCounters == 0) {
-         exprCounters++;
-         /*}
-         else blockCounters++;*/
+         if (blockCounters == 0) {
+            exprCounters++;
+         }
+         else blockCounters++;
       }
       else if (current == lxStatementArgs) {
          parseStatement(current.firstChild(), templateName, exprCounters, blockCounters);

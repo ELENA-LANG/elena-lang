@@ -67,7 +67,7 @@ public class Exception
 //    CallStack theCallstack;
 //
 //    /// Returns the message and the call stack
-//    get string Printable()
+//    string toPrintable()
 //    {
 //        string retVal := theMessage.add($10"Call stack:"$10).add(theCallstack.Printable);
 //        
@@ -76,10 +76,10 @@ public class Exception
 //    
 //    /// Returns the message
 //    string Message = theMessage;
-//    
-//    on(handler)
-//        => system'core_routines'__exception;
-//
+    
+    on(handler)
+        => intern system'core_routines'__exception;
+
 //    on(handler1,handler2)
 //        => system'core_routines'__exception;
 //

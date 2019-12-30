@@ -517,7 +517,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcCallExtR:
             compileExtCommand(opcode, token, writer, binary);
             break;
-         //case bcACallVI:
+         case bcCallVI:
          case bcJumpVI:
          case bcPeekSI:
          //case bcBLoadSI:
@@ -606,13 +606,13 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcIfB:
          //case bcElseB:
          //case bcIf:
-         //case bcElse:
+         case bcElse:
          //case bcLess:
          case bcNotLess:
          //case bcNext:
          case bcJump:
          case bcHook:
-         //case bcAddress:
+         case bcAddress:
             compileJump(opcode, token, writer, info);
             break;
          //case bcIfM:
