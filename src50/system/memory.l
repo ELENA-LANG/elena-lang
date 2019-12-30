@@ -1047,10 +1047,6 @@ public sealed const struct WideString //: BaseValue
 {
     __string short[] theArray;
 
-//    /// return the default value
-//    static wide Default
-//        = emptyWideString;
-
     /// Creates the empty literal
     const static wide MinValue
         = ""w;
@@ -1059,21 +1055,21 @@ public sealed const struct WideString //: BaseValue
     constructor allocate(int size)
         = new short[](size + 1);
 
-//    /// Creates the literal string with specified length and copies the parameter value
-//    constructor copy(int size, wide s)
-//        <= allocate(size)
-//    {
-//        intern system'core_routines'__wide.copy(s, self)
-//    }
-//
+    /// Creates the literal string with specified length and copies the parameter value
+    constructor copy(int size, wide s)
+        <= allocate(size)
+    {
+        intern system'core_routines'__wide.copy(s, self)
+    }
+
 //    /// Creates the literal string with specified length fills with spciefied character value
 //    constructor fill(int aSize, char ch)
 //        => system'core_routines'__wide;
-//
-//    /// Creates the literal string copy
-//    constructor copy(wide s)
-//        <= copy(s.Length, s);
-//        
+
+    /// Creates the literal string copy
+    constructor copy(wide s)
+        <= copy(s.Length, s);
+        
 //    /// Creates the copy of a subarray
 //    constructor new(int index, int size, char[] array)
 //        => system'core_routines'__wide;
@@ -1119,141 +1115,138 @@ public sealed const struct WideString //: BaseValue
         ^ retVal
     }
 
-//    bool equal(o)
-//    {
-//        var s := cast wide(o) ?? nil;
-//        (nil == s)
-//            ? { ^ false } : { ^ self.equal(s) }
-//    }
-//
-//    bool less(o)
-//        <= less(cast wide(o));
-//        
-////    bool equal(BaseVariable v)
-////        <= equal(v value).
-////        
-////    bool less(BaseVariable v)
-////        <= less(v value).
-//
-//    /// Compares the values
-//    bool equal(wide s)
-//        => system'core_routines'__wide;
-//
-//    /// Compares the values
-//    bool less(wide s)
-//        => system'core_routines'__wide;
-//
-//    /// Compares the values
-//    bool equal(char ch)
-//        <= equal(cast wide(ch));
-//
-//    /// Compares the values
-//    bool less(char ch)
-//        <= less(cast wide(ch));
-//
-////    /// Returns the character at the specified index
-////    getAt : aParam
-////        <= getAt(T<int>(aParam)).
-//
-//    /// Returns the character at the specified index
-//    char at(int n)
-//    {
-//        char ch := $0;
-//        self.read(n, ref ch);
-//        
-//        ^ new CharValue(ch)
-//    }
-//
-//    wide add(o)
-//        <= add(cast string(o));
-//
-////    /// Concatinates the values
-////    wide add(BaseVariable v)
-////        <= add(v value).
+    bool equal(o)
+    {
+        var s := cast wide(o) ?? nil;
+        (nil == s)
+            ? { ^ false } : { ^ self.equal(s) }
+    }
+
+    bool less(o)
+        <= less(cast wide(o));
+        
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+        
+    bool less(BaseVariable v)
+        <= less(v.Value);
+
+    /// Compares the values
+    bool equal(wide s)
+        => intern system'core_routines'__wide;
+
+    /// Compares the values
+    bool less(wide s)
+        => intern system'core_routines'__wide;
+
+    /// Compares the values
+    bool equal(char ch)
+        <= equal(cast wide(ch));
+
+    /// Compares the values
+    bool less(char ch)
+        <= less(cast wide(ch));
+
+    /// Returns the character at the specified index
+    char at(int n)
+    {
+        char ch := $0;
+        self.read(n, ref ch);
+        
+        ^ new CharValue(ch)
+    }
+
+    wide add(o)
+        <= add(cast string(o));
+
+    /// Concatinates the values
+    wide add(BaseVariable v)
+        <= add(v.Value);
     
     /// Concatinates the values
     wide add(wide s)
-    {
-        int len1 := self.Length;
-        int len2 := s.Length;
-        
-        int newlen := len1 + len2;
-        
-        auto r := WideString.allocate(newlen);
-        
-        intern system'core_routines'__wide.concat(r, self, 0, len1);
-        
-        intern system'core_routines'__wide.concat(r, s, len1, len2);
-        
-        ^ r
-    }
+        => intern system'core_routines'__wide;
+//    {
+//        int len1 := self.Length;
+//        int len2 := s.Length;
+//        
+//        int newlen := len1 + len2;
+//        
+//        auto r := WideString.allocate(newlen);
+//        
+//        intern system'core_routines'__wide.concat(r, self, 0, len1);
+//        
+//        intern system'core_routines'__wide.concat(r, s, len1, len2);
+//        
+//        ^ r
+//    }
 
-//    /// Concatinates the values
-//    wide add(char ch)
-//        = self.add(wideConvertor.convert(ch));
-//
-//    /// Concatinates the values
-//    wide add(string s)
-//        = self.add(cast wide(s));
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    read(int n, ref char ch)
-//        => system'core_routines'__wide;
-//
+    /// Concatinates the values
+    wide add(char ch)
+        = self.add(wideConvertor.convert(ch));
+
+    /// Concatinates the values
+    wide add(string s)
+        = self.add(cast wide(s));
+
+    // Reads the character at the specified index and saves into an output parameter
+    read(int n, ref char ch)
+        => intern system'core_routines'__wide;
+
 //    // Reads the short integer at the specified index and saves into an output parameter
 //    read(int index, ref short value)
 //        => system'core_routines'__wide;
-//
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int anIndex, wide s, ref<int> aRetVal)
-//        => system'core_routines'__wide;
-//
-//    /// Saves the index of the first occurence of the specified character into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int index, char ch, ref int retVal)
-//        => system'core_routines'__wide;
-//
-//    /// Returns the index of the first occurence of the specified character.
-//    ///
-//    /// If the substring is not found. returns -1
-//    int indexOf(int index, char ch)
-//    {
-//        int retVal := 0;
-//        self.indexOf(index, ch, ref retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int index, wide s)
-//    {
-//        int retVal := 0;
-//        self.indexOf(index, s, ref retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Inserts the substring into and returns the new one
-//    wide insert(int index, wide s)
-//        => system'core_routines'__wide;
-//        
-//    /// Inserts the substring into and returns the new one
-//    wide insert(int index, string s)
-//        = self.insert(index, cast wide(s));
-//
-//    /// Inserts a character into and returns the new one
-//    wide insert(int index, char ch)
-//        = self.insert(index, wideConvertor.convert(ch));
-//
-//    /// Deletes the substring from the object and returns the new one            
-//    wide delete(int index, int length)
-//        => system'core_routines'__wide;
-//
+
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, wide s, ref int aRetVal)
+        => intern system'core_routines'__wide;
+
+    /// Saves the index of the first occurence of the specified character into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, char ch, ref int retVal)
+        => intern system'core_routines'__wide;
+
+    /// Returns the index of the first occurence of the specified character.
+    ///
+    /// If the substring is not found. returns -1
+    int indexOf(int index, char ch)
+    {
+        int retVal := 0;
+        self.indexOf(index, ch, ref retVal);
+        
+        ^ retVal
+    }
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, wide s)
+    {
+        int retVal := 0;
+        self.indexOf(index, s, ref retVal);
+        
+        ^ retVal
+    }
+
+    /// Inserts the substring into and returns the new one
+    wide insert(int index, wide s)
+        => intern system'core_routines'__wide;
+        
+    /// Inserts the substring into and returns the new one
+    wide insert(int index, string s)
+        = self.insert(index, cast wide(s));
+
+    /// Inserts a character into and returns the new one
+    wide insert(int index, char ch)
+        = self.insert(index, wideConvertor.convert(ch));
+
+    /// Deletes the substring from the object and returns the new one            
+    wide delete(int index, int length)
+        => intern system'core_routines'__wide;
+
     /// Returns the substring
     wide Substring(int index, int length)
     {
@@ -1288,9 +1281,9 @@ public sealed const struct WideString //: BaseValue
 //    
 //    /// Returns the object indexer
 //    Indexer<char> indexer() = new WideStringIndexer(self);
-//    
-//    /// Clones the value
-//    wide clone() = WideString.copy(self);
+    
+    /// Clones the value
+    wide clone() = WideString.copy(self);
 }
 
 // --- emptyWideString ---

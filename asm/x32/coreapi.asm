@@ -915,6 +915,44 @@ lab4_2:
   
 end                                                       
 
+// ; wstrtochar(str,index; ebx = 0 if err ; edx - out)
+procedure coreapi'wstrtochar
+
+  mov  esi, [esp+8]
+  mov  eax, [esp+4]
+  mov  ebx, [esi]
+
+  mov  esi, dword ptr [eax + ebx * 2]
+  and  esi, 0FFFFh
+  cmp  esi, 0D800h
+  jl   short lab1
+  cmp  esi, 0DBFFh
+  jg   short err
+
+  mov  ecx, esi
+  shl  ecx, 10
+  mov  esi, dword ptr [eax + ebx * 2 + 2]
+  and  esi, 0FFFFh
+  cmp  esi, 0DC00h
+  jl   short lab2
+  cmp  esi, 0DFFFh
+  jg   short err
+  
+lab2:
+  add  ecx, ebx
+  sub  ecx, 35FDC00h
+  ret  
+
+lab1:
+  mov   ecx, esi
+  ret
+
+err:
+  xor  eax, eax
+  ret 
+
+end
+
 // ; chartostr (char,target, out edx - length)
 procedure coreapi'chartostr
 
@@ -1659,6 +1697,33 @@ Lab1:
 
 end
 
+procedure coreapi'wequal
+
+  mov  edx, [esp+8]                 // ; s1
+  mov  esi, [esp+4]                 // ; s2
+
+  mov  ecx, [edx-8]          // s1.length
+  mov  ebx, [esi-8]
+  and  ecx, 0FFFFCh 
+  and  ebx, 0FFFFCh 
+  mov  eax, 0
+  cmp  ecx, ebx              // compare with s2.length
+  jnz  short Lab1
+Lab2:
+  mov  ebx, [esi]
+  cmp  ebx,  [edx]
+  jnz  short Lab1
+  lea  esi, [esi+4]
+  lea  edx, [edx+4]
+  sub  ecx, 4
+  jnz  short Lab2
+  mov  eax, 1
+Lab1:
+  mov  edx, eax
+  ret
+
+end
+
 procedure coreapi'sless
 
   mov  edx, [esp+8]                 // ; s1
@@ -1682,6 +1747,38 @@ Lab2:
   nop
   jmp  short LabEnd
 
+Lab1:
+  mov  eax, 1
+
+LabEnd:
+  mov  edx, eax
+  ret
+
+end
+
+procedure coreapi'wless
+
+  mov  edx, [esp+8]                 // ; s1
+  mov  esi, [esp+4]                 // ; s2
+
+  mov  ecx, [edx-8]          // s1 length
+  mov  eax, 0
+  and  ecx, 0FFFFFh
+Lab2:
+  mov  ebx, [edx]              // s1[i] 
+  cmp  bx, word ptr [esi]      // compare s2[i] with 
+  jb   short Lab1
+  nop
+  nop
+  ja   short LabEnd
+  lea  esi, [esi+2]
+  lea  edx, [edx+2]
+  sub  ecx, 2
+  jnz  short Lab2
+  nop
+  nop
+  jmp  short LabEnd
+  
 Lab1:
   mov  eax, 1
 
@@ -1746,6 +1843,42 @@ labNext2:
   
 end
 
+// ; sadd(dest,sour,sindex,dindex)
+procedure coreapi'wadd
+
+  mov  ecx, [esp+12]
+  mov  eax, [esp+8]
+  mov  ecx, [ecx]
+  mov  edx, [esp+16]
+  mov  edi, [esp+4]
+
+  mov  ebx, [edx]       // ; dst index
+  
+  shl  ebx, 1
+  shl  edx, 1
+
+  mov  edx, ebx         // ; dst index
+  mov  esi, ecx         // ; src index
+  
+  mov  ebx, [eax-8]
+  and  ebx, 0FFFFFh
+
+  add  edx, edi
+  sub  ecx, ebx
+  add  esi, eax
+  
+labNext2:
+  mov  ebx, [esi]
+  mov  word ptr [edx], ebx
+  lea  esi, [esi+2]
+  lea  edx, [edx+2]
+  add  ecx, 2
+  jnz  short labNext2
+
+  ret
+  
+end
+
 // sseek(s,subs,index)
 procedure coreapi'sseek
 
@@ -1785,6 +1918,55 @@ labCheck:
   sub  ecx, 1
   jnz  short labCheck
   nop
+  jmp  short labEnd2
+
+labEnd:
+  mov  edx, -1
+labEnd2:
+  ret
+
+end
+
+// wseek(s,subs,index)
+procedure coreapi'wseek
+
+  mov  edi, [esp+4] // s
+  mov  eax, [esp+12]
+  mov  esi, [esp+8] // subs
+  mov  edx, [eax]
+  
+  mov  ebx, [edi-8]   // get total length  
+  and  ebx, 0FFFFFh
+
+  shl  edx, 1
+  sub  ebx, edx
+  jbe  short labEnd
+
+  add  ebx, 2
+  sub  edx, 2
+
+labNext:
+  add  edx, 2
+  mov  esi, [esp+8]
+  mov  ecx, [esi-8]
+  sub  ebx, 2
+  lea  ecx, [ecx-2]
+  jz   short labEnd
+  and  ecx, 0FFFFFh
+  cmp  ebx, ecx
+  jb   short labEnd
+  mov  edi, [esp+4]
+  add  edi, edx
+
+labCheck:
+  mov  eax, [edi]
+  cmp  ax, word ptr [esi]
+  jnz  short labNext
+  lea  edi, [edi+2]
+  lea  esi, [esi+2]
+  sub  ecx, 2
+  jnz  short labCheck
+  shr  edx, 1
   jmp  short labEnd2
 
 labEnd:

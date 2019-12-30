@@ -560,6 +560,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcNShlF:
          case bcNShrF:
          case bcShr:
+         case bcShl:
          case bcDec:
          //case bcDSwapSI:
          //case bcAJumpI:
