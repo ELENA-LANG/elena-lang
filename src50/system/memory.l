@@ -780,21 +780,12 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 //    };
 //}
 //
-//// --- emptyString ---
-//
-///// An empty literal value
-//public const string emptyString = "";
-
 // --- String ---
 
 /// A UTF-8 literal value
-public sealed const struct String //: BaseValue
+public sealed const struct String : BaseValue
 {
     __string byte[] theArray;
-
-//    /// Creates the empty literal
-//    static string Default
-//        = emptyString;
 
     /// Creates the empty literal
     const static string MinValue
@@ -804,21 +795,33 @@ public sealed const struct String //: BaseValue
     constructor allocate(int size)
         = new byte[](size + 1);
 
-//    /// Creates the literal string with specified length and copies the parameter value
-//    constructor copy(int size, string s)
-//        <= allocate(size)
-//    {
-//        intern system'core_routines'__literal.copy(s, self)
-//    }
-//
+    /// Creates the literal string with specified length and copies the parameter value
+    constructor copy(int size, string s)
+        <= allocate(size)
+    {
+        intern system'core_routines'__literal.copy(s, self)
+    }
+
 //    /// Creates the literal string with specified length fills with specified character value        
 //    constructor fill(int size, char ch)
-//        => system'core_routines'__literal;
-//
-//    /// Creates the literal string copy              
-//    constructor copy(string s)
-//        <= copy(s.Length, s);
+//        <= allocate(size * ch.Length)
+//    {
+//        byte buffer[4];
+//        int  length := 0;
+//        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
 //        
+//        int offs := 0;
+//        for (int i := 0, i < size, i := i + 1)
+//        {
+//            theArray[i+offs] := buffer[i];
+//            offs := offs + 1;
+//        }
+//    }
+
+    /// Creates the literal string copy              
+    constructor copy(string s)
+        <= copy(s.Length, s);
+        
 //    /// Creates the copy of a subarray        
 //    constructor new(int index, int length, char[] array)
 //        => system'core_routines'__literal;
@@ -868,66 +871,66 @@ public sealed const struct String //: BaseValue
 
     string toPrintable() = self;
 
-//    bool equal(o)
-//    {
-//        var s := cast string(o) ?? nil;
-//        (nil == s)
-//            ? { ^ false } : { ^ self.equal(s) }
-//    }
-//
-//    bool less(o)
-//        <= less(cast string(o));
-//        
-////    bool equal(BaseVariable v)
-////        <= equal(v value).
-////        
-////    bool less(BaseVariable v)
-////        <= less(v value).
-//        
-//    /// Compares the values
-//    bool equal(string s)
-//        => system'core_routines'__literal;
-//
-//    /// Compares the values
-//    bool less(string s)
-//        => system'core_routines'__literal;
-//
-//    /// Compares the values
-//    bool equal(wide s)
-//        = cast wide(self).equal(s);
-//
-//    /// Compares the values
-//    bool less(wide s)
-//        = cast wide(self).less(s);
-//
-//    /// Compares the values
-//    bool equal(char ch)
-//        <= equal(cast string(ch));
-//
-//    /// Compares the values
-//    bool less(char ch)
-//        <= less(cast string(ch));
-//
-//    /// Returns the character at the specified index
-//    char at(int n)
-//    {
-//        char ch := $0;
-//        self.read(n, ref ch);
-//        
-//        ^ new CharValue(ch)
-//    }
-//
-//    string add(o)
-//        <= add(cast string(o));
-//
-////    /// Concatinates the values
-////    literal add(BaseVariable v)
-////        <= add(v value).
-//        
-//    /// Concatinates the values
-//    string add(string s)
-//        => system'core_routines'__literal;
-//
+    bool equal(o)
+    {
+        var s := cast string(o) ?? nil;
+        (nil == s)
+            ? { ^ false } : { ^ self.equal(s) }
+    }
+
+    bool less(o)
+        <= less(cast string(o));
+        
+    bool equal(BaseVariable v)
+        <= equal(v.Value);
+        
+    bool less(BaseVariable v)
+        <= less(v.Value);
+        
+    /// Compares the values
+    bool equal(string s)
+        => intern system'core_routines'__literal;
+
+    /// Compares the values
+    bool less(string s)
+        => intern system'core_routines'__literal;
+
+    /// Compares the values
+    bool equal(wide s)
+        = cast wide(self).equal(s);
+
+    /// Compares the values
+    bool less(wide s)
+        = cast wide(self).less(s);
+
+    /// Compares the values
+    bool equal(char ch)
+        <= equal(cast string(ch));
+
+    /// Compares the values
+    bool less(char ch)
+        <= less(cast string(ch));
+
+    /// Returns the character at the specified index
+    char at(int n)
+    {
+        char ch := $0;
+        self.read(n, ref ch);        
+        
+        ^ new CharValue(ch)
+    }
+
+    string add(o)
+        <= add(cast string(o));
+
+    /// Concatinates the values
+    string add(BaseVariable v)
+        <= add(v.Value);
+        
+    /// Concatinates the values
+    string add(string s)
+        => intern system'core_routines'__literal;
+
 //    /// Concatinates the values
 //    string add(char ch)
 //    {
@@ -943,49 +946,45 @@ public sealed const struct String //: BaseValue
 //        
 //        ^ retVal
 //    }
-//
-//    // Reads the character at the specified index and saves into an output parameter
-//    read(int index, ref char ch)
-//        => system'core_routines'__literal;
-//
-//    // Reads the byte at the specified index and saves into an output parameter
-//    read(int index, ref byte int)
-//        => system'core_routines'__literal;
-//
-//    /// Saves the index of the first occurence of the specified substring into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int index, string literal, ref int retVal)
-//        => system'core_routines'__literal;
-//
-//    /// Saves the index of the first occurence of the specified symbol into an output parameter.
-//    ///
-//    /// If the substring is not found. returns -1
-//    indexOf(int index, char ch, ref int retVal)
-//        => system'core_routines'__literal;
-//
-//    /// Returns the index of the first occurence of the specified symbol.
-//    /// 
-//    /// If the substring is not found. returns -1
-//    int indexOf(int index, char ch)
-//    {
-//        int retVal := 0;
-//        self.indexOf(index, ch, ref retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    /// Returns the index of the first occurence of the specified substring.
-//    ///
-//    /// If the substring is not found. returns -1
-//    int indexOf(int index, string s)
-//    {
-//        int retVal := 0;
-//        self.indexOf(index, s, ref retVal);
-//        
-//        ^ retVal
-//    }
-//
+
+    // Reads the character at the specified index and saves into an output parameter
+    read(int index, ref char ch)
+        => intern system'core_routines'__literal;
+
+    /// Saves the index of the first occurence of the specified substring into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, string literal, ref int retVal)
+        => intern system'core_routines'__literal;
+
+    /// Saves the index of the first occurence of the specified symbol into an output parameter.
+    ///
+    /// If the substring is not found. returns -1
+    indexOf(int index, char ch, ref int retVal)
+        => intern system'core_routines'__literal;
+
+    /// Returns the index of the first occurence of the specified symbol.
+    /// 
+    /// If the substring is not found. returns -1
+    int indexOf(int index, char ch)
+    {
+        int retVal := 0;
+        self.indexOf(index, ch, ref retVal);
+        
+        ^ retVal
+    }
+
+    /// Returns the index of the first occurence of the specified substring.
+    ///
+    /// If the substring is not found. returns -1
+    int indexOf(int index, string s)
+    {
+        int retVal := 0;
+        self.indexOf(index, s, ref retVal);
+        
+        ^ retVal
+    }
+
 //    /// Inserts the substring into and returns the new one
 //    string insert(int index, string s)
 //        => system'core_routines'__literal;
@@ -1031,10 +1030,15 @@ public sealed const struct String //: BaseValue
 //
 //    /// Returns the string indexer
 //    Indexer<char> indexer() = new StringIndexer(self);
-//    
-//    /// Clones the value
-//    string clone() = String.copy(self);
+    
+    /// Clones the value
+    string clone() = String.copy(self);
 }
+
+// --- emptyString ---
+
+/// An empty literal value
+public const string emptyString = String.MinValue;
 
 // --- WideString ---
 

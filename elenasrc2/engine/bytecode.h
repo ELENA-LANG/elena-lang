@@ -51,7 +51,7 @@ enum ByteCode
 //
 //   bcECopyD          = 0x20,
 //   bcDCopyE          = 0x21,
-//   bcPushD           = 0x22,
+   bcPushD           = 0x22,
 //   bcPopD            = 0x23,
 //   bcXCopy           = 0x24,
    bcInclude         = 0x25,     // should immediately follow exclude (after callextr)
@@ -63,7 +63,7 @@ enum ByteCode
 //   bcSelect          = 0x2B,
 //   bcESwap           = 0x2C,
    bcRead            = 0x2D,
-//   bcCopy            = 0x2E,           
+   bcClone           = 0x2E,           
 //   bcXSet            = 0x2F,
 //
 //   bcXLen            = 0x30,
@@ -100,7 +100,7 @@ enum ByteCode
 //
 
 
-//   bcNCopyB          = 0x50,
+   bcAddF            = 0x50,
 //   bcLCopyB          = 0x51,
    bcNXorF           = 0x52,
    bcNOrF            = 0x53,
@@ -163,7 +163,7 @@ enum ByteCode
    bcCreate          = 0x9A,
    bcFillR           = 0x9B,
    bcMovF            = 0x9C,
-//   bcACopyS          = 0x9D,
+   bcMovS            = 0x9D,
    bcMovR            = 0x9E,
    bcMovM            = 0x9F,
 
@@ -542,7 +542,7 @@ public:
          case bcPushAI:
          case bcPushF:
          //case bcPushE:
-         //case bcPushD:
+         case bcPushD:
             return true;
          default:
             return false;

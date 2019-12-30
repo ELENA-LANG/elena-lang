@@ -800,6 +800,121 @@ procedure coreapi'longtoreal
 
 end
 
+// ; strtochar(str,index; ebx = 0 if err ; edx - out)
+procedure coreapi'strtochar   
+
+  mov  esi, [esp+8]
+  mov  eax, [esp+4]
+  mov  ebx, [esi]
+
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx]
+  cmp  edx, 00000080h
+  jl   short lab1
+  cmp  edx, 000000C0h
+  jl   short err
+  cmp  edx, 000000E0h
+  jl   short lab2
+  cmp  edx, 000000F0h
+  jl   short lab3
+  cmp  edx, 000000F8h
+  jl   lab4
+
+err:
+  xor  ebx, ebx
+  ret 
+
+lab1:
+  mov  ebx, eax
+  ret
+
+lab2:  
+  mov  ecx, edx
+  mov  dl, byte ptr [eax + ebx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  shl  ecx, 6
+  add  edx, ecx
+  sub  edx, 3080h
+  mov  ebx, eax
+  ret
+  
+lab3:
+  mov  ecx, edx
+  mov  dl, byte ptr [eax + ebx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  cmp  ecx, 000000E0h
+  jnz  short lab3_1
+  cmp  ebx, 000000A0h
+  jl   short err
+
+lab3_1:
+  shl  ecx, 12
+  shl  edx, 6
+  add  ecx, edx
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx + 2]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  add  edx, ecx
+  sub  edx, 0E2080h
+  mov  ebx, eax
+  ret
+  
+lab4:
+  mov  ecx, edx
+  mov  dl, byte ptr [eax + ebx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  cmp  ecx, 000000F0h
+  jnz  short lab4_1
+  cmp  edx, 00000090h
+  jl   short err
+
+lab4_1:
+  cmp  ecx, 000000F4h
+  jnz  short lab4_2
+  cmp  edx, 00000090h
+  jae  short err
+
+lab4_2:
+  shl  ecx, 18
+  shl  edx, 12
+  add  ecx, edx
+
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx + 2]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
+  jnz  err
+
+  shl  edx, 6
+  add  ecx, edx
+  
+  xor  edx, edx
+  mov  dl, byte ptr [eax + ebx + 3]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
+  jnz  err
+
+  add  edx, ecx
+  sub  edx, 3C82080h
+  mov  ebx, eax
+  ret
+  
+end                                                       
+
 // ; chartostr (char,target, out edx - length)
 procedure coreapi'chartostr
 
@@ -1514,6 +1629,138 @@ atof200:
 atoflend:
    mov  eax, esi
    ret
+
+end
+
+procedure coreapi'sequal
+
+  mov  edx, [esp+8]                 // ; s1
+  mov  esi, [esp+4]                 // ; s2
+
+  mov  ecx, [edx-8]          // s1.length
+  mov  ebx, [esi-8]
+  and  ecx, 0FFFFFh 
+  and  ebx, 0FFFFFh 
+  mov  eax, 0
+  cmp  ecx, ebx              // compare with s2.length
+  jnz  short Lab1
+Lab2:
+  mov  ebx, [esi]
+  cmp  bl,  byte ptr [edx]
+  jnz  short Lab1
+  lea  esi, [esi+1]
+  lea  edx, [edx+1]
+  sub  ecx, 1
+  jnz  short Lab2
+  mov  eax, 1
+Lab1:
+  mov  edx, eax
+  ret
+
+end
+
+procedure coreapi'sless
+
+  mov  edx, [esp+8]                 // ; s1
+  mov  esi, [esp+4]                 // ; s2
+
+  mov  ecx, [edx-8]          // s1 length
+  mov  eax, 0
+  and  ecx, 0FFFFFh
+Lab2:
+  mov  ebx, [edx]              // s1[i] 
+  cmp  bl, byte ptr [esi]      // compare s2[i] with 
+  jb   short Lab1
+  nop 
+  nop
+  ja   short LabEnd
+  lea  esi, [esi+1]
+  lea  edx, [edx+1]
+  sub  ecx, 1
+  jnz  short Lab2
+  nop
+  nop
+  jmp  short LabEnd
+
+Lab1:
+  mov  eax, 1
+
+LabEnd:
+  mov  edx, eax
+  ret
+
+end
+
+// ; insert(dest,sour,index,size)
+procedure coreapi'insert
+
+  mov  ecx, [esp+16]
+  mov  edi, [esp+4]
+  mov  ecx, [ecx]
+  mov  eax, [esp+12]
+  mov  esi, [esp+8]
+  mov  ebx, [eax]
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, [esi]
+  mov  byte ptr [edi + ebx], dl
+  add  ebx, 1
+  lea  esi, [esi + 1]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+end
+
+// sseek(s,subs,index)
+procedure coreapi'sseek
+
+  mov  edi, [esp+4] // s
+  mov  eax, [esp+12]
+  mov  esi, [esp+8] // subs
+  mov  edx, [eax]
+  
+  mov  ebx, [edi-8]   // get total length  
+  and  ebx, 0FFFFFh
+  
+  sub  ebx, edx
+  jbe  short labEnd
+
+  add  ebx, 1
+  sub  edx, 1
+
+labNext:
+  add  edx, 1
+  mov  esi, [esp+8]
+  mov  ecx, [esi-8]
+  sub  ebx, 1
+  lea  ecx, [ecx-1]
+  jz   short labEnd
+  and  ecx, 0FFFFFh
+  cmp  ebx, ecx
+  jb   short labEnd
+  mov  edi, [esp+4]
+  add  edi, edx
+
+labCheck:
+  mov  eax, [edi]
+  cmp  al, byte ptr [esi]
+  jnz  short labNext
+  lea  edi, [edi+1]
+  lea  esi, [esi+1]
+  sub  ecx, 1
+  jnz  short labCheck
+  nop
+  jmp  short labEnd2
+
+labEnd:
+  mov  edx, -1
+labEnd2:
+  ret
 
 end
 

@@ -44,6 +44,8 @@ ELENA byte codes (or ecodes)
 
  movr r                     - r => acc
            
+ movs i                     - sp+i => acc
+
  not                        - !index => index
 
  or n                       - index && n => index
@@ -95,6 +97,8 @@ ELENA byte codes (or ecodes)
 
  Memory operations:
  -----------------
+ clone i                    - copy [acc] << [esp], acc.Length bytes ; NOTE : should support a reference array as well
+
  clonef i                   - copy [acc] << fp+i, acc.Length bytes ; NOTE : should support a reference array as well
 
  copyf  i, n                - copy [acc] << fp+i, n*4-bytes
@@ -126,6 +130,8 @@ ELENA byte codes (or ecodes)
 
  Arithmeric operations:
  ----------------------
+ addf i                     - index += dword[fp+i]
+
  laddf i                    - qword[fp+i] << qword[fp+i] + qword[acc]
 
  ldivf i                    - qword[fp+i] << qword[fp+i] / qword[acc]
@@ -194,6 +200,8 @@ ELENA byte codes (or ecodes)
 
  pushai i                   - [acc::i] => [sp+1] ; sp++
  
+ pushd                      - index => [sp+1] ; sp++                  
+
  pushf i                    - fp+i => [sp+1] ; sp++
  
  pushfi i                   - [fp+i] => [sp+1] ; sp++

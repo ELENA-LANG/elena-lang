@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/102;
+const int gcCommandNumber = /*160*/104;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -85,7 +85,7 @@ const int gcCommands[gcCommandNumber] =
    bcLOrF, bcLXorF, bcLEqual, bcLLess, bcSaveI,
    bcLoadI, bcRAddF, bcRSubF, bcRMulF, bcRDivF,
    bcREqual, bcRLess, bcRSet, bcRSave, bcRGet,
-   bcRIntF, bcRLoad,
+   bcRIntF, bcRLoad, bcClone, bcAddF,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -141,8 +141,8 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNot, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileQuit,
    &loadOneByteOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
-   &loadOneByteOp, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compilePushD, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
+   &loadOneByteOp, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &compileNop,
 
    &compileNop, &loadOneByteLOp, &loadOneByteOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
@@ -150,7 +150,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
+   &loadFPOp, &compileNop, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &loadNOp, &loadNOpX, &loadNOp, &loadFPOp, &loadFPOp,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -163,7 +163,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &compileNop,
 
    &compileDec, &loadIndexOp, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileNop, &loadIndexOp,
-   &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileNop, &compileSetR, &compileMCopy,
+   &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileHook, &compileNop,
    &compileNop, &compileNop, &compileNotLessE, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1484,11 +1484,11 @@ void _ELENA_:: compilePushF(int, x86JITScope& scope)
 //   scope.code->writeByte(0x51);
 //}
 
-//void _ELENA_::compilePushD(int, x86JITScope& scope)
-//{
-//   // push ebx
-//   scope.code->writeByte(0x53);
-//}
+void _ELENA_::compilePushD(int, x86JITScope& scope)
+{
+   // push edx
+   scope.code->writeByte(0x52);
+}
 
 void _ELENA_::compileCallR(int, x86JITScope& scope)
 {
@@ -1639,12 +1639,12 @@ void _ELENA_::compileInvokeVMT(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
-//void _ELENA_::compileACopyS(int, x86JITScope& scope)
-//{
-//   // lea eax, [esp + index]
-//   x86Helper::leaRM32disp(
-//      scope.code, x86Helper::otEAX, x86Helper::otESP, scope.argument << 2);
-//}
+void _ELENA_::compileACopyS(int, x86JITScope& scope)
+{
+   // lea ebx, [esp + index]
+   x86Helper::leaRM32disp(
+      scope.code, x86Helper::otEBX, x86Helper::otESP, scope.argument << 2);
+}
 
 void _ELENA_::compileIfR(int, x86JITScope& scope)
 {

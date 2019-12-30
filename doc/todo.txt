@@ -2,6 +2,9 @@
 In development:
 ------         
               dev
+                * string - add
+                * migrate string, widestring, stringconvertor, wideconvertor
+                * array, variadicarray
                 * migrate basic classes
                 * char - default constructor
                 * calling internal constructor (String and WideString)
@@ -14,6 +17,7 @@ In development:
                 * realsum
                 * int to real conversion
                 * literal convertor (UIntNumber)
+                * String, WideString- fill, new
                 * migrate basic classes : enumerators, indexers
 
                 * constructor default class resend?
@@ -250,6 +254,7 @@ In development:
                 * uncomment cleanUp code
                 * property - append, ...
                 * boxArgument - fieldexpr should be better mapped
+                * String / WideString - add<'Char>
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)

@@ -1013,6 +1013,18 @@ inline % 2Dh
 
 end
 
+// ; clone
+inline % 02Eh
+
+  mov  ecx, [ebx - elSizeOffset]
+  and  ecx, struct_mask_inv
+  mov  esi, [esp]
+  shr  ecx, 2
+  mov  edi, ebx
+  rep  movsd
+
+end
+
 // ; len
 inline % 31h
 
@@ -1232,6 +1244,14 @@ inline % 45Ch
   mov  eax, [ecx]
   mov  dword ptr [edi], eax
   mov  dword ptr [edi+4], esi
+
+end
+
+// ; addf
+inline % 050h
+
+  lea  esi, [ebp+__arg1]
+  add  [esi], edx
 
 end
 

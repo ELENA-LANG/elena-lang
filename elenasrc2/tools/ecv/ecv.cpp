@@ -549,7 +549,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCloneF:
 //      case bcSCopyF:
 //      case bcBCopyF:
-//      case bcACopyS:
+      case bcMovS:
       case bcPushF:
       case bcLAddF:
       case bcLSubF:
@@ -565,6 +565,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcRMulF:
       case bcRDivF:
       case bcRIntF:
+      case bcAddF:
          printCommand(command, opcode);
          command.appendInt(argument);
          break;

@@ -74,6 +74,148 @@ procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$system
 
 end
 
+procedure __literal."copy$system@String$system@String[2]"
+
+  pushsi 2
+  peeksi 2
+  clone
+  freei 1
+  quitn 2
+
+end
+
+procedure __literal."equal$system@String[2]"
+
+  pushsi 2
+  pushsi 2
+  callextr api : sequal
+  freei 2
+  select const : false const : true
+  quitn 2
+  
+end
+
+procedure __literal."less$system@String[2]"
+
+  pushsi 2
+  pushsi 2
+  callextr api : sless
+  freei 2
+  select const : false const : true
+  quitn 2
+  
+end
+
+procedure __literal."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
+
+  pusha
+  len
+  pushd
+  peeksi 4
+  load
+  movs 0
+  notless labErr
+  lessn   labErr 0
+
+  pushsi 4
+  pushsi 2
+  callextr api : strtochar
+  ifr labErr 0
+  freei 4
+  peeksi 3
+  save
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __literal."add$system@String[2]"
+
+  open     5
+  reserve  3
+
+  len
+  movf    -2
+  dec      1
+  save
+  movf    -3
+  save
+  peekfi  -8
+  len
+  movf    -4
+  save
+  dec      1
+  addf    -2
+
+  pushf    -2
+  createn  class : system'String 1
+  pusha
+
+  pushn    0
+  pushf   -3
+  pushs   -1
+  pushfi  -7
+  pushsi   4
+  callextr api : insert
+  freei    5
+
+  pushf    -4
+  pushf    -3
+  pushfi   -8
+  pushsi   3
+  callextr api : insert
+  freei    4
+  popa
+
+  restore  5
+  close
+
+  quitn 2
+
+end                                                
+
+procedure __literal."indexOf$system@IntNumber$system@String$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 2
+  pushsi 4
+  pushsi 3
+  callextr api : sseek
+  freei  3
+  peeksi 4
+  save
+  quitn 4
+
+end
+
+procedure __literal."indexOf$system@IntNumber$system@CharValue$@system@ref#1&system@IntNumber[4]"
+
+  pushn  0
+  pushn  0
+  movs   0
+  pusha
+  pushsi 6
+  callextr api : chartostr
+  freei  2 
+  inc    1
+  pushn  0
+  pushd
+
+  pushsi 6
+  pushs -3
+  pushsi 7
+  callextr api : sseek
+  freei  7
+
+  peeksi 4                 // ; load target
+  save                     // ; save index
+  quitn 4
+
+end
 
 procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$system@WideString[4]"
 
@@ -613,7 +755,7 @@ procedure __shortconvertor."convert$system@RealNumber$@system@ref#1&system@Short
   rload
   rget
 
-  restore 2
+  restore 4
   close
   
   lessn labErr 0FFFF8000h
@@ -847,7 +989,7 @@ procedure __byteconvertor."convert$system@RealNumber$@system@ref#1&system@ByteNu
   rload
   rget
 
-  restore 2
+  restore 4
   close
 
   lessn labErr 0  

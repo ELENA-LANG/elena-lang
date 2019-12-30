@@ -7313,20 +7313,22 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
 
 void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& scope)
 {
-////   if (isImportRedirect(node)) {
-////      importCode(writer, node, scope, node.findChild(lxReference).identifier(), scope.getMessageID());
-////   }
-////   else {
+   SNode redirect = node.findChild(lxRedirect);
+   if (redirect != lxNone) {
       SNode callNode = node.prependSibling(lxCalling_1, scope.moduleScope->constructor_message);
       callNode.appendNode(lxResult);
 
-      SNode redirect = node.findChild(lxRedirect);
-      if (redirect != lxNone) {
-         node.set(lxImplicitJump, redirect.argument);
-         node.appendNode(lxCallTarget, scope.getClassRefId());
+      node.set(lxImplicitJump, redirect.argument);
+      node.appendNode(lxCallTarget, scope.getClassRefId());
+   }
+   else {
+      ExprScope exprScope(&scope);
+      ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
+      if (target.kind == okInternal) {
+         importCode(node, exprScope, target.param, exprScope.getMessageID());
       }
       else scope.raiseError(errInvalidOperation, node);
-////   }
+   }
 }
 
 void Compiler :: compileMultidispatch(SNode node, CodeScope& scope, ClassScope& classScope)

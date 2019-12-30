@@ -333,10 +333,9 @@ void ECodesAssembler::compileRNCommand(ByteCode code, TokenInfo& token, MemoryWr
 {
    size_t reference1 = compileRArg(token, binary);
 
-   token.read();
    int n = token.readInteger(constants);
 
-   writeCommand(ByteCommand(code, reference1 & ~mskAnyRef, n), writer);
+   writeCommand(ByteCommand(code, reference1, n), writer);
 }
 
 void ECodesAssembler :: compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
@@ -523,7 +522,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcPeekSI:
          //case bcBLoadSI:
          //case bcBLoadFI:
-         //case bcACopyS:
+         case bcMovS:
          case bcMovF:
          case bcNAddF:
          case bcNSubF:
@@ -556,7 +555,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          //case bcELoadSI:
          case bcPushS:
          case bcPushSI:
-         //case bcESaveFI:
+         case bcPushFI:
+            //case bcESaveFI:
          case bcNShlF:
          case bcNShrF:
          case bcShr:
@@ -583,6 +583,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcRMulF:
          case bcRDivF:
          case bcRIntF:
+         case bcAddF:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:
