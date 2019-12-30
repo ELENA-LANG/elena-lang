@@ -448,7 +448,7 @@ procedure __wide."add$system@WideString[2]"
   reserve  3
 
   len
-  shl      1
+  shr      1
   movf    -2
   dec      1
   save
@@ -456,7 +456,7 @@ procedure __wide."add$system@WideString[2]"
   save
   peekfi  -8
   len
-  shl      1
+  shr      1
   movf    -4
   save
   addf    -2

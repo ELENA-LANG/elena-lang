@@ -344,6 +344,7 @@ lab11:
   neg  eax
 Lab5:
   mov  edx, eax
+  mov  ebx, [esp+4]
   jmp  short Lab3
 Lab2:
   add  esp, 4
@@ -423,6 +424,7 @@ labSave:
   mov  eax, [esp+12]
   mov  [eax], ebx
   mov  [eax+4], edx
+  mov  ebx, [esp+4]
 
   jmp  short labEnd
 
@@ -501,6 +503,7 @@ labSave:
   mov  eax, [esp+12]
   mov  [eax], ebx
   mov  [eax+4], edx
+  mov  ebx, [esp+4]
 
   jmp  short labEnd
 
@@ -541,6 +544,7 @@ lab11:
   sub  ecx, 1
   jnz  short Lab1
   mov  edx, eax
+  mov  ebx, [esp+4]
   jmp  short Lab3
 Lab2:
   add  esp, 4
@@ -593,6 +597,7 @@ lab11:
   neg  eax
 Lab5:
   mov  edx, eax
+  mov  ebx, [esp+4]
   jmp  short Lab3
 Lab2:
   xor  ebx, ebx

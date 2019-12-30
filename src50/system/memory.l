@@ -1043,7 +1043,7 @@ public const string emptyString = String.MinValue;
 // --- WideString ---
 
 /// A UTF-18 literal value
-public sealed const struct WideString //: BaseValue
+public sealed const struct WideString : BaseValue
 {
     __string short[] theArray;
 
@@ -1157,7 +1157,7 @@ public sealed const struct WideString //: BaseValue
     }
 
     wide add(o)
-        <= add(cast string(o));
+        <= add(cast wide(o));
 
     /// Concatinates the values
     wide add(BaseVariable v)

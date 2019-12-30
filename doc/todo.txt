@@ -2,15 +2,13 @@
 In development:
 ------         
               dev
-                * fix intsum sample
-
-                * array, variadicarray
-                * migrate basic classes
-                * char - default constructor
-                * calling internal constructor (String and WideString)
+                * exception handling
                 * call stack
                 * method not found - test
                 * int sum : test exception handling
+
+                * char - default constructor
+                * calling internal constructor (String and WideString)
 
                 * support vm client
                 * vm hello world sample
@@ -18,6 +16,7 @@ In development:
                 * int to real conversion
                 * literal convertor (UIntNumber)
                 * String, WideString- fill, new
+                * array, variadicarray
                 * migrate basic classes : enumerators, indexers
 
                 * constructor default class resend?
