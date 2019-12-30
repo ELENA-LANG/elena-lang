@@ -985,10 +985,10 @@ public sealed const struct String : BaseValue
         ^ retVal
     }
 
-//    /// Inserts the substring into and returns the new one
-//    string insert(int index, string s)
-//        => system'core_routines'__literal;
-//
+    /// Inserts the substring into and returns the new one
+    string insert(int index, string s)
+        => intern system'core_routines'__literal;
+
 //    /// Inserts a character into and returns the new one
 //    string insert(int index, char ch)
 //        = self.insert(index, cast string(ch));

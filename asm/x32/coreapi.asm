@@ -1716,6 +1716,36 @@ labEnd:
 
 end
 
+// ; sadd(dest,sour,sindex,dindex)
+procedure coreapi'sadd
+
+  mov  ecx, [esp+12]
+  mov  eax, [esp+8]
+  mov  ecx, [ecx]
+  mov  edx, [esp+16]
+  mov  edi, [esp+4]
+
+  mov  edx, [edx]       // ; dst index
+  mov  esi, ecx         // ; src index
+  
+  mov  ebx, [eax-8]
+  and  ebx, 0FFFFFh
+  add  edx, edi
+  sub  ecx, ebx
+  add  esi, eax
+  
+labNext2:
+  mov  ebx, [esi]
+  mov  byte ptr [edx], bl
+  lea  esi, [esi+1]
+  lea  edx, [edx+1]
+  add  ecx, 1
+  jnz  short labNext2
+
+  ret
+  
+end
+
 // sseek(s,subs,index)
 procedure coreapi'sseek
 

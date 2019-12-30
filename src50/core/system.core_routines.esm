@@ -149,7 +149,6 @@ procedure __literal."add$system@String[2]"
   len
   movf    -4
   save
-  dec      1
   addf    -2
 
   pushf    -2
@@ -215,6 +214,66 @@ procedure __literal."indexOf$system@IntNumber$system@CharValue$@system@ref#1&sys
   save                     // ; save index
   quitn 4
 
+end
+
+procedure __literal."insert$system@IntNumber$system@String[3]"
+
+  open     5
+  reserve  3
+
+  len
+  movf    -2
+  dec      1
+  save
+  peekfi  -9
+  len
+  movf    -4
+  save
+  addf    -2
+  dec      1
+  movf    -3
+  save
+
+  pushf    -2
+  createn  class : system'String 1
+  pusha
+
+  // ; copy left side               
+  pushn    0
+  pushfi  -8
+  pushs   -1
+  pushfi  -7
+  pushsi   4
+  callextr api : insert
+  freei    5
+
+  // ; insert
+  pushf    -4
+  pushfi   -8
+  pushfi   -9
+  pushsi   3
+  callextr api : insert
+  freei    4
+
+  // ; copy right side    
+  peekfi  -8
+  load
+  addf    -3
+           
+  pushf   -3
+  pushfi  -8
+  pushfi  -7
+  pushsi   3
+  callextr api : sadd
+  freei    4
+
+  popa
+
+  restore  5
+  close
+
+  quitn 3
+  
 end
 
 procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$system@WideString[4]"
