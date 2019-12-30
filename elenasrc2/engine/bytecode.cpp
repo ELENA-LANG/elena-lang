@@ -29,7 +29,7 @@ const char* _fnOpcodes[256] =
    "nequal", "nless", OPCODE_UNKNOWN, "lequal", "lless", "rset", "rsave", "save",
    "load", "rget", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "addf", OPCODE_UNKNOWN, "nxorf", "norf", "nandf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "addf", "subf", "nxorf", "norf", "nandf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "div", "write", "copyto", "nshlf", "nshrf",
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,

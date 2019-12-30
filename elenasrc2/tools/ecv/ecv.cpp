@@ -566,6 +566,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcRDivF:
       case bcRIntF:
       case bcAddF:
+      case bcSubF:
          printCommand(command, opcode);
          command.appendInt(argument);
          break;

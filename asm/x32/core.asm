@@ -1255,6 +1255,14 @@ inline % 050h
 
 end
 
+// ; subf
+inline % 051h
+
+  lea  esi, [ebp+__arg1]
+  sub  [esi], edx
+
+end
+
 // ; copyto
 inline % 5Dh
 

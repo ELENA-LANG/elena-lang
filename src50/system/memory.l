@@ -989,13 +989,13 @@ public sealed const struct String : BaseValue
     string insert(int index, string s)
         => intern system'core_routines'__literal;
 
-//    /// Inserts a character into and returns the new one
-//    string insert(int index, char ch)
-//        = self.insert(index, cast string(ch));
-//
-//    /// Deletes the substring from the object and returns the new one
-//    string delete(int index, int length)
-//        => system'core_routines'__literal;
+    /// Inserts a character into and returns the new one
+    string insert(int index, char ch)
+        = self.insert(index, cast string(ch));
+
+    /// Deletes the substring from the object and returns the new one
+    string delete(int index, int length)
+        => intern system'core_routines'__literal;
 
     /// Returns the substring
     string Substring(int index, int length)

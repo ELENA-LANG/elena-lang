@@ -101,7 +101,7 @@ enum ByteCode
 
 
    bcAddF            = 0x50,
-//   bcLCopyB          = 0x51,
+   bcSubF            = 0x51,
    bcNXorF           = 0x52,
    bcNOrF            = 0x53,
    bcNAndF           = 0x54,
