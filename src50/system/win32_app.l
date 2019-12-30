@@ -32,23 +32,27 @@ entry()
 {
 //    intern system'core_routines'__exception.register();
     
-//    try
-//    {
+    try
+    {
         forward program()
-//    }
+    }
 //    finally
 //    {
 //       startUpEvents.stopping()
 //    }
-//    catch:(AbortException e)
-//    {
-//    }   
-//    catch:(Exception e)
-//    {
-//        console.writeLine(e.toPrintable());
-//        
-//        extern elenart.Exit(-1);
-//    }
+    catch::
+    {
+        function(AbortException e)
+        {
+        }
+        
+        function(Exception e)
+        {
+            console.writeLine(e.toPrintable());
+            
+            extern elenart.Exit(-1);
+        }
+    }
 }
 
 public symbol startUp

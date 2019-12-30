@@ -2,12 +2,11 @@
 In development:
 ------         
               dev
-                * on handler - handle, not handle, error in handle
+                * call stack
 
                 * try / catch,try / catch / catch  - see system'entry
                 * try / finally / catch - see system'entry
                 * exception handling
-                * call stack
                 * method not found - test
                 * int sum : test exception handling
 
