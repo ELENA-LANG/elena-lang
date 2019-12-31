@@ -748,10 +748,10 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    addVerb(operators, AND_OPERATOR, AND_OPERATOR_ID);
    addVerb(operators, OR_OPERATOR, OR_OPERATOR_ID);
    addVerb(operators, XOR_OPERATOR, XOR_OPERATOR_ID);
-//   addVerb(operators, APPEND_OPERATOR, APPEND_OPERATOR_ID);
-//   addVerb(operators, REDUCE_OPERATOR, REDUCE_OPERATOR_ID);
-//   addVerb(operators, INCREASE_OPERATOR, INCREASE_OPERATOR_ID);
-//   addVerb(operators, SEPARATE_OPERATOR, SEPARATE_OPERATOR_ID);
+   addVerb(operators, APPEND_OPERATOR, APPEND_OPERATOR_ID);
+   addVerb(operators, REDUCE_OPERATOR, REDUCE_OPERATOR_ID);
+   addVerb(operators, INCREASE_OPERATOR, INCREASE_OPERATOR_ID);
+   addVerb(operators, SEPARATE_OPERATOR, SEPARATE_OPERATOR_ID);
    addVerb(operators, SHIFTR_OPERATOR, SHIFTR_OPERATOR_ID);
    addVerb(operators, SHIFTL_OPERATOR, SHIFTL_OPERATOR_ID);
    addVerb(operators, LEN_OPERATOR, LEN_OPERATOR_ID);

@@ -53,13 +53,13 @@ namespace _ELENA_
    constexpr auto MUL_OPERATOR_ID         = 0x0014;
    constexpr auto DIV_OPERATOR_ID         = 0x0015;
    constexpr auto REFER_OPERATOR_ID       = 0x0016;
-//   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
-//   constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
+   constexpr auto APPEND_OPERATOR_ID      = 0x0017;
+   constexpr auto REDUCE_OPERATOR_ID      = 0x0018;
    constexpr auto SET_REFER_OPERATOR_ID   = 0x0019;
    constexpr auto SHIFTR_OPERATOR_ID      = 0x001A;
    constexpr auto SHIFTL_OPERATOR_ID      = 0x001B;
-//   constexpr auto INCREASE_OPERATOR_ID    = 0x001C;
-//   constexpr auto SEPARATE_OPERATOR_ID    = 0x001D;
+   constexpr auto INCREASE_OPERATOR_ID    = 0x001C;
+   constexpr auto SEPARATE_OPERATOR_ID    = 0x001D;
 //   constexpr auto FINALLY_OPERATOR_ID     = 0x001E;
 
    constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
@@ -417,16 +417,16 @@ namespace _ELENA_
    constexpr auto SUB_OPERATOR            = "-";
    constexpr auto MUL_OPERATOR            = "*";
    constexpr auto DIV_OPERATOR            = "/";
-//   constexpr auto APPEND_OPERATOR      = "+=";
-//   constexpr auto REDUCE_OPERATOR      = "-=";
-//   constexpr auto INCREASE_OPERATOR    = "*=";
-//   constexpr auto SEPARATE_OPERATOR    = "/=";
-   constexpr auto SHIFTL_OPERATOR      = "$shl"; 
-   constexpr auto SHIFTR_OPERATOR      = "$shr";
-   constexpr auto LEN_OPERATOR         = "$sizeof";
-   constexpr auto ISNIL_OPERATOR       = "??";
-   constexpr auto CATCH_OPERATOR       = "|";
-   constexpr auto ALT_OPERATOR         = "\\";
+   constexpr auto APPEND_OPERATOR         = "+=";
+   constexpr auto REDUCE_OPERATOR         = "-=";
+   constexpr auto INCREASE_OPERATOR       = "*=";
+   constexpr auto SEPARATE_OPERATOR       = "/=";
+   constexpr auto SHIFTL_OPERATOR         = "$shl"; 
+   constexpr auto SHIFTR_OPERATOR         = "$shr";
+   constexpr auto LEN_OPERATOR            = "$sizeof";
+   constexpr auto ISNIL_OPERATOR          = "??";
+   constexpr auto CATCH_OPERATOR          = "|";
+   constexpr auto ALT_OPERATOR            = "\\";
 //   constexpr auto FINALLY_OPERATOR     = "$fnl";
 //
 //  // operator templates

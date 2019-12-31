@@ -3613,18 +3613,18 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
          return compileAltOperator(roperand, scope, target/*, mode, operator_id*/);
       case ISNIL_OPERATOR_ID:
          return compileIsNilOperator(roperand, scope, target);
-//      case APPEND_OPERATOR_ID:
-//         node.setArgument(ADD_OPERATOR_ID);
-//         return compileAssigning(writer, node, scope, target, false);
-//      case REDUCE_OPERATOR_ID:
-//         node.setArgument(SUB_OPERATOR_ID);
-//         return compileAssigning(writer, node, scope, target, false);
-//      case INCREASE_OPERATOR_ID:
-//         node.setArgument(MUL_OPERATOR_ID);
-//         return compileAssigning(writer, node, scope, target, false);
-//      case SEPARATE_OPERATOR_ID:
-//         node.setArgument(DIV_OPERATOR_ID);
-//         return compileAssigning(writer, node, scope, target, false);
+      case APPEND_OPERATOR_ID:
+         node.setArgument(ADD_OPERATOR_ID);
+         return compileAssigning(node, scope, target, false);
+      case REDUCE_OPERATOR_ID:
+         node.setArgument(SUB_OPERATOR_ID);
+         return compileAssigning(node, scope, target, false);
+      case INCREASE_OPERATOR_ID:
+         node.setArgument(MUL_OPERATOR_ID);
+         return compileAssigning(node, scope, target, false);
+      case SEPARATE_OPERATOR_ID:
+         node.setArgument(DIV_OPERATOR_ID);
+         return compileAssigning(node, scope, target, false);
       default:
          return compileOperator(roperand, scope, target, mode, operator_id);
    }
@@ -4390,14 +4390,16 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //   if (isPrimitiveArrRef(targetRef))
 //      targetRef = resolvePrimitiveReference(scope, targetRef, target.element, false);
 //
-//   if (node == lxOperator) {
-//      // COMPILER MAGIC : implementing assignment operators
-//      writer.newBookmark();
-//      writeTerminal(writer, node.prevNode(), scope, target, assignMode);
-//      compileOperator(writer, node, scope, target, assignMode);
-//      writer.removeBookmark();
-//   }
-   /*else */if (targetRef == V_AUTO) {
+   if (current == lxOperator) {
+      // COMPILER MAGIC : implementing assignment operators
+      sourceNode.injectAndReplaceNode(lxExpression);
+      SNode roperand = sourceNode.firstChild(lxObjectMask);
+      SNode loperand = sourceNode.insertNode(lxVirtualReference);
+      recognizeTerminal(loperand, target, scope, EAttr::eaNoDebugInfo);
+
+      compileOperator(roperand, scope, target, assignMode, current.argument);
+   }
+   else if (targetRef == V_AUTO) {
       // support auto attribute
       exprVal = compileExpression(sourceNode, scope, 0, assignMode);
 

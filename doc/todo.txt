@@ -2,6 +2,7 @@
 In development:
 ------         
               dev
+                * assignment operators
                 * call stack
 
                 * try / catch,try / catch / catch  - see system'entry
@@ -311,6 +312,7 @@ In development:
                 * test negative long to int conversion
                 * test int/byte/short/long to real conversion
                 * test real to byte/short/int/uint/long conversion
+                * test expression with several boxed fields 
 
               dev1
                 * move all description to meta info using descr inline template

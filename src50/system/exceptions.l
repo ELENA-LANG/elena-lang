@@ -9,17 +9,17 @@
 //    throw()
 //        => system'core_routines'__object;
 //}
-//
-//// --- CallStack ---
-//
-///// A call stack
-//public sealed class CallStack
-//{
-//    int[] theStack;
-//    
-//    /// Creates a current call stack
-//    constructor()
-//    {
+
+// --- CallStack ---
+
+/// A call stack
+public sealed class CallStack
+{
+    int[] theStack;
+    
+    /// Creates a current call stack
+    constructor()
+    {
 //        int stack[64];
 //        int length := 0;
 //        
@@ -32,8 +32,8 @@
 //        {
 //            theStack[i] := stack[i]
 //        }
-//    }
-//    
+    }
+    
 //    /// Generates the call stack literal representation
 //    get string Printable()
 //    {
@@ -56,7 +56,7 @@
 //        
 //        ^ callStackText
 //    }
-//}
+}
 
 // --- Exception ---
 
