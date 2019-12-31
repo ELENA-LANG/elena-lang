@@ -5,18 +5,18 @@ public sealed Array<T> //: Indexable<T>
 {
     embeddable __string T[] theArray;
 
-//    constructor allocate(int length)
-//        = new T[](length);
-//        
-//    constructor(T[] array, int index, int length)
-//        <= allocate(length)
-//    {
-//        for(int i := 0 , i < length, i += 1)
-//        {
-//            theArray[i] := array[i + index]
-//        }
-//    }
-//
+    constructor allocate(int length)
+        = new T[](length);
+        
+    constructor(T[] array, int index, int length)
+        <= allocate(length)
+    {
+        for(int i := 0 , i < length, i += 1)
+        {
+            theArray[i] := array[i + index]
+        }
+    }
+
 //    Enumerator<T> enumerator() = new BaseEnumerator<T>::
 //    {
 //        this theIndex := -1;
@@ -53,86 +53,86 @@ public sealed Array<T> //: Indexable<T>
 //            self.setAt(theIndex, o)
 //        }
 //    };
-//
-//    Length
-//    {
-//        int get()
-//        {
-//            int len := 0;
-//            theArray $shr len;
-//            
-//            ^ len
-//        }
-//    }
-//
-//    T at(int n)
-//    {
-//        if (n < 0)
-//            { system'InvalidArgumentException.raise() };
-//        
-//        int len := 0;
-//        theArray $shr len;
-//
-//        if (n < len)
-//        { 
-//            ^ theArray[n] 
-//        }
-//        else
-//        {
-//            system'InvalidArgumentException.raise()
-//        }
-//    }
-//
-//    setAt(int n, T item)
-//    {
-//        if (n < 0)
-//            { system'InvalidArgumentException.raise() };
-//        
-//        int len := 0;
-//        theArray $shr len;
-//
-//        if (n < len)
-//        {
-//            theArray[n] := item
-//        }
-//        else
-//        {
-//            system'InvalidArgumentException.raise()
-//        }
-//    }
-//
-//    setAt(index, item)
-//        <= setAt(cast int(index), cast T(item));
-//
-//    /// Concatinates the arrays    
-//    T[] add(T[] a)
-//        <= add(a, a.Length);
-//                              
-//    T[] add(T[] a, int length)
-//    {
-//        int length1 := self.Length;
-//        int length2 := length;
-//        
-//        auto retVal := new T[](length1 + length2);
-//
-//        for (int i:=0, i < length1, i += 1) {
-//            retVal[i] := theArray[i]
-//        };
-//
-//        for (int i:=0, i < length2, i += 1) {
-//            retVal[length1 + i] := a[i]
-//        };
-//            
-//        ^ retVal
-//    }
-//                              
-////    setAt(object n, object object)
-////        <= setAt(T<int>(n), T<template_subj>(object)).
-////                  
-////    /// Returns the item at the specified index
-////    template_subj getAt : aParam
-////        <= getAt(T<int>(aParam)).
-//
+
+    int Length
+    {
+        get()
+        {
+            int len := 0;
+            len $sizeof theArray;
+            
+            ^ len
+        }
+    }
+
+    T at(int n)
+    {
+        if (n < 0)
+            { system'InvalidArgumentException.raise() };
+        
+        int len := 0;
+        len $sizeof theArray;
+
+        if (n < len)
+        { 
+            ^ theArray[n] 
+        }
+        else
+        {
+            system'InvalidArgumentException.raise()
+        }
+    }
+
+    setAt(int n, T item)
+    {
+        if (n < 0)
+            { system'InvalidArgumentException.raise() };
+        
+        int len := 0;
+        len $sizeof theArray;
+
+        if (n < len)
+        {
+            theArray[n] := item
+        }
+        else
+        {
+            system'InvalidArgumentException.raise()
+        }
+    }
+
+    setAt(index, item)
+        <= setAt(cast int(index), cast T(item));
+
+    /// Concatinates the arrays    
+    T[] add(T[] a)
+        <= add(a, a.Length);
+                              
+    T[] add(T[] a, int length)
+    {
+        int length1 := self.Length;
+        int length2 := length;
+        
+        auto retVal := new T[](length1 + length2);
+
+        for (int i:=0, i < length1, i += 1) {
+            retVal[i] := theArray[i]
+        };
+
+        for (int i:=0, i < length2, i += 1) {
+            retVal[length1 + i] := a[i]
+        };
+            
+        ^ retVal
+    }
+                              
+//    setAt(object n, object object)
+//        <= setAt(T<int>(n), T<template_subj>(object)).
+//                  
+//    /// Returns the item at the specified index
+//    template_subj getAt : aParam
+//        <= getAt(T<int>(aParam)).
+
 //    T[] clone()
 //    {
 //        int len := self.Length;

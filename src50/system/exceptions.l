@@ -20,18 +20,16 @@ public sealed class CallStack
     /// Creates a current call stack
     constructor()
     {
-//        int stack[64];
-//        int length := 0;
-//        
-//        length := extern elenart.core_callstack_load(stack, 64);
-//          
-//        //theStack := new Array<int>(stack, length);        
-//        theStack := new int[](length);
-//        //for(int i := 0, i < length, i += 1)
-//        for(IntNumber i := 0, i < length, i += 1)
-//        {
-//            theStack[i] := stack[i]
-//        }
+        int stack[64];
+        int length := 0;
+        
+        length := extern elenart.core_callstack_load(stack, 64);
+          
+        theStack := new int[](length);
+        for(int i := 0, i < length, i += 1)
+        {
+            theStack[i] := stack[i]
+        }
     }
     
 //    /// Generates the call stack literal representation
@@ -63,7 +61,7 @@ public sealed class CallStack
 /// A basic exception
 public class Exception
 {
-//    string    theMessage;
+    string    theMessage;
 //    CallStack theCallstack;
 //
 //    /// Returns the message and the call stack
@@ -87,14 +85,14 @@ public class Exception
 //    {
 //        self.throw()
 //    }
-//    
-//    /// Creates the exception with the provided message and error type
-//    constructor new(string message)
-//    {
-//        theMessage := message;
+    
+    /// Creates the exception with the provided message and error type
+    constructor new(string message)
+    {
+        theMessage := message;
 //        theCallstack := new CallStack()
-//    }    
-//    
+    }    
+    
 //    constructor new()
 //        <= new(self.__getClassName());
 //
@@ -138,18 +136,18 @@ public class OutOfRangeException : Exception
 
 public class InvalidArgumentException : Exception
 {
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Invalid argument");
-//        
-//    /// Creates the exception
-//    constructor new(string message)
-//        <= new(message);
-//
-//    static raise()
-//    {
-//        InvalidArgumentException.new().raise()
-//    }
+    /// Creates the exception
+    constructor new()
+        <= new("Invalid argument");
+        
+    /// Creates the exception
+    constructor new(string message)
+        <= new(message);
+
+    static raise()
+    {
+        InvalidArgumentException.new().raise()
+    }
 }
 
 //// --- InvalidOperationException ---

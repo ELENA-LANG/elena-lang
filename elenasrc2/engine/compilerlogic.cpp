@@ -1547,9 +1547,9 @@ int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
    if (isEmbeddable(info)) {
       return info.size;
    }
-   /*else if (isEmbeddableArray(info)) {
+   else if (isEmbeddableArray(info)) {
       return info.size;
-   }*/
+   }
 
    return 0;
 }

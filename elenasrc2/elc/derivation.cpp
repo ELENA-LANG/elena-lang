@@ -1772,7 +1772,13 @@ void DerivationWriter :: generateStatementTemplateTree(SyntaxWriter& writer, SNo
 void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
    ref_t& previousCategory, int dimensionCounter, bool templateArgMode/*, bool onlyAttributes*/)
 {
-   bool allowType = /*!onlyAttributes && (*/templateArgMode || current.nextNode().nextNode() != lxToken/*)*/;
+   SNode assignNode = current.nextNode().nextNode();
+   // HOTFIX : skip the dimension token
+   for (int i = 0; i < dimensionCounter; i++) {
+      assignNode = assignNode.nextNode();
+   }
+
+   bool allowType = /*!onlyAttributes && (*/templateArgMode || assignNode != lxToken/*)*/;
 //   bool allowProperty = false;
    
 //   if (dimensionCounter && !allowType)

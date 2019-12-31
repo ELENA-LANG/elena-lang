@@ -2,7 +2,7 @@
 In development:
 ------         
               dev
-                * assignment operators
+                * array
                 * call stack
 
                 * try / catch,try / catch / catch  - see system'entry
@@ -20,9 +20,10 @@ In development:
                 * int to real conversion
                 * literal convertor (UIntNumber)
                 * String, WideString- fill, new
+                * Array<T>.clone
 
                 * stringConvertor, wideConvertor, charConvertor
-                * array, variadicarray
+                * variadicarray
                 * migrate basic classes : enumerators, indexers
 
                 * constructor default class resend?
@@ -42,8 +43,6 @@ In development:
 
                 * extension to read the class name, package info
 
-                * declare array, use array
-                * creating dynamic array / buffers
                 * test creating an array : non-empty, empty
 
                 * template of templates

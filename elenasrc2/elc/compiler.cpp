@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -5227,10 +5227,10 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
       ref_t roperand = 0;
       scope.module->resolveSignature(implicitSignatureRef, &roperand);
 
-      int operationType = _logic->resolveNewOperationType(*scope.moduleScope, target.reference, roperand);
+      int operationType = _logic->resolveNewOperationType(*scope.moduleScope, targetRef, roperand);
       if (operationType != 0) {
          // if it is a primitive operation
-         _logic->injectNewOperation(exprNode, *scope.moduleScope, operationType, target.reference, target.element);
+         _logic->injectNewOperation(exprNode, *scope.moduleScope, operationType, targetRef, target.element);
 
          // HOTFIX : remove class symbol - the array will be created directly
          SNode classNode = exprNode.firstChild(lxObjectMask);
@@ -6024,7 +6024,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
    ObjectInfo result;
 
    SNode current = node.firstChild();
-   if (current.compare(lxAttribute, lxType, lxBookmarkReference)) {
+   if (current.compare(lxAttribute, lxType, lxArrayType, lxBookmarkReference)) {
       mode.include(declareExpressionAttributes(current, scope, exprMode));
       //      if (targetMode.testany(HINT_DIRECTCALL)) {
       //         // HOTFIX : direct call attribute should be applied to the operation
@@ -6314,6 +6314,7 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    while (current != lxNone) {
       switch(current) {
          case lxExpression:
+            test2(current);
             compileRootExpression(current, scope, 0, HINT_ROOT);
             break;
          case lxReturning:
