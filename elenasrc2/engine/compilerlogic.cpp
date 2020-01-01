@@ -2361,7 +2361,10 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
 
    ClassInfo info;
    if (defineClassInfo(scope, info, targetRef)) {
-//      if (isMethodInternal(info, multiMessage)) {
+      if (isEmbeddable(info))
+         stackSafeAttr |= 1;
+
+      //      if (isMethodInternal(info, multiMessage)) {
 //         // recognize the internal message
 //         ref_t signRef = 0;
 //         IdentifierString internalName(scope.module->Name(), "$$");
@@ -2402,9 +2405,6 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
 
             if (argModule == scope.module) {
                if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
-                  if (isEmbeddable(info))
-                     stackSafeAttr |= 1;
-
                   setSignatureStacksafe(scope, argSign, stackSafeAttr);
 
                   return argMessage;
@@ -2412,9 +2412,6 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
             }
             else {
                if (isSignatureCompatible(scope, argModule, argSign, signatures, signatureLen)) {
-                  if (isEmbeddable(info))
-                     stackSafeAttr |= 1;
-
                   setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
 
                   return importMessage(argModule, argMessage, scope.module);

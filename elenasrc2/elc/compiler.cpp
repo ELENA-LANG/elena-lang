@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -7310,8 +7310,6 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
             assignNode.appendNode(lxResult);
          }
       }
-
-      test2(node);
    }
    else resendScope.raiseError(errUnknownMessage, node);
 }
@@ -7377,8 +7375,6 @@ void Compiler :: compileResendExpression(SNode node, CodeScope& codeScope, bool 
       compileMultidispatch(node, codeScope, *classScope);
    }
    else {
-      ExprScope scope(&codeScope);
-
       SNode expr = node.findChild(lxExpression);
 
       // new stack frame
@@ -7390,6 +7386,7 @@ void Compiler :: compileResendExpression(SNode node, CodeScope& codeScope, bool 
 
       SNode messageNode = expr.findChild(lxMessage);
 
+      ExprScope scope(&codeScope);
       ObjectInfo target = scope.mapMember(SELF_VAR);
       compileMessage(messageNode, scope, /*0, */target, EAttr::eaNone);
 

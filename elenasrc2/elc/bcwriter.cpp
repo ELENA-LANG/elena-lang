@@ -5036,7 +5036,7 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowS
 //   }
 
    bool apiCall = (node == lxCoreAPICall);
-   bool cleaned = (node != lxStdExternalCall);
+   bool cleaned = (node == lxStdExternalCall);
 
    // compile argument list
    //ExternalScope externalScope;
