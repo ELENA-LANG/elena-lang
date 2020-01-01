@@ -3,7 +3,7 @@
 //
 //      This file contains the common constants of the command-line
 //      compiler and a ELC project class
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elcH
@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0088
+#define ELC_REVISION_NUMBER         0x0089
 
 // --- ELC default file names ---
 #ifdef _WIN32

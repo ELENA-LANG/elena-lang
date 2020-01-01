@@ -32,28 +32,28 @@ public sealed class CallStack
         }
     }
     
-//    /// Generates the call stack literal representation
-//    get string Printable()
-//    {
-//        int    length := theStack.Length;
-//        int    bufferLength := 0;
-//        int    address := 0;
-//
-//        byte   buffer[512];
-//        string callStackText := emptyString;
-//        for (IntNumber i := 0, i < length, i += 1)
-//        {
-//            address := theStack[i];
-//            
-//            bufferLength := extern elenart.LoadAddressInfo(address, buffer, 512);
-//            if (bufferLength > 0)
-//            {
-//                callStackText += String.fromByteArray(0, bufferLength, buffer).add(forward newLine)
-//            }
-//        };
-//        
-//        ^ callStackText
-//    }
+    /// Generates the call stack literal representation
+    string toPrintable()
+    {
+        int    length := theStack.Length;
+        int    bufferLength := 0;
+        int    address := 0;
+
+        byte   buffer[512];
+        string callStackText := emptyString;
+        for (IntNumber i := 0, i < length, i += 1)
+        {
+            address := theStack[i];
+            
+            bufferLength := extern elenart.LoadAddressInfo(address, buffer, 512);
+            if (bufferLength > 0)
+            {
+                callStackText += String.fromByteArray(0, bufferLength, buffer).add(forward newLine)
+            }
+        };
+        
+        ^ callStackText
+    }
 }
 
 // --- Exception ---
@@ -62,18 +62,18 @@ public sealed class CallStack
 public class Exception
 {
     string    theMessage;
-//    CallStack theCallstack;
-//
-//    /// Returns the message and the call stack
-//    string toPrintable()
-//    {
-//        string retVal := theMessage.add($10"Call stack:"$10).add(theCallstack.Printable);
-//        
-//        ^ retVal
-//    }
-//    
-//    /// Returns the message
-//    string Message = theMessage;
+    CallStack theCallstack;
+
+    /// Returns the message and the call stack
+    string toPrintable()
+    {
+        string retVal := theMessage.add($10"Call stack:"$10).add(theCallstack.toPrintable());
+        
+        ^ retVal
+    }
+    
+    /// Returns the message
+    string Message = theMessage;
     
     on(handler)
         => intern system'core_routines'__exception;
@@ -90,7 +90,7 @@ public class Exception
     constructor new(string message)
     {
         theMessage := message;
-//        theCallstack := new CallStack()
+        theCallstack := new CallStack()
     }    
     
 //    constructor new()
@@ -107,29 +107,29 @@ public class Exception
 
 public class FormatException : Exception
 {
-//    constructor new()
-//        <= new("A number is not in the correct format");
-//        
-//    constructor new(string message)
-//        <= new(message);
+    constructor new()
+        <= new("A number is not in the correct format");
+        
+    constructor new(string message)
+        <= new(message);
 }
 
 // --- OutOfRangeException ---
 
 public class OutOfRangeException : Exception
 {
-//    static raise()
-//    {
-//        OutOfRangeException.new().raise()
-//    }
-//    
-//    /// Creates the exception
-//    constructor new()
-//        <= new("An index is out of range");
-//
-//    /// Creates the exception
-//    constructor new(string message)
-//        <= new(message);
+    static raise()
+    {
+        OutOfRangeException.new().raise()
+    }
+    
+    /// Creates the exception
+    constructor new()
+        <= new("An index is out of range");
+
+    /// Creates the exception
+    constructor new(string message)
+        <= new(message);
 }
 
 // --- InvalidArgumentException ---
@@ -173,21 +173,19 @@ public class InvalidArgumentException : Exception
 public sealed class MethodNotFoundException : Exception
 {
     /// Creates the exception
-//    constructor new()
-//        <= new("Method not found");
-//
-//    constructor new(string message)
-//        <= new(message);
-//
-//    constructor new(mssg missingMessage)
-////        <= ("Method " + missingMessage.Printable + " not found");
-//        <= new(cast string("Method " + missingMessage.Printable + " not found"));
+    constructor new()
+        <= new("Method not found");
+
+    constructor new(string message)
+        <= new(message);
+
+    constructor new(mssg missingMessage)
+//        <= ("Method " + missingMessage.Printable + " not found");
+        <= new(cast string("Method " + missingMessage.toPrintable() + " not found"));
         
     constructor new(object object, mssg missingMessage)
-    {
-    }
 ////        <= (object.__getClassName() + " : Method " + missingMessage.Printable + " not found");
-//        <= new(object.__getClassName() + " : Method " + missingMessage.Printable + " not found");
+        <= new(object/*.__getClassName()*/ + " : Method " + missingMessage.toPrintable() + " not found");
 }
 
 //// --- NotSupportedException ---
@@ -213,14 +211,14 @@ public sealed class MethodNotFoundException : Exception
 /// An abort exception 
 public class AbortException : Exception
 {
-//    static raise()
-//    {
-//        AbortException.new().raise()
-//    }
-//    
-//    /// Creates the exception
-//    constructor new()
-//        <= new("The process terminated");
+    static raise()
+    {
+        AbortException.new().raise()
+    }
+    
+    /// Creates the exception
+    constructor new()
+        <= new("The process terminated");
 }
 
 //// --- CriticalException ---

@@ -13,21 +13,15 @@
 using namespace _ELENA_;
 
 constexpr auto STACKOP_MODE      = 0x0001;
-//constexpr auto ACC_REQUIRED    = 0x0001;
-//constexpr auto BOOL_ARG_EXPR   = 0x0002;
-//constexpr auto EMBEDDABLE_EXPR = 0x0004;
-//constexpr auto BASE_PRESAVED   = 0x0008;
-//constexpr auto ACC_PRESAVED    = 0x0010;
-//constexpr auto ASSIGN_MODE     = 0x0020;
-//
-////void test2(SNode node)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      test2(current);
-////      current = current.nextNode();
-////   }
-////}
+
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 inline bool isSubOperation(SNode node)
 {

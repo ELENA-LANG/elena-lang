@@ -2,13 +2,14 @@
 In development:
 ------         
               dev
-                * array
+                * n.toPrintable() - should be directly resolved - no need for boxing
                 * call stack
+                * __getClassName extension
+                * method not found - test
 
                 * try / catch,try / catch / catch  - see system'entry
                 * try / finally / catch - see system'entry
                 * exception handling
-                * method not found - test
                 * int sum : test exception handling
 
                 * char - default constructor

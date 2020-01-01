@@ -4,6 +4,42 @@ define CORE_ET_TABLE     2000Bh
 
 define elSizeOffset      0008h
 
+// ; --- API ---
+
+procedure coreapi'core_callstack_load
+
+  mov  eax, [esp+4]
+  mov  ecx, [esp+8]
+
+  mov  edx, [esp]
+  xor  ebx, ebx
+  mov  esi, ebp
+
+labNext:
+  mov  edx, [esi + 4]
+  cmp  [esi], 0
+  jnz  short labSave
+  test edx, edx
+  jz   short labEnd
+  mov  esi, edx
+  jmp  short labNext                              
+
+labSave:
+  mov  [eax + ebx * 4], edx
+  add  ebx, 1
+  cmp  ebx, ecx
+  jge  short labEnd
+  mov  esi, [esi]
+  jmp  short labNext                              
+  
+labEnd:
+  mov  edx, ebx
+  ret  
+
+end
+
+// ; === internal ===
+
 // strtowstr(target,source)
 procedure coreapi'strtowstr
 
@@ -1980,8 +2016,6 @@ labEnd2:
   ret
 
 end
-
-// ; === internal ===
 
 procedure coreapi'default_handler                                                       
 

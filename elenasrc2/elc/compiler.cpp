@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //#define FULL_OUTOUT_INFO 1
@@ -6314,7 +6314,6 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
    while (current != lxNone) {
       switch(current) {
          case lxExpression:
-            test2(current);
             compileRootExpression(current, scope, 0, HINT_ROOT);
             break;
          case lxReturning:
@@ -7212,7 +7211,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    ResendScope resendScope(&codeScope);
    resendScope.consructionMode = true;
 
-   SNode expr = node.findChild(lxExpression);
+   // inject a root expression
+   SNode expr = node.findChild(lxExpression).injectNode(lxExpression);
 
    _ModuleScope* moduleScope = codeScope.moduleScope;
    MethodScope* methodScope = (MethodScope*)codeScope.getScope(Scope::ScopeLevel::slMethod);
@@ -7239,10 +7239,10 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
       // stack already contains $self value
       node.set(lxNewFrame, 0);
       codeScope.allocated1++;
+      // HOTFIX : take into account saved self variable
+      resendScope.tempAllocated1 = codeScope.allocated1;
    }
    else node.set(lxExpression, 0);
-
-//   writer.newBookmark();
 
    if (withFrame) {
       expr.insertNode(lxSelfLocal, 1);
@@ -7310,6 +7310,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
             assignNode.appendNode(lxResult);
          }
       }
+
+      test2(node);
    }
    else resendScope.raiseError(errUnknownMessage, node);
 }
