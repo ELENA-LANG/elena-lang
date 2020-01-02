@@ -3574,7 +3574,7 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
       case SET_REFER_OPERATOR_ID:
          if ((itemSize & 3) == 0) {
             // copyto itemSize
-            tape.write(bcCopyTo, itemSize);
+            tape.write(bcCopyTo, itemSize >> 2);
          }
          // xwrite itemSize
          else tape.write(bcXWrite, itemSize);

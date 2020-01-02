@@ -1160,6 +1160,22 @@ inline % 49h
 
 end
 
+// ; addf
+inline % 050h
+
+  lea  esi, [ebp+__arg1]
+  add  [esi], edx
+
+end
+
+// ; subf
+inline % 051h
+
+  lea  esi, [ebp+__arg1]
+  sub  [esi], edx
+
+end
+
 // ; nxorf
 inline % 52h
 
@@ -1247,22 +1263,6 @@ inline % 45Ch
 
 end
 
-// ; addf
-inline % 050h
-
-  lea  esi, [ebp+__arg1]
-  add  [esi], edx
-
-end
-
-// ; subf
-inline % 051h
-
-  lea  esi, [ebp+__arg1]
-  sub  [esi], edx
-
-end
-
 // ; copyto
 inline % 5Dh
 
@@ -1270,6 +1270,58 @@ inline % 5Dh
   mov  ecx, __arg1
   mov esi, [esp]
   rep movsd
+
+end
+
+// ; copyto
+inline % 15Dh
+
+  mov esi, [esp]
+  lea edi, [ebx+edx]
+  mov eax, [esi]
+  mov [edi], eax
+
+end
+
+// ; copyto
+inline % 25Dh
+
+  mov esi, [esp]
+  lea edi, [ebx+edx]
+  mov eax, [esi]
+  mov [edi], eax
+  mov ecx, [esi+4]
+  mov [edi+4], ecx
+
+end
+
+// ; copyto
+inline % 35Dh
+
+  mov esi, [esp]
+  lea edi, [ebx+edx]
+  mov eax, [esi]
+  mov [edi], eax
+  mov ecx, [esi+4]
+  mov eax, [esi+8]
+  mov [edi+4], ecx
+  mov [edi+8], eax
+
+end
+
+// ; copyto
+inline % 45Dh
+
+  mov esi, [esp]
+  lea edi, [ebx+edx]
+  mov eax, [esi]
+  mov [edi], eax
+  mov ecx, [esi+4]
+  mov [edi+4], ecx
+  mov eax, [esi+8]
+  mov [edi+8], eax
+  mov ecx, [esi+12]
+  mov [edi+12], ecx
 
 end
 

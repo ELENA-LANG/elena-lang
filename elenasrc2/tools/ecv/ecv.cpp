@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2012-2019, by Alexei Rakov
+//                                              (C)2012-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   52
+#define REVISION_VERSION   53
 
 using namespace _ELENA_;
 
@@ -653,6 +653,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcMovN:
       case bcShl:
       case bcShr:
+      case bcCopyTo:
       case bcXWrite:
          printCommand(command, opcode);
          command.appendHex(argument);

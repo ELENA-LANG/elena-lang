@@ -2,10 +2,13 @@
 In development:
 ------         
               dev
+                * allocate in the correct place
                 * setAt - should be resolved directly 
                 * call stack
                 * __getClassName extension
                 * method not found - test
+                * fix clone opcode - add 3
+                * copytof - use optimization for 1, 2, 3, 4
 
                 * try / catch,try / catch / catch  - see system'entry
                 * try / finally / catch - see system'entry

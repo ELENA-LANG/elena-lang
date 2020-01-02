@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -122,7 +122,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcEOrN, bcNewI, bcACopyAI
 };
 
-const int gcCommandExNumber = 18;
+const int gcCommandExNumber = 22;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
@@ -131,6 +131,7 @@ const int gcCommandExs[gcCommandExNumber] =
    bcCreateN + 0x100, bcCreateN + 0x200, bcCreateN + 0x300, bcCreateN + 0x400,
    bcXWrite + 0x100, bcXWrite + 0x200, bcXWrite + 0x300, bcXWrite + 0x400,
    bcReadToF + 0x100, bcReadToF + 0x200, bcReadToF + 0x300, bcReadToF + 0x400,
+   bcCopyTo + 0x100, bcCopyTo + 0x200, bcCopyTo + 0x300, bcCopyTo + 0x400,
 };
 
 // command table
@@ -152,7 +153,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &loadNOp, &loadNOpX, &loadNOp, &loadFPOp, &loadFPOp,
+   &compileNop, &compileNop, &compileNop, &loadNOp, &loadNOpX, &loadN4OpX, &loadFPOp, &loadFPOp,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -1264,6 +1265,26 @@ void _ELENA_::loadNOpX(int opcode, x86JITScope& scope)
    }
 }
 
+void _ELENA_::loadN4OpX(int opcode, x86JITScope& scope)
+{
+   switch (scope.argument) {
+      case 1:
+         loadNOpX(opcode, scope, 0x100);
+         break;
+      case 2:
+         loadNOpX(opcode, scope, 0x200);
+         break;
+      case 3:
+         loadNOpX(opcode, scope, 0x300);
+         break;
+      case 4:
+         loadNOpX(opcode, scope, 0x400);
+         break;
+      default:
+         loadNOp(opcode, scope);
+         break;
+   }
+}
 
 void _ELENA_::compileDynamicCreateN(int opcode, x86JITScope& scope)
 {
