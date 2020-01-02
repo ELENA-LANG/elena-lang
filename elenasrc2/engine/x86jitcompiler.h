@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef x86jitcompilerH
@@ -95,7 +95,7 @@ protected:
 //   friend void compilePop(int opcode, x86JITScope& scope);
    friend void compilePopA(int opcode, x86JITScope& scope);
 //   friend void compilePopE(int opcode, x86JITScope& scope);
-//   friend void compilePopD(int opcode, x86JITScope& scope);
+   friend void compilePopD(int opcode, x86JITScope& scope);
    friend void compilePopN(int opcode, x86JITScope& scope);
    friend void compileAllocI(int opcode, x86JITScope& scope);
    friend void compileOpen(int opcode, x86JITScope& scope);
@@ -161,7 +161,6 @@ protected:
 //   friend void compileDMulN(int opcode, x86JITScope& scope);
    friend void compileDec(int opcode, x86JITScope& scope);
 //   friend void compileDCopyCount(int opcode, x86JITScope& scope);
-//   friend void compileDSetVerb(int opcode, x86JITScope& scope);
 //   friend void compileIndexInc(int opcode, x86JITScope& scope);
 //   friend void compileIndexDec(int opcode, x86JITScope& scope);
    friend void compileDShiftN(int opcode, x86JITScope& scope);
@@ -294,7 +293,7 @@ void compileLessN(int opcode, x86JITScope& scope);
 void compileQuit(int opcode, x86JITScope& scope);
 void compileQuitN(int opcode, x86JITScope& scope);
 //void compilePopE(int opcode, x86JITScope& scope);
-//void compilePopD(int opcode, x86JITScope& scope);
+void compilePopD(int opcode, x86JITScope& scope);
 //void compileSetVerb(int opcode, x86JITScope& scope);
 //void compileSetSubj(int opcode, x86JITScope& scope);
 //void compilePopB(int opcode, x86JITScope& scope);
@@ -311,7 +310,6 @@ void compileDAndN(int opcode, x86JITScope& scope);
 //void compileDMulN(int opcode, x86JITScope& scope);
 void compileDec(int opcode, x86JITScope& scope);
 //void compileDCopyCount(int opcode, x86JITScope& scope);
-//void compileDSetVerb(int opcode, x86JITScope& scope);
 //void compileIndexInc(int opcode, x86JITScope& scope);
 //void compileIndexDec(int opcode, x86JITScope& scope);
 void compileDShiftN(int opcode, x86JITScope& scope);

@@ -184,8 +184,7 @@ public sealed class MethodNotFoundException : Exception
         <= new(cast string("Method " + missingMessage.toPrintable() + " not found"));
         
     constructor new(object object, mssg missingMessage)
-////        <= (object.__getClassName() + " : Method " + missingMessage.Printable + " not found");
-        <= new(object/*.__getClassName()*/ + " : Method " + missingMessage.toPrintable() + " not found");
+        <= new(object.__getClassName() + " : Method " + missingMessage.toPrintable() + " not found");
 }
 
 //// --- NotSupportedException ---

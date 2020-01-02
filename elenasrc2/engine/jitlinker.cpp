@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -601,14 +601,13 @@ void* JITLinker :: resolveBytecodeSection(ReferenceInfo referenceInfo, int mask,
 
 void* JITLinker :: resolveClassName(ReferenceInfo referenceInfo)
 {
-   IdentifierString fullName;
-   if (referenceInfo.isRelative()) {
-      fullName.copy(referenceInfo.module->Name());
-      fullName.append(referenceInfo.referenceName);
+   IdentifierString relativeName;
+   if (!referenceInfo.isRelative()) {
+      relativeName.append(referenceInfo.referenceName + getlength(referenceInfo.module->Name()));
    }
-   else fullName.copy(referenceInfo.referenceName);
+   else relativeName.copy(referenceInfo.referenceName);
 
-   return resolve(ReferenceInfo(fullName.c_str()), mskLiteralRef, false);
+   return resolve(ReferenceInfo(relativeName.c_str()), mskLiteralRef, false);
 }
 
 void* JITLinker :: resolvePackage(_Module* module)

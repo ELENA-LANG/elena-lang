@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2019, by Alexei Rakov
+//                                              (C)2009-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -183,8 +183,8 @@ int ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxL
 
 int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t length)
 {
-   int packagePtr = *(int*)(classAddress - 20);
-   int namePtr = *(int*)(classAddress - 24);
+   int packagePtr = *(int*)(classAddress - 24);
+   int namePtr = *(int*)(classAddress - 20);
 
    char* name = (char*)namePtr;
    char* ns = ((char**)packagePtr)[0];

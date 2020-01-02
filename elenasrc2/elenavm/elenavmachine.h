@@ -12,10 +12,10 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x0001;
+constexpr auto ELENAVM_REVISION = 0x0002;
 
 // --- ELENAVM common constants ---
-constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2019 by Alex Rakov";
+constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2020 by Alex Rakov";
 
 namespace _ELENA_
 {

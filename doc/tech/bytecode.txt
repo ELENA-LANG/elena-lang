@@ -38,6 +38,8 @@ ELENA byte codes (or ecodes)
 
  loadsi i                   - [sp+i] => index
 
+ loadverb                   - index.verb >> index
+ 
  movm m                     - m => index
 
  movn n                     - n => index
@@ -78,7 +80,9 @@ ELENA byte codes (or ecodes)
 
  set i                      - [sp] => acc[index]
 
- seti i                     - [sp] => acc[i]
+ seti i                     - [sp] => acc[i]         
+
+ setverb                    - acc[0].verb <= index
 
  shl n                      - index << n  => index
  
@@ -198,6 +202,8 @@ ELENA byte codes (or ecodes)
  
  popa                       - acc <= [sp] ; sp--
  
+ popd                       - index <= [sp] ; sp--
+    
  pusha                      - acc => [sp+1] ; sp++                  
 
  pushai i                   - [acc::i] => [sp+1] ; sp++
@@ -362,8 +368,6 @@ ELENA byte codes (or ecodes)
  dcopycount                 - index << ext.paramcount
  
  dcopye                     - index << ext
- 
- dcopyverb                  - index << ext.verb
  
  dsetverb                   - index >> ext.verb
  

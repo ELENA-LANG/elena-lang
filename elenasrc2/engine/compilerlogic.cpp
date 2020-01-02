@@ -519,8 +519,9 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
    switch (targetRef) {
       case V_PTR32:
-      case V_DWORD:
          return sourceRef == V_INT32;
+      case V_DWORD:
+         return sourceRef == V_INT32 || sourceRef == V_PTR32 || sourceRef == V_MESSAGE;
       default:
          return false;
    }

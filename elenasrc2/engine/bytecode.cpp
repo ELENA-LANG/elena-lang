@@ -3,7 +3,7 @@
 //
 //		This file contains implementation of ELENA byte code routines.
 //
-//                                                 (C)2009-2019, by Alexei Rakov
+//                                                 (C)2009-2020, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,13 +14,13 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 
 const char* _fnOpcodes[256] =
 {
-   "nop", "breakpoint", "coalesce", OPCODE_UNKNOWN, "snop", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "throw",
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pusha", "popa", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "bsredirect", OPCODE_UNKNOWN,
+   "nop", "breakpoint", "coalesce", OPCODE_UNKNOWN, "snop", OPCODE_UNKNOWN, "loadverb", "throw",
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pusha", "popa", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "bsredirect", "setverb",
 
    "not", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", OPCODE_UNKNOWN, "quit",
    "get", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "unhook", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushd", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "include", "exclude", "trylock",
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",
    "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "read", "clone", OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, "len", "rload", "flag", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "class", OPCODE_UNKNOWN,

@@ -1768,6 +1768,25 @@ procedure __dptr."system$setReference[2]"
 
 end
 
+procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[2]"
+
+  peeksi 1
+  load
+
+  pushn 0
+  movs  0
+  save
+  loadverb
+  setverb
+  popd
+
+  peeksi 2
+  save
+
+  quitn 2
+
+end
+
 // ; system routines
 
 symbol sta_start

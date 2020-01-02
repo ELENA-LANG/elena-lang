@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Engine constants
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaconstH
@@ -22,7 +22,7 @@ namespace _ELENA_
   // --- ELENA Standart message constants ---
    constexpr int ACTION_ORDER             = 9;
 
-//   constexpr auto ACTION_MASK             = 0x1C0u;
+   constexpr auto ACTION_MASK             = 0x1C0u;
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
    // indicates it is an invoke message (without target variable in the call stack)
    constexpr auto FUNCTION_MESSAGE        = 0x020u;

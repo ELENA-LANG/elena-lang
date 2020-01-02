@@ -2,26 +2,21 @@
 In development:
 ------         
               dev
-                * implicit conversion
-                * recognize implicit conversion
-                * embeddable constructor
-
-                * __getClassName extension
-                * method not found - test
-                * fix clone opcode - add 3
                 * copytof - use optimization for 1, 2, 3, 4
 
-                * try / catch,try / catch / catch  - see system'entry
                 * try / finally / catch - see system'entry
                 * exception handling
+                * event handler
                 * uncomment system'entry
                 * int sum : test exception handling
+                * embeddable constructor
 
                 * char - default constructor
                 * calling internal constructor (String and WideString)
 
                 * support vm client
                 * vm hello world sample
+                * real, real literal, primitive operations with real
                 * realsum
                 * int to real conversion
                 * literal convertor (UIntNumber)
@@ -68,9 +63,6 @@ In development:
 
                 * calling default constructor - see extensions'Integer.#constructor<IntNumber> - double initialization 
 
-                * try / finally / catch exception
-                * register exceptions
-
                 * closures: unboxing
                 * closures: presaved arguments
                 * closures: returning a value
@@ -88,7 +80,6 @@ In development:
 
                 * primitive operations with int : bitwise
                 * high-level opoerations with int : comparision, bitwise
-
 
                 * nested class should not have static methods and constructors
 
@@ -123,10 +114,6 @@ In development:
 
                 * countable
 
-                * primitive operations with real
-                * primitive operations with ptr
-                * primitive operations with dword
-
                 * fields, public / private / internal fields
                 * fields with reference name
                 * strong typed fields
@@ -148,27 +135,19 @@ In development:
                 * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
                   signature or default one (if nothing is found - cannot be declared)
 
-
                 * auto symbol
                 * auto method
                 * auto field
-                * abstract methods
                 * internal / protected methods : refactor
 
                 * implement analog of C# enum
-
-                * primitive numbers
-                * primitive operations
 
                 * recognize idle method
                 * recognize idle constructor
                 * if the parent constructor is idle - do like normal one
 
-                * fields cannot be chaned if the class is declared const (except constructor)
-
                 * stack allocated structs, executing field initializers, embeddable constructors?
 
-                * properties : explicit
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
 
                 * nested class scope
@@ -269,6 +248,7 @@ In development:
                 * property - append, ...
                 * boxArgument - fieldexpr should be better mapped
                 * String / WideString - add<'Char>
+                * api doc - with description
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)

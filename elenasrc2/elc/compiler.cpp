@@ -5347,6 +5347,7 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
 //         objectInfo = compileWrapping(writer, current, scope, objectInfo, EAttrs::test(mode, HINT_CALL_MODE));
 //         break;
    }
+   node.refresh();
 
    return objectInfo;
 }

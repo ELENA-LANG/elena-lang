@@ -65,8 +65,9 @@ define elPackageOffset       0010h
 define page_align_mask   000FFFF0h
 
 define ACTION_ORDER              9
-define PARAM_MASK             01Fh
-define PARAM_MASK_INV   0FFFFFFE0h
+define ARG_ACTION_MASK        1DFh
+define ARG_MASK               01Fh
+define ARG_MASK_INV     0FFFFFFE0h
 
 // --- System Core Preloaded Routines --
 
@@ -908,6 +909,17 @@ inline % 4
 
 end
 
+// ; loadverb
+inline % 6
+
+  mov   ecx, edx
+  shr   edx, ACTION_ORDER
+  mov   eax, rdata : % CORE_MESSAGE_TABLE
+  test  ecx, ecx
+  cmovs edx, [eax + edx]
+
+end
+
 // ; throw
 inline % 7
 
@@ -942,6 +954,18 @@ labFound:
 
 labEnd:
                                                                 
+end
+
+// ; setverb
+inline % 0Fh
+
+  mov eax, [ebx]
+  and eax, ARG_ACTION_MASK
+  mov ecx, edx
+  shl ecx, ACTION_ORDER
+  or  eax, ecx
+  mov [ebx], eax
+
 end
 
 // ; close
@@ -1017,10 +1041,11 @@ end
 inline % 02Eh
 
   mov  ecx, [ebx - elSizeOffset]
-  and  ecx, struct_mask_inv
   mov  esi, [esp]
-  shr  ecx, 2
+  and  ecx, struct_mask_inv
   mov  edi, ebx
+  add  ecx, 3
+  shr  ecx, 2
   rep  movsd
 
 end

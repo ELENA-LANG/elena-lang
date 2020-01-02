@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                              (C)2009-2019, by Alexei Rakov
+//                                              (C)2009-2020, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
@@ -21,7 +21,7 @@ enum ByteCode
 //   bcPop             = 0x03,
    bcSNop            = 0x04,
 //   bcPushE           = 0x05,
-//   bcDCopyVerb       = 0x06,
+   bcLoadVerb        = 0x06,
    bcThrow           = 0x07,
 //   bcDCopyCount      = 0x08,
 //   bcOr              = 0x09,
@@ -30,7 +30,7 @@ enum ByteCode
 //   bcACopyB          = 0x0C,
 //   bcPopE            = 0x0D,
    bcBSRedirect      = 0x0E,
-//   bcDSetVerb        = 0x0F,
+   bcSetVerb         = 0x0F,
 
    bcNot             = 0x10,
 //   bcLen             = 0x11,
@@ -52,7 +52,7 @@ enum ByteCode
 //   bcECopyD          = 0x20,
 //   bcDCopyE          = 0x21,
    bcPushD           = 0x22,
-//   bcPopD            = 0x23,
+   bcPopD            = 0x23,
 //   bcXCopy           = 0x24,
    bcInclude         = 0x25,     // should immediately follow exclude (after callextr)
    bcExclude         = 0x26,   
@@ -557,7 +557,7 @@ public:
          case bcFreeI:
          //case bcPopB:
          //case bcPopE:
-         //case bcPopD:
+         case bcPopD:
             return true;
          default:
             return false;
