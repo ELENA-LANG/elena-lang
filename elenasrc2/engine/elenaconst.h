@@ -328,7 +328,7 @@ namespace _ELENA_
    constexpr int elDebugQWORD          = 0x00060000;
    constexpr int elDebugBytes          = 0x00070000;
    constexpr int elDebugShorts         = 0x00080000;
-//   constexpr int elDebugPTR            = 0x00090000;
+   constexpr int elDebugPTR            = 0x00090000;
    constexpr int elDebugWideLiteral    = 0x000A0000;
 //   constexpr int elDebugReference      = 0x000B0000;   // symbol reference
 //   constexpr int elDebugSubject        = 0x000C0000;

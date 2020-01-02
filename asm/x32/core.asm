@@ -1896,6 +1896,13 @@ inline % 0B7h
 
 end
 
+// ; dloadsi
+inline % 0B8h
+
+  mov  edx, [esp + __arg1]
+
+end
+
 // ; savef
 inline % 0B9h
 

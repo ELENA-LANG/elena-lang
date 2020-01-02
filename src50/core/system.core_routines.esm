@@ -33,6 +33,14 @@ procedure __object.equal[2]
   
 end
 
+procedure __object."__getClass$system@Object[1]"
+
+  peeksi 1
+  class
+  quitn 1
+
+end
+
 procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1
@@ -381,7 +389,6 @@ procedure __wide."concat$system@WideString$system@WideString$system@IntNumber$sy
 
 end                                                
 
-
 procedure __wide."copy$system@WideString$system@WideString[2]"
 
   pushsi 2
@@ -699,7 +706,6 @@ procedure __literalconvertor."convert$system@IntNumber$system@IntNumber$@system@
 
 end
 
-
 procedure __literalconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   pushsi 3
@@ -747,7 +753,6 @@ procedure __literalconvertor."convert$system@ShortNumber$system@IntNumber$@syste
   quitn 4
 
 end
-
 
 procedure __literalconvertor."convert$system@ByteNumber$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
@@ -1018,7 +1023,6 @@ procedure __shortconvertor."convert$system@ByteNumber$@system@ref#1&system@Short
 
 end
 
-
 procedure __shortconvertor."convert$system@IntNumber$@system@ref#1&system@ShortNumber[2]"
 
   peeksi 1
@@ -1105,7 +1109,6 @@ labCopyNegative:
   quitn 2  
 
 end
-
 
 procedure __shortconvertor."convert$system@RealNumber$@system@ref#1&system@ShortNumber[2]"
 
@@ -1339,7 +1342,6 @@ labCopy:
   quitn 2  
 
 end
-
 
 procedure __byteconvertor."convert$system@RealNumber$@system@ref#1&system@ByteNumber[2]"
 
@@ -1755,6 +1757,14 @@ labContinueError:
   unhook
   pusha
   throw
+
+end
+
+procedure __dptr."system$setReference[2]"
+
+  loadsi 2
+  save
+  quitn 2
 
 end
 

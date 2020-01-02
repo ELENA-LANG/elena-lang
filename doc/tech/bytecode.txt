@@ -36,6 +36,8 @@ ELENA byte codes (or ecodes)
 
  loadfi i                   - [fp+i] => index
 
+ loadsi i                   - [sp+i] => index
+
  movm m                     - m => index
 
  movn n                     - n => index

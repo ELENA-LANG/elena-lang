@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -1500,11 +1500,11 @@ void Compiler :: importCode(SNode node, Scope& scope, ref_t functionRef, ref_t m
 
    size_t signIndex = virtualReference.Length();
    virtualReference.append('0' + (char)argCount);
-//   if (test(message, STATIC_MESSAGE)) {
-//      virtualReference.append(scope.module->Name());
-//      virtualReference.append("$");
-//   }
-//
+   if (test(message, STATIC_MESSAGE)) {
+      virtualReference.append(scope.module->Name());
+      virtualReference.append("$");
+   }
+
 //   if (test(flags, VARIADIC_MESSAGE))
 //      virtualReference.append("params#");
 
@@ -1542,7 +1542,7 @@ void Compiler :: importCode(SNode node, Scope& scope, ref_t functionRef, ref_t m
    if (section != NULL) {
       node.set(lxImporting, _writer.registerImportInfo(section, api, moduleScope->module));
    }
-   else scope.raiseError(errInvalidLink, findIdentifier(node.firstChild()));
+   else scope.raiseError(errInvalidLink, findIdentifier(node.findChild(lxInternalRef)));
 }
 
 Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed)
@@ -1944,17 +1944,17 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
             break;
       }
    }
-//   else if (attrs.fieldRef == V_PTRBINARY) {
-//      switch (attrs.size) {
-//         case 4:
-//            // treat it like dword
-//            attrs.fieldRef = V_PTR32;
-//            break;
-//         default:
-//            scope.raiseError(errInvalidHint, node);
-//            break;
-//      }
-//   }
+   else if (attrs.fieldRef == V_PTRBINARY) {
+      switch (attrs.size) {
+         case 4:
+            // treat it like dword
+            attrs.fieldRef = V_PTR32;
+            break;
+         default:
+            scope.raiseError(errInvalidHint, node);
+            break;
+      }
+   }
    else if (attrs.fieldRef == V_MESSAGE/* || attrs.fieldRef == V_SUBJECT*/) {
       //if (attrs.size == 8 && attrs.fieldRef == V_MESSAGE) {
       //   attrs.fieldRef = V_EXTMESSAGE;
@@ -3521,10 +3521,10 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
    else {
       EAttr operationMode = HINT_NODEBUGINFO;
       ref_t implicitSignatureRef = 0;
-//      if (roperand2.kind != okUnknown) {
-//         implicitSignatureRef = resolveStrongArgument(scope, roperand, roperand2);
-//      }
-      /*else */implicitSignatureRef = resolveStrongArgument(scope, roperand);
+      if (roperand2.kind != okUnknown) {
+         implicitSignatureRef = resolveStrongArgument(scope, roperand, roperand2);
+      }
+      else implicitSignatureRef = resolveStrongArgument(scope, roperand);
 
       int stackSafeAttr = 0;
       int messageRef = resolveMessageAtCompileTime(loperand, scope, resolveOperatorMessage(scope, operator_id, argCount),
@@ -3842,6 +3842,7 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
    ref_t sourceRef = resolveObjectReference(scope, source, false);
+   int stackSafeAttrs = 0;
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
       if ((source.kind == okIntConstant || source.kind == okUIntConstant) 
          && targetRef == scope.moduleScope->intReference && !EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) 
@@ -3857,12 +3858,17 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
          // HOTFIX : allow to pass the result of external operation directly
          return source;
       }
-      // if it can be boxed / implicitly converted
-      else if (!_logic->injectImplicitConversion(*scope.moduleScope, node, *this, targetRef, sourceRef, source.element))
+      else if (_logic->injectImplicitConversion(*scope.moduleScope, node, *this, targetRef, sourceRef, 
+         source.element, stackSafeAttrs))
       {
-         return sendTypecast(node, scope, targetRef, source);
+         if (node.compare(lxDirectCalling, lxSDirectCalling)) {
+            // HOTFIX : box arguments if required
+            analizeOperands(node, scope, stackSafeAttrs);
+         }
+
+         return ObjectInfo(okObject, 0, targetRef);
       }
-      else return ObjectInfo(okObject, 0, targetRef);
+      else return sendTypecast(node, scope, targetRef, source);
    }
    return source;
 }
@@ -3899,18 +3905,18 @@ ref_t Compiler :: resolveStrongArgument(ExprScope& scope, ObjectInfo info)
    return scope.module->mapSignature(&argRef, 1, false);
 }
 
-//ref_t Compiler :: resolveStrongArgument(CodeScope& scope, ObjectInfo info1, ObjectInfo info2)
-//{
-//   ref_t argRef[2];
-//
-//   argRef[0] = resolveObjectReference(scope, info1, true);
-//   argRef[1] = resolveObjectReference(scope, info2, true);
-//
-//   if (!argRef[0] || !argRef[1])
-//      return 0;
-//
-//   return scope.module->mapSignature(argRef, 2, false);
-//}
+ref_t Compiler :: resolveStrongArgument(ExprScope& scope, ObjectInfo info1, ObjectInfo info2)
+{
+   ref_t argRef[2];
+
+   argRef[0] = resolveObjectReference(scope, info1, true);
+   argRef[1] = resolveObjectReference(scope, info2, true);
+
+   if (!argRef[0] || !argRef[1])
+      return 0;
+
+   return scope.module->mapSignature(argRef, 2, false);
+}
 
 ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode)
 {
@@ -9993,7 +9999,7 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
 {
    SNode parent = node;
    SNode current;
-   while (!parent.compare(lxSeqExpression, lxNewFrame/*, lxReturning*/)) {
+   while (!parent.compare(lxSeqExpression, lxNewFrame, lxCodeExpression/*, lxReturning*/)) {
       current = parent;
       parent = parent.parentNode();
    }
@@ -11497,19 +11503,24 @@ void Compiler :: injectBoxingExpr(SNode& node, bool variable, int size, ref_t ta
 //   writer.closeNode();
 }
 
-//void Compiler :: injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef, int stackSafeAttr, bool embeddableAttr)
-//{
-//   writer.appendNode(lxCallTarget, targetClassRef);
-//   writer.appendNode(lxBoxableAttr);
-//   if (stackSafeAttr)
-//      writer.appendNode(lxStacksafeAttr, stackSafeAttr);
-//   if (embeddableAttr)
-//      writer.appendNode(lxEmbeddableAttr);
-//
-//   writer.inject(convertOp, convertArg);
-//   writer.insertNode(targetOp, targetArg/*, lxTarget, targetClassRef*/);
-//   writer.closeNode();
-//}
+void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef, int stackSafeAttr, bool embeddableAttr)
+{
+   if (node == lxExpression) {
+   }
+   else node.injectAndReplaceNode(lxExpression);
+
+   node.appendNode(lxCallTarget, targetClassRef);
+
+   if (embeddableAttr)
+      node.appendNode(lxEmbeddableAttr);
+
+   node.set(convertOp, convertArg);
+   node.insertNode(targetOp, targetArg/*, lxTarget, targetClassRef*/);
+
+   test2(node);
+
+   //analizeOperands(node, stackSafeAttr);
+}
 
 void Compiler :: injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t messageRef)
 {

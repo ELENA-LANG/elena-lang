@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -228,13 +228,13 @@ CompilerLogic :: CompilerLogic()
 //   operators.add(OperatorInfo(AND_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
 //   operators.add(OperatorInfo(OR_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
 
-   //// pointer primitive operations
-   //operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
-   //operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
-   //operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntBoolOp, V_FLAG));
-   //operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntBoolOp, V_FLAG));
-   //operators.add(OperatorInfo(ADD_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
-   //operators.add(OperatorInfo(SUB_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
+   // pointer primitive operations
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_PTR32, V_INT32, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
+   operators.add(OperatorInfo(SUB_OPERATOR_ID, V_PTR32, V_INT32, lxIntOp, V_PTR32));
 
    // dword primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
@@ -518,7 +518,7 @@ int CompilerLogic :: resolveNewOperationType(_ModuleScope& scope, ref_t loperand
 inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
 {
    switch (targetRef) {
-      //case V_PTR32:
+      case V_PTR32:
       case V_DWORD:
          return sourceRef == V_INT32;
       default:
@@ -679,12 +679,12 @@ bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpYieldable);
 //}
-//
-//bool CompilerLogic :: isMethodEmbeddable(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpEmbeddable);
-//}
-//
+
+bool CompilerLogic :: isMethodEmbeddable(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpEmbeddable);
+}
+
 //bool CompilerLogic :: isMethodInternal(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpInternal);
@@ -1179,30 +1179,30 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
    }
 }
 
-//bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message)
-//{
-//   ClassInfo info;
-//   if (defineClassInfo(scope, info, reference)) {
-//      return isMethodEmbeddable(info, message);
-//   }
-//   else return false;
-//}
-
-bool CompilerLogic :: injectImplicitConstructor(/*_ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef*//*, ref_t elementRef*//*, ref_t* signatures, int paramCount*/)
+bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message)
 {
-//   ref_t signRef = scope.module->mapSignature(signatures, paramCount, false);
-//
-//   int stackSafeAttr = 0;
-//   ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, paramCount, stackSafeAttr, true);
-//   if (messageRef) {
-//      bool embeddableAttr = isMethodEmbeddable(scope, info.header.classRef, messageRef);
-//
-//      compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, info.header.classRef, stackSafeAttr, embeddableAttr);
-//
-//      return true;
-//
-//   }
-   /*else */return false;
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      return isMethodEmbeddable(info, message);
+   }
+   else return false;
+}
+
+bool CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, SNode& node, _Compiler& compiler, ClassInfo& info, ref_t targetRef/*, ref_t elementRef*/, 
+   ref_t* signatures, size_t signLen, int& stackSafeAttr)
+{
+   ref_t signRef = scope.module->mapSignature(signatures, signLen, false);
+
+   ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, signLen, stackSafeAttr, true);
+   if (messageRef) {
+      bool embeddableAttr = isMethodEmbeddable(scope, info.header.classRef, messageRef);
+
+      compiler.injectConverting(node, lxDirectCalling, messageRef, lxClassSymbol, targetRef, info.header.classRef, stackSafeAttr, embeddableAttr);
+
+      return true;
+
+   }
+   else return false;
 }
 
 //bool CompilerLogic :: injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef)
@@ -1214,51 +1214,51 @@ bool CompilerLogic :: injectImplicitConstructor(/*_ModuleScope& scope, _Compiler
 //
 //   return true;
 //}
-//
-//ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, targetRef, true))
-//      return 0;
-//
-//   return info.header.classRef;
-//}
-//
-//ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod)
-//{
-//   ref_t classClassRef = getClassClassRef(scope, targetRef);
-//   ref_t actionRef = scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false);
-//   ref_t messageRef = encodeMessage(actionRef, paramCount, 0);
-//   if (signRef != 0) {
-//      // try to resolve implicit multi-method
-//      ref_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef, stackSafeAttr);
-//      if (resolvedMessage)
-//         return resolvedMessage;
-//   }
-//
-//   ClassInfo classClassinfo;
-//   if (!defineClassInfo(scope, classClassinfo, classClassRef))
-//      return 0;
-//
-//   if (classClassinfo.methods.exist(messageRef)) {
-//      if (ignoreMultimethod) {
-//         int hints = classClassinfo.methodHints.get(Attribute(messageRef, maHint));
-//         if (test(hints, tpMultimethod))
-//            return 0;
-//      }
-//
-//      return messageRef;
-//   }
-//   else if (classClassinfo.methods.exist(encodeMessage(actionRef, 1, VARIADIC_MESSAGE))) {
-//      // if exists an inplicit message with variadic argument list
-//      return encodeMessage(actionRef, 1, VARIADIC_MESSAGE);
-//   }
-//
-//   return 0;
-//}
+
+ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, targetRef, true))
+      return 0;
+
+   return info.header.classRef;
+}
+
+ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, size_t signLen, int& stackSafeAttr, bool ignoreMultimethod)
+{
+   ref_t classClassRef = getClassClassRef(scope, targetRef);
+   ref_t actionRef = scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false);
+   ref_t messageRef = encodeMessage(actionRef, signLen + 1, 0);
+   if (signRef != 0) {
+      // try to resolve implicit multi-method
+      ref_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef, stackSafeAttr);
+      if (resolvedMessage)
+         return resolvedMessage;
+   }
+
+   ClassInfo classClassinfo;
+   if (!defineClassInfo(scope, classClassinfo, classClassRef))
+      return 0;
+
+   if (classClassinfo.methods.exist(messageRef)) {
+      if (ignoreMultimethod) {
+         int hints = classClassinfo.methodHints.get(Attribute(messageRef, maHint));
+         if (test(hints, tpMultimethod))
+            return 0;
+      }
+
+      return messageRef;
+   }
+   else if (classClassinfo.methods.exist(encodeMessage(actionRef, 1, VARIADIC_MESSAGE))) {
+      // if exists an inplicit message with variadic argument list
+      return encodeMessage(actionRef, 1, VARIADIC_MESSAGE);
+   }
+
+   return 0;
+}
 
 bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-   ref_t elementRef/*, ident_t ns, bool noUnboxing*/)
+   ref_t elementRef/*, ident_t ns, bool noUnboxing*/, int& stackSafeAttr)
 {
 ////   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
 ////      if (isPrimitiveArrayRef(sourceRef)) {
@@ -1383,7 +1383,7 @@ bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node,
 //   /*else */if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
 //      sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, ns, false);
 
-   return injectImplicitConstructor(/*scope, compiler, info, targetRef, *//*elementRef, *//*&sourceRef, 1*/);
+   return injectImplicitConstructor(scope, node, compiler, info, targetRef, /*elementRef, */&sourceRef, 1, stackSafeAttr);
 }
 
 void CompilerLogic :: injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef)
@@ -1422,11 +1422,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
          info.header.flags = elDebugReal64 | elStructureRole | elReadOnlyRole;
          info.size = 8;
          break;
-//      case V_PTR32:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elStructureRole;
-//         info.size = 4;
-//         break;
+      case V_PTR32:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elStructureRole;
+         info.size = 4;
+         break;
       case V_DWORD:
          info.header.parentRef = scope.superReference;
          info.header.flags = elStructureRole | elReadOnlyRole;
@@ -1892,7 +1892,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
       case V_FLOAT:
       case V_BINARY:
       case V_INTBINARY:
-//      case V_PTRBINARY:
+      case V_PTRBINARY:
       case V_STRING:
       case V_MESSAGE:
 //      case V_SUBJECT:
@@ -2054,9 +2054,9 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
          case V_INT32:
             info.header.flags |= elDebugDWORD;
             break;
-//         case V_PTR32:
-//            info.header.flags |= elDebugPTR;
-//            break;
+         case V_PTR32:
+            info.header.flags |= elDebugPTR;
+            break;
          case V_INT64:
             info.header.flags |= elDebugQWORD;
             break;

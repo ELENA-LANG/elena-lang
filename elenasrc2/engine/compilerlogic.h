@@ -71,9 +71,10 @@ class CompilerLogic : public _CompilerLogic
    void setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
 
 ////   bool loadBranchingInfo(_CompilerScope& scope, ref_t reference);
-   bool injectImplicitConstructor(/*_ModuleScope& scope, _Compiler& compiler, ClassInfo& info, ref_t targetRef*//*, ref_t elementRef*//*, ref_t* signatures, int paramCount*/);
+   bool injectImplicitConstructor(_ModuleScope& scope, SNode& node, _Compiler& compiler, ClassInfo& info, ref_t targetRef,
+      /*ref_t elementRef, */ref_t* signatures, size_t paramCount, int& stackSafeAttr);
 
-//   ref_t getClassClassRef(_ModuleScope& scope, ref_t reference);
+   ref_t getClassClassRef(_ModuleScope& scope, ref_t reference);
 
    bool isBoolean(_ModuleScope& scope, ref_t reference);
 
@@ -156,8 +157,8 @@ public:
    virtual bool isMethodPrivate(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
 //   virtual bool isFunction(ClassInfo& info, ref_t message);
-//   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message);
-//   virtual bool isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message);
+   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message);
+   virtual bool isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message);
 ////   virtual bool isDispatcher(ClassInfo& info, ref_t message);
    virtual bool isReadonly(ClassInfo& info);
    virtual bool isReadonly(_ModuleScope& scope, ref_t reference)
@@ -178,9 +179,10 @@ public:
       ref_t& reference, /*ref_t elementRef, */int tempLocal);
 //   virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef);
    virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-      ref_t elementRef/*, ident_t ns, bool noUnboxing*/);
-//   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod);
-//
+      ref_t elementRef/*, ident_t ns, bool noUnboxing*/, int& stackSafeAttr);
+   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, size_t signLen, 
+      int& stackSafeAttr, bool ignoreMultimethod);
+
 ////   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef);
 ////   virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef);
    virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef);

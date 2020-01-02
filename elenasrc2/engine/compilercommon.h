@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler common interfaces.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerCommonH
@@ -94,7 +94,7 @@ constexpr auto V_STRING          = 0x80000801u;
 constexpr auto V_FLOAT           = 0x80000802u;
 constexpr auto V_INTBINARY       = 0x80000803u;
 constexpr auto V_BINARY          = 0x80000804u;
-//constexpr auto V_PTRBINARY       = 0x80000805u;
+constexpr auto V_PTRBINARY       = 0x80000805u;
 constexpr auto V_MESSAGE         = 0x80000806u;
 //constexpr auto V_SUBJECT         = 0x80000807u;
 //constexpr auto V_SYMBOL          = 0x80000808u;
@@ -109,7 +109,7 @@ constexpr auto V_INT64           = 0x80000004u;
 constexpr auto V_DWORD           = 0x80000005u;
 constexpr auto V_REAL64          = 0x80000006u;
 //constexpr auto V_EXTMESSAGE      = 0x80000007u;
-//constexpr auto V_PTR32           = 0x80000008u;
+constexpr auto V_PTR32           = 0x80000008u;
 constexpr auto V_OBJARRAY        = 0x80000009u;
 constexpr auto V_INT32ARRAY      = 0x8000000Au;
 constexpr auto V_BINARYARRAY     = 0x8000000Bu;
@@ -395,8 +395,8 @@ public:
 //   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode) = 0;
 //
    virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode = false*/) = 0;
-//   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
-//      int stacksafeAttr, bool embeddableAttr) = 0;
+   virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
+      int stacksafeAttr, bool embeddableAttr) = 0;
 //////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 
    virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
@@ -689,7 +689,7 @@ public:
    virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
       /*ref_t elementRef, */int tempLocal) = 0;
    virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-      ref_t elementRef/*, ident_t ns, bool noUnboxing*/) = 0;
+      ref_t elementRef/*, ident_t ns, bool noUnboxing*/, int& stackSafeAttr) = 0;
 //   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
    virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
    virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;

@@ -647,7 +647,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcLoadI:
       case bcSaveI:
 //      case bcMulN:
-//      case bcDLoadSI:
+      case bcLoadSI:
 //      case bcBLoadAI:
       case bcGetI:
       case bcMovN:
@@ -1050,9 +1050,9 @@ void listFlags(int flags, int& row, int pageSize)
       case elDebugShorts:
          printLine("@flag ", "elDebugShorts", row, pageSize);
          break;
-   //   case elDebugPTR:
-   //      printLine("@flag ", "elDebugPTR");
-   //      break;
+      case elDebugPTR:
+         printLine("@flag ", "elDebugPTR");
+         break;
       case elDebugWideLiteral:
          printLine("@flag ", "elDebugWideLiteral", row, pageSize);
          break;

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerH
@@ -1021,7 +1021,7 @@ private:
    ObjectInfo compileBranchingOperator(SNode roperand, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
 
    ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo info);
-//   ref_t resolveStrongArgument(CodeScope& scope, ObjectInfo param1, ObjectInfo param2);
+   ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo param1, ObjectInfo param2);
 
    ref_t compileMessageParameters(SNode node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/);
 
@@ -1256,8 +1256,8 @@ public:
    // _Compiler interface implementation
    virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode = false*/);
    virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
-//   virtual void injectConverting(SyntaxWriter& writer, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
-//      int stacksafeAttr, bool embeddableAttr);
+   virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
+      ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
    virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
 //   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);

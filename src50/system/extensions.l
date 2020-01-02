@@ -1,11 +1,11 @@
-//// --- common methods ---
-//
-///// A generic extender
-//public extension objectOp
-//{
-//    __getClass()
-//        => system'core_routines'__object;
-//
+// --- common methods ---
+
+/// A generic extender
+public extension objectOp
+{
+    __getClass()
+        => intern system'core_routines'__object;
+
 //    __getBaseClass()
 //        => system'core_routines'__object;
 //
@@ -14,20 +14,20 @@
 //
 //    bool instanceOf(type)
 //        => system'core_routines'__object;
-//
-//    string __getClassName()
-//    {
-//        dirty_ptr c := self.__getClass();
-//
-//        byte dump[256];
-//        int         len := extern elenart.LoadClassName(c, dump, 255);
-//         
-//        if (len == 0)
-//            { ^ "Unknown class" };
-//        
-//        ^ String.fromByteArray(0,len,dump)
-//    }
-//    
+
+    string __getClassName()
+    {
+        dirty_ptr c := self.__getClass();
+
+        byte dump[256];
+        int         len := extern elenart.LoadClassName(c, dump, 255);
+         
+        if (len == 0)
+            { ^ "Unknown class" };
+        
+        ^ String.fromByteArray(0,len,dump)
+    }
+    
 //    /// Returns true if the specified object instances are equal; otherwise, false.
 //    bool equalReference(o)
 //        => system'core_routines'__object;
@@ -142,8 +142,8 @@
 ////            [ ^ self shiftLeft(n negative) ];
 ////            [ ^ self shiftRight(n) ].
 ////    ]
-//}
-//
+}
+
 //// --- Operations ---
 //
 //// --- byteOp ---

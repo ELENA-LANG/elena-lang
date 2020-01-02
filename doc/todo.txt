@@ -2,9 +2,10 @@
 In development:
 ------         
               dev
-                * allocate in the correct place
-                * setAt - should be resolved directly 
-                * call stack
+                * implicit conversion
+                * recognize implicit conversion
+                * embeddable constructor
+
                 * __getClassName extension
                 * method not found - test
                 * fix clone opcode - add 3
@@ -13,6 +14,7 @@ In development:
                 * try / catch,try / catch / catch  - see system'entry
                 * try / finally / catch - see system'entry
                 * exception handling
+                * uncomment system'entry
                 * int sum : test exception handling
 
                 * char - default constructor
@@ -45,8 +47,6 @@ In development:
                 * stack allocated variables : assigning nil, default constructor call, ...
 
                 * conversion routines : others
-                * implicit conversion
-                * recognize implicit conversion
                 * run-time extension dispatching : if no extension was found - send the message to the target
 
                 * console operations
@@ -107,7 +107,6 @@ In development:
                 * template based class
 
                 * default implcit constructor should be embeddable?
-                * embeddable constructor
                 * variadic arguments : unboxing
 
                 * implicit default constructor cannot have redirector statement
