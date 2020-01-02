@@ -122,7 +122,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcEOrN, bcNewI, bcACopyAI
 };
 
-const int gcCommandExNumber = 22;
+const int gcCommandExNumber = 26;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
@@ -132,6 +132,7 @@ const int gcCommandExs[gcCommandExNumber] =
    bcXWrite + 0x100, bcXWrite + 0x200, bcXWrite + 0x300, bcXWrite + 0x400,
    bcReadToF + 0x100, bcReadToF + 0x200, bcReadToF + 0x300, bcReadToF + 0x400,
    bcCopyTo + 0x100, bcCopyTo + 0x200, bcCopyTo + 0x300, bcCopyTo + 0x400,
+   bcCopyToF + 0x100, bcCopyToF + 0x200, bcCopyToF + 0x300, bcCopyToF + 0x400,
 };
 
 // command table
@@ -179,7 +180,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileDShiftN, &compileDAndN, &loadNOp, &compileNop,
    &loadROp, &compileDShiftN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &loadFPIndexOpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp, &loadFPNOp,
+   &loadFPIndexOpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPN4OpX, &loadFPNOp, &loadFPNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileLessN,
@@ -468,6 +469,43 @@ void _ELENA_::loadFPNOp(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
+void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope, int prefix)
+{
+   int arg2 = scope.tape->getDWord();
+   char* code = nullptr;
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      if (gcCommandExs[i] == opcode + prefix) {
+         code = (char*)scope.compiler->_inlineExs[i];
+         break;
+      }
+   }
+
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(-(scope.argument << 2));
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 void _ELENA_::loadFPIndexOpX(int opcode, x86JITScope& scope, int prefix)
 {
    char* code = nullptr;
@@ -529,7 +567,31 @@ void _ELENA_::loadFPIndexOpX(int opcode, x86JITScope& scope)
          loadFPIndexOp(opcode, scope);
          break;
    }
+}
 
+void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope)
+{
+   pos_t pos = scope.tape->Position();
+   int arg2 = scope.tape->getDWord();
+   scope.tape->seek(pos);
+
+   switch (arg2) {
+      case 1:
+         loadFPN4OpX(opcode, scope, 0x100);
+         break;
+      case 2:
+         loadFPN4OpX(opcode, scope, 0x200);
+         break;
+      case 3:
+         loadFPN4OpX(opcode, scope, 0x300);
+         break;
+      case 4:
+         loadFPN4OpX(opcode, scope, 0x400);
+         break;
+      default:
+         loadFPNOp(opcode, scope);
+         break;
+   }
 }
 
 void _ELENA_::loadFPIndexOp(int opcode, x86JITScope& scope)

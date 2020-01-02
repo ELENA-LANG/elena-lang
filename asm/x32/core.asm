@@ -2779,6 +2779,54 @@ inline % 0E5h
 
 end
 
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 1E5h
+
+  lea  edi, [ebp + __arg1]
+  mov  eax, [ebx]
+  mov  [edi], eax
+
+end
+
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 2E5h
+
+  lea  edi, [ebp + __arg1]
+  mov  eax, [ebx]
+  mov  [edi], eax
+  mov  ecx, [ebx+4]
+  mov  [edi+4], ecx
+
+end
+
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 3E5h
+
+  lea  edi, [ebp + __arg1]
+  mov  eax, [ebx]
+  mov  [edi], eax
+  mov  ecx, [ebx+4]
+  mov  [edi+4], ecx
+  mov  eax, [ebx+8]
+  mov  [edi+8], eax
+
+end
+
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 4E5h
+
+  lea  edi, [ebp + __arg1]
+  mov  eax, [ebx]
+  mov  [edi], eax
+  mov  ecx, [ebx+4]
+  mov  [edi+4], ecx
+  mov  eax, [ebx+8]
+  mov  [edi+8], eax
+  mov  ecx, [ebx+12]
+  mov  [edi+12], ecx
+
+end
+
 // ; copyfi (__arg1 - index, __arg2 - n)
 inline % 0E6h
 

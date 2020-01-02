@@ -75,6 +75,8 @@ protected:
    friend void loadNOpX(int opcode, x86JITScope& scope);
    friend void loadN4OpX(int opcode, x86JITScope& scope);
    friend void loadFPNOp(int opcode, x86JITScope& scope);
+   friend void loadFPN4OpX(int opcode, x86JITScope& scope);
+   friend void loadFPN4OpX(int opcode, x86JITScope& scope, int prefix);
    friend void loadFPIndexOp(int opcode, x86JITScope& scope);
    friend void loadFPIndexOpX(int opcode, x86JITScope& scope);
    friend void loadFPIndexOpX(int opcode, x86JITScope& scope, int prefix);
@@ -229,6 +231,8 @@ void loadNOpX(int opcode, x86JITScope& scope);
 void loadN4OpX(int opcode, x86JITScope& scope);
 void loadIndexNOp(int opcode, x86JITScope& scope);
 void loadFpNOp(int opcode, x86JITScope& scope);
+void loadFpN4OpX(int opcode, x86JITScope& scope);
+void loadFpN4OpX(int opcode, x86JITScope& scope, int prefix);
 void loadFpIndexOp(int opcode, x86JITScope& scope);
 void loadFpIndexOpX(int opcode, x86JITScope& scope);
 void loadFpIndexOpX(int opcode, x86JITScope& scope, int prefix);

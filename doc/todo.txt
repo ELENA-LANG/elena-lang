@@ -2,8 +2,6 @@
 In development:
 ------         
               dev
-                * copytof - use optimization for 1, 2, 3, 4
-
                 * try / finally / catch - see system'entry
                 * descr inline attribute
                 * event handler
