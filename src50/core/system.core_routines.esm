@@ -1760,6 +1760,15 @@ labContinueError:
 
 end
 
+procedure __exception.register[0]
+
+  movr intern : system'core_routines'critical_exception_handler
+  callextr api : register_critical_exception_handler
+
+  quit
+
+end
+
 procedure __dptr."system$setReference[2]"
 
   loadsi 2
@@ -1784,6 +1793,15 @@ procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[
   save
 
   quitn 2
+
+end
+
+procedure critical_exception_handler
+
+  open 1
+  pushr class : system'CriticalException
+  pushr mssgconst : "new[0]"
+  throw
 
 end
 

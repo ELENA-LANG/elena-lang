@@ -30,7 +30,7 @@
 
 entry()
 {
-//    intern system'core_routines'__exception.register();
+    intern system'core_routines'__exception.register();
     
     try
     {

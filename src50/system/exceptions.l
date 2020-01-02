@@ -220,15 +220,15 @@ public class AbortException : Exception
         <= new("The process terminated");
 }
 
-//// --- CriticalException ---
-//
-//public class CriticalException : Exception
-//{
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Critical exception");
-//}
-//
+// --- CriticalException ---
+
+public class CriticalException : Exception
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception");
+}
+
 //// --- NilReferenceException ---
 //
 //public class NilReferenceException : CriticalException

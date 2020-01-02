@@ -2017,6 +2017,13 @@ labEnd2:
 
 end
 
+procedure coreapi'register_critical_exception_handler
+
+  mov  [data : % CORE_ET_TABLE], ebx
+  ret
+
+end
+
 procedure coreapi'default_handler                                                       
 
   // ; exit code
