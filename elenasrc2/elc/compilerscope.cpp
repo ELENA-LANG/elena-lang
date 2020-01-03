@@ -63,12 +63,11 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
    target.size = copy.size;
 
    if (!headerOnly) {
-      // import method references and mark them as inherited if required, ignoring private methods in the inherit mode
+      // import method references and mark them as inherited if required (inherit mode)
       auto it = copy.methods.start();
       if (inheritMode) {
          while (!it.Eof()) {
-            if (!test(it.key(), STATIC_MESSAGE))
-               target.methods.add(importMessage(exporter, it.key(), module), false);
+            target.methods.add(importMessage(exporter, it.key(), module), false);
 
             it++;
          }
@@ -81,11 +80,11 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
          }
       }
 
-      // import method attributes ingoring private one in inherit mode
+      // import method attributes ignoring private methods in inherit mode
       auto mtype_it = copy.methodHints.start();
       while (!mtype_it.Eof()) {
          Attribute key = mtype_it.key();
-         if (!inheritMode || !test(key.value1, STATIC_MESSAGE)) {
+         if (!inheritMode || key.value2 != maPrivate) {
             ref_t value = *mtype_it;
             if (test(key.value2, maActionMask)) {
                value = importAction(exporter, value, module);

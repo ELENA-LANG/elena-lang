@@ -527,9 +527,12 @@ enum MethodAttribute
 //   maEmbeddableNew      = 0x409,
    maOverloadlist       = 0x20A,
    maMultimethod        = 0x40B,
-//   maYieldContext       = 0x00C,
-//   maYieldLocals        = 0x00D,
-//   maYieldPreallocated  = 0x00E,
+   maInternal           = 0x40C,
+   maPrivate            = 0x40D,
+   maProtected          = 0x40E,
+   //   maYieldContext       = 0x00F,
+//   maYieldLocals        = 0x010,
+//   maYieldPreallocated  = 0x011,
 };
 
 enum ClassAttribute : int

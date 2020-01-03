@@ -1,6 +1,9 @@
 Declarations
   Namespaces
     * nested namespaces (import is declared for the namespace)
+  Classes
+    Methods
+      * private / protected / internal ones
 Code
   Build-in Variables
     * self vs this self

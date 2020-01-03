@@ -3651,7 +3651,7 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
 //   }
 
    if (callType == tpPrivate) {
-      if (target.kind == okSelfParam || target.kind == okOuterSelf || target.kind == okClassSelf) {
+      if (isSelfCall(target)) {
          messageRef |= STATIC_MESSAGE;
 
          callType = tpSealed;
@@ -4035,6 +4035,11 @@ ref_t Compiler :: resolveVariadicMessage(Scope& scope, ref_t message)
    return encodeMessage(scope.module->mapAction(actionName, 0, false), 2, flags | VARIADIC_MESSAGE);
 }
 
+bool Compiler :: isSelfCall(ObjectInfo target)
+{
+   return target.kind == okSelfParam || target.kind == okOuterSelf || target.kind == okClassSelf;
+}
+
 ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
    bool withExtension, int& stackSafeAttr)
 {
@@ -4042,7 +4047,8 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
    ref_t targetRef = resolveObjectReference(scope, target, true);
 
    // try to resolve the message as is
-   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, stackSafeAttr);
+   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef, 
+      stackSafeAttr, isSelfCall(target));
    if (resolvedMessageRef != 0) {
       // if the object handles the compile-time resolved message - use it
       return resolvedMessageRef;
@@ -4051,7 +4057,7 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
    // check if the object handles the variadic message
    if (targetRef) {
       resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, resolveVariadicMessage(scope, generalMessageRef),
-         targetRef, implicitSignatureRef, stackSafeAttr);
+         targetRef, implicitSignatureRef, stackSafeAttr, isSelfCall(target));
 
       if (resolvedMessageRef != 0) {
          // if the object handles the compile-time resolved variadic message - use it
@@ -6958,6 +6964,14 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          actionStr.insert("$$", 0);
          actionStr.insert(scope.module->Name(), 0);
       }
+      else if (test(scope.hints, tpProtected)) {
+         ident_t className = scope.module->resolveReference(scope.getClassRef());
+
+         actionStr.insert("$$", 0);
+         actionStr.insert(className + 1, 0);
+         actionStr.insert("@", 0);
+         actionStr.insert(scope.module->Name(), 0);
+      }
       else if ((scope.hints & tpMask) == tpPrivate) {
          flags |= STATIC_MESSAGE;
       }
@@ -8723,12 +8737,15 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    }
 
    if (test(hint, tpPrivate)) {
-      // if it is private message save its hints as public one
-      scope.addHint(message & ~STATIC_MESSAGE, hint);
+      if (scope.info.methods.exist(message & ~STATIC_MESSAGE)) {
+         // there should be no public method with the same name
+         scope.raiseError(errDupPublicMethod, findName(node));
+      }
+      // if it is private message save the visibility attribute
+      else scope.addAttribute(message & ~STATIC_MESSAGE, maPrivate, message);      
    }
-   else if (test(hint, tpInternal)) {
-      // if it is an internal message save internal hint as a public general one
-      // so it could be later recognized
+   else if (testany(hint, tpInternal | tpProtected)) {
+      // if it is internal / protected message save the visibility attribute
       ref_t signRef = 0;
       ident_t name = scope.module->resolveAction(getAction(message), signRef);
       int index = name.find("$$");
@@ -8740,10 +8757,11 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
          // there should be no public method with the same name
          scope.raiseError(errDupPublicMethod, findName(node));
       }
-      else {
-         scope.info.methodHints.exclude(Attribute(publicMessage, maHint));
-         scope.info.methodHints.add(Attribute(publicMessage, maHint), tpInternal);
+      // if it is protected / internal message save the visibility attribute
+      else if (test(hint, tpProtected)) {
+         scope.addAttribute(publicMessage, maProtected, message);
       }
+      else scope.addAttribute(publicMessage, maInternal, message);
    }
 
    if (outputRef) {
@@ -8837,6 +8855,17 @@ void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope
 
 }
 
+inline bool checkNonpublicDuplicates(ClassInfo& info, ref_t publicMessage)
+{
+   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+      Attribute key = it.key();
+      if (key.value1 == publicMessage && (key.value2 == maPrivate || key.value2 == maProtected || key.value2 == maInternal))
+         return true;
+   }
+
+   return false;
+}
+
 void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, 
    bool allowTypeAttribute)
 {
@@ -8889,17 +8918,18 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.raiseError(errClosedMethod, findParent(current, lxClass/*, lxNestedClass*/));
       }
 
-      // HOTFIX : make sure there are no duplicity between public and private / statically linked ones
-      if (privateOne || test(message, STATIC_MESSAGE)) {
-         if (scope.info.methods.exist(message & ~STATIC_MESSAGE))
-            scope.raiseError(errDupPublicMethod, current.findChild(lxIdentifier));
+      // HOTFIX : make sure there are no duplicity between public and private / internal / statically linked ones
+      if (!test(message, STATIC_MESSAGE)) {
+         if (scope.info.methods.exist(message | STATIC_MESSAGE))
+            scope.raiseError(errDuplicatedMethod, current);
       }
-      else  if (scope.info.methods.exist(message | STATIC_MESSAGE))
-         scope.raiseError(errDuplicatedMethod, current);
+      else if (!privateOne && !testany(methodHints, tpInternal | tpProtected)) {
+         if (checkNonpublicDuplicates(scope.info, message))
+            scope.raiseError(errDuplicatedMethod, current);
+      }
 
       if (scope.embeddable && !test(methodHints, tpMultimethod)) {
          // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
-
          methodHints |= tpStackSafe;
 
          scope.addHint(message, tpStackSafe);

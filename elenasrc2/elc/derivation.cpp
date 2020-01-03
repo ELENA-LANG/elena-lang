@@ -1489,14 +1489,10 @@ void DerivationWriter :: generatePropertyBody(SyntaxWriter& writer, SNode node, 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
-//         SNode subNameNode = current.prevNode();
-//
-//         subNameNode.setArgument(MODE_COMPLEXMESSAGE);
-
          generateMethodTree(writer, current, derivationScope, false, current.argument == MODE_PROPERTYMETHOD, buffer);
-
-//         if (parameters)
-//            parameters->add(subNameNode);
+      }
+      else if (current == lxClassField) {
+         generateFieldTree(writer, current, derivationScope, buffer);
       }
 
       current = current.nextNode();

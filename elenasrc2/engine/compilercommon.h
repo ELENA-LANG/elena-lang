@@ -31,9 +31,10 @@ constexpr auto V_NODEBUGINFO     = 0x80006004u;
 constexpr auto V_PUBLIC          = 0x80005001u;
 constexpr auto V_PRIVATE         = 0x80005002u;
 constexpr auto V_INTERNAL        = 0x80005003u;
-//constexpr auto V_META            = 0x80005004u;
-//constexpr auto V_INLINE          = 0x80005005u;
-//constexpr auto V_PROPERTY        = 0x80005006u;
+constexpr auto V_PROTECTED       = 0x80005004u;
+//constexpr auto V_META            = 0x80005005u;
+//constexpr auto V_INLINE          = 0x80005006u;
+//constexpr auto V_PROPERTY        = 0x80005007u;
 
 /// property:
 constexpr auto V_SEALED          = 0x80004001u;
@@ -163,6 +164,7 @@ enum MethodHint
    tpCast         = 0x0800000,
 //   tpYieldable   = 0x1000000
    tpConstant     = 0x2000000,
+   tpProtected    = 0x4000000,
 };
 
 // --- _Project ---
@@ -359,6 +361,20 @@ struct _ModuleScope
 
    virtual void declareNamespace(ident_t name) = 0;
    virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
+
+   bool isInteralOp(ref_t reference)
+   {
+      ident_t identName = resolveFullName(reference);
+      if (isWeakReference(identName)) {
+         return true;
+      }
+      else {
+         ref_t ownerRef = 0;
+         _Module* ownerModule = project->resolveModule(identName, ownerRef, true);
+
+         return ownerModule == module;
+      }
+   }
 
    _ModuleScope()
       : attributes(0), savedPaths(-1)
@@ -727,7 +743,8 @@ public:
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
 //   virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 
-   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr) = 0;
+   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, 
+      int& stackSafeAttr, bool selfCall) = 0;
 //   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns) = 0;
 };
 

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerLogicH
@@ -226,7 +226,8 @@ public:
 //
 //////   virtual void optimizeDuplicateBoxing(SNode node);
 
-   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr);
+   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, 
+      int& stackSafeAttr, bool selfCall);
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
 //   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns);
    virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference);

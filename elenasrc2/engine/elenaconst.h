@@ -359,10 +359,10 @@ namespace _ELENA_
    constexpr int WARNING_MASK_3           = 7;
 
    // --- ELENA Module structure constants ---
-   constexpr auto ELENA_SIGNITURE         = "ELENA.050.";      // the stand alone image
-   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.050.";   // the ELENAVM client
+   constexpr auto ELENA_SIGNITURE         = "ELENA.051.";      // the stand alone image
+   constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.051.";   // the ELENAVM client
 
-   constexpr auto MODULE_SIGNATURE        = "ELENA.050.0";     // the module version
+   constexpr auto MODULE_SIGNATURE        = "ELENA.051.0";     // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!03";
 
   // --- ELENA core module names ---

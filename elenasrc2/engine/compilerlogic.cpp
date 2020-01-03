@@ -1232,7 +1232,7 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
    ref_t messageRef = encodeMessage(actionRef, signLen + 1, 0);
    if (signRef != 0) {
       // try to resolve implicit multi-method
-      ref_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef, stackSafeAttr);
+      ref_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef, stackSafeAttr, true);
       if (resolvedMessage)
          return resolvedMessage;
    }
@@ -1804,6 +1804,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_INTERNAL:
          attrValue = tpInternal;
          return true;
+      case V_PROTECTED:
+         attrValue = tpProtected;
+         return true;
       case V_SEALED:
          attrValue = tpSealed;
          return true;
@@ -2355,7 +2358,42 @@ bool CompilerLogic :: optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compi
 //////   temp.copy(signature.c_str() + start, end - start);
 //////}
 
-ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, int& stackSafeAttr)
+inline ref_t resolveNonpublic(ClassInfo& info, _Module* module, ref_t publicMessage, ref_t& visibility)
+{
+   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+      Attribute key = it.key();
+      if (key.value1 == publicMessage && (key.value2 == maPrivate || key.value2 == maProtected || key.value2 == maInternal)) {
+         visibility = key.value2;
+
+         // get multi method
+         int argCount = 0;
+         ref_t actionRef = 0, flags = 0, signRef = 0;
+         decodeMessage(*it, actionRef, argCount, flags);
+
+         ident_t actionStr = module->resolveAction(actionRef, signRef);
+
+         if (test(flags, VARIADIC_MESSAGE)) {
+            // COMPILER MAGIC : for variadic message - use the most general message
+            ref_t genericActionRef = module->mapAction(actionStr, 0, false);
+            ref_t genericMessage = encodeMessage(genericActionRef, 2, flags);
+
+            return genericMessage;
+         }
+         else if (signRef) {
+            ref_t genericActionRef = module->mapAction(actionStr, 0, false);
+            ref_t genericMessage = encodeMessage(genericActionRef, argCount, flags);
+
+            return genericMessage;
+         }
+         else return *it;
+      }
+   }
+
+   return 0;
+}
+
+ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, 
+   int& stackSafeAttr, bool selfCall)
 {
    if (!targetRef)
       return 0;
@@ -2365,19 +2403,27 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
       if (isEmbeddable(info))
          stackSafeAttr |= 1;
 
-      //      if (isMethodInternal(info, multiMessage)) {
-//         // recognize the internal message
-//         ref_t signRef = 0;
-//         IdentifierString internalName(scope.module->Name(), "$$");
-//         internalName.append(scope.module->resolveAction(getAction(multiMessage), signRef));
-//
-//         ref_t internalRef = scope.module->mapAction(internalName.c_str(), signRef, false);
-//
-//         multiMessage = overwriteAction(multiMessage, internalRef);
-//         if (!implicitSignatureRef)
-//            // if no signature provided - return the general internal message
-//            return multiMessage;
-//      }
+      // check if it is non public message
+      ref_t type = 0;
+      ref_t nonPublicMultiMessage = resolveNonpublic(info, scope.module, multiMessage, type);
+      if (nonPublicMultiMessage != 0) {
+         // if it is an internal
+         ref_t resolved = 0;
+         if (type == maInternal && scope.isInteralOp(targetRef)) {
+            resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
+            if (!resolved) {
+               return nonPublicMultiMessage;
+            }
+            else return resolved;
+         }
+         else if ((type == maPrivate || type == maProtected) && selfCall) {
+            resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
+            if (!resolved) {
+               return nonPublicMultiMessage;
+            }
+            else return resolved;
+         }
+      }
 
       if (!implicitSignatureRef)
          return 0;

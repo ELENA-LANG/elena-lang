@@ -2,16 +2,22 @@
 In development:
 ------         
               dev
-                * property field
+                * test console operation
+                * test method not found exception
+
+
+
+                * public / private / internal / protected methods
+                * public / private / internal / protected constructors
                 * protected attribute
+
                 * public / private / internal / protected properties
-                * public / private / internal / protecte fields
-                * public / private / internal / protecte methods
-                * sealed property??
-                * static property??
+                * public / private / internal / protected fields
+                * public / private / internal classes
 
-                * auto injected attributes should be ignored if it is not allowed (e.g. public)??
+                * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
 
+                * property template
                 * event handler
                 * uncomment system'entry
                 * int sum : test exception handling
@@ -110,17 +116,10 @@ In development:
                 * nested class cannot have constructors
                 * conditional boxing of arguments and self
 
-                * revew internal methods
-                  - accessible only inside its own module
-                  - polymorphic
-                  - accessed only for strong-typed classes
-                  - internal sealed can be compiled as static one (outside VMT)
-
                 * singleton nested class - should init method be called?
 
                 * countable
 
-                * fields, public / private / internal fields
                 * fields with reference name
                 * strong typed fields
                 * temlate based typed fields
@@ -144,7 +143,6 @@ In development:
                 * auto symbol
                 * auto method
                 * auto field
-                * internal / protected methods : refactor
 
                 * implement analog of C# enum
 
@@ -190,6 +188,9 @@ In development:
 
                 * methods with reference name
                 * fields with reference name
+
+                * sealed property??
+                * static property??
 
                 * class template
                 * template base class
@@ -288,7 +289,6 @@ In development:
                 * protected constructors
                 * test internal / public / private / proteced methods
                 * test internal / public / private / proteced constructors
-                * public / internal fields
                 * public / private / internal properties
                 * direct operations with int constants
                 * comple-time int expression evaluation
