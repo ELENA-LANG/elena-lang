@@ -1,31 +1,30 @@
 /// Attribute categories:
-/// modificator? visibility? property? scope_prefix? scope? type?
+/// scope_accessors? modificator? visibility? scope_prefix? scope? type?
 
 /// modificator:
 //#define __ignore_duplicates 80006001h 
 
+/// scope_accessors:
+#define get         80005001h
+#define set         80005002h
+
 /// visibility:
-#define public      80005001h
-#define private     80005002h
-#define internal    80005003h
-#define protected   80005004h
-////#define __meta      80005005h
-//#define inline      80005006h
-//#define property    80005007h
+#define public      80004001h
+#define private     80004002h
+#define internal    80004003h
+#define protected   80004004h
+////#define __meta      80004005h
+//#define inline      80004006h
+//#define property    80004007h
 
 /// property:
-#define sealed      80004001h
-#define abstract    80004002h
-#define closed      80004003h
-#define predefined  80004005h
+#define sealed      80003001h
+#define abstract    80003002h
+#define closed      80003003h
+#define predefined  80003005h
 //#define yieldable   80004006h
 
-/// scope_accessors:
-#define get         80003007h
-#define set         80003008h
-
 /// scope_prefix:
-
 #define const       80002001h
 #define embeddable  80002002h
 #define ref         80002003h

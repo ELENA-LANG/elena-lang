@@ -150,7 +150,7 @@ public interface BoolValue
 
     abstract bool xor(expr) {}
 
-    abstract get bool Inverted() {}
+    get abstract bool Inverted() {}
 
     abstract bool clone() {}
 }

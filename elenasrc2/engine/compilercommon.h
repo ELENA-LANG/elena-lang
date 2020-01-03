@@ -27,25 +27,25 @@ constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
 //constexpr auto V_AUTOSIZE        = 0x80006003u;
 constexpr auto V_NODEBUGINFO     = 0x80006004u;
 
+/// accessors:
+constexpr auto V_GETACCESSOR     = 0x80005001u;
+constexpr auto V_SETACCESSOR     = 0x80005002u;
+
 /// visibility:
-constexpr auto V_PUBLIC          = 0x80005001u;
-constexpr auto V_PRIVATE         = 0x80005002u;
-constexpr auto V_INTERNAL        = 0x80005003u;
-constexpr auto V_PROTECTED       = 0x80005004u;
-//constexpr auto V_META            = 0x80005005u;
-//constexpr auto V_INLINE          = 0x80005006u;
-//constexpr auto V_PROPERTY        = 0x80005007u;
+constexpr auto V_PUBLIC          = 0x80004001u;
+constexpr auto V_PRIVATE         = 0x80004002u;
+constexpr auto V_INTERNAL        = 0x80004003u;
+constexpr auto V_PROTECTED       = 0x80004004u;
+//constexpr auto V_META            = 0x80004005u;
+//constexpr auto V_INLINE          = 0x80004006u;
+//constexpr auto V_PROPERTY        = 0x80004007u;
 
 /// property:
-constexpr auto V_SEALED          = 0x80004001u;
-constexpr auto V_ABSTRACT        = 0x80004002u;
-constexpr auto V_CLOSED          = 0x80004003u;
-constexpr auto V_PREDEFINED      = 0x80004005u;
-//constexpr auto V_YIELDABLE       = 0x80004006u;
-
-/// accessors:
-constexpr auto V_GETACCESSOR = 0x80003007u;
-constexpr auto V_SETACCESSOR = 0x80003008u;
+constexpr auto V_SEALED          = 0x80003001u;
+constexpr auto V_ABSTRACT        = 0x80003002u;
+constexpr auto V_CLOSED          = 0x80003003u;
+constexpr auto V_PREDEFINED      = 0x80003005u;
+//constexpr auto V_YIELDABLE       = 0x80003006u;
 
 /// scope_prefix:
 constexpr auto V_CONST           = 0x80002001u;

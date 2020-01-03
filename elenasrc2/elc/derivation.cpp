@@ -1204,13 +1204,26 @@ void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, 
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxScope) {
-         SNode prev = current;
-         SNode nameNode = node.prevNode();
-         while (nameNode.compare(lxNameAttr, lxType, lxAttribute)) {
-            prev = prev.prependSibling(lxToken);
-            SyntaxTree::copyNode(nameNode, prev);
+         if (current.firstChild().compare(lxFieldInit, lxNone)) {
+            // HOTFIX : skip attribute info for field member
+            SNode prev = current;
+            SNode nameNode = node.prevNode();
+            while (nameNode.compare(lxNameAttr, lxType)) {
+               prev = prev.prependSibling(lxToken);
+               SyntaxTree::copyNode(nameNode, prev);
 
-            nameNode = nameNode.prevNode();
+               nameNode = nameNode.prevNode();
+            }
+         }
+         else {
+            SNode prev = current;
+            SNode nameNode = node.prevNode();
+            while (nameNode.compare(lxNameAttr, lxType, lxAttribute)) {
+               prev = prev.prependSibling(lxToken);
+               SyntaxTree::copyNode(nameNode, prev);
+
+               nameNode = nameNode.prevNode();
+            }
          }
       }
       current = current.nextNode();

@@ -2,9 +2,9 @@
 public abstract class BaseVariable
 {
     // should be overridden
-    abstract get Value() {}
+    get abstract Value() {}
     
-    abstract set Value(o) {}
+    set abstract Value(o) {}
 }
 
 public sealed ref<T> : BaseVariable
@@ -2001,7 +2001,7 @@ public sealed const struct CharValue : BaseValue
     static char MaxValue
         = $010FFFFh;
 
-    internal get Value()
+    get internal Value()
     {
         int val := intConvertor.convert(self);
         
