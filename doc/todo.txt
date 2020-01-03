@@ -2,21 +2,6 @@
 In development:
 ------         
               dev
-                * test console operation
-                * test method not found exception
-
-
-
-                * public / private / internal / protected methods
-                * public / private / internal / protected constructors
-                * protected attribute
-
-                * public / private / internal / protected properties
-                * public / private / internal / protected fields
-                * public / private / internal classes
-
-                * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
-
                 * property template
                 * event handler
                 * uncomment system'entry
@@ -24,6 +9,7 @@ In development:
                 * embeddable constructor
 
                 * char - default constructor
+                * public / private / internal / protected constructors
                 * calling internal constructor (String and WideString)
 
                 * support vm client
@@ -34,6 +20,12 @@ In development:
                 * literal convertor (UIntNumber)
                 * String, WideString- fill, new
                 * Array<T>.clone
+
+                * public / private / internal / protected fields
+                * public / private / internal classes
+                * public / private / internal / protected properties
+
+                * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
 
                 * stringConvertor, wideConvertor, charConvertor
                 * variadicarray
