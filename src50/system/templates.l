@@ -171,9 +171,13 @@ public interface<T>
 //{
 //    try_block | on(catch_block1,catch_block2);
 //}
-//
-//// -- try-finally-catch statement ---
-//
+
+// -- try-finally-catch statement ---
+#declare try:finally:catch(try_block,finally_block,catch_block)
+{
+    try_block $fnl finally_block | on(catch_block);
+}
+
 //public try<try_block,finally_block, catch_block>:finally,catch()
 //{
 //    try_block $fnl finally_block | on(catch_block);

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Derivation Tree class implementation
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"

@@ -6030,7 +6030,7 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
 
    int retLabel = declareSafeTry(tape);
 
-   SNode finallyNode/* = node.findChild(lxFinally)*/;
+   SNode finallyNode = node.findChild(lxFinalblock);
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone) {
       if (first) {
@@ -6040,23 +6040,23 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
          else generateObject(tape, current, scope);
             
          endTry(tape);
-//            if (finallyNode != lxNone) {
-//               // generate finally
-//               pushObject(tape, lxResult);
-//               generateCodeBlock(tape, finallyNode);
-//               popObject(tape, lxResult);
-//            }
+         if (finallyNode != lxNone) {
+            // generate finally
+            pushObject(tape, lxResult, 0, scope, 0);
+            generateCodeBlock(tape, finallyNode, scope);
+            popObject(tape, lxResult);
+         }
          declareSafeCatch(tape, finallyNode, retLabel, scope);
          doCatch(tape);
-//            if (finallyNode != lxNone) {
-//               // generate finally
-//               pushObject(tape, lxResult);
-//               generateCodeBlock(tape, finallyNode);
-//               popObject(tape, lxResult);
-//            }
-//
-//            // ...
-//
+         if (finallyNode != lxNone) {
+            // generate finally
+            pushObject(tape, lxResult, 0, scope, 0);
+            generateCodeBlock(tape, finallyNode, scope);
+            popObject(tape, lxResult);
+         }
+
+         // ...
+
          first = false;
       }
       else generateObject(tape, current, scope);

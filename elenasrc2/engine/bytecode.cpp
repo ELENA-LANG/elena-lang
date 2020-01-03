@@ -758,7 +758,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
    addVerb(operators, ISNIL_OPERATOR, ISNIL_OPERATOR_ID);
    addVerb(operators, CATCH_OPERATOR, CATCH_OPERATOR_ID);
    addVerb(operators, ALT_OPERATOR, ALT_OPERATOR_ID);
-//   addVerb(operators, FINALLY_OPERATOR, FINALLY_OPERATOR_ID);
+   addVerb(operators, FINALLY_OPERATOR, FINALLY_OPERATOR_ID);
 }
 
 ByteCode ByteCodeCompiler :: code(ident_t s)

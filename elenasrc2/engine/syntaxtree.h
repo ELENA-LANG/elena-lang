@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Syntax Tree classes
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef syntaxTreeH
@@ -49,6 +49,7 @@ enum LexicalType
    lxForward                  = 0x00001B,
    lxClassProperty            = 0x00001C,
    lxClassImport              = 0x00001D,
+   lxFinalblock               = 0x00001E,
 
    // derivation symbols
    lxToken                    = 0x001010,

@@ -60,7 +60,7 @@ namespace _ELENA_
    constexpr auto SHIFTL_OPERATOR_ID      = 0x001B;
    constexpr auto INCREASE_OPERATOR_ID    = 0x001C;
    constexpr auto SEPARATE_OPERATOR_ID    = 0x001D;
-//   constexpr auto FINALLY_OPERATOR_ID     = 0x001E;
+   constexpr auto FINALLY_OPERATOR_ID     = 0x001E;
 
    constexpr auto ISNIL_OPERATOR_ID       = 0x0022;
    constexpr auto CATCH_OPERATOR_ID       = 0x0023;
@@ -427,8 +427,8 @@ namespace _ELENA_
    constexpr auto ISNIL_OPERATOR          = "??";
    constexpr auto CATCH_OPERATOR          = "|";
    constexpr auto ALT_OPERATOR            = "\\";
-//   constexpr auto FINALLY_OPERATOR     = "$fnl";
-//
+   constexpr auto FINALLY_OPERATOR        = "$fnl";
+
 //  // operator templates
 //   constexpr auto DOIFNOTNIL_OPERATOR  = "doIfNotNil#1#1";
 //   constexpr auto TRYORRETURN_OPERATOR = "tryOrReturn#1#1";

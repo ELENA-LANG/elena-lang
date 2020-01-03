@@ -3607,7 +3607,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
          // if it is branching operators
          return compileBranchingOperator(roperand, scope, target, mode, operator_id);
       case CATCH_OPERATOR_ID:
-//      case FINALLY_OPERATOR_ID:
+      case FINALLY_OPERATOR_ID:
          return compileCatchOperator(roperand, scope/*, target, mode*/, operator_id);
       case ALT_OPERATOR_ID:
          return compileAltOperator(roperand, scope, target/*, mode, operator_id*/);
@@ -5027,16 +5027,15 @@ ObjectInfo Compiler :: compileCatchOperator(SNode node, ExprScope& scope, ref_t 
 //   writer.closeNode();
 
 //   SNode current = node.firstChild();
-//   if (operator_id == FINALLY_OPERATOR_ID) {
-//      writer.newNode(lxFinally);
-//      writer.newBookmark();
-//      compileObject(writer, current, scope, 0, EAttr::eaNone);
-//      writer.removeBookmark();
-//      writer.closeNode();
-//
-//      // HOTFIX : catch operation follow the finally operation
-//      current = node.nextNode().firstChild();
-//   }
+   if (operator_id == FINALLY_OPERATOR_ID) {
+      SNode finalExpr = node;
+      finalExpr.injectAndReplaceNode(lxFinalblock);
+
+      compileExpression(finalExpr.firstChild(lxObjectMask), scope, 0, EAttr::eaNone);
+
+      // catch operation follow the finally operation
+      node = node.nextNode();
+   }
 
    node.insertNode(lxResult);
    compileOperation(node, scope, ObjectInfo(okObject), /*0, */EAttr::eaNone, false);
@@ -7621,16 +7620,20 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
 
    // if the method returns itself
    if (retVal.kind == okUnknown) {
-      ObjectInfo thisParam = scope.mapSelf();
+      ObjectInfo retVal;
+      if (test(scope.hints, tpSetAccessor)) {
+         retVal = scope.mapParameter(*scope.parameters.start(), EAttr::eaNone);
+      }
+      else retVal = scope.mapSelf();
 
-      // adding the code loading self
+      // adding the code loading self / parameter (for set accessor)
       SNode retNode = body.appendNode(lxReturning);
       ExprScope exprScope(&codeScope);
-      recognizeTerminal(retNode.appendNode(lxExpression), thisParam, exprScope, HINT_NODEBUGINFO | HINT_NOBOXING);
+      recognizeTerminal(retNode.appendNode(lxExpression), retVal, exprScope, HINT_NODEBUGINFO | HINT_NOBOXING);
 
       ref_t resultRef = scope.getReturningRef(false);
       if (resultRef != 0) {
-         if (convertObject(retNode, exprScope, resultRef, thisParam, EAttr::eaNone).kind == okUnknown)
+         if (convertObject(retNode, exprScope, resultRef, retVal, EAttr::eaNone).kind == okUnknown)
             scope.raiseError(errInvalidOperation, node);
       }
    }
@@ -8932,7 +8935,10 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          ref_t outputRef = scope.info.methodHints.get(Attribute(message, maReference));
 
          bool embeddable = false;
-         if (outputRef == scope.reference && _logic->isEmbeddable(scope.info)) {
+         if (test(methodHints, tpSetAccessor)) {
+            // HOTFIX : the result of set accessor should not be embeddable
+         }
+         else if (outputRef == scope.reference && _logic->isEmbeddable(scope.info)) {
             embeddable = true;
          }
          else if (_logic->isEmbeddable(*scope.moduleScope, outputRef)) {
@@ -9372,10 +9378,6 @@ void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 
 void Compiler :: compileClassImplementation(SNode node, ClassScope& scope)
 {
-//   expressionTree.clear();
-//
-//   SyntaxWriter writer(expressionTree);
-
    if (test(scope.info.header.flags, elExtension)) {
       scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
 

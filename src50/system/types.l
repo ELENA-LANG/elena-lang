@@ -106,9 +106,8 @@ type handle     = Handle;
 //type rt_ptr     = RTPointer;
 type dirty_ptr  = UnsafePointer;
 
-
 /// descr inline template
-#inline descr<arg>
+#inline info<arg>
 {
     meta info := arg;
 }

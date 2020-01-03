@@ -1,0 +1,14 @@
+Declarations
+  Namespaces
+    * nested namespaces (import is declared for the namespace)
+Code
+  Build-in Variables
+    * self vs this self
+  Operators
+    * a ?? b / a.msg() ?? b
+  Expressions
+    * In-place assignment (both variable and properties)
+Project
+  Options
+    * option to turn on / off auto system module import
+VM

@@ -2,8 +2,16 @@
 In development:
 ------         
               dev
-                * try / finally / catch - see system'entry
-                * descr inline attribute
+                * property field
+                * protected attribute
+                * public / private / internal / protected properties
+                * public / private / internal / protecte fields
+                * public / private / internal / protecte methods
+                * sealed property??
+                * static property??
+
+                * auto injected attributes should be ignored if it is not allowed (e.g. public)??
+
                 * event handler
                 * uncomment system'entry
                 * int sum : test exception handling
@@ -247,6 +255,9 @@ In development:
                 * boxArgument - fieldexpr should be better mapped
                 * String / WideString - add<'Char>
                 * api doc - with description
+
+              dev - refactoring
+                * mov GC to C code
 
               dev - test
                 * it should be possible to turn-off optimization (opL1)
