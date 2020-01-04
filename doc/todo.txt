@@ -2,8 +2,6 @@
 In development:
 ------         
               dev
-                * int sum : test exception handling
-
                 * char - default constructor
                 * public / private / internal / protected constructors
                 * calling internal constructor (String and WideString)

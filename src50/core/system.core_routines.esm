@@ -41,6 +41,14 @@ procedure __object."__getClass$system@Object[1]"
 
 end
 
+procedure __object."raise[1]"
+
+  freei 1
+  peeksi 0
+  throw
+  
+end
+
 procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1

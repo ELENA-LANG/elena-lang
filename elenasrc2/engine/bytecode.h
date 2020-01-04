@@ -430,7 +430,7 @@ public:
          //case bcIfB:
          //case bcElseB:
          //case bcIf:
-         //case bcElse:
+         case bcElse:
          //case bcLess:
          case bcNotLess:
          case bcIfN:

@@ -1,15 +1,3 @@
-////// --- type --
-////
-////type exception = Exception.
-//
-//// --- helper ---
-//
-//extension op
-//{
-//    throw()
-//        => system'core_routines'__object;
-//}
-
 // --- CallStack ---
 
 /// A call stack
@@ -80,11 +68,9 @@ public class Exception
 
 //    on(handler1,handler2)
 //        => system'core_routines'__exception;
-//
-//    raise()
-//    {
-//        self.throw()
-//    }
+
+    raise()
+        => intern system'core_routines'__object;
     
     /// Creates the exception with the provided message and error type
     constructor new(string message)
