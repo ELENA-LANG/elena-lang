@@ -3,7 +3,7 @@
 //               
 //		This file contains ELENA Engine Derivation Tree classes
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef derivationH
@@ -39,7 +39,7 @@ class DerivationWriter : public _DerivationWriter
       stNormal = 0,
       stClassTemplate,
       stCodeTemplate,
-//      stPropertyTemplate,
+      stPropertyTemplate,
 //      stExtensionTemplate,
       stInlineTemplate
    };
@@ -51,21 +51,21 @@ class DerivationWriter : public _DerivationWriter
       int            nestedLevel;
       bool           ignoreTerminalInfo;
       int            bookmark;
-//
-//      bool isNameParameter(ident_t name, ref_t& argument)
-//      {
-//         if (templateMode == stInlineTemplate || templateMode == stPropertyTemplate) {
-//            ref_t index = parameters.get(name);
-//            if (index == parameters.Count()) {
-//               argument = nestedLevel + index;
-//
-//               return true;
-//            }
-//            else return false;
-//         }
-//         else return false;
-//      }
-//
+
+      bool isNameParameter(ident_t name, ref_t& argument)
+      {
+         if (/*templateMode == stInlineTemplate || */templateMode == stPropertyTemplate) {
+            ref_t index = parameters.get(name);
+            if (index == parameters.Count()) {
+               argument = nestedLevel + index;
+
+               return true;
+            }
+            else return false;
+         }
+         else return false;
+      }
+
 //      bool isMessageParameter(ident_t name, ref_t& argument)
 //      {
 //         if (templateMode == stPropertyTemplate) {
@@ -107,7 +107,7 @@ class DerivationWriter : public _DerivationWriter
 
       bool withTypeParameters() const
       {
-         return templateMode == stClassTemplate/* || templateMode == stPropertyTemplate 
+         return templateMode == stClassTemplate || templateMode == stPropertyTemplate/*
             || templateMode == stExtensionTemplate*/;
       }
 
@@ -141,7 +141,7 @@ class DerivationWriter : public _DerivationWriter
 
 //   ref_t resolveTemplate(ident_t templateName);
 
-   ref_t mapAttribute(SNode terminal, bool allowType, /*bool& allowPropertyTemplate, */ref_t& previusCategory);
+   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory);
    ref_t mapInlineAttribute(SNode terminal);
    void declareAttribute(SNode node);
    void declareStatement(SNode node, ScopeType templateType);
@@ -160,6 +160,8 @@ class DerivationWriter : public _DerivationWriter
 
    void saveTemplateParameters(SyntaxWriter& tempWriter, SNode current, Scope& derivationScope);
 
+   void copyScope(SyntaxWriter& writer, SNode node, Scope& derivationScope);
+
 //   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
    void generateClassImport(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void generateTemplateTree(SNode node, ScopeType templateType);
@@ -169,7 +171,7 @@ class DerivationWriter : public _DerivationWriter
       Scope& derivationScope);
    void generateStatementTemplateTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
    void generatePropertyBody(SyntaxWriter& writer, SNode node, Scope& derivationScope, /*List<SNode>* parameters, */SyntaxTree& buffer);
-//   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
+   void generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void generateInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode owner, Scope& derivationScope, SyntaxTree& buffer);
    //void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);

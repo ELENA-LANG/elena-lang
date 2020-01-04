@@ -2,11 +2,7 @@
 In development:
 ------         
               dev
-                * property template
-                * event handler
-                * uncomment system'entry
                 * int sum : test exception handling
-                * embeddable constructor
 
                 * char - default constructor
                 * public / private / internal / protected constructors
@@ -40,6 +36,10 @@ In development:
               dev
                 * constructor default class resend?
                 * constructor - calling a parent one - currently implicit, should explicit be allowed?
+
+                * event handler
+                * uncomment system'entry
+                * embeddable constructor
 
                 * samples
 

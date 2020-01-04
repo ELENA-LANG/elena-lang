@@ -79,6 +79,7 @@ enum LexicalType
    lxFieldAccum               = 0x001170,
    lxArrOperator              = 0x021180,
    lxAttrExpression           = 0x001190,
+   lxPropertyDecl             = 0x0011A0,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -218,6 +219,7 @@ enum LexicalType
    lxClassName                = 0x000F1F, // arg - identifier
    lxIfValue                  = 0x000F20, // arg - reference
    lxElseValue                = 0x000F21, // arg - reference
+   lxTemplateNameParam        = 0x000F22,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -317,7 +319,6 @@ enum LexicalType
 //   lxElement                  = 0x20043,
 //   lxTypecasting              = 0x20044,
 //   lxIntConversion            = 0x20045,
-//   lxTemplateNameParam        = 0x20046,
 //   lxTemplateMsgParam         = 0x20047,
 //   lxByRefTarget              = 0x20049,
 //   lxDimensionAttr            = 0x2004B,

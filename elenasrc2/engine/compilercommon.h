@@ -38,7 +38,7 @@ constexpr auto V_INTERNAL        = 0x80004003u;
 constexpr auto V_PROTECTED       = 0x80004004u;
 //constexpr auto V_META            = 0x80004005u;
 //constexpr auto V_INLINE          = 0x80004006u;
-//constexpr auto V_PROPERTY        = 0x80004007u;
+constexpr auto V_PROPERTY        = 0x80004007u;
 
 /// property:
 constexpr auto V_SEALED          = 0x80003001u;
