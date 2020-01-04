@@ -74,7 +74,7 @@ public:
 
    virtual int allocateTLSVariable(_JITLoader* loader) = 0;
    virtual void allocateThreadTable(_JITLoader* loader, int length) = 0;
-//   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length) = 0;
+   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length) = 0;
 
    virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize) = 0;

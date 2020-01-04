@@ -2187,20 +2187,20 @@ int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
    return position;
 }
 
-//int x86JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t length)
-//{
-//   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskRDataRef));
-//
-//   // reserve space for TLS index
-//   int position = dataWriter.Position();
-//
-//   dataWriter.write(tape, length);
-//
-//   // map VMTape
-//   loader->mapReference(ReferenceInfo(TAPE_KEY), (void*)(position | mskRDataRef), (ref_t)mskRDataRef);
-//
-//   return position;
-//}
+int x86JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t length)
+{
+   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskRDataRef));
+
+   // reserve space for TLS index
+   int position = dataWriter.Position();
+
+   dataWriter.write(tape, length);
+
+   // map VMTape
+   loader->mapReference(ReferenceInfo(TAPE_KEY), (void*)(position | mskRDataRef), (ref_t)mskRDataRef);
+
+   return position;
+}
 
 inline void compileTape(MemoryReader& tapeReader, size_t endPos, x86JITScope& scope)
 {

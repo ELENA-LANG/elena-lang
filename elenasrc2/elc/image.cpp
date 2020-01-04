@@ -311,81 +311,81 @@ ReferenceInfo ExecutableImage :: retrieveReference(_Module* module, ref_t refere
    }
 }
 
-//// --- ExecutableImage::_Helper ---
-//
-//inline void writeTapeRecord(MemoryWriter& tape, size_t command)
-//{
-//   tape.writeDWord(command);
-//   tape.writeDWord(0);
-//}
-//
-//inline void writeTapeRecord(MemoryWriter& tape, size_t command, ident_t value, bool forward = false)
-//{
-//   tape.writeDWord(command);
-//
-//   if (!emptystr(value)) {
-//      if (forward) {
-//         tape.writeDWord(getlength(value) + 1 + FORWARD_PREFIX_NS_LEN);
-//         tape.writeLiteral(FORWARD_PREFIX_NS, FORWARD_PREFIX_NS_LEN);
-//         tape.writeLiteral(value, getlength(value) + 1);
-//      }
-//      else {
-//         tape.writeDWord(getlength(value) + 1);
-//         tape.writeLiteral(value, getlength(value) + 1);
-//      }
-//   }
-//   else tape.writeDWord(0);
-//}
-//
-//inline void writeTapeRecord(MemoryWriter& tape, size_t command, ident_t value1, ident_t value2)
-//{
-//   tape.writeDWord(command);
-//   // write total length including equal sign
-//   tape.writeDWord(getlength(value1) + getlength(value2) + 2);
-//   if (!emptystr(value1)) {
-//      tape.writeLiteral(value1, getlength(value1));
-//      tape.writeChar('=');
-//   }
-//   if (!emptystr(value2)) {
-//      tape.writeLiteral(value2);
-//   }
-//   else tape.writeChar((char)0);
-//}
-//
-//void ExecutableImage::_Helper :: createTape(_Memory& tape, Project* project, bool withNewConsole)
-//{
-//   MemoryWriter data(&tape);
-//
-//   // write tape
-//
-//   // USE_VM_MESSAGE_ID path, package
-//   writeTapeRecord(data, USE_VM_MESSAGE_ID, project->StrSetting(opNamespace), project->StrSetting(opOutputPath));
-//
-//   // LOAD_VM_MESSAGE_ID name
-//   writeTapeRecord(data, LOAD_VM_MESSAGE_ID, project->StrSetting(opTemplate));
-//
-//   // { MAP_VM_MESSAGE_ID fwrd, ref }*
-//   ForwardIterator it = project->getForwardIt();
-//   while (!it.Eof()) {
-//      ident_t fwd = *it;
-//
-//      writeTapeRecord(data, MAP_VM_MESSAGE_ID, it.key(), fwd);
-//
-//      it++;
-//   }
-//
-//   if (withNewConsole) {
-//      writeTapeRecord(data, OPEN_VM_CONSOLE);
-//   }
-//
-//   // START_VM_MESSAGE_ID debugMode ??
-//   writeTapeRecord(data, START_VM_MESSAGE_ID);
-//
-//   // CALL_TAPE_MESSAGE_ID 'program
-//   writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, PROGRAM_ENTRY, true);
-//
-//   data.writeDWord(0);
-//}
+// --- ExecutableImage::_Helper ---
+
+inline void writeTapeRecord(MemoryWriter& tape, size_t command)
+{
+   tape.writeDWord(command);
+   tape.writeDWord(0);
+}
+
+inline void writeTapeRecord(MemoryWriter& tape, size_t command, ident_t value, bool forward = false)
+{
+   tape.writeDWord(command);
+
+   if (!emptystr(value)) {
+      if (forward) {
+         tape.writeDWord(getlength(value) + 1 + FORWARD_PREFIX_NS_LEN);
+         tape.writeLiteral(FORWARD_PREFIX_NS, FORWARD_PREFIX_NS_LEN);
+         tape.writeLiteral(value, getlength(value) + 1);
+      }
+      else {
+         tape.writeDWord(getlength(value) + 1);
+         tape.writeLiteral(value, getlength(value) + 1);
+      }
+   }
+   else tape.writeDWord(0);
+}
+
+inline void writeTapeRecord(MemoryWriter& tape, size_t command, ident_t value1, ident_t value2)
+{
+   tape.writeDWord(command);
+   // write total length including equal sign
+   tape.writeDWord(getlength(value1) + getlength(value2) + 2);
+   if (!emptystr(value1)) {
+      tape.writeLiteral(value1, getlength(value1));
+      tape.writeChar('=');
+   }
+   if (!emptystr(value2)) {
+      tape.writeLiteral(value2);
+   }
+   else tape.writeChar((char)0);
+}
+
+void ExecutableImage::_Helper :: createTape(_Memory& tape, Project* project, bool withNewConsole)
+{
+   MemoryWriter data(&tape);
+
+   // write tape
+
+   // USE_VM_MESSAGE_ID path, package
+   writeTapeRecord(data, USE_VM_MESSAGE_ID, project->StrSetting(opNamespace), project->StrSetting(opOutputPath));
+
+   // LOAD_VM_MESSAGE_ID name
+   writeTapeRecord(data, LOAD_VM_MESSAGE_ID, project->StrSetting(opTemplate));
+
+   // { MAP_VM_MESSAGE_ID fwrd, ref }*
+   ForwardIterator it = project->getForwardIt();
+   while (!it.Eof()) {
+      ident_t fwd = *it;
+
+      writeTapeRecord(data, MAP_VM_MESSAGE_ID, it.key(), fwd);
+
+      it++;
+   }
+
+   if (withNewConsole) {
+      writeTapeRecord(data, OPEN_VM_CONSOLE);
+   }
+
+   // START_VM_MESSAGE_ID debugMode ??
+   writeTapeRecord(data, START_VM_MESSAGE_ID);
+
+   // CALL_TAPE_MESSAGE_ID 'program
+   writeTapeRecord(data, CALL_TAPE_MESSAGE_ID, PROGRAM_ENTRY, true);
+
+   data.writeDWord(0);
+}
 
 //// --- VirtualMachineClientImage ---
 //

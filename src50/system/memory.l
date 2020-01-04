@@ -826,7 +826,7 @@ public sealed const struct String : BaseValue
 //    constructor new(int index, int length, char[] array)
 //        => system'core_routines'__literal;
 
-    /*internal*/ constructor fromByteArray(int index, int size, byte[] buffer)
+    internal constructor fromByteArray(int index, int size, byte[] buffer)
         <= allocate(size)
     {
         intern system'core_routines'__literal.copy(self, index, size, buffer)
@@ -1074,7 +1074,7 @@ public sealed const struct WideString : BaseValue
 //    constructor new(int index, int size, char[] array)
 //        => system'core_routines'__wide;
 
-    /*internal*/ constructor fromShortArray(int index, int size, short[] array)
+    internal constructor fromShortArray(int index, int size, short[] array)
         <= allocate(size)
     {
         intern system'core_routines'__wide.copy(self, index, size, array)
@@ -1319,22 +1319,22 @@ public sealed class Variant
     int cast()
         = intConvertor.convert(value);
 
-////    /// Tries to convert the literal value to the long integer number
-////    cast T<long>
-////        = longConvertor convert:theValue.
-//
-//    /// Tries to convert the literal value to the real number
-//    real cast()
-//        = realConvertor.convert(theValue);
-//
-//    /// Returns a literal value
-//    string cast()
-//        = stringConvertor.convert(theValue);
-//    
-////    /// Returns a wide literal value
-////    cast T<wide>
-////        = wideConvertor convert:theValue.
-////
+    /// Tries to convert the literal value to the long integer number
+    long cast()
+        = longConvertor.convert(value);
+
+    /// Tries to convert the literal value to the real number
+    real cast()
+        = realConvertor.convert(value);
+
+    /// Returns a literal value
+    string cast()
+        = stringConvertor.convert(value);
+    
+    /// Returns a wide literal value
+    wide cast()
+        = wideConvertor.convert(value);
+
 ////    T<literal> literal => theValue.
 ////
 ////    /// Converts the parameter into a literal string
@@ -1372,29 +1372,29 @@ public sealed class Variant
             castTo(o)
                 = o.toPrintable();
             
-////            eval(BaseVariable v)
-//////                <= eval(v value).
-//////            
+//            castTo(BaseVariable v)
+//                <= castTo(v.Value);
+            
             castTo(int val)
                 = cast int(self);
                 
-////            eval(byte val)
-////                = cast byte(self);
-////                
-////            eval(short val)
-////                = cast short(self);
-////                
-////            eval(long val)
-////                = cast long(self);
-////                
-////            eval(real val)
-////                = cast real(self);
-////                
-////            eval(string val)
-////                = cast string(self);
-////                
-////            eval(wide val)
-////                = cast wide(self);
+            castTo(byte val)
+                = cast byte(self);
+                
+            castTo(short val)
+                = cast short(self);
+                
+            castTo(long val)
+                = cast long(self);
+                
+            castTo(real val)
+                = cast real(self);
+                
+            castTo(string val)
+                = cast string(self);
+                
+            castTo(wide val)
+                = cast wide(self);
         }.castTo(target);
 
     saveTo(target)
@@ -1639,18 +1639,18 @@ public singleton stringConvertor
 //        
 //        ^ String.fromByteArray(0, length, buffer)
 //    }
-//
-//    /// Converts the parameter to the literal value
-//    string convert(real n)
-//    {
-//        byte buffer[32];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
+
+    /// Converts the parameter to the literal value
+    string convert(real n)
+    {
+        byte buffer[32];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(n, 24, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
 //    string convert(wide w)
 //    {
 //        int  i := 0;

@@ -1964,7 +1964,7 @@ public sealed const struct RealNumber : BaseNumber
         = self.divide(new RealNumber(n));
 
     /// Returns the literal presentation
-    string Printable = stringConvertor.convert(self);
+    string toPrintable() = stringConvertor.convert(self);
 
     /// Clones the value    
     real clone = new RealNumber(self);
@@ -1981,9 +1981,9 @@ public sealed const struct CharValue : BaseValue
 {
     embeddable __raw theValue[4];
 
-//    /// Creates the object with a default value (0)
-//    constructor()
-//        = $0;
+    /// Creates the object with a default value (0)
+    constructor()
+        = /*$0*/0;
 
     /// Creates the object with specified value
     constructor(char value)

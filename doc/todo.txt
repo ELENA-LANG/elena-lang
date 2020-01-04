@@ -2,24 +2,10 @@
 In development:
 ------         
               dev
-                * char - default constructor
-                * public / private / internal / protected constructors
-                * calling internal constructor (String and WideString)
-
-                * support vm client
-                * vm hello world sample
-                * real, real literal, primitive operations with real
-                * realsum
                 * int to real conversion
                 * literal convertor (UIntNumber)
                 * String, WideString- fill, new
                 * Array<T>.clone
-
-                * public / private / internal / protected fields
-                * public / private / internal classes
-                * public / private / internal / protected properties
-
-                * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
 
                 * stringConvertor, wideConvertor, charConvertor
                 * variadicarray
@@ -48,6 +34,13 @@ In development:
 
                 * console operations
                 * no need to include system for system'io module, it should be included automatically!?
+
+                * public / private / internal / protected fields
+                * public / private / internal classes
+                * public / private / internal / protected properties
+
+                * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
+
 
                 * extension to read the class name, package info
 

@@ -129,11 +129,11 @@ public:
 //   {
 //      return _settings.exist(key);
 //   }
-//
-//   ForwardIterator getForwardIt()
-//   {
-//      return _settings.getIt(opForwards);
-//   }
+
+   ForwardIterator getForwardIt()
+   {
+      return _settings.getIt(opForwards);
+   }
 
    ident_t resolvePrimitive(ident_t alias) const
    {

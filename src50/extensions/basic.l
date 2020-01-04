@@ -25,69 +25,70 @@ public sealed class Integer : BaseVariable, ref<int>
 ////
 ////    reduce : n
 ////        <= reduce(T<int>(n)).
-//        
-//    append(int n)
-//    {
-//        int v := theValue;
-//        v := v + n;
-//        
-//        theValue := v
-//    }
-//    
-//    reduce(int n)
-//    {
-//        int v := theValue;
-//        v := v - n;
-//        
-//        theValue := v
-//    }
+        
+    append(int n)
+    {
+        int v := value;
+        v := v + n;
+        
+        value := v
+    }
+    
+    reduce(int n)
+    {
+        int v := value;
+        v := v - n;
+        
+        value := v
+    }
     
     dispatch() => value;
 }
 
-//public sealed class Real : BaseVariable, ref<real>
-//{
-//    constructor()
-//    {
-//        theValue := 0.0r
-//    }
-//    
-//    constructor(real n) 
-//    {
-//        theValue := n
-//    }
-//    
-//    constructor new()
-//        <= ();
-//        
-////    constructor new : n
-////        <= new(T<real>(n)).
-//        
-//    append(real n)
-//    {
-//        real v := theValue;
-//        v := v + n;
-//        
-//        theValue := v
-//    }
-//    
-//    append(n)
-//        <= append(cast real(n));
-//    
-//    reduce(real n)
-//    {
-//        real v := theValue;
-//        v := v - n;
-//        
-//        theValue := v
-//    }
-//    
-//    reduce(n)
-//        <= reduce(cast real(n));
-//        
-//    dispatch() => theValue;
-//}
-//
+public sealed class Real : BaseVariable, ref<real>
+{
+    constructor()
+    {
+        value := 0.0r
+    }
+    
+    constructor(real n) 
+    {
+        value := n
+    }
+    
+    constructor new()
+    {
+    }
+        
+//    constructor new : n
+//        <= new(T<real>(n)).
+        
+    append(real n)
+    {
+        real v := value;
+        v := v + n;
+        
+        value := v
+    }
+    
+    append(n)
+        <= append(cast real(n));
+    
+    reduce(real n)
+    {
+        real v := value;
+        v := v - n;
+        
+        value := v
+    }
+    
+    reduce(n)
+        <= reduce(cast real(n));
+        
+    dispatch() => value;
+}
+
 //public sealed class LongInteger : BaseVariable, ref<long>
 //{
 //    constructor()

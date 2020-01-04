@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the win32 command-line compiler
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #define __MSVCRT_VERSION__ 0x0800
@@ -19,7 +19,7 @@
 #include "x86jitcompiler.h"
 //#include "amd64jitcompiler.h"
 //#include "derivation.h"
-//
+
 //#include <stdarg.h>
 #include <windows.h>
 
@@ -87,12 +87,12 @@ public:
       // thread table contains TLS reference
       compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
 
-      //if (_vmMode) {
-      //   _ELENA_::MemoryDump tape;
-      //   createTape(tape, project, _consoleMode);
+      if (_vmMode) {
+         _ELENA_::MemoryDump tape;
+         createTape(tape, project, _consoleMode);
 
-      //   compiler->allocateVMTape(loader, tape.get(0), tape.Length());
-      //}
+         compiler->allocateVMTape(loader, tape.get(0), tape.Length());
+      }
    }
 
    virtual void afterLoad(_ELENA_::ExecutableImage&)
