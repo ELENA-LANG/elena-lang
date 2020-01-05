@@ -89,6 +89,17 @@ inline SNode goToFirstNode(SNode current, LexicalType type1, LexicalType type2, 
    return firstOne;
 }
 
+inline SNode goToFirstNode(SNode current, LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
+{
+   SNode firstOne = current;
+   while (current != lxNone && current.compare(type1, type2, type3, type4)) {
+      firstOne = current;
+      current = current.prevNode();
+   }
+
+   return firstOne;
+}
+
 //inline SNode goToNode(SNode current, LexicalType type)
 //{
 //   while (current != lxNone && current != type)
@@ -819,7 +830,8 @@ void DerivationWriter :: recognizeScopeAttributes(SNode current, int mode)
    SNode nameNode = current;
    nameNode = lxNameAttr;
 
-   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken, lxDynamicSizeDecl, lxInlineAttribute), mode, lxNameAttr);
+   recognizeAttributes(goToFirstNode(nameNode.prevNode(), lxToken, lxDynamicSizeDecl, lxInlineAttribute, lxTemplateArgs), 
+      mode, lxNameAttr);
 
    SNode nameTerminal = nameNode.firstChild(lxTerminalMask);
    IdentifierString name(nameTerminal.identifier().c_str());
@@ -1164,6 +1176,8 @@ void DerivationWriter :: generateAttributes(SyntaxWriter& writer, SNode node, Sc
 
          current = current.prevNode();
       }
+      if (current == lxTemplateArgs)
+         current = current.prevNode();
 
       current = goToFirstNode(current, lxAttribute, lxType, lxInlineAttribute);
    }
@@ -1865,7 +1879,7 @@ void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode
 
    if (current.nextNode() == lxTemplateArgs) {
       // if it is a template based type
-      generateTypeAttribute(writer, current, dimensionCounter, V_TEMPLATE, derivationScope);
+      generateTypeAttribute(writer, current, V_TEMPLATE, dimensionCounter, derivationScope);
    }
    else {
       ref_t attrRef = mapAttribute(current, allowType, allowProperty, previousCategory);

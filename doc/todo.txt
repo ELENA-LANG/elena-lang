@@ -2,20 +2,24 @@
 In development:
 ------         
               dev50
+                * StringEnumerator should be private
                 * migrate basic classes : enumerators - string, wide, array
                 * migrate basic classes : strong-typed enumerators - string, wide, array
                 * migrate basic classes : indexers - string, wide, array
-                * words samples
 
-              dev50
                 * literal convertor (UIntNumber)
                 * String, WideString- fill, new
                 * Array<T>.clone
 
                 * stringConvertor, wideConvertor, charConvertor
                 * variadicarray
+                * ArrayList
+                * StringWriter
+                * ifExists, forEachWord, ascendant extensions
 
               dev50
+                * words samples
+
                 * samples
 
                 * constructor default class resend?

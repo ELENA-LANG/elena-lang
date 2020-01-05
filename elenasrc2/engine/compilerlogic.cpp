@@ -1259,7 +1259,7 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
 }
 
 bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-   ref_t elementRef/*, ident_t ns, bool noUnboxing*/, int& stackSafeAttr)
+   ref_t elementRef/*, ident_t ns*/, bool noUnboxing, int& stackSafeAttr)
 {
 ////   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
 ////      if (isPrimitiveArrayRef(sourceRef)) {
@@ -1305,7 +1305,7 @@ bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node,
       else compatible = isCompatible(scope, inner.value1, sourceRef);
 
       if (compatible) {
-         compiler.injectBoxingExpr(node, !isReadonly(info), 
+         compiler.injectBoxingExpr(node, !isReadonly(info) && !noUnboxing,
             test(info.header.flags, elStructureRole) ? info.size : 0, 
             targetRef);
 
@@ -1343,7 +1343,7 @@ bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node,
 //      ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
 
       if (isCompatible(scope, info.fieldTypes.get(-1).value2, elementRef)) {
-         compiler.injectBoxingExpr(node, !isReadonly(info),
+         compiler.injectBoxingExpr(node, !isReadonly(info) && !noUnboxing,
             test(info.header.flags, elStructureRole) ? info.size : 0,
             targetRef);
 

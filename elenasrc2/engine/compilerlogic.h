@@ -179,7 +179,7 @@ public:
       ref_t& reference, /*ref_t elementRef, */int tempLocal);
 //   virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef);
    virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-      ref_t elementRef/*, ident_t ns, bool noUnboxing*/, int& stackSafeAttr);
+      ref_t elementRef/*, ident_t ns*/, bool noUnboxing, int& stackSafeAttr);
    virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, size_t signLen, 
       int& stackSafeAttr, bool ignoreMultimethod);
 

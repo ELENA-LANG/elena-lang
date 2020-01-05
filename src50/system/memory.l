@@ -867,7 +867,7 @@ public sealed const struct String : BaseValue
         ^ retVal
     }
      
-//    Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
+    //Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
 
     string toPrintable() = self;
 
@@ -1025,7 +1025,7 @@ public sealed const struct String : BaseValue
 //    internal saveToByteArray(int index, byte[] array, int retVal)
 //        => system'core_routines'__literal;
 
-    /// Returns the string enumerator
+//    /// Returns the string enumerator
 //    Enumerator<char> enumerator() = new StringEnumerator(self);
 
 //    /// Returns the string indexer
@@ -2031,8 +2031,8 @@ public singleton charConvertor
 //    char get() = theChar;
 //}
 
-//// --- LiteralIndexer ---
-//
+// --- LiteralIndexer ---
+
 ///// A literal value indexer
 //class StringIndexer : Indexer<char>
 //{

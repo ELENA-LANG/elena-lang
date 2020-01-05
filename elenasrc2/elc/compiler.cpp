@@ -3841,6 +3841,7 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
 {
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
+   bool noUnboxing = EAttrs::test(mode, HINT_NOUNBOXING);
    ref_t sourceRef = resolveObjectReference(scope, source, false);
    int stackSafeAttrs = 0;
    if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
@@ -3859,7 +3860,7 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
          return source;
       }
       else if (_logic->injectImplicitConversion(*scope.moduleScope, node, *this, targetRef, sourceRef, 
-         source.element, stackSafeAttrs))
+         source.element, noUnboxing, stackSafeAttrs))
       {
          if (node.compare(lxDirectCalling, lxSDirectCalling)) {
             // HOTFIX : box arguments if required
@@ -6166,6 +6167,7 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ref_t ta
 ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t exptectedRef, EAttr modeAttrs)
 {
    bool noPrimMode = EAttrs::test(modeAttrs, HINT_NOPRIMITIVES);
+   bool noUnboxing = EAttrs::test(modeAttrs, HINT_NOUNBOXING);
 //   bool inlineArgMode = false;
 //   bool boxingMode = false;
 //   //   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
@@ -6252,6 +6254,9 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectIn
 //   }
 
    if (exptectedRef) {
+      if (noUnboxing)
+         mode = mode | HINT_NOUNBOXING;
+
 //////      if (assignMode && exptectedRef == scope.moduleScope->realReference && (sourceRef == V_INT32 || sourceRef == scope.moduleScope->intReference)) {
 //////         objectInfo = ObjectInfo(okPrimitiveConv, V_REAL64, V_INT32);
 //////      } else {
