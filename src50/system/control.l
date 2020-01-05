@@ -1,54 +1,54 @@
-//// === Basic prototypes ===
-//
-//// --- Enumerator ---
-//
-///// An enumerator prototype
-//public interface Enumerator
-//{
-//    /// Returns the current object
-//    abstract get() {}
-//    
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    abstract bool next() {}
-//    
-//    /// Resets the enumerator
-//    abstract reset() {}
-//    
-//    /// returns the enumerator owner
-//    abstract enumerable() {}
-//    
-//    Enumerator enumerator() = self;
-//}
-//
-//// --- enumerator<> ---
-//
-//public interface Enumerator<T>
-//{
-//    abstract bool next() {}
-//    
-//    abstract T get() {}
-//    
-//    /// Resets the enumerator
-//    abstract reset() {}
-//    
-//    /// returns the enumerator owner
-//    abstract enumerable() {}
-//
-//    abstract Enumerator cast() {}
-//    
-//    Enumerator<T> enumerator() = self;
-//}
-//
-//public abstract Enumerable
-//{
-//    abstract Enumerator enumerator() {}
-//}
-//
-//public abstract Enumerable<T>
-//{
-//    abstract Enumerator<T> enumerator() {}
-//}
-//
+// === Basic prototypes ===
+
+// --- Enumerator ---
+
+/// An enumerator prototype
+public interface Enumerator
+{
+    /// Returns the current object
+    abstract get() {}
+    
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    abstract bool next() {}
+    
+    /// Resets the enumerator
+    abstract reset() {}
+    
+    /// returns the enumerator owner
+    abstract enumerable() {}
+    
+    Enumerator enumerator() = self;
+}
+
+// --- enumerator<> ---
+
+public interface Enumerator<T>
+{
+    abstract bool next() {}
+    
+    abstract T get() {}
+    
+    /// Resets the enumerator
+    abstract reset() {}
+    
+    /// returns the enumerator owner
+    abstract enumerable() {}
+
+    abstract Enumerator cast() {}
+    
+    Enumerator<T> enumerator() = self;
+}
+
+public abstract Enumerable
+{
+    abstract Enumerator enumerator() {}
+}
+
+public abstract Enumerable<T>
+{
+    abstract Enumerator<T> enumerator() {}
+}
+
 //// --- Indexer ---
 //
 ///// An indexer prototype

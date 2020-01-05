@@ -1024,10 +1024,10 @@ public sealed const struct String : BaseValue
 //
 //    internal saveToByteArray(int index, byte[] array, int retVal)
 //        => system'core_routines'__literal;
-//
-//    /// Returns the string enumerator
+
+    /// Returns the string enumerator
 //    Enumerator<char> enumerator() = new StringEnumerator(self);
-//
+
 //    /// Returns the string indexer
 //    Indexer<char> indexer() = new StringIndexer(self);
     
@@ -1966,10 +1966,10 @@ public singleton charConvertor
         = cast char(o);
 }
 
-//// === Enumerators / Indexers
-//
-//// --- StringEnumerator ---
-//
+// === Enumerators / Indexers
+
+// --- StringEnumerator ---
+
 ///// A string enumerator
 //class StringEnumerator : Enumerator<char>
 //{
@@ -2030,7 +2030,7 @@ public singleton charConvertor
 //    /// Returns the current character
 //    char get() = theChar;
 //}
-//
+
 //// --- LiteralIndexer ---
 //
 ///// A literal value indexer

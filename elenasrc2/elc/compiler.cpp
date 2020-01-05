@@ -7442,16 +7442,16 @@ void Compiler :: compileEmbeddableMethod(SNode node, MethodScope& scope)
    privateScope.extensionMode = scope.extensionMode;
    privateScope.embeddableRetMode = true;
 
+   // !! TEMPORAL : clone the method node, to compile it safely : until the proper implementation
+   SNode cloneNode = node.prependSibling(node.type, privateScope.message);
+   SyntaxTree::copyNode(node, cloneNode);
+
    if (scope.abstractMethod) {
       // COMPILER MAGIC : if the method retunging value can be passed as an extra argument
       compileAbstractMethod(node, scope);
-      compileAbstractMethod(node, privateScope);
+      compileAbstractMethod(cloneNode, privateScope);
    }
    else {
-      // !! TEMPORAL : clone the method node, to compile it safely : until the proper implementation
-      SNode cloneNode = node.prependSibling(node.type, privateScope.message);
-      SyntaxTree::copyNode(node, cloneNode);
-
       //if (scope.yieldMethod) {
       //   compileYieldableMethod(writer, dummyTree.readRoot(), privateScope);
       //   //compileMethod(writer, node, privateScope);

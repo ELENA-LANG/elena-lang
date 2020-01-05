@@ -1,31 +1,29 @@
 ------                                 
 In development:
 ------         
-              dev
-                * int to real conversion
+              dev50
+                * migrate basic classes : enumerators - string, wide, array
+                * migrate basic classes : strong-typed enumerators - string, wide, array
+                * migrate basic classes : indexers - string, wide, array
+                * words samples
+
+              dev50
                 * literal convertor (UIntNumber)
                 * String, WideString- fill, new
                 * Array<T>.clone
 
                 * stringConvertor, wideConvertor, charConvertor
                 * variadicarray
-                * migrate basic classes : enumerators, indexers
 
-              dev2
-                * xdev - call default constructor
-                * creating nested class - implciit constructor should be called
-                * creating nested class - field intialization should be called 
-                * creating nested class - in-place field intialization should be called 
+              dev50
+                * samples
 
-              dev
                 * constructor default class resend?
                 * constructor - calling a parent one - currently implicit, should explicit be allowed?
 
                 * event handler
                 * uncomment system'entry
                 * embeddable constructor
-
-                * samples
 
                 * stack allocated variables : assigning nil, default constructor call, ...
 
@@ -35,7 +33,6 @@ In development:
                 * console operations
                 * no need to include system for system'io module, it should be included automatically!?
 
-                * public / private / internal / protected fields
                 * public / private / internal classes
                 * public / private / internal / protected properties
 
@@ -188,14 +185,6 @@ In development:
                 * calls
                 * system module to be included by default : an option?
 
-                * functions
-                * variables
-                * templates
-
-                * long,real,string constant
-
-                * inheritance
-
                 * nested class scope?
                 * global types
 
@@ -240,10 +229,16 @@ In development:
                 * String / WideString - add<'Char>
                 * api doc - with description
 
+              xdev
+                * xdev - call default constructor
+                * creating nested class - implciit constructor should be called
+                * creating nested class - field intialization should be called 
+                * creating nested class - in-place field intialization should be called 
+
               dev - refactoring
                 * mov GC to C code
 
-              dev - test
+              dev50 - test
                 * it should be possible to turn-off optimization (opL1)
                 * protected default constructor - the class cannot be created using default constructor
                 * test : branching external implementation : returning a value from closure 
@@ -294,6 +289,9 @@ In development:
                 * test int/byte/short/long to real conversion
                 * test real to byte/short/int/uint/long conversion
                 * test expression with several boxed fields 
+
+              dev50 - new features
+                * public / private / internal / protected fields
 
               dev1
                 * move all description to meta info using descr inline template
