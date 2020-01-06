@@ -80,8 +80,8 @@ public:
             rootNs = false;
          }
          else appendSubName(path_t(buf), bufLen);
-         
-         name += pos + 1;         
+
+         name += pos + 1;
       }
       appendExtension(extension);
    }
@@ -435,6 +435,15 @@ public:
          appendExtension(path.c_str());
       }
    }
+#else
+   FileName(const char* pathStr, bool withExtension)
+   {
+      copyName(pathStr);
+      if (withExtension) {
+         appendExtension(pathStr);
+      }
+   }
+
 #endif
 
    FileName()

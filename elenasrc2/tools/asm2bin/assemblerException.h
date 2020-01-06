@@ -50,4 +50,4 @@ struct AssemblerException
 };
 }
 
-#endif assemblerExceptionH
+#endif // assemblerExceptionH

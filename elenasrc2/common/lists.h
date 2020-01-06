@@ -1996,7 +1996,7 @@ public:
 
             if (*current == key) {
                // if it is top item
-               if (previous == -1) {
+               if (previous == (unsigned int)-1) {
                   _buffer[0] = current->next;
 
                   if (_count == 1)

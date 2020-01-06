@@ -368,7 +368,7 @@ public:
          }
          else {
             pos = path.findLast('.');
-            if (pos == -1)
+            if (pos == NOTFOUND_POS)
                pos = getlength(path);
 
             bufLen = IDENTIFIER_LEN;
@@ -566,7 +566,7 @@ struct ClassInfo
 
    FieldTypeMap    fieldTypes;
    CategoryInfoMap methodHints;
-   CategoryInfoMap mattributes;   
+   CategoryInfoMap mattributes;
 
    void save(StreamWriter* writer, bool headerAndSizeOnly = false)
    {

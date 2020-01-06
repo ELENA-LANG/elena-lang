@@ -304,7 +304,7 @@ void JITCompiler32 :: addVMTEntry(ref_t message, size_t codePosition, VMTEntry* 
          insertVMTEntry(entries, entryCount, index);
          entryCount++;
       }
-   }  
+   }
    else entryCount++;
 
    entries[index].message = message;
@@ -313,10 +313,10 @@ void JITCompiler32 :: addVMTEntry(ref_t message, size_t codePosition, VMTEntry* 
 
 void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, pos_t packageParentVAddress, int count, bool virtualMode)
 {
-   _Memory* image = vmtWriter.Memory();   
+   _Memory* image = vmtWriter.Memory();
 
    // update class package reference if available
-   if (packageParentVAddress != NULL) {
+   if (packageParentVAddress != 0) {
       int position = vmtWriter.Position();
       vmtWriter.seek(position - 0x10);
 
@@ -329,10 +329,10 @@ void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, 
    }
 
    // update class vmt reference if available
-   if (classClassVAddress != NULL) {
+   if (classClassVAddress != 0) {
       vmtWriter.seek(vmtWriter.Position() - 4);
 
-      if (virtualMode) {                                  
+      if (virtualMode) {
          vmtWriter.writeRef((ref_t)classClassVAddress, 0);
       }
       else vmtWriter.writeDWord((int)classClassVAddress);
@@ -343,12 +343,12 @@ void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, pos_t classClassVAddress, 
       ref_t entryPosition = vmtWriter.Position();
       for (int i = 0 ; i < count ; i++) {
          image->addReference(mskCodeRef, entryPosition + 4);
-      
+
          entryPosition += 8;
       }
    }
 }
-   
+
 void JITCompiler32 :: generateProgramStart(MemoryDump& tape)
 {
    MemoryWriter ecodes(&tape);
@@ -605,7 +605,7 @@ void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
 //      // + VMT length
 //      vmtSize = vmtLength * sizeof(VMTXEntry);
 //   }
-//   
+//
 //   vmtWriter.writeBytes(0, vmtSize);
 //
 //   vmtWriter.seek(position);

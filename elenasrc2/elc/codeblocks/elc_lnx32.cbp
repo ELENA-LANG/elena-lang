@@ -112,7 +112,6 @@
 		<Unit filename="../separser.cpp" />
 		<Unit filename="../source.cpp" />
 		<Unit filename="../source.h" />
-		<Unit filename="../syntax.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

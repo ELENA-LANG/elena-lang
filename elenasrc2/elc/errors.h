@@ -3,7 +3,7 @@
 //
 //		This file contains the ELENA Compiler error messages
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jeterrorsH
@@ -100,7 +100,7 @@ namespace _ELENA_
    #define errClosureError          "internal error 503: closure cannot be generated"
 ////   #define errCrUnknownReference    "reference cannot be resolved"
    #define errCommandSetAbsent     "internal error 600: command set is not defined"
-//   #define errFatalLinker          "internal error 601: linker fatal error"
+   #define errFatalLinker          "internal error 601: linker fatal error"
 
   // --- Linker error messages ---
    #define errUnknownModule         "linker: error 201: Unknown module '%s'\n"

@@ -31,7 +31,7 @@ constexpr auto SOURCERULES_FILE     = "source_rules.dat";
 
 constexpr auto SYNTAX_FILE          = "/usr/share/elena/syntax.dat";
 constexpr auto RULES_FILE           = "/usr/share/elena/rules.dat";
-//constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
+constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
 
 #endif
 
@@ -274,7 +274,7 @@ class Project : public _ELENA_::Project
                raiseError(errInvalidFile, filePath);
 
             // declare a namespace
-            writer.newNodeDirectly(_ELENA_::lxNamespace);            
+            writer.newNodeDirectly(_ELENA_::lxNamespace);
             writer.newNodeDirectly(_ELENA_::lxSourcePath, filePath);
             writer.closeNodeDirectly();
 

@@ -51,4 +51,4 @@ namespace _ELENA_
 	};
 }
 
-#endif preprocessorExceptionH
+#endif // preprocessorExceptionH
