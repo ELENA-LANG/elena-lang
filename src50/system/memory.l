@@ -17,22 +17,22 @@ public sealed Array<T> //: Indexable<T>
         }
     }
 
-//    Enumerator<T> enumerator() = new BaseEnumerator<T>::
-//    {
-//        this theIndex := -1;
-//        
-//        this theLength := self.Length;
-//        
-//        T get() = self.at(this theIndex.Value);
-//        
-//        enumerable() = self;
-//        
-//        reset()
-//        {
-//            this theIndex := -1
-//        }
-//    };
-//
+    Enumerator<T> enumerator() = new BaseEnumerator<T>::
+    {
+        this theIndex := -1;
+        
+        this theLength := self.Length;
+        
+        T get() = self.at(this theIndex.Value);
+        
+        enumerable() = self;
+        
+        reset()
+        {
+            this theIndex := -1
+        }
+    };
+
 ////    cast T<Indexable> = Indexable::{ /*embeddable dispatch => self.*/T<Indexer> indexer => self. }.
 //    
 ////    cast Enumerable<T> = new Enumerable<T>:{ embeddable dispatch => self; };

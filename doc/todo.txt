@@ -1,9 +1,11 @@
 ------                                 
 In development:
 ------         
+              dev3 - linux32
+                * port elenart dll
+                * port Linux
+
               dev50
-                * migrate basic classes : enumerators - array, array<T>
-                * migrate basic classes : strong-typed enumerators - string, wide, array
                 * migrate basic classes : indexers - string, wide, array
 
                 * literal convertor (UIntNumber)
@@ -331,7 +333,6 @@ In development:
                 * yieldable method can be declared only for normal class
 
               dev3
-                * port Linux
                 * port Linux IDE
 
               dev4

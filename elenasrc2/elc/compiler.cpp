@@ -7784,7 +7784,7 @@ void Compiler :: compileInitializer(SNode node, MethodScope& scope)
 {
    SNode methodNode = node.appendNode(lxClassMethod, scope.message);
 
-   beginMethod(node, scope);
+   beginMethod(methodNode, scope);
 
    int preallocated = 0;
 
@@ -7827,7 +7827,7 @@ void Compiler :: compileInitializer(SNode node, MethodScope& scope)
 
    codeScope.syncStack(&scope);
 
-   endMethod(node, scope, preallocated);
+   endMethod(methodNode, scope, preallocated);
 }
 
 void Compiler :: compileDefaultConstructor(SNode node, MethodScope& scope)

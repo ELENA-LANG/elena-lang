@@ -735,24 +735,24 @@ public interface Func<T1,T2,TResult>
 //    
 //    dispatch() => system'core_routines'__lazyexpression;
 //}
-//
-//// --- BaseEnumerator<type> ---
-//
-//public abstract class BaseEnumerator<T> : Enumerator<T>
-//{
-//    ref<int> theIndex;
-//    int      theLength;
-//    
-//    bool next()
-//    {
-//        theIndex.append(1);
-//        
-//        ^ (cast int(theIndex)) < theLength
-//    }
-//    
-//    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
-//}
-//
+
+// --- BaseEnumerator<type> ---
+
+public abstract class BaseEnumerator<T> : Enumerator<T>
+{
+    ref<int> theIndex;
+    int      theLength;
+    
+    bool next()
+    {
+        theIndex.append(1);
+        
+        ^ (cast int(theIndex)) < theLength
+    }
+    
+    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
+}
+
 //// --- BaseIndexer ---
 //
 //public abstract class BaseIndexer : Indexer
