@@ -983,6 +983,30 @@ inline % 18h
 
 end
 
+// ; set
+inline % 19h
+                                
+   // ; calculate write-barrier address
+   mov  ecx, ebx
+   mov  esi, [data : %CORE_GC_TABLE + gc_header]
+   sub  ecx, [data : %CORE_GC_TABLE + gc_start]
+   mov  eax, [esp]
+   shr  ecx, page_size_order
+   mov  [ebx + edx*4], eax
+   mov  byte ptr [ecx + esi], 1  
+
+end
+
+// ; count
+inline % 1Ch
+
+  mov  ecx, 0FFFFFh
+  mov  edx, [ebx-elSizeOffset]
+  and  edx, ecx
+  shr  edx, 2
+
+end
+
 // ; unhook
 inline % 1Dh
 

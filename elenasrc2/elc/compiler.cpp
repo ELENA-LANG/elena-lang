@@ -3501,7 +3501,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
       analizeOperands(node, scope, -1);
 
       // if it is a primitive operation
-      _logic->injectOperation(node, scope, *this, operator_id, operationType, resultClassRef, /*loperand.element, */retVal.param);
+      _logic->injectOperation(node, scope, *this, operator_id, operationType, resultClassRef, loperand.element, retVal.param);
 
       if (IsArrExprOperator(operator_id, (LexicalType)operationType)) {
          // inject to target for array operation

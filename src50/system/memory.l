@@ -867,7 +867,7 @@ public sealed const struct String : BaseValue
         ^ retVal
     }
      
-    //Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
+    Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
 
     string toPrintable() = self;
 
@@ -1025,8 +1025,8 @@ public sealed const struct String : BaseValue
 //    internal saveToByteArray(int index, byte[] array, int retVal)
 //        => system'core_routines'__literal;
 
-//    /// Returns the string enumerator
-//    Enumerator<char> enumerator() = new StringEnumerator(self);
+    /// Returns the string enumerator
+    Enumerator<char> enumerator() = new StringEnumerator(self);
 
 //    /// Returns the string indexer
 //    Indexer<char> indexer() = new StringIndexer(self);
@@ -1114,6 +1114,8 @@ public sealed const struct WideString : BaseValue
         
         ^ retVal
     }
+
+    Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
 
     bool equal(o)
     {
@@ -1275,10 +1277,10 @@ public sealed const struct WideString : BaseValue
 //
 //    internal saveToShortArray(int index, short[] array, int retVal)
 //        => system'core_routines'__wide;
-//
-//    /// Returns the object enumerator
-//    Enumerator<char> enumerator() = new WideStringEnumerator(self);
-//    
+
+    /// Returns the object enumerator
+    Enumerator<char> enumerator() = new WideStringEnumerator(self);
+    
 //    /// Returns the object indexer
 //    Indexer<char> indexer() = new WideStringIndexer(self);
     
@@ -1420,42 +1422,42 @@ public sealed class Variant
 //////        = $self $castValueTo:aTarget; equal:aTarget.
 }
 
-//// --- Array ---
-//
-///// An array
-//public sealed Array : Indexable//, Array<object>
-//{
-//    __string object[] theArray;
-//    
-//    /// Creates an empty array
-//    constructor MinValue
-//        = new object[](0);
-//    
-////    /// Creates the array with the specified length
-////    constructor new : aLength
-////        <= new(T<int>(aLength)).
-//    
+// --- Array ---
+
+/// An array
+public sealed Array //: Indexable//, Array<object>
+{
+    __string object[] theArray;
+    
+    /// Creates an empty array
+    constructor MinValue
+        = new object[](0);
+    
 //    /// Creates the array with the specified length
-//    constructor allocate(int len)
-//        = new object[](len);
-//
+//    constructor new : aLength
+//        <= new(T<int>(aLength)).
+    
+    /// Creates the array with the specified length
+    constructor allocate(int len)
+        = new object[](len);
+
 //    /// Creates a copy of the provided array
 //    constructor(Array array)
 //        <= (0, array.Length, array);
-//    
+    
 //    /// Creates a copy of the provided sub array
 //    constructor(int index, int length, Array array)
 //        <= allocate(length)
 //    {
 //        intern system'core_routines'__array.copy(self, index, length, array)
 //    }
-//        
-////    constructor single(object singleItem)
-////        <= new(1);
-////    [
-////        self setAt(0, singleItem).
-////    ]
-//
+        
+//    constructor single(object singleItem)
+//        <= new(1);
+//    [
+//        self setAt(0, singleItem).
+//    ]
+
 //    /// Concatinates the arrays    
 //    add(Array a)
 //    {
@@ -1474,29 +1476,29 @@ public sealed class Variant
 //            
 //        ^ retVal
 //    }
-//
-//    Length
-//    {
-//        /// Reads the array length into an output parameter
-//        int get()
-//        {
-//            intern system'core_routines'__array.readLengthTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//
-//    /// Sets the specified array member
-//    setAt(int n, object o)
-//        => system'core_routines'__array;
-//
-//    /// Returns the specified array member
-//    object at(int n)
-//        => system'core_routines'__array;
-// 
-//    /// Returns the array enumerator
-//    Enumerator enumerator() = new ArrayEnumerator(self);
-//
+
+    int Length
+    {
+        /// Reads the array length into an output parameter
+        get()
+        {
+            intern system'core_routines'__array.readLengthTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+
+    /// Sets the specified array member
+    setAt(int n, object o)
+        => intern system'core_routines'__array;
+
+    /// Returns the specified array member
+    object at(int n)
+        => intern system'core_routines'__array;
+ 
+    /// Returns the array enumerator
+    Enumerator enumerator() = new ArrayEnumerator(self);
+
 //    /// Returns the array indexer
 //    Indexer indexer() = new ArrayIndexer(self);
 //
@@ -1505,7 +1507,7 @@ public sealed class Variant
 //    /// Clones the array
 //    Array clone()
 //        = new Array(self);
-//}
+}
 
 // === Convertors ===
 
@@ -1970,66 +1972,66 @@ public singleton charConvertor
 
 // --- StringEnumerator ---
 
-///// A string enumerator
-//class StringEnumerator : Enumerator<char>
-//{
-//    string   theLiteral;
-//    ref<int> theIndex;
-//    ref<int> theDiff;
-//    char     theChar;
-//    
-////    /// Creates an enumerator
-////    constructor new : anObject
-////        <= new(T<literal>(anObject)).
-//    
+/// A string enumerator
+class StringEnumerator : Enumerator<char>
+{
+    string   theLiteral;
+    ref<int> theIndex;
+    ref<int> theDiff;
+    char     theChar;
+    
 //    /// Creates an enumerator
-//    constructor(string s)
-//    {
-//        theLiteral := s;
-//        theIndex := -1;
-//        theDiff := 1;
-//        theChar := $0
-//    }
-//
-//    /// Resets the enumerator
-//    reset()
-//    {
-//        theIndex.Value := -1;
-//        theDiff.Value := 1
-//    }
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next()
-//    {
-//        int aLength := theLiteral.Length;
-//        
-//        theIndex.append(cast int(theDiff));
-//        
-//        if (theIndex < aLength)
-//            {
-//                theChar := theLiteral.at(cast int(theIndex));
-//                
-//                theDiff := theChar.Length;
-//                
-//                ^ true
-//            };
-//
-//        theDiff.Value := 0;
-//        theChar := $0;
-//
-//        ^ false
-//    }
-//    
-//    Enumerator cast() = new Enumerator::
-//    {
-//        embeddable dispatch() => self;
-//    };
-//    
-//    enumerable() = theLiteral;
-//    
-//    /// Returns the current character
-//    char get() = theChar;
-//}
+//    constructor new : anObject
+//        <= new(T<literal>(anObject)).
+    
+    /// Creates an enumerator
+    constructor(string s)
+    {
+        theLiteral := s;
+        theIndex := -1;
+        theDiff := 1;
+        theChar := $0
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1;
+        theDiff.Value := 1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int aLength := theLiteral.Length;
+        
+        theIndex.append(cast int(theDiff));
+        
+        if (theIndex < aLength)
+            {
+                theChar := theLiteral.at(cast int(theIndex));
+                
+                theDiff := theChar.Length;
+                
+                ^ true
+            };
+
+        theDiff.Value := 0;
+        theChar := $0;
+
+        ^ false
+    }
+    
+    Enumerator cast() = new Enumerator::
+    {
+        embeddable dispatch() => self;
+    };
+    
+    enumerable() = theLiteral;
+    
+    /// Returns the current character
+    char get() = theChar;
+}
 
 // --- LiteralIndexer ---
 
@@ -2109,73 +2111,73 @@ public singleton charConvertor
 //        
 //    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
 //}
-//
-//// --- WideLiteralEnumerator ---
-//
-///// A literal enumerator
-//class WideStringEnumerator : Enumerator<char>
-//{
-//    wide      theLiteral;
-//    ref<int>  theIndex;
-//    ref<int>  theDiff;
-//    ref<char> theChar;
-//    
-////    /// Creates an enumerator
-////    constructor new : anObject
-////        <= new(T<wide>(anObject)).
-////    
+
+// --- WideLiteralEnumerator ---
+
+/// A literal enumerator
+class WideStringEnumerator : Enumerator<char>
+{
+    wide      theLiteral;
+    ref<int>  theIndex;
+    ref<int>  theDiff;
+    ref<char> theChar;
+    
 //    /// Creates an enumerator
-//    constructor(wide s)
-//    {
-//        theLiteral := s;
-//        theIndex := -1;
-//        theDiff := 1;
-//        theChar := $0
-//    }
-//
-//    /// Resets the enumerator
-//    reset()
-//    {
-//        theIndex.Value := -1;
-//        theDiff.Value := 1
-//    }
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next()
-//    {
-//        int len := theLiteral.Length;
-//
-//        int diff := theDiff.Value;
-//        theIndex.append(diff);
-//        
-//        int index := theIndex.Value;
-//        if (index < len)
-//        {
-//            theChar := theLiteral.at(index);                
-//            //theDiff := theChar.WideLength;
-//            diff := theChar.WideLength;
-//            theDiff.Value := diff;
-//            
-//            ^ true
-//        };
-//
-//        theDiff.Value := 0;
-//        theChar := $0;
-//
-//        ^ false
-//    }
+//    constructor new : anObject
+//        <= new(T<wide>(anObject)).
 //    
-//    Enumerator cast() = new Enumerator::
-//    {
-//        embeddable dispatch() => self;
-//    };
-//    
-//    enumerable() = theLiteral;
-//    
-//    /// Returns the current character
-//    char get() = theChar;
-//}
-//
+    /// Creates an enumerator
+    constructor(wide s)
+    {
+        theLiteral := s;
+        theIndex := -1;
+        theDiff := 1;
+        theChar := $0
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1;
+        theDiff.Value := 1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int len := theLiteral.Length;
+
+        int diff := theDiff.Value;
+        theIndex.append(diff);
+        
+        int index := theIndex.Value;
+        if (index < len)
+        {
+            theChar := theLiteral.at(index);                
+            //theDiff := theChar.WideLength;
+            diff := theChar.WideLength;
+            theDiff.Value := diff;
+            
+            ^ true
+        };
+
+        theDiff.Value := 0;
+        theChar := $0;
+
+        ^ false
+    }
+    
+    Enumerator cast() = new Enumerator::
+    {
+        embeddable dispatch() => self;
+    };
+    
+    enumerable() = theLiteral;
+    
+    /// Returns the current character
+    char get() = theChar;
+}
+
 //// --- WideLiteralInexer ---
 //
 ///// A wide literal enumerator
@@ -2322,45 +2324,45 @@ public singleton charConvertor
 //        }
 //    }
 //}
-//
-//// --- ArrayEnumerator ---
-//
-///// An array enumerator
-//class ArrayEnumerator : Enumerator
-//{
-//    Array    theArray;
-//    ref<int> theIndex;
-//    
-//    /// Creates an array enumerator
-//    constructor(Array array)
-//    {
-//        theArray := array;
-//        theIndex := -1
-//    }
-//
-//    /// Resets the enumerator
-//    reset()
-//    {
-//        theIndex.Value := -1
-//    }
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next()
-//    {
-//        int length := theArray.Length;
-//        
-//        theIndex.append(1);
-//
-//        ^ cast int(theIndex) < length
-//    }
-//    
-//    /// Returns the current object
-//    get()
-//        = theArray.at(cast int(theIndex));
-//        
-//    enumerable() = theArray;
-//}
-//
+
+// --- ArrayEnumerator ---
+
+/// An array enumerator
+class ArrayEnumerator : Enumerator
+{
+    Array    theArray;
+    ref<int> theIndex;
+    
+    /// Creates an array enumerator
+    constructor(Array array)
+    {
+        theArray := array;
+        theIndex := -1
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int length := theArray.Length;
+        
+        theIndex.append(1);
+
+        ^ cast int(theIndex) < length
+    }
+    
+    /// Returns the current object
+    get()
+        = theArray.at(cast int(theIndex));
+        
+    enumerable() = theArray;
+}
+
 //// --- BitArrayIndexer ---
 //
 ///// An array indexer

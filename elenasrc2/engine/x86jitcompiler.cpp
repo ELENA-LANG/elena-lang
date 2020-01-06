@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/109;
+const int gcCommandNumber = /*160*/111;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -86,7 +86,8 @@ const int gcCommands[gcCommandNumber] =
    bcLoadI, bcRAddF, bcRSubF, bcRMulF, bcRDivF,
    bcREqual, bcRLess, bcRSet, bcRSave, bcRGet,
    bcRIntF, bcRLoad, bcClone, bcAddF, bcSubF,
-   bcAddress, bcLoadSI, bcLoadVerb, bcSetVerb,
+   bcAddress, bcLoadSI, bcLoadVerb, bcSetVerb, bcCount,
+   bcSet,
    //bcBCopyA, bcParent,
 //   bcMIndex,
 //   bcASwapSI, bcXIndexRM, bcESwap,
@@ -94,7 +95,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcClass, bcACallVD,
 //   bcELoadSI,
 //   bcEQuit, bcESaveSI,
-//   bcSet, bcXSet, bcACallI, bcBReadB,
+//   bcXSet, bcACallI, bcBReadB,
 //   bcLen, bcIfHeap, bcNCreate,
 //   bcBLoadFI, bcAXSaveBI, bcBLoadSI, bcBWriteB,
 //   bcNCopy, bcNAdd, bcBSwapSI,
@@ -109,7 +110,7 @@ const int gcCommands[gcCommandNumber] =
 //   bcLNot, bcRCopy, bcRSave, bcREqual, bcBSaveSI,
 //   bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
 //   bcDCopyR, 
-//   bcNext, bcCount,
+//   bcNext, 
 //   bcRAbs, bcRExp, bcRInt, bcValidate, ,
 //   bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
 //   bcBWriteW, bcRLoad, bcNLen,
@@ -142,7 +143,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compilePushA, &compilePopA, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp,
 
    &compileNot, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileQuit,
-   &loadOneByteOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop,
+   &loadOneByteOp, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compilePushD, &compilePopD, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
    &loadOneByteOp, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &compileNop,

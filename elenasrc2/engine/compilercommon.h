@@ -116,7 +116,7 @@ constexpr auto V_INT32ARRAY      = 0x8000000Au;
 constexpr auto V_BINARYARRAY     = 0x8000000Bu;
 constexpr auto V_INT16ARRAY      = 0x8000000Cu;
 constexpr auto V_INT8ARRAY       = 0x8000000Du;
-//constexpr auto V_OBJECT          = 0x8000000Eu;
+constexpr auto V_OBJECT          = 0x8000000Eu;
 //constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
 //constexpr auto V_CLASSNAME       = 0x80000010u;
 
@@ -703,7 +703,7 @@ public:
       List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
    virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
-      /*ref_t elementRef, */int tempLocal) = 0;
+      ref_t elementRef, int tempLocal) = 0;
    virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
       ref_t elementRef/*, ident_t ns*/, bool noUnboxing, int& stackSafeAttr) = 0;
 //   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;

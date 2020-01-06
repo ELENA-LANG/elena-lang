@@ -1819,6 +1819,64 @@ procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[
 
 end
 
+procedure __array."at$system@IntNumber[2]"
+
+  count
+  movs  0
+  pushd
+
+  peeksi 3
+  load
+  notless labErr
+  lessn   labErr 0
+
+  peeksi 2
+  freei  1
+  get
+  quitn 2
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __array."setAt$system@IntNumber$system@Object[3]"
+
+  count
+  movs    0
+  pushd
+
+  peeksi  3
+  load
+  notless labErr
+  freei   1
+  lessn   labErr 0
+
+  pushsi  3
+  set
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __array."readLengthTo$system@Array$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  count
+  peeksi 2
+  save
+  quitn 2
+
+end
+
 procedure critical_exception_handler
 
   open 1

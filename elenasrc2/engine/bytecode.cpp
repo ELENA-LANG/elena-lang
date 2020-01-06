@@ -18,7 +18,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pusha", "popa", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "bsredirect", "setverb",
 
    "not", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", OPCODE_UNKNOWN, "quit",
-   "get", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "unhook", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "get", "set", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "count", "unhook", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",
    "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "read", "clone", OPCODE_UNKNOWN,

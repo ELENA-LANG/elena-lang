@@ -176,7 +176,7 @@ public:
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
       List<ref_t>& implicitMultimethods, LexicalType methodType);
    virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, 
-      ref_t& reference, /*ref_t elementRef, */int tempLocal);
+      ref_t& reference, ref_t elementRef, int tempLocal);
 //   virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef);
    virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
       ref_t elementRef/*, ident_t ns*/, bool noUnboxing, int& stackSafeAttr);

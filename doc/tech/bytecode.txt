@@ -78,7 +78,7 @@ ELENA byte codes (or ecodes)
 
  select r1, r2              - acc = (index = 0 ? r1 : r2)
 
- set i                      - [sp] => acc[index]
+ set                        - [sp] => acc[index]
 
  seti i                     - [sp] => acc[i]         
 
@@ -123,7 +123,7 @@ ELENA byte codes (or ecodes)
 
  createn r, i               - create the object with size=[esp]*i, out : acc, index is affected
 
- len                        - [acc].Length >> index ; where acc is a object
+ len                        - [acc].Size >> index ; where acc is a object
 
  read                       - acc[index] >> index
 
@@ -287,6 +287,8 @@ ELENA byte codes (or ecodes)
 
  class                      - acc::VMT >> acc 
  
+ count                      - acc.Length >> index   
+
  fillr r                    - fill the object with the value dword[esp]-times
 
  fillri r, i                - fill the object with the value i-times

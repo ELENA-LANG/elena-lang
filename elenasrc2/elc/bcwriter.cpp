@@ -3537,6 +3537,20 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
    }
 }
 
+void ByteCodeWriter :: doArrayImmOperation(CommandTape& tape, int operator_id, int immValue)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // geti imm
+         tape.write(bcGetI, immValue);
+         break;
+      case SET_REFER_OPERATOR_ID:
+         // seti imm
+         tape.write(bcSetI, immValue);
+         break;
+   }
+}
+
 void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target)
 {
    switch (operator_id) {
@@ -3596,6 +3610,24 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
          else if (itemSize == 1) {
          }
          else tape.write(bcDiv, itemSize);
+         tape.write(bcSaveF, target);
+         break;
+   }
+}
+
+void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id, int target)
+{
+   switch (operator_id) {
+      case REFER_OPERATOR_ID:
+         // get
+         break;
+      case SET_REFER_OPERATOR_ID:
+         // set
+         break;
+      case LEN_OPERATOR_ID:
+         // count
+         // savef target
+         tape.write(bcCount);
          tape.write(bcSaveF, target);
          break;
    }
@@ -4166,9 +4198,6 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
    generateObject(tape, node.firstChild(lxObjectMask), scope, STACKOP_MODE);
 
    if (node.argument != 0) {
-      if (!node.existChild(lxSize))
-         throw InternalError("size is not defined"); // !! temporal
-
       int size = node.findChild(lxSize).argument;
 //
 //      if ((int)node.argument < 0) {
@@ -4198,9 +4227,6 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
 {
-//   if (test(mode, BASE_PRESAVED))
-//      tape.write(bcPushB);
-//
    int freeArgs = 0;
    bool lenMode = node.argument == LEN_OPERATOR_ID;
    bool setMode = (node.argument == SET_REFER_OPERATOR_ID/* || node.argument == SETNIL_REFER_MESSAGE_ID*/);
@@ -4230,7 +4256,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 
       if (setMode) {
          generateObject(tape, rarg2, scope, STACKOP_MODE);
-         freeArgs = true;
+         freeArgs = 1;
       }
       else if (rarg2 == lxLocalAddress) {
          argument = rarg2.argument;
@@ -4263,14 +4289,14 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          case lxShortArrOp:
             doBinaryArrayOperation(tape, node.argument, 2, argument, immValue * 2);
             break;
-         //      case lxBinArrOp:
+         case lxArrOp:
+            doArrayImmOperation(tape, node.argument, immValue);
+            break;
+            //      case lxBinArrOp:
          //         doBinaryArrayOperation(tape, node.argument, node.findChild(lxSize).argument);
          //
          //         if (node.argument == REFER_OPERATOR_ID)
          //            assignBaseTo(tape, lxResult);
-         //         break;
-         //      case lxArrOp:
-         //         doArrayOperation(tape, node.argument);
          //         break;
          case lxArgArrOp:
             doArgArrayOperation(tape, node.argument, argument, immValue);
@@ -4296,14 +4322,15 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
             }
             doBinaryArrayOperation(tape, node.argument, 2, argument);
             break;
+         case lxArrOp:
+            doArrayOperation(tape, node.argument, argument);
+            break;
+
          //      case lxBinArrOp:
          //         doBinaryArrayOperation(tape, node.argument, node.findChild(lxSize).argument);
          //
          //         if (node.argument == REFER_OPERATOR_ID)
          //            assignBaseTo(tape, lxResult);
-         //         break;
-         //      case lxArrOp:
-         //         doArrayOperation(tape, node.argument);
          //         break;
          case lxArgArrOp:
             doArgArrayOperation(tape, node.argument, argument);
@@ -6642,7 +6669,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxIntArrOp:
       case lxByteArrOp:
       case lxShortArrOp:
-//      case lxArrOp:
+      case lxArrOp:
 //      case lxBinArrOp:
       case lxArgArrOp:
          generateArrOperation(tape, node, scope, mode);

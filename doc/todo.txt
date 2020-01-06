@@ -2,8 +2,7 @@
 In development:
 ------         
               dev50
-                * StringEnumerator should be private
-                * migrate basic classes : enumerators - string, wide, array
+                * migrate basic classes : enumerators - array, array<T>
                 * migrate basic classes : strong-typed enumerators - string, wide, array
                 * migrate basic classes : indexers - string, wide, array
 

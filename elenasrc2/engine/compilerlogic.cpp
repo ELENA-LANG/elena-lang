@@ -207,11 +207,11 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_INT8ARRAY, V_INT32, V_INT32, lxByteArrOp, 0));
    operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_INT8ARRAY, lxByteArrOp, 0));
 
-//   // array of object primitive operations
-//   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
-//   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
-//   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
-//
+   // array of object primitive operations
+   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, lxArrOp, V_OBJECT));
+   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
+   operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_OBJARRAY, lxArrOp, 0));
+
 //   // array of structures primitive operations
 //   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
 //   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
@@ -1032,7 +1032,7 @@ bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
 }
 
 void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operator_id, 
-   int operationType, ref_t& reference, /*ref_t elementRef, */int tempLocal)
+   int operationType, ref_t& reference, ref_t elementRef, int tempLocal)
 {
 //   int size = 0;
 //   if (operationType == lxBinArrOp) {
@@ -1043,9 +1043,9 @@ void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compil
 //   if (reference == V_BINARY && elementRef != 0) {
 //      reference = elementRef;
 //   }
-//   else if (reference == V_OBJECT && elementRef != 0) {
-//      reference = elementRef;
-//   }
+   /*else */if (reference == V_OBJECT && elementRef != 0) {
+      reference = elementRef;
+   }
 
    bool inverting = IsInvertedOperator(operator_id);
 
