@@ -10,8 +10,8 @@ mkdir -p ./temp/tools/sg
 mkdir -p ./temp/tools/og
 
 g++ -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX32 -g -std=c++14 -m32 -I../../common -I../../engine -I.. -I../win32 -c /home/alex/elena-lang/elenasrc2/common/altstrings.cpp -o ../temp/common/altstrings.o
-g++ -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX32 -g -std=c++14 -m32 -I../../common -I../../engine -I.. -I../win32 -c /home/alex/elena-lang/elenasrc2/common/config.cpp -o ../temp/common/config.o
 g++ -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX32 -g -std=c++14 -m32 -I../../common -I../../engine -I.. -I../win32 -c /home/alex/elena-lang/elenasrc2/common/dump.cpp -o ../temp/common/dump.o
+g++ -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX32 -g -std=c++14 -m32 -I../../common -I../../engine -I.. -I../win32 -c /home/alex/elena-lang/elenasrc2/common/config.cpp -o ../temp/common/config.o
 g++ -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX32 -g -std=c++14 -m32 -I../../common -I../../engine -I.. -I../win32 -c /home/alex/elena-lang/elenasrc2/common/files.cpp -o ../temp/common/files.o
 g++ -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX32 -g -std=c++14 -m32 -I../../common -I../../engine -I.. -I../win32 -c /home/alex/elena-lang/elenasrc2/common/xmlreader.cpp -o ../temp/common/xmlreader.o
 g++ -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX32 -g -std=c++14 -m32 -I../../common -I../../engine -I.. -I../win32 -c /home/alex/elena-lang/elenasrc2/engine/bytecode.cpp -o ../temp/engine/bytecode.o
