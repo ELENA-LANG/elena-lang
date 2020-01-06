@@ -6,8 +6,6 @@ In development:
                 * port Linux
 
               dev50
-                * migrate basic classes : indexers - string, wide, array
-
                 * literal convertor (UIntNumber)
                 * String, WideString- fill, new
                 * Array<T>.clone

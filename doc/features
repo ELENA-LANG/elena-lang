@@ -4,6 +4,14 @@ Declarations
   Classes
     Methods
       * private / protected / internal ones
+      * Multimethods
+        - variadic
+        - implcit default
+        - explcit default
+    Properties
+      * implicit
+      * explicit
+      * abstract
 Code
   Build-in Variables
     * self vs this self

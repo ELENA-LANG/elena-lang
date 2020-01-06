@@ -1,7 +1,7 @@
 
 // --- Array template ---
 
-public sealed Array<T> //: Indexable<T>
+public sealed Array<T> : Indexable<T>
 {
     embeddable __string T[] theArray;
 
@@ -36,23 +36,23 @@ public sealed Array<T> //: Indexable<T>
 ////    cast T<Indexable> = Indexable::{ /*embeddable dispatch => self.*/T<Indexer> indexer => self. }.
 //    
 ////    cast Enumerable<T> = new Enumerable<T>:{ embeddable dispatch => self; };
-//
-//    Enumerable cast() = new Enumerable::{ Enumerator enumerator() => self; };
-//
-//    Indexer<T> indexer() = new BaseIndexer<T>::
-//    {
-//        this theIndex := 0;
-//        
-//        this theLength := self.Length;
-//        
-//        T get()
-//            = self.at(theIndex);
-//            
-//        set(T o)
-//        {
-//            self.setAt(theIndex, o)
-//        }
-//    };
+
+    Enumerable cast() = new Enumerable::{ Enumerator enumerator() => self; };
+
+    Indexer<T> indexer() = new BaseIndexer<T>::
+    {
+        this theIndex := 0;
+        
+        this theLength := self.Length;
+        
+        T get()
+            = self.at(theIndex);
+            
+        set(T o)
+        {
+            self.setAt(theIndex, o)
+        }
+    };
 
     int Length
     {
@@ -1028,8 +1028,8 @@ public sealed const struct String : BaseValue
     /// Returns the string enumerator
     Enumerator<char> enumerator() = new StringEnumerator(self);
 
-//    /// Returns the string indexer
-//    Indexer<char> indexer() = new StringIndexer(self);
+    /// Returns the string indexer
+    Indexer<char> indexer() = new StringIndexer(self);
     
     /// Clones the value
     string clone() = String.copy(self);
@@ -1281,8 +1281,8 @@ public sealed const struct WideString : BaseValue
     /// Returns the object enumerator
     Enumerator<char> enumerator() = new WideStringEnumerator(self);
     
-//    /// Returns the object indexer
-//    Indexer<char> indexer() = new WideStringIndexer(self);
+    /// Returns the object indexer
+    Indexer<char> indexer() = new WideStringIndexer(self);
     
     /// Clones the value
     wide clone() = WideString.copy(self);
@@ -1425,7 +1425,7 @@ public sealed class Variant
 // --- Array ---
 
 /// An array
-public sealed Array //: Indexable//, Array<object>
+public sealed Array : Indexable//, Array<object>
 {
     __string object[] theArray;
     
@@ -1499,9 +1499,9 @@ public sealed Array //: Indexable//, Array<object>
     /// Returns the array enumerator
     Enumerator enumerator() = new ArrayEnumerator(self);
 
-//    /// Returns the array indexer
-//    Indexer indexer() = new ArrayIndexer(self);
-//
+    /// Returns the array indexer
+    Indexer indexer() = new ArrayIndexer(self);
+
 //    object[] Value = theArray;
 //
 //    /// Clones the array
@@ -2035,82 +2035,82 @@ class StringEnumerator : Enumerator<char>
 
 // --- LiteralIndexer ---
 
-///// A literal value indexer
-//class StringIndexer : Indexer<char>
-//{
-//    string   theLiteral;
-//    ref<int> theIndex;
-//    
-////    /// Creates an indexer
-////    constructor new : anObject
-////        <= new(T<literal>(anObject)).
-////    
+/// A literal value indexer
+class StringIndexer : Indexer<char>
+{
+    string   theLiteral;
+    ref<int> theIndex;
+    
 //    /// Creates an indexer
-//    constructor(string s)
-//    {
-//        theLiteral := s;
-//        theIndex := 0
-//    }
+//    constructor new : anObject
+//        <= new(T<literal>(anObject)).
 //    
-//    /// Returns false if the index out of range
-//    get bool Available()
-//    {
-//        int len := theLiteral.Length;
-//        int val := theIndex.Value;
-//        
-//        ^ val < len
-//    }
-//
-//    /// Returns the current character
-//    char get()
-//    {
-//        char ch := $0;
-//        theLiteral.read(cast int(theIndex), ref ch);
-//        
-//        ^ ch
-//    }
-//    
-//    /// Sets the index by specified value
-//    set (char ch)
-//    {
-//        system'NotSupportedException.raise()
-//    }
-//    
-//    Index
-//    {
-//        /// Reads the current index and saves it into an output parameter
-//        int get()
-//        {
-//            theIndex.readValueTo(ref int retVal);
-//            
-//            ^ retVal
-//        }
-//        
-//        /// Sets the index by specified value
-//        set(int val)
-//        {
-//            theIndex.Value := val
-//        }
-//    }
-//    
-//    appendIndex(int val)
-//    {
-//        theIndex.append(val)
-//    }
-//    
-//    Length
-//    {
-//        /// Reads the length to the output parameter    
-//        int get()
-//        {
-//            int retVal := theLiteral.Length;
-//            
-//            ^ retVal
-//        }
-//    }
-//        
-//    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
-//}
+    /// Creates an indexer
+    constructor(string s)
+    {
+        theLiteral := s;
+        theIndex := 0
+    }
+    
+    /// Returns false if the index out of range
+    get bool Available()
+    {
+        int len := theLiteral.Length;
+        int val := theIndex.Value;
+        
+        ^ val < len
+    }
+
+    /// Returns the current character
+    char get()
+    {
+        char ch := $0;
+        theLiteral.read(cast int(theIndex), ref ch);
+        
+        ^ ch
+    }
+    
+    /// Sets the index by specified value
+    set (char ch)
+    {
+        system'NotSupportedException.raise()
+    }
+    
+    int Index
+    {
+        /// Reads the current index and saves it into an output parameter
+        get()
+        {
+            theIndex.readValueTo(ref int retVal);
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int val)
+        {
+            theIndex.Value := val
+        }
+    }
+    
+    appendIndex(int val)
+    {
+        theIndex.append(val)
+    }
+    
+    int Length
+    {
+        /// Reads the length to the output parameter    
+        get()
+        {
+            int retVal := theLiteral.Length;
+            
+            ^ retVal
+        }
+    }
+        
+    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
+}
 
 // --- WideLiteralEnumerator ---
 
@@ -2178,152 +2178,152 @@ class WideStringEnumerator : Enumerator<char>
     char get() = theChar;
 }
 
-//// --- WideLiteralInexer ---
-//
-///// A wide literal enumerator
-//class WideStringIndexer : Indexer<char>
-//{
-//    wide     theLiteral;
-//    ref<int> theIndex;
-//    
-////    /// Creates an indexer
-////    constructor new : anObject
-////        <= new(T<wide>(anObject)).
-//    
+// --- WideLiteralInexer ---
+
+/// A wide literal enumerator
+class WideStringIndexer : Indexer<char>
+{
+    wide     theLiteral;
+    ref<int> theIndex;
+    
 //    /// Creates an indexer
-//    constructor(wide s)
-//    {
-//        theLiteral := s;
-//        theIndex := 0
-//    }
-//
-//    /// Returns false if the index out of range    
-//    get bool Available()
-//    {
-//        int len := theLiteral.Length;
-//        int val := theIndex.Value;
-//        
-//        ^ val < len
-//    }
-//
-//    /// Returns the current character
-//    char get()
-//        = theLiteral.at(cast int(theIndex));
-//    
-//    set(char ch)
-//    {
-//        system'NotSupportedException.raise()
-//    }
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    Index
-//    {
-//        int get()
-//        {
-//            theIndex.readValueTo(ref int retVal);
-//            
-//            ^ retVal
-//        }
-//        
-//        /// Sets the index by specified value
-//        set(int val)
-//        {
-//            theIndex.Value := val
-//        }
-//    }
-//    
-//    appendIndex(int val)
-//    {
-//        theIndex.append(val)
-//    }
-//    
-//    Length
-//    {
-//        /// Reads the length to the output parameter    
-//        int get()
-//        {
-//            int retVal := theLiteral.Length;
-//            
-//            ^ retVal
-//        }
-//    }
-//        
-//    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
-//}
-//
-//// --- ArrayIndexer ---
-//
-///// An array indexer
-//public class ArrayIndexer : Indexer
-//{
-//    Array    _array;
-//    ref<int> _index;
-//
-////    /// Returns the parameter indexer
-////    constructor new : anArray
-////        <= new(T<Array>(anArray)).
-//    
+//    constructor new : anObject
+//        <= new(T<wide>(anObject)).
+    
+    /// Creates an indexer
+    constructor(wide s)
+    {
+        theLiteral := s;
+        theIndex := 0
+    }
+
+    /// Returns false if the index out of range    
+    get bool Available()
+    {
+        int len := theLiteral.Length;
+        int val := theIndex.Value;
+        
+        ^ val < len
+    }
+
+    /// Returns the current character
+    char get()
+        = theLiteral.at(cast int(theIndex));
+    
+    set(char ch)
+    {
+        system'NotSupportedException.raise()
+    }
+    
+    /// Reads the current index and saves it into an output parameter
+    int Index
+    {
+        get()
+        {
+            theIndex.readValueTo(ref int retVal);
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int val)
+        {
+            theIndex.Value := val
+        }
+    }
+    
+    appendIndex(int val)
+    {
+        theIndex.append(val)
+    }
+    
+    int Length
+    {
+        /// Reads the length to the output parameter    
+        get()
+        {
+            int retVal := theLiteral.Length;
+            
+            ^ retVal
+        }
+    }
+        
+    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
+}
+
+// --- ArrayIndexer ---
+
+/// An array indexer
+public class ArrayIndexer : Indexer
+{
+    Array    _array;
+    ref<int> _index;
+
 //    /// Returns the parameter indexer
-//    constructor(Array arr)
-//    {
-//        _array := arr;
-//        _index := 0
-//    }
-//    
-//    /// Returns false if the index out of range
-//    get bool Available()
-//    {
-//        int len := _array.Length;
-//
-//        ^ _index < len
-//    }
-//
-//    /// Returns the current member
-//    get()
-//        = _array.at(_index.Value);
-//    
-//    /// Sets the current member
-//    set(object)
-//    {
-//        int n := _index.Value;
-//        
-//        _array.setAt(n, object)
-//    }
-//    
-//    /// Reads the current index and saves it into an output parameter
-//    Index
-//    {
-//        int get()
-//        {
-//            int retVal := _index.Value;
-//            
-//            ^ retVal
-//        }
-//        
-//        /// Sets the index by specified value
-//        set(int n)
-//        {
-//           _index.Value := n
-//        }
-//    }
-//    
-//    /// Sets the index by specified value
-//    appendIndex(int offs)
-//    {
-//        _index.append(offs)
-//    }
-//
-//    Length
-//    {
-//        /// Reads the length to the output parameter    
-//        int get()
-//        {
-//            int retVal := _array.Length;
-//            
-//            ^ retVal
-//        }
-//    }
-//}
+//    constructor new : anArray
+//        <= new(T<Array>(anArray)).
+    
+    /// Returns the parameter indexer
+    constructor(Array arr)
+    {
+        _array := arr;
+        _index := 0
+    }
+    
+    /// Returns false if the index out of range
+    get bool Available()
+    {
+        int len := _array.Length;
+
+        ^ _index < len
+    }
+
+    /// Returns the current member
+    get()
+        = _array.at(_index.Value);
+    
+    /// Sets the current member
+    set(object)
+    {
+        int n := _index.Value;
+        
+        _array.setAt(n, object)
+    }
+    
+    /// Reads the current index and saves it into an output parameter
+    int Index
+    {
+        get()
+        {
+            int retVal := _index.Value;
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int n)
+        {
+           _index.Value := n
+        }
+    }
+    
+    /// Sets the index by specified value
+    appendIndex(int offs)
+    {
+        _index.append(offs)
+    }
+
+    int Length
+    {
+        /// Reads the length to the output parameter    
+        get()
+        {
+            int retVal := _array.Length;
+            
+            ^ retVal
+        }
+    }
+}
 
 // --- ArrayEnumerator ---
 
