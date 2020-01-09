@@ -144,7 +144,7 @@ public:
       okParams,                       // param - local offset
 //////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - overridden message, reference - role reference
-//      okExplicitConstant,             // param - reference, extraparam - subject
+      okExplicitConstant,             // param - reference, extraparam - subject
       okExtension,
       okClassSelf,                    // param - class reference; used in class resending expression
       okMetaField,                    // param - meta attribute id
@@ -454,6 +454,20 @@ private:
          MemoryWriter metaWriter(moduleScope->mapSection(reference | mskMetaRDataRef, false), 0);
          metaWriter.Memory()->trim(0);
          info.save(&metaWriter);
+      }
+
+      bool checkAttribute(ref_t message, int attribute)
+      {
+         ClassInfo::Attribute attr(message, attribute);
+
+         return info.methodHints.exist(attr);
+      }
+
+      ref_t getAttribute(ref_t message, int attribute)
+      {
+         ClassInfo::Attribute attr(message, attribute);
+
+         return info.methodHints.get(attr);
       }
 
       void addAttribute(ref_t message, int attribute, ref_t value)
@@ -883,6 +897,7 @@ private:
 //   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
+   bool isDefaultOrConversionConstructor(Scope& scope, ref_t message);
    bool isSelfCall(ObjectInfo info);
 
    bool isMethodEmbeddable(MethodScope& scope, SNode node);
@@ -958,7 +973,7 @@ private:
    void declareClassAttributes(SNode node, ClassScope& scope, bool visibilityOnly);
 ////   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
-   void declareVMT(SNode member, ClassScope& scope);
+   void declareVMT(SNode member, ClassScope& scope, bool& withConstructors, bool& withDefaultConstructor);
 
 //   ref_t mapTypeAttribute(SNode member, Scope& scope);
    ref_t mapTemplateAttribute(SNode node, Scope& scope);
@@ -1115,7 +1130,7 @@ private:
 
    void compileSpecialMethodCall(SNode& node, ClassScope& classScope, ref_t message);
 
-   void compileDefaultConstructor(SNode node, MethodScope& scope);
+   void compileDefConvConstructor(SNode node, MethodScope& scope, bool isDefault);
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
    ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
@@ -1273,7 +1288,7 @@ public:
 //      LexicalType objType, int objArg);
 ////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message);
-   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode);
+   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne);
    virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
       int opArg, ref_t reference);
 ////   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);

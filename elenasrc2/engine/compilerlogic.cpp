@@ -1206,15 +1206,15 @@ bool CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, SNode& node
    else return false;
 }
 
-//bool CompilerLogic :: injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef)
-//{
-//   int stackSafeAttr = 0;
-//   setSignatureStacksafe(scope, scope.literalReference, stackSafeAttr);
-//
-//   compiler.injectConverting(writer, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef), stackSafeAttr, false);
-//
-//   return true;
-//}
+bool CompilerLogic :: injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef)
+{
+   int stackSafeAttr = 0;
+   setSignatureStacksafe(scope, scope.literalReference, stackSafeAttr);
+
+   compiler.injectConverting(node, lxDirectCalling, messageRef, lxClassSymbol, targetRef, getClassClassRef(scope, targetRef), stackSafeAttr, false);
+
+   return true;
+}
 
 ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
 {
@@ -1258,7 +1258,7 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
    return 0;
 }
 
-bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
+bool CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
    ref_t elementRef/*, ident_t ns*/, bool noUnboxing, int& stackSafeAttr)
 {
 ////   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
@@ -1287,7 +1287,7 @@ bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node,
 ////   }
 
    ClassInfo info;
-   if (!defineClassInfo(scope, info, targetRef))
+   if (!defineClassInfo(*scope.moduleScope, info, targetRef))
       return false;
 
    // if the target class is wrapper around the source
@@ -1297,12 +1297,13 @@ bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node,
       bool compatible = false;
       if (test(info.header.flags, elStructureWrapper)) {
          if (isPrimitiveRef(sourceRef)) {
-            compatible = isCompatible(scope, inner.value1, sourceRef);
+            compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef);
          }
          // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
-         else compatible = isCompatible(scope, inner.value1, sourceRef) && info.size == defineStructSize(scope, sourceRef, 0u);
+         else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef) 
+            && info.size == defineStructSize(*scope.moduleScope, sourceRef, 0u);
       }
-      else compatible = isCompatible(scope, inner.value1, sourceRef);
+      else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef);
 
       if (compatible) {
          compiler.injectBoxingExpr(node, !isReadonly(info) && !noUnboxing,
@@ -1342,7 +1343,7 @@ bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node,
    if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole/* | elWrapper*/)) {
 //      ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
 
-      if (isCompatible(scope, info.fieldTypes.get(-1).value2, elementRef)) {
+      if (isCompatible(*scope.moduleScope, info.fieldTypes.get(-1).value2, elementRef)) {
          compiler.injectBoxingExpr(node, !isReadonly(info) && !noUnboxing,
             test(info.header.flags, elStructureRole) ? info.size : 0,
             targetRef);
@@ -1380,11 +1381,11 @@ bool CompilerLogic :: injectImplicitConversion(_ModuleScope& scope, SNode& node,
 ////      compiler.injectBoxing(writer, scope,
 ////         test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, sourceRef, true);
 ////   }
-//   // HOTFIX : recognize primitive data except of a constant literal
-//   /*else */if (isPrimitiveRef(sourceRef) && sourceRef != V_STRCONSTANT)
-//      sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, ns, false);
+   // HOTFIX : recognize primitive data except of a constant literal
+   /*else */if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
+      sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, false);
 
-   return injectImplicitConstructor(scope, node, compiler, info, targetRef, /*elementRef, */&sourceRef, 1, stackSafeAttr);
+   return injectImplicitConstructor(*scope.moduleScope, node, compiler, info, targetRef, /*elementRef, */&sourceRef, 1, stackSafeAttr);
 }
 
 void CompilerLogic :: injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef)

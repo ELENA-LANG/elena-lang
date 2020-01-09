@@ -1,34 +1,75 @@
 ------                                 
 In development:
 ------         
-              dev3 - linux32
+              xdev - refactoring
+                * mov GC to C code
+
+              xdev - linux32
                 * port elenart dll
                 * port Linux
 
-              dev50
-                * literal convertor (UIntNumber)
-                * String, WideString- fill, new
-                * Array<T>.clone
+              xdev - amd64
+                * compile elenart64.dll
 
-                * stringConvertor, wideConvertor, charConvertor
-                * variadicarray
+              xdev elena50
+                * constructor default class resend?
+
+                * constructor - calling a parent one - currently implicit, should explicit be allowed?
+                * implicit default constructor cannot have redirector statement
+                * embeddable constructor
+                * stack allocated variables : assigning nil, default constructor call, ...
+                * stack allocated structs, executing field initializers, embeddable constructors?
+                * closures : default constructor is called for virtual nested class, for normal one - only initializer
+                * nested class should not have static methods and constructors
+                * default implcit constructor should be embeddable?
+                * nested class cannot have constructors
+                * inherited only implcit constructors
+                * implicit constructor inheritance - if not declared - call the parent one?
+                * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
+                  signature or default one (if nothing is found - cannot be declared)
+                * recognize idle constructor
+                * if the parent constructor is idle - do like normal one
+                * constructor dispatching
+                * replacing embeddable constructor call with direct operarions
+                * creating an object : implicit / explicit, default constructor should be embeddable
+                * if all constructors are internal - can be inherited only inside the module
+                * implicit multi-constructor : compile-time, run-time
+                * run-time implicit constructor resolving, should it be allowed? auto-generated multi-constructors
+                  hide the error if there is no appropriate handler for the given argument list 
+                * protected default constructor - the class cannot be created using default constructor
+                * nested class and default constructor
+                * protected constructors
+
+                * xdev - call default constructor
+                * creating nested class - implciit constructor should be called
+                * creating nested class - field intialization should be called 
+                * creating nested class - in-place field intialization should be called 
+                * implicit constructor should clear the object fields
+                * stack allocated class and default constructor
+                * #162 - explicit constructor
+                * dynamic default constructor should create an empty dynamic object
+                * abstract class cannot have constructors / default constructor
+                * optimize IntNumber#class.#constructor[1]
+                * support Array<type> constructors
+                * CharValue.new = $0 -> should create a new class
+                * idle init constructor should not be called
+
+              xdev elena50
                 * ArrayList
                 * StringWriter
                 * ifExists, forEachWord, ascendant extensions
-
-              dev50
                 * words samples
+
+              xdev elena50
+                * stringConvertor, wideConvertor, charConvertor
+                * variadicarray
 
                 * samples
 
-                * constructor default class resend?
-                * constructor - calling a parent one - currently implicit, should explicit be allowed?
 
                 * event handler
                 * uncomment system'entry
-                * embeddable constructor
 
-                * stack allocated variables : assigning nil, default constructor call, ...
 
                 * conversion routines : others
                 * run-time extension dispatching : if no extension was found - send the message to the target
@@ -36,13 +77,15 @@ In development:
                 * console operations
                 * no need to include system for system'io module, it should be included automatically!?
 
+                * String, WideString- fill, new
+                * Array<T>.clone
+
                 * public / private / internal classes
                 * public / private / internal / protected properties
 
                 * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
 
-
-                * extension to read the class name, package info
+                * extension to read package info
 
                 * test creating an array : non-empty, empty
 
@@ -56,13 +99,11 @@ In development:
                 * method not found exception
                 * call stack
 
-                * calling default constructor - see extensions'Integer.#constructor<IntNumber> - double initialization 
 
                 * closures: unboxing
                 * closures: presaved arguments
                 * closures: returning a value
                 * closures : virtual one
-                * closures : default constructor is called for virtual nested class, for normal one - only initializer
 
                 * arrays of templates
                 * arrays of template of templates
@@ -76,7 +117,6 @@ In development:
                 * primitive operations with int : bitwise
                 * high-level opoerations with int : comparision, bitwise
 
-                * nested class should not have static methods and constructors
 
                 * templates based on another template
                 * template variables
@@ -92,11 +132,8 @@ In development:
                 * template : inherting another template
                 * template based class
 
-                * default implcit constructor should be embeddable?
                 * variadic arguments : unboxing
 
-                * implicit default constructor cannot have redirector statement
-                * nested class cannot have constructors
                 * conditional boxing of arguments and self
 
                 * singleton nested class - should init method be called?
@@ -113,15 +150,11 @@ In development:
                 * static methods
                 * inheriting static fields / methods
                 * sealed static fields
-                * inherited only implcit constructors
                 * accumulating static fields
-                * implicit constructor inheritance - if not declared - call the parent one?
                 * optimization : do not call idle method
 
                 * auto returning
 
-                * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
-                  signature or default one (if nothing is found - cannot be declared)
 
                 * auto symbol
                 * auto method
@@ -130,10 +163,7 @@ In development:
                 * implement analog of C# enum
 
                 * recognize idle method
-                * recognize idle constructor
-                * if the parent constructor is idle - do like normal one
 
-                * stack allocated structs, executing field initializers, embeddable constructors?
 
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
 
@@ -149,7 +179,6 @@ In development:
 
                 * no unboxing by assign
 
-                * constructor dispatching
                 * message dispatching
 
                 * complex message names
@@ -178,13 +207,11 @@ In development:
                 * class template
                 * template base class
                 * "multi-inheritance"
-                * replacing embeddable constructor call with direct operarions
 
                 * using a type before it declaration
 
                 * method visibility
                 * methods : reference name??
-                * creating an object : implicit / explicit, default constructor should be embeddable
                 * calls
                 * system module to be included by default : an option?
 
@@ -213,8 +240,6 @@ In development:
                 * redesign
                 * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
                 * review : inheriting private methods (what about the public "shadow one" hints?, should they be removed as well??)
-                * if all constructors are internal - can be inherited only inside the module
-                * implicit multi-constructor : compile-time, run-time
                 * auto conversion methods should be marked as idle
                 * passing byref further
                 * should child have an access to the parent static fields?
@@ -222,8 +247,6 @@ In development:
                 * emptyWideString cannot be used before its declaration (see String)
                 * using direct passing the arguments for internal call when it is possible
                 * allow to pass field to the external routines - see system'io'ConsoleWriter
-                * run-time implicit constructor resolving, should it be allowed? auto-generated multi-constructors
-                  hide the error if there is no appropriate handler for the given argument list 
                 * step over external / message / loop / if call?
                 * call inernal function directly (without intermediate step in system'routines) when it is possible
                 * uncomment cleanUp code
@@ -233,28 +256,17 @@ In development:
                 * api doc - with description
 
               xdev
-                * xdev - call default constructor
-                * creating nested class - implciit constructor should be called
-                * creating nested class - field intialization should be called 
-                * creating nested class - in-place field intialization should be called 
-
-              dev - refactoring
-                * mov GC to C code
 
               dev50 - test
                 * it should be possible to turn-off optimization (opL1)
-                * protected default constructor - the class cannot be created using default constructor
                 * test : branching external implementation : returning a value from closure 
                 * it should be possible to extend attributes / template statements from anoter libraries
                 * optimization : saving dword or qword 
                 * test if big alloc is proper working
-                * implicit constructor should clear the object fields
                 * optimization : assigning a field with a local - there should be direct byte code
                 * adding source path link on tempate based classes with field initializers
                 * private / internal class templates
                 * invalid operation : var a.test();
-                * nested class and default constructor
-                * stack allocated class and default constructor
                 * debugger : do not copy template parameter terminal info
                 * new opcode : setfi
                 * double boxing - n * (m + k), n,m,k - local integers
@@ -267,7 +279,6 @@ In development:
                 * test super (normal, stack unsafe)
                 * test internal / public / private classes
                 * protected methods
-                * protected constructors
                 * test internal / public / private / proteced methods
                 * test internal / public / private / proteced constructors
                 * public / private / internal properties
@@ -284,7 +295,6 @@ In development:
                 * boxing ext call result
                 * optimize interface implementation . try to use direct / semi-direct call when possible
                 * optimize operations with int[], short[], byte[] arrays
-                * optimize IntNumber#class.#constructor[1]
                 * ByteNumber#class.new[2] - idle command - "pushr 0"
                 * alt - no need to assign temp local for local / field / param
                 * test long / real arithmetic, comparision
@@ -423,7 +433,6 @@ Pipeline:
                 * primitive op where i,k are fields - i+k
 
               xdev
-                * #162 - explicit constructor
                 * new system'dynamics'DynamicStruct() - raise an error
                 * support lazyOp
 
@@ -510,7 +519,6 @@ Pipeline:
                  * test: internal prop x, internal prop int x
                  * test prop, event
                  * prop public int x
-                 * dynamic default constructor should create an empty dynamic object
                  * abstract class cannot be created
                  * read package info
                  * support seriaization properties - indicating which properties should be serilized
@@ -574,7 +582,6 @@ Pipeline:
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
                  * allow to work with ref<int> directly
-                 * abstract class cannot have constructors / default constructor
                  * uncomment validateClassDeclaration
 
                  * new anyToken { .. } - should raise an error?
@@ -592,7 +599,6 @@ Pipeline:
 
                  * long constant should not be boxed like int constants
 
-                 * support Array<type> constructors
 
                  * reddit post - Switch statement
 

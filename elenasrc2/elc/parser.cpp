@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Parser class implementation.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -110,9 +110,9 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
             case 'r':
                terminal.symbol = lxReal;
                break;
-//            default:
-//               terminal.symbol = tsExplicitConst;
-//               break;
+            default:
+               terminal.symbol = lxExplicitConst;
+               break;
          }
          break;
       case dfaLong:

@@ -26,6 +26,7 @@
        <include>exceptions.l</include>
        <include>console.l</include>
        <include>win32_app.l</include>
+       <include>collections\list.l</include>
        <include>io\win32_console.l</include>
      </module>
   </files>

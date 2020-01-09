@@ -408,8 +408,8 @@ struct _CompileScope
 class _Compiler
 {
 public:
-//   virtual ref_t resolvePrimitiveReference(_ModuleScope& scope, ref_t argRef, ref_t elementRef, ident_t ns, bool declarationMode) = 0;
-//
+   virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode) = 0;
+
    virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode = false*/) = 0;
    virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
       int stacksafeAttr, bool embeddableAttr) = 0;
@@ -424,7 +424,7 @@ public:
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef) = 0;
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
-   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode) = 0;
+   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne) = 0;
    virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op, 
       int opArg, ref_t reference) = 0;
 
@@ -704,12 +704,12 @@ public:
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
    virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
       ref_t elementRef, int tempLocal) = 0;
-   virtual bool injectImplicitConversion(_ModuleScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
+   virtual bool injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
       ref_t elementRef/*, ident_t ns*/, bool noUnboxing, int& stackSafeAttr) = 0;
 //   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
    virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
    virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
-//   virtual bool injectConstantConstructor(SyntaxWriter& writer, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef) = 0;
+   virtual bool injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef) = 0;
 
    // auto generate class flags
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;

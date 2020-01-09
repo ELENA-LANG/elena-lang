@@ -269,6 +269,9 @@ public interface Func<T, TResult>
     /// Executes the action
     abstract TResult function(T param) {}
     
+    Func1 cast()
+        = (x => self(x));
+    
 //    run(Enumerator<T> e)
 //    {
 //        while(e.next())
@@ -312,6 +315,10 @@ public interface Func<T1,T2,TResult>
 {
     /// Executes the action
     abstract TResult function(T1 param1, T2 param2) {}
+    
+    Func2 cast()
+        = (x,y => self(x,y));
+    
     
 //    run(enumerator<type> e)
 //    [

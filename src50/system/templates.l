@@ -84,13 +84,13 @@ public interface<T>
     cast bool(expr) ? if_block : else_block
 }
 
-//// --- ifnot statement ---
-//
-//public ifnot<if_block>(expr)
-//{
-//    cast bool(expr) ! if_block
-//}
-//
+// --- ifnot statement ---
+
+#declare ifnot<expr>(if_block)
+{
+    cast bool(expr) ! if_block
+}
+
 //// --- ifnot-else statement ---
 //
 //public ifnot<ifnot_block,else_block>:else(expr)

@@ -94,6 +94,7 @@ enum LexicalType
    lxCharacter                = 0x002019,
    lxLong                     = 0x00201A,
    lxReal                     = 0x00201B,
+   lxExplicitConst            = 0x00201C,
 
    lxVirtualReference         = 0x00201F,
 
@@ -248,7 +249,6 @@ enum LexicalType
 //   lxCharacter                = 0x01800B,
 //   lxLong                     = 0x01800C,
 //   lxWide                     = 0x01800D,
-//   lxExplicitConst            = 0x01800E,
 //   lxExplicitAttr             = 0x01800F,
 //
 //   lxNested                   = 0x008102, // arg - count

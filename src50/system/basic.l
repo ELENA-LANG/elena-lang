@@ -133,9 +133,6 @@ public sealed const struct ByteNumber : IntBaseNumber
 {
     embeddable __int theValue[1];
 
-    constructor(int n)
-        = n && 255;
-
     /// return the default value
     constructor()
         = 0;
@@ -153,8 +150,8 @@ public sealed const struct ByteNumber : IntBaseNumber
         = value;
 
     /// Creates the object with a specified value
-    constructor new(val)
-        = cast byte(val);
+    constructor(int n)
+        = n && 255;
 
     /// Returns the value as a short integer
     short cast() = new ShortNumber(self);
@@ -426,6 +423,14 @@ public sealed const struct ShortNumber : IntBaseNumber
 {
     embeddable __int theValue[2];
 
+    /// Returns the minimal value (-32768)
+    static short MinValue
+        = -32768;
+
+    /// Returns the maxial value (32767)
+    static short MaxValue
+        = 32767;
+
     constructor(int n)
     {
         (n < 0)
@@ -437,14 +442,6 @@ public sealed const struct ShortNumber : IntBaseNumber
             : { theValue := n && 0FFFFh }
     }
     
-    /// Returns the minimal value (-32768)
-    static short MinValue
-        = -32768;
-
-    /// Returns the maxial value (32767)
-    static short MaxValue
-        = 32767;
-
     /// Creates the object with specified value
     constructor(byte value)
         = shortConvertor.convert(value);
@@ -456,10 +453,6 @@ public sealed const struct ShortNumber : IntBaseNumber
     /// Creates the object with a default value (0)
     constructor()
         = 0;
-
-    /// Creates the object with specified value
-    constructor new(o)
-        = cast short(o);
 
     /// Returns the byte value        
     byte cast() = byteConvertor.convert(self);
@@ -735,6 +728,14 @@ public sealed const struct IntNumber : IntBaseNumber
 {
     embeddable __int theValue[4];
     
+    /// Creates the object with the minimal value
+    static int MinValue
+        = -2147483648;
+
+    /// Creates the object with the maximal value
+    static int MaxValue
+        = 2147483647;
+
     constructor(byte n)
     {
         theValue := n
@@ -745,14 +746,6 @@ public sealed const struct IntNumber : IntBaseNumber
         theValue := n
     }
     
-    /// Creates the object with the minimal value
-    static int MinValue
-        = -2147483648;
-
-    /// Creates the object with the maximal value
-    static int MaxValue
-        = 2147483647;
-
     constructor()
         = 0;
     
@@ -763,10 +756,6 @@ public sealed const struct IntNumber : IntBaseNumber
     /// Creates the object with specified value
     constructor(uint value)
         = value;
-
-    /// Creates the object with specified value
-    constructor new(o)
-        = cast int(o);
 
     /// Returns the value as a short integer    
     short cast() = shortConvertor.convert(self);
@@ -1091,22 +1080,11 @@ public sealed const struct UIntNumber : IntBaseNumber
         theValue := n
     }
     
-//    cast u(string s)
-//    {
-//        theValue := intConvertor.convertUnsigned(s)
-//    }
+    cast u(string s)
+    {
+        theValue := uintConvertor.convert(s)
+    }
     
-    /// Creates the object with the minimal value
-    static int MinValue
-        = 0;
-
-    /// Creates the object with the maximal value
-    static int MaxValue
-        = 0FFFFFFFFh;
-        
-    constructor new(o)
-        = cast int(o);
-        
     constructor(uint n)
     {
         theValue := n
@@ -1115,6 +1093,14 @@ public sealed const struct UIntNumber : IntBaseNumber
     constructor()
         = 0;
 
+    /// Creates the object with the minimal value
+    static int MinValue
+        = 0;
+
+    /// Creates the object with the maximal value
+    static int MaxValue
+        = 0FFFFFFFFh;
+        
     /// Returns the literal presentation
     string toPrintable() = stringConvertor.convert(self);
 
@@ -1456,10 +1442,6 @@ public sealed const struct LongNumber : IntBaseNumber
     constructor(byte value)
         = longConvertor.convert(value);
 
-    /// Creates the object with specified value
-    constructor new(o)
-        = cast long(o);
-
     /// Returns an integer value
     int cast() = intConvertor.convert(self);
 
@@ -1738,15 +1720,6 @@ public sealed const struct RealNumber : BaseNumber
 {
     embeddable __float theValue[8];
 
-    constructor(int n)
-        = realConvertor.convert(n);
-            
-    constructor(byte n)
-        = realConvertor.convert(n);
-            
-    constructor(short n)
-        = realConvertor.convert(n);
-            
     /// Returns the minimal value
     static real MinValue
         = -1.7976931348623157e+308r;
@@ -1770,6 +1743,15 @@ public sealed const struct RealNumber : BaseNumber
 //    static real Pi
 //        = Pi_value;
 
+    constructor(int n)
+        = realConvertor.convert(n);
+            
+    constructor(byte n)
+        = realConvertor.convert(n);
+            
+    constructor(short n)
+        = realConvertor.convert(n);
+            
     /// Creates the object with a default value (0)
     constructor()
         = 0.0r;
@@ -1785,10 +1767,6 @@ public sealed const struct RealNumber : BaseNumber
     /// Creates the object with specified value
     constructor(long value)
         = realConvertor.convert(value);
-        
-    /// Creates the object with specified value
-    constructor new(o)
-        = cast real(o);
         
     bool equal(o)
     {
@@ -1981,6 +1959,14 @@ public sealed const struct CharValue : BaseValue
 {
     embeddable __raw theValue[4];
 
+    /// Returns the minimal possible character value (0)
+    static char MinValue
+        = $0;
+
+    /// Returns the maximal possible character value (010FFFFh)
+    static char MaxValue
+        = $010FFFFh;
+
     /// Creates the object with a default value (0)
     constructor()
         = /*$0*/0;
@@ -1992,14 +1978,6 @@ public sealed const struct CharValue : BaseValue
     /// Creates the object with specified numeric value
     constructor load(int n)
         = charConvertor.convert(n);
-
-    /// Returns the minimal possible character value (0)
-    static char MinValue
-        = $0;
-
-    /// Returns the maximal possible character value (010FFFFh)
-    static char MaxValue
-        = $010FFFFh;
 
     get internal Value()
     {

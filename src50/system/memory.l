@@ -8,7 +8,7 @@ public sealed Array<T> : Indexable<T>
     constructor allocate(int length)
         = new T[](length);
         
-    constructor(T[] array, int index, int length)
+    constructor copy(T[] array, int index, int length)
         <= allocate(length)
     {
         for(int i := 0 , i < length, i += 1)
@@ -1442,11 +1442,11 @@ public sealed Array : Indexable//, Array<object>
         = new object[](len);
 
 //    /// Creates a copy of the provided array
-//    constructor(Array array)
+//    constructor copy(Array array)
 //        <= (0, array.Length, array);
     
 //    /// Creates a copy of the provided sub array
-//    constructor(int index, int length, Array array)
+//    constructor copy(int index, int length, Array array)
 //        <= allocate(length)
 //    {
 //        intern system'core_routines'__array.copy(self, index, length, array)

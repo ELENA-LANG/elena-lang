@@ -3,11 +3,6 @@
 
 public sealed class Integer : BaseVariable, ref<int>
 {
-    constructor()
-    {
-        value := 0
-    }
-    
     constructor(int n) 
     {
         value := n
@@ -15,6 +10,7 @@ public sealed class Integer : BaseVariable, ref<int>
     
     constructor new()
     {
+        value := 0
     }
     
 ////    constructor new : n
@@ -47,11 +43,6 @@ public sealed class Integer : BaseVariable, ref<int>
 
 public sealed class Real : BaseVariable, ref<real>
 {
-    constructor()
-    {
-        value := 0.0r
-    }
-    
     constructor(real n) 
     {
         value := n
@@ -59,6 +50,7 @@ public sealed class Real : BaseVariable, ref<real>
     
     constructor new()
     {
+        value := 0.0r
     }
         
 //    constructor new : n

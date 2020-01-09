@@ -4,6 +4,7 @@ open pusha peekfi := 1 close quit => nop nop nop nop quit;
 peekfi pusha peekfi => pushfi nop peekfi;
 
 pusha peeksi := 0 => pusha nop;
+pusha popa        => nop nop;
 pushr peeksi := 0 => movr pusha;
 
 movf pusha movr => pushf nop movr;

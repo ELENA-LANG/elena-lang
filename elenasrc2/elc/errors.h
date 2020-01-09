@@ -69,9 +69,9 @@ namespace _ELENA_
    #define errIllegalConstructor    "%s(%d:%d): error 149: Constructor cannot be declared\n"
    #define errClosedMethod          "%s(%d:%d): error 150: sealed method cannot be overridden\n"
 ////   #define errNoConstructorDefined  "%s(%d:%d): error 151: Class '%s' has no implicit or explicit constructors\n"
-   #define errIllegalMethod         "%s(%d:%d): error 152: Illegal method declaration\n"
-   #define errIllegalOperation      "%s(%d:%d): error 153: Illegal operation\n"
-//   constexpr auto errInvalidConstant            = "%s(%d:%d): error 154: Invalid constant '%s'\n";
+   constexpr auto errIllegalMethod              = "%s(%d:%d): error 152: Illegal method declaration\n";
+   constexpr auto errIllegalOperation           = "%s(%d:%d): error 153: Illegal operation\n";
+   constexpr auto errInvalidConstant            = "%s(%d:%d): error 154: Invalid constant '%s'\n";
 ////   #define errInvalidMultimethod    "%s(%d:%d): error 155: Invalid multimethod declararion in the class '%s'\n"
    #define errTypeNotAllowed        "%s(%d:%d): error 156: returning type attribute '%s' cannot be specified for this method\n"
    #define errNotCompatibleMulti    "%s(%d:%d): error 157: type attribute should be the same for the overloaded method '%s'\n"
@@ -88,7 +88,7 @@ namespace _ELENA_
 //   //   #define errOneDefaultConstructor "%s(%d:%d): error 168: a class '%s' should have only one default constructor\n"
    constexpr auto errEmptyStructure             = "%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
    constexpr auto errReadOnlyField              = "%s(%d:%d): error 170: cannot assign a value to the read-only field '%s'\n";
-   constexpr auto errDefaultConstructorNotFound = "%s(%d:%d): error 171: implicit constructor is not found for '%s'\n";
+   constexpr auto errDefaultConstructorNotFound = "%s(%d:%d): error 171: default or conversion constructor is not found for '%s'\n";
    constexpr auto errInvalidType                = "%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
    constexpr auto errDupInternalMethod          = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
    constexpr auto errInvalidConstAttr           = "%s(%d:%d): error 174: A method '%s' cannot be compiled as a constant one\n";

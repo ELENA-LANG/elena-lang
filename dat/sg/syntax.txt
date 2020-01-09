@@ -67,6 +67,7 @@ __define wide                    8216
 __define character               8217
 __define long                    8218
 __define real                    8219
+__define constant                8220
 
 START ->
 	DECLARATION DECLARATIONS eof

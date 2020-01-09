@@ -2,6 +2,22 @@ Declarations
   Namespaces
     * nested namespaces (import is declared for the namespace)
   Classes
+    Constructors
+      * Normal constructors - the default one is auto called
+      * Expression constructors - the returning value is boxed, no default constructor call
+      * constructors with resend expression - no default constructor call
+      * conversion constructor
+        - default constructor / in-place initialization is not called
+      * Default constructor
+        - impicit : if no constructors are declared - default one is auto-generated
+        - implicit protected - if there are constructors - protected one is auto-generated 
+        - explicit - if there are constructors - auto called
+
+        - private constructor - class cannot be inherited
+        - protected constructor
+        - conversion constructors
+        - named : call the default constructor
+        - anonymos / conversion - do not call default constructor
     Methods
       * private / protected / internal ones
       * Multimethods
