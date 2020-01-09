@@ -215,11 +215,11 @@ public:
 //   {
 //      return !test(info.header.flags, elDynamicRole);
 //   }
-//
-//   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
-//   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef);
-//
-//   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope);
+
+   virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
+   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef);
+
+   virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope);
    virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode);
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
 //   virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node);

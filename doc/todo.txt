@@ -12,53 +12,27 @@ In development:
                 * compile elenart64.dll
 
               xdev elena50
-                * constructor default class resend?
-
-                * constructor - calling a parent one - currently implicit, should explicit be allowed?
-                * implicit default constructor cannot have redirector statement
-                * embeddable constructor
-                * stack allocated variables : assigning nil, default constructor call, ...
-                * stack allocated structs, executing field initializers, embeddable constructors?
-                * closures : default constructor is called for virtual nested class, for normal one - only initializer
-                * nested class should not have static methods and constructors
-                * default implcit constructor should be embeddable?
-                * nested class cannot have constructors
-                * inherited only implcit constructors
-                * implicit constructor inheritance - if not declared - call the parent one?
-                * implicit constructors are "final" ones. The explicit ones should call an implcit one with the same
-                  signature or default one (if nothing is found - cannot be declared)
-                * recognize idle constructor
-                * if the parent constructor is idle - do like normal one
-                * constructor dispatching
-                * replacing embeddable constructor call with direct operarions
-                * creating an object : implicit / explicit, default constructor should be embeddable
-                * if all constructors are internal - can be inherited only inside the module
-                * implicit multi-constructor : compile-time, run-time
-                * run-time implicit constructor resolving, should it be allowed? auto-generated multi-constructors
-                  hide the error if there is no appropriate handler for the given argument list 
-                * protected default constructor - the class cannot be created using default constructor
-                * nested class and default constructor
-                * protected constructors
-
-                * xdev - call default constructor
-                * creating nested class - implciit constructor should be called
-                * creating nested class - field intialization should be called 
-                * creating nested class - in-place field intialization should be called 
-                * implicit constructor should clear the object fields
-                * stack allocated class and default constructor
-                * #162 - explicit constructor
-                * dynamic default constructor should create an empty dynamic object
-                * abstract class cannot have constructors / default constructor
-                * optimize IntNumber#class.#constructor[1]
-                * support Array<type> constructors
-                * CharValue.new = $0 -> should create a new class
-                * idle init constructor should not be called
-
-              xdev elena50
                 * ArrayList
                 * StringWriter
                 * ifExists, forEachWord, ascendant extensions
                 * words samples
+
+              xdev elena50
+                * closures : default constructor is called for virtual nested class, for normal one - only initializer
+                * nested class should not have static methods and constructors
+                * recognize idle constructor
+                * if the parent constructor is idle - do like normal one
+                * nested class and default constructor
+
+                * creating nested class - implciit constructor should be called
+                * creating nested class - field intialization should be called 
+                * creating nested class - in-place field intialization should be called 
+
+                * implicit constructor should clear the object fields
+                * optimize IntNumber#class.#constructor[1]
+                * support Array<type> constructors
+                * CharValue.new = $0 -> should create a new class
+                * idle init constructor should not be called
 
               xdev elena50
                 * stringConvertor, wideConvertor, charConvertor
@@ -155,6 +129,8 @@ In development:
 
                 * auto returning
 
+                * stack allocated structs, executing field initializers, embeddable constructors?
+                * stack allocated class and default constructor
 
                 * auto symbol
                 * auto method
@@ -253,9 +229,9 @@ In development:
                 * property - append, ...
                 * boxArgument - fieldexpr should be better mapped
                 * String / WideString - add<'Char>
+                * stack allocated variables : assigning nil, default constructor call, ...
+                * copytoai - optimized version for 1,2,3 dwords
                 * api doc - with description
-
-              xdev
 
               dev50 - test
                 * it should be possible to turn-off optimization (opL1)
@@ -305,6 +281,8 @@ In development:
 
               dev50 - new features
                 * public / private / internal / protected fields
+                * if all constructors are internal - can be inherited only inside the module
+                * replacing embeddable constructor call with direct operarions?
 
               dev1
                 * move all description to meta info using descr inline template

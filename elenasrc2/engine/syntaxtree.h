@@ -222,6 +222,7 @@ enum LexicalType
    lxIfValue                  = 0x000F20, // arg - reference
    lxElseValue                = 0x000F21, // arg - reference
    lxTemplateNameParam        = 0x000F22,
+   lxEmbeddableMssg           = 0x000F23,
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -314,7 +315,6 @@ enum LexicalType
 //   lxStacksafeAttr            = 0x2002B,
 //   lxBoxableAttr              = 0x2002E,
 //   lxExtArgumentRef           = 0x20031,
-//   lxEmbeddableMssg           = 0x20034,
 //   lxBoxingRequired           = 0x20035,
 //   lxElement                  = 0x20043,
 //   lxTypecasting              = 0x20044,
@@ -681,6 +681,18 @@ public:
          while (current != lxNone) {
             last = current;
             current = current.nextNode();
+         }
+
+         return last;
+      }
+
+      Node lastNode(LexicalType mask) const
+      {
+         Node last = *this;
+         Node current = nextNode(mask);
+         while (current != lxNone) {
+            last = current;
+            current = current.nextNode(mask);
          }
 
          return last;
@@ -1324,7 +1336,7 @@ public:
       return false;
    }
 
-//   static Node findPattern(Node node, int counter, ...);
+   static Node findPattern(Node node, int counter, ...);
 //   //static bool matchPattern(Node node, int mask, int counter, ...);
 
    static bool existChildWithArg(Node node, LexicalType type, ref_t arg)

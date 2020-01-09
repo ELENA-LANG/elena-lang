@@ -1193,7 +1193,7 @@ private:
    void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode);
    void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr);
 
-//   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
+   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 
    void createPackageInfo(_Module* module, _ProjectManager& project);
 
@@ -1219,7 +1219,7 @@ private:
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
    bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
    bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode);
-//   bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
+   bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
 //   bool optimizeAssigningBoxing(_ModuleScope& scope, SNode& node);
 //   void optimizeBoxing(_ModuleScope& scope, SNode& node);
 //   bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
@@ -1276,8 +1276,8 @@ public:
    virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
       ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
    virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
-//   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
-//   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
+   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
+   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t resendMessage);
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);

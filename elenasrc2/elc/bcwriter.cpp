@@ -5685,7 +5685,7 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, F
 //      (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp)));
 //}
 
-SyntaxTree::Node ByteCodeWriter :: loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+SyntaxTree::Node ByteCodeWriter :: loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode)
 {
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone) {
@@ -5696,7 +5696,8 @@ SyntaxTree::Node ByteCodeWriter :: loadFieldExpression(CommandTape& tape, Syntax
       SNode nextNode = current.nextNode(lxObjectMask);
 
       if (nextNode != lxNone) {
-         loadObject(tape, current, scope);
+         if (!idleMode)
+            loadObject(tape, current, scope);
       }
       else return objNode;
 
@@ -5772,9 +5773,10 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
       copyToLocalAddress(tape, node.argument, dstObj.argument);
    }
    else if (dstObj == lxFieldExpression) {
-      SNode fieldNode = loadFieldExpression(tape, dstObj, scope);
+      SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
       if (fieldNode == lxFieldAddress) {
          generateObject(tape, source, scope, STACKOP_MODE);
+         loadFieldExpression(tape, dstObj, scope, false);
          copyToFieldAddress(tape, node.argument, fieldNode.argument);
          releaseStack(tape);
       }
@@ -5851,7 +5853,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       if (target == lxFieldExpression) {
          generateObject(tape, source, scope, STACKOP_MODE);
 
-         SNode fieldNode = loadFieldExpression(tape, target, scope);
+         SNode fieldNode = loadFieldExpression(tape, target, scope, false);
          saveObject(tape, fieldNode);
 
          releaseStack(tape);

@@ -1,4 +1,5 @@
 directcall, constattr = 1;
+directcall, embeddable = 3;
 
 copying, call, embeddable = 2;
 copying, directcall, embeddable = 2;

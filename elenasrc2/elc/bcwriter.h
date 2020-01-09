@@ -337,7 +337,7 @@ class ByteCodeWriter
    void pushIntConstant(CommandTape& tape, int value);
    void pushIntValue(CommandTape& tape);
 
-   SyntaxTree::Node loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   SyntaxTree::Node loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode);
 
 //   void saveUnboxingVar(CommandTape& tape, SNode member, bool& accTrarget, bool& accPresaving, int& presavedCount);
 //   void loadUnboxingVar(CommandTape& tape, SNode current, int paramCount, int& presavedCount);
