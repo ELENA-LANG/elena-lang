@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                              (C)2018-2019, by Alexei Rakov
+//                                              (C)2018-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenamachineH
@@ -111,14 +111,23 @@ struct FrameHeader
 static class SystemRoutineProvider
 {
 public:
+   static pos_t NewHeap(int totalSize, int committedSize);
+   static void CloseThreadHandle(TLSEntry* entry, bool withExit, pos_t exitCode);
+   static TLSEntry* GetTLSEntry(pos_t tlsIndex);
+
+   static void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader);
+   static void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader);
+
    static void InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler);
    static void InitTLSEntry(pos_t threadIndex, pos_t index, ProgramHeader* frameHeader, pos_t* threadTable);
 
    static void Prepare();
+   static void Init(SystemEnv* env);
 
    static void InitSTA(SystemEnv* env, ProgramHeader* frameHeader);
    static void InitMTA(SystemEnv* env, ProgramHeader* frameHeader);
 
+   static int Execute(void* address, FrameHeader* framePtr);
    static int ExecuteInFrame(SystemEnv* env, _Entry& entry);
    static int ExecuteInNewFrame(SystemEnv* env, _Entry& entry);
 
@@ -128,6 +137,7 @@ public:
    static void ExitThread(SystemEnv* env, pos_t exitCode, bool withExit);
 
    static void OpenFrame(SystemEnv* env, FrameHeader* frameHeader);
+
    static void CloseFrame(SystemEnv* env, FrameHeader* frameHeader);
 
 } __routineProvider;

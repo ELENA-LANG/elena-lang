@@ -1,38 +1,21 @@
 //---------------------------------------------------------------------------
-//		E L E N A   P r o j e c t:  Win32 ELENA System Routines
+//		E L E N A   P r o j e c t:  x86 ELENA System Routines
 //
-//                                              (C)2018-2019, by Alexei Rakov
+//                                              (C)2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
-#include <windows.h>
 
 using namespace _ELENA_;
 
-const pos_t page_size              = 0x10;
-const pos_t page_size_order        = 0x04;
+const pos_t page_size = 0x10;
+const pos_t page_size_order = 0x04;
 const pos_t page_size_order_minus2 = 0x02;
-const pos_t page_mask              = 0x0FFFFFFF0;
+const pos_t page_mask = 0x0FFFFFFF0;
 
-void SystemRoutineProvider :: Prepare()
-{
-
-}
-
-inline pos_t NewHeap(int totalSize, int committedSize)
-{
-   // reserve
-   void* allocPtr = VirtualAlloc(nullptr, totalSize, MEM_RESERVE, PAGE_READWRITE);
-
-   // allocate
-   VirtualAlloc(allocPtr, committedSize, MEM_COMMIT, PAGE_READWRITE);
-
-   return (pos_t)allocPtr;
-}
-
-inline void Init(SystemEnv* env)
+void SystemRoutineProvider :: Init(SystemEnv* env)
 {
    // ; initialize fpu
    __asm {
@@ -105,68 +88,7 @@ inline void Init(SystemEnv* env)
  //  mov  [data : %CORE_GC_TABLE + gc_mg_wbar], edx
    env->Table->gc_mg_wbar = ((mg_ptr - env->Table->gc_start) >> page_size_order) + env->Table->gc_header;
 
-   env->Table->gc_signal = 0 ;
-}
-
-void SystemRoutineProvider :: InitSTA(SystemEnv* env, ProgramHeader* frameHeader)
-{
-   Init(env);
-
-   // setting current exception handler (only for STA)
-   env->Table->gc_et_current = &frameHeader->root_exception_struct;
-   env->Table->gc_stack_frame = 0;
-}
-
-void SystemRoutineProvider :: InitMTA(SystemEnv* env, ProgramHeader* frameHeader)
-{
-   Init(env);
-   InitTLSEntry(0, *env->TLSIndex, frameHeader, env->ThreadTable);
-
-   // set the thread table size
-   env->ThreadTable[-1] = env->MaxThread;
-}
-
-inline TLSEntry* GetTLSEntry(pos_t tlsIndex)
-{
-   TLSEntry* entry = nullptr;
-
-   // ; GCXT: assign tls entry
-   __asm {
-      mov  ebx, tlsIndex
-      mov  ecx, fs:[2Ch]
-      mov  edx, [ecx + ebx * 4]
-      mov  entry, edx
-   }
-
-   return entry;
-}
-
-void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, ProgramHeader* frameHeader, pos_t* threadTable)
-{
-   TLSEntry* entry = GetTLSEntry(tlsIndex);
-
-   entry->tls_flags = 0;
-   entry->tls_sync_event = ::CreateEvent(0, -1, 0, 0);
-   entry->tls_et_current =  &frameHeader->root_exception_struct;
-   entry->tls_threadindex = threadIndex;
-
-   threadTable[threadIndex] = (pos_t)entry;
-}
-
-void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler)
-{
-   pos_t previousHeader = 0;
-
-   // ; set SEH handler / frame / stack pointers
-   __asm {
-      mov  eax, header
-      mov  ecx, fs:[0]
-      mov  previousHeader, ecx
-      mov  fs : [0], eax
-   }
-
-   header->previousStruct = previousHeader;
-   header->handler = criticalHandler;
+   env->Table->gc_signal = 0;
 }
 
 inline void entryCriticalSection(void* tt_lock)
@@ -176,10 +98,10 @@ inline void entryCriticalSection(void* tt_lock)
 
       labWait :
       // ; set lock
-      xor  eax, eax
-      mov  edx, 1
-      lock cmpxchg dword ptr[esi], edx
-      jnz  short labWait
+      xor eax, eax
+         mov  edx, 1
+         lock cmpxchg dword ptr[esi], edx
+         jnz  short labWait
    }
 }
 
@@ -218,11 +140,6 @@ bool SystemRoutineProvider :: NewThread(SystemEnv* env, ProgramHeader* frameHead
    return valid;
 }
 
-void SystemRoutineProvider :: Exit(pos_t exitCode)
-{
-   ::ExitProcess(exitCode);
-}
-
 void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool withExit)
 {
    entryCriticalSection(&env->Table->tt_lock);
@@ -233,24 +150,10 @@ void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool wi
 
    leaveCriticalSection(&env->Table->tt_lock);
 
-   ::CloseHandle(entry->tls_sync_event);
-
-   if (withExit)
-      ::ExitThread(exitCode);
+   CloseThreadHandle(entry, withExit, exitCode);
 }
 
-inline void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
-{
-   frameHeader->previousFrame = env->Table->gc_stack_frame;
-   frameHeader->reserved = 0;
-}
-
-inline void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
-{
-   env->Table->gc_stack_frame = frameHeader->previousFrame;
-}
-
-int Execute(void* address, FrameHeader* framePtr)
+int SystemRoutineProvider :: Execute(void* address, FrameHeader* framePtr)
 {
    int retVal = 0;
    int prevFrame = framePtr->previousFrame;
@@ -281,43 +184,4 @@ int Execute(void* address, FrameHeader* framePtr)
    }
 
    return retVal;
-}
-
-int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry)
-{
-   FrameHeader frameHeader;
-   if (env->MaxThread <= 1) {
-      OpenSTAFrame(env, &frameHeader);
-   }
-   
-   int retVal = Execute(entry.address, &frameHeader);
-
-   if (env->MaxThread <= 1) {
-      CloseSTAFrame(env, &frameHeader);
-   }
-
-   return retVal;
-}
-
-int SystemRoutineProvider :: ExecuteInNewFrame(SystemEnv* env, _Entry& entry)
-{
-   FrameHeader frameHeader = { 0 };
-
-   int retVal = Execute(entry.address, &frameHeader);
-
-   return retVal;
-}
-
-void SystemRoutineProvider :: OpenFrame(SystemEnv* env, FrameHeader* frameHeader)
-{
-   if (env->MaxThread <= 1) {
-      OpenSTAFrame(env, frameHeader);
-   }
-}
-
-void SystemRoutineProvider :: CloseFrame(SystemEnv* env, FrameHeader* frameHeader)
-{
-   if (env->MaxThread <= 1) {
-      CloseSTAFrame(env, frameHeader);
-   }
 }

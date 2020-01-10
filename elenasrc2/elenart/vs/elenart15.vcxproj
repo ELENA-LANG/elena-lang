@@ -109,12 +109,14 @@
     <ClCompile Include="..\..\common\xmlreader.cpp" />
     <ClCompile Include="..\..\common\config.cpp" />
     <ClCompile Include="..\..\engine\bytecode.cpp" />
+    <ClCompile Include="..\..\engine\elenamachine.cpp" />
     <ClCompile Include="..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\rtman.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\win32\pehelper.cpp" />
-    <ClCompile Include="..\..\engine\win32\systemroutines.cpp" />
+    <ClCompile Include="..\..\engine\win32\win32routines.cpp" />
+    <ClCompile Include="..\..\engine\x86\x86routines.cpp" />
     <ClCompile Include="..\elenartmachine.cpp" />
     <ClCompile Include="..\win32\dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
