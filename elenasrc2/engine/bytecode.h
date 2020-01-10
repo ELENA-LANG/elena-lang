@@ -178,7 +178,7 @@ enum ByteCode
 //   bcACallI          = 0xA8,
 //   bcLess            = 0xA9,
    bcNotLess         = 0xAA,
-//   bcIfB             = 0xAB,
+   bcNotGreater      = 0xAB,
 //   bcElseB           = 0xAC,
 //   bcIf              = 0xAD,
    bcElse            = 0xAE,
@@ -433,6 +433,7 @@ public:
          case bcElse:
          //case bcLess:
          case bcNotLess:
+         case bcNotGreater:
          case bcIfN:
          case bcElseN:
          case bcLessN:

@@ -329,9 +329,9 @@ ELENA byte codes (or ecodes)
  
  lessn n, label             - jump to the label if index < n
 
+ notgreater label           - jump to the label if acc[0] <= index
+ 
  notless label              - jump to the label if acc[0] >= index
-
-
 
 
 
@@ -541,8 +541,6 @@ ELENA byte codes (or ecodes)
  less label                 - jump to the label if index < ext
 
  next label                 - index++; if index < ext, jump to the label
- 
- notgreatern n, label      - jump to the label if index <= n
  
  notlessn n, label          - jump to the label if index >= n
 

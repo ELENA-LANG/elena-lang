@@ -1614,7 +1614,7 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
    }
 
    // adjust array
-   if (test(info.header.flags, elDynamicRole) && !testany(info.header.flags, elStructureRole/* | elNonStructureRole*/)) {
+   if (test(info.header.flags, elDynamicRole) && !test(info.header.flags, elStructureRole)/* | elNonStructureRole*/) {
       info.header.flags |= elNonStructureRole;
 
       if ((info.header.flags & elDebugMask) == 0) {

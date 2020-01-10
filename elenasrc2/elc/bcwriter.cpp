@@ -2058,6 +2058,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcElseN:
          case bcLessN:
          case bcNotLess:
+         case bcNotGreater:         
          //case bcNotLessN:
          //case bcGreaterN:
          //case bcNotGreaterN:

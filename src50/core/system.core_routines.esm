@@ -1822,12 +1822,12 @@ end
 procedure __array."at$system@IntNumber[2]"
 
   count
-  movs  0
   pushd
 
   peeksi 3
   load
-  notless labErr
+  movs  0
+  notgreater labErr
   lessn   labErr 0
 
   peeksi 2
@@ -1846,17 +1846,18 @@ end
 procedure __array."setAt$system@IntNumber$system@Object[3]"
 
   count
-  movs    0
   pushd
 
   peeksi  3
   load
-  notless labErr
-  freei   1
+  movs    0
+  notgreater labErr                
   lessn   labErr 0
 
-  pushsi  3
+  peeksi  2
+  pushsi  4
   set
+  freei   2
   quitn 3
 
 labErr:

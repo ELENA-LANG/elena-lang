@@ -170,7 +170,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileHook, &compileHook,
-   &compileNop, &compileNop, &compileNotLessE, &compileNop, &compileNop, &compileNop, &compileElseE, &compileNop,
+   &compileNop, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileNop, &compileNop, &compileElseE, &compileNop,
 
    &compilePush, &loadNOp, &compilePush, &compileNop, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFPOp, &compilePushSI, &loadIndexOp, &compileNop, &compilePushF, &loadFPOp, &loadIndexOp,
@@ -314,12 +314,12 @@ inline void compileJumpNotLess(x86JITScope& scope, int label, bool forwardJump, 
 //   // jl   lbEnding
 //   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JLE);
 //}
-//
-//inline void compileJumpLessOrEqual(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-//{
-//   // jle   lbEnding
-//   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JLE);
-//}
+
+inline void compileJumpLessOrEqual(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jle   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JLE);
+}
 
 inline void compileJumpGreaterOrEqual(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
 {
@@ -1159,6 +1159,18 @@ void _ELENA_::compileNotLessE(int, x86JITScope& scope)
    // try to use short jump if offset small (< 0x10?)
    //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
    compileJumpGreaterOrEqual(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+}
+
+void _ELENA_::compileNotGreaterE(int, x86JITScope& scope)
+{
+   int jumpOffset = scope.argument;
+
+   // cmp dwotd ptr[ebx], edx
+   scope.code->writeWord(0x1339);
+
+   // try to use short jump if offset small (< 0x10?)
+   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
+   compileJumpLessOrEqual(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
 }
 
 //void _ELENA_::compileIfB(int, x86JITScope& scope)

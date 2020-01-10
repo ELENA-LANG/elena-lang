@@ -45,7 +45,7 @@ const char* _fnOpcodes[256] =
    "open", "quitn", "create", "fillr", "movf", "movs", "movr", "movm",
 
    "jump", "jumpvi", "callvi", "callr", OPCODE_UNKNOWN, "callextr", "hook", "address",
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "notless", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "else", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "notless", "notgreater", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "else", OPCODE_UNKNOWN,
 
    "pushn", "movn", "pushr", OPCODE_UNKNOWN, "pushai", OPCODE_UNKNOWN, "pushfi", "loadfi",
    "loadsi", "savef", "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
@@ -385,6 +385,7 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case bcElse:
          //case bcLess:
          case bcNotLess:
+         case bcNotGreater:
          case bcIfN:
          case bcElseN:
          case bcLessN:
@@ -465,6 +466,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcElse:              
 //            case bcLess:
             case bcNotLess:
+            case bcNotGreater:
             case bcIfN:
             case bcElseN:              
             case bcLessN:

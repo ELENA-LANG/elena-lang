@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   53
+#define REVISION_VERSION   54
 
 using namespace _ELENA_;
 
@@ -462,7 +462,7 @@ void printMessage(IdentifierString& command, _Module* module, size_t reference)
 void printCommand(IdentifierString& command, const char* opcode)
 {
    command.append(opcode);
-   size_t tabbing = _showBytecodes ? 44 : 13;
+   size_t tabbing = _showBytecodes ? 46 : 15;
    while (getlength(command) < tabbing) {
       command.append(' ');
    }
@@ -517,7 +517,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.append(' ');
       }
 
-      size_t tabbing = code == bcNop ? 24 : 31;
+      size_t tabbing = code == bcNop ? 26 : 33;
       while (getlength(command) < tabbing) {
          command.append(' ');
       }
@@ -577,6 +577,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcElse:
 //      case bcIfHeap:
       case bcNotLess:
+      case bcNotGreater:
 ////      case bcAddress:
          printCommand(command, opcode);
          printLabel(command, position + argument + 5, labels);
@@ -612,7 +613,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcNop:
          printLabel(command, position + argument, labels);
          command.append(':');
-         command.append("   ");
+         command.append("     ");
          command.append(opcode);
          break;
       case bcPushR:

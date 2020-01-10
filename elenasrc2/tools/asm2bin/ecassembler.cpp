@@ -609,7 +609,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcElse:
          //case bcLess:
          case bcNotLess:
-         //case bcNext:
+         case bcNotGreater:
+            //case bcNext:
          case bcJump:
          case bcHook:
          case bcAddress:

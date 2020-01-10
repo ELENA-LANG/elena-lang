@@ -596,7 +596,6 @@ namespace collections
         {
             theCapacity := 0;
             theLength := 0;
-//            theArray := Array.allocate(32);
         }
     
         constructor allocate(int capacity)
@@ -604,6 +603,9 @@ namespace collections
             theCapacity := capacity;
             theArray := Array.allocate(capacity);
         }
+        
+        constructor allocate()
+            <= allocate(32);
         
 //        constructor load(Array a)
 //            <= fromArray(a, a.Length);
@@ -658,32 +660,34 @@ namespace collections
             theArray.setAt(index, o)
         }
         
-//        private expand()
-//        {
-//            if (theCapacity <= theLength)
-//            {
-//                theCapacity.append(32);
-//                
-//                Array newArray := Array.allocate(cast int(theCapacity));
-//                for(IntNumber i := 0, i < theLength, i := i + 1)
-//                {
-//                    newArray[i] := theArray[i];
-//                };
-//                
-//                theArray := newArray
-//            }
-//        }
-//        
-//        /// Appends a new object to the end of the list
-//        append(item)
-//        {
-//            self.expand();
-//            
-//            theArray[cast int(theLength)] := item;
-//            
-//            theLength.append(1)
-//        }
-//        
+        private expand()
+        {
+            if (theCapacity <= theLength)
+            {
+                theCapacity.append(32);
+                
+                int capacity := theCapacity.Value;
+                Array newArray := Array.allocate(capacity);
+                for(IntNumber i := 0, i < theLength, i := i + 1)
+                {
+                    newArray[i] := theArray[i];
+                };
+                
+                theArray := newArray
+            }
+        }
+        
+        /// Appends a new object to the end of the list
+        append(item)
+        {
+            self.expand();
+            
+            int len := theLength.Value;
+            theArray[len] := item;
+            
+            theLength.append(1)
+        }
+        
 //        appendRange(subarray)
 //        {
 //            if (nil != subarray)
