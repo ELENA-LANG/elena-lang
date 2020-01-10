@@ -140,6 +140,8 @@ public:
 
    static void CloseFrame(SystemEnv* env, FrameHeader* frameHeader);
 
+   static void GCRoutine();
+
 } __routineProvider;
 
 } // _ELENA_
