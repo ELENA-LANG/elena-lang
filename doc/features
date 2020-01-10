@@ -18,6 +18,7 @@ Declarations
         - conversion constructors
         - named : call the default constructor
         - anonymos / conversion - do not call default constructor
+        - resending : to another constructor / to parent one
     Methods
       * private / protected / internal ones
       * Multimethods

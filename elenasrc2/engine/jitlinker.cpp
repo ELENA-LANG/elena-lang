@@ -1449,7 +1449,11 @@ void JITLinker :: prepareCompiler()
    SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
    // dispatch message should be the first
    resolveWeakAction(messageTable, DISPATCH_MESSAGE);
-   // constructor message should be the second
+   // protected default constructor message should be the second
+   // NOTE : protected constructor action can be used only for default constructor due to current implementation
+   // (we have to guarantee that default constructor is always the second one)
+   resolveWeakAction(messageTable, CONSTRUCTOR_MESSAGE2);
+   // constructor message should be the third
    resolveWeakAction(messageTable, CONSTRUCTOR_MESSAGE);
 
    _compiler->prepareCore(helper, _loader);

@@ -257,6 +257,7 @@ struct _ModuleScope
    ref_t             dispatch_message;
    ref_t             init_message;
    ref_t             constructor_message;
+   ref_t             protected_constructor_message;
 
    // cached bool values
    BranchingInfo     branchingInfo;
@@ -391,7 +392,7 @@ struct _ModuleScope
       /*wrapReference = */argArrayTemplateReference = 0;
 
       init_message = dispatch_message = 0;
-      constructor_message = 0;
+      protected_constructor_message = constructor_message = 0;
    }
 };
 

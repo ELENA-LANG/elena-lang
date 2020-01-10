@@ -1,6 +1,5 @@
 namespace io
 {    
-    import system;
 
 //import system'text;
 //

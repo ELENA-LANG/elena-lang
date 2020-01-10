@@ -897,10 +897,12 @@ private:
 //   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
-   bool isDefaultOrConversionConstructor(Scope& scope, ref_t message);
+   bool isDefaultOrConversionConstructor(Scope& scope, ref_t message, bool& isProtectedDefConst);
    bool isSelfCall(ObjectInfo info);
 
    bool isMethodEmbeddable(MethodScope& scope, SNode node);
+
+   ref_t retrieveImplicitIdentifier(NamespaceScope& scope, ident_t identifier, bool referenceOne, bool innermost);
 
    void writeMessageInfo(SNode node, _ModuleScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
@@ -1092,7 +1094,8 @@ private:
    ObjectInfo compileExternalCall(SNode node, ExprScope& scope/*, ref_t expectedRef*/, EAttr mode);
    ObjectInfo compileInternalCall(SNode node, ExprScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 
-   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, bool& withFrame);
+   void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, 
+      bool& withFrame, int& preallocated);
    void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
    void compileResendExpression(SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SNode node, CodeScope& scope);
@@ -1209,6 +1212,7 @@ private:
    void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
 //   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
 
+   void copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target);
    void declareNamespace(SNode& node, NamespaceScope& scope, bool withImports, bool withFullInfo);
 
 //   void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);

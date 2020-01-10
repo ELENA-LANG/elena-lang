@@ -366,12 +366,13 @@ namespace _ELENA_
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!03";
 
   // --- ELENA core module names ---
-   constexpr auto CORE_ALIAS              = "core";          // Core functionality
+   constexpr auto CORE_ALIAS              = "core";            // Core functionality
 
   // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE        = "#dispatch";
    constexpr auto CAST_MESSAGE            = "#cast";
    constexpr auto CONSTRUCTOR_MESSAGE     = "#constructor";
+   constexpr auto CONSTRUCTOR_MESSAGE2    = "#constructor2";   // protected constructor
    constexpr auto INVOKE_MESSAGE          = "#invoke";
    constexpr auto EQUAL_MESSAGE           = "equal";
    constexpr auto NOTEQUAL_MESSAGE        = "notequal";

@@ -6981,13 +6981,19 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          actionStr.insert(scope.module->Name(), 0);
       }
       else if (test(scope.hints, tpProtected)) {
-         ident_t className = scope.module->resolveReference(scope.getClassRef());
+         if (actionStr.compare(CONSTRUCTOR_MESSAGE) && paramCount == 0) {
+            //HOTFIX : protected default constructor has a special name
+            actionStr.copy(CONSTRUCTOR_MESSAGE2);
+         }
+         else {
+            ident_t className = scope.module->resolveReference(scope.getClassRef());
 
-         actionStr.insert("$$", 0);
-         actionStr.insert(className + 1, 0);
-         actionStr.insert("@", 0);
-         actionStr.insert(scope.module->Name(), 0);
-         actionStr.replaceAll('\'', '@', 0);
+            actionStr.insert("$$", 0);
+            actionStr.insert(className + 1, 0);
+            actionStr.insert("@", 0);
+            actionStr.insert(scope.module->Name(), 0);
+            actionStr.replaceAll('\'', '@', 0);
+         }
       }
       else if ((scope.hints & tpMask) == tpPrivate) {
          flags |= STATIC_MESSAGE;
@@ -7244,7 +7250,8 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
    }
 }
 
-void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeScope, ClassScope& classClassScope, bool& withFrame)
+void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeScope, ClassScope& classClassScope, 
+   bool& withFrame, int& preallocated)
 {
    ResendScope resendScope(&codeScope);
    resendScope.consructionMode = true;
@@ -7279,6 +7286,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
       codeScope.allocated1++;
       // HOTFIX : take into account saved self variable
       resendScope.tempAllocated1 = codeScope.allocated1;
+
+      preallocated = codeScope.allocated1;
    }
    else node.set(lxExpression, 0);
 
@@ -7857,16 +7866,25 @@ void Compiler :: compileDefConvConstructor(SNode node, MethodScope& scope, bool 
       compileSpecialMethodCall(exprNode, *classScope, scope.moduleScope->init_message);
 }
 
-bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, ref_t message)
+bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, ref_t message, bool& isProtectedDefConst)
 {
    ref_t actionRef = getAction(message);
    if (actionRef == getAction(scope.moduleScope->constructor_message)) {
       return true;
    }
+   else if (actionRef == getAction(scope.moduleScope->protected_constructor_message)) {
+      isProtectedDefConst = true;
+
+      return true;
+   }
    else if (getArgCount(message) > 1) {
       ref_t dummy = 0;
       ident_t actionName = scope.module->resolveAction(actionRef, dummy);
-      return actionName.endsWith(CONSTRUCTOR_MESSAGE);
+      if (actionName.compare(CONSTRUCTOR_MESSAGE2)) {
+         isProtectedDefConst = true;
+         return true;
+      }
+      else return actionName.endsWith(CONSTRUCTOR_MESSAGE);
    }
    else return false;
 }
@@ -7874,16 +7892,13 @@ bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, ref_t message)
 void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope)
 {
    // if it is a default / conversion (unnamed) constructor
-   bool isDefConvConstructor = isDefaultOrConversionConstructor(scope, scope.message);
    bool isProtectedDefConst = false;
+   bool isDefConvConstructor = isDefaultOrConversionConstructor(scope, scope.message, isProtectedDefConst);
 
    ref_t defConstrMssg = scope.moduleScope->constructor_message;
    if (classClassScope.checkAttribute(defConstrMssg, maProtected)) {
       // if protected default constructor is declared - use it
       defConstrMssg = classClassScope.getAttribute(defConstrMssg, maProtected);
-      if (defConstrMssg == scope.message) {
-         isDefConvConstructor = true;
-      }
       isProtectedDefConst = true;
    }
    else if (classClassScope.info.methods.exist(defConstrMssg | STATIC_MESSAGE)) {
@@ -7922,7 +7937,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
          if (isDefConvConstructor)
             scope.raiseError(errInvalidOperation, node);
 
-         compileConstructorResendExpression(bodyNode, codeScope, classClassScope, withFrame);
+         compileConstructorResendExpression(bodyNode, codeScope, classClassScope, withFrame, preallocated);
 
          bodyNode = bodyNode.findChild(lxCode);
       }
@@ -7938,7 +7953,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    // if no redirect statement - call the default constructor
    else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(defConstrMssg)) {
       // HOTFIX : use dispatching routine for the protected default constructor
-      SNode callNode = node.insertNode(isProtectedDefConst ? lxCalling_0 : lxCalling_1, defConstrMssg);
+      SNode callNode = node.insertNode(lxCalling_1, defConstrMssg);
       callNode.appendNode(lxResult);
    }
    // if it is a dynamic object implicit constructor call is not possible
@@ -8800,11 +8815,17 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       // if it is internal / protected message save the visibility attribute
       ref_t signRef = 0;
       ident_t name = scope.module->resolveAction(getAction(message), signRef);
-      int index = name.find("$$");
-      if(index == NOTFOUND_POS)
-         scope.raiseError(errDupInternalMethod, findName(node));
+      ref_t publicMessage = 0;
+      if (name.compare(CONSTRUCTOR_MESSAGE2)) {
+         publicMessage = scope.moduleScope->constructor_message;
+      }
+      else {
+         int index = name.find("$$");
+         if (index == NOTFOUND_POS)
+            scope.raiseError(errDupInternalMethod, findName(node));
 
-      ref_t publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
+         publicMessage = overwriteAction(message, scope.module->mapAction(name + index + 2, 0, false));
+      }
       if (scope.info.methods.exist(publicMessage)) {
          // there should be no public method with the same name
          scope.raiseError(errDupPublicMethod, findName(node));
@@ -9294,6 +9315,19 @@ ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
    return parentRef;
 }
 
+ref_t Compiler :: retrieveImplicitIdentifier(NamespaceScope& scope, ident_t identifier, bool referenceOne, bool innermost)
+{
+   ref_t reference = scope.resolveImplicitIdentifier(identifier, false, innermost);
+
+   if (!reference && scope.parent != nullptr) {
+      NamespaceScope* parentScope = (NamespaceScope*)scope.parent->getScope(Scope::ScopeLevel::slNamespace);
+      if (parentScope)
+         return retrieveImplicitIdentifier(*parentScope, identifier, referenceOne, false);
+   }
+
+   return reference;
+}
+
 void Compiler :: importClassMembers(SNode classNode, SNode importNode, NamespaceScope& scope)
 {
    SNode nameNode = importNode.firstChild(lxTerminalMask);
@@ -9312,7 +9346,7 @@ void Compiler :: importClassMembers(SNode classNode, SNode importNode, Namespace
    templateName.append('#');
    templateName.appendInt(parameters.Count());
 
-   ref_t templateRef = scope.resolveImplicitIdentifier(templateName.c_str(), false, true);
+   ref_t templateRef = retrieveImplicitIdentifier(scope, templateName.c_str(), false, true);
    if (!templateRef)
       scope.raiseError(errInvalidSyntax, importNode);
 
@@ -11090,6 +11124,7 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
             SNode node = current.firstChild();
             NamespaceScope namespaceScope(&scope/*, true*/);
             declareNamespace(node, namespaceScope, false, true);
+            copyParentNamespaceExtensions(scope, namespaceScope);
 
             compileImplementations(node, namespaceScope);
             break;
@@ -11168,6 +11203,15 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
    return declared;
 }
 
+void Compiler :: copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target)
+{
+   for (auto it = source.extensions.start(); !it.Eof(); it++) {
+      auto ext = *it;
+
+      target.extensions.add(it.key(), Pair<ref_t, ref_t>(ext.value1, ext.value2));
+   }
+}
+
 void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool ignoreImports, bool withFullInfo)
 {
    if (!ignoreImports && !scope.module->Name().compare(STANDARD_MODULE) && _autoSystemImport) {
@@ -11222,6 +11266,8 @@ void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool ig
    }
 
    if (withFullInfo) {
+      // HOTFIX : copy the parent extensions
+
       scope.loadExtensions(scope.module->Name(), scope.nsName.c_str());
 
       for (auto it = scope.importedNs.start(); !it.Eof(); it++) {
@@ -11433,6 +11479,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.dispatch_message = encodeMessage(scope.module->mapAction(DISPATCH_MESSAGE, 0, false), 1, 0);
    scope.init_message = encodeMessage(scope.module->mapAction(INIT_MESSAGE, 0, false), 0, FUNCTION_MESSAGE | STATIC_MESSAGE);
    scope.constructor_message = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false), 1, 0);
+   scope.protected_constructor_message = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false), 1, 0);
 
    if (!scope.module->Name().compare(STANDARD_MODULE)) {
       // system attributes should be loaded automatically
@@ -11854,18 +11901,7 @@ void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, re
 
 void Compiler :: injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne)
 {
-   ref_t message = scope.constructor_message;
-   if (protectedOne) {
-      IdentifierString actionStr(scope.module->Name());
-      actionStr.append("@");
-      actionStr.append(scope.module->resolveReference(classRef));
-      actionStr.append("$$");
-      actionStr.append(CONSTRUCTOR_MESSAGE);
-      actionStr.replaceAll('\'', '@', 0);
-
-      message = encodeMessage(scope.module->mapAction(actionStr.c_str(), 0, false), 1, 0);
-   }
-
+   ref_t message = protectedOne ? scope.protected_constructor_message : scope.constructor_message;
    SNode methNode = classNode.appendNode(lxConstructor, message);
    methNode.appendNode(lxAutogenerated);
    methNode.appendNode(lxAttribute, tpConstructor);

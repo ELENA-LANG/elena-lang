@@ -585,24 +585,23 @@ namespace collections
     // --- ArrayList ---
     
     /// An array list object
-    public sealed class ArrayList : Indexable//, interface<Enumerable>
+    public sealed class ArrayList : Indexable
     {
         Array    theArray;
         ref<int> theLength;
         ref<int> theCapacity;
     
-//        /// Creates the list
-//        constructor()
-//        {
-//            theCapacity := 32;
-//            theLength := 0;
+        /// Creates the empty list
+        constructor()
+        {
+            theCapacity := 0;
+            theLength := 0;
 //            theArray := Array.allocate(32);
-//        }
+        }
     
         constructor allocate(int capacity)
         {
             theCapacity := capacity;
-            theLength := 0;
             theArray := Array.allocate(capacity);
         }
         
@@ -788,9 +787,9 @@ namespace collections
 //    //        
 //    //        ^ theArray getAt(len - 1)
 //    //    ]
-//        
-//        /// Returns the list enumerator
-//        Enumerator enumerator() = new ArrayListEnumerator(self);
+        
+        /// Returns the list enumerator
+        Enumerator enumerator() = new ArrayListEnumerator(self);
         
         /// Returns the list indexer9
         Indexer indexer() = new ArrayListIndexer(self);
@@ -806,46 +805,46 @@ namespace collections
 //            = new Array(0, cast int(theLength), theArray);
     }
 
-//// --- ArrayListEnumerator ---
-//
-///// A list enumerator
-//class ArrayListEnumerator : Enumerator
-//{
-//    ArrayList theList;
-//    ref<int>  theIndex;
-//    
-//    /// Creates a list enumerator
-//    constructor(ArrayList list)
-//    {
-//        theList := list;
-//        theIndex := -1;
-//    }
-//
-////    /// Creates a list enumerator
-////    constructor new : anObject
-////        <= new(T<ArrayList>(anObject)).
-//
-//    /// Returns the current object
-//    get() = theList.at(cast int(theIndex));
-//    
-//    /// Resets the enumerator
-//    reset()
-//    {
-//        theIndex.Value := -1
-//    }
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next()
-//    {
-//        theIndex.append(1);
-//        
-//        int len := theList.Length;
-//        
-//        ^ len > (cast int(theIndex))
-//    }
-//    
-//    enumerable() = theList;
-//}
+    // --- ArrayListEnumerator ---
+    
+    /// A list enumerator
+    class ArrayListEnumerator : Enumerator
+    {
+        ArrayList theList;
+        ref<int>  theIndex;
+        
+        /// Creates a list enumerator
+        constructor(ArrayList list)
+        {
+            theList := list;
+            theIndex := -1;
+        }
+    
+    //    /// Creates a list enumerator
+    //    constructor new : anObject
+    //        <= new(T<ArrayList>(anObject)).
+    
+        /// Returns the current object
+        get() = theList.at(cast int(theIndex));
+        
+        /// Resets the enumerator
+        reset()
+        {
+            theIndex.Value := -1
+        }
+    
+        /// Goes to the next enumeration member and returns true if it is not the last member
+        bool next()
+        {
+            theIndex.append(1);
+            
+            int len := theList.Length;
+            
+            ^ len > (cast int(theIndex))
+        }
+        
+        enumerable() = theList;
+    }
 
     // --- ArrayListIndexer ---
     
