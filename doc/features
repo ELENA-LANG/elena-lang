@@ -29,6 +29,9 @@ Declarations
       * implicit
       * explicit
       * abstract
+  Templates
+  Extensions
+  Extension Templates
 Code
   Build-in Variables
     * self vs this self
