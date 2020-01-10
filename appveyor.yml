@@ -7,4 +7,4 @@ configuration: Release
 platform: x86
 build:
   verbosity: minimal
-  project: elenasrc2.sln 
+  project: elenasrc2\elenasrc2.sln 
