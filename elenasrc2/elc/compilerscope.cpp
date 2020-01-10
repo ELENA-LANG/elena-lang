@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class scope implementation.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -523,7 +523,7 @@ ref_t ModuleScope :: resolveImportedIdentifier(ident_t identifier, IdentifierLis
 //   }   
 //}
 
-void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
+void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting, ExtensionMap* outerExtensionList)
 {
    // declare classes / symbols based on the derivation tree
    bool repeatMode = true;
@@ -534,11 +534,11 @@ void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
 
    while (repeatMode && !idle) {
       repeatMode = false;
-      idle = !compiler->declareModule(derivationTree, *this, false, repeatMode);
+      idle = !compiler->declareModule(derivationTree, *this, false, repeatMode, outerExtensionList);
       if (idle && repeatMode) {
          repeatMode = false;
          // if the last declaration was not successful, force it last time 
-         idle = !compiler->declareModule(derivationTree, *this, true, repeatMode);
+         idle = !compiler->declareModule(derivationTree, *this, true, repeatMode, outerExtensionList);
       }
 
       nothingToCompile &= idle;
@@ -546,7 +546,7 @@ void ModuleScope :: compile(SyntaxTree& derivationTree, ident_t greeting)
    
    if (!nothingToCompile) {
       // compile classes / symbols if not idle 
-      compiler->compileModule(derivationTree, *this, greeting);
+      compiler->compileModule(derivationTree, *this, greeting, outerExtensionList);
    }
 }
 
@@ -589,7 +589,8 @@ void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t referen
    SyntaxTree::copyNode(output, templateTree.readRoot());
 }
 
-ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode)
+ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode, 
+   ExtensionMap* outerExtensionList)
 {
    SyntaxTree templateTree;
 
@@ -621,7 +622,7 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
 
          try
          {
-            compile(templateTree, path.c_str());
+            compile(templateTree, path.c_str(), outerExtensionList);
          }
          catch (_Exception&)
          {
@@ -693,7 +694,7 @@ ref_t ModuleScope :: resolveClosure(ref_t closureMessage, ref_t outputRef, ident
       else templateReference = mapFullReference(closureName, true);
 
       if (templateReference) {
-         return generateTemplate(templateReference, parameters, ns, false);
+         return generateTemplate(templateReference, parameters, ns, false, nullptr);
       }
       else return superReference;
    }

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler scope class.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerscopeH
@@ -94,7 +94,8 @@ struct ModuleScope : _ModuleScope
 
    virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns);
 
-   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode);
+   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode,
+      ExtensionMap* outerExtensionList);
    virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, int bookmark);
 //   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef);
@@ -105,7 +106,7 @@ struct ModuleScope : _ModuleScope
    virtual void declareNamespace(ident_t name);
    virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);
 
-   void compile(SyntaxTree& derivationTree, ident_t greeting);
+   void compile(SyntaxTree& derivationTree, ident_t greeting, ExtensionMap* outerExtensionList);
 
 //   void beginModule(ident_t ns, ident_t filePath, DerivationWriter& writer);
 

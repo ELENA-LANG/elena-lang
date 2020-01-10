@@ -317,8 +317,11 @@ private:
       Map<ref_t, ref_t> extensionDispatchers;
       Map<ref_t, ref_t> extensionTargets;
       ExtensionMap      extensions;
-//      ExtensionTmplMap  extensionTemplates;
-//
+      ExtensionTmplMap  extensionTemplates;
+
+      // COMPILER MAGIC : used for extension template compilation
+      ExtensionMap*     outerExtensionList;
+
 //      ref_t             packageReference;
 //
 ////      // list of references to the current module which should be checked after the project is compiled
@@ -395,7 +398,7 @@ private:
       ref_t resolveExtensionTarget(ref_t reference);
 
       void saveExtension(ref_t message, ref_t extRef, ref_t strongMessage/*, bool internalOne*/);
-//      void saveExtensionTemplate(ref_t message, ident_t pattern);
+      void saveExtensionTemplate(ref_t message, ident_t pattern);
 
       void loadModuleInfo(ident_t name)
       {
@@ -409,7 +412,7 @@ private:
 //         return forwards.add(forward, info.param, true);
 //      }
 
-      NamespaceScope(_ModuleScope* moduleScope/*, ident_t path, IdentifierList* imported*//*, bool withFullInfo*/);
+      NamespaceScope(_ModuleScope* moduleScope, ExtensionMap* outerExtensionList);
       NamespaceScope(NamespaceScope* parent/*, ident_t path, IdentifierList* imported*//*, bool withFullInfo*/);
    };
 
@@ -1215,9 +1218,9 @@ private:
    void copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target);
    void declareNamespace(SNode& node, NamespaceScope& scope, bool withImports, bool withFullInfo);
 
-//   void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);
-//   void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
-//   void registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature);
+   void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);
+   void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
+   void registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature);
 
    bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
@@ -1266,8 +1269,8 @@ public:
    void declareModuleIdentifiers(SyntaxTree& tree, _ModuleScope& scope);
 
    // return true if no forward class declarations are encountered
-   bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forced, bool& repeatMode);
-   void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting);
+   bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forced, bool& repeatMode, ExtensionMap* outerExtensionList);
+   void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting, ExtensionMap* outerExtensionList);
 
    void initializeScope(ident_t name, _ModuleScope& scope, bool withDebugInfo);
 
@@ -1300,9 +1303,10 @@ public:
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
 
-//   virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef);
-//   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, ref_t* arguments, ident_t ns);
-//
+   //virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef);
+   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
+      ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList);
+
 ////   //virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);

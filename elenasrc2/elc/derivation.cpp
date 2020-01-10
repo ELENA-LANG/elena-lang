@@ -386,12 +386,14 @@ void DerivationWriter :: generateTemplateTree(SNode node, ScopeType templateType
 
    identNode.setStrArgument(name.c_str());
 
-   _output.newNode(lxTemplate);
+   if (templateType == ScopeType::stExtensionTemplate) {
+      _output.newNode(lxExtensionTemplate);
+   }
+   else _output.newNode(lxTemplate);
    generateScope(_output, _cache.readRoot(), templateScope);
    _output.closeNode();
 
    //SNode root = templateTree.readRoot();
-
 }
 
 //bool DerivationWriter :: recognizeMetaScope(SNode node)
@@ -493,9 +495,19 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
    else if (scopeNode.prevNode() == lxTemplateArgs) {
       scopeNode = lxClass;
 
+      // validate the template type
+      ScopeType type = ScopeType::stClassTemplate;
+      SNode prevNode = scopeNode.prevNode();
+      while (prevNode != lxNone) {
+         if (prevNode == lxAttribute && prevNode.argument == V_EXTENSION) {
+            type = ScopeType::stExtensionTemplate;
+         }
+         prevNode = prevNode.prevNode();
+      }
+
       recognizeClassMebers(scopeNode);
 
-      generateTemplateTree(scopeNode, ScopeType::stClassTemplate);
+      generateTemplateTree(scopeNode, type);
 
       scopeNode = lxIdle;
    }

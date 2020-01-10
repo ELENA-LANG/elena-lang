@@ -2471,155 +2471,156 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
    return 0;
 }
 
-//inline size_t readSignatureMember(ident_t signature, size_t index)
-//{
-//   int level = 0;
-//   size_t len = getlength(signature);
-//   for (size_t i = index; i < len; i++) {
-//      if (signature[i] == '&') {
-//         if (level == 0) {
-//            return i;
-//         }
-//         else level--;
-//      }
-//      else if (signature[i] == '#') {
-//         String<char, 5> tmp;
-//         size_t numEnd = signature.find(i, '&', NOTFOUND_POS);
-//         tmp.copy(signature.c_str() + i + 1, numEnd - i - 1);
-//         level += ident_t(tmp).toInt();
-//      }
-//   }
-//
-//   return len;
-//}
-//
-//inline void decodeClassName(IdentifierString& signature)
-//{
-//   ident_t ident = signature.ident();
-//
-//   if (ident.startsWith(TEMPLATE_PREFIX_NS_ENCODED)) {
-//      // if it is encodeded weak reference - decode only the prefix
-//      signature[0] = '\'';
-//      signature[strlen(TEMPLATE_PREFIX_NS_ENCODED) - 1] = '\'';
-//   }
-//   else if (ident.startsWith(TEMPLATE_PREFIX_NS)) {
-//      // if it is weak reference - do nothing
-//   }
-//   else signature.replaceAll('@', '\'', 0);
-//}
-//
-//ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t implicitSignatureRef, ident_t ns)
-//{
-//   size_t argumentLen = 0;
-//   ref_t parameters[ARG_COUNT] = { 0 };
-//   ref_t signatures[ARG_COUNT];
-//   scope.module->resolveSignature(implicitSignatureRef, signatures);
-//
-//   // matching pattern with the provided signature
-//   size_t i = pattern.find('.') + 2;
-//
-//   IdentifierString templateName(pattern, i - 2);
-//   ref_t templateRef = scope.mapFullReference(templateName.ident(), true);
-//
-//   size_t len = getlength(pattern);
-//   bool matched = true;
-//   size_t signIndex = 0;
-//   while (matched && i < len) {
-//      if (pattern[i] == '{') {
-//         size_t end = pattern.find(i, '}', 0);
-//
-//         String<char, 5> tmp;
-//         tmp.copy(pattern + i + 1, end - i - 1);
-//
-//         size_t index = ident_t(tmp).toInt();
-//
-//         parameters[index - 1] = signatures[signIndex];
-//         if (argumentLen < index)
-//            argumentLen = index;
-//
-//         i = end + 2;
-//      }
-//      else {
-//         size_t end = pattern.find(i, '/', getlength(pattern));
-//         IdentifierString argType;
-//         argType.copy(pattern + i, end - i);
-//
-//         if (argType.ident().find('{') != NOTFOUND_POS) {
-//            ref_t argRef = signatures[signIndex];
-//            // bad luck : if it is a template based argument
-//            ident_t signType;
-//            while (argRef) {
-//               // try to find the template based signature argument
-//               signType = scope.module->resolveReference(argRef);
-//               if (!isTemplateWeakReference(signType)) {
-//                  ClassInfo info;
-//                  defineClassInfo(scope, info, argRef, true);
-//                  argRef = info.header.parentRef;
-//               }
-//               else break;
-//            }
-//
-//            if (argRef) {
-//               size_t argLen = getlength(argType);
-//               size_t start = 0;
-//               size_t argIndex = argType.ident().find('{');
-//               while (argIndex < argLen && matched) {
-//                  if (argType.ident().compare(signType, start, argIndex - start)) {
-//                     size_t paramEnd = argType.ident().find(argIndex, '}', 0);
-//
-//                     String<char, 5> tmp;
-//                     tmp.copy(argType.c_str() + argIndex + 1, paramEnd - argIndex - 1);
-//
-//                     IdentifierString templateArg;
-//                     size_t nextArg = readSignatureMember(signType, argIndex - start);
-//                     templateArg.copy(signType + argIndex - start, nextArg - argIndex + start);
-//                     decodeClassName(templateArg);                     
-//
-//                     signType = signType + nextArg + 1;
-//
-//                     size_t index = ident_t(tmp).toInt();
-//                     ref_t templateArgRef = scope.mapFullReference(templateArg);
-//                     if (!parameters[index - 1]) {
-//                        parameters[index - 1] = templateArgRef;
-//                     }
-//                     else if (parameters[index - 1] != templateArgRef) {
-//                        matched = false;
-//                        break;
-//                     }
-//                     
-//                     if (argumentLen < index)
-//                        argumentLen = index;
-//
-//                     start = paramEnd + 2;
-//                     argIndex = argType.ident().find(start, '{', argLen);
-//                  }
-//                  else matched = false;
-//               }
-//
-//               if (matched && start < argLen) {
-//                  // validate the rest part
-//                  matched = argType.ident().compare(signType, start, argIndex - start);
-//               }
-//            }
-//            else matched = false;
-//         }
-//         else {
-//            ref_t argRef = scope.mapFullReference(argType.ident(), true);
-//            matched = isCompatible(scope, argRef, signatures[signIndex]);
-//         }
-//
-//         i = end + 1;
-//      }
-//
-//      signIndex++;
-//   }
-//
-//   if (matched) {
-//      return compiler.generateExtensionTemplate(scope, templateRef, argumentLen, parameters, ns);
-//   }
-//   
-//   return 0;
-//}
+inline size_t readSignatureMember(ident_t signature, size_t index)
+{
+   int level = 0;
+   size_t len = getlength(signature);
+   for (size_t i = index; i < len; i++) {
+      if (signature[i] == '&') {
+         if (level == 0) {
+            return i;
+         }
+         else level--;
+      }
+      else if (signature[i] == '#') {
+         String<char, 5> tmp;
+         size_t numEnd = signature.find(i, '&', NOTFOUND_POS);
+         tmp.copy(signature.c_str() + i + 1, numEnd - i - 1);
+         level += ident_t(tmp).toInt();
+      }
+   }
+
+   return len;
+}
+
+inline void decodeClassName(IdentifierString& signature)
+{
+   ident_t ident = signature.ident();
+
+   if (ident.startsWith(TEMPLATE_PREFIX_NS_ENCODED)) {
+      // if it is encodeded weak reference - decode only the prefix
+      signature[0] = '\'';
+      signature[strlen(TEMPLATE_PREFIX_NS_ENCODED) - 1] = '\'';
+   }
+   else if (ident.startsWith(TEMPLATE_PREFIX_NS)) {
+      // if it is weak reference - do nothing
+   }
+   else signature.replaceAll('@', '\'', 0);
+}
+
+ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
+   ref_t implicitSignatureRef, ident_t ns, ExtensionMap* outerExtensionList)
+{
+   size_t argumentLen = 0;
+   ref_t parameters[ARG_COUNT] = { 0 };
+   ref_t signatures[ARG_COUNT];
+   scope.module->resolveSignature(implicitSignatureRef, signatures);
+
+   // matching pattern with the provided signature
+   size_t i = pattern.find('.') + 2;
+
+   IdentifierString templateName(pattern, i - 2);
+   ref_t templateRef = scope.mapFullReference(templateName.ident(), true);
+
+   size_t len = getlength(pattern);
+   bool matched = true;
+   size_t signIndex = 0;
+   while (matched && i < len) {
+      if (pattern[i] == '{') {
+         size_t end = pattern.find(i, '}', 0);
+
+         String<char, 5> tmp;
+         tmp.copy(pattern + i + 1, end - i - 1);
+
+         size_t index = ident_t(tmp).toInt();
+
+         parameters[index - 1] = signatures[signIndex];
+         if (argumentLen < index)
+            argumentLen = index;
+
+         i = end + 2;
+      }
+      else {
+         size_t end = pattern.find(i, '/', getlength(pattern));
+         IdentifierString argType;
+         argType.copy(pattern + i, end - i);
+
+         if (argType.ident().find('{') != NOTFOUND_POS) {
+            ref_t argRef = signatures[signIndex];
+            // bad luck : if it is a template based argument
+            ident_t signType;
+            while (argRef) {
+               // try to find the template based signature argument
+               signType = scope.module->resolveReference(argRef);
+               if (!isTemplateWeakReference(signType)) {
+                  ClassInfo info;
+                  defineClassInfo(scope, info, argRef, true);
+                  argRef = info.header.parentRef;
+               }
+               else break;
+            }
+
+            if (argRef) {
+               size_t argLen = getlength(argType);
+               size_t start = 0;
+               size_t argIndex = argType.ident().find('{');
+               while (argIndex < argLen && matched) {
+                  if (argType.ident().compare(signType, start, argIndex - start)) {
+                     size_t paramEnd = argType.ident().find(argIndex, '}', 0);
+
+                     String<char, 5> tmp;
+                     tmp.copy(argType.c_str() + argIndex + 1, paramEnd - argIndex - 1);
+
+                     IdentifierString templateArg;
+                     size_t nextArg = readSignatureMember(signType, argIndex - start);
+                     templateArg.copy(signType + argIndex - start, nextArg - argIndex + start);
+                     decodeClassName(templateArg);                     
+
+                     signType = signType + nextArg + 1;
+
+                     size_t index = ident_t(tmp).toInt();
+                     ref_t templateArgRef = scope.mapFullReference(templateArg);
+                     if (!parameters[index - 1]) {
+                        parameters[index - 1] = templateArgRef;
+                     }
+                     else if (parameters[index - 1] != templateArgRef) {
+                        matched = false;
+                        break;
+                     }
+                     
+                     if (argumentLen < index)
+                        argumentLen = index;
+
+                     start = paramEnd + 2;
+                     argIndex = argType.ident().find(start, '{', argLen);
+                  }
+                  else matched = false;
+               }
+
+               if (matched && start < argLen) {
+                  // validate the rest part
+                  matched = argType.ident().compare(signType, start, argIndex - start);
+               }
+            }
+            else matched = false;
+         }
+         else {
+            ref_t argRef = scope.mapFullReference(argType.ident(), true);
+            matched = isCompatible(scope, argRef, signatures[signIndex]);
+         }
+
+         i = end + 1;
+      }
+
+      signIndex++;
+   }
+
+   if (matched) {
+      return compiler.generateExtensionTemplate(scope, templateRef, argumentLen, parameters, ns, outerExtensionList);
+   }
+   
+   return 0;
+}
 
 bool CompilerLogic :: validateMessage(_ModuleScope& scope, ref_t message, int hints)
 {

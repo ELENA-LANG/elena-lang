@@ -354,7 +354,8 @@ struct _ModuleScope
 //      project->raiseWarning(level, message, sourcePath);
 //   }
 
-   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode) = 0;
+   virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode,
+      ExtensionMap* outerExtensionList) = 0;
    virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
    virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, int bookmark) = 0;
 //   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef) = 0;
@@ -439,13 +440,16 @@ public:
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
-//   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, ref_t* arguments, ident_t ns) = 0;
-//
+   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
+      ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList) = 0;
+
 //   virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef) = 0;
 
    virtual void declareModuleIdentifiers(SyntaxTree& tree, _ModuleScope& scope) = 0;
-   virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forcedDeclaration, bool& repeatMode) = 0;
-   virtual void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting) = 0;
+   virtual bool declareModule(SyntaxTree& tree, _ModuleScope& scope, bool forcedDeclaration, 
+      bool& repeatMode, ExtensionMap* outerExtensionList) = 0;
+   virtual void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, 
+      ident_t greeting, ExtensionMap* outerExtensionList) = 0;
 
 ////   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
@@ -746,7 +750,8 @@ public:
 
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, 
       int& stackSafeAttr, bool selfCall) = 0;
-//   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, ref_t signatureRef, ident_t ns) = 0;
+   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
+      ref_t signatureRef, ident_t ns, ExtensionMap* outerExtensionList) = 0;
 };
 
 typedef _CompilerLogic::ExpressionAttributes EAttrs;

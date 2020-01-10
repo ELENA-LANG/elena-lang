@@ -2,8 +2,6 @@
 In development:
 ------         
               xdev - refactoring
-                * system
-
                 * mov GC to C code
 
               xdev - linux32
@@ -14,7 +12,8 @@ In development:
                 * compile elenart64.dll
 
               xdev elena50
-                * extension templates
+                * yield method
+                * generic handler
 
               xdev elena50
                 * ArrayList
@@ -87,8 +86,6 @@ In development:
                 * arrays of template of templates
 
                 * variadic dispatch
-                * generic methods
-                * yieldable methods
 
                 * primitive operations with int : bitwise
                 * high-level opoerations with int : comparision, bitwise

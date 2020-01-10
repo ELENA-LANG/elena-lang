@@ -50,6 +50,7 @@ enum LexicalType
    lxClassProperty            = 0x00001C,
    lxClassImport              = 0x00001D,
    lxFinalblock               = 0x00001E,
+   lxExtensionTemplate        = 0x00001F,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -1239,19 +1240,19 @@ public:
       return counter;
    }
 
-//   static int countNode(Node current, LexicalType type1, LexicalType type2)
-//   {
-//      int counter = 0;
-//      while (current != lxNone) {
-//         if (current == type1 || current == type2)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
+   static int countNode(Node current, LexicalType type1, LexicalType type2)
+   {
+      int counter = 0;
+      while (current != lxNone) {
+         if (current == type1 || current == type2)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
 //   static int countNode(Node current, LexicalType type1, LexicalType type2, LexicalType type3)
 //   {
 //      int counter = 0;
@@ -1294,22 +1295,22 @@ public:
 //
 //      return counter;
 //   }
-//
-//   static int countChild(Node node, LexicalType type1, LexicalType type2)
-//   {
-//      int counter = 0;
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone) {
-//         if (current == type1 || current == type2)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
+
+   static int countChild(Node node, LexicalType type1, LexicalType type2)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (current == type1 || current == type2)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
 //   static bool existChild(Node node, LexicalType type, ref_t arg)
 //   {
 //      Node current = node.firstChild();

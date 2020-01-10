@@ -232,12 +232,14 @@ inline bool isConstantArguments(SNode node)
 
 // --- Compiler::NamespaceScope ---
 
-Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope)
+Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ExtensionMap* outerExtensionList)
    : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr),
-   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF)//, extensionTemplates(NULL, freestr)
+   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF), extensionTemplates(NULL, freestr)
 {
    // by default - private visibility
    defaultVisibility = Visibility::Private;
+
+   this->outerExtensionList = outerExtensionList;
 
 //   // load private namespaces
 //   loadExtensions(moduleScope->module->Name(), ns, true);
@@ -251,8 +253,10 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope)
 
 Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent)
    : Scope(parent), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr),
-   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF)//, extensionTemplates(NULL, freestr)
+   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF), extensionTemplates(NULL, freestr)
 {
+   outerExtensionList = parent->outerExtensionList;
+
    defaultVisibility = parent->defaultVisibility;
    sourcePath.copy(parent->sourcePath);
    nsName.copy(parent->ns);
@@ -529,13 +533,13 @@ void Compiler::NamespaceScope :: loadExtensions(ident_t ns)
             strongMessage = importMessage(extModule, strongMessage, module);
          }
 
-         /*if (!role_ref) {
+         if (!extRef) {
             // if it is an extension template
             ident_t pattern = metaReader.getLiteral(DEFAULT_STR);
 
             extensionTemplates.add(message, pattern.clone());
          }
-         else */extensions.add(message, Pair<ref_t, ref_t>(extRef, strongMessage));
+         else extensions.add(message, Pair<ref_t, ref_t>(extRef, strongMessage));
       }
    }
 }
@@ -545,6 +549,34 @@ void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t extRef, ref_
 //   if (typeRef == INVALID_REF || typeRef == moduleScope->superReference)
 //      typeRef = 0;
 
+   if (outerExtensionList != nullptr) {
+      // COMPILER MAGIC : if it is template extension compilation
+      outerExtensionList->add(message, Pair<ref_t, ref_t>(extRef, strongMessage));
+   }
+   else {
+      IdentifierString sectionName(/*internalOne ? PRIVATE_PREFIX_NS : */"'");
+      if (!emptystr(ns)) {
+         sectionName.append(ns);
+         sectionName.append("'");
+      }
+      sectionName.append(EXTENSION_SECTION);
+
+      MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+      //   if (typeRef == moduleScope->superReference) {
+      //      metaWriter.writeDWord(0);
+      //   }
+      /*else */metaWriter.writeDWord(extRef);
+      metaWriter.writeDWord(message);
+      metaWriter.writeDWord(strongMessage);
+
+   }
+
+   extensions.add(message, Pair<ref_t, ref_t>(extRef, strongMessage));
+}
+
+void Compiler::NamespaceScope :: saveExtensionTemplate(ref_t message, ident_t pattern)
+{
    IdentifierString sectionName(/*internalOne ? PRIVATE_PREFIX_NS : */"'");
    if (!emptystr(ns)) {
       sectionName.append(ns);
@@ -554,34 +586,13 @@ void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t extRef, ref_
 
    MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
 
-//   if (typeRef == moduleScope->superReference) {
-//      metaWriter.writeDWord(0);
-//   }
-   /*else */metaWriter.writeDWord(extRef);
+   metaWriter.writeDWord(0);
    metaWriter.writeDWord(message);
-   metaWriter.writeDWord(strongMessage);
+   metaWriter.writeDWord(0);
+   metaWriter.writeLiteral(pattern.c_str());
 
-   extensions.add(message, Pair<ref_t, ref_t>(extRef, strongMessage));
+   extensionTemplates.add(message, pattern.clone());
 }
-
-//void Compiler::NamespaceScope :: saveExtensionTemplate(ref_t message, ident_t pattern)
-//{
-//   IdentifierString sectionName(/*internalOne ? PRIVATE_PREFIX_NS : */"'");
-//   if (!emptystr(ns)) {
-//      sectionName.append(ns);
-//      sectionName.append("'");
-//   }
-//   sectionName.append(EXTENSION_SECTION);
-//
-//   MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//   metaWriter.writeDWord(0);
-//   metaWriter.writeDWord(message);
-//   metaWriter.writeDWord(0);
-//   metaWriter.writeLiteral(pattern.c_str());
-//
-//   extensionTemplates.add(message, pattern.clone());
-//}
 
 // --- Compiler::SourceScope ---
 
@@ -3082,22 +3093,21 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
       objectRef = scope.moduleScope->superReference;
    }
 
-//   // general extension
-//   ref_t generalRoleRef1 = 0;
-//   ref_t roleRef1 = 0;
-//   ref_t strongMessage1 = 0;
-//
-//   // typified extension
-//   ref_t generalRoleRef2 = 0;
-//   ref_t roleRef2 = 0;
-//   ref_t strongMessage2 = 0;
-//
-//   // typified template extension
-//   //ref_t generalRoleRef3 = 0;
-//   ref_t roleRef3 = 0;
-//   ref_t strongMessage3 = 0;
-
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
+
+   // auto generate extension template
+   for (auto it = nsScope->extensionTemplates.getIt(messageRef); !it.Eof(); it = nsScope->extensionTemplates.nextIt(messageRef, it)) {
+      ref_t resolvedTemplateExtension = _logic->resolveExtensionTemplate(*scope.moduleScope, *this, *it,
+         implicitSignatureRef, nsScope->ns, nsScope->outerExtensionList ? nsScope->outerExtensionList : &nsScope->extensions);
+      if (resolvedTemplateExtension) {
+         //ref_t strongMessage = encodeMessage()
+
+         //nsScope->extensions.add(messageRef, Pair<ref_t, ref_t>(resolvedTemplateExtension, strongMessage));
+
+      }
+   }
+
+   // check extensions
    auto it = nsScope->extensions.getIt(messageRef);
    bool found = !it.Eof();
    if (found) {
@@ -3147,24 +3157,6 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
          return resolvedExtRef;
       }
 
-      //ref_t targetRef = scope.resolveExtensionTarget(extInfo.value1);
-
-
-
-      // inject an extension target into the implicit signature
-
-
-
-      /*ref_t dummyRef = 0;
-      ident_t actionName = scope.module->resolveAction(getAction(extInfo.value2), signRef);*/
-
-      //
-      //ref_t full_mssg = encodeMessage(scope.module->mapAction(actionName, full_sign, false), signatureLen, FUNCTION_MESSAGE);
-
-
-
-
-
       // bad luck - we have to generate run-time extension dispatcher
       ref_t extRef = nsScope->extensionDispatchers.get(messageRef);
       if (extRef == INVALID_REF) {
@@ -3207,19 +3199,9 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
 //      }
 //   }
 //
-//   // check template extensions
-//   for (auto it = nsScope->extensionTemplates.getIt(messageRef); !it.Eof(); it = nsScope->extensionTemplates.nextIt(messageRef, it)) {
-//      ref_t resolvedTemplateExtension = _logic->resolveExtensionTemplate(*scope.moduleScope, *this, *it,
-//         implicitSignatureRef, nsScope->ns);
-//      if (resolvedTemplateExtension) {
-//         ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, resolvedTemplateExtension, implicitSignatureRef, stackSafeAttr);
-//         if (!roleRef3) {
-//            strongMessage3 = resolvedMessageRef;
-//            roleRef3 = resolvedTemplateExtension;
-//         }
-//      }
-//   }
-//
+   // check template extensions
+
+
 //   if (roleRef3) {
 //      // if it is strong typed message and extension
 //      messageRef = strongMessage3;
@@ -5112,7 +5094,8 @@ ref_t Compiler :: resolveReferenceTemplate(_CompileScope& scope, ref_t operandRe
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   return scope.moduleScope->generateTemplate(scope.moduleScope->refTemplateReference, parameters, scope.ns, declarationMode);
+   return scope.moduleScope->generateTemplate(scope.moduleScope->refTemplateReference, parameters, scope.ns, 
+      declarationMode, nullptr);
 }
 
 //ref_t Compiler :: resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode)
@@ -5147,7 +5130,7 @@ ref_t Compiler :: resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef,
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   return moduleScope->generateTemplate(templateRef, parameters, scope.ns, declarationMode);
+   return moduleScope->generateTemplate(templateRef, parameters, scope.ns, declarationMode, nullptr);
 }
 
 ObjectInfo Compiler :: compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode)
@@ -5484,7 +5467,7 @@ ref_t Compiler :: resolveTemplateDeclaration/*Unsafe*/(SNode node, Scope& scope,
       scope.raiseError(errInvalidHint, node);
 
    NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
-   return scope.moduleScope->generateTemplate(templateRef, parameters, ns->nsName.c_str(), declarationMode);
+   return scope.moduleScope->generateTemplate(templateRef, parameters, ns->nsName.c_str(), declarationMode, nullptr);
 }
 
 //ref_t Compiler :: resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode)
@@ -11029,46 +11012,11 @@ void Compiler :: declareTemplate(SNode node, NamespaceScope& scope)
    if (scope.module->mapSection(templateRef | mskSyntaxTreeRef, true))
       scope.raiseError(errDuplicatedSymbol, current.findChild(lxNameAttr));
 
-  // SNode nameNode = node.prevNode();
-   //// if it is a template identifier
-   //bool codeTemplate = nameNode.nextNode().findChild(lxCode) == lxCode;
-   //if (codeTemplate && nameNode.nextNode().existChild(lxParent)) {
-   //   // COMPILER MAGIC : if it is complex code template
-   //   SNode subNameNode = nameNode.nextNode().findChild(lxParent);
-   //   while (subNameNode == lxParent) {
-   //      name.append(':');
-   //      name.append(subNameNode.findChild(lxToken).firstChild(lxTerminalMask).identifier());
-
-   //      subNameNode = subNameNode.nextNode();
-   //   }
-   //}
-
    _Memory* target = scope.module->mapSection(templateRef | mskSyntaxTreeRef, false);
 
-//   if (templateScope.templateMode == ScopeType::stCodeTemplate) {
-//      // COMPILER MAGIC : code template : find the method body and ignore the rest, save as the attribute
-//      root = root.findChild(lxClass).findChild(lxClassMethod).findChild(lxCode);
-//
-//      ReferenceName refName(_scope->module->resolveReference(nameNode.argument));
-//
-//      _scope->attributes.add(refName.ident(), nameNode.argument);
-//      _scope->saveAttribute(refName.ident(), nameNode.argument);
-//   }
-//   else if (templateScope.templateMode == ScopeType::stPropertyTemplate) {
-//      ReferenceName refName(_scope->module->resolveReference(nameNode.argument));
-//
-//      _scope->attributes.add(refName.ident(), nameNode.argument);
-//      _scope->saveAttribute(refName.ident(), nameNode.argument);
-//   }
-//   else if (templateScope.templateMode == ScopeType::stInlineTemplate) {
-//      ReferenceName refName(_scope->module->resolveReference(nameNode.argument));
-//
-//      _scope->attributes.add(refName.ident(), nameNode.argument);
-//      _scope->saveAttribute(refName.ident(), nameNode.argument);
-//   }
-//   else if (templateScope.templateMode == ScopeType::stExtensionTemplate) {
-//      _scope->generateExtensionTemplate(templateTree, _ns, nameNode.argument);
-//   }
+   if (node == lxExtensionTemplate) {
+      registerExtensionTemplate(current, scope, templateRef);
+   }
 
    SyntaxTree::saveNode(node, target);
 
@@ -11194,6 +11142,7 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
             }
             break;
          case lxTemplate:
+         case lxExtensionTemplate:
             declareTemplate(current, scope);
             break;
       }
@@ -11334,7 +11283,7 @@ void Compiler :: declareModuleIdentifiers(SyntaxTree& syntaxTree, _ModuleScope& 
       if (node == lxNamespace) {
          SNode current = node.firstChild();
 
-         NamespaceScope namespaceScope(&scope);
+         NamespaceScope namespaceScope(&scope, nullptr);
          declareNamespace(current, namespaceScope, true, false);
 
          scope.declareNamespace(namespaceScope.ns.c_str());
@@ -11347,7 +11296,8 @@ void Compiler :: declareModuleIdentifiers(SyntaxTree& syntaxTree, _ModuleScope& 
    }
 }
 
-bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope, bool forced, bool& repeatMode)
+bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope, bool forced, bool& repeatMode,
+   ExtensionMap* outerExtensionList)
 {
    SNode node = syntaxTree.readRoot().firstChild();
    bool retVal = false;
@@ -11355,7 +11305,7 @@ bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope, bool
       if (node == lxNamespace) {
          SNode current = node.firstChild();
 
-         NamespaceScope namespaceScope(&scope);
+         NamespaceScope namespaceScope(&scope, outerExtensionList);
          declareNamespace(current, namespaceScope, false, false);
 
          // compile class declarations several times to ignore the declaration order
@@ -11368,14 +11318,15 @@ bool Compiler :: declareModule(SyntaxTree& syntaxTree, _ModuleScope& scope, bool
    return retVal;
 }
 
-void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting)
+void Compiler :: compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, ident_t greeting,
+   ExtensionMap* outerExtensionList)
 {
    SNode node = syntaxTree.readRoot().firstChild();
    while (node != lxNone) {
       if (node == lxNamespace) {
          SNode current = node.firstChild();
 
-         NamespaceScope namespaceScope(&scope/*, true*/);
+         NamespaceScope namespaceScope(&scope, outerExtensionList);
          declareNamespace(current, namespaceScope, false, true);
 
          if (!emptystr(greeting))
@@ -11932,132 +11883,125 @@ void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
 //////   writer.closeNode();
 //////   writer.closeNode();
 //////}
-//
-//void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature)
-//{
-//   signature.append(TEMPLATE_PREFIX_NS);
-//
-//   int signIndex = signature.Length();
-//
-//   IdentifierString templateName(node.firstChild(lxTerminalMask).identifier());
-//   int paramCounter = SyntaxTree::countChild(node, lxTypeAttribute, lxTemplateParam);
-//
-//   templateName.append('#');
-//   templateName.appendInt(paramCounter);
-//
-//   ref_t ref = resolveImplicitIdentifier(scope, templateName.c_str(), false, false);
-//
-//   ident_t refName = scope.module->resolveReference(ref);
-//   if (isWeakReference(refName))
-//      signature.append(scope.module->Name());
-//
-//   signature.append(refName);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxTypeAttribute) {
-//         SNode targetNode = current.firstChild();
-//         if (targetNode == lxTemplateParam) {
-//            signature.append('&');
-//            signature.append('{');
-//            signature.appendInt(targetNode.argument);
-//            signature.append('}');
-//         }
-//         else if (targetNode == lxTarget) {
-//            signature.append('&');
-//
-//            ref_t classRef = targetNode.argument
-//                                 ? targetNode.argument : resolveImplicitIdentifier(scope, targetNode.firstChild(lxTerminalMask));
-//            if (!classRef)
-//               scope.raiseError(errUnknownClass, current);
-//
-//            ident_t className = scope.module->resolveReference(classRef);
-//            if (isWeakReference(className))
-//               signature.append(scope.module->Name());
-//
-//            signature.append(className);
-//         }
-//         else scope.raiseError(errNotApplicable, current);
-//      }
-//      else if (current == lxIdentifier) {
-//         // !! ignore identifier
-//      }
-//      else scope.raiseError(errNotApplicable, current);
-//
-//      current = current.nextNode();
-//   }
-//
-//   // '$auto'system@Func#2&CharValue&Object
-//   signature.replaceAll('\'', '@', signIndex);
-//}
-//
-//void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef)
-//{
-//   IdentifierString messageName;
-//   int paramCount = 0;
-//   ref_t flags = 0;
-//   IdentifierString signaturePattern;
-//   ident_t extensionName = scope.module->resolveReference(extensionRef);
-//   if (isWeakReference(extensionName)) {
-//      signaturePattern.append(scope.module->Name());
-//   }
-//   signaturePattern.append(extensionName);
-//   signaturePattern.append('.');
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxNameAttr) {
-//         messageName.copy(current.firstChild(lxTerminalMask).identifier());
-//      }
-//      else if (current == lxMethodParameter) {
-//         paramCount++;
-//         signaturePattern.append('/');
-//         SNode typeAttr = current.findChild(lxTypeAttribute);
-//         if (typeAttr == lxTypeAttribute) {
-//            SNode targetNode = typeAttr.firstChild();
-//            if (targetNode == lxTemplateParam) {
-//               signaturePattern.append('{');
-//               signaturePattern.appendInt(targetNode.argument);
-//               signaturePattern.append('}');
-//            }
-//            else if (targetNode == lxTarget) {
-//               if (targetNode.argument == V_TEMPLATE) {
-//                  registerTemplateSignature(targetNode, scope, signaturePattern);
-//               }
-//               else {
-//                  ref_t classRef = targetNode.argument ? targetNode.argument : resolveImplicitIdentifier(scope, targetNode.firstChild(lxTerminalMask));
-//                  if (!classRef)
-//                     scope.raiseError(errUnknownClass, targetNode);
-//
-//                  ident_t className = scope.module->resolveReference(classRef);
-//                  if (isWeakReference(className))
-//                     signaturePattern.append(scope.module->Name());
-//
-//                  signaturePattern.append(className);
-//               }
-//            }
-//            else scope.raiseError(errNotApplicable, current);
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   ref_t messageRef = encodeMessage(scope.module->mapAction(messageName.c_str(), 0, false), paramCount, flags);
-//
-//   scope.saveExtensionTemplate(messageRef, signaturePattern.ident());
-//}
-//
-//void Compiler :: registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod) {
-//         registerExtensionTemplateMethod(current, scope, extensionRef);
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
+
+void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature)
+{
+   signature.append(TEMPLATE_PREFIX_NS);
+
+   int signIndex = signature.Length();
+
+ /*  IdentifierString templateName(node.firstChild(lxTerminalMask).identifier());
+   int paramCounter = SyntaxTree::countChild(node, lxType, lxTemplateParam);
+
+   templateName.append('#');
+   templateName.appendInt(paramCounter);*/
+
+   ref_t ref = mapTemplateAttribute(node, scope);
+      
+      //resolveImplicitIdentifier(scope, templateName.c_str(), false, false);
+
+   ident_t refName = scope.module->resolveReference(ref);
+   if (isWeakReference(refName))
+      signature.append(scope.module->Name());
+
+   signature.append(refName);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxTemplateParam) {
+         signature.append('&');
+         signature.append('{');
+         signature.appendInt(current.argument);
+         signature.append('}');
+      }
+      else if (current.compare(lxType, lxArrayType)) {
+         signature.append('&');
+
+         ref_t classRef = resolveTypeAttribute(current, scope, true);
+         if (!classRef)
+            scope.raiseError(errUnknownClass, current);
+
+         ident_t className = scope.module->resolveReference(classRef);
+         if (isWeakReference(className))
+            signature.append(scope.module->Name());
+
+         signature.append(className);
+      }
+      //else scope.raiseError(errNotApplicable, current);
+      //}
+      else if (current == lxIdentifier) {
+         // !! ignore identifier
+      }
+      else scope.raiseError(errNotApplicable, current);
+
+      current = current.nextNode();
+   }
+
+   // '$auto'system@Func#2&CharValue&Object
+   signature.replaceAll('\'', '@', signIndex);
+}
+
+void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef)
+{
+   IdentifierString messageName;
+   int argCount = 1;
+   ref_t flags = 0;
+   IdentifierString signaturePattern;
+   ident_t extensionName = scope.module->resolveReference(extensionRef);
+   if (isWeakReference(extensionName)) {
+      signaturePattern.append(scope.module->Name());
+   }
+   signaturePattern.append(extensionName);
+   signaturePattern.append('.');
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxNameAttr) {
+         messageName.copy(current.firstChild(lxTerminalMask).identifier());
+      }
+      else if (current == lxMethodParameter) {
+         argCount++;
+         signaturePattern.append('/');
+         SNode typeAttr = current.findChild(lxType, lxArrayType, lxTemplateParam);
+         if (typeAttr == lxTemplateParam) {
+            signaturePattern.append('{');
+            signaturePattern.appendInt(typeAttr.argument);
+            signaturePattern.append('}');
+         }
+         else if (typeAttr != lxNone) {
+            if (typeAttr == lxType && typeAttr.argument == V_TEMPLATE) {
+               registerTemplateSignature(typeAttr, scope, signaturePattern);
+            }
+            else {
+               ref_t classRef = resolveTypeAttribute(typeAttr, scope, true);
+               ident_t className = scope.module->resolveReference(classRef);
+               if (isWeakReference(className))
+                  signaturePattern.append(scope.module->Name());
+
+               signaturePattern.append(className);
+            }
+         }
+         else scope.raiseError(errNotApplicable, current);
+      }
+      current = current.nextNode();
+   }
+
+   ref_t messageRef = encodeMessage(scope.module->mapAction(messageName.c_str(), 0, false), argCount, flags);
+
+   scope.saveExtensionTemplate(messageRef, signaturePattern.ident());
+}
+
+void Compiler :: registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         registerExtensionTemplateMethod(current, scope, extensionRef);
+      }
+      current = current.nextNode();
+   }
+}
+
 //void Compiler :: registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef)
 //{
 //   SNode node = tree.readRoot();
@@ -12068,30 +12012,31 @@ void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
 //
 //   registerExtensionTemplate(node.findChild(lxClass), namespaceScope, extensionRef);
 //}
-//
-//ref_t Compiler :: generateExtensionTemplate(_ModuleScope& moduleScope, ref_t templateRef, size_t argumentLen, ref_t* arguments, ident_t ns)
-//{
-//   List<SNode> parameters;
-//
-//   // generate an extension if matched
-//   // HOTFIX : generate a temporal template to pass the type
-//   SyntaxTree dummyTree;
-//   SyntaxWriter dummyWriter(dummyTree);
-//   dummyWriter.newNode(lxRoot);
-//   for (size_t i = 0; i < argumentLen; i++) {
-//      dummyWriter.appendNode(lxTarget, arguments[i]);
-//   }
-//   dummyWriter.closeNode();
-//
-//   SNode current = dummyTree.readRoot().firstChild();
-//   while (current != lxNone) {
-//      parameters.add(current);
-//
-//      current = current.nextNode();
-//   }
-//
-//   return moduleScope.generateTemplate(templateRef, parameters, ns, false);
-//}
+
+ref_t Compiler :: generateExtensionTemplate(_ModuleScope& moduleScope, ref_t templateRef, size_t argumentLen, 
+   ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList)
+{
+   List<SNode> parameters;
+
+   // generate an extension if matched
+   // HOTFIX : generate a temporal template to pass the type
+   SyntaxTree dummyTree;
+   SyntaxWriter dummyWriter(dummyTree);
+   dummyWriter.newNode(lxRoot);
+   for (size_t i = 0; i < argumentLen; i++) {
+      dummyWriter.appendNode(lxType, arguments[i]);
+   }
+   dummyWriter.closeNode();
+
+   SNode current = dummyTree.readRoot().firstChild();
+   while (current != lxNone) {
+      parameters.add(current);
+
+      current = current.nextNode();
+   }
+
+   return moduleScope.generateTemplate(templateRef, parameters, ns, false, outerExtensionList);
+}
 
 void Compiler :: injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
    int opArg, ref_t reference)
