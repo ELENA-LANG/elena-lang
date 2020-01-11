@@ -23,14 +23,14 @@ constexpr auto MODE_PROPERTYMETHOD        = -4;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- DerivationWriter ---
 
@@ -1708,8 +1708,6 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
    _scope->generateTemplateProperty(tempWriter, templateRef, parameters, 0);
    tempWriter.closeNode();
    tempWriter.closeNode();
-
-   test2(tempTree.readRoot());
 
    generatePropertyTree(writer, tempTree.readRoot().findChild(lxClassProperty), derivationScope, buffer);
 }

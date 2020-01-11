@@ -2765,43 +2765,43 @@ public singleton realConvertor
 //public real Pi_value = realOpController.pi();
 //
 //public real E_value = realOpController.e();
-//
-//// === basic type extensions ===
-//
-//public extension intRefOp : ref<int>
-//{
-//    append(int n)
-//    {
-//        int v := self.Value;
-//        v := v + n;
-//        
-//        self.Value := v
-//    }
-//    
-//    reduce(int n)
-//    {
-//        int v := self.Value;
-//        v := v - n;
-//        
-//        self.Value := v
-//    }
-//}
-//
-//public extension realRefOp : ref<real>
-//{
-//    append(real n)
-//    {
-//        real v := self.Value;
-//        v := v + n;
-//        
-//        self.Value := v
-//    }
-//    
-//    reduce(real n)
-//    {
-//        real v := self.Value;
-//        v := v - n;
-//        
-//        self.Value := v
-//    }
-//}
+
+// === basic type extensions ===
+
+public extension intRefOp : ref<int>
+{
+    append(int n)
+    {
+        int v := self.Value;
+        v := v + n;
+        
+        self.Value := v
+    }
+    
+    reduce(int n)
+    {
+        int v := self.Value;
+        v := v - n;
+        
+        self.Value := v
+    }
+}
+
+public extension realRefOp : ref<real>
+{
+    append(real n)
+    {
+        real v := self.Value;
+        v := v + n;
+        
+        self.Value := v
+    }
+    
+    reduce(real n)
+    {
+        real v := self.Value;
+        v := v - n;
+        
+        self.Value := v
+    }
+}

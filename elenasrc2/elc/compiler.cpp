@@ -9813,9 +9813,6 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t generi
    ref_t dispatchListRef = _logic->generateOverloadList(*scope.moduleScope, *this, genericMessageRef | FUNCTION_MESSAGE, methods,
       (void*)&taregts, targetResolver, elSealed);
 
-   classScope.info.methodHints.exclude(Attribute(genericMessageRef | FUNCTION_MESSAGE, maOverloadlist));
-   classScope.info.methodHints.add(Attribute(genericMessageRef | FUNCTION_MESSAGE, maOverloadlist), dispatchListRef);
-
    SyntaxTree classTree;
    SyntaxWriter writer(classTree);
 
@@ -9838,7 +9835,11 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t generi
    classScope.extensionClassRef = scope.moduleScope->superReference;
    classScope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classScope.extensionClassRef, 0));
 
+   classScope.info.methodHints.exclude(Attribute(genericMessageRef | FUNCTION_MESSAGE, maOverloadlist));
+   classScope.info.methodHints.add(Attribute(genericMessageRef | FUNCTION_MESSAGE, maOverloadlist), dispatchListRef);
+
    generateMethodDeclaration(classNode.findChild(lxClassMethod), classScope, false, false, false);
+   //generateMethodDeclarations(classNode, classScope, false, lxClassMethod, true);
    classScope.save();
 
    // compile the extension
