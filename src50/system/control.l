@@ -239,15 +239,15 @@ public interface Func1
     /// Executes the action
     abstract function(param) {}
     
-//    /// Executes the function for every enumeration item
-//    run(Enumerator en)
-//    {
-//        while(en.next())
-//        {
-//            self(en.get())
-//        }
-//    }
-//    
+    /// Executes the function for every enumeration item
+    run(Enumerator en)
+    {
+        while(en.next())
+        {
+            self(en.get())
+        }
+    }
+    
 //    /// Executes the function for every enumeration item until it returns true
 //    retrieve(Enumerator en)
 //    {

@@ -130,7 +130,7 @@ procedure __literal."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
   peeksi 4
   load
   movs 0
-  notless labErr
+  notgreater labErr
   lessn   labErr 0
 
   pushsi 4
@@ -437,7 +437,7 @@ procedure __wide."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
   peeksi 4
   load
   movs 0
-  notless labErr
+  notgreater labErr
   lessn   labErr 0
 
   pushsi 4
