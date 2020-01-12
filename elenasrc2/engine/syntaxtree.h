@@ -150,6 +150,7 @@ enum LexicalType
    lxMultiDispatching         = 0x058180,
    lxSealedMultiDispatching   = 0x058181,
    lxResending                = 0x058190,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+   lxGenericResending         = 0x058191,   // resending a generic message
    lxConstantInt              = 0x0181A0,   // arg - reference
    lxConstantString           = 0x0181A1,   // arg - reference
    lxConstantList             = 0x0181A2,   // arg - reference

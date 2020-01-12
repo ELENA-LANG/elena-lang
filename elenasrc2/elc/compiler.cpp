@@ -549,9 +549,11 @@ void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t extRef, ref_
 //   if (typeRef == INVALID_REF || typeRef == moduleScope->superReference)
 //      typeRef = 0;
 
+   Pair<ref_t, ref_t> extInfo(extRef, strongMessage);
    if (outerExtensionList != nullptr) {
+
       // COMPILER MAGIC : if it is template extension compilation
-      outerExtensionList->add(message, Pair<ref_t, ref_t>(extRef, strongMessage));
+      outerExtensionList->add(message, extInfo);
    }
    else {
       IdentifierString sectionName(/*internalOne ? PRIVATE_PREFIX_NS : */"'");
@@ -569,10 +571,9 @@ void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t extRef, ref_
       /*else */metaWriter.writeDWord(extRef);
       metaWriter.writeDWord(message);
       metaWriter.writeDWord(strongMessage);
-
    }
 
-   extensions.add(message, Pair<ref_t, ref_t>(extRef, strongMessage));
+   extensions.add(message, extInfo);
 }
 
 void Compiler::NamespaceScope :: saveExtensionTemplate(ref_t message, ident_t pattern)
@@ -643,6 +644,7 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility vi
    abstractMode = false;
    abstractBaseMode = false;
    withInitializers = false;
+   extensionDispatcher = false;
 }
 
 //void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
@@ -3132,13 +3134,14 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
       while (!it.Eof()) {
          auto extInfo = *it;
          ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
-
+         int extStackAttr = 0;
          if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2, signaturues,
-            signatureLen, resolvedStackSafeAttr))
+            signatureLen, extStackAttr))
          {
             if (!resolvedMessage) {
                resolvedMessage = extInfo.value2;
                resolvedExtRef = extInfo.value1;
+               resolvedStackSafeAttr = extStackAttr;
             }
             else {
                resolvedMessage = 0;
@@ -7171,6 +7174,11 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
          }
       }
 
+      LexicalType op = lxResending;
+      if (methodScope->message == methodScope->moduleScope->dispatch_message)
+         // HOTFIX : if it is a generic message resending
+         op = lxGenericResending;
+
       // check if direct dispatch can be done
       if (directOp) {
          // we are lucky and can dispatch the message directly
@@ -7181,7 +7189,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
             case okOuterSelf:
             case okOuter:
             {
-               node.set(lxResending, methodScope->message);
+               node.set(op, methodScope->message);
                if (target.kind != okConstantSymbol) {
                   SNode fieldExpr = node.findChild(lxFieldExpression);
                   if (fieldExpr != lxNone) {
@@ -7192,7 +7200,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
             }
             default:
             {
-               node.set(lxResending, methodScope->message);
+               node.set(op, methodScope->message);
                SNode frameNode = node.injectNode(lxNewFrame);
                SNode exprNode = frameNode.injectNode(lxExpression);
                exprScope.tempAllocated1++;
@@ -7388,7 +7396,11 @@ void Compiler :: compileMultidispatch(SNode node, CodeScope& scope, ClassScope& 
       //         writer.closeNode();
       //      }
       //      else {
-      node.set(lxResending, node.argument);
+      if (classScope.extensionDispatcher) {
+         node.set(lxResending, node.argument & ~FUNCTION_MESSAGE);
+         node.appendNode(lxCurrent, 1);
+      }
+      else node.set(lxResending, node.argument);
       //         writer.newNode(lxDispatching, node.argument);
       //         SyntaxTree::copyNode(writer, lxTarget, node);
       //         writer.closeNode();
@@ -9008,7 +9020,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          // private / internal methods cannot be declared in the extension
          scope.raiseError(errIllegalPrivate, current);
 
-      if (test(scope.info.header.flags, elExtension) && !privateOne/* && isGeneralMessage(scope.module, message)*/) {
+      if (test(scope.info.header.flags, elExtension) && !privateOne && !scope.extensionDispatcher) {
          saveExtension(scope, message/*, scope.internalOne*/);
       }
 
@@ -9796,6 +9808,7 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t generi
 {
    ref_t extRef = scope.moduleScope->mapAnonymous();
    ClassScope classScope(&scope, extRef, Visibility::Private);
+   classScope.extensionDispatcher = true;
 
    // create a new overload list
    ClassInfo::CategoryInfoMap methods(0);
@@ -11753,8 +11766,7 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
    }
    else {
       for (int i = firstArg; i < argCount; i++) {
-         signatureLen++;
-         signatures[i] = scope.superReference;
+         signatures[signatureLen++] = scope.superReference;
       }
    }
    ref_t signRef = scope.module->mapAction(actionName, scope.module->mapSignature(signatures, signatureLen, false), false);

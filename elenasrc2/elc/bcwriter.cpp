@@ -6486,8 +6486,10 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
 
 void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
+   bool genericResending = node == lxGenericResending;
+
 //   SNode target = node.findChild(lxTarget);
-   if (node.argument == 0) {
+   if (!genericResending && node.argument == 0) {
       throw InternalError("Not yet implemented"); // !! temporal
 //      SNode message = node.findChild(lxMessage);
 //      if (isOpenArg(message.argument)/* && getAction(message.argument) == DISPATCH_MESSAGE_ID*/) {
@@ -6537,13 +6539,16 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
             // new frame
             newFrame(tape, 1, reserved/*, false*/);
 
-            // save message
-            tape.write(bcSaveF, -2);
+            if (genericResending) {
+               // save message
+               tape.write(bcSaveF, -2);
+               
+               generateExpression(tape, current, scope);
 
-            generateExpression(tape, current, scope);
-
-            // restore message
-            tape.write(bcLoadFI, -2);
+               // restore message
+               tape.write(bcLoadFI, -2);
+            }
+            else generateExpression(tape, current, scope);
 
             // close frame
             closeFrame(tape, 1);
@@ -6554,6 +6559,9 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
 
          current = current.nextNode();
       }
+
+      if (!genericResending)
+         tape.write(bcMovM, node.argument);
 
 //      if (target.argument != 0) {
 //         resendResolvedMethod(tape, target.argument, node.argument);
@@ -6681,6 +6689,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          generateNewArrOperation(tape, node, scope);
          break;
       case lxResending:
+      case lxGenericResending:
          generateResendingExpression(tape, node, scope);
          break;
 //      case lxDispatching:

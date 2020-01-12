@@ -435,7 +435,7 @@ private:
       bool        abstractMode;
       bool        abstractBaseMode;
       bool        withInitializers;
-////      bool        withImplicitConstructor;
+      bool        extensionDispatcher;
 //
 //      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 
