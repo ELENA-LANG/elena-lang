@@ -1422,14 +1422,12 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
 
    // declare built-in variables
    if (withSelf) {
-      //if (scope.classEmbeddable) {
-      //   writer.newNode(lxBinarySelf, 1);
+      if (scope.classEmbeddable) {
+         SNode selfNode = node.appendNode(lxBinarySelf, 1);
 
-      //   writeClassNameInfo(writer, scope.module, scope.getClassRef());
-
-      //   writer.closeNode();
-      //}
-      /*else */node.appendNode(lxSelfVariable, 1);
+         writeClassNameInfo(selfNode, scope.module, scope.getClassRef());
+      }
+      else node.appendNode(lxSelfVariable, 1);
    }
 
 //   if (withTargetSelf)

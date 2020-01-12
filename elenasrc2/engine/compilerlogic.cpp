@@ -212,10 +212,10 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_OBJARRAY, V_INT32, 0, lxArrOp, 0));
    operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_OBJARRAY, lxArrOp, 0));
 
-//   // array of structures primitive operations
-//   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
-//   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
-//   operators.add(OperatorInfo(SHIFTR_OPERATOR_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, 0));
+   // array of structures primitive operations
+   operators.add(OperatorInfo(REFER_OPERATOR_ID, V_BINARYARRAY, V_INT32, lxBinArrOp, V_BINARY));
+   operators.add(OperatorInfo(SET_REFER_OPERATOR_ID, V_BINARYARRAY, V_INT32, 0, lxBinArrOp, 0));
+   operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_BINARYARRAY, lxBinArrOp, 0));
 
    // array of arg list
    operators.add(OperatorInfo(REFER_OPERATOR_ID, V_ARGARRAY, V_INT32, lxArgArrOp, 0));
@@ -1031,16 +1031,16 @@ bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
 void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operator_id, 
    int operationType, ref_t& reference, ref_t elementRef, int tempLocal)
 {
-//   int size = 0;
-//   if (operationType == lxBinArrOp) {
-//      // HOTFIX : define an item size for the binary array operations
-//      size = -defineStructSize(scope, V_BINARYARRAY, elementRef);
-//   }
-//
-//   if (reference == V_BINARY && elementRef != 0) {
-//      reference = elementRef;
-//   }
-   /*else */if (reference == V_OBJECT && elementRef != 0) {
+   int size = 0;
+   if (operationType == lxBinArrOp) {
+      // HOTFIX : define an item size for the binary array operations
+      size = -defineStructSize(*scope.moduleScope, V_BINARYARRAY, elementRef);
+   }
+
+   if (reference == V_BINARY && elementRef != 0) {
+      reference = elementRef;
+   }
+   else if (reference == V_OBJECT && elementRef != 0) {
       reference = elementRef;
    }
 
@@ -1063,14 +1063,14 @@ void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compil
          node.appendNode(lxElseValue, scope.moduleScope->branchingInfo.falseRef);
       }
    }
-//
-//   if (size != 0) {
-//      // HOTFIX : inject an item size for the binary array operations
-//      writer.appendNode(lxSize, size);
-//   }
-//
+
+   if (size != 0) {
+      // HOTFIX : inject an item size for the binary array operations
+      node.appendNode(lxSize, size);
+   }
+
    if (IsExprOperator(operator_id)) {
-      int size = defineStructSize(*scope.moduleScope, reference, /*elementRef*/0);
+      int size = defineStructSize(*scope.moduleScope, reference, elementRef);
 
       compiler.injectExprOperation(scope, node, size, tempLocal, (LexicalType)operationType, operator_id, reference);
    }

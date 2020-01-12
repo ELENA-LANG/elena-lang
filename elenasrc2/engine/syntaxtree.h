@@ -187,6 +187,7 @@ enum LexicalType
    lxShortArrOp               = 0x058232,
    lxByteArrOp                = 0x058233,
    lxArrOp                    = 0x058234,   // arg - operation id
+   lxBinArrOp                 = 0x058235,
    lxExternFrame              = 0x058240,
 
    // attributes
@@ -225,6 +226,7 @@ enum LexicalType
    lxElseValue                = 0x000F21, // arg - reference
    lxTemplateNameParam        = 0x000F22,
    lxEmbeddableMssg           = 0x000F23,
+   lxBinarySelf               = 0x000F24, // debug info only
 
 //   lxTemplate                 = 0x00000F,
 //   lxExpression               = 0x00C012,
@@ -310,7 +312,6 @@ enum LexicalType
 //   lxIntExtArgument           = 0x2001C,
 //   lxExtArgument              = 0x2001D,
 //   lxExtInteranlRef           = 0x2001E,
-//   lxBinarySelf               = 0x20023, // debug info only
 //   lxOvreriddenMessage        = 0x20024, // arg - message ; used for extension / implicit constructor call
 //   lxInclude                  = 0x20027,
 //   lxTemplateField            = 0x20028,

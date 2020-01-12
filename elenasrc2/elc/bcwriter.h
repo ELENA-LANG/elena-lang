@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef bcwriterH
@@ -170,7 +170,7 @@ class ByteCodeWriter
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
    void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
-//   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
+   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);

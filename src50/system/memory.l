@@ -823,7 +823,7 @@ public sealed const struct String : BaseValue
         <= copy(s.Length, s);
         
 //    /// Creates the copy of a subarray        
-//    constructor new(int index, int length, char[] array)
+//    constructor copy(int index, int length, char[] array)
 //        => system'core_routines'__literal;
 
     internal constructor fromByteArray(int index, int size, byte[] buffer)

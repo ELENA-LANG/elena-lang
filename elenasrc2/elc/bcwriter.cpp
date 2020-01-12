@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -226,13 +226,13 @@ void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, i
    }
 }
 
-//void ByteCodeWriter :: declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
-//{
-//   if (!emptystr(localName)) {
-//      tape.write(bdStructSelf, writeString(localName), level);
-//      tape.write(bdLocalInfo, writeString(className));
-//   }
-//}
+void ByteCodeWriter :: declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
+{
+   if (!emptystr(localName)) {
+      tape.write(bdStructSelf, writeString(localName), level);
+      tape.write(bdLocalInfo, writeString(className));
+   }
+}
 
 void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
 {
@@ -3599,7 +3599,19 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
          // div itemSize
          // savef
          tape.write(bcLen);
-         if (itemSize == 8) {
+         if (itemSize == 128) {
+            tape.write(bcShr, 7);
+         }
+         else if (itemSize == 64) {
+            tape.write(bcShr, 6);
+         }
+         else if (itemSize == 32) {
+            tape.write(bcShr, 5);
+         }
+         else if (itemSize == 16) {
+            tape.write(bcShr, 4);
+         }
+         else if (itemSize == 8) {
             tape.write(bcShr, 3);
          }
          else if (itemSize == 4) {
@@ -4290,15 +4302,15 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          case lxShortArrOp:
             doBinaryArrayOperation(tape, node.argument, 2, argument, immValue * 2);
             break;
+         case lxBinArrOp:
+         {
+            int size = node.findChild(lxSize).argument;
+            doBinaryArrayOperation(tape, node.argument, size, immValue * size);
+            break;
+         }
          case lxArrOp:
             doArrayImmOperation(tape, node.argument, immValue);
             break;
-            //      case lxBinArrOp:
-         //         doBinaryArrayOperation(tape, node.argument, node.findChild(lxSize).argument);
-         //
-         //         if (node.argument == REFER_OPERATOR_ID)
-         //            assignBaseTo(tape, lxResult);
-         //         break;
          case lxArgArrOp:
             doArgArrayOperation(tape, node.argument, argument, immValue);
             break;
@@ -4323,16 +4335,52 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
             }
             doBinaryArrayOperation(tape, node.argument, 2, argument);
             break;
+         case lxBinArrOp:
+         {
+            int size = node.findChild(lxSize).argument;
+            if (!lenMode) {
+               switch (size) {
+                  case 1:
+                     break;
+                  case 2:
+                     // shl 1
+                     tape.write(bcShl, 1);
+                     break;
+                  case 4:
+                     // shl 2
+                     tape.write(bcShl, 2);
+                     break;
+                  case 8:
+                     // shl 3
+                     tape.write(bcShl, 3);
+                     break;
+                  case 16:
+                     // shl 4
+                     tape.write(bcShl, 4);
+                     break;
+                  case 32:
+                     // shl 5
+                     tape.write(bcShl, 5);
+                     break;
+                  case 64:
+                     // shl 6
+                     tape.write(bcShl, 6);
+                     break;
+                  case 128:
+                     // shl 6
+                     tape.write(bcShl, 128);
+                     break;
+                  default:
+                     break;
+               }
+            }
+            doBinaryArrayOperation(tape, node.argument, size, argument);
+            break;
+         }
+            //         doBinaryArrayOperation(tape, node.argument, node.findChild(lxSize).argument);
          case lxArrOp:
             doArrayOperation(tape, node.argument, argument);
             break;
-
-         //      case lxBinArrOp:
-         //         doBinaryArrayOperation(tape, node.argument, node.findChild(lxSize).argument);
-         //
-         //         if (node.argument == REFER_OPERATOR_ID)
-         //            assignBaseTo(tape, lxResult);
-         //         break;
          case lxArgArrOp:
             doArgArrayOperation(tape, node.argument, argument);
             break;
@@ -6681,7 +6729,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxByteArrOp:
       case lxShortArrOp:
       case lxArrOp:
-//      case lxBinArrOp:
+      case lxBinArrOp:
       case lxArgArrOp:
          generateArrOperation(tape, node, scope, mode);
          break;
@@ -6890,10 +6938,10 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 ////         case lxReleasing:
 ////            releaseObject(tape, current.argument);
 ////            break;
-//         case lxBinarySelf:
-//            declareSelfStructInfo(tape, SELF_VAR, current.argument,
-//               current.findChild(lxClassName).identifier());
-//            break;
+         case lxBinarySelf:
+            declareSelfStructInfo(tape, SELF_VAR, current.argument,
+               current.findChild(lxClassName).identifier());
+            break;
 //         case lxBreakpoint:
 //            translateBreakpoint(tape, current, false);
 //            break;
@@ -7046,10 +7094,10 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
          case lxSelfVariable:
             declareSelfInfo(tape, current.argument);
             break;
-//         case lxBinarySelf:
-//            declareSelfStructInfo(tape, SELF_VAR, current.argument,
-//               current.findChild(lxClassName).identifier());
-//            break;
+         case lxBinarySelf:
+            declareSelfStructInfo(tape, SELF_VAR, current.argument,
+               current.findChild(lxClassName).identifier());
+            break;
          case lxIntVariable:
             declareLocalIntInfo(tape,
                current.firstChild(lxTerminalMask).identifier(),
