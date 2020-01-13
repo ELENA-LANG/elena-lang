@@ -5,6 +5,10 @@ branches:
 image: Visual Studio 2019
 configuration: Release
 platform: x86
+
+after_build:
+  - cmd: call install\output\build_package.bat
+
 build:
   verbosity: minimal
   project: elenasrc2\elenasrc2.sln 
