@@ -7,7 +7,7 @@ configuration: Release
 platform: x86
 
 after_build:
-  - cmd: call install\build_package.bat elena.5.0.{build}-i386
+  - cmd: call install\build_package.bat elena.5.0.v$(appveyor_build_version)-i386
 
 build:
   verbosity: minimal
@@ -28,5 +28,4 @@ deploy:
   draft: false
   prerelease: true
   on:
-    branch: master                 # release from master branch only
     APPVEYOR_REPO_TAG: true        # deploy on tag push only
