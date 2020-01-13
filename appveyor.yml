@@ -7,7 +7,7 @@ configuration: Release
 platform: x86
 
 after_build:
-  - cmd: call install\build_package.bat elena.5.0.$(APPVEYOR_BUILD_NUMBER)-i386
+  - cmd: call install\build_package.bat elena.5.0.%build%-i386
 
 build:
   verbosity: minimal
