@@ -27,5 +27,6 @@ deploy:
   artifact: nightly-build
   draft: false
   prerelease: true
+  tag: $(APPVEYOR_REPO_TAG_NAME)
   on:
     APPVEYOR_REPO_TAG: true        # deploy on tag push only
