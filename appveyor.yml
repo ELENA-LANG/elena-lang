@@ -7,7 +7,7 @@ configuration: Release
 platform: x86
 
 after_build:
-  - cmd: call install\build_package.bat elena.5.0.%APPVEYOR_BUILD_VERSION%-i386
+  - cmd: call install\build_package.bat elena.%APPVEYOR_BUILD_VERSION%-i386
 
 build:
   verbosity: minimal
@@ -22,7 +22,7 @@ deploy:
   appveyor_repo_tag: true
   tag: $(APPVEYOR_REPO_TAG_NAME)
   release: $(APPVEYOR_REPO_TAG_NAME)
-  description: 'ELENA WIN32 Nightly Build'
+  description: 'ELENA Nightly Build'
   provider: GitHub
   auth_token:
     secure: mPwQDFEXhfxCz5d9Lzjl1kaRje/E3P1/jaQjWs7byEwEKsU+ljxIgIv5uKevaBXX
@@ -31,3 +31,4 @@ deploy:
   prerelease: true
   on:
     appveyor_repo_tag: true
+    branch: master
