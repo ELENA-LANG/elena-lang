@@ -1700,11 +1700,11 @@ public extension objectOp
 //        ^ self
 //    }    
 //}
-//
-//// --- charOp ---
-//
-//public extension charOp : CharValue
-//{
+
+// --- charOp ---
+
+public extension charOp : CharValue
+{
 //    HashCode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -1777,7 +1777,7 @@ public extension objectOp
 //            
 //        ^ ch == 39
 //    }
-//}
+}
 
 // --- byteArrayHelper ---
 
@@ -1854,18 +1854,18 @@ public extension byteArrayHelper : Array<byte>
 //    }
 }
 
-//// --- charArrayHelper ---
-//
-//public extension charArrayHelper : Array<char>
-//{
+// --- charArrayHelper ---
+
+public extension charArrayHelper : Array<char>
+{
 //    move(int index, int length, int offset)
 //        => system'core_routines'__chararray;
-//
-//    /// Copies the array at the specified position    
-//    write(int index, int length, char[] array)
-//        => system'core_routines'__chararray;
-//}
-//
+
+    /// Copies the array at the specified position    
+    write(int index, int length, char[] array)
+        => intern system'core_routines'__chararray;
+}
+
 ////public singleton byteArrayHelper
 ////{
 //////    read(ByteArray array, int offset, ref<short> retVal)

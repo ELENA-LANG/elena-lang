@@ -1021,10 +1021,10 @@ public sealed const struct String : BaseValue
         }
     }
 
-//    /// Saves the literal into a UTF-32 character array
-//    save(int index, char[] array, ref int retVal)
-//        => system'core_routines'__literal;
-//
+    /// Saves the literal into a UTF-32 character array
+    save(int index, char[] array, ref int retVal)
+        => intern system'core_routines'__literal;
+
 //    internal saveToByteArray(int index, byte[] array, int retVal)
 //        => system'core_routines'__literal;
 

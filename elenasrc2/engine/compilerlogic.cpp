@@ -223,10 +223,10 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(LEN_OPERATOR_ID, V_INT32, V_ARGARRAY, lxArgArrOp, 0));
 
 //   //operators.add(OperatorInfo(READ_MESSAGE_ID, V_OBJARRAY, V_INT32, lxArrOp, 0));
-//
-//   // boolean primitive operations
-//   operators.add(OperatorInfo(AND_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
-//   operators.add(OperatorInfo(OR_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
+
+   // boolean primitive operations
+   operators.add(OperatorInfo(AND_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
+   operators.add(OperatorInfo(OR_OPERATOR_ID, V_FLAG, V_FLAG, 0, lxBoolOp, V_FLAG));
 
    // pointer primitive operations
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_PTR32, V_PTR32, lxIntBoolOp, V_FLAG));
@@ -1069,7 +1069,7 @@ void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compil
       node.appendNode(lxSize, size);
    }
 
-   if (IsExprOperator(operator_id)) {
+   if (IsExprOperator(operator_id) && operationType != lxBoolOp) {
       int size = defineStructSize(*scope.moduleScope, reference, elementRef);
 
       compiler.injectExprOperation(scope, node, size, tempLocal, (LexicalType)operationType, operator_id, reference);

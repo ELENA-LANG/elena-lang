@@ -42,10 +42,10 @@ public sealed class TextBuilder
         = theBuffer;
 
     string cast()
-        = String.new(0, theLength.Value, theBuffer);
+        = String.copy(0, theLength.Value, theBuffer);
         
     string Value
-        = String.new(0, cast int(theLength), theBuffer);
+        = String.copy(0, theLength.Value, theBuffer);
 
     get string toPrintable()
         = self.Value;
@@ -62,44 +62,44 @@ public sealed class TextBuilder
 //    {
 //        self.write:line
 //    }
-//                                    
-//    private reserve(int len)
-//    {
-//        int newLength := len;
-//        
-//        newLength := newLength + (cast int(theLength));
-//        
-//        int bufferLength := theBuffer.Length;
-//        
-//        if (newLength >= bufferLength)
-//        {
-//            //aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
-//            newLength := newLength / TextPageSize;
-//            newLength := newLength + 1;
-//            newLength := newLength * TextPageSize;
-//            
-//            char[] newBuffer := new char[](newLength);
-//            
-//            newBuffer.write(0, bufferLength, theBuffer);
-//            
-//            theBuffer := newBuffer
-//        }
-//    }
-//
-//    write(string s)
-//    {
-//        int length := s.Length;
-//        
-//        ifnot (0 == length)
-//        {
-//            self.reserve(length);
-//            
-//            s.save(cast int(theLength), theBuffer, ref length);
-//            
-//            theLength.append(length)
-//        }
-//    }
-//
+                                    
+    private reserve(int len)
+    {
+        int newLength := len;
+        
+        newLength := newLength + (theLength.Length);
+        
+        int bufferLength := theBuffer.Length;
+        
+        if (newLength >= bufferLength)
+        {
+            //aNewLength := (aNewLength / $TextPageSize + 1) * $TextPageSize.
+            newLength := newLength / TextPageSize;
+            newLength := newLength + 1;
+            newLength := newLength * TextPageSize;
+            
+            char[] newBuffer := new char[](newLength);
+            
+            newBuffer.write(0, bufferLength, theBuffer);
+            
+            theBuffer := newBuffer
+        }
+    }
+
+    write(string s)
+    {
+        int length := s.Length;
+        
+        ifnot (0 == length)
+        {
+            self.reserve(length);
+            
+            s.save(theLength.Length, theBuffer, ref length);
+            
+            theLength.append(length)
+        }
+    }
+
 ////    write(wide aLiteral)
 ////    [
 ////        int aLength := aLiteral length.

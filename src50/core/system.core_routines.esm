@@ -90,6 +90,21 @@ procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$@syste
 
 end
 
+procedure __literal."save$system@IntNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+
+  callextr api : strtochararray
+  
+  peeksi 0
+  freei  4
+  quitn  4
+
+end
+
 procedure __literal."sizeOf$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[4]"
 
   pushsi 4
@@ -928,6 +943,28 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
 
   quitn 3
   
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
+procedure __chararray."write$@system@Array#1&system@CharValue$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : ninsert
+  ifn labErr 0 
+
+  peeksi 0
+  freei  4
+  quitn  4
+
 labErr:
   open 1
   pushr class : system'InvalidArgumentException

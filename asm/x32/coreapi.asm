@@ -413,6 +413,103 @@ labSave:
 
 end
 
+// strtochararray(target,index,source,ret)
+procedure coreapi'strtochararray
+
+  push eax
+  push edi
+  push ebx
+
+
+  mov  eax, [esp+12]
+  mov  esi, [esp+8]
+  mov  edi, [esp+4]
+  mov  ebx, [esi]
+
+  lea  edi, [edi + ebx * 4]
+
+labStart:
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  cmp  ebx, 00000080h
+  jl   short lab1
+  cmp  ebx, 000000E0h
+  jl   short lab2
+  cmp  ebx, 000000F0h
+  jl   short lab3
+  
+lab4:
+  mov  edx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  shl  edx, 18
+  shl  ebx, 12
+  add  edx, ebx
+
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  shl  ebx, 6
+  add  edx, ebx
+  
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  
+  add  edx, ebx
+  sub  edx, 3C82080h
+  sub  ecx, 3
+  jmp  labSave  
+
+lab2:  
+  mov  edx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+
+  shl  edx, 6
+  add  edx, ebx
+  sub  edx, 3080h
+  sub  ecx, 1
+  jmp  short labSave  
+  
+lab3:
+  mov  edx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  shl  edx, 12
+  shl  ebx, 6
+  add  edx, ebx
+  xor  ebx, ebx
+  mov  bl, byte ptr [eax]
+  add  eax, 1
+  add  edx, ebx
+  sub  edx, 0E2080h
+  sub  ecx, 2
+  jmp  short labSave  
+  
+lab1:
+  mov  edx, ebx
+
+labSave:
+  mov  [edi], edx
+  add  edi, 4
+  sub  ecx, 1
+  jnz  labStart
+
+  mov  ecx, edi
+  mov  edi, [esp+4]
+  sub  ecx, edi
+  mov  esi, [esp+8]
+  shr  ecx, 2
+  sub  ecx, [esi]
+  mov  eax, [esp+16]
+  mov  [eax], ecx
+
+  ret
+
+end
+
 // ; slen_ch - ecx - len, eax - charr, esi - result 
 procedure coreapi'slen_ch
 
@@ -489,6 +586,34 @@ labNext:
   jnz  short labNext
 
 labEnd:
+  mov  edx, ecx
+  mov  ebx, edi
+  ret
+
+end
+
+// ninsert(target,source,index,len)
+procedure coreapi'ninsert
+
+  mov  edx, [esp+12]
+  mov  eax, [esp+16]
+  mov  edi, [esp+4]
+  mov  ecx, [eax]
+  mov  esi, [esp+8]
+  mov  ebx, [edx]
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, [esi]
+  mov  [edi + ebx*4], edx
+  add  ebx, 1
+  lea  esi, [esi + 4]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  mov  edx, ecx
   mov  ebx, edi
   ret
 

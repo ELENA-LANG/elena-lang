@@ -13,6 +13,7 @@
 using namespace _ELENA_;
 
 constexpr auto STACKOP_MODE      = 0x0001;
+constexpr auto BOOL_ARG_EXPR     = 0x0002;
 
 //void test2(SNode node)
 //{
@@ -4906,36 +4907,36 @@ void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node
    releaseStack(tape);
 }
 
-//void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, int mode)
-//{
-//   SNode larg;
-//   SNode rarg;
-//   assignOpArguments(node, larg, rarg);
-//
-//   ref_t trueRef = node.findChild(lxIfValue).argument | mskConstantRef;
-//   ref_t falseRef = node.findChild(lxElseValue).argument | mskConstantRef;
-//
-//   if (!test(mode, BOOL_ARG_EXPR))
-//      tape.newLabel();
-//
-//   generateObject(tape, larg, ACC_REQUIRED | BOOL_ARG_EXPR);
-//
-//   switch (node.argument) {
-//      case AND_OPERATOR_ID:
-//         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
-//         tape.write(bcIfR, baCurrentLabel, falseRef);
-//         break;
-//      case OR_OPERATOR_ID:
-//         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
-//         tape.write(bcIfR, baCurrentLabel, trueRef);
-//         break;
-//   }
-//
-//   generateObject(tape, rarg, ACC_REQUIRED | BOOL_ARG_EXPR);
-//
-//   if (!test(mode, BOOL_ARG_EXPR))
-//      tape.setLabel();
-//}
+void ByteCodeWriter :: generateBoolLogicOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
+   SNode larg;
+   SNode rarg;
+   assignOpArguments(node, larg, rarg);
+
+   ref_t trueRef = node.findChild(lxIfValue).argument | mskConstantRef;
+   ref_t falseRef = node.findChild(lxElseValue).argument | mskConstantRef;
+
+   if (!test(mode, BOOL_ARG_EXPR))
+      tape.newLabel();
+
+   generateObject(tape, larg, scope, BOOL_ARG_EXPR);
+
+   switch (node.argument) {
+      case AND_OPERATOR_ID:
+         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
+         tape.write(bcIfR, baCurrentLabel, falseRef);
+         break;
+      case OR_OPERATOR_ID:
+         tape.write(blBreakLabel); // !! temporally, to prevent if-optimization
+         tape.write(bcIfR, baCurrentLabel, trueRef);
+         break;
+   }
+
+   generateObject(tape, rarg, scope, BOOL_ARG_EXPR);
+
+   if (!test(mode, BOOL_ARG_EXPR))
+      tape.setLabel();
+}
 
 inline bool isConstant(LexicalType type)
 {
@@ -6709,9 +6710,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxCloning:
          generateCloningExpression(tape, node, scope);
          break;
-         //      case lxBoolOp:
-//         generateBoolOperation(tape, node, mode);
-//         break;
+      case lxBoolOp:
+         generateBoolLogicOperation(tape, node, scope, mode & ~STACKOP_MODE);
+         break;
       case lxNilOp:
          generateNilOperation(tape, node, scope);
          break;
