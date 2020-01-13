@@ -75,6 +75,35 @@ procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$@syste
 
 end
 
+procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : s_copychars
+  
+  peeksi 0
+  freei  4
+  quitn  4
+
+end
+
+procedure __literal."sizeOf$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : slen_ch
+  
+  freei  4
+  quitn  4
+
+end
+
 procedure __literal."copy$system@String$system@IntNumber$system@IntNumber$system@String[4]"
 
   pushsi 4

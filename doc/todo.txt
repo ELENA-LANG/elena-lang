@@ -14,6 +14,9 @@ In development:
               xdev elena50
                 * TextBuilder
 
+              xdev debugger
+                * step over several expression : message call / array operation
+
               xdev elena50
                 * yield method
                 * generic handler

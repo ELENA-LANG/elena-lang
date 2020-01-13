@@ -822,9 +822,12 @@ public sealed const struct String : BaseValue
     constructor copy(string s)
         <= copy(s.Length, s);
         
-//    /// Creates the copy of a subarray        
-//    constructor copy(int index, int length, char[] array)
-//        => system'core_routines'__literal;
+    /// Creates the copy of a subarray        
+    constructor copy(int index, int length, char[] array)
+        <= allocate(stringConvertor.getSubLength(index, length, array))
+    {
+        intern system'core_routines'__literal.copy(self, index, length, array)
+    }
 
     internal constructor fromByteArray(int index, int size, byte[] buffer)
         <= allocate(size)
@@ -1516,6 +1519,14 @@ public sealed Array : Indexable//, Array<object>
 /// A literal convertor
 public singleton stringConvertor
 {
+    int getSubLength(int index, int length, char[] array)
+    {
+        int len;
+        intern system'core_routines'__literal.sizeOf(index, length, array, ref len);
+        
+        ^ len
+    }
+    
 //    string convert(BaseVariable v)
 //        <= convert(v.Value);
 //    

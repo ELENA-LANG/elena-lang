@@ -313,6 +313,161 @@ labEnd:
 
 end
 
+procedure coreapi's_copychars
+
+  mov  eax, [esp+16]
+  mov  edx, [esp+12]
+  mov  esi, [esp+8]
+  mov  ecx, [edx]
+  mov  edi, [esp+4]
+  mov  ebx, [esi]
+
+  lea  esi, [eax + ebx * 4]
+
+labNext:
+  mov  ebx, [esi]
+  
+  cmp  ebx, 00000080h
+  jl   short labs1
+  cmp  ebx, 0800h
+  jl   short labs2
+  cmp  ebx, 10000h
+  jl   short labs3
+  
+  mov  edx, ebx
+  shr  edx, 18
+  add  edx, 000000F0h 
+  mov  byte ptr [edi], dl
+  add  edi, 1
+   
+  mov  edx, ebx
+  shr  edx, 12
+  and  edx, 0000003Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+   
+  mov  edx, ebx
+  shr  edx, 6
+  and  edx, 0000003Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+   
+  mov  edx, ebx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  jmp  labSave
+
+labs2:
+  mov  edx, ebx
+  shr  edx, 6
+  add  edx, 000000C0h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  
+  mov  edx, ebx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  jmp  short labSave
+
+labs3:
+  mov  edx, ebx
+  shr  edx, 12
+  add  edx, 000000E0h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+
+  mov  edx, ebx
+  shr  edx, 6
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  
+  mov  edx, ebx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [edi], dl
+  add  edi, 1
+  jmp  short labSave
+  
+labs1:
+  mov  byte ptr [edi], bl
+  add  edi, 1
+
+labSave:
+  lea  esi, [esi + 4]
+  sub  ecx, 1
+  jnz  labNext
+
+  mov  edx,  edi
+  mov  edi, [esp+8]
+  sub  edx, edi
+
+  ret
+
+end
+
+// ; slen_ch - ecx - len, eax - charr, esi - result 
+procedure coreapi'slen_ch
+
+   mov  eax, [esp+12]
+   mov  edi, [esp+8]
+   mov  esi, [esp+4]
+   mov  ecx, [edi]
+   mov  edx, [esi]
+   mov  edi, [esp+16]
+   lea  eax, [eax+edx*4]
+               
+   xor  ebx, ebx
+
+labNext:
+   mov  edx, [eax]
+   cmp  edx, 00000080h
+   jl   short lab1
+   cmp  edx, 0800h
+   jl   short lab2
+   cmp  edx, 10000h
+   jl   short lab3
+   
+   add  ebx, 4
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   mov  [edi], ebx
+   ret
+   
+lab1:
+   add  ebx, 1
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   mov  [edi], ebx
+   ret
+
+lab2:
+   add  ebx, 2
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   mov  [edi], ebx
+   ret
+
+lab3:
+   add  ebx, 3
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   mov  [edi], ebx
+   ret
+
+end
+
 // winsert(target,source,index,len)
 procedure coreapi'winsert
 
