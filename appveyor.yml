@@ -12,3 +12,19 @@ after_build:
 build:
   verbosity: minimal
   project: elenasrc2\elenasrc2.sln 
+
+artifacts:
+  # archive the generated packages in the ci.appveyor.com build report
+  - path: install\output\*.zip
+    name: nightly-build
+
+deploy:
+  # deploy wheels to GitHub on tags
+  provider: GitHub
+  auth_token:
+    secure: bf896b6305dc7df6febcf22526636feb166cad4d
+  artifact: nightly-build
+  draft: false
+  prerelease: true
+  on:
+    appveyor_repo_tag: true
