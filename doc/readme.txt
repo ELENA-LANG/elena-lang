@@ -109,6 +109,6 @@ in the folder <app root>\examples.
 * ELENA Project Source code
 ****************************************************************************
 
-The project source code is compiled with Visual Studio 2017
+The project source code is compiled with Visual Studio 2019
 
-The project files could be found in <app root>\elenasrc2 folder.
+The project files could be found at https://github.com/ELENA-LANG/elena-lang

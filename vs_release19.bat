@@ -21,6 +21,8 @@ ECHO =========== Release Compiled ==================
 
 ECHO =========== Compiling ELENA files ==================
 
+md bin
+
 %1\bin\sg %1\dat\sg\syntax.txt
 move %1\dat\sg\syntax.dat %1\bin
 
@@ -36,12 +38,9 @@ md lib40
 %1\bin\asm2binx %1\asm\x32\core.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\corex.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\coreapi.asm %1\bin\x32
-%1\bin\asm2binx %1\asm\x32\core_vm.asm %1\bin\x32
 %1\bin\asm2binx %1\asm\x32\core_win.asm %1\bin\x32
 
 echo ========== copying bin files.. ===============
-
-md bin
 
 copy %1\bin\asm2binx.exe bin
 copy %1\bin\elc.exe bin
