@@ -19,12 +19,14 @@ artifacts:
     name: nightly-build
 
 deploy:
-  # deploy wheels to GitHub on tags
+  release: elena-5-0-v$(appveyor_build_version)
+  description: 'ELENA WIN32 Nightly Build'
   provider: GitHub
   auth_token:
-    secure: bf896b6305dc7df6febcf22526636feb166cad4d
+    secure: mPwQDFEXhfxCz5d9Lzjl1kaRje/E3P1/jaQjWs7byEwEKsU+ljxIgIv5uKevaBXX
   artifact: nightly-build
   draft: false
   prerelease: true
   on:
-    appveyor_repo_tag: true
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only
