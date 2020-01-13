@@ -19,7 +19,7 @@ artifacts:
     name: nightly-build
 
 deploy:
-  release: elena-5-0-v$(appveyor_build_version)
+  release: elena-5-0-$(APPVEYOR_BUILD_NUMBER)
   description: 'ELENA WIN32 Nightly Build'
   provider: GitHub
   auth_token:
