@@ -19,7 +19,9 @@ artifacts:
     name: nightly-build
 
 deploy:
-  release: elena-5-0-$(APPVEYOR_BUILD_NUMBER)
+  appveyor_repo_tag: true
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  release: $(APPVEYOR_REPO_TAG_NAME)
   description: 'ELENA WIN32 Nightly Build'
   provider: GitHub
   auth_token:
@@ -29,4 +31,4 @@ deploy:
   prerelease: true
   tag: $(APPVEYOR_REPO_TAG_NAME)
   on:
-    APPVEYOR_REPO_TAG: true        # deploy on tag push only
+    appveyor_repo_tag: true
