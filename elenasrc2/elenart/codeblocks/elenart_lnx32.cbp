@@ -72,8 +72,8 @@
 		<Unit filename="../../engine/rtman.h" />
 		<Unit filename="../../engine/section.cpp" />
 		<Unit filename="../../engine/section.h" />
-		<Unit filename="../instance.cpp" />
-		<Unit filename="../instance.h" />
+		<Unit filename="../elenartmachine.cpp" />
+		<Unit filename="../elenartmachine.h" />
 		<Unit filename="../linux32/elenart.h" />
 		<Unit filename="../linux32/main.cpp" />
 		<Extensions>

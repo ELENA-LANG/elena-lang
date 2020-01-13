@@ -7,7 +7,7 @@
 #include "elena.h"
 // -------------------------------------------------------------------
 #include "elenart.h"
-#include "instance.h"
+#include "elenartmachine.h"
 #include "linux32/elfhelper.h"
 
 #define ROOT_PATH          "/usr/lib/elena"
@@ -19,98 +19,7 @@ using namespace _ELENA_;
 static ELENARTMachine* _Instance = NULL;
 static void* _SystemEnv = NULL;
 
-EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
-{
-   ProgramHeader header;
-   // initialize the exception handler
-   __asm {
-      mov header.root_exception_struct.core_catch_frame, ebp
-      mov header.root_exception_struct.core_catch_level, esp
-   }
-   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
-
-   // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
-
-   // initialize system env variable
-   _SystemEnv = systemEnv;
-
-   // start the system
-   _Instance->startSTA(&header, (SystemEnv*)systemEnv, entryPoint);
-}
-
-EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
-{
-   ProgramHeader header;
-   // initialize the exception handler
-   __asm {
-      mov header.root_exception_struct.core_catch_frame, ebp
-      mov header.root_exception_struct.core_catch_level, esp
-   }
-   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
-
-   // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
-
-   // initialize system env variable
-   _SystemEnv = systemEnv;
-
-   // start the system
-   _Instance->startMTA(&header, (SystemEnv*)systemEnv, entryPoint);
-}
-
-EXTERN_DLL_EXPORT int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int index)
-{
-   ProgramHeader header;
-   // initialize the exception handler
-   __asm {
-      mov header.root_exception_struct.core_catch_frame, ebp
-      mov header.root_exception_struct.core_catch_level, esp
-   }
-   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
-
-   _Instance->startThread(&header, (SystemEnv*)systemEnv, entryPoint, index);
-
-   return 0;
-}
-
-
-EXTERN_DLL_EXPORT void OpenFrame(void* systemEnv, void* frameHeader)
-{
-   SystemRoutineProvider::OpenFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
-}
-
-EXTERN_DLL_EXPORT void CloseFrame(void* systemEnv, void* frameHeader)
-{
-   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
-}
-
-EXTERN_DLL_EXPORT void Exit(int exitCode)
-{
-   _Instance->Exit(exitCode);
-}
-
-EXTERN_DLL_EXPORT void StopThread(int exitCode)
-{
-   _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);
-}
-
-void loadModulePath(HMODULE hModule, Path& rootPath, bool includeName)
-{
-   TCHAR path[MAX_PATH + 1];
-
-   ::GetModuleFileName(hModule, path, MAX_PATH);
-
-   if (includeName) {
-      rootPath.copy(path);
-   }
-   else rootPath.copySubPath(path);
-   rootPath.lower();
-}
-
-// ==== DLL entries ====
-
-void init(HMODULE hModule)
+void init()
 {
    //// get DLL path
    //Path rootPath;
@@ -120,82 +29,168 @@ void init(HMODULE hModule)
    //Path execPath;
    //loadModulePath(0, execPath, true);
 
-   _Instance = new ELENARTMachine(rootPath.c_str(), execPath.c_str());
+   _Instance = new ELENARTMachine(/*rootPath.c_str(), execPath.c_str()*/nullptr, nullptr); // !! temporal
 
-   void* messageSection = nullptr;
-   void* mattributeSection = nullptr;
-   ELENARTMachine::ImageSection section;
-   section.init((void*)IMAGE_BASE, 0x1000);
-
-   PEHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
-   messageSection = (void*)ptr;
-
-   PEHelper::seekSection(MemoryReader(&section), ".adata", ptr);
-   mattributeSection = (void*)ptr;
-
-   _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
+//   void* messageSection = nullptr;
+//   void* mattributeSection = nullptr;
+//   ELENARTMachine::ImageSection section;
+//   section.init((void*)IMAGE_BASE, 0x1000);
+//
+//   ELFHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
+//   messageSection = (void*)ptr;
+//
+//   ELFHelper::seekSection(MemoryReader(&section), ".adata", ptr);
+//   mattributeSection = (void*)ptr;
+//
+//   _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
 }
 
-EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
+{
+   ProgramHeader header;
+   // initialize the exception handler
+//   asm(
+//      "mov header.root_exception_struct.core_catch_frame, ebp\n\t"
+//      "mov header.root_exception_struct.core_catch_level, esp"
+//   );
+   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+
+   // initialize the critical exception handler
+   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
+
+   // initialize system env variable
+   _SystemEnv = systemEnv;
+
+   if (_Instance == nullptr)
+      init();
+
+   // start the system
+   _Instance->startSTA(&header, (SystemEnv*)systemEnv, entryPoint);
+}
+
+void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
+{
+   ProgramHeader header;
+   // initialize the exception handler
+//    asm(
+//      "mov header.root_exception_struct.core_catch_frame, ebp\n\t"
+//      "mov header.root_exception_struct.core_catch_level, esp"
+//   );
+
+   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+
+   // initialize the critical exception handler
+   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
+
+   // initialize system env variable
+   _SystemEnv = systemEnv;
+
+   if (_Instance == nullptr)
+      init();
+
+   // start the system
+   _Instance->startMTA(&header, (SystemEnv*)systemEnv, entryPoint);
+}
+
+int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int index)
+{
+   ProgramHeader header;
+   // initialize the exception handler
+//   asm(
+//      "mov header.root_exception_struct.core_catch_frame, ebp\n\t"
+//      "mov header.root_exception_struct.core_catch_level, esp"
+//   );
+
+   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+
+   _Instance->startThread(&header, (SystemEnv*)systemEnv, entryPoint, index);
+
+   return 0;
+}
+
+
+void OpenFrame(void* systemEnv, void* frameHeader)
+{
+   SystemRoutineProvider::OpenFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+}
+
+void CloseFrame(void* systemEnv, void* frameHeader)
+{
+   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+}
+
+void Exit(int exitCode)
+{
+   _Instance->Exit(exitCode);
+}
+
+void StopThread(int exitCode)
+{
+   _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);
+}
+
+// ==== DLL entries ====
+
+int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
 {
    return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
-EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
+int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
 {
    return _Instance->loadAddressInfo(retPoint, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)
+int LoadClassName(void* object, char* buffer, int length)
 {
    return _Instance->loadClassName((size_t)object, buffer, length);
 }
 
-EXTERN_DLL_EXPORT void* EvaluateTape(void* tape)
+void* EvaluateTape(void* tape)
 {
    // !! terminator code
    return NULL;
 }
 
-EXTERN_DLL_EXPORT void* InterpretTape(void* tape)
+void* InterpretTape(void* tape)
 {
    // !! terminator code
    return NULL;
 }
 
-EXTERN_DLL_EXPORT void* GetVMLastError(void* retVal)
+void* GetVMLastError(void* retVal)
 {
    return NULL;
 }
 
-EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, char* lineInfo, int length)
+int LoadSubjectName(void* subject, char* lineInfo, int length)
 {
    return _Instance->loadSubjectName((size_t)subject, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
+void* LoadSubject(void* subjectName)
 {
    return _Instance->loadSubject((const char*)subjectName);
 }
 
-EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* lineInfo, int length)
+int LoadMessageName(void* message, char* lineInfo, int length)
 {
    return _Instance->loadMessageName((ref_t)message, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
+void* LoadMessage(void* messageName)
 {
    return _Instance->loadMessage((const char*)messageName);
 }
 
-EXTERN_DLL_EXPORT void* LoadClassByString(void* systemEnv, void* referenceName)
+void* LoadClassByString(void* systemEnv, void* referenceName)
 {
-   throw InternalError("Not yet implemented"); // !! temporal 
+   throw InternalError("Not yet implemented"); // !! temporal
 
    //return _Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
 }
 
-EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
 {
    if (length < 0x100) {
       IdentifierString str((const char*)referenceName, index, length);
@@ -209,14 +204,14 @@ EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, 
    }
 }
 
-EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
+void* LoadSymbolByString(void* systemEnv, void* referenceName)
 {
-   throw InternalError("Not yet implemented"); // !! temporal 
+   throw InternalError("Not yet implemented"); // !! temporal
 
    //return _Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
 }
 
-EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
 {
    if (length < 0x100) {
       IdentifierString str((const char*)referenceName, index, length);

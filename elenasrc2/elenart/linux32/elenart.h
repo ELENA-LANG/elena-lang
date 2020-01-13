@@ -17,25 +17,49 @@
 
 extern "C"
 {
-   DLL_PUBLIC int ReadCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
+   DLL_PUBLIC void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint);
 
-   DLL_PUBLIC int LoadAddressInfo(void* retPoint, char* lineInfo, size_t length);
+   DLL_PUBLIC void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint);
 
-   DLL_PUBLIC int LoadClassName(void* object, char* lineInfo, size_t length);
+   DLL_PUBLIC int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int index);
+
+   DLL_PUBLIC void OpenFrame(void* systemEnv, void* frameHeader);
+
+   DLL_PUBLIC void CloseFrame(void* systemEnv, void* frameHeader);
+
+   DLL_PUBLIC void Exit(int exitCode);
+
+   DLL_PUBLIC void StopThread(int exitCode);
+
+   DLL_PUBLIC int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
+
+   DLL_PUBLIC int LoadAddressInfo(size_t retPoint, char* lineInfo, int length);
+
+   DLL_PUBLIC int LoadClassName(void* object, char* buffer, int length);
 
    DLL_PUBLIC void* LoadSymbol(void* referenceName);
 
-   DLL_PUBLIC void* Interpreter(void* tape);
+   DLL_PUBLIC void* EvaluateTape(void* tape);
+
+   DLL_PUBLIC void* InterpretTape(void* tape);
 
    DLL_PUBLIC void* GetVMLastError(void* retVal);
 
-   DLL_PUBLIC int LoadSubjectName(void* subject, char* lineInfo, size_t length);
+   DLL_PUBLIC int LoadSubjectName(void* subject, char* lineInfo, int length);
 
-   DLL_PUBLIC int LoadMessageName(void* subject, char* lineInfo, size_t length);
+   DLL_PUBLIC void* LoadSubject(void* subjectName);
+
+   DLL_PUBLIC int LoadMessageName(void* message, char* lineInfo, int length);
 
    DLL_PUBLIC void* LoadMessage(void* messageName);
 
-   DLL_PUBLIC void* LoadSubject(void* subjectName);
+   DLL_PUBLIC void* LoadClassByString(void* systemEnv, void* referenceName);
+
+   DLL_PUBLIC void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length);
+
+   DLL_PUBLIC void* LoadSymbolByString(void* systemEnv, void* referenceName);
+
+   DLL_PUBLIC void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length);
 }
 
 #endif // ELENART_H_INCLUDED
