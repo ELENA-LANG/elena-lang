@@ -1,237 +1,241 @@
 ////import system'text.
 
-// --- Statemachine ---
-
-public interface Statemachine
+namespace text
 {
-    abstract bool proceed(char ch) {}
+    // --- Statemachine ---
     
-    abstract bool isWhitespace() {}
-}
-
-public class SimpleStatemachine : Statemachine
-{
-    bool theSpaceMode;
-    
-    constructor()
+    public interface Statemachine
     {
-        theSpaceMode := true
+        abstract bool proceed(char ch) {}
+        
+        abstract bool isWhitespace() {}
     }
     
-    bool proceed(char ch)
+    public class SimpleStatemachine : Statemachine
     {
-        if (ch.isWhitespace())
+        bool theSpaceMode;
+        
+        constructor()
         {
-            ifnot (theSpaceMode)
-                { theSpaceMode := true; ^ true }
+            theSpaceMode := true
         }
-        else
+        
+        bool proceed(char ch)
         {
-            theSpaceMode := false
-        };
-            
-        ^ false
-    }
-    
-    bool isWhitespace() = theSpaceMode;
-}
-
-public class ExpressionStatemachine : Statemachine
-{
-    bool theSpaceMode;
-    bool theQuoteMode;
-    bool theNewToken;
-    bool theOperatorMode;
-    
-    constructor()
-    {
-        theSpaceMode := true;
-        theQuoteMode := false;
-        theNewToken := true;
-        theOperatorMode := false
-    }
-    
-    bool proceed(char ch)
-    {
-        if (theQuoteMode)
-        {
-            if (ch == $22h)
-                { theQuoteMode := false; theSpaceMode := false; theNewToken := false; theOperatorMode := true };
+            if (ch.isWhitespace())
+            {
+                ifnot (theSpaceMode)
+                    { theSpaceMode := true; ^ true }
+            }
+            else
+            {
+                theSpaceMode := false
+            };
                 
             ^ false
-        };
-        
-        bool whitespace := ch.isWhitespace();
-        bool digit := ch.isDigit();
-        bool letter := ch.isLToken();
-        if (whitespace)
-        {
-            ifnot(theSpaceMode)
-                { theSpaceMode := true; theNewToken := true; ^ true }
         }
-        else
+        
+        bool isWhitespace() = theSpaceMode;
+    }
+    
+    public class ExpressionStatemachine : Statemachine
+    {
+        bool theSpaceMode;
+        bool theQuoteMode;
+        bool theNewToken;
+        bool theOperatorMode;
+        
+        constructor()
         {
-            if (ch == $22h)
+            theSpaceMode := true;
+            theQuoteMode := false;
+            theNewToken := true;
+            theOperatorMode := false
+        }
+        
+        bool proceed(char ch)
+        {
+            if (theQuoteMode)
             {
-                ifnot(theNewToken)
-                    { theNewToken := true; ^ true };
-                
-                theQuoteMode := true;
-                theSpaceMode := false;
-                
+                if (ch == $22h)
+                    { theQuoteMode := false; theSpaceMode := false; theNewToken := false; theOperatorMode := true };
+                    
                 ^ false
             };
             
-            if (theNewToken)
-            { 
-                theNewToken := false;
-                theSpaceMode := false; 
-                theOperatorMode := (letter || digit) ? false : true
+            bool whitespace := ch.isWhitespace();
+            bool digit := ch.isDigit();
+            bool letter := ch.isLToken();
+            if (whitespace)
+            {
+                ifnot(theSpaceMode)
+                    { theSpaceMode := true; theNewToken := true; ^ true }
             }
             else
-            {                
-                if (letter || digit)
+            {
+                if (ch == $22h)
                 {
-                    if(theOperatorMode)
-                        { theNewToken := true; theOperatorMode := false; ^ true }
+                    ifnot(theNewToken)
+                        { theNewToken := true; ^ true };
+                    
+                    theQuoteMode := true;
+                    theSpaceMode := false;
+                    
+                    ^ false
+                };
+                
+                if (theNewToken)
+                { 
+                    theNewToken := false;
+                    theSpaceMode := false; 
+                    theOperatorMode := (letter || digit) ? false : true
                 }
                 else
-                { 
-                    theOperatorMode := true;
-                    theNewToken := true; ^ true
-                }
-            }                  
-        };
-        
-        ^ false
-    }
-    
-    bool isWhitespace() = theSpaceMode;    
-}
-
-public class TokenStatemachine : Statemachine
-{
-    bool theSpaceMode;
-    bool theQuoteMode;
-    bool theNewToken;
-    
-    constructor()
-    {
-        theSpaceMode := true;
-        theQuoteMode := false;
-        theNewToken := true
-    }
-    
-    bool proceed(char ch)
-    {
-        if (theQuoteMode)
-        {
-            if (ch == $22h)
-               { theQuoteMode := false; theSpaceMode := false; theNewToken := false };
-                
+                {                
+                    if (letter || digit)
+                    {
+                        if(theOperatorMode)
+                            { theNewToken := true; theOperatorMode := false; ^ true }
+                    }
+                    else
+                    { 
+                        theOperatorMode := true;
+                        theNewToken := true; ^ true
+                    }
+                }                  
+            };
+            
             ^ false
-        };
-        
-        bool whitespace := ch.isWhitespace();
-        if (whitespace)
-        {
-            ifnot(theSpaceMode)
-                { theSpaceMode := true; theNewToken := true; ^ true }
         }
-        else
+        
+        bool isWhitespace() = theSpaceMode;    
+    }
+    
+    public class TokenStatemachine : Statemachine
+    {
+        bool theSpaceMode;
+        bool theQuoteMode;
+        bool theNewToken;
+        
+        constructor()
         {
-            if (ch == $22h)
+            theSpaceMode := true;
+            theQuoteMode := false;
+            theNewToken := true
+        }
+        
+        bool proceed(char ch)
+        {
+            if (theQuoteMode)
             {
-                ifnot(theNewToken)
-                    { theNewToken := true; ^ true };
-                
-                theQuoteMode := true;
-                theSpaceMode := false;
-                
+                if (ch == $22h)
+                   { theQuoteMode := false; theSpaceMode := false; theNewToken := false };
+                    
                 ^ false
             };
-                                  
-            if (theNewToken)
-            { 
-                theNewToken := false;
-                theSpaceMode := false 
-            }
-        };
-        
-        ^ false
-    }
-    
-    bool isWhitespace() = theSpaceMode;    
-}
-
-public class TokenEnumerator : Enumerator<string>, interface<Enumerator>
-{
-    string       theLiteral;
-    ref<int>     theIndex;
-    TextBuilder  theBuffer;
-    Statemachine theDFA;
-
-    constructor()
-    {
-        theLiteral := String.MinValue;
-        theIndex := 0;
-        theBuffer := new TextBuilder();
-        theDFA := new SimpleStatemachine();
-    }    
-        
-    constructor(string s, Statemachine dfa)
-    {
-        theLiteral := s;
-        theIndex := 0;
-        theBuffer := new TextBuilder();
-        theDFA := dfa;
-    }    
-    
-    constructor new(s)
-    {
-        theLiteral := cast string(s);
-    }
-    
-    reset()
-    {
-        theIndex.Value := 0;
-    }
-    
-    enumerable() = theLiteral;
-    
-    bool next()
-    {
-        theBuffer.clear();
-
-        int  len := theLiteral.Length;
-        int  current := theIndex;
-        char ch := $0;
-        int  chLen := 0;
-        
-        while (current < len)
-        {
-            theLiteral.read(current, ref ch);
             
-            if (theDFA.proceed(ch))
+            bool whitespace := ch.isWhitespace();
+            if (whitespace)
             {
-                theIndex.Value := current;
-                
-                ^ true
+                ifnot(theSpaceMode)
+                    { theSpaceMode := true; theNewToken := true; ^ true }
             }
             else
             {
-                ifnot (theDFA.isWhitespace())
-                    { theBuffer.write(ch) }
+                if (ch == $22h)
+                {
+                    ifnot(theNewToken)
+                        { theNewToken := true; ^ true };
+                    
+                    theQuoteMode := true;
+                    theSpaceMode := false;
+                    
+                    ^ false
+                };
+                                      
+                if (theNewToken)
+                { 
+                    theNewToken := false;
+                    theSpaceMode := false 
+                }
             };
-                
-            chLen := ch.Length;
-            current := current + chLen
-        };
-
-        theIndex.Value := current;
-
-        ^ theBuffer.isNonempty()
+            
+            ^ false
+        }
+        
+        bool isWhitespace() = theSpaceMode;    
     }
     
-    string get() = theBuffer.Value;
+    public class TokenEnumerator : Enumerator<string>, interface<Enumerator>
+    {
+        string       theLiteral;
+        ref<int>     theIndex;
+        TextBuilder  theBuffer;
+        Statemachine theDFA;
+    
+        constructor()
+        {
+            theLiteral := String.MinValue;
+            theIndex := 0;
+            theBuffer := new TextBuilder();
+            theDFA := new SimpleStatemachine();
+        }    
+            
+        constructor(string s, Statemachine dfa)
+        {
+            theLiteral := s;
+            theIndex := 0;
+            theBuffer := new TextBuilder();
+            theDFA := dfa;
+        }    
+        
+        constructor new(s)
+        {
+            theLiteral := cast string(s);
+        }
+        
+        reset()
+        {
+            theIndex.Value := 0;
+        }
+        
+        enumerable() = theLiteral;
+        
+        bool next()
+        {
+            theBuffer.clear();
+    
+            int  len := theLiteral.Length;
+            int  current := theIndex;
+            char ch := $0;
+            int  chLen := 0;
+            
+            while (current < len)
+            {
+                theLiteral.read(current, ref ch);
+                
+                if (theDFA.proceed(ch))
+                {
+                    theIndex.Value := current;
+                    
+                    ^ true
+                }
+                else
+                {
+                    ifnot (theDFA.isWhitespace())
+                        { theBuffer.write(ch) }
+                };
+                    
+                chLen := ch.Length;
+                current := current + chLen
+            };
+    
+            theIndex.Value := current;
+    
+            ^ theBuffer.isNonempty()
+        }
+        
+        string get() = theBuffer.Value;
+    }
+
 }

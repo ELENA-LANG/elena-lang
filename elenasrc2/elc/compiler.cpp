@@ -9239,7 +9239,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
       }
-      else if (current == lxType) {
+      else if (current.compare(lxType, lxArrayType)) {
          // if it is a type attribute
          scope.outputRef = resolveTypeAttribute(current, scope, true);
       }

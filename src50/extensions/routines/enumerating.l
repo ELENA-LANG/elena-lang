@@ -1,8 +1,8 @@
 //import system'io;
 ////import system'text.
 //import extensions;
-//import extensions'text;
-//
+import extensions'text;
+
 //// --- ReaderEnumerator ---
 //
 //public class ReaderEnumerator : Enumerator
@@ -72,18 +72,18 @@
 ////    run for:anEncoder eachLine:anAction
 ////        = anAction run enumerator:(ReaderEnumerator new path:self encoder:anEncoder).
 //}
-//
-//// --- stringExOp ---
-//
-//public extension stringExOp
-//{
-//    forEachWord(Func1 f)
-//        = f.run(cast Enumerator(TokenEnumerator.new(self)));
-//        
-//////    run token_dfa:aStatemachine each:aFunction
-//////        = aFunction run enumerator:(TokenEnumerator new literal:self token_dfa:aStatemachine).
-//}
-//
+
+// --- stringExOp ---
+
+public extension stringExOp
+{
+    forEachWord(Func1 f)
+        = f.run(cast Enumerator(TokenEnumerator.new(self)));
+        
+////    run token_dfa:aStatemachine each:aFunction
+////        = aFunction run enumerator:(TokenEnumerator new literal:self token_dfa:aStatemachine).
+}
+
 //// --- printingLn ---
 //
 //public symbol printingLn = (aLine){ forward program'output.printLine:aLine };

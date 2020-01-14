@@ -202,6 +202,9 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
    for (size_t i = 0; i != count; i++) {
       signatureName.append('$');
       ident_t referenceName = module->resolveReference(signatures[i]);
+      if (referenceName.empty())
+         count += 0;
+
       if (isWeakReference(referenceName)) {
          if (isTemplateWeakReference(referenceName)) {
             ReferenceInfo refInfo = _loader->retrieveReference(module, signatures[i], mskVMTRef);

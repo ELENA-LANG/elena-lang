@@ -122,10 +122,14 @@ public extension objectOp
 //        
 //    bool isEmpty()
 //        = self.Length == 0;
-//        
-//    bool isNonempty()
-//        = self.Length != 0;
-//        
+        
+    bool isNonempty()
+    {
+        int len := self.Length;
+        
+        ^ len != 0;
+    }
+        
 //    /// Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible
 //    bool safeEqual(o)
 //        = self.equal:o \ back:false;
@@ -1715,26 +1719,26 @@ public extension charOp : CharValue
 //            ^ retVal
 //        }
 //    }
-//    
-//    bool isWhitespace()
-//    {
-//        self =>
-//            $9  { ^ true }
-//            $32 { ^ true }
-//            $10 { ^ true }
-//            $13 { ^ true }
-//            $12 { ^ true };
-//            
-//        ^ false
-//    }
-//    
-//    bool isDigit()
-//    {
-//        int ch := intConvertor.convert(self);
-//        
-//        ^ (ch >= 30h) && (ch <= 39h)
-//    }
-//    
+    
+    bool isWhitespace()
+    {
+        self =>
+            $9  { ^ true }
+            $32 { ^ true }
+            $10 { ^ true }
+            $13 { ^ true }
+            $12 { ^ true };
+            
+        ^ false
+    }
+    
+    bool isDigit()
+    {
+        int ch := intConvertor.convert(self);
+        
+        ^ (ch >= 30h) && (ch <= 39h)
+    }
+    
 //    bool isNewLine()
 //    {
 //        ^ self == $10
@@ -1758,25 +1762,25 @@ public extension charOp : CharValue
 //            
 //        ^ false
 //    }
-//    
-//    bool isLToken()
-//    {
-//        int ch := intConvertor.convert(self);
-//        
-//        if (ch >= 41h && ch <= 5Ah)
-//            { ^ true };
-//        
-//        if (ch >= 61h && ch <= 7Ah)
-//            { ^ true };
-//        
-//        if (ch >= 3ACh && ch <= 3CEh)
-//            { ^ true };
-//            
-//        if (ch >= 400h && ch <= 42Fh)
-//            { ^ true };
-//            
-//        ^ ch == 39
-//    }
+    
+    bool isLToken()
+    {
+        int ch := intConvertor.convert(self);
+        
+        if (ch >= 41h && ch <= 5Ah)
+            { ^ true };
+        
+        if (ch >= 61h && ch <= 7Ah)
+            { ^ true };
+        
+        if (ch >= 3ACh && ch <= 3CEh)
+            { ^ true };
+            
+        if (ch >= 400h && ch <= 42Fh)
+            { ^ true };
+            
+        ^ ch == 39
+    }
 }
 
 // --- byteArrayHelper ---
