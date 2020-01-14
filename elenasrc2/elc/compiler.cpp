@@ -54,10 +54,10 @@ constexpr auto HINT_LOOP            = EAttr::eaLoop;
 constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 constexpr auto HINT_FORWARD         = EAttr::eaForward;
 constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
+constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
 
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
-//constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
 //constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
 //constexpr auto HINT_PARAMETER		   = EAttr::eaParameter;
@@ -2030,87 +2030,74 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
 ////      else scope.raiseError(errInvalidHint, node);
 ////   }
 ////}
-//
-//void Compiler :: compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope)
-//{
-//   SNode targetNode = node.firstChild(lxObjectMask);
-//
-//   writer.newBookmark();
-//
-//   bool immMode = true;
-//   int localOffs = 0;
-//   ObjectInfo loperand;
-//   if (targetNode == lxExpression) {
-//      immMode = false;
-//
-//      localOffs = scope.newLocal();
-//
-//      loperand = compileExpression(writer, targetNode, scope, 0, EAttr::eaNone);
-//
-//      writer.inject(lxAssigning, 0);
-//      writer.insertNode(lxLocal, localOffs);
-//      writer.closeNode();
-//   }
-//
-//   SNode current = node.findChild(lxOption, lxElse);
-//   while (current == lxOption) {
-//      writer.newNode(lxOption);
-//      writer.newNode(lxExpression);
-//
-//      writer.newBookmark();
-//
-//      writer.appendNode(lxBreakpoint, dsStep);
-//
-//      int operator_id = current.argument;
-//
-//      if (!immMode) {
-//         writer.newNode(lxLocal, localOffs);
-//         writer.appendNode(lxTarget, resolveObjectReference(scope, loperand, false));
-//         writer.closeNode();
-//      }
-//      else loperand = compileObject(writer, targetNode, scope, 0, EAttr::eaNone);
-//
-//      // find option value
-//      SNode valueNode = current.firstChild(lxObjectMask);
-//
-//      ObjectInfo roperand = compileObject(writer, valueNode, scope, 0, EAttr::eaNone);
-//
-//      ObjectInfo operationInfo = compileOperator(writer, node, scope, operator_id, 1, loperand, roperand, ObjectInfo());
-//
-//      ObjectInfo retVal;
-//      compileBranchingOp(writer, current, scope, HINT_SWITCH, IF_OPERATOR_ID, operationInfo, retVal);
-//
-//      writer.removeBookmark();
-//      writer.closeNode();
-//      writer.closeNode();
-//
-//      current = current.nextNode();
-//   }
-//
-//   if (current == lxElse) {
-//      CodeScope subScope(&scope);
-//      SNode thenCode = current.findSubNode(lxCode);
-//
-//      writer.newNode(lxElse);
-//
-//      SNode statement = thenCode.firstChild(lxObjectMask);
-//      if (statement.nextNode() != lxNone || statement == lxEOF) {
-//         compileCode(writer, thenCode, subScope);
-//      }
-//      // if it is inline action
-//      else compileRetExpression(writer, statement, scope, EAttr::eaNone);
-//
-//      // preserve the allocated space
-//      scope.level = subScope.level;
-//
-//      writer.closeNode();
-//   }
-//
-//   writer.inject(lxSwitching);
-//   writer.closeNode();
-//
-//   writer.removeBookmark();
-//}
+
+void Compiler :: compileSwitch(SNode node, ExprScope& scope)
+{
+   SNode targetNode = node.firstChild();
+
+   bool immMode = true;
+   int localOffs = 0;
+   ObjectInfo loperand;
+   if (targetNode == lxExpression) {
+      immMode = false;
+
+      localOffs = scope.newTempLocal();
+
+      loperand = compileExpression(targetNode, scope, 0, EAttr::eaNone);
+
+      targetNode.injectAndReplaceNode(lxAssigning);
+      targetNode.insertNode(lxLocal, localOffs);
+   }
+
+   SNode current = node.findChild(lxOption, lxElse);
+   while (current == lxOption) {
+      SNode optionNode = current.injectNode(lxExpression);
+      SNode blockNode = optionNode.firstChild(lxObjectMask);
+
+      // find option value
+      SNode exprNode = optionNode.firstChild();
+      exprNode.injectAndReplaceNode(lxExpression);
+
+      int operator_id = current.argument;
+
+      if (!immMode) {
+         exprNode.insertNode(lxLocal, localOffs);
+      }
+      else {
+         SNode localNode = SyntaxTree::insertNodeCopy(targetNode, exprNode);
+
+         if (localNode != lxExpression) {
+            localNode.injectAndReplaceNode(lxExpression);
+         }
+         loperand = compileExpression(localNode, scope, 0, EAttr::eaNone);
+      }
+
+      ObjectInfo roperand = mapTerminal(exprNode.lastChild(), scope, EAttr::eaNone);
+      ObjectInfo operationInfo = compileOperator(exprNode, scope, operator_id, 2, loperand, roperand, ObjectInfo(), EAttr::eaNone);
+
+      ObjectInfo retVal;
+      compileBranchingOp(blockNode, scope, HINT_SWITCH, IF_OPERATOR_ID, operationInfo, retVal);
+
+      current = current.nextNode();
+   }
+
+   if (current == lxElse) {
+      compileSubCode(current, scope, false);
+
+      //CodeScope subScope(&scope);
+      //SNode thenCode = current.findSubNode(lxCode);
+
+      //SNode statement = thenCode.firstChild(lxObjectMask);
+      //if (statement.nextNode() != lxNone || statement == lxEOF) {
+      //   compileCode(writer, thenCode, subScope);
+      //}
+      //// if it is inline action
+      //else compileRetExpression(writer, statement, scope, EAttr::eaNone);
+
+      //// preserve the allocated space
+      //scope.level = subScope.level;
+   }
+}
 
 size_t Compiler :: resolveArraySize(SNode node, Scope& scope)
 {
@@ -3243,7 +3230,7 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
    return 0;
 }
 
-void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifReference, bool loopMode/*, bool switchMode*/)
+void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifReference, bool loopMode, bool switchMode)
 {
    if (loopMode) {
       SNode thenCode = node.findSubNode(lxCode);
@@ -3270,7 +3257,7 @@ void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifRef
       compileSubCode(thenCode, scope, true);
 
       // HOTFIX : switch mode - ignore else
-//      if (!switchMode) {
+      if (!switchMode) {
          node = node.nextNode(lxObjectMask);
          if (node != lxNone) {
             SNode elseCode = node.findSubNode(lxCode);
@@ -3287,7 +3274,7 @@ void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifRef
 
             compileSubCode(elseCode, scope, true);
          }
-//      }
+      }
    }
 }
 
@@ -3352,7 +3339,7 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
    ObjectInfo loperand, ObjectInfo& retVal)
 {
    bool loopMode = EAttrs::test(mode, HINT_LOOP);
-//   bool switchMode = EAttrs::test(mode, HINT_SWITCH);
+   bool switchMode = EAttrs::test(mode, HINT_SWITCH);
 
    // HOTFIX : in loop expression, else node is used to be similar with branching code
    // because of optimization rules
@@ -3368,9 +3355,9 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
       resolveObjectReference(scope, loperand, false), ifReference))
    {
       // we are lucky : we can implement branching directly
-      compileBranchingNodes(roperandNode, scope, ifReference, loopMode/*, switchMode*/);
+      compileBranchingNodes(roperandNode, scope, ifReference, loopMode, switchMode);
 
-      roperandNode.parentNode().set(loopMode ? lxLooping : lxBranching, /*switchMode ? -1 : */0);
+      roperandNode.parentNode().set(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
    }
    else {
       operator_id = original_id;
@@ -6121,11 +6108,11 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          case lxExpression:
             result = compileExpression(current, scope, 0, mode);
             break;
-//         case lxSwitching:
-//            compileSwitch(writer, node, scope);
-//
-//            result = ObjectInfo(okObject);
-//            break;
+         case lxSwitching:
+            compileSwitch(current, scope);
+
+            result = ObjectInfo(okObject);
+            break;
          case lxIdle:
             result = ObjectInfo(okUnknown);
             break;

@@ -512,6 +512,7 @@ public:
       eaForward            = 0x00000100000,
       eaParams             = 0x00000200000,
       eaInitializerScope   = 0x00000400000,
+      eaSwitch             = 0x00000800000,
 
       eaScopeMask          = 0x0000041400A,
       eaObjectMask         = 0x0000021B2F4,
@@ -534,7 +535,6 @@ public:
 //      eaDirectCall         = 0x00008000000,
 //      eaClosure            = 0x00080000000,
 //      eaSubCodeClosure     = 0x00800000000,
-//      eaSwitch             = 0x08000000000,
 //      eaRefExpr            = 0x20000000000,
 //      eaYieldExpr          = 0x40000000000,
 //      eaAutoSize           = 0x80000000000,

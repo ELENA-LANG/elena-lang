@@ -25,6 +25,8 @@ __define INLINE_ARG 	         4448
 __define FIELD_ACCUMULATOR       4464
 __define ATTR_EXPRESSION         4496
 __define PROP_DECLARATION 	 4512
+__define OPTION 		 4528
+__define LAST_OPTION 		 4544
 __define BLOCK 		        69728
 __define BLOCK_END	        69776
 __define MESSAGE	       135296
@@ -54,6 +56,7 @@ __define SINGLE_BLOCK 	       364602
 __define DBLCOLON_EXPRESSION   364603
 __define RET_EXPRESSION	       364848
 __define RESEND                364912  
+__define SWITCHING	       365136
 
 __define eof            	 8208
 __define identifier 	 	 8209
@@ -381,6 +384,7 @@ T0_OPERATIONS ->
 	| L0_OPERATION L0_OPERATIONS L0_FOLLOWERS
 	| L2_OPERATION L2_OPERATIONS L2_FOLLOWERS
 	| OPERATIONS
+	| => SWITCHING
 
 E_OPERATIONS ->
         L1_OPERATION L1_OPERATIONS L2_OPERATIONS L3_OPERATIONS L4_OPERATIONS L5_OPERATIONS L6_OPERATIONS L7_OPERATIONS L8_OPERATIONS
@@ -655,6 +659,29 @@ ARRAY_OPERATOR ->
 
 MESSAGE ->                                                                                                   
 	identifier
+
+SWITCHING ->
+	OPTION OPTIONS
+
+OPTION ->
+	integer OPTION_BODY
+	| character OPTION_BODY
+	| literal OPTION_BODY
+	| identifier OPTION_BODY
+
+OPTION_BODY ->
+	BLOCK
+
+LAST_OPTION ->
+	COLON OPTION_BODY
+
+OPTIONS ->
+	NEXT_OPTION
+	| eps
+
+NEXT_OPTION ->
+	OPTION OPTIONS
+	| LAST_OPTION
 
 ASSIGN_OPERATOR ->
 	:=

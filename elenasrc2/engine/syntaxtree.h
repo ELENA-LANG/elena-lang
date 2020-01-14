@@ -81,6 +81,8 @@ enum LexicalType
    lxArrOperator              = 0x021180,
    lxAttrExpression           = 0x001190,
    lxPropertyDecl             = 0x0011A0,
+   lxSwitchOption             = 0x0011B0,
+   lxLastSwitchOption         = 0x0011C0,
 
    // derivation terminals
    lxEOF                      = 0x002010,   // end of the file
@@ -190,6 +192,8 @@ enum LexicalType
    lxBinArrOp                 = 0x058235,
    lxBoolOp                   = 0x058236,   // arg - operation id
    lxExternFrame              = 0x058240,
+   lxSwitching                = 0x059250,
+   lxOption                   = 0x058251,
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -235,9 +239,7 @@ enum LexicalType
 //   lxMeta                     = 0x000015,
 //   lxDispatchCode             = 0x000020,
 //   lxAssign                   = 0x000021,
-//   lxSwitchOption             = 0x00003C,
 //   lxWrapping                 = 0x00002B,
-//   lxLastSwitchOption         = 0x00003D,
 //   lxAttributeDecl            = 0x00004E,
 //   lxSizeDecl                 = 0x000068,
 //   lxClosureExpr              = 0x00006E,
@@ -279,7 +281,6 @@ enum LexicalType
 //   lxArgBoxing                = 0x00C005,   // argument list boxing, arg - size
 //   lxArgUnboxing              = 0x00C006,
 //   lxImplicitCall             = 0x00C00B,
-//   lxSwitching                = 0x00C010,
 //   lxInlineArgCall            = 0x10C012,   // calling a message with the unpacked parameter list
 //   lxAltExpression            = 0x00C018,
 //   lxIfNot                    = 0x00C019,   // optional arg - reference
@@ -287,7 +288,6 @@ enum LexicalType
 //   lxIfNotN                   = 0x00C01C,   // arg - value
 //   lxLessN                    = 0x00C01D,   // arg - value
 //   lxNotLessN                 = 0x00C01E,   // arg - value
-//   lxOption                   = 0x00C021,
 //   lxNewArrOp                 = 0x00C028,
 //   lxBinArrOp                 = 0x08C02A,   // arg - operation id
 //   lxArgArrOp                 = 0x08C02B,   // arg - operation id
@@ -365,9 +365,12 @@ public:
          if (child != INVALID_REF) {
             return tree->read(tree->injectChild(child, nodeType, 0, strOffset));
          }
-         else return appendNode(type, argument);
+         else return appendStrNode(nodeType, strOffset);
       }
-
+      Node insertStrNode(LexicalType nodeType, int strOffset)
+      {
+         return tree->read(tree->insertChild(position, nodeType, 0, strOffset));
+      }
 
    public:
       LexicalType   type;
@@ -1210,7 +1213,8 @@ public:
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);
-//   static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
+   static Node insertNodeCopy(Node source, Node destination);
+   //   static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
    static void saveNode(Node node, _Memory* dump, bool includingNode = false);
 //   static void loadNode(Node node, _Memory* dump);
 //

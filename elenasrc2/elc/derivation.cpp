@@ -2041,41 +2041,41 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
 //   }
 }
 
-//void DerivationWriter :: generateSwitchTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current.type) {
-//         case lxSwitchOption:
-////         case lxBiggerSwitchOption:
-////         case lxLessSwitchOption:
-////            if (current.type == lxBiggerSwitchOption) {
-////               writer.newNode(lxOption, GREATER_MESSAGE_ID);
-////            }
-////            else if (current.type == lxLessSwitchOption) {
-////               writer.newNode(lxOption, LESS_MESSAGE_ID);
-////            }
-//            /*else */writer.newNode(lxOption, EQUAL_OPERATOR_ID);
-//            generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
-//            generateCodeExpression(writer, current.firstChild(lxCode), derivationScope, false);
-//            writer.closeNode();
+void DerivationWriter :: generateSwitchTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxSwitchOption:
+//         case lxBiggerSwitchOption:
+//         case lxLessSwitchOption:
+//            if (current.type == lxBiggerSwitchOption) {
+//               writer.newNode(lxOption, GREATER_MESSAGE_ID);
+//            }
+//            else if (current.type == lxLessSwitchOption) {
+//               writer.newNode(lxOption, LESS_MESSAGE_ID);
+//            }
+            /*else */writer.newNode(lxOption, EQUAL_OPERATOR_ID);
+            generateIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope);
+            generateCodeExpression(writer, current.firstChild(lxCode), derivationScope, false);
+            writer.closeNode();
+            break;
+         case lxLastSwitchOption:
+            writer.newNode(lxElse);
+            writer.newBookmark();
+            generateCodeExpression(writer, current.firstChild(lxCode), derivationScope, false);
+            writer.removeBookmark();
+            writer.closeNode();
+            break;
+//         default:
+//            scope.raiseError(errInvalidSyntax, current);
 //            break;
-//         case lxLastSwitchOption:
-//            writer.newNode(lxElse);
-//            writer.newBookmark();
-//            generateCodeExpression(writer, current.firstChild(lxCode), derivationScope, false);
-//            writer.removeBookmark();
-//            writer.closeNode();
-//            break;
-////         default:
-////            scope.raiseError(errInvalidSyntax, current);
-////            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+      }
+
+      current = current.nextNode();
+   }
+}
+
 //void DerivationWriter :: generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
 //{
 //   writer.newNode(lxCollection);
@@ -2138,7 +2138,7 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
 ////   current = node;
 //}
 
-void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& current, bool& first/*, bool& expressionExpected*/, 
+void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& current, bool& first, bool& expressionExpected, 
    Scope& derivationScope)
 {
    switch (current.type) {
@@ -2189,12 +2189,12 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
          // to indicate the get property call
          writer.appendNode(lxPropertyParam);
          break;
-//      case lxSwitching:
-//         generateSwitchTree(writer, current, derivationScope);
-//         writer.inject(lxSwitching);
-//         writer.closeNode();
-//         expressionExpected = true;
-//         break;
+      case lxSwitching:
+         generateSwitchTree(writer, current, derivationScope);
+         writer.inject(lxSwitching);
+         writer.closeNode();
+         expressionExpected = true;
+         break;
 //      case lxCollection:
 //         generateCollectionTree(writer, current, derivationScope);
 //         first = false;
@@ -2238,7 +2238,7 @@ void DerivationWriter :: generateExpressionTree(SyntaxWriter& writer, SNode node
    
    SNode current = node.firstChild();
    while (current != lxNone) {
-      generateExpressionNode(writer, current, first/*, expressionExpected*/, derivationScope);
+      generateExpressionNode(writer, current, first, expressionExpected, derivationScope);
 
       current = current.nextNode();
    }

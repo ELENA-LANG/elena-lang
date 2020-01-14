@@ -1005,7 +1005,7 @@ private:
    //ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 
-//   void compileSwitch(SyntaxWriter& writer, SNode node, CodeScope& scope);
+   void compileSwitch(SNode node, ExprScope& scope);
 
    LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
                                     int& variableArg, ident_t& className);
@@ -1038,7 +1038,7 @@ private:
    ObjectInfo compileOperator(SNode& node, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
    ObjectInfo compileOperator(SNode& node, ExprScope& scope, ObjectInfo target, EAttr mode);
    ObjectInfo compileIsNilOperator(SNode node, ExprScope& scope, ObjectInfo loperand/*, ObjectInfo roperand*/);
-   void compileBranchingNodes(SNode loperandNode, ExprScope& scope, ref_t ifReference, bool loopMode/*, bool switchMode*/);
+   void compileBranchingNodes(SNode loperandNode, ExprScope& scope, ref_t ifReference, bool loopMode, bool switchMode);
    void compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr mode, int operator_id, ObjectInfo loperand, ObjectInfo& retVal);
    ObjectInfo compileBranchingOperator(SNode roperand, ExprScope& scope, ObjectInfo target, EAttr mode, int operator_id);
 
