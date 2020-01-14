@@ -37,6 +37,7 @@ Code
     * self vs this self
   Operators
     * a ?? b / a.msg() ?? b
+    * switch operator
   Expressions
     * In-place assignment (both variable and properties)
 Project
