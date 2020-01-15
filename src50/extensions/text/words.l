@@ -1,4 +1,4 @@
-////import system'text.
+import system'text;
 
 namespace text
 {

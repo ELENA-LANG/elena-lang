@@ -1964,9 +1964,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_GROUP:
 //         attributes.include(EAttr::eaWrap);
 //         return true;
-//      case V_CLASS:
-//         attributes.include(EAttr::eaClass);
-//         return true;
+      case V_CLASS:
+         attributes.include(EAttr::eaClass);
+         return true;
 //      case V_DIRECT:
 //         attributes.include(EAttr::eaDirect);
 //         return true;

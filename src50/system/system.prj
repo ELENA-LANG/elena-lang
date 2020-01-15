@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>5.0.0</version>
+     <version>5.0.1</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -27,6 +27,8 @@
        <include>console.l</include>
        <include>win32_app.l</include>
        <include>collections\list.l</include>
+       <include>text\encoder.l</include>
+       <include>text\win32_encoder.l</include>
        <include>text\textbuffer.l</include>
        <include>io\win32_console.l</include>
      </module>

@@ -513,6 +513,7 @@ public:
       eaParams             = 0x00000200000,
       eaInitializerScope   = 0x00000400000,
       eaSwitch             = 0x00000800000,
+      eaClass              = 0x00001000000,
 
       eaScopeMask          = 0x0000041400A,
       eaObjectMask         = 0x0000021B2F4,
@@ -520,7 +521,6 @@ public:
 //      eaSubj               = 0x00000000400,
 //      eaMssg               = 0x00000000800,
 //      eaWrap               = 0x00000001000,
-//      eaClass              = 0x00000002000,
 //      eaDirect             = 0x00000004000,
 //      eaLazy               = 0x00000008000,
 //      eaInlineArg          = 0x00000010000,

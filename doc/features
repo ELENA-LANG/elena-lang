@@ -35,6 +35,7 @@ Declarations
 Code
   Build-in Variables
     * self vs this self
+    * class / global predicate
   Operators
     * a ?? b / a.msg() ?? b
     * switch operator

@@ -1944,6 +1944,52 @@ procedure __array."readLengthTo$system@Array$@system@ref#1&system@IntNumber[2]"
 
 end
 
+procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@ByteNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
+
+  pushsi 5
+  pushsi 5
+  pushsi 5  
+  pushsi 5  
+  pushsi 5  
+  
+  callextr api : s_encode
+  freei 5
+  ifr labErr 0
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[1]"
+  throw
+  
+end
+
+procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[6]"
+
+  pushsi 5
+  pushsi 5
+  pushsi 5  
+  pushsi 5  
+  pushsi 5  
+  
+  callextr api : s_decode
+  freei 5
+  ifr labErr 0
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[1]"
+  throw
+  
+end
+
+// ; system routines
+
 procedure critical_exception_handler
 
   open 1
@@ -1952,8 +1998,6 @@ procedure critical_exception_handler
   throw
 
 end
-
-// ; system routines
 
 symbol vm_sta_start
 

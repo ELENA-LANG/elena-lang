@@ -55,6 +55,7 @@ constexpr auto HINT_EXTERNALOP      = EAttr::eaExtern;
 constexpr auto HINT_FORWARD         = EAttr::eaForward;
 constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
 constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
+constexpr auto HINT_CLASSREF        = EAttr::eaClass;
 
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
@@ -6064,6 +6065,12 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          mssgNode.set(lxCastOperation, 0);
       }
       else scope.raiseError(errInvalidOperation, node);
+   }
+   else if (mode.testAndExclude(HINT_CLASSREF)) {
+      ref_t typeRef = resolveTypeAttribute(current, scope, false);
+      result = mapClassSymbol(scope, typeRef);
+
+      recognizeTerminal(current, result, scope, mode);
    }
    else if (mode.testAndExclude(HINT_REFOP)) {
       result = compileReferenceExpression(current, scope, mode);
