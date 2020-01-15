@@ -70,7 +70,7 @@ namespace text
         {
             int newLength := len;
             
-            newLength := newLength + (theLength.Length);
+            newLength := newLength + theLength.Value;
             
             int bufferLength := theBuffer.Length;
             
@@ -121,7 +121,7 @@ namespace text
         {
             self.reserve(1);
             
-            theBuffer[cast int(theLength)] := ch;
+            theBuffer[theLength.Value] := ch;
             
             theLength.append(1)
         }
