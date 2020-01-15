@@ -1,4 +1,4 @@
-                      ELENA Language Project V. 5.0.0
+                      ELENA Language Project V. 5.0
                         (C)2005-2020  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
@@ -30,8 +30,8 @@ For more information see at http://elenalang.sourceforge.net/
 * OS requirements
 ****************************************************************************
 
- - Windows XP(with some limitations) / 7 / 8 / 10, x86
- - Linux I386 (no longer maintained)
+ - Windows 7 / 8 / 10, x86
+ - Linux I386
 
 ****************************************************************************
 * License
@@ -109,6 +109,6 @@ in the folder <app root>\examples.
 * ELENA Project Source code
 ****************************************************************************
 
-The project source code is compiled with Visual Studio 2019
+The project source code is compiled with Visual Studio 2017
 
-The project files could be found at https://github.com/ELENA-LANG/elena-lang
+The project files could be found in <app root>\elenasrc2 folder.
