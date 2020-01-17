@@ -2,7 +2,7 @@ import system;
 //import system'collections;
 //import system'routines;
 //import system'calendar;
-//import system'text;
+import system'text;
 ////import system'dynamic.
 //
 ////// --- convertors ---
@@ -39,25 +39,25 @@ singleton stringExConvertor
 //
 //    string convert(IntMatrix a)
 //        = intmatrixExConvertor.toString(a);
-//
-//    string convert(Indexer it)
-//    {
-//        auto output := new TextBuilder();
-//        while (it.Available)
-//        {
-//            output.write(it.get().toString());
-//            output.write:",";
-//            
-//            it.appendIndex(1)
-//        };
-//        
-//        int length := output.Length;
-//        if (0 < length)
-//            { output.Length := -1 + length };
-//        
-//        ^ output
-//    }
-//
+
+    string convert(Indexer it)
+    {
+        auto output := new TextBuilder();
+        while (it.Available)
+        {
+            output.write(it.get().toString());
+            output.write:",";
+            
+            it.appendIndex(1)
+        };
+        
+        int length := output.Length;
+        if (0 < length)
+            { output.Length := -1 + length };
+        
+        ^ output
+    }
+
 //    string convert(Enumerator en)
 //    {
 //        auto output := new TextBuilder();
@@ -80,9 +80,9 @@ singleton stringExConvertor
 //
 //    string convert(Enumerable o)
 //        <= convert(o.enumerator());
-//
-//    string convert(Indexable o)
-//        <= convert(o.indexer());
+
+    string convert(Indexable o)
+        <= convert(o.indexer());
 
     string convert(o)
         = stringConvertor.convert(o);

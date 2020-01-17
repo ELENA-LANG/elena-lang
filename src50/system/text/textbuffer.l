@@ -97,7 +97,7 @@ namespace text
             {
                 self.reserve(length);
                 
-                s.save(theLength.Length, theBuffer, ref length);
+                s.save(theLength.Value, theBuffer, ref length);
                 
                 theLength.append(length)
             }

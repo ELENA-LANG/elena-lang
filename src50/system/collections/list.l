@@ -873,8 +873,9 @@ namespace collections
         get bool Available()
         {
             int length := theList.Length;
+            int index := theIndex.Value;
             
-            ^ length > (cast int(theIndex))
+            ^ length > index
         }
     
         /// Returns the current member

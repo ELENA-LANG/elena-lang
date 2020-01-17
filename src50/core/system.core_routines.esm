@@ -1946,10 +1946,10 @@ end
 
 procedure __array."copy$system@Array$system@IntNumber$system@IntNumber$system@Array[4]"
 
-  pushsi 5
-  pushsi 5
-  pushsi 5  
-  pushsi 5  
+  pushsi 4
+  pushsi 4
+  pushsi 4  
+  pushsi 4  
 
   callextr api : nsubcopy
   freei 4
