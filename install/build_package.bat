@@ -11,6 +11,7 @@ md %~dp0\output\examples
 md %~dp0\output\examples\console 
 md %~dp0\output\examples\console\helloworld 
 md %~dp0\output\examples\console\sum
+md %~dp0\output\examples\console\words
 
 copy %~dp0\..\bin\asm2binx.exe %~dp0\output\bin
 copy %~dp0\..\bin\elc.exe %~dp0\output\bin
@@ -98,6 +99,9 @@ copy %~dp0\..\examples\console\helloworld\*.prj %~dp0\output\examples\console\he
 
 copy %~dp0\..\examples\console\sum\*.l %~dp0\output\examples\console\sum
 copy %~dp0\..\examples\console\sum\*.prj %~dp0\output\examples\console\sum
+
+copy %~dp0\..\examples\console\words\*.l %~dp0\output\examples\console\words
+copy %~dp0\..\examples\console\words\*.prj %~dp0\output\examples\console\words
 
 7z a %~dp0\output\%1.zip %~dp0\output\*.* -r
 

@@ -22,7 +22,7 @@ constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
 // attributes / prmitive types
 
 /// modificator
-//constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
+constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
 //constexpr auto V_SCRIPTSELFMODE  = 0x80006002u;
 //constexpr auto V_AUTOSIZE        = 0x80006003u;
 constexpr auto V_NODEBUGINFO     = 0x80006004u;
@@ -514,6 +514,7 @@ public:
       eaSwitch             = 0x00000800000,
       eaClass              = 0x00001000000,
       eaYieldExpr          = 0x00002000000,
+      eaIgnoreDuplicates   = 0x00004000000,
 
       eaScopeMask          = 0x0000041400A,
       eaObjectMask         = 0x0000021B2F4,
@@ -524,7 +525,6 @@ public:
 //      eaDirect             = 0x00000004000,
 //      eaLazy               = 0x00000008000,
 //      eaInlineArg          = 0x00000010000,
-//      eaIgnoreDuplicates   = 0x00000020000,
 //      eaYield              = 0x00000040000,
 //eaAutoSize           = 0x00002000000,
 //

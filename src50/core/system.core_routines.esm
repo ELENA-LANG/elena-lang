@@ -1944,6 +1944,19 @@ procedure __array."readLengthTo$system@Array$@system@ref#1&system@IntNumber[2]"
 
 end
 
+procedure __array."copy$system@Array$system@IntNumber$system@IntNumber$system@Array[4]"
+
+  pushsi 5
+  pushsi 5
+  pushsi 5  
+  pushsi 5  
+
+  callextr api : nsubcopy
+  freei 4
+  quitn 4
+  
+end
+
 procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@ByteNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
 
   pushsi 5

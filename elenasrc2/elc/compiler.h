@@ -667,8 +667,6 @@ private:
 //      bool         genericMethod;
 //      bool         yieldMethod;
 //
-//      bool         ignoreDuplicates; // used for code templates, should be applied only to the statement
-      
       int reserved1, allocated1; // managed scope stack allocation
       int reserved2, allocated2; // unmanaged scope stack allocation
 
@@ -693,13 +691,6 @@ private:
       {
          locals.add(local, Parameter(level, class_ref, element_ref, size));
       }
-
-//      // check if a local was declared in one of nested code scopes
-//      bool checkLocal(ident_t local)
-//      {
-//         ObjectInfo info = mapTerminal(local, false, EAttr::eaNone);
-//         return info.kind == okLocal || info.kind == okLocalAddress;
-//      }
 
 //      ObjectInfo mapGlobal(ident_t identifier);
 
@@ -783,8 +774,10 @@ private:
 
    struct ExprScope : public Scope
    {
-      int tempAllocated1;
-      int tempAllocated2;
+      bool ignoreDuplicates; // used for code templates, should be applied only to the statement
+
+      int  tempAllocated1;
+      int  tempAllocated2;
 
       Map<ClassInfo::Attribute, int> tempLocals;
 
@@ -829,6 +822,13 @@ private:
       bool isInitializer()
       {
          return getMessageID() == moduleScope->init_message;
+      }
+
+      // check if a local was declared in one of nested code scopes
+      bool checkLocal(ident_t local)
+      {
+         ObjectInfo info = mapTerminal(local, false, EAttr::eaNone);
+         return info.kind == okLocal || info.kind == okLocalAddress;
       }
 
       ObjectInfo mapGlobal(ident_t identifier);

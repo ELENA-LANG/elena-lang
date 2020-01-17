@@ -106,6 +106,12 @@ struct FrameHeader
    pos_t previousFrame;
 };
 
+struct GCRoot
+{
+   void*  stackPtr;
+   size_t size;
+};
+
 // --- SystemRoutineProvider ---
 
 static class SystemRoutineProvider
@@ -140,7 +146,7 @@ public:
 
    static void CloseFrame(SystemEnv* env, FrameHeader* frameHeader);
 
-   static void GCRoutine();
+   static void GCRoutine(GCTable* table, GCRoot* roots);
 
 } __routineProvider;
 

@@ -133,16 +133,16 @@ public sealed Array<T> : Indexable<T>
 //    template_subj getAt : aParam
 //        <= getAt(T<int>(aParam)).
 
-//    T[] clone()
-//    {
-//        int len := self.Length;
-//        T[] copy := new T[](len);
-//        for(int i := 0, i < len, i+=1) {
-//            copy[i] := theArray[i]
-//        };
-//        
-//        ^ copy
-//    }
+    T[] clone()
+    {
+        int len := self.Length;
+        T[] copy := new T[](len);
+        for(int i := 0, i < len, i+=1) {
+            copy[i] := theArray[i]
+        };
+        
+        ^ copy
+    }
 }
 
 // --- Array template ---
@@ -1448,12 +1448,12 @@ public sealed Array : Indexable//, Array<object>
 //    constructor copy(Array array)
 //        <= (0, array.Length, array);
     
-//    /// Creates a copy of the provided sub array
-//    constructor copy(int index, int length, Array array)
-//        <= allocate(length)
-//    {
-//        intern system'core_routines'__array.copy(self, index, length, array)
-//    }
+    /// Creates a copy of the provided sub array
+    constructor copy(int index, int length, Array array)
+        <= allocate(length)
+    {
+        intern system'core_routines'__array.copy(self, index, length, array)
+    }
         
 //    constructor single(object singleItem)
 //        <= new(1);
@@ -1506,10 +1506,10 @@ public sealed Array : Indexable//, Array<object>
     Indexer indexer() = new ArrayIndexer(self);
 
 //    object[] Value = theArray;
-//
-//    /// Clones the array
-//    Array clone()
-//        = new Array(self);
+
+    /// Clones the array
+    Array clone()
+        = Array.copy(0, self.Length, self);
 }
 
 // === Convertors ===

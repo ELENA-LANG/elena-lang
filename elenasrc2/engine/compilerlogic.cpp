@@ -1980,9 +1980,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_INLINEARG:
 //         attributes.include(EAttr::eaInlineArg);
 //         return true;
-//      case V_IGNOREDUPLICATE:
-//         attributes.include(EAttr::eaIgnoreDuplicates);
-//         return true;
+      case V_IGNOREDUPLICATE:
+         attributes.include(EAttr::eaIgnoreDuplicates);
+         return true;
       case V_YIELD:
          attributes.include(EAttr::eaYieldExpr);
          return true;

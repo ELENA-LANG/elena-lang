@@ -240,7 +240,7 @@ public interface Func1
     abstract function(param) {}
     
     /// Executes the function for every enumeration item
-    run(Enumerator en)
+    sealed run(Enumerator en)
     {
         while(en.next())
         {
@@ -248,20 +248,20 @@ public interface Func1
         }
     }
     
-//    /// Executes the function for every enumeration item until it returns true
-//    retrieve(Enumerator en)
-//    {
-//        object item := nil;
-//        while (en.next())
-//        {
-//            item := en.get();
-//
-//            if(self(item))
-//                 { ^ item }
-//        };
-//        
-//        ^ nil
-//    }
+    /// Executes the function for every enumeration item until it returns true
+    sealed retrieve(Enumerator en)
+    {
+        object item := nil;
+        while (en.next())
+        {
+            item := en.get();
+
+            if(self(item))
+                 { ^ item }
+        };
+        
+        ^ nil
+    }
 }
 
 public interface Func<T, TResult>

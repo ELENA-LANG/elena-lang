@@ -119,9 +119,13 @@ public extension objectOp
 //////        
 //////        ^ true.
 //////    ]
-//        
-//    bool isEmpty()
-//        = self.Length == 0;
+        
+    bool isEmpty()
+    {
+        int len := self.Length;
+        
+        ^ len == 0;
+    }
         
     bool isNonempty()
     {

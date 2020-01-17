@@ -2,7 +2,7 @@
 /// scope_accessors? modificator? visibility? scope_prefix? scope? type?
 
 /// modificator:
-//#define __ignore_duplicates 80006001h 
+#define __ignore_duplicates 80006001h 
 
 /// scope_accessors:
 #define get         80005001h

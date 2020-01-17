@@ -619,17 +619,17 @@ namespace collections
 //                self.append(e.get())
 //            }
 //        }
-//        
-//        /// Creates the list
-//        internal constructor fromArray(Array array, int length)
-//        {
-//            int capacity := array.Length;
-//            
-//            theCapacity := capacity;
-//            theLength := length;
-//            
-//            theArray := array.clone()
-//        }
+        
+        /// Creates the list
+        internal constructor fromArray(Array array, int length)
+        {
+            int capacity := array.Length;
+            
+            theCapacity := capacity;
+            theLength := length;
+            
+            theArray := array.clone()
+        }
         
         int Length
         {
@@ -798,10 +798,10 @@ namespace collections
         /// Returns the list indexer9
         Indexer indexer() = new ArrayListIndexer(self);
         
-//        /// Returns a list copy
-//        ArrayList clone()
-//            = ArrayList.fromArray(theArray, cast int(theLength));
-//            
+        /// Returns a list copy
+        ArrayList clone()
+            = ArrayList.fromArray(theArray, theLength.Value);
+            
 //        Array cast()
 //            = new Array(0, cast int(theLength), theArray);
 //    

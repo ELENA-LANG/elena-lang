@@ -2928,6 +2928,32 @@ err:
 
 end
 
+procedure coreapi'nsubcopy
+
+  mov  edi, [esp+4]
+  mov  esi, [esp+12]
+  mov  edx, [esp+4]
+  mov  eax, [esp+16]
+  mov  ecx, [esi]
+  mov  ebx, [edx]
+
+  mov  esi, edi
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, [eax + ebx * 4]
+  mov  [esi], edx
+  add  ebx, 1
+  lea  esi, [esi + 4]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+end
+
 procedure coreapi'register_critical_exception_handler
 
   mov  [data : % CORE_ET_TABLE], ebx

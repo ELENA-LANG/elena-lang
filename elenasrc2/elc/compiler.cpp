@@ -928,6 +928,8 @@ Compiler::ExprScope :: ExprScope(CodeScope* parent)
 {
    tempAllocated1 = parent->allocated1;
    tempAllocated2 = parent->allocated2;
+
+   ignoreDuplicates = false;
 }
 
 Compiler::ExprScope :: ExprScope(SourceScope* parent)
@@ -935,6 +937,8 @@ Compiler::ExprScope :: ExprScope(SourceScope* parent)
 {
    tempAllocated1 = -1;
    tempAllocated2 = -1;
+
+   ignoreDuplicates = false;
 }
 
 int Compiler::ExprScope :: newTempLocal()
@@ -5549,13 +5553,11 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 //   if (exprAttr.test(EAttr::eaInlineArg) && !exprAttr.test(EAttr::eaParameter)) {
 //      scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
 //   }
-//
-//   if (exprAttr.test(EAttr::eaIgnoreDuplicates)) {
-//      scope.ignoreDuplicates = true;
-//
-//      exprAttr.exclude(EAttr::eaIgnoreDuplicates);
-//   }
-//
+
+   if (exprAttr.testAndExclude(EAttr::eaIgnoreDuplicates)) {
+      scope.ignoreDuplicates = true;
+   }
+
 //   if (exprAttr.test(EAttr::eaCast) || exprAttr.test(EAttr::eaNewOp)) {
 //      SNode msgNode = goToNode(current, lxMessage, lxCollection);
 //      if (msgNode == lxCollection && !exprAttr.test(EAttr::eaCast)) {
@@ -5602,11 +5604,11 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
       if (!typeRef)
          typeRef = scope.moduleScope->superReference;
 
-//      // COMPILER MAGIC : make possible to ignore duplicates - used for some code templates
-//      if (scope.ignoreDuplicates && scope.checkLocal(current.identifier())) {
-//         // ignore duplicates
-//      }
-      /*else */declareVariable(current, scope, typeRef/*, dynamicSize*/, !exprAttr.testany(HINT_REFOP));
+      // COMPILER MAGIC : make possible to ignore duplicates - used for some code templates
+      if (scope.ignoreDuplicates && scope.checkLocal(current.identifier())) {
+         // ignore duplicates
+      }
+      else declareVariable(current, scope, typeRef/*, dynamicSize*/, !exprAttr.testany(HINT_REFOP));
    }
 
    return exprAttr;

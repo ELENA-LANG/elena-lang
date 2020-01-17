@@ -1,10 +1,10 @@
 //import system'collections;
-//
-//// === actions ===
-//
-//public ifOrdered
-//    = (f,l => f < l);
-//
+
+// === actions ===
+
+public ifOrdered
+    = (f,l => f < l);
+
 ////public symbol ifDecrescent
 ////    = (:aFormer:aLater) [ ^aFormer > aLater ].
 //
@@ -190,13 +190,13 @@ public extension enumerableOp
 ////
 //////    safeSeek : aValue
 //////        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
-//
-//    seekFor(val)
-//        = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
-//
-//    bool ifExists(val)
-//        = nil != self.seekFor(val);
-//
+
+    seekFor(val)
+        = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
+
+    bool ifExists(val)
+        = nil != self.seekFor(val);
+
 //////    equal enumerable:list
 //////    [
 //////        ifnot (self length == list length)
@@ -418,9 +418,9 @@ public extension enumerableOp
 //        }
 //    }    
 //}    
-//
-//public extension indexableOp
-//{
+
+public extension indexableOp
+{
 //////    exchange : anIndex1 : anIndex2
 //////        = self~indexableOp exchange int:anIndex1 int:anIndex2.
 //        
@@ -516,20 +516,20 @@ public extension enumerableOp
 //        
 //        ^ true
 //    }
-//
-//    sort(Func2 compareFunc)
-//    {
-//        QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
-//    }
-//    
-//    ascendant()
-////        = self.clone().sort(ifOrdered);
-//    {
-//        var copy := self.clone();
-//        
-//        ^ copy.sort(ifOrdered)
-//    }
-//
+
+    sort(Func2 compareFunc)
+    {
+        QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
+    }
+    
+    ascendant()
+//        = self.clone().sort(ifOrdered);
+    {
+        var copy := self.clone();
+        
+        ^ copy.sort(ifOrdered)
+    }
+
 //    isAscendant()
 //        = self.isSorted(ifOrdered);
 //
@@ -588,8 +588,8 @@ public extension enumerableOp
 //        
 //        ^ self
 //    }    
-//}
-//
+}
+
 //// --- stringListOp ---
 //
 //singleton stringController

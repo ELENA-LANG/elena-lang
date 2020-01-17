@@ -11,17 +11,16 @@ In development:
               xdev - amd64
                 * compile elenart64.dll
 
-              xdev debugger
-                * step over several expression : message call / array operation
-
               xdev elena50
-                * TokenEnumerator
                 * ifExists, forEachWord, ascendant extensions
                 * words samples
 
               xdev elena50
                 * generic handler
                 * collections
+
+              xdev debugger
+                * step over several expression : message call / array operation
 
               xdev elena50
                 * if two extensions can be used for the given argumnet list
