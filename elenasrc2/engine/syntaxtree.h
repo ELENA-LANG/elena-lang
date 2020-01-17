@@ -51,8 +51,6 @@ enum LexicalType
    lxClassImport              = 0x00001D,
    lxFinalblock               = 0x00001E,
    lxExtensionTemplate        = 0x00001F,
-   lxYieldContext             = 0x000020,
-   lxYieldLocals              = 0x000021,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -198,6 +196,8 @@ enum LexicalType
    lxOption                   = 0x058251,
    lxYieldDispatch            = 0x058260,
    lxYieldReturning           = 0x058261,
+   lxYieldContext             = 0x018270,
+   lxYieldLocals              = 0x018271,
 
    // attributes
    lxAttribute                = 0x000F00,

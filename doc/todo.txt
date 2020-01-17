@@ -15,6 +15,7 @@ In development:
                 * yield method
                 * reset yield locals field on yield return to mark mg->yg reference
                 * test yield method
+                * yield tutorial
 
               xdev debugger
                 * step over several expression : message call / array operation

@@ -22,7 +22,7 @@
 #define abstract    80003002h
 #define closed      80003003h
 #define predefined  80003005h
-//#define yieldable   80004006h
+#define yieldable   80003006h
 
 /// scope_prefix:
 #define const       80002001h
@@ -61,7 +61,7 @@
 ////#8000101B = nonstructural;
 #define auto        8000101Ch
 //#define attribute   8000101Fh
-//#define yield       80001020h
+#define yield       80001020h
 #define namespace   80001021h
 #define meta        80001022h
 
