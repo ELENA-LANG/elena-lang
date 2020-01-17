@@ -11,12 +11,6 @@ In development:
               xdev - amd64
                 * compile elenart64.dll
 
-              xdev elena50
-                * yield method
-                * test yield method
-                * reset yield locals field on yield return to mark mg->yg reference
-                * yield tutorial
-
               xdev debugger
                 * step over several expression : message call / array operation
 
