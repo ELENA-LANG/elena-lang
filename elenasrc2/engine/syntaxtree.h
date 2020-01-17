@@ -51,6 +51,8 @@ enum LexicalType
    lxClassImport              = 0x00001D,
    lxFinalblock               = 0x00001E,
    lxExtensionTemplate        = 0x00001F,
+   lxYieldContext             = 0x000020,
+   lxYieldLocals              = 0x000021,
 
    // derivation symbols
    lxToken                    = 0x001010,
@@ -194,6 +196,8 @@ enum LexicalType
    lxExternFrame              = 0x058240,
    lxSwitching                = 0x059250,
    lxOption                   = 0x058251,
+   lxYieldDispatch            = 0x058260,
+   lxYieldReturning           = 0x058261,
 
    // attributes
    lxAttribute                = 0x000F00,
@@ -271,8 +275,6 @@ enum LexicalType
 //   lxResultFieldIndex         = 0x00A11D, // arg -offset
 //   lxClassRefField            = 0x008120, // arg - self instance offset
 //   lxBaseField                = 0x00A122,
-//   lxPrimitive                = 0x00A123, // arg * 4 = size
-//   lxPrimCollection           = 0x00A124, // arg - length
 //
 //   lxCondBoxing               = 0x00C001, // conditional boxing, arg - size
 //   lxBoxing                   = 0x00C002, // boxing of the argument, arg - size
@@ -961,10 +963,10 @@ public:
       {
          return findChild(type1, type2, type3) != lxNone;
       }
-      //bool existSubChild(LexicalType type1, LexicalType type2)
-      //{
-      //   return findSubNode(type1, type2) != lxNone;
-      //}
+      bool existSubChild(LexicalType type1, LexicalType type2)
+      {
+         return findSubNode(type1, type2) != lxNone;
+      }
       //bool existSubChild(LexicalType type1)
       //{
       //   return findSubNode(type1) != lxNone;
@@ -1317,18 +1319,18 @@ public:
       return counter;
    }
 
-//   static bool existChild(Node node, LexicalType type, ref_t arg)
-//   {
-//      Node current = node.firstChild();
-//      while (current != lxNone) {
-//         if (current == type && current.argument == arg)
-//            return true;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return false;
-//   }
+   static bool existChild(Node node, LexicalType type, ref_t arg)
+   {
+      Node current = node.firstChild();
+      while (current != lxNone) {
+         if (current == type && current.argument == arg)
+            return true;
+
+         current = current.nextNode();
+      }
+
+      return false;
+   }
 
    static bool existSibling(Node node, LexicalType type1)
    {

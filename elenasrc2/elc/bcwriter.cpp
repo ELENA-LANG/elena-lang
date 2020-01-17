@@ -6758,9 +6758,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxCreatingStruct:
          generateCreating(tape, node, scope);
          break;
-//      case lxYieldReturing:
-//         generateYieldReturn(tape, node);
-//         break;
+      case lxYieldReturning:
+         generateYieldReturn(tape, node, scope);
+         break;
       case lxBoxableExpression:
       case lxArgBoxableExpression:
          throw InternalError("Unboxed expression");
@@ -6958,9 +6958,9 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxBinaryVariable:
             generateDebugInfo(tape, current);
             break;
-//         case lxYieldDispatch:
-//            generateYieldDispatch(tape, current);
-//            break;
+         case lxYieldDispatch:
+            generateYieldDispatch(tape, current, scope);
+            break;
          case lxEOP:
             scope.debugBlockStarted = true;
             if (current.firstChild() == lxBreakpoint)
@@ -7136,28 +7136,26 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
    }
 }
 
-//void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   //; jump if state is set
-//   // aloadfi 1
-//   // aloadai index
-//   // nload
-//   // ifn labStart 0
-//   // nop
-//   // ajumpi 0
-//   // labStart:
-//
-//   tape.newLabel();
-//
-//   tape.write(bcALoadFI, 1, bpFrame);
-//   tape.write(bcALoadAI, node.argument);
-//   tape.write(bcNLoad);
-//   tape.write(bcIfN, baCurrentLabel, 0);
-//   tape.write(bcNop);
-//   tape.write(bcAJumpI, 0);
-//   tape.setLabel();
-//}
-//
+void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   generateExpression(tape, node, scope);
+   
+   //; jump if state is set
+   // load
+   // ifn labStart 0
+   // nop
+   // ajumpi 0
+   // labStart:
+
+   tape.newLabel();
+
+   tape.write(bcLoad);
+   tape.write(bcIfN, baCurrentLabel, 0);
+   tape.write(bcNop);
+   tape.write(bcJumpI, 0);
+   tape.setLabel();
+}
+
 //void ByteCodeWriter :: generateYieldStop(CommandTape& tape, SyntaxTree::Node node)
 //{
 //   // ; clear state
@@ -7171,33 +7169,33 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
 //   tape.write(bcDCopy, 0);
 //   tape.write(bcNSave);
 //}
-//
-//void ByteCodeWriter :: generateYieldReturn(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   // address labNext
-//   // aloadfi 1
-//   // dcopye
-//   // bloadai index
-//   // nsavee
-//
-//   // <expr>
-//
-//   // jump labReturn
-//   // labNext:
-//
-//   tape.newLabel();
-//   tape.write(bcAddress, baCurrentLabel);
-//   tape.write(bcALoadFI, 1, bpFrame);
-//   tape.write(bcDCopyE);
-//   tape.write(bcBLoadAI, node.argument);
-//   tape.write(bcNSave);
-//
-//   generateExpression(tape, node);
-//
-//   gotoEnd(tape, baFirstLabel);
-//
-//   tape.setLabel();
-//}
+
+void ByteCodeWriter :: generateYieldReturn(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   // address labNext
+   // peekfi 1
+   // geti index
+   // save
+
+   // <expr>
+
+   // jump labReturn
+   // labNext:
+
+   tape.newLabel();
+   tape.write(bcAddress, baCurrentLabel);
+   tape.write(bcPeekFI, 1, bpFrame);
+   tape.write(bcGetI, node.argument);
+   tape.write(bcSave);
+
+   scope.clear();
+
+   generateExpression(tape, node, scope);
+
+   gotoEnd(tape, baFirstLabel);
+
+   tape.setLabel();
+}
 
 void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef)
 {

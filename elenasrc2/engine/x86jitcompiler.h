@@ -109,7 +109,7 @@ protected:
    //friend void compilePushE(int opcode, x86JITScope& scope);
    friend void compilePushD(int opcode, x86JITScope& scope);
    friend void compileCallR(int opcode, x86JITScope& scope);
-//   friend void compileJumpN(int opcode, x86JITScope& scope);
+   friend void compileJumpN(int opcode, x86JITScope& scope);
    friend void compileMCopy(int opcode, x86JITScope& scope);
    friend void compileASaveR(int opcode, x86JITScope& scope);
 //   friend void compileSCopyF(int opcode, x86JITScope& scope);
@@ -257,7 +257,7 @@ void compilePushSI(int opcode, x86JITScope& scope);
 //void compilePushE(int opcode, x86JITScope& scope);
 void compilePushD(int opcode, x86JITScope& scope);
 void compileCallR(int opcode, x86JITScope& scope);
-//void compileJumpN(int opcode, x86JITScope& scope);
+void compileJumpN(int opcode, x86JITScope& scope);
 void compileMCopy(int opcode, x86JITScope& scope);
 void compileASaveR(int opcode, x86JITScope& scope);
 //void compileSCopyF(int opcode, x86JITScope& scope);

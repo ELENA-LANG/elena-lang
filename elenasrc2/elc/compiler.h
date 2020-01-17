@@ -151,8 +151,8 @@ public:
 
       okExternal,
       okInternal,
-//      okPrimitive,                    // param * 4 = size 
-//      okPrimCollection                // param - length
+      //okPrimitive,                    // param * 4 = size 
+      //okPrimCollection                // param - length
    };
 
    struct ObjectInfo
@@ -573,20 +573,28 @@ private:
       bool         nestedMode;
 //      bool         subCodeMode;       
       bool         abstractMethod;
-//      bool         yieldMethod;
+      bool         yieldMethod;
       bool         embeddableRetMode;
       bool         targetSelfMode;        // used for script generated methods - self refers to __target
 ////      bool         dispatchMode;
       bool         constMode;
 
-//      ref_t getAttribute(MethodAttribute attr, bool ownerClass = true)
-//      {
-//         ClassInfo::Attribute key(message, attr);
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-//
-//         return scope->info.methodHints.get(key);
-//      }
-//
+      int          preallocated;
+
+      ref_t getAttribute(MethodAttribute attr, bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope->getAttribute(message, attr);
+      }
+
+      void addAttribute(MethodAttribute attr, ref_t argument, bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         scope->addAttribute(message, attr, argument);
+      }
+
 //      void setAttribute(MethodAttribute attr, ref_t value, bool ownerClass = true)
 //      {
 //         ClassInfo::Attribute key(message, attr);
@@ -805,6 +813,19 @@ private:
          return scope ? scope->reference : 0;
       }
 
+      ref_t getAttribute(ref_t message, MethodAttribute attr, bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope->getAttribute(message, attr);
+      }
+
+      ref_t getAttribute(MethodAttribute attr)
+      {
+         MethodScope* methodScope = (MethodScope*)getScope(Scope::ScopeLevel::slMethod);
+         return methodScope ? methodScope->getAttribute(attr) : 0;
+      }
+
       bool isInitializer()
       {
          return getMessageID() == moduleScope->init_message;
@@ -1017,8 +1038,8 @@ private:
 //
 //   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileSubjectReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
-//   ObjectInfo compileYieldExpression(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
-//
+   ObjectInfo compileYieldExpression(SNode objectNode, ExprScope& scope, EAttr mode);
+
 //   bool writeSizeArgument(SyntaxWriter& writer);
 //
 //   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
@@ -1098,7 +1119,7 @@ private:
    ObjectInfo compileInternalCall(SNode node, ExprScope& scope, ref_t message, ref_t signature, ObjectInfo info);
 
    void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, 
-      bool& withFrame, int& preallocated);
+      bool& withFrame);
    void compileConstructorDispatchExpression(SNode node, CodeScope& scope);
    void compileResendExpression(SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SNode node, CodeScope& scope);
@@ -1119,9 +1140,8 @@ private:
    void compileDispatcher(SNode node, MethodScope& scope, /*bool withGenericMethods = false, */bool withOpenArgGenerics = false);
 
    void beginMethod(SNode node, MethodScope& scope);
-   void endMethod(SNode node, MethodScope& scope, int preallocated);
-   void compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope,
-      int& preallocated);
+   void endMethod(SNode node, MethodScope& scope);
+   void compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope);
 
    void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
    void compileEmbeddableMethod(SNode node, MethodScope& scope);
@@ -1130,9 +1150,9 @@ private:
    void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
    void compileInitializer(SNode node, MethodScope& scope);
 
-//   void compileYieldDispatch(SyntaxWriter& writer, int index, int index2, int preallocated);
+   void compileYieldDispatch(SNode node, MethodScope& scope);
 //   void compileYieldEnd(SyntaxWriter& writer, int index);
-//   void compileYieldableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void compileYieldableMethod(SNode node, MethodScope& scope);
 
    void compileSpecialMethodCall(SNode& node, ClassScope& classScope, ref_t message);
 
@@ -1291,8 +1311,7 @@ public:
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);
-//   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex, 
-//      LexicalType objType, int objArg);
+   virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex);
 ////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne);

@@ -295,6 +295,8 @@ ELENA byte codes (or ecodes)
 
  flag                       - acc::VMT::flag >> index 
 
+ jumpi i                    - redirect to acc[i] address
+ 
  jumprm r, m                - jumps directly the method resolved by JIT by r and m
  
  jumpvi i                   - redirect to acc::VMT[i] method
@@ -549,8 +551,6 @@ ELENA byte codes (or ecodes)
  ------------------
  acallvd                    - call acc::VMT[index]
 
- ajumpi i                   - redirect to acc[i] address
- 
  bcreate                    - create the object with size=index and vmt=acc, out : acc  (*index and ext affected)
  
  check                      - acc is-instance-of base ? -1 : 0

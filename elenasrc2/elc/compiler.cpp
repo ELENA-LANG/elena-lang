@@ -56,7 +56,9 @@ constexpr auto HINT_FORWARD         = EAttr::eaForward;
 constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
 constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
 constexpr auto HINT_CLASSREF        = EAttr::eaClass;
+constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
 
+//constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 //constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
@@ -70,8 +72,6 @@ constexpr auto HINT_CLASSREF        = EAttr::eaClass;
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
 //constexpr auto HINT_RETEXPR         = EAttr::eaRetExpr;
 //constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
-//constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
-//constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 
 // scope modes
 constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
@@ -752,9 +752,11 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 //   this->genericClosure = false;
    this->embeddableRetMode = false;
    this->targetSelfMode = false;
-//   this->yieldMethod = false;
+   this->yieldMethod = false;
 ////   this->dispatchMode = false;
    this->constMode = false;
+
+   this->preallocated = 0;
 }
 
 ObjectInfo Compiler::MethodScope :: mapSelf()
@@ -2866,78 +2868,61 @@ ObjectInfo Compiler :: compileTypeSymbol(SNode node, ExprScope& scope, EAttr mod
 //
 //   return result;
 //}
-//
-//ObjectInfo Compiler :: compileYieldExpression(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode)
-//{
-//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::slMethod);
-//   int index = methodScope->getAttribute(maYieldContext);
-//   int index2 = methodScope->getAttribute(maYieldLocals);
-//   int preallocated = methodScope->getAttribute(maYieldPreallocated);
-//
-//   EAttrs objectMode(mode, HINT_YIELD_EXPR);
-//   objectMode.include(HINT_NOPRIMITIVES);
-//
-//   // save context
-//   writer.newNode(lxExpression);
-//   writer.appendNode(lxTapeArgument, index);
-//   writer.newNode(lxCopying);
-//   writer.newNode(lxFieldExpression);
-//   writer.appendNode(lxField, index);
-//   writer.appendNode(lxResultFieldIndex, 1);
-//   writer.closeNode();
-//   writer.appendNode(lxLocalAddress, -2);
-//
-//   writer.closeNode();
-//   writer.closeNode();
-//
-//   // save locals
-//   writer.newNode(lxExpression);
-//   writer.appendNode(lxTapeArgument, index2);
-//   writer.newNode(lxCopying, 0);
-//   writer.appendNode(lxField, index2);
-//
-//   writer.newNode(lxSeqExpression);
-//   writer.appendNode(lxTapeArgument, index2);
-//   writer.appendNode(lxLocalAddress, preallocated);
-//   writer.closeNode();
-//
-//   writer.closeNode();
-//   writer.closeNode();
-//
-//   ObjectInfo retVal;
-//   if (scope.withEmbeddableRet()) {
-//      retVal = scope.mapTerminal(SELF_VAR, false, EAttr::eaNone);
-//
-//      // HOTFIX : the node should be compiled as returning expression
-//      LexicalType ori = objectNode.type;
-//      objectNode = lxReturning;
-//      compileEmbeddableRetExpression(writer, objectNode, scope);
-//      objectNode = ori;
-//
-//      writer.newBookmark();
-//      writer.appendNode(lxBreakpoint, dsStep);
-//      writeTerminal(writer, objectNode, scope, retVal, HINT_NODEBUGINFO | HINT_NOBOXING);
-//
-//      writer.inject(lxYieldReturing, index);
-//      writer.closeNode();
-//
-//      writer.removeBookmark();
-//   }
-//   else {
-//      writer.newBookmark();
-//
-//      writer.appendNode(lxBreakpoint, dsStep);
-//      retVal = compileObject(writer, objectNode, scope, 0, objectMode);
-//
-//      writer.inject(lxYieldReturing, index);
-//      writer.closeNode();
-//
-//      writer.removeBookmark();
-//   }
-//
-//   return retVal;
-//}
-//
+
+ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope, EAttr mode)
+{
+   CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
+   MethodScope* methodScope = (MethodScope*)codeScope->getScope(Scope::ScopeLevel::slMethod);
+   int index = methodScope->getAttribute(maYieldContext);
+   int index2 = methodScope->getAttribute(maYieldLocals);
+
+   EAttrs objectMode(mode);
+   objectMode.include(HINT_NOPRIMITIVES);
+
+   objectNode.injectAndReplaceNode(lxSeqExpression);
+   SNode retExprNode = objectNode.firstChild(lxObjectMask);
+
+   // save context
+   SNode exprNode = objectNode.insertNode(lxExpression);
+   SNode copyNode = exprNode.appendNode(lxCopying, codeScope->reserved2);
+   SNode fieldNode = copyNode.appendNode(lxFieldExpression);
+   fieldNode.appendNode(lxSelfLocal, 1);
+   fieldNode.appendNode(lxField, index);
+   fieldNode.appendNode(lxField, 1);
+   copyNode.appendNode(lxLocalAddress, -2);
+
+   // save locals
+   SNode expr2Node = objectNode.insertNode(lxExpression);
+   SNode copy2Node = expr2Node.appendNode(lxCopying, codeScope->reserved1 - methodScope->preallocated);
+   SNode field2Node = copy2Node.appendNode(lxFieldExpression);
+   field2Node.appendNode(lxSelfLocal, 1);
+   field2Node.appendNode(lxField, index2);
+   copy2Node.appendNode(lxLocalAddress, methodScope->preallocated);
+
+   ObjectInfo retVal;
+   if (codeScope->withEmbeddableRet()) {
+      retVal = scope.mapTerminal(SELF_VAR, false, EAttr::eaNone);
+
+      // HOTFIX : the node should be compiled as returning expression
+      LexicalType ori = objectNode.type;
+      objectNode = lxReturning;
+      compileEmbeddableRetExpression(retExprNode, scope);
+      objectNode = ori;
+
+      recognizeTerminal(objectNode, retVal, scope, HINT_NODEBUGINFO | HINT_NOBOXING);
+
+      retExprNode.set(lxYieldReturning, index);
+   }
+   else {
+      //writer.appendNode(lxBreakpoint, dsStep);
+      retVal = compileExpression(retExprNode, scope, 0, objectMode);
+
+      retExprNode.injectAndReplaceNode(lxYieldReturning, index);
+   }
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope)
 //{
 //   ObjectInfo retVal;
@@ -4396,6 +4381,22 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
       }
       else scope.raiseError(errInvalidOperation, node);
    }
+   else if (sourceNode == lxYieldContext) {
+      int size = scope.getAttribute(sourceNode.argument, maYieldContextLength);
+
+      sourceNode.set(lxCreatingStruct, size);
+
+      node.set(lxAssigning, 0);
+   }
+   else if (sourceNode == lxYieldLocals) {
+      int size = scope.getAttribute(sourceNode.argument, maYieldLocalLength);
+      if (size != 0) {
+         sourceNode.set(lxCreatingClass, size);
+
+         node.set(lxAssigning, 0);
+      }
+      else node = lxIdle;
+   }
    else exprVal = compileExpression(sourceNode, scope, targetRef, assignMode);
 
    if (exprVal.kind == okExternal) {
@@ -5803,23 +5804,25 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okInternal:
          terminal.set(lxInternalRef, object.param);
          return;
-//      case okPrimitive:
-//      case okPrimCollection:
-//         writer.newBookmark();
-//         if (EAttrs::test(mode, HINT_AUTOSIZE) && !writeSizeArgument(writer))
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         writer.appendNode(object.kind == okPrimitive ? lxCreatingStruct : lxCreatingClass, object.param);
-//         writer.inject(lxSeqExpression);
-//         writer.removeBookmark();
-//         break;
+      //case okPrimitive:
+      //case okPrimCollection:
+      //{
+      //   terminal.set(lxSeqExpression);
+      //   SNode exprNode = terminal.appendNode(object.kind == okPrimitive ? lxCreatingStruct : lxCreatingClass, object.param);
+      //   //         writer.newBookmark();
+      //   if (EAttrs::test(mode, HINT_AUTOSIZE) && !writeSizeArgument(exprNode))
+      //      scope.raiseError(errInvalidOperation, terminal);
+
+      //   //         writer.appendNode();
+      //   //         writer.inject(lxSeqExpression);
+      //   //         writer.removeBookmark();
+      //   break;
+      //}
    }
    //
    //   writeTarget(writer, resolveObjectReference(scope, object, false), object.element);
    //
    //      writeTerminalInfo(writer, terminal);
-   //
-   //   writer.closeNode();
 }
 
 ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
@@ -5864,12 +5867,12 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          //      //      // HOTFIX : recognize predefined constant lists
          //      //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
          //      //   break;
-         //      case lxPrimitive:
-         //         object = ObjectInfo(okPrimitive, terminal.argument);
-         //         break;
-         //      case lxPrimCollection:
-         //         object = ObjectInfo(okPrimCollection, terminal.argument);
-         //         break;
+         //case lxPrimitive:
+         //   object = ObjectInfo(okPrimitive, terminal.argument);
+         //   break;
+         //case lxPrimCollection:
+         //   object = ObjectInfo(okPrimCollection, terminal.argument);
+         //   break;
          case lxLiteral:
             object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
             break;
@@ -6076,7 +6079,10 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
       result = compileReferenceExpression(current, scope, mode);
    }
    else if (mode.testAndExclude(HINT_PARAMSOP)) {
-	   result = compileVariadicUnboxing(node, scope, mode);
+	   result = compileVariadicUnboxing(current, scope, mode);
+   }
+   else if (mode.testAndExclude(HINT_YIELD_EXPR)) {
+      compileYieldExpression(current, scope, mode);
    }
    else {
       switch (current.type) {
@@ -6207,9 +6213,6 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectIn
 //
 //   if (targetMode.test(HINT_LAZY_EXPR)) {
 //      objectInfo = compileClosure(writer, current, scope, targetMode);
-//   }
-//   else if (targetMode.test(HINT_YIELD_EXPR)) {
-//      compileYieldExpression(writer, current, scope, targetMode);
 //   }
 //   else objectInfo = compileObject(writer, current, scope, 0, targetMode);
 //
@@ -7099,13 +7102,13 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
    // new stack frame
    // stack already contains previous $self value
    codeScope.allocated1++;
-   int preallocated = codeScope.allocated1;
+   scope.preallocated = codeScope.allocated1;
 
    ObjectInfo retVal = compileCode(body == lxReturning ? body.parentNode() : body, codeScope);
 
    codeScope.syncStack(&scope);
 
-   endMethod(node, scope, preallocated);
+   endMethod(node, scope);
 }
 
 void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope/*, bool lazyMode*/)
@@ -7121,7 +7124,7 @@ void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope/*, bool 
    // new stack frame
    // stack already contains previous $self value
    codeScope.allocated1++;
-   int preallocated = codeScope.allocated1;
+   scope.preallocated = codeScope.allocated1;
 
 //   if (lazyMode) {
 //      compileRetExpression(writer, node, codeScope, EAttr::eaNone);
@@ -7130,7 +7133,7 @@ void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope/*, bool 
 
    codeScope.syncStack(&scope);
 
-   endMethod(node, scope, preallocated);
+   endMethod(node, scope);
 }
 
 void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
@@ -7234,7 +7237,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
 }
 
 void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeScope, ClassScope& classClassScope, 
-   bool& withFrame, int& preallocated)
+   bool& withFrame)
 {
    ResendScope resendScope(&codeScope);
    resendScope.consructionMode = true;
@@ -7270,7 +7273,7 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
       // HOTFIX : take into account saved self variable
       resendScope.tempAllocated1 = codeScope.allocated1;
 
-      preallocated = codeScope.allocated1;
+      methodScope->preallocated = codeScope.allocated1;
    }
    else node.set(lxExpression, 0);
 
@@ -7466,18 +7469,18 @@ void Compiler :: compileEmbeddableMethod(SNode node, MethodScope& scope)
       compileAbstractMethod(cloneNode, privateScope);
    }
    else {
-      //if (scope.yieldMethod) {
-      //   compileYieldableMethod(writer, dummyTree.readRoot(), privateScope);
-      //   //compileMethod(writer, node, privateScope);
+      if (scope.yieldMethod) {
+         compileYieldableMethod(cloneNode, privateScope);
+         //compileMethod(writer, node, privateScope);
 
-      //   compileYieldableMethod(writer, node, scope);
-      //}
-      //else {
+         compileYieldableMethod(node, scope);
+      }
+      else {
          compileMethod(cloneNode, privateScope);
          //compileMethod(node, privateScope);
 
          compileMethod(node, scope);
-      //}
+      }
    }
 }
 
@@ -7490,9 +7493,9 @@ void Compiler :: beginMethod(SNode node, MethodScope& scope)
    declareProcedureDebugInfo(node, scope, true/*, test(scope.getClassFlags(), elExtension)*/);
 }
 
-void Compiler :: endMethod(SNode node, MethodScope& scope, int preallocated)
+void Compiler :: endMethod(SNode node, MethodScope& scope)
 {
-   node.insertNode(lxAllocated, scope.reserved1 - preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
+   node.insertNode(lxAllocated, scope.reserved1 - scope.preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
    node.insertNode(lxArgCount, getArgCount(scope.message)/* + scope.rootToFree*/);
    node.insertNode(lxReserved, scope.reserved2);
 }
@@ -7609,7 +7612,7 @@ ref_t Compiler :: generateConstant(_CompileScope& scope, ObjectInfo retVal)
    return constRef;
 }
 
-void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope, int& preallocated)
+void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope)
 {
    if (scope.multiMethod) {
       ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
@@ -7634,12 +7637,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
 //      codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0, 0);
 //   }
 
-   preallocated = codeScope.allocated1;
-
-//   if (scope.yieldMethod) {
-//      scope.setAttribute(maYieldPreallocated, preallocated);
-//      compileYieldDispatch(writer, scope.getAttribute(maYieldContext), scope.getAttribute(maYieldLocals), preallocated);
-//   }
+   scope.preallocated = codeScope.allocated1;
 
    if (body == lxReturning)
       body = body.parentNode();
@@ -7684,7 +7682,7 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 {
    beginMethod(node, scope);
 
-   int preallocated = 0;
+   scope.preallocated = 0;
 
    CodeScope codeScope(&scope);
 
@@ -7692,66 +7690,69 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
    // check if it is a resend
    if (body == lxResendExpression) {
       compileResendExpression(body, codeScope, scope.multiMethod);
-      preallocated = 1;
+      scope.preallocated = 1;
    }
    // check if it is a dispatch
    else if (body == lxDispatchCode) {
       compileDispatchExpression(body, codeScope);
    }
-   else compileMethodCode(node, body, scope, codeScope, preallocated);
+   else compileMethodCode(node, body, scope, codeScope);
 
    codeScope.syncStack(&scope);
 
-   endMethod(node, scope, preallocated);
+   endMethod(node, scope);
 }
 
-//void Compiler :: compileYieldDispatch(SyntaxWriter& writer, int index, int index2, int preallocated)
-//{
-//   // load context
-//   writer.newNode(lxExpression);
-//   writer.appendNode(lxTapeArgument, index);
-//   writer.newNode(lxCopying);
-//   writer.appendNode(lxLocalAddress, -2);
-//   writer.newNode(lxFieldExpression);
-//   writer.appendNode(lxField, index);
-//   writer.appendNode(lxResultFieldIndex, 1);
-//   writer.closeNode();
-//
-//   writer.closeNode();
-//   writer.closeNode();
-//
-//   // load locals
-//   writer.newNode(lxExpression);
-//   writer.appendNode(lxTapeArgument, index2);
-//   writer.newNode(lxCopying);
-//   writer.newNode(lxSeqExpression);
-//   writer.appendNode(lxTapeArgument, index2);
-//   writer.appendNode(lxLocalAddress, preallocated);
-//   writer.closeNode();
-//   writer.appendNode(lxField, index2);
-//
-//   writer.closeNode();
-//   writer.closeNode();
-//
-//   // dispatch
-//   writer.appendNode(lxYieldDispatch, index);
-//}
-//
-//void Compiler :: compileYieldableMethod(SyntaxWriter& writer, SNode node, MethodScope& scope)
-//{
-//   beginMethod(writer, node, scope);
-//
-//   int paramCount = getParamCount(scope.message);
-//   int preallocated = 0;
-//
-//   CodeScope codeScope(&scope);
-//
-//   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
-//   if (body == lxCode) {
-//      compileMethodCode(writer, node, body, scope, codeScope, preallocated);
-//   }
-//   else scope.raiseError(errInvalidOperation, body);
-//
+void Compiler :: compileYieldDispatch(SNode node, MethodScope& scope)
+{
+   int size1 = scope.reserved1 - scope.preallocated;
+   int size2 = scope.reserved2;
+
+   int index = scope.getAttribute(maYieldContext);
+   int index2 = scope.getAttribute(maYieldLocals);
+
+   // dispatch
+   SNode dispNode = node.insertNode(lxYieldDispatch);
+   SNode contextExpr = dispNode.appendNode(lxFieldExpression);
+   contextExpr.appendNode(lxSelfLocal, 1);
+   contextExpr.appendNode(lxField, index);
+
+   // load context
+   SNode exprNode = node.insertNode(lxExpression);
+   SNode copyNode = exprNode.appendNode(lxCopying, size2);
+   copyNode.appendNode(lxLocalAddress, -2);
+   SNode fieldNode = copyNode.appendNode(lxFieldExpression);
+   fieldNode.appendNode(lxSelfLocal, 1);
+   fieldNode.appendNode(lxField, index);
+   fieldNode.appendNode(lxField, 1);
+
+   // load locals
+   if (size1 != 0) {
+      SNode expr2Node = node.insertNode(lxExpression);
+      SNode copy2Node = expr2Node.appendNode(lxCopying, size1);
+      copy2Node.appendNode(lxLocalAddress, scope.preallocated + size1);
+      SNode field2Node = copy2Node.appendNode(lxFieldExpression);
+      field2Node.appendNode(lxSelfLocal, 1);
+      field2Node.appendNode(lxField, index2);
+   }
+}
+
+void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
+{
+   beginMethod(node, scope);
+
+   scope.preallocated = 0;
+
+   CodeScope codeScope(&scope);
+
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
+   if (body == lxCode) {
+      compileMethodCode(node, body, scope, codeScope);
+   }
+   else scope.raiseError(errInvalidOperation, body);
+
+   codeScope.syncStack(&scope);
+   
 //   // COMPILER MAGIC : struct variables should be synchronized with the context field
 //   int index = scope.getAttribute(maYieldContext);
 //   int index2 = scope.getAttribute(maYieldLocals);
@@ -7761,9 +7762,17 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 //   methodWriter.seekUp(lxClassMethod);
 //   methodWriter.CurrentNode().insertNode(lxSetTapeArgument, scope.reserved).appendNode(lxTapeArgument, index);
 //   methodWriter.CurrentNode().insertNode(lxSetTapeArgument, codeScope.level - preallocated).appendNode(lxTapeArgument, index2);
-//
-//   endMethod(writer, scope, codeScope, paramCount, preallocated);
-//}
+
+//   if (scope.yieldMethod) {
+//      scope.setAttribute(maYieldPreallocated, preallocated);
+   compileYieldDispatch(body, scope);
+//   }
+
+   endMethod(node, scope);
+
+   scope.addAttribute(maYieldContextLength, scope.reserved2 + 1);
+   scope.addAttribute(maYieldLocalLength, scope.reserved1);
+}
 
 void Compiler :: compileAbstractMethod(SNode node, MethodScope& scope)
 {
@@ -7784,7 +7793,7 @@ void Compiler :: compileInitializer(SNode node, MethodScope& scope)
 
    beginMethod(methodNode, scope);
 
-   int preallocated = 0;
+   scope.preallocated = 0;
 
    CodeScope codeScope(&scope);
 
@@ -7803,7 +7812,7 @@ void Compiler :: compileInitializer(SNode node, MethodScope& scope)
    // the original message should be restored if it is a generic method
    codeScope.allocated1++;
 
-   preallocated = codeScope.allocated1;
+   scope.preallocated = codeScope.allocated1;
 
    SNode current = node.firstChild();
    while (current != lxNone) {
@@ -7825,7 +7834,7 @@ void Compiler :: compileInitializer(SNode node, MethodScope& scope)
 
    codeScope.syncStack(&scope);
 
-   endMethod(methodNode, scope, preallocated);
+   endMethod(methodNode, scope);
 }
 
 void Compiler :: compileDefConvConstructor(SNode node, MethodScope& scope, bool isDefault)
@@ -7906,7 +7915,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    bool retExpr = false;
    bool withFrame = false;
    int classFlags = codeScope.getClassFlags();
-   int preallocated = 0;
+   scope.preallocated = 0;
 
    SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
    if (bodyNode == lxDispatchCode) {
@@ -7924,7 +7933,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
          if (isDefConvConstructor)
             scope.raiseError(errInvalidOperation, node);
 
-         compileConstructorResendExpression(bodyNode, codeScope, classClassScope, withFrame, preallocated);
+         compileConstructorResendExpression(bodyNode, codeScope, classClassScope, withFrame);
 
          bodyNode = bodyNode.findChild(lxCode);
       }
@@ -7961,7 +7970,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
          codeScope.allocated1++;
       }
 
-      preallocated = codeScope.allocated1;
+      scope.preallocated = codeScope.allocated1;
       if (retExpr) {
          //ObjectInfo retVal = compileRootExpression(bodyNode, codeScope, codeScope.getClassRefId(), EAttr::eaNone);
 
@@ -7979,7 +7988,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
 
    codeScope.syncStack(&scope);
 
-   endMethod(node, scope, preallocated);
+   endMethod(node, scope);
 }
 
 void Compiler :: compileSpecialMethodCall(SNode& node, ClassScope& classScope, ref_t message)
@@ -8090,9 +8099,9 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
                   // COMPILER MAGIC : if the method retunging value can be passed as an extra argument
                   compileEmbeddableMethod(current, methodScope);
                }
-//               else if (methodScope.yieldMethod) {
-//                  compileYieldableMethod(writer, current, methodScope);
-//               }
+               else if (methodScope.yieldMethod) {
+                  compileYieldableMethod(current, methodScope);
+               }
                else compileMethod(current, methodScope);
             }
 
@@ -8406,7 +8415,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
 
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
-//   methodScope.yieldMethod = _logic->isMethodYieldable(scope.info, methodScope.message);
+   methodScope.yieldMethod = _logic->isMethodYieldable(scope.info, methodScope.message);
 //   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
    methodScope.targetSelfMode = test(methodScope.hints, tpTargetSelf);
 //   if (methodScope.withOpenArg && methodScope.functionMode)
@@ -8464,12 +8473,12 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& withConstructor
          else if (test(methodScope.hints, tpStatic)) {
             current = lxStaticMethod;
          }
-//         else if (test(methodScope.hints, tpYieldable)) {
-//            scope.info.header.flags |= elWithYieldable;
-//
-//            // HOTFIX : the class should have intializer method
-//            scope.withInitializers = true;
-//         }
+         else if (test(methodScope.hints, tpYieldable)) {
+            scope.info.header.flags |= elWithYieldable;
+
+            // HOTFIX : the class should have intializer method
+            scope.withInitializers = true;
+         }
 
          if (!_logic->validateMessage(*methodScope.moduleScope, methodScope.message, methodScope.hints)) {
             if (test(methodScope.hints, tpConstant)) {
@@ -9187,9 +9196,9 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool ne
 ////      if (test(scope.info.header.flags, elExtension)) {
 ////         scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
 ////      }
-//
-//      // inject virtual fields
-//      _logic->injectVirtualFields(*scope.moduleScope, node, scope.reference, scope.info, *this);
+
+      // inject virtual fields
+      _logic->injectVirtualFields(*scope.moduleScope, node, scope.reference, scope.info, *this);
 
       // generate fields
       generateClassFields(node, scope, countFields(node) == 1);
@@ -11447,32 +11456,22 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    createPackageInfo(scope.module, *scope.project);
 }
 
-//void Compiler :: injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex,
-//   LexicalType objType, int objArg)
-//{
-//   // declare field
-//   IdentifierString fieldName(VIRTUAL_FIELD);
-//   fieldName.appendInt(postfixIndex);
-//
-//   SNode fieldNode = classNode.appendNode(lxClassField, INVALID_REF);
-//   fieldNode.appendNode(lxNameAttr).appendNode(lxIdentifier, fieldName.c_str());
-//
-//   SNode subNode = fieldNode.appendNode(subType, subArg);
-//   subNode.appendNode(lxAttribute, arg);
-//
-//   // assing field
-//   SNode assignNode = classNode.appendNode(lxFieldInit, INVALID_REF); // INVALID_REF indicates the virtual code
-//   assignNode.appendNode(lxIdentifier, fieldName.c_str());
-//   assignNode.appendNode(lxAssign);
-//   // NOTE : if stack allocated variables are declared
-//   // this nummber has to be auto-update
-//
-//   SNode exprNode = assignNode.appendNode(lxExpression);
-//   // indicating that the size should be auto-set
-//   exprNode.appendNode(lxAttribute, V_AUTOSIZE);
-//   exprNode.appendNode(objType, objArg);
-//}
-//
+void Compiler :: injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex)
+{
+   // declare field
+   IdentifierString fieldName(VIRTUAL_FIELD);
+   fieldName.appendInt(postfixIndex);
+
+   SNode fieldNode = classNode.appendNode(lxClassField, INVALID_REF);
+   fieldNode.appendNode(lxNameAttr).appendNode(lxIdentifier, fieldName.c_str());
+
+   // assing field
+   SNode assignNode = classNode.appendNode(lxFieldInit, INVALID_REF); // INVALID_REF indicates the virtual code
+   assignNode.appendNode(lxIdentifier, fieldName.c_str());
+   assignNode.appendNode(lxAssign);
+   assignNode.appendNode(sourceType, sourceArg);
+}
+
 ////void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef)
 ////{
 ////   // injecting auto-generated static sealed constant field, (argument=INVALID_REF)

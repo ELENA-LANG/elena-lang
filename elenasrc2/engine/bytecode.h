@@ -171,7 +171,7 @@ enum ByteCode
    bcJumpVI          = 0xA1,
    bcCallVI          = 0xA2,
    bcCallR           = 0xA3,
-//   bcAJumpI          = 0xA4,
+   bcJumpI           = 0xA4,
    bcCallExtR        = 0xA5,
    bcHook            = 0xA6,
    bcAddress         = 0xA7,
@@ -447,6 +447,7 @@ public:
          case bcHook:
          case bcAddress:
          case bcJumpRM:
+         case bcJumpI:
             return true;
          default:
             return false;
@@ -471,6 +472,7 @@ public:
          case bcCallExtR:
          case bcSelect:
          case bcJumpRM:
+         case bcJumpI:
          case bcVCallRM:
          //case bcBLoadR:
          case bcCreate:
@@ -578,8 +580,6 @@ struct CommandTape
    int            labelSeed;
    Stack<int>     labels;
    
-   Map<int, int> arguments;
-
    ByteCodeIterator start() { return tape.start(); }
 
    ByteCodeIterator end() { return tape.end(); }
@@ -629,21 +629,6 @@ struct CommandTape
       *it = newLabel;
 
       return oldLabel;
-   }
-
-   int resolveArgument(int key)
-   {
-      return arguments.get(key);
-   }
-
-   void setArgument(int key, int value)
-   {
-      arguments.add(key, value);
-   }
-
-   void clearArguments()
-   {
-      arguments.clear();
    }
 
    ByteCodeIterator find(ByteCode code);

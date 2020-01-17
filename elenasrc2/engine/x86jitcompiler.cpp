@@ -169,7 +169,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileDec, &loadIndexOp, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileNop, &loadIndexOp,
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
-   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileNop, &loadFunction, &compileHook, &compileHook,
+   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &loadFunction, &compileHook, &compileHook,
    &compileNop, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileNop, &compileNop, &compileElseE, &compileNop,
 
    &compilePush, &loadNOp, &compilePush, &compileNop, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,
@@ -1580,13 +1580,13 @@ void _ELENA_::compileCallR(int, x86JITScope& scope)
    scope.writeReference(*scope.code, scope.argument | mskRelCodeRef, 0);
 }
 
-//void _ELENA_::compileJumpN(int, x86JITScope& scope)
-//{
-//   // jmp [eax+i]
-//   scope.code->writeWord(0x60FF);
-//   scope.code->writeByte(scope.argument << 2);
-//}
-//
+void _ELENA_::compileJumpN(int, x86JITScope& scope)
+{
+   // jmp [ebx+i]
+   scope.code->writeWord(0x63FF);
+   scope.code->writeByte(scope.argument << 2);
+}
+
 //void _ELENA_::compilePop(int, x86JITScope& scope)
 //{
 //   // pop edx

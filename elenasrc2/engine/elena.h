@@ -530,9 +530,11 @@ enum MethodAttribute
    maInternal           = 0x40C,
    maPrivate            = 0x40D,
    maProtected          = 0x40E,
-   //   maYieldContext       = 0x00F,
-//   maYieldLocals        = 0x010,
-//   maYieldPreallocated  = 0x011,
+   maYieldContext       = 0x00F,   
+   maYieldLocals        = 0x010,
+   maYieldContextLength = 0x011,
+   maYieldLocalLength   = 0x011,
+   //   maYieldPreallocated  = 0x011,
 };
 
 enum ClassAttribute : int

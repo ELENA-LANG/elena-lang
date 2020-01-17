@@ -307,16 +307,13 @@ namespace _ELENA_
    constexpr int elMessage             = 0x00200000;
    constexpr int elWithVariadics       = 0x00400000;
    constexpr int elWithCustomDispatcher= 0x00800000;
-         //   constexpr int elGroup               = 0x00000200;
+   constexpr int elWithYieldable       = 0x01000000;
+   //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elWithGenerics        = 0x00000400;
 //   constexpr int elSubject             = 0x00002000;
 //   constexpr int elSymbol              = 0x00100000;
 //   constexpr int elExtMessage          = 0x00208000;
-//   constexpr int elWithYieldable       = 0x00400000;
-//////   const int elTapeGroup           = 0x02000200;
-////   const int elWithMuti            = 0x08000000;
 
-//
 //   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
    constexpr int elDebugMask           = 0x001F0000;
@@ -454,7 +451,7 @@ namespace _ELENA_
 
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 
-//   constexpr auto VIRTUAL_FIELD        = "$virtual#";
+   constexpr auto VIRTUAL_FIELD              = "$virtual#";
 
   // --- ELENA special sections ---
    constexpr auto METAINFO_SECTION           = "#metainfo";

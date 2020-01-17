@@ -676,10 +676,10 @@ bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
 }
 
-//bool CompilerLogic :: isMethodYieldable(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpYieldable);
-//}
+bool CompilerLogic :: isMethodYieldable(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpYieldable);
+}
 
 bool CompilerLogic :: isMethodEmbeddable(ClassInfo& info, ref_t message)
 {
@@ -799,29 +799,33 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
    }
 }
 
-//void CompilerLogic :: injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
-//{
-//   // generate yield fields
-//   if (test(info.header.flags, elWithYieldable)) {
-//      int index = info.fields.Count();
-//
-//      SNode current = node.firstChild();
-//      while (current != lxNone) {
-//         if (current == lxClassMethod && SyntaxTree::existChild(current, lxAttribute, tpYieldable)) {
-//            // NOTE : field initialization MUST be declared after the yield method declaration
-//            compiler.injectVirtualField(node, maYieldContext, lxMessage, current.argument, ++index, lxPrimitive, 1);
-//            compiler.injectVirtualField(node, maYieldLocals, lxMessage, current.argument, ++index, lxPrimCollection, 0);
-//         }
-//
-//         current = current.nextNode();
-//      }
+void CompilerLogic :: injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
+{
+   // generate yield fields
+   if (test(info.header.flags, elWithYieldable)) {
+      int index = info.fields.Count();
+
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxClassMethod && SyntaxTree::existChild(current, lxAttribute, tpYieldable)) {
+
+            // NOTE : field initialization MUST be declared after the yield method declaration
+            info.methodHints.add(ClassInfo::Attribute(current.argument, maYieldContext), ++index);
+            compiler.injectVirtualField(node, lxYieldContext, current.argument, index);
+
+            info.methodHints.add(ClassInfo::Attribute(current.argument, maYieldLocals), ++index);
+            compiler.injectVirtualField(node, lxYieldLocals, current.argument, index);
+         }
+
+         current = current.nextNode();
+      }
+   }
+
+//   // generate enumeration list static field
+//   if ((info.header.flags & elDebugMask) == elEnumList && !test(info.header.flags, elNestedClass)) {
+//      compiler.injectVirtualStaticConstField(scope, node, ENUM_VAR, classRef);
 //   }
-//
-////   // generate enumeration list static field
-////   if ((info.header.flags & elDebugMask) == elEnumList && !test(info.header.flags, elNestedClass)) {
-////      compiler.injectVirtualStaticConstField(scope, node, ENUM_VAR, classRef);
-////   }
-//}
+}
 
 void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
 {
@@ -1854,9 +1858,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
 //      case V_SCRIPTSELFMODE:
 //         attrValue = tpTargetSelf;
 //         return true;
-//      case V_YIELDABLE:
-//         attrValue = tpYieldable;
-//         return true;
+      case V_YIELDABLE:
+         attrValue = tpYieldable;
+         return true;
       case V_CONST:
          attrValue = tpConstant;
          return true;
@@ -1918,9 +1922,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case 0:
          // HOTFIX : recognize idle attributes
          return true;
-//      case V_AUTOSIZE:
-//         attributes.include(EAttr::eaAutoSize);
-//         return true;
+      //case V_AUTOSIZE:
+      //   attributes.include(EAttr::eaAutoSize);
+      //   return true;
       case V_VARIABLE:
       case V_AUTO:
          newVariable = true;
@@ -1979,9 +1983,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_IGNOREDUPLICATE:
 //         attributes.include(EAttr::eaIgnoreDuplicates);
 //         return true;
-//      case V_YIELD:
-//         attributes.include(EAttr::eaYieldExpr);
-//         return true;
+      case V_YIELD:
+         attributes.include(EAttr::eaYieldExpr);
+         return true;
       case V_NODEBUGINFO:
          attributes.include(EAttr::eaNoDebugInfo);
          return true;

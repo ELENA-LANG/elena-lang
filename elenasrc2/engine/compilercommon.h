@@ -45,7 +45,7 @@ constexpr auto V_SEALED          = 0x80003001u;
 constexpr auto V_ABSTRACT        = 0x80003002u;
 constexpr auto V_CLOSED          = 0x80003003u;
 constexpr auto V_PREDEFINED      = 0x80003005u;
-//constexpr auto V_YIELDABLE       = 0x80003006u;
+constexpr auto V_YIELDABLE       = 0x80003006u;
 
 /// scope_prefix:
 constexpr auto V_CONST           = 0x80002001u;
@@ -86,7 +86,7 @@ constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
 constexpr auto V_TEMPLATE        = 0x8000101Eu;
 //constexpr auto V_ATTRIBUTE       = 0x8000101Fu;
-//constexpr auto V_YIELD           = 0x80001020u;
+constexpr auto V_YIELD           = 0x80001020u;
 constexpr auto V_NAMESPACE       = 0x80001021u;
 constexpr auto V_META            = 0x80001022u;
 
@@ -162,7 +162,7 @@ enum MethodHint
    tpInitializer  = 0x0200000,
    tpSetAccessor  = 0x0400000,
    tpCast         = 0x0800000,
-//   tpYieldable   = 0x1000000
+   tpYieldable    = 0x1000000,
    tpConstant     = 0x2000000,
    tpProtected    = 0x4000000,
 };
@@ -433,9 +433,8 @@ public:
    virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 
 ////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef) = 0;
-//   virtual void injectVirtualField(SNode classNode, ref_t arg, LexicalType subType, ref_t subArg, int postfixIndex,
-//      LexicalType objType, int objArg) = 0;
-////
+   virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex) = 0;
+
 ////   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
@@ -514,6 +513,7 @@ public:
       eaInitializerScope   = 0x00000400000,
       eaSwitch             = 0x00000800000,
       eaClass              = 0x00001000000,
+      eaYieldExpr          = 0x00002000000,
 
       eaScopeMask          = 0x0000041400A,
       eaObjectMask         = 0x0000021B2F4,
@@ -526,6 +526,7 @@ public:
 //      eaInlineArg          = 0x00000010000,
 //      eaIgnoreDuplicates   = 0x00000020000,
 //      eaYield              = 0x00000040000,
+//eaAutoSize           = 0x00002000000,
 //
 //      eaAssigningExpr      = 0x00000100000,
 //      eaCallExpr           = 0x00000400000,
@@ -536,8 +537,6 @@ public:
 //      eaClosure            = 0x00080000000,
 //      eaSubCodeClosure     = 0x00800000000,
 //      eaRefExpr            = 0x20000000000,
-//      eaYieldExpr          = 0x40000000000,
-//      eaAutoSize           = 0x80000000000,
 //
 //      eaClosureMask        = 0x01C00008000,
    };
@@ -685,7 +684,7 @@ public:
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
 ////   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isFunction(ClassInfo& info, ref_t message) = 0;
@@ -701,7 +700,7 @@ public:
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
-//   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
+   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
    virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, ref_t message,
       ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags) = 0;
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 

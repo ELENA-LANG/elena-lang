@@ -13,7 +13,8 @@ In development:
 
               xdev elena50
                 * yield method
-                * generic handler
+                * reset yield locals field on yield return to mark mg->yg reference
+                * test yield method
 
               xdev debugger
                 * step over several expression : message call / array operation
@@ -22,6 +23,10 @@ In development:
                 * TokenEnumerator
                 * ifExists, forEachWord, ascendant extensions
                 * words samples
+
+              xdev elena50
+                * generic handler
+                * collections
 
               xdev elena50
                 * if two extensions can be used for the given argumnet list
@@ -74,10 +79,6 @@ In development:
                 * array of templates
                 * external code : long, real ret value
 
-                * method not found exception
-                * call stack
-
-
                 * closures: unboxing
                 * closures: presaved arguments
                 * closures: returning a value
@@ -87,10 +88,6 @@ In development:
                 * arrays of template of templates
 
                 * variadic dispatch
-
-                * primitive operations with int : bitwise
-                * high-level opoerations with int : comparision, bitwise
-
 
                 * operations in symbol
 
@@ -131,7 +128,6 @@ In development:
 
                 * recognize idle method
 
-
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
 
                 * nested class scope
@@ -140,7 +136,6 @@ In development:
 
                 * test primitive numeric operation in the symbol
 
-                * implement sealed, const, struct
                 * analog of C# $ strings
 
                 * no unboxing by assign
