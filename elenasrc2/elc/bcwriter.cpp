@@ -4961,6 +4961,10 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
       SNode larg;
       SNode rarg;
       assignOpArguments(node, larg, rarg);
+      if (larg == lxExpression)
+         larg = larg.findSubNodeMask(lxObjectMask);
+      if (rarg == lxExpression)
+         rarg = rarg.findSubNodeMask(lxObjectMask);
 
       if (larg == lxNil) {
          generateObject(tape, rarg, scope);

@@ -13,8 +13,8 @@ In development:
 
               xdev elena50
                 * yield method
-                * reset yield locals field on yield return to mark mg->yg reference
                 * test yield method
+                * reset yield locals field on yield return to mark mg->yg reference
                 * yield tutorial
 
               xdev debugger

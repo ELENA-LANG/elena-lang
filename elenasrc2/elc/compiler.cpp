@@ -2899,6 +2899,15 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
    field2Node.appendNode(lxField, index2);
    copy2Node.appendNode(lxLocalAddress, methodScope->preallocated);
 
+   // HOTFIX : reset yield locals field on yield return to mark mg->yg reference
+   SNode expr3Node = objectNode.insertNode(lxAssigning);
+   SNode src3 = expr3Node.appendNode(lxFieldExpression);
+   src3.appendNode(lxSelfLocal, 1);
+   src3.appendNode(lxField, index2);
+   SNode dst3 = expr3Node.appendNode(lxFieldExpression);
+   dst3.appendNode(lxSelfLocal, 1);
+   dst3.appendNode(lxField, index2);
+
    ObjectInfo retVal;
    if (codeScope->withEmbeddableRet()) {
       retVal = scope.mapTerminal(SELF_VAR, false, EAttr::eaNone);
