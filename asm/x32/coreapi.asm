@@ -2396,8 +2396,8 @@ end
 
 procedure coreapi'sless
 
-  mov  edx, [esp+8]                 // ; s1
-  mov  esi, [esp+4]                 // ; s2
+  mov  esi, [esp+8]                 // ; s1
+  mov  edx, [esp+4]                 // ; s2
 
   mov  ecx, [edx-8]          // s1 length
   mov  eax, 0
@@ -2428,8 +2428,8 @@ end
 
 procedure coreapi'wless
 
-  mov  edx, [esp+8]                 // ; s1
-  mov  esi, [esp+4]                 // ; s2
+  mov  esi, [esp+8]                 // ; s1
+  mov  edx, [esp+4]                 // ; s2
 
   mov  ecx, [edx-8]          // s1 length
   mov  eax, 0
