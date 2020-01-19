@@ -413,17 +413,14 @@ labSave:
 
 end
 
-// strtochararray(target,index,source,ret)
+// strtochararray(src,index,dst,len)
 procedure coreapi'strtochararray
 
-  push eax
-  push edi
-  push ebx
-
-
-  mov  eax, [esp+12]
+  mov  edx, [esp+16]
+  mov  edi, [esp+12]
+  mov  ecx, [edx]
   mov  esi, [esp+8]
-  mov  edi, [esp+4]
+  mov  eax, [esp+4]
   mov  ebx, [esi]
 
   lea  edi, [edi + ebx * 4]
@@ -498,7 +495,7 @@ labSave:
   jnz  labStart
 
   mov  ecx, edi
-  mov  edi, [esp+4]
+  mov  edi, [esp+12]
   sub  ecx, edi
   mov  esi, [esp+8]
   shr  ecx, 2

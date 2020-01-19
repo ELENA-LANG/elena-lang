@@ -99,7 +99,6 @@ procedure __literal."save$system@IntNumber$@system@Array#1&system@CharValue$@sys
 
   callextr api : strtochararray
   
-  peeksi 0
   freei  4
   quitn  4
 
