@@ -63,8 +63,8 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
   // resolve message & action tables
    linker.resolve(MESSAGE_TABLE, mskMessageTableRef, true);
 
-  //// resolve attribute table
-  // linker.resolve(MATTRIBUTE_TABLE, mskMetaAttributes, true);
+  // resolve attribute table
+   linker.resolve(MATTRIBUTE_TABLE, mskMetaAttributes, true);
 
    helper.afterLoad(*this);
 }

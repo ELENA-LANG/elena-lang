@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA ELFHelper.
 //		Supported platforms: Linux I386
-//                                              (C)2005-2016, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elfhelperH
@@ -17,8 +17,7 @@ class ELFHelper
 public:
    static size_t findEntryPoint(path_t path);
 
-   static bool seekRDataSegment(StreamReader& reader, size_t& rvaAddress);
-   static bool seekDebugSegment(StreamReader& reader, size_t& rvaAddress);
+   static bool seekRODataSegment(StreamReader& reader, size_t& rvaAddress);
 };
 
 } // _ELENA_

@@ -1068,31 +1068,31 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
    return nullptr; // !! should be resolved only once
 }
 
-//void* JITLinker :: resolveMetaAttributeTable(ReferenceInfo, int mask)
-//{
-//   _Memory* asection = _loader->getTargetSection(mask);
-//
-//   // get target image & resolve virtual address
-//   MemoryWriter writer(asection);
-//
-//   SectionInfo bodyInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
-//
-//   // load table into target image
-//   MemoryReader reader(bodyInfo.section);
-//   writer.writeDWord(bodyInfo.section->Length()); // section size
-//   pos_t offs = writer.Position();
-//   writer.read(&reader, bodyInfo.section->Length());
-//
-//   // resolve signature references
-//   _ELENA_::RelocationMap::Iterator body_it(bodyInfo.section->getReferences());
-//   while (!body_it.Eof()) {
-//      asection->addReference(body_it.key(), offs + *body_it);
-//
-//      body_it++;
-//   }
-//
-//   return NULL; // !! should be resolved only once
-//}
+void* JITLinker :: resolveMetaAttributeTable(ReferenceInfo, int mask)
+{
+   _Memory* asection = _loader->getTargetSection(mask);
+
+   // get target image & resolve virtual address
+   MemoryWriter writer(asection);
+
+   SectionInfo bodyInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
+
+   // load table into target image
+   MemoryReader reader(bodyInfo.section);
+   writer.writeDWord(bodyInfo.section->Length()); // section size
+   pos_t offs = writer.Position();
+   writer.read(&reader, bodyInfo.section->Length());
+
+   // resolve signature references
+   _ELENA_::RelocationMap::Iterator body_it(bodyInfo.section->getReferences());
+   while (!body_it.Eof()) {
+      asection->addReference(body_it.key(), offs + *body_it);
+
+      body_it++;
+   }
+
+   return nullptr; // !! should be resolved only once
+}
 
 ref_t JITLinker :: parseMessage(ident_t reference, bool actionOnlyMode)
 {
@@ -1421,9 +1421,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskMessageTableRef:
             vaddress = resolveMessageTable(referenceInfo, mskMessageTableRef);
             break;
-//         case mskMetaAttributes:
-//            vaddress = resolveMetaAttributeTable(referenceInfo, mskMetaAttributes);
-//            break;
+         case mskMetaAttributes:
+            vaddress = resolveMetaAttributeTable(referenceInfo, mskMetaAttributes);
+            break;
          case mskEntryRef:
             vaddress = resolveEntry(resolve(referenceInfo, mskSymbolRef, silentMode));
             break;

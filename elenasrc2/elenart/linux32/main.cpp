@@ -19,40 +19,48 @@ using namespace _ELENA_;
 static ELENARTMachine* _Instance = NULL;
 static void* _SystemEnv = NULL;
 
+getSelfPath(Path rootPath) 
+{
+   char buff[PATH_MAX];
+   size_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
+   if (len != -1) {
+      rootPath.copy(buff, len);
+   }
+   /* handle error condition */
+}
+
 void init()
 {
-   //// get DLL path
-   //Path rootPath;
-   //loadModulePath(hModule, rootPath, false);
+   // get EXE path
+   Path execPath;
+   getSelfPath(execPath);
 
-   //// get EXE path
-   //Path execPath;
-   //loadModulePath(0, execPath, true);
+   _Instance = new ELENARTMachine(ROOT_PATH, execPath.c_str());
 
-   _Instance = new ELENARTMachine(/*rootPath.c_str(), execPath.c_str()*/nullptr, nullptr); // !! temporal
+   void* messageSection = nullptr;
+   void* mattributeSection = nullptr;
+   ELENARTMachine::ImageSection section;
+   section.init((void*)IMAGE_BASE, 0x1000);
 
-//   void* messageSection = nullptr;
-//   void* mattributeSection = nullptr;
-//   ELENARTMachine::ImageSection section;
-//   section.init((void*)IMAGE_BASE, 0x1000);
-//
-//   ELFHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
-//   messageSection = (void*)ptr;
-//
-//   ELFHelper::seekSection(MemoryReader(&section), ".adata", ptr);
-//   mattributeSection = (void*)ptr;
-//
-//   _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
+   size_t ptr = 0;
+   MemoryReader reader(&section);
+
+   ELFHelper::seekRODataSegment(MemoryReader(&section), ptr);
+
+   mattributeSection = (void*)ptr;
+    
+   reader.seek(ptr);
+   size_t maSectionSize = reader.getDWord();
+
+   reader.seek(ptr + maSectionSize + 4);
+
+   messageSection = (void*)ptr;
+
+   _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
 }
 
 void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)
 {
-   //ProgramHeader header;
-   // initialize the exception handler
-//   asm(
-//      "mov header.root_exception_struct.core_catch_frame, ebp\n\t"
-//      "mov header.root_exception_struct.core_catch_level, esp"
-//   );
    header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler
@@ -70,13 +78,6 @@ void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandle
 
 void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)
 {
-   //ProgramHeader header;
-   // initialize the exception handler
-//    asm(
-//      "mov header.root_exception_struct.core_catch_frame, ebp\n\t"
-//      "mov header.root_exception_struct.core_catch_level, esp"
-//   );
-
    header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler
@@ -107,7 +108,6 @@ int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int i
 
    return 0;
 }
-
 
 void OpenFrame(void* systemEnv, void* frameHeader)
 {
