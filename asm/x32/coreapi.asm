@@ -2973,6 +2973,16 @@ procedure coreapi'get_seh_handler
 
 end
 
+procedure coreapi'initProgramHeader
+
+  lea  edx, [esp+8]
+  mov  eax, [esp+4]
+  mov  [eax+4], edx
+  mov  [eax+8], ebp
+  ret
+
+end
+
 procedure coreapi'seh_handler
 
   push ebp

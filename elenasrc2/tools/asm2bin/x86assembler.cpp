@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                             (C)2005-2019, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2020, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -11,6 +11,7 @@
 #include "x86assembler.h"
 #include "module.h"
 #include "assemblerException.h"
+#include "elenamachine.h"
 
 #include <float.h>
 
@@ -227,6 +228,15 @@ x86Assembler::Operand x86Assembler :: defineOperand(TokenInfo& token, ProcedureI
 		else if (token.check(ARGUMENT2)) {
          operand.type = x86Helper::otDD;
          operand.reference = -2;
+		}
+		else if (token.check("sizeof")) {
+			token.read();
+			if (token.check("ProgramHeader")) {
+				operand.type = x86Helper::otDD;
+				operand.offset = align(sizeof(ProgramHeader), 4);
+				operand.reference = 0;
+			}
+			else token.raiseErr(err);
 		}
       else if (token.check(ARGUMENT3)) {
          operand.type = x86Helper::otDD;

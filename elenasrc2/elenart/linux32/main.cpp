@@ -45,18 +45,18 @@ void init()
 //   _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
 }
 
-void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
+void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)
 {
-   ProgramHeader header;
+   //ProgramHeader header;
    // initialize the exception handler
 //   asm(
 //      "mov header.root_exception_struct.core_catch_frame, ebp\n\t"
 //      "mov header.root_exception_struct.core_catch_level, esp"
 //   );
-   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
+   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
 
    // initialize system env variable
    _SystemEnv = systemEnv;
@@ -65,22 +65,22 @@ void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandle
       init();
 
    // start the system
-   _Instance->startSTA(&header, (SystemEnv*)systemEnv, entryPoint);
+   _Instance->startSTA(header, (SystemEnv*)systemEnv, entryPoint);
 }
 
-void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
+void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)
 {
-   ProgramHeader header;
+   //ProgramHeader header;
    // initialize the exception handler
 //    asm(
 //      "mov header.root_exception_struct.core_catch_frame, ebp\n\t"
 //      "mov header.root_exception_struct.core_catch_level, esp"
 //   );
 
-   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
+   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
 
    // initialize system env variable
    _SystemEnv = systemEnv;
@@ -89,7 +89,7 @@ void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandle
       init();
 
    // start the system
-   _Instance->startMTA(&header, (SystemEnv*)systemEnv, entryPoint);
+   _Instance->startMTA(header, (SystemEnv*)systemEnv, entryPoint);
 }
 
 int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int index)

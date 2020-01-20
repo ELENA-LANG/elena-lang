@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2019, by Alexei Rakov
+//                                              (C)2009-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenavmachineH
@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x0002;
+constexpr auto ELENAVM_REVISION = 0x0003;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2020 by Alex Rakov";

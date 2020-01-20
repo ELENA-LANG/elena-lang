@@ -2013,29 +2013,45 @@ end
 
 symbol vm_sta_start
 
-  pushr rdata : "$elena'@tapekey"
-  pushr api : seh_handler
-  pushr api : default_handler
-  alloci 1
+  open     1
+  reserve  sizeof ProgramHeader
+
+  pushs    -2
+  callextr api : initProgramHeader
+  pushr    rdata : "$elena'@tapekey"
+  pushr    api : seh_handler
+  pushr    api : default_handler
+  alloci   1
   loadenv
-  savesi 0
+  savesi   0
   callextr api : get_seh_handler
   pushd
   callextr extern : InitializeVMSTA
-  freei 5
+  freei    5
+
+  close
   quit
 
 end
+
 symbol sta_start
 
-  pushr entry : "$forwards'$program"
-  pushr api : seh_handler
-  pushr api : default_handler
-  alloci 1
+  open    1
+  reserve sizeof ProgramHeader
+
+  pushs    -2
+  callextr api : initProgramHeader
+  pushr    entry : "$forwards'$program"
+  pushr    api : seh_handler
+  pushr    api : default_handler
+  alloci   1
   loadenv
-  savesi 0
+  savesi   0
   callextr extern : InitializeSTA
-  freei 4
+  freei    4
+
+  restore  sizeof ProgramHeader_2
+  close
   quit
 
 end

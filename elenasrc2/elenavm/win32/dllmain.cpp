@@ -26,25 +26,26 @@ void loadDLLPath(HMODULE hModule)
 
 // ==== DLL entries ====
 
-EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape)
+EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape, 
+   ProgramHeader* header)
 {
-   ProgramHeader header;
-   // initialize the exception handler
-   __asm {
-      mov header.root_exception_struct.core_catch_frame, ebp
-      mov header.root_exception_struct.core_catch_level, esp
-   }
-   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+   //ProgramHeader header;
+   //// initialize the exception handler
+   //__asm {
+   //   mov header.root_exception_struct.core_catch_frame, ebp
+   //   mov header.root_exception_struct.core_catch_level, esp
+   //}
+   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler
    if (criticalHandler != nullptr)
-      __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
+      __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
 
    //// initialize system env variable
    //_SystemEnv = systemEnv;
 
    // start the system
-   _Machine->startSTA(&header, (SystemEnv*)systemEnv, sehTable, vmTape);
+   _Machine->startSTA(header, (SystemEnv*)systemEnv, sehTable, vmTape);
 }
 
 EXTERN_DLL_EXPORT void OpenFrame(void* systemEnv, void* frameHeader)

@@ -3,13 +3,14 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef assemblerH
 #define assemblerH
 
 #include "assemblerException.h"
+#include "elenamachine.h"
 
 namespace _ELENA_
 {
@@ -159,18 +160,30 @@ struct TokenInfo
 	{
       bool negative = false;
 		read();
-
-      if (check("-")) {
-         negative = true;
-		   read();
+      if (check("sizeof")) {
+         read();
+         if (check("ProgramHeader")) {
+            return align(sizeof(ProgramHeader), 4) >> 2;
+         }
+         else if (check("ProgramHeader_2")) {
+            return align(sizeof(ProgramHeader), 4) >> 2 + 2;
+         }
+         else raiseErr("Invalid number (%d)\n");
       }
+      else {
+         if (check("-")) {
+            negative = true;
+            read();
+         }
 
-		int integer;
-		if (getInteger(integer, constants)) {
-         return negative ? -integer : integer;
-		}
-		else raiseErr("Invalid number (%d)\n");
-		return 0;
+         int integer;
+         if (getInteger(integer, constants)) {
+            return negative ? -integer : integer;
+         }
+         else raiseErr("Invalid number (%d)\n");
+
+         return 0;
+      }
 	}
 
    int readLongInteger(Map<ident_t, ref64_t>& constants)

@@ -8,7 +8,7 @@ public interface<T>
 
 #property prop<T, __name>
 {
-    T field;
+    field;
     
     get()
     {

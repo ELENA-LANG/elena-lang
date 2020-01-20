@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //             Linux Shared Library Declaration
-//                                              (C)2009-2016, by Alexei Rakov
+//                                              (C)2009-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENART_H_INCLUDED
@@ -17,9 +17,9 @@
 
 extern "C"
 {
-   DLL_PUBLIC void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint);
+   DLL_PUBLIC void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header);
 
-   DLL_PUBLIC void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint);
+   DLL_PUBLIC void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header);
 
    DLL_PUBLIC int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int index);
 
