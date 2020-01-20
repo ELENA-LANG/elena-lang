@@ -30,14 +30,11 @@ In development:
                 * conversion routines : others
 
                 * console operations
-                * no need to include system for system'io module, it should be included automatically!?
 
                 * String, WideString- fill, new
                 * Array<T>.clone
 
-                * public / private / internal classes
                 * public / private / internal / protected properties
-
                 * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
 
                 * extension to read package info
@@ -53,9 +50,7 @@ In development:
                 * closures: unboxing
                 * closures: presaved arguments
                 * closures: returning a value
-                * closures : virtual one
 
-                * arrays of templates
                 * arrays of template of templates
 
                 * variadic dispatch
@@ -69,33 +64,19 @@ In development:
 
                 * conditional boxing of arguments and self
 
-                * singleton nested class - should init method be called?
-
-                * countable
-
                 * fields with reference name
-                * strong typed fields
-                * temlate based typed fields
                 * const class \ const field
                 * properties - multi-level
-                * property - methods
-                * static fields
-                * static methods
-                * inheriting static fields / methods
-                * sealed static fields
                 * accumulating static fields
                 * optimization : do not call idle method
 
                 * auto returning
 
-                * stack allocated structs, executing field initializers, embeddable constructors?
                 * stack allocated class and default constructor
 
                 * auto symbol
                 * auto method
                 * auto field
-
-                * implement analog of C# enum
 
                 * recognize idle method
 
@@ -107,8 +88,6 @@ In development:
 
                 * test primitive numeric operation in the symbol
 
-                * analog of C# $ strings
-
                 * no unboxing by assign
 
                 * message dispatching
@@ -117,13 +96,8 @@ In development:
 
                 * declaring typed variable : implicit, reference, global
 
-                * static fields / static methods are inherited
-                * const static  - are declared only in-plaby assignce
-                * accum static  - are declared and inherited only in-place
                 * it should be possible to create a class from static method (using self)
 
-                * weak parameters
-                * stron-typed parameters
                 * singleton can be used as a type?
                 * should V_SINGLETON be marked as elNestedClass?
                 * difference between sealed and final?
@@ -136,12 +110,8 @@ In development:
                 * sealed property??
                 * static property??
 
-                * using a type before it declaration
-
                 * method visibility
                 * methods : reference name??
-                * calls
-                * system module to be included by default : an option?
 
                 * nested class scope?
                 * global types
@@ -149,9 +119,6 @@ In development:
                 * inherit identifier, reference, global, template
 
                 * implicit / explicit namespaces, public / internal / private namespaces --- 
-
-                * private / internal / public : private accessible only by proper name and visible inside its own
-                  namespace, internal accessible by proper and relative name, visible inside its own module
 
                 * uncomment DerivationWriter :: mapAttribute
                 * uncomment - resolveBytecodeSection
@@ -162,7 +129,6 @@ In development:
                 * migrate changes from core to corex
                 * copying  a buffer with unaligned size
                 * copying 4,8,1,2 bytes
-                * break / contninue
                 * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
                   possible values)
                 * redesign
@@ -241,6 +207,10 @@ In development:
                 * replacing embeddable constructor call with direct operarions?
                 * setting several properties in row  new A().set(subj A,2).set(subj B,3) 
                 * initialize property
+                * countable
+                * implement analog of C# enum
+                * analog of C# $ strings
+                * break / contninue
 
               dev1
                 * move all description to meta info using descr inline template
