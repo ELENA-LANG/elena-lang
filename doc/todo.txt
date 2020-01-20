@@ -17,12 +17,10 @@ In development:
                 * generic handler
                 * collections
 
-              xdev debugger
-                * step over several expression : message call / array operation
-
               xdev elena50
-                * if two extensions can be used for the given argumnet list
+                * virtual nested class
                 * closures : default constructor is called for virtual nested class, for normal one - only initializer
+
                 * nested class should not have static methods and constructors
                 * recognize idle constructor
                 * if the parent constructor is idle - do like normal one
@@ -47,7 +45,6 @@ In development:
 
                 * event handler
                 * uncomment system'entry
-
 
                 * conversion routines : others
 

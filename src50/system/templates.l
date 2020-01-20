@@ -6,6 +6,21 @@ public interface<T>
     };
 }
 
+#property prop<T, __name>
+{
+    T field;
+    
+    get()
+    {
+        ^ __name
+    }
+    
+    set(T value)
+    {
+        __name := value
+    }
+}
+
 //property prop<__name>
 //{
 //    __name;
