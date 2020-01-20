@@ -93,6 +93,8 @@ namespace _ELENA_
    constexpr auto errDupInternalMethod          = "%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
    constexpr auto errInvalidConstAttr           = "%s(%d:%d): error 174: A method '%s' cannot be compiled as a constant one\n";
    constexpr auto errInvalidBoxing              = "%s(%d:%d): error 175: An expression at '%s' cannot be boxed\n";
+   constexpr auto errIllegalStaticMethod        = "%s(%d:%d): error 176: Static method cannot be declared\n";
+
 
    #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
    #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"

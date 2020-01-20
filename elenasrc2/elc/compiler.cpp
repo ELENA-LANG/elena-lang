@@ -4725,6 +4725,9 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
    if (withConstructors)
       scope.raiseError(errIllegalConstructor, node);
 
+   if (node.existChild(lxStaticMethod))
+      scope.raiseError(errIllegalStaticMethod, node);
+
    generateClassDeclaration(node, scope, true);
 
    scope.save();
@@ -7859,7 +7862,7 @@ void Compiler :: compileDefConvConstructor(SNode node, MethodScope& scope, bool 
    }
    else {
       exprNode
-         .appendNode(lxCreatingClass, classScope->info.size)
+         .appendNode(lxCreatingClass, classScope->info.fields.Count())
          .appendNode(lxType, classScope->reference);
    }
 

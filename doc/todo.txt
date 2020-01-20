@@ -11,15 +11,6 @@ In development:
                 * compile elenart64.dll
 
               xdev elena50
-                * nested class should not have static methods and constructors
-                * recognize idle constructor
-                * if the parent constructor is idle - do like normal one
-                * nested class and default constructor
-
-                * implicit constructor should clear the object fields
-                * optimize IntNumber#class.#constructor[1]
-                * support Array<type> constructors
-                * CharValue.new = $0 -> should create a new class
                 * idle init constructor should not be called
 
               xdev elena50
@@ -194,7 +185,7 @@ In development:
                 * copytoai,fillri - optimized version for 1,2,3 dwords
                 * api doc - with description
 
-              dev50 - test
+              dev50 - test / optimization
                 * it should be possible to turn-off optimization (opL1)
                 * test : branching external implementation : returning a value from closure 
                 * it should be possible to extend attributes / template statements from anoter libraries
@@ -240,6 +231,8 @@ In development:
                 * test real to byte/short/int/uint/long conversion
                 * test expression with several boxed fields 
                 * check notless : literal, wide, bytearray, array
+                * optimize IntNumber#class.#constructor[1]
+                * CharValue.new = $0 -> should create a new class
 
               dev50 - new features
                 * resend to constant - no need for frame
