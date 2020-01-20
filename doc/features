@@ -29,6 +29,9 @@ Declarations
       * implicit
       * explicit
       * abstract
+  Nested classes
+    Creating
+      * in-place initialization : default constructor is not called
   Templates
   Extensions
   Extension Templates

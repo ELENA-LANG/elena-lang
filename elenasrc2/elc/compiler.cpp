@@ -4010,7 +4010,15 @@ ref_t Compiler :: resolveVariadicMessage(Scope& scope, ref_t message)
 
 bool Compiler :: isSelfCall(ObjectInfo target)
 {
-   return target.kind == okSelfParam || target.kind == okOuterSelf || target.kind == okClassSelf;
+   switch (target.kind) {
+      case okSelfParam:
+      case okOuterSelf:
+      case okClassSelf:
+      case okInternalSelf:
+         return true;
+      default:
+         return false;
+   }
 }
 
 ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
@@ -4673,59 +4681,54 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
 
 void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
 {
-//   // check if the class was already compiled
-//   if (!node.argument) {
-      // COMPILER MAGIC : check if it is a virtual vmt (only for the class initialization)
-      SNode current = node.firstChild();
-//      bool virtualClass = true;
-      while (current != lxNone) {
-         if (current == lxAttribute) {
-            EAttrs attributes;
-            bool dummy = false;
-            if (_logic->validateExpressionAttribute(current.argument, attributes, dummy) && attributes.test(EAttr::eaNewOp)) {
-               // only V_NEWOP attribute is allowed
-               current.setArgument(0);
-            }
-            else scope.raiseError(errInvalidHint, current);
+   SNode current = node.firstChild();
+   bool virtualClass = true;
+   while (current != lxNone) {
+      if (current == lxAttribute) {
+         EAttrs attributes;
+         bool dummy = false;
+         if (_logic->validateExpressionAttribute(current.argument, attributes, dummy) && attributes.test(EAttr::eaNewOp)) {
+            // only V_NEWOP attribute is allowed
+            current.setArgument(0);
          }
-         else if (current == lxType) {
-            current.injectAndReplaceNode(lxParent);
+         else scope.raiseError(errInvalidHint, current);
+      }
+      else if (current == lxType) {
+         current.injectAndReplaceNode(lxParent);
+      }
+      if (current == lxClassField) {
+         virtualClass = false;
+      }
+      else if (current == lxClassMethod) {
+         if (!current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier().compare(INIT_MESSAGE)) {
+            // HOTFIX : ignore initializer auto-generated method
+            virtualClass = false;
+            break;
          }
-//         if (current == lxClassField) {
-//            virtualClass = false;
-//         }
-//         else if (current == lxClassMethod) {
-//            if (!current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier().compare(INIT_MESSAGE)) {
-//               // HOTFIX : ignore initializer auto-generated method
-//               virtualClass = false;
-//               break;
-//            }
-//         }
-         current = current.nextNode();
       }
+      current = current.nextNode();
+   }
 
-//      if (virtualClass)
-//         scope.info.header.flags |= elVirtualVMT;
+   if (virtualClass)
+      scope.info.header.flags |= elVirtualVMT;
 
-      compileParentDeclaration(node.findChild(lxParent), scope, false);
+   compileParentDeclaration(node.findChild(lxParent), scope, false);
 
-      if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
-         // COMPILER MAGIC : inject interface implementation
-         _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef);
-      }
+   if (scope.abstractBaseMode && test(scope.info.header.flags, elClosed | elNoCustomDispatcher) && _logic->isWithEmbeddableDispatcher(*scope.moduleScope, node)) {
+      // COMPILER MAGIC : inject interface implementation
+      _logic->injectInterfaceDisaptch(*scope.moduleScope, *this, node, scope.info.header.parentRef);
+   }
 
-      bool withConstructors = false;
-      bool withDefaultConstructor = false;
-      declareVMT(node, scope, withConstructors, withDefaultConstructor);
-      if (withConstructors)
-         scope.raiseError(errIllegalConstructor, node);
+   bool withConstructors = false;
+   bool withDefaultConstructor = false;
+   declareVMT(node, scope, withConstructors, withDefaultConstructor);
+   if (withConstructors)
+      scope.raiseError(errIllegalConstructor, node);
 
-      generateClassDeclaration(node, scope, true);
+   generateClassDeclaration(node, scope, true);
 
-      scope.save();
-//   }
-//   else scope.moduleScope->loadClassInfo(scope.info, scope.moduleScope->module->resolveReference(node.argument), false);
-//
+   scope.save();
+
 //   if (!test(scope.info.header.flags, elVirtualVMT) && scope.info.staticValues.Count() > 0)
 //      // do not inherit the static fields for the virtual class declaration
 //      copyStaticFieldValues(node, scope);
@@ -4740,7 +4743,6 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
    // NOTE : compile once again only auto generated methods
    compileVMT(node, scope, true, false);
 
-//   writer.closeNode();
    scope.save();
 
    generateClassImplementation(node, scope);
@@ -4751,22 +4753,23 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
    SyntaxTree::copyNode(attrTerminal, node);
 }
 
-//ref_t Compiler :: resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message)
-//{
-//   if (!classInfo.methods.exist(message, true)) {
-//      ClassInfo parentInfo;
-//      _logic->defineClassInfo(scope, parentInfo, classInfo.header.parentRef, false);
-//
-//      return resolveMessageOwnerReference(scope, parentInfo, classInfo.header.parentRef, message);
-//   }
-//   else return reference;
-//}
+ref_t Compiler :: resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message, 
+   bool ignoreSelf)
+{
+   if (!classInfo.methods.exist(message, true) || ignoreSelf) {
+      ClassInfo parentInfo;
+      _logic->defineClassInfo(scope, parentInfo, classInfo.header.parentRef, false);
+
+      return resolveMessageOwnerReference(scope, parentInfo, classInfo.header.parentRef, message);
+   }
+   else return reference;
+}
 
 ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode)
 {
    ref_t closureRef = scope.reference;
-//   if (test(scope.info.header.flags, elVirtualVMT))
-//      closureRef = scope.info.header.parentRef;
+   if (test(scope.info.header.flags, elVirtualVMT))
+      closureRef = scope.info.header.parentRef;
 
    if (test(scope.info.header.flags, elStateless)) {
       ObjectInfo retVal = ObjectInfo(okSingleton, closureRef, closureRef);
@@ -4782,13 +4785,6 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
       return ObjectInfo();
    }
    else {
-//      //int stackSafeAttr = 0;
-//      //ref_t messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, closureRef, 0, 0, stackSafeAttr, true);
-//      //if (messageRef) {
-//      //   // call the constructor if it can be resolved directly
-//      //   compileMessage(writer, node, scope, closureRef, messageRef, HINT_SILENT | HINT_NODEBUGINFO, stackSafeAttr);
-//      //}
-
       // dynamic binary symbol
       if (test(scope.info.header.flags, elStructureRole)) {
          node.set(lxCreatingStruct, scope.info.size);
@@ -4848,19 +4844,15 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
 //         writer.closeNode();
 //         writer.closeNode();
 //      }
-//
-//      if (scope.info.methods.exist(scope.moduleScope->init_message)) {
-//         ref_t messageOwnerRef = resolveMessageOwnerReference(*scope.moduleScope, scope.info, scope.reference,
-//                                    scope.moduleScope->init_message);
-//
-//         // if implicit constructor is declared - it should be automatically called
-//         writer.newNode(lxOvreriddenMessage, scope.moduleScope->init_message);
-//         if (messageOwnerRef != closureRef)
-//            writer.appendNode(lxTarget, messageOwnerRef);
-//         writer.closeNode();
-//      }
-//
-//      writer.closeNode();
+
+      if (scope.info.methods.exist(scope.moduleScope->init_message)) {
+         ref_t messageOwnerRef = resolveMessageOwnerReference(*scope.moduleScope, scope.info, scope.reference,
+                                    scope.moduleScope->init_message);
+
+         // if implicit constructor is declared - it should be automatically called
+         node.injectAndReplaceNode(lxDirectCalling, scope.moduleScope->init_message);
+         node.appendNode(lxCallTarget, messageOwnerRef);
+      }
 
       return ObjectInfo(okObject, 0, closureRef);
    }
@@ -7810,10 +7802,13 @@ void Compiler :: compileInitializer(SNode node, MethodScope& scope)
 
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
    if (checkMethod(*scope.moduleScope, classScope->info.header.parentRef, scope.message) != tpUnknown) {
+      ref_t messageOwnerRef = resolveMessageOwnerReference(*scope.moduleScope, classScope->info, classScope->reference,
+         scope.message, true);
+
       // check if the parent has implicit constructor - call it
       SNode callNode = methodNode.appendNode(lxDirectCalling, scope.message);
       callNode.appendNode(lxResult);
-      callNode.appendNode(lxCallTarget, classScope->info.header.parentRef);
+      callNode.appendNode(lxCallTarget, messageOwnerRef);
    }
 
    SNode frameNode = methodNode.appendNode(lxNewFrame);
@@ -8123,7 +8118,8 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
       current = current.nextNode();
    }
 
-   if (scope.withInitializers) {
+   if (scope.withInitializers && (ignoreAutoMultimethods || !exclusiveMode)) {
+      // HOTFIX : compileVMT is called twice for nested classes - initializer should be called only once
       MethodScope methodScope(&scope);
       methodScope.message = scope.moduleScope->init_message;
 

@@ -148,6 +148,7 @@ public:
       okExtension,
       okClassSelf,                    // param - class reference; used in class resending expression
       okMetaField,                    // param - meta attribute id
+      okInternalSelf,
 
       okExternal,
       okInternal,
@@ -931,7 +932,8 @@ private:
    void writeMessageInfo(SNode node, _ModuleScope& scope, ref_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
-//   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message);
+   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message,
+      bool ignoreSelf = false);
 
    int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message)
    {

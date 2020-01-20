@@ -2888,7 +2888,8 @@ end
 
 // ; fillri (__arg1 - count)
 inline % 0F2h
-	
+
+  mov  edi, ebx
   mov  ecx, __arg1
   rep  stosd
 
