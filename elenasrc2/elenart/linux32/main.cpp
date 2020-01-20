@@ -9,6 +9,7 @@
 #include "elenart.h"
 #include "elenartmachine.h"
 #include "linux32/elfhelper.h"
+#include <unistd.h>
 
 #define ROOT_PATH          "/usr/lib/elena"
 #define CONFIG_PATH        "/etc/elena/elenart.config"
@@ -19,12 +20,13 @@ using namespace _ELENA_;
 static ELENARTMachine* _Instance = NULL;
 static void* _SystemEnv = NULL;
 
-getSelfPath(Path rootPath) 
+void getSelfPath(Path& rootPath)
 {
    char buff[PATH_MAX];
    size_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
    if (len != -1) {
-      rootPath.copy(buff, len);
+      buff[len] = 0;
+      rootPath.copy(buff);
    }
    /* handle error condition */
 }
@@ -45,10 +47,10 @@ void init()
    size_t ptr = 0;
    MemoryReader reader(&section);
 
-   ELFHelper::seekRODataSegment(MemoryReader(&section), ptr);
+   ELFHelper::seekRODataSegment(reader, ptr);
 
    mattributeSection = (void*)ptr;
-    
+
    reader.seek(ptr);
    size_t maSectionSize = reader.getDWord();
 

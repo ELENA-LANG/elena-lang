@@ -4,6 +4,8 @@
 //                                              (C)2009-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
+#include "elenamachine.h"
+
 #ifndef ELENART_H_INCLUDED
 #define ELENART_H_INCLUDED
 
@@ -17,9 +19,9 @@
 
 extern "C"
 {
-   DLL_PUBLIC void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header);
+   DLL_PUBLIC void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);
 
-   DLL_PUBLIC void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header);
+   DLL_PUBLIC void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);
 
    DLL_PUBLIC int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int index);
 
