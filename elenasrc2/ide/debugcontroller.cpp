@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //      its helpers
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -171,48 +171,39 @@ DebugLineInfo* DebugController :: seekClassInfo(size_t address, IdentifierString
 
 DebugLineInfo* DebugController :: getNextStep(DebugLineInfo* step, bool stepOverMode)
 {
-   DebugLineInfo* next = &step[1];
-
-   // HOTFIX : nested brackets
-   if (step->symbol == dsEOP && next->symbol == dsVirtualEnd)
-      step = next;
-
-   if (step->symbol != dsEnd && step->symbol != dsEOP) {
-      next = &step[1];
-      while ((next->symbol & dsDebugMask) != dsStep) {
-         // step over virtual block if required
-         if (next->symbol == dsVirtualBlock && stepOverMode) {
-            int level = 1;
-            while (level > 0) {
-               next = &next[1];
-               switch (next->symbol) {
-                  case dsVirtualBlock:
-                     level++;
-                     break;
-                  case dsVirtualEnd:
-                     level--;
-                     break;
-                  case dsEnd:
-                     return NULL;
-                  //case dsEOP:
-                  //   level = 0;
-                  //   break;
-                  default:
-                     break;
-               }
-            }
-            return next;
-         }
+   DebugLineInfo* next = step;
+   if (stepOverMode) {
+      int level = 1;
+      while (level > 0) {
          next = &next[1];
+         switch (next->symbol) {
+            case dsVirtualBlock:
+               level++;
+               break;
+            case dsVirtualEnd:
+               level--;
+               break;
+            case dsEnd:
+               return nullptr;
+            case dsEOP:
+               level = 0;
+               break;
+            default:
+               break;
+         }
+         
       }
-
-      if (next->row == step->row && next->col == step->col) {
-         // HOTFIX : ignore the step in the same position
-         return getNextStep(next, stepOverMode);
-      }
-      else return next;
    }
-   return NULL;
+   else next = &next[1];
+
+   while ((next->symbol & dsDebugMask) != dsStep) {
+      if (next->symbol == dsEnd)
+         return nullptr;
+
+      next = &next[1];
+   }
+
+   return next;
 }
 
 DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
