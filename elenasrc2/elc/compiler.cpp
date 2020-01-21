@@ -4486,48 +4486,51 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, EAttr m
    return compileClosure(node, ownerScope, scope, mode);
 }
 
-//ObjectInfo Compiler :: compileCollection(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target)
-//{
-//   if (target.reference == V_OBJARRAY) {
-//      target.reference = resolvePrimitiveArray(scope, target.element, false);
-//   }
-//   else if (target.kind == okClass) {
-//      // HOTFIX : class class reference should be turned into class one
-//      IdentifierString className(scope.module->resolveReference(target.reference));
-//      className.cut(getlength(className) - getlength(CLASSCLASS_POSTFIX), getlength(CLASSCLASS_POSTFIX));
-//
-//      target.reference = scope.moduleScope->mapFullReference(className);
-//   }
-//   else scope.raiseError(errInvalidOperation, node);
-//
-//   int counter = 0;
-//   int size = _logic->defineStructSize(*scope.moduleScope, target.reference, 0);
-//
-////   writer.newBookmark();
-//
-//   // all collection memebers should be created before the collection itself
-//   SNode current = node.findChild(lxExpression);
-//   while (current != lxNone) {
-//      writer.newNode(lxMember, counter);
-//      compileExpression(writer, current, scope, target.element, EAttr::eaNone);
-//      writer.closeNode();
-//
-//      current = current.nextNode();
-//      counter++;
-//   }
-//
-//   writer.appendNode(lxTarget, target.reference);
-//   if (size < 0) {
-//      writer.appendNode(lxSize, -size);
-//      writer.inject(lxStruct, counter * (-size));
-//   }
-//   else writer.inject(lxNested, counter);
-//   writer.closeNode();
-//
-////   writer.removeBookmark();
-//
-//   return target;
-//}
+ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInfo target)
+{
+   if (target.reference == V_OBJARRAY) {
+      target.reference = resolvePrimitiveArray(scope, scope.moduleScope->arrayTemplateReference, target.element, false);
+   }
+   else if (target.kind == okClass) {
+      // HOTFIX : class class reference should be turned into class one
+      IdentifierString className(scope.module->resolveReference(target.reference));
+      className.cut(getlength(className) - getlength(CLASSCLASS_POSTFIX), getlength(CLASSCLASS_POSTFIX));
+
+      target.reference = scope.moduleScope->mapFullReference(className);
+   }
+   else scope.raiseError(errInvalidOperation, node);
+
+   int counter = 0;
+   int size = _logic->defineStructSize(*scope.moduleScope, target.reference, 0);
+
+   if (size < 0)
+      throw InternalError("Not yet implemented"); // !! temporal
+
+   node.set(lxInitializing, 0);
+
+   // all collection memebers should be created before the collection itself
+   SNode current = node.findChild(lxExpression);
+   int index = 0;
+   while (current != lxNone) {
+      current.injectAndReplaceNode(lxMember, index++);
+
+      compileExpression(current.firstChild(), scope, target.element, EAttr::eaNone);
+
+      current = current.nextNode();
+      counter++;
+   }
+   
+   if (size < 0) {
+      //      writer.appendNode(lxSize, -size);
+      //      writer.inject(lxStruct, counter * (-size));
+   }
+   else {
+      SNode op = node.insertNode(lxCreatingClass, counter);
+      op.appendNode(lxType, target.reference);
+   }
+
+   return target;
+}
 
 ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr mode)
 {
@@ -4856,9 +4859,9 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
    SNode current = node.firstChild(lxOperatorMask);
 
    switch (current.type) {
-//      case lxCollection:
-//         objectInfo = compileCollection(writer, current, scope, objectInfo);
-//         break;
+      case lxCollection:
+         objectInfo = compileCollection(current, scope, objectInfo);
+         break;
 //      case lxDimensionAttr:
 //         if (current.nextNode() == lxTypecast && objectInfo.kind == okClass) {
 //            // COMPILER MAGIC : if it is a primitive array creation
@@ -5619,11 +5622,12 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 
       recognizeTerminal(current, result, scope, mode);
 
-      SNode mssgNode = node.findChild(lxMessage);
-      if (mssgNode != lxNone) {
+      SNode mssgNode = node.findChild(lxMessage, lxCollection);
+      if (mssgNode == lxMessage) {
          mssgNode.set(lxNewOperation, CONSTRUCTOR_MESSAGE);
       }
-      else scope.raiseError(errInvalidOperation, node);
+      else if (mssgNode == lxNone)
+         scope.raiseError(errInvalidOperation, node);
    }
    else if (mode.testAndExclude(HINT_CASTOP)) {
       ref_t typeRef = resolveTypeAttribute(current, scope, false);

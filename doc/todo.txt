@@ -11,13 +11,14 @@ In development:
                 * compile elenart64.dll
 
               xdev elena50
-                * collections
+                * message literals       	
 
               xdev elena50
                 * stringConvertor, wideConvertor, charConvertor
                 * variadicarray
 
                 * pi sample
+                * collections : numbers
                 * samples
 
                 * event handler
@@ -149,6 +150,7 @@ In development:
                 * api doc - with description
 
               dev50 - test / optimization
+                * review byte code - check for more optimal opcodes
                 * it should be possible to turn-off optimization (opL1)
                 * test : branching external implementation : returning a value from closure 
                 * it should be possible to extend attributes / template statements from anoter libraries
@@ -196,6 +198,9 @@ In development:
                 * check notless : literal, wide, bytearray, array
                 * optimize IntNumber#class.#constructor[1]
                 * CharValue.new = $0 -> should create a new class
+                * CreateClass / CreateStruct with initializers - no need to clear newly created object
+                * generateInitializer - support constants as well for onlyLocal mode
+                * optimize array creation
 
               dev50 - new features
                 * resend to constant - no need for frame

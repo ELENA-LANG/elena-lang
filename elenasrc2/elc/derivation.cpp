@@ -1963,7 +1963,7 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
    }
 
    // NOTE : set the node back to the last one due to implementation
-   if (node.compare(/*lxCollection, */lxNestedClass, lxAttrExpression)) {
+   if (node.compare(lxCollection, lxNestedClass, lxAttrExpression)) {
       // NOTE : nested class is considered as a last token
       node = lastNode;
       lastNode = node.nextNode();
@@ -2049,20 +2049,20 @@ void DerivationWriter :: generateSwitchTree(SyntaxWriter& writer, SNode node, Sc
    }
 }
 
-//void DerivationWriter :: generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
-//{
-//   writer.newNode(lxCollection);
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxExpression) {
-//         generateExpressionTree(writer, current, derivationScope);
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   writer.closeNode();
-//}
+void DerivationWriter :: generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
+{
+   writer.newNode(lxCollection);
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxExpression) {
+         generateExpressionTree(writer, current, derivationScope);
+      }
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+}
 
 //void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope)
 //{
@@ -2168,10 +2168,10 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
          writer.closeNode();
          expressionExpected = true;
          break;
-//      case lxCollection:
-//         generateCollectionTree(writer, current, derivationScope);
-//         first = false;
-//         break;
+      case lxCollection:
+         generateCollectionTree(writer, current, derivationScope);
+         first = false;
+         break;
 //      case lxClosureExpr:
 //      case lxInlineClosure:
 //         // COMPILER MAGIC : recognize the closure without parameters, 

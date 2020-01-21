@@ -3630,9 +3630,11 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id, int 
    switch (operator_id) {
       case REFER_OPERATOR_ID:
          // get
+         tape.write(bcGet);
          break;
       case SET_REFER_OPERATOR_ID:
          // set
+         tape.write(bcSet);
          break;
       case LEN_OPERATOR_ID:
          // count
@@ -6382,7 +6384,7 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
    bool onlyLocals = createMode;
    while (current != lxNone) {
       if (current == lxMember) {
-         SNode memberNode = current.firstChild(lxObjectMask);
+         SNode memberNode = current.findSubNodeMask(lxObjectMask);
          if (!memberNode.compare(lxLocal, lxSelfLocal)) {
             onlyLocals = false;
             break;
@@ -6418,64 +6420,13 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
       current = node.findChild(lxMember);
       while (current != lxNone) {
          if (current == lxMember) {
-            SNode memberNode = current.firstChild(lxObjectMask);
-
+            SNode memberNode = current.findSubNodeMask(lxObjectMask);
+   
             tape.write(bcXSetFI, memberNode.argument, current.argument, bpFrame);
          }
          current = current.nextNode();
       }
    }
-
-//   SNode target = node.findChild(lxTarget);
-//
-//   // presave all the members which could create new objects
-//   SNode current = node.lastChild();
-//   while (current != lxNone) {
-//      if (current.type == lxMember || current.type == lxOuterMember) {
-//         if (!isSimpleObjectExpression(current)) {
-//            generateExpression(tape, current, ACC_REQUIRED);
-//            pushObject(tape, lxResult);
-//         }
-//      }
-//
-//      current = current.prevNode();
-//   }
-//
-//   newObject(tape, node.argument, target.argument);
-//
-//   loadBase(tape, lxResult, 0, ACC_PRESAVED);
-//
-//   current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current.type == lxMember || current.type == lxOuterMember) {
-//         if (!isSimpleObjectExpression(current)) {
-//            popObject(tape, lxResult);
-//         }
-//         else generateExpression(tape, current, ACC_REQUIRED);
-//         SNode temp = current.findChild(lxTempLocal);
-//         if (temp != lxNone) {
-//            saveObject(tape, lxLocal, temp.argument);
-//         }
-//
-//         saveBase(tape, true, lxResult, current.argument);
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   assignBaseTo(tape, lxResult);
-//
-//   SNode callNode = node.findChild(lxOvreriddenMessage);
-//   while (callNode != lxNone) {
-//      ref_t messageTarget = callNode.findChild(lxTarget).argument;
-//      if (!messageTarget)
-//         messageTarget = target.argument;
-//
-//      // call implicit constructor
-//      callInitMethod(tape, messageTarget, callNode.argument, false);
-//
-//      callNode = goToNode(callNode.nextNode(), lxOvreriddenMessage);
-//   }
 }
 
 //void ByteCodeWriter :: generateStructExpression(CommandTape& tape, SyntaxTree::Node node)

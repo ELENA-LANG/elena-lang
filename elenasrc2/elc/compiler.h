@@ -1036,8 +1036,8 @@ private:
 
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
-//   ObjectInfo compileCollection(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ObjectInfo target);
-//
+   ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target);
+
 //   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
 //   ObjectInfo compileSubjectReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
    ObjectInfo compileYieldExpression(SNode objectNode, ExprScope& scope, EAttr mode);
