@@ -222,7 +222,7 @@ enum ByteCode
    bcAllocI          = 0xD1, 
 //   bcNReadI          = 0xD1,
 //   bcSCopyF          = 0xD2,
-//   bcSetVerb         = 0xD3,
+   bcMovV            = 0xD3,
    bcShl             = 0xD4,
    bcAnd             = 0xD5,
    bcInc             = 0xD6,

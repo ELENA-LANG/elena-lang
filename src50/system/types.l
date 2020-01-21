@@ -44,7 +44,7 @@
 #define method      80001008h
 #define field       80001009h
 #define type        8000100Ah
-//#define generic     8000100Bh
+#define generic     8000100Bh
 #define function    8000100Ch
 #define var         8000100Dh
 #define this        8000100Eh
@@ -72,7 +72,7 @@
 #define __raw       80000804h
 #define __ptr       80000805h
 #define __mssg      80000806h
-//#define __subj      80000807h
+#define __subj      80000807h
 //#define mssgconst   80000806h
 //#define subjconst   80000807h
 //#define __symbol    80000808h

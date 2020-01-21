@@ -308,9 +308,9 @@ namespace _ELENA_
    constexpr int elWithVariadics       = 0x00400000;
    constexpr int elWithCustomDispatcher= 0x00800000;
    constexpr int elWithYieldable       = 0x01000000;
-   //   constexpr int elGroup               = 0x00000200;
-//   constexpr int elWithGenerics        = 0x00000400;
-//   constexpr int elSubject             = 0x00002000;
+   constexpr int elWithGenerics        = 0x02000000;
+   constexpr int elSubject             = 0x04000000;
+      //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elSymbol              = 0x00100000;
 //   constexpr int elExtMessage          = 0x00208000;
 
@@ -328,7 +328,7 @@ namespace _ELENA_
    constexpr int elDebugPTR            = 0x00090000;
    constexpr int elDebugWideLiteral    = 0x000A0000;
 //   constexpr int elDebugReference      = 0x000B0000;   // symbol reference
-//   constexpr int elDebugSubject        = 0x000C0000;
+   constexpr int elDebugSubject        = 0x000C0000;
 ////////   const int elDebugReals          = 0x000D0000;
    constexpr int elDebugMessage        = 0x000E0000;
 ////////   const int elDebugDPTR           = 0x000F0000;
@@ -435,7 +435,7 @@ namespace _ELENA_
    constexpr auto GROUP_VAR                  = "__target";         // the current method target / closure owner method target
    constexpr auto SELF_VAR                   = "self";             // the current method class reference / closure owner class reference
    constexpr auto SUPER_VAR                  = "super";            // the predecessor class
-//   constexpr auto SUBJECT_VAR          = "__received";       // the current message
+   constexpr auto SUBJECT_VAR                = "__received";       // the current message
    constexpr auto NIL_VAR                    = "nil";              // the nil pseudo symbol - representing the null value
    constexpr auto RETVAL_VAR                 = "$$ret";            // the closure returning value
    constexpr auto OWNER_VAR                  = "$$owner";          // the nested class / closure owner
@@ -475,7 +475,7 @@ namespace _ELENA_
    constexpr auto FORWARD_PREFIX_NS_LEN      = 10;
 
    constexpr auto CLASSCLASS_POSTFIX         = "#class";
-//   constexpr auto GENERIC_PREFIX             = "#generic";
+   constexpr auto GENERIC_PREFIX             = "#generic";
 //      ////   #define EMBEDDED_PREFIX          "#embedded"
 //      ////   #define TARGET_POSTFIX           "##"
    constexpr auto STATICFIELD_POSTFIX        = "#static";
@@ -524,7 +524,7 @@ namespace _ELENA_
    constexpr auto CHAR_FORWARD               = "$char";
    constexpr auto MESSAGE_FORWARD            = "$message";
 //   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
-//   constexpr auto MESSAGENAME_FORWARD     = "$messagename";
+   constexpr auto MESSAGENAME_FORWARD        = "$messagename";
    constexpr auto REFTEMPLATE_FORWARD        = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD    = "$closure";
    constexpr auto ARRAYTEMPLATE_FORWARD      = "$parray";

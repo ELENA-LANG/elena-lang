@@ -157,9 +157,9 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_INT32, V_INT32, lxIntBoolOp, V_FLAG));
 
-//   // subject primitive operations
-//   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntOp, V_FLAG));
-//   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntOp, V_FLAG));
+   // subject primitive operations
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntOp, V_FLAG));
 
    // int64 primitive operations
    operators.add(OperatorInfo(ADD_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
@@ -521,7 +521,7 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
       case V_PTR32:
          return sourceRef == V_INT32;
       case V_DWORD:
-         return sourceRef == V_INT32 || sourceRef == V_PTR32 || sourceRef == V_MESSAGE;
+         return sourceRef == V_INT32 || sourceRef == V_PTR32 || sourceRef == V_MESSAGE || sourceRef == V_SUBJECT;
       default:
          return false;
    }
@@ -696,10 +696,10 @@ bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
    return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpPrivate;
 }
 
-//bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
-//}
+bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
+}
 
 bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
 {
@@ -1435,11 +1435,11 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
          info.header.flags = elStructureRole | elReadOnlyRole;
          info.size = 4;
          break;
-//      case V_SUBJECT:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugSubject | elStructureRole | elReadOnlyRole;
-//         info.size = 4;
-//         break;
+      case V_SUBJECT:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugSubject | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
       case V_MESSAGE:
          info.header.parentRef = scope.superReference;
          info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
@@ -1773,7 +1773,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue/*, bool com
       case V_CONSTRUCTOR:
       case V_DISPATCHER:
       case V_CONVERSION:
-//      case V_GENERIC:
+      case V_GENERIC:
       case V_FUNCTION:
          return validateMethodAttribute(attrValue, dummy);
       case V_GETACCESSOR:
@@ -1794,9 +1794,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_EMBEDDABLE:
          attrValue = tpEmbeddable;
          return true;
-//      case V_GENERIC:
-//         attrValue = (tpGeneric | tpSealed);
-//         return true;
+      case V_GENERIC:
+         attrValue = (tpGeneric | tpSealed);
+         return true;
       case V_PRIVATE:
          attrValue = (tpPrivate | tpSealed);
          return true;
@@ -1901,7 +1901,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
       case V_PTRBINARY:
       case V_STRING:
       case V_MESSAGE:
-//      case V_SUBJECT:
+      case V_SUBJECT:
 //      case V_EXTMESSAGE:
 //      case V_SYMBOL:
          attrValue = 0;
@@ -2073,9 +2073,9 @@ void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 ////            info.header.flags |= (elDebugPTR | elWrapper);
 ////            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));
 ////            return info.size == 4;
-//         case V_SUBJECT:
-//            info.header.flags |= elDebugSubject | elSubject;
-//            break;
+         case V_SUBJECT:
+            info.header.flags |= elDebugSubject | elSubject;
+            break;
          case V_MESSAGE:
             info.header.flags |= (elDebugMessage | elMessage);
             break;

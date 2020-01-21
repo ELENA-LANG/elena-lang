@@ -50,6 +50,8 @@ ELENA byte codes (or ecodes)
            
  movs i                     - sp+i => acc
 
+ movv m                     - m  => index.verb
+ 
  not                        - !index => index
 
  or n                       - index && n => index
@@ -384,8 +386,6 @@ ELENA byte codes (or ecodes)
  eswap                      - index <=> ext
  
  scopyf i                   - sp <= fp + i
- 
- setverb m                  - ext.verb << m
  
 
  Memory operations:

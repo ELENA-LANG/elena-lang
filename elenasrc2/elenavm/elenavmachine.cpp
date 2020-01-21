@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2019, by Alexei Rakov
+//                                              (C)2009-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -585,7 +585,7 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
    _longClass.copy(_config.forwards.get(LONG_FORWARD));
    _msgClass.copy(_config.forwards.get(MESSAGE_FORWARD));
    //_extMsgClass.copy(_config.forwards.get(EXT_MESSAGE_FORWARD));
-   //_subjClass.copy(_config.forwards.get(MESSAGENAME_FORWARD));
+   _subjClass.copy(_config.forwards.get(MESSAGENAME_FORWARD));
 
    // init debug section
    if (_debugMode) {

@@ -88,39 +88,6 @@ const int gcCommands[gcCommandNumber] =
    bcRIntF, bcRLoad, bcClone, bcAddF, bcSubF,
    bcAddress, bcLoadSI, bcLoadVerb, bcSetVerb, bcCount,
    bcSet,
-   //bcBCopyA, bcParent,
-//   bcMIndex,
-//   bcASwapSI, bcXIndexRM, bcESwap,
-//   bcALoadBI,
-//   bcClass, bcACallVD,
-//   bcELoadSI,
-//   bcEQuit, bcESaveSI,
-//   bcXSet, bcACallI, bcBReadB,
-//   bcLen, bcIfHeap, bcNCreate,
-//   bcBLoadFI, bcAXSaveBI, bcBLoadSI, bcBWriteB,
-//   bcNCopy, bcNAdd, bcBSwapSI,
-//   bcNSub, bcNMul, bcNDiv, bcNLoadE,
-//   bcWLen, bcWCreate, bcCopy,
-//   bcBCreate, bcBWrite, bcXLen,
-//   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI,
-//   bcNAnd, bcNOr, bcNXor, 
-//   bcLCopy, bcLEqual, bcLLess, bcLAdd, bcRethrow,
-//   bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,
-//   bcLXor, bcNShiftL, bcNNot, bcLShiftL, bcLShiftR,
-//   bcLNot, bcRCopy, bcRSave, bcREqual, bcBSaveSI,
-//   bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
-//   bcDCopyR, 
-//   bcNext, 
-//   bcRAbs, bcRExp, bcRInt, bcValidate, ,
-//   bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
-//   bcBWriteW, bcRLoad, bcNLen,
-//   bcNRead, bcNWrite, bcNLoadI, bcELoadFI,
-//   bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
-//   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI, bcInit,
-//   bcCheck, bcXCopy,
-//   bcAddFI, bcSubFI, bcLSave,
-//   bcSelect, bcEqualR, bcBLoadAI, bcAndE, bcDMoveVerb,
-//   bcEOrN, bcNewI, bcACopyAI
 };
 
 const int gcCommandExNumber = 26;
@@ -178,7 +145,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop,
    &loadFPOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileNop, &loadFPOp, &compileNop,
 
-   &compilePopN, &compileAllocI, &compileNop, &compileNop, &compileDShiftN, &compileDAndN, &loadNOp, &compileNop,
+   &compilePopN, &compileAllocI, &compileNop, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileNop,
    &loadROp, &compileDShiftN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &loadFPIndexOpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPN4OpX, &loadFPNOp, &loadFPNOp,
@@ -1855,16 +1822,16 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
    }
 }
 
-//void _ELENA_::compileSetVerb(int, x86JITScope& scope)
-//{
-//   // and ecx, PARAM_MASK | ACTION_MASK
-//   // or  ecx, m
-//   scope.code->writeWord(0xE181);
-//   scope.code->writeDWord(PARAM_MASK | ACTION_MASK);
-//   scope.code->writeWord(0xC981);
-//   scope.code->writeDWord(scope.resolveMessage(encodeAction(scope.argument)));
-//}
-//
+void _ELENA_::compileMovV(int, x86JITScope& scope)
+{
+   // and edx, ARG_MASK | ACTION_MASK
+   // or  edx, m
+   scope.code->writeWord(0xE281);
+   scope.code->writeDWord(ARG_MASK | ACTION_MASK);
+   scope.code->writeWord(0xCA81);
+   scope.code->writeDWord(scope.resolveMessage(encodeAction(scope.argument)));
+}
+
 //void _ELENA_::compilePopB(int, x86JITScope& scope)
 //{
 //   // pop edi

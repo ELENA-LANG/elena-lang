@@ -86,7 +86,7 @@ public:
    virtual ident_t getLongClass();
    virtual ident_t getMessageClass();
    //virtual ident_t getExtMessageClass();
-   //virtual ident_t getMessageNameClass();
+   virtual ident_t getMessageNameClass();
    virtual ident_t getNamespace();
 
    ident_t resolveTemplateWeakReference(ident_t referenceName);

@@ -66,7 +66,7 @@ constexpr auto V_LIMITED         = 0x80001007u;
 constexpr auto V_METHOD          = 0x80001008u;
 constexpr auto V_FIELD           = 0x80001009u;
 constexpr auto V_TYPETEMPL       = 0x8000100Au;
-//constexpr auto V_GENERIC         = 0x8000100Bu;
+constexpr auto V_GENERIC         = 0x8000100Bu;
 constexpr auto V_FUNCTION        = 0x8000100Cu;     // a closure attribute
 constexpr auto V_VARIABLE        = 0x8000100Du;
 constexpr auto V_MEMBER          = 0x8000100Eu;
@@ -96,7 +96,7 @@ constexpr auto V_INTBINARY       = 0x80000803u;
 constexpr auto V_BINARY          = 0x80000804u;
 constexpr auto V_PTRBINARY       = 0x80000805u;
 constexpr auto V_MESSAGE         = 0x80000806u;
-//constexpr auto V_SUBJECT         = 0x80000807u;
+constexpr auto V_SUBJECT         = 0x80000807u;
 //constexpr auto V_SYMBOL          = 0x80000808u;
 //constexpr auto V_INLINEARG       = 0x80000809u;
 ////constexpr auto V_INLINEATTRIBUTE = 0x8000080Au;
@@ -145,7 +145,7 @@ enum MethodHint
 
    tpStackSafe    = 0x0000010,
    tpEmbeddable   = 0x0000020,
-//   tpGeneric     = 0x0000040,
+   tpGeneric      = 0x0000040,
    tpFunction     = 0x0000080,
    tpTargetSelf   = 0x0000100, // used for script generated classes (self refers to __target)
    tpConstructor  = 0x0200400,
@@ -239,7 +239,7 @@ struct _ModuleScope
    ref_t             intReference;
    ref_t             longReference;
    ref_t             realReference;
-//   ref_t             messageNameReference;
+   ref_t             messageNameReference;
    ref_t             messageReference;
 //   ref_t             extMessageReference;
    ref_t             literalReference;
@@ -384,7 +384,7 @@ struct _ModuleScope
       project = nullptr;
       debugModule = module = nullptr;
       intReference = superReference = 0;
-      /*messageNameReference = */messageReference = 0;
+      messageNameReference = messageReference = 0;
       longReference = literalReference = wideReference = 0;
       charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
@@ -685,7 +685,7 @@ public:
 ////   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
-//   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isFunction(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;

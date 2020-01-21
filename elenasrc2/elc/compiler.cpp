@@ -64,7 +64,6 @@ constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
 //constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
 //constexpr auto HINT_PARAMETER		   = EAttr::eaParameter;
-//constexpr auto HINT_SUBCODE_CLOSURE = EAttr::eaSubCodeClosure;
 //constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
 //constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
@@ -742,7 +741,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->outputRef = INVALID_REF; // to indicate lazy load
    this->withOpenArg = false;
    this->classEmbeddable = false;
-//   this->generic = false;
+   this->generic = false;
    this->extensionMode = false;
    this->multiMethod = false;
    this->functionMode = false;
@@ -841,7 +840,7 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
 {
    this->allocated1 = this->reserved1 = 0;
    this->allocated2 = this->reserved2 = 0;
-//   this->genericMethod = false;
+   this->genericMethod = false;
 //   this->ignoreDuplicates = false;
 //   this->yieldMethod = false;
 }
@@ -851,7 +850,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
 {
    this->allocated1 = this->reserved1 = 0;
    this->allocated2 = this->reserved2 = 0;
-   //   this->genericMethod = parent->generic;
+   this->genericMethod = parent->generic;
 //   this->ignoreDuplicates = false;
 //   this->yieldMethod = parent->yieldMethod;
 }
@@ -863,7 +862,7 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->reserved1 = parent->reserved1;
    this->allocated2 = parent->allocated2;
    this->reserved2 = parent->reserved2;
-//   this->genericMethod = parent->genericMethod;
+   this->genericMethod = parent->genericMethod;
 //   this->yieldMethod = parent->yieldMethod;
 //   this->ignoreDuplicates = false;
 }
@@ -879,10 +878,10 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-//      if (genericMethod && identifier.compare(SUBJECT_VAR)) {
-//         return ObjectInfo(okSubject, local.offset, V_SUBJECT);
-//      }
-      /*else */if (local.size != 0) {
+      if (genericMethod && identifier.compare(SUBJECT_VAR)) {
+         return ObjectInfo(okSubject, local.offset, V_SUBJECT);
+      }
+      else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.element_ref, 0);
       }
       else return ObjectInfo(okLocal, local.offset, local.class_ref, local.element_ref, 0);
@@ -1482,7 +1481,9 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
                else varNode = node.appendNode(lxVariable);
 
                varNode.appendNode(lxLevel, prefix - param.offset);
-               varNode.appendNode(lxIdentifier, identNode.identifier());
+               
+               IdentifierString name(identNode.identifier());
+               varNode.appendNode(lxIdentifier, name.c_str());
             }
          }
       }
@@ -1973,7 +1974,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
             break;
       }
    }
-   else if (attrs.fieldRef == V_MESSAGE/* || attrs.fieldRef == V_SUBJECT*/) {
+   else if (attrs.fieldRef == V_MESSAGE || attrs.fieldRef == V_SUBJECT) {
       //if (attrs.size == 8 && attrs.fieldRef == V_MESSAGE) {
       //   attrs.fieldRef = V_EXTMESSAGE;
       //}
@@ -2442,348 +2443,6 @@ void Compiler :: setVariableTerminal(SNode& node, _CompileScope& scope, ObjectIn
 //   }
 //   else return false;
 //}
-//
-//void Compiler :: writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode)
-//{
-//   switch (object.kind) {
-//      case okUnknown:
-//         scope.raiseError(errUnknownObject, terminal);
-//         break;
-//      case okSymbol:
-////         scope.moduleScope->validateReference(terminal, object.param | mskSymbolRef);
-//         writer.newNode(lxSymbolReference, object.param);
-//         break;
-//      case okClass:
-//         writer.newNode(lxClassSymbol, object.param);
-//         break;
-//      case okExtension:
-//         scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
-//      case okConstantSymbol:
-//         writer.newNode(lxConstantSymbol, object.param);
-//         break;
-//      case okLiteralConstant:
-//         writer.newNode(lxConstantString, object.param);
-//         break;
-//      case okWideLiteralConstant:
-//         writer.newNode(lxConstantWideStr, object.param);
-//         break;
-//      case okCharConstant:
-//         writer.newNode(lxConstantChar, object.param);
-//         break;
-//      case okIntConstant:
-//      case okUIntConstant:
-//         writer.newNode(lxConstantInt, object.param);
-//         writer.appendNode(lxIntValue, object.extraparam);
-//         break;
-//      case okLongConstant:
-//         writer.newNode(lxConstantLong, object.param);
-//         break;
-//      case okRealConstant:
-//         writer.newNode(lxConstantReal, object.param);
-//         break;
-//      case okArrayConst:
-//         writer.newNode(lxConstantList, object.param);
-//         break;
-//      case okParam:
-//      case okLocal:
-//         writeParamTerminal(writer, scope, object, mode, lxLocal);
-//         break;
-//      case okParamField:
-//         writeParamFieldTerminal(writer, scope, object, mode, lxLocal);
-//         break;
-//      case okSelfParam:
-//         if (EAttrs::test(mode, HINT_RETEXPR))
-//            mode = mode | HINT_NOBOXING;
-//
-//         writeParamTerminal(writer, scope, object, mode, lxSelfLocal);
-//         break;
-//      case okSuper:
-//         writer.newNode(lxLocal, 1);
-//         break;
-//      case okReadOnlyField:
-//      case okField:
-//      case okOuter:
-//      case okOuterSelf:
-//         writer.newNode(lxField, object.param);
-//         break;
-//      case okStaticField:
-//         if ((int)object.param < 0) {
-//            // if it is a normal static field - field expression should be used
-//            writer.newNode(lxFieldExpression, 0);
-//            writer.appendNode(lxClassRefField, 1);
-//            writer.appendNode(lxStaticField, object.param);
-//         }
-//         // if it is a sealed static field
-//         else writer.newNode(lxStaticField, object.param);
-//         break;
-//      case okClassStaticField:
-//         writer.newNode(lxFieldExpression, 0);
-//         if (!object.param) {
-//            writer.appendNode(lxSelfLocal, 1);
-//         }
-//         else writer.appendNode(lxClassSymbol, object.param);
-//         writer.appendNode(lxStaticField, object.extraparam);
-//         break;
-//      case okStaticConstantField:
-//         if ((int)object.param < 0) {
-//            writer.newNode(lxFieldExpression, 0);
-//            writer.appendNode(lxClassRefField, 1);
-//            writer.appendNode(lxStaticConstField, object.param);
-//         }
-//         else writer.newNode(lxStaticField, object.param);
-//         break;
-//      case okClassStaticConstantField:
-//         writer.newNode(lxFieldExpression, 0);
-//         if (!object.param) {
-//            writer.appendNode(lxSelfLocal, 1);
-//         }
-//         else writer.appendNode(lxClassSymbol, object.param);
-//         writer.appendNode(lxStaticConstField, object.extraparam);
-//         break;
-//      case okOuterField:
-//      case okOuterReadOnlyField:
-//         writer.newNode(lxFieldExpression, 0);
-//         writer.appendNode(lxField, object.param);
-//         writer.appendNode(lxResultField, object.extraparam);
-//         break;
-//      case okOuterStaticField:
-//         writer.newNode(lxFieldExpression, 0);
-//         writer.newNode(lxFieldExpression, 0);
-//         writer.appendNode(lxField, object.param);
-//         //writer.appendNode(lxClassRefAttr, object.param);
-//         writer.closeNode();
-//         writer.appendNode(lxStaticField, object.extraparam);
-//         break;
-//      case okSubject:
-//         writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->messageNameReference, 0u));
-//         writer.appendNode(lxLocalAddress, object.param);
-//         writer.appendNode(lxTarget, scope.moduleScope->messageNameReference);
-//         break;
-//      case okLocalAddress:
-//      case okFieldAddress:
-//      case okReadOnlyFieldAddress:
-//      {
-//         LexicalType type = object.kind == okLocalAddress ? lxLocalAddress : lxFieldAddress;
-//         writeVariableTerminal(writer, scope, object, mode, type);
-//         break;
-//      }
-//      case okNil:
-//         writer.newNode(lxNil/*, object.param*/);
-//         break;
-//      case okMessageConstant:
-//         writer.newNode(lxMessageConstant, object.param);
-//         break;
-//      case okExtMessageConstant:
-//         writer.newNode(lxExtMessageConstant, object.param);
-//         break;
-//      case okMessageNameConstant:
-//         writer.newNode(lxSubjectConstant, object.param);
-//         break;
-//////      case okBlockLocal:
-//////         terminal.set(lxBlockLocal, object.param);
-//////         break;
-//      case okParams:
-//      {
-//         ref_t r = resolvePrimitiveReference(scope, object.reference, object.element, false);
-//         if (!r)
-//            throw InternalError("Cannot resolve variadic argument template");
-//
-//         writer.newNode(lxArgBoxing, 0);
-//         writer.appendNode(lxBlockLocalAddr, object.param);
-//         writer.appendNode(lxTarget, r);
-//         if (EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
-//            writer.appendNode(lxBoxingRequired);
-//         break;
-//      }
-//      case okObject:
-//         writer.newNode(lxResult, 0);
-//         break;
-//      case okConstantRole:
-//         writer.newNode(lxConstantSymbol, object.param);
-//         break;
-//      case okExternal:
-//         return;
-//      case okInternal:
-//         writer.appendNode(lxInternalRef, object.param);
-//         return;
-//      case okPrimitive:
-//      case okPrimCollection:
-//         writer.newBookmark();
-//         if (EAttrs::test(mode, HINT_AUTOSIZE) && !writeSizeArgument(writer))
-//            scope.raiseError(errInvalidOperation, terminal);
-//
-//         writer.appendNode(object.kind == okPrimitive ? lxCreatingStruct : lxCreatingClass, object.param);
-//         writer.inject(lxSeqExpression);
-//         writer.removeBookmark();
-//         break;
-//   }
-//
-//   writeTarget(writer, resolveObjectReference(scope, object, false), object.element);
-//
-//   if (!EAttrs::test(mode, HINT_NODEBUGINFO))
-//      writeTerminalInfo(writer, terminal);
-//
-//   writer.closeNode();
-//}
-//
-//ObjectInfo Compiler :: compileTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, EAttr modeAttr)
-//{
-//   EAttrs mode(modeAttr);
-//   ident_t token = terminal.identifier();
-//
-//   ObjectInfo object;
-//   switch (terminal.type) {
-//      //case lxConstantList:
-//      //      // HOTFIX : recognize predefined constant lists
-//      //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
-//      //   break;
-//      case lxPrimitive:
-//         object = ObjectInfo(okPrimitive, terminal.argument);
-//         break;
-//      case lxPrimCollection:
-//         object = ObjectInfo(okPrimCollection, terminal.argument);
-//         break;
-//      case lxLiteral:
-//         object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
-//         break;
-//      case lxWide:
-//         object = ObjectInfo(okWideLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->wideReference);
-//         break;
-//      case lxCharacter:
-//         object = ObjectInfo(okCharConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->charReference);
-//         break;
-//      case lxInteger:
-//      {
-//         String<char, 20> s;
-//
-//         int integer = token.toInt();
-//         if (errno == ERANGE)
-//            scope.raiseError(errInvalidIntNumber, terminal);
-//
-//         // convert back to string as a decimal integer
-//         s.appendHex(integer);
-//
-//         object = ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
-//         break;
-//      }
-//      case lxLong:
-//      {
-//         String<char, 30> s("_"); // special mark to tell apart from integer constant
-//         s.append(token, getlength(token) - 1);
-//
-//         token.toULongLong(10, 1);
-//         if (errno == ERANGE)
-//            scope.raiseError(errInvalidIntNumber, terminal);
-//
-//         object = ObjectInfo(okLongConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT64);
-//         break;
-//      }
-//      case lxHexInteger:
-//      {
-//         String<char, 20> s;
-//
-//         int integer = token.toULong(16);
-//         if (errno == ERANGE)
-//            scope.raiseError(errInvalidIntNumber, terminal);
-//
-//         // convert back to string as a decimal integer
-//         s.appendHex(integer);
-//
-//         object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT32, 0, integer);
-//         break;
-//      }
-//      case lxReal:
-//      {
-//         String<char, 30> s(token, getlength(token) - 1);
-//         token.toDouble();
-//         if (errno == ERANGE)
-//            scope.raiseError(errInvalidIntNumber, terminal);
-//
-//         // HOT FIX : to support 0r constant
-//         if (s.Length() == 1) {
-//            s.append(".0");
-//         }
-//
-//         object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s), V_REAL64);
-//         break;
-//      }
-//      case lxGlobalReference:
-//         object = scope.mapGlobal(token.c_str());
-//         break;
-////      case lxLocal:
-////         // if it is a temporal variable
-////         object = ObjectInfo(okLocal, terminal.argument);
-////         break;
-//      case lxExplicitConst:
-//      {
-//         // try to resolve explicit constant
-//         size_t len = getlength(token);
-//
-//         IdentifierString action(token + len - 1);
-//         action.append(CONSTRUCTOR_MESSAGE);
-//
-//         ref_t dummyRef = 0;
-//         ref_t actionRef = scope.module->mapAction(action, scope.module->mapSignature(&scope.moduleScope->literalReference, 1, false), dummyRef);
-//
-//         action.copy(token, len - 1);
-//         object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(action), 0, 0, actionRef);
-//         break;
-//      }
-//      default:
-//         if (mode.testany(HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER | HINT_SUBJECTREF | HINT_MESSAGEREF)) {
-//            if (mode.test(HINT_FORWARD)) {
-//               IdentifierString forwardName(FORWARD_MODULE, "'", token);
-//
-//               object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
-//            }
-//            else if (mode.test(HINT_EXTERNALOP)) {
-//               object = ObjectInfo(okExternal, 0, V_INT32);
-//            }
-//            else if (mode.test(HINT_INTERNALOP)) {
-//               object = ObjectInfo(okInternal, scope.module->mapReference(token), V_INT32);
-//            }
-//            else if (mode.test(HINT_MEMBER)) {
-//               object = scope.mapMember(token);
-//            }
-//            else if (mode.testAndExclude(HINT_SUBJECTREF)) {
-//               object = compileSubjectReference(writer, terminal, scope, mode);
-//            }
-//            else if (mode.testAndExclude(HINT_MESSAGEREF)) {
-//               object = compileMessageReference(writer, terminal, scope);
-//            }
-//         }
-//         else object = scope.mapTerminal(token, terminal == lxReference, mode & HINT_SCOPE_MASK);
-//         break;
-//   }
-//
-//   if (object.kind == okExplicitConstant) {
-//      // replace an explicit constant with the appropriate object
-//      writer.newBookmark();
-//      writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
-//
-//      ref_t messageRef = encodeMessage(object.extraparam, 1, 0);
-//      NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//      Pair<ref_t, ref_t>  constInfo = nsScope->extensions.get(messageRef);
-//      if (constInfo.value2 != 0) {
-//         ref_t signRef = 0;
-//         scope.module->resolveAction(object.extraparam, signRef);
-//         if (!_logic->injectConstantConstructor(writer, *scope.moduleScope, *this, constInfo.value2, messageRef))
-//            scope.raiseError(errInvalidConstant, terminal);
-//      }
-//      else scope.raiseError(errInvalidConstant, terminal);
-//
-//      object = ObjectInfo(okObject, constInfo.value2);
-//
-//      writer.removeBookmark();
-//   }
-//   else if (!mode.test(HINT_VIRTUALEXPR)) {
-//      writeTerminal(writer, terminal, scope, object, mode);
-//   }
-//   else if (object.kind == okUnknown)
-//      scope.raiseError(errUnknownObject, terminal);
-//
-//   return object;
-//}
 
 ObjectInfo Compiler :: mapClassSymbol(Scope& scope, int classRef)
 {
@@ -2809,69 +2468,6 @@ ObjectInfo Compiler :: compileTypeSymbol(SNode node, ExprScope& scope, EAttr mod
 
    return retVal;
 }
-
-//ObjectInfo Compiler :: compileObject(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, EAttr modeAttr)
-//{
-//   EAttrs mode(modeAttr);
-//   ObjectInfo result;
-//
-//   if (mode.testAndExclude(HINT_REFOP)) {
-//      result = compileReferenceExpression(writer, node, scope, mode);
-//   }
-//   else if (mode.testAndExclude(HINT_PARAMSOP)) {
-//	   result = compileVariadicUnboxing(writer, node, scope, mode);
-//   }
-//   else {
-//      switch (node.type) {
-//         case lxCollection:
-//            result = compileCollection(writer, node, scope, ObjectInfo(okObject, 0, V_OBJARRAY, scope.moduleScope->superReference, 0));
-//            break;
-//         case lxCodeExpression:
-//         case lxCode:
-//            if (mode.test(HINT_EXTERNALOP)) {
-//               writer.newNode(lxExternFrame);
-//               result = compileSubCode(writer, node, scope, false);
-//               writer.closeNode();
-//            }
-//            else result = compileSubCode(writer, node, scope, false);
-//            break;
-//         case lxTemplate:
-//            if (mode.testAndExclude(HINT_MESSAGEREF)) {
-//               // HOTFIX : if it is an extension message
-//               result = compileMessageReference(writer, node, scope);
-//
-//               if (!mode.test(HINT_VIRTUALEXPR))
-//                  writeTerminal(writer, node, scope, result, mode);
-//            }
-//            else result = compileTemplateSymbol(writer, node, scope, mode);
-//            break;
-//         case lxNestedClass:
-//            result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
-//            break;
-////         case lxLazyExpression:
-////            result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
-////            break;
-//         case lxClosureExpr:
-//            result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
-//            break;
-//         case lxExpression:
-//            result = compileExpression(writer, node, scope, targetRef, mode);
-//            break;
-//         case lxSwitching:
-//            compileSwitch(writer, node, scope);
-//
-//            result = ObjectInfo(okObject);
-//            break;
-//         case lxIdle:
-//            result = ObjectInfo(okUnknown);
-//            break;
-//         default:
-//            result = compileTerminal(writer, node, scope, mode);
-//      }
-//   }
-//
-//   return result;
-//}
 
 ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope, EAttr mode)
 {
@@ -3156,75 +2752,6 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
 
       return extRef;
    }
-
-//   for (auto it = nsScope->extensions.getIt(messageRef); !it.Eof(); it = nsScope->extensions.nextIt(messageRef, it)) {
-//      if (_logic->isCompatible(*scope.moduleScope, (*it).value1, objectRef)) {
-//         // check if the extension handles the normal message
-//         ref_t resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, messageRef, (*it).value2, implicitSignatureRef, stackSafeAttr);
-//         if (resolvedMessageRef) {
-//            if ((*it).value1) {
-//               if (!roleRef2) {
-//                  strongMessage2 = resolvedMessageRef;
-//                  roleRef2 = (*it).value2;
-//               }
-//            }
-//            else {
-//               strongMessage1 = resolvedMessageRef;
-//               roleRef1 = (*it).value2;
-//            }
-//         }
-//         else {
-//            if ((*it).value1) {
-//               if (!generalRoleRef2)
-//                  generalRoleRef2 = (*it).value2;
-//            }
-//            else {
-//               if (!generalRoleRef1)
-//                  generalRoleRef1 = (*it).value2;
-//            }
-//         }
-//      }
-//   }
-//
-   // check template extensions
-
-
-//   if (roleRef3) {
-//      // if it is strong typed message and extension
-//      messageRef = strongMessage3;
-//      //stackSafeAttr |= 1;
-//
-//      return roleRef3;
-//   }
-//   if (roleRef2) {
-//      // if it is strong typed message and extension
-//      messageRef = strongMessage2;
-//      stackSafeAttr |= 1;
-//
-//      return roleRef2;
-//   }
-//   else if (roleRef1) {
-//      // if it is strong typed message and general extension
-//      messageRef = strongMessage1;
-//
-//      return roleRef1;
-//   }
-//   else if (generalRoleRef2) {
-//      stackSafeAttr |= 1;
-//
-//      // if it is general message and strong typed extension
-//      return generalRoleRef2;
-//   }
-//   else if (generalRoleRef1) {
-//      // if it is general message and extension
-//      return generalRoleRef1;
-//   }
-//
-//   //if (objectRef == V_ARGARRAY) {
-//   //   // HOTFIX : variadic target - try to resolve extension for the array
-//
-//   //   return mapExtension(scope, messageRef, implicitSignatureRef, ObjectInfo(okObject, scope.moduleScope->arrayReference), stackSafeAttr);
-//   //}
 
    return 0;
 }
@@ -3905,8 +3432,8 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
          return scope.moduleScope->longReference;
       case V_REAL64:
          return scope.moduleScope->realReference;
-//      case V_SUBJECT:
-//         return scope.messageNameReference;
+      case V_SUBJECT:
+         return scope.moduleScope->messageNameReference;
       case V_MESSAGE:
          return scope.moduleScope->messageReference;
 //      case V_UNBOXEDARGS:
@@ -5794,11 +5321,6 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 //         writer.closeNode();
 //         writer.appendNode(lxStaticField, object.extraparam);
 //         break;
-//      case okSubject:
-//         writer.newNode(lxBoxing, _logic->defineStructSize(*scope.moduleScope, scope.moduleScope->messageNameReference, 0u));
-//         writer.appendNode(lxLocalAddress, object.param);
-//         writer.appendNode(lxTarget, scope.moduleScope->messageNameReference);
-//         break;
       case okFieldAddress:
       case okReadOnlyFieldAddress:
          terminal.set(lxFieldExpression, 0);
@@ -5809,6 +5331,9 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
          setVariableTerminal(terminal, scope, object, mode, lxFieldExpression);
          break;
       case okLocalAddress:
+         setVariableTerminal(terminal, scope, object, mode, lxLocalAddress);
+         break;
+      case okSubject:
          setVariableTerminal(terminal, scope, object, mode, lxLocalAddress);
          break;
       case okNil:
@@ -6826,9 +6351,9 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
 
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode)
 {
-//   if (withoutWeakMessages && test(scope.hints, tpGeneric))
-//      // HOTFIX : nested generic message should not have a multimethod
-//      withoutWeakMessages = false;
+   if (withoutWeakMessages && test(scope.hints, tpGeneric))
+      // HOTFIX : nested generic message should not have a multimethod
+      withoutWeakMessages = false;
 
    IdentifierString actionStr;
    ref_t actionRef = 0;
@@ -6967,13 +6492,13 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          actionStr.copy(CONSTRUCTOR_MESSAGE);
          unnamedMessage = false;
       }
-//      else if (test(scope.hints, tpSealed | tpGeneric)/* && paramCount < OPEN_ARG_COUNT*/) {
-//         if (signatureLen > 0 || !unnamedMessage)
-//            scope.raiseError(errInvalidHint, node);
-//
-//         actionStr.copy(GENERIC_PREFIX);
-//         unnamedMessage = false;
-//      }
+      else if (test(scope.hints, tpSealed | tpGeneric)/* && paramCount < OPEN_ARG_COUNT*/) {
+         if (signatureLen > 0 || !unnamedMessage)
+            scope.raiseError(errInvalidHint, node);
+
+         actionStr.copy(GENERIC_PREFIX);
+         unnamedMessage = false;
+      }
       else if (test(scope.hints, tpFunction)) {
          if (!unnamedMessage)
             scope.raiseError(errInvalidHint, node);
@@ -7067,40 +6592,41 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 //   }
 }
 
-void Compiler :: compileDispatcher(SNode node, MethodScope& scope, /*bool withGenericMethods, */bool withOpenArgGenerics)
+void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
 {
    node.set(lxClassMethod, scope.message);
 
    SNode dispatchNode = node.findChild(lxDispatchCode);
 
-   CodeScope codeScope(&scope);
-   ExprScope exprScope(&codeScope);
-   ObjectInfo target = mapObject(dispatchNode, exprScope, EAttr::eaNone);
-   if (target.kind != okInternal) {
-      dispatchNode.injectAndReplaceNode(lxDispatching);
-      dispatchNode = dispatchNode.firstChild();
-   }
-
    if (dispatchNode != lxNone) {
+      CodeScope codeScope(&scope);
+      ExprScope exprScope(&codeScope);
+      ObjectInfo target = mapObject(dispatchNode, exprScope, EAttr::eaNone);
+      if (target.kind != okInternal) {
+         dispatchNode.injectAndReplaceNode(lxDispatching);
+         dispatchNode = dispatchNode.firstChild();
+      }
+
       compileDispatchExpression(dispatchNode, target, exprScope);
    }
+   // if it is generic handler without redirect statement
+   else if (withGenericMethods) {
+      // !! temporally
+      if (withOpenArgGenerics)
+         scope.raiseError(errInvalidOperation, node);
+
+      dispatchNode = node.appendNode(lxDispatching);
+
+      SNode resendNode = dispatchNode.appendNode(lxResending, 0);
+
+      resendNode.appendNode(lxMessage,
+         encodeMessage(scope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
+
+      resendNode
+         .appendNode(lxCallTarget, scope.moduleScope->superReference)
+         .appendNode(lxMessage, scope.moduleScope->dispatch_message);
+   }
    else throw InternalError("Not yet implemented"); // !! temporal
-//      // if it is generic handler without redirect statement
-//      else if (withGenericMethods) {
-//         // !! temporally
-//         if (withOpenArgGenerics)
-//            scope.raiseError(errInvalidOperation, node);
-//
-//         writer.newNode(lxResending);
-//
-//         writer.appendNode(lxMessage, encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
-//
-//         writer.newNode(lxTarget, scope.moduleScope->superReference);
-//         writer.appendNode(lxMessage, codeScope.moduleScope->dispatch_message);
-//         writer.closeNode();
-//
-//         writer.closeNode();
-//      }
 //      // if it is open arg generic without redirect statement
 //      else if (withOpenArgGenerics) {
 //         writer.newNode(lxResending);
@@ -7662,7 +7188,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
       compileMultidispatch(node, codeScope, *classScope);
    }
 
-   int frameArg = /*scope.generic ? -1 : */0;
+   int frameArg = scope.generic ? -1 : 0;
    if (body != lxCode) {
       body.injectAndReplaceNode(lxNewFrame, frameArg);
       body = body.firstChild();
@@ -7673,11 +7199,11 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
    // stack already contains current self reference
    // the original message should be restored if it is a generic method
    codeScope.allocated1++;
-//   // declare the current subject for a generic method
-//   if (scope.generic) {
-//      codeScope.level++;
-//      codeScope.mapLocal(SUBJECT_VAR, codeScope.level, V_MESSAGE, 0, 0);
-//   }
+   // declare the current subject for a generic method
+   if (scope.generic) {
+      codeScope.allocated2++;
+      codeScope.mapLocal(SUBJECT_VAR, -2, V_MESSAGE, 0, 0);
+   }
 
    scope.preallocated = codeScope.allocated1;
 
@@ -8130,7 +7656,7 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
             // if it is a dispatch handler
             if (methodScope.message == scope.moduleScope->dispatch_message) {
                compileDispatcher(current, methodScope,
-                  /*test(scope.info.header.flags, elWithGenerics),*/
+                  test(scope.info.header.flags, elWithGenerics),
                   test(scope.info.header.flags, elWithVariadics));
             }
             // if it is a normal method
@@ -8171,26 +7697,26 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
       compileInitializer(node, methodScope);
    }
 
-//   // if the VMT conatains newly defined generic handlers, overrides default one
-//   if (testany(scope.info.header.flags, elWithGenerics | elWithVariadics)
-//      && scope.info.methods.exist(scope.moduleScope->dispatch_message, false))
-//   {
-//      MethodScope methodScope(&scope);
-//      methodScope.message = scope.moduleScope->dispatch_message;
-//
-//      scope.include(methodScope.message);
-//
-//      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
-//
-//      scope.info.header.flags |= elWithCustomDispatcher;
-//
-//      compileDispatcher(writer, SNode(), methodScope,
-//         test(scope.info.header.flags, elWithGenerics),
-//         test(scope.info.header.flags, elWithVariadics));
-//
-//      // overwrite the class info
-//      scope.save();
-//   }
+   // if the VMT conatains newly defined generic handlers, overrides default one
+   if (testany(scope.info.header.flags, elWithGenerics | elWithVariadics)
+      && scope.info.methods.exist(scope.moduleScope->dispatch_message, false))
+   {
+      MethodScope methodScope(&scope);
+      methodScope.message = scope.moduleScope->dispatch_message;
+
+      scope.include(methodScope.message);
+
+      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
+
+      scope.info.header.flags |= elWithCustomDispatcher;
+
+      compileDispatcher(methodNode, methodScope,
+         test(scope.info.header.flags, elWithGenerics),
+         test(scope.info.header.flags, elWithVariadics));
+
+      // overwrite the class info
+      scope.save();
+   }
 }
 
 void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassScope& classScope)
@@ -8248,24 +7774,24 @@ void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassS
       current = current.nextNode();
    }
 
-//   // if the VMT conatains newly defined generic handlers, overrides default one
-//   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
-//      && classClassScope.info.methods.exist(classClassScope.moduleScope->dispatch_message, false))
-//   {
-//      MethodScope methodScope(&classClassScope);
-//      methodScope.message = classClassScope.moduleScope->dispatch_message;
-//
-//      classClassScope.include(methodScope.message);
-//
-//      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
-//
-//      compileDispatcher(writer, SNode(), methodScope,
-//         test(classClassScope.info.header.flags, elWithGenerics),
-//         test(classClassScope.info.header.flags, elWithVariadics));
-//
-//      // overwrite the class info
-//      classClassScope.save();
-//   }
+   // if the VMT conatains newly defined generic handlers, overrides default one
+   if (testany(classClassScope.info.header.flags, elWithGenerics | elWithVariadics)
+      && classClassScope.info.methods.exist(classClassScope.moduleScope->dispatch_message, false))
+   {
+      MethodScope methodScope(&classClassScope);
+      methodScope.message = classClassScope.moduleScope->dispatch_message;
+
+      classClassScope.include(methodScope.message);
+
+      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
+
+      compileDispatcher(methodNode, methodScope,
+         test(classClassScope.info.header.flags, elWithGenerics),
+         test(classClassScope.info.header.flags, elWithVariadics));
+
+      // overwrite the class info
+      classClassScope.save();
+   }
 }
 
 inline int countFields(SNode node)
@@ -8465,7 +7991,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.multiMethod = _logic->isMultiMethod(scope.info, methodScope.message);
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
    methodScope.yieldMethod = _logic->isMethodYieldable(scope.info, methodScope.message);
-//   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
+   methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
    methodScope.targetSelfMode = test(methodScope.hints, tpTargetSelf);
 //   if (methodScope.withOpenArg && methodScope.functionMode)
 //      methodScope.genericClosure = true;
@@ -9009,9 +8535,9 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.info.header.flags |= elWithVariadics;
 //      }
    }
-//   else if (_logic->isMethodGeneric(scope.info, message)) {
-//      scope.info.header.flags |= elWithGenerics;
-//   }
+   else if (_logic->isMethodGeneric(scope.info, message)) {
+      scope.info.header.flags |= elWithGenerics;
+   }
 
    // check if there is no duplicate method
    if (scope.info.methods.exist(message, true)) {
@@ -9075,7 +8601,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
       }
 
       if (!closed && test(methodHints, tpEmbeddable)
-         && !testany(methodHints, tpDispatcher | tpFunction | tpConstructor | tpConversion | /*tpGeneric | */tpCast)
+         && !testany(methodHints, tpDispatcher | tpFunction | tpConstructor | tpConversion | tpGeneric | tpCast)
          && !test(message, VARIADIC_MESSAGE)
          && !current.existChild(lxDispatchCode, lxResendExpression))
       {
@@ -11483,7 +11009,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.refTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(REFTEMPLATE_FORWARD));
    scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
    scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
-//   scope.messageNameReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGENAME_FORWARD));
+   scope.messageNameReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGENAME_FORWARD));
 //   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
 //   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));

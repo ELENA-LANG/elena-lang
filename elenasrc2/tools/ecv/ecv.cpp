@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   54
+#define REVISION_VERSION   55
 
 using namespace _ELENA_;
 
@@ -985,9 +985,9 @@ void listFlags(int flags, int& row, int pageSize)
    //   printLine("@flag ", "elGroup", row, pageSize);
    //}      
 
-   //if (test(flags, elWithGenerics)) {
-   //   printLine("@flag ", "elWithGenerics", row, pageSize);
-   //}      
+   if (test(flags, elWithGenerics)) {
+      printLine("@flag ", "elWithGenerics", row, pageSize);
+   }      
 
    if (test(flags, elWithVariadics))
       printLine("@flag ", "elWithVariadics", row, pageSize);
@@ -998,8 +998,8 @@ void listFlags(int flags, int& row, int pageSize)
    if (test(flags, elNonStructureRole))
       printLine("@flag ", "elNonStructureRole", row, pageSize);
 
-   //if (test(flags, elSubject))
-   //   printLine("@flag ", "elSubject", row, pageSize);
+   if (test(flags, elSubject))
+      printLine("@flag ", "elSubject", row, pageSize);
 
    if (test(flags, elAbstract))
       printLine("@flag ", "elAbstract", row, pageSize);
@@ -1060,9 +1060,9 @@ void listFlags(int flags, int& row, int pageSize)
    //   case elDebugReference:
    //      printLine("@flag ", "elDebugReference", row, pageSize);
    //      break;
-   //   case elDebugSubject:
-   //      printLine("@flag ", "elDebugSubject", row, pageSize);
-   //      break;
+      case elDebugSubject:
+         printLine("@flag ", "elDebugSubject", row, pageSize);
+         break;
    //////   //case elDebugReals:
    //////   //   printLine("@flag ", "elDebugReals");
    //////   //   break;

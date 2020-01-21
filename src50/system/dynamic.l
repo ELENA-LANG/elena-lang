@@ -91,14 +91,14 @@ public sealed const struct Message
 //    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
 //    dispatch() => system'core_routines'__extmessage;
 //}
-//
-//// --- MessageName ---
-//
-///// A dynamic message extender
-//public sealed const struct MessageName
-//{
-//    embeddable __subj theValue[4];
-//    
+
+// --- MessageName ---
+
+/// A dynamic message extender
+public sealed const struct MessageName
+{
+    embeddable __subj theValue[4];
+    
 ////    /// Creates a dynamic signature
 ////    constructor new(mssg message)
 ////    [
@@ -141,19 +141,19 @@ public sealed const struct Message
 //    /// Compares the values
 //    bool equal(MessageName subject)
 //        = theValue == subject;
-//
-//    get string Printable()
-//    {
-//        byte buffer[256];
-//        int  length := extern elenart.LoadSubjectName(self, buffer, 255);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
+
+    string toPrintable()
+    {
+        byte buffer[256];
+        int  length := extern elenart.LoadSubjectName(self, buffer, 255);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
 //    /// Qualifies incoming messages and redirects to the target
 //    dispatch() => system'core_routines'__signature;
-//}
-//
+}
+
 //// --- Extension ---
 //
 //public mixin Wrap

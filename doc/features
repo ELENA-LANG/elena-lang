@@ -38,6 +38,7 @@ Declarations
 Code
   Build-in Variables
     * self vs this self
+    * __received
     * class / global predicate
   Operators
     * a ?? b / a.msg() ?? b
