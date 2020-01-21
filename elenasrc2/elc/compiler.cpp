@@ -6609,43 +6609,35 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGene
 
       compileDispatchExpression(dispatchNode, target, exprScope);
    }
-   // if it is generic handler without redirect statement
-   else if (withGenericMethods) {
-      // !! temporally
-      if (withOpenArgGenerics)
-         scope.raiseError(errInvalidOperation, node);
-
+   else {
       dispatchNode = node.appendNode(lxDispatching);
 
       SNode resendNode = dispatchNode.appendNode(lxResending, 0);
 
-      resendNode.appendNode(lxMessage,
-         encodeMessage(scope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
+      // if it is generic handler without redirect statement
+      if (withGenericMethods) {
+         // !! temporally
+         if (withOpenArgGenerics)
+            scope.raiseError(errInvalidOperation, node);
 
-      resendNode
-         .appendNode(lxCallTarget, scope.moduleScope->superReference)
-         .appendNode(lxMessage, scope.moduleScope->dispatch_message);
+         resendNode.appendNode(lxMessage,
+            encodeMessage(scope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 1, 0));
+
+         resendNode
+            .appendNode(lxCallTarget, scope.moduleScope->superReference)
+            .appendNode(lxMessage, scope.moduleScope->dispatch_message);
+      }
+      // if it is open arg generic without redirect statement
+      else if (withOpenArgGenerics) {
+         resendNode.appendNode(lxMessage, encodeMessage(getAction(scope.moduleScope->dispatch_message), 2, VARIADIC_MESSAGE));
+
+         resendNode
+            .appendNode(lxCallTarget, scope.moduleScope->superReference)
+            .appendNode(lxMessage, scope.moduleScope->dispatch_message);
+      }
+      else throw InternalError("Not yet implemented"); // !! temporal
+
    }
-   else throw InternalError("Not yet implemented"); // !! temporal
-//      // if it is open arg generic without redirect statement
-//      else if (withOpenArgGenerics) {
-//         writer.newNode(lxResending);
-//
-////         for (int paramCount = MAX_ARG_COUNT; paramCount >= OPEN_ARG_COUNT; paramCount--) {
-////            if (verifyGenericArgParamCount(*(ClassScope*)scope.parent, paramCount)) {
-//               writer.appendNode(lxMessage, encodeMessage(getAction(codeScope.moduleScope->dispatch_message), 1, VARIADIC_MESSAGE));
-////            }
-////         }
-//
-//         writer.newNode(lxTarget, scope.moduleScope->superReference);
-//         writer.appendNode(lxMessage, codeScope.moduleScope->dispatch_message);
-//         writer.closeNode();
-//
-//         writer.closeNode();
-//      }
-//
-//      writer.closeNode();
-
 }
 
 void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
@@ -8526,14 +8518,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
    int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
    if (isOpenArg(message)) {
-//      if (_logic->isMethodGeneric(scope.info, message)) {
-//         // HOTFIX : verify that only generics with similar argument signature available
-//         //int extraParamCount = retrieveGenericArgParamCount(scope);
-//         //if (extraParamCount != -1 && getParamCount(message) != extraParamCount)
-//         //   scope.raiseError(errIllegalMethod, current);
-//
-         scope.info.header.flags |= elWithVariadics;
-//      }
+      scope.info.header.flags |= elWithVariadics;
    }
    else if (_logic->isMethodGeneric(scope.info, message)) {
       scope.info.header.flags |= elWithGenerics;

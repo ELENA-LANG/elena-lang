@@ -3,7 +3,7 @@
 //
 //		This header contains abstract ECODES Assembler declarations
 //
-//                                             (C)2013-2019, by Alexei Rakov
+//                                             (C)2013-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ecassemblerH
@@ -73,6 +73,7 @@ class ECodesAssembler : public Assembler
 
    void compileNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
    void compileMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   void compileVCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
    void compileICommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
    void compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);

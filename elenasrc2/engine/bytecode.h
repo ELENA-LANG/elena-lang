@@ -20,11 +20,11 @@ enum ByteCode
    bcCoalesce        = 0x02,
 //   bcPop             = 0x03,
    bcSNop            = 0x04,
-//   bcPushE           = 0x05,
+   bcPushVerb        = 0x05,
    bcLoadVerb        = 0x06,
    bcThrow           = 0x07,
-//   bcDCopyCount      = 0x08,
-//   bcOr              = 0x09,
+   bcMCount          = 0x08,
+   bcPush            = 0x09,
    bcPushA           = 0x0A,
    bcPopA            = 0x0B,
 //   bcACopyB          = 0x0C,
@@ -43,7 +43,7 @@ enum ByteCode
    bcGet             = 0x18,
    bcSet             = 0x19,
 //   bcInc             = 0x1A,
-//   bcEQuit           = 0x1B,
+   bcMQuit           = 0x1B,
    bcCount           = 0x1C,
    bcUnhook          = 0x1D,
 //   bcAdd             = 0x1E,
@@ -226,7 +226,7 @@ enum ByteCode
    bcShl             = 0xD4,
    bcAnd             = 0xD5,
    bcInc             = 0xD6,
-//   bcOrN             = 0xD7,
+   bcOr              = 0xD7,
    bcCoalesceR       = 0xD8,
    bcShr             = 0xD9,
 
@@ -524,8 +524,8 @@ public:
    static bool IsMNCode(ByteCode code)
    {
       switch (code) {
-         //case bcSetVerb:
-         //   return true;
+         case bcMovV:
+            return true;
          default:
             return false;
       }

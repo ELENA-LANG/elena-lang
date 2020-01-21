@@ -14,11 +14,11 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 
 const char* _fnOpcodes[256] =
 {
-   "nop", "breakpoint", "coalesce", OPCODE_UNKNOWN, "snop", OPCODE_UNKNOWN, "loadverb", "throw",
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pusha", "popa", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "bsredirect", "setverb",
+   "nop", "breakpoint", "coalesce", OPCODE_UNKNOWN, "snop", "pushverb", "loadverb", "throw",
+   "mcount", "push", "pusha", "popa", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "bsredirect", "setverb",
 
    "not", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", OPCODE_UNKNOWN, "quit",
-   "get", "set", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "count", "unhook", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "get", "set", OPCODE_UNKNOWN, "mquit", "count", "unhook", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",
    "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "read", "clone", OPCODE_UNKNOWN,
@@ -53,7 +53,7 @@ const char* _fnOpcodes[256] =
    "seti", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", "naddf", "nmulf", OPCODE_UNKNOWN,
    "nsubf", "ndivf", "loadi", "savei", "storer", OPCODE_UNKNOWN, "clonef", OPCODE_UNKNOWN,
 
-   "freei", "alloci", OPCODE_UNKNOWN, "movv", "shl", "and", "inc", OPCODE_UNKNOWN,
+   "freei", "alloci", OPCODE_UNKNOWN, "movv", "shl", "and", "inc", "or",
    "coalescer", "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",

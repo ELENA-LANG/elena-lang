@@ -354,6 +354,15 @@ void ECodesAssembler :: compileMCommand(ByteCode code, TokenInfo& token, MemoryW
    writeCommand(ByteCommand(code, arg), writer);
 }
 
+void ECodesAssembler :: compileVCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+{
+   token.read();
+
+   int arg = compileMessageArg(token, binary);
+
+   writeCommand(ByteCommand(code, arg), writer);
+}
+
 void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
 {
 	int n1 = token.readSignedInteger(constants);
@@ -594,16 +603,18 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcMovN:
          //case bcECopy:
          case bcAnd:
-         //case bcOrN:
+         case bcOr:
          case bcPushN:
          case bcInc:
             compileNCommand(opcode, token, writer);
             break;
-         //case bcSetVerb:
          case bcMovM:
             compileMCommand(opcode, token, writer, binary);
             break;
-         //case bcIfB:
+         case bcMovV:
+            compileVCommand(opcode, token, writer, binary);
+            break;
+            //case bcIfB:
          //case bcElseB:
          //case bcIf:
          case bcElse:

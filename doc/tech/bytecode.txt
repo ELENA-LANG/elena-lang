@@ -206,6 +206,8 @@ ELENA byte codes (or ecodes)
  
  popd                       - index <= [sp] ; sp--
     
+ push                       - acc[index] => [sp+1] ; sp++                  
+
  pusha                      - acc => [sp+1] ; sp++                  
 
  pushai i                   - [acc::i] => [sp+1] ; sp++
@@ -231,13 +233,16 @@ ELENA byte codes (or ecodes)
                               should be paired with open
                               it should be only one command per procedure ; 
  
+ mquit                      - terminates the procedure ; clear the stack parameters, based
+                              on index
+
  open i                     - save the last frame and open the new frame ; 
                               init the frame header offset
                               it should be only one command per procedure ; 
  
  quit                       - terminates the procedure;
  
- quitn                      - terminates the procedure;
+ quitn i                    - terminates the procedure;
                               clear the stack parameters
 
  reserve i                  - exclude part of the stack from managed stack frame ;
@@ -303,6 +308,8 @@ ELENA byte codes (or ecodes)
  
  jumpvi i                   - redirect to acc::VMT[i] method
  
+ mcount                     - index.Count >> index   
+
  mtredirect r, m            - search in message table r the message in index and provided parameter list; if found jumps to it;
 
  new vmt, i                 - create the object with the specified
@@ -588,9 +595,6 @@ ELENA byte codes (or ecodes)
 
  Frame operations:
  -----------------              
- equit                      - terminates the procedure ; clear the stack parameters, based
-                              on ext
-
  exclude                    - should be called before external call, excluding the stack starting from ESP from GC frames
  
  init i                     - allocate the stack block for variables and fill it with zero ; acc,base are undefined

@@ -909,6 +909,19 @@ inline % 4
 
 end
 
+// ; pushverb
+inline % 5
+
+  mov   eax, edx
+  mov   ecx, edx
+  shr   eax, ACTION_ORDER
+  mov   edi, rdata : % CORE_MESSAGE_TABLE
+  test  ecx, ecx
+  cmovs eax, [edi + edx]
+  push  eax
+
+end
+
 // ; loadverb
 inline % 6
 
@@ -925,6 +938,14 @@ inline % 7
 
   mov  eax, [data : %CORE_GC_TABLE + gc_et_current]
   jmp  [eax]
+
+end
+
+// ; push
+inline % 09h
+
+   mov  eax, [ebx + edx * 4]
+   push eax
 
 end
 
@@ -995,6 +1016,19 @@ inline % 19h
    mov  [ebx + edx*4], eax
    mov  byte ptr [ecx + esi], 1  
 
+end
+
+// ; mquit
+inline % 1Bh
+
+  mov  ecx, edx
+  pop  esi
+  and  ecx, ARG_MASK
+  lea  esp, [esp + ecx * 4]
+  jmp  esi
+  nop
+  nop
+ 
 end
 
 // ; count

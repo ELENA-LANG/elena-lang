@@ -643,7 +643,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcInc:
          //      case bcECopy:
       case bcAnd:
-//      case bcOrN:
+      case bcOr:
 //      case bcInit:
       case bcLoadI:
       case bcSaveI:
@@ -700,12 +700,12 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printMessage(command, module, argument);
          command.append("\"");
          break;
-//      case bcSetVerb:
-//         printCommand(command, opcode);
-//         command.append("messagename : \"");
-//         printMessage(command, module, encodeAction(argument));
-//         command.append("\"");
-//         break;
+      case bcMovV:
+         printCommand(command, opcode);
+         command.append("messagename : \"");
+         printMessage(command, module, encodeAction(argument));
+         command.append("\"");
+         break;
       case bcSelect:
       case bcXSelectR:
          printCommand(command, opcode);
