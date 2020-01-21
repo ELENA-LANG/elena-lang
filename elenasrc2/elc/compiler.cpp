@@ -4270,6 +4270,61 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScop
    return scope.resolveAutoType(target, sourceRef, source.element);
 }
 
+bool Compiler :: recognizeCompileTimeAssigning(SNode node, ClassScope& scope)
+{
+   bool idle = true;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxFieldInit) {
+         EAttr mode = EAttr::eaNone;
+         SNode identNode = current.findChild(lxIdentifier);
+         if (identNode != lxNone) {
+            ObjectInfo field = scope.mapField(identNode.identifier(), mode);
+            switch (field.kind)
+            {
+               case okStaticConstantField:
+               case okStaticField:
+               case okMetaField:
+                  // HOTFIX : compile-time assigning should be implemented directly
+                  current = lxStaticFieldInit;
+                  break;
+               default:
+                  idle = false;
+                  break;
+            }
+         }
+         else idle = false;
+      }
+      current = current.nextNode();
+   }
+
+   return idle;
+}
+
+void Compiler :: compileCompileTimeAssigning(SNode node, ClassScope& classScope)
+{
+   SNode targetNode = node.firstChild();
+   SNode assignNode = node.findChild(lxAssign);
+   SNode sourceNode = assignNode.nextNode();
+   bool accumulateMode = assignNode.argument == INVALID_REF;
+
+   ExprScope scope(&classScope);
+
+   ObjectInfo target = mapObject(targetNode, scope, EAttr::eaNone);
+
+   // HOTFIX : recognize static field initializer
+   if (target.kind == okStaticField || target.kind == okStaticConstantField || target.kind == okMetaField) {
+      if (target.kind == okMetaField) {
+         compileMetaConstantAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
+      }
+      else if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
+         // HOTFIX : static field initializer should be compiled as preloaded symbol
+         compileClassConstantAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass)), accumulateMode);
+      }
+      else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
+   }
+}
+
 ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode)
 {
    ObjectInfo retVal = target;
@@ -4288,25 +4343,6 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //      }
 //   }
    /*else */sourceNode = current.nextNode(lxObjectMask);
-
-   if (scope.isInitializer()) {
-      // HOTFIX : recognize static field initializer
-      if (target.kind == okStaticField || target.kind == okStaticConstantField || target.kind == okMetaField) {
-         if (target.kind == okMetaField) {
-            compileMetaConstantAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
-         }
-         else if (!isSealedStaticField(target.param) && target.kind == okStaticConstantField) {
-            // HOTFIX : static field initializer should be compiled as preloaded symbol
-            compileClassConstantAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass)), accumulateMode);
-         }
-         else compileStaticAssigning(target, sourceNode, *((ClassScope*)scope.getScope(Scope::ScopeLevel::slClass))/*, accumulateMode*/);
-
-         // NOTE : should not be compiled twice
-         node = lxIdle;
-
-         return ObjectInfo();
-      }
-   }
 
    if (accumulateMode)
       // !! temporally
@@ -8058,6 +8094,9 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
 
    while (current != lxNone) {
       switch(current) {
+         case lxStaticFieldInit:
+            compileCompileTimeAssigning(current, scope);
+            break;
          case lxClassMethod:
          {
             if (exclusiveMode && (ignoreAutoMultimethods == current.existChild(lxAutoMultimethod))) {
@@ -9184,17 +9223,6 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool ne
 {
    bool closed = test(scope.info.header.flags, elClosed);
 
-   if (scope.withInitializers) {
-      // add special method initalizer
-      scope.include(scope.moduleScope->init_message);
-
-      int attrValue = V_INITIALIZER;
-      bool dummy = false;
-      _logic->validateMethodAttribute(attrValue, dummy);
-
-      scope.addAttribute(scope.moduleScope->init_message, maHint, attrValue);
-   }
-
    if (scope.classClassMode) {
       // generate static fields
       generateClassFields(node, scope, countFields(node) == 1);
@@ -9218,6 +9246,20 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool ne
 
       if (scope.extensionClassRef != 0 && _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef))
          scope.embeddable = true;
+
+      if (scope.withInitializers) {
+         // HOTFIX : recognize compile-time assinging
+         if (!recognizeCompileTimeAssigning(node, scope)) {
+            // add special method initalizer
+            scope.include(scope.moduleScope->init_message);
+
+            int attrValue = V_INITIALIZER;
+            bool dummy = false;
+            _logic->validateMethodAttribute(attrValue, dummy);
+
+            scope.addAttribute(scope.moduleScope->init_message, maHint, attrValue);
+         }
+      }
    }
 
    _logic->injectVirtualCode(*scope.moduleScope, node, scope.reference, scope.info, *this, closed);

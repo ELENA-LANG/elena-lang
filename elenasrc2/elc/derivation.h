@@ -238,9 +238,8 @@ class TemplateGenerator
       {
          ttClassTemplate    = 0,
          ttPropertyTemplate = 1,
-//         ttMethodTemplate = 2,
          ttCodeTemplate     = 3,
-//         ttExtTemplate    = 4
+         ttInlineTemplate   = 4
       };
 
       Type          type;
@@ -302,7 +301,7 @@ public:
 
    void generateTemplateCode(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, List<SNode>& parameters);
    void generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, 
-      List<SNode>& parameters, int bookmark);
+      List<SNode>& parameters, int bookmark, bool inlineMode);
 
    void importClass(SyntaxWriter& output, SNode node);
 

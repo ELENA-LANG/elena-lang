@@ -1099,6 +1099,8 @@ private:
 
    ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode);
 
+   bool recognizeCompileTimeAssigning(SNode node, ClassScope& scope);
+   void compileCompileTimeAssigning(SNode node, ClassScope& scope);
    void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*//*, int mode*/);
    void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode);
    void compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope);

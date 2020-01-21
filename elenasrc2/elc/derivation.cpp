@@ -1605,33 +1605,6 @@ void DerivationWriter :: generateInlineTemplateTree(SyntaxWriter& writer, SNode 
       current = current.nextNode();
    }
 
-//   //IdentifierString templateName;
-//
-//   //SyntaxTree tempTree;
-//   //SyntaxWriter tempWriter(tempTree);
-//
-//   //SNode current = node;
-//   //templateName.copy(current.firstChild(lxTerminalMask).identifier());
-//
-//   //if (nameNode.nextNode() == lxClassMethod) {
-//   //   tempWriter.newNode(lxNameAttr);
-//   //   tempWriter.newNode(lxMessage);
-//
-//   //   SyntaxTree::copyNode(tempWriter, nameNode);
-//   //   SyntaxTree::copyMatchedNodes(writer, lxParameter, nameNode.nextNode());
-//
-//   //   tempWriter.closeNode();
-//   //   tempWriter.closeNode();
-//
-//   //   parameters.add(tempTree.readRoot());
-//   //}
-//
-//   // name parameter is always the last parameter
-//   parameters.add(nameNode);
-//
-//   //templateName.append("#inline#");
-//   //templateName.appendInt(parameters.Count());
-
    ref_t templateRef = /*_scope->attributes.get(templateName.c_str())*/node.argument;
    if (!templateRef)
       raiseError(errInvalidSyntax, node.parentNode());
@@ -1643,7 +1616,7 @@ void DerivationWriter :: generateInlineTemplateTree(SyntaxWriter& writer, SNode 
    }
    else bufferWriter.findRoot();
 
-   _scope->generateTemplateProperty(bufferWriter, templateRef, parameters, derivationScope.bookmark);
+   _scope->generateTemplateProperty(bufferWriter, templateRef, parameters, derivationScope.bookmark, true);
 }
 
 void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
@@ -1705,7 +1678,7 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
    }
 
    tempWriter.newNode(lxClassProperty);
-   _scope->generateTemplateProperty(tempWriter, templateRef, parameters, 0);
+   _scope->generateTemplateProperty(tempWriter, templateRef, parameters, 0, false);
    tempWriter.closeNode();
    tempWriter.closeNode();
 
@@ -2419,7 +2392,8 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
 //            writer.closeNode();
 //         }
       }
-      else if (scope.type == TemplateScope::ttPropertyTemplate || scope.type == TemplateScope::ttClassTemplate) {
+      else if (scope.type == TemplateScope::ttPropertyTemplate 
+         || scope.type == TemplateScope::ttClassTemplate || scope.type == TemplateScope::ttInlineTemplate) {
 //         SNode sizeNode = current.findChild(lxDimensionAttr);
          SNode nodeToInject = scope.parameterValues.get(current.argument);
          //bool oldMode = scope.importMode;
@@ -2803,10 +2777,10 @@ void TemplateGenerator :: generateTemplateCode(SyntaxWriter& writer, _ModuleScop
 }
 
 void TemplateGenerator :: generateTemplateProperty(SyntaxWriter& writer, _ModuleScope& scope, ref_t reference, 
-   List<SNode>& parameters, int bookmark)
+   List<SNode>& parameters, int bookmark, bool inlineMode)
 {
    TemplateScope templateScope(&scope, reference, NULL, NULL/*, NULL*/);
-   templateScope.type = TemplateScope::Type::ttPropertyTemplate;
+   templateScope.type = inlineMode ? TemplateScope::Type::ttInlineTemplate : TemplateScope::Type::ttPropertyTemplate;
 
    for (auto it = parameters.start(); !it.Eof(); it++) {
       templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);

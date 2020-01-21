@@ -36,7 +36,6 @@ constexpr auto V_PUBLIC          = 0x80004001u;
 constexpr auto V_PRIVATE         = 0x80004002u;
 constexpr auto V_INTERNAL        = 0x80004003u;
 constexpr auto V_PROTECTED       = 0x80004004u;
-//constexpr auto V_META            = 0x80004005u;
 //constexpr auto V_INLINE          = 0x80004006u;
 constexpr auto V_PROPERTY        = 0x80004007u;
 
@@ -357,7 +356,8 @@ struct _ModuleScope
    virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode,
       ExtensionMap* outerExtensionList) = 0;
    virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
-   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, int bookmark) = 0;
+   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, 
+      int bookmark, bool inlineMode) = 0;
 //   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef) = 0;
    virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 

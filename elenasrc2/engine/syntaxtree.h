@@ -73,6 +73,7 @@ enum LexicalType
    lxStatementDecl            = 0x001100,
    lxStatementArgs            = 0x001110,
    lxFieldInit                = 0x001120,
+   lxStaticFieldInit          = 0x001121,
    lxDynamicSizeDecl          = 0x001130,
    lxClosureExpr              = 0x001140,
    lxInlineDecl               = 0x001150,

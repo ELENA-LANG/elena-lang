@@ -576,14 +576,15 @@ void ModuleScope :: importClassTemplate(SyntaxWriter& output, ref_t reference, L
    transformer.importClass(output, templateTree.readRoot());
 }
 
-void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t reference, List<SNode>& parameters, int bookmark)
+void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t reference, List<SNode>& parameters, 
+   int bookmark, bool inlineMode)
 {
    SyntaxTree templateTree;
 
    TemplateGenerator transformer(templateTree);
    SyntaxWriter writer(templateTree);
    writer.newNode(lxRoot);
-   transformer.generateTemplateProperty(writer, *this, reference, parameters, bookmark);
+   transformer.generateTemplateProperty(writer, *this, reference, parameters, bookmark, inlineMode);
    writer.closeNode();
 
    SyntaxTree::copyNode(output, templateTree.readRoot());

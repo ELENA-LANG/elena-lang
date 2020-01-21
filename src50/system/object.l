@@ -1,6 +1,6 @@
 // --- super object ---
 
-[info:"a common ancestor"]
+//[info:"a common ancestor"]
 public class Object
 {
     /// class constant - a class name 
@@ -31,7 +31,7 @@ public class Object
     dispatch() => intern system'core_routines'__object;
 }
 
-[info:"a common boolean value"]
+//[info:"a common boolean value"]
 public interface BoolValue
 {
     private constructor() {}
