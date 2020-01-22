@@ -117,7 +117,7 @@ public:
       okRealConstant,                 // param - reference
       okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
-//      okMessageNameConstant,          // param - reference
+      okMessageNameConstant,          // param - reference
 //      okArrayConst,
       okField,                        // param - reference, param - field offset
       okReadOnlyField,                // param - reference, param - field offset
@@ -1039,7 +1039,7 @@ private:
    ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target);
 
    ObjectInfo compileMessageReference(SNode objectNode, ExprScope& scope);
-//   ObjectInfo compileSubjectReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
+   ObjectInfo compileSubjectReference(SNode objectNode, ExprScope& scope, EAttr mode);
    ObjectInfo compileYieldExpression(SNode objectNode, ExprScope& scope, EAttr mode);
 
 //   bool writeSizeArgument(SyntaxWriter& writer);

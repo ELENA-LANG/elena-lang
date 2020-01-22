@@ -59,13 +59,13 @@ constexpr auto HINT_CLASSREF        = EAttr::eaClass;
 constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
 constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
+constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
 
 //constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
 //constexpr auto HINT_PARAMETER		   = EAttr::eaParameter;
-//constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
 //constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
@@ -2581,23 +2581,23 @@ ObjectInfo Compiler :: compileMessageReference(SNode terminal, ExprScope& scope)
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileSubjectReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope, EAttr mode)
-//{
-//   ObjectInfo retVal;
-//   IdentifierString messageName;
-//   if (terminal == lxIdentifier) {
-//      ident_t name = terminal.identifier();
-//      messageName.copy(name);
-//   }
-//
-//   retVal.kind = okMessageNameConstant;
-//   retVal.param = scope.moduleScope->module->mapReference(messageName);
-//   retVal.reference = V_SUBJECT;
-//
-//   //writeTerminal(writer, terminal, scope, retVal, mode);
-//
-//   return retVal;
-//}
+ObjectInfo Compiler :: compileSubjectReference(SNode terminal, ExprScope& scope, EAttr mode)
+{
+   ObjectInfo retVal;
+   IdentifierString messageName;
+   if (terminal == lxIdentifier) {
+      ident_t name = terminal.identifier();
+      messageName.copy(name);
+   }
+
+   retVal.kind = okMessageNameConstant;
+   retVal.param = scope.moduleScope->module->mapReference(messageName);
+   retVal.reference = V_SUBJECT;
+
+   //writeTerminal(writer, terminal, scope, retVal, mode);
+
+   return retVal;
+}
 
 ref_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool variadicOne)
 {
@@ -5348,9 +5348,9 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
 //      case okExtMessageConstant:
 //         writer.newNode(lxExtMessageConstant, object.param);
 //         break;
-//      case okMessageNameConstant:
-//         writer.newNode(lxSubjectConstant, object.param);
-//         break;
+      case okMessageNameConstant:
+         terminal.set(lxSubjectConstant, object.param);
+         break;
 //////      case okBlockLocal:
 //////         terminal.set(lxBlockLocal, object.param);
 //////         break;
@@ -5401,7 +5401,9 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    ident_t token = terminal.identifier();
    ObjectInfo object;
 
-   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | HINT_FORWARD | HINT_MESSAGEREF)) {
+   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | HINT_FORWARD 
+      | HINT_MESSAGEREF | HINT_SUBJECTREF))
+   {
       bool invalid = false;
       if (EAttrs::test(mode, HINT_INTERNALOP)) {
          if (terminal == lxReference) {
@@ -5431,6 +5433,9 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
       else if (EAttrs::test(mode, HINT_MESSAGEREF)) {
          // HOTFIX : if it is an extension message
          object = compileMessageReference(terminal, scope);
+      }
+      else if (EAttrs::test(mode, HINT_SUBJECTREF)) {
+         object = compileSubjectReference(terminal, scope, mode);
       }
 
       if (invalid)
@@ -5539,23 +5544,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
             break;
          }
          default:
-         //         if (mode.testany(HINT_FORWARD | HINT_EXTERNALOP | HINT_INTERNALOP | HINT_MEMBER | HINT_SUBJECTREF | HINT_MESSAGEREF)) {
-         //            if (mode.test(HINT_FORWARD)) {
-         //               IdentifierString forwardName(FORWARD_MODULE, "'", token);
-         //
-         //               object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
-         //            }
-         //            else if (mode.test(HINT_MEMBER)) {
-         //               object = scope.mapMember(token);
-         //            }
-         //            else if (mode.testAndExclude(HINT_SUBJECTREF)) {
-         //               object = compileSubjectReference(writer, terminal, scope, mode);
-         //            }
-         //            else if (mode.testAndExclude(HINT_MESSAGEREF)) {
-         //               object = compileMessageReference(writer, terminal, scope);
-         //            }
-         //         }
-            /*else */object = scope.mapTerminal(token, terminal == lxReference, mode & HINT_SCOPE_MASK);
+            object = scope.mapTerminal(token, terminal == lxReference, mode & HINT_SCOPE_MASK);
             break;
       }
    }
@@ -7134,19 +7123,19 @@ ref_t Compiler :: generateConstant(_CompileScope& scope, ObjectInfo retVal)
 
       parentRef = scope.moduleScope->wideReference;
    }
-   //      else if (retVal.kind == okCharConstant) {
-   //         ident_t value = module->resolveConstant(retVal.param);
-   //
-   //         dataWriter.writeLiteral(value, getlength(value));
-   //
-   //         parentRef = scope.moduleScope->charReference;
-   //      }
-   //      else if (retVal.kind == okMessageNameConstant) {
-   //         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
-   //         dataWriter.writeDWord(0);
-   //
-   //         parentRef = scope.moduleScope->messageNameReference;
-   //      }
+   else if (retVal.kind == okCharConstant) {
+      ident_t value = module->resolveConstant(retVal.param);
+   
+      dataWriter.writeLiteral(value, getlength(value));
+   
+      parentRef = scope.moduleScope->charReference;
+   }
+   else if (retVal.kind == okMessageNameConstant) {
+      dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
+      dataWriter.writeDWord(0);
+   
+      parentRef = scope.moduleScope->messageNameReference;
+   }
    //      else if (retVal.kind == okObject) {
    //         SNode root = node.findSubNodeMask(lxObjectMask);
    //
@@ -9156,11 +9145,11 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 
          dataWriter.writeDWord(0);
       }
-//      else if (retVal.kind == okMessageNameConstant) {
-//         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
-//
-//         dataWriter.writeDWord(0);
-//      }
+      else if (retVal.kind == okMessageNameConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
+
+         dataWriter.writeDWord(0);
+      }
 //      else if (retVal.kind == okClass) {
 //         dataWriter.Memory()->addReference(retVal.param | mskVMTRef, dataWriter.Position());
 //         dataWriter.writeDWord(0);
@@ -9215,19 +9204,19 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 
          parentRef = scope.moduleScope->wideReference;
       }
-//      else if (retVal.kind == okCharConstant) {
-//         ident_t value = module->resolveConstant(retVal.param);
-//
-//         dataWriter.writeLiteral(value, getlength(value));
-//
-//         parentRef = scope.moduleScope->charReference;
-//      }
-//      else if (retVal.kind == okMessageNameConstant) {
-//         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
-//         dataWriter.writeDWord(0);
-//
-//         parentRef = scope.moduleScope->messageNameReference;
-//      }
+      else if (retVal.kind == okCharConstant) {
+         ident_t value = module->resolveConstant(retVal.param);
+
+         dataWriter.writeLiteral(value, getlength(value));
+
+         parentRef = scope.moduleScope->charReference;
+      }
+      else if (retVal.kind == okMessageNameConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
+         dataWriter.writeDWord(0);
+
+         parentRef = scope.moduleScope->messageNameReference;
+      }
 //      else if (retVal.kind == okObject) {
 //         SNode root = node.findSubNodeMask(lxObjectMask);
 //

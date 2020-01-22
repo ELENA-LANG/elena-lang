@@ -1405,9 +1405,9 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskMessage:
             vaddress = resolveMessage(referenceInfo, _loader->getMessageClass(), false);
             break;
-//         case mskMessageName:
-//            vaddress = resolveMessage(referenceInfo, _loader->getMessageNameClass(), true);
-//            break;
+         case mskMessageName:
+            vaddress = resolveMessage(referenceInfo, _loader->getMessageNameClass(), true);
+            break;
 //         case mskExtMessage:
 //            vaddress = resolveExtensionMessage(referenceInfo, _loader->getExtMessageClass());
 //            break;

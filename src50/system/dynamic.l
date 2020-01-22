@@ -150,8 +150,8 @@ public sealed const struct MessageName
         ^ String.fromByteArray(0, length, buffer)
     }
 
-//    /// Qualifies incoming messages and redirects to the target
-//    dispatch() => system'core_routines'__signature;
+    /// Qualifies incoming messages and redirects to the target
+    dispatch() => intern system'core_routines'__signature;
 }
 
 //// --- Extension ---

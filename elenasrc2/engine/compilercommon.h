@@ -517,11 +517,11 @@ public:
       eaIgnoreDuplicates   = 0x00004000000,
       eaMssg               = 0x00008000000,
       eaVirtualExpr        = 0x00010000000,
+      eaSubj               = 0x00020000000,
 
       eaScopeMask          = 0x0000041400A,
-      eaObjectMask         = 0x0000821B2F4,
+      eaObjectMask         = 0x0002821B2F4,
 
-//      eaSubj               = 0x00000000400,
 //      eaWrap               = 0x00000001000,
 //      eaDirect             = 0x00000004000,
 //      eaLazy               = 0x00000008000,

@@ -1959,9 +1959,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_META:
          attributes.include(EAttr::eaMetaField);
          return true;
-//      case V_SUBJECT:
-//         attributes.include(EAttr::eaSubj);
-//         return true;
+      case V_SUBJECT:
+         attributes.include(EAttr::eaSubj);
+         return true;
       case V_MESSAGE:
          attributes.include(EAttr::eaMssg);
          return true;
