@@ -11,12 +11,13 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 - **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Twitter:** <https://twitter.com/elena_language>
 - **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
-- **Binaries mirror:** <https://sourceforge.net/projects/elenalang/files/>
+- **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
 - **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
 
 ## Currently Supported Platforms
 
-- **Windows** (v. 4.1)
+- **Windows** 
+- **Linux**
 
 For time being only x86 (32-bit) architecture is supported.
 
@@ -58,7 +59,7 @@ ELENA Project looks for programmers interested in learning the language and prov
 
 ### 1. Bugs, questions, suggestions?
 
-If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new)!
+If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new/choose)!
 
 [Join](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3A%22Design+Idea%22) design discussions or [take part](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3ADiscussion) in general talks.
 
