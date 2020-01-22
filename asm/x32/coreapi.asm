@@ -3620,6 +3620,125 @@ procedure coreapi'register_critical_exception_handler
 
 end
 
+// ; rcopyl (eax:char, edi - target)
+procedure coreapi'chartoshorts
+
+   mov  esi, [esp+4]
+   mov  eax, [esp+8]
+   mov  ecx, [esi]
+   mov  edi, [esp+12]
+   mov  ebx, [eax]
+
+   cmp  ecx, 010000h
+   jl   short lab1
+   
+   mov  edx, ecx
+   shr  edx, 10
+   add  edx, 0D7C0h
+   mov  word ptr [edi + ebx * 2], dx
+   add  ebx, 1
+
+   mov  edx, ecx
+   and  edx, 03FFh
+   add  edx, 0DC00h
+   mov  word ptr [edi+ebx * 2], dx
+   mov  edx, 2
+   ret
+   
+lab1:
+   mov  [edi + ebx * 2], ecx
+   mov  edx, 1
+   ret
+
+end
+
+// ; (esi - index, ecx - char, edi - target ; out : ecx : length)
+procedure coreapi'chartobytes
+
+   mov  esi, [esp+4]
+   mov  eax, [esp+8]
+   mov  ecx, [esi]
+   mov  edi, [esp+12]
+   mov  ebx, [eax]
+
+   cmp  ecx, 00000080h
+   jl   short lab1
+   cmp  ecx, 0800h
+   jl   short lab2
+   cmp  ecx, 10000h
+   jl   short lab3
+   
+   mov  edx, ecx
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
+
+   mov  edx, ecx
+   shr  edx, 12
+   and  edx, 0000003Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
+   
+   mov  edx, ecx
+   shr  edx, 6
+   and  edx, 0000003Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
+    
+   mov  edx, ecx
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
+   mov  edx, 4
+   ret
+   
+lab1:
+   mov  byte ptr [edi + ebx], cl
+   add  ebx, 1
+   mov  edx, 1
+   ret
+
+lab2:
+   mov  edx, ecx
+   shr  edx, 6
+   add  edx, 0C0h
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
+   
+   and  ecx, 03Fh
+   add  ecx, 00000080h
+   mov  byte ptr [edi+ebx], cl
+   add  ebx, 1
+   mov  edx, 2
+   ret
+
+lab3:
+   mov  edx, ecx
+   shr  edx, 12
+   add  edx, 0E0h
+   mov  byte ptr [edi + ebx], dl
+   add  ebx, 1
+   
+   mov  edx, ecx
+   shr  edx, 6
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [edi+ebx], dl
+   add  ebx, 1
+
+   and  ecx, 03Fh
+   add  ecx, 00000080h
+   mov  byte ptr [edi+ebx], cl
+   add  ebx, 1
+   mov  edx, 3
+   ret
+
+end
+
 procedure coreapi'default_handler                                                       
 
   // ; exit code

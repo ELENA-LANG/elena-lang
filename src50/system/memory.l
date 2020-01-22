@@ -1858,94 +1858,94 @@ public singleton wideConvertor
 /// An Unicode character convertor
 public singleton charConvertor
 {
-//    char convert(BaseVariable v)
-//        <= convert(v value).
+    char convert(BaseVariable v)
+        <= convert(v.Value);
         
-//    internal save(char ch, int index, short[] charArray, ref int length)
-//    {
-//        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
-//    }
-//    
-//    internal save(char ch, int index, byte[] charArray, ref int length)
-//    {
-//        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
-//    }
-//    
-//    internal char convert(int index, string s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    internal char convert(int index, byte[] s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
-//        
-//        ^ retVal
-//    }
-//  
-//    internal char convert(int index, wide s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
-//        
-//        ^ retVal
-//    }
-//
-//    internal char convert(int index, short[] buffer)
-//    {
-//        intern system'core_routines'__charconvertor.convert(index, buffer, ref char retVal);
-//        
-//        ^ retVal
-//    }    
-//        
-//    /// Returns a parameter        
-//    char convert(char ch)
-//        = new CharValue(ch);
-//  
-//    /// Converts a literal string into a character
-//    char convert(string s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
-//        
-//        int l1 := retVal.Length;
-//        int l2 := s.Length;
-//        
-//        (l1 != l2)
-//            ? { InvalidArgumentException.new().raise() };
-//        
-//        ^ retVal
-//    }        
-//        
-//    /// Converts a wide literal string into a character                
-//    char convert(wide s)
-//    {
-//        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
-//
-//        int l1 := retVal.Length;
-//        int l2 := s.Length;
-//                
-//        (l1 != l2)
-//            ? { InvalidArgumentException.new().raise() };
-//        
-//        ^ retVal
-//    }      
-//        
-//    /// Converts a byte value into a character
-//    char convert(byte n)
-//    {
-//        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
-//        
-//        ^ retVal
-//    }        
-//        
-//    /// Converts a short integer into a character
-//    char convert(short n)
-//    {
-//        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
-//        
-//        ^ retVal
-//    }
+    internal save(char ch, int index, short[] charArray, ref int length)
+    {
+        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
+    }
+    
+    internal save(char ch, int index, byte[] charArray, ref int length)
+    {
+        intern system'core_routines'__charconvertor.save(ch,index,charArray,ref length);
+    }
+    
+    internal char convert(int index, string s)
+    {
+        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
+        
+        ^ retVal
+    }
+        
+    internal char convert(int index, byte[] s)
+    {
+        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
+        
+        ^ retVal
+    }
+  
+    internal char convert(int index, wide s)
+    {
+        intern system'core_routines'__charconvertor.convert(index, s, ref char retVal);
+        
+        ^ retVal
+    }
+
+    internal char convert(int index, short[] buffer)
+    {
+        intern system'core_routines'__charconvertor.convert(index, buffer, ref char retVal);
+        
+        ^ retVal
+    }    
+        
+    /// Returns a parameter        
+    char convert(char ch)
+        = new CharValue(ch);
+  
+    /// Converts a literal string into a character
+    char convert(string s)
+    {
+        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
+        
+        int l1 := retVal.Length;
+        int l2 := s.Length;
+        
+        (l1 != l2)
+            ? { InvalidArgumentException.new().raise() };
+        
+        ^ retVal
+    }        
+        
+    /// Converts a wide literal string into a character                
+    char convert(wide s)
+    {
+        intern system'core_routines'__charconvertor.convert(0, s, ref char retVal);
+
+        int l1 := retVal.Length;
+        int l2 := s.Length;
+                
+        (l1 != l2)
+            ? { InvalidArgumentException.new().raise() };
+        
+        ^ retVal
+    }      
+        
+    /// Converts a byte value into a character
+    char convert(byte n)
+    {
+        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
+        
+        ^ retVal
+    }        
+        
+    /// Converts a short integer into a character
+    char convert(short n)
+    {
+        intern system'core_routines'__charconvertor.convert(n, ref char retVal);
+        
+        ^ retVal
+    }
         
     /// Converts an integer into a character
     char convert(int n)

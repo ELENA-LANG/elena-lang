@@ -1920,6 +1920,160 @@ labCopy:
 
 end
 
+procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3  
+  callextr api : chartoshorts
+  peeksi 4
+  save
+  
+  quitn 4
+
+end
+
+procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3  
+  callextr api : chartobytes
+  peeksi 4
+  save
+  
+  quitn 4
+
+end
+
+procedure __charconvertor."convert$system@IntNumber$system@String$@system@ref#1&system@CharValue[3]"
+  
+  pushsi 2
+  pushsi 2
+
+  callextr api : strtochar
+  ifr   labErr 0
+
+  freei 2
+  peeksi 3
+  save
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __charconvertor."convert$system@IntNumber$@system@Array#1&system@ByteNumber$@system@ref#1&system@CharValue[3]"
+  
+  pushsi 2
+  pushsi 2
+
+  callextr api : strtochar
+  ifr   labErr 0
+
+  freei 2
+  peeksi 3
+  save
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __charconvertor."convert$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@CharValue[3]"
+
+  pushsi 2
+  pushsi 2
+
+  callextr api : wstrtochar
+  ifr   labErr 0
+
+  freei 2
+  peeksi 3
+  save
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __charconvertor."convert$system@IntNumber$system@WideString$@system@ref#1&system@CharValue[3]"
+  
+  pushsi 2
+  pushsi 2
+
+  callextr api : wstrtochar
+  ifr   labErr 0
+
+  freei 2
+  peeksi 3
+  save
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __charconvertor."convert$system@ByteNumber$@system@ref#1&system@CharValue[2]"
+  
+  peeksi 1
+  load
+
+  lessn labErr 0
+  lessn labCopy 080h
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw
+
+labCopy:
+
+  peeksi 2
+  save
+  quitn 2
+
+end
+
+procedure __charconvertor."convert$system@ShortNumber$@system@ref#1&system@CharValue[2]"
+  
+  peeksi 1
+  load
+
+  lessn labErr 0
+  lessn labCopy 010000h
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw
+
+labCopy:
+
+  peeksi 1
+  save
+  quitn 2
+
+end
+
 procedure __char."readLengthTo$system@CharValue$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1
