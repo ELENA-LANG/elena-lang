@@ -1073,9 +1073,12 @@ public sealed const struct WideString : BaseValue
     constructor copy(wide s)
         <= copy(s.Length, s);
         
-//    /// Creates the copy of a subarray
-//    constructor new(int index, int size, char[] array)
-//        => system'core_routines'__wide;
+    /// Creates the copy of a subarray
+    constructor copy(int index, int length, char[] array)
+        <= allocate(wideConvertor.getSubLength(index, length, array))
+    {
+        intern system'core_routines'__wide.copy(self, index, length, array)
+    }
 
     internal constructor fromShortArray(int index, int size, short[] array)
         <= allocate(size)
@@ -1274,10 +1277,10 @@ public sealed const struct WideString : BaseValue
         }
     }
 
-//    /// Saves the literal into a UTF-32 character array
-//    save(int index, char[] array, ref int length)
-//        => system'core_routines'__wide;
-//
+    /// Saves the literal into a UTF-32 character array
+    save(int index, char[] array, ref int length)
+        => intern system'core_routines'__wide;
+
 //    internal saveToShortArray(int index, short[] array, int retVal)
 //        => system'core_routines'__wide;
 
@@ -1527,11 +1530,11 @@ public singleton stringConvertor
         ^ len
     }
     
-//    string convert(BaseVariable v)
-//        <= convert(v.Value);
-//    
-//    string convert(BaseVariable v, int radix)
-//        <= convert(v.Value, radix);
+    string convert(BaseVariable v)
+        <= convert(v.Value);
+    
+    string convert(BaseVariable v, int radix)
+        <= convert(v.Value, radix);
     
     string convert(char ch)
     {
@@ -1598,60 +1601,60 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
 
-//    /// Converts the parameter to the literal value with the provided radix
-//    string convert(int n, int radix)
-//    {
-//        byte buffer[48];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    string convert(uint n, int radix)
-//    {
-//        byte buffer[48];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    string convert(short n, int radix)
-//    {
-//        byte buffer[32];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    string convert(byte n, int radix)
-//    {
-//        byte buffer[8];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    string convert(long n, int radix)
-//    {
-//        byte buffer[64];
-//        int  length := 0;
-//        
-//        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ String.fromByteArray(0, length, buffer)
-//    }
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(int n, int radix)
+    {
+        byte buffer[48];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(uint n, int radix)
+    {
+        byte buffer[48];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(short n, int radix)
+    {
+        byte buffer[32];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    string convert(byte n, int radix)
+    {
+        byte buffer[8];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    string convert(long n, int radix)
+    {
+        byte buffer[64];
+        int  length := 0;
+        
+        intern system'core_routines'__literalconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ String.fromByteArray(0, length, buffer)
+    }
 
     /// Converts the parameter to the literal value
     string convert(real n)
@@ -1664,55 +1667,24 @@ public singleton stringConvertor
         ^ String.fromByteArray(0, length, buffer)
     }
 
-//    string convert(wide w)
-//    {
-//        int  i := 0;
-//        int  m := 0;
-//        int  page := 0;
-//        int  l := w.Length;
-//        byte buffer[256];
-//        if (l < 128)
-//        {
-//            intern system'core_routines'__literalconvertor.convert(w, buffer, ref m);
-//            
-//            ^ String.fromByteArray(0, m, buffer)
-//        };
-//
-//        string retVal := emptyString;
-//        while(l > 0)
-//        {
-//            page := l;
-//            if (page > 127)
-//            {
-//               page := 127
-//            };
-//            
-//            intern system'core_routines'__literalconvertor.convert(w.Substring(i, page), buffer, ref m);
-//            
-//            retVal := retVal.add(String.fromByteArray(0, m, buffer));
-//            
-//            i := i + page;
-//            l := l - page
-//        };
-//        
-//        ^ retVal
-//    }
-//    
-//    /// Converts the parameter to the literal value
-//    convert(char ch, byte[] buffer, ref int length)
-//    {
-//        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length)
-//    }
-//
-//    convert(int n, byte[] buffer, ref int length)
-//    {
-//        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length)
-//    }
-//    
-//    convert(uint n, byte[] buffer, ref int length)
-//    {
-//        intern system'core_routines'__literalconvertor.convert(n, buffer, ref length)
-//    }
+    string convert(wide w)
+        = cast string(w);
+    
+    /// Converts the parameter to the literal value
+    convert(char ch, byte[] buffer, ref int length)
+    {
+        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length)
+    }
+
+    convert(int n, byte[] buffer, ref int length)
+    {
+        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length)
+    }
+    
+    convert(uint n, byte[] buffer, ref int length)
+    {
+        intern system'core_routines'__literalconvertor.convert(n, 10, buffer, ref length)
+    }
 
     /// Returns a parameter                
     string convert(string s)
@@ -1728,6 +1700,14 @@ public singleton stringConvertor
 /// A wide literal convertor
 public singleton wideConvertor
 {
+    int getSubLength(int index, int length, char[] array)
+    {
+        int len;
+        intern system'core_routines'__wide.sizeOf(index, length, array, ref len);
+        
+        ^ len
+    }
+    
     wide convert(BaseVariable v)
         <= convert(v.Value);
     
@@ -1741,126 +1721,126 @@ public singleton wideConvertor
         ^ WideString.fromShortArray(0, length, buffer)
     }    
     
-//    /// Converts the parameter to the literal value
-//    wide convert(int n)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(uint n)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(short n)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(byte n)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(long n)
-//    {
-//        short buffer[64];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(int n, int radix)
-//    {
-//        short buffer[32];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(uint n, int radix)
-//    {
-//        short buffer[32];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(short n, int radix)
-//    {
-//        short buffer[16];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(byte n, int radix)
-//    {
-//        short buffer[12];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value with the provided radix
-//    wide convert(long n, int radix)
-//    {
-//        short buffer[64];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
-//
-//    /// Converts the parameter to the literal value
-//    wide convert(real n)
-//    {
-//        short buffer[32];
-//        int   length := 0;
-//        
-//        intern system'core_routines'__wideconvertor.convert(n, buffer, ref length);
-//        
-//        ^ WideString.fromShortArray(0, length, buffer)
-//    }
+    /// Converts the parameter to the literal value
+    wide convert(int n)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(uint n)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(short n)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(byte n)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(long n)
+    {
+        short buffer[64];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, 10, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(int n, int radix)
+    {
+        short buffer[32];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(uint n, int radix)
+    {
+        short buffer[32];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(short n, int radix)
+    {
+        short buffer[16];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(byte n, int radix)
+    {
+        short buffer[12];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value with the provided radix
+    wide convert(long n, int radix)
+    {
+        short buffer[64];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, radix, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
+
+    /// Converts the parameter to the literal value
+    wide convert(real n)
+    {
+        short buffer[32];
+        int   length := 0;
+        
+        intern system'core_routines'__wideconvertor.convert(n, 24, buffer, ref length);
+        
+        ^ WideString.fromShortArray(0, length, buffer)
+    }
 
     /// Converts UTF-8 literal to UTF-16e
     wide convert(string s)

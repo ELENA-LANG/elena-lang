@@ -413,6 +413,47 @@ labSave:
 
 end
 
+procedure coreapi'ws_copychars
+
+  mov  eax, [esp+16]
+  mov  edx, [esp+12]
+  mov  esi, [esp+8]
+  mov  ecx, [edx]
+  mov  edi, [esp+4]
+  mov  ebx, [esi]
+
+  lea  esi, [eax + ebx * 4]
+
+labNext:
+  mov  ebx, [esi]
+  cmp  ebx, 010000h
+  jl   short lab1
+
+  mov  edx, ebx
+  shr  edx, 10
+  add  edx, 0D7C0h
+  mov  word ptr [edi], dx
+  add  edi, 2
+
+  and  ebx, 03FFh
+  add  ebx, 0DC00h
+   
+lab1:
+  mov  word ptr [edi], bx
+  add  edi, 2
+  lea  esi, [esi + 4]
+  sub  ecx, 1
+  jnz  short labNext
+
+  mov  ebx, edi
+  pop  edi
+  sub  ebx, edi
+  shr  ebx, 1
+
+  ret
+
+end
+
 // strtochararray(src,index,dst,len)
 procedure coreapi'strtochararray
 
@@ -507,6 +548,54 @@ labSave:
 
 end
 
+procedure coreapi'wstrtochararray
+
+  mov  edx, [esp+16]
+  mov  edi, [esp+12]
+  mov  ecx, [edx]
+  mov  esi, [esp+8]
+  mov  eax, [esp+4]
+  mov  ebx, [esi]
+
+  lea  edi, [edi + ebx * 4]
+
+labStart:
+  mov  ebx, dword ptr [eax]
+  add  eax, 2
+
+  and  ebx, 0FFFFh
+  cmp  ebx, 0D800h
+  jl   short lab1
+
+  shl  ebx, 10
+  mov  edx, dword ptr [eax]
+  add  eax, 2
+  and  edx, 0FFFFh
+  add  ebx, edx
+  sub  ebx, 35FDC00h
+
+lab1:
+  mov   edx, ebx
+
+labSave:
+  mov  [edi], edx
+  add  edi, 4
+  sub  ecx, 1
+  jnz  labStart
+
+  mov  ecx, edi
+  mov  edi, [esp+12]
+  sub  ecx, edi
+  mov  esi, [esp+8]
+  shr  ecx, 2
+  sub  ecx, [esi]
+  mov  eax, [esp+16]
+  mov  [eax], ecx
+
+  ret
+
+end
+
 // ; slen_ch - ecx - len, eax - charr, esi - result 
 procedure coreapi'slen_ch
 
@@ -559,6 +648,39 @@ lab3:
    jnz  short labNext
    mov  [edi], ebx
    ret
+
+end
+
+// ; wslen_ch - ecx - len, eax - charr, esi - result 
+procedure coreapi'wslen_ch
+
+   mov  eax, [esp+12]
+   mov  edi, [esp+8]
+   mov  esi, [esp+4]
+   mov  ecx, [edi]
+   mov  edx, [esi]
+   mov  edi, [esp+16]
+   lea  eax, [eax+edx*4]
+               
+   xor  ebx, ebx
+
+labNext:
+   mov  edx, [eax]
+   cmp  edx, 010000h
+   jl   short lab1
+
+   add  ebx, 2
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret   
+   
+lab1:
+   add  ebx, 1
+   lea  eax, [eax + 4]
+   sub  ecx, 1
+   jnz  short labNext
+   ret   
 
 end
 
@@ -983,6 +1105,112 @@ Lab8:
 
 end
 
+procedure coreapi'inttowstr
+
+   mov  ebx, [esp+8]
+   mov  eax, [esp+4]
+   mov  esi, [ebx]
+   mov  edi, [esp+12]
+
+   push ebp
+   mov  eax, [eax]
+   mov  ebp, esp
+   xor  ecx, ecx
+   push eax
+   cmp  eax, 0
+   jns  short Lab6
+   neg  eax
+Lab6:
+   cmp  eax, ebx
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv ebx
+   push edx
+   add  ecx, 2
+   cmp  eax, ebx
+   jae  short Lab1
+Lab5:   
+   add  ecx, 4
+   push eax
+   mov  eax, [ebp-4]
+   cmp  eax, 0
+   jns  short Lab7
+   push 0F6h      // to get "-" after adding 0x30
+   add  ecx, 2
+Lab7:
+   mov  esi, edi
+   mov  edx, 0FFh
+   sub  ecx, 2             // to skip zero
+Lab2:
+   pop  eax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  word ptr [esi], ax
+   add  esi, 2
+   sub  ecx, 2
+   jnz  short Lab2
+   mov  ecx, esi
+   sub  ecx, edi
+   shr  ecx, 1
+   lea  esp, [esp+4]
+   pop  ebp
+
+   ret
+   
+end
+
+procedure coreapi'uinttowstr
+
+   mov  ebx, [esp+8]
+   mov  eax, [esp+4]
+   mov  esi, [ebx]
+   mov  edi, [esp+12]
+
+   push ebp
+   mov  eax, [eax]
+   mov  ebp, esp
+   xor  ecx, ecx
+   cmp  eax, ebx
+   jb   short Lab5
+Lab1:
+   xor  edx, edx
+   idiv ebx
+   push edx
+   add  ecx, 2
+   cmp  eax, ebx
+   jae  short Lab1
+Lab5:   
+   add  ecx, 4
+   push eax
+   mov  esi, edi
+   mov  edx, 0FFh
+   sub  ecx, 2             // to skip zero
+Lab2:
+   pop  eax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, edx
+   mov  word ptr [esi], ax
+   add  esi, 2
+   sub  ecx, 2
+   jnz  short Lab2
+   mov  ecx, esi
+   sub  ecx, edi
+   shr  ecx, 1
+   pop  ebp
+
+   ret
+   
+end
+
 procedure coreapi'longtostr
 
    mov  ebx, [esp+8]
@@ -1051,6 +1279,85 @@ Lab8:
    and  eax, ebx
    mov  byte ptr [esi], al
    add  esi, 1
+   sub  ecx, 1
+   jnz  short Lab2
+   mov  edx, esi
+   lea  esp, [esp+8]
+   pop  ebp
+   sub  edx, [esp+12]
+   ret
+   
+end
+
+procedure coreapi'longtowstr
+
+   mov  ebx, [esp+8]
+   mov  eax, [esp+4]
+   mov  ecx, [ebx]
+   mov  edi, [esp+12]
+
+   push edi
+   push ebp
+   push [eax+4]
+   mov  ebp, esp
+   mov  edx, [eax]     // NLO
+   mov  eax, [eax+4]   // NHI
+   push 0
+   or   eax, eax
+   jge  short Lab6
+
+   neg  eax 
+   neg  edx 
+   sbb  eax, 0
+
+Lab6:                 // convert 
+   mov  esi, edx      // NLO
+   mov  edi, eax      // NHI
+
+Lab1:
+   test edi, edi
+   jnz  short labConvert
+   cmp  esi, ecx
+   jb   short Lab5
+
+labConvert:
+   mov  eax, edi      // NHI
+   xor  edx, edx
+   div  ecx
+   mov  ebx, eax
+   mov  eax, esi      // NLO
+   div  ecx
+   mov  edi,ebx 
+   mov  esi,eax
+
+   push edx
+   add  [ebp-4], 1
+   jmp  short Lab1
+
+Lab5:   
+   push esi
+
+   mov  ecx, [ebp-4]
+   add  ecx, 1
+
+   mov  eax, [ebp]
+   cmp  eax, 0
+   jns  short Lab7
+   push 0F6h      // to get "-" after adding 0x30
+   add  ecx, 1                  
+Lab7:
+   mov  esi, [ebp+8]
+   mov  ebx, 0FFh
+Lab2:
+   pop  eax
+   cmp  eax, 0Ah
+   jb   short Lab8
+   add  eax, 7
+Lab8:
+   add  eax, 30h
+   and  eax, ebx
+   mov  word ptr [esi], ax
+   add  esi, 2
    sub  ecx, 1
    jnz  short Lab2
    mov  edx, esi
@@ -2326,6 +2633,361 @@ srcerr:
    add   esp, 52
    pop   ebp
    xor   ebx,ebx
+finish3:
+
+/*
+oldcw   :-4  (4)
+truncw  :-8  (4)
+esize   :-12 (4)
+tempdw  :-16 (4)
+bcdstr  :-28 (12)  // -20
+unpacked:- (52)  // -32
+*/
+
+  ret
+end
+
+procedure coreapi'realtowstr
+
+   mov  edi, [esp+12]                 
+   mov  esi, [esp+8]                 // ; radix
+   mov  eax, [esp+4]                 // ; get str
+   mov  ebx, [esi]
+
+   mov   ecx, eax
+   push  ebp
+   mov   ebp, esp
+
+   sub   esp, 52  
+
+   push  edi
+   
+   lea   ebx, [ebx-3]         // get the number of decimal digits (minus 2 for sign and dot)
+   cmp   ebx, 13
+   jbe   short ftoa1   
+   mov   ebx, 13
+ftoa1:
+   xor   edx, edx
+
+   //-------------------------------------------
+   //first examine the value on FPU for validity
+   //-------------------------------------------
+
+   fld   qword ptr [ecx]
+   fxam                       // examine value on FPU
+   fstsw ax                   // get result
+
+   sahf                       // transfer to CPU flags
+   jz    short maybezero
+   jpo   srcerr               // C3=0 and C2=0 would be NAN or unsupported
+   jnc   short getnumsize      // continue if normal finite number
+
+   //--------------------------------
+   //value to be converted = INFINITY
+   //--------------------------------
+
+   mov   al,43                // "+"
+   test  ah,2                 // C1 field = sign
+   jz    short ftoa2
+   mov   al, 45               // "-"
+ftoa2:
+   and   eax, 0FFh
+   stosw
+   mov   eax,4E0049h        // "NI"
+   stosd
+   mov   eax,490046h        // "IF"
+   stosd
+   mov   eax,49004Eh        // "IN"
+   stosd
+   mov   eax,590054h        // "YT"
+   stosd
+   jmp   finish      
+
+   //-------------------------
+   //value to be converted = 0
+   //-------------------------
+         
+maybezero:
+   jpe   short getnumsize      // would be denormalized number
+   fstp  st(0)                // flush that 0 value off the FPU
+   mov   eax,2E0030h          // ".0" szstring
+   stosd                      // write it
+   mov   eax,30h              // "0" szstring
+   stosw                      // write it
+   jmp   finish
+
+   //---------------------------
+   // get the size of the number
+   //---------------------------
+
+getnumsize:
+   fldlg2                     // log10(2)
+   fld   st(1)                // copy Src
+   fabs                       // insures a positive value
+   fyl2x                      // ->[log2(Src)]*[log10(2)] = log10(Src)
+      
+   fstcw word ptr [ebp-4]     // get current control word
+   mov   ax, word ptr [ebp-4]
+   or    ax,0C00h             // code it for truncating
+   mov   word ptr [ebp-8],ax
+   fldcw word ptr [ebp-8]     // insure rounding code of FPU to truncating
+      
+   fist  [ebp-12]             // store characteristic of logarithm
+   fldcw word ptr [ebp-4]     // load back the former control word
+
+   ftst                       // test logarithm for its sign
+   fstsw ax                   // get result
+   sahf                       // transfer to CPU flags
+   sbb   [ebp-12],0           // decrement esize if log is negative
+   fstp  st(0)                // get rid of the logarithm
+
+   //-----------------------------------------------------------------------
+   // get the power of 10 required to generate an integer with the specified
+   // number of significant digits
+   //-----------------------------------------------------------------------
+   
+   mov   eax, [ebp-12]
+   lea   eax, [eax+1]  // one digit is required
+   or    eax, eax
+   js    short ftoa21
+   cmp   eax, 13
+   jbe   short ftoa20
+   mov   edx, -1
+   mov   ebx, 13
+   mov   ecx, ebx
+   sub   ecx, eax
+   mov   [ebp-16], ecx
+   jmp   short ftoa22
+
+ftoa20:
+   add   eax, ebx
+   cmp   eax, 13
+   jbe   short ftoa21
+   sub   eax, 13
+   sub   ebx, eax      
+
+ftoa21:
+   mov   [ebp-16], ebx
+
+ftoa22:
+
+   //----------------------------------------------------------------------------------------
+   // multiply the number by the power of 10 to generate required integer and store it as BCD
+   //----------------------------------------------------------------------------------------
+
+   fild  dword ptr [ebp-16]
+   fldl2t
+   fmulp                      // ->log2(10)*exponent
+   fld   st(0)
+   frndint                    // get the characteristic of the log
+   fxch st(1)
+   fsub  st(0),st(1)          // get only the fractional part but keep the characteristic
+   f2xm1                      // ->2^(fractional part)-1
+   fld1
+   faddp                      // add 1 back
+   fscale                     // re-adjust the exponent part of the REAL number
+   fstp  st(1)                // get rid of the characteristic of the log
+   fmulp                      // ->16-digit integer
+
+   fbstp tbyte ptr[ebp-28]    // ->TBYTE containing the packed digits
+   fstsw ax                   // retrieve exception flags from FPU
+   shr   eax,1                // test for invalid operation
+   jc    srcerr               // clean-up and return error
+
+   //------------------------------------------------------------------------------
+   // unpack BCD, the 10 bytes returned by the FPU being in the little-endian style
+   //------------------------------------------------------------------------------
+
+   lea   esi, [ebp-19]        // go to the most significant byte (sign byte)
+   push  edi
+   lea   edi,[ebp-52]
+   mov   eax,3020h
+   movzx  ecx,byte ptr[esi]     // sign byte
+   cmp   ecx, 00000080h
+   jnz   short ftoa5
+   mov   al, 45               // insert sign if negative number
+ftoa5:
+
+   stosw
+   mov   ecx,9
+ftoa6:
+   sub   esi, 1
+   movzx eax,byte ptr[esi]
+   ror   ax,4
+   ror   ah,4
+   add   eax,3030h
+   stosw
+   sub   ecx, 1
+   jnz   short ftoa6
+
+   pop   edi
+   lea   esi,[ebp-52]
+   
+   cmp   edx, 0
+   jnz   short scientific
+
+   //************************
+   // REGULAR STRING NOTATION
+   //************************
+
+   movsb                      // insert sign
+   xor   eax, eax
+   stosb
+
+   cmp   byte ptr[esi-1], 20h // test if we insert space
+   jnz   short ftoa60
+   lea   edi, [edi-2]         // erase it
+
+ftoa60:
+   mov   ecx,1                // at least 1 integer digit
+   mov   eax, [ebp-12]
+   or    eax, eax             // is size negative (i.e. number smaller than 1)
+   js    short ftoa61
+   add   ecx, eax
+
+ftoa61:
+   mov   eax, ebx
+   add   eax, ecx             // ->total number of digits to be displayed
+   sub   eax, 19
+   sub   esi, eax             // address of 1st digit to be displayed
+   cmp   byte ptr[esi-1], 49  // "1"
+   jnz   ftoa8 
+   sub   esi, 1
+   add   ecx, 1 
+ftoa8:
+   test  ecx, ecx
+   jz    short ftoa8End
+ftoa8Next:                    // copy required integer digits
+   movzx  eax, byte ptr [esi]
+   mov   word ptr [edi], ax
+   lea   esi, [esi+1]
+   lea   edi, [edi+2]
+   sub   ecx, 1
+   jnz   short ftoa8Next
+ftoa8End:
+   mov   ecx,ebx
+   or    ecx,ecx
+   jz    short ftoa9
+   mov   eax,46               // "."
+   stosw
+
+ftoa9Next:                    // copy required decimal digits
+   movzx  eax, byte ptr [esi]
+   mov   word ptr [edi], ax
+   lea   esi, [esi+1]
+   lea   edi, [edi+2]
+   sub   ecx, 1
+   jnz   short ftoa9Next
+ftoa9:
+   jmp   finish
+
+scientific:
+   movsb                      // insert sign
+   xor   eax, eax
+   stosb
+
+   cmp   byte ptr[esi-1], 20h // test if we insert space
+   jnz   short ftoa90
+   lea   edi, [edi-2]         // erase it
+
+ftoa90:
+   mov   ecx, ebx
+   mov   eax, 18
+   sub   eax, ecx
+   add   esi, eax
+   cmp   byte ptr[esi-1],49   // "1"
+   pushfd                     // save flags for extra "1"
+   jnz   short ftoa10
+   sub   esi, 1
+ftoa10:
+   movsb                      // copy the integer
+   xor   eax, eax
+   stosb
+
+   mov   eax,46               // "."
+   stosw
+
+ftoa10Next:                    // copy the decimal digits
+   movzx  eax, byte ptr [esi]
+   mov   word ptr [edi], ax
+   lea   esi, [esi+1]
+   lea   edi, [edi+2]
+   sub   ecx, 1
+   jnz   short ftoa10Next
+
+   mov   eax,69                // "E"
+   stosw
+   mov   eax,43                // "+"
+   mov   ecx,[ebp-12]
+   popfd                      // retrieve flags for extra "1"
+   jnz   short ftoa11          // no extra "1"
+   add   ecx, 1               // adjust exponent
+ftoa11:
+   or    ecx,ecx
+   jns   short ftoa12
+   mov   eax,45                // "-"
+   neg   ecx                  // make number positive
+ftoa12:
+   stosw                      // insert proper sign
+
+// Note: the absolute value of the size could not exceed 4931
+   
+   xor   ebx, ebx   
+   mov   eax,ecx
+   mov   cl,100
+   div   cl                   // ->thousands & hundreds in al, tens & units in AH
+   push  eax
+   and   eax,0ffh             // keep only the thousands & hundreds
+   mov   cl,10
+   div   cl                   // ->thousands in al, hundreds in AH
+   add   eax,3030h            // convert to characters
+   mov   bl, al               // insert them 
+   mov   word ptr [edi], bx
+   lea   edi, [edi+2]
+   shr   eax, 8
+   mov   bl, al
+   mov   word ptr [edi], bx
+   lea   edi, [edi+2]
+   pop   eax
+   shr   eax,8                // get the tens & units in al
+   div   cl                   // tens in al, units in AH
+   add   eax,3030h            // convert to characters
+
+   mov   bl, al               // insert them 
+   mov   word ptr [edi], bx
+   lea   edi, [edi+2]
+   shr   eax, 8
+   mov   bl, al
+   mov   word ptr [edi], bx
+   lea   edi, [edi+2]
+
+finish:
+   cmp   word ptr [edi-2], 48 // '0'
+   jnz   short finish1
+   lea   edi, [edi-2]
+   jmp   short finish
+
+finish1:
+   cmp   word ptr [edi-2], 46 // '.'
+   jnz   short finish2
+   lea   edi, [edi+2]
+
+finish2:
+   mov   ebx, edi
+   pop   edi
+   add   esp, 52
+   pop   ebp
+
+   sub   ebx, edi
+   mov   ecx, ebx
+
+   jmp   short finish3
+
+srcerr:
+   pop   edi
+   add   esp, 52
+   pop   ebp
+   xor   eax,eax
 finish3:
 
 /*

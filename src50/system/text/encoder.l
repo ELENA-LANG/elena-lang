@@ -161,7 +161,7 @@ namespace text
                 
                 if (nil == retVal)
                 { 
-                    retVal := WideString.new(0, tmp_len, tmp) 
+                    retVal := WideString.copy(0, tmp_len, tmp) 
                 }
                 else
                 { 

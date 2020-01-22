@@ -698,6 +698,49 @@ procedure __wide."delete$system@IntNumber$system@IntNumber[3]"
   
 end
 
+procedure __wide."save$system@IntNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+
+  callextr api : wstrtochararray
+                
+  freei  4
+  quitn  4
+
+end
+
+procedure __wide."sizeOf$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : wslen_ch
+  
+  freei  4
+  quitn  4
+
+end
+
+procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : ws_copychars
+  
+  peeksi 0
+  freei  4
+  quitn  4
+
+end
+
 procedure __wideconvertor."convert$system@String$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[3]"
 
   pushsi 1
@@ -730,6 +773,99 @@ labEmpty:
   save
   quitn 3
 
+end
+
+procedure __wideconvertor."convert$system@IntNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3
+
+  callextr api : inttowstr
+  freei 3
+
+  peeksi 4
+  save
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@ShortNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3
+
+  callextr api : inttowstr
+  freei 3
+
+  peeksi 4
+  save
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@ByteNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3
+
+  callextr api : inttowstr
+  freei 3
+
+  peeksi 4
+  save
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@UIntNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3
+
+  callextr api : uinttowstr
+  freei 3
+
+  peeksi 4
+  save
+
+  quitn 4
+
+end
+
+procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3
+  
+  callextr api : longtowstr
+
+  peeksi 4
+  save
+
+  quitn 4
+end
+
+procedure __wideconvertor."convert$system@RealNumber$system@IntNumber$@system@Array#1&system@ShortNumber$@system@ref#1&system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 3
+  
+  callextr api : realtowstr
+  freei 3
+
+  peeksi 4
+  save
+
+  quitn 4
 end
 
 procedure __literalconvertor."convert$system@WideString$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[3]"

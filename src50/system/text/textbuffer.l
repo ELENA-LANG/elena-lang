@@ -144,18 +144,18 @@ namespace text
             self.write(object.toPrintable())
         }
     
-    //    write(char[] array, int length)
-    //    {
-    //        ifnot (0 == length)
-    //        {
-    //            self.reserve(length);
-    //            
-    //            theBuffer.write(cast int(theLength), length, array);
-    //            
-    //            theLength.append(length)
-    //        }
-    //    }
-    //
+        write(char[] array, int length)
+        {
+            ifnot (0 == length)
+            {
+                self.reserve(length);
+    
+                theBuffer.write(theLength.Value, length, array);
+    
+                theLength.append(length)
+            }
+        }
+
     //    private readIndex(string s, ref int i, ref int retVal)
     //    {
     //        char ch := $0;
