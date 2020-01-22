@@ -1931,7 +1931,8 @@ procedure __signature."#dispatch[1]"
   ifn      labDefault 0 
 
   load
-  storev
+  movs 0
+  setv
   popd
   and      SPECIAL_MESSAGE_INV
   peeksi   1
