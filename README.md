@@ -16,7 +16,8 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 
 ## Currently Supported Platforms
 
-- **Windows** and **Linux**
+- **Windows** 
+- **Linux**
 
 For time being only x86 (32-bit) architecture is supported.
 
