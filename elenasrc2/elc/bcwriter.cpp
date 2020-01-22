@@ -661,8 +661,8 @@ inline ref_t defineConstantMask(LexicalType type)
          return mskRealRef;
       case lxMessageConstant:
          return mskMessage;
-      //case lxExtMessageConstant:
-      //   return mskExtMessage;
+      case lxExtMessageConstant:
+         return mskExtMessage;
       case lxSubjectConstant:
          return mskMessageName;
       case lxConstantList:
@@ -3825,7 +3825,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantLong:
       case lxConstantReal:
       case lxMessageConstant:
-//      case lxExtMessageConstant:
+      case lxExtMessageConstant:
       case lxSubjectConstant:
       case lxConstantList:
          // pushr reference
@@ -3959,7 +3959,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxConstantLong:
       case lxConstantReal:
       case lxMessageConstant:
-//      case lxExtMessageConstant:
+      case lxExtMessageConstant:
       case lxSubjectConstant:
       case lxConstantList:
          // pushr reference

@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   55
+#define REVISION_VERSION   56
 
 using namespace _ELENA_;
 
@@ -662,6 +662,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          break;
       case bcJumpVI:
       case bcCallVI:
+      case bcJumpI:
          printCommand(command, opcode);
          command.appendInt(argument);
          break;
@@ -1013,8 +1014,8 @@ void listFlags(int flags, int& row, int pageSize)
    if (test(flags, elMessage))
       printLine("@flag ", "elMessage", row, pageSize);
 
-   //if (test(flags, elExtMessage))
-   //   printLine("@flag ", "elExtMessage", row, pageSize);
+   if (test(flags, elExtMessage))
+      printLine("@flag ", "elExtMessage", row, pageSize);
 
    //if (test(flags, elSymbol))
    //   printLine("@flag ", "elSymbol", row, pageSize);

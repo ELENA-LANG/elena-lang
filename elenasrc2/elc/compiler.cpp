@@ -1975,10 +1975,10 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
       }
    }
    else if (attrs.fieldRef == V_MESSAGE || attrs.fieldRef == V_SUBJECT) {
-      //if (attrs.size == 8 && attrs.fieldRef == V_MESSAGE) {
-      //   attrs.fieldRef = V_EXTMESSAGE;
-      //}
-      /*else*/ if (attrs.size != 4) {
+      if (attrs.size == 8 && attrs.fieldRef == V_MESSAGE) {
+         attrs.fieldRef = V_EXTMESSAGE;
+      }
+      else if (attrs.size != 4) {
          scope.raiseError(errInvalidHint, node);
       }
    }
@@ -2563,18 +2563,22 @@ ObjectInfo Compiler :: compileMessageReference(SNode terminal, ExprScope& scope)
 
       retVal.reference = V_MESSAGE;
    }
-//   else if (terminal == lxTemplate) {
-//      SNode current = terminal.findChild(lxTypeAttribute).findChild(lxTarget);
-//      ref_t extensionRef = mapTypeAttribute(current, scope);
-//      message.append(scope.moduleScope->module->resolveReference(extensionRef));
-//      message.append('.');
-//      message.append('1' + (char)paramCount);
-//      message.append(terminal.firstChild(lxTerminalMask).identifier());
-//
-//      retVal.kind = okExtMessageConstant;
-//      retVal.param = scope.moduleScope->module->mapReference(message);
-//      retVal.reference = V_EXTMESSAGE;
-//   }
+   else if (terminal == lxType) {
+      SNode typeNode = terminal.findChild(lxType);
+      if (typeNode.nextNode() != lxNone)
+         scope.raiseError(errNotApplicable, terminal);
+
+      ref_t extensionRef = resolveTypeAttribute(typeNode, scope, false);
+
+      message.append(scope.moduleScope->module->resolveReference(extensionRef));
+      message.append('.');
+      message.append('1' + (char)paramCount);
+      message.append(terminal.firstChild(lxTerminalMask).identifier());
+
+      retVal.kind = okExtMessageConstant;
+      retVal.param = scope.moduleScope->module->mapReference(message);
+      retVal.reference = V_EXTMESSAGE;
+   }
 
    retVal.param = scope.moduleScope->module->mapReference(message);
 
@@ -5345,9 +5349,9 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okMessageConstant:
          terminal.set(lxMessageConstant, object.param);
          break;
-//      case okExtMessageConstant:
-//         writer.newNode(lxExtMessageConstant, object.param);
-//         break;
+      case okExtMessageConstant:
+         terminal.set(lxExtMessageConstant, object.param);
+         break;
       case okMessageNameConstant:
          terminal.set(lxSubjectConstant, object.param);
          break;
@@ -5573,7 +5577,6 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    }   
    else recognizeTerminal(terminal, object, scope, mode);
 
-
    return object;
 }
 
@@ -5662,14 +5665,13 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
             result = compileSubCode(current, scope, false);
             break;
          case lxType:
-            //            if (mode.testAndExclude(HINT_MESSAGEREF)) {
-            //               // HOTFIX : if it is an extension message
-            //               result = compileMessageReference(writer, node, scope);
-            //
-            //               if (!mode.test(HINT_VIRTUALEXPR))
-            //                  writeTerminal(writer, node, scope, result, mode);
-            //            }
-            /*else */result = compileTypeSymbol(current, scope, mode);
+            if (mode.testAndExclude(HINT_MESSAGEREF)) {
+               // HOTFIX : if it is an extension message
+               result = compileMessageReference(current, scope);
+            
+               recognizeTerminal(current, result, scope, mode);
+            }
+            else result = compileTypeSymbol(current, scope, mode);
             break;
          case lxNestedClass:
             result = compileClosure(current, scope, mode/* & HINT_CLOSURE_MASK*/);

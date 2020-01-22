@@ -272,11 +272,6 @@ const char* showPlatform(int platform)
 
 int main()
 {
-   __asm {
-      cmp edx, [esp]
-   }
-
-
    int argc;
    wchar_t **argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 

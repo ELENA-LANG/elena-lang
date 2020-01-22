@@ -446,8 +446,6 @@ public:
          //case bcIfHeap:
          case bcHook:
          case bcAddress:
-         case bcJumpRM:
-         case bcJumpI:
             return true;
          default:
             return false;
@@ -472,7 +470,6 @@ public:
          case bcCallExtR:
          case bcSelect:
          case bcJumpRM:
-         case bcJumpI:
          case bcVCallRM:
          //case bcBLoadR:
          case bcCreate:

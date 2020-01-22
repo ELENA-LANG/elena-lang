@@ -310,9 +310,9 @@ namespace _ELENA_
    constexpr int elWithYieldable       = 0x01000000;
    constexpr int elWithGenerics        = 0x02000000;
    constexpr int elSubject             = 0x04000000;
-      //   constexpr int elGroup               = 0x00000200;
+   constexpr int elExtMessage          = 0x08200000;
+         //   constexpr int elGroup               = 0x00000200;
 //   constexpr int elSymbol              = 0x00100000;
-//   constexpr int elExtMessage          = 0x00208000;
 
 //   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
@@ -523,7 +523,7 @@ namespace _ELENA_
    constexpr auto WIDESTR_FORWARD            = "$wideliteral";
    constexpr auto CHAR_FORWARD               = "$char";
    constexpr auto MESSAGE_FORWARD            = "$message";
-//   constexpr auto EXT_MESSAGE_FORWARD     = "$ext_message";
+   constexpr auto EXT_MESSAGE_FORWARD        = "$ext_message";
    constexpr auto MESSAGENAME_FORWARD        = "$messagename";
    constexpr auto REFTEMPLATE_FORWARD        = "$reference";
    constexpr auto CLOSURETEMPLATE_FORWARD    = "$closure";
