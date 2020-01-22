@@ -11,12 +11,12 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 - **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Twitter:** <https://twitter.com/elena_language>
 - **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
-- **Binaries mirror:** <https://sourceforge.net/projects/elenalang/files/>
+- **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
 - **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
 
 ## Currently Supported Platforms
 
-- **Windows** (v. 4.1)
+- **Windows** and **Linux**
 
 For time being only x86 (32-bit) architecture is supported.
 
