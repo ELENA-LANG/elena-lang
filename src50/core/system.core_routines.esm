@@ -3,6 +3,8 @@
 
 // ; external methods
 
+define SPECIAL_MESSAGE      000000020h
+
 procedure __object."#dispatch[1]"
 
   bsredirect  
@@ -1874,7 +1876,7 @@ procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[
   movs  0
   save
   loadverb
-  setverb
+  setv
   popd
 
   peeksi 2
@@ -1882,6 +1884,41 @@ procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[
 
   quitn 2
 
+end
+
+procedure __message."#dispatch[1]"
+
+  pushd
+
+  // check if it is invoke
+  and     SPECIAL_MESSAGE
+  ifn     labDefault 0 
+
+  load
+  storev
+
+  elsed   labDefault
+  freei   1
+
+  peeksi  1
+  jumpvi  0
+
+labDefault:
+  popd
+  bsredirect 
+
+  open     4
+  reserve  2
+  savesi   3
+  pushs   -3
+  pusha
+  movr     class : system'Message
+  pushr    class : system'MethodNotFoundException
+  storesi  5
+  peeksi   0
+  pushr    mssgconst : "new[3]"
+  throw
+  
 end
 
 procedure __array."at$system@IntNumber[2]"

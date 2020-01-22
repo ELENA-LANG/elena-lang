@@ -73,8 +73,10 @@
 #define __ptr       80000805h
 #define __mssg      80000806h
 #define __subj      80000807h
-//#define mssgconst   80000806h
-//#define subjconst   80000807h
+#define mssg        80000806h
+#define mssgconst   80000806h
+#define subj        80000807h
+#define subjconst   80000807h
 //#define __symbol    80000808h
 //#define inlinearg   80000809h
 //
@@ -98,8 +100,6 @@ type uint       = UIntNumber;
 type long       = LongNumber;
 type real       = RealNumber;
 type char       = CharValue;
-type mssg       = Message;
-////type ext_mssg   = system'ExtensionMessage.
 type string     = String;
 type wide       = WideString;
 type handle     = Handle;

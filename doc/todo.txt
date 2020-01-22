@@ -11,16 +11,25 @@ In development:
                 * compile elenart64.dll
 
               xdev elena50
-                * message literals       	
+                * message, message name, extension message literals       	
+                * get rid of engine release constant
 
               xdev elena50
                 * stringConvertor, wideConvertor, charConvertor
                 * variadicarray
+                * do not box variadicarray
+                * debug printLine extension
 
+              xdev elena50
                 * pi sample
                 * collections : numbers
                 * samples
 
+              xdev debugger
+                * step over last statement (without terminator)
+                * watch message / subject info
+
+              xdev elena50
                 * event handler
                 * uncomment system'entry
 
@@ -213,6 +222,7 @@ In development:
                 * implement analog of C# enum
                 * analog of C# $ strings
                 * break / contninue
+                * method templates
 
               dev1
                 * move all description to meta info using descr inline template

@@ -28,9 +28,9 @@ enum ByteCode
    bcPushA           = 0x0A,
    bcPopA            = 0x0B,
 //   bcACopyB          = 0x0C,
-//   bcPopE            = 0x0D,
+   bcStoreV          = 0x0D,
    bcBSRedirect      = 0x0E,
-   bcSetVerb         = 0x0F,
+   bcSetV            = 0x0F,
 
    bcNot             = 0x10,
 //   bcLen             = 0x11,
@@ -179,7 +179,7 @@ enum ByteCode
 //   bcLess            = 0xA9,
    bcNotLess         = 0xAA,
    bcNotGreater      = 0xAB,
-//   bcElseB           = 0xAC,
+   bcElseD           = 0xAC,
 //   bcIf              = 0xAD,
    bcElse            = 0xAE,
 //   bcNext            = 0xAF,
@@ -428,7 +428,7 @@ public:
          case bcIfR:
          case bcElseR:
          //case bcIfB:
-         //case bcElseB:
+         case bcElseD:
          //case bcIf:
          case bcElse:
          //case bcLess:

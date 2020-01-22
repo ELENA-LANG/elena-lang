@@ -515,12 +515,13 @@ public:
       eaClass              = 0x00001000000,
       eaYieldExpr          = 0x00002000000,
       eaIgnoreDuplicates   = 0x00004000000,
+      eaMssg               = 0x00008000000,
+      eaVirtualExpr        = 0x00010000000,
 
       eaScopeMask          = 0x0000041400A,
-      eaObjectMask         = 0x0000021B2F4,
+      eaObjectMask         = 0x0000821B2F4,
 
 //      eaSubj               = 0x00000000400,
-//      eaMssg               = 0x00000000800,
 //      eaWrap               = 0x00000001000,
 //      eaDirect             = 0x00000004000,
 //      eaLazy               = 0x00000008000,
@@ -530,7 +531,6 @@ public:
 //
 //      eaAssigningExpr      = 0x00000100000,
 //      eaCallExpr           = 0x00000400000,
-//      eaVirtualExpr        = 0x00000800000,
 //      eaParameter          = 0x00001000000,
 //      eaRetExpr            = 0x00004000000,
 //      eaDirectCall         = 0x00008000000,

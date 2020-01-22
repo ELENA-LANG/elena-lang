@@ -162,6 +162,7 @@ enum LexicalType
    lxConstantChar             = 0x0181A4,   // arg - reference
    lxConstantLong             = 0x0181A5,   // arg - reference
    lxConstantReal             = 0x0181A6,   // arg - reference
+   lxMessageConstant          = 0x0181A7, // arg - rererence
    lxOp                       = 0x0581B0,
    lxIntOp                    = 0x0581B1,   // arg - operation id
    lxIntBoolOp                = 0x0581B2,   // arg - operation id
@@ -268,7 +269,6 @@ enum LexicalType
 //   lxNested                   = 0x008102, // arg - count
 //   lxStruct                   = 0x008103, // arg - count
 //   lxBlockLocal               = 0x00A10B, // arg - offset
-//   lxMessageConstant          = 0x00A113, // arg - rererence
 //   lxExtMessageConstant       = 0x00A114, // arg -reference
 //   lxSubjectConstant          = 0x00A115, // arg - reference
 //   lxStaticConstField         = 0x008116, // arg - reference

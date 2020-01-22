@@ -15,7 +15,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", "coalesce", OPCODE_UNKNOWN, "snop", "pushverb", "loadverb", "throw",
-   "mcount", "push", "pusha", "popa", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "bsredirect", "setverb",
+   "mcount", "push", "pusha", "popa", OPCODE_UNKNOWN, "storev", "bsredirect", "setv",
 
    "not", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", OPCODE_UNKNOWN, "quit",
    "get", "set", OPCODE_UNKNOWN, "mquit", "count", "unhook", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -45,7 +45,7 @@ const char* _fnOpcodes[256] =
    "open", "quitn", "create", "fillr", "movf", "movs", "movr", "movm",
 
    "jump", "jumpvi", "callvi", "callr", "jumpi", "callextr", "hook", "address",
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "notless", "notgreater", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "else", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "notless", "notgreater", "elsed", OPCODE_UNKNOWN, "else", OPCODE_UNKNOWN,
 
    "pushn", "movn", "pushr", OPCODE_UNKNOWN, "pushai", OPCODE_UNKNOWN, "pushfi", "loadfi",
    "loadsi", "savef", "pushsi", "savesi", OPCODE_UNKNOWN, "pushf", "pushs", "reserve",
@@ -380,7 +380,7 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case bcIfR:
          case bcElseR:
          //case bcIfB:
-         //case bcElseB:
+         case bcElseD:
          //case bcIf:
          case bcElse:
          //case bcLess:
@@ -463,7 +463,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcIfR:
             case bcElseR:              
 //            case bcIfB:
-//            case bcElseB:              
+            case bcElseD:              
 //            case bcIf:
             case bcElse:              
 //            case bcLess:

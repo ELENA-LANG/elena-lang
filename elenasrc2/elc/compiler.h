@@ -115,7 +115,7 @@ public:
       okUIntConstant,                 // param - reference, extraparam - imm argument
       okLongConstant,                 // param - reference
       okRealConstant,                 // param - reference
-//      okMessageConstant,              // param - reference
+      okMessageConstant,              // param - reference
 //      okExtMessageConstant,           // param - reference
 //      okMessageNameConstant,          // param - reference
 //      okArrayConst,
@@ -1038,7 +1038,7 @@ private:
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
    ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target);
 
-//   ObjectInfo compileMessageReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope);
+   ObjectInfo compileMessageReference(SNode objectNode, ExprScope& scope);
 //   ObjectInfo compileSubjectReference(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, EAttr mode);
    ObjectInfo compileYieldExpression(SNode objectNode, ExprScope& scope, EAttr mode);
 

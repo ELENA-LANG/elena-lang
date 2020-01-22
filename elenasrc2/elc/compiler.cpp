@@ -57,14 +57,14 @@ constexpr auto HINT_PARAMSOP		   = EAttr::eaParams;
 constexpr auto HINT_SWITCH          = EAttr::eaSwitch;
 constexpr auto HINT_CLASSREF        = EAttr::eaClass;
 constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
+constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
+constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
 
 //constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
-//constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 //constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
 //constexpr auto HINT_PARAMETER		   = EAttr::eaParameter;
-//constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
 //constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
 //constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
@@ -2463,8 +2463,7 @@ ObjectInfo Compiler :: compileTypeSymbol(SNode node, ExprScope& scope, EAttr mod
 {
    ObjectInfo retVal = mapClassSymbol(scope, resolveTemplateDeclaration(node, scope, false));
 
-   //if (!EAttrs::test(mode, HINT_VIRTUALEXPR))
-      recognizeTerminal(node, retVal, scope, mode);
+   recognizeTerminal(node, retVal, scope, mode);
 
    return retVal;
 }
@@ -2532,58 +2531,56 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileMessageReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope)
-//{
-//   ObjectInfo retVal;
-//   IdentifierString message;
-//   int paramCount = 0;
-//
-//   SNode paramNode = terminal.nextNode();
-//   bool invalid = true;
-//   if (paramNode == lxOperator && paramNode.argument == REFER_OPERATOR_ID) {
-//      if (isSingleStatement(paramNode.nextNode())) {
-//         ObjectInfo sizeInfo = compileTerminal(writer, paramNode.nextNode().firstChild(lxObjectMask), scope, HINT_VIRTUALEXPR);
-//         if (sizeInfo.kind == okIntConstant) {
-//            paramCount = sizeInfo.extraparam;
-//            invalid = false;
-//         }
-//      }
-//   }
-//
-//   if (invalid)
-//      scope.raiseError(errNotApplicable, terminal);
-//
-//   // HOTFIX : prevent further compilation of the expression
-//   paramNode = lxIdle;
-//
-//   if (terminal == lxIdentifier) {
-//      message.append('0' + (char)paramCount);
-//      message.append(terminal.identifier());
-//
-//      retVal.kind = okMessageConstant;
-//
-//      retVal.reference = V_MESSAGE;
-//   }
+ObjectInfo Compiler :: compileMessageReference(SNode terminal, ExprScope& scope)
+{
+   ObjectInfo retVal;
+   IdentifierString message;
+   int paramCount = 0;
+
+   SNode paramNode = terminal.nextNode();
+   bool invalid = true;
+   if (paramNode == lxArrOperator && paramNode.argument == REFER_OPERATOR_ID) {
+      if (isSingleStatement(paramNode.nextNode())) {
+         ObjectInfo sizeInfo = mapTerminal(paramNode.nextNode().firstChild(lxTerminalMask), scope, HINT_VIRTUALEXPR);
+         if (sizeInfo.kind == okIntConstant) {
+            paramCount = sizeInfo.extraparam;
+            invalid = false;
+         }
+      }
+   }
+
+   if (invalid)
+      scope.raiseError(errNotApplicable, terminal);
+
+   // HOTFIX : prevent further compilation of the expression
+   paramNode = lxIdle;
+
+   if (terminal == lxIdentifier) {
+      message.append('1' + (char)paramCount);
+      message.append(terminal.identifier());
+
+      retVal.kind = okMessageConstant;
+
+      retVal.reference = V_MESSAGE;
+   }
 //   else if (terminal == lxTemplate) {
 //      SNode current = terminal.findChild(lxTypeAttribute).findChild(lxTarget);
 //      ref_t extensionRef = mapTypeAttribute(current, scope);
 //      message.append(scope.moduleScope->module->resolveReference(extensionRef));
 //      message.append('.');
-//      message.append('0' + (char)paramCount);
+//      message.append('1' + (char)paramCount);
 //      message.append(terminal.firstChild(lxTerminalMask).identifier());
 //
 //      retVal.kind = okExtMessageConstant;
 //      retVal.param = scope.moduleScope->module->mapReference(message);
 //      retVal.reference = V_EXTMESSAGE;
 //   }
-//
-//   retVal.param = scope.moduleScope->module->mapReference(message);
-//
-//   //writeTerminal(writer, terminal, scope, retVal, mode);
-//
-//   return retVal;
-//}
-//
+
+   retVal.param = scope.moduleScope->module->mapReference(message);
+
+   return retVal;
+}
+
 //ObjectInfo Compiler :: compileSubjectReference(SyntaxWriter& writer, SNode terminal, CodeScope& scope, EAttr mode)
 //{
 //   ObjectInfo retVal;
@@ -5204,6 +5201,9 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
 
 void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope& scope, EAttr mode)
 {
+   if (EAttrs::test(mode, HINT_VIRTUALEXPR))
+      return;
+
    // injecting an expression node
    terminal.injectAndReplaceNode(lxExpression);
 
@@ -5342,9 +5342,9 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okNil:
          terminal.set(lxNil, 0/*object.param*/);
          break;
-//      case okMessageConstant:
-//         writer.newNode(lxMessageConstant, object.param);
-//         break;
+      case okMessageConstant:
+         terminal.set(lxMessageConstant, object.param);
+         break;
 //      case okExtMessageConstant:
 //         writer.newNode(lxExtMessageConstant, object.param);
 //         break;
@@ -5401,7 +5401,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    ident_t token = terminal.identifier();
    ObjectInfo object;
 
-   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | HINT_FORWARD)) {
+   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | HINT_FORWARD | HINT_MESSAGEREF)) {
       bool invalid = false;
       if (EAttrs::test(mode, HINT_INTERNALOP)) {
          if (terminal == lxReference) {
@@ -5428,6 +5428,11 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 
          object = scope.mapTerminal(forwardName.ident(), true, EAttr::eaNone);
       }
+      else if (EAttrs::test(mode, HINT_MESSAGEREF)) {
+         // HOTFIX : if it is an extension message
+         object = compileMessageReference(terminal, scope);
+      }
+
       if (invalid)
          scope.raiseError(errInvalidOperation, terminal);
    }
@@ -5557,8 +5562,6 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 
    if (object.kind == okExplicitConstant) {
       // replace an explicit constant with the appropriate object
-//      writer.newBookmark();
-//      writeTerminal(writer, terminal, scope, ObjectInfo(okLiteralConstant, object.param) , mode);
       recognizeTerminal(terminal, ObjectInfo(okLiteralConstant, object.param), scope, mode);
 
       ref_t messageRef = encodeMessage(object.extraparam, 2, 0);
@@ -5576,12 +5579,11 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 
 //      writer.removeBookmark();
    }
-   else /*if (!mode.test(HINT_VIRTUALEXPR))*/ {
-      recognizeTerminal(terminal, object, scope, mode);
-   }
-   ///*else */if (object.kind == okUnknown) {
-   //   scope.raiseError(errUnknownObject, terminal);
-   //}   
+   else if (object.kind == okUnknown) {
+      scope.raiseError(errUnknownObject, terminal);
+   }   
+   else recognizeTerminal(terminal, object, scope, mode);
+
 
    return object;
 }
@@ -5671,13 +5673,13 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
             result = compileSubCode(current, scope, false);
             break;
          case lxType:
-//            if (mode.testAndExclude(HINT_MESSAGEREF)) {
-//               // HOTFIX : if it is an extension message
-//               result = compileMessageReference(writer, node, scope);
-//
-//               if (!mode.test(HINT_VIRTUALEXPR))
-//                  writeTerminal(writer, node, scope, result, mode);
-//            }
+            //            if (mode.testAndExclude(HINT_MESSAGEREF)) {
+            //               // HOTFIX : if it is an extension message
+            //               result = compileMessageReference(writer, node, scope);
+            //
+            //               if (!mode.test(HINT_VIRTUALEXPR))
+            //                  writeTerminal(writer, node, scope, result, mode);
+            //            }
             /*else */result = compileTypeSymbol(current, scope, mode);
             break;
          case lxNestedClass:
@@ -9149,11 +9151,11 @@ bool Compiler :: compileSymbolConstant(/*SNode node, */SymbolScope& scope, Objec
 
          dataWriter.writeLiteral(value, getlength(value) + 1);
       }
-      //      else if (retVal.kind == okMessageConstant) {
-//         dataWriter.Memory()->addReference(retVal.param | mskMessage, dataWriter.Position());
-//
-//         dataWriter.writeDWord(0);
-//      }
+      else if (retVal.kind == okMessageConstant) {
+         dataWriter.Memory()->addReference(retVal.param | mskMessage, dataWriter.Position());
+
+         dataWriter.writeDWord(0);
+      }
 //      else if (retVal.kind == okMessageNameConstant) {
 //         dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
 //

@@ -66,6 +66,7 @@ define page_align_mask   000FFFF0h
 
 define ACTION_ORDER              9
 define ARG_ACTION_MASK        1DFh
+define ACTION_MASK            1E0h
 define ARG_MASK               01Fh
 define ARG_MASK_INV     0FFFFFFE0h
 
@@ -949,6 +950,18 @@ inline % 09h
 
 end
 
+// ; storev
+inline % 0Dh
+
+  mov eax, edx
+  and eax, ACTION_MASK
+  mov ecx, [esp]
+  and ecx, ARG_MASK
+  or  ecx, edx
+  mov [esp], ecx
+
+end
+
 // ; bsredirect
 inline % 0Eh // (ebx - object, edx - message)
 
@@ -977,7 +990,7 @@ labEnd:
                                                                 
 end
 
-// ; setverb
+// ; setv
 inline % 0Fh
 
   mov eax, [ebx]

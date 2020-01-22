@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/114;
+const int gcCommandNumber = /*160*/115;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -86,8 +86,8 @@ const int gcCommands[gcCommandNumber] =
    bcLoadI, bcRAddF, bcRSubF, bcRMulF, bcRDivF,
    bcREqual, bcRLess, bcRSet, bcRSave, bcRGet,
    bcRIntF, bcRLoad, bcClone, bcAddF, bcSubF,
-   bcAddress, bcLoadSI, bcLoadVerb, bcSetVerb, bcCount,
-   bcSet, bcPushVerb, bcPush, bcMQuit,
+   bcAddress, bcLoadSI, bcLoadVerb, bcSetV, bcCount,
+   bcSet, bcPushVerb, bcPush, bcMQuit, bcStoreV,
 };
 
 const int gcCommandExNumber = 26;
@@ -107,7 +107,7 @@ const int gcCommandExs[gcCommandExNumber] =
 void (*commands[0x100])(int opcode, x86JITScope& scope) =
 {
    &compileNop, &compileBreakpoint, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
-   &compileDCopyCount, &loadOneByteOp, &compilePushA, &compilePopA, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp,
+   &compileDCopyCount, &loadOneByteOp, &compilePushA, &compilePopA, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
    &compileNot, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop, &compileNop,
@@ -137,7 +137,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &loadFunction, &compileHook, &compileHook,
-   &compileNop, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileNop, &compileNop, &compileElseE, &compileNop,
+   &compileNop, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileNop, &compileElseE, &compileNop,
 
    &compilePush, &loadNOp, &compilePush, &compileNop, &loadIndexOp, &compileNop, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFPOp, &compilePushSI, &loadIndexOp, &compileNop, &compilePushF, &loadFPOp, &loadIndexOp,
@@ -1151,19 +1151,20 @@ void _ELENA_::compileNotGreaterE(int, x86JITScope& scope)
 //   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
 //   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
 //}
-//
-//void _ELENA_::compileElseB(int, x86JITScope& scope)
-//{
-//   int jumpOffset = scope.argument;
-//
-//   // cmp eax, edi
-//   scope.code->writeWord(0xC73B);
-//
-//   // try to use short jump if offset small (< 0x10?)
-//   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
-//   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
-//}
-//
+
+void _ELENA_::compileElseD(int, x86JITScope& scope)
+{
+   int jumpOffset = scope.argument;
+
+   // cmp edx, [esp]
+   scope.code->writeByte(0x3B);
+   scope.code->writeWord(0x2414);
+
+   // try to use short jump if offset small (< 0x10?)
+   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
+   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+}
+
 //void _ELENA_::compileIfM(int, x86JITScope& scope)
 //{
 //   int jumpOffset = scope.tape->getDWord();

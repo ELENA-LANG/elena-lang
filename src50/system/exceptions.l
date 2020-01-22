@@ -165,11 +165,11 @@ public sealed class MethodNotFoundException : Exception
     constructor new(string message)
         <= new(message);
 
-    constructor new(mssg missingMessage)
+    constructor new(Message missingMessage)
 //        <= ("Method " + missingMessage.Printable + " not found");
         <= new(cast string("Method " + missingMessage.toPrintable() + " not found"));
         
-    constructor new(object object, mssg missingMessage)
+    constructor new(object object, Message missingMessage)
         <= new(object.__getClassName() + " : Method " + missingMessage.toPrintable() + " not found");
 }
 

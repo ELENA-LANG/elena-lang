@@ -52,6 +52,8 @@ ELENA byte codes (or ecodes)
 
  movv m                     - m  => index.verb
  
+ storev m                   - index.verb => [sp].verb
+ 
  not                        - !index => index
 
  or n                       - index && n => index
@@ -84,7 +86,7 @@ ELENA byte codes (or ecodes)
 
  seti i                     - [sp] => acc[i]         
 
- setverb                    - acc[0].verb <= index
+ setv                       - acc[0].verb <= index
 
  shl n                      - index << n  => index
  
@@ -308,7 +310,7 @@ ELENA byte codes (or ecodes)
  
  jumpvi i                   - redirect to acc::VMT[i] method
  
- mcount                     - index.Count >> index   
+ mcount                     - message[index].Count >> index   
 
  mtredirect r, m            - search in message table r the message in index and provided parameter list; if found jumps to it;
 
