@@ -278,7 +278,7 @@ LoadResult Module :: load(StreamReader& reader)
    // load signature...
    char signature[12];
    reader.read(signature, (pos_t)strlen(MODULE_SIGNATURE));
-   if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) != 0) {
+   if (strncmp(signature, MODULE_SIGNATURE, strlen(MODULE_SIGNATURE)) != 0) {
       return (strncmp(signature, ELENA_SIGNITURE, 6) == 0) ? lrWrongVersion : lrWrongStructure;
    }
 

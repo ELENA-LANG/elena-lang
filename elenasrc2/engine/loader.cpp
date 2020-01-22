@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image loader class implementations
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -169,10 +169,10 @@ Image :: Image(bool standAlone)
    else writer.write(ELENACLIENT_SIGNITURE, strlen(ELENACLIENT_SIGNITURE));
 
    String<char, 4> number;
-   number.appendInt(ENGINE_MINOR_VERSION);
+   number.appendInt(ENGINE_MAJOR_VERSION);
    writer.write(number, strlen(number));
    writer.writeChar('.');
-   number.copyInt(ENGINE_RELEASE_VERSION);
+   number.copyInt(ENGINE_MINOR_VERSION);
    writer.write(number, strlen(number));               
                                                   
    writer.align(4, 0);

@@ -21,10 +21,8 @@
  
 #define VER_FILE_VERSION_STR        STRINGIZE(ENGINE_MAJOR_VERSION)        \
                                     "." STRINGIZE(ENGINE_MINOR_VERSION)    \
-                                    "." STRINGIZE(ELC_REVISION_NUMBER) \
-                                    ".0" 
+                                    ".0.0" 
 
 #define VER_PRODUCT_VERSION_STR     STRINGIZE(ENGINE_MAJOR_VERSION)        \
                                     "." STRINGIZE(ENGINE_MINOR_VERSION)    \
-                                    "." STRINGIZE(ENGINE_RELEASE_VERSION)  \
-                                    ".0"                                   
+                                    ".0.0"                                   
