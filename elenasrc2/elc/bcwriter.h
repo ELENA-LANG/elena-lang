@@ -316,6 +316,7 @@ class ByteCodeWriter
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope/*, bool ignoreBranching*/);
 
+   void copyFieldAddress(CommandTape& tape, int size, int argument);
    void copyToFieldAddress(CommandTape& tape, int size, int argument);
    void copyToLocalAddress(CommandTape& tape, int size, int argument);
    void saveToLocalAddress(CommandTape& tape, int size, int argument);
@@ -341,6 +342,8 @@ class ByteCodeWriter
 
 //   void saveUnboxingVar(CommandTape& tape, SNode member, bool& accTrarget, bool& accPresaving, int& presavedCount);
 //   void loadUnboxingVar(CommandTape& tape, SNode current, int paramCount, int& presavedCount);
+
+   void copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope);
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 

@@ -5765,7 +5765,20 @@ void ByteCodeWriter :: copyToFieldAddress(CommandTape& tape, int size, int argum
       // if it is a dword aligned
       tape.write(bcCopyToAI, argument, size >> 2);
    }
-   else throw InternalError("not yet implemente"); // !! temporal
+   else {
+      tape.write(bcMoveTo, argument, size);
+   }
+}
+
+void ByteCodeWriter :: copyFieldAddress(CommandTape& tape, int size, int argument)
+{
+   if ((size & 3) == 0 && (argument & 3) == 0) {
+      // if it is a dword aligned
+      tape.write(bcCopyAI, argument, size >> 2);
+   }
+   else {
+      tape.write(bcMove, size, argument);
+   }
 }
 
 void ByteCodeWriter :: copyFromLocalAddress(CommandTape& tape, int size, int argument)
@@ -5803,6 +5816,33 @@ void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
    tape.write(bcCopyToFI, argument, size >> 2, bpFrame);
 }
 
+void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope)
+{
+   if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
+      loadObject(tape, source, scope);
+      copyToLocal(tape, size, dstObj.argument);
+   }
+   else if (dstObj == lxLocalAddress) {
+      loadObject(tape, source, scope);
+      copyToLocalAddress(tape, size, dstObj.argument);
+   }
+   else if (dstObj == lxFieldExpression) {
+      SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
+      if (fieldNode == lxFieldAddress) {
+         generateObject(tape, source, scope, STACKOP_MODE);
+         loadFieldExpression(tape, dstObj, scope, false);
+         copyToFieldAddress(tape, size, fieldNode.argument);
+         releaseStack(tape);
+      }
+      else if (fieldNode == lxSelfLocal) {
+         loadObject(tape, source, scope);
+         copyToLocal(tape, size, fieldNode.argument);
+      }
+      else throw InternalError("not yet implemente"); // !! temporal
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
 void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
 {
    SNode target;
@@ -5816,29 +5856,24 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
       loadObject(tape, target, scope);
       copyFromLocalAddress(tape, node.argument, srcObj.argument);
    }
-   else if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
-      loadObject(tape, source, scope);
-      copyToLocal(tape, node.argument, dstObj.argument);
-   }
-   else if (dstObj == lxLocalAddress) {
-      loadObject(tape, source, scope);
-      copyToLocalAddress(tape, node.argument, dstObj.argument);
-   }
-   else if (dstObj == lxFieldExpression) {
-      SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
-      if (fieldNode == lxFieldAddress) {
-         generateObject(tape, source, scope, STACKOP_MODE);
-         loadFieldExpression(tape, dstObj, scope, false);
-         copyToFieldAddress(tape, node.argument, fieldNode.argument);
+   else if (srcObj == lxFieldExpression && dstObj != lxFieldExpression) {
+      SNode fieldNode = loadFieldExpression(tape, srcObj, scope, true);
+      if (fieldNode.compare(lxFieldAddress, lxSelfLocal)) {
+         generateObject(tape, target, scope, STACKOP_MODE);
+         loadFieldExpression(tape, srcObj, scope, false);
+         if (fieldNode == lxFieldAddress) {
+            copyFieldAddress(tape, node.argument, fieldNode.argument);
+         }
+         else {
+            loadObject(tape, fieldNode, scope);
+            copyFieldAddress(tape, node.argument, 0);
+         }
+
          releaseStack(tape);
       }
-      else if (fieldNode == lxSelfLocal) {
-         loadObject(tape, source, scope);
-         copyToLocal(tape, node.argument, fieldNode.argument);
-      }
-      else throw InternalError("not yet implemente"); // !! temporal
+      else copyExpression(tape, source, dstObj, node.argument, scope);
    }
-   else throw InternalError("not yet implemente"); // !! temporal
+   else copyExpression(tape, source, dstObj, node.argument, scope);
 }
 
 void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)

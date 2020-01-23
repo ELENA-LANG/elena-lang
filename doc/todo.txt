@@ -194,6 +194,7 @@ In development:
                 * test creating an array : non-empty, empty
                 * operations in symbol
                 * call inernal function directly (without intermediate step in system'routines) when it is possible
+                * optimize xreadn, xwriten
 
               dev50 - new features
                 * resend to constant - no need for frame

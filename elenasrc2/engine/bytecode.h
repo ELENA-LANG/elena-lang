@@ -227,8 +227,10 @@ enum ByteCode
 //   bcMulN            = 0xDA,
 //   bcBLoadR          = 0xDC,
 //   bcInit            = 0xDD,
-//   bcEqualR          = 0xDE,
-//   bcBLoadAI         = 0xDF,
+
+   bcCopyAI          = 0xDD,
+   bcMove            = 0xDE,
+   bcMoveTo          = 0xDF,
 
    bcReadToF         = 0xE0,
    bcCreateN         = 0xE1,
@@ -305,7 +307,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x4F
-#define MAX_DOUBLE_ECODE 0xDF
+#define MAX_DOUBLE_ECODE 0xDC
 
 enum PseudoArg
 {

@@ -54,58 +54,13 @@ const char* _fnOpcodes[256] =
    "nsubf", "ndivf", "loadi", "savei", "storer", OPCODE_UNKNOWN, "clonef", OPCODE_UNKNOWN,
 
    "freei", "alloci", OPCODE_UNKNOWN, "movv", "shl", "and", "inc", "or",
-   "coalescer", "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "coalescer", "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "copyai", "move", "moveto",
 
    "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
    "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavef",
 
    "new", "newn", "fillri", "xselectr", "vcallrm", "jumprm", "select", "lessn",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", OPCODE_UNKNOWN,
-
-//   "not", "len", "bcopya", "dec", "popb", "close", "sub", "quit",
-//   "get", "set", "inc", "equit", "count", "unhook", "add", "create",
-//
-//   "ecopyd", "dcopye", "pushd", "popd", "xcopy", "include", "exclude", "trylock",
-//   "freelock", "rethrow", "system", "select", "eswap", "bswap", "copy", "xset",
-//
-//   "xlen", "blen", "wlen", "flag", "nlen", "parent", "class", "mindex",
-//   "check", "acallvd", "validate", "ande", "dmoveverb", "unknown", "unknown", "unknown",
-//
-//   "nequal", "nless", "ncopy", "nadd", "nsub", "nmul", "ndiv", "nsave",
-//   "nload", "dcopyr", "nand", "nor", "nxor", "nshiftl", "nnot", "ncreate",
-//
-//   "ncopyb", "lcopyb", "copyb", "nloade", "nshiftr", "unknown", "unknown", "unknown",
-//   "unknown", "wread", "wwrite", "nread", "nwrite", "unknown", "unknown", "wcreate",
-//
-//   "breadw", "bread", "unknown", "unknown", "unknown", "breadb", "rsin", "rcos",
-//   "rarctan", "bwrite", "unknown", "unknown", "bwriteb", "bwritew", "unknown", "bcreate",
-//
-//   "lcopy", "lsave", "lequal", "lless", "ladd", "lsub", "lmul", "ldiv",
-//   "land", "lor", "lxor", "lshiftl", "lnot", "lshiftr", "unknown", "unknown",
-//
-//   "rcopy", "unknown", "rsave", "requal", "rless", "radd", "rsub", "rmul",
-//   "rdiv", "unknown", "rexp", "rln", "rabs", "rround", "rint", "rload",
-//
-//   "dcopy", "ecopy", "restore", "aloadr", "aloadfi", "aloadsi", "ifheap", "bcopys",
-//   "open", "quitn", "bcopyr", "bcopyf", "acopyf", "acopys", "acopyr", "copym",
-//
-//   "jump", "ajumpvi", "acallvi", "callr", "ajumpi", "callextr", "hook", "address",
-//   "acalli", "less", "notless", "ifb", "elseb", "if", "else", "next",
-//
-//   "pushn", "eloadfi", "pushr", "bsavesi", "pushai", "esavefi", "pushfi", "dloadfi",
-//   "dloadsi", "dsavefi", "pushsi", "dsavesi", "eloadsi", "pushf", "esavesi", "reserve",
-//
-//   "asavebi", "nwritei", "aswapsi", "asavesi", "asavefi", "bswapsi", "eswapsi", "dswapsi",
-//   "bloadfi", "bloadsi", "nloadi", "nsavei", "asaver", "aloadai", "aloadbi", "axsavebi",
-//
-//   "popi", "nreadi", "scopyf", "setverb", "shiftln", "andn", "addn", "orn",
-//   "eaddn", "shiftrn", "muln", "divn", "bloadr", "init", "equalr", "bloadai",
-//
-//   "eorn", "newi", "acopyai", "unknown", "unknown", "unknown", "unknown", "unknown",
-//   "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", "subfi", "addfi", "savefi",
-//
-//   "new", "newn", "unknown", "xselectr", "xindexrm", "xjumprm", "selectr", "lessn",
-//   "ifm", "elsem", "ifr", "elser", "ifn", "elsen", "xcallrm", "unknown"
 };
 
 using namespace _ELENA_;

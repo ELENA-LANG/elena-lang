@@ -2350,6 +2350,36 @@ inline % 0D8h
 
 end
 
+// ; copyai (__arg1 - index, __arg2 - n)
+inline % 0DDh
+
+  mov  ecx, __arg2	
+  lea  esi, [ebx + __arg1]
+  mov  edi, [esp]
+  rep  movsd
+
+end
+
+// ; move
+inline % 0DEh
+
+  lea esi, [eax+__arg2]
+  mov ecx, __arg1
+  mov edi, [esp]
+  rep movsb
+
+end
+
+// ; moveto
+inline % 0DFh
+
+  lea edi, [eax+__arg2]
+  mov ecx, __arg1
+  mov esi, [esp]
+  rep movsb
+
+end
+
 // ; mtredirect (__arg3 - number of parameters, eax - points to the stack arg list)
 inline % 0E8h
 

@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/122;
+const int gcCommandNumber = 125;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -89,7 +89,7 @@ const int gcCommands[gcCommandNumber] =
    bcAddress, bcLoadSI, bcLoadVerb, bcSetV, bcCount,
    bcSet, bcPushVerb, bcPush, bcMQuit, bcStoreV,
    bcRExp, bcRSin, bcRArcTan, bcRLn, bcRRound,
-   bcRInt, bcRCos,
+   bcRInt, bcRCos, bcMove, bcMoveTo, bcCopyAI,
 };
 
 const int gcCommandExNumber = 26;
@@ -148,7 +148,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileNop, &loadFPOp, &compileNop,
 
    &compilePopN, &compileAllocI, &compileNop, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
-   &loadROp, &compileDShiftN, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadROp, &compileDShiftN, &compileNop, &compileNop, &compileNop, &loadIndexNOp, &loadNNOp, &loadNNOp,
 
    &loadFPIndexOpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPN4OpX, &loadFPNOp, &loadFPNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
@@ -615,6 +615,37 @@ void _ELENA_::loadIndexNOp(int opcode, x86JITScope& scope)
 
       if (relocation[0] == -1) {
          scope.code->writeDWord(scope.argument << 2);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadNNOp(int opcode, x86JITScope& scope)
+{
+   int arg2 = scope.tape->getDWord();
+
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(scope.argument);
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
