@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*160*/115;
+const int gcCommandNumber = /*160*/122;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -88,6 +88,8 @@ const int gcCommands[gcCommandNumber] =
    bcRIntF, bcRLoad, bcClone, bcAddF, bcSubF,
    bcAddress, bcLoadSI, bcLoadVerb, bcSetV, bcCount,
    bcSet, bcPushVerb, bcPush, bcMQuit, bcStoreV,
+   bcRExp, bcRSin, bcRArcTan, bcRLn, bcRRound,
+   bcRInt, bcRCos,
 };
 
 const int gcCommandExNumber = 26;
@@ -109,17 +111,17 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileBreakpoint, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
    &compileDCopyCount, &loadOneByteOp, &compilePushA, &compilePopA, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &compileNot, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileQuit,
-   &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop, &compileNop,
+   &compileNot, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteOp, &compileQuit,
+   &loadOneByteOp, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop,
 
-   &compileNop, &compileNop, &compilePushD, &compilePopD, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
-   &loadOneByteOp, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &compileNop,
+   &loadOneByteOp, &loadOneByteOp, &compilePushD, &compilePopD, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
+   &loadOneByteOp, &compileNop, &loadOneByteOp, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop,
 
    &compileNop, &loadOneByteLOp, &loadOneByteOp, &loadOneByteLOp, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
 
    &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &loadNOp, &loadNOpX, &loadN4OpX, &loadFPOp, &loadFPOp,

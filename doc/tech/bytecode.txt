@@ -180,6 +180,22 @@ ELENA byte codes (or ecodes)
 
  rsubf i                    - real[fp+i] << real[fp+i] - real[acc] 
 
+ rexp                       - real[sp] << exp(real[acc]) 
+
+ rsin                       - real[sp] << sin(real[acc]) 
+
+ rcos                       - real[sp] << cos(real[acc]) 
+
+ rarctan                    - real[sp] << arctan(real[acc]) 
+
+ rln                        - real[sp] << ln(real[acc]) 
+
+ rabs                       - real[sp] << abs(real[acc]) 
+
+ rround                     - real[sp] << round(real[acc]) 
+
+ rint                       - real[sp] << int(real[acc]) 
+
 
  Comparision operations:
  ----------------------- 

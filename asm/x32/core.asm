@@ -1010,6 +1010,51 @@ inline % 15h
   
 end
 
+// ; rexp
+inline % 16h
+
+  mov   eax, [esp]
+  mov   edx, 0
+  fld   qword ptr [eax]   // ; Src
+
+  fldl2e                  // ; ->log2(e)
+  fmulp                   // ; ->log2(e)*Src
+                                                              
+  // ; the FPU can compute the antilog only with the mantissa
+  // ; the characteristic of the logarithm must thus be removed
+      
+  fld   st(0)             // ; copy the logarithm
+  frndint                 // ; keep only the characteristic
+  fsub  st(1),st(0)       // ; keeps only the mantissa
+  fxch                    // ; get the mantissa on top
+
+  f2xm1                   // ; ->2^(mantissa)-1
+  fld1
+  faddp                   // ; add 1 back
+
+  //; the number must now be readjusted for the characteristic of the logarithm
+
+  fscale                  // ;, scale it with the characteristic
+      
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  jc    short lErr        // ; clean-up and return if error
+      
+  // ; the characteristic is still on the FPU and must be removed
+  
+  fstp  st(1)             // ; get rid of the characteristic
+
+  fstp  qword ptr [ebx]   // ; store result 
+  mov   edx, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(1)
+  
+labEnd:
+
+end
+
 // ; get
 inline % 18h
 
@@ -1065,6 +1110,50 @@ inline % 1Dh
   
 end
 
+// ; rsin
+inline % 1Eh
+
+  mov   eax, [esp]
+  fld   qword ptr [eax]  
+  fldpi
+  fadd  st(0),st(0)       // ; ->2pi
+  fxch
+
+lReduce:
+  fprem                   // ; reduce the angle
+  fsin
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  // ; jc    short lErr        // ; clean-up and return error
+  sahf                    // ; transfer to the CPU flags
+  jpe   short lReduce     // ; reduce angle again if necessary
+  fstp  st(1)             // ; get rid of the 2pi
+
+  fstp  qword ptr [ebx]    // ; store result 
+
+end
+
+// ; rcos
+inline % 20h
+
+  mov   eax, [esp]
+  fld   qword ptr [eax]  
+  fcos
+  fstp  qword ptr [ebx]    // store result 
+
+end
+
+// ; rarctan
+inline % 21h
+
+  mov   eax, [esp]
+  fld   qword ptr [eax]  
+  fld1
+  fpatan                  // i.e. arctan(Src/1)
+  fstp  qword ptr [ebx]    // store result 
+
+end
+
 // ; include
 inline % 25h
 
@@ -1101,6 +1190,32 @@ inline % 2Ah
 
 end
 
+// ; rln
+inline % 2Ch
+
+  mov   eax, [esp]
+  mov   edx, 0
+  fld   qword ptr [eax]  
+  
+  fldln2
+  fxch
+  fyl2x                   // ->[log2(Src)]*ln(2) = ln(Src)
+
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    short lErr        // clean-up and return error
+
+  fstp  qword ptr [ebx]    // store result 
+  mov   edx, 1
+  jmp   short labEnd
+
+lErr:
+  ffree st(0)
+
+labEnd:
+
+end
+
 // ; read
 inline % 2Dh
 
@@ -1119,6 +1234,16 @@ inline % 02Eh
   shr  ecx, 2
   rep  movsd
 
+end
+
+// ; rabs
+inline %30h
+
+  mov   eax, [esp]
+  fld   qword ptr [eax]  
+  fabs
+  fstp  qword ptr [ebx]    // ; store result 
+  
 end
 
 // ; len
@@ -1150,6 +1275,39 @@ inline % 36h
 
   mov ebx, [ebx - elVMTOffset]
 
+end
+
+// ; rround
+inline %3Dh
+
+  mov   eax, [esp]
+  mov   edx, 0
+  fld   qword ptr [eax]  
+
+  fstcw word ptr [esp]    // ;get current control word
+  mov   ax,[esp]
+  and   ax,0F3FFh         // ; code it for rounding 
+  push  eax
+  fldcw word ptr [esp]    // ; change rounding code of FPU to round
+
+  frndint                 // ; round the number
+  pop   eax               // ; get rid of last push
+  fldcw word ptr [esp]    // ; load back the former control word
+
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  pop   ecx               // ; clean CPU stack
+  jc    short lErr        // ; clean-up and return error
+  
+  fstp  qword ptr [ebx]   // ; store result 
+  mov   edx, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(0)
+
+labEnd:
+  
 end
 
 // ; equal
@@ -1253,6 +1411,42 @@ inline % 49h
   mov  esi, esp
   fistp dword ptr [esi]
   pop edx
+
+end
+               
+// ; rint
+inline % 4Fh
+
+  mov   eax, [esp]
+  mov   ecx, 0
+  fld   qword ptr [eax]
+
+  push  ecx                // reserve space on stack
+  fstcw word ptr [esp]     // get current control word
+  mov   dx, [esp]
+  or    dx,0c00h           // code it for truncating
+  push  edx
+  fldcw word ptr [esp]    // change rounding code of FPU to truncate
+
+  frndint                  // truncate the number
+  pop   edx                // remove modified CW from CPU stack
+  fldcw word ptr [esp]     // load back the former control word
+  pop   edx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [ebx]    // store result
+  mov   ecx, 1
+  jmp   short labEnd
+  
+labErr:
+  ffree st(1)
+  
+labEnd:
+  mov  edx, ecx
 
 end
 

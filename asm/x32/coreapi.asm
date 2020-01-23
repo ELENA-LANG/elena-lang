@@ -3739,6 +3739,24 @@ lab3:
 
 end
 
+procedure coreapi'rpi
+
+  fldpi
+  fstp  qword ptr [ebx]    // store result 
+  ret
+
+end
+
+procedure coreapi'rsqrt
+
+  mov   eax, [esp]
+  fld   qword ptr [eax]  
+  fsqrt
+  fstp  qword ptr [ebx]    // store result 
+  ret
+
+end
+
 procedure coreapi'default_handler                                                       
 
   // ; exit code

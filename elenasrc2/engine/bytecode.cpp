@@ -17,17 +17,17 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", "coalesce", OPCODE_UNKNOWN, "snop", "pushverb", "loadverb", "throw",
    "mcount", "push", "pusha", "popa", OPCODE_UNKNOWN, "storev", "bsredirect", "setv",
 
-   "not", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", OPCODE_UNKNOWN, "quit",
-   "get", "set", OPCODE_UNKNOWN, "mquit", "count", "unhook", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "not", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", "rexp", "quit",
+   "get", "set", OPCODE_UNKNOWN, "mquit", "count", "unhook", "rsin", OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",
-   "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "read", "clone", OPCODE_UNKNOWN,
+   "rcos", "rarctan", "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",
+   "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, "rln", "read", "clone", OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, "len", "rload", "flag", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "class", OPCODE_UNKNOWN,
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "equal", OPCODE_UNKNOWN,
+   "rabs", "len", "rload", "flag", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "class", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rround", "equal", OPCODE_UNKNOWN,
 
    "nequal", "nless", OPCODE_UNKNOWN, "lequal", "lless", "rset", "rsave", "save",
-   "load", "rget", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "load", "rget", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rint",
 
    "addf", "subf", "nxorf", "norf", "nandf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "div", "write", "copyto", "nshlf", "nshrf",

@@ -321,11 +321,11 @@ public extension objectOp
 ////        ^ byteConvertor convert(aWord)
 ////    ]
 //}
-//
-//// --- intOp ---
-//
-//public extension intOp : IntNumber
-//{
+
+// --- intOp ---
+
+public extension intOp : IntNumber
+{
 //    HashCode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -413,10 +413,10 @@ public extension objectOp
 //
 //    power(n)
 //        = self.power(cast int(n));
-//                
-//    bool isOdd()
-//        = (self && 1) != 0;
-//        
+                
+    bool isOdd()
+        = (self && 1) != 0;
+        
 //    bool isEven()
 //        = self.and(1) == 0;
 //        
@@ -455,8 +455,8 @@ public extension objectOp
 ////            [ ^ self shiftLeft(T<int>(n) negative) ];
 ////            [ ^ self shiftRight(T<int>(n)) ].
 ////    ]            
-//}
-//
+}
+
 //public extension uintOp : UIntNumber
 //{
 //    HashCode
@@ -584,11 +584,11 @@ public extension objectOp
 ////        ^ intConvertor convert(aWord)
 ////    ]
 //}
-//
-//// --- realOp ---
-//
-//public extension realOp : RealNumber
-//{        
+
+// --- realOp ---
+
+public extension realOp : RealNumber
+{        
 //    HashCode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -631,64 +631,64 @@ public extension objectOp
 //        
 //        ^ retVal
 //    }
-//
-//    real power(real y)
-//    {
-//        real x := self;
-//        
-//        (x == 0.0r)
-//            ? { ^ 0.0r };
-//                        
-//        (y == 0.0r)
-//            ? { ^ 1.0r };
-//            
-//        x := realOpController.ln(x);
-//        
-//        x := x * y;
-//        
-//        x := realOpController.exp(x);
-//            
-//        ^ x            
-//    }
-//
-//    real power(int y)
-//    {
-//        real x := self;
-//
-//        (x == 0.0r)
-//            ? { ^ 0.0r };
-//                        
-//        (y == 0)
-//            ? { ^ 1.0r };
-//                        
-//        if (x < 0.0r)
-//        {
-//            x := x * -1.0r;
-//            
-//            x := realOpController.ln(x);
-//            
-//            x := x * y;
-//            
-//            x := realOpController.exp(x);
-//            
-//            (y.isOdd())
-//                ? { x := x * -1.0r }
-//        }
-//        else
-//        {
-//            x := realOpController.ln(x);
-//            
-//            x := x * y;
-//            
-//            x := realOpController.exp(x)
-//        };
-//        
-//        ^ x
-//    }
-//
-////    power : aPower
-////        = self~realOp power(T<int>(aPower)).
-//
+
+    real power(real y)
+    {
+        real x := self;
+        
+        (x == 0.0r)
+            ? { ^ 0.0r };
+                        
+        (y == 0.0r)
+            ? { ^ 1.0r };
+            
+        x := realOpController.ln(x);
+        
+        x := x * y;
+        
+        x := realOpController.exp(x);
+            
+        ^ x            
+    }
+
+    real power(int y)
+    {
+        real x := self;
+
+        (x == 0.0r)
+            ? { ^ 0.0r };
+                        
+        (y == 0)
+            ? { ^ 1.0r };
+                        
+        if (x < 0.0r)
+        {
+            x := x * -1.0r;
+            
+            x := realOpController.ln(x);
+            
+            x := x * y;
+            
+            x := realOpController.exp(x);
+            
+            (y.isOdd())
+                ? { x := x * -1.0r }
+        }
+        else
+        {
+            x := realOpController.ln(x);
+            
+            x := x * y;
+            
+            x := realOpController.exp(x)
+        };
+        
+        ^ x
+    }
+
+//    power : aPower
+//        = self~realOp power(T<int>(aPower)).
+
 //    real sqr()
 //    {
 //        real n := self;        
@@ -869,8 +869,8 @@ public extension objectOp
 //        
 //    bool isNonnegative()
 //        = self <= 0.0r;
-//}
-//
+}
+
 //// --- intArrayOp ---
 //
 //public extension intArrayOp : Array<int>

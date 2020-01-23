@@ -2395,6 +2395,114 @@ labErr:
   
 end
 
+procedure __real."exp$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rexp
+  freei 1
+
+  quitn 2
+
+end
+
+procedure __real."ln$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rln
+  freei 1
+
+  quitn 2
+
+end
+
+procedure __real."sqrt$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  callextr api : rsqrt
+  freei 1
+
+  quitn 2
+
+end
+
+procedure __real."sin$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rsin
+  freei 1
+
+  quitn 2
+
+end
+
+procedure __real."cos$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rcos
+  freei 1
+
+  quitn 2
+
+end
+
+procedure __real."arctan$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rarctan
+  freei 1
+
+  quitn 2
+  
+end
+
+procedure __real."pi$@system@ref#1&system@RealNumber[1]"
+
+  peeksi 1
+  callextr api : rpi
+
+  quitn 1
+  
+end
+
+procedure __real."abs$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rabs
+  freei 1
+
+  quitn 2
+
+end
+
+procedure __real."round$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rround
+  freei 1
+
+  quitn 2
+
+end
+
+procedure __real."truncate$system@RealNumber$@system@ref#1&system@RealNumber[2]"
+
+  pushsi 1
+  peeksi 3
+  rint
+  freei 1
+
+  quitn 2
+
+end
+
 // ; system routines
 
 procedure critical_exception_handler

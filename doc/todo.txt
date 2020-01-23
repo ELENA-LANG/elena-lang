@@ -11,9 +11,8 @@ In development:
                 * compile elenart64.dll
 
               xdev elena50
+                * realOpController
                 * pi sample
-                * collections : numbers
-                * samples
 
               xdev debugger
                 * debug printLine extension
@@ -21,15 +20,10 @@ In development:
                 * watch message / subject info
 
               xdev elena50
-                * variadicarray
-                * do not box variadicarray
-
                 * event handler
                 * uncomment system'entry
 
                 * conversion routines : others
-
-                * console operations
 
                 * String, WideString- fill, new
                 * Array<T>.clone
@@ -39,7 +33,8 @@ In development:
 
                 * extension to read package info
 
-                * test creating an array : non-empty, empty
+                * collections : numbers
+                * samples
 
                 * template of templates
                 * field - template of templates
@@ -53,16 +48,10 @@ In development:
 
                 * arrays of template of templates
 
-                * variadic dispatch
-
-                * operations in symbol
-
                 * type should be only one in the token expression - test: int long r := 0;
                 * reference identifier name?
 
                 * variadic arguments : unboxing
-
-                * conditional boxing of arguments and self
 
                 * fields with reference name
                 * const class \ const field
@@ -95,8 +84,6 @@ In development:
                 * complex message names
 
                 * declaring typed variable : implicit, reference, global
-
-                * it should be possible to create a class from static method (using self)
 
                 * singleton can be used as a type?
                 * should V_SINGLETON be marked as elNestedClass?
@@ -137,12 +124,10 @@ In development:
                 * auto conversion methods should be marked as idle
                 * passing byref further
                 * should child have an access to the parent static fields?
-                * public const fields?
                 * emptyWideString cannot be used before its declaration (see String)
                 * using direct passing the arguments for internal call when it is possible
                 * allow to pass field to the external routines - see system'io'ConsoleWriter
                 * step over external / message / loop / if call?
-                * call inernal function directly (without intermediate step in system'routines) when it is possible
                 * uncomment cleanUp code
                 * property - append, ...
                 * boxArgument - fieldexpr should be better mapped
@@ -153,6 +138,7 @@ In development:
                 * api doc - with description
 
               dev50 - test / optimization
+                * conditional boxing of arguments and self
                 * review byte code - check for more optimal opcodes
                 * it should be possible to turn-off optimization (opL1)
                 * test : branching external implementation : returning a value from closure 
@@ -204,6 +190,10 @@ In development:
                 * CreateClass / CreateStruct with initializers - no need to clear newly created object
                 * generateInitializer - support constants as well for onlyLocal mode
                 * optimize array creation
+                * do not box variadicarray
+                * test creating an array : non-empty, empty
+                * operations in symbol
+                * call inernal function directly (without intermediate step in system'routines) when it is possible
 
               dev50 - new features
                 * resend to constant - no need for frame
@@ -217,6 +207,8 @@ In development:
                 * analog of C# $ strings
                 * break / contninue
                 * method templates
+                * function return type : e.g. int f() = 1;
+                * it should be possible to create a class from static method (using self)
 
               dev1
                 * move all description to meta info using descr inline template

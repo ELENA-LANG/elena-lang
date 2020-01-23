@@ -2680,88 +2680,88 @@ public singleton realConvertor
         = cast real(o);
 }
 
-//// --- realOpController ---
-//
-//public singleton realOpController
-//{
-//    real exp(real n)
-//    {
-//        intern system'core_routines'__real.exp(n, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    real abs(real r)
-//    {
-//        intern system'core_routines'__real.abs(r, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    real ln(real n)
-//    {
-//        intern system'core_routines'__real.ln(n, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    real round(real r)
-//    {
-//        intern system'core_routines'__real.round(r, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    real truncate(real r)
-//    {
-//        intern system'core_routines'__real.truncate(r, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    real sin(real r)
-//    {
-//        intern system'core_routines'__real.sin(r, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    real cos(real r)
-//    {
-//        intern system'core_routines'__real.cos(r, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    real arctan(real r)
-//    {
-//        intern system'core_routines'__real.arctan(r, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//                
-//    real sqrt(real r)
-//    {
-//        intern system'core_routines'__real.sqrt(r, ref real retVal);
-//        
-//        ^ retVal
-//    }
-//        
-//    real pi()
-//    {
-//        intern system'core_routines'__real.pi(ref real retVal);
-//        
-//        ^ retVal
-//    }
-//    
-//    embeddable real e()
-//    {
-//        real retVal := self.exp(1.0r);
-//        
-//        ^ retVal
-//    }        
-//}
-//
+// --- realOpController ---
+
+public singleton realOpController
+{
+    real exp(real n)
+    {
+        intern system'core_routines'__real.exp(n, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real abs(real r)
+    {
+        intern system'core_routines'__real.abs(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real ln(real n)
+    {
+        intern system'core_routines'__real.ln(n, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real round(real r)
+    {
+        intern system'core_routines'__real.round(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real truncate(real r)
+    {
+        intern system'core_routines'__real.truncate(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real sin(real r)
+    {
+        intern system'core_routines'__real.sin(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real cos(real r)
+    {
+        intern system'core_routines'__real.cos(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real arctan(real r)
+    {
+        intern system'core_routines'__real.arctan(r, ref real retVal);
+        
+        ^ retVal
+    }
+                
+    real sqrt(real r)
+    {
+        intern system'core_routines'__real.sqrt(r, ref real retVal);
+        
+        ^ retVal
+    }
+        
+    real pi()
+    {
+        intern system'core_routines'__real.pi(ref real retVal);
+        
+        ^ retVal
+    }
+    
+    real e()
+    {
+        real retVal := self.exp(1.0r);
+        
+        ^ retVal
+    }        
+}
+
 //public real Pi_value = realOpController.pi();
 //
 //public real E_value = realOpController.e();

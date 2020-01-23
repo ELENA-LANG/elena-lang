@@ -38,7 +38,7 @@ enum ByteCode
 //   bcDec             = 0x13,
 //   bcPopB            = 0x14,
    bcClose           = 0x15,
-//   bcSub             = 0x16,
+   bcRExp            = 0x16,
    bcQuit            = 0x17,
    bcGet             = 0x18,
    bcSet             = 0x19,
@@ -46,11 +46,11 @@ enum ByteCode
    bcMQuit           = 0x1B,
    bcCount           = 0x1C,
    bcUnhook          = 0x1D,
-//   bcAdd             = 0x1E,
+   bcRSin            = 0x1E,
 //   bcCreate          = 0x1F,
 //
-//   bcECopyD          = 0x20,
-//   bcDCopyE          = 0x21,
+   bcRCos            = 0x20,
+   bcRArcTan         = 0x21,
    bcPushD           = 0x22,
    bcPopD            = 0x23,
 //   bcXCopy           = 0x24,
@@ -61,12 +61,12 @@ enum ByteCode
 //   bcRethrow         = 0x29,
    bcLoadEnv         = 0x2A,
 //   bcSelect          = 0x2B,
-//   bcESwap           = 0x2C,
+   bcRLn             = 0x2C,
    bcRead            = 0x2D,
    bcClone           = 0x2E,           
 //   bcXSet            = 0x2F,
 //
-//   bcXLen            = 0x30,
+   bcRAbs            = 0x30,
    bcLen             = 0x31,
    bcRLoad           = 0x32,
    bcFlag            = 0x33,
@@ -77,8 +77,8 @@ enum ByteCode
 //   bcCheck           = 0x38,
 //   bcACallVD         = 0x39,
 //   bcValidate        = 0x3A,
-//   bcAndE            = 0x3B,
 //   bcDMoveVerb       = 0x3C,
+   bcRRound          = 0x3D,
    bcEqual           = 0x3E,
 
    bcNEqual          = 0x40,
@@ -97,8 +97,7 @@ enum ByteCode
 //   bcNShiftL         = 0x4D,
 //   bcNNot            = 0x4E,
 //   bcNCreate         = 0x4F,
-//
-
+   bcRInt            = 0x4F,
 
    bcAddF            = 0x50,
    bcSubF            = 0x51,
@@ -115,9 +114,8 @@ enum ByteCode
 
 //   bcBRead           = 0x61,
 //   bcBReadB          = 0x65,
-//   bcRSin            = 0x66,
-//   bcRCos            = 0x67,
-//   bcRArcTan         = 0x68,
+
+
 //   bcBWrite          = 0x69,
 //   bcBWriteB         = 0x6C,
 //   bcBWriteW         = 0x6D,
@@ -144,10 +142,6 @@ enum ByteCode
    bcRSubF           = 0x86,
    bcRMulF           = 0x87,
    bcRDivF           = 0x88,
-//   bcRExp            = 0x8A,
-//   bcRLn             = 0x8B,
-//   bcRAbs            = 0x8C,
-//   bcRRound          = 0x8D,
    bcRIntF           = 0x8E,
 
    bcDec             = 0x90,
@@ -229,8 +223,6 @@ enum ByteCode
    bcOr              = 0xD7,
    bcCoalesceR       = 0xD8,
    bcShr             = 0xD9,
-
-
 
 //   bcMulN            = 0xDA,
 //   bcBLoadR          = 0xDC,
