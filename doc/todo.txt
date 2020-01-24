@@ -12,8 +12,6 @@ In development:
 
               xdev debugger
                 * debug printLine extension
-                * step over last statement (without terminator)
-                * watch message / subject info
 
               xdev elena50
                 * event handler
@@ -28,6 +26,7 @@ In development:
                 * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
 
                 * extension to read package info
+                * bsort sample
 
                 * collections : numbers
                 * samples
@@ -49,6 +48,11 @@ In development:
 
                 * variadic arguments : unboxing
 
+              xdev debugger
+                * step over last statement (without terminator)
+                * watch message / subject info
+
+              xdev elena50
                 * fields with reference name
                 * const class \ const field
                 * properties - multi-level
@@ -191,6 +195,7 @@ In development:
                 * operations in symbol
                 * call inernal function directly (without intermediate step in system'routines) when it is possible
                 * optimize xreadn, xwriten
+                * optimize pi sample ( < 5s )
 
               dev50 - new features
                 * resend to constant - no need for frame

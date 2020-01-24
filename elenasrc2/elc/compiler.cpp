@@ -1469,7 +1469,7 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
          }
       }
       else if (current == lxSourcePath) {
-         node.appendNode(lxSourcePath, scope.saveSourcePath(_writer, current.identifier()));
+         current.setArgument(scope.saveSourcePath(_writer, current.identifier()));
       }
 
       current = current.nextNode();

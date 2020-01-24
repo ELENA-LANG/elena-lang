@@ -443,6 +443,7 @@ public:
       void setArgument(ref_t argument)
       {
          this->argument = argument;
+         this->strArgument = INVALID_REF;
 
          tree->save(*this);
       }

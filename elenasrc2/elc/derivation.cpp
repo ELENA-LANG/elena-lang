@@ -1409,15 +1409,14 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
 //   //}
 
    writer.newNode(lxClassMethod);
-//   if (derivationScope.templateMode != stNormal) {
-//      // HOTFIX : save the template source path
-//      IdentifierString fullPath(_scope->module->Name());
-//      fullPath.append('\'');
-//      fullPath.append(_filePath);
-//
-//      writer.appendNode(lxSourcePath, fullPath.c_str());
-//      //writer.appendNode(lxTemplate, scope.templateRef);
-//   }
+   if (derivationScope.templateMode != stNormal) {
+      // HOTFIX : save the template source path
+      IdentifierString fullPath(_scope->module->Name());
+      fullPath.append('\'');
+      appendFilePath(writer.CurrentNode(), fullPath);
+
+      writer.appendNode(lxSourcePath, fullPath.c_str());
+   }
 
    if (propertyMode) {
       writer.appendNode(lxAttribute, V_GETACCESSOR);
