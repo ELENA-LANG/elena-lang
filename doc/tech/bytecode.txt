@@ -135,6 +135,8 @@ ELENA byte codes (or ecodes)
 
  readtof i, n               - copy acc[index] >> fp+i, n*4-bytes
  
+ xsaveai i,n                - acc[i] <= n
+                                                                                                               
  xsavef i,n                 - fp:i <= n
                                                                                                                
  xwrite n                   - copy [sp] >> acc[index], n-bytes  

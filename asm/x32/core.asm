@@ -2350,6 +2350,14 @@ inline % 0D8h
 
 end
 
+// ; xsaveai (__arg1 - index, __arg2 - n)
+inline % 0DCh
+
+  mov  eax, __arg2
+  mov  [ebx + __arg1], eax
+
+end
+
 // ; copyai (__arg1 - index, __arg2 - n)
 inline % 0DDh
 

@@ -225,9 +225,7 @@ enum ByteCode
    bcShr             = 0xD9,
 
 //   bcMulN            = 0xDA,
-//   bcBLoadR          = 0xDC,
-//   bcInit            = 0xDD,
-
+   bcXSaveAI         = 0xDC,
    bcCopyAI          = 0xDD,
    bcMove            = 0xDE,
    bcMoveTo          = 0xDF,
@@ -307,7 +305,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x4F
-#define MAX_DOUBLE_ECODE 0xDC
+#define MAX_DOUBLE_ECODE 0xDB
 
 enum PseudoArg
 {

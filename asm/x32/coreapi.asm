@@ -1267,7 +1267,7 @@ Lab5:
    push 0F6h      // to get "-" after adding 0x30
    add  ecx, 1                  
 Lab7:
-   mov  esi, [ebp+8]
+   mov  esi, [ebp+20]
    mov  ebx, 0FFh
 Lab2:
    pop  eax
@@ -1346,7 +1346,7 @@ Lab5:
    push 0F6h      // to get "-" after adding 0x30
    add  ecx, 1                  
 Lab7:
-   mov  esi, [ebp+8]
+   mov  esi, [ebp+20]
    mov  ebx, 0FFh
 Lab2:
    pop  eax

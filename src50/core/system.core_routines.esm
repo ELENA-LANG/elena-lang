@@ -846,6 +846,7 @@ procedure __wideconvertor."convert$system@LongNumber$system@IntNumber$@system@Ar
   pushsi 3
   
   callextr api : longtowstr
+  freei 3
 
   peeksi 4
   save
@@ -918,6 +919,7 @@ procedure __literalconvertor."convert$system@LongNumber$system@IntNumber$@system
   pushsi 3
   
   callextr api : longtostr
+  freei 3
 
   peeksi 4
   save
@@ -2500,6 +2502,18 @@ procedure __real."truncate$system@RealNumber$@system@ref#1&system@RealNumber[2]"
   freei 1
 
   quitn 2
+
+end
+
+procedure __timest."empty$system@calendar@TimeStruct[1]"
+
+  peeksi  1
+  xsaveai 0 0
+  xsaveai 1 0
+  xsaveai 2 0
+  xsaveai 3 0
+
+  quitn 1
 
 end
 
