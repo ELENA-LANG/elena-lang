@@ -139,9 +139,9 @@ ELENA byte codes (or ecodes)
                                                                                                                
  xwrite n                   - copy [sp] >> acc[index], n-bytes  
 
- move n1, n2                - copy acc + n2 => [sp], n1-bytes
+ move n1, n2                - copy acc + n1 => [sp], n2-bytes
 
- moveto n1, n2              - copy [sp] => acc + n2, n1-bytes
+ moveto n1, n2              - copy [sp] => acc + n1, n2-bytes
 
 
  Arithmeric operations:

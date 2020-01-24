@@ -5777,7 +5777,7 @@ void ByteCodeWriter :: copyFieldAddress(CommandTape& tape, int size, int argumen
       tape.write(bcCopyAI, argument, size >> 2);
    }
    else {
-      tape.write(bcMove, size, argument);
+      tape.write(bcMove, argument, size);
    }
 }
 
@@ -5816,6 +5816,11 @@ void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
    tape.write(bcCopyToFI, argument, size >> 2, bpFrame);
 }
 
+inline bool isAligned(int size)
+{
+   return (size & 3) == 0;
+}
+
 void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope)
 {
    if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
@@ -5835,8 +5840,16 @@ void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dst
          releaseStack(tape);
       }
       else if (fieldNode == lxSelfLocal) {
-         loadObject(tape, source, scope);
-         copyToLocal(tape, size, fieldNode.argument);
+         if (isAligned(size)) {
+            loadObject(tape, source, scope);
+            copyToLocal(tape, size, fieldNode.argument);
+         }
+         else {
+            generateObject(tape, source, scope, STACKOP_MODE);
+            generateObject(tape, dstObj, scope, 0);
+            copyToFieldAddress(tape, size, 0);
+            releaseStack(tape);
+         }
       }
       else throw InternalError("not yet implemente"); // !! temporal
    }
@@ -5852,7 +5865,7 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
    SNode srcObj = source == lxExpression ? source.findSubNodeMask(lxObjectMask) : source;
    SNode dstObj = target == lxExpression ? target.findSubNodeMask(lxObjectMask) : target;
 
-   if (srcObj == lxLocalAddress) {
+   if (srcObj == lxLocalAddress && dstObj != lxFieldExpression) {
       loadObject(tape, target, scope);
       copyFromLocalAddress(tape, node.argument, srcObj.argument);
    }

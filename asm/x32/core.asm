@@ -2363,8 +2363,8 @@ end
 // ; move
 inline % 0DEh
 
-  lea esi, [eax+__arg2]
-  mov ecx, __arg1
+  lea esi, [ebx+__arg1]
+  mov ecx, __arg2
   mov edi, [esp]
   rep movsb
 
@@ -2373,8 +2373,8 @@ end
 // ; moveto
 inline % 0DFh
 
-  lea edi, [eax+__arg2]
-  mov ecx, __arg1
+  lea edi, [ebx+__arg1]
+  mov ecx, __arg2
   mov esi, [esp]
   rep movsb
 
