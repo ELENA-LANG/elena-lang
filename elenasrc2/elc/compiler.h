@@ -437,8 +437,6 @@ private:
       bool        abstractBaseMode;
       bool        withInitializers;
       bool        extensionDispatcher;
-//
-//      void copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues);
 
       ObjectInfo mapField(ident_t identifier, EAttr scopeMode);
 
@@ -1213,14 +1211,15 @@ private:
 
    void compileExternalArguments(SNode node, ExprScope& scope, SNode callNode);
 
-   void injectBoxingTempLocal(SNode boxExprNode, SNode objNode, ExprScope& scope, LexicalType tempType, int tempLocal);
+   void injectBoxingTempLocal(SNode boxExprNode, SNode objNode, ExprScope& scope, LexicalType tempType, 
+      int tempLocal, bool localBoxingMode);
 //   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));
    void analizeSymbolTree(SNode node, Scope& scope);
-   void boxArgument(SNode boxExprNode, SNode node, ExprScope& scope, bool boxingMode);
-   void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode);
+   void boxArgument(SNode boxExprNode, SNode node, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing);
+   void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing);
    void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr);
 
    void defineEmbeddableAttributes(ClassScope& scope, SNode node);

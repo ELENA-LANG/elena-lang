@@ -647,25 +647,6 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility vi
    extensionDispatcher = false;
 }
 
-//void Compiler::ClassScope :: copyStaticFields(ClassInfo::StaticFieldMap& statics, ClassInfo::StaticInfoMap& staticValues)
-//{
-//   // import static fields
-//   ClassInfo::StaticFieldMap::Iterator static_it = statics.start();
-//   while (!static_it.Eof()) {
-//      info.statics.add(static_it.key(), *static_it);
-//
-//      static_it++;
-//   }
-//
-//   auto staticValue_it = staticValues.start();
-//   while (!staticValue_it.Eof()) {
-//      ref_t val = *staticValue_it;
-//      info.staticValues.add(staticValue_it.key(), val);
-//
-//      staticValue_it++;
-//   }
-//}
-
 ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, EAttr scopeMode)
 {
    int offset = info.fields.get(terminal);
@@ -3261,19 +3242,20 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
    return retVal;
 }
 
-void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope, bool boxingMode)
+void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope, 
+   bool boxingMode, bool withoutLocalBoxing)
 {
    if (current == lxExpression) {
-      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode);
+      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing);
    }
    else if (current == lxSeqExpression) {
-      boxArgument(boxExprNode, current.lastChild(lxObjectMask), scope, boxingMode);
+      boxArgument(boxExprNode, current.lastChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing);
    }
    else if (current == lxBoxableExpression) {
       // resolving double boxing
       current.set(lxExpression, 0);
 
-      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode);
+      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing);
    }
    else if (current == lxArgBoxableExpression) {
       throw InternalError("Not yet implemented");
@@ -3284,40 +3266,47 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
 
          current.setArgument(typeRef);
       }
-      else if (boxingMode) {
-         Attribute key(current.type, current.argument);
+      else {
+         SNode argNode = current;
+         if (current == lxFieldExpression) {
+            argNode = current.lastChild(lxObjectMask);
+         }         
 
-         int tempLocal = scope.tempLocals.get(key);
-         if (tempLocal == NOTFOUND_POS) {
-            tempLocal = scope.newTempLocal();
-            scope.tempLocals.add(key, tempLocal);
+         if (boxingMode || (!withoutLocalBoxing && argNode == lxFieldAddress)) {
+            Attribute key(argNode.type, argNode.argument);
 
-            injectBoxingTempLocal(boxExprNode, current, scope, lxTempLocal, tempLocal);
+            int tempLocal = scope.tempLocals.get(key);
+            if (tempLocal == NOTFOUND_POS) {
+               tempLocal = scope.newTempLocal();
+               scope.tempLocals.add(key, tempLocal);
+
+               injectBoxingTempLocal(boxExprNode, current, scope, lxTempLocal, tempLocal, !boxingMode);
+            }
+            else current.set(lxTempLocal, tempLocal);
          }
-         else current.set(lxTempLocal, tempLocal);
       }
    }
 }
 
-void Compiler :: analizeOperand(SNode& current, ExprScope& scope, bool boxingMode)
+void Compiler :: analizeOperand(SNode& current, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing)
 {
    switch (current.type) {
       case lxArgBoxableExpression:
       case lxBoxableExpression:
-         boxArgument(current, current.firstChild(lxObjectMask), scope, boxingMode);
+         boxArgument(current, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing);
          current.set(lxExpression, 0);
          break;
       case lxExpression:
       {
          SNode opNode = current.firstChild(lxObjectMask);
-         analizeOperand(opNode, scope, boxingMode);
+         analizeOperand(opNode, scope, boxingMode, withoutLocalBoxing);
          break;
       }
       case lxSeqExpression:
       case lxFieldExpression:
       {
          SNode opNode = current.lastChild(lxObjectMask);
-         analizeOperand(opNode, scope, boxingMode);
+         analizeOperand(opNode, scope, boxingMode, withoutLocalBoxing);
          break;
       }
       default:
@@ -3331,7 +3320,7 @@ void Compiler :: analizeOperands(SNode& node, ExprScope& scope, int stackSafeAtt
    SNode current = node.firstChild(lxObjectMask);
    int argBit = 1;
    while (current != lxNone) {
-      analizeOperand(current, scope, !test(stackSafeAttr, argBit));
+      analizeOperand(current, scope, !test(stackSafeAttr, argBit), false);
 
       argBit <<= 1;
       current = current.nextNode(lxObjectMask);
@@ -3991,6 +3980,10 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 
    node.set(operationType, operand);
 
+   if (target.kind == okFieldAddress && target.param != 0) {
+      // HOTFIX : the assignment target should not be locally boxed
+      analizeOperand(node.firstChild(lxObjectMask), scope, false, true);
+   }
    analizeOperands(node, scope, stackSafeAttr);
 
    return retVal;
@@ -4377,7 +4370,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
          SNode objNode = member.appendNode(lxVirtualReference);
 
          recognizeTerminal(objNode, info, ownerScope, EAttr::eaNone);
-         analizeOperand(objNode, ownerScope, true);
+         analizeOperand(objNode, ownerScope, true, false);
 
 //         writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
 //         writeTerminal(writer, node, ownerScope, info, EAttr::eaNone);
@@ -5332,8 +5325,11 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okReadOnlyFieldAddress:
          terminal.set(lxFieldExpression, 0);
          terminal.appendNode(lxSelfLocal, 1);
-         if (object.param)
+         if (object.param) {
             terminal.appendNode(lxFieldAddress, object.param);
+            // the field address expression should always be boxed (either local or dynamic)
+            mode = EAttrs(mode, HINT_NOBOXING);
+         }
 
          setVariableTerminal(terminal, scope, object, mode, lxFieldExpression);
          break;
@@ -5953,7 +5949,7 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
             if (!typeRef)
                typeRef = objNode.findChild(lxType).argument;
 
-            analizeOperand(objNode, scope, false);
+            analizeOperand(objNode, scope, false, false);
 
             objNode = objNode.findSubNodeMask(lxObjectMask);
          }
@@ -9679,7 +9675,8 @@ int Compiler :: allocateStructure(SNode node, int& size)
 //   return applied;
 //}
 
-void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType, int tempLocal)
+void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType, 
+   int tempLocal, bool localBoxingMode)
 {
    SNode parent = node;
    SNode current;
@@ -9704,22 +9701,32 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
       // inject creating a boxed object
       SNode assigningNode = current.insertNode(lxAssigning);
       assigningNode.appendNode(tempType, tempLocal);
-      SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
-      if (variadic) {
-         int tempSizeLocal = scope.newTempLocalAddress();
-         SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, LEN_OPERATOR_ID);
-         sizeSetNode.appendNode(lxLocalAddress, tempSizeLocal);
-         sizeSetNode.appendNode(objNode.type, objNode.argument);
 
-         newNode.set(lxNewArrOp, typeRef);
-         newNode.appendNode(lxSize, 0);
-         newNode.appendNode(lxLocalAddress, tempSizeLocal);
+      if (localBoxingMode) {
+         // inject local boxed object
+         ObjectInfo tempBuffer;
+         allocateTempStructure(scope, size, false, tempBuffer);
+
+         assigningNode.appendNode(lxLocalAddress, tempBuffer.param);
       }
-      else if (!size) {
-         // HOTFIX : recognize byref boxing
-         newNode.set(lxCreatingClass, 1);
+      else {
+         SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
+         if (variadic) {
+            int tempSizeLocal = scope.newTempLocalAddress();
+            SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, LEN_OPERATOR_ID);
+            sizeSetNode.appendNode(lxLocalAddress, tempSizeLocal);
+            sizeSetNode.appendNode(objNode.type, objNode.argument);
+
+            newNode.set(lxNewArrOp, typeRef);
+            newNode.appendNode(lxSize, 0);
+            newNode.appendNode(lxLocalAddress, tempSizeLocal);
+         }
+         else if (!size) {
+            // HOTFIX : recognize byref boxing
+            newNode.set(lxCreatingClass, 1);
+         }
+         newNode.appendNode(lxType, typeRef);
       }
-      newNode.appendNode(lxType, typeRef);
 
       // inject copying to the boxed object if it is a structure
       SNode copyingNode = objNode;
@@ -9753,52 +9760,6 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
       }
    }
    else scope.raiseError(errInvalidBoxing, node);
-
-//   SNode current = node.firstChild();
-//   while (current != lxNone && tempLocals.Count() > 0) {
-//      if (current == lxNested) {
-//         injectBoxingTempLocal(current, counter, boxed, tempLocals);
-//      }
-//      else if (current.compare(lxOuterMember, lxMember)) {
-//         counter++;
-//         SNode boxNode = current.findChild(lxBoxing);
-//         if (boxNode != lxNone) {
-//            SNode objNode = boxNode.firstChild(lxObjectMask);
-//
-//            int objKey = boxed.get(Attribute(objNode.type, objNode.argument));
-//            auto it = tempLocals.getIt(objKey);
-//
-//            int key = it.key();
-//            if (key == counter) {
-//               boxNode.appendNode(lxTempLocal, *it);
-//               tempLocals.erase(it);
-//            }
-//         }
-//         else if (current == lxOuterMember) {
-//            SNode objNode = current.firstChild(lxObjectMask);
-//            int tempLocal = boxed.get(Attribute(objNode.type, objNode.argument));
-//            if (tempLocal) {
-//               int key = tempLocals.get(tempLocal);
-//               if (counter == key) {
-//                  current.appendNode(lxTempLocal, tempLocal);
-//               }
-//               current.appendNode(lxCheckLocal, tempLocal);
-//            }
-//         }
-//         else {
-//            SNode objNode = current.firstChild(lxObjectMask);
-//            int tempLocal = boxed.get(Attribute(objNode.type, objNode.argument));
-//            if (tempLocal) {
-//               int key = tempLocals.get(tempLocal);
-//               if (counter == key) {
-//                  current.appendNode(lxTempLocal, tempLocal);
-//               }
-//            }
-//         }
-//      }
-//
-//      current = current.nextNode();
-//   }
 }
 
 bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode)
