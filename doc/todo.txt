@@ -10,9 +10,6 @@ In development:
               xdev - amd64
                 * compile elenart64.dll
 
-              xdev debugger
-                * debug printLine extension
-
               xdev elena50
                 * event handler
                 * uncomment system'entry

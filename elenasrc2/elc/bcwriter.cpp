@@ -6417,6 +6417,10 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
       source = source.findSubNodeMask(lxObjectMask);
 
    if (source.compare(lxLocalAddress, lxBlockLocalAddr)) {
+      if (source.firstChild() == lxBreakpoint) {
+         translateBreakpoint(tape, source.firstChild(), scope);
+      }
+
       generateObject(tape, target, scope);
 
       tape.write(bcCloneF, source.argument, bpFrame);
