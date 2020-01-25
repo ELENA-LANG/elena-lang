@@ -1270,6 +1270,17 @@ inline void checkFieldPropAttributes(SNode node, bool& isPropertyTemplate, bool&
    }
 }
 
+inline bool isFieldPlaceholder(SNode node, _ModuleScope* scope)
+{
+   if (node == lxToken && node.prevNode() != lxToken) {
+      ref_t attr = scope->attributes.get(node.firstChild(lxTerminalMask).identifier());
+      if (attr == V_FIELD)
+         return true;
+   }
+
+   return false;
+}
+
 void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
 {
 //   //// COMPILER MAGIC : property declaration
@@ -1283,14 +1294,17 @@ void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, 
    while (current != lxNone) {
       if (current == lxScope) {
          if (current.firstChild().compare(lxFieldInit, lxNone)) {
-            // HOTFIX : skip attribute info for field member
-            SNode prev = current;
-            SNode nameNode = node.prevNode();
-            while (nameNode.compare(lxNameAttr, lxType)) {
-               prev = prev.prependSibling(lxToken);
-               SyntaxTree::copyNode(nameNode, prev);
+            if (isFieldPlaceholder(current.prevNode(), _scope)) {
+               // HOTFIX : check if it is a field placeholder
+               // and skip attribute info for it
+               SNode prev = current;
+               SNode nameNode = node.prevNode();
+               while (nameNode.compare(lxNameAttr, lxType)) {
+                  prev = prev.prependSibling(lxToken);
+                  SyntaxTree::copyNode(nameNode, prev);
 
-               nameNode = nameNode.prevNode();
+                  nameNode = nameNode.prevNode();
+               }
             }
          }
          else {
