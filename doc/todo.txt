@@ -183,6 +183,7 @@ In development:
                 * call inernal function directly (without intermediate step in system'routines) when it is possible
                 * optimize xreadn, xwriten
                 * optimize pi sample ( < 5s )
+                * warn if the extension method is called from itself (short-cutting)
 
               dev50 - new features
                 * resend to constant - no need for frame

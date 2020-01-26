@@ -384,26 +384,26 @@ public extension enumerableOp
 ////        = JoinEnumerator new(filter_f, select_f, T<Enumerator>(self enumerator), T<Enumerator>(list enumerator)).        
 }
 
-//// --- indexableOp ---
-//
-//public extension indexableOp<T>
-//{
-//    populate(Func<int,T> f)
-//    {
-//        Indexer it := self.indexer();
-//
-//        while (it.Available)
-//        {
-//            int i := it.Index;
-//            
-//            it.set(f(i));
-//            
-//            it.appendIndex:1
-//        };
-//        
-//        ^ self
-//    }
-//        
+// --- indexableOp ---
+
+public extension indexableOp<T>
+{
+    populate(Func<int,T> f)
+    {
+        Indexer it := self.indexer();
+
+        while (it.Available)
+        {
+            int i := it.Index;
+            
+            it.set(f(i));
+            
+            it.appendIndex:1
+        };
+        
+        ^ self
+    }
+        
 //    forEvery(Func<int,T> fn)
 //    {
 //        Indexer it := self.indexer();
@@ -417,7 +417,7 @@ public extension enumerableOp
 //            it.appendIndex:1
 //        }
 //    }    
-//}    
+}    
 
 public extension indexableOp
 {

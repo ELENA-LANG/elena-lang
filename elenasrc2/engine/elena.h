@@ -973,6 +973,9 @@ inline ref_t importSignature(_Module* exporter, ref_t exportRef, _Module* import
 
 inline ref_t importMessage(_Module* exporter, ref_t exportRef, _Module* importer)
 {
+   if (!exportRef)
+      return exportRef;
+
    int paramCount = 0;
    ref_t actionRef, flags;
    decodeMessage(exportRef, actionRef, paramCount, flags);

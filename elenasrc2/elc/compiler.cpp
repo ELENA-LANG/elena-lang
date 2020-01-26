@@ -4917,7 +4917,7 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
    int paramCounter = 0;
    SNode current = node.findChild(lxType);
    while (current != lxNone) {
-      if (current == lxType) {
+      if (current.compare(lxType, lxTemplateParam)) {
          paramCounter++;
       }
       else scope.raiseError(errInvalidOperation, node);
