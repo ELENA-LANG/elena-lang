@@ -4497,9 +4497,6 @@ ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInf
    int counter = 0;
    int size = _logic->defineStructSize(*scope.moduleScope, target.reference, 0);
 
-   if (size < 0)
-      throw InternalError("Not yet implemented"); // !! temporal
-
    node.set(lxInitializing, 0);
 
    // all collection memebers should be created before the collection itself
@@ -4515,7 +4512,10 @@ ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInf
    }
    
    if (size < 0) {
-      //      writer.appendNode(lxSize, -size);
+      SNode op = node.insertNode(lxCreatingStruct, counter * (-size));
+      op.appendNode(lxType, target.reference);
+      op.appendNode(lxSize, -size);
+      //      writer.appendNode(lxSize);
       //      writer.inject(lxStruct, counter * (-size));
    }
    else {

@@ -33,6 +33,11 @@ bin\elc examples\console\bsort\bsort.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elc examples\files\textfile\textfile.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 @echo off 
 goto:eof
 @echo on

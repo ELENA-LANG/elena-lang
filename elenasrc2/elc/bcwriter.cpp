@@ -5763,7 +5763,7 @@ void ByteCodeWriter :: copyToFieldAddress(CommandTape& tape, int size, int argum
 {
    if ((size & 3) == 0 && (argument & 3) == 0) {
       // if it is a dword aligned
-      tape.write(bcCopyToAI, argument, size >> 2);
+      tape.write(bcCopyToAI, argument >> 2, size >> 2);
    }
    else {
       tape.write(bcMoveTo, argument, size);
@@ -5774,7 +5774,7 @@ void ByteCodeWriter :: copyFieldAddress(CommandTape& tape, int size, int argumen
 {
    if ((size & 3) == 0 && (argument & 3) == 0) {
       // if it is a dword aligned
-      tape.write(bcCopyAI, argument, size >> 2);
+      tape.write(bcCopyAI, argument >> 2, size >> 2);
    }
    else {
       tape.write(bcMove, argument, size);
@@ -6432,7 +6432,9 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
    SNode objNode = node.findSubNodeMask(lxObjectMask);
 
    SNode current = node.findChild(lxMember);
+   int size = objNode.findChild(lxSize).argument;
    bool createMode = objNode == lxCreatingClass;
+   bool structMode = objNode == lxCreatingStruct;
    bool onlyLocals = createMode;
    while (current != lxNone) {
       if (current == lxMember) {
@@ -6460,8 +6462,10 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
       while (current != lxNone) {
          if (current == lxMember) {
             //SNode memberNode = current.firstChild(lxObjectMask);
-
-            tape.write(createMode ? bcXSetI : bcSetI, current.argument);
+            if (structMode) {
+               copyToFieldAddress(tape, size, current.argument * size);
+            }
+            else tape.write(createMode ? bcXSetI : bcSetI, current.argument);
             releaseStack(tape);
          }
          current = current.nextNode();
