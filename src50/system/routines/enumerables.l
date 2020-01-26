@@ -423,24 +423,24 @@ public extension indexableOp
 {
 //////    exchange : anIndex1 : anIndex2
 //////        = self~indexableOp exchange int:anIndex1 int:anIndex2.
-//        
-//    exchange(int i1, int i2)
-//    {
-//        Indexer indexer := self.indexer();
-//        
-//        indexer.Index := i1;
-//        
-//        var o1 := indexer.get();
-//        
-//        indexer.Index := i2;
-//        var o2 := indexer.get();
-//        
-//        indexer.set:o1;
-//        
-//        indexer.Index := i1;
-//        indexer.set:o2
-//    }
-//    
+        
+    exchange(int i1, int i2)
+    {
+        Indexer indexer := self.indexer();
+        
+        indexer.Index := i1;
+        
+        var o1 := indexer.get();
+        
+        indexer.Index := i2;
+        var o2 := indexer.get();
+        
+        indexer.set:o1;
+        
+        indexer.Index := i1;
+        indexer.set:o2
+    }
+    
 ////    forEvery(Func1 fn)
 ////        = self~indexableOp forEvery(:n)<int>(fn(n)).
 //    
