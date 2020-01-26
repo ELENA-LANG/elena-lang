@@ -477,24 +477,24 @@ public extension indexableOp
 //        
 ////    populate(ExtensionMessage ext_mssg)
 ////        = self~indexableOp populate(:n)<int>[ ^n~ext_mssg get ].
-////
-//    populate(Func1 f)
-//    {
-//        Indexer it := self.indexer();
-//
-//        while (it.Available)
-//        {
-//            int i := it.Index;
-//            
-//            it.set(f(i));
-//            
-//            it.appendIndex:1
-//        };
-//    }    
-//
-//    populate(action)
-//        = self.populate:(int n){ ^action(n) };
-//
+
+    populate(Func1 f)
+    {
+        Indexer it := self.indexer();
+
+        while (it.Available)
+        {
+            int i := it.Index;
+            
+            it.set(f(i));
+            
+            it.appendIndex:1
+        };
+    }    
+
+    populate(action)
+        = self.populate:(int n){ ^action(n) };
+
 //    bool isSorted(Func2 compareFunc)
 //    {
 //        auto it := cast Indexer(self.indexer());

@@ -9680,7 +9680,7 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
 {
    SNode parent = node;
    SNode current;
-   while (!parent.compare(lxSeqExpression, lxNewFrame, lxCodeExpression/*, lxReturning*/)) {
+   while (!parent.compare(lxSeqExpression, lxNewFrame, lxCodeExpression, lxCode/*, lxReturning*/)) {
       current = parent;
       parent = parent.parentNode();
    }

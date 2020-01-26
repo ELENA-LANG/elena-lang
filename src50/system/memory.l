@@ -802,21 +802,21 @@ public sealed const struct String : BaseValue
         intern system'core_routines'__literal.copy(s, self)
     }
 
-//    /// Creates the literal string with specified length fills with specified character value        
-//    constructor fill(int size, char ch)
-//        <= allocate(size * ch.Length)
-//    {
-//        byte buffer[4];
-//        int  length := 0;
-//        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
-//        
-//        int offs := 0;
-//        for (int i := 0, i < size, i := i + 1)
-//        {
-//            theArray[i+offs] := buffer[i];
-//            offs := offs + 1;
-//        }
-//    }
+    /// Creates the literal string with specified length fills with specified character value        
+    constructor fill(int size, char ch)
+        <= allocate(ch.Length * size)
+    {
+        byte buffer[4];
+        int  length := 0;
+        intern system'core_routines'__literalconvertor.convert(ch, buffer, ref length);
+        
+        int offs := 0;
+        for (int i := 0, i < size, i := i + 1)
+        {
+            theArray[i+offs] := buffer[i];
+            offs := offs + 1;
+        }
+    }
 
     /// Creates the literal string copy              
     constructor copy(string s)
@@ -1065,9 +1065,21 @@ public sealed const struct WideString : BaseValue
         intern system'core_routines'__wide.copy(s, self)
     }
 
-//    /// Creates the literal string with specified length fills with spciefied character value
-//    constructor fill(int aSize, char ch)
-//        => system'core_routines'__wide;
+    /// Creates the literal string with specified length fills with specified character value        
+    constructor fill(int size, char ch)
+        <= allocate(ch.WideLength * size)
+    {
+        short buffer[2];
+        int   length := 0;
+        intern system'core_routines'__wideconvertor.convert(ch, buffer, ref length);
+        
+        int offs := 0;
+        for (int i := 0, i < size, i := i + 1)
+        {
+            theArray[i+offs] := buffer[i];
+            offs := offs + 1;
+        }
+    }
 
     /// Creates the literal string copy
     constructor copy(wide s)

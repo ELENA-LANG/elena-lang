@@ -26,11 +26,11 @@ public sealed EventHandler<TF>
     dispatch() => system'core_routines'__event;
 }
 
-property event<T, __name>
+#property event<T, __name>
 {
     EventHandler<T> __name;
     
-    set __name(T f)
+    set(T f)
     {
         if (nil == __name)
         {

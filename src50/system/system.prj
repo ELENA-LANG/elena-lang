@@ -24,6 +24,7 @@
        <include>dynamic.l</include>
        <include>extensions.l</include>
        <include>exceptions.l</include>
+       <include>events.l</include>
        <include>console.l</include>
        <include>win32_app.l</include>
        <include>collections\list.l</include>
