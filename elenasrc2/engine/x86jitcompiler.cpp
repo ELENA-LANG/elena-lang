@@ -62,7 +62,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 126;
+const int gcCommandNumber = 127;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -90,7 +90,7 @@ const int gcCommands[gcCommandNumber] =
    bcSet, bcPushVerb, bcPush, bcMQuit, bcStoreV,
    bcRExp, bcRSin, bcRArcTan, bcRLn, bcRRound,
    bcRInt, bcRCos, bcMove, bcMoveTo, bcCopyAI,
-   bcXSaveAI,
+   bcXSaveAI, bcXSave,
 };
 
 const int gcCommandExNumber = 26;

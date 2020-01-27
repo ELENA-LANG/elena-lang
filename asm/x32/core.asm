@@ -1553,6 +1553,14 @@ inline % 45Ch
 
 end
 
+// ; xsave
+inline % 5Ah
+
+  lea eax, [ebx+__arg1]
+  mov [eax], edx
+
+end
+
 // ; copyto
 inline % 5Dh
 

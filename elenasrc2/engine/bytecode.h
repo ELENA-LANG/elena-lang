@@ -105,7 +105,7 @@ enum ByteCode
    bcNOrF            = 0x53,
    bcNAndF           = 0x54,
 //   bcWRead           = 0x59,
-//   bcWWrite          = 0x5A,
+   bcXSave           = 0x5A,
    bcDiv             = 0x5B,
    bcXWrite          = 0x5C,
    bcCopyTo          = 0x5D,

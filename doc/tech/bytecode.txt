@@ -104,6 +104,8 @@ ELENA byte codes (or ecodes)
                        
  xsetfi i1 i2               - [fp+i1] => acc[i2]; direct operation 
 
+ xsave n                    - [acc + n] << index 
+
 
  Memory operations:
  -----------------
