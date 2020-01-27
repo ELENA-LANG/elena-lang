@@ -13,11 +13,7 @@ In development:
               xdev elena50
                 * textfile
 
-                * template of templates
-                * field - template of templates
-                * parameter - template of templates
-
-                * array of templates
+                * template of templates : array of tuples
 
                 * samples
 

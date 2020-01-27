@@ -802,11 +802,11 @@ namespace collections
         ArrayList clone()
             = ArrayList.fromArray(theArray, theLength.Value);
             
-//        Array cast()
-//            = new Array(0, cast int(theLength), theArray);
-//    
-//        get Array Value()
-//            = new Array(0, cast int(theLength), theArray);
+        Array cast()
+            = Array.copy(0, theLength.Value, theArray);
+    
+        get Array Value()
+            = Array.copy(0, theLength.Value, theArray);
     }
 
     // --- ArrayListEnumerator ---

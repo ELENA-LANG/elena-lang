@@ -14,7 +14,8 @@
     <files>
         <module>
             <include>convertors.l</include>
-            <include>console.l</include>                                                        
+            <include>console.l</include>
+            <include>win32_args.l</include>                                                        
             <include>basic.l</include>
             <include>text\strings.l</include>
             <include>text\words.l</include>

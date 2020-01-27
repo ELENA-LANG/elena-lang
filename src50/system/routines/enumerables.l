@@ -11,7 +11,7 @@ public ifOrdered
 //// --- literalSplitOp ---
 //
 //public extension stringListOp : String
-//{
+//{<
 //    Array split()
 //        = self.split($32);
 //    
@@ -145,10 +145,10 @@ public extension enumerableOp
 //        
 //    forEach(fn)
 //        = self.forEach:(n){ fn(n) };
-//
-//    selectBy(selector)
-//        = Selector.new(selector, cast Enumerator(self.enumerator()));
-//
+
+    selectBy(selector)
+        = Selector.new(selector, cast Enumerator(self.enumerator()));
+
 ////    forEachPair(object object, ext_mssg anExtMessage)
 ////        = self~enumerableOp forEachPair(object, (:o:n)(o~anExtMessage eval:n)).
 //    

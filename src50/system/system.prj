@@ -37,6 +37,7 @@
      </module>
      <module name="routines">
        <include>routines\enumerables.l</include>
+       <include>routines\patterns.l</include>
        <include>routines\sorting.l</include>
      </module>
   </files>
