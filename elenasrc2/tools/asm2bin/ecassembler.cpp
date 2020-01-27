@@ -606,6 +606,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcOr:
          case bcPushN:
          case bcInc:
+         case bcXWrite:
             compileNCommand(opcode, token, writer);
             break;
          case bcMovM:

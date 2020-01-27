@@ -2398,12 +2398,12 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
 
 //            scope.importMode = oldMode;
          }
-//         else {
-//            // if it is a nested template
-//            writer.newNode(current.type, current.argument - 0x100);
-//            copyChildren(writer, current, scope);
-//            writer.closeNode();
-//         }
+         else {
+            // if it is a nested template
+            writer.newNode(current.type, current.argument - 0x100);
+            copyChildren(writer, current, scope);
+            writer.closeNode();
+         }
       }
       else if (scope.type == TemplateScope::ttPropertyTemplate 
          || scope.type == TemplateScope::ttClassTemplate || scope.type == TemplateScope::ttInlineTemplate) {

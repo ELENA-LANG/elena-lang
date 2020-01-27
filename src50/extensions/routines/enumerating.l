@@ -1,77 +1,77 @@
-//import system'io;
+import system'io;
 ////import system'text.
 //import extensions;
 import extensions'text;
 
-//// --- ReaderEnumerator ---
-//
-//public class ReaderEnumerator : Enumerator
-//{
-//    TextReader theReader;
-//    object     theLine;
-//
-////    constructor()
-////    { 
-////    }
-//
-//    constructor new(source)
-//  //      <= new
-//    {
-//        theReader := source.textreader();
+// --- ReaderEnumerator ---
+
+public class ReaderEnumerator : Enumerator
+{
+    TextReader theReader;
+    object     theLine;
+
+//    constructor()
+//    { 
 //    }
-//
-////    constructor new(Stream aStream, Encoder anEncoder)
-////        <= new;
-////    [
-////        theReader := StreamReader new(aStream, anEncoder).
-////    ]        
-////                        
-////    constructor new(literal aPath)
-////        <= new;
-////    [
-////        theReader := StreamReader new:aPath.
-////    ]
-////    
-////    constructor new(literal aPath, Encoder anEncoder)
-////        <= new;
-////    [
-////        theReader := StreamReader new(aPath, anEncoder)
-////    ]
+
+    constructor new(source)
+  //      <= new
+    {
+        theReader := source.textreader();
+    }
+
+//    constructor new(Stream aStream, Encoder anEncoder)
+//        <= new;
+//    [
+//        theReader := StreamReader new(aStream, anEncoder).
+//    ]        
+//                        
+//    constructor new(literal aPath)
+//        <= new;
+//    [
+//        theReader := StreamReader new:aPath.
+//    ]
 //    
-//    reset() 
-//    {
-//        NotSupportedException.raise()
-//    }
-//    
-//    bool next()
-//    {
-//        if(theReader.Available)
-//        {
-//            theLine := theReader.readLine();
-//            
-//            ^ true
-//        };        
-//        
-//        theReader.close();
-//        
-//        ^ false
-//    }
-//
-//    enumerable() = theReader;
-//            
-//    get() = theLine;
-//}
-//
-//// --- fileExOp ---
-//
-//public extension fileExOp : File
-//{
-//    forEachLine(f)
-//        = f.run(ReaderEnumerator.new(self));
-//        
-////    run for:anEncoder eachLine:anAction
-////        = anAction run enumerator:(ReaderEnumerator new path:self encoder:anEncoder).
-//}
+//    constructor new(literal aPath, Encoder anEncoder)
+//        <= new;
+//    [
+//        theReader := StreamReader new(aPath, anEncoder)
+//    ]
+    
+    reset() 
+    {
+        NotSupportedException.raise()
+    }
+    
+    bool next()
+    {
+        if(theReader.Available)
+        {
+            theLine := theReader.readLine();
+            
+            ^ true
+        };        
+        
+        theReader.close();
+        
+        ^ false
+    }
+
+    enumerable() = theReader;
+            
+    get() = theLine;
+}
+
+// --- fileExOp ---
+
+public extension fileExOp : File
+{
+    forEachLine(f)
+        = f.run(ReaderEnumerator.new(self));
+        
+//    run for:anEncoder eachLine:anAction
+//        = anAction run enumerator:(ReaderEnumerator new path:self encoder:anEncoder).
+}
 
 // --- stringExOp ---
 
@@ -84,10 +84,10 @@ public extension stringExOp
 ////        = aFunction run enumerator:(TokenEnumerator new literal:self token_dfa:aStatemachine).
 }
 
-//// --- printingLn ---
-//
-//public symbol printingLn = (aLine){ forward program'output.printLine:aLine };
-//
+// --- printingLn ---
+
+public symbol printingLn = (line){ forward program'output.printLine:line };
+
 //// --- func1Op ---
 //
 //public extension func1Op : Func1

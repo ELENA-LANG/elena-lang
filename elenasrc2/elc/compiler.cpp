@@ -2158,7 +2158,7 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
 {
    CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
 
-   ident_t identifier = terminal.identifier();
+   IdentifierString identifier(terminal.identifier());
    ident_t className = NULL;
    LexicalType variableType = lxVariable;
    int variableArg = 0;

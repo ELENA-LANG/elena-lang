@@ -316,63 +316,63 @@ namespace text
     ////        
     ////        aRetVal value := -1
     ////    ]
-    //
-    //    indexOf(int pos, string s, ref int retVal)
-    //    {
-    //        int  strLen := 0;
-    //        int  index := 0;
-    //        int  firstChLen := 0;
-    //        char current := $0;
-    //        char firstCh := $0;
-    //        char nextCh := $0;
-    //        
-    //        strLen := s.Length;
-    //        
-    //        s.read(0, ref firstCh);
-    //        firstChLen := firstCh.Length;
-    //        
-    //        int maxIndex := theLength;
-    //        maxIndex := maxIndex - strLen;
-    //        
-    //        while (index <= maxIndex)
-    //        {
-    //            current := theBuffer[index];
-    //            
-    //            if (current == firstCh)
-    //            {
-    //                int j := firstChLen;
-    //                int chLen := 0;
-    //                while (j < strLen)
-    //                {
-    //                    current := theBuffer[index + j];
-    //                    s.read(j, ref nextCh);
-    //                    
-    //                    if (nextCh == current)
-    //                    { 
-    //                        chLen := nextCh.Length
-    //                    }
-    //                    else
-    //                    { 
-    //                        j := strLen; 
-    //                        chLen := 1 
-    //                    };
-    //                    
-    //                    j := j + chLen
-    //                };
-    //                
-    //                if (j == strLen)
-    //                { 
-    //                    retVal := index; 
-    //                    ^ self 
-    //                }
-    //            };
-    //                
-    //            index += 1
-    //        };
-    //        
-    //        retVal := -1
-    //    }
-    //
+    
+        indexOf(int pos, string s, ref int retVal)
+        {
+            int  strLen := 0;
+            int  index := 0;
+            int  firstChLen := 0;
+            char current := $0;
+            char firstCh := $0;
+            char nextCh := $0;
+            
+            strLen := s.Length;
+            
+            s.read(0, ref firstCh);
+            firstChLen := firstCh.Length;
+            
+            int maxIndex := theLength;
+            maxIndex := maxIndex - strLen;
+            
+            while (index <= maxIndex)
+            {
+                current := theBuffer[index];
+                
+                if (current == firstCh)
+                {
+                    int j := firstChLen;
+                    int chLen := 0;
+                    while (j < strLen)
+                    {
+                        current := theBuffer[index + j];
+                        s.read(j, ref nextCh);
+                        
+                        if (nextCh == current)
+                        { 
+                            chLen := nextCh.Length
+                        }
+                        else
+                        { 
+                            j := strLen; 
+                            chLen := 1 
+                        };
+                        
+                        j := j + chLen
+                    };
+                    
+                    if (j == strLen)
+                    { 
+                        retVal := index; 
+                        ^ self 
+                    }
+                };
+                    
+                index += 1
+            };
+            
+            retVal := -1
+        }
+
     ////    indexOf(int aPosition, wide aLiteral, ref<int> aRetVal)
     ////    [
     ////        int  aLiteralLength := 0.

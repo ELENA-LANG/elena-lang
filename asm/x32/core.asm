@@ -1501,7 +1501,7 @@ inline %05Bh
 
 end
 
-// ; write
+// ; xwrite
 inline % 5Ch
 
   mov  esi, [esp]
@@ -1511,7 +1511,7 @@ inline % 5Ch
 
 end
 
-// ; write
+// ; xwrite
 inline % 15Ch
 
   mov  ecx, [esp]
@@ -1521,7 +1521,7 @@ inline % 15Ch
 
 end
 
-// ; write
+// ; xwrite
 inline % 25Ch
 
   mov  ecx, [esp]
@@ -1531,7 +1531,7 @@ inline % 25Ch
 
 end
 
-// ; write
+// ; xwrite
 inline % 35Ch
 
   mov  ecx, [esp]
@@ -1541,7 +1541,7 @@ inline % 35Ch
 
 end
 
-// ; write
+// ; xwrite
 inline % 45Ch
 
   mov  ecx, [esp]

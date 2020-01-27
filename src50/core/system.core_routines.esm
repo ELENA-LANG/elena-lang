@@ -1091,6 +1091,106 @@ labErr:
 
 end
 
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@IntNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr 0
+
+  pushsi  3
+  xwrite  4
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@CharValue[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr 0
+
+  pushsi  3
+  xwrite  4
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@ShortNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr 0
+
+  pushsi  3
+  xwrite  2
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@LongNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr 0
+
+  pushsi  3
+  xwrite  8
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@RealNumber[3]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr 0
+
+  pushsi  3
+  xwrite  8
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
 procedure __chararray."write$@system@Array#1&system@CharValue$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
 
   pushsi 4

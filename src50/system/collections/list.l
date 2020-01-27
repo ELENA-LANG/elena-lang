@@ -1,586 +1,585 @@
 namespace collections
 {
 
-//// --- listof ---
-//
-//public sealed List<T> : Enumerable<T>
-//{
-//    T[]      theArray;
-//    ref<int> theLength;
-//    ref<int> theCapacity;
-//
-////    constructor(Array list)
-////    [
-////        int len := list length.
-////        int size := len / 32.
-////        size := size + 1.
-////        size := size * 32.
-////        
-////        theLength := len.
-////        theCapacity := size.
-////        theArray := V<type>(size).
-////        
-////        int i := 0.
-////        while(i < len)
-////        [
-////            theArray[i] := list[i].
-////            
-////            i := i + 1.
-////        ].
-////    ]
-//
-//    constructor(T[] a)
-//    {
-//        int len := a.Length;
-//        int size := len / 32;
-//        size := size + 1;
-//        size := size * 32;
+// --- listof ---
+
+public sealed List<T> : Enumerable<T>
+{
+    T[]      theArray;
+    ref<int> theLength;
+    ref<int> theCapacity;
+
+//    constructor(Array list)
+//    [
+//        int len := list length.
+//        int size := len / 32.
+//        size := size + 1.
+//        size := size * 32.
 //        
-//        theLength := len;
-//        theCapacity := size;
-//        theArray := new T[](size);
+//        theLength := len.
+//        theCapacity := size.
+//        theArray := V<type>(size).
 //        
-//        for(int i := 0, i < len, i += 1)
-//        {
-//            theArray[i] := a[i]
-//        }
-//    }
-//        
-//    constructor(Enumerator<T> e)
-//        <= ()
-//    {
-//        self.appendRange(e)        
-//    }
-//    
-//    constructor(int capacity)
-//    {
-//        theCapacity := capacity;
-//        theLength := 0;
-//        theArray := new T[](capacity);
-//    }
-//    
-//    constructor()
-//    {
-//        theCapacity := 16;
-//        theLength := 0;
-//        theArray := new T[](16);
-//    }
-//    
-//    Length
-//    {
-//        int get()
-//        {
-//            int retVal := theLength.Value;
+//        int i := 0.
+//        while(i < len)
+//        [
+//            theArray[i] := list[i].
 //            
-//            ^ retVal
-//        }        
-//    }
-//    
-//    private expand()
-//    {
-//        int cap := theCapacity.Value;
-//        int len := theLength.Value;
-//        
-//        if (cap <= len)
-//        {
-//            theCapacity.append(32);
-//            cap += 32;
-//            
-//            T[] newArray := new T[](cap);
-//
-//            for(int i := 0, i < len, i += 1)
-//            {
-//                //newArray[i] := theArray[i]
-//                T tmp := theArray[i];
-//                newArray[i] := tmp
-//            };
-//            
-//            theArray := newArray
-//        }
-//    }
-//    
-////    /// Returns the object at the specified position
-////    type getAt : anIndex
-////        = self getAt(T<int>(anIndex)).
-//
+//            i := i + 1.
+//        ].
+//    ]
+
+    constructor(T[] a)
+    {
+        int len := a.Length;
+        int size := len / 32;
+        size := size + 1;
+        size := size * 32;
+        
+        theLength := len;
+        theCapacity := size;
+        theArray := new T[](size);
+        
+        for(int i := 0, i < len, i += 1)
+        {
+            theArray[i] := a[i]
+        }
+    }
+        
+    constructor(Enumerator<T> e)
+    {
+        self.appendRange(e)        
+    }
+    
+    constructor(int capacity)
+    {
+        theCapacity := capacity;
+        theLength := 0;
+        theArray := new T[](capacity);
+    }
+    
+    constructor()
+    {
+        theCapacity := 16;
+        theLength := 0;
+        theArray := new T[](16);
+    }
+    
+    int Length
+    {
+        get()
+        {
+            int retVal := theLength.Value;
+            
+            ^ retVal
+        }        
+    }
+    
+    private expand()
+    {
+        int cap := theCapacity.Value;
+        int len := theLength.Value;
+        
+        if (cap <= len)
+        {
+            theCapacity.append(32);
+            cap += 32;
+            
+            T[] newArray := new T[](cap);
+
+            for(int i := 0, i < len, i += 1)
+            {
+                //newArray[i] := theArray[i]
+                T tmp := theArray[i];
+                newArray[i] := tmp
+            };
+            
+            theArray := newArray
+        }
+    }
+    
 //    /// Returns the object at the specified position
-//    T at(int index)
-//    {
-//        int len := theLength.Value;
-//        
-//        ifnot(index < len)
-//            { OutOfRangeException.raise() };
-//            
-//        ^ theArray[index]
-//    }
-//
+//    type getAt : anIndex
+//        = self getAt(T<int>(anIndex)).
+
+    /// Returns the object at the specified position
+    T at(int index)
+    {
+        int len := theLength.Value;
+        
+        ifnot(index < len)
+            { OutOfRangeException.raise() };
+            
+        ^ theArray[index]
+    }
+
+    /// Returns the object at the specified position
+    setAt(int index, T object)
+    {
+        int len := theLength.Value;
+        
+        ifnot(index < len)
+            { OutOfRangeException.raise() };
+        
+        theArray[index] := object
+    }
+
 //    /// Returns the object at the specified position
-//    setAt(int index, T object)
-//    {
-//        int len := theLength.Value;
-//        
-//        ifnot(index < len)
-//            { OutOfRangeException.raise() };
-//        
-//        theArray[index] := object
-//    }
-//
-////    /// Returns the object at the specified position
-////    setAt(object anIndex, object anObject)
-////        = self setAt(T<int>(anIndex), T<type>(anObject)).
-//
-//    /// Appends a new object to the end of the list
-//    append(T object)
-//    {
-//        self.expand();
-//        
-//        int index := theLength.Value;
-//        theArray[index] := object;
-//        
-//        theLength.append(1)
-//    }
-//
-//    append(object)
-//        <= append(cast T(object));
-//
-//    appendRange(Enumerator<T> e)
-//    {
-//        while(e.next())
-//        {
-//            self.append(e.get())
-//        }        
-//    }
-//
-//    /// Removes an object at the specified position
-//    remove(int index)
-//    {
-//        ifnot (index < theLength)
-//            { OutOfRangeException.raise() };
-//        
-//        theLength.reduce(1);
-//        
-//        int i := index;
-//        while(i < theLength)
-//        {
-//            theArray[i] := theArray[i + 1];
+//    setAt(object anIndex, object anObject)
+//        = self setAt(T<int>(anIndex), T<type>(anObject)).
+
+    /// Appends a new object to the end of the list
+    append(T object)
+    {
+        self.expand();
+        
+        int index := theLength.Value;
+        theArray[index] := object;
+        
+        theLength.append(1)
+    }
+
+    append(object)
+        <= append(cast T(object));
+
+    appendRange(Enumerator<T> e)
+    {
+        while(e.next())
+        {
+            self.append(e.get())
+        }        
+    }
+
+    /// Removes an object at the specified position
+    remove(int index)
+    {
+        ifnot (index < theLength)
+            { OutOfRangeException.raise() };
+        
+        theLength.reduce(1);
+        
+        int i := index;
+        while(i < theLength)
+        {
+            theArray[i] := theArray[i + 1];
+            
+            i := i + 1
+        }
+    }
+        
+    /// Returns the top object
+    T First = theArray.at(0);
+    
+    /// Clears the list
+    clear()
+    {
+        theLength.Value := 0        
+    }
+    
+    trim(int pos)
+    {
+        if (pos > (cast int(theLength)))
+            { OutOfRangeException.raise() };
+        
+        theLength.Value := pos
+    }
+    
+    Enumerator<T> enumerator() = new BaseEnumerator<T>::
+    {
+        this theIndex := -1;
+        
+        this theLength := self.Length;
+        
+        T get() = self.at(this theIndex.Value);
+        
+        enumerable() = self;
+        
+        reset()
+        {
+            this theIndex := -1
+        }
+    };
+
+    Indexer<T> indexer() = new BaseIndexer<T>::
+    {
+        this theIndex := 0;
+        
+        this theLength := self.Length;
+        
+        T get()
+            = self.at(theIndex);
+            
+        set(T o)
+        {
+            self.setAt(theIndex, o)
+        }
+    };
+        
+//    cast T<Array>
+//    [
+//        int len := T<int>(theLength).
+//        auto copy := Array new(len).
+//        int i := 0.
+//        while (i < len)
+//        [
+//            copy[i] := theArray[i].
 //            
-//            i := i + 1
-//        }
-//    }
+//            i += 1.
+//        ].
 //        
-//    /// Returns the top object
-//    T First = theArray.at(0);
-//    
-//    /// Clears the list
-//    clear()
-//    {
-//        theLength.Value := 0        
-//    }
-//    
-//    trim(int pos)
-//    {
-//        if (pos > (cast int(theLength)))
-//            { OutOfRangeException.raise() };
-//        
-//        theLength.Value := pos
-//    }
-//    
-//    Enumerator<T> enumerator() = new BaseEnumerator<T>::
-//    {
-//        this theIndex := -1;
-//        
-//        this theLength := self.Length;
-//        
-//        T get() = self.at(this theIndex.Value);
-//        
-//        enumerable() = self;
-//        
-//        reset()
-//        {
-//            this theIndex := -1
-//        }
-//    };
-//
-//    Indexer<T> indexer() = new BaseIndexer<T>::
-//    {
-//        this theIndex := 0;
-//        
-//        this theLength := self.Length;
-//        
-//        T get()
-//            = self.at(theIndex);
-//            
-//        set(T o)
-//        {
-//            self.setAt(theIndex, o)
-//        }
-//    };
-//        
-////    cast T<Array>
-////    [
-////        int len := T<int>(theLength).
-////        auto copy := Array new(len).
-////        int i := 0.
-////        while (i < len)
-////        [
-////            copy[i] := theArray[i].
-////            
-////            i += 1.
-////        ].
-////        
-////        ^ copy.
-////    ]
-//
-//    get T[] Value()
-//    {
-//        int len := cast int(theLength);
-//        T[] copy := new T[](len);
-//        
-//        for (int i := 0, i < len, i += 1)
-//        {
-//            copy[i] := theArray[i]
-//        };
-//        
-//        ^ copy
-//    }
-//
-////    clone
-////        = List<type>(theArray, T<int>(theLength)).
-//}
-//
-//// --- ListItem ---
-//
-///// A list item
-//sealed class ListItem
-//{
-//    object   theContent;
-//    ListItem theNext;
-//    
-//    /// Creates a new item
-//    constructor new(object)
-//    {
-//        theContent := object
-//    }
-//
-//    /// Returns the item object
-//    get() = theContent;
-//            
-//    /// Sets the item object
-//    set(object)
-//    {
-//        theContent := object
-//    }
-//
-//    NextItem
-//    {
-//        /// Returns the next item
-//        ListItem get() = theNext;
-//      
-//        /// Sets the next item  
-//        set(ListItem next)
-//        {
-//            theNext := next
-//        }
-//    }
-//}
-//
-//// --- ListEnumerator ---
-//
-///// A list enumerator
-//class ListEnumerator : Enumerator
-//{
-//    List     theList;
-//    ListItem theCurrent;
-//    
+//        ^ copy.
+//    ]
+
+    get T[] Value()
+    {
+        int len := cast int(theLength);
+        T[] copy := new T[](len);
+        
+        for (int i := 0, i < len, i += 1)
+        {
+            copy[i] := theArray[i]
+        };
+        
+        ^ copy
+    }
+
+//    clone
+//        = List<type>(theArray, T<int>(theLength)).
+}
+
+// --- ListItem ---
+
+/// A list item
+sealed class ListItem
+{
+    object   theContent;
+    ListItem theNext;
+    
+    /// Creates a new item
+    constructor new(object)
+    {
+        theContent := object
+    }
+
+    /// Returns the item object
+    get() = theContent;
+            
+    /// Sets the item object
+    set(object)
+    {
+        theContent := object
+    }
+
+    ListItem NextItem
+    {
+        /// Returns the next item
+        get() = theNext;
+      
+        /// Sets the next item  
+        set(ListItem next)
+        {
+            theNext := next
+        }
+    }
+}
+
+// --- ListEnumerator ---
+
+/// A list enumerator
+class ListEnumerator : Enumerator
+{
+    List     theList;
+    ListItem theCurrent;
+    
+    /// Creates a list enumerator
+    constructor(List list)
+    {
+        theList := list
+    }
+
 //    /// Creates a list enumerator
-//    constructor(List list)
-//    {
-//        theList := list
-//    }
+//    constructor new : anObject
+//        <= new(T<List>(anObject)).
+
+    /// Returns the current object
+    get() = theCurrent.get();
+    
+    /// Resets the enumerator
+    reset()
+    {
+        theCurrent := nil
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        if (nil == theCurrent)
+        { 
+            theCurrent := theList.TopItem 
+        }
+        else
+        { 
+            theCurrent := theCurrent.NextItem 
+        };
+            
+        ^ nil != theCurrent
+    }
+    
+    enumerable() = theList;
+}
+
+//// --- ListIndexer ---
 //
-////    /// Creates a list enumerator
-////    constructor new : anObject
-////        <= new(T<List>(anObject)).
-//
-//    /// Returns the current object
-//    get() = theCurrent.get();
-//    
-//    /// Resets the enumerator
-//    reset()
-//    {
-//        theCurrent := nil
-//    }
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next()
-//    {
-//        if (nil == theCurrent)
-//        { 
-//            theCurrent := theList.TopItem 
-//        }
-//        else
-//        { 
-//            theCurrent := theCurrent.NextItem 
-//        };
-//            
-//        ^ nil != theCurrent
-//    }
-//    
-//    enumerable() = theList;
-//}
-//
-////// --- ListIndexer ---
-////
-/////// A list indexer
-////class ListIndexer :: Indexer
-////{
-////    T<List>     theList.
-////    T<ListItem> theCurrent.
-////    ref<int>    theIndex.
-////    
-////    /// Creates a list indexer
-////    constructor new(List aList)
-////    [
-////        theList := aList.
-////        theCurrent := aList topItem.
-////        theIndex := 0.
-////    ]
-////
-////    /// Creates a list indexer
-////    constructor new : anObject
-////        <= new(T<List>(anObject)).
-////    
-////    /// Returns false if the index out of range
-////    bool available = nil != theCurrent.
-////
-////    /// Returns the current member
-////    get = theCurrent get.
-////    
-////    /// Sets the current member
-////    set : anObject 
-////    [
-////        theCurrent set:anObject.
-////    ]
-////    
-////    /// Reads the current index into an output parameter
-////    readIndexTo(ref<int> anIndex)
-////    [
-////        theIndex readValueTo(anIndex).
-////    ]
-////    
-////    /// Sets the index by specified value
-////    writeIndex(int anIndex)
-////    [
-////        int i := theIndex.
-////        
-////        if(anIndex < i)
-////        [
-////            theCurrent := theList topItem.
-////            i := 0.
-////        ].
-////        
-////        while (i < anIndex) 
-////        [
-////            if (nil == theCurrent)
-////                [ OutOfRangeException new; raise. ].
-////            
-////            theCurrent := theCurrent nextItem.            
-////            i := i + 1
-////        ].
-////        
-////        theIndex value := i.
-////    ]
-////    
-////    appendIndex(int anIndex)
-////    [
-////        int i := theIndex.
-////        i := i + anIndex.
-////        
-////        self writeIndex(i).
-////    ]
-////    
-////    readLengthTo(ref<int> retVal)
-////    [
-////        theList readLengthTo(retVal).
-////    ]
-////}
-//
-//// --- List ---
-//
-///// A list object
-//public sealed class List : Enumerable
+///// A list indexer
+//class ListIndexer :: Indexer
 //{
-//    ref<int> theCount;
-//    ListItem theTop;
-//    ListItem theLast;
-//
-//    /// Creates a list
-//    constructor()
-//    {
-//        theCount := 0
-//    }
-//
-////    constructor new(Array l)
-////    [
-////        theCount := 0.
-////        
-////        auto it := l enumerator.
-////        while (it next)
-////        [
-////            self append(it get)
-////        ].
-////    ]
-//
-//    /// Returns the top item
-//    internal ListItem TopItem = theTop;
-//
-////    /// Returns the top object
-////    first = theTop get.
-////
-////    /// Returns the last object
-////    last = theLast get.    
-//
-//    append(object)
-//    {
-//        theCount.append(1);
-//        if(nil == theTop)
-//        {
-//            theTop := ListItem.new(object);
-//            theLast := theTop
-//        }
-//        else
-//        {
-//            auto newItem := ListItem.new(object);
-//            
-//            theLast.NextItem := newItem;
-//            theLast := newItem
-//        }
-//    }
-//
-////    insert : anObject
-////    [
-////        theCount append(1).
-////        
-////        auto aNewItem := ListItem new:anObject.
-////        aNewItem setNextItem(theTop).
-////        theTop := aNewItem.
-////    ]
+//    T<List>     theList.
+//    T<ListItem> theCurrent.
+//    ref<int>    theIndex.
 //    
-//    /// Returns the list item at the specified position
-//    internal ListItem getItemAt(int index)
-//    {
-//        int      currentIndex := index;
-//        ListItem item := theTop;
-//        
-//        while (currentIndex > 0)
-//        {
-//            item := item.NextItem;
-//            if (nil == item)
-//                { OutOfRangeException.raise() };
-//            
-//            currentIndex := currentIndex - 1
-//        };
-//        
-//        ^ item
-//    }
+//    /// Creates a list indexer
+//    constructor new(List aList)
+//    [
+//        theList := aList.
+//        theCurrent := aList topItem.
+//        theIndex := 0.
+//    ]
 //
-//    /// Returns the object at the specified position
-//    at(int index)
-//        = self.getItemAt(index).get();
-//
-//    /// Returns the object at the specified position
-//    setAt(int index, object object)
-//        = self.getItemAt(index).set(object);
-//
-////    insert : anObject at:anIndex
-////        <= insert(anIndex, anObject).
-////
-////    /// Inserts a new object to the specified position
-////    insert(int anIndex, object anObject)
-////    [
-////        if (anIndex == 0)
-////            [ self insert:anObject ];
-////            [
-////                T<ListItem> aNew := ListItem new:anObject.        
-////                T<ListItem> aPrevious := self getItemAt(anIndex - 1).
-////                T<ListItem> aNext := aPrevious nextItem.
-////                
-////                aPrevious setNextItem(aNew).
-////                aNew setNextItem(aNext)
-////            ]
-////    ]
-//
-//    /// Removes an object at the specified position
-//    remove(int index)
-//    {
-//        if (nil == theTop)
-//            { OutOfRangeException.raise() };
-//        
-//        if (0 == index)
-//        {
-//            theTop := theTop.NextItem;
-//            if (nil == theTop)
-//                { theLast := nil }
-//        }
-//        else
-//        {
-//            ListItem previous := self.getItemAt(index - 1);
-//            ListItem next := previous.NextItem;
-//            
-//            previous.NextItem := next.NextItem;
-//            
-//            if(next.equalReference(theLast))
-//                { theLast := previous }
-//        };
-//            
-//        theCount.reduce(1)
-//    }
-//        
-//    removeAt(index)
-//        <= remove(cast int(index));
-//
-//    Length
-//    {
-//        /// Reads the number of list item to the output parameter
-//        int get()
-//        {
-//            int retVal := theCount.Value; 
-//            
-//            ^ retVal
-//        }
-//    }
+//    /// Creates a list indexer
+//    constructor new : anObject
+//        <= new(T<List>(anObject)).
 //    
-////    /// Clears the list
-////    clear 
-////    [
-////        theCount value := 0.
-////        
-////        theTop := nil.
-////        theLast := nil.
-////    ]
+//    /// Returns false if the index out of range
+//    bool available = nil != theCurrent.
 //
-//    /// Returns the list enumerator
-//    Enumerator enumerator() = new ListEnumerator(self);
-//
-////    /// Returns the list indexer
-////    T<Indexer> indexer = ListIndexer new(self).
-////    
-////    /// Clones the list
-////    T<List> clone 
-////    [
-////        auto aList := List new.
-////        
-////        T<ListItem> anItem := theTop.        
-////        while (nil != anItem)
-////        [
-////            aList append(anItem get).
-////            
-////            anItem := anItem nextItem
-////        ].
-////        
-////        ^ aList
-////    ]
+//    /// Returns the current member
+//    get = theCurrent get.
+//    
+//    /// Sets the current member
+//    set : anObject 
+//    [
+//        theCurrent set:anObject.
+//    ]
+//    
+//    /// Reads the current index into an output parameter
+//    readIndexTo(ref<int> anIndex)
+//    [
+//        theIndex readValueTo(anIndex).
+//    ]
+//    
+//    /// Sets the index by specified value
+//    writeIndex(int anIndex)
+//    [
+//        int i := theIndex.
+//        
+//        if(anIndex < i)
+//        [
+//            theCurrent := theList topItem.
+//            i := 0.
+//        ].
+//        
+//        while (i < anIndex) 
+//        [
+//            if (nil == theCurrent)
+//                [ OutOfRangeException new; raise. ].
+//            
+//            theCurrent := theCurrent nextItem.            
+//            i := i + 1
+//        ].
+//        
+//        theIndex value := i.
+//    ]
+//    
+//    appendIndex(int anIndex)
+//    [
+//        int i := theIndex.
+//        i := i + anIndex.
+//        
+//        self writeIndex(i).
+//    ]
+//    
+//    readLengthTo(ref<int> retVal)
+//    [
+//        theList readLengthTo(retVal).
+//    ]
 //}
+
+// --- List ---
+
+/// A list object
+public sealed class List : Enumerable
+{
+    ref<int> theCount;
+    ListItem theTop;
+    ListItem theLast;
+
+    /// Creates a list
+    constructor()
+    {
+        theCount := 0
+    }
+
+//    constructor new(Array l)
+//    [
+//        theCount := 0.
+//        
+//        auto it := l enumerator.
+//        while (it next)
+//        [
+//            self append(it get)
+//        ].
+//    ]
+
+    /// Returns the top item
+    internal ListItem TopItem = theTop;
+
+//    /// Returns the top object
+//    first = theTop get.
+//
+//    /// Returns the last object
+//    last = theLast get.    
+
+    append(object)
+    {
+        theCount.append(1);
+        if(nil == theTop)
+        {
+            theTop := ListItem.new(object);
+            theLast := theTop
+        }
+        else
+        {
+            auto newItem := ListItem.new(object);
+            
+            theLast.NextItem := newItem;
+            theLast := newItem
+        }
+    }
+
+//    insert : anObject
+//    [
+//        theCount append(1).
+//        
+//        auto aNewItem := ListItem new:anObject.
+//        aNewItem setNextItem(theTop).
+//        theTop := aNewItem.
+//    ]
+    
+    /// Returns the list item at the specified position
+    internal ListItem getItemAt(int index)
+    {
+        int      currentIndex := index;
+        ListItem item := theTop;
+        
+        while (currentIndex > 0)
+        {
+            item := item.NextItem;
+            if (nil == item)
+                { OutOfRangeException.raise() };
+            
+            currentIndex := currentIndex - 1
+        };
+        
+        ^ item
+    }
+
+    /// Returns the object at the specified position
+    at(int index)
+        = self.getItemAt(index).get();
+
+    /// Returns the object at the specified position
+    setAt(int index, object object)
+        = self.getItemAt(index).set(object);
+
+//    insert : anObject at:anIndex
+//        <= insert(anIndex, anObject).
+//
+//    /// Inserts a new object to the specified position
+//    insert(int anIndex, object anObject)
+//    [
+//        if (anIndex == 0)
+//            [ self insert:anObject ];
+//            [
+//                T<ListItem> aNew := ListItem new:anObject.        
+//                T<ListItem> aPrevious := self getItemAt(anIndex - 1).
+//                T<ListItem> aNext := aPrevious nextItem.
+//                
+//                aPrevious setNextItem(aNew).
+//                aNew setNextItem(aNext)
+//            ]
+//    ]
+
+    /// Removes an object at the specified position
+    remove(int index)
+    {
+        if (nil == theTop)
+            { OutOfRangeException.raise() };
+        
+        if (0 == index)
+        {
+            theTop := theTop.NextItem;
+            if (nil == theTop)
+                { theLast := nil }
+        }
+        else
+        {
+            ListItem previous := self.getItemAt(index - 1);
+            ListItem next := previous.NextItem;
+            
+            previous.NextItem := next.NextItem;
+            
+            if(next.equalReference(theLast))
+                { theLast := previous }
+        };
+            
+        theCount.reduce(1)
+    }
+        
+    removeAt(index)
+        <= remove(cast int(index));
+
+    int Length
+    {
+        /// Reads the number of list item to the output parameter
+        get()
+        {
+            int retVal := theCount.Value; 
+            
+            ^ retVal
+        }
+    }
+    
+//    /// Clears the list
+//    clear 
+//    [
+//        theCount value := 0.
+//        
+//        theTop := nil.
+//        theLast := nil.
+//    ]
+
+    /// Returns the list enumerator
+    Enumerator enumerator() = new ListEnumerator(self);
+
+//    /// Returns the list indexer
+//    T<Indexer> indexer = ListIndexer new(self).
+//    
+//    /// Clones the list
+//    T<List> clone 
+//    [
+//        auto aList := List new.
+//        
+//        T<ListItem> anItem := theTop.        
+//        while (nil != anItem)
+//        [
+//            aList append(anItem get).
+//            
+//            anItem := anItem nextItem
+//        ].
+//        
+//        ^ aList
+//    ]
+}
 
     // --- ArrayList ---
     

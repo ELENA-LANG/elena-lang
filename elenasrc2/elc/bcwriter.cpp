@@ -5821,6 +5821,30 @@ inline bool isAligned(int size)
    return (size & 3) == 0;
 }
 
+void ByteCodeWriter :: saveFieldExpression(CommandTape& tape, SNode dstObj, SNode source, int size, FlowScope& scope)
+{
+   SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
+   if (fieldNode == lxFieldAddress) {
+      generateObject(tape, source, scope, STACKOP_MODE);
+      loadFieldExpression(tape, dstObj, scope, false);
+      copyToFieldAddress(tape, size, fieldNode.argument);
+      releaseStack(tape);
+   }
+   else if (fieldNode == lxSelfLocal) {
+      if (isAligned(size)) {
+         loadObject(tape, source, scope);
+         copyToLocal(tape, size, fieldNode.argument);
+      }
+      else {
+         generateObject(tape, source, scope, STACKOP_MODE);
+         generateObject(tape, dstObj, scope, 0);
+         copyToFieldAddress(tape, size, 0);
+         releaseStack(tape);
+      }
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
 void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope)
 {
    if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
@@ -5832,26 +5856,7 @@ void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dst
       copyToLocalAddress(tape, size, dstObj.argument);
    }
    else if (dstObj == lxFieldExpression) {
-      SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
-      if (fieldNode == lxFieldAddress) {
-         generateObject(tape, source, scope, STACKOP_MODE);
-         loadFieldExpression(tape, dstObj, scope, false);
-         copyToFieldAddress(tape, size, fieldNode.argument);
-         releaseStack(tape);
-      }
-      else if (fieldNode == lxSelfLocal) {
-         if (isAligned(size)) {
-            loadObject(tape, source, scope);
-            copyToLocal(tape, size, fieldNode.argument);
-         }
-         else {
-            generateObject(tape, source, scope, STACKOP_MODE);
-            generateObject(tape, dstObj, scope, 0);
-            copyToFieldAddress(tape, size, 0);
-            releaseStack(tape);
-         }
-      }
-      else throw InternalError("not yet implemente"); // !! temporal
+      saveFieldExpression(tape, dstObj, source, size, scope);
    }
    else throw InternalError("not yet implemente"); // !! temporal
 }
@@ -5910,17 +5915,9 @@ void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::N
       loadObject(tape, source, scope);
       saveToLocalAddress(tape, node.argument, dstObj.argument);
    }
-   //else if (dstObj == lxFieldExpression) {
-   //   generateObject(tape, source, scope, STACKOP_MODE);
-
-   //   SNode fieldNode = loadFieldExpression(tape, dstObj, scope);
-   //   if (fieldNode == lxFieldAddress) {
-   //      copyToFieldAddress(tape, node.argument, fieldNode.argument);
-   //   }
-   //   else throw InternalError("not yet implemente"); // !! temporal
-
-   //   releaseStack(tape);
-   //}
+   else if (dstObj == lxFieldExpression) {
+      saveFieldExpression(tape, dstObj, source, node.argument, scope);
+   }
    else throw InternalError("not yet implemente"); // !! temporal
 }
 
