@@ -444,3 +444,11 @@ public extension convertorOp
 //    Enumerable asEnumerable()
 //        = enumerableConvertor.convert(self);
 //}
+
+// --- fileExOp ---
+
+public extension fileExOp
+{
+    system'io'File asFileName()
+        = system'io'File.assign(self);
+}

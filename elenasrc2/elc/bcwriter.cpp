@@ -3571,7 +3571,7 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
                tape.write(bcSaveF, target);
                break;
             case 4:
-               // read itemSize
+               // read
                // savef target
                tape.write(bcRead);
                tape.write(bcSaveF, target);
@@ -6241,6 +6241,9 @@ void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node, Flo
 
 void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
+   // HOTFIX : clear the previous register value - it doesn't work for the second loop
+   scope.clear();
+
    declareLoop(tape, true);
 
    SNode current = node.firstChild();
@@ -6315,6 +6318,8 @@ void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node,
       endLoop(tape, node.argument);
    }
    else endLoop(tape);
+
+   scope.clear();
 }
 
 void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)

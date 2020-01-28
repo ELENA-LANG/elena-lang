@@ -1203,7 +1203,7 @@ private:
 //
 //////   bool validate(_ProjectManager& project, _Module* module, int reference);
 
-   ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef/*, ref_t elementRef = 0*/);
+   ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef, ref_t elementRef = 0);
 
    // NOTE : if the conversion is not possible - the methods return unknown result
    ObjectInfo convertObject(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);

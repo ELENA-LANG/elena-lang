@@ -2927,6 +2927,7 @@ inline bool IsArrExprOperator(int operator_id, LexicalType type)
       case lxIntArrOp:
       case lxShortArrOp:
       case lxByteArrOp:
+      case lxBinArrOp:
          return operator_id == REFER_OPERATOR_ID;
       default:
          return false;
@@ -2969,7 +2970,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
 //   //bool assignMode = false;
    if (operationType != 0) {
       if (IsExprOperator(operator_id) || IsArrExprOperator(operator_id, (LexicalType)operationType)) {
-         retVal = allocateResult(scope, /*false, */resultClassRef/*, loperand.element*/);
+         retVal = allocateResult(scope, /*false, */resultClassRef, loperand.element);
       }
       else retVal = ObjectInfo(okObject, 0, resultClassRef, loperand.element, 0);
 
@@ -2978,6 +2979,8 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
 
       // if it is a primitive operation
       _logic->injectOperation(node, scope, *this, operator_id, operationType, resultClassRef, loperand.element, retVal.param);
+      // HOTFIX : update the result type
+      retVal.reference = resultClassRef;
 
       if (IsArrExprOperator(operator_id, (LexicalType)operationType)) {
          // inject to target for array operation
@@ -2989,9 +2992,6 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
          valExpr.appendNode(lxLocalAddress, retVal.param);
          appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING));
       }
-
-      // HOTFIX : update the result type
-      retVal.reference = resultClassRef;
    }
    // if not , replace with appropriate method call
    else {
@@ -9420,9 +9420,9 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t generi
 }
 
 // NOTE : elementRef is used for binary arrays
-ObjectInfo Compiler :: allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef/*, ref_t elementRef*/)
+ObjectInfo Compiler :: allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef, ref_t elementRef)
 {
-   int size = _logic->defineStructSize(*scope.moduleScope, targetRef, /*elementRef*/0);
+   int size = _logic->defineStructSize(*scope.moduleScope, targetRef, elementRef);
    if (size > 0) {
       ObjectInfo retVal;
 
