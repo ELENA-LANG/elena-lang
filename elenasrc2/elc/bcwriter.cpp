@@ -4304,7 +4304,7 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
          case lxBinArrOp:
          {
             int size = node.findChild(lxSize).argument;
-            doBinaryArrayOperation(tape, node.argument, size, immValue * size);
+            doBinaryArrayOperation(tape, node.argument, size, argument, immValue * size);
             break;
          }
          case lxArrOp:

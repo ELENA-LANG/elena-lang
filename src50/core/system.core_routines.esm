@@ -2455,11 +2455,11 @@ end
 
 procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@ByteNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
 
-  pushsi 5
-  pushsi 5
-  pushsi 5  
-  pushsi 5  
-  pushsi 5  
+  pushsi 6
+  pushsi 6
+  pushsi 6  
+  pushsi 6  
+  pushsi 6  
   
   callextr api : s_encode
   freei 5
@@ -2477,11 +2477,11 @@ end
 
 procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[6]"
 
-  pushsi 5
-  pushsi 5
-  pushsi 5  
-  pushsi 5  
-  pushsi 5  
+  pushsi 6
+  pushsi 6
+  pushsi 6  
+  pushsi 6  
+  pushsi 6  
   
   callextr api : s_decode
   freei 5

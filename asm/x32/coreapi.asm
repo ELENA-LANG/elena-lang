@@ -711,14 +711,14 @@ labEnd:
 
 end
 
-// ninsert(target,source,index,len)
+// ninsert(target,index,len,source)
 procedure coreapi'ninsert
 
-  mov  edx, [esp+12]
-  mov  eax, [esp+16]
+  mov  edx, [esp+8]
+  mov  eax, [esp+12]
   mov  edi, [esp+4]
   mov  ecx, [eax]
-  mov  esi, [esp+8]
+  mov  esi, [esp+16]
   mov  ebx, [edx]
   test ecx, ecx
   jz   short labEnd
@@ -732,7 +732,7 @@ labNext:
   jnz  short labNext
 
 labEnd:
-  mov  edx, ecx
+  mov  edx, ebx
   mov  ebx, edi
   ret
 
@@ -3455,7 +3455,7 @@ err:
   sub  ecx, edi
   shr  ecx, 2
   mov  eax, [esp+20]
-  mov  [eax], ebx
+  mov  [eax], ecx
   mov  esi, [esp+8]
   mov  [esi], edx
 
@@ -3579,7 +3579,7 @@ err:
    pop  edi
    sub  ecx, edi
    mov  eax, [esp+20]
-   mov  [eax], ebx
+   mov  [eax], ecx
    mov  esi, [esp+8]
    mov  [esi], edx
 
