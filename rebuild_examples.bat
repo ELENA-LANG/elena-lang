@@ -38,6 +38,11 @@ bin\elc examples\files\textfile\textfile.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elc examples\console\binary\binary.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 @echo off 
 goto:eof
 @echo on

@@ -1095,6 +1095,17 @@ inline ref_t getSignature(_ModuleScope& scope, ref_t message)
    return signRef;
 }
 
+inline ref_t overwriteSignature(_ModuleScope& scope, ref_t message, ref_t* signatures, size_t len)
+{
+   ref_t actionRef = getAction(message);
+   ref_t signRef = scope.module->mapSignature(signatures, len, true);
+   
+   ref_t dummy = 0;
+   ident_t name = scope.module->resolveAction(actionRef, dummy);
+
+   return overwriteAction(message, scope.module->mapAction(name, signRef, true));
+}
+
 bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage)
 {
    ref_t sourceSignatures[ARG_COUNT];
@@ -2189,44 +2200,75 @@ inline bool isMethodTree(SNode node)
    return (node != lxNone);
 }
 
-bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode)
+ref_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target, 
+   ref_t message, ref_t expectedRef)
 {
-   // validate if it is a method
-   if (!isMethodTree(node))
-      return false;
-
-   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirectCalling, lxCalling_0);
-   if (callNode == lxNone)
-      return false;
-
-   SNode callTarget = callNode.findChild(lxCallTarget);
-
    ClassInfo info;
-   if (!defineClassInfo(scope, info, callTarget.argument))
-      return false;
+   if (!defineClassInfo(*scope.moduleScope, info, target))
+      return 0;
 
-   ref_t messageRef = info.methodHints.get(Attribute(callNode.argument, maEmbeddableRet));
-   if (messageRef != 0) {
-      if (argMode) {
-         // allocate & inject temporal variable
-         ref_t argRef = info.methodHints.get(Attribute(callNode.argument, maReference));
-         int size = defineStructSize(scope, argRef, 0);
-         SNode tempLocal = compiler.injectTempLocal(callNode, size, false);
+   // take the main embeddable method
+   Attribute key(message, maEmbeddableRet);
+   ref_t byRefMessageRef = info.methodHints.get(key);
+   if (!byRefMessageRef)
+      return 0;
 
-         // inject byref arg
-         callNode.setArgument(messageRef);
+   ref_t signatures[ARG_COUNT];
+   size_t len = scope.moduleScope->module->resolveSignature(getSignature(*scope.moduleScope, byRefMessageRef), signatures);
 
-         // inject sequence expr
-         callNode.injectNode(callNode.type, callNode.argument);
-         callNode.set(lxSeqExpression, 0);
-         callNode.appendNode(tempLocal.type, tempLocal.argument);
-      }
-      else compiler.injectEmbeddableRet(node, callNode, messageRef);
+   ref_t byRefArg = compiler.resolvePrimitiveReference(scope, V_WRAPPER, expectedRef, true);
 
-      return true;
-   }
-   else return false;
+   if (signatures[len - 1] == byRefArg)
+      return byRefMessageRef;
+
+   //// COMPILER MAGIC : try to find alternative-returning method
+   //signatures[len - 1] = byRefArg;
+   //byRefMessageRef = overwriteSignature(scope, byRefMessageRef, signatures, len);
+
+   //if (info.methods.exist(byRefMessageRef))
+   //   return byRefMessageRef;
+
+   return 0;
 }
+
+//bool CompilerLogic :: optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode)
+//{
+//   // validate if it is a method
+//   if (!isMethodTree(node))
+//      return false;
+//
+//   SNode callNode = node.findSubNode(lxDirectCalling, lxSDirectCalling, lxCalling_0);
+//   if (callNode == lxNone)
+//      return false;
+//
+//   SNode callTarget = callNode.findChild(lxCallTarget);
+//
+//   ClassInfo info;
+//   if (!defineClassInfo(scope, info, callTarget.argument))
+//      return false;
+//
+//   ref_t messageRef = info.methodHints.get(Attribute(callNode.argument, maEmbeddableRet));
+//   if (messageRef != 0) {
+//      if (argMode) {
+//         // allocate & inject temporal variable
+//         ref_t argRef = info.methodHints.get(Attribute(callNode.argument, maReference));
+//         int size = defineStructSize(scope, argRef, 0);
+//         SNode tempLocal = compiler.injectTempLocal(callNode, size, false);
+//
+//         // inject byref arg
+//         callNode.setArgument(messageRef);
+//
+//         // inject sequence expr
+//         callNode.injectNode(callNode.type, callNode.argument);
+//         callNode.set(lxSeqExpression, 0);
+//         callNode.appendNode(tempLocal.type, tempLocal.argument);
+//      }
+//      else compiler.injectEmbeddableRet(node, callNode, messageRef);
+//
+//      return true;
+//   }
+//   else return false;
+//}
 
 bool CompilerLogic :: optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node)
 {

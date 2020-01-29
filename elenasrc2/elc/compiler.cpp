@@ -2883,7 +2883,8 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
       }
 
       SNode parentNode = roperandNode.parentNode();
-      retVal = compileMessage(parentNode, scope, loperand, message, EAttr::eaNone, 0);
+      bool dummy = false;
+      retVal = compileMessage(parentNode, scope, loperand, message, EAttr::eaNone, 0, dummy);
 
       if (loopMode) {
          parentNode.injectAndReplaceNode(lxLooping);
@@ -3011,7 +3012,8 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
       }
       else stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
-      retVal = compileMessage(node, scope, loperand, messageRef, operationMode, stackSafeAttr);
+      bool dummy = false;
+      retVal = compileMessage(node, scope, loperand, messageRef, operationMode, stackSafeAttr, dummy);
    }
 
    return retVal;
@@ -3107,7 +3109,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
 }
 
 ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef,
-   EAttr mode, int stackSafeAttr)
+   EAttr mode, int stackSafeAttr, bool& embeddable)
 {
    ObjectInfo retVal(okObject);
 
@@ -3191,8 +3193,10 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
       }
    }
 
-   if (result.embeddable)
+   if (result.embeddable) {
+      embeddable = result.embeddable;
       node.appendNode(lxEmbeddableAttr);
+   }
 
 //   if (stackSafeAttr && !dispatchCall && !result.dynamicRequired)
 //      writer.appendNode(lxStacksafeAttr, stackSafeAttr);
@@ -3376,7 +3380,8 @@ ObjectInfo Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetR
          if (node != lxExpression)
             node.injectAndReplaceNode(lxExpression);
 
-         compileMessage(node, scope, source, encodeMessage(actionRef, 1, 0), HINT_NODEBUGINFO | HINT_SILENT, 0);
+         bool dummy;
+         compileMessage(node, scope, source, encodeMessage(actionRef, 1, 0), HINT_NODEBUGINFO | HINT_SILENT, 0, dummy);
 
          return ObjectInfo(okObject, 0, targetRef);
       }
@@ -3599,7 +3604,7 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
    return generalMessageRef;
 }
 
-ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t exptectedRef, */ObjectInfo target, EAttr mode)
+ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expectedRef, ObjectInfo target, EAttr mode)
 {
    EAttr paramsMode = EAttr::eaNone;
    if (target.kind == okExternal) {
@@ -3638,7 +3643,23 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, /*ref_t expt
             stackSafeAttr &= 0xFFFFFFFE; // exclude the stack safe target attribute, it should be set by compileMessage
 
          SNode opNode = node.parentNode();
-         retVal = compileMessage(opNode, scope, target, messageRef, mode, stackSafeAttr);
+         bool embeddable = false;
+         retVal = compileMessage(opNode, scope, target, messageRef, mode, stackSafeAttr, embeddable);
+
+         if (expectedRef && embeddable) {
+            ref_t byRefMessageRef = _logic->resolveEmbeddableRetMessage(
+               scope, *this, resolveObjectReference(scope, target, true),
+               messageRef, expectedRef);
+
+            if (byRefMessageRef) {
+               ObjectInfo tempVar = allocateResult(scope, expectedRef);
+               opNode.appendNode(lxLocalAddress, tempVar.param);
+
+               opNode.setArgument(byRefMessageRef);
+               opNode.injectAndReplaceNode(lxSeqExpression);
+               opNode.appendNode(lxLocalAddress, tempVar.param);
+            }
+         }
       }
    }
 
@@ -4025,7 +4046,8 @@ ObjectInfo Compiler :: compilePropAssigning(SNode node, ExprScope& scope, Object
    if (!test(stackSafeAttr, 1))
       mode = mode | HINT_DYNAMIC_OBJECT;
 
-   retVal = compileMessage(opNode, scope, target, messageRef, mode, stackSafeAttr);
+   bool dummy = false;
+   retVal = compileMessage(opNode, scope, target, messageRef, mode, stackSafeAttr, dummy);
 
    return retVal;
 }
@@ -4594,7 +4616,7 @@ ObjectInfo Compiler :: compileCatchOperator(SNode node, ExprScope& scope, ref_t 
    }
 
    node.insertNode(lxResult);
-   compileOperation(node, scope, ObjectInfo(okObject), /*0, */EAttr::eaNone, false);
+   compileOperation(node, scope, ObjectInfo(okObject), 0, EAttr::eaNone, false);
 
    opNode.set(lxTrying, 0);
 
@@ -4625,15 +4647,18 @@ ObjectInfo Compiler :: compileAltOperator(SNode node, ExprScope& scope, ObjectIn
    SNode op = node.firstChild(lxOperatorMask);
    altNode.insertNode(lxTempLocal, tempLocal);
 
-   compileMessage(op, scope, target, EAttr::eaNone);
+   compileMessage(op, scope, 0, target, EAttr::eaNone);
 
    return ObjectInfo(okObject);
 }
 
 ref_t Compiler :: resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode)
 {
-   if (!operandRef)
+   if (!operandRef) {
       operandRef = scope.moduleScope->superReference;
+   }
+   else if (isPrimitiveRef(operandRef))
+      operandRef = resolvePrimitiveReference(scope, operandRef, 0, declarationMode);
 
    List<SNode> parameters;
 
@@ -4835,7 +4860,8 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    //}
    //else scope.raiseError(errInvalidOperation, exprNode);
 
-   ObjectInfo retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT, stackSafeAttr);
+   bool dummy = false;
+   ObjectInfo retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT, stackSafeAttr, dummy);
 
    if (!resolveObjectReference(scope, retVal, false)) {
       scope.raiseError(errDefaultConstructorNotFound, exprNode);
@@ -4847,7 +4873,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    return retVal;
 }
 
-ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo/*, ref_t expectedRef*/,
+ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t expectedRef,
    EAttr mode, bool propMode)
 {
    SNode current = node.firstChild(lxOperatorMask);
@@ -4874,13 +4900,13 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
          if (EAttrs::test(mode, HINT_LOOP)) {
             EAttrs subMode(mode, HINT_LOOP);
 
-            objectInfo = compileMessage(current, scope, /*expectedRef, */objectInfo, subMode);
+            objectInfo = compileMessage(current, scope, expectedRef, objectInfo, subMode);
             current.parentNode().injectAndReplaceNode(lxLooping);
          }
          else if (propMode) {
             objectInfo = compilePropAssigning(current, scope, objectInfo);
          }
-         else objectInfo = compileMessage(current, scope, /*expectedRef, */objectInfo, mode);
+         else objectInfo = compileMessage(current, scope, expectedRef, objectInfo, mode);
          break;
       case lxNewOperation:
          objectInfo = compileBoxingExpression(current, scope, objectInfo, mode);
@@ -5724,93 +5750,19 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectIn
    bool noUnboxing = EAttrs::test(modeAttrs, HINT_NOUNBOXING);
 //   bool inlineArgMode = false;
 //   bool boxingMode = false;
-//   //   bool assignMode = test(mode, HINT_ASSIGNING_EXPR);
-//
-   EAttrs mode(modeAttrs, HINT_OBJECT_MASK);
-   ObjectInfo retVal = compileOperation(node, scope, objectInfo, mode, EAttrs::test(modeAttrs, HINT_PROP_MODE));
 
-//   writer.newBookmark();
-//
-//   EAttrs targetMode(mode, HINT_PROP_MODE | HINT_LOOP | HINT_CALL_MODE);
-//
-//   SNode current = node.firstChild();
-//   // COMPILER MAGIC : compile the expression attributes
-//   if (current.compare(lxAttribute, lxTypeAttribute)) {
-//      targetMode.include(compileExpressionAttributes(writer, current, scope, mode));
-//      if (targetMode.testany(HINT_DIRECTCALL)) {
-//         // HOTFIX : direct call attribute should be applied to the operation
-//         mode.include(HINT_DIRECTCALL);
-//         targetMode.exclude(HINT_DIRECTCALL);
-//      }
-//      if (targetMode.testAndExclude(HINT_INLINEARGMODE)) {
-//         noPrimMode = true;
-//         inlineArgMode = true;
-//      }
-//   }
-//
-//   SNode operationNode = current.nextNode();
-//   if (isAssigmentOp(operationNode)) {
-//      // recognize the property set operation
-//      targetMode.include(HINT_PROP_MODE);
-//      if (isSingleStatement(current)) {
-//         targetMode.include(HINT_NOBOXING);
-//         if (targetMode.testany(HINT_DYNAMIC_OBJECT | HINT_PARAMETER)) {
-//            // HOTFIX : an assignment target should not be boxed but the operation result should be!
-//            targetMode.exclude(HINT_DYNAMIC_OBJECT);
-//
-//            boxingMode = noPrimMode = true;
-//         }
-//      }
-//
-//      mode.include(HINT_NOUNBOXING);
-//   }
-//   else if (isCallingOp(operationNode)) {
-//      targetMode.include(HINT_CALL_MODE);
-//   }
-//   else if (operationNode == lxNone) {
-//      targetMode.include(mode);
-//   }
-//
-//   if (targetMode.test(HINT_LAZY_EXPR)) {
-//      objectInfo = compileClosure(writer, current, scope, targetMode);
-//   }
-//   else objectInfo = compileObject(writer, current, scope, 0, targetMode);
-//
-//   // HOTFIX : reload the operation node
-//   operationNode = current.nextNode();
-//   if (operationNode != lxNone) {
-//      objectInfo = compileOperation(writer, operationNode, scope, objectInfo, exptectedRef, mode);
-//   }
+   EAttrs mode(modeAttrs, HINT_OBJECT_MASK);
+   ObjectInfo retVal = compileOperation(node, scope, objectInfo, exptectedRef, mode, EAttrs::test(modeAttrs, HINT_PROP_MODE));
 
    ref_t sourceRef = resolveObjectReference(scope, retVal, false/*, exptectedRef*/);
    if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
-////      if (sourceRef != V_UNBOXEDARGS || inlineArgMode) { // !! temporal box the argument list
-////         // resolve the primitive object if no primitives are expected, except unboxed variadic arguments
-////         // NOTE : the primitive wrapper is set as an expected type, so later the primitive will be boxed
-         exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element, false);
-////      }
+      exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element, false);
    }
-//   if (boxingMode) {
-//      switch (objectInfo.kind) {
-//         case okLocalAddress:
-//         case okFieldAddress:
-//            // HOTFIX : the result of an assignment operation result should be boxed
-//            writer.inject(lxBoxing, _logic->defineStructSize(*scope.moduleScope, sourceRef, 0u));
-//            writer.appendNode(lxTarget, sourceRef);
-//            writer.closeNode();
-//            break;
-//         default:
-//            break;
-//      }
-//   }
 
    if (exptectedRef) {
       if (noUnboxing)
          mode = mode | HINT_NOUNBOXING;
 
-//////      if (assignMode && exptectedRef == scope.moduleScope->realReference && (sourceRef == V_INT32 || sourceRef == scope.moduleScope->intReference)) {
-//////         objectInfo = ObjectInfo(okPrimitiveConv, V_REAL64, V_INT32);
-//////      } else {
       retVal = convertObject(node, scope, exptectedRef, retVal, mode);
       if (retVal.kind == okUnknown) {
          scope.raiseError(errInvalidOperation, node);
@@ -5821,8 +5773,6 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectIn
 //      objectInfo.element = objectInfo.reference;
 //      objectInfo.reference = V_INLINEARG;
 //   }
-//
-//   writer.removeBookmark();
 
    return retVal;
 }
@@ -6780,7 +6730,10 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
             setParamTerminal(refNode, exprScope, param, mode, lxLocal);
          }
 
-         ObjectInfo retVal = compileMessage(exprNode, exprScope, target, methodScope->message, mode | HINT_NODEBUGINFO, stackSafeAttrs);
+         bool dummy = false;
+         ObjectInfo retVal = compileMessage(exprNode, exprScope, target, methodScope->message, mode | HINT_NODEBUGINFO, 
+            stackSafeAttrs, dummy);
+
          retVal = convertObject(exprNode, exprScope, targetRef, retVal, mode);
          if (retVal.kind == okUnknown) {
             exprScope.raiseError(errInvalidOperation, node);
@@ -6885,7 +6838,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    }
 
    if (found) {
-      compileMessage(expr, resendScope, target, messageRef, EAttr::eaNone, stackSafeAttr);
+      bool dummy = false;
+      compileMessage(expr, resendScope, target, messageRef, EAttr::eaNone, stackSafeAttr, dummy);
 
       if (withFrame) {
          // HOT FIX : inject saving of the created object
@@ -6978,7 +6932,7 @@ void Compiler :: compileResendExpression(SNode node, CodeScope& codeScope, bool 
 
       ExprScope scope(&codeScope);
       ObjectInfo target = scope.mapMember(SELF_VAR);
-      compileMessage(messageNode, scope, /*0, */target, EAttr::eaNone);
+      compileMessage(messageNode, scope, 0, target, EAttr::eaNone);
 
       if (node.existChild(lxCode))
          scope.raiseError(errInvalidOperation, node);
@@ -9436,56 +9390,6 @@ ObjectInfo Compiler :: allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t 
 
       return ObjectInfo(okLocal, tempLocal, targetRef, /*elementRef*/0, 0);
    }
-
-//   if (size > 0) {
-//      if (allocateStructure(scope, size, false, retVal)) {
-//         retVal.extraparam = targetRef;
-//
-//         writer.inject(lxAssigning, size);
-//         writer.insertNode(lxLocalAddress, retVal.param);
-//         writer.appendNode(lxTempAttr); // NOTE : should be the last child!
-//         if (fpuMode)
-//            writer.appendNode(lxFPUTarget);
-//
-//         writer.closeNode();
-//      }
-//      else if (size > 0) {
-//         writer.inject(lxAssigning, size);
-//         writer.closeNode();
-//         writer.inject(lxCreatingStruct, size);
-//         writer.appendNode(lxTarget, targetRef);
-//         writer.closeNode();
-//      }
-//
-//      switch (targetRef) {
-//         case V_INT32:
-//            targetRef = scope.moduleScope->intReference;
-//            break;
-//         case V_INT64:
-//            targetRef = scope.moduleScope->longReference;
-//            break;
-//         case V_REAL64:
-//            targetRef = scope.moduleScope->realReference;
-//            break;
-//         //case V_SIGNATURE:
-//         //   targetRef = scope.moduleScope->signatureReference;
-//         //   break;
-//         //case V_MESSAGE:
-//         //   targetRef = scope.moduleScope->messageReference;
-//         //   break;
-//      }
-//
-//      writer.inject(lxBoxing, size);
-//      writer.appendNode(lxTarget, targetRef);
-//      writer.appendNode(lxBoxableAttr);
-//      writer.closeNode();
-//
-//      retVal.kind = okObject;
-//      retVal.param = targetRef;
-//
-//      return retVal;
-//   }
-//   else return retVal;
 }
 
 int Compiler :: allocateStructure(SNode node, int& size)
@@ -9769,7 +9673,7 @@ bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool
    // verify the path
    SNode callNode = node.parentNode();
    SNode rootNode = callNode.parentNode();
-   if (argMode) {
+   /*if (argMode) {
       if (rootNode.compare(lxCalling_0, lxDirectCalling, lxSDirectCalling)) {
          //// validate if the argument is stack safe
          //int stackSafeAttrs = rootNode.findChild(lxStacksafeAttr).argument;
@@ -9790,11 +9694,11 @@ bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool
             applied = _logic->optimizeReturningStructure(scope, *this, rootNode, true);
       }
    }
-   else if (rootNode == lxCopying) {
-      if (!_logic->optimizeReturningStructure(scope, *this, rootNode, false)) {
+   else */if (rootNode == lxCopying) {
+      //if (!_logic->optimizeReturningStructure(scope, *this, rootNode, false)) {
          applied = _logic->optimizeEmbeddableOp(scope, *this, rootNode);
-      }
-      else applied = true;
+      //}
+      //else applied = true;
    }
 
    if (applied)
@@ -11136,24 +11040,24 @@ void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int conver
    //analizeOperands(node, stackSafeAttr);
 }
 
-void Compiler :: injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t messageRef)
-{
-   // move assigning target into the call node
-   SNode assignTarget;
-   if (assignNode == lxByRefAssigning) {
-      assignTarget = assignNode.findSubNode(lxLocal);
-   }
-   else assignTarget = assignNode.findSubNode(lxLocalAddress);
-
-   if (assignTarget != lxNone) {
-      // removing assinging operation
-      assignNode = lxExpression;
-
-      callNode.appendNode(assignTarget.type, assignTarget.argument);
-      assignTarget = lxIdle;
-      callNode.setArgument(messageRef);
-   }
-}
+//void Compiler :: injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t messageRef)
+//{
+//   // move assigning target into the call node
+//   SNode assignTarget;
+//   if (assignNode == lxByRefAssigning) {
+//      assignTarget = assignNode.findSubNode(lxLocal);
+//   }
+//   else assignTarget = assignNode.findSubNode(lxLocalAddress);
+//
+//   if (assignTarget != lxNone) {
+//      // removing assinging operation
+//      assignNode = lxExpression;
+//
+//      callNode.appendNode(assignTarget.type, assignTarget.argument);
+//      assignTarget = lxIdle;
+//      callNode.setArgument(messageRef);
+//   }
+//}
 
 void Compiler :: injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/)
 {

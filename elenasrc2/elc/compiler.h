@@ -1068,8 +1068,9 @@ private:
 
    ref_t compileMessageParameters(SNode node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/);
 
-   ObjectInfo compileMessage(SNode node, ExprScope& scope, /*ref_t exptectedRef,*/ ObjectInfo target, EAttr mode);
-   ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode, int stackSafeAttr);
+   ObjectInfo compileMessage(SNode node, ExprScope& scope, ref_t exptectedRef, ObjectInfo target, EAttr mode);
+   ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode, 
+      int stackSafeAttr, bool& embeddable);
 ////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 
    SNode injectAttributeIdentidier(SNode current, Scope& scope);
@@ -1103,7 +1104,7 @@ private:
    void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode);
    void compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope);
 
-   ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, /*ref_t expectedRef,*/
+   ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t expectedRef,
       EAttr mode, bool propMode);
 
    ObjectInfo compileCatchOperator(SNode roperand, ExprScope& scope, ref_t operator_id);
@@ -1305,7 +1306,7 @@ public:
    virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
    virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
       ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
-   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
+//   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
    virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
    virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
