@@ -46,6 +46,7 @@ Code
     * switch operator
   Expressions
     * In-place assignment (both variable and properties)
+  Control statements
 Project
   Options
     * option to turn on / off auto system module import

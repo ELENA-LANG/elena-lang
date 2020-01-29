@@ -71,7 +71,7 @@ enum LexicalType
    lxPropertyParam            = 0x0010E0,
    lxOperator                 = 0x0210F0,
    lxStatementDecl            = 0x001100,
-   lxStatementArgs            = 0x001110,
+   lxControlArgs              = 0x001110,
    lxFieldInit                = 0x001120,
    lxStaticFieldInit          = 0x001121,
    lxDynamicSizeDecl          = 0x001130,

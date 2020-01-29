@@ -1699,7 +1699,7 @@ void DerivationWriter :: generateStatementTemplateTree(SyntaxWriter& writer, SNo
 void DerivationWriter :: saveTemplateParameters(SyntaxWriter& tempWriter, SNode current, Scope& derivationScope)
 {
    while (current != lxNone) {
-      if (current == lxStatementArgs) {
+      if (current == lxControlArgs) {
          saveTemplateParameters(tempWriter, current.firstChild(), derivationScope);
       }
       else if (current == lxCode) {
@@ -1726,7 +1726,7 @@ inline void parseStatement(SNode current, IdentifierString& templateName, int& e
          }
          else blockCounters++;
       }
-      else if (current == lxStatementArgs) {
+      else if (current == lxControlArgs) {
          parseStatement(current.firstChild(), templateName, exprCounters, blockCounters);
       }
       else if (current == lxCode) {
@@ -1898,7 +1898,7 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
       node = lastNode;
       lastNode = node.nextNode();
    }
-   else if ((node == lxMessage && SyntaxTree::existSibling(node, lxStatementArgs)) || node == lxCode) {
+   else if ((node == lxMessage && SyntaxTree::existSibling(node, lxControlArgs)) || node == lxCode || node == lxControlArgs) {
       // COMPILER MAGIC : recognize the statement template
       generateStatementTemplateTree(writer, current, derivationScope);
       lastNode = current;
