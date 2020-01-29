@@ -25,6 +25,7 @@ Declarations
         - variadic
         - implcit default
         - explcit default
+        - multi-return
     Properties
       * implicit
       * explicit

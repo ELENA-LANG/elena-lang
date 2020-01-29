@@ -440,15 +440,15 @@ namespace text
     ////        
     ////        ^ IntNumber new(aRetVal)
     ////    ]
-    //
-    //    string Substring(int index, int length)
-    //    {
-    //        if (length == 0)
-    //            { ^ emptyString };
-    //            
-    //        ^ String.new(index, length, theBuffer)
-    //    }
-    //
+
+        string Substring(int index, int length)
+        {
+            if (length == 0)
+                { ^ emptyString };
+                
+            ^ String.copy(index, length, theBuffer)
+        }
+    
     ////    wide WideSubstring(int anIndex, int aLength)
     ////    [
     ////        if (aLength == 0)
@@ -456,19 +456,19 @@ namespace text
     ////            
     ////        ^ WideLiteralValue new(anIndex, aLength, theBuffer)
     ////    ]
-    //
-    //    delete(int index, int length)
-    //    {
-    //        int n := 0 - length;
-    //        int l := theLength;
-    //        l := l - index;
-    //        l := l - length;
-    //        
-    //        theBuffer.move(index + length, l, n);
-    //        
-    //        theLength.reduce(length)
-    //    }
-    //    
+
+        delete(int index, int length)
+        {
+            int n := 0 - length;
+            int l := theLength;
+            l := l - index;
+            l := l - length;
+            
+            theBuffer.move(index + length, l, n);
+            
+            theLength.reduce(length)
+        }
+    
     //    trim(int n)
     //    {
     //        theLength.reduce(n)

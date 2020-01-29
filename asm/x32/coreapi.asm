@@ -738,6 +738,63 @@ labEnd:
 
 end
 
+// ; nmove(target,index,len,offs)
+procedure coreapi'nmove
+
+  mov  edi, [esp+4]
+  mov  eax, [esp+12]
+  mov  ebx, [esp+8]
+  mov  ecx, [eax]
+  mov  ebx, [ebx]
+  mov  edx, [esp+16]
+
+  test ecx, ecx
+  jz   short labEnd
+
+  mov  esi, [edx]
+  cmp  esi, 0
+  jl   short labDelete
+
+  add  ebx, ecx
+  sub  ebx, 1
+
+  add  esi, ebx
+  shl  esi, 2
+
+  add  esi, edi
+  shl  ebx, 2
+  add  ebx, edi
+  
+labNext:
+  mov  edx, dword ptr [ebx]
+  mov  dword ptr [esi], edx
+  sub  ebx, 4
+  sub  esi, 4
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+labDelete:
+  add  esi, ebx
+  shl  esi, 2
+
+  add  esi, edi
+  shl  ebx, 2
+  add  ebx, edi
+
+labNext2:
+  mov  edx, dword ptr [ebx]
+  mov  dword ptr [esi], edx
+  add  ebx, 4
+  add  esi, 4
+  sub  ecx, 1
+  jnz  short labNext2
+  ret
+
+end
+
 procedure coreapi'strtoint
 
   mov  eax, [esp+8]                 // ; radix

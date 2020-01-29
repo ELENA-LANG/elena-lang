@@ -1213,6 +1213,28 @@ labErr:
 
 end
 
+procedure __chararray."move$@system@Array#1&system@CharValue$system@IntNumber$system@IntNumber$system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : nmove
+  ifn labErr 0 
+
+  peeksi 0
+  freei  4
+  quitn  4
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+  
+end
+
 procedure __intconvertor."convert$system@String$system@IntNumber$@system@ref#1&system@IntNumber[3]"
 
   pushsi 2

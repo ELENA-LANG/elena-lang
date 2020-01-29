@@ -14,18 +14,20 @@ In development:
                 * if else if
                 * uncomment getFiles
 
-                * textfile
-
                 * template of templates : array of tuples
 
+              xdev elena50
+                * multi-return methods
+                * using embeddable methods instead of normal one for method arguments
+                * auto determining the closure return value for closure templates
+
+              xdev elena50
                 * samples
 
-                * test : short field to int
+                * test : short field to int - correct value (discarding high word)
                 * closures: unboxing
                 * closures: presaved arguments
                 * closures: returning a value
-
-                * arrays of template of templates
 
                 * type should be only one in the token expression - test: int long r := 0;
                 * reference identifier name?
