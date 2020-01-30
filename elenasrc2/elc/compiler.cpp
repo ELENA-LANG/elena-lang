@@ -2928,6 +2928,7 @@ inline bool IsArrExprOperator(int operator_id, LexicalType type)
       case lxIntArrOp:
       case lxShortArrOp:
       case lxByteArrOp:
+         return operator_id == REFER_OPERATOR_ID;
       case lxBinArrOp:
          return operator_id == REFER_OPERATOR_ID;
       default:
@@ -2970,6 +2971,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
 
 //   //bool assignMode = false;
    if (operationType != 0) {
+      // if it is a primitive operation
       if (IsExprOperator(operator_id) || IsArrExprOperator(operator_id, (LexicalType)operationType)) {
          retVal = allocateResult(scope, /*false, */resultClassRef, loperand.element);
       }
@@ -2978,8 +2980,11 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
       // HOTFIX : remove boxing expressions
       analizeOperands(node, scope, -1);
 
-      // if it is a primitive operation
-      _logic->injectOperation(node, scope, *this, operator_id, operationType, resultClassRef, loperand.element, retVal.param);
+      ref_t opElementRef = loperand.element;
+      if (operator_id == LEN_OPERATOR_ID)
+         opElementRef = roperand.element;
+
+      _logic->injectOperation(node, scope, *this, operator_id, operationType, resultClassRef, opElementRef, retVal.param);
       // HOTFIX : update the result type
       retVal.reference = resultClassRef;
 

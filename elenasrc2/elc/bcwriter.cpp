@@ -3550,6 +3550,35 @@ void ByteCodeWriter :: doArrayImmOperation(CommandTape& tape, int operator_id, i
    }
 }
 
+inline void divIndex(CommandTape& tape, int itemSize)
+{
+   if (itemSize == 128) {
+      tape.write(bcShr, 7);
+   }
+   else if (itemSize == 64) {
+      tape.write(bcShr, 6);
+   }
+   else if (itemSize == 32) {
+      tape.write(bcShr, 5);
+   }
+   else if (itemSize == 16) {
+      tape.write(bcShr, 4);
+   }
+   else if (itemSize == 8) {
+      tape.write(bcShr, 3);
+   }
+   else if (itemSize == 4) {
+      tape.write(bcShr, 2);
+   }
+   else if (itemSize == 2) {
+      tape.write(bcShr, 1);
+   }
+   else if (itemSize == 1) {
+   }
+   else tape.write(bcDiv, itemSize);
+
+}
+
 void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target)
 {
    switch (operator_id) {
@@ -3597,30 +3626,7 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
          // div itemSize
          // savef
          tape.write(bcLen);
-         if (itemSize == 128) {
-            tape.write(bcShr, 7);
-         }
-         else if (itemSize == 64) {
-            tape.write(bcShr, 6);
-         }
-         else if (itemSize == 32) {
-            tape.write(bcShr, 5);
-         }
-         else if (itemSize == 16) {
-            tape.write(bcShr, 4);
-         }
-         else if (itemSize == 8) {
-            tape.write(bcShr, 3);
-         }
-         else if (itemSize == 4) {
-            tape.write(bcShr, 2);
-         }
-         else if (itemSize == 2) {
-            tape.write(bcShr, 1);
-         }
-         else if (itemSize == 1) {
-         }
-         else tape.write(bcDiv, itemSize);
+         divIndex(tape, itemSize);
          tape.write(bcSaveF, target);
          break;
    }
