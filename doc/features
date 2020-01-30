@@ -30,6 +30,11 @@ Declarations
       * implicit
       * explicit
       * abstract
+    Fields
+      * fixed-size arrays
+      * constant fields
+      * constant accumulating fields
+      * static fields
   Nested classes
     Creating
       * in-place initialization : default constructor is not called

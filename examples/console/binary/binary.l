@@ -5,7 +5,7 @@ import extensions;
 public program()
 {
     // reading    
-    var number := console.write:"Enter the number you want to convert: ".loadLineTo(new Integer());
+    var number := console.write:"Enter the number you want to convert: ".loadLineTo(Integer.new());
     
     // converting
     var binaryStr := number.toString(2);

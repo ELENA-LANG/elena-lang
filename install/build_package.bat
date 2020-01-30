@@ -14,6 +14,7 @@ md %~dp0\output\examples\console\sum
 md %~dp0\output\examples\console\words
 md %~dp0\output\examples\console\pi
 md %~dp0\output\examples\console\bsort
+md %~dp0\output\examples\console\binary
 md %~dp0\output\examples\files
 md %~dp0\output\examples\files\textfile
 
@@ -112,6 +113,9 @@ copy %~dp0\..\examples\console\pi\*.prj %~dp0\output\examples\console\pi
 
 copy %~dp0\..\examples\console\bsort\*.l %~dp0\output\examples\console\bsort
 copy %~dp0\..\examples\console\bsort\*.prj %~dp0\output\examples\console\bsort
+
+copy %~dp0\..\examples\console\binary\*.l %~dp0\output\examples\console\binary
+copy %~dp0\..\examples\console\binary\*.prj %~dp0\output\examples\console\binary
 
 copy %~dp0\..\examples\files\textfile\*.l %~dp0\output\files\textfile\bsort
 copy %~dp0\..\examples\files\textfile\*.prj %~dp0\output\files\textfile\bsort
