@@ -2022,6 +2022,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          //case bcBLoadFI:
          case bcLoadFI:
          case bcSaveF:
+         case bcSaveFI:
          //case bcELoadFI:
          //case bcESaveFI:
             (*it).save(scope.code, true);
@@ -5798,6 +5799,15 @@ void ByteCodeWriter :: copyToLocalAddress(CommandTape& tape, int size, int argum
    tape.write(bcCopyToF, argument, size >> 2);
 }
 
+void ByteCodeWriter :: saveToLocal(CommandTape& tape, int size, int argument)
+{
+   if (size == 4) {
+      // savef arg
+      tape.write(bcSaveFI, argument, bpFrame);
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
 void ByteCodeWriter :: saveToLocalAddress(CommandTape& tape, int size, int argument)
 {
    if (size == 4) {
@@ -5932,11 +5942,11 @@ void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::N
    //   loadObject(tape, target, scope);
    //   copyFromLocalAddress(tape, node.argument, srcObj.argument);
    //}
-   //else if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
-   //   loadObject(tape, source, scope);
-   //   copyToLocal(tape, node.argument, dstObj.argument);
-   //}
-   /*else */if (dstObj == lxLocalAddress) {
+   /*else */if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
+      loadObject(tape, source, scope);
+      saveToLocal(tape, 4, dstObj.argument);
+   }
+   else if (dstObj == lxLocalAddress) {
       loadObject(tape, source, scope); // NOTE : it should load the index
       saveToLocalAddress(tape, 4, dstObj.argument);
    }

@@ -3270,6 +3270,11 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
 
          current.setArgument(typeRef);
       }
+      else if (current.compare(lxStdExternalCall, lxExternalCall, lxCoreAPICall)) {
+         int tempLocal = scope.newTempLocal();
+
+         injectIndexBoxingTempLocal(boxExprNode, current, scope, lxTempLocal, tempLocal);
+      }
       else {
          SNode argNode = current;
          if (current == lxFieldExpression) {
@@ -3620,7 +3625,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
    if (target.kind == okExternal) {
       EAttr extMode = mode & HINT_ROOT;
 
-      retVal = compileExternalCall(node, scope/*, exptectedRef*/, extMode);
+      retVal = compileExternalCall(node, scope, expectedRef, extMode);
    }
    else {
       ref_t messageRef = mapMessage(node, scope, variadicOne);
@@ -3653,11 +3658,20 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
 
             if (byRefMessageRef) {
                ObjectInfo tempVar = allocateResult(scope, expectedRef);
-               opNode.appendNode(lxLocalAddress, tempVar.param);
+               if (tempVar.kind == okLocalAddress) {
+                  opNode.appendNode(lxLocalAddress, tempVar.param);
 
-               opNode.setArgument(byRefMessageRef);
-               opNode.injectAndReplaceNode(lxSeqExpression);
-               opNode.appendNode(lxLocalAddress, tempVar.param);
+                  opNode.setArgument(byRefMessageRef);
+                  opNode.injectAndReplaceNode(lxSeqExpression);
+                  opNode.appendNode(lxLocalAddress, tempVar.param);
+
+                  opNode.injectAndReplaceNode(lxBoxableExpression);
+                  opNode.appendNode(lxType, expectedRef);
+                  opNode.appendNode(lxSize, _logic->defineStructSize(*scope.moduleScope, expectedRef, 0));
+               }
+               else throw InternalError("Not yet implemented"); // !! temporal
+
+               retVal = tempVar;
             }
          }
       }
@@ -3994,7 +4008,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
    }
    else exprVal = compileExpression(sourceNode, scope, targetRef, assignMode);
 
-   if (exprVal.kind == okExternal) {
+   if (exprVal.kind == okExternal && operationType == lxCopying) {
       stackSafeAttr = 3;
       operationType = lxSaving;
    }
@@ -5975,7 +5989,7 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
    }
 }
 
-ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope/*, ref_t expectedRef*/, EAttr mode)
+ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode)
 {
    ObjectInfo retVal(okExternal);
 
@@ -6044,16 +6058,20 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope/*, ref_t
 
    callNode.injectAndReplaceNode(lxBoxableExpression);
 
+   if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_DWORD, expectedRef)) {
+      retVal.reference = expectedRef;
+      callNode.appendNode(lxSize, 4);
+   }
    //   /*if (expectedRef == scope.moduleScope->realReference || expectedRef == V_REAL64) {
    //      retVal = assignResult(writer, scope, true, V_REAL64);
    //   }
    //   else if (expectedRef == V_INT64) {
    //      retVal = assignResult(writer, scope, false, expectedRef);
    //   }
-   //else {
+   else {
       retVal.reference = V_DWORD;
       callNode.appendNode(lxSize, 4);
-   //}
+   }
 
    callNode.appendNode(lxType, retVal.reference);
 
@@ -9579,10 +9597,8 @@ int Compiler :: allocateStructure(SNode node, int& size)
 //   return applied;
 //}
 
-void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType, 
-   int tempLocal, bool localBoxingMode)
+inline SNode injectRootSeqExpression(SNode& parent)
 {
-   SNode parent = node;
    SNode current;
    while (!parent.compare(lxSeqExpression, lxNewFrame, lxCodeExpression, lxCode/*, lxReturning*/)) {
       current = parent;
@@ -9593,6 +9609,41 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
       current.injectAndReplaceNode(lxSeqExpression);
    }
    else current = parent;
+
+   return current;
+}
+
+void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
+   int tempLocal)
+{
+   SNode parent = node;
+   SNode current = injectRootSeqExpression(parent);
+
+   // inject creating a boxed object
+   SNode assigningNode = current.insertNode(lxAssigning);
+   assigningNode.appendNode(tempType, tempLocal);
+
+   ref_t typeRef = node.findChild(lxType).argument;
+   int size = node.findChild(lxSize).argument;
+
+   SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
+
+   // saving index
+      // inject copying to the boxed object if it is a structure
+   SNode copyingNode = objNode;
+   copyingNode.injectAndReplaceNode(lxSaving, size);
+
+   copyingNode.insertNode(tempType, tempLocal);
+   copyingNode.injectAndReplaceNode(lxSeqExpression);
+
+   copyingNode.appendNode(tempType, tempLocal);
+}
+
+void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType, 
+   int tempLocal, bool localBoxingMode)
+{
+   SNode parent = node;
+   SNode current = injectRootSeqExpression(parent);
 
    ref_t typeRef = node.findChild(lxType).argument;
    int size = node.findChild(lxSize).argument;

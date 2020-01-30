@@ -320,6 +320,7 @@ class ByteCodeWriter
    void copyToFieldAddress(CommandTape& tape, int size, int argument);
    void copyToLocalAddress(CommandTape& tape, int size, int argument);
    void saveToLocalAddress(CommandTape& tape, int size, int argument);
+   void saveToLocal(CommandTape& tape, int size, int argument);
    void copyToLocal(CommandTape& tape, int size, int argument);
    void copyFromLocalAddress(CommandTape& tape, int size, int argument);
 

@@ -80,6 +80,8 @@ ELENA byte codes (or ecodes)
 
  savesi i                   - [sp+i] <= index
 
+ savefi i                   - [fp+i] <= index
+
  select r1, r2              - acc = (index = 0 ? r1 : r2)
 
  set                        - [sp] => acc[index]

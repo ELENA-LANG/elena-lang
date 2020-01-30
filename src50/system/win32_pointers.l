@@ -13,12 +13,12 @@ public sealed const struct Handle
 ////    [
 ////        theHandle := h
 ////    ]
-//
-//    constructor(int n)
-//    {
-//        theHandle := n
-//    }
-//
+
+    constructor(int n)
+    {
+        theHandle := n
+    }
+
 ////    cast T<int> = theHandle.
 ////
 ////    bool equal(handle anOperand)

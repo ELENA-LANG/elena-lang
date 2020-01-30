@@ -13,6 +13,7 @@
 [+] Flat library hierarchy
 [+] #492 : Yield statement 
 [+] #380 : Run-time extension dispatching 
+[+] #494 : Method result multi-dispatching 
 
 [ELC]
 [!] deep code refactoring - treamlining code generation, increasing 

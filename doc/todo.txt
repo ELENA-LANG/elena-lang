@@ -11,14 +11,8 @@ In development:
                 * compile elenart64.dll
 
               xdev elena50
-                * optimize double assigning
-
-                * multi-return methods
-                * using embeddable methods instead of normal one for method arguments
-                * auto determining the closure return value for closure templates
-
-              xdev elena50
                 * binary
+                * textview : big file
 
                 * template of templates : array of tuples
                 * test : short field to int - correct value (discarding high word)
@@ -45,6 +39,13 @@ In development:
                 * accumulating static fields
                 * optimization : do not call idle method
 
+              xdev elena50
+                * multi-return methods : properties
+                * multi-return methods : optimize double assigning
+                * multi-return methods : dynamic objects
+
+                * using embeddable methods instead of normal one for method arguments
+                * auto determining the closure return value for closure templates
                 * auto returning
 
                 * stack allocated class and default constructor

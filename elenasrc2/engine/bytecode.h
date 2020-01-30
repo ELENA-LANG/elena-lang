@@ -190,7 +190,7 @@ enum ByteCode
    bcSaveF           = 0xB9,
    bcPushSI          = 0xBA,
    bcSaveSI          = 0xBB,
-//   bcELoadSI         = 0xBC,
+   bcSaveFI          = 0xBC,
    bcPushF           = 0xBD,
    bcPushS           = 0xBE,
    bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)

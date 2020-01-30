@@ -550,6 +550,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcLoadSI:
          case bcSaveF:
          case bcSaveSI:
+         case bcSaveFI:
          case bcRestore:
          case bcReserve:
          //case bcALoadBI:

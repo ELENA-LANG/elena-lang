@@ -2215,6 +2215,13 @@ inline % 0BBh
 
 end
 
+// ; savefi
+inline % 0BCh
+
+  mov  [ebp + __arg1], edx
+
+end
+
 // ; pushf
 inline % 0BDh
 

@@ -1095,17 +1095,6 @@ inline ref_t getSignature(_ModuleScope& scope, ref_t message)
    return signRef;
 }
 
-inline ref_t overwriteSignature(_ModuleScope& scope, ref_t message, ref_t* signatures, size_t len)
-{
-   ref_t actionRef = getAction(message);
-   ref_t signRef = scope.module->mapSignature(signatures, len, true);
-   
-   ref_t dummy = 0;
-   ident_t name = scope.module->resolveAction(actionRef, dummy);
-
-   return overwriteAction(message, scope.module->mapAction(name, signRef, true));
-}
-
 bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage)
 {
    ref_t sourceSignatures[ARG_COUNT];
@@ -2216,17 +2205,28 @@ ref_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compil
    ref_t signatures[ARG_COUNT];
    size_t len = scope.moduleScope->module->resolveSignature(getSignature(*scope.moduleScope, byRefMessageRef), signatures);
 
-   ref_t byRefArg = compiler.resolvePrimitiveReference(scope, V_WRAPPER, expectedRef, true);
+   ref_t byRefArg = compiler.resolvePrimitiveReference(scope, V_WRAPPER, expectedRef, false);
 
    if (signatures[len - 1] == byRefArg)
       return byRefMessageRef;
 
-   //// COMPILER MAGIC : try to find alternative-returning method
-   //signatures[len - 1] = byRefArg;
-   //byRefMessageRef = overwriteSignature(scope, byRefMessageRef, signatures, len);
+   // COMPILER MAGIC : try to find alternative-returning method
+   signatures[len - 1] = byRefArg;
 
-   //if (info.methods.exist(byRefMessageRef))
-   //   return byRefMessageRef;
+   ref_t signRef = scope.moduleScope->module->mapSignature(signatures, len, true);
+   if (!signRef)
+      return 0;
+
+   ref_t dummy = 0, actionRef = 0, flags = 0;
+   int argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+   ident_t name = scope.moduleScope->module->resolveAction(actionRef, dummy);
+
+   byRefMessageRef = encodeMessage(scope.moduleScope->module->mapAction(name, signRef, true),
+      argCount + 1, flags);
+
+   if (info.methods.exist(byRefMessageRef))
+      return byRefMessageRef;
 
    return 0;
 }
