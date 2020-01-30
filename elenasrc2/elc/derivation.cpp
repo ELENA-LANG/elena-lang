@@ -1580,7 +1580,7 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
    }
 
    SNode param = paramTree.readRoot();
-   if (param == lxType/*.compare(lxTarget, lxTemplateParam)*/) {
+   if (param.compare(lxType, lxTemplateParam)) {
       parameters.add(param/*.findChild(lxTarget, lxTemplateParam)*/);
    }
 

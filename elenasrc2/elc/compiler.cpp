@@ -5010,7 +5010,7 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
    while (current != lxNone) {
       if (current == lxType) {
          ref_t typeRef = current.argument;
-         if (!typeRef) {
+         if (!typeRef || typeRef == V_TEMPLATE) {
             typeRef = resolveTypeAttribute(current, scope, declarationMode);
             current.setArgument(typeRef);
 
