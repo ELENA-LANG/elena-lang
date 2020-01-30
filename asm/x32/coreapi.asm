@@ -322,6 +322,9 @@ procedure coreapi's_copychars
   mov  edi, [esp+4]
   mov  ebx, [esi]
 
+  test ecx, ecx
+  jz   labEnd
+
   lea  esi, [eax + ebx * 4]
 
 labNext:
@@ -405,6 +408,7 @@ labSave:
   sub  ecx, 1
   jnz  labNext
 
+labEnd:
   mov  edx,  edi
   mov  edi, [esp+8]
   sub  edx, edi
@@ -421,6 +425,9 @@ procedure coreapi'ws_copychars
   mov  ecx, [edx]
   mov  edi, [esp+4]
   mov  ebx, [esi]
+
+  test ecx, ecx
+  jz   labEnd
 
   lea  esi, [eax + ebx * 4]
 
@@ -445,6 +452,7 @@ lab1:
   sub  ecx, 1
   jnz  short labNext
 
+labEnd:
   mov  ebx, edi
   pop  edi
   sub  ebx, edi
@@ -608,6 +616,8 @@ procedure coreapi'slen_ch
    lea  eax, [eax+edx*4]
                
    xor  ebx, ebx
+   test ecx, ecx
+   jz   short labEnd
 
 labNext:
    mov  edx, [eax]
@@ -622,6 +632,7 @@ labNext:
    lea  eax, [eax + 4]
    sub  ecx, 1
    jnz  short labNext
+labEnd:
    mov  [edi], ebx
    ret
    
@@ -663,6 +674,8 @@ procedure coreapi'wslen_ch
    lea  eax, [eax+edx*4]
                
    xor  ebx, ebx
+   test ecx, ecx
+   jz   short labEnd
 
 labNext:
    mov  edx, [eax]
@@ -673,6 +686,8 @@ labNext:
    lea  eax, [eax + 4]
    sub  ecx, 1
    jnz  short labNext
+labEnd:
+   mov  [edi], ebx
    ret   
    
 lab1:
@@ -680,6 +695,7 @@ lab1:
    lea  eax, [eax + 4]
    sub  ecx, 1
    jnz  short labNext
+   mov  [edi], ebx
    ret   
 
 end
