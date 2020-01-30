@@ -813,8 +813,10 @@ public sealed const struct String : BaseValue
         int offs := 0;
         for (int i := 0, i < size, i := i + 1)
         {
-            theArray[i+offs] := buffer[i];
-            offs := offs + 1;
+            for (int j := 0, j < length, j := j + 1) {
+                theArray[offs] := buffer[j];
+                offs := offs + 1;
+            }
         }
     }
 
@@ -1076,8 +1078,10 @@ public sealed const struct WideString : BaseValue
         int offs := 0;
         for (int i := 0, i < size, i := i + 1)
         {
-            theArray[i+offs] := buffer[i];
-            offs := offs + 1;
+            for (int j := 0, j < length, j := j + 1) {
+                theArray[offs] := buffer[j];
+                offs := offs + 1;
+            }
         }
     }
 
