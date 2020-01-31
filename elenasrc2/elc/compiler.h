@@ -371,7 +371,7 @@ private:
       virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       ObjectInfo mapGlobal(ident_t identifier);
-      ObjectInfo mapWeakReference(ident_t identifier);
+      ObjectInfo mapWeakReference(ident_t identifier, bool directResolved);
 
       virtual pos_t saveSourcePath(ByteCodeWriter& writer);
       virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);

@@ -316,9 +316,13 @@ ObjectInfo Compiler::NamespaceScope :: mapGlobal(ident_t identifier)
    else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), false);
 }
 
-ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ident_t identifier)
+ObjectInfo Compiler::NamespaceScope :: mapWeakReference(ident_t identifier, bool directResolved)
 {
-   ref_t reference = moduleScope->mapWeakReference(identifier);
+   ref_t reference = 0;
+   if (directResolved) {
+      reference = moduleScope->mapWeakReference(identifier);
+   }
+   else reference = moduleScope->mapFullReference(identifier);
 
    return defineObjectInfo(reference, true);
 }
@@ -1677,7 +1681,7 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalT
 
    NamespaceScope* ns = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
    if (type == lxReference && isWeakReference(terminal)) {
-      identInfo = ns->mapWeakReference(terminal);
+      identInfo = ns->mapWeakReference(terminal, false);
    }
    else if (type == lxGlobalReference) {
       identInfo = ns->mapGlobal(terminal);
