@@ -86,7 +86,7 @@ namespace io
                     open := true
                 }
             }
-            else: if(open) 
+            else if(open) 
             {
                 int retVal := extern KERNEL32.FindNextFileW(hFind, ffd);
                 if (retVal == 0)
