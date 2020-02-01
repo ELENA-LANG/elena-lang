@@ -5777,11 +5777,25 @@ void ByteCodeWriter :: copyToFieldAddress(CommandTape& tape, int size, int argum
    }
 }
 
-void ByteCodeWriter :: copyFieldAddress(CommandTape& tape, int size, int argument)
+void ByteCodeWriter :: copyFieldAddress(CommandTape& tape, int size, int argument, FlowScope& scope)
 {
    if ((size & 3) == 0 && (argument & 3) == 0) {
       // if it is a dword aligned
       tape.write(bcCopyAI, argument >> 2, size >> 2);
+   }
+   else if (size == 2) {
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0xFFFF);
+      tape.write(bcPeekSI, 0);
+      tape.write(bcSave);
+      scope.clear();
+   }
+   else if (size == 1) {
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0xFF);
+      tape.write(bcPeekSI, 0);
+      tape.write(bcSave);
+      scope.clear();
    }
    else {
       tape.write(bcMove, argument, size);
@@ -5816,9 +5830,28 @@ void ByteCodeWriter :: saveToLocal(CommandTape& tape, int size, int argument)
 
 void ByteCodeWriter :: saveToLocalAddress(CommandTape& tape, int size, int argument)
 {
+   switch (size) {
+      case 1:
+         tape.write(bcAnd, 0xFF);
+         break;
+      case 2:
+         tape.write(bcAnd, 0xFFFF);
+         break;
+      case 4:
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+   }
+
+   // savef arg
+   tape.write(bcSaveF, argument);
+}
+
+void ByteCodeWriter :: loadFieldAddress(CommandTape& tape, int size, int argument)
+{
    if (size == 4) {
-      // savef arg
-      tape.write(bcSaveF, argument);
+      // xload arg
+      tape.write(bcXLoad, argument);
    }
    else throw InternalError("not yet implemente"); // !! temporal
 }
@@ -5918,17 +5951,30 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
    else if (srcObj == lxFieldExpression && dstObj != lxFieldExpression) {
       SNode fieldNode = loadFieldExpression(tape, srcObj, scope, true);
       if (fieldNode.compare(lxFieldAddress, lxSelfLocal)) {
-         generateObject(tape, target, scope, STACKOP_MODE);
-         loadFieldExpression(tape, srcObj, scope, false);
-         if (fieldNode == lxFieldAddress) {
-            copyFieldAddress(tape, node.argument, fieldNode.argument);
+         if (dstObj == lxLocalAddress && node.argument <= 4) {
+            loadFieldExpression(tape, srcObj, scope, false);
+            if (fieldNode == lxFieldAddress) {
+               loadFieldAddress(tape, node.argument, fieldNode.argument);
+            }
+            else {
+               loadObject(tape, fieldNode, scope);
+               tape.write(bcLoad);
+            }
+            saveToLocalAddress(tape, node.argument, dstObj.argument);
          }
          else {
-            loadObject(tape, fieldNode, scope);
-            copyFieldAddress(tape, node.argument, 0);
-         }
+            generateObject(tape, target, scope, STACKOP_MODE);
+            loadFieldExpression(tape, srcObj, scope, false);
+            if (fieldNode == lxFieldAddress) {
+               copyFieldAddress(tape, node.argument, fieldNode.argument, scope);
+            }
+            else {
+               loadObject(tape, fieldNode, scope);
+               copyFieldAddress(tape, node.argument, 0, scope);
+            }
 
-         releaseStack(tape);
+            releaseStack(tape);
+         }
       }
       else copyExpression(tape, source, dstObj, node.argument, scope);
    }

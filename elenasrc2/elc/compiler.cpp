@@ -5374,7 +5374,10 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okReadOnlyFieldAddress:
          terminal.set(lxFieldExpression, 0);
          terminal.appendNode(lxSelfLocal, 1);
-         if (object.param) {
+         if (object.param || (!EAttrs::test(mode, HINT_PROP_MODE) 
+            && _logic->defineStructSize(*scope.moduleScope, object.reference, 0) != 4)) 
+         {
+            // if it a field address (except the first one, which does not equal to 4 )
             terminal.appendNode(lxFieldAddress, object.param);
             // the field address expression should always be boxed (either local or dynamic)
             mode = EAttrs(mode, HINT_NOBOXING);

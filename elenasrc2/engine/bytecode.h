@@ -210,7 +210,7 @@ enum ByteCode
    bcStoreR          = 0xCC,
 //   bcALoadAI         = 0xCD,
    bcCloneF          = 0xCE,
-//   bcAXSaveBI        = 0xCF,
+   bcXLoad           = 0xCF,
 
    bcFreeI           = 0xD0,
    bcAllocI          = 0xD1, 

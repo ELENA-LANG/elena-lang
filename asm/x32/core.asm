@@ -2338,6 +2338,13 @@ inline % 0CEh
 
 end
 
+// ; xload
+inline % 0CFh
+
+  mov  edx, [ebx + __arg1]
+
+end
+
 // ; alloci
 inline %0D1h
 

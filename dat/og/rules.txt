@@ -8,6 +8,7 @@ pusha popa        => nop nop;
 pushr peeksi := 0 => movr pusha;
 
 movf pusha movr => pushf nop movr;
+movf pusha peekfi => pushf nop peekfi;
 movr pusha movr => pushr nop movr;
 
 storefi := 1 peekfi := 1 => storefi nop;
