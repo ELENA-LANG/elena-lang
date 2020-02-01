@@ -145,7 +145,7 @@ namespace text
             }
         }
         
-        get string Printable() => theValue;
+        string toPrintable() => theValue;
         
         string cast() = cast string(theValue);
         

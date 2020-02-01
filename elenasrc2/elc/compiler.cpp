@@ -6949,6 +6949,12 @@ void Compiler :: compileResendExpression(SNode node, CodeScope& codeScope, bool 
       compileMultidispatch(node, codeScope, *classScope);
    }
    else {
+      if (multiMethod) {
+         ClassScope* classScope = (ClassScope*)codeScope.getScope(Scope::ScopeLevel::slClass);
+
+         compileMultidispatch(node.parentNode(), codeScope, *classScope);
+      }
+
       SNode expr = node.findChild(lxExpression);
 
       // new stack frame
