@@ -30,7 +30,7 @@ In development:
                 * optimization : do not call idle method
 
               xdev elena50
-                * samples
+                * goods 
 
                 * multi-return methods : properties
                 * multi-return methods : optimize double assigning
@@ -39,6 +39,8 @@ In development:
                 * using embeddable methods instead of normal one for method arguments
                 * auto determining the closure return value for closure templates
                 * auto returning
+
+                * samples
 
                 * stack allocated class and default constructor
                 * extension to read package info

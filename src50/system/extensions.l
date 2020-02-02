@@ -1148,24 +1148,24 @@ public extension stringOp : String
 //
 //    int indexOf(char ch)
 //        = self.indexOf(0, ch);
-//        
-//    string Substring(index)
-//        = self.Substring(cast int(index));
-//        
-//    string Substring(int index)
-//    {
-//        int len := self.Length;
-//        if (len > index)
-//        {
-//            len := len - index;
-//            
-//            ^ self.Substring(index, len)
-//        }
-//        else
-//        {
-//            ^ emptyString
-//        }        
-//    }        
+        
+    string Substring(index)
+        = self.Substring(cast int(index));
+        
+    string Substring(int index)
+    {
+        int len := self.Length;
+        if (len > index)
+        {
+            len := len - index;
+            
+            ^ self.Substring(index, len)
+        }
+        else
+        {
+            ^ emptyString
+        }        
+    }        
     
     string trimLeft(char ch)
     {
@@ -1359,18 +1359,18 @@ public extension wideOp : WideString
 //
 //    indexOf(char ch)
 //        = self.indexOf(0, ch);
-//                
-////    wide Substring(index)
-////        = self~wideOp Substring(T<int>(anIndex)).
-//        
-//    wide Substring(int index)
-//    {
-//        int length := self.Length;
-//        
-//        length := length - index;
-//        
-//        ^ self.Substring(index, length)
-//    }
+                
+    wide Substring(index)
+        = self.Substring(cast int(index));
+        
+    wide Substring(int index)
+    {
+        int length := self.Length;
+        
+        length := length - index;
+        
+        ^ self.Substring(index, length)
+    }
      
     wide trimLeft(char ch)
     {

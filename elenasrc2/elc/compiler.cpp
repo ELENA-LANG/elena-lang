@@ -4417,6 +4417,9 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
          recognizeTerminal(objNode, info, ownerScope, EAttr::eaNone);
          analizeOperand(objNode, ownerScope, true, false);
 
+         if ((*outer_it).preserved) {
+         }
+
 //         writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
 //         writeTerminal(writer, node, ownerScope, info, EAttr::eaNone);
 //         writer.closeNode();
@@ -9629,6 +9632,15 @@ inline SNode injectRootSeqExpression(SNode& parent)
    else current = parent;
 
    return current;
+}
+
+void Compiler :: injectMemberPreserving(SNode node)
+{
+   SNode parent = node;
+   SNode current = injectRootSeqExpression(parent);
+
+   current.appendNode(lxAssigning);
+   
 }
 
 void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,

@@ -78,7 +78,7 @@ public program()
         adapter.write:line;
 
         var name := new StringWriter();
-        var price := new Real();
+        var price := Real.new();
                         
         while (adapter.read(name))
         {
