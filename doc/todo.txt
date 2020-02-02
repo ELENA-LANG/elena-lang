@@ -16,7 +16,6 @@ In development:
                 * closures: returning a value
 
                 * type should be only one in the token expression - test: int long r := 0;
-                * reference identifier name?
 
                 * variadic arguments : unboxing
 
@@ -202,6 +201,7 @@ In development:
                 * public / private / internal / protected properties
                 * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
                 * fields with reference name
+                * reference identifier name?
 
               dev1
                 * move all description to meta info using descr inline template
