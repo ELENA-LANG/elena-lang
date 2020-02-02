@@ -1212,7 +1212,7 @@ private:
 
    void compileExternalArguments(SNode node, ExprScope& scope, SNode callNode);
 
-   void injectMemberPreserving(SNode node);
+   void injectMemberPreserving(SNode objNode, LexicalType tempType, int tempLocal, int memberIndex);
    void injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
       int tempLocal);
    void injectBoxingTempLocal(SNode boxExprNode, SNode objNode, ExprScope& scope, LexicalType tempType, 

@@ -5451,7 +5451,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       directMode = true;
    }
    else if (!directMode) {
-      allocateStack(tape, functionMode ? argCount - 1 : argCount);
+      allocateStack(tape, functionMode && isFirstDirect ? argCount - 1 : argCount);
    }
 
    // the function target can be loaded at the end

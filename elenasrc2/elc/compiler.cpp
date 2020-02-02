@@ -4408,6 +4408,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
 
       Map<ident_t, InlineClassScope::Outer>::Iterator outer_it = scope.outers.start();
       //int toFree = 0;
+      int tempLocal = 0;
       while(!outer_it.Eof()) {
          ObjectInfo info = (*outer_it).outerObject;
 
@@ -4418,6 +4419,16 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
          analizeOperand(objNode, ownerScope, true, false);
 
          if ((*outer_it).preserved) {
+            if (!tempLocal) {
+               // save the closure in the temp variable
+               tempLocal = ownerScope.newTempLocal();
+
+               SNode objNode = node.firstChild(lxObjectMask);
+               objNode.injectAndReplaceNode(lxAssigning);
+               objNode.insertNode(lxTempLocal, tempLocal);
+            }
+
+            injectMemberPreserving(objNode, lxTempLocal, tempLocal, (*outer_it).reference);
          }
 
 //         writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
@@ -4426,7 +4437,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
 
          outer_it++;
       }
-
+         
 //      if (scope.returningMode) {
 //         // injecting returning code if required
 //         InlineClassScope::Outer retVal = scope.outers.get(RETVAL_VAR);
@@ -9634,13 +9645,20 @@ inline SNode injectRootSeqExpression(SNode& parent)
    return current;
 }
 
-void Compiler :: injectMemberPreserving(SNode node)
+void Compiler :: injectMemberPreserving(SNode objNode, LexicalType tempType, int tempLocal, int memberIndex)
 {
-   SNode parent = node;
+   SNode parent = objNode;
    SNode current = injectRootSeqExpression(parent);
 
-   current.appendNode(lxAssigning);
-   
+   SNode assignNode = current.appendNode(lxAssigning);
+   if (objNode.type != lxLocal)
+      throw InternalError("Not yet implemented"); // !! temporal
+
+   assignNode.appendNode(objNode.type, objNode.argument);
+
+   SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
+   fieldExpr.appendNode(tempType, tempLocal);
+   fieldExpr.appendNode(lxField, memberIndex);
 }
 
 void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
