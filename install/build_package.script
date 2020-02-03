@@ -122,12 +122,19 @@ mkdir -p ./$RELEASE/usr/elena-lang/examples/console/goods/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/files/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textfiles/
 
+mkdir -p /etc/elena/templates
+mkdir -p /usr/share/elena
+
+cp ../bin/scripts/*.es /etc/elena/scripts
+cp ../dat/og/*.dat /usr/share/elena
+cp ../dat/sg/syntax.dat /usr/share/elena
+
 cp ../bin/elena-lc ./$RELEASE/usr/bin/
 cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena/
 
 cp ../bin/*.config ./$RELEASE/etc/elena/
 cp ../bin/templates/*.config ./$RELEASE/etc/elena/templates
-cp ../bin/scripts/*.config ./$RELEASE/etc/elena/scripts
+cp ../bin/scripts/*.es ./$RELEASE/etc/elena/scripts
 
 cp ../dat/og/*.dat ./$RELEASE/usr/share/elena
 cp ../dat/sg/syntax.dat ./$RELEASE/usr/share/elena
