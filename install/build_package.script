@@ -46,7 +46,7 @@ else
 fi
 
 echo core_lnx
-bin/elena-asm2binx ../asm/x32/core_lnx.asm ../bin/x32
+../bin/elena-asm2binx ../asm/x32/core_lnx.asm ../bin/x32
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -57,7 +57,7 @@ else
 fi
 
 echo coreapi
-bin/elena-asm2binx ../asm/x32/coreapi.asm ..bin/x32
+../bin/elena-asm2binx ../asm/x32/coreapi.asm ..bin/x32
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -69,7 +69,7 @@ fi
 
 echo compiling lib50 files
 
-bin/elena-asm2binx ../src50/core/system.core_routines.esm ../lib50
+../bin/elena-asm2binx ../src50/core/system.core_routines.esm ../lib50
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -79,7 +79,7 @@ else
   exit 1
 fi
 
-elena-lc ../src50/system/system.project
+../elena-lc ../src50/system/system.project
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -89,7 +89,7 @@ else
   exit 1
 fi
 
-elena-lc ../src50/extensions/extensions.project
+../elena-lc ../src50/extensions/extensions.project
 ret=$?
 if [ $ret -eq 0 ]
 then
