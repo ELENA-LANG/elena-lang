@@ -122,9 +122,9 @@ copy %~dp0\..\examples\console\binary\*.prj %~dp0\output\examples\console\binary
 copy %~dp0\..\examples\console\replace\*.l %~dp0\output\examples\console\replace
 copy %~dp0\..\examples\console\replace\*.prj %~dp0\output\examples\console\replace
 
-copy %~dp0\..\examples\console\replace\*.l %~dp0\output\examples\console\goods
-copy %~dp0\..\examples\console\replace\*.prj %~dp0\output\examples\console\goods
-copy %~dp0\..\examples\console\replace\*.txt %~dp0\output\examples\console\goods
+copy %~dp0\..\examples\console\goods\*.l %~dp0\output\examples\console\goods
+copy %~dp0\..\examples\console\goods\*.prj %~dp0\output\examples\console\goods
+copy %~dp0\..\examples\console\goods\*.txt %~dp0\output\examples\console\goods
 
 copy %~dp0\..\examples\files\textfile\*.l %~dp0\output\files\textfile
 copy %~dp0\..\examples\files\textfile\*.prj %~dp0\output\files\textfile

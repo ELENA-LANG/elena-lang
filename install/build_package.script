@@ -1,0 +1,155 @@
+#!/bin/bash
+RELEASE=elena-5.0.1.i386-linux
+
+echo compiling data files
+
+../bin/elena-og ../dat/og/rules.txt
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../bin/elena-og s ../dat/og/source_rules.txt
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../bin/elena-sg ../dat/sg/syntax.txt
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+echo compiling asm files
+
+../bin/elena-asm2binx ../asm/x32/core.asm ../bin/x32
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+echo core_lnx
+bin/elena-asm2binx ../asm/x32/core_lnx.asm ../bin/x32
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+echo coreapi
+bin/elena-asm2binx ../asm/x32/coreapi.asm ..bin/x32
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+echo compiling lib50 files
+
+bin/elena-asm2binx ../src50/core/system.core_routines.esm ../lib50
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+elena-lc ../src50/system/system.project
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+elena-lc ../src50/extensions/extensions.project
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+echo copying files
+
+mkdir -p ./$RELEASE/usr/bin/
+mkdir -p ./$RELEASE/usr/lib/elena/core/x32/
+mkdir -p ./$RELEASE/etc/elena/
+mkdir -p ./$RELEASE/etc/elena/templates/
+mkdir -p ./$RELEASE/etc/elena/scripts/
+mkdir -p ./$RELEASE/usr/share/elena/
+mkdir -p ./$RELEASE/usr/lib/elena/lib50/system/
+mkdir -p ./$RELEASE/usr/elena-lang/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/helloworld/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/sum/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/words/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/pi/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/bsort/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/binary/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/replace/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/console/goods/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/files/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textfiles/
+
+cp ../bin/elena-lc ./$RELEASE/usr/bin/
+cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena/
+
+cp ../bin/*.config ./$RELEASE/etc/elena/
+cp ../bin/templates/*.config ./$RELEASE/etc/elena/templates
+cp ../bin/scripts/*.config ./$RELEASE/etc/elena/scripts
+
+cp ../dat/og/*.dat ./$RELEASE/usr/share/elena
+cp ../dat/sg/syntax.dat ./$RELEASE/usr/share/elena
+
+cp -r ../lib50 ./$RELEASE/usr/lib/elena/
+
+cp ../examples/console/helloworld\*.l ./$RELEASE/usr/elena-lang/examples/console/helloworld/
+cp ../examples/console/helloworld\*.prj ./$RELEASE/usr/elena-lang/examples/console/helloworld/
+
+cp ../examples/console/sum\*.l ./$RELEASE/usr/elena-lang/examples/console/sum/
+cp ../examples/console/sum\*.prj ./$RELEASE/usr/elena-lang/examples/console/sum/
+
+cp ../examples/console/words/*.l ./$RELEASE/usr/elena-lang/examples/console/words/
+cp ../examples/console/words/*.prj ./$RELEASE/usr/elena-lang/examples/console/words/
+
+cp ../examples/console/pi/*.l ./$RELEASE/usr/elena-lang/examples/console/pi/
+cp ../examples/console/pi/*.prj ./$RELEASE/usr/elena-lang/examples/console/pi/
+
+cp ../examples/console/bsort/*.l ./$RELEASE/usr/elena-lang/examples/console/bsort/
+cp ../examples/console/bsort/*.prj ./$RELEASE/usr/elena-lang/examples/console/bsort/
+
+cp ../examples/console/binary/*.l ./$RELEASE/usr/elena-lang/examples/console/binary/
+cp ../examples/console/binary/*.prj ./$RELEASE/usr/elena-lang/examples/console/binary/
+
+cp ..\examples\console\replace\*.l %~dp0\output\examples\console\replace
+cp ..\examples\console\replace\*.prj %~dp0\output\examples\console\replace
+
+cp ../examples/console/goods/*.l ./$RELEASE/usr/elena-lang/examples/console/goods/
+cp ../examples/console/goods/*.prj ./$RELEASE/usr/elena-lang/examples/console/goods/
+cp ../examples/console/goods/*.txt ./$RELEASE/usr/elena-lang/examples/console/goods/
+
+cp ../examples/files/textfiles/*.l ./$RELEASE/usr/elena-lang/examples/files/textfiles/
+cp ../examples/files/textfiles/*.prj ./$RELEASE/usr/elena-lang/examples/files/textfiles/
+cp ../examples/files/textfiles/*.txt ./$RELEASE/usr/elena-lang/examples/files/textfiles/
+
+mkdir ./$RELEASE/DEBIAN
+cp ./control ./$RELEASE/DEBIAN
+
+dpkg-deb --build $RELEASE
+
+alien -r -c -v *.deb
+
+exit 0
