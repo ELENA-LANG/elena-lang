@@ -155,10 +155,10 @@ namespace io
     //    {
     //    }    
     
-        close()
-        {
-            extern KERNEL32.CloseHandle(theHandle)
-        }
+//        close()
+//        {
+//            extern KERNEL32.CloseHandle(theHandle)
+//        }
     }
 
 //// --- FileWriter ---

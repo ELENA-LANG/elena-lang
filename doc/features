@@ -36,6 +36,7 @@ Declarations
       * constant fields
       * constant accumulating fields
       * static fields
+  Closures
   Nested classes
     Creating
       * in-place initialization : default constructor is not called

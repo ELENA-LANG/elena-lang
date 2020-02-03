@@ -709,7 +709,11 @@ ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenc
             return fieldInfo;
          }
       }
-      return Scope::mapTerminal(identifier, referenceOne, mode);
+      ObjectInfo retVal = Scope::mapTerminal(identifier, referenceOne, mode);
+      if (retVal.kind == okClass) {
+      }
+
+      return retVal;
    }
 }
 
@@ -2438,6 +2442,10 @@ ObjectInfo Compiler :: mapClassSymbol(Scope& scope, int classRef)
       ClassInfo info;
       scope.moduleScope->loadClassInfo(info, classRef, true);
       retVal.reference = info.header.classRef;
+
+      ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
+      if (classScope != nullptr && classScope->reference == retVal.reference)
+         retVal.kind = okClassSelf;
 
       return retVal;
    }
@@ -4806,7 +4814,7 @@ ObjectInfo Compiler :: compileVariadicUnboxing(SNode node, ExprScope& scope, EAt
 ObjectInfo Compiler :: compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
 {
    ref_t targetRef = 0;
-   if (target.kind == okClass) {
+   if (target.kind == okClass || target.kind == okClassSelf) {
       targetRef = target.param;
    }
    else targetRef = resolveObjectReference(scope, target, true);
@@ -5279,6 +5287,7 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
          terminal.set(lxSymbolReference, object.param);
          break;
       case okClass:
+      case okClassSelf:
          terminal.set(lxClassSymbol, object.param);
          break;
       case okExtension:
