@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the Linux command-line compiler
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -208,7 +208,7 @@ int main(int argc, char* argv[])
          if (argv[i][0]=='-') {
             project.setOption(argv[i] + 1);
          }
-         else if (_ELENA_::Path::checkExtension(argv[i], "prj")) {
+         else if (_ELENA_::Path::checkExtension(argv[i], "project")) {
             project.loadProject(argv[i]);
          }
          else project.addSource(argv[i]);
