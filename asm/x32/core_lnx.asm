@@ -94,24 +94,3 @@ procedure % INIT_RND
   ret
   
 end
-
-procedure % EXIT
-  
-  mov  eax, 1
-  mov  ebx, 0
-  int  80h
-
-end
-
-
-procedure % EXITTHREAD
-  
-  ret
-
-end
-
-procedure % NEW_EVENT
-
-  ret
-
-end

@@ -4,7 +4,7 @@
         <namespace>extensions</namespace>
         <debuginfo>-1</debuginfo>
         <options>-w3</options>
-        <output>..\..\lib50</output>
+        <output>/usr/lib/elena/lib50</output>
     </project>
     <manifest>
         <name>ELENA Extension Library</name>
@@ -15,7 +15,7 @@
         <module>
             <include>convertors.l</include>
             <include>console.l</include>
-            <include>win32_args.l</include>                                                        
+            <include>lnx32_args.l</include>                                                        
             <include>basic.l</include>
             <include>text\strings.l</include>
             <include>text\words.l</include>

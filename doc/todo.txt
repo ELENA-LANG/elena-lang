@@ -3,6 +3,7 @@ In development:
 ------         
               xdev - refactoring
                 * mov GC to C code
+                * get rid of EXPAND_HEAP, NEW_HEAP
 
               xdev - linux32
                 * port Linux
@@ -14,6 +15,7 @@ In development:
                 * compile lib50
 
               xdev elena50
+                * const fields
                 * goods 
                 * properties - multi-level
                 * accumulating static fields

@@ -78,83 +78,82 @@ namespace io
         {
         }
     
-        #method(stacksafe) read &vbyte:aRetVal
-        [    
-            #var(int) ch := system'external'libc getchar.
+        read(ref char retVal)
+        {
+           self.read(ref byte ch);
     
-            byteConvertor convert &int:ch &vbyte:aRetVal. 
-        ]
-    
-        #method(stacksafe) read &bytearray:aBuffer &vint:aRetVal
-        [
-            #var(int) i := 0.
-            #loop (aRetVal > i) ?
-            [
-                #var(byte)ch.
-                $self read &vbyte:ch.
-    
-                aBuffer@i := ch.
-    
-                i += 1.
-    
-                (ch == 0Ah)
-                   ? [ aRetVal := i.  ^ $self. ].
-            ].
-    
-            aRetVal := i.
-        ]
-    
-        #method read &wide
-            = $self read &literal wide.
-    
-        #method read &literal
-        [
-            #var(byte:127)aBuffer.
-            #var(int)aLength.
-            #var anOutput := emptyLiteralValue.
-            
-            #var(bool) continue := true.
-            #loop continue ?
-            [
-                aLength := 127.
-                $self read &bytearray:aBuffer &vint:aLength.
-    
-                #var(byte)ch := aBuffer@(aLength - 1).
-    
-                (ch == 0Ah)
-                    ? [
-                        aLength := aLength - 1.
-                        
-                        continue := false.
-                    ].
-                
-                #var aTemp := LiteralValue $new &int:0 &int:aLength &bytearray:aBuffer.
-                
-                anOutput := anOutput + aTemp.
-            ].
-    
-            ^ anOutput.
-        ]
-    
-        #method read &vchar:aRetVal
-        [
-           #var(byte)ch.
-           $self read &vbyte:ch.
-    
-           charConvertor convert &byte:ch &vchar:aRetVal.  
-        ]
+           charConvertor.convert(ch, ref retVal)
+        }
               
-        #method char
-        [
-            #var(char)aRetVal.
-            $self read &vchar:aRetVal.
-            
-            ^ CharValue new &char:aRetVal.
-        ]
+        read(ref byte retVal)
+        {
+            int ch := extern libc.getchar();
     
-        #method close
-        [
-        ]
+            byteConvertor.convert(ch, ref retVal) 
+        }
+    
+        read(byte[] buffer, ref int retVal)
+        {
+            for (int i := 0, i < retVal, i += 1)
+            {
+                self.read(ref byte ch);
+    
+                buffer[i] := ch;
+    
+                if(ch == 0Ah)
+                {
+                    retVal := i + 1;  
+                    
+                    ^ self
+                }
+            };
+    
+            retVal := i
+        }
+    
+        wide readWideLine()
+            = cast wide(self.readLine());
+    
+        string readLine()
+        {
+            byte:127)buffer[127];
+            int length := 0;
+            var output := emptyString;
+            
+            bool continue := true;
+            while(continue)
+            {
+                length := 127;
+                self.read(buffer, ref length);
+    
+                byte ch := buffer[length - 1];
+    
+                if(ch == 0Ah)
+                {
+                    length := length - 1;
+                    
+                    continue := false
+                };
+                
+                var temp := String.fromByteArray(0, length, buffer);
+                
+                output := output + aTemp;
+            };
+    
+            ^ output
+        }
+    
+//        #method char
+//        [
+//            #var(char)aRetVal.
+//            $self read &vchar:aRetVal.
+//            
+//            ^ CharValue new &char:aRetVal.
+//        ]
+//    
+//        #method close
+//        [
+//        ]
     }
 
     // --- Console Standard Symbols

@@ -45,8 +45,12 @@ Declarations
   Extension Templates
 Code
   Types
-    * optional types
     * conversions
+  Variables
+    * optional types
+    * fixed-size array
+    * in-place initializer
+    * in-place declaration
   Build-in Variables
     * self vs this self
     * __received

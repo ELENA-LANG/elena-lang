@@ -22,7 +22,7 @@ singleton CommandLineFactory
 //#symbol commandLine 
 //    = $CommandLineFactory new.
 
-public commandLine = 
+public commandLineArguments = 
     CommandLineFactory.load();
 
 //// --- startUp ---
