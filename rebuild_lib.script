@@ -5,12 +5,28 @@ mkdir /etc/elena/templates
 mkdir /usr/lib/elena
 
 cp bin/elc.config /etc/elena/
+
 cp -a bin/templates/*.config /etc/elena/templates/
 
 bin/elena-og dat/og/rules.txt
 cp dat/og/rules.dat /usr/share/elena
 
+bin/elena-og s dat/og/source_rules.txt
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+cp dat/og/source_rules.dat /usr/share/elena
+
 bin/elena-sg dat/sg/syntax.txt
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
 cp dat/sg/syntax.dat /usr/share/elena
 
 cp bin/elena-lc /usr/bin/
@@ -18,16 +34,53 @@ cp bin/libelenart.so /usr/lib/elena/
 
 echo core
 bin/elena-asm2binx asm/x32/core.asm /usr/lib/elena/core/x32
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
 
 echo core_lnx
 bin/elena-asm2binx asm/x32/core_lnx.asm /usr/lib/elena/core/x32
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
 
 echo coreapi
 bin/elena-asm2binx asm/x32/coreapi.asm /usr/lib/elena/core/x32
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
 
-bin/elena-asm2binx src30/core/core_routines.esm /usr/lib/elena/lib30/system
+bin/elena-asm2binx src50/core/system.core_routines.esm /usr/lib/elena/lib50
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
 
-elena-lc -csrc30/system/system.project
-elena-lc -csrc30/extensions/extensions.project
+elena-lc -csrc50/system/system.project
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+elena-lc -csrc50/extensions/extensions.project
+if [ $? -eq 0 ]
+then
+else
+  echo "Failure" >&2
+  exit 1
+fi
 
 exit 0
