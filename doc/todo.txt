@@ -14,21 +14,23 @@ In development:
                 * compile lib50
 
               xdev elena50
+                * goods 
+                * properties - multi-level
+                * accumulating static fields
+
+              xdev - linux32
+                * (re)implement internal String.read<int,ref<byte>>
+                * (re)implement UnsafePointer.cast<string>
+                * compile hello world
+
+              xdev elena50
+                * readonly fields
+                * support if(a) b else c; (?)
                 * closures: unboxing : stack-allocated
                 * closures: presaved arguments
                 * #190 : Closure : auto boxing / unboxing local variables 
 
               xdev elena50
-                * const class \ const field
-                * properties - multi-level
-                * accumulating static fields
-                * optimization : do not call idle method
-
-              xdev - linux32
-                * compile hello world
-
-              xdev elena50
-                * goods 
                 * closures: unboxing : fields
                 * closures: unboxing : struct fields
 
@@ -197,6 +199,7 @@ In development:
                 * do we need lxEmbeddableAttr and optimiation rule?
                 * optimize pi sample ( < 5s )
                 * warn if the extension method is called from itself (short-cutting)
+                * optimization : do not call idle method
 
               dev50 - new features
                 * resend to constant - no need for frame

@@ -14,6 +14,9 @@ public sealed const struct Handle
 ////        theHandle := h
 ////    ]
 
+//    #constructor min
+//        = 0.
+//
     constructor(int n)
     {
         theHandle := n
@@ -96,14 +99,17 @@ public sealed const struct UnsafePointer
 //        ^ ptr
 //    }
 //
-//    // unsafe code
-//    int cast()
-//    {
-//        intern system'core_routines'__dptr.readVal(self, ref int val);
-//        
-//        ^ val
-//    }
-//
+    get int Value()
+        = cast int(self);
+
+    // unsafe code
+    int cast()
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        ^ val
+    }
+
 //    // unsafe code
 //    string cast()
 //    {

@@ -21,7 +21,7 @@ class Record
     
     Price = thePrice;
 
-    string Printable
+    string toPrintable()
         = new StringWriter().print("Name:",theName," Price:",thePrice);
 }
 

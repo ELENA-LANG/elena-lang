@@ -32,6 +32,7 @@ Declarations
       * abstract
     Fields
       * fixed-size arrays
+      * realonly fields + 
       * constant fields
       * constant accumulating fields
       * static fields
@@ -42,6 +43,9 @@ Declarations
   Extensions
   Extension Templates
 Code
+  Types
+    * optional types
+    * conversions
   Build-in Variables
     * self vs this self
     * __received
