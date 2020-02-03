@@ -67,7 +67,14 @@ else
   exit 1
 fi
 
+mkdir -p /etc/elena/templates
+mkdir -p /usr/share/elena
+mkdir -p /etc/elena/
+mkdir -p /etc/elena/templates
 
+cp ../bin/scripts/*.es /etc/elena/scripts
+cp ../dat/og/*.dat /usr/share/elena
+cp ../dat/sg/syntax.dat /usr/share/elena
 
 echo compiling lib50 files
 
@@ -123,17 +130,6 @@ mkdir -p ./$RELEASE/usr/elena-lang/examples/console/replace/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/console/goods/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/files/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textfiles/
-
-mkdir -p /etc/elena/templates
-mkdir -p /usr/share/elena
-
-mkdir -p /usr/share/elena/
-mkdir -p /etc/elena/
-mkdir -p /etc/elena/templates
-
-cp ../bin/scripts/*.es /etc/elena/scripts
-cp ../dat/og/*.dat /usr/share/elena
-cp ../dat/sg/syntax.dat /usr/share/elena
 
 cp ../bin/elena-lc ./$RELEASE/usr/bin/
 cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena/
