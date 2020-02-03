@@ -125,6 +125,10 @@ mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textfiles/
 mkdir -p /etc/elena/templates
 mkdir -p /usr/share/elena
 
+mkdir /usr/share/elena/
+mkdir /etc/elena/
+mkdir /etc/elena/templates
+
 cp ../bin/scripts/*.es /etc/elena/scripts
 cp ../dat/og/*.dat /usr/share/elena
 cp ../dat/sg/syntax.dat /usr/share/elena
