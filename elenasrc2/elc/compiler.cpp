@@ -1470,7 +1470,7 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
                else varNode = node.appendNode(lxVariable);
 
                varNode.appendNode(lxLevel, prefix - param.offset);
-               
+
                IdentifierString name(identNode.identifier());
                varNode.appendNode(lxIdentifier, name.c_str());
             }
@@ -3263,7 +3263,7 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
    return retVal;
 }
 
-void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope, 
+void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
    bool boxingMode, bool withoutLocalBoxing)
 {
    if (current == lxExpression) {
@@ -3296,7 +3296,7 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
          SNode argNode = current;
          if (current == lxFieldExpression) {
             argNode = current.lastChild(lxObjectMask);
-         }         
+         }
 
          if (boxingMode || (!withoutLocalBoxing && argNode == lxFieldAddress)) {
             Attribute key(argNode.type, argNode.argument);
@@ -4034,7 +4034,9 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 
    if (target.kind == okFieldAddress && target.param != 0) {
       // HOTFIX : the assignment target should not be locally boxed
-      analizeOperand(node.firstChild(lxObjectMask), scope, false, true);
+      SNode fieldNode = node.firstChild(lxObjectMask);
+
+      analizeOperand(fieldNode, scope, false, true);
    }
    analizeOperands(node, scope, stackSafeAttr);
 
@@ -4366,7 +4368,7 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
    SyntaxTree::copyNode(attrTerminal, node);
 }
 
-ref_t Compiler :: resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message, 
+ref_t Compiler :: resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message,
    bool ignoreSelf)
 {
    if (!classInfo.methods.exist(message, true) || ignoreSelf) {
@@ -4445,7 +4447,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
 
          outer_it++;
       }
-         
+
 //      if (scope.returningMode) {
 //         // injecting returning code if required
 //         InlineClassScope::Outer retVal = scope.outers.get(RETVAL_VAR);
@@ -4572,12 +4574,13 @@ ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInf
    while (current != lxNone) {
       current.injectAndReplaceNode(lxMember, index++);
 
-      compileExpression(current.firstChild(), scope, target.element, EAttr::eaNone);
+      SNode memberNode = current.firstChild();
+      compileExpression(memberNode, scope, target.element, EAttr::eaNone);
 
       current = current.nextNode();
       counter++;
    }
-   
+
    if (size < 0) {
       SNode op = node.insertNode(lxCreatingStruct, counter * (-size));
       op.appendNode(lxType, target.reference);
@@ -4722,7 +4725,7 @@ ref_t Compiler :: resolveReferenceTemplate(_CompileScope& scope, ref_t operandRe
 
    parameters.add(dummyTree.readRoot().firstChild());
 
-   return scope.moduleScope->generateTemplate(scope.moduleScope->refTemplateReference, parameters, scope.ns, 
+   return scope.moduleScope->generateTemplate(scope.moduleScope->refTemplateReference, parameters, scope.ns,
       declarationMode, nullptr);
 }
 
@@ -5397,8 +5400,8 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okReadOnlyFieldAddress:
          terminal.set(lxFieldExpression, 0);
          terminal.appendNode(lxSelfLocal, 1);
-         if (object.param || (!EAttrs::test(mode, HINT_PROP_MODE) 
-            && _logic->defineStructSize(*scope.moduleScope, object.reference, 0) != 4)) 
+         if (object.param || (!EAttrs::test(mode, HINT_PROP_MODE)
+            && _logic->defineStructSize(*scope.moduleScope, object.reference, 0) != 4))
          {
             // if it a field address (except the first one, which does not equal to 4 )
             terminal.appendNode(lxFieldAddress, object.param);
@@ -5476,7 +5479,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    ident_t token = terminal.identifier();
    ObjectInfo object;
 
-   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | HINT_FORWARD 
+   if (EAttrs::testany(mode, HINT_INTERNALOP | HINT_MEMBER | HINT_METAFIELD | HINT_EXTERNALOP | HINT_FORWARD
       | HINT_MESSAGEREF | HINT_SUBJECTREF))
    {
       bool invalid = false;
@@ -5607,13 +5610,13 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          {
             // try to resolve explicit constant
             size_t len = getlength(token);
-         
+
             IdentifierString action(token + len - 1);
             action.append(CONSTRUCTOR_MESSAGE);
-         
+
             ref_t dummyRef = 0;
             ref_t actionRef = scope.module->mapAction(action, scope.module->mapSignature(&scope.moduleScope->literalReference, 1, false), dummyRef);
-         
+
             action.copy(token, len - 1);
             object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(action), 0, 0, actionRef);
             break;
@@ -5645,7 +5648,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    }
    else if (object.kind == okUnknown) {
       scope.raiseError(errUnknownObject, terminal);
-   }   
+   }
    else recognizeTerminal(terminal, object, scope, mode);
 
    return object;
@@ -5739,7 +5742,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
             if (mode.testAndExclude(HINT_MESSAGEREF)) {
                // HOTFIX : if it is an extension message
                result = compileMessageReference(current, scope);
-            
+
                recognizeTerminal(current, result, scope, mode);
             }
             else result = compileTypeSymbol(current, scope, mode);
@@ -6784,7 +6787,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
          }
 
          bool dummy = false;
-         ObjectInfo retVal = compileMessage(exprNode, exprScope, target, methodScope->message, mode | HINT_NODEBUGINFO, 
+         ObjectInfo retVal = compileMessage(exprNode, exprScope, target, methodScope->message, mode | HINT_NODEBUGINFO,
             stackSafeAttrs, dummy);
 
          retVal = convertObject(exprNode, exprScope, targetRef, retVal, mode);
@@ -6795,7 +6798,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
    }
 }
 
-void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeScope, ClassScope& classClassScope, 
+void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeScope, ClassScope& classClassScope,
    bool& withFrame)
 {
    ResendScope resendScope(&codeScope);
@@ -7136,15 +7139,15 @@ ref_t Compiler :: generateConstant(_CompileScope& scope, ObjectInfo retVal)
    }
    else if (retVal.kind == okCharConstant) {
       ident_t value = module->resolveConstant(retVal.param);
-   
+
       dataWriter.writeLiteral(value, getlength(value));
-   
+
       parentRef = scope.moduleScope->charReference;
    }
    else if (retVal.kind == okMessageNameConstant) {
       dataWriter.Memory()->addReference(retVal.param | mskMessageName, dataWriter.Position());
       dataWriter.writeDWord(0);
-   
+
       parentRef = scope.moduleScope->messageNameReference;
    }
    //      else if (retVal.kind == okObject) {
@@ -7318,7 +7321,7 @@ void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
    else scope.raiseError(errInvalidOperation, body);
 
    codeScope.syncStack(&scope);
-   
+
 //   // COMPILER MAGIC : struct variables should be synchronized with the context field
 //   int index = scope.getAttribute(maYieldContext);
 //   int index2 = scope.getAttribute(maYieldLocals);
@@ -9696,7 +9699,7 @@ void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope
    copyingNode.appendNode(tempType, tempLocal);
 }
 
-void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType, 
+void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
    int tempLocal, bool localBoxingMode)
 {
    SNode parent = node;
@@ -11188,7 +11191,7 @@ void Compiler :: injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode
 
       IdentifierString className(scope.module->resolveReference(callTarget.argument));
       className.cut(getlength(className) - getlength(CLASSCLASS_POSTFIX), getlength(CLASSCLASS_POSTFIX));
-      
+
       callTarget.setArgument(scope.mapFullReference(className));
 
       assignNode = lxExpression;
@@ -11434,7 +11437,7 @@ void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, Id
    templateName.appendInt(paramCounter);*/
 
    ref_t ref = mapTemplateAttribute(node, scope);
-      
+
       //resolveImplicitIdentifier(scope, templateName.c_str(), false, false);
 
    ident_t refName = scope.module->resolveReference(ref);
@@ -11550,7 +11553,7 @@ void Compiler :: registerExtensionTemplate(SNode node, NamespaceScope& scope, re
 //   registerExtensionTemplate(node.findChild(lxClass), namespaceScope, extensionRef);
 //}
 
-ref_t Compiler :: generateExtensionTemplate(_ModuleScope& moduleScope, ref_t templateRef, size_t argumentLen, 
+ref_t Compiler :: generateExtensionTemplate(_ModuleScope& moduleScope, ref_t templateRef, size_t argumentLen,
    ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList)
 {
    List<SNode> parameters;
