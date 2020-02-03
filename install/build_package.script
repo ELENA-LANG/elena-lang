@@ -67,12 +67,12 @@ else
   exit 1
 fi
 
-mkdir -p /usr/share/elena
+mkdir -p /usr/share/elena/
 mkdir -p /etc/elena/
-mkdir -p /etc/elena/scripts
+mkdir -p /etc/elena/templates/
 
 cp ../bin/elc.config /etc/elena/
-cp -a ../bin/templates/*.config /etc/elena/templates/
+cp ../bin/templates/*.config /etc/elena/templates/
 cp ../dat/og/*.dat /usr/share/elena/
 cp ../dat/sg/syntax.dat /usr/share/elena
 
