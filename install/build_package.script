@@ -4,24 +4,30 @@ RELEASE=elena-5.0.1.i386-linux
 echo compiling data files
 
 ../bin/elena-og ../dat/og/rules.txt
-if [ $? -eq 0 ]
+ret=$?
+if [ $ret -eq 0 ]
 then
+  echo .
 else
   echo "Failure" >&2
   exit 1
 fi
 
 ../bin/elena-og s ../dat/og/source_rules.txt
-if [ $? -eq 0 ]
+ret=$?
+if [ $ret -eq 0 ]
 then
+  echo .
 else
   echo "Failure" >&2
   exit 1
 fi
 
 ../bin/elena-sg ../dat/sg/syntax.txt
-if [ $? -eq 0 ]
+ret=$?
+if [ $ret -eq 0 ]
 then
+  echo .
 else
   echo "Failure" >&2
   exit 1
@@ -30,8 +36,10 @@ fi
 echo compiling asm files
 
 ../bin/elena-asm2binx ../asm/x32/core.asm ../bin/x32
-if [ $? -eq 0 ]
+ret=$?
+if [ $ret -eq 0 ]
 then
+  echo .
 else
   echo "Failure" >&2
   exit 1
@@ -39,8 +47,10 @@ fi
 
 echo core_lnx
 bin/elena-asm2binx ../asm/x32/core_lnx.asm ../bin/x32
-if [ $? -eq 0 ]
+ret=$?
+if [ $ret -eq 0 ]
 then
+  echo .
 else
   echo "Failure" >&2
   exit 1
@@ -48,8 +58,10 @@ fi
 
 echo coreapi
 bin/elena-asm2binx ../asm/x32/coreapi.asm ..bin/x32
-if [ $? -eq 0 ]
+ret=$?
+if [ $ret -eq 0 ]
 then
+  echo .
 else
   echo "Failure" >&2
   exit 1
@@ -58,24 +70,30 @@ fi
 echo compiling lib50 files
 
 bin/elena-asm2binx ../src50/core/system.core_routines.esm ../lib50
-if [ $? -eq 0 ]
+ret=$?
+if [ $ret -eq 0 ]
 then
+  echo .
 else
   echo "Failure" >&2
   exit 1
 fi
 
 elena-lc ../src50/system/system.project
-if [ $? -eq 0 ]
+ret=$?
+if [ $ret -eq 0 ]
 then
+  echo .
 else
   echo "Failure" >&2
   exit 1
 fi
 
 elena-lc ../src50/extensions/extensions.project
-if [ $? -eq 0 ]
+ret=$?
+if [ $ret -eq 0 ]
 then
+  echo .
 else
   echo "Failure" >&2
   exit 1
