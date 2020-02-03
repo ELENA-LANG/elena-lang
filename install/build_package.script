@@ -67,6 +67,8 @@ else
   exit 1
 fi
 
+
+
 echo compiling lib50 files
 
 ../bin/elena-asm2binx ../src50/core/system.core_routines.esm ../lib50
@@ -125,9 +127,9 @@ mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textfiles/
 mkdir -p /etc/elena/templates
 mkdir -p /usr/share/elena
 
-mkdir /usr/share/elena/
-mkdir /etc/elena/
-mkdir /etc/elena/templates
+mkdir -p /usr/share/elena/
+mkdir -p /etc/elena/
+mkdir -p /etc/elena/templates
 
 cp ../bin/scripts/*.es /etc/elena/scripts
 cp ../dat/og/*.dat /usr/share/elena
