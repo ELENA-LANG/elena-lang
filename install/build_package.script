@@ -79,7 +79,7 @@ else
   exit 1
 fi
 
-../elena-lc ../src50/system/system.project
+../bin/elena-lc ../src50/system/system.project
 ret=$?
 if [ $ret -eq 0 ]
 then
