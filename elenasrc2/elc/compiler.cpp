@@ -1832,7 +1832,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
       }
-      else if (current == lxType) {
+      else if (current.compare(lxType, lxArrayType)) {
          outputRef = resolveTypeAttribute(current, scope, declarationMode);
       }
 
@@ -3872,14 +3872,14 @@ bool Compiler :: recognizeCompileTimeAssigning(SNode node, ClassScope& scope)
 
 void Compiler :: compileCompileTimeAssigning(SNode node, ClassScope& classScope)
 {
-   SNode targetNode = node.firstChild();
+   SNode targetNode = node.firstChild(lxTerminalMask);
    SNode assignNode = node.findChild(lxAssign);
    SNode sourceNode = assignNode.nextNode();
    bool accumulateMode = assignNode.argument == INVALID_REF;
 
    ExprScope scope(&classScope);
 
-   ObjectInfo target = mapObject(targetNode, scope, EAttr::eaNone);
+   ObjectInfo target = mapTerminal(targetNode, scope, EAttr::eaNone);
 
    // HOTFIX : recognize static field initializer
    if (target.kind == okStaticField || target.kind == okStaticConstantField || target.kind == okMetaField) {
@@ -7647,7 +7647,7 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
             initialize(scope, methodScope);
             if (methodScope.outputRef) {
                // HOTFIX : validate the output type once again in case it was declared later in the code
-               SNode typeNode = current.findChild(lxType);
+               SNode typeNode = current.findChild(lxType, lxArrayType);
                if (typeNode) {
                   resolveTypeAttribute(typeNode, scope, false);
                }
@@ -7816,7 +7816,7 @@ void Compiler :: validateClassFields(SNode node, ClassScope& scope)
 
    while (current != lxNone) {
       if (current == lxClassField) {
-         SNode typeNode = current.findChild(lxType);
+         SNode typeNode = current.findChild(lxType, lxArrayType);
          if (typeNode != lxNone) {
             resolveTypeAttribute(typeNode, scope, false);
          }
