@@ -116,7 +116,7 @@ namespace io
     
         string readLine()
         {
-            byte:127)buffer[127];
+            byte buffer[127];
             int length := 0;
             var output := emptyString;
             

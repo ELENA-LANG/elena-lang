@@ -65,6 +65,7 @@ void print(const char* msg, ...)
 }
 
 _ELC_::Project :: Project()
+   : _sources(true), _targets(true)
 {
    appPath.copy(DATA_PATH);
 

@@ -17,7 +17,7 @@ namespace io
         constructor openForAppend(path)
             <= new(path, "a");
     
-        constructor new(string path, string attributes
+        constructor new(string path, string attributes)
         {
             theHandle := extern libc.fopen
                           (path,

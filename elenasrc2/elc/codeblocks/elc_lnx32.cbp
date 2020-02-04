@@ -12,7 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
-				<Option parameters="-c/home/alex/elena-lang/examples/console/helloworld/u_helloworld.project" />
+				<Option parameters="/home/alex/elena-lang/src50/system/system.project" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
