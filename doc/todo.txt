@@ -21,6 +21,7 @@ In development:
               xdev - linux32
                 * (re)implement internal String.read<int,ref<byte>>
                 * (re)implement UnsafePointer.cast<string>
+                * (re)implement FileStrean.set length<int>
                 * compile hello world
 
               xdev elena50

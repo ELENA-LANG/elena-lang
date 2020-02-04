@@ -3,6 +3,10 @@ namespace io
 
     import system'text;
 
+    const int SEEK_SET = 0;
+    const int SEEK_CUR = 1;
+    const int SEEK_END = 2;
+
     // --- FileStream ---    
     public struct FileStream : Stream
     {
@@ -47,34 +51,50 @@ namespace io
             retVal := n
         }
     
-    //    #method readIndex &vint:anIndex
-    //    [
-    //        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
-    //            &handle : theHandle
-    //            &int    : 0
-    //            &int    : 0
-    //            &int    : $FILE_CURRENT.
-    //            
-    //        anIndex << ret.
-    //    ] 
-    //    
-    //    #method writeIndex &int:anIndex
-    //    [
-    //        #var(type:int) ret := system'external'KERNEL32 SetFilePointer
-    //            &handle : theHandle
-    //            &int    : anIndex
-    //            &int    : 0
-    //            &int    : $FILE_BEGIN.
-    //    ] 
-    //    
-    //    #method readLength &vint:aLength 
-    //    [ 
-    //        #var(type:int)n := system'external'KERNEL32 GetFileSize
-    //            &handle : theHandle
-    //            &int:0.
-    //    
-    //        aLength << n. 
-    //    ]
+        int Index
+        {    
+            get()
+            {
+                int ret := extern libc.lseek(
+                    theHandle,
+                    0,
+                    SEEK_CUR);
+                    
+                ^ ret
+            } 
+            
+            set(int index)
+            {
+                int ret := extern libc.lseek(
+                    theHandle,
+                    index,
+                    SEEK_SET);
+            }
+        }
+        
+        int Length
+        {
+            get() 
+            { 
+                int ret := extern libc.lseek(
+                    theHandle,
+                    0,
+                    SEEK_END);
+                    
+                ^ ret
+            }
+            
+            set(int length)
+            {
+//                int pos := self.Index;
+//                
+//                self.Index := length;
+//                extern KERNEL32.SetEndOfFile(theHandle);
+//                
+//                if(length > pos)
+//                    { self.Index := pos }
+            }
+        }
         
         close()
         {
