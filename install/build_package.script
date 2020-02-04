@@ -145,11 +145,11 @@ cp ../dat/sg/syntax.dat ./$RELEASE/usr/share/elena
 
 cp -r /usr/lib/elena/lib50 ./$RELEASE/usr/lib/elena/
 
-cp ../examples/console/helloworld\*.l ./$RELEASE/usr/elena-lang/examples/console/helloworld/
-cp ../examples/console/helloworld\*.prj ./$RELEASE/usr/elena-lang/examples/console/helloworld/
+cp ../examples/console/helloworld/*.l ./$RELEASE/usr/elena-lang/examples/console/helloworld/
+cp ../examples/console/helloworld/*.prj ./$RELEASE/usr/elena-lang/examples/console/helloworld/
 
-cp ../examples/console/sum\*.l ./$RELEASE/usr/elena-lang/examples/console/sum/
-cp ../examples/console/sum\*.prj ./$RELEASE/usr/elena-lang/examples/console/sum/
+cp ../examples/console/sum/*.l ./$RELEASE/usr/elena-lang/examples/console/sum/
+cp ../examples/console/sum/*.prj ./$RELEASE/usr/elena-lang/examples/console/sum/
 
 cp ../examples/console/words/*.l ./$RELEASE/usr/elena-lang/examples/console/words/
 cp ../examples/console/words/*.prj ./$RELEASE/usr/elena-lang/examples/console/words/
@@ -163,8 +163,8 @@ cp ../examples/console/bsort/*.prj ./$RELEASE/usr/elena-lang/examples/console/bs
 cp ../examples/console/binary/*.l ./$RELEASE/usr/elena-lang/examples/console/binary/
 cp ../examples/console/binary/*.prj ./$RELEASE/usr/elena-lang/examples/console/binary/
 
-cp ..\examples\console\replace\*.l %~dp0\output\examples\console\replace
-cp ..\examples\console\replace\*.prj %~dp0\output\examples\console\replace
+cp ../examples/console/replace/*.l ./$RELEASE/usr/elena-lang/examples/console/replace
+cp ../examples/console/replace/*.prj ./$RELEASE/usr/elena-lang/examples/console/replace
 
 cp ../examples/console/goods/*.l ./$RELEASE/usr/elena-lang/examples/console/goods/
 cp ../examples/console/goods/*.prj ./$RELEASE/usr/elena-lang/examples/console/goods/
