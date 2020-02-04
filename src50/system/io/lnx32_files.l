@@ -304,4 +304,8 @@ namespace io
 //           ^ ret != 0
 //        }
     }
+
+    singleton directoryControl
+    {
+    }
 }

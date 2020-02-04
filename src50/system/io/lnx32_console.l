@@ -94,7 +94,8 @@ namespace io
     
         read(byte[] buffer, ref int retVal)
         {
-            for (int i := 0, i < retVal, i += 1)
+            int i;
+            for (i := 0, i < retVal, i += 1)
             {
                 self.read(ref byte ch);
     
@@ -137,7 +138,7 @@ namespace io
                 
                 var temp := String.fromByteArray(0, length, buffer);
                 
-                output := output + aTemp;
+                output := output + temp;
             };
     
             ^ output

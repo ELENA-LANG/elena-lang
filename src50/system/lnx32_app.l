@@ -4,7 +4,7 @@ singleton CommandLineFactory
 {
     string load()
     {
-        byte buf[256];
+/*        byte buf[256];
         int len := 0;
         int argc := extern core_getargc;
 
@@ -15,7 +15,7 @@ singleton CommandLineFactory
             args[i] := String.fromByteArray(0, len, buf)
         };
 
-        ^ args
+        ^ args*/
     }
 }
 

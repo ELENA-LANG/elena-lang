@@ -80,7 +80,7 @@ cp ../dat/sg/syntax.dat /usr/share/elena
 
 echo compiling lib50 files
 
-../bin/elena-asm2binx ../src50/core/system.core_routines.esm ../lib50
+../bin/elena-asm2binx ../src50/core/system.core_routines.esm /usr/lib/elena/lib50
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -89,8 +89,6 @@ else
   echo "Failure" >&2
   exit 1
 fi
-
-cp ../lib50/system.core_routines.nl /usr/lib/elena/lib50
 
 ../bin/elena-lc ../src50/system/system.project
 ret=$?
@@ -101,8 +99,6 @@ else
   echo "Failure" >&2
   exit 1
 fi
-
-cp ../lib50/system.nl /usr/lib/elena/lib50
 
 ../elena-lc ../src50/extensions/extensions.project
 ret=$?
@@ -147,7 +143,7 @@ cp ../bin/scripts/*.es ./$RELEASE/etc/elena/scripts
 cp ../dat/og/*.dat ./$RELEASE/usr/share/elena
 cp ../dat/sg/syntax.dat ./$RELEASE/usr/share/elena
 
-cp -r ../lib50 ./$RELEASE/usr/lib/elena/
+cp -r /usr/lib/elena/lib50 ./$RELEASE/usr/lib/elena/
 
 cp ../examples/console/helloworld\*.l ./$RELEASE/usr/elena-lang/examples/console/helloworld/
 cp ../examples/console/helloworld\*.prj ./$RELEASE/usr/elena-lang/examples/console/helloworld/

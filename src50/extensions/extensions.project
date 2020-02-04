@@ -4,7 +4,7 @@
         <namespace>extensions</namespace>
         <debuginfo>-1</debuginfo>
         <options>-w3</options>
-        <output>../lib50</output>
+        <output>/usr/lib/elena/lib50</output>
     </project>
     <manifest>
         <name>ELENA Extension Library</name>
