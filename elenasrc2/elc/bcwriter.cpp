@@ -6246,6 +6246,8 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
    SNode finallyNode = node.findChild(lxFinalblock);
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone) {
+      scope.clear();
+
       if (first) {
          if (current == lxCode) {
             generateCodeBlock(tape, current, scope);
@@ -6254,6 +6256,8 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
 
          endTry(tape);
          if (finallyNode != lxNone) {
+            scope.clear();
+
             // generate finally
             pushObject(tape, lxResult, 0, scope, 0);
             generateCodeBlock(tape, finallyNode, scope);
@@ -6262,6 +6266,8 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
          declareSafeCatch(tape, finallyNode, retLabel, scope);
          doCatch(tape);
          if (finallyNode != lxNone) {
+            scope.clear();
+
             // generate finally
             pushObject(tape, lxResult, 0, scope, 0);
             generateCodeBlock(tape, finallyNode, scope);
@@ -6278,6 +6284,8 @@ void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, 
    }
 
    endSafeCatch(tape);
+
+   scope.clear();
 }
 
 void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
@@ -6288,6 +6296,8 @@ void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node, Flo
 
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone) {
+      scope.clear();
+
       generateObject(tape, current, scope);
 
       if (first) {
@@ -6299,18 +6309,19 @@ void ByteCodeWriter :: generateAlt(CommandTape& tape, SyntaxTree::Node node, Flo
    }
 
    endAlt(tape);
+   scope.clear();
 }
 
 void ByteCodeWriter :: generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
-   // HOTFIX : clear the previous register value - it doesn't work for the second loop
-   scope.clear();
-
    declareLoop(tape, true);
 
    SNode current = node.firstChild();
    bool repeatMode = true;
    while (current != lxNone) {
+      // HOTFIX : clear the previous register value - it doesn't work for the second loop
+      scope.clear();
+
       if (current == lxElse) {
          jumpIfEqual(tape, current.argument/*, true*/);
 
@@ -6408,6 +6419,7 @@ void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node nod
    }
 
    endSwitchBlock(tape);
+   scope.clear();
 }
 
 void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
@@ -6424,6 +6436,8 @@ void ByteCodeWriter :: generateBranching(CommandTape& tape, SyntaxTree::Node nod
 
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone) {
+      scope.clear();
+
       switch (current.type) {
          case lxIf:
 //         case lxIfN:

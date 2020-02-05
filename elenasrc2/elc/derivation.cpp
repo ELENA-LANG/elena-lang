@@ -2102,12 +2102,12 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
          generateCollectionTree(writer, current, derivationScope);
          first = false;
          break;
-//      case lxClosureExpr:
+      case lxClosureExpr:
 //      case lxInlineClosure:
-//         // COMPILER MAGIC : recognize the closure without parameters, 
-//         //                  the one with parameters should be handled in default case
-//         generateClosureTree(writer, current, derivationScope);
-//         break;
+         // COMPILER MAGIC : recognize the closure without parameters, 
+         //                  the one with parameters should be handled in default case
+         generateClosureTree(writer, current, derivationScope);
+         break;
       case lxInteger:
       case lxHexInteger:
       case lxLiteral:

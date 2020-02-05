@@ -6,17 +6,14 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               xdev elena50
-                * goods 
-
-                * properties - multi-level
-                * accumulating static fields
+                * review Control Flow
+                * support if(a) b, else c; (?)
 
               xdev - linux32
                 * compile hello world
 
               xdev elena50
                 * readonly fields
-                * support if(a) b else c; (?)
                 * closures: unboxing : stack-allocated
                 * closures: presaved arguments
                 * #190 : Closure : auto boxing / unboxing local variables 
@@ -223,6 +220,7 @@ In development:
                 * fields with reference name
                 * reference identifier name?
                 * should extensions hasan access to the fields / static fields / class constants?
+                * properties in properties
 
               dev1
                 * move all description to meta info using descr inline template
