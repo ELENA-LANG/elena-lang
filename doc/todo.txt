@@ -5,10 +5,6 @@ In development:
                 * mov GC to C code
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
-              xdev elena50
-                * review Control Flow
-                * support if(a) b, else c; (?)
-
               xdev - linux32
                 * compile hello world
 
