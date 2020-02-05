@@ -123,7 +123,7 @@ public:
       okReadOnlyField,                // param - reference, param - field offset
       okStaticField,                  // param - reference
       okStaticConstantField,          // param - reference
-//      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
+      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
       okFieldAddress,                 // param - field offset
       okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
       okOuter,                        // param - field offset

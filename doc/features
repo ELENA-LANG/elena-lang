@@ -19,6 +19,8 @@ Declarations
         - named : call the default constructor
         - anonymos / conversion - do not call default constructor
         - resending : to another constructor / to parent one
+    Static Methods
+      * inheritable : cannot be overriden, accessible in all parent class
     Methods
       * private / protected / internal ones
       * Multimethods

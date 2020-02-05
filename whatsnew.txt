@@ -14,6 +14,7 @@
 [+] #492 : Yield statement 
 [+] #380 : Run-time extension dispatching 
 [+] #494 : Method result multi-dispatching 
+[+] #495 : Inheritable static methods 
 
 [ELC]
 [!] deep code refactoring - treamlining code generation, increasing 
