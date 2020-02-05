@@ -6,8 +6,6 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               xdev elena50
-                * inheritable static methods
-                * const fields should be accessible in static methods
                 * goods 
 
                 * properties - multi-level
@@ -200,7 +198,11 @@ In development:
                 * warn if the extension method is called from itself (short-cutting)
                 * optimization : do not call idle method
                 * static methods : multimethods
+
+
+              dev50 - #495 Inheritable static methods
                 * sealed static methods : multimethods
+		* close issue 
 
               dev50 - new features
                 * resend to constant - no need for frame

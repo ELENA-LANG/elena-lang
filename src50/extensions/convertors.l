@@ -58,28 +58,28 @@ singleton stringExConvertor
         ^ output
     }
 
-//    string convert(Enumerator en)
-//    {
-//        auto output := new TextBuilder();
-//        while(en.next())
-//        {
-//            output.write(en.get().toString());
-//            output.write:",";
-//        };
-//
-//        int length := output.Length;
-//        if (0 < length)
-//            { output.Length := -1 + length };
+    string convert(Enumerator en)
+    {
+        auto output := new TextBuilder();
+        while(en.next())
+        {
+            output.write(en.get().toString());
+            output.write:",";
+        };
+
+        int length := output.Length;
+        if (0 < length)
+            { output.Length := -1 + length };
+        
+        ^ output
+    }
+
+//    literal convert datetime:aValue = aValue literal.
 //        
-//        ^ output
-//    }
-//
-////    literal convert datetime:aValue = aValue literal.
-////        
-////    literal convert timestamp:aValue = aValue literal.
-//
-//    string convert(Enumerable o)
-//        <= convert(o.enumerator());
+//    literal convert timestamp:aValue = aValue literal.
+
+    string convert(Enumerable o)
+        <= convert(o.enumerator());
 
     string convert(Indexable o)
         <= convert(o.indexer());
@@ -425,25 +425,25 @@ public extension convertorOp
 //    string toShortTimeString()
 //        = cast TimeStruct(self).toShortTime();
 //}
-//
-//// --- enumerableConvertor ---
-//
-//singleton enumerableConvertor
-//{
-//    Enumerable convert(Enumerable o)
-//        = o;
-//    
-//    Enumerable convert(o)
-//        = new Enumerable::{ Enumerator enumerator() = o.enumerator(); };
-//}
-//
-//// --- enumerableExOp ---
-//
-//public extension enumerableExOp
-//{
-//    Enumerable asEnumerable()
-//        = enumerableConvertor.convert(self);
-//}
+
+// --- enumerableConvertor ---
+
+singleton enumerableConvertor
+{
+    Enumerable convert(Enumerable o)
+        = o;
+    
+    Enumerable convert(o)
+        = new Enumerable::{ Enumerator enumerator() = o.enumerator(); };
+}
+
+// --- enumerableExOp ---
+
+public extension enumerableExOp
+{
+    Enumerable asEnumerable()
+        = enumerableConvertor.convert(self);
+}
 
 // --- fileExOp ---
 
