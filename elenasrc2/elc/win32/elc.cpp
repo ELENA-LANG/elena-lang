@@ -79,7 +79,6 @@ public:
       // compile TLS section if it is a multi-threading app
       if (project->IntSetting(_ELENA_::opThreadMax) > 1) {
          _linker->prepareTLS(image, compiler->allocateTLSVariable(loader), tls_directory);
-
       }
       else compiler->allocateTLSVariable(loader);
 

@@ -24,6 +24,25 @@ class ImageHelper : public _ELENA_::ExecutableImage::_Helper
 {
    virtual void beforeLoad(_ELENA_::_JITCompiler* compiler, _ELENA_::ExecutableImage& image)
    {
+      _ELENA_::Project* project = image.getProject();
+      _ELENA_::_JITLoader* loader = dynamic_cast<_ELENA_::_JITLoader*>(&image);
+
+      // compile TLS section if it is a multi-threading app
+      /*if (project->IntSetting(_ELENA_::opThreadMax) > 1) {
+         _linker->prepareTLS(image, compiler->allocateTLSVariable(loader), tls_directory);
+      }
+      else */compiler->allocateTLSVariable(loader);
+
+      // load GC thread table, should be allocated before static roots
+      // thread table contains TLS reference
+      compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
+
+      //if (_vmMode) {
+      //   _ELENA_::MemoryDump tape;
+      //   createTape(tape, project, _consoleMode);
+
+      //   compiler->allocateVMTape(loader, tape.get(0), tape.Length());
+      //}
    }
 
    virtual void afterLoad(_ELENA_::ExecutableImage& image)
