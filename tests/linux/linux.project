@@ -1,6 +1,7 @@
 <configuration>
   <project>
-    <template>console</template> 
+    <template>console</template>
+    <executable>test</executable> 
   </project>
   <files>
      <module>
