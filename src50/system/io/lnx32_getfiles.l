@@ -2,7 +2,7 @@ namespace io
 {
 
 //    import system'text;
-//    import system'collections;
+    import system'collections;
 //    
 //    const int INVALID_HANDLE_VALUE = -1;
 //    const int ERROR_NO_MORE_FILES = 012h;

@@ -1,8 +1,10 @@
-[project]
-template=console
-executable=test
-namespace=test
-debuginfo=-1
-
-[files]
-linux.l
+<configuration>
+  <project>
+    <template>console</template> 
+  </project>
+  <files>
+     <module>
+        <include>linux.l</include>
+     </module>
+  </files>
+</configuration>
