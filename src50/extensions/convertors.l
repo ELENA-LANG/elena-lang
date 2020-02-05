@@ -388,13 +388,13 @@ public extension convertorOp
 //
 //    uint toUInt()
 //        = uintConvertor.convert(self);
-//        
-//    int toInt()
-//        = intConvertor.convert(self);
-//        
-//    int toInt(IntNumber radix)
-//        = intConvertor.convert(self, radix);
-//        
+        
+    int toInt()
+        = intConvertor.convert(self);
+        
+    int toInt(IntNumber radix)
+        = intConvertor.convert(self, radix);
+        
 //    int toHexInt()
 //        = intConvertor.convert(self, 16);
 //

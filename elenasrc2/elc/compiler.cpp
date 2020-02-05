@@ -830,7 +830,6 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
    this->allocated1 = this->reserved1 = 0;
    this->allocated2 = this->reserved2 = 0;
    this->genericMethod = false;
-//   this->ignoreDuplicates = false;
 //   this->yieldMethod = false;
 }
 
@@ -840,7 +839,6 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
    this->allocated1 = this->reserved1 = 0;
    this->allocated2 = this->reserved2 = 0;
    this->genericMethod = parent->generic;
-//   this->ignoreDuplicates = false;
 //   this->yieldMethod = parent->yieldMethod;
 }
 
@@ -853,7 +851,6 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->reserved2 = parent->reserved2;
    this->genericMethod = parent->genericMethod;
 //   this->yieldMethod = parent->yieldMethod;
-//   this->ignoreDuplicates = false;
 }
 
 //ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
@@ -5266,9 +5263,6 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
 
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr);
-
-//   // HOTFIX:to ignore duplicates in some code templates
-//   scope.ignoreDuplicates = false;
 
    return retVal;
 }

@@ -136,12 +136,12 @@ public interface<T>
     
 // --- for statement ---
 
-//public for<loop_body>(step_expr, cond_expr)
-//{
-//    step_expr;
-//    
-//    (__loop: cast bool(cond_expr) ? { loop_body; __ignore_duplicates step_expr })
-//}
+#declare for<step_expr, cond_expr>(loop_body)
+{
+    step_expr;
+    
+    __loop: cast bool(cond_expr) ? { loop_body; __ignore_duplicates step_expr }
+}
 
 #declare for<init_expr, cond_expr, step_expr>(loop_body)
 {
@@ -158,23 +158,22 @@ public interface<T>
 //    
 //    (__loop: cast bool(cond_expr) ? { loop_body; step1_expr; step2_expr })
 //}
-//
-//// --- doUntil statement ---
-//
-//public do<loop_body,cond_expr>:until()
-//{
-//    loop_body;
-//    
-//    (__loop: cast bool(cond_expr) ! { loop_body })
-//}
-//
-//
-//public do<loop_body,cond_expr>:while()
-//{
-//    loop_body;
-//    
-//    (__loop: cast bool(cond_expr) ? { loop_body })
-//}
+
+// --- doUntil statement ---
+
+#declare do:until(loop_body,cond_expr)
+{
+    loop_body;
+    
+    __loop: cast bool(cond_expr) ! { loop_body }
+}
+
+#declare do:while(loop_body,cond_expr)
+{
+    loop_body;
+    
+    __loop: cast bool(cond_expr) ? { loop_body }
+}
 
 // -- try-catch statement ---
 #declare try:catch(try_block,catch_block)
