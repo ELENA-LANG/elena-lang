@@ -6401,6 +6401,8 @@ void ByteCodeWriter :: generateSwitching(CommandTape& tape, SyntaxTree::Node nod
 
    SNode current = node.firstChild();
    while (current != lxNone) {
+      scope.clear();
+
       if (current == lxAssigning) {
          generateObject(tape, current, scope);
       }
@@ -6842,12 +6844,12 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //         jumpIfNotEqual(tape, node.argument, true);
 //         generateCodeBlock(tape, node);
 //         break;
-//      case lxElse:
-//         if (node.argument != 0)
-//            jumpIfEqual(tape, node.argument, true);
-//
-//         generateCodeBlock(tape, node);
-//         break;
+      case lxElse:
+         if (node.argument != 0)
+            jumpIfEqual(tape, node.argument/*, true*/);
+
+         generateCodeBlock(tape, node, scope);
+         break;
       case lxCreatingClass:
       case lxCreatingStruct:
          generateCreating(tape, node, scope);

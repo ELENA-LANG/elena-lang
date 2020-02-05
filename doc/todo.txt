@@ -1,18 +1,19 @@
 ------                                 
 In development:
 ------         
-              xdev - refactoring
-                * mov GC to C code
-                * get rid of EXPAND_HEAP, NEW_HEAP
-
               xdev - linux32
-                * compile hello world
+                * compile empty program
 
               xdev elena50
+                * call if not nil
+                * dtcalc
                 * readonly fields
                 * closures: unboxing : stack-allocated
                 * closures: presaved arguments
                 * #190 : Closure : auto boxing / unboxing local variables 
+
+              xdev - linux32
+                * compile hello world
 
               xdev elena50
                 * closures: unboxing : fields
@@ -24,7 +25,14 @@ In development:
 
                 * type should be only one in the token expression - test: int long r := 0;
 
-                * variadic arguments : unboxing
+                * variadic arguments : unboxing, boxing, direct use
+
+              xdev - refactoring
+                * mov GC to C code
+                * get rid of EXPAND_HEAP, NEW_HEAP
+
+              xdev elena50
+                * samples
 
                 * multi-return methods : properties
                 * multi-return methods : optimize double assigning
@@ -33,8 +41,6 @@ In development:
                 * using embeddable methods instead of normal one for method arguments
                 * auto determining the closure return value for closure templates
                 * auto returning
-
-                * samples
 
                 * stack allocated class and default constructor
                 * extension to read package info
