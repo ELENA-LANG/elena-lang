@@ -1834,7 +1834,7 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          explicitMode = true;
          return true;
       case V_STATIC:
-         attrValue = (tpStatic | tpSealed);
+         attrValue = tpStatic;
          return true;
 ////      case V_SET:
 ////         attrValue = tpAccessor;

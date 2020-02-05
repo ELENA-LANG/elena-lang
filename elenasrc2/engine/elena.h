@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaH
@@ -533,7 +533,8 @@ enum MethodAttribute
    maYieldContext       = 0x00F,   
    maYieldLocals        = 0x010,
    maYieldContextLength = 0x011,
-   maYieldLocalLength   = 0x011,
+   maYieldLocalLength   = 0x012,
+   maStaticInherited    = 0x213,
    //   maYieldPreallocated  = 0x011,
 };
 

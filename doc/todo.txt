@@ -5,28 +5,11 @@ In development:
                 * mov GC to C code
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
-              xdev - amd64
-                * compile elenart64.dll
-
               xdev - linux32
-                * get rid of release.script
-                * compile lib50
-
-              xdev elena50
-                * const fields
-                * goods 
-                * properties - multi-level
-                * accumulating static fields
-
-              xdev - linux32
-                * (re)implement internal String.read<int,ref<byte>>
-                * (re)implement UnsafePointer.cast<string>
-                * (re)implement FileStrean.set length<int>
                 * compile hello world
 
               xdev elena50
                 * readonly fields
-                * support if(a) b else c; (?)
                 * closures: unboxing : stack-allocated
                 * closures: presaved arguments
                 * #190 : Closure : auto boxing / unboxing local variables 
@@ -100,6 +83,7 @@ In development:
                 * inherit identifier, reference, global, template
 
                 * implicit / explicit namespaces, public / internal / private namespaces --- 
+                * Exception.raise sealed static method
 
                 * uncomment DerivationWriter :: mapAttribute
                 * uncomment - resolveBytecodeSection
@@ -132,6 +116,11 @@ In development:
                 * external code : long, real ret value
                 * uncomment all code in LIB50
                 * api doc - with description
+
+              xdev - linux32
+                * (re)implement internal String.read<int,ref<byte>>
+                * (re)implement UnsafePointer.cast<string>
+                * (re)implement FileStrean.set length<int>
 
               xdev debugger
                 * step over last statement (without terminator)
@@ -201,6 +190,12 @@ In development:
                 * optimize pi sample ( < 5s )
                 * warn if the extension method is called from itself (short-cutting)
                 * optimization : do not call idle method
+                * static methods : multimethods
+
+
+              dev50 - #495 Inheritable static methods
+                * sealed static methods : multimethods
+		* close issue 
 
               dev50 - new features
                 * resend to constant - no need for frame
@@ -220,6 +215,8 @@ In development:
                 * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
                 * fields with reference name
                 * reference identifier name?
+                * should extensions hasan access to the fields / static fields / class constants?
+                * properties in properties
 
               dev1
                 * move all description to meta info using descr inline template
@@ -276,6 +273,9 @@ In development:
                 * template extensions
                 * missing algorithms (template extensions)
                 * missing system'routines'stex
+
+              xdev - amd64
+                * compile elenart64.dll
 
 ------                                                           
 Pipeline:
