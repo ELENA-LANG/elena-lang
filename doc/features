@@ -33,11 +33,11 @@ Declarations
       * explicit
       * abstract
     Fields
-      * fixed-size arrays
+      * fixed-size arrays +
       * realonly fields + 
-      * constant fields
-      * constant accumulating fields
-      * static fields
+      * constant fields +
+      * constant accumulating fields +
+      * static fields +
   Closures
   Nested classes
     Creating

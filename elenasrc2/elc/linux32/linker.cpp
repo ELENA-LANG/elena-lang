@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Linux32
-//                                              (C)2015-2019, by Alexei Rakov
+//                                              (C)2015-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -106,16 +106,19 @@ void Linker32 :: mapImage(ImageInfo& info)
       info.ph_length += 2; // if import table is not empty, append interpreter / dynamic
    }
 
+   // define section sizes
+   int adataSize = align(getSize(info.image->getADataSection()), 4);
+   int mdataSize = align(getSize(info.image->getMDataSection()), 4);
+   int rdataSize = align(getSize(info.image->getRDataSection()), 4);
+   int importSize = getSize(info.image->getImportSection());
+   int statSize = align(getSize(info.image->getStatSection()), 4);
+   int bssSize = align(getSize(info.image->getBSSSection()), 4);
+
    info.headerSize = align(HEADER_SIZE, FILE_ALIGNMENT);
    info.textSize = align(getSize(info.image->getTextSection()), FILE_ALIGNMENT);
-
-   info.rdataSize = align(getSize(info.image->getADataSection()), 4);
-   info.rdataSize += align(getSize(info.image->getMDataSection()), 4);
-   info.rdataSize = align(info.rdataSize + getSize(info.image->getRDataSection()), FILE_ALIGNMENT);
-
-   info.importSize = align(getSize(info.image->getImportSection()), FILE_ALIGNMENT);
-   info.bssSize = align(getSize(info.image->getStatSection()), 4);
-   info.bssSize = align(info.bssSize + getSize(info.image->getBSSSection()), FILE_ALIGNMENT);
+   info.rdataSize = align(adataSize + mdataSize + rdataSize, FILE_ALIGNMENT);
+   info.importSize = align(importSize, FILE_ALIGNMENT);
+   info.bssSize = align(statSize + bssSize, FILE_ALIGNMENT);
 
    // text segment
    info.map.code = info.headerSize;               // code section should always be first
@@ -125,17 +128,17 @@ void Linker32 :: mapImage(ImageInfo& info)
    // due to loader requirement, adjust offset
    info.map.adata += ((info.headerSize + info.textSize) & (alignment - 1));
 
-   info.map.mdata = align(info.map.adata + getSize(info.image->getADataSection()), 4);
-   info.map.rdata = align(info.map.mdata + getSize(info.image->getMDataSection()), 4);
+   info.map.mdata = info.map.adata + adataSize;
+   info.map.rdata = info.map.mdata + mdataSize;
 
    // data segment
-   info.map.import = align(info.map.rdata + getSize(info.image->getMDataSection()), alignment);
+   info.map.import = align(info.map.rdata + rdataSize, alignment);
    // due to loader requirement, adjust offset
    if (info.importSize != 0)
       info.map.import += ((info.headerSize + info.textSize + info.rdataSize) & (alignment - 1));
 
-   info.map.stat = align(info.map.import + getSize(info.image->getImportSection()), FILE_ALIGNMENT);
-   info.map.bss = align(info.map.stat + getSize(info.image->getStatSection()), FILE_ALIGNMENT);
+   info.map.stat = align(info.map.import + importSize, FILE_ALIGNMENT);
+   info.map.bss = info.map.stat + statSize;
 
 /*
    info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
@@ -173,6 +176,9 @@ int Linker32 :: fillImportTable(ImageInfo& info)
 
 void Linker32 :: createImportData(ImageInfo& info)
 {
+   int adataSize = align(getSize(info.image->getADataSection()), 4);
+   int mdataSize = align(getSize(info.image->getMDataSection()), 4);
+
    size_t count = fillImportTable(info);
    if (count == 0)
       return;
@@ -183,7 +189,8 @@ void Linker32 :: createImportData(ImageInfo& info)
    MemoryWriter dynamicWriter(info.image->getRDataSection());
    dynamicWriter.align(FILE_ALIGNMENT, 0);
 
-   info.dynamic = dynamicWriter.Position();
+   // HOTFIX : rdata is located after adata and mdta
+   info.dynamic = dynamicWriter.Position() + adataSize + mdataSize;
 
    // reference to GOT
    ref_t importRef = (count + 1) | mskImportRef;
@@ -307,7 +314,8 @@ void Linker32 :: createImportData(ImageInfo& info)
    // write interpreter path
    dynamicWriter.align(FILE_ALIGNMENT, 0);
 
-   info.interpreter = dynamicWriter.Position();
+   // HOTFIX : rdata is located after adata and mdta
+   info.interpreter = dynamicWriter.Position() + adataSize + mdataSize;
    dynamicWriter.writeLiteral(INTERPRETER_PATH, getlength(INTERPRETER_PATH) + 1);
 }
 
