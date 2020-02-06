@@ -77,7 +77,10 @@ ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
    if ((key & mskImageMask)==mskImportRef) {
       int base = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
 
-      return base + ((ImageBaseMap*)map)->import + disp;
+      int vv  = ((ImageBaseMap*)map)->import;
+      int v = ((ImageBaseMap*)map)->import + disp;
+
+     return /*base + */((ImageBaseMap*)map)->import + disp;
    }
    else if ((key & mskImageMask)==mskRDataRef) {
       int base = ((ImageBaseMap*)map)->base + (key & ~mskAnyRef);
@@ -107,24 +110,25 @@ void Linker32 :: mapImage(ImageInfo& info)
    }
 
    // define section sizes
-   int adataSize = align(getSize(info.image->getADataSection()), 4);
-   int mdataSize = align(getSize(info.image->getMDataSection()), 4);
-   int rdataSize = align(getSize(info.image->getRDataSection()), 4);
-   int importSize = getSize(info.image->getImportSection());
-   int statSize = align(getSize(info.image->getStatSection()), 4);
-   int bssSize = align(getSize(info.image->getBSSSection()), 4);
+   int textSize = align(getSize(info.image->getTextSection()), FILE_ALIGNMENT);
+   int adataSize = align(getSize(info.image->getADataSection()), FILE_ALIGNMENT);
+   int mdataSize = align(getSize(info.image->getMDataSection()), FILE_ALIGNMENT);
+   int rdataSize = align(getSize(info.image->getRDataSection()), FILE_ALIGNMENT);
+   int importSize = align(getSize(info.image->getImportSection()), FILE_ALIGNMENT);
+   int statSize = align(getSize(info.image->getStatSection()), FILE_ALIGNMENT);
+   int bssSize = align(getSize(info.image->getBSSSection()), FILE_ALIGNMENT);
 
    info.headerSize = align(HEADER_SIZE, FILE_ALIGNMENT);
-   info.textSize = align(getSize(info.image->getTextSection()), FILE_ALIGNMENT);
-   info.rdataSize = align(adataSize + mdataSize + rdataSize, FILE_ALIGNMENT);
-   info.importSize = align(importSize, FILE_ALIGNMENT);
-   info.bssSize = align(statSize + bssSize, FILE_ALIGNMENT);
+   info.textSize = textSize;
+   info.rdataSize = adataSize + mdataSize + rdataSize;
+   info.importSize = importSize;
+   info.bssSize = statSize + bssSize;
 
    // text segment
    info.map.code = info.headerSize;               // code section should always be first
 
    // rodata segment
-   info.map.adata = align(info.map.code + getSize(info.image->getTextSection()), alignment);
+   info.map.adata = align(info.map.code + info.textSize, alignment);
    // due to loader requirement, adjust offset
    info.map.adata += ((info.headerSize + info.textSize) & (alignment - 1));
 
@@ -135,10 +139,17 @@ void Linker32 :: mapImage(ImageInfo& info)
    info.map.import = align(info.map.rdata + rdataSize, alignment);
    // due to loader requirement, adjust offset
    if (info.importSize != 0)
-      info.map.import += ((info.headerSize + info.textSize + info.rdataSize) & (alignment - 1));
+      info.map.import += ((info.headerSize + textSize + adataSize + mdataSize + rdataSize) & (alignment - 1));
 
-   info.map.stat = align(info.map.import + importSize, FILE_ALIGNMENT);
+   info.map.stat = info.map.import + importSize;
    info.map.bss = info.map.stat + statSize;
+
+   if (info.interpreter)
+      info.interpreterOffset = info.headerSize + textSize + adataSize + mdataSize + info.interpreter;
+
+   if (info.dynamic) {
+      info.dynamicOffset = info.headerSize + textSize + adataSize + mdataSize + info.dynamic;
+   }
 
 /*
    info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
@@ -176,9 +187,6 @@ int Linker32 :: fillImportTable(ImageInfo& info)
 
 void Linker32 :: createImportData(ImageInfo& info)
 {
-   int adataSize = align(getSize(info.image->getADataSection()), 4);
-   int mdataSize = align(getSize(info.image->getMDataSection()), 4);
-
    size_t count = fillImportTable(info);
    if (count == 0)
       return;
@@ -189,8 +197,13 @@ void Linker32 :: createImportData(ImageInfo& info)
    MemoryWriter dynamicWriter(info.image->getRDataSection());
    dynamicWriter.align(FILE_ALIGNMENT, 0);
 
-   // HOTFIX : rdata is located after adata and mdta
-   info.dynamic = dynamicWriter.Position() + adataSize + mdataSize;
+   // reserve place for dynamic section
+   info.dynamic = dynamicWriter.Position();
+   dynamicWriter.writeBytes(0, 8 * 12);
+   dynamicWriter.writeBytes(0, 8 * info.libraries.Count());
+   info.dynamicSize = dynamicWriter.Position() - info.dynamic;
+
+   dynamicWriter.seek(info.dynamic);
 
    // reference to GOT
    ref_t importRef = (count + 1) | mskImportRef;
@@ -218,7 +231,7 @@ void Linker32 :: createImportData(ImageInfo& info)
    symtabWriter.seek(symtabOffset + 16);
 
    // string table
-   MemoryWriter strWriter(import);
+   MemoryWriter strWriter(info.image->getRDataSection());
    int strOffset = strWriter.Position();
    strWriter.writeChar('\0');
 
@@ -276,7 +289,7 @@ void Linker32 :: createImportData(ImageInfo& info)
    int strLength = strWriter.Position() - strOffset;
 
    dynamicWriter.writeDWord(DT_STRTAB);
-   dynamicWriter.writeRef(importRef, strOffset);
+   dynamicWriter.writeRef(mskRDataRef, strOffset);
 
    dynamicWriter.writeDWord(DT_SYMTAB);
    dynamicWriter.writeRef(importRef, symtabOffset);
@@ -312,11 +325,9 @@ void Linker32 :: createImportData(ImageInfo& info)
    dynamicWriter.writeDWord(0);
 
    // write interpreter path
-   dynamicWriter.align(FILE_ALIGNMENT, 0);
-
-   // HOTFIX : rdata is located after adata and mdta
-   info.interpreter = dynamicWriter.Position() + adataSize + mdataSize;
-   dynamicWriter.writeLiteral(INTERPRETER_PATH, getlength(INTERPRETER_PATH) + 1);
+   strWriter.align(FILE_ALIGNMENT, 0);
+   info.interpreter = strWriter.Position();
+   strWriter.writeLiteral(INTERPRETER_PATH, getlength(INTERPRETER_PATH) + 1);
 }
 
 void Linker32 :: fixImage(ImageInfo& info)
@@ -417,7 +428,7 @@ void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
    if (info.interpreter > 0) {
       // Interpreter
       ph_header.p_type = PT_INTERP;
-      ph_header.p_offset = info.textSize + info.headerSize + info.interpreter;
+      ph_header.p_offset = info.interpreterOffset;
       ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.interpreter;
       ph_header.p_memsz = ph_header.p_filesz = getlength(INTERPRETER_PATH) + 1;
       ph_header.p_flags = PF_R;
@@ -461,9 +472,9 @@ void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
   if (info.dynamic > 0) {
       // Dynamic
       ph_header.p_type = PT_DYNAMIC;
-      ph_header.p_offset = info.headerSize + info.textSize + info.dynamic;
+      ph_header.p_offset = info.dynamicOffset;
       ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.dynamic;
-      ph_header.p_filesz = ph_header.p_memsz = info.rdataSize - info.dynamic;
+      ph_header.p_filesz = ph_header.p_memsz = info.dynamicSize;
       ph_header.p_flags = PF_R;
       ph_header.p_align = 8;
       file->write((char*)&ph_header, ELF_PH_SIZE);
@@ -476,9 +487,11 @@ void Linker32 :: writeSegments(ImageInfo& info, FileWriter* file)
    // text section
    writeSection(file, info.image->getTextSection(), FILE_ALIGNMENT);
 
+   int pos = file->Position();
+
    // rodata section
-   writeSection(file, info.image->getADataSection(), 4);
-   writeSection(file, info.image->getMDataSection(), 4);
+   writeSection(file, info.image->getADataSection(), FILE_ALIGNMENT);
+   writeSection(file, info.image->getMDataSection(), FILE_ALIGNMENT);
    writeSection(file, info.image->getRDataSection(), FILE_ALIGNMENT);
 
    // import section

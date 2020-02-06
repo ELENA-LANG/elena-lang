@@ -54,6 +54,8 @@ class Linker32
       int  headerSize, textSize, rdataSize, importSize, bssSize;
       int  ph_length;      // number of entries in the program header table
       int  interpreter, dynamic, entryPoint;
+      int  dynamicOffset, interpreterOffset;
+      int  dynamicSize;
 
       ImageInfo(Project* project, Image* image)
          : libraries(NULL, freestr)
@@ -64,6 +66,8 @@ class Linker32
          this->ph_length = 0;
          this->headerSize = this->textSize = this->rdataSize = this->importSize = this->bssSize = 0;
          this->withDebugInfo = project->BoolSetting(opDebugMode)/*false*/;
+         this->dynamicOffset = this->interpreterOffset = 0;
+         this->dynamicSize = 0;
       }
    };
 
