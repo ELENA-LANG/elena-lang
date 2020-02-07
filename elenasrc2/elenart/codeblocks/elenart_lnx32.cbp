@@ -11,6 +11,8 @@
 				<Option object_output="../temp/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
+				<Option host_application="/home/alex/elena-lang/tests/linux/test" />
+				<Option run_host_application_in_terminal="0" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
@@ -62,6 +64,8 @@
 		<Unit filename="../../common/xmlreader.h" />
 		<Unit filename="../../engine/bytecode.cpp" />
 		<Unit filename="../../engine/bytecode.h" />
+		<Unit filename="../../engine/elenamachine.cpp" />
+		<Unit filename="../../engine/elenamachine.h" />
 		<Unit filename="../../engine/libman.cpp" />
 		<Unit filename="../../engine/libman.h" />
 		<Unit filename="../../engine/linux32/elfhelper.cpp" />

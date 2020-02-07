@@ -7,7 +7,6 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
-#include <windows.h>
 
 using namespace _ELENA_;
 
@@ -96,7 +95,7 @@ void SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots)
    //   // ; create set of roots
    //   mov  ebp, esp
    //   xor ecx, ecx
-   //   push ecx        // ; reserve place 
+   //   push ecx        // ; reserve place
    //   push ecx
    //   push ecx
    //
@@ -125,11 +124,11 @@ void SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots)
    //   test eax, eax
    //   mov  ecx, eax
    //   jnz  short labYGNextFrame
-   
+
    //// === Minor collection ===
    //   mov[ebp - 4], esp      // ; save position for roots
-   
-   //// ; save mg -> yg roots 
+
+   //// ; save mg -> yg roots
    //   mov  ebx, [data:% CORE_GC_TABLE + gc_mg_current]
    //   mov  edi, [data:% CORE_GC_TABLE + gc_mg_start]
    //   sub  ebx, edi                                        // ; we need to check only MG region
@@ -198,7 +197,7 @@ void SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots)
    //      mov  ebx, [data:% CORE_GC_TABLE + gc_yg_start]
    //      mov  edx, [data:% CORE_GC_TABLE + gc_yg_end]
    //      mov  ebp, [data:% CORE_GC_TABLE + gc_shadow]
-   
+
 
 
    // collect roots
@@ -218,7 +217,7 @@ void SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots)
    //      test esi, esi
    //      mov  ecx, [eax]
    //      jnz short labCollectFrame
-     
+
 
 
    //      // ; save gc_yg_current to mark survived objects
@@ -338,7 +337,7 @@ void SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots)
    //      labMGSkipEnd :
    //   mov  ebp, esi
    //
-   //      // ; compact	
+   //      // ; compact
    //      labMGCompactNext :
    //   add  ecx, page_ceil
    //      and ecx, page_align_mask
@@ -564,7 +563,7 @@ void SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots)
    //      add  ecx, page_ceil
    //      lea  edi, [ebp + elObjectOffset]
    //      and ecx, page_align_mask
-   //      mov[esi], edi          // ; update reference 
+   //      mov[esi], edi          // ; update reference
    //      add  ebp, ecx
    //
    //      // ; get object size

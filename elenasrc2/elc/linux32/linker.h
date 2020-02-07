@@ -20,14 +20,15 @@ namespace _ELENA_
 struct ImageBaseMap
 {
    int base;
-   int code, rdata, mdata, adata, bss, stat, /*tls,*/ import;
+   int code, adata, mdata, rdata, bss, stat, /*tls,*/ import;
 
    RelocationFixMap importMapping;
 
    ImageBaseMap()
       : importMapping((size_t)-1)
    {
-      base = code = rdata = mdata = adata = bss = stat /*= tls*/ = import = 0;
+      base = code = rdata = bss = stat /*= tls*/ = import = 0;
+      adata = mdata = 0;
    }
 };
 
@@ -53,9 +54,8 @@ class Linker32
       // Linker target image properties
       int  headerSize, textSize, rdataSize, importSize, bssSize;
       int  ph_length;      // number of entries in the program header table
+      int  rdataOffset;    // used to correctly localt dynamic and interpreter
       int  interpreter, dynamic, entryPoint;
-      int  dynamicOffset, interpreterOffset;
-      int  dynamicSize;
 
       ImageInfo(Project* project, Image* image)
          : libraries(NULL, freestr)
@@ -65,9 +65,8 @@ class Linker32
          this->entryPoint = this->interpreter = this->dynamic = 0;
          this->ph_length = 0;
          this->headerSize = this->textSize = this->rdataSize = this->importSize = this->bssSize = 0;
-         this->withDebugInfo = project->BoolSetting(opDebugMode)/*false*/;
-         this->dynamicOffset = this->interpreterOffset = 0;
-         this->dynamicSize = 0;
+         this->withDebugInfo = project->BoolSetting(opDebugMode);
+         this->rdataOffset = 0;
       }
    };
 
