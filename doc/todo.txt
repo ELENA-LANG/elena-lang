@@ -5,7 +5,6 @@ In development:
                 * compile empty program
 
               xdev elena50
-                * dtcalc
                 * readonly fields
                 * closures: unboxing : stack-allocated
                 * closures: presaved arguments

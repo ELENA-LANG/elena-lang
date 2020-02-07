@@ -6915,6 +6915,11 @@ void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& sco
          SNode callNode = node.prependSibling(lxCalling_1, scope.moduleScope->constructor_message);
          callNode.appendNode(lxResult);
       }
+      else {
+         MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
+
+         compileDefConvConstructor(node.parentNode(), *methodScope, isDefault);
+      }
 
       node.set(lxImplicitJump, redirect.argument);
       node.appendNode(lxCallTarget, scope.getClassRefId());
