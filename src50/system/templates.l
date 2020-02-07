@@ -237,3 +237,9 @@ public interface<T>
         expr        
     }
 }
+
+// .\
+#declare tryOrReturn<identifier>(expr)
+{
+    expr \ back:identifier;
+}

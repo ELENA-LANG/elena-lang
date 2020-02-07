@@ -1993,6 +1993,9 @@ void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNod
    if (operatorNode.identifier().compare(IF_OPERATOR)) {
       templateName.copy(DOIFNOTNIL_OPERATOR);
    }
+   else if (operatorNode.identifier().compare(ALT_OPERATOR)) {
+      templateName.copy(TRYORRETURN_OPERATOR);
+   }
 
    // generate members
    SyntaxTree tempTree;

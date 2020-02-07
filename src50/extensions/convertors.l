@@ -1,10 +1,10 @@
 import system;
 import system'collections;
 import system'routines;
-//import system'calendar;
+import system'calendar;
 import system'text;
 ////import system'dynamic.
-//
+
 ////// --- convertors ---
 ////
 ////singleton charArrayExConvertor
@@ -419,12 +419,12 @@ public extension convertorOp
 
 //public convertor 
 //    = new::{ generic(n) = __received(mixin extensions'convertorOp(n)); };
-//
-//public extension dateFormatterOp : Date
-//{
-//    string toShortTimeString()
-//        = cast TimeStruct(self).toShortTime();
-//}
+
+public extension dateFormatterOp : Date
+{
+    string toShortTimeString()
+        = cast TimeStruct(self).toShortTime();
+}
 
 // --- enumerableConvertor ---
 

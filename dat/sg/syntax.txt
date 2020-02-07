@@ -774,6 +774,7 @@ L8c_OPERATOR ->
 
 TEMPLATE_OPERATOR ->
 	?
+	| \
 
 SIZE ->
 	hex

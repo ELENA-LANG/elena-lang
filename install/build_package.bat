@@ -17,6 +17,7 @@ md %~dp0\output\examples\console\bsort
 md %~dp0\output\examples\console\binary
 md %~dp0\output\examples\console\replace
 md %~dp0\output\examples\console\goods
+md %~dp0\output\examples\console\datetime
 md %~dp0\output\examples\files
 md %~dp0\output\examples\files\textfile
 
@@ -125,6 +126,9 @@ copy %~dp0\..\examples\console\replace\*.prj %~dp0\output\examples\console\repla
 copy %~dp0\..\examples\console\goods\*.l %~dp0\output\examples\console\goods
 copy %~dp0\..\examples\console\goods\*.prj %~dp0\output\examples\console\goods
 copy %~dp0\..\examples\console\goods\*.txt %~dp0\output\examples\console\goods
+
+copy %~dp0\..\examples\console\datetime\*.l %~dp0\output\examples\console\datetime
+copy %~dp0\..\examples\console\datetime\*.prj %~dp0\output\examples\console\datetime
 
 copy %~dp0\..\examples\files\textfile\*.l %~dp0\output\files\textfile
 copy %~dp0\..\examples\files\textfile\*.prj %~dp0\output\files\textfile

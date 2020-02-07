@@ -60,6 +60,7 @@ Code
   Operators
     * a ?? b / a.msg() ?? b
     * .?
+    * .\
     * switch operator
     * $sizeof
   Expressions
