@@ -28,6 +28,7 @@ __define ATTR_EXPRESSION         4496
 __define PROP_DECLARATION 	 4512
 __define OPTION 		 4528
 __define LAST_OPTION 		 4544
+__define TEMPLATE_OPERATOR       4560
 __define BLOCK 		        69728
 __define NESTED_ROOT_EXPR       69729
 __define BLOCK_END	        69776
@@ -488,7 +489,15 @@ L2_OPERATIONS ->
 	| eps
 	                                                                                                    
 L2_OPERATION ->
-	. MESSAGE MESSAGE_BODY
+	. L2_OPERATOR_BODY 
+
+L2_OPERATOR_BODY ->
+	MESSAGE MESSAGE_BODY
+	| TEMPLATE_OPERATOR TEMPLATE_OPERATOR_BODY
+
+TEMPLATE_OPERATOR_BODY ->
+	MESSAGE MESSAGE_BODY 
+	| IMPLICIT_OPERATION		
 
 L3_OPERATIONS ->
 	L3_OPERATION L3_OPERATIONS
@@ -762,6 +771,9 @@ L8b_OPERATOR ->
 
 L8c_OPERATOR ->
 	$fnl
+
+TEMPLATE_OPERATOR ->
+	?
 
 SIZE ->
 	hex

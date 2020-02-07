@@ -5,9 +5,6 @@ In development:
                 * compile empty program
 
               xdev elena50
-                * __getClassName should return the full class name
-
-                * call if not nil
                 * dtcalc
                 * readonly fields
                 * closures: unboxing : stack-allocated

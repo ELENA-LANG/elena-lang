@@ -1927,21 +1927,6 @@ void DerivationWriter :: generateTokenExpression(SyntaxWriter& writer, SNode& no
             node = current;
          }
       }
-         
-
-//      if (rootMode) {
-//         if (goToNode(node, lxCode/*, lxClosureExpr*/, lxOperator) == lxCode) {
-//            // COMPILER MAGIC : recognize the code template
-//            generateCodeTemplateTree(writer, node, derivationScope);
-//            return;
-//         }
-//      }
-//
-//      size_t dimensionCounter = SyntaxTree::countChild(node, lxDynamicSizeDecl);
-//      if (dimensionCounter > 0) {
-//         writer.appendNode(lxDimensionAttr, dimensionCounter);
-//      }
-//   }
 }
 
 void DerivationWriter :: generateSwitchTree(SyntaxWriter& writer, SNode node, Scope& derivationScope)
@@ -1994,52 +1979,49 @@ void DerivationWriter :: generateCollectionTree(SyntaxWriter& writer, SNode node
    writer.closeNode();
 }
 
-//void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope)
-//{
-////   // revert the first operand
-////   writer.trim();
-////
-////   current = lxIdle;
-////
-////   SNode node = goToFirstNode(current);
-//
-//   IdentifierString templateName;
-//   SNode identNode = current.firstChild(lxTerminalMask);
-////   if (operatorNode.identifier().compare(IF_OPERATOR)) {
-////      templateName.copy(DOIFNOTNIL_OPERATOR);
-////   }
-////   else if (operatorNode.identifier().compare(ALT_OPERATOR)) {
-////      templateName.copy(TRYORRETURN_OPERATOR);
-////   }
-////
-////   // generate members
-////   SyntaxTree tempTree;
-////   SyntaxWriter tempWriter(tempTree);
-////
-////   // generate loperand
-////   derivationScope.nestedLevel += 0x100;
-////   bool dummy1 = false, dummy2 = false;
-////   tempWriter.newNode(lxRoot);
-////
-////   tempWriter.newNode(lxExpression);
-////   generateExpressionNode(tempWriter, node, dummy1,dummy2, derivationScope);
-////   tempWriter.closeNode();
-////   derivationScope.nestedLevel -= 0x100;
-////
-////   // generate roperand
-////   derivationScope.nestedLevel += 0x100;
-////   generateExpressionTree(tempWriter, current.parentNode(), derivationScope);
-////   derivationScope.nestedLevel -= 0x100;
-////
-////   tempWriter.closeNode();
-////
-////   generateCodeTemplateTree(writer, node, tempTree, templateName.ident(), derivationScope);
-////
-////   while (node.nextNode() != lxNone)
-////      node = node.nextNode();
-////
-////   current = node;
-//}
+void DerivationWriter :: generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope)
+{
+   // revert the first operand
+   writer.trim();
+
+   current = lxIdle;
+
+   SNode node = goToFirstNode(current);
+
+   IdentifierString templateName;
+   SNode operatorNode = current.firstChild(lxTerminalMask);
+   if (operatorNode.identifier().compare(IF_OPERATOR)) {
+      templateName.copy(DOIFNOTNIL_OPERATOR);
+   }
+
+   // generate members
+   SyntaxTree tempTree;
+   SyntaxWriter tempWriter(tempTree);
+
+   // generate loperand
+   derivationScope.nestedLevel += 0x100;
+   bool dummy1 = false, dummy2 = false;
+   tempWriter.newNode(lxRoot);
+
+   tempWriter.newNode(lxExpression);
+   generateExpressionNode(tempWriter, node, dummy1, dummy2, derivationScope);
+   tempWriter.closeNode();
+   derivationScope.nestedLevel -= 0x100;
+
+   // generate roperand
+   derivationScope.nestedLevel += 0x100;
+   generateExpressionTree(tempWriter, current.parentNode(), derivationScope);
+   derivationScope.nestedLevel -= 0x100;
+
+   tempWriter.closeNode();
+
+   generateStatementTemplateTree(writer, node, tempTree, templateName.ident(), derivationScope);
+
+   while (node.nextNode() != lxNone)
+      node = node.nextNode();
+
+   current = node;
+}
 
 void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& current, bool& first, bool& expressionExpected, 
    Scope& derivationScope)
@@ -2066,6 +2048,10 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
          writer.newNode(current.type, current.argument);
          copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
          writer.closeNode();
+         break;
+      case lxTemplateOperator:
+         // COMPILER MAGIC : recognize the operator template
+         generateOperatorTemplateTree(writer, current, derivationScope);
          break;
       case lxExpression:
          generateExpressionTree(writer, current, derivationScope);

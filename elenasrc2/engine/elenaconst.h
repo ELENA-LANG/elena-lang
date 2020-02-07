@@ -426,8 +426,8 @@ namespace _ELENA_
    constexpr auto ALT_OPERATOR            = "\\";
    constexpr auto FINALLY_OPERATOR        = "$fnl";
 
-//  // operator templates
-//   constexpr auto DOIFNOTNIL_OPERATOR  = "doIfNotNil#1#1";
+  // operator templates
+   constexpr auto DOIFNOTNIL_OPERATOR        = "doIfNotNil#1#1";
 //   constexpr auto TRYORRETURN_OPERATOR = "tryOrReturn#1#1";
 
   // --- ELENA explicit variables ---
@@ -446,7 +446,7 @@ namespace _ELENA_
 
   // --- ELENA meta variables ---
    constexpr auto CLASSNAME_VAR              = "@classname";       // the class name
-   constexpr auto PACKAGE_VAR                = "@package";       // the class name
+   constexpr auto PACKAGE_VAR                = "@package";         // the package info
 
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 

@@ -226,21 +226,14 @@ public interface<T>
 //        v.close()
 //    }
 //}
-//
-//// === operator templates ===
-//
-//// .?
-//public doIfNotNil<expr>(identifier)
-//{
-//    if (nil != identifier)
-//    {
-//        expr        
-//    }
-//}
-//
-//// .\
-//public tryOrReturn<expr>(identifier)
-//{
-//    expr \ back:identifier;
-//}
-//
+
+// === operator templates ===
+
+// .?
+#declare doIfNotNil<identifier>(expr)
+{
+    if (nil != identifier)
+    {
+        expr        
+    }
+}
