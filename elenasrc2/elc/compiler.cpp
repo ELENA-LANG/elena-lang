@@ -6907,12 +6907,14 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    else resendScope.raiseError(errUnknownMessage, node);
 }
 
-void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& scope)
+void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& scope, bool isDefault)
 {
    SNode redirect = node.findChild(lxRedirect);
    if (redirect != lxNone) {
-      SNode callNode = node.prependSibling(lxCalling_1, scope.moduleScope->constructor_message);
-      callNode.appendNode(lxResult);
+      if (!isDefault) {
+         SNode callNode = node.prependSibling(lxCalling_1, scope.moduleScope->constructor_message);
+         callNode.appendNode(lxResult);
+      }
 
       node.set(lxImplicitJump, redirect.argument);
       node.appendNode(lxCallTarget, scope.getClassRefId());
@@ -7492,7 +7494,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
 
    SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
    if (bodyNode == lxDispatchCode) {
-      compileConstructorDispatchExpression(bodyNode, codeScope);
+      compileConstructorDispatchExpression(bodyNode, codeScope, scope.message == defConstrMssg);
 
       return;
    }
