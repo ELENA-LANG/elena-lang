@@ -9024,7 +9024,7 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
       compileClassClassDeclaration(node, classClassScope, scope);
 
       // HOTFIX : if the default constructor is private - a class cannot be inherited
-      int hints = classClassScope.info.methodHints.get(Attribute(scope.moduleScope->constructor_message, maHint));
+      int hints = classClassScope.info.methodHints.get(Attribute(scope.moduleScope->constructor_message | STATIC_MESSAGE, maHint));
       if ((hints & tpMask) == tpPrivate) {
          scope.info.header.flags |= elFinal;
          scope.save();
