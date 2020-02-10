@@ -1,5 +1,7 @@
 // --- System Core API  --
 
+define INIT_RND          10012h
+
 define CORE_ET_TABLE     2000Bh
 
 define elSizeOffset      0008h
@@ -3827,6 +3829,104 @@ procedure coreapi'rsqrt
   fsqrt
   fstp  qword ptr [ebx]    // store result 
   ret
+
+end
+
+procedure coreapi'core_rnd_init
+
+  mov  edi, [esp+4]
+  call code : % INIT_RND
+  mov  [edi], eax 
+  mov  [edi+4], edx
+  mov  ebx, eax
+  ret
+  
+end
+
+procedure coreapi'core_rnd_next
+
+   mov  edi, [esp+4]
+   mov  eax, [esp+12]
+   mov  ebx, [esp+8]
+
+   xor  edx, edx
+   mov  ecx, ebx
+   cmp  ecx, edx
+   jle  short labEnd
+
+   push eax
+   push ebx
+
+   mov  ebx, [edi+4] // NUM.RE
+   mov  esi, [edi]   // NUM.FR             
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h                              
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   mul  esi
+   add  eax, ecx
+   xchg eax, esi
+   mul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  ecx, edi
+   mov  [ecx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  [ecx] , esi
+   cdq
+   pop  ecx
+   idiv ecx
+   pop  eax
+labEnd:
+   mov  [eax], edx
+   ret
+
+end
+
+procedure coreapi'core_rnd_nextint
+
+   mov  edi, [esp+4]
+   mov  eax, [esp+8]
+
+   push eax
+   
+   mov  ebx, [edi+4] // NUM.RE
+   mov  esi, [edi]   // NUM.FR             
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h                              
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   imul  esi
+   add  eax, ecx
+   xchg eax, esi
+   imul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  ecx, edi
+   mov  [ecx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  [ecx], esi
+   mov  edx, eax
+   pop  eax
+labEnd:
+   mov  [eax], edx
+   ret
 
 end
 

@@ -1525,70 +1525,8 @@ public extension wideOp : WideString
 //    }
 }
 
-//// --- stringOp ---
-//
-//singleton stringOpDispatcher
-//{
-//    padRight(string s, char ch, int len)
-//        = s.padRight(ch, len);
-//    
-//    padRight(wide s, char ch, int len)
-//        = s.padRight(ch, len);
-//        
-//    padLeft(string s, char ch, int len)
-//        = s.padLeft(ch, len);
-//    
-//    padLeft(wide s, char ch, int len)
-//        = s.padLeft(ch, len);
-//        
-//    bool startingWith(string s, string subs)
-//        = s.startingWith(subs);
-//
-//    bool startingWith(wide s, wide subs)
-//        = s.startingWith(subs);
-//
-//    bool endingWith(string s, string subs)
-//        = s.endingWith(subs);
-//
-//    bool endingWith(wide s, wide subs)
-//        = s.endingWith(subs);
-//        
-//    bool containing(string s, string subs)
-//        = s.containing(subs);
-//
-//    bool containing(wide s, wide subs)
-//        = s.containing(subs);
-//        
-//    trimLeft(string s, char ch)
-//        =s.trimLeft(ch);       
-//        
-//    trimRight(string s, char ch)
-//        =s.trimRight(ch);
-//        
-//    trim(string s, char ch)
-//        =s.trim(ch);
-//        
-//    trimLeft(wide s, char ch)
-//        =s.trimLeft(ch);        
-//        
-//    trimRight(wide s, char ch)
-//        =s.trimRight(ch);        
-//        
-//    trim(wide s, char ch)
-//        =s.trim(ch);
-//        
-//    replace(string s, src, dst)
-//        = s.replace(cast string(src), cast string(dst));
-//        
-//    replace(string s, string src, string dst)
-//        = s.replace(src, dst);
-//        
-//    replace(wide s, wide src, wide dst)
-//        = s.replace(src, dst);
-//}
-//
-//public extension stringWeakOp
-//{
+public extension stringWeakOp
+{
 //    Substring(index)
 //        = self.Substring(index, self.Length - index);
 //            
@@ -1650,64 +1588,64 @@ public extension wideOp : WideString
 //
 //    writeCopies(line, counter)
 //        = self.fillString(line, cast int(counter));
-//
-//    writePaddingLeft(line, char ch, int width)
-//    {
-//        var paddedStr := line.padLeft(ch, width);
-//
-//        self.write(paddedStr);
-//            
-//        ^ self
-//    }
-//    
-//    writePaddingRight(line, char ch, int width)
-//    {
-//        var paddedStr := line.padRight(ch, width);
-//
-//        self.write(paddedStr);
-//            
-//        ^ self
-//    }
-//    
-//    writePaddingLeft(line, int width)
-//    {
-//        var paddedStr := line.padLeft($32, width);
-//
-//        self.write(paddedStr);
-//            
-//        ^ self
-//    }
-//    
-//    writePaddingRight(line, int width)
-//    {
-//        var paddedStr := line.padRight($32, width);
-//
-//        self.write(paddedStr);
-//            
-//        ^ self
-//    }
-//    
-//    writePadding(line, char ch, int width)
-//    {
-//        int length := line.Length;        
-//        
-//        if (length < width)
-//        {
-//            int len := width - length;
-//            int leftLen := len / 2;
-//            
-//            self.fillString(ch, leftLen);
-//            self.write(line);
-//            self.fillString(ch, len - leftLen)
-//        }
-//        else
-//        { 
-//            self.write(line)
-//        };
-//            
-//        ^ self
-//    }    
-//}
+
+    writePaddingLeft(line, char ch, int width)
+    {
+        var paddedStr := line.padLeft(ch, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePaddingRight(line, char ch, int width)
+    {
+        var paddedStr := line.padRight(ch, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePaddingLeft(line, int width)
+    {
+        var paddedStr := line.padLeft($32, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePaddingRight(line, int width)
+    {
+        var paddedStr := line.padRight($32, width);
+
+        self.write(paddedStr);
+            
+        ^ self
+    }
+    
+    writePadding(line, char ch, int width)
+    {
+        int length := line.Length;        
+        
+        if (length < width)
+        {
+            int len := width - length;
+            int leftLen := len / 2;
+            
+            self.fillString(ch, leftLen);
+            self.write(line);
+            self.fillString(ch, len - leftLen)
+        }
+        else
+        { 
+            self.write(line)
+        };
+            
+        ^ self
+    }    
+}
 
 // --- charOp ---
 

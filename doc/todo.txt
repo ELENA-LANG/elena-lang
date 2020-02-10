@@ -1,13 +1,15 @@
 ------                                 
 In development:
 ------         
-              xdev - linux32
+              xdev - linux32                 
                 * compile empty program
 
               xdev - linux32
                 * compile hello world
 
               xdev elena50
+                * dispatching variadic argument list : run-time / compile-time, with normal part run-time / compile-time
+                * extension variadic argument list with normal part run-time / compile-time
                 * random
                 * type should be only one in the token expression - test: int long r := 0;
 
@@ -19,6 +21,13 @@ In development:
 
               xdev elena50
                 * closures: unboxing : fields
+                * samples
+
+                * readonly fields
+                * multi-return methods : properties
+                * multi-return methods : optimize double assigning
+                * multi-return methods : dynamic objects
+
                 * closures: unboxing : struct fields
                 * closures: presaved arguments
                 * #190 : Closure : auto boxing / unboxing local variables 
@@ -26,13 +35,6 @@ In development:
                 * closures: race conditions
 
                 * closures: returning a value
-
-                * samples
-
-                * readonly fields
-                * multi-return methods : properties
-                * multi-return methods : optimize double assigning
-                * multi-return methods : dynamic objects
 
                 * using embeddable methods instead of normal one for method arguments
                 * auto determining the closure return value for closure templates

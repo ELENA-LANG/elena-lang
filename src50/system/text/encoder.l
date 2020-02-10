@@ -219,84 +219,84 @@ namespace text
     //        => system'core_routines'__utf8encoder;
     }
     
-    //// --- UTF16Encoder ---
-    //
-    //public singleton UTF16Encoder : Encoder
-    //{
-    //    convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
-    //        => system'core_routines'__utf16encoder;
-    //    
-    //    convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
-    //        => system'core_routines'__utf16encoder;
-    //}
-    //
-    //// --- UTF16Encoding ---
-    //
-    //public singleton UTF16Encoding
-    //{
-    //    Encoder encoder = UTF16Encoder;
-    //    
-    ////    charCount(wide aLiteral, ref<int> aRetVal)
-    ////        => system'core_routines'__utf16encoder.
-    //        
-    //    convert(int index, int length, wide s, short[] array)
-    //    {
-    //        s.saveToShortArray(index, array, length)
-    //    }
-    //
-    //    convert(int index, int size, short[] array, char[] output, ref int outputLength)
-    //        => system'core_routines'__utf16encoder;
-    //        
-    //    convert(int index, int size, char[] array, short[] output, ref int outputLength)
-    //        => system'core_routines'__utf16encoder;
-    //        
-    //    convert(int index, ref int size, string s, short[] output, ref int outputLength)
-    //    {
-    //        char temp[64];
-    //        int  temp_len := 64;
-    //        if (temp_len < size)
-    //            { size := temp_len };
-    //        
-    //        UTF8Encoding.convert(index, ref size, s, temp, ref temp_len);
-    //        
-    //        self.convert(0, temp_len, temp, output, ref outputLength)
-    //    }
-    //        
-    //    string toString(int index, int length, short[] array)
-    //    {
-    //        char temp[64];
-    //        int  temp_len := 64;
-    //        string s := nil;
-    //        int i := index;
-    //        int l := length;
-    //        while (l > 0)
-    //        {
-    //            temp_len := 64;
-    //            if (temp_len > l)
-    //            {
-    //                temp_len := l
-    //            };
-    //        
-    //            self.convert(i, temp_len, array, temp, ref temp_len);
-    //            if (s == nil)
-    //            {
-    //                s := String.new(0, temp_len, temp)
-    //            }
-    //            else
-    //            {
-    //                s := s + String.new(0, temp_len, temp);
-    //            };
-    //            
-    //            l -= temp_len;
-    //        };
-    //        
-    //        ^ s
-    //    }
-    //    
-    //    string toWide(int index, int length, short[] array)
-    //    {
-    //        ^ WideString.fromShortArray(index, length, array)
-    //    }
-    //}
+    // --- UTF16Encoder ---
+    
+    public singleton UTF16Encoder : Encoder
+    {
+        convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
+            => intern system'core_routines'__utf16encoder;
+        
+        convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
+            => intern system'core_routines'__utf16encoder;
+    }
+
+    // --- UTF16Encoding ---
+    
+    public singleton UTF16Encoding
+    {
+        Encoder encoder = UTF16Encoder;
+        
+    //    charCount(wide aLiteral, ref<int> aRetVal)
+    //        => system'core_routines'__utf16encoder.
+            
+        convert(int index, int length, wide s, short[] array)
+        {
+            s.saveToShortArray(index, array, length)
+        }
+    
+        convert(int index, int size, short[] array, char[] output, ref int outputLength)
+            => system'core_routines'__utf16encoder;
+            
+        convert(int index, int size, char[] array, short[] output, ref int outputLength)
+            => system'core_routines'__utf16encoder;
+            
+        convert(int index, ref int size, string s, short[] output, ref int outputLength)
+        {
+            char temp[64];
+            int  temp_len := 64;
+            if (temp_len < size)
+                { size := temp_len };
+            
+            UTF8Encoding.convert(index, ref size, s, temp, ref temp_len);
+            
+            self.convert(0, temp_len, temp, output, ref outputLength)
+        }
+            
+        string toString(int index, int length, short[] array)
+        {
+            char temp[64];
+            int  temp_len := 64;
+            string s := nil;
+            int i := index;
+            int l := length;
+            while (l > 0)
+            {
+                temp_len := 64;
+                if (temp_len > l)
+                {
+                    temp_len := l
+                };
+            
+                self.convert(i, temp_len, array, temp, ref temp_len);
+                if (s == nil)
+                {
+                    s := String.new(0, temp_len, temp)
+                }
+                else
+                {
+                    s := s + String.new(0, temp_len, temp);
+                };
+                
+                l -= temp_len;
+            };
+            
+            ^ s
+        }
+        
+        string toWide(int index, int length, short[] array)
+        {
+            ^ WideString.fromShortArray(index, length, array)
+        }
+    }
     
 }

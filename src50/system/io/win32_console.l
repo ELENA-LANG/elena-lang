@@ -1,10 +1,9 @@
 namespace io
 {    
+    import system'text;
 
-//import system'text;
-//
-//const int FILE_TYPE_CHAR = 2;
-//
+    const int FILE_TYPE_CHAR = 2;
+
 //sealed struct CONSOLE_SCREEN_BUFFER_INFO
 //{
 //    COORD      dwSize;    
@@ -70,15 +69,15 @@ namespace io
         newWriter()
         {
             handle h := ConsoleHandleFactory.new(0FFFFFFF5h);
-    //        int    dwMode := extern KERNEL32.GetFileType(h);
-    //        if (dwMode == FILE_TYPE_CHAR)
-    //        {
+            int    dwMode := extern KERNEL32.GetFileType(h);
+            if (dwMode == FILE_TYPE_CHAR)
+            {
                 ^ new ConsoleWriter(h)
-    //        }
-    //        else
-    //        {
-    //            ^ new FileWriter(h)
-    //        }
+            }
+            else
+            {
+                ^ new FileWriter(h)
+            }
         }
     }
     
@@ -161,107 +160,107 @@ namespace io
 //        }
     }
 
-//// --- FileWriter ---
-//
-//sealed class FileWriter
-//{
-//    handle theHandle;
-//    string theNewLineSymbol;
-//
-//    constructor(handle h)
-//    {
-//        theHandle := h;
-//        theNewLineSymbol := forward newLine;
-//    }
-//
-//    write(byte[] buffer, int length)
-//    {
-//        int written := 0;
-//        extern KERNEL32.WriteFile
-//            (theHandle, buffer, length, ref written, 0)
-//    }
-//
-//    write(wide literal)
-//    {
-//        byte buffer[256];
-//        int  length := literal.Length;
-//        int  index := 0;
-//        int  buf_len := 256;
-//        int  subs_len := 256;
-//        while (length > 0)
-//        {
-//            buf_len := 256;
-//            
-//            subs_len := length < 128 ? length : 128;
-//            
-//            OEMEncoder.convert(index, ref subs_len, literal, buffer, ref buf_len);
-//            
-//            self.write(buffer, buf_len);
-//            
-//            index := index + subs_len;
-//            length := length - subs_len
-//        }
-//    }
-//    
-////    writeLine(wide s)
-////    {
-////        self.write(s);
-////        self.write(theNewLineSymbol);
-////    }
-//    
-//    writeLine()
-//    {
-//        self.write(theNewLineSymbol);
-//    }
-//    
-//    writeLine(string s)
-//    {
-//        self.write(s);
-//        self.write(theNewLineSymbol);
-//    }
-//    
-//    write(string literal)
-//    {
-//        byte buffer[256];
-//        int length := literal.Length;
-//        int index := 0;
-//        int buf_len := 256;
-//        int subs_len := 256;
-//        while (length > 0)
-//        {
-//            buf_len := 256;
-//            
-//            if (length < 128)
-//            {
-//                subs_len := length
-//            }
-//            else
-//            {
-//                subs_len := 128
-//            };
-//            
-//            OEMEncoder.convert(index, ref subs_len, literal, buffer, ref buf_len);
-//            
-//            self.write(buffer, buf_len);
-//            
-//            index += subs_len;
-//            length -= subs_len
-//        }
-//    }
-//    
-//    clear()
-//    {
-//    }
-//
-//    refresh()
-//    {
-//    }
-//
-//    close()
-//    {
-//        extern KERNEL32.CloseHandle(theHandle)
-//    }
-//}
+    // --- FileWriter ---
+    
+    sealed class FileWriter
+    {
+        handle theHandle;
+        string theNewLineSymbol;
+    
+        constructor(handle h)
+        {
+            theHandle := h;
+            theNewLineSymbol := forward newLine;
+        }
+    
+        write(byte[] buffer, int length)
+        {
+            int written := 0;
+            extern KERNEL32.WriteFile
+                (theHandle, buffer, length, ref written, 0)
+        }
+    
+        write(wide literal)
+        {
+            byte buffer[256];
+            int  length := literal.Length;
+            int  index := 0;
+            int  buf_len := 256;
+            int  subs_len := 256;
+            while (length > 0)
+            {
+                buf_len := 256;
+                
+                subs_len := length < 128 ? length : 128;
+                
+                OEMEncoder.convert(index, ref subs_len, literal, buffer, ref buf_len);
+                
+                self.write(buffer, buf_len);
+                
+                index := index + subs_len;
+                length := length - subs_len
+            }
+        }
+        
+    //    writeLine(wide s)
+    //    {
+    //        self.write(s);
+    //        self.write(theNewLineSymbol);
+    //    }
+        
+        writeLine()
+        {
+            self.write(theNewLineSymbol);
+        }
+        
+        writeLine(string s)
+        {
+            self.write(s);
+            self.write(theNewLineSymbol);
+        }
+        
+        write(string literal)
+        {
+            byte buffer[256];
+            int length := literal.Length;
+            int index := 0;
+            int buf_len := 256;
+            int subs_len := 256;
+            while (length > 0)
+            {
+                buf_len := 256;
+                
+                if (length < 128)
+                {
+                    subs_len := length
+                }
+                else
+                {
+                    subs_len := 128
+                };
+                
+                OEMEncoder.convert(index, ref subs_len, literal, buffer, ref buf_len);
+                
+                self.write(buffer, buf_len);
+                
+                index += subs_len;
+                length -= subs_len
+            }
+        }
+        
+        clear()
+        {
+        }
+    
+        refresh()
+        {
+        }
+    
+        close()
+        {
+            extern KERNEL32.CloseHandle(theHandle)
+        }
+    }
 
     // --- ConsoleReader ---
     
