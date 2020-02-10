@@ -946,7 +946,7 @@ int Compiler::ExprScope :: newTempLocalAddress()
    if (tempAllocated2 > codeScope->reserved2)
       codeScope->reserved2 = tempAllocated2;
 
-   return tempAllocated2;
+   return -2 - tempAllocated2;
 }
 
 ObjectInfo Compiler::ExprScope :: mapGlobal(ident_t identifier)
