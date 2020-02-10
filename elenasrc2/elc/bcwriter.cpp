@@ -1238,23 +1238,22 @@ void ByteCodeWriter :: changeMessageCounter(CommandTape& tape, int paramCount, i
 void ByteCodeWriter :: unboxMessage(CommandTape& tape)
 {
    // ; copy the call stack
-   // movf -2
    // mcount
    //
    // pushn 0
    // labNextParam:
+   // movf -2
    // push
-   // dec
+   // dec 1
    // elsen labNextParam 0
 
-   tape.write(bcMovF, -2);
    tape.write(bcMCount);
-   tape.write(bcInc);
-   tape.write(bcPushN, 0);
+   tape.write(bcPushN, -1);
+   tape.write(bcMovF, -2);
    tape.newLabel();
    tape.setLabel(true);
    tape.write(bcPush);
-   tape.write(bcDec);
+   tape.write(bcDec, 1);
    tape.write(bcElseN, baCurrentLabel, 0);
    tape.releaseLabel();
 }
@@ -6659,7 +6658,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
          tape.write(bcPushA);
 
          unboxMessage(tape);
-         changeMessageCounter(tape, 1, VARIADIC_MESSAGE);
+         changeMessageCounter(tape, 2, VARIADIC_MESSAGE);
          loadObject(tape, lxLocal, 1, scope, 0);
 
          callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument/*, false, false*/);
