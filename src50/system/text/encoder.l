@@ -221,20 +221,20 @@ namespace text
     
     // --- UTF16Encoder ---
     
-    public singleton UTF16Encoder : Encoder
-    {
-        convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
-            => intern system'core_routines'__utf16encoder;
-        
-        convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
-            => intern system'core_routines'__utf16encoder;
-    }
+//    public singleton UTF16Encoder : Encoder
+//    {
+//        convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
+//            => intern system'core_routines'__utf16encoder;
+//        
+//        convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
+//            => intern system'core_routines'__utf16encoder;
+//    }
 
     // --- UTF16Encoding ---
     
     public singleton UTF16Encoding
     {
-        Encoder encoder = UTF16Encoder;
+      //  Encoder encoder = UTF16Encoder;
         
     //    charCount(wide aLiteral, ref<int> aRetVal)
     //        => system'core_routines'__utf16encoder.
@@ -244,11 +244,11 @@ namespace text
             s.saveToShortArray(index, array, length)
         }
     
-        convert(int index, int size, short[] array, char[] output, ref int outputLength)
-            => system'core_routines'__utf16encoder;
-            
-        convert(int index, int size, char[] array, short[] output, ref int outputLength)
-            => system'core_routines'__utf16encoder;
+//        convert(int index, int size, short[] array, char[] output, ref int outputLength)
+//            => system'core_routines'__utf16encoder;
+//            
+//        convert(int index, int size, char[] array, short[] output, ref int outputLength)
+//            => system'core_routines'__utf16encoder;
             
         convert(int index, ref int size, string s, short[] output, ref int outputLength)
         {
