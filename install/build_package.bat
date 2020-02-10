@@ -18,6 +18,8 @@ md %~dp0\output\examples\console\binary
 md %~dp0\output\examples\console\replace
 md %~dp0\output\examples\console\goods
 md %~dp0\output\examples\console\datetime
+md %~dp0\output\examples\console\random
+md %~dp0\output\examples\console\trans
 md %~dp0\output\examples\files
 md %~dp0\output\examples\files\textfile
 
@@ -129,6 +131,12 @@ copy %~dp0\..\examples\console\goods\*.txt %~dp0\output\examples\console\goods
 
 copy %~dp0\..\examples\console\datetime\*.l %~dp0\output\examples\console\datetime
 copy %~dp0\..\examples\console\datetime\*.prj %~dp0\output\examples\console\datetime
+
+copy %~dp0\..\examples\console\random\*.l %~dp0\output\examples\console\random
+copy %~dp0\..\examples\console\random\*.prj %~dp0\output\examples\console\random
+
+copy %~dp0\..\examples\console\trans\*.l %~dp0\output\examples\console\trans
+copy %~dp0\..\examples\console\trans\*.prj %~dp0\output\examples\console\trans
 
 copy %~dp0\..\examples\files\textfile\*.l %~dp0\output\files\textfile
 copy %~dp0\..\examples\files\textfile\*.prj %~dp0\output\files\textfile

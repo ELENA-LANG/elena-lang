@@ -8,10 +8,8 @@ In development:
                 * compile hello world
 
               xdev elena50
-                * random
-                * type should be only one in the token expression - test: int long r := 0;
-
-                * variadic arguments : unboxing, boxing, direct use
+                * simplify syntax - create a collection
+                * translit sample
 
               xdev - refactoring
                 * mov GC to C code
@@ -19,7 +17,10 @@ In development:
 
               xdev elena50
                 * closures: unboxing : fields
-                * samples
+
+                * matrix samples
+                * pi2 samples
+                * collatz sample
 
                 * readonly fields
                 * multi-return methods : properties
@@ -81,6 +82,8 @@ In development:
                 * method visibility
                 * methods : reference name??
 
+                * variadic arguments : unboxing, boxing, direct use
+
                 * nested class scope?
                 * global types
 
@@ -120,6 +123,12 @@ In development:
                 * external code : long, real ret value
                 * uncomment all code in LIB50
                 * api doc - with description
+
+              xdev elena50
+                * script samples
+                * gui samples
+                * db samples
+                * socket samples
 
               xdev - linux32
                 * (re)implement internal String.read<int,ref<byte>>
@@ -260,6 +269,9 @@ In development:
               xdev - linux32
                 * compile ecv
                 * compile all console / files examples
+
+              xdev - ide
+                * error by viewing translit sample
 
               dev3
                 * port Linux IDE

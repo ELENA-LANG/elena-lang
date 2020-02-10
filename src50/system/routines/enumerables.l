@@ -166,10 +166,10 @@ public extension enumerableOp
 //////
 //////    multi runFor:aParam eachPair:aFunction
 //////        = self~enumerableOp runFor:aParam eachPair(:n:m)(aFunction(n,m)).
-//
-//    seekEach(Func1 f)
-//        = f.retrieve(cast Enumerator(self.enumerator()));
-//
+
+    seekEach(Func1 f)
+        = f.retrieve(cast Enumerator(self.enumerator()));
+
 //////    seekEach(ExtensionMessage anExtMessage)
 //////        = self~enumerableOp seekEach(:n)(n~anExtMessage eval).
 //////        
