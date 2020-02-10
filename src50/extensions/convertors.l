@@ -409,9 +409,9 @@ public extension convertorOp
 //    
 //    char toChar()
 //        = charConvertor.convert:self;
-//
-//    real toReal()
-//        = realConvertor.convert:self;
+
+    real toReal()
+        = realConvertor.convert:self;
 
     convertTo(target)
         = new Variant(self).saveTo(target);

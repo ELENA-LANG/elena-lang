@@ -4241,6 +4241,8 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
 //   //   // HOTFIX: -1 indicates the stack is not consumed by the constructor
 //   //   callMethod(tape, 1, -1);
 //   //}
+
+   scope.clear();
 }
 
 void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)

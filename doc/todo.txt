@@ -8,7 +8,6 @@ In development:
                 * compile hello world
 
               xdev elena50
-                * do not box the variadic argument list for Length operation
                 * random
                 * type should be only one in the token expression - test: int long r := 0;
 
@@ -132,6 +131,7 @@ In development:
                 * watch message / subject info
 
               dev50 - test / optimization
+                * do not box the variadic argument list for Length operation
                 * simplify the operations with struct fields (size=1,2,4,8,...)
                 * resolving byref template - cache the resolved results
                 * conditional boxing of arguments and self
