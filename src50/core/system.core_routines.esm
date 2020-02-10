@@ -2551,6 +2551,50 @@ labErr:
   
 end
 
+procedure __utf16encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@ByteNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
+
+  pushsi 6
+  pushsi 6
+  pushsi 6  
+  pushsi 6  
+  pushsi 6  
+  
+  callextr api : ws_encode
+  freei 5
+  ifr labErr 0
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __utf16encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@CharValue$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[6]"
+
+  pushsi 6
+  pushsi 6
+  pushsi 6  
+  pushsi 6  
+  pushsi 6  
+  
+  callextr api : ws_decode
+  freei 5
+  ifr labErr 0
+  
+  quitn 6
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[1]"
+  throw
+  
+end
+
 procedure __real."exp$system@RealNumber$@system@ref#1&system@RealNumber[2]"
 
   pushsi 1

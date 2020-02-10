@@ -186,16 +186,16 @@ namespace text
         convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
             => intern system'core_routines'__utf8encoder;
         
-    //    convert(int index, ref int length, string s, byte[] output, ref int outputLength)
-    //    {
-    //        int l := aLength value.
-    //        s.saveToByteArray(index, output, l).
-    //
-    //        aLength readValueTo(anOutputLength).
-    //    }
+//        convert(int index, ref int length, string s, byte[] output, ref int outputLength)
+//        {
+//            int l := aLength value.
+//            s.saveToByteArray(index, output, l).
+//    
+//            aLength readValueTo(anOutputLength).
+//        }
         
-    //    toLiteral(int anIndex, int aLength, ByteArray anArray)
-    //        = UTF8Encoding toLiteral(anIndex, aLength, anArray).
+        string toString(int index, int length, byte[] array)
+            = UTF8Encoding.toString(index, length, array);
     }
     
     // --- UTF8Encoding ---
@@ -206,35 +206,35 @@ namespace text
         
     //    charCount(string s, ref int retVal)
     //        => system'core_routines'__utf8encoder;
-    //        
-    //    convert(int index, int length, string s, byte[] array)
-    //    {
-    //        s.saveToByteArray(index, array, length)
-    //    }
+        
+        convert(int index, int length, string s, byte[] array)
+        {
+            s.saveToByteArray(index, array, length)
+        }
             
         string toString(int index, int length, byte[] array)
             = String.fromByteArray(index, length, array);
             
-    //    convert(int index, ref int length, string s, char[] output, ref int outputLength)
-    //        => system'core_routines'__utf8encoder;
+//        convert(int index, ref int length, string s, char[] output, ref int outputLength)
+//            => intern system'core_routines'__utf8encoder;
     }
     
     // --- UTF16Encoder ---
     
-//    public singleton UTF16Encoder : Encoder
-//    {
-//        convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
-//            => intern system'core_routines'__utf16encoder;
-//        
-//        convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
-//            => intern system'core_routines'__utf16encoder;
-//    }
+    public singleton UTF16Encoder : Encoder
+    {
+        convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength)
+            => intern system'core_routines'__utf16encoder;
+        
+        convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
+            => intern system'core_routines'__utf16encoder;
+    }
 
     // --- UTF16Encoding ---
     
     public singleton UTF16Encoding
     {
-      //  Encoder encoder = UTF16Encoder;
+        Encoder encoder = UTF16Encoder;
         
     //    charCount(wide aLiteral, ref<int> aRetVal)
     //        => system'core_routines'__utf16encoder.

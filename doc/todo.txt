@@ -8,6 +8,11 @@ In development:
                 * compile hello world
 
               xdev elena50
+                * variadic extension methods : compile-time, run-time
+                * variadic methods : compile-time, run-time
+                * extension run-time dispatcher - several matched arguments
+
+                * fix ConsoleFileWriter
                 * dispatching variadic argument list : run-time / compile-time, with normal part run-time / compile-time
                 * extension variadic argument list with normal part run-time / compile-time
                 * random

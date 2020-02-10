@@ -1,4 +1,5 @@
 ﻿//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA compiler class implementation.
@@ -8481,6 +8482,8 @@ void Compiler :: saveExtension(ClassScope& scope, ref_t message/*, bool internal
    ident_t actionName = scope.module->resolveAction(getAction(message), signRef);
    if (signRef) {
       extensionMessage = overwriteAction(message, scope.module->mapAction(actionName, 0, false));
+      if (test(extensionMessage, VARIADIC_MESSAGE))
+         extensionMessage = overwriteArgCount(extensionMessage, 2);
    }
    else extensionMessage = message;
 
@@ -8715,8 +8718,7 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
    SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == methodType) {
-         //HOTFIX : ignore private and extension methods
-         ref_t multiMethod = extensionMode ? 0 : resolveMultimethod(scope, current.argument);
+         ref_t multiMethod = resolveMultimethod(scope, current.argument);
          if (multiMethod) {
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
             Attribute attr(current.argument, maMultimethod);
@@ -11362,10 +11364,6 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
 
    int firstArg = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
    if (test(message, VARIADIC_MESSAGE)) {
-   //   for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
-   //      signatures[signatureLen++] = scope.superReference;
-   //   }
-   //   signatures[signatureLen++] = scope.superReference;
    }
    else {
       for (int i = firstArg; i < argCount; i++) {
