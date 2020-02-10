@@ -4,23 +4,11 @@ In development:
               xdev - linux32
                 * compile empty program
 
-              xdev elena50
-                * readonly fields
-                * closures: unboxing : stack-allocated
-                * closures: presaved arguments
-                * #190 : Closure : auto boxing / unboxing local variables 
-
               xdev - linux32
                 * compile hello world
 
               xdev elena50
-                * closures: unboxing : fields
-                * closures: unboxing : struct fields
-
-                * closures: race conditions
-
-                * closures: returning a value
-
+                * random
                 * type should be only one in the token expression - test: int long r := 0;
 
                 * variadic arguments : unboxing, boxing, direct use
@@ -30,8 +18,18 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               xdev elena50
+                * closures: unboxing : fields
+                * closures: unboxing : struct fields
+                * closures: presaved arguments
+                * #190 : Closure : auto boxing / unboxing local variables 
+
+                * closures: race conditions
+
+                * closures: returning a value
+
                 * samples
 
+                * readonly fields
                 * multi-return methods : properties
                 * multi-return methods : optimize double assigning
                 * multi-return methods : dynamic objects

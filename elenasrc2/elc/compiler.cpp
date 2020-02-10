@@ -4382,6 +4382,7 @@ ref_t Compiler :: resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& c
 
 ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode)
 {
+   bool noUnboxing = EAttrs::test(mode, HINT_NOUNBOXING);
    ref_t closureRef = scope.reference;
    if (test(scope.info.header.flags, elVirtualVMT))
       closureRef = scope.info.header.parentRef;
@@ -4428,14 +4429,14 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
          recognizeTerminal(objNode, info, ownerScope, EAttr::eaNone);
          analizeOperand(objNode, ownerScope, true, false);
 
-         if ((*outer_it).preserved) {
+         if ((*outer_it).preserved && !noUnboxing) {
             if (!tempLocal) {
                // save the closure in the temp variable
                tempLocal = ownerScope.newTempLocal();
 
-               SNode objNode = node.firstChild(lxObjectMask);
-               objNode.injectAndReplaceNode(lxAssigning);
-               objNode.insertNode(lxTempLocal, tempLocal);
+               SNode closureNode = node.firstChild(lxObjectMask);
+               closureNode.injectAndReplaceNode(lxAssigning);
+               closureNode.insertNode(lxTempLocal, tempLocal);
             }
 
             injectMemberPreserving(objNode, lxTempLocal, tempLocal, (*outer_it).reference);
@@ -9715,15 +9716,37 @@ void Compiler :: injectMemberPreserving(SNode objNode, LexicalType tempType, int
    SNode parent = objNode;
    SNode current = injectRootSeqExpression(parent);
 
-   SNode assignNode = current.appendNode(lxAssigning);
-   if (objNode.type != lxLocal)
-      throw InternalError("Not yet implemented"); // !! temporal
+   if (objNode == lxExpression)
+      objNode = objNode.findSubNodeMask(lxObjectMask);
 
-   assignNode.appendNode(objNode.type, objNode.argument);
+   int size = 0;
+   if (objNode == lxSeqExpression) {
+      SNode copyNode = objNode.firstChild();
+      if (copyNode == lxCopying) {
+         size = copyNode.argument;
+         objNode = copyNode.lastChild(lxObjectMask);
+      }
+   }
 
-   SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
-   fieldExpr.appendNode(tempType, tempLocal);
-   fieldExpr.appendNode(lxField, memberIndex);
+   if (objNode.type == lxLocal) {
+      SNode assignNode = current.appendNode(lxAssigning);
+
+      assignNode.appendNode(objNode.type, objNode.argument);
+
+      SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
+      fieldExpr.appendNode(tempType, tempLocal);
+      fieldExpr.appendNode(lxField, memberIndex);
+   }
+   else if (objNode == lxLocalAddress) {
+      SNode assignNode = current.appendNode(lxCopying, size);
+
+      assignNode.appendNode(objNode.type, objNode.argument);
+
+      SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
+      fieldExpr.appendNode(tempType, tempLocal);
+      fieldExpr.appendNode(lxField, memberIndex);
+   }
+   else throw InternalError("Not yet implemented"); // !! temporal
 }
 
 void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
