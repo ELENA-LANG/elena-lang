@@ -28,6 +28,9 @@ Declarations
         - implcit default
         - explcit default
         - multi-return
+      * resend
+      * dispatch
+      * ret expression
     Properties
       * implicit
       * explicit

@@ -1107,11 +1107,15 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetSig
 {
    ref_t targetSignatures[ARG_COUNT];
    size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
-   if (len < 0)
+   if (sourceLen == 0 && len == 0)
+      return true;
+
+   if (len < 1)
       return false;
 
-   for (size_t i = 0; i < len; i++) {
-      if (!isCompatible(scope, targetSignatures[i], sourceSignatures[i]))
+   for (size_t i = 0; i < sourceLen; i++) {
+      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
+      if (!isCompatible(scope, targetSign, sourceSignatures[i]))
          return false;
    }
 
@@ -1124,13 +1128,20 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* target
    ref_t targetSignatures[ARG_COUNT];
    size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
 
-   for (size_t i = 0; i < len; i++) {
-      if (!isCompatible(scope, importReference(targetModule, targetSignatures[i], scope.module), sourceSignatures[i]))
+   if (sourceLen == 0 && len == 0)
+      return true;
+
+   if (len < 1)
+      return false;
+
+   for (size_t i = 0; i < sourceLen; i++) {
+      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
+
+      if (!isCompatible(scope, importReference(targetModule, targetSign, scope.module), sourceSignatures[i]))
          return false;
    }
 
    return true;
-
 }
 
 bool CompilerLogic :: isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage, 
@@ -2491,6 +2502,7 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
 
          MemoryReader reader(section);
          pos_t position = section->Length() - 4;
+         ref_t foundMessage = 0;
          while (position != 0) {
             reader.seek(position - 8);
             ref_t argMessage = reader.getDWord();
@@ -2501,19 +2513,21 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
                if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
                   setSignatureStacksafe(scope, argSign, stackSafeAttr);
 
-                  return argMessage;
+                  foundMessage = argMessage;
                }                  
             }
             else {
                if (isSignatureCompatible(scope, argModule, argSign, signatures, signatureLen)) {
                   setSignatureStacksafe(scope, argModule, argSign, stackSafeAttr);
 
-                  return importMessage(argModule, argMessage, scope.module);
+                  foundMessage = importMessage(argModule, argMessage, scope.module);
                }                  
             }
 
             position -= 8;
          }
+
+         return foundMessage;
       }
    }
 
