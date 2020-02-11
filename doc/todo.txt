@@ -21,6 +21,7 @@ In development:
                 * matrix samples
                 * pi2 samples
                 * collatz sample
+                * rosetta code samples
 
                 * readonly fields
                 * multi-return methods : properties

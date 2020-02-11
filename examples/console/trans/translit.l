@@ -4,8 +4,8 @@ import extensions;
 
 // --- RusLatRules ---
 
-const rusLatRules = new object[]::
-(
+const rusLatRules = new object[]
+{
     new :: { from = "а"; to = "a"; },
     new :: { from = "б"; to = "b"; },
     new :: { from = "в"; to = "v"; },
@@ -38,7 +38,7 @@ const rusLatRules = new object[]::
     new :: { from = "э"; to = "je"; },
     new :: { from = "ю"; to = "ju"; },
     new :: { from = "я"; to = "ja"; }
-);
+};
 
 // === Transliteration ===
 
