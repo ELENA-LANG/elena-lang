@@ -675,23 +675,23 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 ////        enumerable = self.
 ////    }.
 //}
-//
-//// --- RealMatrix ---
-//
-//public sealed class RealMatrix
-//{
-//    real[] theArray;
-//    int    theRows;
-//    int    theColumns;
-//    
-//    constructor(int rows, int columns)
-//    {
-//        theRows := rows;
-//        theColumns := columns;
-//        
-//        theArray := new real[](columns * rows)
-//    }
-//        
+
+// --- RealMatrix ---
+
+public sealed class RealMatrix
+{
+    real[] theArray;
+    int    theRows;
+    int    theColumns;
+    
+    constructor(int rows, int columns)
+    {
+        theRows := rows;
+        theColumns := columns;
+        
+        theArray := new real[](columns * rows)
+    }
+        
 ////    constructor new(object Rows, object Columns)
 ////        <= new(T<int>(Columns), T<int>(Rows)).
 //
@@ -778,8 +778,8 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 //            self.setAt(i,j,v)
 //        }
 //    };
-//}
-//
+}
+
 // --- String ---
 
 /// A UTF-8 literal value
