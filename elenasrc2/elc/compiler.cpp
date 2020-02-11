@@ -4595,6 +4595,8 @@ ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInf
       op.appendNode(lxType, target.reference);
    }
 
+   target.kind = okObject;
+
    return target;
 }
 
@@ -9287,23 +9289,23 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal, bo
 
          parentRef = scope.moduleScope->superReference;
       }
-//      else if (retVal.kind == okObject) {
-//         SNode root = node.findSubNodeMask(lxObjectMask);
-//
-//         if (root == lxConstantList/* && !accumulatorMode*/) {
-//            SymbolExpressionInfo info;
-//            info.expressionClassRef = scope.outputRef;
-//            info.constant = scope.constant;
-//            info.listRef = root.argument;
-//
-//            // save class meta data
-//            MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-//            info.save(&metaWriter);
-//
-//            return true;
-//         }
-//         else return false;
-//      }
+      //else if (retVal.kind == okObject) {
+      //   SNode root = node.findSubNodeMask(lxObjectMask);
+
+      //   if (root == lxConstantList/* && !accumulatorMode*/) {
+      //      SymbolExpressionInfo info;
+      //      info.expressionClassRef = scope.outputRef;
+      //      info.constant = scope.constant;
+      //      info.listRef = root.argument;
+
+      //      // save class meta data
+      //      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
+      //      info.save(&metaWriter);
+
+      //      return true;
+      //   }
+      //   else return false;
+      //}
       else return false;
 
       dataWriter.Memory()->addReference(parentRef | mskVMTRef, (ref_t)-4);

@@ -4,7 +4,7 @@ import extensions;
 
 // --- RusLatRules ---
 
-const rusLatRules = new object[]
+/*const*/ rusLatRules = new object[]
 {
     new { from = "а"; to = "a"; },
     new { from = "б"; to = "b"; },
@@ -49,7 +49,7 @@ Transliteration(text)
     text.forEach:(ch)
     {
         var rule := rusLatRules.seekEach:
-            (x => x.from == ch.Printable );
+            (x => x.from == ch.toPrintable() );
                 
         if (nil == rule)
         { 
