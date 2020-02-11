@@ -12,25 +12,20 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               xdev elena50
-                * closures: unboxing : fields
-
                 * matrix samples
-                * pi2 samples
-                * collatz sample
-                * rosetta code samples
 
                 * readonly fields
                 * multi-return methods : properties
                 * multi-return methods : optimize double assigning
                 * multi-return methods : dynamic objects
 
+                * pi2 samples
+
                 * closures: unboxing : struct fields
                 * closures: presaved arguments
                 * #190 : Closure : auto boxing / unboxing local variables 
 
-                * closures: race conditions
-
-                * closures: returning a value
+                * collatz sample
 
                 * using embeddable methods instead of normal one for method arguments
                 * auto determining the closure return value for closure templates
@@ -38,6 +33,12 @@ In development:
 
                 * stack allocated class and default constructor
                 * extension to read package info
+
+                * rosetta code samples
+
+                * closures: race conditions
+
+                * closures: returning a value
 
                 * auto symbol
                 * auto method

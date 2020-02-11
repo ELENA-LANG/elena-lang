@@ -3998,7 +3998,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //            tape.write(bcACopyB);
 //         }
          /*else */tape.write(bcGetI, argument);
-         break;
+         scope.clear();
+         return;
       case lxStaticConstField:
 //         if ((int)argument > 0) {
 //            // aloadr r
@@ -4007,8 +4008,9 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //         else {
             // geti -offset
             tape.write(bcGetI, argument);
-//         }
-         break;
+            //         }
+         scope.clear();
+         return;
       case lxStaticField:
 //         if ((int)argument > 0) {
             // peekr r
@@ -4020,7 +4022,8 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //            tape.write(bcALoadAI, argument);
 //            tape.write(bcALoadAI, 0);
 //         }
-         break;
+         scope.clear();
+         return;
 //      case lxFieldAddress:
 //         // aloadfi 1
 //         tape.write(bcALoadFI, 1, bpFrame);
