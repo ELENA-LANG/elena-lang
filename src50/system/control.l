@@ -759,7 +759,7 @@ public abstract class BaseEnumerator<T> : Enumerator<T>
         ^ (cast int(theIndex)) < theLength
     }
     
-    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
+    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
 
 //// --- BaseIndexer ---
@@ -837,7 +837,7 @@ public abstract BaseIndexer<T> : Indexer<T>
         }
     }
     
-    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
+    Indexer cast() = new Indexer { embeddable dispatch() => self; };
 }
 
 ////// --- BaseMatrixIndexer ---

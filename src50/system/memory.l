@@ -17,7 +17,7 @@ public sealed Array<T> : Indexable<T>
         }
     }
 
-    Enumerator<T> enumerator() = new BaseEnumerator<T>::
+    Enumerator<T> enumerator() = new BaseEnumerator<T>
     {
         this theIndex := -1;
         
@@ -37,9 +37,9 @@ public sealed Array<T> : Indexable<T>
 //    
 ////    cast Enumerable<T> = new Enumerable<T>:{ embeddable dispatch => self; };
 
-    Enumerable cast() = new Enumerable::{ Enumerator enumerator() => self; };
+    Enumerable cast() = new Enumerable{ Enumerator enumerator() => self; };
 
-    Indexer<T> indexer() = new BaseIndexer<T>::
+    Indexer<T> indexer() = new BaseIndexer<T>
     {
         this theIndex := 0;
         
@@ -872,7 +872,7 @@ public sealed const struct String : BaseValue
         ^ retVal
     }
      
-    Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
+    Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
 
     string toPrintable() = self;
 
@@ -1137,7 +1137,7 @@ public sealed const struct WideString : BaseValue
         ^ retVal
     }
 
-    Enumerable<char> cast() = new Enumerable<char>::{ Enumerator<char> enumerator() => self; };
+    Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
 
     bool equal(o)
     {
@@ -1392,7 +1392,7 @@ public sealed class Variant
 ////    ]    
 
     private castValueTo(target)
-        = new::{
+        = new{
             castTo(o)
                 = o.toPrintable();
             
@@ -2029,7 +2029,7 @@ class StringEnumerator : Enumerator<char>
         ^ false
     }
     
-    Enumerator cast() = new Enumerator::
+    Enumerator cast() = new Enumerator
     {
         embeddable dispatch() => self;
     };
@@ -2116,7 +2116,7 @@ class StringIndexer : Indexer<char>
         }
     }
         
-    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
+    Indexer cast() = new Indexer{ embeddable dispatch() => self; };
 }
 
 // --- WideLiteralEnumerator ---
@@ -2174,7 +2174,7 @@ class WideStringEnumerator : Enumerator<char>
         ^ false
     }
     
-    Enumerator cast() = new Enumerator::
+    Enumerator cast() = new Enumerator
     {
         embeddable dispatch() => self;
     };
@@ -2255,7 +2255,7 @@ class WideStringIndexer : Indexer<char>
         }
     }
         
-    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };
+    Indexer cast() = new Indexer{ embeddable dispatch() => self; };
 }
 
 // --- ArrayIndexer ---

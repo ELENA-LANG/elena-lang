@@ -40,7 +40,7 @@ public interface BoolValue
     static bool MinValue
         = BoolValue.false;
 
-    const static true = BoolValue::
+    const static true = BoolValue
     {
         /// Executes the action
         if(trueAction) = trueAction();
@@ -83,7 +83,7 @@ public interface BoolValue
         bool clone() = this self;        
     };
                         
-    const static false = BoolValue::
+    const static false = BoolValue
     {
         /// Always returns nil
         if(trueAction) = nil;

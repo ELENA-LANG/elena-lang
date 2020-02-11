@@ -117,7 +117,7 @@ namespace io
             ffd := nil
         }
         
-        Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
+        Enumerator cast() = new Enumerator{ embeddable dispatch() => self; };
     }
     
     public SearchFiles(string path, string mask, List<string> output)

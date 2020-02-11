@@ -434,7 +434,7 @@ singleton enumerableConvertor
         = o;
     
     Enumerable convert(o)
-        = new Enumerable::{ Enumerator enumerator() = o.enumerator(); };
+        = new Enumerable{ Enumerator enumerator() = o.enumerator(); };
 }
 
 // --- enumerableExOp ---

@@ -132,7 +132,7 @@ namespace io
     
     // --- fileStreamHelper ---
     
-    fileStreamHelper = new::
+    fileStreamHelper = new
     {
         Stream openForWrite(string path, bool appendMode)
         {

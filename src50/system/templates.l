@@ -1,6 +1,6 @@
 public interface<T>
 {
-    T cast() = new T::
+    T cast() = new T
     {
         embeddable dispatch() => self;
     };
