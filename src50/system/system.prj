@@ -48,5 +48,8 @@
        <include>routines\patterns.l</include>
        <include>routines\sorting.l</include>
      </module>
+     <module name="dynamic">
+       <include>dynamic\groups.l</include>
+     </module>
   </files>
 </configuration>

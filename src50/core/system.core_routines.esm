@@ -2715,6 +2715,29 @@ procedure __timest."empty$system@calendar@TimeStruct[1]"
 
 end
 
+procedure __extension."#dispatch[1]"
+/*
+  asavesi 1
+  pushe
+  bcopya
+  dcopy 1
+
+labNext:
+  pope
+  get
+  bsredirect
+  pushe
+  bloadsi 2
+  inc
+  count
+  less labNext
+  
+  pope
+  aloadbi 0
+  ajumpvi 0
+*/
+end
+
 // ; system routines
 
 procedure critical_exception_handler

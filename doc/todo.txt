@@ -12,7 +12,6 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               xdev elena50
-                * mixin
                 * matrix samples
 
                 * readonly fields
@@ -55,6 +54,8 @@ In development:
                 * nested class scope
                 * reference message??
                 * variable : identifier / reference
+
+                * invoke extension directly
 
                 * test primitive numeric operation in the symbol
 
@@ -213,6 +214,7 @@ In development:
 		* close issue 
 
               dev50 - new features
+                * system'Extension : variadic argument should be boxed directly into extension
                 * resend to constant - no need for frame
                 * public / private / internal / protected fields
                 * if all constructors are internal - can be inherited only inside the module

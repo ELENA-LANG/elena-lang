@@ -57,7 +57,7 @@
 #define intern      80001016h
 #define forward     80001017h
 #define import      80001018h
-//#define mixin       80001019h
+#define mixin       80001019h
 ////#8000101B = nonstructural;
 #define auto        8000101Ch
 //#define attribute   8000101Fh

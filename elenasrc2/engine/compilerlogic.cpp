@@ -1749,9 +1749,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
       case V_NOSTRUCT:
          attrValue = elNonStructureRole;
          return true;
-//      case V_GROUP:
-//         attrValue = elGroup;
-//         return true;
+      case V_GROUP:
+         attrValue = elGroup;
+         return true;
 //      //case V_TAPEGROUP:
 //      //   attrValue = elTapeGroup;
 ////         return true;

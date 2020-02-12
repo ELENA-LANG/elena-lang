@@ -154,7 +154,7 @@ public sealed const struct MessageName
     dispatch() => intern system'core_routines'__signature;
 }
 
-//// --- Extension ---
+//// --- Wrap ---
 //
 //public mixin Wrap
 //{
@@ -162,12 +162,25 @@ public sealed const struct MessageName
 //    
 //    dispatch() => system'core_routines'__wrap;
 //}
-//
-//// --- Wrap ---
-//
-//public mixin Extension
-//{
-//    object[] items;
-//    
-//    dispatch() => system'core_routines'__extension;
-//}
+
+// --- Extension ---
+
+public mixin Extension
+{
+    __string object[] items;
+    
+    protected constructor allocate(int length)
+        = new object[](length);
+    
+    constructor new(params object[] args)
+        <= allocate(args.Length)
+    {
+        int l := args.Length;
+        for (int i := 0, i < l, i += 1)
+        {
+            items[i] := args[i]
+        }
+    }
+    
+//    dispatch() => intern system'core_routines'__extension;
+}

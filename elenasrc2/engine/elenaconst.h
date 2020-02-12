@@ -310,7 +310,7 @@ namespace _ELENA_
    constexpr int elWithGenerics        = 0x02000000;
    constexpr int elSubject             = 0x04000000;
    constexpr int elExtMessage          = 0x08200000;
-         //   constexpr int elGroup               = 0x00000200;
+   constexpr int elGroup               = 0x10000000;
 //   constexpr int elSymbol              = 0x00100000;
 
 //   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
