@@ -6,15 +6,15 @@ namespace io
     {
         handle stdout()
         {
-           handle libHandle := extern libdl.dlopen( 
+           /*handle libHandle := extern libdl.dlopen(
                                               "libc.so.6",
                                               1);
     
-           dirty_ptr variable := extern libdl.dlsym(
+           /*dirty_ptr variable := extern libdl.dlsym(
                             libHandle,
                             "stdout");
-    
-            int handle := variable.Value;
+*/    
+            int handle/* := variable.Value*/;
     
            ^ handle
         }
@@ -40,18 +40,18 @@ namespace io
     
         write(string s)
         {
-            int n := 0;
-            byte vc := 0;
-    
-            int l := s.Length;
-            while(n < l)
-            {
-                s.read(n, ref vc);
-    
-                extern libc.putchar(vc);
-    
-                n := n + 1
-            }
+            //int n := 0;
+            //byte vc := 0;
+            //
+            //int l := s.Length;
+            //while(n < l)
+            //{
+            //    s.read(n, ref vc);
+            //
+            //    extern libc.putchar(vc);
+            //
+            //    n := n + 1
+            //}
     
             // !!check the result of the operation
         }
@@ -87,9 +87,9 @@ namespace io
               
         read(ref byte retVal)
         {
-            int ch := extern libc.getchar();
-    
-            byteConvertor.convert(ch, ref retVal) 
+           // int ch := extern libc.getchar();
+
+           // byteConvertor.convert(ch, ref retVal)
         }
     
         read(byte[] buffer, ref int retVal)

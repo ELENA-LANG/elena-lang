@@ -48,7 +48,7 @@ procedure % NEW_HEAP
   push PROT_READ_WRITE
   push ecx
   push 0
-  call extern : "libc.so.6.mmap"
+  //call extern : "libc.so.6.mmap"
   add  esp, 24
   ret
 
@@ -67,7 +67,7 @@ procedure % BREAK
 
   // ; SIGABRT
   push SIGABRT
-  call extern : "libc.so.6.raise"
+ // call extern : "libc.so.6.raise"
 
 end
 

@@ -3,6 +3,18 @@ RELEASE=elena-5.0.1.i386-linux
 
 echo compiling data files
 
+cp /usr/lib/elena/core/x32/*.bin /usr/lib/elena/core/x32/
+cp ../bin/elena-lc /usr/bin/
+
+mkdir -p /usr/share/elena
+mkdir -p /usr/lib/elena/core/x32/
+mkdir -p /usr/lib/elena/lib50
+mkdir -p /etc/elena/
+mkdir -p /etc/elena/templates/
+
+cp ../bin/elc.config /etc/elena/
+cp ../bin/templates/*.config /etc/elena/templates/
+
 ../bin/elena-og ../dat/og/rules.txt
 ret=$?
 if [ $ret -eq 0 ]
@@ -23,6 +35,8 @@ else
   exit 1
 fi
 
+cp ../dat/og/*.dat /usr/share/elena/
+
 ../bin/elena-sg ../dat/sg/syntax.txt
 ret=$?
 if [ $ret -eq 0 ]
@@ -33,16 +47,15 @@ else
   exit 1
 fi
 
-echo compiling asm files
+cp ../dat/sg/syntax.dat /usr/share/elena
 
-mkdir -p /usr/lib/elena/core/x32/
+echo compiling assembly files
 
 ../bin/elena-asm2binx ../asm/x32/core.asm /usr/lib/elena/core/x32
 ret=$?
 if [ $ret -eq 0 ]
 then
   echo .
-  exit 0
 else
   echo "Failure" >&2
   exit 1
@@ -59,7 +72,6 @@ else
   exit 1
 fi
 
-echo coreapi
 ../bin/elena-asm2binx ../asm/x32/coreapi.asm /usr/lib/elena/core/x32
 ret=$?
 if [ $ret -eq 0 ]
@@ -69,18 +81,6 @@ else
   echo "Failure" >&2
   exit 1
 fi
-
-mkdir -p /usr/share/elena/
-mkdir -p /etc/elena/
-mkdir -p /etc/elena/templates/
-mkdir -p /usr/lib/elena
-mkdir -p /usr/lib/elena/lib50
-
-cp ../bin/elc.config /etc/elena/
-cp ../bin/templates/*.config /etc/elena/templates/
-cp ../dat/og/*.dat /usr/share/elena/
-cp ../dat/sg/syntax.dat /usr/share/elena
-cp /usr/lib/elena/core/x32/*.bin ./$RELEASE/usr/lib/elena/core/x32/
 
 echo compiling lib50 files
 
@@ -114,15 +114,27 @@ else
   echo .
 fi
 
-echo copying files
+echo building package
 
-mkdir -p ./$RELEASE/usr/bin/
 mkdir -p ./$RELEASE/usr/lib/elena/core/x32/
+mkdir -p ./$RELEASE/usr/bin/
+mkdir -p ./$RELEASE/usr/lib/elena/
 mkdir -p ./$RELEASE/etc/elena/
 mkdir -p ./$RELEASE/etc/elena/templates/
 mkdir -p ./$RELEASE/etc/elena/scripts/
 mkdir -p ./$RELEASE/usr/share/elena/
 mkdir -p ./$RELEASE/usr/lib/elena/lib50/
+
+cp /usr/lib/elena/core/x32/*.bin ./$RELEASE/usr/lib/elena/core/x32/
+cp ../bin/elena-lc ./$RELEASE/usr/bin/
+cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena/
+cp ../bin/*.config ./$RELEASE/etc/elena/
+cp ../bin/templates/*.config ./$RELEASE/etc/elena/templates
+cp ../bin/scripts/*.es ./$RELEASE/etc/elena/scripts
+cp ../dat/og/*.dat ./$RELEASE/usr/share/elena
+cp ../dat/sg/syntax.dat ./$RELEASE/usr/share/elena
+cp -r /usr/lib/elena/lib50 ./$RELEASE/usr/lib/elena/
+
 mkdir -p ./$RELEASE/usr/elena-lang/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/console/
@@ -136,18 +148,6 @@ mkdir -p ./$RELEASE/usr/elena-lang/examples/console/replace/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/console/goods/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/files/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textfiles/
-
-cp ../bin/elena-lc ./$RELEASE/usr/bin/
-cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena/
-
-cp ../bin/*.config ./$RELEASE/etc/elena/
-cp ../bin/templates/*.config ./$RELEASE/etc/elena/templates
-cp ../bin/scripts/*.es ./$RELEASE/etc/elena/scripts
-
-cp ../dat/og/*.dat ./$RELEASE/usr/share/elena
-cp ../dat/sg/syntax.dat ./$RELEASE/usr/share/elena
-
-cp -r /usr/lib/elena/lib50 ./$RELEASE/usr/lib/elena/
 
 cp ../examples/console/helloworld/*.l ./$RELEASE/usr/elena-lang/examples/console/helloworld/
 cp ../examples/console/helloworld/*.prj ./$RELEASE/usr/elena-lang/examples/console/helloworld/
