@@ -445,6 +445,8 @@ int Linker32 :: fillImportTable(ImageInfo& info)
 
       it++;
       count++;
+
+      return count; // !! temporal
    }
    return count;
 }

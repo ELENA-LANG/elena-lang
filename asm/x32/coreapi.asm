@@ -4085,7 +4085,7 @@ procedure coreapi'default_handler
 
   // ; exit code
   push 0
-  call extern 'rt_dlls.Exit
+  //call extern 'rt_dlls.Exit
 
 end
 
