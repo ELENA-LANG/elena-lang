@@ -15,9 +15,9 @@ Declarations
 
         - private constructor - class cannot be inherited  +
         - protected constructor +
-        - conversion constructors
+        - conversion constructors +
         - named : call the default constructor +
-        - anonymos / conversion - do not call default constructor
+        - anonymos / conversion - do not call default constructor +
         - resending : to another constructor / to parent one +
     Static Methods
       * inheritable : cannot be overriden, accessible in all parent class
@@ -31,6 +31,7 @@ Declarations
       * resend
       * dispatch
       * ret expression
+      * Generic handlers 
     Properties
       * implicit
       * explicit
@@ -69,6 +70,7 @@ Code
   Expressions
     * In-place assignment (both variable and properties)
   Control statements
+  Conversions : cast vs conversion constructor
 Project
   Options
     * option to turn on / off auto system module import
