@@ -12,6 +12,7 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               xdev elena50
+                * mixin
                 * matrix samples
 
                 * readonly fields
@@ -138,6 +139,7 @@ In development:
                 * watch message / subject info
 
               dev50 - test / optimization
+                * readtof - optimization
                 * translit sample: List should be compiled as constant list
                 * do not box the variadic argument list for Length operation
                 * simplify the operations with struct fields (size=1,2,4,8,...)

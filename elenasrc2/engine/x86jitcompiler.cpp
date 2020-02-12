@@ -151,7 +151,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePopN, &compileAllocI, &compileNop, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
    &loadROp, &compileDShiftN, &compileNop, &compileNop, &loadIndexNOp, &loadIndexNOp, &loadNNOp, &loadNNOp,
 
-   &loadFPIndexOpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPN4OpX, &loadFPNOp, &loadFPNOp,
+   &loadFPN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPN4OpX, &loadFPNOp, &loadFPNOp,
    &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileLessN,
