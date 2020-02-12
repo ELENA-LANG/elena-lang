@@ -19,6 +19,8 @@
 
 extern "C"
 {
+   DLL_PUBLIC void Test();
+
    DLL_PUBLIC void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);
 
    DLL_PUBLIC void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);

@@ -70,12 +70,14 @@
 		<Unit filename="../../engine/libman.h" />
 		<Unit filename="../../engine/linux32/elfhelper.cpp" />
 		<Unit filename="../../engine/linux32/elfhelper.h" />
+		<Unit filename="../../engine/linux32/linx32routines.cpp" />
 		<Unit filename="../../engine/module.cpp" />
 		<Unit filename="../../engine/module.h" />
 		<Unit filename="../../engine/rtman.cpp" />
 		<Unit filename="../../engine/rtman.h" />
 		<Unit filename="../../engine/section.cpp" />
 		<Unit filename="../../engine/section.h" />
+		<Unit filename="../../engine/x86/x86routines.cpp" />
 		<Unit filename="../elenartmachine.cpp" />
 		<Unit filename="../elenartmachine.h" />
 		<Unit filename="../linux32/elenart.h" />

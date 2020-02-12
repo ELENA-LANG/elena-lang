@@ -7,7 +7,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
-#include <windows.h>
+#include <sys/mman.h>
 
 using namespace _ELENA_;
 

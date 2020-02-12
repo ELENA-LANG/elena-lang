@@ -17,10 +17,12 @@ const pos_t page_mask = 0x0FFFFFFF0;
 
 void SystemRoutineProvider :: Init(SystemEnv* env)
 {
+#ifdef _WIN32
    // ; initialize fpu
    __asm {
       finit
    }
+#endif
 
    // ; initialize static roots
  //  mov  ecx, [data : %CORE_STAT_COUNT]
@@ -93,6 +95,7 @@ void SystemRoutineProvider :: Init(SystemEnv* env)
 
 inline void entryCriticalSection(void* tt_lock)
 {
+#ifdef _WIN32
    __asm {
       mov  esi, tt_lock
 
@@ -103,10 +106,12 @@ inline void entryCriticalSection(void* tt_lock)
          lock cmpxchg dword ptr[esi], edx
          jnz  short labWait
    }
+#endif
 }
 
 inline void leaveCriticalSection(void* tt_lock)
 {
+#ifdef _WIN32
    // ; free lock
    __asm {
       mov  esi, tt_lock
@@ -115,6 +120,7 @@ inline void leaveCriticalSection(void* tt_lock)
       mov  edx, -1
       lock xadd[esi], edx
    }
+#endif
 }
 
 bool SystemRoutineProvider :: NewThread(SystemEnv* env, ProgramHeader* frameHeader)
@@ -155,6 +161,7 @@ void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool wi
 
 int SystemRoutineProvider :: Execute(void* address, FrameHeader* framePtr)
 {
+#ifdef _WIN32
    int retVal = 0;
    int prevFrame = framePtr->previousFrame;
    int resrv = framePtr->reserved;
@@ -184,4 +191,5 @@ int SystemRoutineProvider :: Execute(void* address, FrameHeader* framePtr)
    }
 
    return retVal;
+#endif
 }

@@ -6,274 +6,6 @@
 //                                              (C)2015-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
-//// --- Reallocate ---
-//
-//ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
-//{
-//   int base = ((ImageBaseMap*)map)->base + (key & ~mskAnyRef);
-//
-//   switch(key & mskImageMask) {
-//      case mskCodeRef:
-//         return ((ImageBaseMap*)map)->code + base + disp;
-//      case mskRelCodeRef:
-//         return (key & ~mskAnyRef) + disp - pos - 4;
-//      case mskRDataRef:
-//         return ((ImageBaseMap*)map)->rdata + base + disp;
-//      case mskStatRef:
-//         return ((ImageBaseMap*)map)->stat + base + disp;
-//      case mskDataRef:
-//         return ((ImageBaseMap*)map)->bss + base + disp;
-////      case mskTLSRef:
-////         return ((ImageBaseMap*)map)->tls + base + disp;
-//      case mskImportRef:
-//      {
-//         int address = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
-//
-//         return ((ImageBaseMap*)map)->import + address + disp;
-//      }
-//      default:
-//         return disp;
-//   }
-//}
-//
-//ref_t reallocateImport(ref_t pos, ref_t key, ref_t disp, void* map)
-//{
-//   if ((key & mskImageMask)==mskImportRef) {
-//      int base = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
-//
-//      int vv  = ((ImageBaseMap*)map)->import;
-//      int v = ((ImageBaseMap*)map)->import + disp;
-//
-//     return /*base + */((ImageBaseMap*)map)->import + disp;
-//   }
-//   else if ((key & mskImageMask)==mskRDataRef) {
-//      int base = ((ImageBaseMap*)map)->base + (key & ~mskAnyRef);
-//
-//      return ((ImageBaseMap*)map)->rdata + base + disp;
-//   }
-//   else if ((key & mskImageMask)==mskCodeRef) {
-//      int base = ((ImageBaseMap*)map)->base + (key & ~mskAnyRef);
-//
-//      return ((ImageBaseMap*)map)->code + base + disp;
-//   }
-//   else return disp;
-//}
-//
-//// --- Linker ---
-//
-//void Linker32 :: mapImage(ImageInfo& info)
-//{
-//   info.map.base = info.project->IntSetting(opImageBase, IMAGE_BASE);
-//
-//   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-//
-//   info.ph_length = 4; // header + text + rdata + data
-//
-//   if (info.dynamic > 0) {
-//      info.ph_length += 2; // if import table is not empty, append interpreter / dynamic
-//   }
-//
-//   // define section sizes
-//   int textSize = align(HEADER_SIZE + getSize(info.image->getTextSection()), FILE_ALIGNMENT);
-//   int adataSize = align(getSize(info.image->getADataSection()), FILE_ALIGNMENT);
-//   int mdataSize = align(getSize(info.image->getMDataSection()), FILE_ALIGNMENT);
-//   int rdataSize = align(getSize(info.image->getRDataSection()), FILE_ALIGNMENT);
-//   int importSize = align(getSize(info.image->getImportSection()), FILE_ALIGNMENT);
-//   int statSize = align(getSize(info.image->getStatSection()), FILE_ALIGNMENT);
-//   int bssSize = align(getSize(info.image->getBSSSection()), FILE_ALIGNMENT);
-//
-//   info.headerSize = /*align(*/HEADER_SIZE/*, FILE_ALIGNMENT)*/;
-//   info.textSize = textSize;
-//   info.rdataSize = adataSize + mdataSize + rdataSize;
-//   info.importSize = importSize;
-//   info.bssSize = statSize + bssSize;
-//
-//   // text segment
-//   info.map.code = /*info.headerSize*/0;               // code section should always be first
-//
-//   // rodata segment
-//   info.map.adata = align(info.map.code + info.textSize, alignment);
-//   // due to loader requirement, adjust offset
-//   //info.map.adata += ((/*info.headerSize + */info.textSize) & (alignment - 1));
-//
-//   info.map.mdata = info.map.adata + adataSize;
-//   info.map.rdata = info.map.mdata + mdataSize;
-//
-//   // data segment
-//   info.map.import = align(info.map.rdata + rdataSize, alignment);
-//   // due to loader requirement, adjust offset
-//   //if (info.importSize != 0)
-//   //   info.map.import += ((/*info.headerSize + */textSize + adataSize + mdataSize + rdataSize) & (alignment - 1));
-//
-//   info.map.stat = info.map.import + importSize;
-//   info.map.bss = info.map.stat + statSize;
-//
-//   if (info.interpreter)
-//      info.interpreterOffset = /*info.headerSize + */textSize + adataSize + mdataSize + info.interpreter;
-//
-//   if (info.dynamic) {
-//      info.dynamicOffset = /*info.headerSize + */textSize + adataSize + mdataSize + info.dynamic;
-//   }
-//
-///*
-//   info.map.tls = align(info.map.stat + getSize(info.image->getStatSection()), alignment);
-//   info.imageSize = align(info.map.debug + getSize(info.image->getDebugSection()), alignment);
-//*/
-//}
-//
-//int Linker32 :: fillImportTable(ImageInfo& info)
-//{
-//   int count = 0;
-//
-//   ReferenceMap::Iterator it = info.image->getExternalIt();
-//   while (!it.Eof()) {
-//      String<char, PATH_MAX> external(it.key());
-//
-//      int dotPos = ident_t(external).findLast('.') + 1;
-//
-//      ident_t function = external + dotPos;
-//
-//      IdentifierString dll(external + getlength(DLL_NAMESPACE) + 1, getlength(external) - getlength(DLL_NAMESPACE) - getlength(function) - 2);
-//      if (dll.ident().compare(RTDLL_FORWARD)) {
-//         dll.copy(info.project->resolvePrimitive(RTDLL_FORWARD));
-//      }
-//
-//      info.functions.add(function.clone(), *it);
-//      if (!retrieve(info.libraries.start(), dll.ident(), (char*)NULL)) {
-//          info.libraries.add(dll.clone());
-//      }
-//
-//      it++;
-//      count++;
-//
-//      return count; // !! temporal
-//   }
-//   return count;
-//}
-//
-//void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
-//{
-//   int alignment = info.project->IntSetting(opSectionAlignment, SECTION_ALIGNMENT);
-//
-//   Elf32_Phdr ph_header;
-//
-//   // Program header
-//   ph_header.p_type = PT_PHDR;
-//   ph_header.p_offset = ELF_HEADER_SIZE;
-//   ph_header.p_vaddr = info.map.base + ELF_HEADER_SIZE;
-//   ph_header.p_paddr = info.map.base + ELF_HEADER_SIZE;
-//   ph_header.p_filesz = info.ph_length * ELF_PH_SIZE;
-//   ph_header.p_memsz = info.ph_length * ELF_PH_SIZE;
-//   ph_header.p_flags = PF_R;
-//   ph_header.p_align = 4;
-//   file->write((char*)&ph_header, ELF_PH_SIZE);
-//
-//   if (info.interpreter > 0) {
-//      // Interpreter
-//      ph_header.p_type = PT_INTERP;
-//      ph_header.p_offset = info.interpreterOffset;
-//      ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.interpreter;
-//      ph_header.p_memsz = ph_header.p_filesz = getlength(INTERPRETER_PATH) + 1;
-//      ph_header.p_flags = PF_R;
-//      ph_header.p_align = 1;
-//      file->write((char*)&ph_header, ELF_PH_SIZE);
-//   }
-//
-//   // Text Segment
-//   ph_header.p_type = PT_LOAD;
-//   ph_header.p_offset = 0;
-//   ph_header.p_vaddr = info.map.base;
-//   ph_header.p_paddr = info.map.base;
-//   ph_header.p_memsz = ph_header.p_filesz = /*info.headerSize + */info.textSize;
-//   ph_header.p_flags = PF_R + PF_X;
-//   ph_header.p_align = alignment;
-//   file->write((char*)&ph_header, ELF_PH_SIZE);
-//
-//   // RData Segment
-//   ph_header.p_type = PT_LOAD;
-//   ph_header.p_offset = /*info.headerSize + */info.textSize;
-//   ph_header.p_vaddr = info.map.base + info.map.adata;
-//   ph_header.p_paddr = info.map.base + info.map.adata;
-//   ph_header.p_memsz = ph_header.p_filesz = info.rdataSize;
-//   ph_header.p_flags = PF_R;
-//   ph_header.p_align = alignment;
-//   file->write((char*)&ph_header, ELF_PH_SIZE);
-//
-//   // Data Segment
-//   ph_header.p_type = PT_LOAD;
-//   if (info.importSize != 0) {
-//      ph_header.p_offset = /*info.headerSize + */info.textSize + info.rdataSize;
-//   }
-//   else ph_header.p_offset = 0;
-//   ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.import;
-//   ph_header.p_memsz = info.importSize/* + info.bssSize*/;
-//   ph_header.p_filesz = info.importSize;
-//   ph_header.p_flags = PF_R + PF_W;
-//   ph_header.p_align = alignment;
-//   file->write((char*)&ph_header, ELF_PH_SIZE);
-//
-//   if (info.dynamic > 0) {
-//      // Dynamic
-//      ph_header.p_type = PT_DYNAMIC;
-//      ph_header.p_offset = info.dynamicOffset;
-//      ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.dynamic;
-//      ph_header.p_filesz = ph_header.p_memsz = /*info.dynamicSize*/0x100;
-//      ph_header.p_flags = PF_R;
-//      ph_header.p_align = 8;
-//      file->write((char*)&ph_header, ELF_PH_SIZE);
-//   }
-//}
-//
-//
-//bool Linker32 :: createExecutable(ImageInfo& info, const char* exePath/*, ref_t tls_directory*/)
-//{
-//   // create a full path (including none existing directories)
-//   Path dirPath;
-//   dirPath.copySubPath(exePath);
-//   Path::create(NULL, exePath);
-//
-//   FileWriter executable(exePath, feRaw, false);
-//
-//   if (!executable.isOpened())
-//      return false;
-//
-//   writeELFHeader(info, &executable);
-//   writePHTable(info, &executable);
-//
-//    int p = executable.Position();
-//
-//   if (info.headerSize >= executable.Position()) {
-//      executable.writeBytes(0, info.headerSize - executable.Position());
-//   }
-//   else throw InternalError(errFatalLinker);
-//
-//   writeSegments(info, &executable);
-//
-//   return true;
-//}
-//
-//void Linker32 :: run(Project& project, Image& image/*, ref_t tls_directory*/)
-//{
-//   ImageInfo info(&project, &image);
-//
-//   info.entryPoint = image.getEntryPoint();
-//
-//   createImportData(info);
-//   mapImage(info);
-//   fixImage(info);
-//
-//   Path path(project.StrSetting(opTarget));
-//
-//   if (emptystr(path))
-//      throw InternalError(errEmptyTarget);
-//
-//   if (!createExecutable(info, path/*, tls_directory*/))
-//      project.raiseError(errCannotCreate, path.c_str());
-//
-//   chmod(path, S_IXOTH | S_IXUSR | S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
-//
-//}
-
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "linker.h"
@@ -332,6 +64,9 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
       case mskImportRef:
       {
          int address = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
+
+
+         int v = ((ImageBaseMap*)map)->import + address + disp;
 
          return ((ImageBaseMap*)map)->import + address + disp;
       }
@@ -407,7 +142,7 @@ void Linker32 :: mapImage(ImageInfo& info)
    info.map.rdata = info.map.mdata + mdataSize;
 
    // data segment
-   info.map.import = align(info.map.adata + getSize(info.image->getRDataSection()) + adataSize + mdataSize, alignment);
+   info.map.import = align(info.map.rdata + getSize(info.image->getRDataSection()), alignment);
    // due to loader requirement, adjust offset
    if (info.importSize != 0)
       info.map.import += ((info.headerSize + info.textSize + info.rdataSize) & (alignment - 1));
@@ -445,8 +180,6 @@ int Linker32 :: fillImportTable(ImageInfo& info)
 
       it++;
       count++;
-
-      return count; // !! temporal
    }
    return count;
 }
@@ -558,10 +291,10 @@ void Linker32 :: createImportData(ImageInfo& info)
    dynamicWriter.writeDWord(strLength);
 
    dynamicWriter.writeDWord(DT_SYMENT);
-   dynamicWriter.writeDWord(0x10);
+   dynamicWriter.writeDWord(16);
 
    dynamicWriter.writeDWord(DT_PLTGOT);
-   dynamicWriter.writeRef(importRef, 0);
+   dynamicWriter.writeRef(importRef, /*gotStart*/0);
 
    dynamicWriter.writeDWord(DT_PLTRELSZ);
    dynamicWriter.writeDWord(count * 8);
@@ -728,7 +461,7 @@ void Linker32 :: writePHTable(ImageInfo& info, FileWriter* file)
       ph_header.p_type = PT_DYNAMIC;
       ph_header.p_offset = info.headerSize + info.textSize + info.dynamic + info.rdataOffset;
       ph_header.p_paddr = ph_header.p_vaddr = info.map.base + info.map.rdata + info.dynamic;
-      ph_header.p_filesz = ph_header.p_memsz = info.rdataSize - info.dynamic - info.rdataOffset;
+      ph_header.p_filesz = ph_header.p_memsz = align(info.interpreter - info.dynamic, 8);
       ph_header.p_flags = PF_R;
       ph_header.p_align = 8;
       file->write((char*)&ph_header, ELF_PH_SIZE);
@@ -859,7 +592,7 @@ size_t I386Linker32 :: writePLTEntry(MemoryWriter& codeWriter, int symbolIndex, 
    codeWriter.writeByte(0x68);
    codeWriter.writeDWord(symbolIndex);
    codeWriter.writeByte(0xE9);
-   codeWriter.writeDWord(-0x10-(entryIndex * 0x10));
+   codeWriter.writeDWord(0x10*(-1-entryIndex));
 
    return position;
 }

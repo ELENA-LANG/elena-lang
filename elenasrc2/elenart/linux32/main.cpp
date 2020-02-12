@@ -7,8 +7,8 @@
 #include "elena.h"
 // -------------------------------------------------------------------
 #include "elenart.h"
-//#include "elenartmachine.h"
-//#include "linux32/elfhelper.h"
+#include "elenartmachine.h"
+#include "linux32/elfhelper.h"
 #include <unistd.h>
 
 #define ROOT_PATH          "/usr/lib/elena"
@@ -17,67 +17,69 @@
 
 using namespace _ELENA_;
 
-//static ELENARTMachine* _Instance = NULL;
-//static void* _SystemEnv = NULL;
-//
-//void getSelfPath(Path& rootPath)
-//{
-//   char buff[PATH_MAX];
-//   size_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
-//   if (len != -1) {
-//      buff[len] = 0;
-//      rootPath.copy(buff);
-//   }
-//   /* handle error condition */
-//}
-//
-//void init()
-//{
-//   // get EXE path
-//   Path execPath;
-//   getSelfPath(execPath);
-//
-//   _Instance = new ELENARTMachine(ROOT_PATH, execPath.c_str());
-//
-//   void* messageSection = nullptr;
-//   void* mattributeSection = nullptr;
-//   ELENARTMachine::ImageSection section;
-//   section.init((void*)IMAGE_BASE, 0x1000);
-//
-//   size_t ptr = 0;
-//   MemoryReader reader(&section);
-//
-//   ELFHelper::seekRODataSegment(reader, ptr);
-//
-//   mattributeSection = (void*)ptr;
-//
-//   reader.seek(ptr);
-//   size_t maSectionSize = reader.getDWord();
-//
-//   reader.seek(ptr + maSectionSize + 4);
-//
-//   messageSection = (void*)ptr;
-//
-//   _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
-//}
+static ELENARTMachine* _Instance = NULL;
+static void* _SystemEnv = NULL;
+
+void getSelfPath(Path& rootPath)
+{
+   char buff[PATH_MAX];
+   size_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
+   if (len != -1) {
+      buff[len] = 0;
+      rootPath.copy(buff);
+   }
+   /* handle error condition */
+}
+
+void init()
+{
+   // get EXE path
+   Path execPath;
+   getSelfPath(execPath);
+
+   _Instance = new ELENARTMachine(ROOT_PATH, execPath.c_str());
+
+   void* messageSection = nullptr;
+   void* mattributeSection = nullptr;
+   ELENARTMachine::ImageSection section;
+   section.init((void*)IMAGE_BASE, 0x1000);
+
+   size_t ptr = 0;
+   MemoryReader reader(&section);
+
+   ELFHelper::seekRODataSegment(reader, ptr);
+
+   mattributeSection = (void*)ptr;
+
+   reader.seek(ptr);
+   size_t maSectionSize = reader.getDWord();
+
+   reader.seek(ptr + maSectionSize + 4);
+
+   messageSection = (void*)ptr;
+
+   _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
+}
 
 void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)
 {
-   printf("Init");
+   putchar('!');
 
-//   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
-//
-//   // initialize the critical exception handler
-//   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
-//
-//   // initialize system env variable
-//   _SystemEnv = systemEnv;
-//
-//   if (_Instance == nullptr)
-//      init();
-//
-//   // start the system
-//   _Instance->startSTA(header, (SystemEnv*)systemEnv, entryPoint);
+   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+
+   // initialize the critical exception handler
+   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
+
+   // initialize system env variable
+   _SystemEnv = systemEnv;
+
+   if (_Instance == nullptr)
+      init();
+
+   // start the system
+   _Instance->startSTA(header, (SystemEnv*)systemEnv, entryPoint);
+
+   ::exit(0);
 }
 
 void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)
