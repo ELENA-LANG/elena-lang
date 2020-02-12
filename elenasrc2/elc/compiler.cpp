@@ -6521,6 +6521,12 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          if ((paramCount == 0 && test(scope.hints, tpGetAccessor)) || (paramCount == 1 && test(scope.hints, tpSetAccessor))) {
             flags |= PROPERTY_MESSAGE;
          }
+         else if (scope.extensionMode && ((paramCount == 1 && test(scope.hints, tpGetAccessor))
+            || (paramCount == 2 && test(scope.hints, tpSetAccessor)))) 
+         {
+            // HOTFIX : in extension self is a parameter
+            flags |= PROPERTY_MESSAGE;
+         }
          else scope.raiseError(errIllegalMethod, node);
       }
 

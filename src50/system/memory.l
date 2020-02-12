@@ -217,24 +217,24 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 //    }    
 }
 
-//// --- matrixof ---
-//
-//public sealed Matrix<T>
-//{
-//    T[] theArray;
-//    int theRows;
-//    int theColumns;
-//    
-//    constructor(int rows, int columns)
-//    {
-//        theRows := rows;
-//        theColumns := columns;
-//        
-//        int len := theRows * theColumns;
-//        
-//        theArray := new T[](len)
-//    }
-//    
+// --- matrixof ---
+
+public sealed Matrix<T>
+{
+    T[] theArray;
+    int theRows;
+    int theColumns;
+    
+    constructor(int rows, int columns)
+    {
+        theRows := rows;
+        theColumns := columns;
+        
+        int len := theRows * theColumns;
+        
+        theArray := new T[](len)
+    }
+    
 //    constructor(rows, columns)
 //        <= (cast int(rows), cast int(columns));
 //    
@@ -305,30 +305,30 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 //            ^ theRows
 //        }
 //    }
-//
-//    /// Writes an integer value at the specified position
-//    setAt(int i, int j, T v)
-//    {        
-//        int index := i * theColumns + j;
-//        
-//        theArray[index] := v
-//    }
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    read(int i, int j, ref T retVal)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        retVal := theArray[index];
-//    }
-//
-//    T at(int i, int j)
-//    {
-//        T retVal := T.Default;
-//        self.read(i, j, ref retVal);
-//        ^ retVal
-//    }
-//
+
+    /// Writes an integer value at the specified position
+    setAt(int i, int j, T v)
+    {        
+        int index := i * theColumns + j;
+        
+        theArray[index] := v
+    }
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int i, int j, ref T retVal)
+    {
+        int index := i * theColumns + j;
+        
+        retVal := theArray[index];
+    }
+
+    T at(int i, int j)
+    {
+        T retVal := T.Default;
+        self.read(i, j, ref retVal);
+        ^ retVal
+    }
+
 ////    setAt(i, j, v)
 ////    [
 ////        self setAt(T<int>(i), T<int>(j), T<template_subj>(v)).    
@@ -389,8 +389,8 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
 ////              ]
 ////          }.
 ////    ]
-//}
-//
+}
+
 //// === basic memory classes ===
 //
 //// --- BitArray ---
@@ -694,14 +694,14 @@ public sealed class RealMatrix
         
 ////    constructor new(object Rows, object Columns)
 ////        <= new(T<int>(Columns), T<int>(Rows)).
-//
-//    /// Reads the matrix lengths to the output parameter
-//    readLengthsTo(ref int rows, ref int columns)
-//    {
-//        rows := theRows;
-//        columns := theColumns
-//    }
-//
+
+    /// Reads the matrix lengths to the output parameter
+    readLengthsTo(ref int rows, ref int columns)
+    {
+        rows := theRows;
+        columns := theColumns
+    }
+
 //    Length
 //    {
 //        int get()
@@ -725,31 +725,31 @@ public sealed class RealMatrix
 //            ^ theRows
 //        }
 //    }
-//
-//    /// Writes a real value at the specified position
-//    setAt(int i, int j, real v)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        theArray[index] := v
-//    }
-//
-//    /// Reads a real value at the specified position and saves it into an output variable
-//    read(int i, int j, ref real retVal)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        retVal := theArray[index];
-//    }
-//
-//    real at(int i, int j)
-//    {
-//        int index := i * theColumns + j;
-//        real retVal := theArray[index];
-//        
-//        ^ retVal
-//    }
-//
+
+    /// Writes a real value at the specified position
+    setAt(int i, int j, real v)
+    {
+        int index := i * theColumns + j;
+        
+        theArray[index] := v
+    }
+
+    /// Reads a real value at the specified position and saves it into an output variable
+    read(int i, int j, ref real retVal)
+    {
+        int index := i * theColumns + j;
+        
+        retVal := theArray[index];
+    }
+
+    real at(int i, int j)
+    {
+        int index := i * theColumns + j;
+        real retVal := theArray[index];
+        
+        ^ retVal
+    }
+
 //    /// Returns a row
 //    at(int i) = new Indexable<real>::
 //    {

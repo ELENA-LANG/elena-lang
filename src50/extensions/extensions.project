@@ -19,6 +19,7 @@
             <include>app.l</include>
             <include>basic.l</include>
             <include>random.l</include>
+            <include>math\matrix.l</include>
             <include>text/strings.l</include>
             <include>text/words.l</include>
         </module>
