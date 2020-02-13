@@ -4,10 +4,10 @@ Declarations
   Classes
     Constructors
       * Normal constructors - the default one is auto called +
-      * Expression constructors - the returning value is boxed, no default constructor call
+      * Expression constructors - the returning value is boxed, no default constructor call +
       * constructors with resend expression - no default constructor call +
       * conversion constructor
-        - default constructor / in-place initialization is not called
+        - default constructor / in-place initialization is not called +
       * Default constructor
         - impicit : if no constructors are declared - default one is auto-generated +
         - implicit protected - if there are constructors - protected one is auto-generated +
@@ -22,7 +22,8 @@ Declarations
     Static Methods
       * inheritable : cannot be overriden, accessible in all parent class
     Methods
-      * private / protected / internal ones
+      * Visibility : private / protected / internal ones
+      * returning types
       * Multimethods
         - variadic
         - implcit default
@@ -32,10 +33,12 @@ Declarations
       * dispatch
       * ret expression
       * Generic handlers 
+      * abstract / sealed / predefined
     Properties
       * implicit
       * explicit
       * abstract
+      * multi-return
     Fields
       * fixed-size arrays +
       * realonly fields + 
@@ -71,6 +74,7 @@ Code
     * In-place assignment (both variable and properties)
   Control statements
   Conversions : cast vs conversion constructor
+  Message Dispaching
 Project
   Options
     * option to turn on / off auto system module import

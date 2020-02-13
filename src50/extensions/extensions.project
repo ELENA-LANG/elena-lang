@@ -13,6 +13,7 @@
     </manifest>
     <files>
         <module>
+            <include>control.l</include>
             <include>convertors.l</include>
             <include>console.l</include>
             <include>lnx32_args.l</include>                                                        

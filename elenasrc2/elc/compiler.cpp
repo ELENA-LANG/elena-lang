@@ -3591,14 +3591,14 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
    if (withExtension) {
       resolvedMessageRef = generalMessageRef;
 
-//      // check the existing extensions if allowed
-//      if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
-//         // could be stacksafe
-//         stackSafeAttr |= 1;
-//
-//         // if the object handles the general message - do not use extensions
-//         return generalMessageRef;
-//      }
+      // check the existing extensions if allowed
+      if (checkMethod(*scope.moduleScope, targetRef, generalMessageRef) != tpUnknown) {
+         // could be stacksafe
+         stackSafeAttr |= 1;
+
+         // if the object handles the general message - do not use extensions
+         return generalMessageRef;
+      }
 
       ref_t extensionRef = mapExtension(scope, resolvedMessageRef, implicitSignatureRef, target, stackSafeAttr);
       if (extensionRef != 0) {
@@ -6518,16 +6518,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       }
 
       if (testany(scope.hints, tpGetAccessor | tpSetAccessor)) {
-         if ((paramCount == 0 && test(scope.hints, tpGetAccessor)) || (paramCount == 1 && test(scope.hints, tpSetAccessor))) {
-            flags |= PROPERTY_MESSAGE;
-         }
-         else if (scope.extensionMode && ((paramCount == 1 && test(scope.hints, tpGetAccessor))
-            || (paramCount == 2 && test(scope.hints, tpSetAccessor)))) 
-         {
-            // HOTFIX : in extension self is a parameter
-            flags |= PROPERTY_MESSAGE;
-         }
-         else scope.raiseError(errIllegalMethod, node);
+         flags |= PROPERTY_MESSAGE;
       }
 
       if (test(scope.hints, tpInternal)) {

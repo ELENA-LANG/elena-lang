@@ -26,17 +26,17 @@ sealed class Console
         this reader := reader
     }
 
-//    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
-//    writeLine(o)
-//    {
-//        self.writeLine(o.Printable)
-//    }
-//
-//    /// Writes the specified literal value to the standard output stream.
-//    write(o)
-//    {
-//        self.write(o.Printable)
-//    }
+    /// Writes the specified literal value, followed by the current line terminator, to the standard output stream.
+    writeLine(o)
+    {
+        self.writeLine(o.toPrintable())
+    }
+
+    /// Writes the specified literal value to the standard output stream.
+    write(o)
+    {
+        self.write(o.toPrintable())
+    }
 
     /// Writes the specified literal value to the standard output stream.
     write(string s)

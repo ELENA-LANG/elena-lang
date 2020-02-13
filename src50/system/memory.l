@@ -1396,8 +1396,8 @@ public sealed class Variant
             castTo(o)
                 = o.toPrintable();
             
-//            castTo(BaseVariable v)
-//                <= castTo(v.Value);
+            castTo(BaseVariable v)
+                <= castTo(v.Value);
             
             castTo(int val)
                 = cast int(self);

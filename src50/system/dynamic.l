@@ -108,32 +108,32 @@ public sealed const struct MessageName
 ////    /// Creates a dynamic signature
 ////    constructor new(Signature subject)
 ////        = subject.
-//
-//    /// Creates a dynamic signature
-//    constructor(string s)
-//    {
-//        intern system'core_routines'__signature.load(self, s)
-//    }
-//
+
+    /// Creates a dynamic signature
+    constructor(string s)
+    {
+        intern system'core_routines'__signature.load(self, s)
+    }
+
 //    saveTo(ref mssg message)
 //    {
 //        intern system'core_routines'__signature.saveTo(self, ref message)
 //    }
-//
-//    mssg getPropertyMessage()
-//    {
-//        intern system'core_routines'__signature.getProperty(self, ref mssg message);
-//        
-//        ^ message
-//    }
-//
-//    mssg setPropertyMessage()
-//    {
-//        intern system'core_routines'__signature.setProperty(self, ref mssg message);
-//        
-//        ^ message        
-//    }
-//
+
+    Message getPropertyMessage()
+    {
+        intern system'core_routines'__signature.getProperty(self, ref Message message);
+        
+        ^ message
+    }
+
+    Message setPropertyMessage()
+    {
+        intern system'core_routines'__signature.setProperty(self, ref Message message);
+        
+        ^ message        
+    }
+
 ////    /// Creates a dynamic signature
 ////    constructor new(wide aSubjectName)
 ////        <= new(T<literal>(aSubjectName)).

@@ -21,8 +21,10 @@ md %~dp0\output\examples\console\datetime
 md %~dp0\output\examples\console\random
 md %~dp0\output\examples\console\trans
 md %~dp0\output\examples\console\matrix
+md %~dp0\output\examples\console\pi2
 md %~dp0\output\examples\files
 md %~dp0\output\examples\files\textfile
+md %~dp0\output\examples\files\textdb
 
 copy %~dp0\..\bin\asm2binx.exe %~dp0\output\bin
 copy %~dp0\..\bin\elc.exe %~dp0\output\bin
@@ -142,9 +144,16 @@ copy %~dp0\..\examples\console\trans\*.prj %~dp0\output\examples\console\trans
 copy %~dp0\..\examples\console\matrix\*.l %~dp0\output\examples\console\matrix
 copy %~dp0\..\examples\console\matrix\*.prj %~dp0\output\examples\console\matrix
 
+copy %~dp0\..\examples\console\pi\*.l %~dp0\output\examples\console\pi2
+copy %~dp0\..\examples\console\pi\*.prj %~dp0\output\examples\console\pi2
+
 copy %~dp0\..\examples\files\textfile\*.l %~dp0\output\files\textfile
 copy %~dp0\..\examples\files\textfile\*.prj %~dp0\output\files\textfile
 copy %~dp0\..\examples\files\textfile\*.txt %~dp0\output\files\textfile
+
+copy %~dp0\..\examples\files\textdb\*.l %~dp0\output\files\textdb
+copy %~dp0\..\examples\files\textdb\*.prj %~dp0\output\files\textdb
+copy %~dp0\..\examples\files\textdb\*.txt %~dp0\output\files\textdb
 
 7z a %~dp0\output\%1.zip %~dp0\output\*.* -r
 

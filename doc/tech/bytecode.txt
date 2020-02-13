@@ -151,6 +151,7 @@ ELENA byte codes (or ecodes)
 
  moveto n1, n2              - copy [sp] => acc + n1, n2-bytes
 
+
  Arithmeric operations:
  ----------------------
  addf i                     - index += dword[fp+i]

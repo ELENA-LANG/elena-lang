@@ -1,10 +1,10 @@
-import system'math.
-import extensions.
+import system'math;
+import extensions;
 
 //function altcol(x)
 //clc, close all
-altcol = (:x)
-[
+altcol(x)
+{
     //% Load auxilliary anonymous functions
     //hR=@(x,y,z)(x-z)*y+z;
     var hR := (:x:y:z)( (x-z)*y + z ).
@@ -69,10 +69,10 @@ altcol = (:x)
     console printLine("Final out: ",z," Correct should be ", col(x)).
     
 //end
-].
+}
 
-col = (:x)
-    ( T<int>(x) isEven; iif($(x / 2), $(3*x + 1)) ).
+col(x)
+    = x.isEven.iif($(x / 2), $(3*x + 1)) );
 
 //function x = col(x)
 //if ~mod(x,2)
@@ -84,8 +84,8 @@ col = (:x)
 
 //function altcolsingle(x)
 //clc, close all
-altcolsingle = (:x)
-[
+altcolsingle(x)
+{
     //% Load auxilliary anonymous functions
     //h=@(x,y,z,w)y*(x-z) + w;
     var h := (:x:y:z:w)( y*(x-z) + w ).
@@ -145,14 +145,14 @@ altcolsingle = (:x)
     
     //disp(['Final out: ', num2str(z), ' Correct should be ', num2str( col(x) )])
     console printLine("Final out: ",z," Correct should be ",col(x)).
-].
+}
 //end
 
-public program =
-[
-    altcol(7).
-    altcol(44).
+public program()
+{
+    altcol(7);
+    altcol(44);
     
-    altcolsingle(7).
-    altcolsingle(44).
-].
+    altcolsingle(7);
+    altcolsingle(44);
+}

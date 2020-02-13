@@ -1,39 +1,32 @@
 ------                                 
 In development:
 ------         
-              xdev - linux32                 
-                * compile empty program
-
-              xdev - linux32
+              dev2 - linux32
                 * x86routines : get rid of assembly code
+                * compile empty program
                 * compile hello world
 
-              xdev - refactoring
+              dev2 - refactoring
                 * mov GC to C code
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
-              xdev elena50
-                * readonly fields
-                * multi-return methods : properties
-                * multi-return methods : optimize double assigning
-                * multi-return methods : dynamic objects
-
-                * pi2 samples
-
-                * closures: unboxing : struct fields
-                * closures: presaved arguments
-                * #190 : Closure : auto boxing / unboxing local variables 
-
+              dev - migration
+                * textdb
+                * rosetta code samples
                 * collatz sample
+                * db sample
+                * script samples
+                * gui samples
+                * uncomment all code in LIB50
 
-                * using embeddable methods instead of normal one for method arguments
+              dev - elena50
+                * closures: unboxing : struct fields
+
                 * auto determining the closure return value for closure templates
                 * auto returning
 
                 * stack allocated class and default constructor
                 * extension to read package info
-
-                * rosetta code samples
 
                 * closures: race conditions
 
@@ -120,7 +113,8 @@ In development:
                 * copytoai,fillri - optimized version for 1,2,3 dwords
                 * meta attributes
                 * external code : long, real ret value
-                * uncomment all code in LIB50
+                * closures: presaved arguments
+                * #190 : Closure : auto boxing / unboxing local variables 
                 * api doc - with description
 
               xdev elena50
@@ -139,6 +133,7 @@ In development:
                 * watch message / subject info
 
               dev50 - test / optimization
+                * multi-return methods : optimize double assigning
                 * readtof - optimization
                 * translit sample: List should be compiled as constant list
                 * do not box the variadic argument list for Length operation
@@ -213,6 +208,7 @@ In development:
 		* close issue 
 
               dev50 - new features
+                * multi-return methods : dynamic objects
                 * system'Extension : variadic argument should be boxed directly into extension
                 * resend to constant - no need for frame
                 * public / private / internal / protected fields
@@ -233,6 +229,7 @@ In development:
                 * reference identifier name?
                 * should extensions hasan access to the fields / static fields / class constants?
                 * properties in properties
+                * readonly fields
 
               dev1
                 * move all description to meta info using descr inline template

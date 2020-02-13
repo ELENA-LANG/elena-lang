@@ -24,7 +24,7 @@ class Record
     constructor()
     {
         theName := new StringWriter();
-        theAge := new Integer();
+        theAge := Integer.new();
         thePhone := new StringWriter();
     }
 
@@ -72,7 +72,7 @@ class Record
         }
     }
 
-    string Printable
+    string toPrintable()
         = new StringWriter()
                 .printLine("Name:",theName)
                 .printLine("Age:",theAge)
