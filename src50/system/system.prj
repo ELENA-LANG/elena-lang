@@ -50,6 +50,7 @@
      </module>
      <module name="dynamic">
        <include>dynamic\groups.l</include>
+       <include>dynamic\interpreters.l</include>
      </module>
   </files>
 </configuration>
