@@ -4578,6 +4578,7 @@ ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInf
 
       SNode memberNode = current.firstChild();
       compileExpression(memberNode, scope, target.element, EAttr::eaNone);
+      analizeOperand(memberNode, scope, true, true);
 
       current = current.nextNode();
       counter++;
