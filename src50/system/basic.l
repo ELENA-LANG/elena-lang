@@ -2080,29 +2080,29 @@ public sealed const struct CharValue : BaseValue
     }
 }
 
-//// --- nil constant ---
-//
-///// A nil value
-//public singleton nilValue
-//{
-//    /// Returns true if the specified object is nil.
-//    bool equal(object)
-//    {
-//        (nil == object)
-//            ? { ^ true };
-//        
-//        (super.equal:object)
-//            ? { ^ true };
-//
-//        ^ false
-//    }
-//    
-//    /// Returns nil
-//    ///
-//    /// Any typecasting message will be handled and nil value returned
-//    generic() = nil;
-//}
-//
+// --- nil constant ---
+
+/// A nil value
+public singleton nilValue
+{
+    /// Returns true if the specified object is nil.
+    bool equal(object)
+    {
+        (nil == object)
+            ? { ^ true };
+        
+        (super.equal:object)
+            ? { ^ true };
+
+        ^ false
+    }
+    
+    /// Returns nil
+    ///
+    /// Any typecasting message will be handled and nil value returned
+    generic() = nil;
+}
+
 //// === Basic Factory symbols ==
 //
 //public class BaseExtender
