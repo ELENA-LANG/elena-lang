@@ -1541,19 +1541,24 @@ int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t referen
       return -1;
    }
    else {
-      int size = scope.cachedSizes.get(reference);
-      if (!size) {
+      auto sizeInfo = scope.cachedSizes.get(reference);
+      if (!sizeInfo.value1) {
          ClassInfo classInfo;
          if (defineClassInfo(scope, classInfo, reference)) {
-            size = defineStructSize(classInfo, variable);
+            sizeInfo.value1 = defineStructSize(classInfo, variable);
+            sizeInfo.value2 = variable;
 
-            scope.cachedSizes.add(reference, size);
+            scope.cachedSizes.add(reference, sizeInfo);
 
-            return size;
+            return sizeInfo.value1;
          }
          else return 0;
       }
-      else return size;
+      else {
+         variable = sizeInfo.value2;
+
+         return sizeInfo.value1;
+      }
    }
 }
 

@@ -265,7 +265,7 @@ struct _ModuleScope
    SymbolMap         savedPaths;
 
    // cached requests
-   Map<ref_t, int>   cachedSizes;
+   Map<ref_t, Pair<int, bool>> cachedSizes;
 
    MessageMap        attributes;
 
@@ -379,7 +379,7 @@ struct _ModuleScope
    }
 
    _ModuleScope()
-      : attributes(0), savedPaths(-1)
+      : attributes(0), savedPaths(-1), cachedSizes(Pair<int,bool>(0, false))
    {
       project = nullptr;
       debugModule = module = nullptr;

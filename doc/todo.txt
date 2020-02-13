@@ -11,7 +11,7 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev - migration
-                * rosetta code samples
+                * rosetta code samples : 24 game
                 * collatz sample
                 * db sample
                 * script samples
@@ -19,26 +19,9 @@ In development:
                 * uncomment all code in LIB50
 
               dev - elena50
-                * closures: unboxing : struct fields
-
-                * auto determining the closure return value for closure templates
-                * auto returning
-
-                * stack allocated class and default constructor
-                * extension to read package info
-
-                * closures: race conditions
-
-                * closures: returning a value
-
-                * auto symbol
-                * auto method
-                * auto field
-
-                * extension run-time dispatcher - several matched arguments
-
-                * recognize idle method
-                * uncomment system'entry
+                * record unboxing
+                * no unboxing by assign
+                * uncomment system'entry : event handler
 
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
 
@@ -50,7 +33,6 @@ In development:
 
                 * test primitive numeric operation in the symbol
 
-                * no unboxing by assign
 
                 * message dispatching
 
@@ -113,7 +95,10 @@ In development:
                 * meta attributes
                 * external code : long, real ret value
                 * closures: presaved arguments
+                * closures: race conditions
+                * closures: returning a value
                 * #190 : Closure : auto boxing / unboxing local variables 
+                * auto returning
                 * api doc - with description
 
               xdev elena50
@@ -206,7 +191,7 @@ In development:
                 * sealed static methods : multimethods
 		* close issue 
 
-              dev50 - new features
+              dev - new features
                 * multi-return methods : dynamic objects
                 * system'Extension : variadic argument should be boxed directly into extension
                 * resend to constant - no need for frame
@@ -229,6 +214,13 @@ In development:
                 * should extensions hasan access to the fields / static fields / class constants?
                 * properties in properties
                 * readonly fields
+                * closures: unboxing : struct fields
+                * auto determining the closure return value for closure templates
+                * stack allocated class and default constructor
+                * extension to read package info
+                * auto symbol
+                * auto method
+                * auto field
 
               dev1
                 * move all description to meta info using descr inline template
