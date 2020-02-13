@@ -24,7 +24,8 @@ public mixin Struct
         get()
         {
             int len := 0;
-            items $shr len;
+            len $sizeof items;
+            
             
             ^ len
         }
@@ -69,13 +70,13 @@ public class DynamicStruct
 //        theStruct := T<Struct>(aStruct).
 //    ]
 
-//    set generic(o)
-//    {
-//        bool notFound := true;
-//        int len := theStruct.Length;
-//        int i := 0;
-//        while ((i < len) && notFound)
-//        {
+    set generic(o)
+    {
+        bool notFound := true;
+        int len := theStruct.Length;
+        int i := 0;
+        while ((i < len) && notFound)
+        {
 //            var item := theStruct.at(i);
 //            if (cast MessageName(item) == __received)
 //            {
@@ -85,8 +86,8 @@ public class DynamicStruct
 //            {
 //                i := i + 2
 //            }
-//        };
-//                
+        };
+                
 //        // if not found extend the structure
 //        if(i == len)
 //        {                                 
@@ -97,8 +98,8 @@ public class DynamicStruct
 //
 //        // set the content for the appropriate field
 //        theStruct.setAt(i + 1, o);
-//    }
-//    
+    }
+    
 //    containsProperty(MessageName subj)
 //    {
 //        int index := 0;        
