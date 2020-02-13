@@ -1,6 +1,5 @@
 namespace io
 {
-
     import system'text;
     import system'collections;
     

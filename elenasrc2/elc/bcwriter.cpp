@@ -5685,7 +5685,7 @@ void ByteCodeWriter :: saveFieldExpression(CommandTape& tape, SNode dstObj, SNod
       copyToFieldAddress(tape, size, fieldNode.argument);
       releaseStack(tape);
    }
-   else if (fieldNode == lxSelfLocal) {
+   else if (fieldNode.compare(lxSelfLocal, lxTempLocal)) {
       if (isAligned(size)) {
          loadObject(tape, source, scope);
          copyToLocal(tape, size, fieldNode.argument);

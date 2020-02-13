@@ -19,7 +19,6 @@ In development:
                 * uncomment all code in LIB50
 
               dev - elena50
-                * record unboxing
                 * no unboxing by assign
                 * uncomment system'entry : event handler
 
