@@ -19,7 +19,6 @@ In development:
                 * uncomment all code in LIB50
 
               dev - elena50
-                * no unboxing by assign
                 * uncomment system'entry : event handler
 
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
