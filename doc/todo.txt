@@ -13,7 +13,6 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               xdev elena50
-                * console redirection
                 * readonly fields
                 * multi-return methods : properties
                 * multi-return methods : optimize double assigning

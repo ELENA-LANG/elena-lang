@@ -215,8 +215,8 @@ namespace text
         string toString(int index, int length, byte[] array)
             = String.fromByteArray(index, length, array);
             
-//        convert(int index, ref int length, string s, char[] output, ref int outputLength)
-//            => intern system'core_routines'__utf8encoder;
+        convert(int index, ref int length, string s, char[] output, ref int outputLength)
+            => intern system'core_routines'__utf8encoder;
     }
     
     // --- UTF16Encoder ---
@@ -246,9 +246,9 @@ namespace text
     
 //        convert(int index, int size, short[] array, char[] output, ref int outputLength)
 //            => system'core_routines'__utf16encoder;
-//            
-//        convert(int index, int size, char[] array, short[] output, ref int outputLength)
-//            => system'core_routines'__utf16encoder;
+            
+        convert(int index, int size, char[] array, short[] output, ref int outputLength)
+            => intern system'core_routines'__utf16encoder;
             
         convert(int index, ref int size, string s, short[] output, ref int outputLength)
         {
