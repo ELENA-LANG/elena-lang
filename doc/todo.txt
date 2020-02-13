@@ -5,6 +5,7 @@ In development:
                 * compile empty program
 
               xdev - linux32
+                * x86routines : get rid of assembly code
                 * compile hello world
 
               xdev - refactoring

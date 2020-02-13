@@ -280,11 +280,11 @@ namespace text
                 self.convert(i, temp_len, array, temp, ref temp_len);
                 if (s == nil)
                 {
-                    s := String.new(0, temp_len, temp)
+                    s := String.copy(0, temp_len, temp)
                 }
                 else
                 {
-                    s := s + String.new(0, temp_len, temp);
+                    s := s + String.copy(0, temp_len, temp);
                 };
                 
                 l -= temp_len;

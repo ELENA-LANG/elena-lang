@@ -33,107 +33,107 @@
 //////    
 //////    dispatch => system'core_routines'__castover.
 //////}
-//
-//// --- extensions ---
-//
-//public extension dynamicOp
-//{
-//    mixInto(role)
-//        = new Extension::( self, role );
+
+// --- extensions ---
+
+public extension dynamicOp
+{
+    mixInto(role)
+        = new Extension(self, role);
+        
+//    groupWith:object
+//    [
+//        if(nil == object)
+//            [ ^ self ].
 //        
-////    groupWith:object
+//        if(Group == self __class)
+//            [ 
+//                int length := self fieldCount.
+//            
+//                var retVal := Group newInteral(length + 1).
+//                                
+//                int i := 0.
+//                
+//                while (i < length)
+//                [
+//                    retVal setField(i, self getField(i)).
+//                    
+//                    i := i + 1.
+//                ].
+//                
+//                retVal setField(length, object).
+//                
+//                ^ retVal
+//            ];
+//            [ 
+//                if (Group == object __class)
+//                    [
+//                        int length := object fieldCount.
+//                    
+//                        var retVal := Group newInteral(length + 1).
+//                                        
+//                        int i := 0.
+//                        
+//                        while (i < length)
+//                        [
+//                            retVal setField(i + 1, self getField(i)).
+//                            
+//                            i := i + 1
+//                        ].
+//                        
+//                        retVal setField(0, object).
+//                        
+//                        ^ retVal
+//                    ];
+//                    [ ^ Group new(self,object) ]
+//            ].
+//    ]        
+//        
+////    castWith:object
 ////    [
-////        if(nil == object)
+////        if ($nil == object)
 ////            [ ^ self ].
 ////        
-////        if(Group == self __class)
+////        if(self class_ref == Cast)
 ////            [ 
 ////                int length := self fieldCount.
 ////            
-////                var retVal := Group newInteral(length + 1).
+////                var retVal := Cast $new int(length + 1).
 ////                                
 ////                int i := 0.
 ////                
 ////                while (i < length)
 ////                [
-////                    retVal setField(i, self getField(i)).
+////                    retVal setField int:i object(self getField int:i).
 ////                    
-////                    i := i + 1.
+////                    i := i + 1
 ////                ].
 ////                
-////                retVal setField(length, object).
+////                retVal setField int:length object:object.
 ////                
 ////                ^ retVal
 ////            ];
 ////            [ 
-////                if (Group == object __class)
+////                if(object class_ref == Cast)
 ////                    [
 ////                        int length := object fieldCount.
 ////                    
-////                        var retVal := Group newInteral(length + 1).
+////                        var retVal := Cast $new int:(length + 1).
 ////                                        
 ////                        int i := 0.
 ////                        
 ////                        while (i < length)
 ////                        [
-////                            retVal setField(i + 1, self getField(i)).
+////                            retVal setField int(i + 1) object(self getField int:i).
 ////                            
 ////                            i := i + 1
 ////                        ].
 ////                        
-////                        retVal setField(0, object).
+////                        retVal setField int:0 object:object.
 ////                        
 ////                        ^ retVal
 ////                    ];
-////                    [ ^ Group new(self,object) ]
+////                    [ ^ Cast new args:(self,object) ]
 ////            ].
 ////    ]        
-////        
-//////    castWith:object
-//////    [
-//////        if ($nil == object)
-//////            [ ^ self ].
-//////        
-//////        if(self class_ref == Cast)
-//////            [ 
-//////                int length := self fieldCount.
-//////            
-//////                var retVal := Cast $new int(length + 1).
-//////                                
-//////                int i := 0.
-//////                
-//////                while (i < length)
-//////                [
-//////                    retVal setField int:i object(self getField int:i).
-//////                    
-//////                    i := i + 1
-//////                ].
-//////                
-//////                retVal setField int:length object:object.
-//////                
-//////                ^ retVal
-//////            ];
-//////            [ 
-//////                if(object class_ref == Cast)
-//////                    [
-//////                        int length := object fieldCount.
-//////                    
-//////                        var retVal := Cast $new int:(length + 1).
-//////                                        
-//////                        int i := 0.
-//////                        
-//////                        while (i < length)
-//////                        [
-//////                            retVal setField int(i + 1) object(self getField int:i).
-//////                            
-//////                            i := i + 1
-//////                        ].
-//////                        
-//////                        retVal setField int:0 object:object.
-//////                        
-//////                        ^ retVal
-//////                    ];
-//////                    [ ^ Cast new args:(self,object) ]
-//////            ].
-//////    ]        
-//}
+}

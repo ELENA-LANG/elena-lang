@@ -1027,8 +1027,8 @@ public sealed const struct String : BaseValue
     save(int index, char[] array, ref int retVal)
         => intern system'core_routines'__literal;
 
-//    internal saveToByteArray(int index, byte[] array, int retVal)
-//        => system'core_routines'__literal;
+    internal saveToByteArray(int index, byte[] array, int retVal)
+        => intern system'core_routines'__literal;
 
     /// Returns the string enumerator
     Enumerator<char> enumerator() = new StringEnumerator(self);

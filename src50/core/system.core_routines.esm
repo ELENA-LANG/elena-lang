@@ -397,6 +397,21 @@ procedure __literal."delete$system@IntNumber$system@IntNumber[3]"
   
 end
 
+procedure __literal."system$$saveToByteArray$system@IntNumber$@system@Array#1&system@ByteNumber$system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 6
+  pushsi 4
+
+  callextr api : subcopy
+  
+  peeksi 0
+  freei  4
+  quitn  4
+
+end
+
 procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$system@WideString[4]"
 
   pushsi 4
@@ -2716,26 +2731,15 @@ procedure __timest."empty$system@calendar@TimeStruct[1]"
 end
 
 procedure __extension."#dispatch[1]"
-/*
-  asavesi 1
-  pushe
-  bcopya
-  dcopy 1
 
-labNext:
-  pope
-  get
+  storesi 1
+  geti    1
   bsredirect
-  pushe
-  bloadsi 2
-  inc
-  count
-  less labNext
-  
-  pope
-  aloadbi 0
-  ajumpvi 0
-*/
+
+  peeksi  1
+  geti    0
+  jumpvi  0
+
 end
 
 // ; system routines

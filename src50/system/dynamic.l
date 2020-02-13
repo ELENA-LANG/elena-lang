@@ -167,20 +167,14 @@ public sealed const struct MessageName
 
 public mixin Extension
 {
-    __string object[] items;
+    object target;
+    object extender;
     
-    protected constructor allocate(int length)
-        = new object[](length);
-    
-    constructor new(params object[] args)
-        <= allocate(args.Length)
+    constructor(target, extender)
     {
-        int l := args.Length;
-        for (int i := 0, i < l, i += 1)
-        {
-            items[i] := args[i]
-        }
+        this target := target;
+        this extender := extender;
     }
     
-//    dispatch() => intern system'core_routines'__extension;
+    dispatch() => intern system'core_routines'__extension;
 }

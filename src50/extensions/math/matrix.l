@@ -214,27 +214,27 @@ namespace math
             ^ a.mixInto(new { Even = even; } );
         }
     
-//        get real Determinant()
-//        {
-//            var lum := mixin matrixOp(self).Decomposed;
-//            real deter := 1.0r;
-//            real v := 0.0r;
-//    
-//            ifnot(lum.Even)
-//                { deter := deter * (-1.0r) };
-//            
-//            auto a := cast RealMatrix(lum);
-//            a.readLengthsTo(ref int n, ref int m);
-//            
-//            for (int i := 0, i < n, i += 1)
-//            {
-//                a.read(i, i, ref v);
-//                
-//                deter := deter * v
-//            };
-//                
-//           ^ deter
-//        }
+        get real Determinant()
+        {
+            var lum := self.Decomposed;
+            real deter := 1.0r;
+            real v := 0.0r;
+    
+            ifnot(lum.Even)
+                { deter := deter * (-1.0r) };
+            
+            auto a := cast RealMatrix(lum);
+            a.readLengthsTo(ref int n, ref int m);
+            
+            for (int i := 0, i < n, i += 1)
+            {
+                a.read(i, i, ref v);
+                
+                deter := deter * v
+            };
+                
+           ^ deter
+        }
                 
         string toString()
         {
