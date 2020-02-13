@@ -13,8 +13,6 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               xdev elena50
-                * matrix samples
-
                 * console redirection
                 * readonly fields
                 * multi-return methods : properties

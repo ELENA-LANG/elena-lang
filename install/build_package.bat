@@ -20,6 +20,7 @@ md %~dp0\output\examples\console\goods
 md %~dp0\output\examples\console\datetime
 md %~dp0\output\examples\console\random
 md %~dp0\output\examples\console\trans
+md %~dp0\output\examples\console\matrix
 md %~dp0\output\examples\files
 md %~dp0\output\examples\files\textfile
 
@@ -137,6 +138,9 @@ copy %~dp0\..\examples\console\random\*.prj %~dp0\output\examples\console\random
 
 copy %~dp0\..\examples\console\trans\*.l %~dp0\output\examples\console\trans
 copy %~dp0\..\examples\console\trans\*.prj %~dp0\output\examples\console\trans
+
+copy %~dp0\..\examples\console\matrix\*.l %~dp0\output\examples\console\matrix
+copy %~dp0\..\examples\console\matrix\*.prj %~dp0\output\examples\console\matrix
 
 copy %~dp0\..\examples\files\textfile\*.l %~dp0\output\files\textfile
 copy %~dp0\..\examples\files\textfile\*.prj %~dp0\output\files\textfile
