@@ -2048,7 +2048,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcElseR:
          //case bcIfB:
          case bcElseD:
-         //case bcIf:
+         case bcIf:
          case bcElse:
          //case bcLess:
          case bcIfN:
@@ -7042,7 +7042,7 @@ void ByteCodeWriter :: generateYieldDispatch(CommandTape& tape, SyntaxTree::Node
 {
    generateExpression(tape, node, scope);
    
-   //; jump if state is set
+   // ; jump if state is set
    // load
    // ifn labStart 0
    // nop

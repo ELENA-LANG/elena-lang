@@ -8,8 +8,18 @@ public mixin Struct
     
     internal constructor allocate(int n)
         = new object[](n);
+
+    constructor new(params object[] list)
+        <= allocate(list.Length)
+    {
+        int len := list.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            items[i] := list[i]
+        }
+    }
     
-    constructor new(object[] list)
+    constructor load(object[] list)
         <= allocate(list.Length)
     {
         int len := list.Length;
@@ -51,7 +61,7 @@ public mixin Struct
 //        ]
 //    ]
     
-    dispatch() => system'core_routines'__struct;
+    dispatch() => intern system'core_routines'__struct;
 }
 
 // --- DynamicStruct ---

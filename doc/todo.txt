@@ -11,6 +11,9 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev - migration
+                * struct
+                * dynamicstruct
+
                 * rosetta code samples : 24 game
                 * collatz sample
                 * db sample

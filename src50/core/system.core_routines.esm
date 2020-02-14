@@ -1,10 +1,13 @@
 //        ELENA Language 5.0
 //      inline system library
 
-// ; external methods
+define ARG_MASK              0000001Fh
+define SPECIAL_MESSAGE       00000020h
+define SPECIAL_MESSAGE_INV  0FFFFFFDFh
 
-define SPECIAL_MESSAGE      000000020h
-define SPECIAL_MESSAGE_INV 0FFFFFFFDFh
+define elSubject             04000000h
+
+// ; external methods
 
 procedure __object."#dispatch[1]"
 
@@ -2503,6 +2506,72 @@ labDefault:
   pushr    mssgconst : "new[3]"
   throw
   
+end
+
+procedure __struct."#dispatch[1]"
+
+  bsredirect
+
+  pusha
+  pushd
+  and      ARG_MASK
+  elsen    labEnd 1
+
+  loadsi   0
+  loadverb
+  pushd
+
+  count
+  pushd
+
+labNext:  
+  dec      2
+  savesi   0
+
+  peeksi   3
+  get
+
+  flag
+  and      elSubject
+  ifn      labSkip 0
+
+  load
+  movs     1
+  if       labCall
+
+labSkip:
+  loadsi   0
+  elsen    labNext 0
+
+  jump     labEnd
+
+labCall:
+  loadsi   0
+  inc      1
+  peeksi   3
+  get
+
+  freei    4
+  quitn 1
+  
+labEnd:
+
+  freei    2
+  popd
+  popa
+
+  open     4
+  reserve  2
+  savesi   3
+  pushs   -3
+  pusha
+  movr     class : system'Message
+  pushr    class : system'MethodNotFoundException
+  storesi  5
+  peeksi   0
+  pushr    mssgconst : "new[3]"
+  throw
+
 end
 
 procedure __array."at$system@IntNumber[2]"

@@ -618,7 +618,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             break;
             //case bcIfB:
          case bcElseD:
-         //case bcIf:
+         case bcIf:
          case bcElse:
          //case bcLess:
          case bcNotLess:

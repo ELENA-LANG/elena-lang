@@ -52,7 +52,7 @@ ELENA byte codes (or ecodes)
 
  movv m                     - m  => index.verb
  
- storev m                   - index.verb => [sp].verb
+ storev                     - index.verb => [sp].verb
  
  not                        - !index => index
 
@@ -365,6 +365,8 @@ ELENA byte codes (or ecodes)
  elser r, label             - jumps to the label if acc != r
 
  jump label                 - jumps to the label
+ 
+ if label                   - jump to the label if index == acc[0]
  
  ifn n, label               - jump to the label if index == n
  
