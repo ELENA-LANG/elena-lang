@@ -136,7 +136,7 @@ public:
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
       okParamField,
-      okSubject,                      // param - parameter offset
+      okMessage,                      // param - parameter offset
       okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
       okNil,
       okSuper,

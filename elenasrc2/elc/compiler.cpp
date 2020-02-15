@@ -865,8 +865,8 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
 {
    Parameter local = locals.get(identifier);
    if (local.offset) {
-      if (genericMethod && identifier.compare(SUBJECT_VAR)) {
-         return ObjectInfo(okSubject, local.offset, V_SUBJECT);
+      if (genericMethod && identifier.compare(MESSAGE_VAR)) {
+         return ObjectInfo(okMessage, local.offset, V_MESSAGE);
       }
       else if (local.size != 0) {
          return ObjectInfo(okLocalAddress, local.offset, local.class_ref, local.element_ref, 0);
@@ -5416,7 +5416,7 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okLocalAddress:
          setVariableTerminal(terminal, scope, object, mode, lxLocalAddress);
          break;
-      case okSubject:
+      case okMessage:
          setVariableTerminal(terminal, scope, object, mode, lxLocalAddress);
          break;
       case okNil:
@@ -6602,6 +6602,10 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGene
       ObjectInfo target = mapObject(dispatchNode, exprScope, EAttr::eaNone);
       if (target.kind != okInternal) {
          dispatchNode.injectAndReplaceNode(lxDispatching);
+         if (withGenericMethods) {
+            dispatchNode.setArgument(encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
+         }
+
          dispatchNode = dispatchNode.firstChild();
       }
 
@@ -7213,7 +7217,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
    // declare the current subject for a generic method
    if (scope.generic) {
       codeScope.allocated2++;
-      codeScope.mapLocal(SUBJECT_VAR, -2, V_MESSAGE, 0, 0);
+      codeScope.mapLocal(MESSAGE_VAR, -2, V_MESSAGE, 0, 0);
    }
 
    scope.preallocated = codeScope.allocated1;

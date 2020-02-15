@@ -49,13 +49,13 @@ public sealed const struct Message
 ////    /// Loads a message
 ////    constructor new(mssg message)
 ////        = message.
-//
-//    get MessageName MessageName()
-//    {
-//        intern system'core_routines'__message.getMessageName(self, ref MessageName retVal);
-//        
-//        ^ retVal
-//    }
+
+    get MessageName MessageName()
+    {
+        intern system'core_routines'__message.getMessageName(self, ref MessageName retVal);
+        
+        ^ retVal
+    }
 
     string toPrintable()
     {

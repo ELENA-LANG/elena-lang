@@ -33,6 +33,7 @@ Declarations
       * dispatch
       * ret expression
       * Generic handlers 
+        - __received - incoming message
       * abstract / sealed / predefined
     Properties
       * implicit

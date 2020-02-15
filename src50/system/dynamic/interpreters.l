@@ -6,7 +6,7 @@ public mixin Struct
 {
     __string object[] items;
     
-    internal constructor allocate(int n)
+    constructor allocate(int n)
         = new object[](n);
 
     constructor new(params object[] list)
@@ -41,6 +41,21 @@ public mixin Struct
         }
     }
 
+    internal Struct expand(int gain)
+    {
+        int len := self.Length;
+        int newLength := len + gain;
+        
+        auto newArr := Struct.allocate(newLength);
+        
+        for(int i := 0, i < len, i += 1)
+        {
+            newArr[i] := items[i];
+        };
+        
+        ^ newArr
+    }
+                
     internal at(int index)
         = items[index];
 
@@ -82,13 +97,15 @@ public class DynamicStruct
 
     set generic(o)
     {
+        MessageName subj := __received.MessageName;
+        
         bool notFound := true;
         int len := theStruct.Length;
         int i := 0;
         while ((i < len) && notFound)
         {
             var item := theStruct.at(i);
-            if (cast MessageName(item) == __received)
+            if (cast MessageName(item) == subj)
             {
                 notFound := false
             }
@@ -100,10 +117,10 @@ public class DynamicStruct
                 
         // if not found extend the structure
         if(i == len)
-        {                                 
-            theStruct := theStruct.reallocate(len + 2);
+        {                          
+            theStruct := theStruct.expand(2);
 
-            theStruct.setAt(i, __received)
+            theStruct.setAt(i, subj)
        };
 
         // set the content for the appropriate field

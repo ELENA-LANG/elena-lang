@@ -161,6 +161,9 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_SUBJECT, V_SUBJECT, lxIntBoolOp, V_FLAG));
 
+   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_MESSAGE, V_MESSAGE, lxIntBoolOp, V_FLAG));
+   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_MESSAGE, V_MESSAGE, lxIntBoolOp, V_FLAG));
+
    // int64 primitive operations
    operators.add(OperatorInfo(ADD_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));
    operators.add(OperatorInfo(SUB_OPERATOR_ID,   V_INT64, V_INT64, lxLongOp, V_INT64));

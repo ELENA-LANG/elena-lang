@@ -140,7 +140,22 @@ public extension objectOp
 //
 //    doWith(action)
 //        = action(self);
-//        
+//
+    reallocate(int newLength)
+    {
+        int len := self.Length;
+        
+        var class := self.__getClass();
+        var newArr := class.allocate(newLength);
+        
+        for(int i := 0, i < len, i += 1)
+        {
+            newArr[i] := self[i];
+        };
+        
+        ^ newArr
+    }
+                
 //    reallocate(int newLength)
 //        => system'core_routines'__array;
 //        

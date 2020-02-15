@@ -6475,7 +6475,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
          tape.write(bcMQuit);
       }
       else {
-         tape.write(bcPushVerb);
+         tape.write(bcPushD);
          setSubject(tape, message.argument);
 
          resendResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument);
@@ -6949,14 +6949,14 @@ void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::N
 
 void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
-//   if (node.argument != 0) {
-//      // obsolete : old-style dispatching
-//      pushObject(tape, lxCurrentMessage);
-//      setSubject(tape, node.argument);
-//      doGenericHandler(tape);
-//      popObject(tape, lxCurrentMessage);
-//   }
-   /*else */doGenericHandler(tape);
+   if (node.argument != 0) {
+      // if it is a generic dispatcher with the custom target
+      tape.write(bcPushD);
+      setSubject(tape, node.argument);
+      doGenericHandler(tape);
+      tape.write(bcPopD);
+   }
+   doGenericHandler(tape);
 
    generateExpression(tape, node, scope);
 }
