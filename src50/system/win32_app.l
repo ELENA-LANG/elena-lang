@@ -13,20 +13,20 @@ singleton CommandLineFactory
 public commandLine = 
     CommandLineFactory.load();
 
-//// --- startUp ---
-//
-//class StartUpEvents
-//{
-//    event Func OnStop;
-//    
-//    internal stopping()
-//    {
-//        ifnot (nil == OnStop)
-//            { OnStop() }
-//    }
-//}
-//
-//public static startUpEvents = new StartUpEvents();
+// --- startUp ---
+
+class StartUpEvents
+{
+    event Func OnStop;
+    
+    internal stopping()
+    {
+        ifnot (nil == OnStop)
+            { OnStop() }
+    }
+}
+
+public static startUpEvents = new StartUpEvents();
 
 entry()
 {
@@ -36,10 +36,10 @@ entry()
     {
         forward program()
     }
-//    finally
-//    {
-//       startUpEvents.stopping()
-//    }
+    finally
+    {
+       startUpEvents.stopping()
+    }
     catch::
     {
         function(AbortException e)
