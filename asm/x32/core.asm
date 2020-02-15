@@ -1,6 +1,7 @@
 // --- Predefined References  --
 define GC_ALLOC	            10001h
 define HOOK                 10010h
+define INVOKER              10011h
 define INIT_RND             10012h
 define ENDFRAME             10016h
 define RESTORE_ET           10017h
@@ -111,6 +112,7 @@ rstructure %SYSTEM_ENV
   dd data : %CORE_GC_TABLE
   dd data : %CORE_TLS_INDEX
   dd data : %THREAD_TABLE
+  dd code : %INVOKER
 
 end
 

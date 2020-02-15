@@ -1,6 +1,7 @@
 // --- Predefined References  --
 define GC_ALLOC	            10001h
 define HOOK                 10010h
+define INVOKER              10011h
 define INIT_RND             10012h
 define INIT_ET              10015h
 define ENDFRAME             10016h
@@ -64,4 +65,36 @@ procedure % INIT_RND
   pop  edx
   ret
   
+end
+
+// INVOKER(prevFrame, function)
+procedure % INVOKER
+
+  mov  eax, esp
+
+  push esi
+  push edi
+  push ecx
+  push ebx
+  push ebp
+  push esi
+  push edi
+
+  mov  esi, [eax+4]
+  mov  edi, [eax+8]
+
+  push  esi         // ; declare frame
+  push  0
+  call  edi
+
+  add   esp, 8
+  pop   edi
+  pop   esi
+  pop   ebp
+  pop   ebx
+  pop   ecx
+  pop   edi
+  pop   esi
+  ret
+
 end

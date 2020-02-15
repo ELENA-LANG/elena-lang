@@ -55,15 +55,6 @@ int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry)
    return retVal;
 }
 
-int SystemRoutineProvider :: ExecuteInNewFrame(SystemEnv* env, _Entry& entry)
-{
-   FrameHeader frameHeader = { 0 };
-
-   int retVal = Execute(entry.address, &frameHeader);
-
-   return retVal;
-}
-
 void SystemRoutineProvider :: OpenFrame(SystemEnv* env, FrameHeader* frameHeader)
 {
    if (env->MaxThread <= 1) {

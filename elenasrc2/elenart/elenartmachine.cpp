@@ -24,12 +24,13 @@ void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
    __routineProvider.InitSTA((SystemEnv*)env, frameHeader);
 
    _Entry entry;
-   entry.address = programEntry;
+   entry.address = env->Invoker;
 
-   __routineProvider.ExecuteInNewFrame(env, entry);
+   // executing the program
+   int retVal = entry.evaluate2(0, programEntry);
 
    // winding down system
-   Exit(0);
+   Exit(retVal);
 }
 
 void ELENARTMachine :: startMTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)

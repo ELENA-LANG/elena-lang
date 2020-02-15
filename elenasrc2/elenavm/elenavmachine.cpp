@@ -997,14 +997,13 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
    }      
 
    _Entry entry;
-   entry.address = vaddress;
+   entry.address = env->Invoker;
 
    int retVal = 0;
    if (!standAlone) {
       retVal = __routineProvider.ExecuteInFrame(env, entry);
    }
-   else retVal = __routineProvider.ExecuteInNewFrame(env, entry);
-   //else retVal = (*entry.entry)();
+   else retVal = entry.evaluate2(0, vaddress);
 
    if (retVal == 0)
       setStatus("Broken");

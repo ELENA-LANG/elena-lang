@@ -43,7 +43,7 @@ SectionInfo JITLinker::ReferenceHelper :: getSection(ref_t reference, _Module* m
 
 SectionInfo JITLinker::ReferenceHelper :: getCoreSection(ref_t reference)
 {
-   return _owner->_loader->getCoreSectionInfo(reference, 0);
+  return _owner->_loader->getCoreSectionInfo(reference, 0);
 }
 
 ref_t JITLinker::ReferenceHelper :: resolveMessage(ref_t reference, _Module* module)

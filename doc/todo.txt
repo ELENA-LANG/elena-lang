@@ -19,8 +19,6 @@ In development:
                 * implement some roseta code samples
 
               dev - elena50
-                * get rid of ExecuteInNewFrame, provide special function to invoke the function from external
-
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
 
                 * nested class scope
@@ -229,6 +227,9 @@ In development:
                 * migrate all existing ones
                 * tutorials
                 * rosetta code : AmicablePairs using yieldable method
+
+              dev2 - inline assembly in RT / VM
+                * get rid of ExecuteInFrame, provide special function to invoke the function from external
 
               dev2
                 * refactor code generation (ByteCodeWriter), there should be a context to keep track on the current register

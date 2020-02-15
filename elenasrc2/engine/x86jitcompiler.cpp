@@ -20,6 +20,7 @@ constexpr int elObjectOffset     = 0x0008;           // object header / offset c
 // --- ELENA CORE built-in routines
 constexpr int GC_ALLOC           = 0x10001;
 constexpr int HOOK               = 0x10010;
+constexpr int INVOKER            = 0x10011;
 constexpr int INIT_RND           = 0x10012;
 constexpr int ENDFRAME           = 0x10016;
 constexpr int CALC_SIZE          = 0x1001F;
@@ -50,6 +51,13 @@ const int coreStaticNumber = 2;
 const int coreStatics[coreStaticNumber] =
 {
    VOID, VOIDPTR
+};
+
+// preloaded env routines
+const int envFunctionNumber = 1;
+const int envFunctions[envFunctionNumber] =
+{
+   INVOKER
 };
 
 // preloaded gc routines
@@ -2042,6 +2050,22 @@ inline void loadCoreData(_ReferenceHelper& helper, x86JITScope& dataScope, ref_t
    loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
 }
 
+inline void loadRoutines(int functionNumber, const int* functions, x86JITScope& scope, 
+   IntFixedMap<void*>& preloaded)
+{
+   for (int i = 0; i < functionNumber; i++) {
+      if (!preloaded.exist(functions[i])) {
+         preloaded.add(functions[i], scope.helper->getVAddress(*scope.code, mskCodeRef));
+
+         // due to optimization section must be ROModule::ROSection instance
+         SectionInfo info = scope.helper->getCoreSection(functions[i]);
+         scope.module = info.module;
+
+         loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
+      }
+   }
+}
+
 void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 {
    // preload core data
@@ -2072,11 +2096,15 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    // load GC static root
    _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
 
+   // HOTFIX : preload invoker
+   x86JITScope scope(NULL, &codeWriter, &helper, this);
+   loadRoutines(envFunctionNumber, envFunctions, scope, _preloaded);
+
    // SYSTEM_ENV
    x86JITScope rdataScope(NULL, &rdataWriter, &helper, this);
    _preloaded.add(SYSTEM_ENV, helper.getVAddress(rdataWriter, mskRDataRef));
    loadCoreData(helper, rdataScope, SYSTEM_ENV);
-   // NOTE : the table is tailed with GCMGSize,GCYGSize,MaxThread and DebugPtr fields
+   // NOTE : the table is tailed with GCMGSize,GCYGSize,MaxThread
    rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
    rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
    rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
@@ -2101,18 +2129,7 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    }
 
    // preloaded core functions
-   x86JITScope scope(NULL, &codeWriter, &helper, this);
-   for (int i = 0; i < coreFunctionNumber; i++) {
-      if (!_preloaded.exist(coreFunctions[i])) {
-         _preloaded.add(coreFunctions[i], helper.getVAddress(codeWriter, mskCodeRef));
-
-         // due to optimization section must be ROModule::ROSection instance
-         SectionInfo info = helper.getCoreSection(coreFunctions[i]);
-         scope.module = info.module;
-
-         loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
-      }
-   }
+   loadRoutines(coreFunctionNumber, coreFunctions, scope, _preloaded);
 
    // preload vm commands
    for (int i = 0; i < gcCommandNumber; i++) {

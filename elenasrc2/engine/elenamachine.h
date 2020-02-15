@@ -31,6 +31,7 @@ struct _Entry
       void* address;
       int  (*entry)(void);
       int  (*evaluate)(void*);
+      int  (*evaluate2)(pos_t, void*);
    };
 
    _Entry()
@@ -85,6 +86,7 @@ struct SystemEnv
    GCTable*          Table;
    pos_t*            TLSIndex;
    pos_t*            ThreadTable;
+   void*             Invoker;
    pos_t             GCMGSize;
    pos_t             GCYGSize;
    pos_t             MaxThread;
@@ -135,7 +137,6 @@ public:
 
    static int Execute(void* address, FrameHeader* framePtr);
    static int ExecuteInFrame(SystemEnv* env, _Entry& entry);
-   static int ExecuteInNewFrame(SystemEnv* env, _Entry& entry);
 
    static bool NewThread(SystemEnv* env, ProgramHeader* frameHeader);
 
