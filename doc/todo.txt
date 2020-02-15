@@ -2,7 +2,6 @@
 In development:
 ------         
               dev2 - linux32
-                * x86routines : get rid of assembly code
                 * compile empty program
                 * compile hello world
 
@@ -21,6 +20,7 @@ In development:
 
               dev - elena50
                 * uncomment system'entry : event handler
+                * x86routines::execute : mov code to C
 
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
 

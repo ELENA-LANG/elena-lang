@@ -2922,6 +2922,58 @@ procedure __extension."#dispatch[1]"
 
 end
 
+procedure __event."#dispatch[1]"
+
+  bsredirect  
+
+  open     5
+  reserve  2
+
+  savefi  -3
+  xsavef  -2 0
+
+  geti     0  // ; get the first field !! better to define a special array (like castover group object)
+  pusha
+
+labNext:
+  count
+  movf    -2
+  if       labEnd
+
+  // ; define the message length
+  loadfi  -3
+  and      ARG_MASK
+  ifn      labSkip 0
+  
+// ; copy message
+labNextParam:
+  movf    -5
+  get
+  pusha
+  dec      1
+  elsen    labNextParam 0
+
+labSkip:
+  peekfi   1
+  loadfi  -2
+  get
+  inc      1
+  savefi  -2
+
+  loadfi  -3
+  callvi   0
+  
+  peekfi   1
+  jump labNext
+
+labEnd:
+  loadfi  -3
+  restore  4
+  close
+  mquit
+
+end
+
 // ; system routines
 
 procedure critical_exception_handler

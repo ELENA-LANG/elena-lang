@@ -23,7 +23,7 @@ public sealed EventHandler<TF>
         this functions := functions
     }
     
-    dispatch() => system'core_routines'__event;
+    dispatch() => intern system'core_routines'__event;
 }
 
 #property event<T, __name>
