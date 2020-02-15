@@ -82,8 +82,6 @@ class ExpressionTree
         if (nil == node)
             { InvalidArgumentException.raise() };
         
-        var s := subjconst Leaf;
-        
         if (node.containsProperty(subjconst Leaf))
         { 
             list.append(node.Leaf) 

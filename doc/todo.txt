@@ -11,14 +11,13 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev - migration
-                * dynamicstruct
-
-                * rosetta code samples : 24 game
+                * rosetta code samples : 99 Bottles of Beer
                 * collatz sample
                 * db sample
                 * script samples
                 * gui samples
                 * uncomment all code in LIB50
+                * implement some roseta code samples
 
               dev - elena50
                 * uncomment system'entry : event handler

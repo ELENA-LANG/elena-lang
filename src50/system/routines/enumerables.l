@@ -539,27 +539,27 @@ public extension indexableOp
 //        
 //        ^ Array.allocate(length).populate:(int i){ it.Index := index + i; ^ it.get()}
 //    }
-//    
-//    sequenceEqual(array)
-//    {
-//        if (self.Length != array.Length)
-//            { ^ false };
-//            
-//        Indexer a := self.indexer();
-//        Indexer b := array.indexer();
-//        
-//        while (a.Available)
-//        {
-//            ifnot (a.get() == b.get())
-//                { ^ false };
-//                
-//            a.appendIndex:1;
-//            b.appendIndex:1
-//        };
-//          
-//        ^ true                
-//    }
-//            
+    
+    sequenceEqual(array)
+    {
+        if (self.Length != array.Length)
+            { ^ false };
+            
+        Indexer a := self.indexer();
+        Indexer b := array.indexer();
+        
+        while (a.Available)
+        {
+            ifnot (a.get() == b.get())
+                { ^ false };
+                
+            a.appendIndex:1;
+            b.appendIndex:1
+        };
+          
+        ^ true                
+    }
+            
 //    sequenceReverse()
 //        = self.sequenceReverse(0, self.Length);
 //            

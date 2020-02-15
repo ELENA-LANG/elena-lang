@@ -84,9 +84,9 @@ public sealed const struct ExtensionMessage
 ////
 ////    T<Signature> signature
 ////        => system'core_routines'__message.
-////
-////    bool equal(ExtensionMessage aSubject)
-////        => system'core_routines'__extmessage.
+//
+//    bool equal(ExtensionMessage aSubject)
+//        => system'core_routines'__extmessage.
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
     dispatch() => intern system'core_routines'__extmessage;
@@ -137,10 +137,10 @@ public sealed const struct MessageName
 ////    /// Creates a dynamic signature
 ////    constructor new(wide aSubjectName)
 ////        <= new(T<literal>(aSubjectName)).
-//
-//    /// Compares the values
-//    bool equal(MessageName subject)
-//        = theValue == subject;
+
+    /// Compares the values
+    bool equal(MessageName subject)
+        = theValue == subject;
 
     string toPrintable()
     {
