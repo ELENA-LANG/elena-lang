@@ -19,8 +19,7 @@ In development:
                 * implement some roseta code samples
 
               dev - elena50
-                * uncomment system'entry : event handler
-                * x86routines::execute : mov code to C
+                * get rid of ExecuteInNewFrame, provide special function to invoke the function from external
 
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
 
