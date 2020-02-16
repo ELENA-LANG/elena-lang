@@ -61,10 +61,10 @@ constexpr auto HINT_YIELD_EXPR      = EAttr::eaYieldExpr;
 constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
 constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
+constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 
 //constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
-//constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
 //constexpr auto HINT_PARAMETER		   = EAttr::eaParameter;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
@@ -3137,11 +3137,12 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
 
 //   bool inlineArgCall = EAttrs::test(mode, HINT_INLINEARGMODE);
 //   bool dispatchCall = false;
+   bool directCall = EAttrs::test(mode, HINT_DIRECTCALL);
    _CompilerLogic::ChechMethodInfo result;
    int callType = 0;
-//   if (!inlineArgCall) {
+   if (/*!inlineArgCall && */!directCall) {
       callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
-//   }
+   }
 
    if (callType == tpPrivate) {
       if (isSelfCall(target)) {
@@ -3655,7 +3656,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
 //      }
       else {
          int stackSafeAttr = 0;
-//         if (!EAttrs::test(mode, HINT_DIRECTCALL))
+         if (!EAttrs::test(mode, HINT_DIRECTCALL))
             messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, true, stackSafeAttr);
 
          if (!test(stackSafeAttr, 1)) {
@@ -5666,11 +5667,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
    SNode current = node.firstChild();
    if (current.compare(lxAttribute, lxType, lxArrayType, lxBookmarkReference)) {
       mode.include(declareExpressionAttributes(current, scope, exprMode));
-      //      if (targetMode.testany(HINT_DIRECTCALL)) {
-      //         // HOTFIX : direct call attribute should be applied to the operation
-      //         mode.include(HINT_DIRECTCALL);
-      //         targetMode.exclude(HINT_DIRECTCALL);
-      //      }
+
       //      if (targetMode.testAndExclude(HINT_INLINEARGMODE)) {
       //         noPrimMode = true;
       //         inlineArgMode = true;

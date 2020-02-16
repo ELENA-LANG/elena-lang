@@ -28,7 +28,7 @@
 #define const       80002001h
 #define embeddable  80002002h
 #define ref         80002003h
-////#80002004 = __direct;
+#define __weak      80002004h
 #define __loop      80002005h
 //#define preloaded   80002006h
 //#define lazy        80002009h

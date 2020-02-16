@@ -50,7 +50,7 @@ constexpr auto V_YIELDABLE       = 0x80003006u;
 constexpr auto V_CONST           = 0x80002001u;
 constexpr auto V_EMBEDDABLE      = 0x80002002u;
 constexpr auto V_WRAPPER         = 0x80002003u;
-//constexpr auto V_DIRECT          = 0x80002004u;
+constexpr auto V_WEAKOP          = 0x80002004u;
 constexpr auto V_LOOP            = 0x80002005u;
 //constexpr auto V_PRELOADED       = 0x80002006u;
 //constexpr auto V_LAZY            = 0x80002009u;
@@ -518,6 +518,7 @@ public:
       eaMssg               = 0x00008000000,
       eaVirtualExpr        = 0x00010000000,
       eaSubj               = 0x00020000000,
+      eaDirectCall         = 0x00040000000,
 
       eaScopeMask          = 0x0000041400A,
       eaObjectMask         = 0x0002821B2F4,
@@ -533,7 +534,6 @@ public:
 //      eaCallExpr           = 0x00000400000,
 //      eaParameter          = 0x00001000000,
 //      eaRetExpr            = 0x00004000000,
-//      eaDirectCall         = 0x00008000000,
 //      eaClosure            = 0x00080000000,
 //      eaSubCodeClosure     = 0x00800000000,
 //      eaRefExpr            = 0x20000000000,

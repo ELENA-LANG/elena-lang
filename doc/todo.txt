@@ -10,7 +10,8 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev - migration
-                * rosetta code samples : a+b
+                * rosetta code samples : ABC Problem
+                * migrate changes from core to corex
                 * collatz sample
                 * db sample
                 * script samples
@@ -19,17 +20,7 @@ In development:
                 * implement some roseta code samples
 
               dev - elena50
-                * invoke extension directly
-
-                * Exception.raise sealed static method
-
-                * uncomment DerivationWriter :: mapAttribute
-                * uncomment - resolveBytecodeSection
-                * uncomment beforeLoad, ExecutableImage, prepareCompiler, fixReferences, compileMessageArg, resolveMessage,
-                  resolveMessageByIndex, printMethod
-                * uncomment parseMessage, resolveModule, cleanUp, initLoader, loadPrimitiveCategory
                 * declaring unresolved types?
-                * migrate changes from core to corex
                 * copying  a buffer with unaligned size
                 * review : inheriting private methods (what about the public "shadow one" hints?, should they be removed as well??)
                 * auto conversion methods should be marked as idle
@@ -53,6 +44,8 @@ In development:
                 * auto returning
                 * variadic arguments : unboxing, boxing, direct use
                 * extension message - can be applied only to the generic extension?
+                * invoke extension directly
+                * uncomment cleanUp, validateUnresolved
                 * api doc - with description
 
               xdev elena50
@@ -67,6 +60,7 @@ In development:
                 * (re)implement FileStrean.set length<int>
 
               xdev debugger
+                * uncomment DebugController::parseMessage, cleanUp
                 * step over external / message / loop / if call?
                 * step over last statement (without terminator)
                 * watch message / subject info

@@ -472,14 +472,6 @@ void DerivationWriter :: recognizeScope()
 ref_t DerivationWriter :: mapAttribute(SNode node, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory)
 {
    ref_t attrRef = 0;
-////
-////      bool tokenNode = node.existChild(lxToken);
-////      bool sizeNode = node.existChild(lxDynamicSizeDecl);
-////      if (!allowType && (tokenNode || sizeNode))
-////         _scope->raiseError(errInvalidHint, _filePath, node);
-////
-////      if (tokenNode)
-////         return V_TEMPLATE;
 
    SNode terminal = node.firstChild(lxTerminalMask);
    ident_t token = terminal.identifier();

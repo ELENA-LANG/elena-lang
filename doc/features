@@ -80,6 +80,8 @@ Code
   Control statements
   Conversions : cast vs conversion constructor
   Message Dispaching
+  Modificators
+    * __weak attribute
 Project
   Options
     * option to turn on / off auto system module import

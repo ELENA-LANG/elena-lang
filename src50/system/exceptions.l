@@ -79,9 +79,14 @@ public class Exception
         theCallstack := new CallStack()
     }    
     
-//    constructor new()
-//        <= new(self.__getClassName());
-//
+    sealed static raise()
+    {
+        (__weak: self.new()).raise()
+    }
+    
+    constructor new()
+        <= new(self.__getClassName());
+
 ////    constructor raise()
 ////        <= new()
 ////    {
@@ -104,11 +109,6 @@ public class FormatException : Exception
 
 public class OutOfRangeException : Exception
 {
-    static raise()
-    {
-        OutOfRangeException.new().raise()
-    }
-    
     /// Creates the exception
     constructor new()
         <= new("An index is out of range");
@@ -129,11 +129,6 @@ public class InvalidArgumentException : Exception
     /// Creates the exception
     constructor new(string message)
         <= new(message);
-
-    static raise()
-    {
-        InvalidArgumentException.new().raise()
-    }
 }
 
 // --- InvalidOperationException ---
@@ -147,11 +142,6 @@ public class InvalidOperationException : Exception
     /// Creates the exception
     constructor new(string message)
         <= new(message);
-
-    static raise()
-    {
-        InvalidOperationException.new().raise()
-    }
 }
 
 // --- MethodNotFound ---
@@ -177,11 +167,6 @@ public sealed class MethodNotFoundException : Exception
 
 public class NotSupportedException : Exception
 {
-    static raise()
-    {
-        NotSupportedException.new().raise()
-    }
-    
     /// Creates the exception
     constructor new()
         <= new("Operation is not supported");
@@ -196,11 +181,6 @@ public class NotSupportedException : Exception
 /// An abort exception 
 public class AbortException : Exception
 {
-    static raise()
-    {
-        AbortException.new().raise()
-    }
-    
     /// Creates the exception
     constructor new()
         <= new("The process terminated");

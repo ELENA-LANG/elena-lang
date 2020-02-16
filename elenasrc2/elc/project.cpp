@@ -347,10 +347,6 @@ _Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& referenc
 
 _Module* Project :: resolveModule(ident_t referenceName, ref_t& reference, bool silentMode)
 {
-   //while (isWeakReference(referenceName)) {
-   //   referenceName = resolveForward(referenceName);
-   //}
-
    if (emptystr(referenceName))
       return NULL;
 
