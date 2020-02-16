@@ -193,8 +193,8 @@ procedure __literal."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
   notgreater labErr
   lessn   labErr 0
 
-  pushsi 4
-  pushsi 2
+  pushsi 1
+  pushsi 5
   callextr api : strtochar
   ifr labErr 0
   freei 4
@@ -515,8 +515,8 @@ procedure __wide."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
   notgreater labErr
   lessn   labErr 0
 
-  pushsi 4
-  pushsi 2
+  pushsi 1
+  pushsi 5
   callextr api : wstrtochar
   ifr labErr 0
   freei 4
@@ -2079,6 +2079,7 @@ procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#
   pushsi 3
   pushsi 3  
   callextr api : chartoshorts
+  freei  3
   peeksi 4
   save
   
@@ -2092,6 +2093,7 @@ procedure __charconvertor."save$system@CharValue$system@IntNumber$@system@Array#
   pushsi 3
   pushsi 3  
   callextr api : chartobytes
+  freei  3
   peeksi 4
   save
   

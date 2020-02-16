@@ -88,10 +88,10 @@ public extension stringExOp
 
 public symbol printingLn = (line){ forward program'output.printLine:line };
 
-//// --- func1Op ---
-//
-//public extension func1Op : Func1
-//{
-//    asComparator()
-//        = new::{ bool equal(o) = self(o); };
-//}
+// --- func1Op ---
+
+public extension func1Op : Func1
+{
+    asComparator()
+        = new { bool equal(o) = self(o); };
+}

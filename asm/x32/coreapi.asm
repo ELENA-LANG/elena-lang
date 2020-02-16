@@ -1525,11 +1525,11 @@ procedure coreapi'longtoreal
 
 end
 
-// ; strtochar(str,index; ebx = 0 if err ; edx - out)
+// ; strtochar(index,str; ebx = 0 if err ; edx - out)
 procedure coreapi'strtochar   
 
-  mov  esi, [esp+8]
-  mov  eax, [esp+4]
+  mov  esi, [esp+4]
+  mov  eax, [esp+8]
   mov  ebx, [esi]
 
   xor  edx, edx
@@ -1640,11 +1640,11 @@ lab4_2:
   
 end                                                       
 
-// ; wstrtochar(str,index; ebx = 0 if err ; edx - out)
+// ; wstrtochar(index,str; ebx = 0 if err ; edx - out)
 procedure coreapi'wstrtochar
 
-  mov  esi, [esp+8]
-  mov  eax, [esp+4]
+  mov  esi, [esp+4]
+  mov  eax, [esp+8]
   mov  ebx, [esi]
 
   mov  esi, dword ptr [eax + ebx * 2]
@@ -1664,16 +1664,19 @@ procedure coreapi'wstrtochar
   jg   short err
   
 lab2:
-  add  ecx, ebx
-  sub  ecx, 35FDC00h
+  mov  edx, ecx
+  mov  ebx, [esp+4]
+  add  edx, ebx
+  sub  edx, 35FDC00h
   ret  
 
 lab1:
-  mov   ecx, esi
+  mov  ebx, [esp+4]
+  mov  edx, esi
   ret
 
 err:
-  xor  eax, eax
+  xor  ebx, ebx
   ret 
 
 end

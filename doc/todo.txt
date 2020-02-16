@@ -11,6 +11,7 @@ In development:
 
               dev - migration
                 * rosetta code samples : ABC Problem
+                * rosetta code samples : Abundant, deficient and perfect number classifications
                 * migrate changes from core to corex
                 * collatz sample
                 * db sample
@@ -21,16 +22,11 @@ In development:
 
               dev - elena50
                 * declaring unresolved types?
-                * copying  a buffer with unaligned size
                 * review : inheriting private methods (what about the public "shadow one" hints?, should they be removed as well??)
-                * auto conversion methods should be marked as idle
                 * passing byref further
                 * should child have an access to the parent static fields?
-                * emptyWideString cannot be used before its declaration (see String)
                 * using direct passing the arguments for internal call when it is possible
                 * allow to pass field to the external routines - see system'io'ConsoleWriter
-                * uncomment cleanUp code
-                * property - append, ...
                 * boxArgument - fieldexpr should be better mapped
                 * String / WideString - add<'Char>
                 * stack allocated variables : assigning nil, default constructor call, ...
@@ -45,7 +41,8 @@ In development:
                 * variadic arguments : unboxing, boxing, direct use
                 * extension message - can be applied only to the generic extension?
                 * invoke extension directly
-                * uncomment cleanUp, validateUnresolved
+                * uncomment cleanUp code
+                * uncomment validateUnresolved
                 * api doc - with description
 
               xdev elena50
@@ -141,6 +138,8 @@ In development:
                 * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
                   possible values)
                 * copytoai,fillri - optimized version for 1,2,3 dwords
+                * copying  a buffer with unaligned size
+                * auto conversion methods should be marked as idle
 
               dev50 - #495 Inheritable static methods
                 * sealed static methods : multimethods
@@ -181,6 +180,8 @@ In development:
                 * complex message names?
                 * methods with reference name
                 * fields with reference name
+                * emptyWideString cannot be used before its declaration (see String)
+                * property - append, ...
 
               dev1
                 * move all description to meta info using descr inline template

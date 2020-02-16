@@ -441,24 +441,24 @@ public extension indexableOp
         indexer.set:o2
     }
     
-////    forEvery(Func1 fn)
-////        = self~indexableOp forEvery(:n)<int>(fn(n)).
-//    
-//    int indexOfElement(element)
-//    {
-//        Indexer it := self.indexer();
-//        
-//        while (it.Available)
-//        {
-//            if (element == it.get())
-//                { ^ it.Index };
-//            
-//            it.appendIndex:1;
-//        };
-//        
-//        ^ -1
-//    }
-//    
+//    forEvery(Func1 fn)
+//        = self~indexableOp forEvery(:n)<int>(fn(n)).
+    
+    int indexOfElement(element)
+    {
+        Indexer it := self.indexer();
+        
+        while (it.Available)
+        {
+            if (element == it.get())
+                { ^ it.Index };
+            
+            it.appendIndex:1;
+        };
+        
+        ^ -1
+    }
+    
 //////    #method deepClone
 //////    [
 //////        #var aCopy := self clone.

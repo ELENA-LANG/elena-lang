@@ -606,18 +606,17 @@ public sealed class List : Enumerable
         constructor allocate()
             <= allocate(32);
         
-//        constructor load(Array a)
-//            <= fromArray(a, a.Length);
-//        
-//        constructor load(o)
-//            <= ()
-//        {
-//            Enumerator e := o.enumerator();
-//            while (e.next())
-//            {
-//                self.append(e.get())
-//            }
-//        }
+        constructor load(Array a)
+            <= fromArray(a, a.Length);
+        
+        constructor load(o)
+        {
+            Enumerator e := o.enumerator();
+            while (e.next())
+            {
+                self.append(e.get())
+            }
+        }
         
         /// Creates the list
         internal constructor fromArray(Array array, int length)
@@ -740,27 +739,28 @@ public sealed class List : Enumerable
 //    //
 //    //    insert : anObject at:anIndex
 //    //        <= insert(T<int>(anIndex), anObject).
-//            
-//        /// Removes an object at the specified position
-//        remove(int index)
-//        {
-//            if (index >= (cast int(theLength)))
-//                { OutOfRangeException.raise() };
-//            
-//            theLength.reduce(1);
-//            
-//            int i := index;
-//            while (i < (cast int(theLength)))
-//            {
-//                theArray.setAt(i, theArray.at(i + 1));
-//                
-//                i := i + 1
-//            }
-//        }
-//            
-//        removeAt(n)
-//            <= remove(cast int(n));
-//        
+            
+        /// Removes an object at the specified position
+        remove(int index)
+        {
+            if (index >= (cast int(theLength)))
+                { OutOfRangeException.raise() };
+            
+            theLength.reduce(1);
+            
+            int i := index;
+            int len := theLength.Value;
+            while (i < len)
+            {
+                theArray.setAt(i, theArray.at(i + 1));
+                
+                i := i + 1
+            }
+        }
+            
+        removeAt(n)
+            <= remove(cast int(n));
+        
 //    //    readCapacityTo(ref<int>{ aCapacity)
 //    //    [
 //    //        aCapacity value := theCapacity.
