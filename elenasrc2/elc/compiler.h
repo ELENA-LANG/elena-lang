@@ -915,7 +915,7 @@ private:
    bool optimizeJumps(CommandTape& tape);
    void optimizeTape(CommandTape& tape);
 
-   void validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared);
+   void validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared, bool allowType);
 
 //   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
@@ -1022,7 +1022,7 @@ private:
 
    size_t resolveArraySize(SNode node, Scope& scope);
 
-   ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode);
+   ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode, bool allowRole);
    //ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 

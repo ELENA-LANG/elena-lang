@@ -19,36 +19,9 @@ In development:
                 * implement some roseta code samples
 
               dev - elena50
-                * test primitive numeric operation in the symbol
-
-                * declaring typed variable : implicit, reference, global
-
-                * singleton can be used as a type?
-                * should V_SINGLETON be marked as elNestedClass?
-                * difference between sealed and final?
-
-                * public / internal / private extensions?
-
-                * methods with reference name
-                * fields with reference name
-
-                * sealed property??
-                * static property??
-
-                * method visibility
-                * methods : reference name??
-
-                * variadic arguments : unboxing, boxing, direct use
-
-                * nested class scope?
-                * global types
-
-                * inherit identifier, reference, global, template
-
-                * implicit / explicit namespaces, public / internal / private namespaces --- 
-                * Exception.raise sealed static method
-
                 * invoke extension directly
+
+                * Exception.raise sealed static method
 
                 * uncomment DerivationWriter :: mapAttribute
                 * uncomment - resolveBytecodeSection
@@ -58,11 +31,6 @@ In development:
                 * declaring unresolved types?
                 * migrate changes from core to corex
                 * copying  a buffer with unaligned size
-                * copying 4,8,1,2 bytes
-                * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
-                  possible values)
-                * redesign
-                * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
                 * review : inheriting private methods (what about the public "shadow one" hints?, should they be removed as well??)
                 * auto conversion methods should be marked as idle
                 * passing byref further
@@ -70,20 +38,21 @@ In development:
                 * emptyWideString cannot be used before its declaration (see String)
                 * using direct passing the arguments for internal call when it is possible
                 * allow to pass field to the external routines - see system'io'ConsoleWriter
-                * step over external / message / loop / if call?
                 * uncomment cleanUp code
                 * property - append, ...
                 * boxArgument - fieldexpr should be better mapped
                 * String / WideString - add<'Char>
                 * stack allocated variables : assigning nil, default constructor call, ...
-                * copytoai,fillri - optimized version for 1,2,3 dwords
                 * meta attributes
                 * external code : long, real ret value
                 * closures: presaved arguments
                 * closures: race conditions
                 * closures: returning a value
                 * #190 : Closure : auto boxing / unboxing local variables 
+                * public / internal / private extensions?
                 * auto returning
+                * variadic arguments : unboxing, boxing, direct use
+                * extension message - can be applied only to the generic extension?
                 * api doc - with description
 
               xdev elena50
@@ -98,10 +67,12 @@ In development:
                 * (re)implement FileStrean.set length<int>
 
               xdev debugger
+                * step over external / message / loop / if call?
                 * step over last statement (without terminator)
                 * watch message / subject info
 
               dev50 - test / optimization
+                * calc arithmetic operation with constants
                 * multi-return methods : optimize double assigning
                 * readtof - optimization
                 * translit sample: List should be compiled as constant list
@@ -171,6 +142,11 @@ In development:
                 * optimization : do not call idle method
                 * static methods : multimethods
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
+                * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
+                * copying 4,8,1,2 bytes
+                * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
+                  possible values)
+                * copytoai,fillri - optimized version for 1,2,3 dwords
 
               dev50 - #495 Inheritable static methods
                 * sealed static methods : multimethods
@@ -209,6 +185,8 @@ In development:
                 * reference message??
                 * variable : identifier / reference
                 * complex message names?
+                * methods with reference name
+                * fields with reference name
 
               dev1
                 * move all description to meta info using descr inline template

@@ -2375,8 +2375,8 @@ procedure __message."#dispatch[1]"
   storev
 
   elsed   labDefault
-  freei   1
 
+  popd
   peeksi  1
   jumpvi  0
 
@@ -2498,7 +2498,7 @@ procedure __extmessage."#dispatch[1]"
   storev
 
   elsed   labDefault
-  freei   1
+  popd
 
   jumpi   1
 

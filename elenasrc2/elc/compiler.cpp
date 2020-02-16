@@ -1788,12 +1788,12 @@ void Compiler :: declareClassAttributes(SNode node, ClassScope& scope, bool visi
    }
 }
 
-void Compiler :: validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared)
+void Compiler :: validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared, bool allowType)
 {
    if (!typeRef)
       scope.raiseError(errUnknownClass, current);
 
-   if (!_logic->isValidType(*scope.moduleScope, typeRef, ignoreUndeclared))
+   if (!_logic->isValidType(*scope.moduleScope, typeRef, ignoreUndeclared, allowType))
       scope.raiseError(errInvalidType, current);
 }
 
@@ -1831,7 +1831,7 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
          }
       }
       else if (current.compare(lxType, lxArrayType)) {
-         outputRef = resolveTypeAttribute(current, scope, declarationMode);
+         outputRef = resolveTypeAttribute(current, scope, declarationMode, false);
       }
 
       current = current.nextNode();
@@ -1888,7 +1888,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
             if (inlineArray) {
                // if it is an inline array - it should be compiled differently
                if (current == lxArrayType) {
-                  attrs.fieldRef = resolveTypeAttribute(current.firstChild(), scope, false);
+                  attrs.fieldRef = resolveTypeAttribute(current.firstChild(), scope, false, false);
                   attrs.size = -1;
                }
                else scope.raiseError(errInvalidHint, current);
@@ -1896,7 +1896,7 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
             // NOTE : the field type should be already declared only for the structure
             else {
                attrs.fieldRef = resolveTypeAttribute(current, scope,
-                  !test(scope.info.header.flags, elStructureRole));
+                  !test(scope.info.header.flags, elStructureRole), false);
 
                attrs.isArray = current == lxArrayType;
             }
@@ -2526,7 +2526,7 @@ ObjectInfo Compiler :: compileMessageReference(SNode terminal, ExprScope& scope)
 {
    ObjectInfo retVal;
    IdentifierString message;
-   int paramCount = 0;
+   int argCount = 0;
 
    SNode paramNode = terminal.nextNode();
    bool invalid = true;
@@ -2534,7 +2534,7 @@ ObjectInfo Compiler :: compileMessageReference(SNode terminal, ExprScope& scope)
       if (isSingleStatement(paramNode.nextNode())) {
          ObjectInfo sizeInfo = mapTerminal(paramNode.nextNode().firstChild(lxTerminalMask), scope, HINT_VIRTUALEXPR);
          if (sizeInfo.kind == okIntConstant) {
-            paramCount = sizeInfo.extraparam;
+            argCount = sizeInfo.extraparam;
             invalid = false;
          }
       }
@@ -2547,7 +2547,7 @@ ObjectInfo Compiler :: compileMessageReference(SNode terminal, ExprScope& scope)
    paramNode = lxIdle;
 
    if (terminal == lxIdentifier) {
-      message.append('1' + (char)paramCount);
+      message.append('0' + (char)argCount);
       message.append(terminal.identifier());
 
       retVal.kind = okMessageConstant;
@@ -2559,11 +2559,11 @@ ObjectInfo Compiler :: compileMessageReference(SNode terminal, ExprScope& scope)
       if (typeNode.nextNode() != lxNone)
          scope.raiseError(errNotApplicable, terminal);
 
-      ref_t extensionRef = resolveTypeAttribute(typeNode, scope, false);
+      ref_t extensionRef = resolveTypeAttribute(typeNode, scope, false, true);
 
       message.append(scope.moduleScope->module->resolveReference(extensionRef));
       message.append('.');
-      message.append('1' + (char)paramCount);
+      message.append('0' + (char)argCount);
       message.append(terminal.firstChild(lxTerminalMask).identifier());
 
       retVal.kind = okExtMessageConstant;
@@ -3451,7 +3451,9 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
          return scope.moduleScope->messageNameReference;
       case V_MESSAGE:
          return scope.moduleScope->messageReference;
-//      case V_UNBOXEDARGS:
+      case V_EXTMESSAGE:
+         return scope.moduleScope->extMessageReference;
+         //      case V_UNBOXEDARGS:
 //         // HOTFIX : should be returned as is
 //         return argRef;
       case V_NIL:
@@ -5045,7 +5047,7 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
       if (current == lxType) {
          ref_t typeRef = current.argument;
          if (!typeRef || typeRef == V_TEMPLATE) {
-            typeRef = resolveTypeAttribute(current, scope, declarationMode);
+            typeRef = resolveTypeAttribute(current, scope, declarationMode, false);
             current.setArgument(typeRef);
 
             SNode terminalNode = injectAttributeIdentidier(current, scope);
@@ -5124,7 +5126,7 @@ ref_t Compiler :: resolveTemplateDeclaration/*Unsafe*/(SNode node, Scope& scope,
 //   else return resolveTemplateDeclarationUnsafe(node, scope, declarationMode);
 //}
 
-ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode)
+ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode, bool allowRole)
 {
    ref_t typeRef = 0;
    if (test(node.type, lxTerminalMask)) {
@@ -5133,7 +5135,7 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
    else if (node == lxArrayType) {
       typeRef = resolvePrimitiveArray(scope,
          scope.moduleScope->arrayTemplateReference,
-         resolveTypeAttribute(node.firstChild(), scope, declarationMode), declarationMode);
+         resolveTypeAttribute(node.firstChild(), scope, declarationMode, false), declarationMode);
    }
    else {
       typeRef = node.argument;
@@ -5145,7 +5147,7 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
          typeRef = resolveTypeIdentifier(scope, node.firstChild(lxTerminalMask), declarationMode);
    }
 
-   validateType(scope, node, typeRef, declarationMode);
+   validateType(scope, node, typeRef, declarationMode, allowRole);
 
    return typeRef;
 }
@@ -5215,7 +5217,7 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 
    if (current.compare(lxType, lxArrayType) && test(current.nextNode(), lxTerminalMask)) {
       if (typeRef == 0) {
-         typeRef = resolveTypeAttribute(current, scope, false);
+         typeRef = resolveTypeAttribute(current, scope, false, false);
 
          newVariable = true;
 //         //if (current.existChild(lxArrayType)) {
@@ -5679,13 +5681,13 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
       if (current == lxArrayType) {
          // if it is an array creation
          result.kind = okClass;
-         result.element = resolveTypeAttribute(current.firstChild(), scope, false);
+         result.element = resolveTypeAttribute(current.firstChild(), scope, false, false);
          result.param = resolvePrimitiveArray(scope,
             scope.moduleScope->arrayTemplateReference, result.element, false);
          result.reference = V_OBJARRAY;
       }
       else {
-         ref_t typeRef = resolveTypeAttribute(current, scope, false);
+         ref_t typeRef = resolveTypeAttribute(current, scope, false, false);
 
          result = mapClassSymbol(scope, typeRef);
       }
@@ -5700,7 +5702,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          scope.raiseError(errInvalidOperation, node);
    }
    else if (mode.testAndExclude(HINT_CASTOP)) {
-      ref_t typeRef = resolveTypeAttribute(current, scope, false);
+      ref_t typeRef = resolveTypeAttribute(current, scope, false, false);
 
       result = mapClassSymbol(scope, typeRef);
 
@@ -5711,7 +5713,7 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
       else scope.raiseError(errInvalidOperation, node);
    }
    else if (mode.testAndExclude(HINT_CLASSREF)) {
-      ref_t typeRef = resolveTypeAttribute(current, scope, false);
+      ref_t typeRef = resolveTypeAttribute(current, scope, false, false);
       result = mapClassSymbol(scope, typeRef);
 
       recognizeTerminal(current, result, scope, mode);
@@ -6332,9 +6334,9 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
             if (current != lxArrayType)
                scope.raiseError(errIllegalMethod, node);
 
-            classRef = resolveTypeAttribute(current.firstChild(), scope, declarationMode);
+            classRef = resolveTypeAttribute(current.firstChild(), scope, declarationMode, false);
          }
-         else classRef = resolveTypeAttribute(current, scope, declarationMode);
+         else classRef = resolveTypeAttribute(current, scope, declarationMode, false);
       }
 
       current = current.nextNode();
@@ -7034,7 +7036,7 @@ void Compiler :: compileEmbeddableMethod(SNode node, MethodScope& scope)
    privateScope.message = ownerScope->info.methodHints.get(Attribute(scope.message, maEmbeddableRet));
 
    ref_t ref = resolvePrimitiveReference(scope, V_WRAPPER, scope.outputRef, false);
-   validateType(scope, node, ref, false);
+   validateType(scope, node, ref, false, false);
 
    declareArgumentList(node, privateScope, true, false);
    privateScope.parameters.add(RETVAL_ARG, Parameter(1 + scope.parameters.Count(), V_WRAPPER, scope.outputRef, 0));
@@ -7663,9 +7665,9 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
                // HOTFIX : validate the output type once again in case it was declared later in the code
                SNode typeNode = current.findChild(lxType, lxArrayType);
                if (typeNode) {
-                  resolveTypeAttribute(typeNode, scope, false);
+                  resolveTypeAttribute(typeNode, scope, false, false);
                }
-               else validateType(scope, current, methodScope.outputRef, false);
+               else validateType(scope, current, methodScope.outputRef, false, false);
             }
 
             // if it is a dispatch handler
@@ -7832,7 +7834,7 @@ void Compiler :: validateClassFields(SNode node, ClassScope& scope)
       if (current == lxClassField) {
          SNode typeNode = current.findChild(lxType, lxArrayType);
          if (typeNode != lxNone) {
-            resolveTypeAttribute(typeNode, scope, false);
+            resolveTypeAttribute(typeNode, scope, false, false);
          }
       }
       current = current.nextNode();
@@ -8395,7 +8397,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
             scope.raiseError(errTypeNotAllowed, node);
          }
          else {
-            ref_t ref = resolveTypeAttribute(current, scope, true);
+            ref_t ref = resolveTypeAttribute(current, scope, true, false);
             if (!outputRef) {
                outputRef = ref;
             }
@@ -8863,7 +8865,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
       }
       else if (current.compare(lxType, lxArrayType)) {
          // if it is a type attribute
-         scope.outputRef = resolveTypeAttribute(current, scope, true);
+         scope.outputRef = resolveTypeAttribute(current, scope, true, false);
       }
       else if (current == lxNameAttr && !explicitMode) {
          // resolving implicit method attributes
@@ -8899,7 +8901,7 @@ ref_t Compiler :: resolveParentRef(SNode node, Scope& scope, bool silentMode)
    }
    else {
       SNode typeNode = node.findChild(lxType);
-      parentRef = resolveTypeAttribute(typeNode, scope, silentMode);
+      parentRef = resolveTypeAttribute(typeNode, scope, silentMode, false);
    }
 
 //   else if (test(node.type, lxTerminalMask)) {
@@ -11050,7 +11052,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.arrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARRAYTEMPLATE_FORWARD));
    scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
    scope.messageNameReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGENAME_FORWARD));
-//   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
+   scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
 //   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
 //   scope.wrapReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WRAP_FORWARD));
@@ -11535,7 +11537,7 @@ void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, Id
       else if (current.compare(lxType, lxArrayType)) {
          signature.append('&');
 
-         ref_t classRef = resolveTypeAttribute(current, scope, true);
+         ref_t classRef = resolveTypeAttribute(current, scope, true, false);
          if (!classRef)
             scope.raiseError(errUnknownClass, current);
 
@@ -11591,7 +11593,7 @@ void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& sco
                registerTemplateSignature(typeAttr, scope, signaturePattern);
             }
             else {
-               ref_t classRef = resolveTypeAttribute(typeAttr, scope, true);
+               ref_t classRef = resolveTypeAttribute(typeAttr, scope, true, false);
                ident_t className = scope.module->resolveReference(classRef);
                if (isWeakReference(className))
                   signaturePattern.append(scope.module->Name());

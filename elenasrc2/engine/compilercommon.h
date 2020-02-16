@@ -241,7 +241,7 @@ struct _ModuleScope
    ref_t             realReference;
    ref_t             messageNameReference;
    ref_t             messageReference;
-//   ref_t             extMessageReference;
+   ref_t             extMessageReference;
    ref_t             literalReference;
    ref_t             wideReference;
    ref_t             charReference;
@@ -388,7 +388,7 @@ struct _ModuleScope
       longReference = literalReference = wideReference = 0;
       charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
-//      lazyExprReference = extMessageReference = 0;
+      /*lazyExprReference = */extMessageReference = 0;
       arrayTemplateReference = 0;
       /*wrapReference = */argArrayTemplateReference = 0;
 
@@ -670,8 +670,8 @@ public:
    // check if the classes is compatible
    virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
 
-      virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
-   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared) = 0;
+   virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
+   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole) = 0;
    virtual bool doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;
 //

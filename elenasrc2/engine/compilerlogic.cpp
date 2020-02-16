@@ -607,13 +607,13 @@ bool CompilerLogic :: isVariable(ClassInfo& info)
 //   return test(info.header.flags, elDynamicRole);
 //}
 
-bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, bool ignoreUndeclared)
+bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, classReference, true))
       return ignoreUndeclared;
 
-   return isValidType(info);
+   return isValidType(info, allowRole);
 }
 
 bool CompilerLogic :: doesClassExist(_ModuleScope& scope, ref_t targetRef)
@@ -641,9 +641,9 @@ bool CompilerLogic :: validateAutoType(_ModuleScope& scope, ref_t& reference)
    return true;
 }
 
-bool CompilerLogic :: isValidType(ClassInfo& info)
+bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
 {
-   return !testany(info.header.flags, elRole);
+   return allowRole || !testany(info.header.flags, elRole);
 }
 
 bool CompilerLogic :: isEmbeddable(ClassInfo& info)

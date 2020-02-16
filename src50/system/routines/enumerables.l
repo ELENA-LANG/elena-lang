@@ -314,17 +314,17 @@ public extension enumerableOp
 //    
 ////    allMatchedBy(ExtensionMessage extMessage)
 ////        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
-//
-//    summarize(var)
-//    {
-//        new Summing(var).run(cast Enumerator(self.enumerator()));
-//        
-//        ^ var.Value
-//    }
-//    
-//    summarize()
-//        = self.summarize(new Variable());
-//        
+
+    summarize(var)
+    {
+        new Summing(var).run(cast Enumerator(self.enumerator()));
+        
+        ^ var.Value
+    }
+    
+    summarize()
+        = self.summarize(new Variable());
+        
 //    filterBy(Func1 selector)
 //        = new Filter(selector, cast Enumerator(self.enumerator()));
 //        

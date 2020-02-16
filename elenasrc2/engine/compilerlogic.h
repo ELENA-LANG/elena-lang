@@ -126,8 +126,8 @@ public:
    virtual bool isVariable(ClassInfo& info);
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef);
 //   virtual bool isArray(ClassInfo& info);
-   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared);
-   virtual bool isValidType(ClassInfo& info);
+   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole);
+   virtual bool isValidType(ClassInfo& info, bool allowRole);
    virtual bool doesClassExist(_ModuleScope& scope, ref_t targetRef);
    virtual bool isEmbeddable(ClassInfo& info);
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference)

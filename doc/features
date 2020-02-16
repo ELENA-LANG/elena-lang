@@ -54,6 +54,10 @@ Declarations
   Extensions
   Extension Templates
 Code
+  Idenifiers
+    * implicit
+    * reference
+    * global
   Types
     * conversions
   Variables

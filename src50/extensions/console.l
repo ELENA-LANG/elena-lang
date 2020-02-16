@@ -1,4 +1,4 @@
-//import system'routines;
+import system'routines;
 import system'text;
 
 // --- outputOp ---
@@ -218,18 +218,18 @@ public extension inputOp
         ^ var
     }
     
-//    loadLine(params object[] args)
-//    {
-//        string line := self.readLine();
-//        
-//        Array params := line.split($32);
-//        
-//        int len := args.Length;
-//        for(int i := 0, i < len, i := i + 1)
-//        {
-//            params[i].convertTo(args[i]);
-//        };
-//        
-//        ^ self
-//    }
+    loadLine(params object[] args)
+    {
+        string line := self.readLine();
+        
+        Array params := line.splitBy($32);
+        
+        int len := args.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            params[i].convertTo(args[i]);
+        };
+        
+        ^ self
+    }
 }

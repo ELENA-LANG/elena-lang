@@ -1129,6 +1129,9 @@ void* JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t 
    IdentifierString extensionName(referenceInfo.referenceName, dotPos);
    ref_t messageID = parseMessage(referenceInfo.referenceName + dotPos + 1, false);
 
+   // HOTFIX : extension message should be a function one
+   messageID |= FUNCTION_MESSAGE;
+
    void* vmtExtVAddress = resolve(ReferenceInfo(referenceInfo.module, extensionName), mskVMTRef, false);
    int entryOffset = getVMTMethodAddress(vmtExtVAddress, messageID);;
 
