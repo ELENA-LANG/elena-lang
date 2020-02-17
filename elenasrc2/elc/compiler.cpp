@@ -2950,6 +2950,28 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
    ObjectInfo roperand, ObjectInfo roperand2, EAttr mode)
 {
    ObjectInfo retVal;
+   if (loperand.kind == okIntConstant && roperand.kind == okIntConstant) {
+      int result = 0;
+      if (calculateIntOp(operator_id, loperand.extraparam, roperand.extraparam, result)) {
+         retVal = mapIntConstant(scope, result);
+         node.set(lxConstantInt, retVal.param);
+         node.appendNode(lxIntValue, result);
+
+         return retVal;
+      }
+   }
+   else if (loperand.kind == okRealConstant && roperand.kind == okRealConstant) {
+      double l = scope.module->resolveConstant(loperand.param).toDouble();
+      double r = scope.module->resolveConstant(roperand.param).toDouble();
+
+      double result = 0;
+      if (calculateRealOp(operator_id, l, r, result)) {
+         retVal = mapRealConstant(scope, result);
+         node.set(lxConstantReal, retVal.param);
+
+         return retVal;
+      }
+   }
 
    ref_t loperandRef = resolveObjectReference(scope, loperand, false);
    ref_t roperandRef = resolveObjectReference(scope, roperand, false);
@@ -5478,6 +5500,29 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
    //      writeTerminalInfo(writer, terminal);
 }
 
+ObjectInfo Compiler :: mapIntConstant(ExprScope& scope, int integer)
+{
+   String<char, 20> s;
+
+   // convert back to string as a decimal integer
+   s.appendHex(integer);
+
+   return ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
+}
+
+ObjectInfo Compiler :: mapRealConstant(ExprScope& scope, double val)
+{
+   String<char, 30> s;
+
+   s.appendDouble(val);
+   // HOT FIX : to support 0r constant
+   if (s.Length() == 1) {
+      s.append(".0");
+   }
+
+   return ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s), V_REAL64);
+}
+
 ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 {
    //   EAttrs mode(modeAttr);
@@ -5547,16 +5592,11 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
             break;
          case lxInteger:
          {
-            String<char, 20> s;
-
             int integer = token.toInt();
             if (errno == ERANGE)
                scope.raiseError(errInvalidIntNumber, terminal);
 
-            // convert back to string as a decimal integer
-            s.appendHex(integer);
-
-            object = ObjectInfo(okIntConstant, scope.module->mapConstant((const char*)s), V_INT32, 0, integer);
+            object = mapIntConstant(scope, integer);
             break;
          }
          case lxLong:
@@ -5573,31 +5613,20 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          }
          case lxHexInteger:
          {
-            String<char, 20> s;
-
             int integer = token.toULong(16);
             if (errno == ERANGE)
                scope.raiseError(errInvalidIntNumber, terminal);
 
-            // convert back to string as a decimal integer
-            s.appendHex(integer);
-
-            object = ObjectInfo(okUIntConstant, scope.moduleScope->module->mapConstant((const char*)s), V_INT32, 0, integer);
+            object = mapIntConstant(scope, integer);
             break;
          }
          case lxReal:
          {
-            String<char, 30> s(token, getlength(token) - 1);
-            token.toDouble();
+            double val = token.toDouble();
             if (errno == ERANGE)
                scope.raiseError(errInvalidIntNumber, terminal);
 
-            // HOT FIX : to support 0r constant
-            if (s.Length() == 1) {
-               s.append(".0");
-            }
-
-            object = ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s), V_REAL64);
+            object = mapRealConstant(scope, val);
             break;
          }
          case lxGlobalReference:
@@ -10161,49 +10190,49 @@ bool Compiler :: optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node)
 
    return applied;
 }
-
-bool Compiler :: optimizeDirectRealOp(_ModuleScope& scope, SNode& node)
-{
-   SNode current = node.parentNode();
-   SNode loperand = current.findSubNodeMask(lxObjectMask);
-   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-
-   double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
-   double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
-   double val = 0;
-   if (calculateRealOp(current.argument, d1, d2, val)) {
-      loperand = lxIdle;
-      roperand = lxIdle;
-
-      IdentifierString str;
-      str.appendDouble(val);
-      current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
-
-      return true;
-   }
-   else return false;
-}
-
-bool Compiler :: optimizeDirectIntOp(_ModuleScope& scope, SNode& node)
-{
-   SNode current = node.parentNode();
-   SNode loperand = current.findSubNodeMask(lxObjectMask);
-   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-
-   int val = 0;
-   if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
-      loperand = lxIdle;
-      roperand = lxIdle;
-
-      IdentifierString str;
-      str.appendHex(val);
-      current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
-      current.appendNode(lxIntValue, val);
-
-      return true;
-   }
-   else return false;
-}
+//
+//bool Compiler :: optimizeDirectRealOp(_ModuleScope& scope, SNode& node)
+//{
+//   SNode current = node.parentNode();
+//   SNode loperand = current.findSubNodeMask(lxObjectMask);
+//   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+//
+//   double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
+//   double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
+//   double val = 0;
+//   if (calculateRealOp(current.argument, d1, d2, val)) {
+//      loperand = lxIdle;
+//      roperand = lxIdle;
+//
+//      IdentifierString str;
+//      str.appendDouble(val);
+//      current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
+//
+//      return true;
+//   }
+//   else return false;
+//}
+//
+//bool Compiler :: optimizeDirectIntOp(_ModuleScope& scope, SNode& node)
+//{
+//   SNode current = node.parentNode();
+//   SNode loperand = current.findSubNodeMask(lxObjectMask);
+//   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+//
+//   int val = 0;
+//   if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
+//      loperand = lxIdle;
+//      roperand = lxIdle;
+//
+//      IdentifierString str;
+//      str.appendHex(val);
+//      current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
+//      current.appendNode(lxIntValue, val);
+//
+//      return true;
+//   }
+//   else return false;
+//}
 
 //bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
 //{
@@ -10387,10 +10416,10 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeEmbeddableReturn(scope, node, false);
       case 3:
          return optimizeEmbeddableCall(scope, node);
-      case 4:
-         return optimizeDirectIntOp(scope, node);
-      case 5:
-         return optimizeDirectRealOp(scope, node);
+      //case 4:
+      //   return optimizeDirectIntOp(scope, node);
+      //case 5:
+      //   return optimizeDirectRealOp(scope, node);
       case 6:
          return optimizeOpDoubleAssigning(scope, node);
 //      case 4:

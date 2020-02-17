@@ -10,7 +10,7 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev - migration
-                * rosetta code samples : Ackermann function
+                * rosetta code samples : AKS test for primes
                 * migrate changes from core to corex
                 * collatz sample
                 * db sample
@@ -23,6 +23,8 @@ In development:
                 * xforms
 
               dev50 - test / optimization
+                * eval numeric operation in compile-time : 1+2, 1+2*3
+
                 * int op - optimization
                 * calc arithmetic operation with constants
                 * comparision, arithmetic operation

@@ -1079,6 +1079,9 @@ private:
 
    void recognizeTerminal(SNode& node, ObjectInfo info, ExprScope& scope, EAttr mode);
 
+   ObjectInfo mapIntConstant(ExprScope& scope, int value);
+   ObjectInfo mapRealConstant(ExprScope& scope, double val);
+
    ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
    ObjectInfo mapObject(SNode node, ExprScope& scope, EAttr mode);
 
@@ -1262,8 +1265,8 @@ private:
 //   bool optimizeBoxingBoxing(_ModuleScope& scope, SNode& node);
 //   bool optimizeAssigningOp(_ModuleScope& scope, SNode& node);
    bool optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node);
-   bool optimizeDirectRealOp(_ModuleScope& scope, SNode& node);
-   bool optimizeDirectIntOp(_ModuleScope& scope, SNode& node);
+   //bool optimizeDirectRealOp(_ModuleScope& scope, SNode& node);
+   //bool optimizeDirectIntOp(_ModuleScope& scope, SNode& node);
 //   bool optimizeBranching(_ModuleScope& scope, SNode& node);
 //   bool optimizeConstants(_ModuleScope& scope, SNode& node);
 //   bool optimizeArgBoxing(_ModuleScope& scope, SNode& node);
