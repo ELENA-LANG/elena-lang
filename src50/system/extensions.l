@@ -376,26 +376,26 @@ public extension intOp : IntNumber
 //        
 //        ^ r
 //    }
-//  
-//    int mod(int y)
-//    {
-//        int x := self;
-//        
-//        int z := x / y;
-//        z := z * y;
-//        
-//        int retVal := x - z;
-//        
-//        ^ retVal
-//    }
-//
-//    int mod(o)
-//    {
-//        int retVal := self.mod(cast int(o));
-//        
-//        ^ retVal
-//    }
-//    
+  
+    int mod(int y)
+    {
+        int x := self;
+        
+        int z := x / y;
+        z := z * y;
+        
+        int retVal := x - z;
+        
+        ^ retVal
+    }
+
+    int mod(o)
+    {
+        int retVal := self.mod(cast int(o));
+        
+        ^ retVal
+    }
+    
 //    real realDiv(n)
 //        = new RealNumber(self).divide:n;
 //   
@@ -485,11 +485,11 @@ public extension intOp : IntNumber
 //        }
 //    }
 //}
-//    
-//// --- longOp ---
-//
-//public extension longOp : LongNumber
-//{
+    
+// --- longOp ---
+
+public extension longOp : LongNumber
+{
 //    HashCode
 //    {
 //        // Reads the object hash code into the output parameter
@@ -510,18 +510,18 @@ public extension intOp : IntNumber
 //                
 //        ^ new LongNumber(n)
 //    }
-//    
-//    long mod(n)
-//    {
-//        long x := self;
-//        long y := cast long(n);
-//        
-//        long z := x / y;
-//        z := z * y;
-//        
-//        ^ new LongNumber(x - z)
-//    }
-//    
+    
+    long mod(n)
+    {
+        long x := self;
+        long y := cast long(n);
+        
+        long z := x / y;
+        z := z * y;
+        
+        ^ new LongNumber(x - z)
+    }
+    
 //    long power(long y)
 //    {
 //        long x := self;
@@ -563,10 +563,10 @@ public extension intOp : IntNumber
 //
 ////    power : aPower
 ////        = self~longOp power(T<long>(aPower)).
-//                
-//    bool isOdd()
-//        = self.mod:2l != 0;
-//        
+                
+    bool isOdd()
+        = self.mod:2l != 0;
+        
 //    bool isEven()
 //        = self.mod:2l == 0;
 //        
@@ -598,7 +598,7 @@ public extension intOp : IntNumber
 ////        
 ////        ^ intConvertor convert(aWord)
 ////    ]
-//}
+}
 
 // --- realOp ---
 

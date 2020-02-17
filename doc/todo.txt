@@ -11,6 +11,7 @@ In development:
 
               dev - migration
                 * rosetta code samples : AKS test for primes
+                * rosetta code samples : Amb
                 * migrate changes from core to corex
                 * collatz sample
                 * db sample
@@ -23,10 +24,7 @@ In development:
                 * xforms
 
               dev50 - test / optimization
-                * eval numeric operation in compile-time : 1+2, 1+2*3
-
-                * int op - optimization
-                * calc arithmetic operation with constants
+                * int operation with constants : setting, appending, arithmetic
                 * comparision, arithmetic operation
 
                 * optimize const int op : i := 1,  i + 1, i + 2
