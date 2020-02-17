@@ -214,23 +214,23 @@ void _ELC_::Project::raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::iden
 
 void _ELC_::Project :: cleanUp()
 {
-//   _ELENA_::Path rootPath(StrSetting(_ELENA_::opProjectPath), StrSetting(_ELENA_::opOutputPath));
-//
-//   for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
-//      _ELENA_::ident_t ns = _sources.get(it.key(), ELC_NAMESPACE_KEY, DEFAULT_STR);
-//
-//      _ELENA_::Path path;
-//
-//      // remove module
-//      path.copy(rootPath.c_str());
-//      _loader.nameToPath(ns, path, "nl");
-//      _wremove(path);
-//
-//      // remove debug module
-//      path.copy(rootPath.c_str());
-//      _loader.nameToPath(ns, path, "dnl");
-//      _wremove(path);
-//   }
+   _ELENA_::Path rootPath(StrSetting(_ELENA_::opProjectPath), StrSetting(_ELENA_::opOutputPath));
+
+   for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
+      _ELENA_::ident_t ns = _sources.get(it.key(), ELC_NAMESPACE_KEY, DEFAULT_STR);
+
+      _ELENA_::Path path;
+
+      // remove module
+      path.copy(rootPath.c_str());
+      _loader.nameToPath(ns, path, "nl");
+      _wremove(path);
+
+      // remove debug module
+      path.copy(rootPath.c_str());
+      _loader.nameToPath(ns, path, "dnl");
+      _wremove(path);
+   }
 }
 
 _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()

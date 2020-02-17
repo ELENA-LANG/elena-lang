@@ -568,14 +568,14 @@ public:
          return current;
       }
 
-      //Node nextSubNodeMask(LexicalType mask)
-      //{
-      //   Node child = nextNode(mask);
-      //   if (child == lxExpression) {
-      //      return child.findSubNodeMask(mask);
-      //   }
-      //   else return child;
-      //}
+      Node nextSubNodeMask(LexicalType mask)
+      {
+         Node child = nextNode(mask);
+         if (child == lxExpression) {
+            return child.findSubNodeMask(mask);
+         }
+         else return child;
+      }
 
       Node prevNode() const
       {

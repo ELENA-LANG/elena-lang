@@ -1298,66 +1298,66 @@ void Compiler :: optimizeTape(CommandTape& tape)
    }
 }
 
-//bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVal)
-//{
-//   switch (operation_id)
-//   {
-//      case ADD_OPERATOR_ID:
-//         retVal = arg1 + arg2;
-//         break;
-//      case SUB_OPERATOR_ID:
-//         retVal = arg1 - arg2;
-//         break;
-//      case MUL_OPERATOR_ID:
-//         retVal = arg1 * arg2;
-//         break;
-//      case DIV_OPERATOR_ID:
-//         retVal = arg1 / arg2;
-//         break;
-//      case AND_OPERATOR_ID:
-//         retVal = arg1 & arg2;
-//         break;
-//      case OR_OPERATOR_ID:
-//         retVal = arg1 | arg2;
-//         break;
-//      case XOR_OPERATOR_ID:
-//         retVal = arg1 ^ arg2;
-//         break;
-//      case SHIFTR_OPERATOR_ID:
-//         retVal = arg1 >> arg2;
-//         break;
-//      case SHIFTL_OPERATOR_ID:
-//         retVal = arg1 << arg2;
-//         break;
-//      default:
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
-//bool Compiler :: calculateRealOp(int operation_id, double arg1, double arg2, double& retVal)
-//{
-//   switch (operation_id)
-//   {
-//      case ADD_OPERATOR_ID:
-//         retVal = arg1 + arg2;
-//         break;
-//      case SUB_OPERATOR_ID:
-//         retVal = arg1 - arg2;
-//         break;
-//      case MUL_OPERATOR_ID:
-//         retVal = arg1 * arg2;
-//         break;
-//      case DIV_OPERATOR_ID:
-//         retVal = arg1 / arg2;
-//         break;
-//      default:
-//         return false;
-//   }
-//
-//   return true;
-//}
+bool Compiler :: calculateIntOp(int operation_id, int arg1, int arg2, int& retVal)
+{
+   switch (operation_id)
+   {
+      case ADD_OPERATOR_ID:
+         retVal = arg1 + arg2;
+         break;
+      case SUB_OPERATOR_ID:
+         retVal = arg1 - arg2;
+         break;
+      case MUL_OPERATOR_ID:
+         retVal = arg1 * arg2;
+         break;
+      case DIV_OPERATOR_ID:
+         retVal = arg1 / arg2;
+         break;
+      case AND_OPERATOR_ID:
+         retVal = arg1 & arg2;
+         break;
+      case OR_OPERATOR_ID:
+         retVal = arg1 | arg2;
+         break;
+      case XOR_OPERATOR_ID:
+         retVal = arg1 ^ arg2;
+         break;
+      case SHIFTR_OPERATOR_ID:
+         retVal = arg1 >> arg2;
+         break;
+      case SHIFTL_OPERATOR_ID:
+         retVal = arg1 << arg2;
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
+
+bool Compiler :: calculateRealOp(int operation_id, double arg1, double arg2, double& retVal)
+{
+   switch (operation_id)
+   {
+      case ADD_OPERATOR_ID:
+         retVal = arg1 + arg2;
+         break;
+      case SUB_OPERATOR_ID:
+         retVal = arg1 - arg2;
+         break;
+      case MUL_OPERATOR_ID:
+         retVal = arg1 * arg2;
+         break;
+      case DIV_OPERATOR_ID:
+         retVal = arg1 / arg2;
+         break;
+      default:
+         return false;
+   }
+
+   return true;
+}
 
 ref_t Compiler :: resolveConstantObjectReference(_CompileScope& scope, ObjectInfo object)
 {
@@ -10080,83 +10080,131 @@ bool Compiler :: optimizeEmbeddableCall(_ModuleScope& scope, SNode& node)
 //
 //   return false;
 //}
-//
-//bool Compiler :: optimizeDoubleAssigning(_ModuleScope& scope, SNode& node)
-//{
-//   bool applied = false;
-//
-//   SNode assign2Node = node.parentNode();
-//
-//   SNode assignNode = assign2Node.parentNode();
-//   while (assignNode != lxAssigning)
-//      assignNode = assignNode.parentNode();
-//
-//   SNode larg2 = assign2Node.firstChild(lxObjectMask);
-//   SNode larg = assignNode.firstChild(lxObjectMask);
-//
-//   if (assign2Node.argument == assignNode.argument && larg == lxLocalAddress) {
-//      SNode opNode = larg2.nextSubNodeMask(lxObjectMask);
-//      //if (opNode == lxLocalAddress && opNode.argument == larg.argument) {
-//      if (existSubNode(opNode, larg, true)) {
-//         // if the target is used in the subexpression rvalue
-//         // do nothing
-//         node = lxIdle; // remove temporal attribute to prevent duplicate check
-//      }
-//      else {
-//         // remove an extra assignment
-//         assign2Node = lxExpression;
-//         larg2 = lxIdle;
-//
-//         applied = true;
-//      }
-//   }
-//
-//   return applied;
-//}
-//
-//bool Compiler :: optimizeDirectRealOp(_ModuleScope& scope, SNode& node)
-//{
-//   SNode current = node.parentNode();
-//   SNode loperand = current.findSubNodeMask(lxObjectMask);
-//   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-//
-//   double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
-//   double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
-//   double val = 0;
-//   if (calculateRealOp(current.argument, d1, d2, val)) {
-//      loperand = lxIdle;
-//      roperand = lxIdle;
-//
-//      IdentifierString str;
-//      str.appendDouble(val);
-//      current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool Compiler :: optimizeDirectIntOp(_ModuleScope& scope, SNode& node)
-//{
-//   SNode current = node.parentNode();
-//   SNode loperand = current.findSubNodeMask(lxObjectMask);
-//   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-//
-//   int val = 0;
-//   if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
-//      loperand = lxIdle;
-//      roperand = lxIdle;
-//
-//      IdentifierString str;
-//      str.appendHex(val);
-//      current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
-//      current.appendNode(lxIntValue, val);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
+
+inline bool compareNodes(SNode node, SNode target)
+{
+   return (node.type == target.type && node.argument == target.argument);
+}
+
+inline bool existsNode(SNode node, SNode target)
+{
+   if (compareNodes(node, target))
+      return true;
+
+   SNode current = node.firstChild(lxObjectMask);
+   while (current != lxNone) {
+      if (existsNode(current, target))
+         return true;
+
+      current = current.nextNode(lxObjectMask);
+   }
+
+   return false;
+}
+
+inline void commentNode(SNode& node)
+{
+   node = lxIdle;
+   SNode parent = node.parentNode();
+   while (parent == lxExpression) {
+      parent = lxIdle;
+      parent = parent.parentNode();
+   }
+
+}
+
+bool Compiler :: optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node)
+{
+   bool applied = false;
+
+   // seqNode
+   SNode seqNode = node.parentNode();
+   SNode seqRet = seqNode.lastChild(lxObjectMask);
+   if (seqRet == lxExpression)
+      seqRet = seqRet.findSubNodeMask(lxObjectMask);
+
+   // opNode
+   SNode opNode = node.nextNode(lxObjectMask);
+   SNode larg = opNode.firstChild(lxObjectMask);
+   SNode rarg = larg.nextNode(lxObjectMask);
+
+   // target
+   SNode targetCopying = seqNode.parentNode();
+   while (targetCopying == lxExpression)
+      targetCopying = targetCopying.parentNode();
+   SNode target = targetCopying.findSubNodeMask(lxObjectMask);
+   if (target != lxLocalAddress)
+      return false;
+
+   SNode temp = node.firstChild(lxObjectMask);
+   SNode tempSrc = temp.nextNode(lxObjectMask);
+
+   // validate if the target is not used in roperand
+   if (existsNode(rarg, target))
+      return false;
+
+   // validate if temp is used in op and is returned in seq
+   if (compareNodes(seqRet, temp) && compareNodes(larg, temp)) {
+      temp.set(target.type, target.argument);
+      seqRet.set(target.type, target.argument);
+      larg.set(target.type, target.argument);
+      if (compareNodes(tempSrc, target)) {
+         node = lxIdle;
+      }
+
+      commentNode(target);
+
+      targetCopying = lxExpression;
+
+      applied = true;
+   }
+
+   return applied;
+}
+
+bool Compiler :: optimizeDirectRealOp(_ModuleScope& scope, SNode& node)
+{
+   SNode current = node.parentNode();
+   SNode loperand = current.findSubNodeMask(lxObjectMask);
+   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+
+   double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
+   double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
+   double val = 0;
+   if (calculateRealOp(current.argument, d1, d2, val)) {
+      loperand = lxIdle;
+      roperand = lxIdle;
+
+      IdentifierString str;
+      str.appendDouble(val);
+      current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
+
+      return true;
+   }
+   else return false;
+}
+
+bool Compiler :: optimizeDirectIntOp(_ModuleScope& scope, SNode& node)
+{
+   SNode current = node.parentNode();
+   SNode loperand = current.findSubNodeMask(lxObjectMask);
+   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
+
+   int val = 0;
+   if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
+      loperand = lxIdle;
+      roperand = lxIdle;
+
+      IdentifierString str;
+      str.appendHex(val);
+      current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
+      current.appendNode(lxIntValue, val);
+
+      return true;
+   }
+   else return false;
+}
+
 //bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
 //{
 //   _logic->optimizeBranchingOp(scope, node);
@@ -10339,6 +10387,12 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeEmbeddableReturn(scope, node, false);
       case 3:
          return optimizeEmbeddableCall(scope, node);
+      case 4:
+         return optimizeDirectIntOp(scope, node);
+      case 5:
+         return optimizeDirectRealOp(scope, node);
+      case 6:
+         return optimizeOpDoubleAssigning(scope, node);
 //      case 4:
 //         return optimizeEmbeddableReturn(scope, node, true);
 //      case 5:
@@ -10353,10 +10407,6 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
 //         return optimizeAssigningOp(scope, node);
 //      case 10:
 //         return optimizeDoubleAssigning(scope, node);
-//      case 11:
-//         return optimizeDirectIntOp(scope, node);
-//      case 12:
-//         return optimizeDirectRealOp(scope, node);
 //      case 13:
 //         return optimizeBranching(scope, node);
 //      case 14:

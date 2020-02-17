@@ -28,7 +28,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 //   tokens.add("get_method", lxClassMethod);
 //   tokens.add("message", lxMessage);
 //   tokens.add("code", lxCode);
-//   tokens.add("expression", lxExpression);
+   tokens.add("expression", lxExpression);
 //   tokens.add("returning", lxReturning);
 //   tokens.add("symbol", lxSymbol);
 //   tokens.add("preloaded_symbol", lxSymbol);
@@ -58,14 +58,14 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 //      tokens.add("localaddress", lxLocalAddress);
       tokens.add("sdirectcall", lxSDirectCalling);
 //      tokens.add("unboxing", lxUnboxing);
-//
-//      tokens.add("constint", lxConstantInt);
-//      tokens.add("constreal", lxConstantReal);
+
+      tokens.add("constint", lxConstantInt);
+      tokens.add("constreal", lxConstantReal);
 //      tokens.add("stacksafe", lxStacksafeAttr);
 //      tokens.add("boxable", lxBoxableAttr);
-//      tokens.add("intop", lxIntOp);
-//      tokens.add("longop", lxLongOp);
-//      tokens.add("realop", lxRealOp);
+      tokens.add("intop", lxIntOp);
+      tokens.add("longop", lxLongOp);
+      tokens.add("realop", lxRealOp);
 //      tokens.add("intarrop", lxIntArrOp);
 //      tokens.add("bytearrop", lxByteArrOp);
 //      tokens.add("shortarrop", lxShortArrOp);
@@ -91,6 +91,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 //      tokens.add("newarrop", lxNewArrOp);
 //      tokens.add("nested_expr", lxNested);
       tokens.add("constattr", lxConstAttr);
+      tokens.add("seqexpression", lxSeqExpression);
    }
 }
 

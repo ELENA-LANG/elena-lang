@@ -15,7 +15,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION   5
+#define BUILD_VERSION   6
 
 typedef Trie<ByteCodePattern>            ByteTrie;
 typedef MemoryTrie<ByteCodePattern>      MemoryByteTrie;
@@ -233,7 +233,7 @@ bool isMatchNode(ByteCodePattern pattern)
    return pattern.code == bcMatch;
 }
 
-void parseOpcodeRule(Path& path)
+int parseOpcodeRule(Path& path)
 {
    TextFileReader   sourceFile(path.c_str(), feUTF8, false);
    TextSourceReader source(4, &sourceFile);
@@ -267,14 +267,18 @@ void parseOpcodeRule(Path& path)
       trie.save(&file);
 
       printLine("\nSuccessfully created\n");
+
+      return 0;
    }
    catch (UnknownToken& token)
    {
       printLine("(%d): Invalid token %s\n", token.line.row, token.line.line);
+
+      return -2;
    }
 }
 
-void parseSourceRules(Path& path)
+int parseSourceRules(Path& path)
 {
    Map<ident_t, int> tokens;
    loadSyntaxTokens(tokens, true);
@@ -311,29 +315,33 @@ void parseSourceRules(Path& path)
       trie.save(&file);
 
       printLine("\nSuccessfully created\n");
+      return 0;
    }
    catch (UnknownToken& token)
    {
       printLine("(%d): Invalid token %s\n", token.line.row, token.line.line);
+
+      return -2;
    }
 }
 
 int main(int argc, char* argv[])
 {
-   printLine("ELENA command line optimization table generator %d.%d.%d (C)2012-19 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
+   int retVal = 0;
+   printLine("ELENA command line optimization table generator %d.%d.%d (C)2012-20 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, BUILD_VERSION);
    if (argc == 2) {
       Path path(argv[1]);
-      parseOpcodeRule(path);
+      retVal = parseOpcodeRule(path);
    }
    else if (argv[1][0] == 's' && argv[1][1] == 0) {
       Path path(argv[2]);
-      parseSourceRules(path);
+      retVal = parseSourceRules(path);
    }
    else {
       printLine("og [s] <optimization_file>");
       return 0;
    }
 
-   return 0;
+   return retVal;
 }
 

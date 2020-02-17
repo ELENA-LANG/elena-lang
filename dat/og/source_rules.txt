@@ -1,6 +1,14 @@
-directcall, constattr = 1;
-directcall, embeddable = 3;
-
 copying, call, embeddable = 2;
 copying, directcall, embeddable = 2;
 copying, sdirectcall, embeddable = 2;
+
+directcall, constattr = 1;
+directcall, embeddable = 3;
+
+intop, constint | constint = 4;
+realop, constreal | constreal = 5;
+
+copying, expression, seqexpression, copying | intop = 6;
+copying, expression, seqexpression, copying | realop = 6;
+copying, expression, seqexpression, copying | longop = 6;
+      

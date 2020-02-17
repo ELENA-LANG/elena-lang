@@ -5,6 +5,9 @@ bin\og dat\og\rules.txt
 move dat\og\rules.dat bin
 
 bin\og s dat\og\source_rules.txt 
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
 move dat\og\source_rules.dat bin
 
 bin\asm2binx src50\core\system.core_routines.esm lib50

@@ -917,8 +917,8 @@ private:
 
    void validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared, bool allowType);
 
-//   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
-//   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
+   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
+   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
    bool isDefaultOrConversionConstructor(Scope& scope, ref_t message, bool& isProtectedDefConst);
    bool isSelfCall(ObjectInfo info);
@@ -1261,9 +1261,9 @@ private:
 //   bool optimizeStacksafeOp(_ModuleScope& scope, SNode& node);
 //   bool optimizeBoxingBoxing(_ModuleScope& scope, SNode& node);
 //   bool optimizeAssigningOp(_ModuleScope& scope, SNode& node);
-//   bool optimizeDoubleAssigning(_ModuleScope& scope, SNode& node);
-//   bool optimizeDirectRealOp(_ModuleScope& scope, SNode& node);
-//   bool optimizeDirectIntOp(_ModuleScope& scope, SNode& node);
+   bool optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node);
+   bool optimizeDirectRealOp(_ModuleScope& scope, SNode& node);
+   bool optimizeDirectIntOp(_ModuleScope& scope, SNode& node);
 //   bool optimizeBranching(_ModuleScope& scope, SNode& node);
 //   bool optimizeConstants(_ModuleScope& scope, SNode& node);
 //   bool optimizeArgBoxing(_ModuleScope& scope, SNode& node);

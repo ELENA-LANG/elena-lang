@@ -10,8 +10,7 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev - migration
-                * rosetta code samples : ABC Problem
-                * rosetta code samples : Abundant, deficient and perfect number classifications
+                * rosetta code samples : Ackermann function
                 * migrate changes from core to corex
                 * collatz sample
                 * db sample
@@ -19,51 +18,25 @@ In development:
                 * gui samples
                 * uncomment all code in LIB50
                 * implement some roseta code samples
-
-              dev - elena50
-                * declaring unresolved types?
-                * review : inheriting private methods (what about the public "shadow one" hints?, should they be removed as well??)
-                * passing byref further
-                * should child have an access to the parent static fields?
-                * using direct passing the arguments for internal call when it is possible
-                * allow to pass field to the external routines - see system'io'ConsoleWriter
-                * boxArgument - fieldexpr should be better mapped
                 * String / WideString - add<'Char>
-                * stack allocated variables : assigning nil, default constructor call, ...
-                * meta attributes
-                * external code : long, real ret value
-                * closures: presaved arguments
-                * closures: race conditions
-                * closures: returning a value
-                * #190 : Closure : auto boxing / unboxing local variables 
-                * public / internal / private extensions?
-                * auto returning
-                * variadic arguments : unboxing, boxing, direct use
-                * extension message - can be applied only to the generic extension?
-                * invoke extension directly
-                * uncomment cleanUp code
-                * uncomment validateUnresolved
                 * api doc - with description
-
-              xdev elena50
-                * script samples
-                * gui samples
-                * db samples
-                * socket samples
-
-              xdev - linux32
-                * (re)implement internal String.read<int,ref<byte>>
-                * (re)implement UnsafePointer.cast<string>
-                * (re)implement FileStrean.set length<int>
-
-              xdev debugger
-                * uncomment DebugController::parseMessage, cleanUp
-                * step over external / message / loop / if call?
-                * step over last statement (without terminator)
-                * watch message / subject info
+                * xforms
 
               dev50 - test / optimization
+                * int op - optimization
                 * calc arithmetic operation with constants
+                * comparision, arithmetic operation
+
+                * optimize const int op : i := 1,  i + 1, i + 2
+
+                * i + j (assinging, passing to a function)
+                * i + j * k (assinging, passing to a function)
+                * i + 1 (assinging, passing to a function)
+                * i + j * 2 (assinging, passing to a function)
+                * boxing, unboxing, closure initializing
+
+                * int op - ignore the returning the operation result for the root operation
+
                 * multi-return methods : optimize double assigning
                 * readtof - optimization
                 * translit sample: List should be compiled as constant list
@@ -140,10 +113,47 @@ In development:
                 * copytoai,fillri - optimized version for 1,2,3 dwords
                 * copying  a buffer with unaligned size
                 * auto conversion methods should be marked as idle
+                * boxArgument - fieldexpr should be better mapped
+                * stack allocated variables : assigning nil, default constructor call, ...
+                * stack allocation should not be cleared
+                * stack allocates classes should clear its body
+
+              dev - elena50
+                * external code : long, real ret value
+                * closures: presaved arguments
+                * closures: race conditions
+                * closures: returning a value
+                * #190 : Closure : auto boxing / unboxing local variables 
+                * public / internal / private extensions?
+                * auto returning
+                * variadic arguments : unboxing, boxing, direct use
+                * extension message - can be applied only to the generic extension?
+                * invoke extension directly
+
+              xdev elena50
+                * script samples
+                * gui samples
+                * db samples
+                * socket samples
+
+              xdev - linux32
+                * (re)implement internal String.read<int,ref<byte>>
+                * (re)implement UnsafePointer.cast<string>
+                * (re)implement FileStrean.set length<int>
+
+              xdev debugger
+                * uncomment DebugController::parseMessage, cleanUp
+                * step over external / message / loop / if call?
+                * step over last statement (without terminator)
+                * watch message / subject info
 
               dev50 - #495 Inheritable static methods
                 * sealed static methods : multimethods
 		* close issue 
+
+              dev50 - source code
+                * uncomment validateUnresolved
+                * remove all commented code
 
               dev - new features
                 * multi-return methods : dynamic objects
@@ -182,6 +192,8 @@ In development:
                 * fields with reference name
                 * emptyWideString cannot be used before its declaration (see String)
                 * property - append, ...
+                * should child have an access to the parent static fields?
+                * meta attributes
 
               dev1
                 * move all description to meta info using descr inline template
