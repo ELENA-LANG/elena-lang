@@ -48,8 +48,8 @@
        <include>routines/sorting.l</include>
      </module>
      <module name="dynamic">
-       <include>dynamic\groups.l</include>
-       <include>dynamic\interpreters.l</include>
+       <include>dynamic/groups.l</include>
+       <include>dynamic/interpreters.l</include>
      </module>
   </files>
 </configuration>

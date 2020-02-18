@@ -104,7 +104,7 @@ else
   echo .
 fi
 
-../elena-lc ../src50/extensions/extensions.project
+../bin/elena-lc ../src50/extensions/extensions.project
 ret=$?
 if [ $ret -eq -2 ]
 then
@@ -147,7 +147,7 @@ mkdir -p ./$RELEASE/usr/elena-lang/examples/console/binary/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/console/replace/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/console/goods/
 mkdir -p ./$RELEASE/usr/elena-lang/examples/files/
-mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textfiles/
+mkdir -p ./$RELEASE/usr/elena-lang/examples/files/textfile/
 
 cp ../examples/console/helloworld/*.l ./$RELEASE/usr/elena-lang/examples/console/helloworld/
 cp ../examples/console/helloworld/*.prj ./$RELEASE/usr/elena-lang/examples/console/helloworld/
@@ -174,9 +174,9 @@ cp ../examples/console/goods/*.l ./$RELEASE/usr/elena-lang/examples/console/good
 cp ../examples/console/goods/*.prj ./$RELEASE/usr/elena-lang/examples/console/goods/
 cp ../examples/console/goods/*.txt ./$RELEASE/usr/elena-lang/examples/console/goods/
 
-cp ../examples/files/textfiles/*.l ./$RELEASE/usr/elena-lang/examples/files/textfiles/
-cp ../examples/files/textfiles/*.prj ./$RELEASE/usr/elena-lang/examples/files/textfiles/
-cp ../examples/files/textfiles/*.txt ./$RELEASE/usr/elena-lang/examples/files/textfiles/
+cp ../examples/files/textfile/*.l ./$RELEASE/usr/elena-lang/examples/files/textfile/
+cp ../examples/files/textfile/*.prj ./$RELEASE/usr/elena-lang/examples/files/textfile/
+cp ../examples/files/textfile/*.txt ./$RELEASE/usr/elena-lang/examples/files/textfile/
 
 mkdir ./$RELEASE/DEBIAN
 cp ./control ./$RELEASE/DEBIAN

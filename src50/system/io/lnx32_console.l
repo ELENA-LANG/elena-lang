@@ -48,7 +48,7 @@ namespace io
             {
                 s.read(n, ref vc);
             
-                extern libc.putchar(vc);
+                //extern libc.putchar(vc);
             
                 n := n + 1
             }

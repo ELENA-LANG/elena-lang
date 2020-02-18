@@ -9037,9 +9037,9 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
       if (!scope.info.methods.exist(scope.moduleScope->dispatch_message))
          scope.raiseError(errNoDispatcher, node);
 
-      // HOTFIX - constant fields cannot be compiled for super class class (because they are already 
+      // HOTFIX - constant fields cannot be compiled for super class class (because they are already
       //          declared in super class itself), so we mark them as auto-generated, so they will be
-      //          skipped 
+      //          skipped
       SNode current = node.firstChild();
       while (current != lxNone) {
          if (current == lxClassField)
@@ -10491,7 +10491,8 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
       SNode current = node.firstChild();
       while (current != lxNone) {
          if (current == lxExpression) {
-            if (matchTriePatterns(scope, current.findSubNodeMask(lxObjectMask), trie, nextPatterns))
+            SNode subNode = current.findSubNodeMask(lxObjectMask);
+            if (matchTriePatterns(scope, subNode, trie, nextPatterns))
                return true;
          }
          else if(matchTriePatterns(scope, current, trie, nextPatterns))
