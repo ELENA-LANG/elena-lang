@@ -62,7 +62,7 @@ entry()
         {
             console.writeLine(e.toPrintable());
             
-            //extern elenart.Exit(-1);
+            extern elenart.Exit(-1);
         }
     }
 }

@@ -127,7 +127,7 @@ void CloseFrame(void* systemEnv, void* frameHeader)
 
 void Exit(int exitCode)
 {
-//   _Instance->Exit(exitCode);
+   _Instance->Exit(exitCode);
 }
 
 void StopThread(int exitCode)

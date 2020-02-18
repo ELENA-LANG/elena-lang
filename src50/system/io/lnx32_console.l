@@ -40,18 +40,18 @@ namespace io
     
         write(string s)
         {
-            //int n := 0;
-            //byte vc := 0;
-            //
-            //int l := s.Length;
-            //while(n < l)
-            //{
-            //    s.read(n, ref vc);
-            //
-            //    extern libc.putchar(vc);
-            //
-            //    n := n + 1
-            //}
+            int n := 0;
+            byte vc := 0;
+            
+            int l := s.Length;
+            while(n < l)
+            {
+                s.read(n, ref vc);
+            
+                extern libc.putchar(vc);
+            
+                n := n + 1
+            }
     
             // !!check the result of the operation
         }
