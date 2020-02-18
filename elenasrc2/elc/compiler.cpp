@@ -10169,6 +10169,8 @@ bool Compiler :: optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node)
 
    SNode temp = node.firstChild(lxObjectMask);
    SNode tempSrc = temp.nextNode(lxObjectMask);
+   if (tempSrc == lxExpression)
+      tempSrc = tempSrc.findSubNodeMask(lxObjectMask);
 
    // validate if the target is not used in roperand
    if (existsNode(rarg, target))
@@ -10461,6 +10463,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
    return false;
 }
 
+
+
 bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns)
 {
    List<SyntaxTrieNode> nextPatterns;
@@ -10486,7 +10490,11 @@ bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie&
    if (nextPatterns.Count() > 0) {
       SNode current = node.firstChild();
       while (current != lxNone) {
-         if(matchTriePatterns(scope, current, trie, nextPatterns))
+         if (current == lxExpression) {
+            if (matchTriePatterns(scope, current.findSubNodeMask(lxObjectMask), trie, nextPatterns))
+               return true;
+         }
+         else if(matchTriePatterns(scope, current, trie, nextPatterns))
             return true;
 
          current = current.nextNode();
