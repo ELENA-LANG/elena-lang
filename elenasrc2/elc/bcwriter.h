@@ -289,6 +289,7 @@ class ByteCodeWriter
    void saveIntConstant(CommandTape& tape, LexicalType target, int targetArg, int value);
 ////////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
    void doIntOperation(CommandTape& tape, int operator_id, int localOffset);
+   void doIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue);
    void doIntBoolOperation(CommandTape& tape, int operator_id);
    void doLongOperation(CommandTape& tape, int operator_id, int localOffset);
    void doLongBoolOperation(CommandTape& tape, int operator_id);

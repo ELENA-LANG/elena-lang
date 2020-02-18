@@ -1645,6 +1645,16 @@ inline % 5Fh
 
 end
 
+// ; mul
+inline %060h
+
+  mov  eax, edx
+  mov  ecx, __arg1
+  imul ecx
+  mov  edx, eax
+
+end
+
 // ; laddf
 inline % 74h
 
@@ -2371,6 +2381,13 @@ inline % 0D8h
   mov    eax, __arg1
   test   ebx, ebx
   cmovz  ebx, eax
+
+end
+
+// ; xor
+inline % 0DAh
+
+  xor    edx, __arg1
 
 end
 
@@ -3171,6 +3188,13 @@ inline % 0E7h
   lea  esi, [ebp + __arg1]
   mov  edi, ebx
   rep  movsd
+
+end
+
+// ; xaddf (__arg1 - index, __arg2 - n)
+inline % 0EEh
+
+  add dword ptr [ebp + __arg1], __arg2
 
 end
 

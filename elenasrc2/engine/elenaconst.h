@@ -36,7 +36,7 @@ namespace _ELENA_
    constexpr auto INVALID_REF             = 0xFFFFFFFFu;
 
    constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
-//   constexpr auto SET_OPERATOR_ID         = 0x0007;
+   constexpr auto SET_OPERATOR_ID         = 0x0007;
    constexpr auto LESS_OPERATOR_ID        = 0x0008;
    constexpr auto IF_OPERATOR_ID          = 0x0009;
    constexpr auto AND_OPERATOR_ID         = 0x000A;

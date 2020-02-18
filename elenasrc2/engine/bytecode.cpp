@@ -32,7 +32,7 @@ const char* _fnOpcodes[256] =
    "addf", "subf", "nxorf", "norf", "nandf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsave", "div", "xwrite", "copyto", "nshlf", "nshrf",
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "mul", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "laddf", "lsubf", "lmulf", "ldivf",
@@ -54,10 +54,10 @@ const char* _fnOpcodes[256] =
    "nsubf", "ndivf", "loadi", "savei", "storer", OPCODE_UNKNOWN, "clonef", "xload",
 
    "freei", "alloci", OPCODE_UNKNOWN, "movv", "shl", "and", "inc", "or",
-   "coalescer", "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsaveai", "copyai", "move", "moveto",
+   "coalescer", "shr", "xor", OPCODE_UNKNOWN, "xsaveai", "copyai", "move", "moveto",
 
    "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
-   "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavef",
+   "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", OPCODE_UNKNOWN, "xaddf", "xsavef",
 
    "new", "newn", "fillri", "xselectr", "vcallrm", "jumprm", "select", "lessn",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", OPCODE_UNKNOWN,

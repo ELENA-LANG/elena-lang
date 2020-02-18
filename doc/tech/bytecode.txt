@@ -22,13 +22,15 @@ ELENA byte codes (or ecodes)
 
  dec i                      - index -= i
 
- div n                      - index /= n
- 
  get                        - acc[index] => acc
 
  geti i                     - acc <= acc[i] ;
 
- inc i                      - index += 1
+ inc i                      - index += i
+ 
+ mul i                      - index *= i
+ 
+ div i                      - index /= i
  
  load                       - int[acc] => index
 
@@ -57,6 +59,8 @@ ELENA byte codes (or ecodes)
  not                        - !index => index
 
  or n                       - index && n => index
+ 
+ xor n                       - index ~~ n => index
  
  peekfi i                   - [fp+i] => acc;
 
@@ -144,6 +148,8 @@ ELENA byte codes (or ecodes)
  xsaveai i,n                - acc[i] <= n
                                                                                                                
  xsavef i,n                 - fp:i <= n
+                                                                                                               
+ xaddf i,n                  - fp:i += n
                                                                                                                
  xwrite n                   - copy [sp] >> acc[index], n-bytes  
 

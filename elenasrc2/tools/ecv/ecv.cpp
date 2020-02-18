@@ -724,7 +724,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.appendInt(argument2);
          break;
       case bcXSaveF:
-//      case bcAddFI:
+      case bcXAddF:
 //      case bcSubFI:
       case bcCopyFI:
       case bcCopyF:

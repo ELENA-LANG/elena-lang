@@ -16,6 +16,8 @@ copying, expression, seqexpression, copying | intop = 6;
 copying, expression, seqexpression, copying | realop = 6;
 copying, expression, seqexpression, copying | longop = 6;
 
+copying, expression, constint = 5;
+
 looping, intboolop, constint = 4;
 looping, intboolop, expression, constint = 4;
 looping, expression, intboolop, constint = 4;

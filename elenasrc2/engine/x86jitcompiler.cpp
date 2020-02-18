@@ -70,7 +70,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 129;
+const int gcCommandNumber = 132;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -98,7 +98,8 @@ const int gcCommands[gcCommandNumber] =
    bcSet, bcPushVerb, bcPush, bcMQuit, bcStoreV,
    bcRExp, bcRSin, bcRArcTan, bcRLn, bcRRound,
    bcRInt, bcRCos, bcMove, bcMoveTo, bcCopyAI,
-   bcXSaveAI, bcXSave, bcSaveFI, bcXLoad,
+   bcXSaveAI, bcXSave, bcSaveFI, bcXLoad, bcXAddF,
+   bcMul, bcXOr,
 };
 
 const int gcCommandExNumber = 26;
@@ -135,7 +136,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &loadNOp, &loadNOp, &loadNOpX, &loadN4OpX, &loadFPOp, &loadFPOp,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadNOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp,
@@ -157,10 +158,10 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileNop, &loadFPOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &compileNop, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
-   &loadROp, &compileDShiftN, &compileNop, &compileNop, &loadIndexNOp, &loadIndexNOp, &loadNNOp, &loadNNOp,
+   &loadROp, &compileDShiftN, &loadNOp, &compileNop, &loadIndexNOp, &loadIndexNOp, &loadNNOp, &loadNNOp,
 
    &loadFPN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPN4OpX, &loadFPNOp, &loadFPNOp,
-   &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &compileNop, &compileNop, &loadFPNOp,
+   &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &compileNop, &loadFPNOp, &loadFPNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileNop, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop,

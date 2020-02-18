@@ -25,15 +25,8 @@ In development:
                 * xforms
 
               dev50 - test / optimization
-                * int operation with constants : setting, appending, arithmetic
-                * arithmetic operation
+                * optimize basic for loop
 
-                * optimize const int op : i := 1,  i + 1, i + 2
-
-                * i + j (assinging, passing to a function)
-                * i + j * k (assinging, passing to a function)
-                * i + 1 (assinging, passing to a function)
-                * i + j * 2 (assinging, passing to a function)
                 * boxing, unboxing, closure initializing
 
                 * int op - ignore the returning the operation result for the root operation
@@ -52,6 +45,7 @@ In development:
                 * optimization : saving dword or qword 
                 * test if big alloc is proper working
                 * optimization : assigning a field with a local - there should be direct byte code
+                * read / write byte, short - without AND operation
                 * adding source path link on tempate based classes with field initializers
                 * private / internal class templates
                 * invalid operation : var a.test();
@@ -102,6 +96,10 @@ In development:
                 * call inernal function directly (without intermediate step in system'routines) when it is possible
                 * optimize xreadn, xwriten
                 * do we need lxEmbeddableAttr and optimiation rule?
+                * i + j (assinging, passing to a function)
+                * i + j * k (assinging, passing to a function)
+                * i + 1 (assinging, passing to a function)
+                * i + j * 2 (assinging, passing to a function)
                 * optimize pi sample ( < 5s )
                 * warn if the extension method is called from itself (short-cutting)
                 * optimization : do not call idle method
@@ -118,6 +116,8 @@ In development:
                 * stack allocated variables : assigning nil, default constructor call, ...
                 * stack allocation should not be cleared
                 * stack allocates classes should clear its body
+                * assigning struct field with int constant
+                * int operation : 1 + i
 
               dev - elena50
                 * external code : long, real ret value

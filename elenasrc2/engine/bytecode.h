@@ -48,7 +48,7 @@ enum ByteCode
    bcUnhook          = 0x1D,
    bcRSin            = 0x1E,
 //   bcCreate          = 0x1F,
-//
+
    bcRCos            = 0x20,
    bcRArcTan         = 0x21,
    bcPushD           = 0x22,
@@ -65,7 +65,7 @@ enum ByteCode
    bcRead            = 0x2D,
    bcClone           = 0x2E,           
 //   bcXSet            = 0x2F,
-//
+
    bcRAbs            = 0x30,
    bcLen             = 0x31,
    bcRLoad           = 0x32,
@@ -112,9 +112,9 @@ enum ByteCode
    bcNShlF           = 0x5E,
    bcNShrF           = 0x5F,
 
+   bcMul             = 0x60,
 //   bcBRead           = 0x61,
 //   bcBReadB          = 0x65,
-
 
 //   bcBWrite          = 0x69,
 //   bcBWriteB         = 0x6C,
@@ -223,6 +223,7 @@ enum ByteCode
    bcOr              = 0xD7,
    bcCoalesceR       = 0xD8,
    bcShr             = 0xD9,
+   bcXOr             = 0xDA,
 
 //   bcMulN            = 0xDA,
    bcXSaveAI         = 0xDC,
@@ -244,7 +245,7 @@ enum ByteCode
    bcNotGreaterN     = 0xEB,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
    bcNotLessN        = 0xEC,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcSubFI           = 0xED,
-//   bcAddFI           = 0xEE,
+   bcXAddF           = 0xEE,
    bcXSaveF          = 0xEF,
 
    bcNew             = 0xF0,

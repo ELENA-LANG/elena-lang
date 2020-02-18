@@ -9981,22 +9981,24 @@ bool Compiler :: optimizeEmbeddableCall(_ModuleScope& scope, SNode& node)
 //
 //   return applied;
 //}
-//
-//bool Compiler :: optimizeConstantAssigning(_ModuleScope& scope, SNode& node)
-//{
-//   SNode parent = node.parentNode();
-//   while (parent == lxExpression)
-//      parent = parent.parentNode();
-//
-//   if (parent.argument == 4) {
-//      // direct operation with numeric constants
-//      parent.set(lxIntOp, SET_OPERATOR_ID);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
+
+bool Compiler :: optimizeConstantAssigning(_ModuleScope& scope, SNode& node)
+{
+   SNode parent = node.parentNode();
+   while (parent == lxExpression)
+      parent = parent.parentNode();
+
+   SNode larg = parent.findSubNodeMask(lxObjectMask);
+
+   if (larg == lxLocalAddress && parent.argument == 4) {
+      // direct operation with numeric constants
+      parent.set(lxIntOp, SET_OPERATOR_ID);
+
+      return true;
+   }
+   else return false;
+}
+
 //bool Compiler :: optimizeStacksafeCall(_ModuleScope& scope, SNode& node)
 //{
 //   bool applied = false;
@@ -10416,8 +10418,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeEmbeddableCall(scope, node);
       case 4:
          return optimizeBranching(scope, node);
-      //case 5:
-      //   return optimizeDirectRealOp(scope, node);
+      case 5:
+         return optimizeConstantAssigning(scope, node);
       case 6:
          return optimizeOpDoubleAssigning(scope, node);
 //      case 4:
