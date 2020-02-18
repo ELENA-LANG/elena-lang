@@ -57,7 +57,7 @@ const char* _fnOpcodes[256] =
    "coalescer", "shr", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsaveai", "copyai", "move", "moveto",
 
    "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
-   "mtredirect", "xmtredirect", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavef",
+   "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsavef",
 
    "new", "newn", "fillri", "xselectr", "vcallrm", "jumprm", "select", "lessn",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", OPCODE_UNKNOWN,
@@ -344,9 +344,9 @@ inline bool removeIdleJump(ByteCodeIterator it)
          case bcIfN:
          case bcElseN:
          case bcLessN:
-         //case bcNotLessN:
-         //case bcGreaterN:
-         //case bcNotGreaterN:
+         case bcNotLessN:
+         case bcGreaterN:
+         case bcNotGreaterN:
          //case bcIfM:
          //case bcElseM:
          //case bcNext:
@@ -427,9 +427,9 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcIfN:
             case bcElseN:              
             case bcLessN:
-//            case bcNotLessN:
-//            case bcGreaterN:
-//            case bcNotGreaterN:
+            case bcNotLessN:
+            case bcGreaterN:
+            case bcNotGreaterN:
 //            case bcIfM:
 //            case bcElseM:              
 //            case bcNext:

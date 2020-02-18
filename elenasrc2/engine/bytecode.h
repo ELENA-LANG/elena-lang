@@ -240,9 +240,9 @@ enum ByteCode
    bcCopyF           = 0xE7,
    bcMTRedirect      = 0xE8,
    bcXMTRedirect     = 0xE9,
-//   bcGreaterN        = 0xEA,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
-//   bcNotGreaterN     = 0xEB,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
-//   bcNotLessN        = 0xEC,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcGreaterN        = 0xEA,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcNotGreaterN     = 0xEB,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
+   bcNotLessN        = 0xEC,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
 //   bcSubFI           = 0xED,
 //   bcAddFI           = 0xEE,
    bcXSaveF          = 0xEF,
@@ -429,9 +429,9 @@ public:
          case bcIfN:
          case bcElseN:
          case bcLessN:
-         //case bcNotLessN:
-         //case bcGreaterN:
-         //case bcNotGreaterN:
+         case bcNotLessN:
+         case bcGreaterN:
+         case bcNotGreaterN:
          //case bcIfM:
          //case bcElseM:
          //case bcNext:

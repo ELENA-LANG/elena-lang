@@ -1267,7 +1267,7 @@ private:
    bool optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node);
    //bool optimizeDirectRealOp(_ModuleScope& scope, SNode& node);
    //bool optimizeDirectIntOp(_ModuleScope& scope, SNode& node);
-//   bool optimizeBranching(_ModuleScope& scope, SNode& node);
+   bool optimizeBranching(_ModuleScope& scope, SNode& node);
 //   bool optimizeConstants(_ModuleScope& scope, SNode& node);
 //   bool optimizeArgBoxing(_ModuleScope& scope, SNode& node);
 //   bool optimizeArgOp(_ModuleScope& scope, SNode& node);

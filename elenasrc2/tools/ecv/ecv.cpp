@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   58
+#define REVISION_VERSION   59
 
 using namespace _ELENA_;
 
@@ -602,9 +602,9 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcIfN:
       case bcElseN:
       case bcLessN:
-//      case bcNotLessN:
-//      case bcGreaterN:
-//      case bcNotGreaterN:
+      case bcNotLessN:
+      case bcGreaterN:
+      case bcNotGreaterN:
          printCommand(command, opcode);
          printLabel(command, position + argument2 + 9, labels);
          command.append(' ');

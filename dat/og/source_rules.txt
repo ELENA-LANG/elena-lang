@@ -1,3 +1,10 @@
+branching, intboolop, constint = 4;
+branching, intboolop, expression, constint = 4;
+branching, expression, intboolop, constint = 4;
+branching, expression, intboolop, expression, constint = 4;
+branching, expression, expression, intboolop, constint = 4;
+branching, expression, expression, intboolop, expression, constint = 4;
+
 copying, call, embeddable = 2;
 copying, directcall, embeddable = 2;
 copying, sdirectcall, embeddable = 2;
@@ -8,4 +15,11 @@ directcall, embeddable = 3;
 copying, expression, seqexpression, copying | intop = 6;
 copying, expression, seqexpression, copying | realop = 6;
 copying, expression, seqexpression, copying | longop = 6;
+
+looping, intboolop, constint = 4;
+looping, intboolop, expression, constint = 4;
+looping, expression, intboolop, constint = 4;
+looping, expression, intboolop, expression, constint = 4;
+looping, expression, expression, intboolop, constint = 4;
+looping, expression, expression, intboolop, expression, constint = 4;
       

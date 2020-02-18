@@ -748,7 +748,7 @@ public:
 
 //   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode) = 0;
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node) = 0;
-//   virtual void optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
+   virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node) = 0;
 
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, 
       int& stackSafeAttr, bool selfCall) = 0;

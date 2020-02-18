@@ -20,12 +20,13 @@ In development:
                 * uncomment all code in LIB50
                 * implement some roseta code samples
                 * String / WideString - add<'Char>
+                * regression tests
                 * api doc - with description
                 * xforms
 
               dev50 - test / optimization
                 * int operation with constants : setting, appending, arithmetic
-                * comparision, arithmetic operation
+                * arithmetic operation
 
                 * optimize const int op : i := 1,  i + 1, i + 2
 

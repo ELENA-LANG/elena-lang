@@ -149,7 +149,14 @@ enum LexicalType
    lxBranching                = 0x058150,   // branch expression      
    lxIf                       = 0x058160,   // optional arg - reference
    lxElse                     = 0x058161,   // optional arg - reference
-   lxLooping                  = 0x058162,
+   lxIfN                      = 0x058162,
+   lxIfNotN                   = 0x058163,
+   lxIfNot                    = 0x058164,
+   lxLooping                  = 0x058165,
+   lxLessN                    = 0x058166,
+   lxNotLessN                 = 0x058167,
+   lxGreaterN                 = 0x058168,
+   lxNotGreaterN              = 0x058169,
    lxResendExpression         = 0x059170,
    lxDispatching              = 0x059171,   // dispatching a message, optional arg - message
    lxMultiDispatching         = 0x058180,

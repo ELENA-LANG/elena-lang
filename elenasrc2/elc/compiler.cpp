@@ -10234,13 +10234,11 @@ bool Compiler :: optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node)
 //   else return false;
 //}
 
-//bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
-//{
-//   _logic->optimizeBranchingOp(scope, node);
-//
-//   return true;
-//}
-//
+bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
+{
+   return _logic->optimizeBranchingOp(scope, node);
+}
+
 //bool Compiler :: optimizeConstants(_ModuleScope& scope, SNode& sourceNode)
 //{
 //   bool applied = false;
@@ -10416,8 +10414,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeEmbeddableReturn(scope, node, false);
       case 3:
          return optimizeEmbeddableCall(scope, node);
-      //case 4:
-      //   return optimizeDirectIntOp(scope, node);
+      case 4:
+         return optimizeBranching(scope, node);
       //case 5:
       //   return optimizeDirectRealOp(scope, node);
       case 6:
@@ -10436,8 +10434,6 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
 //         return optimizeAssigningOp(scope, node);
 //      case 10:
 //         return optimizeDoubleAssigning(scope, node);
-//      case 13:
-//         return optimizeBranching(scope, node);
 //      case 14:
 //         return optimizeConstants(scope, node);
 //      case 15:

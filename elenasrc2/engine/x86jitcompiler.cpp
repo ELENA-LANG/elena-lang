@@ -160,7 +160,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadROp, &compileDShiftN, &compileNop, &compileNop, &loadIndexNOp, &loadIndexNOp, &loadNNOp, &loadNNOp,
 
    &loadFPN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPNOp, &loadFPN4OpX, &loadFPNOp, &loadFPNOp,
-   &compileMTRedirect, &compileMTRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPNOp,
+   &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &compileNop, &compileNop, &loadFPNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileNop, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop,
@@ -281,17 +281,17 @@ inline void compileJumpNotLess(x86JITScope& scope, int label, bool forwardJump, 
    compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JGE);
 }
 
-//inline void compileJumpGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-//{
-//   // jl   lbEnding
-//   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JG);
-//}
-//
-//inline void compileJumpNotGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-//{
-//   // jl   lbEnding
-//   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JLE);
-//}
+inline void compileJumpGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JG);
+}
+
+inline void compileJumpNotGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JLE);
+}
 
 inline void compileJumpLessOrEqual(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
 {
@@ -1817,19 +1817,19 @@ void _ELENA_::compileLessN(int op, x86JITScope& scope)
    else compileJumpNotLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 }
 
-//void _ELENA_::compileGreaterN(int op, x86JITScope& scope)
-//{
-//   int jumpOffset = scope.tape->getDWord();
-//
-//   // cmp ebx, n
-//   // jz lab
-//   scope.code->writeWord(0xFB81);
-//   scope.code->writeDWord(scope.argument);
-//   if (op == bcGreaterN) {
-//      compileJumpGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-//   }
-//   else compileJumpNotGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-//}
+void _ELENA_::compileGreaterN(int op, x86JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+
+   // cmp edx, n
+   // jz lab
+   scope.code->writeWord(0xFA81);
+   scope.code->writeDWord(scope.argument);
+   if (op == bcGreaterN) {
+      compileJumpGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+   }
+   else compileJumpNotGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
 
 void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
 {

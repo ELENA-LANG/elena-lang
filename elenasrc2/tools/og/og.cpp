@@ -15,7 +15,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-#define BUILD_VERSION   6
+#define BUILD_VERSION   7
 
 typedef Trie<ByteCodePattern>            ByteTrie;
 typedef MemoryTrie<ByteCodePattern>      MemoryByteTrie;
@@ -274,7 +274,7 @@ int parseOpcodeRule(Path& path)
    {
       printLine("(%d): Invalid token %s\n", token.line.row, token.line.line);
 
-      return -2;
+      return -1;
    }
 }
 
@@ -321,7 +321,7 @@ int parseSourceRules(Path& path)
    {
       printLine("(%d): Invalid token %s\n", token.line.row, token.line.line);
 
-      return -2;
+      return -1;
    }
 }
 

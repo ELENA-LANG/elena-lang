@@ -146,7 +146,7 @@ protected:
    friend void compileIfN(int opcode, x86JITScope& scope);
    friend void compileElseN(int opcode, x86JITScope& scope);
    friend void compileLessN(int opcode, x86JITScope& scope);
-//   friend void compileGreaterN(int opcode, x86JITScope& scope);
+   friend void compileGreaterN(int opcode, x86JITScope& scope);
 //   friend void compileIfHeap(int opcode, x86JITScope& scope);
    friend void compileQuit(int opcode, x86JITScope& scope);
    friend void compileQuitN(int opcode, x86JITScope& scope);
@@ -296,7 +296,7 @@ void compileElseR(int opcode, x86JITScope& scope);
 void compileIfN(int opcode, x86JITScope& scope);
 void compileElseN(int opcode, x86JITScope& scope);
 void compileLessN(int opcode, x86JITScope& scope);
-//void compileGreaterN(int opcode, x86JITScope& scope);
+void compileGreaterN(int opcode, x86JITScope& scope);
 //void compileIfHeap(int opcode, x86JITScope& scope);
 void compileQuit(int opcode, x86JITScope& scope);
 void compileQuitN(int opcode, x86JITScope& scope);
