@@ -10,8 +10,8 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev - migration
-                * rosetta code samples : AKS test for primes
                 * rosetta code samples : Amb
+                * rosetta code samples : Amicable pairs
                 * migrate changes from core to corex
                 * collatz sample
                 * db sample

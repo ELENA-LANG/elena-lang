@@ -325,224 +325,239 @@ public interface Func<T1,T2,TResult>
 //    ]
 }
 
-///// A base three variable function
-//public interface Func3
-//{
-//    /// Executes the function
-//    abstract closure(param1, param2, param3) {}
+/// A base three variable function
+public interface Func3
+{
+    /// Executes the function
+    abstract function(param1, param2, param3) {}
+    
+//    /// Executes the function for parameters and every enumeration item
+//    sealed run(object aParam1, object aParam2, Enumerator anEnumerator)
+//    [
+//        while (anEnumerator next)
+//        [
+//            self(aParam1,aParam2,anEnumerator get)
+//        ]
+//    ]
 //    
-////    /// Executes the function for parameters and every enumeration item
-////    sealed run(object aParam1, object aParam2, Enumerator anEnumerator)
-////    [
-////        while (anEnumerator next)
-////        [
-////            self(aParam1,aParam2,anEnumerator get)
-////        ]
-////    ]
-////    
-////    /// Executes the function for parameters and every enumeration item until it returns true    
-////    sealed retrieve(object aParam1, object aParam2, Enumerator anEnumerator)
-////    [
-////        object anItem := nil.
-////        while (anEnumerator next)
-////        [
-////            anItem := anEnumerator get.
-////            
-////            if (self(aParam1,aParam2,anItem))
-////                [ ^ anItem ]
-////        ].        
-////        
-////        ^ nil
-////    ]
-//}
-//
-//public interface Func<T1,T2,T3,TResult>
-//{
-//    /// Executes the action
-//    abstract TResult closure(T1 param1, T2 param2, T3 param3) {}
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
-///// A base three variable function
-//public interface Func4
-//{
-//    /// Executes the function
-//    abstract closure(param1, param2, param3, param4) {}
-////    
-//////    /// Executes the function
-//////    eval : aParam1 : aParam2 : aParam3 : aParam4 = $self(aParam1,aParam2,aParam3,aParam4).
-////    
-////    /// Executes the function for parameters and every enumeration item
-////    sealed run(object aParam1, object aParam2, object aParam3, Enumerator anEnumerator)
-////    [
-////        while (anEnumerator next)
-////        [
-////            self(aParam1,aParam2,aParam3,anEnumerator get)
-////        ]
-////    ]
-////    
-////    /// Executes the function for parameters and every enumeration item until it returns true    
-////    sealed retrieve(object aParam1, object aParam2, object aParam3, Enumerator anEnumerator)
-////    [
-////        object anItem := nil.
-////        while (anEnumerator next)
-////        [
-////            anItem := anEnumerator get.
-////            
-////            // !! temporal
-////            if (self(aParam1,aParam2,aParam3,anItem))
-////                [ ^ anItem ]
-////        ].        
-////        
-////        ^ nil
-////    ]
-//}
-//
-//public interface Func<T1,T2,T3,T4,TResult>
-//{
-//    /// Executes the action
-//    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4) {}
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
-///// A base five variable function
-//public interface Func5
-//{
-//    /// Executes the function
-//    abstract closure(param1, param2, param3, param4, param5) {}
-//
-//////    /// Executes the function
-//////    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 = $self(aParam1,aParam2,aParam3,aParam4,aParam5).
-////    
-////    /// Executes the function for parameters and every enumeration item
-////    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, Enumerator anEnumerator)
-////    [
-////        while (anEnumerator next)
-////        [
-////            self(aParam1,aParam2,aParam3,aParam4,anEnumerator get)
-////        ]
-////    ]
-////    
-////    /// Executes the function for parameters and every enumeration item until it returns true    
-////    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, Enumerator anEnumerator)
-////    [
-////        object anItem := nil.
-////        while (anEnumerator next)
-////        [
-////            anItem := anEnumerator get.
-////            
-////            if (self(aParam1,aParam2,aParam3,aParam4,anItem))
-////                [ ^ anItem ]
-////        ].        
-////        
-////        ^ nil
-////    ]
-//}
-//
-//public interface Func<T1,T2,T3,T4,T5,TResult>
-//{
-//    /// Executes the action
-//    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5) {}
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
-///// A base six variable function
-//public interface Func6
-//{
-//    /// Executes the function
-//    abstract closure(param1, param2, param3, param4, param5, param6) {}
-//
-//////    /// Executes the function
-//////    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6).
-////    
-////    /// Executes the function for parameters and every enumeration item
-////    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, Enumerator anEnumerator)
-////    [
-////        while (anEnumerator next)
-////        [
-////            self(aParam1,aParam2,aParam3,aParam4,aParam5,anEnumerator get)
-////        ]
-////    ]
-////    
-////    /// Executes the function for parameters and every enumeration item until it returns true    
-////    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, Enumerator anEnumerator)
-////    [
-////        object anItem := nil.
-////        while (anEnumerator next)
-////        [
-////            anItem := anEnumerator get.
-////            
-////            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,anItem))
-////                [ ^ anItem ]
-////        ].        
-////        
-////        ^ nil
-////    ]
-//}
-//
-//public interface Func<T1,T2,T3,T4,T5,T6,TResult>
-//{
-//    /// Executes the action
-//    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6) {}
-//    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
-/////// A base seven variable function
-////public interface Func7
-////{
+//    /// Executes the function for parameters and every enumeration item until it returns true    
+//    sealed retrieve(object aParam1, object aParam2, Enumerator anEnumerator)
+//    [
+//        object anItem := nil.
+//        while (anEnumerator next)
+//        [
+//            anItem := anEnumerator get.
+//            
+//            if (self(aParam1,aParam2,anItem))
+//                [ ^ anItem ]
+//        ].        
+//        
+//        ^ nil
+//    ]
+}
+
+public interface Func<T1,T2,T3,TResult>
+{
+    /// Executes the action
+    abstract TResult function(T1 param1, T2 param2, T3 param3) {}
+    
+    Func3 cast()
+        = (x,y,z => self(x,y,z));
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
+/// A base three variable function
+public interface Func4
+{
+    /// Executes the function
+    abstract function(param1, param2, param3, param4) {}
+    
 ////    /// Executes the function
-////    abstract closure(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, object aParam7) []
-//////    
-//////    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 
-//////        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7).
-////    
-////    /// Executes the function for parameters and every enumeration item
-////    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, Enumerator anEnumerator)
-////    [
-////        while (anEnumerator next)
-////        [
-////            self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anEnumerator get)
-////        ]
-////    ]
-////    
-////    /// Executes the function for parameters and every enumeration item until it returns true    
-////    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, Enumerator anEnumerator)
-////    [
-////        object anItem := nil.
-////        while (anEnumerator next)
-////        [
-////            anItem := anEnumerator get.
-////            
-////            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anItem))
-////                [ ^ anItem ]
-////        ].        
-////        
-////        ^ nil
-////    ]
-////}
-//
-//public interface Func<T1,T2,T3,T4,T5,T6,T7, TResult>
-//{
-//    /// Executes the action
-//    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7) {}
+////    eval : aParam1 : aParam2 : aParam3 : aParam4 = $self(aParam1,aParam2,aParam3,aParam4).
 //    
-////    run(enumerator<type> e)
-////    [
-////    ]
-//}
-//
+//    /// Executes the function for parameters and every enumeration item
+//    sealed run(object aParam1, object aParam2, object aParam3, Enumerator anEnumerator)
+//    [
+//        while (anEnumerator next)
+//        [
+//            self(aParam1,aParam2,aParam3,anEnumerator get)
+//        ]
+//    ]
+//    
+//    /// Executes the function for parameters and every enumeration item until it returns true    
+//    sealed retrieve(object aParam1, object aParam2, object aParam3, Enumerator anEnumerator)
+//    [
+//        object anItem := nil.
+//        while (anEnumerator next)
+//        [
+//            anItem := anEnumerator get.
+//            
+//            // !! temporal
+//            if (self(aParam1,aParam2,aParam3,anItem))
+//                [ ^ anItem ]
+//        ].        
+//        
+//        ^ nil
+//    ]
+}
+
+public interface Func<T1,T2,T3,T4,TResult>
+{
+    /// Executes the action
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4) {}
+    
+    Func4 cast()
+        = (a,b,c,d => self(a,b,c,d));
+    
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
+/// A base five variable function
+public interface Func5
+{
+    /// Executes the function
+    abstract function(param1, param2, param3, param4, param5) {}
+
+////    /// Executes the function
+////    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 = $self(aParam1,aParam2,aParam3,aParam4,aParam5).
+//    
+//    /// Executes the function for parameters and every enumeration item
+//    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, Enumerator anEnumerator)
+//    [
+//        while (anEnumerator next)
+//        [
+//            self(aParam1,aParam2,aParam3,aParam4,anEnumerator get)
+//        ]
+//    ]
+//    
+//    /// Executes the function for parameters and every enumeration item until it returns true    
+//    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, Enumerator anEnumerator)
+//    [
+//        object anItem := nil.
+//        while (anEnumerator next)
+//        [
+//            anItem := anEnumerator get.
+//            
+//            if (self(aParam1,aParam2,aParam3,aParam4,anItem))
+//                [ ^ anItem ]
+//        ].        
+//        
+//        ^ nil
+//    ]
+}
+
+public interface Func<T1,T2,T3,T4,T5,TResult>
+{
+    /// Executes the action
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5) {}
+
+    Func5 cast()
+        = (a,b,c,d,e => self(a,b,c,d,e));
+        
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
+/// A base six variable function
+public interface Func6
+{
+    /// Executes the function
+    abstract function(param1, param2, param3, param4, param5, param6) {}
+
+////    /// Executes the function
+////    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6).
+//    
+//    /// Executes the function for parameters and every enumeration item
+//    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, Enumerator anEnumerator)
+//    [
+//        while (anEnumerator next)
+//        [
+//            self(aParam1,aParam2,aParam3,aParam4,aParam5,anEnumerator get)
+//        ]
+//    ]
+//    
+//    /// Executes the function for parameters and every enumeration item until it returns true    
+//    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, Enumerator anEnumerator)
+//    [
+//        object anItem := nil.
+//        while (anEnumerator next)
+//        [
+//            anItem := anEnumerator get.
+//            
+//            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,anItem))
+//                [ ^ anItem ]
+//        ].        
+//        
+//        ^ nil
+//    ]
+}
+
+public interface Func<T1,T2,T3,T4,T5,T6,TResult>
+{
+    /// Executes the action
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6) {}
+
+    Func6 cast()
+        = (a,b,c,d,e,f => self(a,b,c,d,e,f));
+        
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
+/// A base seven variable function
+public interface Func7
+{
+    /// Executes the function
+    abstract function(param1, param2, param3, param4, param5, param6, param7) {}
+
+//    eval : aParam1 : aParam2 : aParam3 : aParam4 : aParam5 : aParam6 : aParam7 
+//        = $self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,aParam7).
+    
+//    /// Executes the function for parameters and every enumeration item
+//    sealed run(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, Enumerator anEnumerator)
+//    [
+//        while (anEnumerator next)
+//        [
+//            self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anEnumerator get)
+//        ]
+//    ]
+//    
+//    /// Executes the function for parameters and every enumeration item until it returns true    
+//    sealed retrieve(object aParam1, object aParam2, object aParam3, object aParam4, object aParam5, object aParam6, Enumerator anEnumerator)
+//    [
+//        object anItem := nil.
+//        while (anEnumerator next)
+//        [
+//            anItem := anEnumerator get.
+//            
+//            if (self(aParam1,aParam2,aParam3,aParam4,aParam5,aParam6,anItem))
+//                [ ^ anItem ]
+//        ].        
+//        
+//        ^ nil
+//    ]
+}
+
+public interface Func<T1,T2,T3,T4,T5,T6,T7, TResult>
+{
+    /// Executes the action
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7) {}
+
+    Func7 cast()
+        = (a,b,c,d,e,f,g => self(a,b,c,d,e,f,g));
+        
+//    run(enumerator<type> e)
+//    [
+//    ]
+}
+
 /////// A base eight variable function
 ////public interface Func8
 ////{

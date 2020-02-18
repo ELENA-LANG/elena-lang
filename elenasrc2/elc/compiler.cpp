@@ -5817,13 +5817,15 @@ inline bool isAssigmentOp(SNode node)
 
 ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ref_t targetRef, EAttr mode)
 {
-   EAttr objMode = mode;
+   EAttrs objMode(mode, HINT_PROP_MODE);
+
    if (isAssigmentOp(node.firstChild(lxOperatorMask))) {
-      objMode = objMode | HINT_PROP_MODE;
+      objMode.include(HINT_PROP_MODE);
+      mode = mode | HINT_PROP_MODE;
    }
 
    return compileExpression(node, scope,
-      mapObject(node, scope, objMode), targetRef, objMode);
+      mapObject(node, scope, objMode), targetRef, mode);
 }
 
 ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t exptectedRef, EAttr modeAttrs)

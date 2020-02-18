@@ -6,7 +6,7 @@ import extensions'routines;
 
 joinable(former,later) = (former[former.Length - 1] == later[0]);
 
-dispatcher = new::
+dispatcher = new
 {
     eval(object a, Func2 f)
     {
@@ -75,7 +75,7 @@ public program1()
 {
     try
     {
-        ambOperator.for(new::(1,2,4), new::(4,5,6)).seek:(a,b => a * b == 8).do:
+        ambOperator.for(new int[]{1,2,4}, new int[]{4,5,6}).seek:(a,b => a * b == 8).do:
             (a,b){ console.printLine(a," * ",b," = 8") }
     }
     catch(Exception e)
@@ -91,7 +91,11 @@ public program2()
     try
     {
         ambOperator 
-            .for(new::("the","that","a"),new::("frog", "elephant", "thing"),new::("walked", "treaded", "grows"), new::("slowly", "quickly"))
+            .for(
+                new string[]{"the","that","a"},
+                new string[]{"frog", "elephant", "thing"},
+                new string[]{"walked", "treaded", "grows"}, 
+                new string[]{"slowly", "quickly"})
             .seek:(a,b,c,d => joinable(a,b) && joinable(b,c) && joinable(c,d) )
             .do:(a,b,c,d) { console.printLine(a," ",b," ",c," ",d) }
     }
