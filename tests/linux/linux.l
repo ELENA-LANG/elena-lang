@@ -1,4 +1,4 @@
 public program()
 {
-   console.writeLine("Hello")
+   //console.writeLine("Hello")
 }

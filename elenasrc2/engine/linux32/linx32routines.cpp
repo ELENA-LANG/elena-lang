@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 #include <sys/mman.h>
+#include <errno.h>
 
 using namespace _ELENA_;
 
@@ -59,10 +60,31 @@ void SystemRoutineProvider::InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, Prog
    //threadTable[threadIndex] = (pos_t)entry;
 }
 
+inline void printNumber(int value)
+{
+      IdentifierString s;
+      s.appendInt(value);
+
+      ident_t pstr = s;
+      for(int i = 0; i < getlength(s); i++)
+         putchar(pstr[i]);
+}
+
 pos_t SystemRoutineProvider::NewHeap(int totalSize, int committedSize)
 {
    void* allocPtr = mmap(NULL, totalSize, PROT_READ | PROT_WRITE,
-      MAP_ANONYMOUS, -1, 0);
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+   if (allocPtr == (void*)INVALID_REF) {
+      /*IdentifierString s;
+      s.appendInt(errno);
+
+      ident_t pstr = s;
+      for(int i = 0; i < getlength(s); i++)
+         putchar(pstr[i]);*/
+
+      ::exit(errno);
+   }
 
    return (pos_t)allocPtr;
 }

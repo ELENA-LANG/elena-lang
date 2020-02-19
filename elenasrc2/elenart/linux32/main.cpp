@@ -63,7 +63,7 @@ void init()
 
 void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)
 {
-   putchar('!');
+   //putchar('!');
 
    header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
@@ -144,12 +144,14 @@ void StopThread(int exitCode)
 //{
 //   return _Instance->loadAddressInfo(retPoint, lineInfo, length);
 //}
-//
-//int LoadClassName(void* object, char* buffer, int length)
-//{
+
+int LoadClassName(void* object, char* buffer, int length)
+{
 //   return _Instance->loadClassName((size_t)object, buffer, length);
-//}
-//
+
+    return 0; // temporal
+}
+
 //void* EvaluateTape(void* tape)
 //{
 //   // !! terminator code
@@ -176,12 +178,14 @@ void StopThread(int exitCode)
 //{
 //   return _Instance->loadSubject((const char*)subjectName);
 //}
-//
-//int LoadMessageName(void* message, char* lineInfo, int length)
-//{
+
+int LoadMessageName(void* message, char* lineInfo, int length)
+{
 //   return _Instance->loadMessageName((ref_t)message, lineInfo, length);
-//}
-//
+
+    return 0; // !! temporal
+}
+
 //void* LoadMessage(void* messageName)
 //{
 //   return _Instance->loadMessage((const char*)messageName);
