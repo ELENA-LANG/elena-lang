@@ -2,7 +2,7 @@
 In development:
 ------         
               dev2 - linux32
-                * compile empty program
+                * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
               dev2 - refactoring
