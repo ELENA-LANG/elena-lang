@@ -14,11 +14,11 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 
 const char* _fnOpcodes[256] =
 {
-   "nop", "breakpoint", "coalesce", OPCODE_UNKNOWN, "snop", "pushverb", "loadverb", "throw",
+   "nop", "breakpoint", "coalesce", "peek", "snop", "pushverb", "loadverb", "throw",
    "mcount", "push", "pusha", "popa", OPCODE_UNKNOWN, "storev", "bsredirect", "setv",
 
    "not", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "close", "rexp", "quit",
-   "get", "set", OPCODE_UNKNOWN, "mquit", "count", "unhook", "rsin", OPCODE_UNKNOWN,
+   "get", "set", "swap", "mquit", "count", "unhook", "rsin", OPCODE_UNKNOWN,
 
    "rcos", "rarctan", "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",
    "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, "rln", "read", "clone", OPCODE_UNKNOWN,

@@ -1045,67 +1045,62 @@ inline ref_t defineConstantMask(LexicalType type)
 //
 //   tape.write(bcPopA);
 //}
-//
-//void ByteCodeWriter :: unboxArgList(CommandTape& tape, bool arrayMode)
-//{
-//   if (arrayMode) {
-//      // pushn 0
-//      // bcopya
-//      // len
-//      // labNext:
-//      // dec
-//      // get
-//      // pusha
-//      // elsen labNext
-//      tape.write(bcPushN, 0);
-//      tape.write(bcBCopyA);
-//      tape.write(bcLen);
-//      tape.newLabel();
-//      tape.setLabel(true);
-//      tape.write(bcDec);
-//      tape.write(bcGet);
-//      tape.write(bcPushA);
-//      tape.write(bcElseN, baCurrentLabel, 0);
-//      tape.releaseLabel();
-//   }
-//   else {
-//      // bcopya
-//      // dcopy 0
-//      // labSearch:
-//      // get
-//      // inc
-//      // elser labSearch
-//      // ecopyd
-//      // dec
-//      // pushn 0
-//
-//      // labNext:
-//      // dec
-//      // get
-//      // pusha
-//      // elsen labNext 0
-//
-//      tape.write(bcBCopyA);
-//      tape.write(bcDCopy, 0);
-//      tape.newLabel();
-//      tape.setLabel(true);
-//      tape.write(bcGet);
-//      tape.write(bcInc);
-//      tape.write(bcElseR, baCurrentLabel, 0);
-//      tape.releaseLabel();
-//      tape.write(bcECopyD);
-//      tape.write(bcDec);
-//      tape.write(bcPushN, 0);
-//
-//      tape.newLabel();
-//      tape.setLabel(true);
-//      tape.write(bcDec);
-//      tape.write(bcGet);
-//      tape.write(bcPushA);
-//      tape.write(bcElseN, baCurrentLabel, 0);
-//      tape.releaseLabel();
-//   }
-//}
+
+void ByteCodeWriter :: unboxArgList(CommandTape& tape, bool arrayMode)
+{
+   if (arrayMode) {
+      // pushn -1
+      // len
+      // labNext:
+      // dec 1
+      // push
+      // elsen labNext
+      tape.write(bcPushN, -1);
+      tape.write(bcCount);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcDec, 1);
+      tape.write(bcPush);
+      tape.write(bcElseN, baCurrentLabel, 0);
+      tape.releaseLabel();
+   }
+   else {
+      // pusha
+      // movn 0
+      // labSearch:
+      // peek
+      // inc 1
+      // elser labSearch -1
+      // popa
+
+      // dec 1
+      // pushn -1
+
+      // labNext:
+      // dec 1
+      // push
+      // elsen labNext 0
+
+      tape.write(bcPushA);
+      tape.write(bcMovN, 0);
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcPeek);
+      tape.write(bcInc, 1);
+      tape.write(bcElseR, baCurrentLabel, -1);
+      tape.releaseLabel();
+      tape.write(bcPopA);
+      tape.write(bcDec, 1);
+      tape.write(bcPushN, -1);
+
+      tape.newLabel();
+      tape.setLabel(true);
+      tape.write(bcDec, 1);
+      tape.write(bcPush);
+      tape.write(bcElseN, baCurrentLabel, 0);
+      tape.releaseLabel();
+   }
+}
 
 void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
 {
@@ -1131,22 +1126,24 @@ void ByteCodeWriter :: releaseStack(CommandTape& tape, int count)
       tape.write(bcFreeI, count);
 }
 
-//void ByteCodeWriter :: releaseArgList(CommandTape& tape)
-//{
-//   // bcopya
-//   // labSearch:
-//   // popa
-//   // elser labSearch
-//   // acopyb
-//
-//   tape.write(bcBCopyA);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcPopA);
-//   tape.write(bcElseR, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//   tape.write(bcACopyB);
-//}
+void ByteCodeWriter :: releaseArgList(CommandTape& tape)
+{
+   // pusha
+   // labSearch:
+   // popa
+   // swap
+   // elser labSearch -1
+   // popa
+
+   tape.write(bcPushA);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcPopA);
+   tape.write(bcSwap);
+   tape.write(bcElseR, baCurrentLabel, -1);
+   tape.releaseLabel();
+   tape.write(bcPopA);
+}
 
 void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
 {
@@ -5036,80 +5033,32 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
 {
    bool functionMode = test(node.argument, FUNCTION_MESSAGE);
    bool directMode = true;
-//   bool argUnboxMode = false;
-//   bool unboxMode = false;
+   bool argUnboxMode = false;
    bool openArg = false;
-//   bool accTarget = false;
-//   bool accPresaving = false; // if the message target is in acc
 
    int argCount = 0;
-//   int presavedCount = 0;
-//
-//   int argMode = ACC_REQUIRED;
 
    // analizing a sub tree
    SNode current = node.firstChild(lxObjectMask);
    // check if the message target can be used directly
    bool isFirstDirect = !isSubOperation(current) && current != lxResult;
    while (current != lxNone) {
-      argCount++;
+      if (current == lxArgArray) {
+         argUnboxMode = true;
+         generateExpression(tape, current, scope);
+         unboxArgList(tape, current.argument != 0);
+      }
+      else {
+         argCount++;
 
-      if (isSubOperation(current) || current == lxResult)
-         directMode = false;
-
-//      SNode member = current;
-//      if (current == lxExpression) {
-//         member = current.firstChild(lxObjectMask);
-//      }
-//
-//      if (current == lxArgUnboxing) {
-//         argUnboxMode = true;
-//         generateExpression(tape, current, ACC_REQUIRED);
-//         unboxArgList(tape, current.argument != 0);
-//      }
-//      else if (test(member.type, lxObjectMask)) {
-//         if (member == lxResult && !accTarget) {
-//            accTarget = true;
-//         }
-//         else if (member.type == lxLocalUnboxing)
-//            unboxMode = true;
-//
-//         paramCount++;
-//      }
-//      else if (current == lxEmbeddableAttr) {
-//         argMode |= EMBEDDABLE_EXPR;
-//      }
-//
-//      // presave the boxed arguments if required
-//      if (member == lxUnboxing) {
-//         saveUnboxingVar(tape, member, accTarget, accPresaving, presavedCount);
-//
-//         unboxMode = true;
-//      }
-//      // presave the nested object if outer operation is required
-//      else if (member == lxNested && member.existChild(lxOuterMember, lxCode)) {
-//         saveUnboxingVar(tape, member, accTarget, accPresaving, presavedCount);
-//         unboxMode = true;
-//         directMode = false;
-//      }
-//
-//      if (member == lxExpression && isSimpleObjectExpression(member, true)) {
-//         // ignore nested expression
-//      }
-//      else if (member == lxOverridden) {
-//         // ignore target override, if it is not unboxing expr
-//         if (member.existChild(lxUnboxing)) {
-//            saveUnboxingVar(tape, member.findChild(lxUnboxing), accTarget, accPresaving, presavedCount);
-//            unboxMode = true;
-//         }
-//      }
-//      else if (test(member.type, lxCodeScopeMask) || member == lxResult)
-//         directMode = false;
+         if (isSubOperation(current) || current == lxResult)
+            directMode = false;
+      }
 
       current = current.nextNode(lxObjectMask);
    }
 
-   if (/*!argUnboxMode && */isOpenArg(node.argument)) {
+   if (!argUnboxMode && isOpenArg(node.argument)) {
       // NOTE : do not add trailing nil for result of unboxing operation
       pushObject(tape, lxStopper, 0, scope, 0);
       openArg = true;
@@ -5133,28 +5082,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    for (size_t i = startIndex; i < argCount; i++) {
       // get parameters in reverse order if required
       current = getChild(node, directMode ? argCount - i - diff : i);
-//      if (current == lxExpression) {
-//         current = current.firstChild(lxObjectMask);
-//      }
-//
-//      if (current == lxArgUnboxing) {
-//         // argument list is already unboxed
-//      }
-//      else if (test(current.type, lxObjectMask)) {
-//         if (current == lxUnboxing) {
-//            loadUnboxingVar(tape, current, paramCount, presavedCount);
-//         }
-//         else if (current == lxNested && current.existChild(lxOuterMember, lxCode)) {
-//            loadObject(tape, lxCurrent, paramCount + presavedCount - 1, 0);
-//            presavedCount--;
-//         }
-//         else if (accPresaving && current == lxResult) {
-//            loadObject(tape, lxCurrent, paramCount + presavedCount - 1, 0);
-//            presavedCount--;
-//         }
-//         else generateObject(tape, current, argMode);
 
-      if (!directMode) {
+      if (current == lxArgArray) {
+         // argument list is already unboxed
+      }
+      else if (!directMode) {
          generateObject(tape, current, scope);
          saveObject(tape, lxCurrent, i - startIndex);
       }
@@ -5170,22 +5102,12 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    }
    else tape.write(bcPeekSI, 0);
 
-   //   SNode overridden = callNode.findChild(lxOverridden);
-   //   if (overridden != lxNone) {
-   //      SNode unboxingNode = overridden.findChild(lxUnboxing);
-   //      if (unboxingNode) {
-   //         loadUnboxingVar(tape, unboxingNode, paramCount, presavedCount);
-   //      }
-   //      else generateExpression(tape, overridden, ACC_REQUIRED);
-   //   }
-   // othetwise load a message target from the stack
-
    generateCall(tape, node/*, paramCount, presavedCount*/);
 
-//   if (argUnboxMode) {
-//      releaseArgList(tape);
-//   }
-   /*else */if (openArg) {
+   if (argUnboxMode) {
+      releaseArgList(tape);
+   }
+   else if (openArg) {
       //// clear open argument list, including trailing nil and subtracting normal arguments
       //if (test(node.argument, SPECIAL_MESSAGE)) {
       //   // HOTFIX : self is not in the stack
@@ -5193,13 +5115,6 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       //}
       /*else */releaseStack(tape, argCount - getArgCount(node.argument));
    }
-
-//   // unbox the arguments
-//   if (unboxMode)
-//      unboxCallParameters(tape, node);
-//
-//   if (accPresaving)
-//      releaseObject(tape);
 
    scope.clear();
 }

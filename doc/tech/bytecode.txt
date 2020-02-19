@@ -62,6 +62,8 @@ ELENA byte codes (or ecodes)
  
  xor n                       - index ~~ n => index
  
+ peek                       - [sp][index] => acc
+
  peekfi i                   - [fp+i] => acc;
 
  peekr r                    - [r] => acc

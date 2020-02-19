@@ -13,6 +13,7 @@ In development:
                 * rosetta code samples : Amb
                 * rosetta code samples : Amicable pairs
                 * migrate changes from core to corex
+                * anagram sample with corex
                 * collatz sample
                 * db sample
                 * script samples
@@ -25,6 +26,11 @@ In development:
                 * xforms
 
               dev50 - test / optimization
+                * variadic arguments : passing, unboxing, boxing, direct use
+
+                * do not box the variadic argument list for Length operation
+                * do not box variadicarray
+
                 * optimize basic for loop
 
                 * boxing, unboxing, closure initializing
@@ -34,7 +40,6 @@ In development:
                 * multi-return methods : optimize double assigning
                 * readtof - optimization
                 * translit sample: List should be compiled as constant list
-                * do not box the variadic argument list for Length operation
                 * simplify the operations with struct fields (size=1,2,4,8,...)
                 * resolving byref template - cache the resolved results
                 * conditional boxing of arguments and self
@@ -90,7 +95,6 @@ In development:
                 * CreateClass / CreateStruct with initializers - no need to clear newly created object
                 * generateInitializer - support constants as well for onlyLocal mode
                 * optimize array creation
-                * do not box variadicarray
                 * test creating an array : non-empty, empty
                 * operations in symbol
                 * call inernal function directly (without intermediate step in system'routines) when it is possible
@@ -127,7 +131,6 @@ In development:
                 * #190 : Closure : auto boxing / unboxing local variables 
                 * public / internal / private extensions?
                 * auto returning
-                * variadic arguments : unboxing, boxing, direct use
                 * extension message - can be applied only to the generic extension?
                 * invoke extension directly
 

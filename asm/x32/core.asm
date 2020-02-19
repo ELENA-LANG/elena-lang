@@ -905,6 +905,14 @@ inline % 2
 
 end
 
+// ; peek
+inline % 4
+
+  mov  eax, [esp]
+  mov  ebx, [eax+edx*4] 
+
+end
+
 // ; snop
 inline % 4
 
@@ -1075,6 +1083,15 @@ inline % 19h
    shr  ecx, page_size_order
    mov  [ebx + edx*4], eax
    mov  byte ptr [ecx + esi], 1  
+
+end
+
+// ; swap
+inline % 1Bh
+
+  mov eax, [esp]
+  mov [esp], ebx
+  mov ebx, eax 
 
 end
 
