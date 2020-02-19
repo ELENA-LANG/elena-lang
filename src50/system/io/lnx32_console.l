@@ -27,9 +27,9 @@ namespace io
         handle handle;
         string newLine;
     
-        constructor(handle h)
+        constructor(/*handle h*/)
         {
-            handle := h;
+            //handle := h;
             newLine := forward newLine;
         }
     
@@ -40,22 +40,30 @@ namespace io
     
         write(string s)
         {
-            int n := 0;
-            byte vc := 0;
+            int  n  := 0;
+            int  cl := 0;
+            char c  := 0;
             
             int l := s.Length;
             while(n < l)
             {
-                s.read(n, ref vc);
-            
-                //extern libc.putchar(vc);
-            
-                n := n + 1
+                s.read(n, ref c);
+
+                extern libc.putchar(c);
+
+                cl := c.Length;
+                n := n + cl
             }
-    
+
             // !!check the result of the operation
         }
-        
+
+        writeLine(string s)
+        {
+            self.write(s);
+            self.write(newLine);
+        }
+
 //        #method clear
 //        [
 //        ]
@@ -72,7 +80,7 @@ namespace io
 
     // --- ConsoleReader ---
     
-    sealed class ConsoleReader
+    sealed class ConsoleReader : Object, interface<IConsoleReader>
     {
         constructor()
         {
@@ -159,7 +167,7 @@ namespace io
 
     // --- Console Standard Symbols
     
-    symbol stdConsoleWriter = new ConsoleWriter(globalVariables.stdout());
+    symbol stdConsoleWriter = new ConsoleWriter(/*globalVariables.stdout()*/);
 
     symbol stdConsoleReader = new ConsoleReader();
 

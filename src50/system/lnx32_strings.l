@@ -1,5 +1,5 @@
 public const string newLine
-    = $10;
+    = ""$10;
 
 // --- characterController ---
 
