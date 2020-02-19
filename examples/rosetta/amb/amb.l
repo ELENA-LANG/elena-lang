@@ -73,17 +73,17 @@ singleton ambOperator
 
 public program1()
 {
-  //  try
-  //  {
+    try
+    {
         ambOperator.for(new object[]{1,2,4}, new object[]{4,5,6}).seek:(a,b => a * b == 8).do:
             (a,b){ console.printLine(a," * ",b," = 8") }
-  //  }
-  //  catch(Exception e)
-  //  {
-  //      console.printLine:"AMB is angry"
-  //  };
+    }
+    catch(Exception e)
+    {
+        console.printLine:"AMB is angry"
+    };
         
-  //  console.readChar()
+    console.readChar()
 }
 
 public program2()
