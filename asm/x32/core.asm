@@ -906,7 +906,7 @@ inline % 2
 end
 
 // ; peek
-inline % 4
+inline % 3
 
   mov  eax, [esp]
   mov  ebx, [eax+edx*4] 
@@ -1087,7 +1087,7 @@ inline % 19h
 end
 
 // ; swap
-inline % 1Bh
+inline % 1Ah
 
   mov eax, [esp]
   mov [esp], ebx

@@ -116,7 +116,7 @@ constexpr auto V_BINARYARRAY     = 0x8000000Bu;
 constexpr auto V_INT16ARRAY      = 0x8000000Cu;
 constexpr auto V_INT8ARRAY       = 0x8000000Du;
 constexpr auto V_OBJECT          = 0x8000000Eu;
-//constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
+constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
 //constexpr auto V_CLASSNAME       = 0x80000010u;
 
 ////#define V_PARAMETER      (ref_t)-02
@@ -519,9 +519,10 @@ public:
       eaVirtualExpr        = 0x00010000000,
       eaSubj               = 0x00020000000,
       eaDirectCall         = 0x00040000000,
+      eaParameter          = 0x00080000000,
 
       eaScopeMask          = 0x0000041400A,
-      eaObjectMask         = 0x0002821B2F4,
+      eaObjectMask         = 0x000A821B2F4,
 
 //      eaWrap               = 0x00000001000,
 //      eaDirect             = 0x00000004000,
@@ -532,7 +533,6 @@ public:
 //
 //      eaAssigningExpr      = 0x00000100000,
 //      eaCallExpr           = 0x00000400000,
-//      eaParameter          = 0x00001000000,
 //      eaRetExpr            = 0x00004000000,
 //      eaClosure            = 0x00080000000,
 //      eaSubCodeClosure     = 0x00800000000,
@@ -673,8 +673,8 @@ public:
    virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
    virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole) = 0;
    virtual bool doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
-//   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;
-//
+   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;
+
 //   virtual bool isWrapper(ClassInfo& info) = 0;
 //   virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element) = 0;
 //   // check if the class can be used as a fixed-size embeddable array

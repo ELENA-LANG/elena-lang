@@ -62,11 +62,11 @@ constexpr auto HINT_MESSAGEREF      = EAttr::eaMssg;
 constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
 constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
 constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
+constexpr auto HINT_PARAMETER       = EAttr::eaParameter;
 
 //constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
-//constexpr auto HINT_PARAMETER		   = EAttr::eaParameter;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
 //constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
@@ -3476,9 +3476,9 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
          return scope.moduleScope->messageReference;
       case V_EXTMESSAGE:
          return scope.moduleScope->extMessageReference;
-         //      case V_UNBOXEDARGS:
-//         // HOTFIX : should be returned as is
-//         return argRef;
+      case V_UNBOXEDARGS:
+         // HOTFIX : should be returned as is
+         return argRef;
       case V_NIL:
          return scope.moduleScope->superReference;
       default:
@@ -3492,7 +3492,7 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
 
 ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/)
 {
-   EAttr paramMode = /*HINT_PARAMETER*/EAttr::eaNone;
+   EAttr paramMode = HINT_PARAMETER;
    bool externalMode = false;
    if (EAttrs::test(mode, HINT_EXTERNALOP)) {
       externalMode = true;
@@ -3519,13 +3519,17 @@ ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr m
 //         else if (inlineArg) {
 //            scope.raiseError(errNotApplicable, current);
 //         }
-//         else if (argRef == V_UNBOXEDARGS) {
-//			   signatures[signatureLen++] = paramInfo.element;
-//			   if (!variadicOne) {
-//				   variadicOne = true;
-//			   }
-//			   else scope.raiseError(errNotApplicable, current);
-//         }
+         else if (argRef == V_UNBOXEDARGS) {
+            if (paramInfo.element) {
+               signatures[signatureLen++] = paramInfo.element;
+            }
+            else signatures[signatureLen++] = scope.moduleScope->superReference;
+
+			   if (!variadicOne) {
+				   variadicOne = true;
+			   }
+			   else scope.raiseError(errNotApplicable, current);
+         }
 //         else if (argRef == V_INLINEARG) {
 //            if (signatureLen == 0) {
 //               inlineArg = true;
@@ -4822,26 +4826,25 @@ ObjectInfo Compiler :: compileReferenceExpression(SNode node, ExprScope& scope, 
 
 ObjectInfo Compiler :: compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode)
 {
-   throw InternalError("Not yet implemented"); // !! temporal
+   ObjectInfo objectInfo = mapTerminal(node, scope, mode);
+   // HOTFIX : refresh node to see the changes
+   node.refresh();
+   analizeOperand(node, scope, false, true);
 
-//	writer.newBookmark();
-//
-//	ObjectInfo objectInfo = compileObject(writer, node, scope, 0, mode);
-//	ref_t operandRef = resolveObjectReference(scope, objectInfo, false, false);
-//	if (operandRef == V_ARGARRAY && EAttrs::test(mode, HINT_PARAMETER)) {
-//		objectInfo.reference = V_UNBOXEDARGS;
-//		writer.inject(lxArgUnboxing);
-//		writer.closeNode();
-//	}
-//   else if (_logic->isArray(*scope.moduleScope, operandRef)) {
-//      objectInfo.reference = V_UNBOXEDARGS;
-//      writer.inject(lxArgUnboxing, (ref_t)-1);
-//      writer.closeNode();
-//   }
-//	else scope.raiseError(errNotApplicable, node);
-//
-//	writer.removeBookmark();
-//	return objectInfo;
+   ref_t operandRef = resolveObjectReference(scope, objectInfo, false, false);
+   if (operandRef == V_ARGARRAY && EAttrs::test(mode, HINT_PARAMETER)) {
+      objectInfo.reference = V_UNBOXEDARGS;
+
+      node.injectAndReplaceNode(lxArgArray);
+   }
+   else if (_logic->isArray(*scope.moduleScope, operandRef)) {
+      objectInfo.reference = V_UNBOXEDARGS;
+
+      node.injectAndReplaceNode(lxArgArray, (ref_t)-1);
+   }
+   else scope.raiseError(errNotApplicable, node);
+
+   return objectInfo;
 }
 
 ObjectInfo Compiler :: compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
@@ -6466,6 +6469,9 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
             // the generic arguments should be free by the method exit
             scope.withOpenArg = true;
+
+            if (!elementRef)
+               elementRef = scope.moduleScope->superReference;
 
             signature[signatureLen++] = elementRef;
          }

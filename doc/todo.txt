@@ -26,16 +26,9 @@ In development:
                 * xforms
 
               dev50 - test / optimization
-                * variadic arguments : passing, unboxing, boxing, direct use
-
-                * do not box the variadic argument list for Length operation
-                * do not box variadicarray
-
                 * optimize basic for loop
 
                 * boxing, unboxing, closure initializing
-
-                * int op - ignore the returning the operation result for the root operation
 
                 * multi-return methods : optimize double assigning
                 * readtof - optimization
@@ -65,7 +58,7 @@ In development:
                 * boxing and unboxing a primitive array?
                 * test super (normal, stack unsafe)
                 * test internal / public / private classes
-                * protected methods
+                * variadic arguments : unboxing
                 * test internal / public / private / proteced methods
                 * test internal / public / private / proteced constructors
                 * public / private / internal properties

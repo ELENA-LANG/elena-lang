@@ -5043,10 +5043,14 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    // check if the message target can be used directly
    bool isFirstDirect = !isSubOperation(current) && current != lxResult;
    while (current != lxNone) {
-      if (current == lxArgArray) {
+      SNode argNode = current;
+      if (argNode == lxExpression)
+         argNode = current.findSubNodeMask(lxObjectMask);
+
+      if (argNode == lxArgArray) {
          argUnboxMode = true;
-         generateExpression(tape, current, scope);
-         unboxArgList(tape, current.argument != 0);
+         generateExpression(tape, argNode, scope);
+         unboxArgList(tape, argNode.argument != 0);
       }
       else {
          argCount++;
@@ -5082,6 +5086,8 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    for (size_t i = startIndex; i < argCount; i++) {
       // get parameters in reverse order if required
       current = getChild(node, directMode ? argCount - i - diff : i);
+      if (current == lxExpression)
+         current = current.findSubNodeMask(lxObjectMask);
 
       if (current == lxArgArray) {
          // argument list is already unboxed
