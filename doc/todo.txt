@@ -1,13 +1,13 @@
 ------                                 
 In development:
 ------         
-              dev2 - linux32
-                * uncomment LoadClassName, LoadMessageName
-                * compile hello world
-
               dev2 - refactoring
                 * mov GC to C code
                 * get rid of EXPAND_HEAP, NEW_HEAP
+
+              dev2 - linux32
+                * uncomment LoadClassName, LoadMessageName
+                * compile hello world
 
               dev - migration
                 * rosetta code samples : Amb
@@ -25,7 +25,9 @@ In development:
                 * api doc - with description
                 * xforms
 
-              dev50 - test / optimization
+              dev - test / optimization
+                * fix bug : public const string newLine = $10; - empty
+
                 * optimize basic for loop
 
                 * boxing, unboxing, closure initializing
