@@ -75,7 +75,7 @@ public program1()
 {
   //  try
   //  {
-        ambOperator.for(new int[]{1,2,4}, new int[]{4,5,6}).seek:(a,b => a * b == 8).do:
+        ambOperator.for(new object[]{1,2,4}, new object[]{4,5,6}).seek:(a,b => a * b == 8).do:
             (a,b){ console.printLine(a," * ",b," = 8") }
   //  }
   //  catch(Exception e)
@@ -92,10 +92,10 @@ public program2()
     {
         ambOperator 
             .for(
-                new string[]{"the","that","a"},
-                new string[]{"frog", "elephant", "thing"},
-                new string[]{"walked", "treaded", "grows"}, 
-                new string[]{"slowly", "quickly"})
+                new object[]{"the","that","a"},
+                new object[]{"frog", "elephant", "thing"},
+                new object[]{"walked", "treaded", "grows"}, 
+                new object[]{"slowly", "quickly"})
             .seek:(a,b,c,d => joinable(a,b) && joinable(b,c) && joinable(c,d) )
             .do:(a,b,c,d) { console.printLine(a," ",b," ",c," ",d) }
     }

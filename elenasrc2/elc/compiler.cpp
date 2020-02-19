@@ -3490,7 +3490,7 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
    }
 }
 
-ref_t Compiler :: compileMessageParameters(SNode node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/)
+ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/)
 {
    EAttr paramMode = HINT_PARAMETER;
    bool externalMode = false;
@@ -4597,6 +4597,11 @@ ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInf
    int counter = 0;
    int size = _logic->defineStructSize(*scope.moduleScope, target.reference, 0);
 
+   // HOTFIX : comment out idle symbol
+   SNode dummyNode = node.prevNode(lxObjectMask);
+   if (dummyNode != lxNone)
+      dummyNode = lxIdle;
+
    node.set(lxInitializing, 0);
 
    // all collection memebers should be created before the collection itself
@@ -4915,32 +4920,6 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    }
    else messageRef = resolveMessageAtCompileTime(target, scope, messageRef, implicitSignatureRef, false, stackSafeAttr);
 
-   //   else if (node.argument == V_NEWOP) {
-   //      else {
-   //         EAttr paramsMode = EAttr::eaNone;
-   //
-   //		   bool variadicOne = false;
-   //         bool inlineArg = false;
-   //         ref_t implicitSignatureRef = compileMessageParameters(writer, node, scope, paramsMode, variadicOne, inlineArg);
-   //
-   //         if (messageRef) {
-   //            // call the constructor if it can be resolved directly
-   //            compileMessage(writer, node, scope, target, messageRef, HINT_SILENT | HINT_NODEBUGINFO, stackSafeAttr);
-   //         }
-   //         else scope.raiseError(errDefaultConstructorNotFound, node.parentNode());
-   //      }
-   //   }
-   //   else if (node.argument == V_OBJARRAY) {
-   //      compileCollection(writer, node, scope, target);
-   //   }
-
-   //SNode targetNode = exprNode.firstChild(lxObjectMask);
-   //if (op != lxNone && targetNode != lxNone) {
-   //   targetNode.set(op, arg);
-   //   targetNode.appendNode(lxType, targetRef);
-   //}
-   //else scope.raiseError(errInvalidOperation, exprNode);
-
    bool dummy = false;
    ObjectInfo retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT, stackSafeAttr, dummy);
 
@@ -5219,27 +5198,6 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
    if (exprAttr.testAndExclude(EAttr::eaIgnoreDuplicates)) {
       scope.ignoreDuplicates = true;
    }
-
-//   if (exprAttr.test(EAttr::eaCast) || exprAttr.test(EAttr::eaNewOp)) {
-//      SNode msgNode = goToNode(current, lxMessage, lxCollection);
-//      if (msgNode == lxCollection && !exprAttr.test(EAttr::eaCast)) {
-//         if (goToNode(current, lxDimensionAttr) == lxDimensionAttr) {
-//            msgNode.set(lxTypecast, V_OBJARRAY);
-//         }
-//         exprAttr.include(EAttr::eaVirtualExpr);
-//      }
-//      else if (msgNode == lxMessage && msgNode.firstChild() == lxNone) {
-//         exprAttr.include(EAttr::eaModuleScope);
-//         if (exprAttr.test(EAttr::eaCast)) {
-//            exprAttr.include(EAttr::eaVirtualExpr);
-//            msgNode.set(lxTypecast, V_CONVERSION);
-//         }
-//         else msgNode.set(lxTypecast, V_NEWOP);
-//      }
-//      else invalidExpr = true;
-//
-//      exprAttr.exclude(EAttr::eaCast | EAttr::eaNewOp);
-//   }
 
    if (current.compare(lxType, lxArrayType) && test(current.nextNode(), lxTerminalMask)) {
       if (typeRef == 0) {
@@ -6887,7 +6845,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
 
    bool variadicOne = false;
 //   bool inlineArg = false;
-   ref_t implicitSignatureRef = compileMessageParameters(expr.findChild(lxMessage).nextNode(), resendScope, EAttr::eaNone,
+   SNode argNode = expr.findChild(lxMessage).nextNode();
+   ref_t implicitSignatureRef = compileMessageParameters(argNode, resendScope, EAttr::eaNone,
       variadicOne/*, inlineArg*/);
 
    ObjectInfo target(okClassSelf, resendScope.getClassRefId(), classRef);
@@ -7606,6 +7565,9 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
          // HOT FIX : returning the created object
          bodyNode.appendNode(lxExpression).appendNode(lxLocal, 1);
       }
+   }
+   else if (withFrame) {
+      scope.preallocated = codeScope.allocated1;
    }
 
    codeScope.syncStack(&scope);

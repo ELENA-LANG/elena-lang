@@ -164,19 +164,19 @@ public sealed nonstructural VariadicArray<T> //: Indexable<T>
         }            
     }
     
-//    T[] cast()
-//    {
-//        int len := self.Length;
-//        
-//        T[] array := new T[](len);
-//        for(int i := 0, i < len, i += 1)
-//        {
-//            array[i] := theArray[i]
-//        };
-//        
-//        ^ array
-//    }
-//    
+    T[] cast()
+    {
+        int len := self.Length;
+        
+        T[] array := new T[](len);
+        for(int i := 0, i < len, i += 1)
+        {
+            array[i] := theArray[i]
+        };
+        
+        ^ array
+    }
+    
 //    Enumerator<T> enumerator() = new BaseEnumerator<T>::
 //    {
 //        this theIndex := -1;

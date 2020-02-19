@@ -1066,7 +1066,7 @@ private:
    ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo info);
    ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo param1, ObjectInfo param2);
 
-   ref_t compileMessageParameters(SNode node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/);
+   ref_t compileMessageParameters(SNode& node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/);
 
    ObjectInfo compileMessage(SNode node, ExprScope& scope, ref_t exptectedRef, ObjectInfo target, EAttr mode);
    ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode, 
