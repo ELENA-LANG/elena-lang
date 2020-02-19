@@ -10,8 +10,8 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : Amb
                 * rosetta code samples : Amicable pairs
+                * rosetta code samples : Anagrams
                 * migrate changes from core to corex
                 * anagram sample with corex
                 * collatz sample
