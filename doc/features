@@ -23,15 +23,15 @@ Declarations
       * inheritable : cannot be overriden, accessible in all parent class
     Methods
       * Visibility : private / protected / internal ones
-      * returning types
+      * returning types +
       * Multimethods
         - variadic
-        - implcit default
-        - explcit default
+        - implcit default +
+        - explcit default +
         - multi-return
       * resend
       * dispatch
-      * ret expression
+      * ret expression +
       * Generic handlers 
         - __received - incoming message
       * abstract / sealed / predefined
