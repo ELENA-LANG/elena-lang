@@ -9356,7 +9356,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
          scope.info.exprRef = ref;
       }
    }
-   else convertObject(node, exprScope, scope.info.exprRef, retVal, EAttr::eaNone);
+   else retVal = convertObject(expression, exprScope, scope.info.exprRef, retVal, EAttr::eaNone);
 
    expression.refresh();
    analizeSymbolTree(expression, scope);

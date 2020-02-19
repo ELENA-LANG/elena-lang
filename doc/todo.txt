@@ -26,8 +26,6 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * fix bug : public const string newLine = $10; - empty
-
                 * optimize basic for loop
 
                 * boxing, unboxing, closure initializing
