@@ -10,11 +10,11 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : Amicable pairs
                 * rosetta code samples : Anagrams
+                * rosetta code samples : Anonymous recursion
 
               dev - migration
-                * rosetta code samples : Amicable pairs strong typed
+                * rosetta code samples : Amicable pairs
                 * Amicable pairs using yield method
                 * migrate changes from core to corex
                 * anagram sample with corex
