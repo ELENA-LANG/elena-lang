@@ -12,6 +12,9 @@ In development:
               dev - migration
                 * rosetta code samples : Amicable pairs
                 * rosetta code samples : Anagrams
+
+              dev - migration
+                * Amicable pairs using yield method
                 * migrate changes from core to corex
                 * anagram sample with corex
                 * collatz sample
@@ -26,8 +29,6 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * optimize basic for loop
-
                 * boxing, unboxing, closure initializing
 
                 * multi-return methods : optimize double assigning

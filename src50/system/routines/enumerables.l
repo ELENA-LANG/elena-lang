@@ -325,10 +325,10 @@ public extension enumerableOp
     summarize()
         = self.summarize(new Variable());
         
-//    filterBy(Func1 selector)
-//        = new Filter(selector, cast Enumerator(self.enumerator()));
-//        
-////    filterBy(Func2 aSelector)
+    filterBy(Func1 selector)
+        = Filter.new(selector, cast Enumerator(self.enumerator()));
+        
+//    filterBy(Func2 aSelector)
 ////        = PatternFilter2 new(aSelector, T<Enumerator>(self enumerator)).
 ////        
 ////    filterBy(Func3 aSelector)
@@ -342,10 +342,10 @@ public extension enumerableOp
 ////        
 ////    filterBy(Func6 aSelector)
 ////        = PatternFilter6 new(aSelector, T<Enumerator>(self enumerator)).
-//        
-//    repeatTill(n)
-//        = new RangeEnumerator(self, n - 1, 1);
-//
+        
+    repeatTill(n)
+        = RangeEnumerator.new(self, n - 1, 1);
+
 ////    repeatTo:n
 ////        = RangeEnumerator from:self to:n by:1.
 //

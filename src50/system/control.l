@@ -910,87 +910,90 @@ public abstract BaseIndexer<T> : Indexer<T>
 ////        retVal value := theLength1.
 ////    ]    
 ////}
-//
-//// --- Range --
-//
-//class IntRangeEnumerator : Enumerator<int>
-//{
-//    int theIndex;
-//    int theStart;
-//    int theEnd;
-//
-//    constructor(IntNumber start, IntNumber end)
-//    {
-//        theStart := start;
-//        theEnd := end;
-//        
-//        self.reset();
-//    }
-//
-//    int get() = theIndex;
-//            
-//    /// Returns false if the index out of range
-//    bool next()
-//    {
-//        theIndex += 1;
-//        
-//        ^ theIndex < theEnd
-//    }
+
+// --- Range --
+
+class IntRangeEnumerator : Enumerator<int>
+{
+    int theIndex;
+    int theStart;
+    int theEnd;
+
+    constructor(IntNumber start, IntNumber end)
+    {
+        theStart := start;
+        theEnd := end;
+        
+        self.reset();
+    }
+
+    int get() = theIndex;
+            
+    /// Returns false if the index out of range
+    bool next()
+    {
+        theIndex += 1;
+        
+        ^ theIndex < theEnd
+    }
+    
+    /// Sets the i-index by specified value
+    reset()
+    {
+        theIndex := theStart - 1;
+    } 
+    
+    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+    
+    enumerable() = new Range(theStart, theEnd - theStart);
+}
+
+public sealed class Range : Enumerable<int>
+{
+    int theStart;
+    int theEnd;
+    
+    constructor(int start, int count)
+    {
+        theStart := start;
+        theEnd := start + count
+    }
+    
+    constructor new(int start, int count)
+    {
+        theStart := start;
+        theEnd := start + count
+    }
+    
+    constructor for(int start, int end)
+        <= new(start, end - start);
+    
+//    constructor from(int start) till(int end)
+//        <= (start, end);
+    
+//    constructor from(IntNumber start) till(IntNumber end)
+//    [
+//        theStart := start.
+//        theEnd := end.
+//    ]
 //    
-//    /// Sets the i-index by specified value
-//    reset()
-//    {
-//        theIndex := theStart - 1;
-//    } 
+//    constructor from(IntNumber start) to(IntNumber end)
+//    [
+//        theStart := start.
+//        theEnd := end + 1.
+//    ]
 //    
-//    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
-//    
-//    enumerable() = new Range(theStart, theEnd - theStart);
-//}
-//
-//public sealed class Range : Enumerable<int>
-//{
-//    int theStart;
-//    int theEnd;
-//    
-//    constructor(IntNumber start, IntNumber count)
-//    {
-//        theStart := start;
-//        theEnd := start + count
-//    }
-//    
-//    constructor for(int start, int end)
-//        <= (start, end - start);
-//    
-//    constructor new(int start, int count)
-//        <= (start, count);
-//    
-////    constructor from(int start) till(int end)
-////        <= (start, end);
-//    
-////    constructor from(IntNumber start) till(IntNumber end)
-////    [
-////        theStart := start.
-////        theEnd := end.
-////    ]
-////    
-////    constructor from(IntNumber start) to(IntNumber end)
-////    [
-////        theStart := start.
-////        theEnd := end + 1.
-////    ]
-////    
-//    Length
-//    {
-//        int get()
-//        {
-//            int l := theEnd - theStart;
-//            
-//            ^ l
-//        }
-//    }
-//    
-//    Enumerator<int> enumerator() = new IntRangeEnumerator(theStart, theEnd);
-//    
-//    Enumerable cast() = new Enumerable::{ Enumerator enumerator() => self; };
-//}
+    int Length
+    {
+        get()
+        {
+            int l := theEnd - theStart;
+            
+            ^ l
+        }
+    }
+    
+    Enumerator<int> enumerator() = new IntRangeEnumerator(theStart, theEnd);
+    
+    Enumerable cast() = new Enumerable { Enumerator enumerator() => self; };
+}
