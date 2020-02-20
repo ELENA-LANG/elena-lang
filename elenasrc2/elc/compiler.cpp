@@ -6342,6 +6342,40 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
    }
 }
 
+ref_t Compiler :: mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags,
+   IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
+   bool withoutWeakMessages, bool noSignature)
+{
+   if (test(flags, VARIADIC_MESSAGE) && !test(flags, FUNCTION_MESSAGE))
+      paramCount = 1;
+
+   // NOTE : a message target should be included as well for a normal message
+   int argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
+   argCount += paramCount;
+
+   if (actionRef != 0) {
+      // HOTFIX : if the action was already resolved - do nothing
+   }
+   else if (actionStr.Length() > 0) {
+      ref_t signatureRef = 0;
+      if (signatureLen > 0)
+         signatureRef = scope.moduleScope->module->mapSignature(signature, signatureLen, false);
+
+      actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), signatureRef, false);
+
+      if (withoutWeakMessages && noSignature && test(scope.getClassFlags(false), elClosed)) {
+         // HOTFIX : for the nested closed class - special handling is requiered
+         ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
+         if (!classScope->info.methods.exist(encodeMessage(actionRef, argCount, flags))) {
+            actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
+         }
+      }
+   }
+   else return 0;
+
+   return encodeMessage(actionRef, argCount, flags);
+}
+
 void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode)
 {
    if (withoutWeakMessages && test(scope.hints, tpGeneric))
@@ -6527,47 +6561,33 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
             actionStr.copy(CONSTRUCTOR_MESSAGE2);
          }
          else {
-            ident_t className = scope.module->resolveReference(scope.getClassRef());
+            // check if protected method already declared
+            ref_t publicMessage = mapMethodName(scope, paramCount, actionRef, flags, actionStr,
+               signature, signatureLen, withoutWeakMessages, noSignature);
+            
+            ref_t declaredMssg = scope.getAttribute(publicMessage, maProtected);
+            if (!declaredMssg) {
+               ident_t className = scope.module->resolveReference(scope.getClassRef());
 
-            actionStr.insert("$$", 0);
-            actionStr.insert(className + 1, 0);
-            actionStr.insert("@", 0);
-            actionStr.insert(scope.module->Name(), 0);
-            actionStr.replaceAll('\'', '@', 0);
+               actionStr.insert("$$", 0);
+               actionStr.insert(className + 1, 0);
+               actionStr.insert("@", 0);
+               actionStr.insert(scope.module->Name(), 0);
+               actionStr.replaceAll('\'', '@', 0);
+            }
+            else scope.message = declaredMssg;
          }
       }
       else if ((scope.hints & tpMask) == tpPrivate) {
          flags |= STATIC_MESSAGE;
       }
 
-      if (test(flags, VARIADIC_MESSAGE) && !test(flags, FUNCTION_MESSAGE))
-         paramCount = 1;
-
-      // NOTE : a message target should be included as well for a normal message
-      int argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
-      argCount += paramCount;
-
-      if (actionRef != 0) {
-         // HOTFIX : if the action was already resolved - do nothing
+      if (!scope.message) {
+         scope.message = mapMethodName(scope, paramCount, actionRef, flags, actionStr,
+            signature, signatureLen, withoutWeakMessages, noSignature);
+         if (!scope.message)
+            scope.raiseError(errIllegalMethod, node);
       }
-      else if (actionStr.Length() > 0) {
-         ref_t signatureRef = 0;
-         if (signatureLen > 0)
-            signatureRef = scope.moduleScope->module->mapSignature(signature, signatureLen, false);
-
-         actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), signatureRef, false);
-
-         if (withoutWeakMessages && noSignature && test(scope.getClassFlags(false), elClosed)) {
-            // HOTFIX : for the nested closed class - special handling is requiered
-            ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
-            if (!classScope->info.methods.exist(encodeMessage(actionRef, argCount, flags))) {
-               actionRef = scope.moduleScope->module->mapAction(actionStr.c_str(), 0, false);
-            }
-         }
-      }
-      else scope.raiseError(errIllegalMethod, node);
-
-      scope.message = encodeMessage(actionRef, argCount, flags);
 
       // if it is an explicit constant conversion
       if (constantConversion) {

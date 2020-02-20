@@ -10,10 +10,10 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : Anagrams
-                * rosetta code samples : Anonymous recursion
+                * rosetta code samples : Apply a callback to an array
 
               dev - migration
+                * rosetta code samples : Anagrams
                 * rosetta code samples : Amicable pairs
                 * Amicable pairs using yield method
                 * migrate changes from core to corex
@@ -30,7 +30,6 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * protected method should be correctly overridden
                 * multi-return methods : optimize double assigning
                 * readtof - optimization
                 * translit sample: List should be compiled as constant list

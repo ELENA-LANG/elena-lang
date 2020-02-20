@@ -78,7 +78,7 @@ namespace collections
         
         setAt(TKey key, TValue object)
         {
-            int code := key.HashCode.Absolute;
+            int code := key.Hashcode.Absolute;
     
             code := code.mod(theHashMask);
             
@@ -89,7 +89,7 @@ namespace collections
             
         TValue at(TKey key)
         {
-            int code := key.HashCode.Absolute;
+            int code := key.Hashcode.Absolute;
     
             code := code.mod(theHashMask);
             
@@ -140,7 +140,7 @@ namespace collections
         
         bool containsKey(TKey key)
         {
-            int index := key.HashCode;
+            int index := key.Hashcode;
     
             index := index.mod(theHashMask);
             

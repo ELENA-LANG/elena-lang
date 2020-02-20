@@ -587,6 +587,13 @@ private:
          return scope->getAttribute(message, attr);
       }
 
+      ref_t getAttribute(ref_t attrMessage, MethodAttribute attr, bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope->getAttribute(attrMessage, attr);
+      }
+
       void addAttribute(MethodAttribute attr, ref_t argument, bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
@@ -1019,6 +1026,9 @@ private:
 ////      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
 ////   }
    ref_t mapMessage(SNode node, ExprScope& scope, bool variadicOne);
+   ref_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags, 
+      IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
+      bool withoutWeakMessages, bool noSignature);
 
    size_t resolveArraySize(SNode node, Scope& scope);
 

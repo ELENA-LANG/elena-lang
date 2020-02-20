@@ -173,7 +173,7 @@ public extension objectOp
 //
 //public extension byteOp : ByteNumber
 //{
-//    HashCode
+//    Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
 //        int get()
@@ -248,7 +248,7 @@ public extension objectOp
 //
 //public extension shortOp : ShortNumber
 //{
-//    HashCode
+//    Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
 //        int get()
@@ -341,27 +341,27 @@ public extension objectOp
 
 public extension intOp : IntNumber
 {
-//    HashCode
-//    {
-//        // Reads the object hash code into the output parameter
-//        int get()
-//        {
-//            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//    
-//    get int Absolute()
-//    {
-//        int n := self;
-//    
-//        if (n < 0)
-//           { n := n * -1 };
-//    
-//        ^ n
-//    }
-//
+    int Hashcode
+    {
+        // Reads the object hash code into the output parameter
+        get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+    
+    get int Absolute()
+    {
+        int n := self;
+    
+        if (n < 0)
+           { n := n * -1 };
+    
+        ^ n
+    }
+
 //    int power(int y)
 //    {
 //        int x := self;
@@ -474,7 +474,7 @@ public extension intOp : IntNumber
 
 //public extension uintOp : UIntNumber
 //{
-//    HashCode
+//    Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
 //        int get()
@@ -490,7 +490,7 @@ public extension intOp : IntNumber
 
 public extension longOp : LongNumber
 {
-//    HashCode
+//    Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
 //        int get()
@@ -604,7 +604,7 @@ public extension longOp : LongNumber
 
 public extension realOp : RealNumber
 {        
-//    HashCode
+//    Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
 //        int get()
@@ -1142,19 +1142,19 @@ public extension realOp : RealNumber
 
 public extension stringOp : String
 {
-//    HashCode
-//    {
-//        /// Reads the object hash code into the output parameter
-//        int get()
-//        {
-//            int len := self.Length;
-//            
-//            int h := extern elenart.core_utf8hashcode(self, len);
-//            
-//            ^ h
-//        }    
-//    }
-//
+    int Hashcode
+    {
+        /// Reads the object hash code into the output parameter
+        get()
+        {
+            int len := self.Length;
+            
+            int h := extern elenart.core_utf8hashcode(self, len);
+            
+            ^ h
+        }    
+    }
+
 ////    indexOf : anObject
 ////        = self indexOf:anObject at:0.
 ////
@@ -1354,7 +1354,7 @@ public extension stringOp : String
 
 public extension wideOp : WideString
 {
-//    HashCode
+//    Hashcode
 //    {
 //        int get()
 //        {
@@ -1666,7 +1666,7 @@ public extension stringWeakOp
 
 public extension charOp : CharValue
 {
-//    HashCode
+//    Hashcode
 //    {
 //        // Reads the object hash code into the output parameter
 //        int get()
