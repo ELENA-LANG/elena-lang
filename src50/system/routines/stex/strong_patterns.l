@@ -1,36 +1,36 @@
-//// --- BasePattern ---
-//
-//// --- Summing ---
-//
-//public StrongSumming<T> : Func<T,object>
-//{
-//    ref<T> result;
-//    
-//    constructor(T defValue)
+// --- BasePattern ---
+
+// --- Summing ---
+
+public StrongSumming<T> : Func<T,object>
+{
+    ref<T> result;
+    
+    constructor(T defValue)
+    {
+        result := defValue
+    }
+
+//    constructor()
 //    {
-//        result := defValue
+//        result := T.Default
 //    }
-//
-////    constructor()
-////    {
-////        result := T.Default
-////    }
-//
-//    run(Enumerator<T> e)
-//    {
-//        super.run(e);
-//        
-//        ^ result.Value
-//    }
-//
-//    object closure(T item)
-//    { 
-//        T val := result.Value;
-//        val := val + item;
-//        
-//        result.Value := val
-//    }
-//}
+
+    run(Enumerator<T> e)
+    {
+        super.run(e);
+        
+        ^ result.Value
+    }
+
+    object function(T item)
+    { 
+        T val := result.Value;
+        val := val + item;
+        
+        result.Value := val
+    }
+}
 
 public StrongFilter<T> : Enumerator<T>
 {
@@ -63,30 +63,30 @@ public StrongFilter<T> : Enumerator<T>
     Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
 
-//// --- StrongSelector ---
-//
-//public StrongSelector<T1, T2> : Enumerator<T2>
-//{
-//    Func<T1,T2> selector;
-//    Enumerator<T1> enumerator;
-//
-//    constructor(Func<T1,T2> selector, Enumerator<T1> enumerator)
-//    {
-//        this selector := selector;
-//        this enumerator := enumerator;
-//    }
-//    
-//    T2 get() = selector(enumerator.get());
-//    
-//    bool next() = enumerator.next();
-//    
-//    reset() => enumerator;
-//    
-//    enumerable() => enumerator;
-//    
-//    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
-//}
-//
+// --- StrongSelector ---
+
+public StrongSelector<T1, T2> : Enumerator<T2>
+{
+    Func<T1,T2> selector;
+    Enumerator<T1> enumerator;
+
+    constructor(Func<T1,T2> selector, Enumerator<T1> enumerator)
+    {
+        this selector := selector;
+        this enumerator := enumerator;
+    }
+    
+    T2 get() = selector(enumerator.get());
+    
+    bool next() = enumerator.next();
+    
+    reset() => enumerator;
+    
+    enumerable() => enumerator;
+    
+    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}
+
 ////// --- StrongJoinEnumerator ---
 ////
 ////public StrongJoinEnumerator<type1, type2, type3> :: Enumerator<type3>

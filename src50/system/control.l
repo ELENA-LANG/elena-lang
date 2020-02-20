@@ -272,13 +272,13 @@ public interface Func<T, TResult>
     Func1 cast()
         = (x => self(x));
     
-//    run(Enumerator<T> e)
-//    {
-//        while(e.next())
-//        {
-//            self(e.get())
-//        }
-//    }
+    run(Enumerator<T> e)
+    {
+        while(e.next())
+        {
+            self(e.get())
+        }
+    }
 }
 
 /// A base two variable function

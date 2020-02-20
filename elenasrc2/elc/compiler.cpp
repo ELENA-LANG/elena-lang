@@ -11564,15 +11564,13 @@ void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, Id
 
    int signIndex = signature.Length();
 
- /*  IdentifierString templateName(node.firstChild(lxTerminalMask).identifier());
+   IdentifierString templateName(node.firstChild(lxTerminalMask).identifier());
    int paramCounter = SyntaxTree::countChild(node, lxType, lxTemplateParam);
 
    templateName.append('#');
-   templateName.appendInt(paramCounter);*/
+   templateName.appendInt(paramCounter);
 
-   ref_t ref = mapTemplateAttribute(node, scope);
-
-      //resolveImplicitIdentifier(scope, templateName.c_str(), false, false);
+   ref_t ref = /*mapTemplateAttribute(node, scope)*/scope.resolveImplicitIdentifier(templateName.c_str(), false, true);
 
    ident_t refName = scope.module->resolveReference(ref);
    if (isWeakReference(refName))

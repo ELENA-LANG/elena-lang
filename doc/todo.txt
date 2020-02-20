@@ -14,6 +14,7 @@ In development:
                 * rosetta code samples : Anagrams
 
               dev - migration
+                * rosetta code samples : Amicable pairs strong typed
                 * Amicable pairs using yield method
                 * migrate changes from core to corex
                 * anagram sample with corex
@@ -29,8 +30,6 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * boxing, unboxing, closure initializing
-
                 * multi-return methods : optimize double assigning
                 * readtof - optimization
                 * translit sample: List should be compiled as constant list
@@ -64,7 +63,7 @@ In development:
                 * test internal / public / private / proteced constructors
                 * public / private / internal properties
                 * direct operations with int constants
-                * comple-time int expression evaluation
+                * boxing, unboxing, closure initializing
                 * boxing byref variable : use intializing, direct assinging after creation without filling with nils
                 * test static fields with singleton
                 * test const fields : override the parent constant value

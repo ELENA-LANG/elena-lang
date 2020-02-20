@@ -48,6 +48,10 @@ public sealed List<T> : Enumerable<T>
         
     constructor(Enumerator<T> e)
     {
+        theCapacity := 16;
+        theLength := 0;
+        theArray := new T[](16);
+        
         self.appendRange(e)        
     }
     
