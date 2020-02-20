@@ -140,11 +140,11 @@ public extension enumerableOp
     forEach(Func1 f)
         = f.run(cast Enumerator(self.enumerator()));
 
-////    forEach(ExtensionMessage anExtMessage)
-////        = self~enumerableOp forEach(:n)(n~anExtMessage eval).
-//        
-//    forEach(fn)
-//        = self.forEach:(n){ fn(n) };
+//    forEach(ExtensionMessage anExtMessage)
+//        = self~enumerableOp forEach(:n)(n~anExtMessage eval).
+        
+    forEach(fn)
+        = self.forEach:(n){ fn(n) };
 
     selectBy(selector)
         = Selector.new(selector, cast Enumerator(self.enumerator()));
