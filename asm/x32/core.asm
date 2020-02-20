@@ -513,17 +513,17 @@ labFixRoot:
 
   // ; free root set
   mov  esp, [esp]
-  pop  edx
+  pop  ecx
   pop  ebp
 
   // ; allocate
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_yg_end]
-  add  edx, eax
-  cmp  edx, ecx
+  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
+  add  ecx, eax
+  cmp  ecx, edx
   jae  labBigAlloc
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   lea  ebx, [eax + elObjectOffset]
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], edx
   ret
 
 labError:
@@ -572,6 +572,12 @@ labBigAlloc:
   jae  labBigAlloc2
   mov  [data : %CORE_GC_TABLE + gc_mg_current], ecx
   lea  ebx, [eax + elObjectOffset]
+
+  mov  ecx, ebx
+  mov  esi, [data : %CORE_GC_TABLE + gc_header]
+  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
+  shr  ecx, page_size_order
+  mov  byte ptr [ecx + esi], 1  
 
   ret  
 
