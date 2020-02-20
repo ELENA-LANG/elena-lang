@@ -1,164 +1,167 @@
-/// Map template
-public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
+namespace collections
 {
-    int theHashMask;
-    
-    List<Tuple<TKey, TValue>> theList;
-    int[][]                   theHashTable; 
-    
-//    value_type     theDefault.
-
-    private init(int capacity, int hashLength)
+    /// Map template
+    public sealed Map<TKey, TValue> : Enumerable<Tuple<TKey, TValue>>
     {
-        theHashMask := hashLength;
+        int theHashMask;
         
-        theHashTable := new int[][](hashLength);
-        theList := new List<Tuple<TKey, TValue>>(capacity);
+        List<Tuple<TKey, TValue>> theList;
+        int[][]                   theHashTable; 
         
-//        theDefault := aDefault.
-    }
-
-    constructor()
-    {
-        self.init(32,37)
-    }
-
-    constructor(int capacity, int hashLength)
-    {
-        self.init(capacity,hashLength)
-    }
+    //    value_type     theDefault.
     
-    private Tuple<TKey, TValue> retrieve(int index, TKey key)
-    {
-        auto backet := theHashTable[index];
-        if (nil == backet)
+        private init(int capacity, int hashLength)
         {
-            backet := new int[](5);
-            backet[0] := 1;
+            theHashMask := hashLength;
             
-            theHashTable[index] := backet
-        };
-        
-        int len := backet[0];
-        for (int i := 1, i < len, i += 1)
+            theHashTable := new int[][](hashLength);
+            theList := new List<Tuple<TKey, TValue>>(capacity);
+            
+    //        theDefault := aDefault.
+        }
+
+        constructor()
         {
-            int j := backet[i];
-            
-            auto item := theList[j];
-            
-            if(key.equal(item.Item1))
-                { ^ item }
-        };
-
-        auto new_item := new Tuple<TKey, TValue>(key);
-
-        int i := theList.Length;
-        theList.append(new_item);
-        
-        // Extend a backet
-        int capacity := backet.Length;
-        if (capacity == len)
+            self.init(32,37)
+        }
+    
+        constructor(int capacity, int hashLength)
         {
-            auto new_backet := new int[](capacity + 4);
-            new_backet.write(0, capacity, backet);
-
-            backet := new_backet;
-            theHashTable[index] := new_backet
-        };
-            
-        backet[len] := i;
-            
-        len += 1;    
-        backet[0] := len;
-
-        ^ new_item                
-    }
-    
-    setAt(TKey key, TValue object)
-    {
-        int code := key.HashCode.Absolute;
-
-        code := code.mod(theHashMask);
+            self.init(capacity,hashLength)
+        }
         
-        auto item := self.retrieve(code, key);
-        
-        item.Item2 := object
-    }
-        
-    TValue at(TKey key)
-    {
-        int code := key.HashCode.Absolute;
-
-        code := code.mod(theHashMask);
-        
-        auto item := self.retrieve(code, key);
-        
-        ^ item.Item2
-    }
-
-    /// Returns a dictionary enumerator
-    Enumerator<Tuple<TKey, TValue>> enumerator() => theList;
-    
-    Array<Tuple<TKey, TValue>> Values = theList.Value;
-
-    get TValue[] MapValues()
-    {
-        auto list := new List<TValue>();
-        auto it := theList.enumerator();
-        while (it.next())
+        private Tuple<TKey, TValue> retrieve(int index, TKey key)
         {
-            list.append(it.get().Item2)
-        };
-        
-        ^ list.Value
-    }
-
-
-//    /// Clones a dictionary
-//    clone 
-//    [
-//        var aList := Dictionary new.
-//
-//        enumerator it := theList enumerator.
-//        while (it next)
-//        [
-//            var anItem := it get.
-//            
-//            aList[anItem key] := anItem value.
-//        ].
-//        
-//        ^ aList.
-//    ]
+            auto backet := theHashTable[index];
+            if (nil == backet)
+            {
+                backet := new int[](5);
+                backet[0] := 1;
+                
+                theHashTable[index] := backet
+            };
+            
+            int len := backet[0];
+            for (int i := 1, i < len, i += 1)
+            {
+                int j := backet[i];
+                
+                auto item := theList[j];
+                
+                if(key.equal(item.Item1))
+                    { ^ item }
+            };
     
-    clear()
-    {
-        theHashTable := new int[][](theHashTable.Length);
-        theList.clear()
-    }
+            auto new_item := new Tuple<TKey, TValue>(key);
     
-    bool containsKey(TKey key)
-    {
-        int index := key.HashCode;
-
-        index := index.mod(theHashMask);
+            int i := theList.Length;
+            theList.append(new_item);
+            
+            // Extend a backet
+            int capacity := backet.Length;
+            if (capacity == len)
+            {
+                auto new_backet := new int[](capacity + 4);
+                new_backet.write(0, capacity, backet);
+    
+                backet := new_backet;
+                theHashTable[index] := new_backet
+            };
+                
+            backet[len] := i;
+                
+            len += 1;    
+            backet[0] := len;
+    
+            ^ new_item                
+        }
         
-        auto backet := theHashTable[index];
-        if (nil == backet)
+        setAt(TKey key, TValue object)
         {
+            int code := key.HashCode.Absolute;
+    
+            code := code.mod(theHashMask);
+            
+            auto item := self.retrieve(code, key);
+            
+            item.Item2 := object
+        }
+            
+        TValue at(TKey key)
+        {
+            int code := key.HashCode.Absolute;
+    
+            code := code.mod(theHashMask);
+            
+            auto item := self.retrieve(code, key);
+            
+            ^ item.Item2
+        }
+    
+        /// Returns a dictionary enumerator
+        Enumerator<Tuple<TKey, TValue>> enumerator() => theList;
+        
+        Array<Tuple<TKey, TValue>> Values = theList.Value;
+    
+        get TValue[] MapValues()
+        {
+            auto list := new List<TValue>();
+            auto it := theList.enumerator();
+            while (it.next())
+            {
+                list.append(it.get().Item2)
+            };
+            
+            ^ list.Value
+        }
+    
+    
+    //    /// Clones a dictionary
+    //    clone 
+    //    [
+    //        var aList := Dictionary new.
+    //
+    //        enumerator it := theList enumerator.
+    //        while (it next)
+    //        [
+    //            var anItem := it get.
+    //            
+    //            aList[anItem key] := anItem value.
+    //        ].
+    //        
+    //        ^ aList.
+    //    ]
+        
+        clear()
+        {
+            theHashTable := new int[][](theHashTable.Length);
+            theList.clear()
+        }
+        
+        bool containsKey(TKey key)
+        {
+            int index := key.HashCode;
+    
+            index := index.mod(theHashMask);
+            
+            auto backet := theHashTable[index];
+            if (nil == backet)
+            {
+                ^ false
+            };
+            
+            int len := backet[0];
+            for (int i := 1, i < len, i += 1)
+            {
+                int j := backet[i];
+                
+                auto item := theList[j];
+                
+                if(key.equal(item.Item1))
+                    { ^ true };
+            };
+            
             ^ false
-        };
-        
-        int len := backet[0];
-        for (int i := 1, i < len, i += 1)
-        {
-            int j := backet[i];
-            
-            auto item := theList[j];
-            
-            if(key.equal(item.Item1))
-                { ^ true };
-        };
-        
-        ^ false
-    }    
+        }    
+    }
 }
