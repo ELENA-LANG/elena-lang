@@ -93,6 +93,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 //      tokens.add("nested_expr", lxNested);
       tokens.add("constattr", lxConstAttr);
       tokens.add("seqexpression", lxSeqExpression);
+      tokens.add("ret_embeddable", lxRetEmbeddableAttr);
    }
 }
 

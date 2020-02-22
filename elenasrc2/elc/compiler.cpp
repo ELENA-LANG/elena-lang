@@ -3705,6 +3705,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
                ObjectInfo tempVar = allocateResult(scope, expectedRef);
                if (tempVar.kind == okLocalAddress) {
                   opNode.appendNode(lxLocalAddress, tempVar.param);
+                  opNode.appendNode(lxRetEmbeddableAttr);
 
                   opNode.setArgument(byRefMessageRef);
                   opNode.injectAndReplaceNode(lxSeqExpression);
@@ -9878,7 +9879,7 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
    else scope.raiseError(errInvalidBoxing, node);
 }
 
-bool Compiler :: optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode)
+bool Compiler :: optimizeEmbeddable(_ModuleScope& scope, SNode& node/*, bool argMode*/)
 {
    bool applied = false;
 
@@ -10400,13 +10401,67 @@ bool Compiler :: optimizeConstProperty(_ModuleScope& scope, SNode& node)
    return false;
 }
 
+inline void commetNode(SNode& node)
+{
+   node = lxIdle;
+   SNode parent = node.parentNode();
+   while (parent == lxExpression) {
+      parent = lxIdle;
+
+      parent = parent.parentNode();
+   }
+}
+
+bool Compiler :: optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node)
+{
+   SNode callNode = node.parentNode();
+   SNode seqNode = callNode.parentNode();
+   while (seqNode == lxExpression)
+      seqNode = seqNode.parentNode();
+
+   if (seqNode != lxSeqExpression)
+      return false;
+
+   SNode copyNode = seqNode.parentNode();
+   while (copyNode == lxExpression)
+      copyNode = copyNode.parentNode();
+
+   SNode src = copyNode.findSubNodeMask(lxObjectMask);
+   if (src.type != lxLocalAddress) {
+      node = lxIdle;
+
+      return false;
+   }      
+
+   SNode temp = callNode.lastChild(lxObjectMask);
+   if (temp == lxExpression)
+      temp = temp.findSubNodeMask(lxObjectMask);
+   SNode seqRes = seqNode.lastChild(lxObjectMask);
+   if (seqRes == lxExpression)
+      seqRes = seqRes.findSubNodeMask(lxObjectMask);
+
+   if (temp == lxLocalAddress && compareNodes(seqRes, temp)) {
+      temp.setArgument(src.argument);
+      seqRes.setArgument(src.argument);
+
+      commentNode(src);
+      copyNode = lxExpression;
+
+      node = lxIdle;
+
+      return true;
+   }
+
+   return false;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
       case 1:
          return optimizeConstProperty(scope, node);
       case 2:
-         return optimizeEmbeddableReturn(scope, node, false);
+         return optimizeEmbeddable(scope, node/*, false*/);
       case 3:
          return optimizeEmbeddableCall(scope, node);
       case 4:
@@ -10415,7 +10470,9 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeConstantAssigning(scope, node);
       case 6:
          return optimizeOpDoubleAssigning(scope, node);
-//      case 4:
+      case 7:
+         return optimizeCallDoubleAssigning(scope, node);
+         //      case 4:
 //         return optimizeEmbeddableReturn(scope, node, true);
 //      case 5:
 //         return optimizeAssigningBoxing(scope, node);

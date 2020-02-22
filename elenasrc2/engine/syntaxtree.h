@@ -252,6 +252,7 @@ enum LexicalType
    lxBinarySelf               = 0x000F24, // debug info only
    lxStatConstRef             = 0x000F25, 
    lxStatIndex                = 0x000F26,
+   lxRetEmbeddableAttr        = 0x000F27,
 };
 
 // --- SyntaxTree ---

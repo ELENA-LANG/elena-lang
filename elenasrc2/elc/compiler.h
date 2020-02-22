@@ -1265,9 +1265,10 @@ private:
    bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
    bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
    bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
-   bool optimizeEmbeddableReturn(_ModuleScope& scope, SNode& node, bool argMode);
+   bool optimizeEmbeddable(_ModuleScope& scope, SNode& node/*, bool argMode*/);
    bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
-//   bool optimizeAssigningBoxing(_ModuleScope& scope, SNode& node);
+   bool optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node);
+   //   bool optimizeAssigningBoxing(_ModuleScope& scope, SNode& node);
 //   void optimizeBoxing(_ModuleScope& scope, SNode& node);
    bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
 //   bool optimizeStacksafeCall(_ModuleScope& scope, SNode& node);

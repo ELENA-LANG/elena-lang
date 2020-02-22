@@ -30,8 +30,6 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * multi-return methods : optimize double assigning
-
                 * readtof - optimization
                 * translit sample: List should be compiled as constant list
                 * simplify the operations with struct fields (size=1,2,4,8,...)
