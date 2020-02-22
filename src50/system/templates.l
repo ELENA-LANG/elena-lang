@@ -60,17 +60,17 @@ public interface<T>
 //        ^ __name
 //    }    
 //}
-//
-//property rprop<T, __name>
-//{
-//    T __name;
-//    
-//    get T __name()
-//    {
-//        ^ __name
-//    }    
-//}
-//
+
+#property rprop<T, __name>
+{
+    field;
+    
+    get()
+    {
+        ^ __name
+    }    
+}
+
 //inline dto<__name>
 //{
 //    this __dto_properties += subjconst __name;
