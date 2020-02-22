@@ -30,7 +30,10 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * readtof - optimization
+                * readtof, copytoai, move, moveto 
+
+                * copying 4,8,1,2 bytes
+                * fillr / fillri - optimized version for 1,2,3 dwords
                 * simplify the operations with struct fields (size=1,2,4,8,...)
                 * optimization : saving byte or word 
                 * optimization : saving dword or qword 
@@ -105,10 +108,8 @@ In development:
                 * static methods : multimethods
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
                 * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
-                * copying 4,8,1,2 bytes
                 * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
                   possible values)
-                * copytoai,fillri - optimized version for 1,2,3 dwords
                 * copying  a buffer with unaligned size
                 * auto conversion methods should be marked as idle
                 * boxArgument - fieldexpr should be better mapped

@@ -2432,6 +2432,54 @@ inline % 0DDh
 
 end
 
+inline % 01DDh
+
+  lea  esi, [ebx + __arg1]
+  mov  edi, [esp]
+  mov  eax, [esi]
+  mov  [edi], eax
+
+end
+
+inline % 02DDh
+
+  lea  esi, [ebx + __arg1]
+  mov  edi, [esp]
+  mov  eax, [esi]
+  mov  [edi], eax
+  mov  ecx, [esi+4]
+  mov  [edi+4], ecx
+
+end
+
+inline % 03DDh
+
+  lea  esi, [ebx + __arg1]
+  mov  edi, [esp]
+  mov  eax, [esi]
+  mov  [edi], eax
+  mov  ecx, [esi+4]
+  mov  [edi+4], ecx
+  mov  eax, [esi+8]
+  mov  [edi+8], eax
+
+end
+
+inline % 04DDh
+
+  lea  esi, [ebx + __arg1]
+  mov  edi, [esp]
+  mov  eax, [esi]
+  mov  [edi], eax
+  mov  ecx, [esi+4]
+  mov  [edi+4], ecx
+  mov  eax, [esi+8]
+  mov  [edi+8], eax
+  mov  ecx, [esi+12]
+  mov  [edi+12], ecx
+
+end
+
 // ; move
 inline % 0DEh
 
@@ -3136,6 +3184,50 @@ inline % 0E4h
 
 end
 
+inline % 1E4h
+
+  mov  edi, [ebp + __arg1]
+  mov  eax, [ebx]
+  mov  [edi], eax
+
+end
+
+inline % 2E4h
+
+  mov  edi, [ebp + __arg1]
+  mov  eax, [ebx]
+  mov  ecx, [ebx+4]
+  mov  [edi], eax
+  mov  [edi+4], ecx
+
+end
+
+inline % 3E4h
+
+  mov  edi, [ebp + __arg1]
+  mov  eax, [ebx]
+  mov  ecx, [ebx+4]
+  mov  [edi], eax
+  mov  esi, [ebx+8]
+  mov  [edi+4], ecx
+  mov  [edi+8], esi
+
+end
+
+inline % 4E4h
+
+  mov  edi, [ebp + __arg1]
+  mov  eax, [ebx]
+  mov  ecx, [ebx+4]
+  mov  [edi], eax
+  mov  esi, [ebx+8]
+  mov  [edi+4], ecx
+  mov  eax, [ebx+12]
+  mov  [edi+8], esi
+  mov  [edi+12], eax
+
+end
+
 // ; copytof (__arg1 - index, __arg2 - n)
 inline % 0E5h
 
@@ -3204,6 +3296,50 @@ inline % 0E6h
 
 end
 
+inline % 01E6h
+
+  mov  esi, [ebp + __arg1]
+  mov  eax, [esi]
+  mov  [ebx], eax
+
+end
+
+inline % 02E6h
+
+  mov  esi, [ebp + __arg1]
+  mov  eax, [esi]
+  mov  [ebx], eax
+  mov  ecx, [esi+4]
+  mov  [ebx+4], ecx
+
+end
+
+inline % 03E6h
+
+  mov  esi, [ebp + __arg1]
+  mov  eax, [esi]
+  mov  [ebx], eax
+  mov  ecx, [esi+4]
+  mov  [ebx+4], ecx
+  mov  eax, [esi+8]
+  mov  [ebx+8], eax
+
+end
+
+inline % 04E6h
+
+  mov  esi, [ebp + __arg1]
+  mov  eax, [esi]
+  mov  [ebx], eax
+  mov  ecx, [esi+4]
+  mov  [ebx+4], ecx
+  mov  eax, [esi+8]
+  mov  [ebx+8], eax
+  mov  ecx, [esi+12]
+  mov  [ebx+8], ecx
+
+end
+
 // ; copyf (__arg1 - index, __arg2 - n)
 inline % 0E7h
 
@@ -3211,6 +3347,50 @@ inline % 0E7h
   lea  esi, [ebp + __arg1]
   mov  edi, ebx
   rep  movsd
+
+end
+
+inline % 01E7h
+
+  lea  esi, [ebp + __arg1]
+  mov  eax, [esi]
+  mov  [ebx], eax
+
+end
+
+inline % 02E7h
+
+  lea  esi, [ebp + __arg1]
+  mov  eax, [esi]
+  mov  [ebx], eax
+  mov  ecx, [esi+4]
+  mov  [ebx+4], ecx
+
+end
+
+inline % 03E7h
+
+  lea  esi, [ebp + __arg1]
+  mov  eax, [esi]
+  mov  [ebx], eax
+  mov  ecx, [esi+4]
+  mov  [ebx+4], ecx
+  mov  eax, [esi+8]
+  mov  [ebx+8], eax
+
+end
+
+inline % 04E7h
+
+  lea  esi, [ebp + __arg1]
+  mov  eax, [esi]
+  mov  [ebx], eax
+  mov  ecx, [esi+4]
+  mov  [ebx+4], ecx
+  mov  eax, [esi+8]
+  mov  [ebx+8], eax
+  mov  ecx, [esi+12]
+  mov  [ebx+12], ecx
 
 end
 
