@@ -102,7 +102,7 @@ const int gcCommands[gcCommandNumber] =
    bcMul, bcXOr, bcPeek, bcSwap,
 };
 
-const int gcCommandExNumber = 42;
+const int gcCommandExNumber = 54;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
@@ -117,6 +117,9 @@ const int gcCommandExs[gcCommandExNumber] =
    bcCopyFI + 0x100, bcCopyFI + 0x200, bcCopyFI + 0x300, bcCopyFI + 0x400,
    bcCopyF + 0x100, bcCopyF + 0x200, bcCopyF + 0x300, bcCopyF + 0x400,
    bcCopyAI + 0x100, bcCopyAI + 0x200, bcCopyAI + 0x300, bcCopyAI + 0x400,
+   bcCopyToAI + 0x100, bcCopyToAI + 0x200, bcCopyToAI + 0x300, bcCopyToAI + 0x400,
+   bcMove + 0x100, bcMove + 0x200, bcMove + 0x300, bcMove + 0x400,
+   bcMoveTo + 0x100, bcMoveTo + 0x200, bcMoveTo + 0x300, bcMoveTo + 0x400,
 };
 
 // command table
@@ -162,9 +165,9 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileNop, &loadFPOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &compileNop, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
-   &loadROp, &compileDShiftN, &loadNOp, &compileNop, &loadIndexNOp, &loadIndexN4OpX, &loadNNOp, &loadNNOp,
+   &loadROp, &compileDShiftN, &loadNOp, &compileNop, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,
 
-   &loadFPN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexNOp, &loadFPN4OpX, &loadFPN4OpX, &loadFPN4OpX, &loadFPN4OpX,
+   &loadFPN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexN4OpX, &loadFPN4OpX, &loadFPN4OpX, &loadFPN4OpX, &loadFPN4OpX,
    &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &compileNop, &loadFPNOp, &loadFPNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileLessN,
@@ -731,6 +734,69 @@ void _ELENA_::loadNNOp(int opcode, x86JITScope& scope)
       count--;
    }
    scope.code->seekEOF();
+}
+
+void _ELENA_::loadNNOpX(int opcode, x86JITScope& scope, int prefix)
+{
+   int arg2 = scope.tape->getDWord();
+
+   char* code = NULL;
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      if (gcCommandExs[i] == opcode + prefix) {
+         code = (char*)scope.compiler->_inlineExs[i];
+         break;
+      }
+   }
+
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(scope.argument);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadNNOpX(int opcode, x86JITScope& scope)
+{
+   pos_t pos = scope.tape->Position();
+   int arg2 = scope.tape->getDWord();
+   scope.tape->seek(pos);
+
+   switch (arg2) {
+      case 1:
+         loadNNOpX(opcode, scope, 0x100);
+         break;
+      case 2:
+         loadNNOpX(opcode, scope, 0x200);
+         break;
+      case 4:
+         loadNNOpX(opcode, scope, 0x300);
+         break;
+      case 8:
+         loadNNOpX(opcode, scope, 0x400);
+         break;
+      default:
+         loadNNOp(opcode, scope);
+         break;
+   }
 }
 
 void _ELENA_::loadOneByteLOp(int opcode, x86JITScope& scope)

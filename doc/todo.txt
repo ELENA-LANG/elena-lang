@@ -30,7 +30,7 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * readtof, copytoai, move, moveto 
+                * move, moveto 
 
                 * copying 4,8,1,2 bytes
                 * fillr / fillri - optimized version for 1,2,3 dwords

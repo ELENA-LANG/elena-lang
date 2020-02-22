@@ -2490,6 +2490,45 @@ inline % 0DEh
 
 end
 
+// ; move
+inline % 01DEh
+
+  lea esi, [ebx+__arg1]
+  mov edi, [esp]
+  mov eax, [esi]
+  mov byte ptr [edi], al
+
+end
+
+inline % 02DEh
+
+  lea esi, [ebx+__arg1]
+  mov edi, [esp]
+  mov eax, [esi]
+  mov word ptr [edi], ax
+
+end
+
+inline % 03DEh
+
+  lea esi, [ebx+__arg1]
+  mov edi, [esp]
+  mov eax, [esi]
+  mov [edi], eax
+
+end
+
+inline % 04DEh
+
+  lea esi, [ebx+__arg1]
+  mov edi, [esp]
+  mov eax, [esi]
+  mov [edi], eax
+  mov ecx, [esi+4]
+  mov [edi+4], ecx
+
+end
+
 // ; moveto
 inline % 0DFh
 
@@ -2497,6 +2536,44 @@ inline % 0DFh
   mov ecx, __arg2
   mov esi, [esp]
   rep movsb
+
+end
+
+inline % 01DFh
+
+  mov esi, [esp]
+  lea edi, [ebx+__arg1]
+  mov eax, [esi] 
+  mov byte ptr [edi], al
+
+end
+
+inline % 02DFh
+
+  mov esi, [esp]
+  lea edi, [ebx+__arg1]
+  mov eax, [esi] 
+  mov word ptr [edi], ax
+
+end
+
+inline % 03DFh
+
+  mov esi, [esp]
+  lea edi, [ebx+__arg1]
+  mov eax, [esi] 
+  mov [edi], eax
+
+end
+
+inline % 04DFh
+
+  mov esi, [esp]
+  lea edi, [ebx+__arg1]
+  mov eax, [esi] 
+  mov [edi], eax
+  mov ecx, [esi+4] 
+  mov [edi+4], ecx
 
 end
 
@@ -3016,40 +3093,39 @@ end
 // ; readtof (__arg1 - index, __arg2 - n)
 inline % 2E0h
 
-  mov  ecx, __arg2	
+  mov  ecx, [ebx+edx]
   lea  edi, [ebp + __arg1]
-  lea  esi, [ebx+edx]
-  rep  movsd
+  mov  dword ptr [edi], ecx
+  mov  eax, [ebx+edx+4]
+  mov  dword ptr [edi+4], eax
 
 end
 
 // ; readtof (__arg1 - index, __arg2 - n)
 inline % 3E0h
 
-  mov  ecx, __arg2	
+  mov  ecx, [ebx+edx]
   lea  edi, [ebp + __arg1]
-  lea  esi, [ebx+edx]
-  rep  movsd
+  mov  dword ptr [edi], ecx
+  mov  eax, [ebx+edx+4]
+  mov  dword ptr [edi+4], eax
+  mov  ecx, [ebx+edx+8]
+  mov  dword ptr [edi+8], ecx
 
 end
 
 // ; readtof (__arg1 - index, __arg2 - n)
 inline % 4E0h
 
-  mov  ecx, __arg2	
+  mov  ecx, [ebx+edx]
   lea  edi, [ebp + __arg1]
-  lea  esi, [ebx+edx]
-  rep  movsd
-
-end
-
-// ; readtof (__arg1 - index, __arg2 - n)
-inline % 5E0h
-
-  mov  ecx, __arg2	
-  lea  edi, [ebp + __arg1]
-  lea  esi, [ebx+edx]
-  rep  movsd
+  mov  dword ptr [edi], ecx
+  mov  eax, [ebx+edx+4]
+  mov  dword ptr [edi+4], eax
+  mov  ecx, [ebx+edx+8]
+  mov  dword ptr [edi+8], ecx
+  mov  eax, [ebx+edx+12]
+  mov  dword ptr [edi+12], eax
 
 end
 
@@ -3171,6 +3247,54 @@ inline % 0E3h
   lea  edi, [ebx + __arg1]
   mov  esi, [esp]
   rep  movsd
+
+end
+
+inline % 01E3h
+
+  mov  esi, [esp]
+  lea  edi, [ebx + __arg1]
+  mov  eax, [esi]
+  mov  [edi], eax
+
+end
+
+inline % 02E3h
+
+  mov  esi, [esp]
+  lea  edi, [ebx + __arg1]
+  mov  eax, [esi]
+  mov  [edi], eax
+  mov  ecx, [esi+4]
+  mov  [edi+4], ecx
+
+end
+
+inline % 03E3h
+
+  mov  esi, [esp]
+  lea  edi, [ebx + __arg1]
+  mov  eax, [esi]
+  mov  [edi], eax
+  mov  ecx, [esi+4]
+  mov  [edi+4], ecx
+  mov  eax, [esi+8]
+  mov  [edi+8], eax
+
+end
+
+inline % 04E3h
+
+  mov  esi, [esp]
+  lea  edi, [ebx + __arg1]
+  mov  eax, [esi]
+  mov  [edi], eax
+  mov  ecx, [esi+4]
+  mov  [edi+4], ecx
+  mov  eax, [esi+8]
+  mov  [edi+8], eax
+  mov  ecx, [esi+12]
+  mov  [edi+12], ecx
 
 end
 
