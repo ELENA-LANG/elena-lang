@@ -7,10 +7,14 @@ public sealed class Integer : BaseVariable, ref<int>
     {
         value := n
     }
-    
-    constructor new()
+
+    constructor()
     {
         value := 0
+    }
+            
+    constructor new()
+    {
     }
     
 ////    constructor new : n

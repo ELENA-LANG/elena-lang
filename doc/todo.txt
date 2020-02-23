@@ -9,8 +9,9 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
-              dev - migration
-                * rosetta code samples : Arithmetic/Integer
+              dev - rosetta code samples
+                * Array concatenation
+                * Array length
 
               dev - migration
                 * rosetta code samples : Anagrams
@@ -30,13 +31,7 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * move, moveto 
-
-                * copying 4,8,1,2 bytes
                 * fillr / fillri - optimized version for 1,2,3 dwords
-                * simplify the operations with struct fields (size=1,2,4,8,...)
-                * optimization : saving byte or word 
-                * optimization : saving dword or qword 
                 * read / write byte, short - without AND operation
                 * double boxing - n * (m + k), n,m,k - local integers
                 * i + j (assinging, passing to a function)
@@ -45,7 +40,10 @@ In development:
                 * i + j * 2 (assinging, passing to a function)
                 * optimize pi sample ( < 5s )
 
-
+                * optimization : saving byte or word 
+                * optimization : saving dword or qword 
+                * simplify the operations with struct fields (size=1,2,4,8,...)
+                * copying 4,8,1,2 bytes
                 * translit sample: List should be compiled as constant list
                 * resolving byref template - cache the resolved results
                 * conditional boxing of arguments and self
