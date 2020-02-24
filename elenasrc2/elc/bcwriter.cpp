@@ -6134,7 +6134,7 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
       tape.write(bcClone, source.argument, bpFrame);
       releaseStack(tape);
    }
-   //else throw InternalError("Not yet implemented"); // !! temporal
+   else throw InternalError("Not yet implemented"); // !! temporal
 }
 
 void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)

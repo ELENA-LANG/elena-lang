@@ -10,8 +10,6 @@ In development:
                 * compile hello world
 
               dev - int array boxing
-                * uncomment generateCloningExpression
-                * assigning
                 * unboxing
 
               dev - variadic arguments
@@ -52,6 +50,10 @@ In development:
                 * i + j * 2 (assinging, passing to a function)
                 * optimize pi sample ( < 5s )
 
+              dev - implementation
+                * fixed-size array boxing (system'io'WIN32_FIND_DATA)
+
+              dev - test / optimization
                 * boxing an array, assinging to the local variable - get rid of double assigning
                 * optimization : saving byte or word 
                 * optimization : saving dword or qword 
