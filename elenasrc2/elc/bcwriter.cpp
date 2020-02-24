@@ -5699,14 +5699,27 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
    if (source == lxExpression)
       source = source.findSubNodeMask(lxObjectMask);
 
+   if (target == lxExpression)
+      target = target.findSubNodeMask(lxObjectMask);
+
    if (source.compare(lxLocalAddress, lxBlockLocalAddr)) {
       if (source.firstChild() == lxBreakpoint) {
          translateBreakpoint(tape, source.firstChild(), scope);
       }
 
-      generateObject(tape, target, scope);
+      if (target == lxCreatingStruct && target.argument == -1) {
+         generateObject(tape, source, scope, STACKOP_MODE);
 
-      tape.write(bcCloneF, source.argument, bpFrame);
+         tape.write(bcXCreate, target.findChild(lxType).argument | mskVMTRef);
+
+         tape.write(bcClone, source.argument, bpFrame);
+         releaseStack(tape);
+      }
+      else {
+         generateObject(tape, target, scope);
+
+         tape.write(bcCloneF, source.argument, bpFrame);
+      }
    }
    else if (source.compare(lxLocal, lxTempLocal)) {
       if (source.firstChild() == lxBreakpoint) {
@@ -5715,7 +5728,7 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
 
       generateObject(tape, source, scope, STACKOP_MODE);
 
-      if (target == lxCreatingStruct && !target.argument) {
+      if (target == lxCreatingStruct && target.argument == -1) {
          tape.write(bcXCreate, target.findChild(lxType).argument | mskVMTRef);
       }
       else generateObject(tape, target, scope);
