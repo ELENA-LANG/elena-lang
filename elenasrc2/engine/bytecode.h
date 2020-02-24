@@ -214,8 +214,7 @@ enum ByteCode
 
    bcFreeI           = 0xD0,
    bcAllocI          = 0xD1, 
-//   bcNReadI          = 0xD1,
-//   bcSCopyF          = 0xD2,
+   bcXCreate         = 0xD2,
    bcMovV            = 0xD3,
    bcShl             = 0xD4,
    bcAnd             = 0xD5,
@@ -225,7 +224,6 @@ enum ByteCode
    bcShr             = 0xD9,
    bcXOr             = 0xDA,
 
-//   bcMulN            = 0xDA,
    bcXSaveAI         = 0xDC,
    bcCopyAI          = 0xDD,
    bcMove            = 0xDE,
@@ -466,6 +464,7 @@ public:
          case bcVCallRM:
          //case bcBLoadR:
          case bcCreate:
+         case bcXCreate:
          case bcCreateN:
          case bcCoalesceR:
          case bcXSelectR:

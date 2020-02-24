@@ -520,6 +520,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcMovR:
          case bcCreate:
          //case bcBCopyR:
+         case bcXCreate:
          case bcPushR:
             compileRCommand(opcode, token, writer, binary);
             break;

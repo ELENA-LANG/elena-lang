@@ -9,6 +9,14 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
+              dev - int array boxing
+                * uncomment generateCloningExpression
+                * assigning
+                * unboxing
+
+              dev - variadic arguments
+                * console.printLine(Ops.sum(1,2)); where sum is variadic method
+
               dev - int array dispatching
                 * weak dispatching
                 * strong-typed dispatching
@@ -44,6 +52,7 @@ In development:
                 * i + j * 2 (assinging, passing to a function)
                 * optimize pi sample ( < 5s )
 
+                * boxing an array, assinging to the local variable - get rid of double assigning
                 * optimization : saving byte or word 
                 * optimization : saving dword or qword 
                 * simplify the operations with struct fields (size=1,2,4,8,...)
@@ -120,6 +129,9 @@ In development:
                 * stack allocates classes should clear its body
                 * assigning struct field with int constant
                 * int operation : 1 + i
+
+              dev - usability
+                * compile single file project
 
               dev - elena50
                 * external code : long, real ret value
@@ -466,8 +478,6 @@ Pipeline:
                  * (#378) support Stackoverflow / OutOfMemory exception, reduce the maximal heap size in callstack
                  * lazy::(console.write("Reading a number:").readLine().toInt()) should generate an error?
 
-                 * direct,mixin should use the special syntax, get rid of hotfix in compileExpression
-                 * property attribute - can be only the top most token
                  * no need to box variadic argument list for template opertions
                  * array operation with Array<type> should be resolved directly (an array is embeddable)
                  * syntax : template should be the last token in expression and one before the last for declaration

@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   59
+#define REVISION_VERSION   60
 
 using namespace _ELENA_;
 
@@ -625,6 +625,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCreate:
       case bcFillR:
       case bcCoalesceR:
+      case bcXCreate:
 //      case bcBCopyR:
          printCommand(command, opcode);
          printReference(command, module, argument);

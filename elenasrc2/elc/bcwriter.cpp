@@ -599,8 +599,7 @@ void ByteCodeWriter :: clearDynamicObject(CommandTape& tape)
 
 void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference)
 {
-   // loadsi 0
-   // creater
+   // create
    tape.write(bcCreate, reference | mskVMTRef);
 }
 
@@ -6120,6 +6119,22 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
 
       tape.write(bcCloneF, source.argument, bpFrame);
    }
+   else if (source.compare(lxLocal, lxTempLocal)) {
+      if (source.firstChild() == lxBreakpoint) {
+         translateBreakpoint(tape, source.firstChild(), scope);
+      }
+
+      generateObject(tape, source, scope, STACKOP_MODE);
+
+      if (target == lxCreatingStruct && !target.argument) {
+         tape.write(bcXCreate, target.findChild(lxType).argument | mskVMTRef);
+      }
+      else generateObject(tape, target, scope);
+
+      tape.write(bcClone, source.argument, bpFrame);
+      releaseStack(tape);
+   }
+   //else throw InternalError("Not yet implemented"); // !! temporal
 }
 
 void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
@@ -6755,11 +6770,11 @@ void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node
       clearObject(tape, size);
    }
    else if (node == lxCreatingStruct) {
-      /*if (size < 0) {
-         loadObject(tape, lxClassSymbol, target.argument, scope, 0);
-         newDynamicStructure(tape, -size);
+      if (size < 0) {
+         // NOTE : in normal case this code should never be reached
+         throw InternalError("Invalid creation operation");
       }
-      else */newStructure(tape, size, target.argument);
+      else newStructure(tape, size, target.argument);
    }
 
    scope.clear();

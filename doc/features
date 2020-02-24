@@ -22,13 +22,14 @@ Declarations
     Static Methods
       * inheritable : cannot be overriden, accessible in all parent class
     Methods
-      * Visibility : private / protected / internal ones
+      * Visibility : private / protected / internal ones +
       * returning types +
       * Multimethods
-        - variadic
         - implcit default +
         - explcit default +
         - multi-return
+      * variadic
+      * byref args
       * resend
       * dispatch
       * ret expression +

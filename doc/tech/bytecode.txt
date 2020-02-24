@@ -119,9 +119,9 @@ ELENA byte codes (or ecodes)
 
  Memory operations:
  -----------------
- clone i                    - copy [acc] << [esp], acc.Length bytes ; NOTE : should support a reference array as well
+ clone                      - copy [acc] << [esp], acc.Length bytes ; NOTE : should support a primitive reference array as well
 
- clonef i                   - copy [acc] << fp+i, acc.Length bytes ; NOTE : should support a reference array as well
+ clonef i                   - copy [acc] << fp+i, acc.Length bytes ; NOTE : should support a primitive reference array as well
 
  copyf  i, n                - copy [acc] << fp+i, n*4-bytes
 
@@ -158,6 +158,8 @@ ELENA byte codes (or ecodes)
  move n1, n2                - copy acc + n1 => [sp], n2-bytes
 
  moveto n1, n2              - copy [sp] => acc + n1, n2-bytes
+
+ xcreate r                  - create the object with size=[esp].Size, out : acc, index is affected
 
 
  Arithmeric operations:

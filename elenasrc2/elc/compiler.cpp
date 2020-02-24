@@ -9558,169 +9558,6 @@ int Compiler :: allocateStructure(SNode node, int& size)
    return offset;
 }
 
-//bool Compiler :: optimizeNestedExpression(_ModuleScope& scope, SNode& node)
-//{
-//   // check if the nested collection can be treated like constant one
-//   bool constant = true;
-//   ref_t memberCounter = 0;
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxMember) {
-//         SNode object = current.findSubNodeMask(lxObjectMask);
-//         switch (object.type) {
-//            case lxConstantChar:
-//            //case lxConstantClass:
-//            case lxConstantInt:
-//            case lxConstantLong:
-//            case lxConstantList:
-//            case lxConstantReal:
-//            case lxConstantString:
-//            case lxConstantWideStr:
-//            case lxConstantSymbol:
-//               break;
-//            case lxNested:
-//               optimizeNestedExpression(scope, object);
-//               object.refresh();
-//               if (object != lxConstantList)
-//                  constant = false;
-//
-//               break;
-//            case lxUnboxing:
-//               current = lxOuterMember;
-//               constant = false;
-//               break;
-//            default:
-//               constant = false;
-//               break;
-//         }
-//         memberCounter++;
-//      }
-//      else if (current == lxOuterMember) {
-//         // nested class with outer member must not be constant
-//         constant = false;
-//      }
-//      else if (current == lxOvreriddenMessage) {
-//         constant = false;
-//      }
-//      current = current.nextNode();
-//   }
-//
-//   if (node.argument != memberCounter)
-//      constant = false;
-//
-//   // replace with constant array if possible
-//   if (constant && memberCounter > 0) {
-//      ref_t reference = scope.mapAnonymous();
-//
-//      node = lxConstantList;
-//      node.setArgument(reference | mskConstArray);
-//
-//      _writer.generateConstantList(node, scope.module, reference);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//inline int incMethodAllocated(SNode node)
-//{
-//   int arg = 0;
-//   while (!node.compare(lxClassMethod, lxNone))
-//      node = node.parentNode();
-//
-//   if (node != lxNone) {
-//      SNode allocNode = node.findChild(lxAllocated);
-//      if (allocNode != lxNone) {
-//         arg = allocNode.argument + 1;
-//
-//         allocNode.setArgument(arg);
-//      }
-//   }
-//
-//   return arg;
-//}
-//
-//bool Compiler :: analizeParameterBoxing(SNode node, int& counter, Map<Attribute, int>& boxed, Map<int, int>& tempLocals)
-//{
-//   bool applied = false;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxNested) {
-//         applied |= analizeParameterBoxing(current, counter, boxed, tempLocals);
-//      }
-//      else if (current.compare(lxOuterMember, lxMember)) {
-//         counter++;
-//
-//         SNode boxNode = current.findChild(lxBoxing);
-//         if (boxNode != lxNone) {
-//            SNode objNode = boxNode.firstChild(lxObjectMask);
-//
-//            // COMPILER MAGIC : merging duplicate boxings into the single one
-//            int key = boxed.get(Attribute(objNode.type, objNode.argument));
-//            if (!key) {
-//               boxed.add(Attribute(objNode.type, objNode.argument), counter);
-//            }
-//            else {
-//               applied = true;
-//
-//               int tempLocal = tempLocals.get(key);
-//               if (!tempLocal) {
-//                  tempLocal = incMethodAllocated(node);
-//
-//                  tempLocals.add(key, tempLocal + 1);
-//               }
-//
-//               boxNode.set(lxLocal, tempLocal + 1);
-//               current.set(lxMember, current.argument);
-//            }
-//         }
-//         else if (current == lxOuterMember) {
-//            SNode objNode = current.firstChild(lxObjectMask);
-//
-//            // COMPILER MAGIC : add check label, to resolve race conditions
-//            int key = boxed.get(Attribute(objNode.type, objNode.argument));
-//            if (!key) {
-//               int tempLocal = incMethodAllocated(node);
-//
-//               boxed.add(Attribute(objNode.type, objNode.argument), tempLocal + 1);
-//               tempLocals.add(tempLocal + 1, counter);
-//            }
-//            else {
-//               applied = true;
-//
-//               int tempLocal = tempLocals.get(key);
-//               if (!tempLocal) {
-//                  tempLocal = incMethodAllocated(node);
-//
-//                  tempLocals.add(key, tempLocal + 1);
-//               }
-//
-//               objNode.set(lxLocal, tempLocal + 1);
-//               current.setArgument(current.argument);
-//            }
-//         }
-//         else {
-//            SNode objNode = current.firstChild(lxObjectMask);
-//            if (objNode != lxNone) {
-//               // COMPILER MAGIC : add check label, to resolve race conditions
-//               int key = boxed.get(Attribute(objNode.type, objNode.argument));
-//               if (!key) {
-//                  int tempLocal = incMethodAllocated(node);
-//
-//                  boxed.add(Attribute(objNode.type, objNode.argument), tempLocal + 1);
-//                  tempLocals.add(tempLocal + 1, counter);
-//               }
-//            }
-//         }
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   return applied;
-//}
-
 inline SNode injectRootSeqExpression(SNode& parent)
 {
    SNode current;
@@ -9791,7 +9628,7 @@ void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope
    SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
 
    // saving index
-      // inject copying to the boxed object if it is a structure
+   // inject copying to the boxed object if it is a structure
    SNode copyingNode = objNode;
    copyingNode.injectAndReplaceNode(lxSaving, size);
 
@@ -9815,34 +9652,36 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
       if (isPrimitiveRef(typeRef))
          typeRef = resolvePrimitiveReference(scope, typeRef, 0, false);
 
-      // inject creating a boxed object
-      SNode assigningNode = current.insertNode(lxAssigning);
-      assigningNode.appendNode(tempType, tempLocal);
+      if (variadic || size >= 0) {
+         // inject creating a boxed object
+         SNode assigningNode = current.insertNode(lxAssigning);
+         assigningNode.appendNode(tempType, tempLocal);
 
-      if (localBoxingMode) {
-         // inject local boxed object
-         ObjectInfo tempBuffer;
-         allocateTempStructure(scope, size, false, tempBuffer);
+         if (localBoxingMode) {
+            // inject local boxed object
+            ObjectInfo tempBuffer;
+            allocateTempStructure(scope, size, false, tempBuffer);
 
-         assigningNode.appendNode(lxLocalAddress, tempBuffer.param);
-      }
-      else {
-         SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
-         if (variadic) {
-            int tempSizeLocal = scope.newTempLocalAddress();
-            SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, LEN_OPERATOR_ID);
-            sizeSetNode.appendNode(lxLocalAddress, tempSizeLocal);
-            sizeSetNode.appendNode(objNode.type, objNode.argument);
-
-            newNode.set(lxNewArrOp, typeRef);
-            newNode.appendNode(lxSize, 0);
-            newNode.appendNode(lxLocalAddress, tempSizeLocal);
+            assigningNode.appendNode(lxLocalAddress, tempBuffer.param);
          }
-         else if (!size) {
-            // HOTFIX : recognize byref boxing
-            newNode.set(lxCreatingClass, 1);
+         else {
+            SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
+            if (variadic) {
+               int tempSizeLocal = scope.newTempLocalAddress();
+               SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, LEN_OPERATOR_ID);
+               sizeSetNode.appendNode(lxLocalAddress, tempSizeLocal);
+               sizeSetNode.appendNode(objNode.type, objNode.argument);
+
+               newNode.set(lxNewArrOp, typeRef);
+               newNode.appendNode(lxSize, 0);
+               newNode.appendNode(lxLocalAddress, tempSizeLocal);
+            }
+            else if (!size) {
+               // HOTFIX : recognize byref boxing
+               newNode.set(lxCreatingClass, 1);
+            }
+            newNode.appendNode(lxType, typeRef);
          }
-         newNode.appendNode(lxType, typeRef);
       }
 
       // inject copying to the boxed object if it is a structure
@@ -9850,6 +9689,14 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
       if (variadic) {
          // NOTE : structure command is used to copy variadic argument list
          copyingNode.injectAndReplaceNode(lxCloning);
+      }
+      else if (size < 0) {
+         // if it is a dynamic srtructure boxing
+         copyingNode.injectAndReplaceNode(lxCloning);
+         SNode newNode = copyingNode.insertNode(lxCreatingStruct);
+         newNode.appendNode(lxType, typeRef);
+
+         copyingNode.injectAndReplaceNode(lxAssigning);
       }
       else if (size != 0) {
          copyingNode.injectAndReplaceNode(lxCopying, size);
@@ -9864,6 +9711,10 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
 
       if (isVariable) {
          SNode unboxing = current.appendNode(lxCopying, size);
+         if (size < 0) {
+            unboxing.set(lxCloning, 0);
+         }
+
          SyntaxTree::copyNode(objNode, unboxing.appendNode(objNode.type, objNode.argument));
          if (size == 0) {
             // HOTFIX : if it is byref variable unboxing

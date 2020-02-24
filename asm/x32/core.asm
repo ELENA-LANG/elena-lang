@@ -2391,6 +2391,28 @@ inline %0D1h
 
 end
 
+// ; xcreate
+inline % 0D2h
+
+  mov   eax, [esp]
+  mov   edx, 0FFFFFh
+  mov   ecx, [eax-8]
+  and   edx, ecx
+  mov   ecx, page_ceil
+  add   ecx, edx
+  and   ecx, page_mask 
+ 
+  call  code : %GC_ALLOC
+
+  mov   eax, [esp]
+  mov   [ebx-4], __arg1
+  mov   edx, 0FFFFFh
+  mov   ecx, [eax-8]
+  and   edx, ecx
+  mov   [ebx-8], edx
+  
+end
+
 // ; inc
 inline %0D6h
 
