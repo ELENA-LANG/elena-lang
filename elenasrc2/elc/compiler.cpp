@@ -17,14 +17,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -9652,51 +9652,45 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
       if (isPrimitiveRef(typeRef))
          typeRef = resolvePrimitiveReference(scope, typeRef, 0, false);
 
-      if (variadic || size >= 0) {
-         // inject creating a boxed object
-         SNode assigningNode = current.insertNode(lxAssigning);
-         assigningNode.appendNode(tempType, tempLocal);
+      // inject copying to the boxed object if it is a structure
+      SNode copyingNode = current.insertNode(objNode.type, objNode.argument);
+      if (objNode == lxFieldExpression)
+         SyntaxTree::copyNode(objNode, copyingNode);
 
-         if (localBoxingMode) {
-            // inject local boxed object
-            ObjectInfo tempBuffer;
-            allocateTempStructure(scope, size, false, tempBuffer);
+      // inject creating a boxed object
+      SNode assigningNode = current.insertNode(lxAssigning);
+      assigningNode.appendNode(tempType, tempLocal);
 
-            assigningNode.appendNode(lxLocalAddress, tempBuffer.param);
+      if (localBoxingMode) {
+         // inject local boxed object
+         ObjectInfo tempBuffer;
+         allocateTempStructure(scope, size, false, tempBuffer);
+
+         assigningNode.appendNode(lxLocalAddress, tempBuffer.param);
+      }
+      else {
+         SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
+         if (variadic) {
+            int tempSizeLocal = scope.newTempLocalAddress();
+            SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, LEN_OPERATOR_ID);
+            sizeSetNode.appendNode(lxLocalAddress, tempSizeLocal);
+            sizeSetNode.appendNode(objNode.type, objNode.argument);
+
+            newNode.set(lxNewArrOp, typeRef);
+            newNode.appendNode(lxSize, 0);
+            newNode.appendNode(lxLocalAddress, tempSizeLocal);
          }
-         else {
-            SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
-            if (variadic) {
-               int tempSizeLocal = scope.newTempLocalAddress();
-               SNode sizeSetNode = assigningNode.prependSibling(lxArgArrOp, LEN_OPERATOR_ID);
-               sizeSetNode.appendNode(lxLocalAddress, tempSizeLocal);
-               sizeSetNode.appendNode(objNode.type, objNode.argument);
-
-               newNode.set(lxNewArrOp, typeRef);
-               newNode.appendNode(lxSize, 0);
-               newNode.appendNode(lxLocalAddress, tempSizeLocal);
-            }
-            else if (!size) {
-               // HOTFIX : recognize byref boxing
-               newNode.set(lxCreatingClass, 1);
-            }
-            newNode.appendNode(lxType, typeRef);
+         else if (!size) {
+            // HOTFIX : recognize byref boxing
+            newNode.set(lxCreatingClass, 1);
          }
+         newNode.appendNode(lxType, typeRef);
       }
 
-      // inject copying to the boxed object if it is a structure
-      SNode copyingNode = objNode;
+      // copying boxed object
       if (variadic) {
          // NOTE : structure command is used to copy variadic argument list
          copyingNode.injectAndReplaceNode(lxCloning);
-      }
-      else if (size < 0) {
-         // if it is a dynamic srtructure boxing
-         copyingNode.injectAndReplaceNode(lxCloning);
-         SNode newNode = copyingNode.insertNode(lxCreatingStruct);
-         newNode.appendNode(lxType, typeRef);
-
-         copyingNode.injectAndReplaceNode(lxAssigning);
       }
       else if (size != 0) {
          copyingNode.injectAndReplaceNode(lxCopying, size);
@@ -9705,9 +9699,9 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
       else copyingNode.injectAndReplaceNode(lxByRefAssigning);
 
       copyingNode.insertNode(tempType, tempLocal);
-      copyingNode.injectAndReplaceNode(lxSeqExpression);
 
-      copyingNode.appendNode(tempType, tempLocal);
+      // replace object with a temp local
+      objNode.set(tempType, tempLocal);
 
       if (isVariable) {
          SNode unboxing = current.appendNode(lxCopying, size);
@@ -9726,6 +9720,8 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
          }
          else unboxing.appendNode(tempType, tempLocal);
       }
+
+      test2(parent);
    }
    else scope.raiseError(errInvalidBoxing, node);
 }

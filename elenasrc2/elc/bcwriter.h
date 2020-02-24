@@ -194,23 +194,9 @@ class ByteCodeWriter
 
    void popObject(CommandTape& tape, LexicalType sourceType);
 
-//   void copyBase(CommandTape& tape, int size);
-//   void loadBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int mode);
-//   void loadFieldExpressionBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int mode);
-//   void initBase(CommandTape& tape, int fieldCount);
    void clearObject(CommandTape& tape, int fieldCount);
    void clearDynamicObject(CommandTape& tape);
-   //   void initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void saveBase(CommandTape& tape, bool directOperation, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void saveStructBase(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument, int size);
-//   void loadIndex(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument = 0);
-//   void loadInternalReference(CommandTape& tape, ref_t reference);
-//
-//   void boxObject(CommandTape& tape, int size, ref_t vmtReference, bool alwaysBoxing = false);
-//   void boxField(CommandTape& tape, int offset, int size, ref_t vmtReference);
-//   void boxArgList(CommandTape& tape, ref_t vmtReference);
    void unboxArgList(CommandTape& tape, bool arrayMode);
-//   void unboxLocal(CommandTape& tape, SNode larg, SNode rarg);
 
    void releaseStack(CommandTape& tape, int count = 1);
    void releaseArgList(CommandTape& tape);

@@ -15,6 +15,12 @@ In development:
               dev - variadic arguments
                 * console.printLine(Ops.sum(1,2)); where sum is variadic method
 
+              dev - implementation
+                * byref arg
+                * variadic
+                * unboxing
+                * fixed-size array boxing (system'io'WIN32_FIND_DATA)
+
               dev - int array dispatching
                 * weak dispatching
                 * strong-typed dispatching
@@ -49,9 +55,6 @@ In development:
                 * i + 1 (assinging, passing to a function)
                 * i + j * 2 (assinging, passing to a function)
                 * optimize pi sample ( < 5s )
-
-              dev - implementation
-                * fixed-size array boxing (system'io'WIN32_FIND_DATA)
 
               dev - test / optimization
                 * boxing an array, assinging to the local variable - get rid of double assigning
