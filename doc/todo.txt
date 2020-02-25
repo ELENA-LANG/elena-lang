@@ -10,9 +10,7 @@ In development:
                 * compile hello world
 
               dev - implementation
-                * primitive array
-                * variadic
-                * unboxing
+                * test previous examples
 
               dev - int array boxing
                 * unboxing

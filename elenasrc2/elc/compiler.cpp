@@ -2359,6 +2359,9 @@ void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo o
    int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
 
    node.appendNode(lxType, targetRef);
+   if (isPrimitiveRef(targetRef))
+      node.appendNode(lxElementType, object.element);
+
    node.appendNode(lxSize, size);
    if (variable && !noUnboxing)
       node.setArgument(INVALID_REF);
@@ -9649,8 +9652,11 @@ void Compiler :: injectBoxingTempLocal(SNode node, SNode objNode, ExprScope& sco
    bool isVariable = node.argument == INVALID_REF;
    bool variadic = node == lxArgBoxableExpression;
    if (typeRef != 0) {
-      if (isPrimitiveRef(typeRef))
-         typeRef = resolvePrimitiveReference(scope, typeRef, 0, false);
+      if (isPrimitiveRef(typeRef)) {
+         ref_t elementRef = node.findChild(lxElementType).argument;
+
+         typeRef = resolvePrimitiveReference(scope, typeRef, elementRef, false);
+      }         
 
       // inject copying to the boxed object if it is a structure
       SNode copyingNode = current.insertNode(objNode.type, objNode.argument);
