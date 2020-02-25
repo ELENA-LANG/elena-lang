@@ -9,6 +9,12 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
+              dev - boxing
+                * in-place : field, array, fixed-arraay, byref, variadic
+                * in-root : local, field, array, fixed-arraay, byref, variadic 
+                * in-root : unboxing
+                * in-place : ext operation
+
               dev - implementation
                 * test previous examples
 

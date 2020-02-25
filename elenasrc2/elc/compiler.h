@@ -1225,19 +1225,25 @@ private:
 
    void compileExternalArguments(SNode node, ExprScope& scope, SNode callNode);
 
+   void injectCopying(SNode& copyingNode, int size);
+   void injectCreating(SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode, int size,
+      ref_t typeRef, bool variadic, bool localBoxingMode);
+
+   void boxExpressionInPlace(SNode boxNode, SNode objNode, ExprScope& scope, bool localBoxingMode);
+   void boxExpressionInRoot(SNode boxNode, SNode objNode, ExprScope& scope, LexicalType tempType,
+      int tempLocal, bool localBoxingMode);
+
    void injectMemberPreserving(SNode objNode, LexicalType tempType, int tempLocal, int memberIndex);
    void injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
       int tempLocal);
-   void injectBoxingTempLocal(SNode boxExprNode, SNode objNode, ExprScope& scope, LexicalType tempType, 
-      int tempLocal, bool localBoxingMode);
-//   bool analizeParameterBoxing(SNode node, int& counter, Map<ClassInfo::Attribute, int>& boxed, Map<int, int>& tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));
    void analizeSymbolTree(SNode node, Scope& scope);
-   void boxArgument(SNode boxExprNode, SNode node, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing);
-   void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing);
-   void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr);
+   void boxArgument(SNode boxExprNode, SNode node, ExprScope& scope, bool boxingMode, 
+      bool withoutLocalBoxing, bool inPlace);
+   void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing, bool inPlace);
+   void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr, bool inPlace);
 
    void defineEmbeddableAttributes(ClassScope& scope, SNode node);
 
