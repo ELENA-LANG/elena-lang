@@ -730,7 +730,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->hints = 0;
    this->outputRef = INVALID_REF; // to indicate lazy load
    this->withOpenArg = false;
-   this->classEmbeddable = false;
+   this->classStacksafe = false;
    this->generic = false;
    this->extensionMode = false;
    this->multiMethod = false;
@@ -756,7 +756,7 @@ ObjectInfo Compiler::MethodScope :: mapSelf()
 
       return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, 0, extensionScope->embeddable ? -1 : 0);
    }
-   else if (classEmbeddable) {
+   else if (classStacksafe) {
       return ObjectInfo(okSelfParam, 1, getClassRef(), 0, (ref_t)-1);
    }
    else return ObjectInfo(okSelfParam, 1, getClassRef());
@@ -1416,7 +1416,7 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
 
    // declare built-in variables
    if (withSelf) {
-      if (scope.classEmbeddable) {
+      if (scope.classStacksafe) {
          SNode selfNode = node.appendNode(lxBinarySelf, 1);
 
          writeClassNameInfo(selfNode, scope.module, scope.getClassRef());
@@ -3215,7 +3215,7 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
             // HOTFIX : if variadic argument should not be dynamic, mark it as stacksafe
             stackSafeAttr |= 1;
          }
-         else if (_logic->isEmbeddable(*scope.moduleScope, classReference) && result.stackSafe)
+         else if (_logic->isStacksafeArg(*scope.moduleScope, classReference) && result.stackSafe)
             stackSafeAttr |= 1;
       }
    }
@@ -7065,7 +7065,7 @@ void Compiler :: compileEmbeddableMethod(SNode node, MethodScope& scope)
 
    declareArgumentList(node, privateScope, true, false);
    privateScope.parameters.add(RETVAL_ARG, Parameter(1 + scope.parameters.Count(), V_WRAPPER, scope.outputRef, 0));
-   privateScope.classEmbeddable = scope.classEmbeddable;
+   privateScope.classStacksafe = scope.classStacksafe;
    privateScope.extensionMode = scope.extensionMode;
    privateScope.embeddableRetMode = true;
 
@@ -8031,7 +8031,7 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
       methodScope.scopeMode = methodScope.scopeMode | INITIALIZER_SCOPE;
 
 ////   methodScope.dispatchMode = _logic->isDispatcher(scope.info, methodScope.message);
-   methodScope.classEmbeddable = _logic->isEmbeddable(scope.info);
+   methodScope.classStacksafe= _logic->isStacksafeArg(scope.info);
    methodScope.withOpenArg = isOpenArg(methodScope.message);
 
    methodScope.extensionMode = scope.extensionClassRef != 0;
@@ -8631,7 +8631,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
             scope.raiseError(errDuplicatedMethod, current);
       }
 
-      if (scope.embeddable && !test(methodHints, tpMultimethod)) {
+      if (_logic->isStacksafeArg(scope.info) && !test(methodHints, tpMultimethod)) {
          // add a stacksafe attribute for the embeddable structure automatically, except multi-methods
          methodHints |= tpStackSafe;
 

@@ -682,6 +682,8 @@ public:
 //   virtual bool isVariable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(ClassInfo& info) = 0;
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
+   virtual bool isStacksafeArg(ClassInfo& info) = 0;
+   virtual bool isStacksafeArg(_ModuleScope& scope, ref_t reference) = 0;
 ////   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;

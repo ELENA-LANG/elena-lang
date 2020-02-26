@@ -2481,7 +2481,7 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
 
    ClassInfo info;
    if (defineClassInfo(scope, info, targetRef)) {
-      if (isEmbeddable(info))
+      if (isStacksafeArg(info))
          stackSafeAttr |= 1;
 
       // check if it is non public message
