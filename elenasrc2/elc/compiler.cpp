@@ -5956,7 +5956,7 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
             if (!typeRef)
                typeRef = objNode.findChild(lxType).argument;
 
-            analizeOperand(objNode, scope, false, false, true);
+            analizeOperand(objNode, scope, false, false, false);
 
             objNode = objNode.findSubNodeMask(lxObjectMask);
          }
@@ -9772,12 +9772,6 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
    bool variadic = node == lxArgBoxableExpression;
 
    if (typeRef != 0) {
-      if (isPrimitiveRef(typeRef)) {
-         ref_t elementRef = node.findChild(lxElementType).argument;
-
-         typeRef = resolvePrimitiveReference(scope, typeRef, elementRef, false);
-      }
-
       if (localBoxingMode) {
          SNode assignNode = objNode;
          assignNode.injectAndReplaceNode(lxAssigning);
@@ -9793,6 +9787,12 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
          assignNode.appendNode(lxLocalAddress, tempBuffer.param);
       }
       else {
+         if (isPrimitiveRef(typeRef)) {
+            ref_t elementRef = node.findChild(lxElementType).argument;
+
+            typeRef = resolvePrimitiveReference(scope, typeRef, elementRef, false);
+         }
+
          int tempLocal = scope.newTempLocal();
 
          SNode seqNode= objNode;
