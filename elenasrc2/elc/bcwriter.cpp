@@ -5031,6 +5031,24 @@ void ByteCodeWriter :: loadFieldAddress(CommandTape& tape, int size, int argumen
       // xload arg
       tape.write(bcXLoad, argument);
    }
+   else if (size == 3) {
+      // xload arg
+      // and 0FFFFFFh
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0x0FFFFFF);
+   }
+   else if (size == 2) {
+      // xload arg
+      // and 0FFFFh
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0x0FFFF);
+   }
+   else if (size == 1) {
+      // xload arg
+      // and 0FFh
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0x0FF);
+   }
    else throw InternalError("not yet implemente"); // !! temporal
 }
 
@@ -5132,7 +5150,7 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
          if (dstObj == lxLocalAddress && node.argument <= 4) {
             loadFieldExpression(tape, srcObj, scope, false);
             if (fieldNode == lxFieldAddress) {
-               loadFieldAddress(tape, node.argument, fieldNode.argument);
+               loadFieldAddress(tape, 4, fieldNode.argument);
             }
             else {
                loadObject(tape, fieldNode, scope);

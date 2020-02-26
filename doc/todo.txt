@@ -10,8 +10,11 @@ In development:
                 * compile hello world
 
               dev - boxing
-                * in-place : field, array, fixed-arraay, byref, variadic
-                * in-root : local, field, array, fixed-arraay, byref, variadic 
+                * local boxing : in-place / root, in epxression
+                * field boxing : e.g x + x - should not be boxed twice
+                * field boxing : double assigning
+                * in-place : field, local boxing (e.g. x+x), byref, array, fixed-arraay, variadic
+                * in-root : field, local boxing, byref, array, fixed-arraay, variadic 
                 * in-root : unboxing
                 * in-place : ext operation
 
@@ -63,9 +66,10 @@ In development:
                 * fixed-size array boxing (system'io'WIN32_FIND_DATA)
 
               dev - test / optimization
+                * double assigning : operation with struct field : var s := x + /*y*/1; (where x is a word field)
                 * boxing an array, assinging to the local variable - get rid of double assigning
-                * optimization : saving byte or word 
-                * optimization : saving dword or qword 
+                * operations with byte or word 
+                * saving dword or qword 
                 * simplify the operations with struct fields (size=1,2,4,8,...)
                 * copying 4,8,1,2 bytes
                 * translit sample: List should be compiled as constant list

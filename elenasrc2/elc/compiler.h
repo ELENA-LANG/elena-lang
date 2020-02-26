@@ -1227,7 +1227,7 @@ private:
 
    void injectCopying(SNode& copyingNode, int size);
    void injectCreating(SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode, int size,
-      ref_t typeRef, bool variadic, bool localBoxingMode);
+      ref_t typeRef, bool variadic);
 
    void boxExpressionInPlace(SNode boxNode, SNode objNode, ExprScope& scope, bool localBoxingMode);
    void boxExpressionInRoot(SNode boxNode, SNode objNode, ExprScope& scope, LexicalType tempType,
