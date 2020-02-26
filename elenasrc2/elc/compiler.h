@@ -1225,7 +1225,7 @@ private:
 
    void compileExternalArguments(SNode node, ExprScope& scope, SNode callNode);
 
-   void injectCopying(SNode& copyingNode, int size);
+   void injectCopying(SNode& copyingNode, int size, bool variadic);
    void injectCreating(SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode, int size,
       ref_t typeRef, bool variadic);
 

@@ -5930,6 +5930,8 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
       eop.insertNode(lxBreakpoint, dsVirtualEnd);
    }
 
+   test2(node);
+
    return retVal;
 }
 
@@ -9577,7 +9579,6 @@ inline SNode injectRootSeqExpression(SNode& parent)
    if (current != lxSeqExpression) {
       current.injectAndReplaceNode(lxSeqExpression);
    }
-   else current = parent;
 
    return current;
 }
@@ -9646,22 +9647,18 @@ void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope
    copyingNode.appendNode(tempType, tempLocal);
 }
 
-void Compiler :: injectCopying(SNode& copyingNode, int size)
+void Compiler :: injectCopying(SNode& copyingNode, int size, bool variadic)
 {
-   //// copying boxed object
-   //if (variadic) {
-   //   // NOTE : structure command is used to copy variadic argument list
-   //   copyingNode.injectAndReplaceNode(lxCloning);
-   //}
-   //else if (size < 0) {
-   //   // if it is a dynamic srtructure boxing
-   //   copyingNode.injectAndReplaceNode(lxCloning);
-   //   SNode newNode = copyingNode.insertNode(lxCreatingStruct, -1);
-   //   newNode.appendNode(lxType, typeRef);
-
-   //   //copyingNode.injectAndReplaceNode(lxAssigning);
-   //}
-   /*else */if (size != 0) {
+   // copying boxed object
+   if (variadic) {
+      // NOTE : structure command is used to copy variadic argument list
+      copyingNode.injectAndReplaceNode(lxCloning);
+   }
+   else if (size < 0) {
+      // if it is a dynamic srtructure boxing
+      copyingNode.injectAndReplaceNode(lxCloning);
+   }
+   else if (size != 0) {
       copyingNode.injectAndReplaceNode(lxCopying, size);
    }
    // otherwise consider it as a byref variable
@@ -9714,24 +9711,34 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
       if (test(objNode.type, lxOpScopeMask))
          SyntaxTree::copyNode(objNode, copyNode);
 
-      SNode assignNode = current.insertNode(lxAssigning);
-      assignNode.appendNode(tempType, tempLocal);
+      if (size < 0) {
+         injectCopying(copyNode, size, variadic);
 
-      if (localBoxingMode) {
-         copyNode.injectAndReplaceNode(lxCopying, size);
+         copyNode.appendNode(lxType, typeRef);
 
-         // inject local boxed object
-         ObjectInfo tempBuffer;
-         allocateTempStructure(scope, size, false, tempBuffer);
-
-         assignNode.appendNode(lxLocalAddress, tempBuffer.param);
-         copyNode.insertNode(lxLocalAddress, tempBuffer.param);
+         copyNode.injectAndReplaceNode(lxAssigning);
+         copyNode.insertNode(tempType, tempLocal);
       }
       else {
-         injectCreating(assignNode, objNode, scope, false, size, typeRef, variadic);
-         injectCopying(copyNode, size);
+         SNode assignNode = current.insertNode(lxAssigning);
+         assignNode.appendNode(tempType, tempLocal);
 
-         copyNode.insertNode(tempType, tempLocal);
+         if (localBoxingMode) {
+            copyNode.injectAndReplaceNode(lxCopying, size);
+
+            // inject local boxed object
+            ObjectInfo tempBuffer;
+            allocateTempStructure(scope, size, false, tempBuffer);
+
+            assignNode.appendNode(lxLocalAddress, tempBuffer.param);
+            copyNode.insertNode(lxLocalAddress, tempBuffer.param);
+         }
+         else {
+            injectCreating(assignNode, objNode, scope, false, size, typeRef, variadic);
+            injectCopying(copyNode, size, variadic);
+
+            copyNode.insertNode(tempType, tempLocal);
+         }
       }
 
       if (isVariable) {
@@ -9792,16 +9799,24 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
          seqNode.injectAndReplaceNode(lxSeqExpression);
 
          SNode copyingNode = seqNode.firstChild();
-         injectCopying(copyingNode, size);
+         injectCopying(copyingNode, size, variadic);
 
-         copyingNode.insertNode(lxTempLocal, tempLocal);
-         
-         SNode assignNode = seqNode.insertNode(lxAssigning);
-         assignNode.insertNode(lxTempLocal, tempLocal);
-         
-         // !!NOTE: objNode is no longer valid, but injectCreating uses only 
-         //         cached values of a type and an argument
-         injectCreating(assignNode, objNode, scope, false, size, typeRef, variadic);
+         if (size < 0) {
+            copyingNode.appendNode(lxType, typeRef);
+
+            copyingNode.injectAndReplaceNode(lxAssigning);
+            copyingNode.insertNode(lxTempLocal, tempLocal);
+         }
+         else {
+            copyingNode.insertNode(lxTempLocal, tempLocal);
+
+            SNode assignNode = seqNode.insertNode(lxAssigning);
+            assignNode.insertNode(lxTempLocal, tempLocal);
+
+            // !!NOTE: objNode is no longer valid, but injectCreating uses only 
+            //         cached values of a type and an argument
+            injectCreating(assignNode, objNode, scope, false, size, typeRef, variadic);
+         }
 
          seqNode.appendNode(lxTempLocal, tempLocal);
       }

@@ -10,13 +10,8 @@ In development:
                 * compile hello world
 
               dev - boxing
-                * local boxing : in-place / root, in epxression
-                * field boxing : e.g x + x - should not be boxed twice
-                * field boxing : double assigning
-                * in-place : field, local boxing (e.g. x+x), byref, array, fixed-arraay, variadic
-                * in-root : field, local boxing, byref, array, fixed-arraay, variadic 
-                * in-root : unboxing
-                * in-place : ext operation
+                * in-place : variadic
+                * in-root : variadic 
 
               dev - implementation
                 * test previous examples
@@ -53,6 +48,8 @@ In development:
                 * xforms
 
               dev - test / optimization
+                * boxing external operation
+
                 * fillr / fillri - optimized version for 1,2,3 dwords
                 * read / write byte, short - without AND operation
                 * double boxing - n * (m + k), n,m,k - local integers
@@ -67,6 +64,9 @@ In development:
 
               dev - test / optimization
                 * double assigning : operation with struct field : var s := x + /*y*/1; (where x is a word field)
+                * double assigning : int n := 2; var o := n + 1 / var o := n
+                * field boxing : e.g x + x - should not be boxed twice
+                * field boxing : double assigning
                 * boxing an array, assinging to the local variable - get rid of double assigning
                 * operations with byte or word 
                 * saving dword or qword 

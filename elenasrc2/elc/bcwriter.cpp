@@ -5714,47 +5714,43 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
    SNode source;
    assignOpArguments(node, target, source);
 
-   if (source == lxExpression)
-      source = source.findSubNodeMask(lxObjectMask);
-
    if (target == lxExpression)
       target = target.findSubNodeMask(lxObjectMask);
 
-   if (source.compare(lxLocalAddress, lxBlockLocalAddr)) {
-      if (source.firstChild() == lxBreakpoint) {
-         translateBreakpoint(tape, source.firstChild(), scope);
-      }
+   if (source == lxNone) {
+      generateObject(tape, target, scope, STACKOP_MODE);
 
-      if (target == lxCreatingStruct && target.argument == -1) {
-         generateObject(tape, source, scope, STACKOP_MODE);
+      tape.write(bcXCreate, node.findChild(lxType).argument | mskVMTRef);
 
-         tape.write(bcXCreate, target.findChild(lxType).argument | mskVMTRef);
+      tape.write(bcClone);
+      releaseStack(tape);
+   }
+   else {
+      if (source == lxExpression)
+         source = source.findSubNodeMask(lxObjectMask);
 
-         tape.write(bcClone, source.argument, bpFrame);
-         releaseStack(tape);
-      }
-      else {
+      if (source.compare(lxLocalAddress, lxBlockLocalAddr)) {
+         if (source.firstChild() == lxBreakpoint) {
+            translateBreakpoint(tape, source.firstChild(), scope);
+         }
+
          generateObject(tape, target, scope);
 
          tape.write(bcCloneF, source.argument, bpFrame);
       }
-   }
-   else if (source.compare(lxLocal, lxTempLocal)) {
-      if (source.firstChild() == lxBreakpoint) {
-         translateBreakpoint(tape, source.firstChild(), scope);
+      else if (source.compare(lxLocal, lxTempLocal)) {
+         if (source.firstChild() == lxBreakpoint) {
+            translateBreakpoint(tape, source.firstChild(), scope);
+         }
+
+         generateObject(tape, source, scope, STACKOP_MODE);
+         generateObject(tape, target, scope);
+
+         tape.write(bcClone, source.argument, bpFrame);
+         releaseStack(tape);
       }
-
-      generateObject(tape, source, scope, STACKOP_MODE);
-
-      if (target == lxCreatingStruct && target.argument == -1) {
-         tape.write(bcXCreate, target.findChild(lxType).argument | mskVMTRef);
-      }
-      else generateObject(tape, target, scope);
-
-      tape.write(bcClone, source.argument, bpFrame);
-      releaseStack(tape);
+      else throw InternalError("Not yet implemented"); // !! temporal
    }
-   else throw InternalError("Not yet implemented"); // !! temporal
 }
 
 void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
