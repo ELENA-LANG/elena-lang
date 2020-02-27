@@ -3604,23 +3604,29 @@ bool Compiler :: isSelfCall(ObjectInfo target)
 ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
    bool withExtension, int& stackSafeAttr)
 {
+   int resolvedStackSafeAttr = 0;
    ref_t resolvedMessageRef = 0;
    ref_t targetRef = resolveObjectReference(scope, target, true);
 
    // try to resolve the message as is
-   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, implicitSignatureRef,
-      stackSafeAttr, isSelfCall(target));
+   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, 
+      implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
    if (resolvedMessageRef != 0) {
+      stackSafeAttr = resolvedStackSafeAttr;
+
       // if the object handles the compile-time resolved message - use it
       return resolvedMessageRef;
    }
 
    // check if the object handles the variadic message
    if (targetRef) {
+      resolvedStackSafeAttr = 0;
       resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, resolveVariadicMessage(scope, generalMessageRef),
-         targetRef, implicitSignatureRef, stackSafeAttr, isSelfCall(target));
+         targetRef, implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
 
       if (resolvedMessageRef != 0) {
+         stackSafeAttr = resolvedStackSafeAttr;
+
          // if the object handles the compile-time resolved variadic message - use it
          return resolvedMessageRef;
       }
@@ -3638,8 +3644,11 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
          return generalMessageRef;
       }
 
-      ref_t extensionRef = mapExtension(scope, resolvedMessageRef, implicitSignatureRef, target, stackSafeAttr);
+      resolvedStackSafeAttr = 0;
+      ref_t extensionRef = mapExtension(scope, resolvedMessageRef, implicitSignatureRef, target, resolvedStackSafeAttr);
       if (extensionRef != 0) {
+         stackSafeAttr = resolvedStackSafeAttr;
+
          // if there is an extension to handle the compile-time resolved message - use it
          target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
 
@@ -3649,8 +3658,11 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
       // check if the extension handles the variadic message
       ref_t variadicMessage = resolveVariadicMessage(scope, generalMessageRef);
 
-      extensionRef = mapExtension(scope, variadicMessage, implicitSignatureRef, target, stackSafeAttr);
+      resolvedStackSafeAttr = 0;
+      extensionRef = mapExtension(scope, variadicMessage, implicitSignatureRef, target, resolvedStackSafeAttr);
       if (extensionRef != 0) {
+         stackSafeAttr = resolvedStackSafeAttr;
+
          // if there is an extension to handle the compile-time resolved message - use it
          target = ObjectInfo(okConstantRole, extensionRef, extensionRef);
 
@@ -5777,18 +5789,24 @@ inline bool isAssigmentOp(SNode node)
    return node == lxAssign/* || (node == lxOperator && node.argument == -1)*/;
 }
 
-//inline bool isCallingOp(SNode node)
-//{
-//   return node == lxMessage;
-//}
+inline bool isCallingOp(SNode node)
+{
+   return node == lxMessage;
+}
 
 ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ref_t targetRef, EAttr mode)
 {
    EAttrs objMode(mode, HINT_PROP_MODE);
 
-   if (isAssigmentOp(node.firstChild(lxOperatorMask))) {
+   SNode operationNode = node.firstChild(lxOperatorMask);
+   if (isAssigmentOp(operationNode)) {
       objMode.include(HINT_PROP_MODE);
       mode = mode | HINT_PROP_MODE;
+   }
+   else if (isCallingOp(operationNode) && EAttrs::testany(mode, HINT_NOBOXING)) {
+      objMode.exclude(HINT_NOBOXING);
+
+      mode = EAttrs::exclude(mode, HINT_NOBOXING);
    }
 
    return compileExpression(node, scope,

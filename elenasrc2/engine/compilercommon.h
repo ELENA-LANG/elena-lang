@@ -593,6 +593,11 @@ public:
          return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0;
       }
 
+      static ExpressionAttribute exclude(ExpressionAttribute attrs, ExpressionAttribute mask)
+      {
+         return (ExpressionAttribute)((uint64_t)attrs & ~(uint64_t)mask);
+      }
+
       ExpressionAttributes()
       {
          attrs = ExpressionAttribute::eaNone;

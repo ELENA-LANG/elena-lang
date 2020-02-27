@@ -10,8 +10,7 @@ In development:
                 * compile hello world
 
               dev - rosetta code samples
-                * Associative array/Iteration
-                * Averages/Arithmetic mean
+                * Averages/Median
 
               dev - migration
                 * rosetta code samples : test twentyfour
@@ -32,8 +31,6 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * boxing external operation
-
                 * fillr / fillri - optimized version for 1,2,3 dwords
                 * read / write byte, short - without AND operation
                 * double boxing - n * (m + k), n,m,k - local integers
@@ -41,12 +38,14 @@ In development:
                 * i + j * k (assinging, passing to a function)
                 * i + 1 (assinging, passing to a function)
                 * i + j * 2 (assinging, passing to a function)
+                * int.mod extension should be resolved without boxing
                 * optimize pi sample ( < 5s )
 
               dev - implementation
                 * fixed-size array boxing (system'io'WIN32_FIND_DATA)
 
               dev - test / optimization
+                * boxing external operation
                 * double assigning : operation with struct field : var s := x + /*y*/1; (where x is a word field)
                 * double assigning : int n := 2; var o := n + 1 / var o := n
                 * field boxing : e.g x + x - should not be boxed twice
