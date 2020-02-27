@@ -2711,15 +2711,15 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
          auto extInfo = *it;
          ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
          int extStackAttr = 0;
-         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2, signaturues,
-            signatureLen, extStackAttr))
+         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2, 
+            signaturues, signatureLen, extStackAttr))
          {
             if (!resolvedMessage) {
                resolvedMessage = extInfo.value2;
                resolvedExtRef = extInfo.value1;
                resolvedStackSafeAttr = extStackAttr;
             }
-            else {
+            else if (!_logic->isSignatureCompatible(*scope.moduleScope, extInfo.value2, resolvedMessage)) {
                resolvedMessage = 0;
                break;
             }

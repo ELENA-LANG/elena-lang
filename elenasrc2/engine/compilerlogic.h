@@ -63,7 +63,6 @@ class CompilerLogic : public _CompilerLogic
 
    OperatorList operators;
 
-   bool isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage);   
    bool isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures, size_t len);
    bool isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t len);
 
@@ -79,7 +78,9 @@ class CompilerLogic : public _CompilerLogic
    bool isBoolean(_ModuleScope& scope, ref_t reference);
 
 public:
-   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage, 
+   virtual bool isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage);
+
+   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage,
       ref_t* sourceSignatures, size_t len, int& stackSafeAttr);
 
    virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
@@ -156,6 +157,7 @@ public:
 //   virtual bool isMethodInternal(ClassInfo& info, ref_t message);
    virtual bool isMethodPrivate(ClassInfo& info, ref_t message);
    virtual bool isMultiMethod(ClassInfo& info, ref_t message);
+   virtual bool isMultiMethod(_ModuleScope& scope, ref_t reference, ref_t message);
 //   virtual bool isFunction(ClassInfo& info, ref_t message);
    virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message);
    virtual bool isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message);

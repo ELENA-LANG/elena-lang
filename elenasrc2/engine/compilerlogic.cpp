@@ -709,6 +709,14 @@ bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
    return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
 }
 
+bool CompilerLogic :: isMultiMethod(_ModuleScope& scope, ref_t reference, ref_t message)
+{
+   ClassInfo info;
+   defineClassInfo(scope, info, reference, true);
+
+   return isMultiMethod(info, message);
+}
+
 //bool CompilerLogic :: isFunction(ClassInfo& info, ref_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpFunction);

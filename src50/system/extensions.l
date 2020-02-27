@@ -391,6 +391,8 @@ public extension intOp : IntNumber
 
     int mod(o)
     {
+        int n := self;
+        
         int retVal := self.mod(cast int(o));
         
         ^ retVal

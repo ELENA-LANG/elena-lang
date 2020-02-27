@@ -31,14 +31,12 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * fillr / fillri - optimized version for 1,2,3 dwords
-                * read / write byte, short - without AND operation
-                * double boxing - n * (m + k), n,m,k - local integers
+                * fillr / fillri - optimized version for 1,2,3 dwords 
                 * i + j (assinging, passing to a function)
                 * i + j * k (assinging, passing to a function)
                 * i + 1 (assinging, passing to a function)
                 * i + j * 2 (assinging, passing to a function)
-                * int.mod extension should be resolved without boxing
+                * double boxing - n * (m + k), n,m,k - local integers
                 * optimize pi sample ( < 5s )
 
               dev - implementation
@@ -69,6 +67,7 @@ In development:
                 * invalid operation : var a.test();
                 * debugger : do not copy template parameter terminal info
                 * new opcode : setfi
+                * read / write byte, short - without AND operation
                 * function closures : strong one - should be resolved directly if possible
                 * public / private / internal extensions
                 * resolving extension : if two extension passed to the argument try to find if one of them is
