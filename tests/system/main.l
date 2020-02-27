@@ -4,7 +4,7 @@ import extensions;
 
 public program()
 {
-    console.writeLine:"=== ELENA Routine Tests ===";
+    console.writeLine:"--- ELENA API Tests ---";
 
 ////    ControlTest eval.
 ////    ObjectTest eval.
@@ -24,7 +24,7 @@ public program()
 ////    ArrayTest eval.
 ////    OpenArgTest eval.
 ////    MethodNotFoundTest eval.
-    ExceptionTest();
+//    ExceptionTest();
 ////    DateTest eval.
 ////    ListTest eval.
 ////    DictionaryTest eval.
@@ -43,14 +43,16 @@ public program()
 ////    jsonTest eval.
 ////    subExpressionTest eval.
 
-    nestedFieldsTest();
-    shortCircuitBooleanOperation();
-    variadicTest();
-//    proberTest().
-    nestedTest();
-    nestetNestedTest();
-    duplicateStructBoxing();
-    duplicateBoxing();
+//    nestedFieldsTest();
+//    shortCircuitBooleanOperation();
+//    variadicTest();
+////    proberTest().
+//    nestedTest();
+//    nestetNestedTest();
+//    duplicateStructBoxing();
+//    duplicateBoxing();
 
-    console.writeLine:"=== Passed ==="
+    stackSafeExtensions();
+
+    console.writeLine:"--- Passed ---"
 }

@@ -79,6 +79,9 @@ rem bin\elc src50\xforms\xforms.prj
 
 rem bin\elc src50\system\system_64.prj
 
+bin\elc tests\system\system_test.prj
+tests\system\system_test.exe
+
 @echo off 
 echo === Done ===
 @echo on
