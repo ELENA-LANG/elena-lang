@@ -10,7 +10,8 @@ In development:
                 * compile hello world
 
               dev - rosetta code samples
-                * Array length
+                * Associative array/Iteration
+                * Averages/Arithmetic mean
 
               dev - migration
                 * rosetta code samples : test twentyfour

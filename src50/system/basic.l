@@ -2165,44 +2165,44 @@ public sealed class Variable : BaseVariable, ref<object>
 //    ]    
 }
 
-//// --- KeyValue ---
-//
-///// A key - object pair
-/////
-///// Extends the object with a key property
-//public sealed class KeyValue
-//{
-//    object theKey;
-//    object theObject;
-//    
-//    /// Creates a new objext
-//    constructor new(key, object)
-//    {
-//        theKey := key;
-//        theObject := object
-//    }
-//    
-//    /// Returns the key
-//    Key = theKey;
-//    
-//    /// Returns the key
-//    Value = theObject;
-//
-//    set Value(object)
-//    {
-//        theObject := object
-//    }
-//           
-//    bool equal(o)
-//        => theObject;
-//                                                                                      
-//    get string Printable()
-//        => theObject;
-//                                                                                      
-//    /// Redirects the incoming messages to the object
-//    dispatch() => theObject;
-//}
-//
+// --- KeyValue ---
+
+/// A key - object pair
+///
+/// Extends the object with a key property
+public sealed class KeyValue
+{
+    object theKey;
+    object theObject;
+    
+    /// Creates a new objext
+    constructor new(key, object)
+    {
+        theKey := key;
+        theObject := object
+    }
+    
+    /// Returns the key
+    Key = theKey;
+    
+    /// Returns the key
+    Value = theObject;
+
+    set Value(object)
+    {
+        theObject := object
+    }
+           
+    bool equal(o)
+        => theObject;
+                                                                                      
+    get string Printable()
+        => theObject;
+                                                                                      
+    /// Redirects the incoming messages to the object
+    dispatch() => theObject;
+}
+
 //// --- DTO --
 //
 //public class DTO
