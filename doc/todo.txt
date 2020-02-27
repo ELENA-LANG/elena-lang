@@ -9,9 +9,6 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
-              dev - variadic arguments
-                * console.printLine(Ops.sum(1,2)); where sum is variadic method
-
               dev - rosetta code samples
                 * Array length
 
