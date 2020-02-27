@@ -14,6 +14,7 @@ using namespace _ELENA_;
 
 constexpr auto STACKOP_MODE      = 0x0001;
 constexpr auto BOOL_ARG_EXPR     = 0x0002;
+constexpr auto NOBREAKPOINTS     = 0x0004;
 
 //void test2(SNode node)
 //{
@@ -707,10 +708,7 @@ void ByteCodeWriter :: popObject(CommandTape& tape, LexicalType sourceType)
 void ByteCodeWriter :: releaseStack(CommandTape& tape, int count)
 {
    // freei n
-   //if (count == 1) {
-   //   tape.write(bcPop);
-   //}
-   //else if (count > 1)
+   if (count >= 1)
       tape.write(bcFreeI, count);
 }
 
@@ -4096,10 +4094,14 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
    if (rargImm && node.type == lxIntOp) {
       int rargVal = rargObj.findChild(lxIntValue).argument;
 
+      if (rargObj.firstChild() == lxBreakpoint && !test(mode, NOBREAKPOINTS)) {
+         translateBreakpoint(tape, rargObj.firstChild(), scope);
+      }
+
       doIntOperation(tape, node.argument, largObj.argument, rargVal);
    }
    else {
-      loadObject(tape, rarg, scope);
+      generateObject(tape, rarg, scope);
 
       if (node.type == lxIntOp) {
          doIntOperation(tape, node.argument, largObj.argument);
@@ -4702,12 +4704,11 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
       releaseArgList(tape);
    }
    else if (openArg) {
-      //// clear open argument list, including trailing nil and subtracting normal arguments
-      //if (test(node.argument, SPECIAL_MESSAGE)) {
-      //   // HOTFIX : self is not in the stack
-      //   releaseObject(tape, paramCount - getParamCount(node.argument) + 1);
-      //}
-      /*else */releaseStack(tape, argCount - getArgCount(node.argument));
+      // clear open argument list, including trailing nil and subtracting normal arguments
+      if (functionMode) {
+         releaseStack(tape, argCount - getArgCount(node.argument));
+      }
+      else releaseStack(tape, argCount - getArgCount(node.argument) + 1);
    }
 
    scope.clear();
@@ -5070,7 +5071,7 @@ void ByteCodeWriter :: saveFieldExpression(CommandTape& tape, SNode dstObj, SNod
 {
    SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
    if (fieldNode == lxFieldAddress) {
-      generateObject(tape, source, scope, STACKOP_MODE);
+      generateObject(tape, source, scope, STACKOP_MODE | NOBREAKPOINTS);
       loadFieldExpression(tape, dstObj, scope, false);
       copyToFieldAddress(tape, size, fieldNode.argument);
       releaseStack(tape);
@@ -5081,7 +5082,7 @@ void ByteCodeWriter :: saveFieldExpression(CommandTape& tape, SNode dstObj, SNod
          copyToLocal(tape, size, fieldNode.argument);
       }
       else {
-         generateObject(tape, source, scope, STACKOP_MODE);
+         generateObject(tape, source, scope, STACKOP_MODE | NOBREAKPOINTS);
          generateObject(tape, dstObj, scope, 0);
          copyToFieldAddress(tape, size, 0);
          releaseStack(tape);
@@ -5140,6 +5141,10 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
    SNode srcObj = source == lxExpression ? source.findSubNodeMask(lxObjectMask) : source;
    SNode dstObj = target == lxExpression ? target.findSubNodeMask(lxObjectMask) : target;
 
+   if (srcObj.firstChild() == lxBreakpoint) {
+      translateBreakpoint(tape, srcObj.firstChild(), scope);
+   }
+
    if (srcObj == lxLocalAddress && dstObj != lxFieldExpression) {
       loadObject(tape, target, scope);
       copyFromLocalAddress(tape, node.argument, srcObj.argument);
@@ -5159,7 +5164,7 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
             saveToLocalAddress(tape, node.argument, dstObj.argument);
          }
          else {
-            generateObject(tape, target, scope, STACKOP_MODE);
+            generateObject(tape, target, scope, STACKOP_MODE | NOBREAKPOINTS);
             loadFieldExpression(tape, srcObj, scope, false);
             if (fieldNode == lxFieldAddress) {
                copyFieldAddress(tape, node.argument, fieldNode.argument, scope);
@@ -5938,7 +5943,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
 
 void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
 {
-   if (node.firstChild() == lxBreakpoint) {
+   if (node.firstChild() == lxBreakpoint && !test(mode, NOBREAKPOINTS)) {
       translateBreakpoint(tape, node.firstChild(), scope);
    }
 
@@ -6279,7 +6284,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
             generateYieldDispatch(tape, current, scope);
             break;
          case lxEOP:
-            scope.debugBlockStarted = true;
+            scope.debugBlockStarted = /*false*/true;
             if (current.firstChild() == lxBreakpoint)
                translateBreakpoint(tape, current.findChild(lxBreakpoint), scope);
             scope.debugBlockStarted = false;
