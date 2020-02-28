@@ -10,9 +10,11 @@ In development:
                 * compile hello world
 
               dev - boxing
-                * stacksafe vs embeddable
-                * conditional boxing?
-                * closure : unboxing
+                * stacksafe closure members should be passed directly? no need to unbox stack allocated variables?
+
+              dev - boxing
+                * closure : unboxing?
+                * conditional boxing / unboxing?
 
               dev - rosetta code samples
                 * fix sort algorith
@@ -134,6 +136,7 @@ In development:
                 * int operation : 1 + i
 
               dev - usability
+                * ref argument should be a variable
                 * compile single file project
 
               dev - elena50

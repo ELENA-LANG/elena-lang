@@ -28,8 +28,9 @@ Declarations
         - implcit default +
         - explcit default +
         - multi-return
-      * variadic
+      * variadic +
       * byref args
+      * in-place declaration
       * resend
       * dispatch
       * ret expression +

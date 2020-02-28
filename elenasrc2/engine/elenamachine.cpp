@@ -69,7 +69,7 @@ void SystemRoutineProvider :: CloseFrame(SystemEnv* env, FrameHeader* frameHeade
    }
 }
 
-void CollectYG()
+inline void CollectYG(size_t ptr, size_t start, size_t end)
 {
    //      // ; start collecting: esi => ebp, [ebx, edx] ; ecx - count
    //      labCollectYG :
@@ -85,8 +85,12 @@ void CollectYG()
    //
    //      labYGCheck :
    //   mov  eax, [esi]
-   //
-   //      // ; check if it valid reference
+   
+   // ; check if it valid reference
+   if (ptr >= start && ptr < end) {
+
+   }
+
    //      mov  edi, eax
    //      cmp  edi, ebx
    //      setb al
@@ -327,10 +331,15 @@ void SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots)
 //      labCollectFrame :
 //   push eax
 
+   size_t* ptr = (size_t*)roots->stackPtr;
+   size_t* end = (size_t*)((char*)roots->stackPtr + roots->size);
    // ; collect roots
-   // call labCollectYG
-   CollectYG();
+   while (ptr < end) {
+      CollectYG(*ptr, table->gc_yg_start, table->gc_yg_end);
+      // call labCollectYG
 
+      ptr++;
+   }
 
 //      pop  eax
 //      lea  eax, [eax + 8]
