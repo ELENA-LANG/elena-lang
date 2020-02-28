@@ -150,7 +150,7 @@ enum ByteCode
    bcPeekR           = 0x93,
    bcPeekFI          = 0x94,
    bcPeekSI          = 0x95,
-//   bcIfHeap          = 0x96,
+   bcIfHeap          = 0x96,
    bcXSetI           = 0x97,
    bcOpen            = 0x98,
    bcQuitN           = 0x99,
@@ -434,7 +434,7 @@ public:
          //case bcIfM:
          //case bcElseM:
          //case bcNext:
-         //case bcIfHeap:
+         case bcIfHeap:
          case bcHook:
          case bcAddress:
             return true;

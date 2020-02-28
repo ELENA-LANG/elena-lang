@@ -1648,7 +1648,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcJump:
          case bcHook:
          case bcAddress:
-         //case bcIfHeap:
+         case bcIfHeap:
             (*it).save(scope.code, true);
 
             if ((*it).code > MAX_DOUBLE_ECODE)
@@ -5941,6 +5941,33 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
    }
 }
 
+void ByteCodeWriter :: generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   SNode step1;
+   SNode step2;
+   assignOpArguments(node, step1, step2);
+
+   SNode tempLocal = step1.findSubNodeMask(lxObjectMask);
+   SNode local = step2.firstChild(lxObjectMask).nextNode(lxObjectMask);
+
+   tape.newLabel();
+   generateObject(tape, local, scope);
+   tape.write(bcIfHeap, baCurrentLabel);
+
+   generateObject(tape, step1, scope);
+   generateObject(tape, step2, scope);
+
+   generateObject(tape, tempLocal, scope);
+   tape.setLabel();
+
+   if (tempLocal.compare(lxLocal, lxTempLocal)) {
+      saveObject(tape, tempLocal.type, tempLocal.argument);
+   }
+   else throw InternalError("Not yet implemented"); // !! temporal
+
+   scope.clear();
+}
+
 void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
 {
    if (node.firstChild() == lxBreakpoint && !test(mode, NOBREAKPOINTS)) {
@@ -5952,7 +5979,6 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
    switch (node.type)
    {
       case lxExpression:
-//      case lxLocalUnboxing:
       case lxFieldExpression:
 //      case lxAltExpression:
       case lxSeqExpression:
@@ -6107,6 +6133,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          break;
       case lxCodeExpression:
          generateCodeBlock(tape, node, scope);
+         break;
+      case lxCondBoxing:
+         generateCondBoxing(tape, node, scope);
          break;
       default:
          if (stackOp) {

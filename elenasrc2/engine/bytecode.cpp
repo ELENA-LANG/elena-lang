@@ -350,7 +350,7 @@ inline bool removeIdleJump(ByteCodeIterator it)
          //case bcIfM:
          //case bcElseM:
          //case bcNext:
-         //case bcIfHeap:
+         case bcIfHeap:
          case bcJumpRM:
          case bcJumpI:
             *it = bcNop;
@@ -435,7 +435,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
 //            case bcNext:
             case bcHook:
             case bcAddress:
-//            case bcIfHeap:
+            case bcIfHeap:
                // remove the label from idle list
                idleLabels.exclude((*it).argument);
 

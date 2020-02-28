@@ -378,6 +378,8 @@ ELENA byte codes (or ecodes)
  
  if label                   - jump to the label if index == acc[0]
  
+ ifheap label               - jump to the label if acc is allocated in heap (more precisely - not in the stack) (*index affected)
+
  ifn n, label               - jump to the label if index == n
  
  ifr r, label               - jumps to the label if acc == r

@@ -384,6 +384,7 @@ class ByteCodeWriter
    void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);

@@ -2109,6 +2109,21 @@ inline % 95h
 
 end
 
+// ; ifheap - part of the command
+inline % 96h
+
+  xor    edx, edx
+  mov    ebx,[data : %CORE_GC_TABLE + gc_start]
+  mov    esi, 1
+  mov    ecx,[data : %CORE_GC_TABLE + gc_end]
+  cmp    eax, ebx
+  cmovl  edx, esi
+  cmp    eax, ecx
+  cmovg  edx, esi
+  and    edx, edx
+
+end
+
 // ; xseti
 inline %97h
 

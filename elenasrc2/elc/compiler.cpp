@@ -17,14 +17,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -5272,6 +5272,8 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
 
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr, true);
+
+   test2(node.parentNode());
 
    return retVal;
 }

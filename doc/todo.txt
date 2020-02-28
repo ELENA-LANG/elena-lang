@@ -2,7 +2,7 @@
 In development:
 ------         
               dev2 - refactoring
-                * mov GC to C code
+                * mov GC to C code : #77
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev2 - linux32
@@ -13,7 +13,6 @@ In development:
                 * stacksafe closure members should be passed directly? no need to unbox stack allocated variables?
 
               dev - boxing
-                * closure : unboxing?
                 * conditional boxing / unboxing?
 
               dev - rosetta code samples
@@ -45,6 +44,7 @@ In development:
                 * i + 1 (assinging, passing to a function)
                 * i + j * 2 (assinging, passing to a function)
                 * double boxing - n * (m + k), n,m,k - local integers
+                * align block code by 16
                 * optimize pi sample ( < 5s )
 
               dev - implementation
@@ -63,7 +63,6 @@ In development:
                 * copying 4,8,1,2 bytes
                 * translit sample: List should be compiled as constant list
                 * resolving byref template - cache the resolved results
-                * conditional boxing of arguments and self
                 * review byte code in core_routines and BCWriter - check for more optimal opcodes
                 * it should be possible to turn-off optimization (opL1)
                 * test : branching external implementation : returning a value from closure 

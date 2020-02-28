@@ -212,6 +212,7 @@ enum LexicalType
    lxYieldContext             = 0x018270,
    lxYieldLocals              = 0x018271,
    lxArgArray                 = 0x058280,
+   lxCondBoxing               = 0x058290,
 
    // attributes
    lxAttribute                = 0x000F00,
