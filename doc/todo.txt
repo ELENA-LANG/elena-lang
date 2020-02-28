@@ -9,7 +9,13 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
+              dev - boxing
+                * stacksafe vs embeddable
+                * conditional boxing?
+                * closure : unboxing
+
               dev - rosetta code samples
+                * fix sort algorith
                 * Averages/Median
 
               dev - migration

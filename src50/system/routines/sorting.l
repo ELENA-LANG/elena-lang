@@ -129,7 +129,7 @@ public singleton QuickSorting
             }
             else
             {
-                ^ (compf(t2, t3)) ? i3 : i2
+                ^ (compf(t2, t3)) ? i3 : i2/*i2 : i3*/
             }
         }
     }

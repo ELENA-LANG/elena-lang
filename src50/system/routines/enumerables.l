@@ -519,7 +519,9 @@ public extension indexableOp
 
     sort(Func2 compareFunc)
     {
-        QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
+        var a := new IndexerSortingAgent(self);
+        
+        QuickSorting.sort(/*new IndexerSortingAgent(self)*/a, compareFunc);
     }
     
     ascendant()
