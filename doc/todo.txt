@@ -9,11 +9,6 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
-              dev - boxing
-                * cond boxing true : in-place / in-root
-                * cond boxing false : in-place / in-root
-                * cond unboxing
-
               dev - rosetta code samples
                 * Averages/Mode
 
@@ -36,11 +31,12 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * fillr / fillri - optimized version for 1,2,3 dwords 
+                * fillri - optimized version for 1,2,3 dwords 
                 * i + j (assinging, passing to a function)
                 * i + j * k (assinging, passing to a function)
                 * i + 1 (assinging, passing to a function)
                 * i + j * 2 (assinging, passing to a function)
+
                 * double boxing : in-place - conditonal / unconditional
                 * double boxing - n * (m + k), n,m,k - local integers
                 * align block code by 16

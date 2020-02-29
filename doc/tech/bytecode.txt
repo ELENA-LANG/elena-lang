@@ -340,8 +340,6 @@ ELENA byte codes (or ecodes)
  
  count                      - acc.Length >> index   
 
- fillr r                    - fill the object with the value dword[esp]-times
-
  fillri r, i                - fill the object with the value i-times
 
  flag                       - acc::VMT::flag >> index 
