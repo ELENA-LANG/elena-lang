@@ -606,17 +606,17 @@ public extension longOp : LongNumber
 
 public extension realOp : RealNumber
 {        
-//    Hashcode
-//    {
-//        // Reads the object hash code into the output parameter
-//        int get()
-//        {
-//            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//    
+    int Hashcode
+    {
+        // Reads the object hash code into the output parameter
+        get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+    
 //    get real Absolute()
 //    {
 //        real n := self;        

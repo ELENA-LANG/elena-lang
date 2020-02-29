@@ -218,21 +218,21 @@ public extension enumerableOp
 ////             
 ////    sequenceEqual:list
 ////        = self~enumerableOp equal enumerable:list.
-//                                                  
-//    get FirstMember()
-//    {
-//        auto en := cast Enumerator(self.enumerator());
-//        
-//        if (en.next()) 
-//        {
-//            ^ en.get()
-//        }
-//        else
-//        {
-//            ^ nil
-//        }
-//    }
-//
+                                                  
+    get FirstMember()
+    {
+        auto en := cast Enumerator(self.enumerator());
+        
+        if (en.next()) 
+        {
+            ^ en.get()
+        }
+        else
+        {
+            ^ nil
+        }
+    }
+
 //    get MaximalMember()
 //    {
 //        auto en := cast Enumerator(self.enumerator());

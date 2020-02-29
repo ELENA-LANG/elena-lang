@@ -11,6 +11,7 @@ In development:
 
               dev - rosetta code samples
                 * Averages/Mode
+                * Averages/Root mean square
 
               dev - migration
                 * rosetta code samples : test twentyfour
@@ -31,12 +32,6 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * fillri - optimized version for 1,2,3 dwords 
-                * i + j (assinging, passing to a function)
-                * i + j * k (assinging, passing to a function)
-                * i + 1 (assinging, passing to a function)
-                * i + j * 2 (assinging, passing to a function)
-
                 * double boxing : in-place - conditonal / unconditional
                 * double boxing - n * (m + k), n,m,k - local integers
                 * align block code by 16
