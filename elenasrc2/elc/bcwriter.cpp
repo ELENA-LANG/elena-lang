@@ -16,14 +16,14 @@ constexpr auto STACKOP_MODE      = 0x0001;
 constexpr auto BOOL_ARG_EXPR     = 0x0002;
 constexpr auto NOBREAKPOINTS     = 0x0004;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 inline bool isSubOperation(SNode node)
 {
@@ -5959,15 +5959,32 @@ void ByteCodeWriter :: generateCondBoxing(CommandTape& tape, SyntaxTree::Node no
    assignOpArguments(node, step1, step2);
 
    SNode tempLocal = step1.findSubNodeMask(lxObjectMask);
-   SNode local = step2.firstChild(lxObjectMask).nextNode(lxObjectMask);
+   if (step2 == lxCopying) {
+      SNode local = step2.firstChild(lxObjectMask).nextNode(lxObjectMask);
 
-   tape.newLabel();
-   generateObject(tape, local, scope);
-   tape.write(bcIfHeap, baCurrentLabel);
+      tape.newLabel();
+      generateObject(tape, local, scope);
+      tape.write(bcIfHeap, baCurrentLabel);
 
-   generateObject(tape, step1, scope);
-   generateObject(tape, step2, scope);
+      generateObject(tape, step1, scope);
+      generateObject(tape, step2, scope);
+   }
+   else if (step2 == lxNone) {
+      SNode cloneNode = step1.findChild(lxCloning);
+      if (cloneNode != lxNone) {
+         SNode local = cloneNode.firstChild(lxObjectMask);
 
+         tape.newLabel();
+         generateObject(tape, local, scope);
+         tape.write(bcIfHeap, baCurrentLabel);
+
+         generateObject(tape, step1, scope);
+      }
+      else throw InternalError("Not yet implemented"); // !! temporal
+   }
+   else throw InternalError("Not yet implemented"); // !! temporal
+
+   scope.clear();
    generateObject(tape, tempLocal, scope);
    tape.setLabel();
 
@@ -5975,8 +5992,6 @@ void ByteCodeWriter :: generateCondBoxing(CommandTape& tape, SyntaxTree::Node no
       saveObject(tape, tempLocal.type, tempLocal.argument);
    }
    else throw InternalError("Not yet implemented"); // !! temporal
-
-   scope.clear();
 }
 
 void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
