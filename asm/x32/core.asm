@@ -2113,12 +2113,12 @@ end
 inline % 96h
 
   xor    edx, edx
-  mov    ebx,[data : %CORE_GC_TABLE + gc_start]
+  mov    eax,[data : %CORE_GC_TABLE + gc_start]
   mov    esi, 1
   mov    ecx,[data : %CORE_GC_TABLE + gc_end]
-  cmp    eax, ebx
+  cmp    ebx, eax
   cmovl  edx, esi
-  cmp    eax, ecx
+  cmp    ebx, ecx
   cmovg  edx, esi
   and    edx, edx
 
@@ -2227,6 +2227,16 @@ end
 inline % 0B1h
 
   mov  edx, __arg1
+
+end
+
+// ; equalfi
+inline % 0B3h
+
+  mov  eax, [ebp+__arg1]
+  xor  edx, edx
+  cmp  eax, ebx
+  setz dl
 
 end
 

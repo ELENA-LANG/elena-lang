@@ -1605,6 +1605,7 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcLoadFI:
          case bcSaveF:
          case bcSaveFI:
+         case bcEqualFI:
          //case bcELoadFI:
          //case bcESaveFI:
             (*it).save(scope.code, true);
@@ -5116,11 +5117,21 @@ void ByteCodeWriter :: saveIndexToFieldExpression(CommandTape& tape, SNode dstOb
    else throw InternalError("not yet implemente"); // !! temporal
 }
 
-void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope)
+void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope, bool condCopying)
 {
    if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
       loadObject(tape, source, scope);
-      copyToLocal(tape, size, dstObj.argument);
+      // no need for this optimization for dword?
+      if (condCopying && size > 4) {
+         tape.newLabel();
+         // equalfi i
+         // ifn labNext 1
+         tape.write(bcEqualFI, dstObj.argument, bpFrame);
+         tape.write(bcIfN, baCurrentLabel, 1);
+         copyToLocal(tape, size, dstObj.argument);
+         tape.setLabel();
+      }
+      else copyToLocal(tape, size, dstObj.argument);
    }
    else if (dstObj == lxLocalAddress) {
       loadObject(tape, source, scope);
@@ -5177,9 +5188,9 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
             releaseStack(tape);
          }
       }
-      else copyExpression(tape, source, dstObj, node.argument, scope);
+      else copyExpression(tape, source, dstObj, node.argument, scope, node == lxCondCopying);
    }
-   else copyExpression(tape, source, dstObj, node.argument, scope);
+   else copyExpression(tape, source, dstObj, node.argument, scope, node == lxCondCopying);
 }
 
 void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
@@ -5997,6 +6008,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          generateAssigningExpression(tape, node, scope);
          break;
       case lxCopying:
+      case lxCondCopying:
          generateCopyingExpression(tape, node, scope);
          break;
       case lxSaving:
@@ -6111,6 +6123,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          break;
       case lxBoxableExpression:
       case lxArgBoxableExpression:
+      case lxCondBoxableExpression:
          throw InternalError("Unboxed expression");
          break;
       case lxReturning:

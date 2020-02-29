@@ -2372,14 +2372,9 @@ void Compiler :: setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo obje
    node.set(type, object.param);
 
    if (object.extraparam == -1 && !EAttrs::test(mode, HINT_NOBOXING)) {
-      node.injectAndReplaceNode(lxBoxableExpression);
+      node.injectAndReplaceNode(lxCondBoxableExpression);
 
       appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING));
-
-//      writer.newNode((variable && !EAttrs::test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxCondBoxing, size);
-//      writer.appendNode(type, object.param);
-//      if (EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
-//         writer.appendNode(lxBoxingRequired);
    }
 }
 
@@ -3286,19 +3281,22 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
 }
 
 void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
-   bool boxingMode, bool withoutLocalBoxing, bool inPlace)
+   bool boxingMode, bool withoutLocalBoxing, bool inPlace, bool condBoxing)
 {
    if (current == lxExpression) {
-      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, inPlace);
+      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, 
+         inPlace, condBoxing);
    }
    else if (current == lxSeqExpression) {
-      boxArgument(boxExprNode, current.lastChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, true);
+      boxArgument(boxExprNode, current.lastChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, 
+         true, condBoxing);
    }
-   else if (current == lxBoxableExpression) {
+   else if (current.compare(lxBoxableExpression, lxCondBoxableExpression)) {
       // resolving double boxing
       current.set(lxExpression, 0);
 
-      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, inPlace);
+      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, 
+         inPlace, condBoxing);
    }
    else if (current == lxArgBoxableExpression) {
       throw InternalError("Not yet implemented");
@@ -3314,12 +3312,9 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
 
          injectIndexBoxingTempLocal(boxExprNode, current, scope, lxTempLocal, tempLocal);
       }
-      //else if (current.compare(lxCalling_0, lxDirectCalling, lxSDirectCalling)) {
-      //   boxExpressionInPlace(boxExprNode, current, scope, !boxingMode);
-      //}
       else if (boxingMode || (current == lxFieldExpression && !withoutLocalBoxing)) {
          if (inPlace || (test(current.type, lxOpScopeMask) && current != lxFieldExpression)) {
-            boxExpressionInPlace(boxExprNode, current, scope, !boxingMode);
+            boxExpressionInPlace(boxExprNode, current, scope, !boxingMode, condBoxing);
          }
          else {
             SNode argNode = current;
@@ -3335,7 +3330,8 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
                   tempLocal = scope.newTempLocal();
                   scope.tempLocals.add(key, tempLocal);
 
-                  boxExpressionInRoot(boxExprNode, current, scope, lxTempLocal, tempLocal, !boxingMode);
+                  boxExpressionInRoot(boxExprNode, current, scope, lxTempLocal, tempLocal, 
+                     !boxingMode, condBoxing);
                }
                else current.set(lxTempLocal, tempLocal);
             }
@@ -3349,7 +3345,9 @@ void Compiler :: analizeOperand(SNode& current, ExprScope& scope, bool boxingMod
    switch (current.type) {
       case lxArgBoxableExpression:
       case lxBoxableExpression:
-         boxArgument(current, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, inPlace);
+      case lxCondBoxableExpression:
+         boxArgument(current, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, 
+            inPlace, current == lxCondBoxableExpression);
          current.set(lxExpression, 0);
          break;
       case lxExpression:
@@ -5966,7 +5964,7 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
          current = lxIdle;
       }
       else {
-         if (objNode == lxBoxableExpression) {
+         if (objNode.compare(lxBoxableExpression, lxCondBoxableExpression)) {
             if (!typeRef)
                typeRef = objNode.findChild(lxType).argument;
 
@@ -9705,10 +9703,13 @@ void Compiler :: injectCreating(SNode& assigningNode, SNode objNode, ExprScope& 
 }
 
 void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
-   int tempLocal, bool localBoxingMode)
+   int tempLocal, bool localBoxingMode, bool condBoxing)
 {
    SNode parent = node;
    SNode current = injectRootSeqExpression(parent);
+   SNode boxingNode = current;
+   if (condBoxing)
+      boxingNode = current.insertNode(lxCondBoxing);
 
    ref_t typeRef = node.findChild(lxType).argument;
    int size = node.findChild(lxSize).argument;
@@ -9721,7 +9722,7 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
          typeRef = resolvePrimitiveReference(scope, typeRef, elementRef, false);
       }
 
-      SNode copyNode = current.insertNode(objNode.type, objNode.argument);
+      SNode copyNode = boxingNode.insertNode(objNode.type, objNode.argument);
       if (test(objNode.type, lxOpScopeMask))
          SyntaxTree::copyNode(objNode, copyNode);
 
@@ -9734,7 +9735,7 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
          copyNode.insertNode(tempType, tempLocal);
       }
       else {
-         SNode assignNode = current.insertNode(lxAssigning);
+         SNode assignNode = boxingNode.insertNode(lxAssigning);
          assignNode.appendNode(tempType, tempLocal);
 
          if (localBoxingMode) {
@@ -9760,6 +9761,8 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
          if (size < 0) {
             unboxing.set(lxCloning, 0);
          }
+         else if (condBoxing)
+            unboxing.set(lxCondCopying, size);
 
          SyntaxTree::copyNode(objNode, unboxing.appendNode(objNode.type, objNode.argument));
          if (size == 0) {
@@ -9779,7 +9782,8 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
    else scope.raiseError(errInvalidBoxing, node);
 }
 
-void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scope, bool localBoxingMode)
+void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scope, 
+   bool localBoxingMode, bool condBoxing)
 {
    ref_t typeRef = node.findChild(lxType).argument;
    int size = node.findChild(lxSize).argument;
@@ -9812,7 +9816,11 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
          SNode seqNode= objNode;
          seqNode.injectAndReplaceNode(lxSeqExpression);
 
-         SNode copyingNode = seqNode.firstChild();
+         SNode boxExpr = seqNode;
+         if (condBoxing)
+            boxExpr = seqNode.injectNode(lxCondBoxing);
+
+         SNode copyingNode = boxExpr.firstChild();
          injectCopying(copyingNode, size, variadic);
 
          if (size < 0) {
@@ -9824,7 +9832,7 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
          else {
             copyingNode.insertNode(lxTempLocal, tempLocal);
 
-            SNode assignNode = seqNode.insertNode(lxAssigning);
+            SNode assignNode = boxExpr.insertNode(lxAssigning);
             assignNode.insertNode(lxTempLocal, tempLocal);
 
             // !!NOTE: objNode is no longer valid, but injectCreating uses only 
@@ -9845,32 +9853,8 @@ bool Compiler :: optimizeEmbeddable(_ModuleScope& scope, SNode& node/*, bool arg
    // verify the path
    SNode callNode = node.parentNode();
    SNode rootNode = callNode.parentNode();
-   /*if (argMode) {
-      if (rootNode.compare(lxCalling_0, lxDirectCalling, lxSDirectCalling)) {
-         //// validate if the argument is stack safe
-         //int stackSafeAttrs = rootNode.findChild(lxStacksafeAttr).argument;
-         //int flag = 1;
-         //SNode current = rootNode.firstChild(lxObjectMask);
-         //bool stackSafeArg = false;
-         //while (current != lxNone) {
-         //   if (current == callNode && test(stackSafeAttrs, flag)) {
-         //      stackSafeArg = true;
-         //      break;
-         //   }
-
-         //   current = current.nextNode(lxObjectMask);
-         //   flag <<= 1;
-         //}
-
-         //if (stackSafeArg)
-            applied = _logic->optimizeReturningStructure(scope, *this, rootNode, true);
-      }
-   }
-   else */if (rootNode == lxCopying) {
-      //if (!_logic->optimizeReturningStructure(scope, *this, rootNode, false)) {
-         applied = _logic->optimizeEmbeddableOp(scope, *this, rootNode);
-      //}
-      //else applied = true;
+   if (rootNode == lxCopying) {
+      applied = _logic->optimizeEmbeddableOp(scope, *this, rootNode);
    }
 
    if (applied)

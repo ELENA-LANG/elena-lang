@@ -111,6 +111,7 @@ enum LexicalType
    lxFieldExpression          = 0x059033,
    lxArgBoxableExpression     = 0x059034,
    lxCodeExpression           = 0x059035,
+   lxCondBoxableExpression    = 0x059036,
    lxNil                      = 0x018040,
    lxStopper                  = 0x018041,   // used for variadic arguments as a last argument
    lxClassSymbol              = 0x018050,   // arg - reference
@@ -144,6 +145,7 @@ enum LexicalType
    lxCopying                  = 0x058121,
    lxByRefAssigning           = 0x058122,
    lxSaving                   = 0x058123,
+   lxCondCopying              = 0x058124,
    lxReturning                = 0x059130,
    lxImplicitJump             = 0x058140,
    lxBranching                = 0x058150,   // branch expression      

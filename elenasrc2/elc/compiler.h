@@ -1229,9 +1229,10 @@ private:
    void injectCreating(SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode, int size,
       ref_t typeRef, bool variadic);
 
-   void boxExpressionInPlace(SNode boxNode, SNode objNode, ExprScope& scope, bool localBoxingMode);
+   void boxExpressionInPlace(SNode boxNode, SNode objNode, ExprScope& scope, 
+      bool localBoxingMode, bool condBoxing);
    void boxExpressionInRoot(SNode boxNode, SNode objNode, ExprScope& scope, LexicalType tempType,
-      int tempLocal, bool localBoxingMode);
+      int tempLocal, bool localBoxingMode, bool condBoxing);
 
    void injectMemberPreserving(SNode objNode, LexicalType tempType, int tempLocal, int memberIndex);
    void injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
@@ -1241,7 +1242,7 @@ private:
    void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));
    void analizeSymbolTree(SNode node, Scope& scope);
    void boxArgument(SNode boxExprNode, SNode node, ExprScope& scope, bool boxingMode, 
-      bool withoutLocalBoxing, bool inPlace);
+      bool withoutLocalBoxing, bool inPlace, bool condBoxing);
    void analizeOperand(SNode& node, ExprScope& scope, bool boxingMode, bool withoutLocalBoxing, bool inPlace);
    void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr, bool inPlace);
 

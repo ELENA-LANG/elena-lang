@@ -10,10 +10,9 @@ In development:
                 * compile hello world
 
               dev - boxing
-                * stacksafe closure members should be passed directly? no need to unbox stack allocated variables?
-
-              dev - boxing
-                * conditional boxing / unboxing?
+                * cond boxing true : in-place / in-root
+                * cond boxing false : in-place / in-root
+                * cond unboxing
 
               dev - rosetta code samples
                 * fix sort algorith
@@ -43,6 +42,7 @@ In development:
                 * i + j * k (assinging, passing to a function)
                 * i + 1 (assinging, passing to a function)
                 * i + j * 2 (assinging, passing to a function)
+                * double boxing : in-place - conditonal / unconditional
                 * double boxing - n * (m + k), n,m,k - local integers
                 * align block code by 16
                 * optimize pi sample ( < 5s )
@@ -133,6 +133,7 @@ In development:
                 * stack allocates classes should clear its body
                 * assigning struct field with int constant
                 * int operation : 1 + i
+                * ifheap - is not correctly recognize data allocated classes
 
               dev - usability
                 * ref argument should be a variable

@@ -334,7 +334,7 @@ class ByteCodeWriter
 //   void saveUnboxingVar(CommandTape& tape, SNode member, bool& accTrarget, bool& accPresaving, int& presavedCount);
 //   void loadUnboxingVar(CommandTape& tape, SNode current, int paramCount, int& presavedCount);
 
-   void copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope);
+   void copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope, bool condCopying);
 
    void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
 

@@ -225,6 +225,8 @@ ELENA byte codes (or ecodes)
  ----------------------- 
  equal                       - acc == [sp] ; if true - index = 1, if false - index = 0
 
+ equalfi i                   - acc == fp[o] ; if true - index = 1, if false - index = 0
+
  lequal                      - long[acc] == long[sp] ; if true - index = 1, if false - index = 0
 
  lless                       - long[acc] < long[sp]  ; if true - index = 1, if false - index = 0
@@ -383,7 +385,7 @@ ELENA byte codes (or ecodes)
  ifn n, label               - jump to the label if index == n
  
  ifr r, label               - jumps to the label if acc == r
- 
+
  lessn n, label             - jump to the label if index < n
 
  notgreater label           - jump to the label if acc[0] <= index
