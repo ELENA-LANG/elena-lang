@@ -15,8 +15,7 @@ In development:
                 * cond unboxing
 
               dev - rosetta code samples
-                * fix sort algorith
-                * Averages/Median
+                * Averages/Mode
 
               dev - migration
                 * rosetta code samples : test twentyfour
