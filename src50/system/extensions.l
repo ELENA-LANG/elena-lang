@@ -400,15 +400,15 @@ public extension intOp : IntNumber
     
 //    real realDiv(n)
 //        = new RealNumber(self).divide:n;
-//   
-//    int sqr()
-//    {
-//        int n := self;        
-//        
-//        n := n * n;
-//        
-//        ^ n
-//    }
+   
+    int sqr()
+    {
+        int n := self;        
+        
+        n := n * n;
+        
+        ^ n
+    }
     
     int sqrt()
     {   

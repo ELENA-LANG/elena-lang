@@ -59,29 +59,29 @@ sealed struct RandomGenerator
 // --- randomGenerator ---
 
 public static randomGenerator = new RandomGenerator();
-//
-//// -- ERandomizer --
-//
-//public extension randomOp
-//{
-//    randomize(count)
-//    {
-//        var list := self.clone();
-//        
-//        int n := cast int(count);
-//        int i := 0;
-//        
-//        int max := self.Length;
-//        
-//        while (i < n)
-//        {
-//            var j := randomGenerator.eval(max);
-//            
-//            mixin indexableOp(list).exchange(i, j);
-//            
-//            i := i + 1
-//        };
-//        
-//        ^ list
-//    }
-//}
+
+// -- ERandomizer --
+
+public extension randomOp
+{
+    randomize(count)
+    {
+        var list := self.clone();
+        
+        int n := cast int(count);
+        int i := 0;
+        
+        int max := self.Length;
+        
+        while (i < n)
+        {
+            var j := randomGenerator.eval(max);
+            
+            list.exchange(i, j);
+            
+            i := i + 1
+        };
+        
+        ^ list
+    }
+}

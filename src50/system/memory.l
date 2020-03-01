@@ -1480,24 +1480,24 @@ public sealed Array : Indexable//, Array<object>
 //        self setAt(0, singleItem).
 //    ]
 
-//    /// Concatinates the arrays    
-//    add(Array a)
-//    {
-//        int length1 := self.Length;
-//        int length2 := a.Length;
-//        
-//        auto retVal := Array.allocate(length1 + length2);
-//
-//        for (int i:=0, i < length1, i += 1) {
-//            retVal[i] := theArray[i]
-//        };
-//
-//        for (int i:=0, i < length2, i += 1) {
-//            retVal[length1 + i] := a[i]
-//        };
-//            
-//        ^ retVal
-//    }
+    /// Concatinates the arrays    
+    add(Array a)
+    {
+        int length1 := self.Length;
+        int length2 := a.Length;
+        
+        auto retVal := Array.allocate(length1 + length2);
+
+        for (int i:=0, i < length1, i += 1) {
+            retVal[i] := theArray[i]
+        };
+
+        for (int i:=0, i < length2, i += 1) {
+            retVal[length1 + i] := a[i]
+        };
+            
+        ^ retVal
+    }
 
     int Length
     {
