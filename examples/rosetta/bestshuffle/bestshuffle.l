@@ -41,7 +41,7 @@ extension op
 
 public program()
 {
-    new::("abracadabra", "seesaw", "grrrrrr", "pop", "up", "a").forEach:(s)
+    new string[]{"abracadabra", "seesaw", "grrrrrr", "pop", "up", "a"}.forEach:(s)
     {
         var shuffled_s := s.Shuffled;
 
