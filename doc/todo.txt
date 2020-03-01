@@ -9,13 +9,11 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
-              dev - boxing
-                * boxing in root - inside for loop (not outside like now)
-
               dev - rosetta code samples
                 * Best shuffle
 
               dev - migration
+                * rosetta code samples : arithmeval
                 * rosetta code samples : test twentyfour
                 * rosetta code samples : Anagrams
                 * rosetta code samples : Amicable pairs
