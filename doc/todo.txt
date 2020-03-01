@@ -9,6 +9,9 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
+              dev - boxing
+                * boxing in root - inside for loop (not outside like now)
+
               dev - rosetta code samples
                 * Best shuffle
 
@@ -30,32 +33,15 @@ In development:
                 * api doc - with description
                 * xforms
 
-              dev - test / optimization
-                * align block code by 16
-                * optimize pi sample ( < 5s )
-
-              dev - implementation
+              dev - test / implementation
                 * fixed-size array boxing (system'io'WIN32_FIND_DATA)
-
-              dev - test / optimization
                 * boxing external operation
-                * double assigning : operation with struct field : var s := x + /*y*/1; (where x is a word field)
-                * double assigning : int n := 2; var o := n + 1 / var o := n
-                * field boxing : e.g x + x - should not be boxed twice
-                * field boxing : double assigning
-                * boxing an array, assinging to the local variable - get rid of double assigning
-                * operations with byte or word 
-                * saving dword or qword 
-                * simplify the operations with struct fields (size=1,2,4,8,...)
-                * copying 4,8,1,2 bytes
                 * translit sample: List should be compiled as constant list
                 * resolving byref template - cache the resolved results
-                * review byte code in core_routines and BCWriter - check for more optimal opcodes
                 * it should be possible to turn-off optimization (opL1)
                 * test : branching external implementation : returning a value from closure 
                 * it should be possible to extend attributes / template statements from anoter libraries
                 * test if big alloc is proper working
-                * optimization : assigning a field with a local - there should be direct byte code
                 * adding source path link on tempate based classes with field initializers
                 * private / internal class templates
                 * invalid operation : var a.test();
@@ -82,11 +68,7 @@ In development:
                 * test property with template-based type, array type
                 * test embeddable method return with by ref variable
                 * test accumulating constants
-                * assigning a big number to short / byte local variable - should be truncated?
                 * boxing ext call result
-                * optimize interface implementation . try to use direct / semi-direct call when possible
-                * optimize operations with int[], short[], byte[] arrays
-                * ByteNumber#class.new[2] - idle command - "pushr 0"
                 * alt - no need to assign temp local for local / field / param
                 * test long / real arithmetic, comparision
                 * test negative long to int conversion
@@ -94,32 +76,51 @@ In development:
                 * test real to byte/short/int/uint/long conversion
                 * test expression with several boxed fields 
                 * check notless : literal, wide, bytearray, array
-                * optimize IntNumber#class.#constructor[1]
                 * CharValue.new = $0 -> should create a new class
                 * CreateClass / CreateStruct with initializers - no need to clear newly created object
                 * generateInitializer - support constants as well for onlyLocal mode
-                * optimize array creation
                 * test creating an array : non-empty, empty
                 * operations in symbol
-                * call inernal function directly (without intermediate step in system'routines) when it is possible
-                * optimize xreadn, xwriten
                 * do we need lxEmbeddableAttr and optimiation rule?
                 * warn if the extension method is called from itself (short-cutting)
-                * optimization : do not call idle method
                 * static methods : multimethods
                 * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
                 * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
-                * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
-                  possible values)
-                * copying  a buffer with unaligned size
                 * auto conversion methods should be marked as idle
                 * boxArgument - fieldexpr should be better mapped
                 * stack allocated variables : assigning nil, default constructor call, ...
                 * stack allocation should not be cleared
                 * stack allocates classes should clear its body
                 * assigning struct field with int constant
-                * int operation : 1 + i
                 * ifheap - is not correctly recognize data allocated classes
+
+              dev - test / optimization
+                * align block code by 16
+                * optimize pi sample ( < 5s )
+                * double assigning : operation with struct field : var s := x + /*y*/1; (where x is a word field)
+                * double assigning : int n := 2; var o := n + 1 / var o := n
+                * field boxing : e.g x + x - should not be boxed twice
+                * field boxing : double assigning
+                * boxing an array, assinging to the local variable - get rid of double assigning
+                * operations with byte or word 
+                * saving dword or qword 
+                * simplify the operations with struct fields (size=1,2,4,8,...)
+                * copying 4,8,1,2 bytes
+                * review byte code in core_routines and BCWriter - check for more optimal opcodes
+                * optimization : assigning a field with a local - there should be direct byte code
+                * assigning a big number to short / byte local variable - should be truncated?
+                * optimize interface implementation . try to use direct / semi-direct call when possible
+                * optimize operations with int[], short[], byte[] arrays
+                * ByteNumber#class.new[2] - idle command - "pushr 0"
+                * optimize IntNumber#class.#constructor[1]
+                * optimize array creation
+                * call inernal function directly (without intermediate step in system'routines) when it is possible
+                * optimize xreadn, xwriten
+                * optimization : do not call idle method
+                * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
+                  possible values)
+                * copying  a buffer with unaligned size
+                * int operation : 1 + i
 
               dev - usability
                 * ref argument should be a variable

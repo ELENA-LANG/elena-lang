@@ -17,14 +17,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -2874,7 +2874,33 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
       // we are lucky : we can implement branching directly
       compileBranchingNodes(roperandNode, scope, ifReference, loopMode, switchMode);
 
-      roperandNode.parentNode().set(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
+      SNode branchNode = roperandNode.parentNode();
+      branchNode.set(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
+
+      if (loopMode) {
+         SNode exprNode = branchNode;
+         SNode rootExpr = exprNode.parentNode();
+         while (rootExpr != lxSeqExpression || rootExpr.argument != -1) {
+            exprNode = rootExpr;
+            rootExpr = rootExpr.parentNode();
+         }
+         if (exprNode.prevNode() != lxNone && rootExpr == lxSeqExpression) {
+            // bad luck : we have to relocate boxing expressions into the loop
+            SNode seqNode = branchNode.insertNode(lxSeqExpression);
+
+            exprNode = exprNode.prevNode();
+            while (exprNode != lxNone) {
+               // copy to the new location
+               SNode copyNode = seqNode.insertNode(exprNode.type, exprNode.argument);
+               SyntaxTree::copyNode(exprNode, copyNode);
+
+               // commenting out old one
+               exprNode = lxIdle;
+
+               exprNode = exprNode.prevNode();
+            }
+         }
+      }
    }
    else {
       operator_id = original_id;
@@ -5260,6 +5286,9 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 
 ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t targetRef, EAttr mode)
 {
+   // renaming top expression into sequence one to be used in root boxing routines
+   node.set(lxSeqExpression, -1);
+
    // inject a root expression
    node = node.injectNode(lxExpression);
 
@@ -5270,6 +5299,8 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
 
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr, true);
+
+   test2(node);
 
    return retVal;
 }
