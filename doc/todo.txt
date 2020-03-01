@@ -31,7 +31,6 @@ In development:
                 * xforms
 
               dev - test / optimization
-                * double boxing : in-place - conditonal / unconditional
                 * double boxing - n * (m + k), n,m,k - local integers
                 * align block code by 16
                 * optimize pi sample ( < 5s )

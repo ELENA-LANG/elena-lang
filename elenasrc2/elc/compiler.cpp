@@ -9783,6 +9783,15 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
 void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scope, 
    bool localBoxingMode, bool condBoxing)
 {
+   SNode rootNode = node.parentNode();
+   while (rootNode == lxExpression)
+      rootNode = rootNode.parentNode();
+
+   SNode target;
+   if (rootNode == lxAssigning) {
+      target = rootNode.findSubNodeMask(lxObjectMask);
+   }
+
    ref_t typeRef = node.findChild(lxType).argument;
    int size = node.findChild(lxSize).argument;
    bool variadic = node == lxArgBoxableExpression;
@@ -9809,7 +9818,11 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
             typeRef = resolvePrimitiveReference(scope, typeRef, elementRef, false);
          }
 
-         int tempLocal = scope.newTempLocal();
+         int tempLocal = 0;
+         if (target == lxLocal) {
+            tempLocal = target.argument;
+         }
+         else tempLocal = scope.newTempLocal();
 
          SNode seqNode= objNode;
          seqNode.injectAndReplaceNode(lxSeqExpression);
@@ -9838,7 +9851,12 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
             injectCreating(assignNode, objNode, scope, false, size, typeRef, variadic);
          }
 
-         seqNode.appendNode(lxTempLocal, tempLocal);
+         if (target == lxLocal) {
+            // comment out double assigning
+            target = lxIdle;
+            rootNode = lxExpression;
+         }
+         else seqNode.appendNode(lxTempLocal, tempLocal);
       }
    }
    else scope.raiseError(errInvalidBoxing, node);
