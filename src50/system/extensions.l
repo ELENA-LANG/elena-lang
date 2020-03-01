@@ -409,25 +409,25 @@ public extension intOp : IntNumber
 //        
 //        ^ n
 //    }
-//    
-//    int sqrt()
-//    {   
-//        int num := self;
-//        
-//        if (num == 0)
-//            { ^ 0 };
-//            
-//        int n := num / 2 + 1;
-//        int n1 := (n + (num / n)) / 2;
-//        while (n1 < n)
-//        {
-//            n := n1;
-//            n1 := (n + (num / n)) / 2
-//        };
-//        
-//        ^ n
-//    }
-//
+    
+    int sqrt()
+    {   
+        int num := self;
+        
+        if (num == 0)
+            { ^ 0 };
+            
+        int n := num / 2 + 1;
+        int n1 := (n + (num / n)) / 2;
+        while (n1 < n)
+        {
+            n := n1;
+            n1 := (n + (num / n)) / 2
+        };
+        
+        ^ n
+    }
+
 //    power(n)
 //        = self.power(cast int(n));
                 
@@ -640,14 +640,14 @@ public extension realOp : RealNumber
 //        
 //        ^ retVal
 //    }
-//    
-//    real sqrt()
-//    {
-//        real n := self;
-//        real retVal := realOpController.sqrt(n);
-//        
-//        ^ retVal
-//    }
+    
+    real sqrt()
+    {
+        real n := self;
+        real retVal := realOpController.sqrt(n);
+        
+        ^ retVal
+    }
 
     real power(real y)
     {

@@ -4004,7 +4004,7 @@ end
 
 procedure coreapi'rsqrt
 
-  mov   eax, [esp]
+  mov   eax, [esp+4]
   fld   qword ptr [eax]  
   fsqrt
   fstp  qword ptr [ebx]    // store result 

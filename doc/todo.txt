@@ -10,8 +10,7 @@ In development:
                 * compile hello world
 
               dev - rosetta code samples
-                * Averages/Mode
-                * Averages/Root mean square
+                * Babbage problem
 
               dev - migration
                 * rosetta code samples : test twentyfour

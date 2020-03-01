@@ -28,7 +28,7 @@ class SMA
                     count := thePeriod
                 };
         
-                var sum := theList.summarize(new Real());
+                var sum := theList.summarize(Real.new());
                 
                 ^ sum / count
             }
