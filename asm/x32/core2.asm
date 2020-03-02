@@ -168,6 +168,13 @@ labWBMark4:
   jmp  short labWBNext
   
 labWBEnd:
+  mov  eax, esp
+  push eax
+  call extern 'rt_dlls.GCCollect
+
+
+  // === old ===
+
   // ; save the stack restore-point
   push ebp
 

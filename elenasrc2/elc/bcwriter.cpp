@@ -6,6 +6,8 @@
 //                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
+//#define FULL_OUTOUT_INFO 1
+
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "bcwriter.h"
@@ -4715,142 +4717,6 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    scope.clear();
 }
 
-//void ByteCodeWriter :: unboxCallParameter(CommandTape& tape, SNode current)
-//{
-//   SNode target = current.firstChild(lxObjectMask);
-//   SNode tempLocal = current.findChild(lxTempLocal);
-//   if (tempLocal != lxNone) {
-//      loadObject(tape, lxLocal, tempLocal.argument, 0);
-//   }
-//   else popObject(tape, lxResult);
-//
-//   if (current.argument != 0) {
-//      if (target == lxExpression)
-//         target = target.firstChild(lxObjectMask);
-//
-//      tape.write(bcPushB);
-//      if (target == lxAssigning) {
-//         // unboxing field address
-//         SNode larg, rarg;
-//         assignOpArguments(target, larg, rarg);
-//
-//         target = rarg;
-//      }
-//
-//      if (target == lxFieldAddress) {
-//         bool dummy = false;
-//         if (current.argument == 4) {
-//            assignInt(tape, lxFieldAddress, target.argument, dummy);
-//         }
-//         else if (current.argument == 2) {
-//            assignLong(tape, lxFieldAddress, target.argument, dummy);
-//         }
-//         else assignStruct(tape, lxFieldAddress, target.argument, current.argument);
-//      }
-//      else {
-//         loadBase(tape, target.type, target.argument, 0);
-//         copyBase(tape, current.argument);
-//      }
-//
-//      tape.write(bcPopB);
-//   }
-//   else {
-//      loadObject(tape, lxResultField, 0, 0);
-//      saveObject(tape, target.type, target.argument);
-//   }
-//}
-//
-//void ByteCodeWriter :: unboxCallParameters(CommandTape& tape, SyntaxTree::Node node)
-//{
-//   loadBase(tape, lxResult, 0, 0);
-//
-//   size_t counter = countChildren(node);
-//   size_t index = 0;
-//   while (index < counter) {
-//      // get parameters in reverse order if required
-//      SNode current = getChild(node, counter - index - 1);
-//
-//      if (current == lxExpression)
-//         current = current.firstChild(lxObjectMask);
-//
-//      if (current == lxUnboxing) {
-//         unboxCallParameter(tape, current);
-//      }
-//      else if (current == lxOverridden && current.existChild(lxUnboxing)) {
-//         unboxCallParameter(tape, current.findChild(lxUnboxing));
-//      }
-//      else if (current == lxLocalUnboxing) {
-//         SNode assignNode = current.findChild(lxAssigning);
-//         SNode larg;
-//         SNode rarg;
-//
-//         assignOpArguments(assignNode, larg, rarg);
-//
-//         tape.write(bcPushB);
-//         loadObject(tape, larg.type, larg.argument, 0);
-//         loadBase(tape, rarg.type, 0, ACC_PRESAVED);
-//
-//         bool dummy = false;
-//         if (assignNode.argument == 4) {
-//            assignInt(tape, lxFieldAddress, rarg.argument, dummy);
-//         }
-//         else if (assignNode.argument == 2) {
-//            assignLong(tape, lxFieldAddress, rarg.argument, dummy);
-//         }
-//         else assignStruct(tape, lxFieldAddress, rarg.argument, assignNode.argument);
-//
-//         tape.write(bcPopB);
-//      }
-//      else if (current == lxNested) {
-//         bool unboxing = false;
-//         SNode member = current.firstChild();
-//         while (member != lxNone) {
-//            if (member == lxOuterMember) {
-//               unboxing = true;
-//
-//               SNode target = member.firstChild(lxObjectMask);
-//               SNode checkLocal = member.firstChild(lxCheckLocal);
-//
-//               // load outer field
-//               loadObject(tape, lxCurrent, 0, 0);
-//               loadObject(tape, lxResultField, member.argument, 0);
-//
-//               // save to the original variable
-//               if (target.type == lxBoxing) {
-//                  SNode localNode = target.firstChild(lxObjectMask);
-//
-//                  tape.write(bcPushB);
-//                  loadBase(tape, localNode.type, localNode.argument, ACC_PRESAVED);
-//                  if (target.argument != 0) {
-//                     copyBase(tape, target.argument);
-//                  }
-//                  else tape.write(bcCopy);
-//
-//                  tape.write(bcPopB);
-//               }
-//               else if (checkLocal == lxCheckLocal) {
-//                  saveObjectIfChanged(tape, target.type, target.argument, checkLocal.argument, 0);
-//               }
-//               else saveObject(tape, target.type, target.argument);
-//            }
-//            else if (member == lxCode) {
-//               unboxing = true;
-//
-//               generateCodeBlock(tape, member);
-//            }
-//
-//            member = member.nextNode();
-//         }
-//         if (unboxing)
-//            releaseObject(tape);
-//      }
-//
-//      index++;
-//   }
-//
-//   assignBaseTo(tape, lxResult);
-//}
-
 void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, FlowScope& scope)
 {
    generateExpression(tape, node, scope/*, ACC_REQUIRED*/);
@@ -4858,66 +4724,6 @@ void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, F
    gotoEnd(tape, baFirstLabel);
 }
 
-//////void ByteCodeWriter :: generateThrowExpression(CommandTape& tape, SNode node)
-//////{
-//////   generateExpression(tape, node, ACC_REQUIRED);
-//////
-//////   pushObject(tape, lxResult);
-//////   throwCurrent(tape);
-//////
-//////
-//////   gotoEnd(tape, baFirstLabel);
-//////}
-//
-//void ByteCodeWriter :: generateBoxing(CommandTape& tape, SNode node)
-//{
-//   SNode target = node.findChild(lxTarget);
-//   if (isPrimitiveRef(target.argument))
-//      throw InternalError("Invalid boxing target");
-//
-//   if (node == lxArgBoxing) {
-//      boxArgList(tape, target.argument);
-//   }
-//   else if (node.argument == 0) {
-//      SNode attr = node.findChild(lxBoxableAttr);
-//      if (attr.argument == INVALID_REF) {
-//         // HOTFIX : to recognize a primitive array boxing
-//         tape.write(bcLen);
-//         loadBase(tape, lxResult, 0, 0);
-//         loadObject(tape, lxClassSymbol, target.argument, 0);
-//         newDynamicObject(tape);
-//         copyDynamicObject(tape, true, true);
-//      }
-//      else newVariable(tape, target.argument, lxResult);
-//   }
-//   else boxObject(tape, node.argument, target.argument, node != lxCondBoxing);
-//
-//   SNode temp = node.findChild(lxTempLocal);
-//   if (temp != lxNone) {
-//      saveObject(tape, lxLocal, temp.argument);
-//   }
-//}
-//
-//void ByteCodeWriter :: generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset)
-//{
-//   SNode target = node.findChild(lxTarget);
-//
-//   boxField(tape, offset, node.argument, target.argument);
-//}
-//
-//void ByteCodeWriter :: generateBoxingExpression(CommandTape& tape, SNode node, int mode)
-//{
-//   SNode expr = node.firstChild(lxObjectMask);
-//   if (expr == lxFieldAddress && expr.argument > 0) {
-//      loadObject(tape, expr);
-//      generateFieldBoxing(tape, node, expr.argument);
-//   }
-//   else {
-//      generateExpression(tape, node, mode | ACC_REQUIRED);
-//      generateBoxing(tape, node);
-//   }
-//}
-//
 //inline bool isAssignOp(SNode source)
 //{
 //   return test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_OPERATOR_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||
@@ -6703,12 +6509,24 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
 //////   }
 //////}
 
-void ByteCodeWriter :: generateClass(CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef, bool(*cond)(LexicalType))
+void ByteCodeWriter :: generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef, bool(*cond)(LexicalType))
 {
+#ifdef FULL_OUTOUT_INFO
+   // info
+   ident_t name = scope.module->resolveReference(reference);
+   scope.printInfo("class %s", name);
+#endif // FULL_OUTOUT_INFO
+
    declareClass(tape, reference);
    SyntaxTree::Node current = root.firstChild();
    while (current != lxNone) {
       if (cond(current.type)) {
+#ifdef FULL_OUTOUT_INFO
+         // info
+         int x = 0;
+         scope.printMessageInfo("method %s", current.argument);
+#endif // FULL_OUTOUT_INFO
+
          generateMethod(tape, current, sourcePathRef);
       }
       current = current.nextNode();

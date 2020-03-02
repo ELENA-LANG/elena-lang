@@ -70,31 +70,28 @@ end
 // INVOKER(prevFrame, function)
 procedure % INVOKER
 
-  mov  eax, esp
-
+  // ; save registers
+  mov  eax, [esp+8]   // ; function
   push esi
+  mov  esi, [esp+8]   // ; prevFrame
   push edi
   push ecx
   push ebx
   push ebp
-  push esi
-  push edi
 
-  mov  esi, [eax+4]
-  mov  edi, [eax+8]
+  // declare new frame
+  push esi            // ; FrameHeader.previousFrame
+  push 0              // ; FrameHeader.reserved
+  mov  ebp, esp       // ; FrameHeader
+  call eax
+  add  esp, 8         // ; clear FrameHeader
 
-  push  esi         // ; declare frame
-  push  0
-  call  edi
-
-  add   esp, 8
-  pop   edi
-  pop   esi
-  pop   ebp
-  pop   ebx
-  pop   ecx
-  pop   edi
-  pop   esi
+  // ; restore registers
+  pop  ebp
+  pop  ebx
+  pop  ecx
+  pop  edi
+  pop  esi
   ret
 
 end

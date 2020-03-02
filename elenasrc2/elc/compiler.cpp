@@ -2878,6 +2878,7 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
       branchNode.set(loopMode ? lxLooping : lxBranching, switchMode ? -1 : 0);
 
       if (loopMode) {
+         // check if the loop has root boxing operations
          SNode exprNode = branchNode;
          SNode rootExpr = exprNode.parentNode();
          while (rootExpr != lxSeqExpression || rootExpr.argument != -1) {
@@ -4721,6 +4722,7 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
    node = node.parentNode();
 
    analizeOperands(node, exprScope, stackSafeAttr, true);
+   test2(node);
 
    return info;
 }
@@ -9185,7 +9187,7 @@ void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
 
    CommandTape tape;
-   _writer.generateClass(tape, node, scope.reference, sourcePathRef,
+   _writer.generateClass(*scope.moduleScope, tape, node, scope.reference, sourcePathRef,
       scope.classClassMode ? isClassClassMethod : isClassMethod);
 
    // optimize
@@ -9888,6 +9890,8 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
             rootNode = lxExpression;
          }
          else seqNode.appendNode(lxTempLocal, tempLocal);
+
+         test2(seqNode);
       }
    }
    else scope.raiseError(errInvalidBoxing, node);
