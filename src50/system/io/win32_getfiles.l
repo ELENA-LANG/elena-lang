@@ -22,36 +22,36 @@ namespace io
         int      nFileSizeLow;
         int      dwReserved0;
         int      dwReserved1;
-//        short    cFileName[260];
-//        short    cAlternateFileName[14]; 
+        short    cFileName[260];
+        short    cAlternateFileName[14]; 
         
-//        bool isFile()
-//        {
-//            int attr := dwFileAttributes;
-//            
-//            attr := attr && FILE_ATTRIBUTE_DIRECTORY;
-//            
-//            ^ attr == 0
-//        }
-//        
-//        bool isDirectory()
-//        {
-//            int attr := dwFileAttributes;
-//            
-//            attr := attr && FILE_ATTRIBUTE_DIRECTORY;
-//            
-//            ^ attr != 0
-//        }
-//        
-//        get string FileName()
-//        {
-//            short[] s := cFileName;
-//            int len := extern KERNEL32.lstrlenW(s);
-//            
-//            // ^ UTF16Encoding.toString(0, len, s)
-//            var w := WideString.fromShortArray(0, len, s);
-//            ^ cast string(w)        
-//        }
+        bool isFile()
+        {
+            int attr := dwFileAttributes;
+            
+            attr := attr && FILE_ATTRIBUTE_DIRECTORY;
+            
+            ^ attr == 0
+        }
+        
+        bool isDirectory()
+        {
+            int attr := dwFileAttributes;
+            
+            attr := attr && FILE_ATTRIBUTE_DIRECTORY;
+            
+            ^ attr != 0
+        }
+        
+        get string FileName()
+        {
+            short[] s := cFileName;
+            int len := extern KERNEL32.lstrlenW(s);
+            
+            // ^ UTF16Encoding.toString(0, len, s)
+            var w := WideString.fromShortArray(0, len, s);
+            ^ cast string(w)        
+        }
     }
     
     public sealed class FileEnumerator : Enumerator<WIN32_FIND_DATA>

@@ -32,8 +32,6 @@ In development:
                 * xforms
 
               dev - test / implementation
-                * fixed-size array boxing (system'io'WIN32_FIND_DATA)
-                * boxing external operation
                 * translit sample: List should be compiled as constant list
                 * resolving byref template - cache the resolved results
                 * it should be possible to turn-off optimization (opL1)
@@ -90,6 +88,7 @@ In development:
                 * stack allocation should not be cleared
                 * stack allocates classes should clear its body
                 * assigning struct field with int constant
+                * boxing external operation
                 * ifheap - is not correctly recognize data allocated classes
 
               dev - test / optimization
