@@ -17,14 +17,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -2356,9 +2356,12 @@ void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo o
    // if the parameter may be stack-allocated
    ref_t targetRef = resolveObjectReference(scope, object, false);
    bool variable = false;
-   // use fixed size (for fixed-sized array fields)
-   int size = fixedSize ? 
-      fixedSize : _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
+   int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
+
+   if (fixedSize)
+      // use fixed size (for fixed-sized array fields)
+      // note that we still need to execute defineStructSizeVariable to set variable bool value
+      size = fixedSize;
 
    node.appendNode(lxType, targetRef);
    if (isPrimitiveRef(targetRef))
@@ -3038,7 +3041,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
       else retVal = ObjectInfo(okObject, 0, resultClassRef, loperand.element, 0);
 
       // HOTFIX : remove boxing expressions
-      analizeOperands(node, scope, -1, true);
+      analizeOperands(node, scope, -1, false);
 
       ref_t opElementRef = loperand.element;
       if (operator_id == LEN_OPERATOR_ID)
@@ -4724,7 +4727,6 @@ ObjectInfo Compiler :: compileRetExpression(SNode node, CodeScope& scope, EAttr 
    node = node.parentNode();
 
    analizeOperands(node, exprScope, stackSafeAttr, true);
-   test2(node);
 
    return info;
 }
@@ -5303,8 +5305,6 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
 
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr, true);
-
-   test2(node);
 
    return retVal;
 }
@@ -9901,8 +9901,6 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
             rootNode = lxExpression;
          }
          else seqNode.appendNode(lxTempLocal, tempLocal);
-
-         test2(seqNode);
       }
    }
    else scope.raiseError(errInvalidBoxing, node);

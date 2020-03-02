@@ -18,14 +18,14 @@ constexpr auto STACKOP_MODE      = 0x0001;
 constexpr auto BOOL_ARG_EXPR     = 0x0002;
 constexpr auto NOBREAKPOINTS     = 0x0004;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 inline bool isSubOperation(SNode node)
 {
@@ -3960,6 +3960,15 @@ void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node 
 
          loadObject(tape, larg.type, larg.argument, scope, 0);
       }
+      //else if (larg.type == lxSeqExpression) {
+      //   if (!immIndex) {
+      //      generateObject(tape, larg, scope, STACKOP_MODE);
+      //      generateObject(tape, rarg, scope);
+      //      tape.write(bcLoad);
+      //      tape.write(bcPopA);
+      //   }
+      //   else generateObject(tape, larg, scope);
+      //}
       else throw InternalError("Not yet implemented"); // !! temporal
    }
 
