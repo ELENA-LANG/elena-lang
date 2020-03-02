@@ -2331,18 +2331,18 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
 //   if (isPrimitiveRef(targetRef) && elementRef)
 //      writer.appendNode(lxElement, elementRef);
 //}
-//
-//int Compiler :: defineFieldSize(CodeScope& scope, int offset)
-//{
-//   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::slClass);
-//
-//   ClassInfo::FieldMap::Iterator it = retrieveIt(classScope->info.fields.start(), offset);
-//   it++;
-//   if (!it.Eof()) {
-//      return *it - offset;
-//   }
-//   else return classScope->info.size - offset;
-//}
+
+int Compiler :: defineFieldSize(Scope& scope, int offset)
+{
+   ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
+
+   ClassInfo::FieldMap::Iterator it = retrieveIt(classScope->info.fields.start(), offset);
+   it++;
+   if (!it.Eof()) {
+      return *it - offset;
+   }
+   else return classScope->info.size - offset;
+}
 
 void Compiler :: setParamFieldTerminal(SNode& node, ExprScope&, ObjectInfo object, EAttr, LexicalType type)
 {
@@ -2351,12 +2351,14 @@ void Compiler :: setParamFieldTerminal(SNode& node, ExprScope&, ObjectInfo objec
    node.appendNode(lxField, 0);
 }
 
-void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing)
+void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing, int fixedSize)
 {
    // if the parameter may be stack-allocated
    ref_t targetRef = resolveObjectReference(scope, object, false);
    bool variable = false;
-   int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
+   // use fixed size (for fixed-sized array fields)
+   int size = fixedSize ? 
+      fixedSize : _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
 
    node.appendNode(lxType, targetRef);
    if (isPrimitiveRef(targetRef))
@@ -2374,7 +2376,7 @@ void Compiler :: setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo obje
    if (object.extraparam == -1 && !EAttrs::test(mode, HINT_NOBOXING)) {
       node.injectAndReplaceNode(lxCondBoxableExpression);
 
-      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING));
+      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING), 0);
    }
 }
 
@@ -2392,14 +2394,14 @@ void Compiler :: setParamsTerminal(SNode& node, _CompileScope& scope, ObjectInfo
    //            writer.appendNode(lxBoxingRequired);
 }
 
-void Compiler :: setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
+void Compiler :: setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, LexicalType type, int fixedSize)
 {
    node.set(type, object.param);
 
    if (!EAttrs::test(mode, HINT_NOBOXING)) {
       node.injectAndReplaceNode(lxBoxableExpression);
 
-      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING));
+      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING), fixedSize);
    }
 
 //   if (!EAttrs::test(mode, HINT_NOBOXING) || EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) {
@@ -3054,7 +3056,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
 
          SNode valExpr = node.appendNode(lxBoxableExpression);
          valExpr.appendNode(lxLocalAddress, retVal.param);
-         appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING));
+         appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING), 0);
       }
    }
    // if not , replace with appropriate method call
@@ -5446,7 +5448,12 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
             mode = EAttrs(mode, HINT_NOBOXING);
          }
 
-         setVariableTerminal(terminal, scope, object, mode, lxFieldExpression);
+         if (isPrimitiveArrRef(object.reference)) {
+            int size = defineFieldSize(scope, object.param);
+
+            setVariableTerminal(terminal, scope, object, mode, lxFieldExpression, size);
+         }
+         else setVariableTerminal(terminal, scope, object, mode, lxFieldExpression);
          break;
       case okLocalAddress:
          setVariableTerminal(terminal, scope, object, mode, lxLocalAddress);
@@ -9747,6 +9754,8 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
    bool isVariable = node.argument == INVALID_REF;
    bool variadic = node == lxArgBoxableExpression;
    if (typeRef != 0) {
+      bool fixedSizeArray = isPrimitiveArrRef(typeRef) && size > 0;
+
       if (isPrimitiveRef(typeRef)) {
          ref_t elementRef = node.findChild(lxElementType).argument;
 
@@ -9774,7 +9783,7 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
 
             // inject local boxed object
             ObjectInfo tempBuffer;
-            allocateTempStructure(scope, size, false, tempBuffer);
+            allocateTempStructure(scope, size, fixedSizeArray, tempBuffer);
 
             assignNode.appendNode(lxLocalAddress, tempBuffer.param);
             copyNode.insertNode(lxLocalAddress, tempBuffer.param);
@@ -9831,12 +9840,14 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
 
    if (typeRef != 0) {
       if (localBoxingMode) {
+         bool fixedSizeArray = isPrimitiveArrRef(typeRef) && size > 0;
+
          SNode assignNode = objNode;
          assignNode.injectAndReplaceNode(lxAssigning);
 
          // inject local boxed object
          ObjectInfo tempBuffer;
-         allocateTempStructure(scope, size, false, tempBuffer);
+         allocateTempStructure(scope, size, fixedSizeArray, tempBuffer);
 
          assignNode.insertNode(lxLocalAddress, tempBuffer.param);
          assignNode.set(lxCopying, size);

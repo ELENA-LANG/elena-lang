@@ -981,7 +981,7 @@ private:
 
    void importCode(SNode node, Scope& scope, ref_t reference, ref_t message);
 
-//   int defineFieldSize(CodeScope& scope, int offset);
+   int defineFieldSize(Scope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed);
    void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
@@ -1054,11 +1054,12 @@ private:
 //
 //   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
    void setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
-   void setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
+   void setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, 
+      LexicalType type, int fixedSize = 0);
    void setParamFieldTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void setParamsTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, ref_t wrapRef);
    //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
-   void appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing);
+   void appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing, int fixedSize);
 
    ObjectInfo compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
