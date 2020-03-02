@@ -22,8 +22,8 @@ namespace io
         int      nFileSizeLow;
         int      dwReserved0;
         int      dwReserved1;
-        short    cFileName[260];
-        short    cAlternateFileName[14]; 
+        //short    cFileName[260];
+        //short    cAlternateFileName[14]; 
         
         bool isFile()
         {
@@ -45,12 +45,12 @@ namespace io
         
         get string FileName()
         {
-            short[] s := cFileName;
-            int len := extern KERNEL32.lstrlenW(s);
-            
-            // ^ UTF16Encoding.toString(0, len, s)
-            var w := WideString.fromShortArray(0, len, s);
-            ^ cast string(w)        
+//            short[] s := cFileName;
+//            int len := extern KERNEL32.lstrlenW(s);
+//            
+//            // ^ UTF16Encoding.toString(0, len, s)
+//            var w := WideString.fromShortArray(0, len, s);
+//            ^ cast string(w)        
         }
     }
     
