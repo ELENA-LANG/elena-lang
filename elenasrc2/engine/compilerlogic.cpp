@@ -1281,34 +1281,9 @@ ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t tar
    return 0;
 }
 
-bool CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
-   ref_t elementRef/*, ident_t ns*/, bool noUnboxing, int& stackSafeAttr)
+bool CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, 
+   ref_t sourceRef, ref_t elementRef, bool noUnboxing, int& stackSafeAttr, int fixedSize)
 {
-////   if (targetRef == 0 && isPrimitiveRef(sourceRef)) {
-////      if (isPrimitiveArrayRef(sourceRef)) {
-////         // HOTFIX : replace generic object with a generic array
-////         targetRef = scope.arrayReference;
-////      }
-////      else if (sourceRef == V_INT32) {
-////         // HOTFIX : replace generic object with an integer constant
-////         targetRef = scope.intReference;
-////      }
-////      else if (sourceRef == V_INT64) {
-////         // HOTFIX : replace generic object with an integer constant
-////         targetRef = scope.longReference;
-////      }
-////      else if (sourceRef == V_REAL64) {
-////         // HOTFIX : replace generic object with an integer constant
-////         targetRef = scope.realReference;
-////      }
-////      else if (sourceRef == V_MESSAGE) {
-////         targetRef = scope.messageReference;
-////      }
-////      else if (sourceRef == V_SIGNATURE) {
-////         targetRef = scope.signatureReference;
-////      }
-////   }
-
    ClassInfo info;
    if (!defineClassInfo(*scope.moduleScope, info, targetRef))
       return false;
@@ -1337,38 +1312,18 @@ bool CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node
       }
    }
 
-////   // HOTFIX : trying to typecast primitive structure array
-////   if (isPrimitiveStructArrayRef(sourceRef) && test(info.header.flags, elStructureRole | elDynamicRole)) {
-////      ClassInfo sourceInfo;      
-////      if (sourceRef == V_BINARYARRAY && elementRef != 0) {
-////         if (defineClassInfo(scope, sourceInfo, elementRef, true)) {
-////            if (-sourceInfo.size == info.size && isCompatible(scope, elementRef, info.fieldTypes.get(-1).value1)) {
-////               compiler.injectBoxing(writer, scope,
-////                  test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
-////
-////               return true;
-////            }
-////         }
-////      }
-////      else {
-////         if (defineClassInfo(scope, sourceInfo, sourceRef, true)) {
-////            if (sourceInfo.size == info.size && isCompatible(scope, definePrimitiveArrayItem(sourceRef), info.fieldTypes.get(-1).value1)) {
-////               compiler.injectBoxing(writer, scope,
-////                  test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, info.size, targetRef);
-////
-////               return true;
-////            }
-////         }
-////      }
-////   }
-
    // COMPILE MAGIC : trying to typecast primitive array
    if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole/* | elWrapper*/)) {
 //      ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
 
       if (isCompatible(*scope.moduleScope, info.fieldTypes.get(-1).value2, elementRef)) {
+         int size = info.size;
+         // if we boxing fixed-sized array field into an array
+         if (size < 0 && fixedSize > 0)
+            size = fixedSize;
+
          compiler.injectBoxingExpr(node, !isReadonly(info) && !noUnboxing,
-            test(info.header.flags, elStructureRole) ? info.size : 0,
+            test(info.header.flags, elStructureRole) ? size : 0,
             targetRef);
 
 //         compiler.injectBoxing(writer, scope,
@@ -1378,34 +1333,8 @@ bool CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node
       }
    }
 
-//   // COMPILE MAGIC : trying to typecast wrapper
-//   if (sourceRef == V_WRAPPER && isCompatible(scope, targetRef, elementRef)) {
-//      compiler.injectBoxing(writer, scope,
-//         noUnboxing || isReadonly(info) ? lxBoxing : lxUnboxing,
-//         test(info.header.flags, elStructureRole) ? info.size : 0, targetRef);
-//
-//      return true;
-//   }
-//
-////   // HOTFIX : trying to typecast open argument list
-////   if (isOpenArgRef(sourceRef) && test(info.header.flags, elDynamicRole | elNonStructureRole)) {
-////      if (isCompatible(scope, info.fieldTypes.get(-1).value1, elementRef)) {
-////         compiler.injectBoxing(writer, scope, lxArgBoxing, 0, targetRef, true);
-////
-////         return true;
-////      }
-////   }
-//
-////   // check if there are implicit constructors
-////   if (sourceRef == V_OBJARRAY) {
-////      // HOTFIX : recognize primitive object array
-////      sourceRef = firstNonZero(scope.arrayReference, scope.superReference);
-////
-////      compiler.injectBoxing(writer, scope,
-////         test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, 0, sourceRef, true);
-////   }
    // HOTFIX : recognize primitive data except of a constant literal
-   /*else */if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
+   if (isPrimitiveRef(sourceRef)/* && sourceRef != V_STRCONSTANT*/)
       sourceRef = compiler.resolvePrimitiveReference(scope, sourceRef, elementRef, false);
 
    return injectImplicitConstructor(*scope.moduleScope, node, compiler, info, targetRef, /*elementRef, */&sourceRef, 1, stackSafeAttr);

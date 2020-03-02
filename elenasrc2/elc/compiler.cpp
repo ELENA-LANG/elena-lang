@@ -3435,17 +3435,24 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
          // HOTFIX : allow to pass the result of external operation directly
          return source;
       }
-      else if (_logic->injectImplicitConversion(scope, node, *this, targetRef, sourceRef,
-         source.element, noUnboxing, stackSafeAttrs))
-      {
-         if (node.compare(lxDirectCalling, lxSDirectCalling)) {
-            // HOTFIX : box arguments if required
-            analizeOperands(node, scope, stackSafeAttrs, false);
-         }
+      else {
+         int fixedArraySize = 0;
+         if (source.kind == okFieldAddress && isPrimitiveArrRef(sourceRef))
+            fixedArraySize = defineFieldSize(scope, source.param);
 
-         return ObjectInfo(okObject, 0, targetRef);
+         if (_logic->injectImplicitConversion(scope, node, *this, targetRef, sourceRef,
+            source.element, noUnboxing, stackSafeAttrs, fixedArraySize))
+         {
+            if (node.compare(lxDirectCalling, lxSDirectCalling)) {
+               // HOTFIX : box arguments if required
+               analizeOperands(node, scope, stackSafeAttrs, false);
+            }
+
+            return ObjectInfo(okObject, 0, targetRef);
+         }
+         else return sendTypecast(node, scope, targetRef, source);
       }
-      else return sendTypecast(node, scope, targetRef, source);
+
    }
    return source;
 }
