@@ -644,7 +644,7 @@ Compiler::ClassScope :: ClassScope(Scope* parent, ref_t reference, Visibility vi
    info.size = 0;
 
    extensionClassRef = 0;
-   embeddable = false;
+   stackSafe = false;
    classClassMode = false;
    abstractMode = false;
    abstractBaseMode = false;
@@ -701,7 +701,7 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, EAttr scopeMode)
 ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
 {
    if (!referenceOne && identifier.compare(SUPER_VAR)) {
-      return ObjectInfo(okSuper, 0, info.header.parentRef);
+      return ObjectInfo(okSuper, 0, info.header.parentRef, 0, stackSafe ? -1 : 0);
    }
    else {
       if (!referenceOne) {
@@ -754,7 +754,7 @@ ObjectInfo Compiler::MethodScope :: mapSelf()
       //COMPILER MAGIC : if it is an extension ; replace $self with self
       ClassScope* extensionScope = (ClassScope*)getScope(ScopeLevel::slClass);
 
-      return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, 0, extensionScope->embeddable ? -1 : 0);
+      return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, 0, extensionScope->stackSafe ? -1 : 0);
    }
    else if (classStacksafe) {
       return ObjectInfo(okSelfParam, 1, getClassRef(), 0, (ref_t)-1);
@@ -2351,10 +2351,10 @@ void Compiler :: setParamFieldTerminal(SNode& node, ExprScope&, ObjectInfo objec
    node.appendNode(lxField, 0);
 }
 
-void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing, int fixedSize)
+void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing, 
+   int fixedSize, ref_t targetRef)
 {
    // if the parameter may be stack-allocated
-   ref_t targetRef = resolveObjectReference(scope, object, false);
    bool variable = false;
    int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, object.element, variable);
 
@@ -2372,6 +2372,17 @@ void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo o
       node.setArgument(INVALID_REF);
 }
 
+void Compiler :: setSuperTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
+{
+   node.set(type, object.param);
+   if (object.extraparam == -1 && !EAttrs::test(mode, HINT_NOBOXING)) {
+      node.injectAndReplaceNode(lxCondBoxableExpression);
+
+      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING), 0,
+         scope.getClassRefId());
+   }
+}
+
 void Compiler :: setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type)
 {
    node.set(type, object.param);
@@ -2379,7 +2390,8 @@ void Compiler :: setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo obje
    if (object.extraparam == -1 && !EAttrs::test(mode, HINT_NOBOXING)) {
       node.injectAndReplaceNode(lxCondBoxableExpression);
 
-      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING), 0);
+      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING), 0,
+         resolveObjectReference(scope, object, false));
    }
 }
 
@@ -2404,36 +2416,10 @@ void Compiler :: setVariableTerminal(SNode& node, _CompileScope& scope, ObjectIn
    if (!EAttrs::test(mode, HINT_NOBOXING)) {
       node.injectAndReplaceNode(lxBoxableExpression);
 
-      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING), fixedSize);
+      appendBoxingInfo(node, scope, object, EAttrs::test(mode, HINT_NOUNBOXING), fixedSize,
+         resolveObjectReference(scope, object, false));
    }
-
-//   if (!EAttrs::test(mode, HINT_NOBOXING) || EAttrs::test(mode, HINT_DYNAMIC_OBJECT)) {
-//      bool variable = false;
-//      int size = _logic->defineStructSizeVariable(*scope.moduleScope,
-//         resolveObjectReference(scope, object, false), object.element, variable);
-//      if (size < 0 && type == lxFieldAddress) {
-//         // if it is fixed-size array
-//         size = defineFieldSize(scope, object.param) * (-size);
-//      }
-//      writer.newNode((variable && !EAttrs::test(mode, HINT_NOUNBOXING)) ? lxUnboxing : lxBoxing, size);
-//
-//      writer.appendNode(type, object.param);
-//      if (EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
-//         writer.appendNode(lxBoxingRequired);
-//   }
-//   else writer.newNode(type, object.param);
 }
-
-//bool Compiler :: writeSizeArgument(SyntaxWriter& writer)
-//{
-//   SNode current = writer.CurrentNode().lastChild();
-//   if (current == lxField) {
-//      writer.appendNode(lxTapeArgument, current.argument);
-//
-//      return true;
-//   }
-//   else return false;
-//}
 
 ObjectInfo Compiler :: mapClassSymbol(Scope& scope, int classRef)
 {
@@ -3059,7 +3045,8 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
 
          SNode valExpr = node.appendNode(lxBoxableExpression);
          valExpr.appendNode(lxLocalAddress, retVal.param);
-         appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING), 0);
+         appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING), 
+            0, resolveObjectReference(scope, retVal, false));
       }
    }
    // if not , replace with appropriate method call
@@ -5382,7 +5369,7 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
          setParamTerminal(terminal, scope, object, mode, lxSelfLocal);
          break;
       case okSuper:
-         terminal.set(lxLocal, 1);
+         setSuperTerminal(terminal, scope, object, mode, lxSelfLocal);
          break;
       case okReadOnlyField:
       case okField:
@@ -8035,8 +8022,8 @@ void Compiler :: compileClassClassDeclaration(SNode node, ClassScope& classClass
       // dynamic class should not have default constructor
       classClassScope.abstractMode = true;
    }
-   if (classScope.embeddable) {
-      classClassScope.embeddable = true;
+   if (classScope.stackSafe) {
+      classClassScope.stackSafe = true;
    }
 
    // NOTE : class class is not inheritable
@@ -8882,11 +8869,11 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool ne
       // generate fields
       generateClassFields(node, scope, countFields(node) == 1);
 
-      if (_logic->isEmbeddable(scope.info))
-         scope.embeddable = true;
+      if (_logic->isStacksafeArg(scope.info))
+         scope.stackSafe = true;
 
-      if (scope.extensionClassRef != 0 && _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef))
-         scope.embeddable = true;
+      if (scope.extensionClassRef != 0 && _logic->isStacksafeArg(*scope.moduleScope, scope.extensionClassRef))
+         scope.stackSafe = true;
 
       if (scope.withInitializers) {
          // HOTFIX : recognize compile-time assinging
@@ -9217,10 +9204,10 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope)
    if (test(scope.info.header.flags, elExtension)) {
       scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
 
-      scope.embeddable = _logic->isEmbeddable(*scope.moduleScope, scope.extensionClassRef);
+      scope.stackSafe = _logic->isStacksafeArg(*scope.moduleScope, scope.extensionClassRef);
    }
-   else if (_logic->isEmbeddable(scope.info)) {
-      scope.embeddable = true;
+   else if (_logic->isStacksafeArg(scope.info)) {
+      scope.stackSafe = true;
    }
 
    // validate field types

@@ -431,7 +431,7 @@ private:
    {
       ClassInfo   info;
       ref_t       extensionClassRef;
-      bool        embeddable;
+      bool        stackSafe;
       bool        classClassMode;
       bool        abstractMode;
       bool        abstractBaseMode;
@@ -1050,16 +1050,14 @@ private:
    ObjectInfo compileSubjectReference(SNode objectNode, ExprScope& scope, EAttr mode);
    ObjectInfo compileYieldExpression(SNode objectNode, ExprScope& scope, EAttr mode);
 
-//   bool writeSizeArgument(SyntaxWriter& writer);
-//
-//   void writeTerminal(SyntaxWriter& writer, SNode terminal, CodeScope& scope, ObjectInfo object, EAttr mode);
+   void setSuperTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void setVariableTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, 
       LexicalType type, int fixedSize = 0);
    void setParamFieldTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
    void setParamsTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, ref_t wrapRef);
-   //   void writeTerminalInfo(SyntaxWriter& writer, SNode node);
-   void appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing, int fixedSize);
+   void appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing, 
+      int fixedSize, ref_t targetRef);
 
    ObjectInfo compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);

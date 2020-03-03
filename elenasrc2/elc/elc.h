@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0115
+#define ELC_REVISION_NUMBER         0x0116
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -86,7 +86,7 @@ constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
 ////#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "configuration/linker/ygsize"
 #define ELC_L0                      "configuration/compiler/l0"                // optimization: byte code optimization
-//#define ELC_L1                      "compiler/l1"                // optimization: source code optimization
+#define ELC_L1                      "configuration/compiler/l1"               // optimization: source code optimization
 
 #define ELC_TARGET_NAME             "target"
 #define ELC_TYPE_NAME               "type"
@@ -204,8 +204,8 @@ class Project : public _ELENA_::Project
             return config.getSetting(ELC_SYSTEM_THREADMAX);
          case _ELENA_::opL0:
             return config.getSetting(ELC_L0);
-            //      case _ELENA_::opL1:
-            //         return config.getSetting(ELC_L1);
+         case _ELENA_::opL1:
+            return config.getSetting(ELC_L1);
             //   //   case _ELENA_::opL2:
             //   //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
          case _ELENA_::opTemplate:
