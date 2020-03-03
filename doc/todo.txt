@@ -32,7 +32,6 @@ In development:
                 * xforms
 
               dev - test / implementation
-                * test long / real arithmetic, comparision
                 * public / private / internal extensions
                 * resolving extension : if two extension passed to the argument try to find if one of them is
                   "more precise" than another - use the more precise directly

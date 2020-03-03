@@ -214,116 +214,180 @@ import extensions;
 //        MyException2.new:"Nested OnError2 handler works".raise()
 //    }
 //}
-//
-//////#symbol ObjectTest =
-//////[
-//////    #var a := 1.
-//////    #var b := "abc".
-//////    
-//////    ( a equal &reference:a and:[ b equal &reference:a not ])
-//////        ? [ console writeLine:"Reference comparison works" ]
-//////        ! [ console writeLine:"!! ObjectTest failed" ].
-//////].
-//////
-//////// --- BooleanTest ---
-//////
-//////#symbol BooleanTest =
-//////[
-//////    #var b1 := true.
-//////    #var b2 := false.
-//////    
-//////    console write:"(true == true) is " writeLine:(b1 == b1).
-//////    console write:"(true == false) is " writeLine:(b1 == b2).
-//////    console write:"(false == true) is " writeLine:(b2 == b1).
-//////    console write:"(false == false) is " writeLine:(b2 == b2).
-//////    console write:"(false != false) is " writeLine:(b2 != b2).
-//////    console write:"(false != true) is " writeLine:(b2 != b1).
-//////].
-//////
-//////// --- ControlTest ---
-//////
-//////#symbol ControlTest =
-//////[
-//////    true ?
-//////    [
-//////        console writeLine:"? operator works!".
-//////    ].
-//////    
-//////    false ?
-//////    [
-//////        console writeLine:"!! ControlTest failed".
-//////    ]
-//////    ! [
-//////        console writeLine:"?-! operator works!".
-//////    ].
-//////].
-//////
-//////// --- IntArithmeticTest ---
-//////
-//////#symbol IntegerTest =
-//////[
-//////    console write:"(2 + 3 * 4) is " writeLine:(2 + 3 * 4).
-//////    console write:"(2 == 3) is " writeLine:(2 == 3).
-//////    console write:"(2 == 2) is " writeLine:(2 == 2).
-//////    console write:"(2 < 3) is " writeLine:(2 < 3).
-//////    console write:"(2 > 3) is " writeLine:(2 > 3).
-//////    console write:"(2 <= 3) is " writeLine:(2 <= 3).
-//////    console write:"(2 >= 2) is " writeLine:(2 >= 2).
-//////    console write:"(2 >= 3) is " writeLine:(2 >= 3).
-//////
-//////    #var(vint) n := 1.
-//////    n += 2.
-//////    n -= 2.
-//////    n *= 2.
-//////    n /= 2.
-//////    
-//////    (n == 1) ?
-//////        [ console writeLine:"Integer operators are working". ].
-//////].
-//////
-//////// --- LongArithmeticTest ---
-//////
-//////#symbol LongTest =
-//////[    
-//////    #var l := 100000000000000l / 5000000000000l.
-//////    
-//////    console write:"(2 + 3 * 4) is " writeLine:(2l + 3l * 4l).
-//////    console write:"(2000000*500000) is " writeLine:(2000000l * 500000l).
-//////    console write:"(12345678 == 12345679) is " writeLine:(12345678l == 12345679l).
-//////    console write:"(12345679 != 12345678) is " writeLine:(12345678l != 12345679l).
-//////    console write:"(12345678l < 3) is " writeLine:(12345678l < 3l).
-//////    console write:"(12345678l > 12345679l) is " writeLine:(12345678l > 12345679l).
-//////    console write:"(12345678l <= 3) is " writeLine:(12345678l <= 3l).
-//////    console write:"(12345678l >= 12345679l) is " writeLine:(12345678l >= 12345679l).
-//////    
-//////    #var(vlong) n := 0l.
-//////    n += 3l.
-//////    n -= 2l.
-//////    n *= 2l.
-//////    n /= 2l.
-//////    
-//////    (n == 1l) ?
-//////        [ console writeLine:"Long Integer operators are working". ].
-//////].
-//////
-//////// --- RealArithmeticTest ---
-//////
-//////#symbol RealTest =
-//////[
-//////    console write:"(2 + 3 * 4) is " writeLine:(2.0r + 3.0r * 4.0r).
-//////    console write:"(10/3) is " writeLine:(10.0r / 3.0r).
-//////    
-//////    #var(vreal) n := 1.0r.
-//////    n += 2.0r.
-//////    n -= 2.0r.
-//////    n *= 2.0r.
-//////    n /= 2.0r.
-//////    
-//////    (n == 1.0r) ?
-//////        [ console writeLine:"Real operators are working". ].
-//////].
-//////
-//////// --- Action Test ---
+
+objectTest()
+{
+    console.write("objectTest..");
+    
+    var a := 1;
+    var b := "abc";
+    
+    Assert.ifTrue(a.equalReference(a) && a.equalReference(b).Inverted);
+    
+    console.writeLine("done")
+}
+
+// --- BooleanTest ---
+
+booleanTest()
+{
+    console.write("booleanTest..");
+    
+    var b1 := true;
+    var b2 := false;
+    
+    Assert.ifTrue(b1 == b1);
+    Assert.ifFalse(b1 == b2);
+    Assert.ifFalse(b2 == b1);
+    Assert.ifTrue(b2 == b2);
+    Assert.ifFalse(b2 != b2);
+    Assert.ifTrue(b1 != b2);
+    
+    console.writeLine("done")
+}
+
+// --- ControlTest ---
+
+controlTest()
+{
+    console.write("controlTest..");
+    
+    var b1 := false;
+    if (true)
+    {
+        b1 := true
+    };
+    
+    var b2 := nil;
+    if (false)
+    {
+        b2 := false;
+    }
+    else
+    {
+        b2 := true
+    };
+    
+    Assert.ifTrue(b1);    
+    Assert.ifTrue(b2);    
+    
+    console.writeLine("done")
+}
+
+// --- IntArithmeticTest ---
+
+integerTest()
+{
+    console.write("integerTest..");
+        
+    int n := 2;
+    int m := 3;
+    int k := 4;
+                    
+    Assert.ifTrue(2 + 3 * 4 == 14);
+    Assert.ifTrue(n + m * k == 14);
+    Assert.ifFalse(n == m);
+    Assert.ifTrue(n == n);
+    Assert.ifTrue(n < m);
+    Assert.ifFalse(n > m);
+    Assert.ifTrue(n <= m);
+    Assert.ifTrue(n <= n);
+    Assert.ifTrue(n >= n);
+    Assert.ifFalse(n >= m);
+
+    int i := 1;
+    i += 2;
+    i -= 2;
+    i *= 2;
+    i /= 2;
+    
+    Assert.ifTrue(i == 1);
+        
+    console.writeLine("done")        
+}
+
+// --- LongArithmeticTest ---
+
+longTest()
+{
+    console.write("longTest..");
+        
+    long l1 := 100000000000000l;
+    long l2 := 5000000000000l;
+    
+    var l := l1 / l2;
+    Assert.ifTrue(l == 20);
+    
+    long n := 2l;
+    long m := 3l;
+    long k := 4l;
+    Assert.ifTrue(n + m * k == 14l);
+    
+    n := 2000000l;
+    m := 500000l;
+    
+    Assert.ifTrue(n * m == 1000000000000l);
+
+    n := 12345678l;
+    m := 12345679l;
+            
+    Assert.ifFalse(n == m);            
+    Assert.ifTrue(n != m);            
+    Assert.ifFalse(n < k);            
+    Assert.ifFalse(n > m);            
+    Assert.ifFalse(n <= k);            
+    Assert.ifFalse(n >= m);            
+    Assert.ifTrue(n >= n);            
+    Assert.ifTrue(n <= n);            
+    Assert.ifTrue(n < m);            
+    Assert.ifTrue(m > n);            
+    
+    long i := 0l;
+    i += 3l;
+    i -= 2l;
+    i *= 2l;
+    i /= 2l;
+    
+    Assert.ifTrue(i == 1l);
+        
+    console.writeLine("done")        
+}
+
+// --- RealArithmeticTest ---
+
+realTest()
+{
+    console.write("realTest..");
+        
+    real n := 2.0r;
+    real m := 3.0r;
+    real k := 4.0r;
+
+    Assert.ifTrue(n + m * k == 14.0r);
+    
+    Assert.ifFalse(n == m);            
+    Assert.ifTrue(n != m);            
+    Assert.ifTrue(n < k);            
+    Assert.ifFalse(n > m);            
+    Assert.ifFalse(n >= k);            
+    Assert.ifFalse(n >= m);            
+    Assert.ifTrue(n >= n);            
+    Assert.ifTrue(n <= n);            
+    Assert.ifTrue(n < m);            
+    Assert.ifTrue(m > n);            
+    
+    real i := 1.0r;
+    i += 2.0r;
+    i -= 2.0r;
+    i *= 2.0r;
+    i /= 2.0r;
+    
+    Assert.ifTrue(i == 1.0r);
+        
+    console.writeLine("done")        
+}
+
+////// --- Action Test ---
 //////
 //////#symbol ActionTest =
 //////[

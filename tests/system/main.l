@@ -6,14 +6,15 @@ public program()
 {
     console.writeLine:"--- ELENA API Tests ---";
 
-////    ControlTest eval.
-////    ObjectTest eval.
-////    BooleanTest eval.
-////    IntegerTest eval.
-////    LongTest eval.
-////    RealTest eval.
-////    LiteralTest eval.
-////    MultiDispatchTest eval.
+    controlTest();
+    objectTest();
+    booleanTest();
+    integerTest();
+    longTest();
+    realTest();
+//    literalTest();
+
+//    MultiDispatchTest eval.
 ////    MultySelectTest  eval.
 ////    EnumTest eval.    
 ////    TextBufferTest eval.
