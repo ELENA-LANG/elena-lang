@@ -701,7 +701,7 @@ ObjectInfo Compiler::ClassScope :: mapField(ident_t terminal, EAttr scopeMode)
 ObjectInfo Compiler::ClassScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
 {
    if (!referenceOne && identifier.compare(SUPER_VAR)) {
-      return ObjectInfo(okSuper, 0, info.header.parentRef, 0, stackSafe ? -1 : 0);
+      return ObjectInfo(okSuper, 1, info.header.parentRef, 0, stackSafe ? -1 : 0);
    }
    else {
       if (!referenceOne) {

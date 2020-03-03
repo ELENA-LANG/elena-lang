@@ -32,16 +32,13 @@ In development:
                 * xforms
 
               dev - test / implementation
+                * test long / real arithmetic, comparision
                 * public / private / internal extensions
                 * resolving extension : if two extension passed to the argument try to find if one of them is
                   "more precise" than another - use the more precise directly
+
                 * create a big list (bigger than YG)
-                * test internal / public / private classes
                 * variadic arguments : unboxing
-                * test internal / public / private / proteced methods
-                * test internal / public / private / proteced constructors
-                * public / private / internal properties
-                * direct operations with int constants
                 * boxing, unboxing, closure initializing
                 * boxing byref variable : use intializing, direct assinging after creation without filling with nils
                 * test static fields with singleton
@@ -52,7 +49,6 @@ In development:
                 * test accumulating constants
                 * boxing ext call result
                 * alt - no need to assign temp local for local / field / param
-                * test long / real arithmetic, comparision
                 * test negative long to int conversion
                 * test int/byte/short/long to real conversion
                 * test real to byte/short/int/uint/long conversion
