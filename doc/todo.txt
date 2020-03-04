@@ -10,7 +10,7 @@ In development:
                 * compile hello world
 
               dev - rosetta code samples
-                * Bulls and cows
+                * Caesar cipher
 
               dev - migration
                 * rosetta code samples : arithmeval
@@ -32,7 +32,14 @@ In development:
                 * xforms
 
               dev - test / implementation
-                * public / private / internal extensions
+                * private / internal extension will similar handled
+                * private method should be possible to use for internal work
+                * internal extension method?
+ 
+                * private extension can be used only inside the module itself
+
+                * private / internal extensions
+                * private / internal method cannot be an extension?
                 * resolving extension : if two extension passed to the argument try to find if one of them is
                   "more precise" than another - use the more precise directly
                 * create a big list (bigger than YG)
@@ -111,6 +118,7 @@ In development:
                   possible values)
                 * copying  a buffer with unaligned size
                 * int operation : 1 + i
+                * check if there are extnension duplicates, probably no need to save extension multi-dispatcher
 
               dev - usability
                 * ide message : display internal error
@@ -156,6 +164,7 @@ In development:
 
               dev - new features
                 * multi-return methods : dynamic objects
+                * internal extensions?
                 * system'Extension : variadic argument should be boxed directly into extension
                 * resend to constant - no need for frame
                 * public / private / internal / protected fields

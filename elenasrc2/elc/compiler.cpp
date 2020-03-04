@@ -10771,7 +10771,6 @@ void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool ig
 
    if (withFullInfo) {
       // HOTFIX : copy the parent extensions
-
       scope.loadExtensions(scope.module->Name(), scope.nsName.c_str());
 
       for (auto it = scope.importedNs.start(); !it.Eof(); it++) {
