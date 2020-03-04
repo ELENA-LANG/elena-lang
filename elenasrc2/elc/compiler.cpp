@@ -242,9 +242,6 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ExtensionM
 
    this->outerExtensionList = outerExtensionList;
 
-//   // load private namespaces
-//   loadExtensions(moduleScope->module->Name(), ns, true);
-//
 //   // HOTFIX : package section should be created if at least literal class is declated
 //   if (moduleScope->literalReference != 0) {
 //      packageReference = module->mapReference(ReferenceNs("'", PACKAGE_SECTION));
@@ -549,19 +546,18 @@ void Compiler::NamespaceScope :: loadExtensions(ident_t ns)
    }
 }
 
-void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t extRef, ref_t strongMessage/*, bool internalOne*/)
+void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t extRef, ref_t strongMessage, bool internalOne)
 {
 //   if (typeRef == INVALID_REF || typeRef == moduleScope->superReference)
 //      typeRef = 0;
 
    Pair<ref_t, ref_t> extInfo(extRef, strongMessage);
    if (outerExtensionList != nullptr) {
-
       // COMPILER MAGIC : if it is template extension compilation
       outerExtensionList->add(message, extInfo);
    }
    else {
-      IdentifierString sectionName(/*internalOne ? PRIVATE_PREFIX_NS : */"'");
+      IdentifierString sectionName(internalOne ? PRIVATE_PREFIX_NS : "'");
       if (!emptystr(ns)) {
          sectionName.append(ns);
          sectionName.append("'");
@@ -6571,7 +6567,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       if (constantConversion) {
          NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
-         nsScope->saveExtension(scope.message, scope.getClassRef(), scope.message);
+         nsScope->saveExtension(scope.message, scope.getClassRef(), scope.message, 
+            scope.getClassVisibility() != Visibility::Public);
       }
    }
 
@@ -8486,7 +8483,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 //   //}
 //}
 
-void Compiler :: saveExtension(ClassScope& scope, ref_t message/*, bool internalOne*/)
+void Compiler :: saveExtension(ClassScope& scope, ref_t message, bool internalOne)
 {
    ref_t extensionMessage = 0;
 
@@ -8504,7 +8501,7 @@ void Compiler :: saveExtension(ClassScope& scope, ref_t message/*, bool internal
    extensionMessage = extensionMessage & ~FUNCTION_MESSAGE;
 
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
-   nsScope->saveExtension(extensionMessage, scope.reference, message);
+   nsScope->saveExtension(extensionMessage, scope.reference, message, internalOne);
 }
 
 //inline bool isGeneralMessage(_Module* module, ref_t message)
@@ -8635,7 +8632,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.raiseError(errIllegalPrivate, current);
 
       if (test(scope.info.header.flags, elExtension) && !privateOne && !scope.extensionDispatcher) {
-         saveExtension(scope, message/*, scope.internalOne*/);
+         saveExtension(scope, message, scope.visibility != Visibility::Public);
       }
 
       if (!closed && test(methodHints, tpEmbeddable)
@@ -10770,8 +10767,9 @@ void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool ig
    }
 
    if (withFullInfo) {
-      // HOTFIX : copy the parent extensions
-      scope.loadExtensions(scope.module->Name(), scope.nsName.c_str());
+      // HOTFIX : load the module internal and public extensions
+      scope.loadExtensions(scope.module->Name(), scope.nsName.c_str(), false);
+      scope.loadExtensions(scope.module->Name(), scope.nsName.c_str(), true);
 
       for (auto it = scope.importedNs.start(); !it.Eof(); it++) {
          ident_t imported_ns = *it;

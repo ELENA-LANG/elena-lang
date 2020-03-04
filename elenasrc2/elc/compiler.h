@@ -383,11 +383,11 @@ private:
       ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
 
       void loadExtensions(ident_t ns);
-      void loadExtensions(ident_t ns, ident_t subns/*, bool internalOne*/)
+      void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
       {
          IdentifierString fullName(ns);
-         //if (internalOne)
-         //   fullName.append(PRIVATE_PREFIX_NS, getlength(PRIVATE_PREFIX_NS) - 1); // HOTFIX : to exclude the tailing quote symbol
+         if (internalOne)
+            fullName.append(PRIVATE_PREFIX_NS, getlength(PRIVATE_PREFIX_NS) - 1); // HOTFIX : to exclude the tailing quote symbol
 
          if (!emptystr(subns)) {
             fullName.append("'");
@@ -398,7 +398,7 @@ private:
 
       ref_t resolveExtensionTarget(ref_t reference);
 
-      void saveExtension(ref_t message, ref_t extRef, ref_t strongMessage/*, bool internalOne*/);
+      void saveExtension(ref_t message, ref_t extRef, ref_t strongMessage, bool internalOne);
       void saveExtensionTemplate(ref_t message, ident_t pattern);
 
       void loadModuleInfo(ident_t name)
@@ -631,6 +631,13 @@ private:
             outputRef = scope ? scope->info.methodHints.get(ClassInfo::Attribute(message, maReference)) : 0;
          }
          return outputRef;
+      }
+
+      Visibility getClassVisibility(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope->visibility;
       }
 
       ref_t getClassFlags(bool ownerClass = true)
@@ -975,7 +982,7 @@ private:
    ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
    ref_t generateConstant(_CompileScope& scope, ObjectInfo retVal);
 
-   void saveExtension(ClassScope& scope, ref_t message/*, bool internalOne*/);
+   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
    ref_t mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
 

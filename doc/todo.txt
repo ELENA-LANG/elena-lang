@@ -32,14 +32,6 @@ In development:
                 * xforms
 
               dev - test / implementation
-                * private / internal extension will similar handled
-                * private method should be possible to use for internal work
-                * internal extension method?
- 
-                * private extension can be used only inside the module itself
-
-                * private / internal extensions
-                * private / internal method cannot be an extension?
                 * resolving extension : if two extension passed to the argument try to find if one of them is
                   "more precise" than another - use the more precise directly
                 * create a big list (bigger than YG)
@@ -202,6 +194,7 @@ In development:
                 * property - append, ...
                 * should child have an access to the parent static fields?
                 * meta attributes
+                * private method should be possible to use for internal work
 
               dev1
                 * move all description to meta info using descr inline template
