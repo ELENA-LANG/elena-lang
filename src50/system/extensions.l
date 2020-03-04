@@ -926,28 +926,28 @@ public extension realOp : RealNumber
 ////    populate(Func1 f)
 ////        = self~intArrayOp populate(:n)<int,int>[ ^f(n) ].    
 //}
-//
-//// --- arrayOp ---
-//
-//public extension weakArrayOp
-//{
-//    Array Subarray(int index, int length)
-//    {
-//        auto it := self.indexer();
-//        it.Index := index;
-//        
-//        auto a := Array.allocate(length);
-//        for (int i := 0, i < length, i += 1)
-//        {
-//            a[i] := it.get();
-//            
-//            it.appendIndex(1)
-//        };
-//        
-//        ^ a;
-//    }
-//}
-//
+
+// --- arrayOp ---
+
+public extension weakArrayOp
+{
+    Array Subarray(int index, int length)
+    {
+        auto it := self.indexer();
+        it.Index := index;
+        
+        auto a := Array.allocate(length);
+        for (int i := 0, i < length, i += 1)
+        {
+            a[i] := it.get();
+            
+            it.appendIndex(1)
+        };
+        
+        ^ a;
+    }
+}
+
 ////public extension<Array> arrayOp
 ////{
 //////    exchange : anIndex1 : anIndex2

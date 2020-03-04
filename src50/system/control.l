@@ -287,28 +287,28 @@ public interface Func2
     /// Executes the action
     abstract function(param1, param2) {}
     
-//    /// Executes the function for parameters and every enumeration item
-//    sealed run(object param, Enumerator enumerator)
-//    {
-//        while(enumerator.next())
-//        {
-//            self(param,enumerator.get())
-//        }
-//    }
-//    
-//    /// Executes the function for parameters and every enumeration item until it returns true
-//    sealed retrieve(object param, Enumerator enumerator)
-//    {
-//        while (enumerator.next())
-//        {
-//            var item := enumerator.get();
-//            
-//            if (self(param, item))
-//                { ^ item }
-//        };        
-//        
-//        ^ nil
-//    }
+    /// Executes the function for parameters and every enumeration item
+    sealed run(object param, Enumerator enumerator)
+    {
+        while(enumerator.next())
+        {
+            self(param,enumerator.get())
+        }
+    }
+    
+    /// Executes the function for parameters and every enumeration item until it returns true
+    sealed retrieve(object param, Enumerator enumerator)
+    {
+        while (enumerator.next())
+        {
+            var item := enumerator.get();
+            
+            if (self(param, item))
+                { ^ item }
+        };        
+        
+        ^ nil
+    }
 }
 
 public interface Func<T1,T2,TResult>

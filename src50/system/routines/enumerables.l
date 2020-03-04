@@ -170,26 +170,26 @@ public extension enumerableOp
     seekEach(Func1 f)
         = f.retrieve(cast Enumerator(self.enumerator()));
 
-//////    seekEach(ExtensionMessage anExtMessage)
-//////        = self~enumerableOp seekEach(:n)(n~anExtMessage eval).
-//////        
-//////    seekEach value:v
-//////        = (:x)(v equal:x) retrieve enumerator:(self enumerator).        
-//////        
-//////    multi seekEach:fn
-//////        = self~enumerableOp seekEach(:n)[ fn(n) ].
+////    seekEach(ExtensionMessage anExtMessage)
+////        = self~enumerableOp seekEach(:n)(n~anExtMessage eval).
+////        
+////    seekEach value:v
+////        = (:x)(v equal:x) retrieve enumerator:(self enumerator).        
+////        
+////    multi seekEach:fn
+////        = self~enumerableOp seekEach(:n)[ fn(n) ].
+
+    seekEach(object param, Func2 f)
+        = f.retrieve(param, cast Enumerator(self.enumerator()));
+
+//    seekFor(Object param) eachPair(ExtensionMessage ext)
+//        = self~enumerableOp seekFor:param eachPair(:n:m)( n~ext eval(m) ).
 //
-//    seekEach(object param, Func2 f)
-//        = f.retrieve(param, cast Enumerator(self.enumerator()));
+////    multi seekFor:param eachPair:fn
+////        = self~enumerableOp seekFor:param eachPair(:n:m)( fn(n,m) ).
 //
-////    seekFor(Object param) eachPair(ExtensionMessage ext)
-////        = self~enumerableOp seekFor:param eachPair(:n:m)( n~ext eval(m) ).
-////
-//////    multi seekFor:param eachPair:fn
-//////        = self~enumerableOp seekFor:param eachPair(:n:m)( fn(n,m) ).
-////
-//////    safeSeek : aValue
-//////        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
+////    safeSeek : aValue
+////        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
 
     seekFor(val)
         = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
