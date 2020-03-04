@@ -18,14 +18,14 @@ constexpr auto STACKOP_MODE      = 0x0001;
 constexpr auto BOOL_ARG_EXPR     = 0x0002;
 constexpr auto NOBREAKPOINTS     = 0x0004;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 inline bool isSubOperation(SNode node)
 {
@@ -789,13 +789,6 @@ void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, re
 
 void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode*/)
 {
-//   int freeArg;
-//   if (invokeMode) {
-//      tape.write(bcPop);
-//      freeArg = getParamCount(message);
-//   }
-//   else freeArg = getParamCount(message) + 1;
-
    // vcallrm r, m
 
    tape.write(bcVCallRM, reference | mskVMTEntryOffset, message);
@@ -985,6 +978,7 @@ void ByteCodeWriter :: exitMethod(CommandTape& tape, int count, int reserved, bo
    //   quitn n / quit
    // end
 
+   // NOTE : index register should not be modified
    tape.setLabel();
    if (withFrame) {
       if (reserved > 0) {
@@ -5008,6 +5002,24 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
    else copyExpression(tape, source, dstObj, node.argument, scope, node == lxCondCopying);
 }
 
+void ByteCodeWriter :: generateIndexLoadingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
+   SNode source = node.findSubNodeMask(lxObjectMask);
+   if (source == lxLocalAddress) {
+      tape.write(bcLoadF, source.argument);
+   }
+   else throw InternalError("Not yet implemented"); // !! temporal
+}
+
+void ByteCodeWriter :: generateIndexSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+{
+   SNode target = node.findSubNodeMask(lxObjectMask);
+   if (target == lxLocalAddress) {
+      tape.write(bcSaveF, target.argument);
+   }
+   else throw InternalError("Not yet implemented"); // !! temporal
+}
+
 void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
 {
    SNode target;
@@ -5843,6 +5855,12 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          break;
       case lxSaving:
          generateSavingExpression(tape, node, scope);
+         break;
+      case lxIndexSaving:
+         generateIndexSavingExpression(tape, node, scope);
+         break;
+      case lxIndexLoading:
+         generateIndexLoadingExpression(tape, node, scope);
          break;
          //      case lxInlineArgCall:
 //         generateInlineArgCallExpression(tape, node);

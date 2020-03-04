@@ -514,7 +514,7 @@ namespace _ELENA_
 
    // predefined system forwards
    constexpr auto SUPER_FORWARD              = "$super";                         // the common class predecessor
-//   constexpr auto LAZYEXPR_FORWARD        = "$lazyexpression";                // the base lazy expression class
+   constexpr auto LAZYEXPR_FORWARD           = "$lazyexpression";                // the base lazy expression class
    constexpr auto INT_FORWARD                = "$int";
    constexpr auto LONG_FORWARD               = "$long";
    constexpr auto REAL_FORWARD               = "$real";

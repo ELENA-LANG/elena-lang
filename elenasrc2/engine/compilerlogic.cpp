@@ -1933,9 +1933,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_WEAKOP:
          attributes.include(EAttr::eaDirectCall);
          return true;
-//      case V_LAZY:
-//         attributes.include(EAttr::eaLazy);
-//         return true;
+      case V_LAZY:
+         attributes.include(EAttr::eaLazy);
+         return true;
 //      case V_INLINEARG:
 //         attributes.include(EAttr::eaInlineArg);
 //         return true;

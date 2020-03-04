@@ -35,10 +35,8 @@ In development:
                 * public / private / internal extensions
                 * resolving extension : if two extension passed to the argument try to find if one of them is
                   "more precise" than another - use the more precise directly
-
                 * create a big list (bigger than YG)
                 * variadic arguments : unboxing
-                * boxing, unboxing, closure initializing
                 * boxing byref variable : use intializing, direct assinging after creation without filling with nils
                 * test static fields with singleton
                 * test const fields : override the parent constant value
@@ -51,6 +49,7 @@ In development:
                 * test negative long to int conversion
                 * test int/byte/short/long to real conversion
                 * test real to byte/short/int/uint/long conversion
+
                 * translit sample: List should be compiled as constant list
                 * test : branching external implementation : returning a value from closure 
                 * resolving byref template - cache the resolved results
@@ -65,6 +64,7 @@ In development:
                 * generateInitializer - support constants as well for onlyLocal mode
                 * test creating an array : non-empty, empty
                 * operations in symbol
+
                 * do we need lxEmbeddableAttr and optimiation rule?
                 * warn if the extension method is called from itself (short-cutting)
                 * static methods : multimethods
@@ -81,10 +81,12 @@ In development:
                 * it should be possible to extend attributes / template statements from anoter libraries
                 * test if big alloc is proper working
                 * adding source path link on tempate based classes with field initializers
+                * closure unboxing: field addr
 
               dev - test / optimization
                 * align block code by 16
                 * optimize pi sample ( < 5s )
+                * closure initializing (do not fill with zeros, more effective assigning)
                 * double assigning : operation with struct field : var s := x + /*y*/1; (where x is a word field)
                 * double assigning : int n := 2; var o := n + 1 / var o := n
                 * field boxing : e.g x + x - should not be boxed twice
@@ -111,6 +113,7 @@ In development:
                 * int operation : 1 + i
 
               dev - usability
+                * ide message : display internal error
                 * ref argument should be a variable
                 * compile single file project
                 * warn an operation with not initialized variable: var a.test();
@@ -261,11 +264,6 @@ Pipeline:
 ------   
               xdev
                 * chat sample
-
-              ydev - Linux
-                * linker : adata + mdata + rdata (meta starts with size field)
-                * get rid of debug section
-                * suport elenart
 
               xdev
                 * fix bug with inserting unicode character

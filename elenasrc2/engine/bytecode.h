@@ -183,7 +183,7 @@ enum ByteCode
    bcPushR           = 0xB2,
    bcEqualFI         = 0xB3,
    bcPushAI          = 0xB4,
-//   bcESaveFI         = 0xB5,
+   bcLoadF           = 0xB5,
    bcPushFI          = 0xB6,
    bcLoadFI          = 0xB7,
    bcLoadSI          = 0xB8,
@@ -494,7 +494,7 @@ public:
          case bcCallRM:
          //case bcIfM:
          //case bcElseM:
-         //   return true;
+            return true;
          default:
             return false;
       }

@@ -2247,6 +2247,13 @@ inline % 0B4h
 
 end
 
+// ; loadf
+inline % 0B5h
+
+  mov  edx, [ebp + __arg1]
+
+end
+
 // ; loadfi
 inline % 0B7h
 

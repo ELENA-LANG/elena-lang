@@ -84,6 +84,8 @@ ELENA byte codes (or ecodes)
 
  savef i                    - fp+i <= index
 
+ loadf i                    - fp+i => index
+
  savesi i                   - [sp+i] <= index
 
  savefi i                   - [fp+i] <= index

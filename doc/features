@@ -32,12 +32,12 @@ Declarations
       * variadic +
       * byref args +
       * in-place declaration
-      * resend
+      * resend +
       * dispatch
       * ret expression +
       * Generic handlers 
         - __received - incoming message
-      * abstract(*) / sealed / predefined(*)
+      * abstract / sealed / predefined +
     Properties
       * implicit
       * explicit
@@ -80,6 +80,7 @@ Code
     * $sizeof
   Expressions
     * In-place assignment (both variable and properties)
+    * lazy
   Control statements
   Conversions : cast vs conversion constructor
   Message Dispaching

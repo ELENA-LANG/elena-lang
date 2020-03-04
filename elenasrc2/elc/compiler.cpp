@@ -17,14 +17,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -63,12 +63,12 @@ constexpr auto HINT_VIRTUALEXPR     = EAttr::eaVirtualExpr;
 constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
 constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 constexpr auto HINT_PARAMETER       = EAttr::eaParameter;
+constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 
 //constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
-//constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 //constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
 //constexpr auto HINT_RETEXPR         = EAttr::eaRetExpr;
 //constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
@@ -938,6 +938,11 @@ int Compiler::ExprScope :: newTempLocal()
    return tempAllocated1;
 }
 
+inline int newLocalAddr(int allocated)
+{
+   return -2 - allocated;
+}
+
 int Compiler::ExprScope :: newTempLocalAddress()
 {
    CodeScope* codeScope = (CodeScope*)getScope(Scope::ScopeLevel::slCode);
@@ -947,7 +952,7 @@ int Compiler::ExprScope :: newTempLocalAddress()
    if (tempAllocated2 > codeScope->reserved2)
       codeScope->reserved2 = tempAllocated2;
 
-   return -2 - allocated;
+   return newLocalAddr(allocated);
 }
 
 ObjectInfo Compiler::ExprScope :: mapGlobal(ident_t identifier)
@@ -4157,110 +4162,25 @@ ObjectInfo Compiler :: compilePropAssigning(SNode node, ExprScope& scope, Object
    return retVal;
 }
 
-//ObjectInfo Compiler :: compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo role, bool callMode)
-//{
-//   ref_t expectedClassRef = 0;
-//   ref_t classRef = resolveObjectReference(scope, role, false);
-//
-//   int flags = 0;
-//   if (classRef == scope.getClassRefId()) {
-//      // if the symbol is used inside itself
-//      flags = scope.getClassFlags();
-//   }
-//   else if (classRef != 0) {
-//      // otherwise
-//      ClassInfo roleClass;
-//      scope.moduleScope->loadClassInfo(roleClass, classRef);
-//
-//      flags = roleClass.header.flags;
-//      //HOTFIX : typecast the extension target if required
-//      if (test(flags, elExtension) && roleClass.fieldTypes.exist(-1)) {
-//         expectedClassRef = roleClass.fieldTypes.get(-1).value1;
-//      }
-//   }
-//
-//   if (test(flags, elStateless)) {
-//      // only a stateless class can be used as a wrapper one
-//      role = ObjectInfo(okConstantRole, classRef, classRef);
-//   }
-//
-//   int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
-//   if (paramCount == 1) {
-//      compileExpression(writer, node.nextNode(lxObjectMask), scope, expectedClassRef, EAttr::eaNone);
-//   }
-//   else scope.raiseError(errNotApplicable, node.parentNode());
-//
-//   if (callMode) {
-//      // if it is a generic role
-//      if (role.kind != okConstantRole && role.kind != okSubject) {
-//         writer.newNode(lxOverridden);
-//         writeTerminal(writer, node, scope, role, EAttr::eaNone);
-//         writer.closeNode();
-//      }
-//   }
-//   else {
-//      writer.inject(lxMember);
-//      writer.closeNode();
-//
-//      writer.newNode(lxMember, 1);
-//      writeTerminal(writer, node, scope, role, EAttr::eaNone);
-//      writer.closeNode();
-//
-//      role = ObjectInfo(okObject);
-//      role.reference = scope.moduleScope->wrapReference;
-//
-//      writer.appendNode(lxTarget, role.reference);
-//      writer.inject(lxNested, 2);
-//      writer.closeNode();
-//   }
-//
-//   return role;
-//}
-//
-////// NOTE : targetRef refers to the type for the typified extension method
-////ObjectInfo Compiler :: compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo object, ObjectInfo role, ref_t targetRef)
-////{
-////   ref_t  messageRef = mapMessage(node, scope);
-////   ref_t implicitSignatureRef = 0;
-////
-////   if (targetRef != 0) {
-////      if (!convertObject(writer, scope, targetRef, resolveObjectReference(scope, object), object.element))
-////         scope.raiseError(errInvalidOperation, node);
-////
-////      //SNode targetNode = node.firstChild(lxObjectMask);
-////
-////      //object = compileExpression(writer, targetNode, scope, targetRef, 0);
-////
-////      //// the target node already compiler so it should be skipped
-////      //targetNode = lxResult;
-////      implicitSignatureRef = compileMessageParameters(writer, node, scope);
-////   }
-////   else implicitSignatureRef = compileMessageParameters(writer, node, scope);
-////
-////   messageRef = resolveMessageAtCompileTime(role, scope, messageRef, implicitSignatureRef);
-////
-////   return compileMessage(writer, node, scope, role, messageRef, HINT_EXTENSION_MODE, 0);
-////}
-
-/*bool*/void Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode)
+bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode)
 {
-//   bool lazyExpression = EAttrs::test(mode, HINT_LAZY_EXPR);
+   bool lazyExpression = EAttrs::test(mode, HINT_LAZY_EXPR);
 
    ref_t invokeAction = scope.module->mapAction(INVOKE_MESSAGE, 0, false);
-   methodScope.message = encodeMessage(/*lazyExpression ? EVAL_MESSAGE_ID : */invokeAction, 0, FUNCTION_MESSAGE);
+   methodScope.message = encodeMessage(invokeAction, 0, FUNCTION_MESSAGE);
 
    if (argNode != lxNone) {
       // define message parameter
       methodScope.message = declareInlineArgumentList(argNode, methodScope, false);
    }
 
-//   return lazyExpression;
+   return lazyExpression;
 }
 
 void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EAttr mode)
 {
    MethodScope methodScope(&scope);
-   /*bool lazyExpression = */declareActionScope(scope, argNode, methodScope, mode);
+   bool lazyExpression = declareActionScope(scope, argNode, methodScope, mode);
    bool inlineExpression = EAttrs::test(mode, HINT_INLINE_EXPR);
    methodScope.functionMode = true;
 
@@ -4271,13 +4191,13 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
 //      methodScope.subCodeMode = true;
 
    // if it is single expression
-   if (inlineExpression/* || lazyExpression*/) {
+   if (inlineExpression || lazyExpression) {
       //inject a method
       node.injectAndReplaceNode(lxClass);
       SNode current = node.firstChild();
       current.injectAndReplaceNode(lxClassMethod, methodScope.message);
 
-      compileExpressionMethod(current, methodScope/*, lazyExpression*/);
+      compileExpressionMethod(current, methodScope, lazyExpression);
    }
    else {
       // inject a method
@@ -4300,10 +4220,10 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
 
    // the parent is defined after the closure compilation to define correctly the output type
    ref_t parentRef = scope.info.header.parentRef;
-//   if (lazyExpression) {
-//      parentRef = scope.moduleScope->lazyExprReference;
-//   }
-//   else {
+   if (lazyExpression) {
+      parentRef = scope.moduleScope->lazyExprReference;
+   }
+   else {
       NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
       ref_t closureRef = scope.moduleScope->resolveClosure(methodScope.message, methodScope.outputRef, nsScope->nsName);
@@ -4312,7 +4232,7 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
          parentRef = closureRef;
       }
       else throw InternalError(errClosureError);
-//   }
+   }
 
    // NOTE : the fields are presaved, so the closure parent should be stateless
    compileParentDeclaration(SNode(), scope, parentRef, true);
@@ -4506,12 +4426,13 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
                // save the closure in the temp variable
                tempLocal = ownerScope.newTempLocal();
 
-               SNode closureNode = node.firstChild(lxObjectMask);
-               closureNode.injectAndReplaceNode(lxAssigning);
-               closureNode.insertNode(lxTempLocal, tempLocal);
+               node.injectAndReplaceNode(lxAssigning);
+               node.insertNode(lxTempLocal, tempLocal);
+               node.injectAndReplaceNode(lxSeqExpression);
+               node.appendNode(lxTempLocal, tempLocal);
             }
 
-            injectMemberPreserving(objNode, lxTempLocal, tempLocal, (*outer_it).reference);
+            injectMemberPreserving(member, ownerScope, lxTempLocal, tempLocal, info, (*outer_it).reference);
          }
 
 //         writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
@@ -4597,7 +4518,7 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, EAttr m
 
    // if it is a lazy expression / multi-statement closure without parameters
    SNode argNode = node.firstChild();
-   if (EAttrs::testany(mode, /*HINT_LAZY_EXPR | */HINT_INLINE_EXPR)) {
+   if (EAttrs::testany(mode, HINT_LAZY_EXPR | HINT_INLINE_EXPR)) {
       compileAction(node, scope, SNode(), mode);
    }
    else if (argNode == lxCode) {
@@ -5300,6 +5221,8 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr, true);
 
+   test2(node);
+
    return retVal;
 }
 
@@ -5764,6 +5687,9 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
    else if (mode.testAndExclude(HINT_YIELD_EXPR)) {
       compileYieldExpression(current, scope, mode);
    }
+   else if (mode.test(HINT_LAZY_EXPR)) {
+      result = compileClosure(node, scope, mode);
+   }
    else {
       switch (current.type) {
 //         case lxCollection:
@@ -5791,9 +5717,6 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          case lxNestedClass:
             result = compileClosure(current, scope, mode/* & HINT_CLOSURE_MASK*/);
             break;
-////         case lxLazyExpression:
-////            result = compileClosure(writer, node, scope, mode & HINT_CLOSURE_MASK);
-////            break;
          case lxClosureExpr:
             result = compileClosure(current, scope, mode/* & HINT_CLOSURE_MASK*/);
             break;
@@ -6238,7 +6161,7 @@ int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reser
    reserved += allocatedSize;
 
    // the offset should include frame header offset
-   retVal = -2 - retVal;
+   retVal = newLocalAddr(retVal);
 
    // reserve place for byte array header if required
    if (bytearray)
@@ -6719,11 +6642,6 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
    CodeScope codeScope(&scope);
 
    SNode body = node.findChild(lxCode, lxReturning);
-   ////   if (body == lxReturning) {
-////      // HOTFIX : if it is an returning expression, inject returning node
-////      SNode expr = body.findChild(lxExpression);
-////      expr = lxReturning;
-////   }
 
    if (body != lxCode) {
       body.injectAndReplaceNode(lxNewFrame);
@@ -6743,7 +6661,7 @@ void Compiler :: compileActionMethod(SNode node, MethodScope& scope)
    endMethod(node, scope);
 }
 
-void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope/*, bool lazyMode*/)
+void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope, bool lazyMode)
 {
    declareProcedureDebugInfo(node, scope, false/*, false*/);
 
@@ -6758,10 +6676,27 @@ void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope/*, bool 
    codeScope.allocated1++;
    scope.preallocated = codeScope.allocated1;
 
-//   if (lazyMode) {
-//      compileRetExpression(writer, node, codeScope, EAttr::eaNone);
-//   }
-   /*else */compileRetExpression(current, codeScope, EAttr::eaNone);
+   if (lazyMode) {
+      int tempLocal = newLocalAddr(codeScope.allocated2++);
+
+      SNode frameNode = current.parentNode();
+      // HOTFIX : lazy expression should presave incoming message
+      frameNode.insertNode(lxIndexSaving).appendNode(lxLocalAddress, tempLocal);
+
+      SNode attrNode = current.firstChild();
+      while ((attrNode != lxAttribute || attrNode.argument != V_LAZY) && attrNode != lxNone)
+         attrNode = attrNode.nextNode();
+
+      // HOTFIX : comment lazy attribute out to prevent short circuit
+      if (attrNode == lxAttribute && attrNode.argument == V_LAZY)
+         attrNode.setArgument(0);
+
+      compileRetExpression(current, codeScope, EAttr::eaNone);
+
+      // HOTFIX : lazy expression should presave incoming message
+      frameNode.appendNode(lxIndexLoading).appendNode(lxLocalAddress, tempLocal);;
+   }
+   else compileRetExpression(current, codeScope, EAttr::eaNone);
 
    codeScope.syncStack(&scope);
 
@@ -9627,36 +9562,28 @@ inline SNode injectRootSeqExpression(SNode& parent)
    return current;
 }
 
-void Compiler :: injectMemberPreserving(SNode objNode, LexicalType tempType, int tempLocal, int memberIndex)
+void Compiler :: injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal, ObjectInfo member, int memberIndex)
 {
-   SNode parent = objNode;
+   SNode parent = node;
    SNode current = injectRootSeqExpression(parent);
 
-   if (objNode == lxExpression)
-      objNode = objNode.findSubNodeMask(lxObjectMask);
+   ref_t targetRef = resolveObjectReference(scope, member, false);
 
-   int size = 0;
-   if (objNode == lxSeqExpression) {
-      SNode copyNode = objNode.firstChild();
-      if (copyNode == lxCopying) {
-         size = copyNode.argument;
-         objNode = copyNode.lastChild(lxObjectMask);
-      }
-   }
+   if (member.kind == okLocalAddress) {
+      // if the parameter may be stack-allocated
+      bool variable = false;
+      int size = _logic->defineStructSizeVariable(*scope.moduleScope, targetRef, member.element, variable);
 
-   if (objNode.type == lxLocal) {
-      SNode assignNode = current.appendNode(lxAssigning);
-
-      assignNode.appendNode(objNode.type, objNode.argument);
+      SNode assignNode = current.appendNode(lxCopying, size);
+      assignNode.appendNode(lxLocalAddress, member.param);
 
       SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
       fieldExpr.appendNode(tempType, tempLocal);
       fieldExpr.appendNode(lxField, memberIndex);
    }
-   else if (objNode == lxLocalAddress) {
-      SNode assignNode = current.appendNode(lxCopying, size);
-
-      assignNode.appendNode(objNode.type, objNode.argument);
+   else if (member.kind == okLocal) {
+      SNode assignNode = current.appendNode(lxAssigning);
+      assignNode.appendNode(lxLocal, member.param);
 
       SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
       fieldExpr.appendNode(tempType, tempLocal);
@@ -11046,7 +10973,7 @@ void Compiler :: initializeScope(ident_t name, _ModuleScope& scope, bool withDeb
    scope.argArrayTemplateReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(ARGARRAYTEMPLATE_FORWARD));
    scope.messageNameReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(MESSAGENAME_FORWARD));
    scope.extMessageReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(EXT_MESSAGE_FORWARD));
-//   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
+   scope.lazyExprReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(LAZYEXPR_FORWARD));
    scope.closureTemplateReference = safeMapWeakReference(scope.module, scope.project->resolveForward(CLOSURETEMPLATE_FORWARD));
 //   scope.wrapReference = safeMapReference(scope.module, scope.project, scope.project->resolveForward(WRAP_FORWARD));
 

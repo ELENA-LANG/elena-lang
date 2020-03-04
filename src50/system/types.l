@@ -31,7 +31,7 @@
 #define __weak      80002004h
 #define __loop      80002005h
 //#define preloaded   80002006h
-//#define lazy        80002009h
+#define lazy        80002009h
 
 /// scope:
 #define class       80001001h

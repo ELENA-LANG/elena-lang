@@ -288,6 +288,9 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    int argCount = 0;
    decodeMessage(message, actionRef, argCount, flags);
 
+   if (argCount == 0 && flags == FUNCTION_MESSAGE)
+      flags |= FUNCTION_MESSAGE;
+
    // signature and custom verb should be imported
    ref_t signature;
    ident_t actionName = module->resolveAction(actionRef, signature);

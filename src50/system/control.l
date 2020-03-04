@@ -750,15 +750,15 @@ public interface Func<T1,T2,T3,T4,T5,T6,T7, TResult>
 ////    [
 ////    ]
 //}
-//
-//// --- base lazy expression ---
-//
-//public abstract BaseLazyExpression
-//{
-//    abstract closure() {}
-//    
-//    dispatch() => system'core_routines'__lazyexpression;
-//}
+
+// --- base lazy expression ---
+
+public abstract BaseLazyExpression
+{
+    abstract function() {}
+    
+    dispatch() => intern system'core_routines'__lazyexpression;
+}
 
 // --- BaseEnumerator<type> ---
 

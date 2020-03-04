@@ -1146,12 +1146,12 @@ private:
    void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
    void declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode);
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
-   /*bool*/void declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
+   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
 
 //////   void declareSingletonClass(SNode node, ClassScope& scope);
 
    void compileActionMethod(SNode member, MethodScope& scope);
-   void compileExpressionMethod(SNode member, MethodScope& scope/*, bool lazyMode*/);
+   void compileExpressionMethod(SNode member, MethodScope& scope, bool lazyMode);
    void compileDispatcher(SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void beginMethod(SNode node, MethodScope& scope);
@@ -1233,7 +1233,8 @@ private:
    void boxExpressionInRoot(SNode boxNode, SNode objNode, ExprScope& scope, LexicalType tempType,
       int tempLocal, bool localBoxingMode, bool condBoxing);
 
-   void injectMemberPreserving(SNode objNode, LexicalType tempType, int tempLocal, int memberIndex);
+   void injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal, 
+      ObjectInfo member, int memberIndex);
    void injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
       int tempLocal);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);

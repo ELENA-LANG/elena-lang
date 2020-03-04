@@ -1,4 +1,4 @@
-import system'routines;
+//import system'routines;
 import extensions;
 
 class GameMaster
@@ -9,7 +9,7 @@ class GameMaster
     constructor()
     {
         // generate secret number
-        var randomNumbers := new int[]::(1,2,3,4,5,6,7,8,9).randomize(9);
+        var randomNumbers := new int[]{1,2,3,4,5,6,7,8,9}.randomize(9);
 
         theNumbers := randomNumbers.Subarray(0, 4);
         theAttempt := new Integer(1);
@@ -35,31 +35,31 @@ class GameMaster
         {
             try
             {
-                for (int i := 0, i < 4, i+=1) {
-                    var ch := guess[i];
-                    var number := ch.toString().toInt();
-                    
-                    // check range
-                    ifnot (number > 0 && number < 10)
-                        { InvalidArgumentException.raise() };
-                    
-                    // check duplicates
-                    var duplicate := guess.seekEach:(x => (x == ch)&&(x.equalReference(ch).Inverted));
-                    if (nil != duplicate)
-                    {
-                        InvalidArgumentException.raise()
-                    };
-                    
-                    if (number == theNumbers[i])
-                    { 
-                        bulls += 1 
-                    }
-                    else
-                    {
-                        if (theNumbers.ifExists(number))
-                            { cows += 1 }
-                    }
-                }
+//                for (int i := 0, i < 4, i+=1) {
+//                    var ch := guess[i];
+//                    var number := ch.toString().toInt();
+//                    
+//                    // check range
+//                    ifnot (number > 0 && number < 10)
+//                        { InvalidArgumentException.raise() };
+//                    
+//                    // check duplicates
+//                    var duplicate := guess.seekEach:(x => (x == ch)&&(x.equalReference(ch).Inverted));
+//                    if (nil != duplicate)
+//                    {
+//                        InvalidArgumentException.raise()
+//                    };
+//                    
+//                    if (number == theNumbers[i])
+//                    { 
+//                        bulls += 1 
+//                    }
+//                    else
+//                    {
+//                        if (theNumbers.ifExists(number))
+//                            { cows += 1 }
+//                    }
+//                }
             }
             catch(Exception e)
             {
@@ -67,24 +67,24 @@ class GameMaster
             }
         };
 
-        bulls =>
-            -1 { console.printLine:"Not a valid guess."; ^ true }
-             4 { console.printLine:"Congratulations! You have won!"; ^ false }
-             : {
-                 theAttempt.append(1);
-                 
-                 console.printLine("Your Score is ",bulls," bulls and ",cows," cows");
-                 
-                 ^ true
-             }
+//        bulls =>
+//            -1 { console.printLine:"Not a valid guess."; ^ true }
+//             4 { console.printLine:"Congratulations! You have won!"; ^ false }
+//             : {
+//                 theAttempt.append(1);
+//                 
+//                 console.printLine("Your Score is ",bulls," bulls and ",cows," cows");
+//                 
+//                 ^ true
+//             }
     }
 }
 
 public program()
 {
-    var gameMaster := new GameMaster();
-
-    (lazy:gameMaster.proceed(gameMaster.ask())).doWhile();
-    
-    console.readChar()
+//    var gameMaster := new GameMaster();
+//
+//    (lazy:gameMaster.proceed(gameMaster.ask())).doWhile();
+//    
+//    console.readChar()
 }

@@ -53,7 +53,7 @@ constexpr auto V_WRAPPER         = 0x80002003u;
 constexpr auto V_WEAKOP          = 0x80002004u;
 constexpr auto V_LOOP            = 0x80002005u;
 //constexpr auto V_PRELOADED       = 0x80002006u;
-//constexpr auto V_LAZY            = 0x80002009u;
+constexpr auto V_LAZY            = 0x80002009u;
 
 /// scope:
 constexpr auto V_CLASS           = 0x80001001u;
@@ -249,7 +249,7 @@ struct _ModuleScope
    ref_t             arrayTemplateReference;
    ref_t             argArrayTemplateReference;
    ref_t             closureTemplateReference;
-//   ref_t             lazyExprReference;
+   ref_t             lazyExprReference;
 //   ref_t             wrapReference;
 
    // cached messages
@@ -388,7 +388,7 @@ struct _ModuleScope
       longReference = literalReference = wideReference = 0;
       charReference = realReference = 0;
       closureTemplateReference = refTemplateReference = 0;
-      /*lazyExprReference = */extMessageReference = 0;
+      lazyExprReference = extMessageReference = 0;
       arrayTemplateReference = 0;
       /*wrapReference = */argArrayTemplateReference = 0;
 
@@ -520,13 +520,13 @@ public:
       eaSubj               = 0x00020000000,
       eaDirectCall         = 0x00040000000,
       eaParameter          = 0x00080000000,
+      eaLazy               = 0x00100000000,
 
       eaScopeMask          = 0x0000041400A,
       eaObjectMask         = 0x000A821B2F4,
 
 //      eaWrap               = 0x00000001000,
 //      eaDirect             = 0x00000004000,
-//      eaLazy               = 0x00000008000,
 //      eaInlineArg          = 0x00000010000,
 //      eaYield              = 0x00000040000,
 //eaAutoSize           = 0x00002000000,

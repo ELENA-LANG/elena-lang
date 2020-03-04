@@ -7,6 +7,19 @@ define SPECIAL_MESSAGE_INV  0FFFFFFDFh
 
 define elSubject             04000000h
 
+
+
+procedure __lazyexpression2."#dispatch[1]"
+
+  vcallrm  system'BaseLazyExpression mssgconst : "#invoke[0]"
+  storesi  1
+  jumpvi   0
+
+end
+
+
+
+
 // ; external methods
 
 procedure __object."#dispatch[1]"
@@ -2605,6 +2618,14 @@ labEnd:
   peeksi   0
   pushr    mssgconst : "new[3]"
   throw
+
+end
+
+procedure __lazyexpression."#dispatch[1]"
+
+  vcallrm  system'BaseLazyExpression mssgconst : "#invoke[0]"
+  storesi  1
+  jumpvi   0
 
 end
 
