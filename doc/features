@@ -33,11 +33,18 @@ Declarations
       * byref args +
       * in-place declaration
       * resend +
-      * dispatch
+      * dispatch +
       * ret expression +
       * Generic handlers 
         - __received - incoming message
       * abstract / sealed / predefined +
+      * inline arg
+
+      * Build-in Variables
+        - self vs this self
+        - __received
+        - class / global predicate
+
     Properties
       * implicit
       * explicit
@@ -55,6 +62,7 @@ Declarations
       * in-place initialization : default constructor is not called
   Templates
   Extensions
+    * public / internal
   Extension Templates
 Code
   Idenifiers
@@ -68,10 +76,6 @@ Code
     * fixed-size array
     * in-place initializer
     * in-place declaration
-  Build-in Variables
-    * self vs this self
-    * __received
-    * class / global predicate
   Operators
     * a ?? b / a.msg() ?? b
     * .?
@@ -86,6 +90,7 @@ Code
   Message Dispaching
   Modificators
     * __weak attribute
+Mixins
 Project
   Options
     * option to turn on / off auto system module import

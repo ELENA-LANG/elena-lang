@@ -17,14 +17,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -64,12 +64,12 @@ constexpr auto HINT_SUBJECTREF      = EAttr::eaSubj;
 constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 constexpr auto HINT_PARAMETER       = EAttr::eaParameter;
 constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
+constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
 
 //constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
 //constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
 //constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
-//constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
 //constexpr auto HINT_RETEXPR         = EAttr::eaRetExpr;
 //constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 
@@ -3176,12 +3176,12 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
    ref_t classReference = resolveObjectReference(scope, target, true);
    ref_t constRef = 0;
 
-//   bool inlineArgCall = EAttrs::test(mode, HINT_INLINEARGMODE);
+   bool inlineArgCall = EAttrs::test(mode, HINT_INLINEARGMODE);
 //   bool dispatchCall = false;
    bool directCall = EAttrs::test(mode, HINT_DIRECTCALL);
    _CompilerLogic::ChechMethodInfo result;
    int callType = 0;
-   if (/*!inlineArgCall && */!directCall) {
+   if (!inlineArgCall && !directCall) {
       callType = _logic->resolveCallType(*scope.moduleScope, classReference, messageRef, result);
    }
 
@@ -3210,17 +3210,17 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
       callType = tpSealed;
    }
 
-//   if (inlineArgCall) {
-//      operation = lxInlineArgCall;
-//      argument = messageRef;
-//   }
+   if (inlineArgCall) {
+      operation = lxInlineArgCall;
+      argument = messageRef;
+   }
 //   else if (dispatchCall) {
 //      operation = lxDirectCalling;
 //      argument = scope.moduleScope->dispatch_message;
 //
 //      writer.appendNode(lxOvreriddenMessage, messageRef);
 //   }
-   /*else */if (callType == tpClosed || callType == tpSealed) {
+   else if (callType == tpClosed || callType == tpSealed) {
       operation = callType == tpClosed ? lxSDirectCalling : lxDirectCalling;
       argument = messageRef;
 
@@ -3524,7 +3524,7 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
    }
 }
 
-ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr mode, bool& variadicOne/*, bool& inlineArg*/)
+ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr mode, bool& variadicOne, bool& inlineArg)
 {
    EAttr paramMode = HINT_PARAMETER;
    bool externalMode = false;
@@ -3550,9 +3550,9 @@ ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr 
          if (signatureLen >= ARG_COUNT) {
             signatureLen++;
          }
-//         else if (inlineArg) {
-//            scope.raiseError(errNotApplicable, current);
-//         }
+         else if (inlineArg) {
+            scope.raiseError(errNotApplicable, current);
+         }
          else if (argRef == V_UNBOXEDARGS) {
             if (paramInfo.element) {
                signatures[signatureLen++] = paramInfo.element;
@@ -3564,12 +3564,12 @@ ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr 
 			   }
 			   else scope.raiseError(errNotApplicable, current);
          }
-//         else if (argRef == V_INLINEARG) {
-//            if (signatureLen == 0) {
-//               inlineArg = true;
-//            }
-//            else scope.raiseError(errNotApplicable, current);
-//         }
+         else if (argRef == V_INLINEARG) {
+            if (signatureLen == 0) {
+               inlineArg = true;
+            }
+            else scope.raiseError(errNotApplicable, current);
+         }
          else if (argRef) {
             signatures[signatureLen++] = argRef;
 
@@ -3708,8 +3708,8 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
 
    ObjectInfo retVal;
    bool variadicOne = false;
-//   bool inlineArg = false;
-   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, variadicOne/*, inlineArg*/);
+   bool inlineArg = false;
+   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, variadicOne, inlineArg);
 
    //   bool externalMode = false;
    if (target.kind == okExternal) {
@@ -3723,9 +3723,10 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
       if (target.kind == okInternal) {
          retVal = compileInternalCall(node.parentNode(), scope, messageRef, implicitSignatureRef, target);
       }
-//      else if (inlineArg) {
-//         retVal = compileMessage(writer, node, scope, target, messageRef, mode | HINT_INLINEARGMODE, 0);
-//      }
+      else if (inlineArg) {
+         bool dummy = false;
+         retVal = compileMessage(node.parentNode(), scope, target, messageRef, mode | HINT_INLINEARGMODE, 0, dummy);
+      }
       else {
          int stackSafeAttr = 0;
          if (!EAttrs::test(mode, HINT_DIRECTCALL))
@@ -4850,8 +4851,11 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
 
    EAttr paramsMode = EAttr::eaNone;
    bool variadicOne = false;
+   bool inlineArg = false;
    int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
-   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, variadicOne/*, inlineArg*/);
+   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, variadicOne, inlineArg);
+   if (inlineArg)
+      scope.raiseError(errInvalidOperation, node);
 
    SNode exprNode = node.parentNode();
    ref_t messageRef = overwriteArgCount(scope.moduleScope->constructor_message, paramCount + 1);
@@ -5217,8 +5221,6 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr, true);
 
-   test2(node);
-
    return retVal;
 }
 
@@ -5505,12 +5507,6 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          //      //      // HOTFIX : recognize predefined constant lists
          //      //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
          //      //   break;
-         //case lxPrimitive:
-         //   object = ObjectInfo(okPrimitive, terminal.argument);
-         //   break;
-         //case lxPrimCollection:
-         //   object = ObjectInfo(okPrimCollection, terminal.argument);
-         //   break;
          case lxLiteral:
             object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
             break;
@@ -5566,10 +5562,6 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
             // NOTE : is not allowed to be used outside const initialization
             scope.raiseError(errIllegalOperation, terminal);
             break;
-         ////      case lxLocal:
-         ////         // if it is a temporal variable
-         ////         object = ObjectInfo(okLocal, terminal.argument);
-         ////         break;
          case lxExplicitConst:
          {
             // try to resolve explicit constant
@@ -5607,8 +5599,6 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
       else scope.raiseError(errInvalidConstant, terminal);
 
       object = ObjectInfo(okObject, constInfo.value2);
-
-//      writer.removeBookmark();
    }
    else if (object.kind == okUnknown) {
       scope.raiseError(errUnknownObject, terminal);
@@ -5729,7 +5719,13 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
             break;
          default:
             result = mapTerminal(current, scope, mode);
+            break;
       }
+   }
+
+   if (mode.test(HINT_INLINEARGMODE)) {
+      result.element = result.reference;
+      result.reference = V_INLINEARG;
    }
 
    return result;
@@ -5768,7 +5764,6 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectIn
 {
    bool noPrimMode = EAttrs::test(modeAttrs, HINT_NOPRIMITIVES);
    bool noUnboxing = EAttrs::test(modeAttrs, HINT_NOUNBOXING);
-//   bool inlineArgMode = false;
 //   bool boxingMode = false;
 
    EAttrs mode(modeAttrs, HINT_OBJECT_MASK);
@@ -5776,7 +5771,10 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectIn
 
    ref_t sourceRef = resolveObjectReference(scope, retVal, false/*, exptectedRef*/);
    if (!exptectedRef && isPrimitiveRef(sourceRef) && noPrimMode) {
-      exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element, false);
+      if (objectInfo.reference == V_INLINEARG && EAttrs::test(modeAttrs, HINT_PARAMETER)) {
+         // HOTFIX : do not resolve inline argument
+      }
+      else exptectedRef = resolvePrimitiveReference(scope, sourceRef, objectInfo.element, false);
    }
 
    if (exptectedRef) {
@@ -5788,11 +5786,6 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectIn
          scope.raiseError(errInvalidOperation, node);
       }
    }
-
-//   if (inlineArgMode) {
-//      objectInfo.element = objectInfo.reference;
-//      objectInfo.reference = V_INLINEARG;
-//   }
 
    return retVal;
 }
@@ -6830,7 +6823,7 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    ref_t classRef = classClassScope.reference;
    bool found = false;
 
-   if (/*(getParamCount(messageRef) != 0 && methodScope->parameters.Count() != 0) || */node.existChild(lxCode) || !isConstantArguments(expr)) {
+   if (node.existChild(lxCode) || !isConstantArguments(expr)) {
       withFrame = true;
 
       // new stack frame
@@ -6852,10 +6845,10 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    resendScope.withFrame = withFrame;
 
    bool variadicOne = false;
-//   bool inlineArg = false;
+   bool inlineArg = false;
    SNode argNode = expr.findChild(lxMessage).nextNode();
    ref_t implicitSignatureRef = compileMessageParameters(argNode, resendScope, EAttr::eaNone,
-      variadicOne/*, inlineArg*/);
+      variadicOne, inlineArg);
 
    ObjectInfo target(okClassSelf, resendScope.getClassRefId(), classRef);
    int stackSafeAttr = 0;

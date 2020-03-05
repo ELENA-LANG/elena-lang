@@ -1936,9 +1936,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_LAZY:
          attributes.include(EAttr::eaLazy);
          return true;
-//      case V_INLINEARG:
-//         attributes.include(EAttr::eaInlineArg);
-//         return true;
+      case V_INLINEARG:
+         attributes.include(EAttr::eaInlineArg);
+         return true;
       case V_IGNOREDUPLICATE:
          attributes.include(EAttr::eaIgnoreDuplicates);
          return true;

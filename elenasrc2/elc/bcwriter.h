@@ -372,8 +372,8 @@ class ByteCodeWriter
    //   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
    void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateInlineArgCallExpression(CommandTape& tape, SyntaxTree::Node node);
-//   void generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message);
+   void generateInlineArgCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message, FlowScope& scope);
 //   void generateVariadicInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message);
 //   void generateBoxing(CommandTape& tape, SyntaxTree::Node node);
 //   void generateFieldBoxing(CommandTape& tape, SyntaxTree::Node node, int offset);

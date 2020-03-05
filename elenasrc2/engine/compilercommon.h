@@ -98,7 +98,7 @@ constexpr auto V_PTRBINARY       = 0x80000805u;
 constexpr auto V_MESSAGE         = 0x80000806u;
 constexpr auto V_SUBJECT         = 0x80000807u;
 //constexpr auto V_SYMBOL          = 0x80000808u;
-//constexpr auto V_INLINEARG       = 0x80000809u;
+constexpr auto V_INLINEARG       = 0x80000809u;
 ////constexpr auto V_INLINEATTRIBUTE = 0x8000080Au;
 
 /// primitive types
@@ -521,13 +521,13 @@ public:
       eaDirectCall         = 0x00040000000,
       eaParameter          = 0x00080000000,
       eaLazy               = 0x00100000000,
+      eaInlineArg          = 0x00200000000,
 
       eaScopeMask          = 0x0000041400A,
       eaObjectMask         = 0x000A821B2F4,
 
 //      eaWrap               = 0x00000001000,
 //      eaDirect             = 0x00000004000,
-//      eaInlineArg          = 0x00000010000,
 //      eaYield              = 0x00000040000,
 //eaAutoSize           = 0x00002000000,
 //

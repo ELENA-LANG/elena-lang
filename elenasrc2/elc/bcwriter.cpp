@@ -4493,111 +4493,141 @@ void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node, FlowS
    scope.clear();
 }
 
-//void ByteCodeWriter :: generateInlineArgCallExpression(CommandTape& tape, SNode node)
-//{
-//   SNode larg;
-//   SNode rarg;
-//   assignOpArguments(node, larg, rarg);
-//   if (rarg == lxExpression)
-//      rarg = rarg.findSubNodeMask(lxObjectMask);
-//
-//   generateInlineArgCall(tape, larg, rarg, node.argument);
-//}
-//
-//void ByteCodeWriter :: generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message)
-//{
-//   tape.newLabel(); // declare end label
-//   tape.newLabel(); // declare long label
-//
-//   if (isSimpleObject(rarg)) {
-//      loadBase(tape, rarg.type, rarg.argument, 0);
-//   }
-//   else {
-//      generateObject(tape, rarg, ACC_REQUIRED);
-//      loadBase(tape, lxResult, 0, 0);
-//   }
-//
-//   // count
-//   tape.write(bcCount);
-//   // dcopye
-//   tape.write(bcDCopyE);
-//
-//   // greatern labVariadic ARG_COUNT
-//   tape.write(bcGreaterN, baCurrentLabel, ARG_COUNT);
-//
-//   // labNext:
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   // dec
-//   tape.write(bcDec);
-//   // get
-//   tape.write(bcGet);
-//   // pusha
-//   tape.write(bcPushA);
-//   // elsen labNext 0
-//   tape.write(bcElseN, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//
-//   // ; push target
-//   generateObject(tape, larg, ACC_REQUIRED);
-//   pushObject(tape, lxResult);
-//
-//   // setverb m
-//   tape.write(bcSetVerb, getAction(message));
-//
-//   if (test(message, SPECIAL_MESSAGE)) {
-//      // eorn SPECIAL_MESSAGE
-//      tape.write(bcEOrN, SPECIAL_MESSAGE);
-//      releaseObject(tape);
-//   }
-//
-//   // acallvi 0
-//   tape.write(bcACallVI, 0);
-//   // jmp labEnd
-//   tape.write(bcJump, baPreviousLabel);
-//
-//   // labVariadic:
-//   tape.setLabel();
-//
-//   // pushn 0
-//   tape.write(bcPushR, 0);
-//
-//   // labNext2:
-//   tape.newLabel();
-//   tape.setLabel(true);
-//
-//   // dec
-//   tape.write(bcDec);
-//   // get
-//   tape.write(bcGet);
-//   // pusha
-//   tape.write(bcPushA);
-//   // elsen labNext2 0
-//   tape.write(bcElseN, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//
-//   // ; push target
-//   generateObject(tape, larg, ACC_REQUIRED);
-//   pushObject(tape, lxResult);
-//
-//   // copym
-//   tape.write(bcCopyM, encodeMessage(getAction(message), 1, VARIADIC_MESSAGE));
-//
-//   if (test(message, SPECIAL_MESSAGE)) {
-//      // eorn SPECIAL_MESSAGE
-//      tape.write(bcEOrN, SPECIAL_MESSAGE);
-//      releaseObject(tape);
-//   }
-//
-//   // acallvi 0
-//   tape.write(bcACallVI, 0);
-//
-//   releaseArgList(tape);
-//
-//   // labEnd
-//   tape.setLabel();
-//}
-//
+void ByteCodeWriter :: generateInlineArgCallExpression(CommandTape& tape, SNode node, FlowScope& scope)
+{
+   SNode larg;
+   SNode rarg;
+   assignOpArguments(node, larg, rarg);
+   if (rarg == lxExpression)
+      rarg = rarg.findSubNodeMask(lxObjectMask);
+
+   generateInlineArgCall(tape, larg, rarg, node.argument, scope);
+
+   scope.clear();
+}
+
+inline void setInlineArgMessage(CommandTape& tape, int message)
+{
+   // count
+   tape.write(bcCount);
+   if (!test(message, FUNCTION_MESSAGE)) {
+      // inc 1
+      tape.write(bcInc, 1);
+   }
+
+   // movv m
+   tape.write(bcMovV, getAction(message));
+   if (test(message, FUNCTION_MESSAGE)) {
+      // or SPECIAL_MESSAGE
+      tape.write(bcOr, FUNCTION_MESSAGE);
+   }
+}
+
+void ByteCodeWriter :: generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message, FlowScope& scope)
+{
+   if (larg == lxExpression)
+      larg = larg.findSubNodeMask(lxObjectMask);
+
+   tape.newLabel(); // declare end label
+   tape.newLabel(); // declare variadic label
+
+   generateObject(tape, rarg, scope);
+
+   // count
+   tape.write(bcCount);
+
+   // greatern labVariadic ARG_COUNT
+   tape.write(bcGreaterN, baCurrentLabel, ARG_COUNT);
+
+   // labNext:
+   tape.newLabel();
+   tape.setLabel(true);
+   // dec
+   tape.write(bcDec, 1);
+   tape.write(bcPush);
+   // elsen labNext 0
+   tape.write(bcElseN, baCurrentLabel, 0);
+   tape.releaseLabel();
+
+   if (!isSubOperation(larg)) {
+      setInlineArgMessage(tape, message);
+
+      loadObject(tape, larg.type, larg.argument, scope, 0);
+      if (!test(message, FUNCTION_MESSAGE))
+         tape.write(bcPushA);
+   }
+   else {
+      if (!isSubOperation(rarg)) {
+         generateObject(tape, larg, scope, STACKOP_MODE);
+
+         loadObject(tape, rarg.type, rarg.argument, scope, 0);
+         setInlineArgMessage(tape, message);
+
+         if (!test(message, FUNCTION_MESSAGE)) {
+            tape.write(bcPeekSI, 0);
+         }
+         else tape.write(bcPopA);
+      }
+      else {
+         tape.write(bcPushN, 0);
+         tape.write(bcPushA);
+         generateObject(tape, larg, scope);
+         tape.write(bcStoreSI, 1);
+         tape.write(bcPopA);
+
+         setInlineArgMessage(tape, message);
+         if (!test(message, FUNCTION_MESSAGE)) {
+            tape.write(bcPeekSI, 0);
+         }
+         else tape.write(bcPopA);
+      }
+   }
+
+   // callvi 0
+   tape.write(bcCallVI, 0);
+   // jmp labEnd
+   tape.write(bcJump, baPreviousLabel);
+
+   // labVariadic:
+   tape.setLabel();
+
+   // pushn -1
+   tape.write(bcPushN, -1);
+
+   // labNext2:
+   tape.newLabel();
+   tape.setLabel(true);
+
+   // dec 1
+   tape.write(bcDec, 1);
+   // push
+   tape.write(bcPush);
+   // elsen labNext2 0
+   tape.write(bcElseN, baCurrentLabel, 0);
+   tape.releaseLabel();
+
+   // ; push target
+   generateObject(tape, larg, scope);
+   if (!test(message, FUNCTION_MESSAGE))
+      tape.write(bcPushA);
+
+   // movm
+   tape.write(bcMovM, encodeMessage(getAction(message), 1, VARIADIC_MESSAGE));
+
+   if (test(message, FUNCTION_MESSAGE)) {
+      // or SPECIAL_MESSAGE
+      tape.write(bcOr, FUNCTION_MESSAGE);
+   }
+
+   // callvi 0
+   tape.write(bcCallVI, 0);
+
+   releaseArgList(tape);
+
+   // labEnd
+   tape.setLabel();
+}
+
 //void ByteCodeWriter :: generateVariadicInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message)
 //{
 //}
@@ -5862,9 +5892,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxIndexLoading:
          generateIndexLoadingExpression(tape, node, scope);
          break;
-         //      case lxInlineArgCall:
-//         generateInlineArgCallExpression(tape, node);
-//         break;
+      case lxInlineArgCall:
+         generateInlineArgCallExpression(tape, node, scope);
+         break;
 //      //case lxImplicitCall:
 //      //   callInitMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
 //      //   break;

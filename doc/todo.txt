@@ -32,19 +32,10 @@ In development:
                 * xforms
 
               dev - test / implementation
-                * resolving extension : if two extension passed to the argument try to find if one of them is
-                  "more precise" than another - use the more precise directly
-                * create a big list (bigger than YG)
-                * variadic arguments : unboxing
-                * boxing byref variable : use intializing, direct assinging after creation without filling with nils
+                * variadic arguments : unboxing - inlinearg
                 * test static fields with singleton
                 * test const fields : override the parent constant value
                 * test global references : with new, var, cast, parent, symbol
-                * test property with template-based type, array type
-                * test embeddable method return with by ref variable
-                * test accumulating constants
-                * boxing ext call result
-                * alt - no need to assign temp local for local / field / param
                 * test negative long to int conversion
                 * test int/byte/short/long to real conversion
                 * test real to byte/short/int/uint/long conversion
@@ -81,6 +72,7 @@ In development:
                 * test if big alloc is proper working
                 * adding source path link on tempate based classes with field initializers
                 * closure unboxing: field addr
+                * create a big list (bigger than YG)
 
               dev - test / optimization
                 * align block code by 16
@@ -111,6 +103,9 @@ In development:
                 * copying  a buffer with unaligned size
                 * int operation : 1 + i
                 * check if there are extnension duplicates, probably no need to save extension multi-dispatcher
+                * alt - no need to assign temp local for local / field / param
+                * boxing byref variable : use intializing, direct assinging after creation without filling with nils
+                * boxing ext call result
 
               dev - usability
                 * ide message : display internal error

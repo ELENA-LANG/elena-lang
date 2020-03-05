@@ -122,6 +122,7 @@ enum LexicalType
    lxCalling_1                = 0x0580A1,
    lxDirectCalling            = 0x0580A2, 
    lxSDirectCalling           = 0x0580A3,
+   lxInlineArgCall            = 0x0580A4,
    lxCurrent                  = 0x0180B0,   // arg - offset
    lxResult                   = 0x0180C0,   // arg - offset
    lxNewFrame                 = 0x0500D0,   // if argument -1 - than with presaved message
