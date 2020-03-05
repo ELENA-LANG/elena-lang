@@ -3,7 +3,7 @@
 //
 //		This header contains String classes declarations
 //
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef altstringsH
@@ -113,7 +113,7 @@ public:
    long toLong(int radix);
    long toLong(int radix, size_t index);
    long toULong(int radix, size_t index = 0);
-   long long toULongLong(int radix, size_t index = 0);
+   long long toLongLong(int radix, size_t index = 0);
 
    double toDouble(size_t index = 0);
 

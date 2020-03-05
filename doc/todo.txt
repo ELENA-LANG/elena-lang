@@ -32,14 +32,6 @@ In development:
                 * xforms
 
               dev - test / implementation
-                * variadic arguments : unboxing - inlinearg
-                * test static fields with singleton
-                * test const fields : override the parent constant value
-                * test global references : with new, var, cast, parent, symbol
-                * test negative long to int conversion
-                * test int/byte/short/long to real conversion
-                * test real to byte/short/int/uint/long conversion
-
                 * translit sample: List should be compiled as constant list
                 * test : branching external implementation : returning a value from closure 
                 * resolving byref template - cache the resolved results
@@ -73,6 +65,8 @@ In development:
                 * adding source path link on tempate based classes with field initializers
                 * closure unboxing: field addr
                 * create a big list (bigger than YG)
+                * test const fields : override the parent constant value
+                * test global references : with new, var, cast, parent, symbol
 
               dev - test / optimization
                 * align block code by 16

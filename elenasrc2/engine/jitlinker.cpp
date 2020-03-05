@@ -943,7 +943,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    }
    else if (mask == mskInt64Ref) {
       // a constant starts with a special mark to tell apart from integer constant, so it should be skipped before converting to the number
-      _compiler->compileInt64(&writer, value.toULongLong(10, 1));
+      _compiler->compileInt64(&writer, value.toLongLong(10, 1));
    }
    else if (mask == mskRealRef) {
       _compiler->compileReal64(&writer, value.toDouble());

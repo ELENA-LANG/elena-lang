@@ -626,6 +626,12 @@ long long strToLongLong(const char* s, int radix)
 {
    long long number = 0;
 
+   bool negative = false;
+   if (s[0] == '-') {
+      negative = true;
+      s++;
+   }
+
    char dump[10];
    size_t length = getlength(s);
    while (length > 9) {
@@ -645,6 +651,9 @@ long long strToLongLong(const char* s, int radix)
    dump[length] = 0;
    long long temp = strToLong(dump, radix);
    number += temp;
+
+   if (negative)
+      number = -number;
 
    return number;
 }
@@ -1405,7 +1414,7 @@ long ident_t :: toULong(int radix, size_t index)
    return strToULong(_string + index, radix);
 }
 
-long long ident_t :: toULongLong(int radix, size_t index)
+long long ident_t :: toLongLong(int radix, size_t index)
 {
    return strToLongLong(_string + index, radix);
 }

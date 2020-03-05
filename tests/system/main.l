@@ -21,7 +21,7 @@ public program()
 ////    LoopTest eval.
 ////    ActionTest eval.
 ////    RoleTest eval.
-////    ConvertorTest eval.
+    convertorTest();
 ////    ArrayTest eval.
 ////    OpenArgTest eval.
 ////    MethodNotFoundTest eval.

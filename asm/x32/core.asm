@@ -1429,13 +1429,17 @@ inline % 48h
 
 end
 
-// ; rget
+// ; rsaven
 inline % 49h
 
-  push 0
-  mov  esi, esp
-  fistp dword ptr [esi]
-  pop edx
+  fistp dword ptr [ebx]
+
+end
+               
+// ; rsavel
+inline % 4Ah
+
+  fistp qword ptr [ebx]
 
 end
                

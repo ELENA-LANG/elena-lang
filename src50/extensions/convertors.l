@@ -395,20 +395,20 @@ public extension convertorOp
     int toInt(IntNumber radix)
         = intConvertor.convert(self, radix);
         
-//    int toHexInt()
-//        = intConvertor.convert(self, 16);
-//
-//    long toLong()
-//        = longConvertor.convert:self;
-//
-//    long toHexLong()
-//        = longConvertor.convert(self, 16);
-//    
-//    long toLong(int radix)
-//        = longConvertor.convert(self, radix);
-//    
-//    char toChar()
-//        = charConvertor.convert:self;
+    int toHexInt()
+        = intConvertor.convert(self, 16);
+
+    long toLong()
+        = longConvertor.convert:self;
+
+    long toHexLong()
+        = longConvertor.convert(self, 16);
+    
+    long toLong(int radix)
+        = longConvertor.convert(self, radix);
+    
+    char toChar()
+        = charConvertor.convert:self;
 
     real toReal()
         = realConvertor.convert:self;

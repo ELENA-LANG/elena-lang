@@ -103,7 +103,7 @@ struct TokenInfo
       }
       else if (terminal.state == dfaHexInteger) {
          value[getlength(value) - 1] = 0;
-         integer = ident_t(value).toULongLong(16);
+         integer = ident_t(value).toLongLong(16);
          return true;
       }
       else if (terminal.state == dfaIdentifier && constants.exist(value)) {

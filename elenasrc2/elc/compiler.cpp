@@ -5530,7 +5530,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
             String<char, 30> s("_"); // special mark to tell apart from integer constant
             s.append(token, getlength(token) - 1);
 
-            token.toULongLong(10, 1);
+            token.toLongLong(10, 1);
             if (errno == ERANGE)
                scope.raiseError(errInvalidIntNumber, terminal);
 
@@ -7120,7 +7120,7 @@ ref_t Compiler :: generateConstant(_CompileScope& scope, ObjectInfo retVal)
       parentRef = scope.moduleScope->intReference;
    }
    else if (retVal.kind == okLongConstant) {
-      long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
+      long long value = module->resolveConstant(retVal.param).toLongLong(10, 1);
 
       dataWriter.write(&value, 8u);
 
@@ -9244,7 +9244,7 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal, bo
          parentRef = scope.moduleScope->intReference;
       }
       else if (retVal.kind == okLongConstant) {
-         long long value = module->resolveConstant(retVal.param).toULongLong(10, 1);
+         long long value = module->resolveConstant(retVal.param).toLongLong(10, 1);
 
          dataWriter.write(&value, 8u);
 

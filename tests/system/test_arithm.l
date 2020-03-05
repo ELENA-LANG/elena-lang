@@ -409,26 +409,38 @@ realTest()
 //////[
 //////    console writeLine:("Role overriding doesn't work!!"::Role literal).
 //////].
-//////
-//////// --- ConvertorTest ---
-//////
-//////#symbol ConvertorTest =
-//////[
-//////    #var n := "23" toInt.
-//////    #var sn := n literal.
-//////    (sn == "23")
-//////        ! [ console writeLine:"Int conversion does not work" ].
-//////    
-//////    #var l := "1234567890123456" toLong.
-//////    #var nn := "-123" toInt.
-//////    #var ll := "-1234567890123456" toLong.
-//////
-//////    #var r := "23" toReal.
-//////    #var r2 := "123.456789" toReal.
-//////    #var r3 := "-123.456789" toReal.
-//////].
-//////
-//////// --- LiteralTest ---
+
+// --- ConvertorTest ---
+
+convertorTest()
+{
+    console.write("convertorTest..");
+        
+    var n := "23".toInt();
+    var sn := n.toString();
+    Assert.ifTrue(sn == "23");
+    
+    Assert.ifTrue("1234567890123456".toLong() == 1234567890123456l);
+    Assert.ifTrue("-123".toInt() == -123);
+    Assert.ifTrue("-1234567890123456".toLong() == -1234567890123456l);
+
+    Assert.ifTrue("23".toReal() == 23.0r);
+    Assert.ifTrue("123.456789".toReal() == 123.456789r);
+    Assert.ifTrue("-123.456789".toReal() == -123.456789r);
+    
+    Assert.ifTrue(-2l.toInt() == -2);
+    Assert.ifTrue(-2.toLong() == -2l);
+    
+    Assert.ifTrue(-2.0r.toInt() == -2);
+    Assert.ifTrue(-2.toReal() == -2.0r);
+        
+    Assert.ifTrue(-2.0r.toLong() == -2l);
+    Assert.ifTrue(-2l.toReal() == -2.0r);
+    
+    console.writeLine("done")        
+}
+
+//// --- LiteralTest ---
 //////
 //////#symbol LiteralTest =
 //////[

@@ -7,19 +7,6 @@ define SPECIAL_MESSAGE_INV  0FFFFFFDFh
 
 define elSubject             04000000h
 
-
-
-procedure __lazyexpression2."#dispatch[1]"
-
-  vcallrm  system'BaseLazyExpression mssgconst : "#invoke[0]"
-  storesi  1
-  jumpvi   0
-
-end
-
-
-
-
 // ; external methods
 
 procedure __object."#dispatch[1]"
@@ -1398,9 +1385,8 @@ procedure __intconvertor."convert$system@RealNumber$@system@ref#1&system@IntNumb
 
   peeksi 1
   rload
-  rget
   peeksi 2  
-  save
+  rsaven
   peeksi 1
   quitn 2
 
@@ -1512,7 +1498,10 @@ procedure __shortconvertor."convert$system@RealNumber$@system@ref#1&system@Short
   rintf    1
   movf     1
   rload
-  rget
+  pushn    0
+  movs     0
+  rsaven
+  popd
 
   restore 4
   close
@@ -1745,7 +1734,10 @@ procedure __byteconvertor."convert$system@RealNumber$@system@ref#1&system@ByteNu
   rintf    1
   movf     1
   rload
-  rget
+  pushn    0
+  movs     0
+  rsaven
+  popd
 
   restore 4
   close
@@ -1924,12 +1916,8 @@ procedure __longconvertor."convert$system@RealNumber$@system@ref#1&system@LongNu
 
   peeksi 1
   rload
-  rget
   peeksi 2
-
-  save
-  movn 0
-  savei 1
+  rsavel
   quitn 2
 
 end
