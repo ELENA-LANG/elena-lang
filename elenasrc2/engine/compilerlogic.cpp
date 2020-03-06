@@ -770,7 +770,7 @@ ref_t CompilerLogic :: generateOverloadList(_ModuleScope& scope, _Compiler& comp
    for (size_t i = 0; i < len; i++) {
       ref_t classRef = resolve(param, list[i]);
 
-      if (test(flags, elSealed)/* || test(message, SEALED_MESSAGE)*/) {
+      if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
          compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
       }
       else if (test(flags, elClosed)) {

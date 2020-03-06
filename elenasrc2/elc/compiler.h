@@ -1340,8 +1340,10 @@ public:
 //   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
    virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
-   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
-   void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, ref_t resendMessage);
+   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, 
+      LexicalType methodType);
+   void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, 
+      ref_t resendMessage, bool privateOne);
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
 ////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
