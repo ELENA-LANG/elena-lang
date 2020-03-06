@@ -2,7 +2,7 @@
     <project>
         <executable></executable>
         <arguments></arguments>
-        <output>..\..\lib40</output>
+        <output>..\..\lib50</output>
         <options></options>
         <namespace>cellular</namespace>
         <template>lib</template>
@@ -10,7 +10,7 @@
     </project>
     <manifest>
       <name>ELENA Cellular Library</name>
-      <version>4.0.1</version>
+      <version>5.0.1</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>
