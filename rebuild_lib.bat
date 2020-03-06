@@ -69,10 +69,10 @@ rem @echo off
 rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
 rem @echo on
 
-rem bin\elc src50\cellular\cellular.prj
-rem @echo off 
-rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
-rem @echo on
+bin\elc src50\cellular\cellular.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 rem bin\elc src50\algorithms\algorithms.prj
 rem @echo off 

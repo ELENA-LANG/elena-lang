@@ -10,7 +10,7 @@ In development:
                 * compile hello world
 
               dev - rosetta code samples
-                * Case-sensitivity of identifiers
+                * Conway's Game of Life
 
               dev - migration
                 * rosetta code samples : arithmeval

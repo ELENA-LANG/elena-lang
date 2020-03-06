@@ -357,23 +357,23 @@ public extension enumerableOp
 ////        
 ////    to:max repeat:aRepeater
 ////        = Repeater new(self, max + 1, aRepeater).
-//        
-//    accumulate(variable, operation)
-//    {
-//        Accumulating.new(variable, operation).run(cast Enumerator(self.enumerator()));
-//        
-//        ^ variable.Value
-//    }
-//    
+        
+    accumulate(variable, operation)
+    {
+        Accumulating.new(variable, operation).run(cast Enumerator(self.enumerator()));
+        
+        ^ variable.Value
+    }
+    
 ////    accumulateWith:operation 
 ////        = self~enumerableOp accumulate(Variable new) with:operation.        
-//        
-//    zipBy(enumerable, zipper)
-//        = ZipEnumerator.new(zipper, cast Enumerator(self.enumerator()), cast Enumerator(enumerable.enumerator()));
-//
-//    zipForEach(enumerable, func2)
-//        = self.zipBy(enumerable, func2).forEach:idleFunc1;
-//        
+        
+    zipBy(enumerable, zipper)
+        = ZipEnumerator.new(zipper, cast Enumerator(self.enumerator()), cast Enumerator(enumerable.enumerator()));
+
+    zipForEach(enumerable, func2)
+        = self.zipBy(enumerable, func2).forEach:idleFunc1;
+        
 //    orderBy(orderFunc)
 //        = OrderingEnumerator.new(orderFunc, cast Enumerator(self.enumerator()));
 //        
@@ -404,19 +404,19 @@ public extension indexableOp<T>
         ^ self
     }
         
-//    forEvery(Func<int,T> fn)
-//    {
-//        Indexer it := self.indexer();
-//        
-//        while (it.Available)
-//        {
-//            int i := it.Index;
-//            
-//            fn(i);
-//            
-//            it.appendIndex:1
-//        }
-//    }    
+    forEvery(Func<int,T> fn)
+    {
+        Indexer it := self.indexer();
+        
+        while (it.Available)
+        {
+            int i := it.Index;
+            
+            fn(i);
+            
+            it.appendIndex:1
+        }
+    }    
 }    
 
 public extension indexableOp

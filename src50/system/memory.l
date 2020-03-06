@@ -538,143 +538,143 @@ public sealed Matrix<T>
 //    /// Returns the array indexer
 //    Indexer<bool> indexer() = new BitArray32Indexer(self);
 //}
-//
-//// --- IntMatrix ---
-//
-//public sealed class IntMatrix
-//{
-//    int[] theArray;
-//    int   theRows;
-//    int   theColumns;
-//    
-//    constructor(int rows, int columns)
+
+// --- IntMatrix ---
+
+public sealed class IntMatrix
+{
+    int[] theArray;
+    int   theRows;
+    int   theColumns;
+    
+    constructor(int rows, int columns)
+    {
+        theRows := rows;
+        theColumns := columns;
+        
+        theArray := new int[](columns * rows)
+    }
+        
+//    constructor new(Rows,Columns)
+//        <= new(T<int>(Rows), T<int>(Columns)).
+        
+    /// Reads the matrix lengths to the output parameter
+    readLengthsTo(ref int rows, ref int columns)
+    {
+        rows := theRows;
+        columns := theColumns
+    }
+
+    int Length
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }    
+
+    int Columns
+    {
+        get()
+        {
+            ^ theColumns
+        }
+    }
+
+    int Rows
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }
+
+    /// Writes an integer value at the specified position
+    setAt(int i, int j, int v)
+    {
+        int index := i * theColumns + j;
+        
+        theArray[index] := v
+    }
+
+    /// Reads an integer value at the specified position and saves it into an output variable
+    read(int i, int j, ref int retVal)
+    {
+        int index := i * theColumns + j;
+        
+        retVal := theArray[index];
+    }
+
+    int at(int i, int j)
+    {
+        int index := i * theColumns + j;
+        int retVal := theArray[index];
+        
+        ^ retVal
+    }
+
+    /// Returns a row
+    at(int i) = new Indexable<int>
+    {
+        Length = theColumns;
+        
+        Indexer<int> indexer() = new BaseIndexer<int>
+        {
+            this theIndex := 0;
+            
+            this theLength := self.Columns;
+            
+            int get()
+                = self.at(i,theIndex);
+                
+            set(int o)
+            {
+                self.setAt(i,theIndex,o);
+            }                        
+        }; 
+        
+        int at(int j)
+            = self.at(i,j);
+        
+        setAt(int j, int v)
+        {
+            self.setAt(i,j,v)
+        }
+    };
+    
+//    enumerator = Enumerator::
 //    {
-//        theRows := rows;
-//        theColumns := columns;
+//        int i := -1.
 //        
-//        theArray := new int[](columns * rows)
-//    }
-//        
-////    constructor new(Rows,Columns)
-////        <= new(T<int>(Rows), T<int>(Columns)).
-//        
-//    /// Reads the matrix lengths to the output parameter
-//    readLengthsTo(ref int rows, ref int columns)
-//    {
-//        rows := theRows;
-//        columns := theColumns
-//    }
-//
-//    Length
-//    {
-//        int get()
-//        {
-//            ^ theRows
-//        }
-//    }    
-//
-//    Columns
-//    {
-//        int get()
-//        {
-//            ^ theColumns
-//        }
-//    }
-//
-//    Rows
-//    {
-//        int get()
-//        {
-//            ^ theRows
-//        }
-//    }
-//
-//    /// Writes an integer value at the specified position
-//    setAt(int i, int j, int v)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        theArray[index] := v
-//    }
-//
-//    /// Reads an integer value at the specified position and saves it into an output variable
-//    read(int i, int j, ref int retVal)
-//    {
-//        int index := i * theColumns + j;
-//        
-//        retVal := theArray[index];
-//    }
-//
-//    int at(int i, int j)
-//    {
-//        int index := i * theColumns + j;
-//        int retVal := theArray[index];
-//        
-//        ^ retVal
-//    }
-//
-//    /// Returns a row
-//    at(int i) = new Indexable<int>::
-//    {
-//        Length = theColumns;
-//        
-//        Indexer<int> indexer() = new BaseIndexer<int>::
-//        {
-//            this theIndex := 0;
+//        bool next
+//        [
+//            i += 1.
+//            if (i >= theRows)
+//            [
+//                ^ false
+//            ].
 //            
-//            this theLength := self.Columns;
-//            
-//            int get()
-//                = self.at(i,theIndex);
-//                
-//            set(int o)
-//            {
-//                self.setAt(i,theIndex,o);
-//            }                        
-//        }; 
+//            ^ true
+//        ]
 //        
-//        int at(int j)
-//            = self.at(i,j);
-//        
-//        setAt(int j, int v)
+//        get = BaseEnumerator<int>::
 //        {
-//            self.setAt(i,j,v)
-//        }
-//    };
-//    
-////    enumerator = Enumerator::
-////    {
-////        int i := -1.
-////        
-////        bool next
-////        [
-////            i += 1.
-////            if (i >= theRows)
-////            [
-////                ^ false
-////            ].
-////            
-////            ^ true
-////        ]
-////        
-////        get = BaseEnumerator<int>::
-////        {
-////            @theIndex := -1.
-////            @theLength := theColumns.
-////        
-////            reset [ theIndex value := -1 ]
-////            
-////            enumerable = self.
-////        
-////            int get
-////                = self[i][theIndex value].
-////        }.
-////        
-////        reset [ i := -1 ]
-////        
-////        enumerable = self.
-////    }.
-//}
+//            @theIndex := -1.
+//            @theLength := theColumns.
+//        
+//            reset [ theIndex value := -1 ]
+//            
+//            enumerable = self.
+//        
+//            int get
+//                = self[i][theIndex value].
+//        }.
+//        
+//        reset [ i := -1 ]
+//        
+//        enumerable = self.
+//    }.
+}
 
 // --- RealMatrix ---
 
