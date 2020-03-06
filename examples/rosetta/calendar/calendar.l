@@ -39,7 +39,9 @@ class CalendarMonthPrinter
         
         if (theDate.Month == theMonth)
         {
-            theLine.writeCopies("   ",theDate.DayOfWeek == 0 ? 7 : (theDate.DayOfWeek - 1));
+            var dw := theDate.DayOfWeek;
+            
+            theLine.writeCopies("   ",theDate.DayOfWeek == 0 ? 6 : (theDate.DayOfWeek - 1));
             
             do
             {
