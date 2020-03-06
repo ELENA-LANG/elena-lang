@@ -10,7 +10,7 @@ In development:
                 * compile hello world
 
               dev - rosetta code samples
-                * Calendar
+                * Case-sensitivity of identifiers
 
               dev - migration
                 * rosetta code samples : arithmeval
