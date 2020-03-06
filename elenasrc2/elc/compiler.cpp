@@ -17,14 +17,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -5855,8 +5855,7 @@ ObjectInfo Compiler :: compileSubCode(SNode codeNode, ExprScope& scope, bool bra
       //HOTFIX : inline branching operator
       codeNode.injectAndReplaceNode(lxCode);
 
-      //      writer.appendNode(lxBreakpoint, dsStep);
-      compileRootExpression(codeNode.firstChild(), subScope, 0, HINT_ROOT);
+      compileRootExpression(codeNode.firstChild(), subScope, 0, HINT_ROOT | HINT_DYNAMIC_OBJECT);
    }
    else compileCode(codeNode, subScope);
 
@@ -5865,17 +5864,6 @@ ObjectInfo Compiler :: compileSubCode(SNode codeNode, ExprScope& scope, bool bra
 
    return ObjectInfo(okObject);
 }
-
-////void Compiler :: compileLoop(SyntaxWriter& writer, SNode node, CodeScope& scope)
-////{
-////   // find inner expression
-////   SNode expr = node;
-////   while (expr.findChild(lxMessage, lxAssign, lxOperator) == lxNone) {
-////      expr = expr.findChild(lxExpression);
-////   }
-////
-////   compileExpression(writer, expr, scope, 0, HINT_LOOP);
-////}
 
 void Compiler :: compileEmbeddableRetExpression(SNode node, ExprScope& scope)
 {
