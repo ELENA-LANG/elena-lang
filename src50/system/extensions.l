@@ -1592,19 +1592,19 @@ public extension stringWeakOp
 //    
 //    replace(replacee, replacer)
 //        = stringOpDispatcher.replace(self, replacee, replacer);
-//    
-//    fillString(s, int counter)
-//    {
-//        for (int i := 0, i < counter, i += 1)
-//        {
-//            self.write(s)
-//        };
-//            
-//        ^ self
-//    }
-//
-//    writeCopies(line, counter)
-//        = self.fillString(line, cast int(counter));
+    
+    fillString(s, int counter)
+    {
+        for (int i := 0, i < counter, i += 1)
+        {
+            self.write(s)
+        };
+            
+        ^ self
+    }
+
+    writeCopies(line, counter)
+        = self.fillString(line, cast int(counter));
 
     writePaddingLeft(line, char ch, int width)
     {

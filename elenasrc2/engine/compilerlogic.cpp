@@ -1313,7 +1313,7 @@ bool CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node
    }
 
    // COMPILE MAGIC : trying to typecast primitive array
-   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole/* | elWrapper*/)) {
+   if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole)) {
 //      ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
 
       if (isCompatible(*scope.moduleScope, info.fieldTypes.get(-1).value2, elementRef)) {
@@ -1324,10 +1324,7 @@ bool CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node
 
          compiler.injectBoxingExpr(node, !isReadonly(info) && !noUnboxing,
             test(info.header.flags, elStructureRole) ? size : 0,
-            targetRef);
-
-//         compiler.injectBoxing(writer, scope,
-//            noUnboxing || test(info.header.flags, elReadOnlyRole) ? lxBoxing : lxUnboxing, boxingArg, targetRef, true);
+            targetRef, true);
 
          return true;
       }

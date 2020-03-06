@@ -412,7 +412,7 @@ class _Compiler
 public:
    virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode) = 0;
 
-   virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode = false*/) = 0;
+   virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef, bool arrayMode = false) = 0;
    virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
       int stacksafeAttr, bool embeddableAttr) = 0;
 //////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;

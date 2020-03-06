@@ -35,8 +35,8 @@ Declarations
       * resend +
       * dispatch +
       * ret expression +
-      * Generic handlers 
-        - __received - incoming message
+      * Generic handlers +
+        - __received - incoming message +
       * abstract / sealed / predefined +
       * inline arg
 

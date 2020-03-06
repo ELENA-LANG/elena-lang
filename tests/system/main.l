@@ -12,7 +12,7 @@ public program()
     integerTest();
     longTest();
     realTest();
-//    literalTest();
+    literalTest();
 
 //    MultiDispatchTest eval.
 ////    MultySelectTest  eval.
@@ -22,7 +22,7 @@ public program()
 ////    ActionTest eval.
 ////    RoleTest eval.
     convertorTest();
-////    ArrayTest eval.
+//    arrayTest();
 ////    OpenArgTest eval.
 ////    MethodNotFoundTest eval.
 //    ExceptionTest();

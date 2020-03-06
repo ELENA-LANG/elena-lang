@@ -1231,7 +1231,7 @@ private:
 
    void compileExternalArguments(SNode node, ExprScope& scope, SNode callNode);
 
-   void injectCopying(SNode& copyingNode, int size, bool variadic);
+   void injectCopying(SNode& copyingNode, int size, bool variadic, bool primArray);
    void injectCreating(SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode, int size,
       ref_t typeRef, bool variadic);
 
@@ -1333,7 +1333,7 @@ public:
 //   void copyStaticFieldValues(SNode node, ClassScope& scope);
 
    // _Compiler interface implementation
-   virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode = false*/);
+   virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef, bool arrayMode = false);
    virtual SNode injectTempLocal(SNode node, int size, bool boxingMode);
    virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
       ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);

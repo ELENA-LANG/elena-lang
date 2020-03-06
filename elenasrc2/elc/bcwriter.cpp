@@ -6002,6 +6002,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxBoxableExpression:
       case lxArgBoxableExpression:
       case lxCondBoxableExpression:
+      case lxPrimArrBoxableExpression:
          throw InternalError("Unboxed expression");
          break;
       case lxReturning:

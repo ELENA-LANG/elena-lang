@@ -1383,7 +1383,14 @@ ref_t Compiler :: resolveObjectReference(_CompileScope& scope, ObjectInfo object
 {
    ref_t retVal = object.reference;
    ref_t elementRef = object.element;
-   if (unboxWapper && object.reference == V_WRAPPER) {
+   /*if (object.kind == okSelfParam) {
+      if (object.extraparam == (ref_t)-2) {
+         // HOTFIX : to return the primitive array
+         retVal = object.reference;
+      }
+      else retVal = scope.getClassRefId(false);
+   }
+   else */if (unboxWapper && object.reference == V_WRAPPER) {
       elementRef = 0;
       retVal = object.element;
    }
@@ -3372,6 +3379,7 @@ void Compiler :: analizeOperand(SNode& current, ExprScope& scope, bool boxingMod
       case lxArgBoxableExpression:
       case lxBoxableExpression:
       case lxCondBoxableExpression:
+      case lxPrimArrBoxableExpression:
          boxArgument(current, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, 
             inPlace, current == lxCondBoxableExpression);
          current.set(lxExpression, 0);
@@ -8439,7 +8447,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
 
          hintChanged = true;
       }
-      else if (current == lxType) {
+      else if (current.compare(lxType, lxArrayType)) {
          if (!allowTypeAttribute) {
             scope.raiseError(errTypeNotAllowed, node);
          }
@@ -9645,7 +9653,7 @@ void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope
    copyingNode.appendNode(tempType, tempLocal);
 }
 
-void Compiler :: injectCopying(SNode& copyingNode, int size, bool variadic)
+void Compiler :: injectCopying(SNode& copyingNode, int size, bool variadic, bool primArray)
 {
    // copying boxed object
    if (variadic) {
@@ -9653,6 +9661,10 @@ void Compiler :: injectCopying(SNode& copyingNode, int size, bool variadic)
       copyingNode.injectAndReplaceNode(lxCloning);
    }
    else if (size < 0) {
+      // if it is a dynamic srtructure boxing
+      copyingNode.injectAndReplaceNode(lxCloning);
+   }
+   else if (primArray) {
       // if it is a dynamic srtructure boxing
       copyingNode.injectAndReplaceNode(lxCloning);
    }
@@ -9701,6 +9713,7 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
    int size = node.findChild(lxSize).argument;
    bool isVariable = node.argument == INVALID_REF;
    bool variadic = node == lxArgBoxableExpression;
+   bool primArray = node == lxPrimArrBoxableExpression;
    if (typeRef != 0) {
       bool fixedSizeArray = isPrimitiveArrRef(typeRef) && size > 0;
 
@@ -9714,8 +9727,8 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
       if (test(objNode.type, lxOpScopeMask))
          SyntaxTree::copyNode(objNode, copyNode);
 
-      if (size < 0) {
-         injectCopying(copyNode, size, variadic);
+      if (size < 0 || primArray) {
+         injectCopying(copyNode, size, variadic, primArray);
 
          copyNode.appendNode(lxType, typeRef);
 
@@ -9738,7 +9751,7 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
          }
          else {
             injectCreating(assignNode, objNode, scope, false, size, typeRef, variadic);
-            injectCopying(copyNode, size, variadic);
+            injectCopying(copyNode, size, variadic, primArray);
 
             copyNode.insertNode(tempType, tempLocal);
          }
@@ -9746,14 +9759,14 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
 
       if (isVariable) {
          SNode unboxing = current.appendNode(lxCopying, size);
-         if (size < 0) {
+         if (size < 0 || primArray) {
             unboxing.set(lxCloning, 0);
          }
          else if (condBoxing)
             unboxing.set(lxCondCopying, size);
 
          SyntaxTree::copyNode(objNode, unboxing.appendNode(objNode.type, objNode.argument));
-         if (size == 0) {
+         if (size == 0 && !primArray) {
             // HOTFIX : if it is byref variable unboxing
             unboxing.set(lxAssigning, 0);
 
@@ -9785,6 +9798,7 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
    ref_t typeRef = node.findChild(lxType).argument;
    int size = node.findChild(lxSize).argument;
    bool variadic = node == lxArgBoxableExpression;
+   bool primArray = node == lxPrimArrBoxableExpression;
 
    if (typeRef != 0) {
       if (localBoxingMode) {
@@ -9824,9 +9838,9 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
             boxExpr = seqNode.injectNode(lxCondBoxing);
 
          SNode copyingNode = boxExpr.firstChild();
-         injectCopying(copyingNode, size, variadic);
+         injectCopying(copyingNode, size, variadic, primArray);
 
-         if (size < 0) {
+         if (size < 0 || primArray) {
             copyingNode.appendNode(lxType, typeRef);
 
             copyingNode.injectAndReplaceNode(lxAssigning);
@@ -11113,19 +11127,18 @@ void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t lis
 ////   return importReference(extModule, memberRef, scope.module);
 ////}
 
-void Compiler :: injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef/*, bool arrayMode*/)
+void Compiler :: injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef, bool arrayMode)
 {
    node.injectAndReplaceNode(lxBoxableExpression, variable ? INVALID_REF : 0);
 
+   if (arrayMode && size == 0) {
+      // HOTFIX : to indicate a primitive array boxing
+      node = lxPrimArrBoxableExpression;
+   }
+   
    node.appendNode(lxType, targetClassRef);
    node.appendNode(lxSize, size);
 
-//   if (arrayMode && argument == 0) {
-//      // HOTFIX : to indicate a primitive array boxing
-//      writer.appendNode(lxBoxableAttr, -1);
-//   }
-//   else writer.appendNode(lxBoxableAttr);
-//
 //   writer.inject(boxingType, argument);
 //   writer.appendNode(lxTarget, targetClassRef);
 //   writer.closeNode();

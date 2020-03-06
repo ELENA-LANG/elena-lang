@@ -440,47 +440,42 @@ convertorTest()
     console.writeLine("done")        
 }
 
-//// --- LiteralTest ---
-//////
-//////#symbol LiteralTest =
-//////[
-//////    #var b1 := "abc" == "abc".
-//////    #var b2 := "ab" == "abc".
-//////    #var b3 := "ba" > "ab".
-//////    #var b4 := "ab" < "abc".
-//////
-//////    #var l := "abc" + "de".
-//////    #var ll := l length.
-//////    #var c := l@2.
-//////
-//////    #var a := l toArray.
-//////
-//////    "abc" run &each: (:ch)[ console write:ch ].
-//////
-//////    console writeLine.
-//////
-//////    #var n := "abcd" indexOf:"bc" &at:0.
-//////    #var n2 := "abcd" indexOf:"bac" &at:0.
-//////
-//////    #var s := "acd" insert:"b" &at:1.
-//////    #var ls := s length.
-//////
-//////    #var s2 := "abbcd" delete:1 &at:1.
-//////    #var ls2 := s2 length.
-//////    
-//////    #var s3 := "abcd" Substring:2 &at:1.
-//////    #var ls3 := s3 length.
-//////   
-//////    "abc" getAt:2.
-//////    
-//////    "abc" getAt:(-1) |
-//////        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
-//////
-//////    "abc" getAt:4 |
-//////        if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
-//////].
-//////
-//////// --- ArrayTest ---
+// --- LiteralTest ---
+
+literalTest()
+{
+    console.write("literalTest..");
+    
+    Assert.ifTrue("abc" == "abc");
+    Assert.ifFalse("ab" == "abc");
+    Assert.ifTrue("ba" > "ab");
+    Assert.ifTrue("ab" < "abc");
+    Assert.ifTrue("abc" + "de" == "abcde");
+//
+//    #var n := "abcd" indexOf:"bc" &at:0.
+//    #var n2 := "abcd" indexOf:"bac" &at:0.
+//
+//    #var s := "acd" insert:"b" &at:1.
+//    #var ls := s length.
+//
+//    #var s2 := "abbcd" delete:1 &at:1.
+//    #var ls2 := s2 length.
+//    
+//    #var s3 := "abcd" Substring:2 &at:1.
+//    #var ls3 := s3 length.
+//   
+//    "abc" getAt:2.
+//    
+//    "abc" getAt:(-1) |
+//        if &OutOfRangeError: (:e)[ console writeLine:"Negative index is not allowed" ].
+//
+//    "abc" getAt:4 |
+//        if &OutOfRangeError: (:e) [ console writeLine:"Index bigger than length is not allowed" ].
+        
+    console.writeLine("done")        
+}
+
+////// --- ArrayTest ---
 //////
 //////#symbol ArrayTest =
 //////[

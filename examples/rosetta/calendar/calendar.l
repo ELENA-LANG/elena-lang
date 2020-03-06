@@ -43,7 +43,7 @@ class CalendarMonthPrinter
             
             do
             {
-                theLine.writePaddingLeft(theDate.Day.Printable, $32, 3);
+                theLine.writePaddingLeft(theDate.Day.toPrintable(), $32, 3);
                 
                 theDate := theDate.addDays:1
             }
@@ -61,15 +61,18 @@ class CalendarMonthPrinter
     {
         bool Available = theRow < 7;
 
-        get int Index() { ^ theRow.Value }
-
-        set Index(int index)
+        int Index
         {
-            if (index <= theRow)
-                { self.writeTitle() };
-                
-            while (index > theRow)
-                { self.writeLine() }
+            get() = theRow.Value;
+            
+            set(int index)
+            {
+                if (index <= theRow)
+                    { self.writeTitle() };
+                    
+                while (index > theRow)
+                    { self.writeLine() }
+            }
         }
 
         appendIndex(int index)
@@ -110,7 +113,7 @@ class Calendar
     {
         output.writePadding("[SNOOPY]", $32, theRowLength * 25); 
         output.writeLine();
-        output.writePadding(theYear.Printable, $32, theRowLength * 25); 
+        output.writePadding(theYear.toPrintable(), $32, theRowLength * 25); 
         output.writeLine().writeLine();
         
         var rowCount := 12 / theRowLength;

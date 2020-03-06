@@ -32,16 +32,9 @@ In development:
                 * xforms
 
               dev - test / implementation
-                * test : branching external implementation : returning a value from closure 
-                * test expression with several boxed fields 
-                * check notless : literal, wide, bytearray, array
                 * CharValue.new = $0 -> should create a new class
-                * debugger : do not copy template parameter terminal info
                 * function closures : strong one - should be resolved directly if possible
-                * generateInitializer - support constants as well for onlyLocal mode
-                * test creating an array : non-empty, empty
-                * operations in symbol
-
+                * test : branching external implementation : returning a value from closure 
                 * do we need lxEmbeddableAttr and optimiation rule?
                 * warn if the extension method is called from itself (short-cutting)
                 * static methods : multimethods
@@ -128,6 +121,7 @@ In development:
                 * (re)implement FileStrean.set length<int>
 
               xdev debugger
+                * debugger : do not copy template parameter terminal info
                 * uncomment DebugController::parseMessage, cleanUp
                 * step over external / message / loop / if call?
                 * step over last statement (without terminator)

@@ -112,6 +112,7 @@ enum LexicalType
    lxArgBoxableExpression     = 0x059034,
    lxCodeExpression           = 0x059035,
    lxCondBoxableExpression    = 0x059036,
+   lxPrimArrBoxableExpression = 0x059037,
    lxNil                      = 0x018040,
    lxStopper                  = 0x018041,   // used for variadic arguments as a last argument
    lxClassSymbol              = 0x018050,   // arg - reference
