@@ -32,10 +32,6 @@ In development:
                 * xforms
 
               dev - test / implementation
-                * constant array of object
-                * constant array of int
-                * translit sample: List should be compiled as constant list
-
                 * test : branching external implementation : returning a value from closure 
                 * test expression with several boxed fields 
                 * check notless : literal, wide, bytearray, array

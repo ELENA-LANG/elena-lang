@@ -4550,6 +4550,8 @@ inline bool isConstant(SNode current)
 {
    switch (current.type) {
       case lxConstantString:
+      case lxConstantWideStr:
+      case lxConstantSymbol:
          return true;
       default:
          return false;
