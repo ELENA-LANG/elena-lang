@@ -522,6 +522,7 @@ public:
       eaParameter          = 0x00080000000,
       eaLazy               = 0x00100000000,
       eaInlineArg          = 0x00200000000,
+      eaConstExpr          = 0x00400000000,
 
       eaScopeMask          = 0x0000041400A,
       eaObjectMask         = 0x000A821B2F4,

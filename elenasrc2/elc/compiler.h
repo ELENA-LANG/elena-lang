@@ -118,7 +118,7 @@ public:
       okMessageConstant,              // param - reference
       okExtMessageConstant,           // param - reference
       okMessageNameConstant,          // param - reference
-//      okArrayConst,
+      okArrayConst,
       okField,                        // param - reference, param - field offset
       okReadOnlyField,                // param - reference, param - field offset
       okStaticField,                  // param - reference
@@ -1051,7 +1051,7 @@ private:
 
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);
    ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
-   ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target);
+   ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target, EAttr mode);
 
    ObjectInfo compileMessageReference(SNode objectNode, ExprScope& scope);
    ObjectInfo compileSubjectReference(SNode objectNode, ExprScope& scope, EAttr mode);

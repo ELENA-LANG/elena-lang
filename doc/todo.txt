@@ -10,7 +10,7 @@ In development:
                 * compile hello world
 
               dev - rosetta code samples
-                * Caesar cipher
+                * Calendar
 
               dev - migration
                 * rosetta code samples : arithmeval
@@ -32,16 +32,15 @@ In development:
                 * xforms
 
               dev - test / implementation
+                * constant array of object
+                * constant array of int
                 * translit sample: List should be compiled as constant list
+
                 * test : branching external implementation : returning a value from closure 
-                * resolving byref template - cache the resolved results
                 * test expression with several boxed fields 
                 * check notless : literal, wide, bytearray, array
-                * private / internal class templates
                 * CharValue.new = $0 -> should create a new class
                 * debugger : do not copy template parameter terminal info
-                * CreateClass / CreateStruct with initializers - no need to clear newly created object
-                * read / write byte, short - without AND operation
                 * function closures : strong one - should be resolved directly if possible
                 * generateInitializer - support constants as well for onlyLocal mode
                 * test creating an array : non-empty, empty
@@ -100,6 +99,9 @@ In development:
                 * alt - no need to assign temp local for local / field / param
                 * boxing byref variable : use intializing, direct assinging after creation without filling with nils
                 * boxing ext call result
+                * CreateClass / CreateStruct with initializers - no need to clear newly created object
+                * resolving byref template - cache the resolved results
+                * read / write byte, short - without AND operation
 
               dev - usability
                 * ide message : display internal error

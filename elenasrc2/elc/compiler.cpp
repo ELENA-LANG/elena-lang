@@ -17,14 +17,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -65,6 +65,7 @@ constexpr auto HINT_DIRECTCALL      = EAttr::eaDirectCall;
 constexpr auto HINT_PARAMETER       = EAttr::eaParameter;
 constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
+constexpr auto HINT_CONSTEXPR       = EAttr::eaConstExpr;
 
 //constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
 ////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
@@ -198,6 +199,24 @@ inline SNode findRootNode(SNode node, LexicalType type1, LexicalType type2, Lexi
 //////   return node == type && node.argument == argument;
 //////}
 
+inline bool isConstantArg(SNode current)
+{
+   switch (current.type) {
+      case lxLiteral:
+      case lxWide:
+      case lxCharacter:
+      case lxInteger:
+      case lxLong:
+      case lxHexInteger:
+      case lxReal:
+      case lxExplicitConst:
+      case lxMessage:
+         return true;
+      default:
+         return false;
+   }
+}
+
 inline bool isConstantArguments(SNode node)
 {
    if (node == lxNone)
@@ -205,25 +224,12 @@ inline bool isConstantArguments(SNode node)
 
    SNode current = node.firstChild();
    while (current != lxNone) {
-      switch (current.type)
-      {
-         case lxExpression:
-            if (!isConstantArguments(current))
-               return false;
-            break;
-         case lxLiteral:
-         case lxWide:
-         case lxCharacter:
-         case lxInteger:
-         case lxLong:
-         case lxHexInteger:
-         case lxReal:
-         case lxExplicitConst:
-         case lxMessage:
-            break;
-         default:
+      if (current == lxExpression) {
+         if (!isConstantArguments(current))
             return false;
       }
+      else if (isConstantArg(current))
+         return false;
 
       current = current.nextNode();
    }
@@ -4540,7 +4546,37 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, EAttr m
    return compileClosure(node, ownerScope, scope, mode);
 }
 
-ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInfo target)
+inline bool isConstant(SNode current)
+{
+   switch (current.type) {
+      case lxConstantString:
+         return true;
+      default:
+         return false;
+   }
+}
+
+inline bool isConstantList(SNode node)
+{
+   bool constant = true;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxMember) {
+         SNode object = current.findSubNodeMask(lxObjectMask);
+         if (!isConstant(object)) {
+            constant = false;
+            break;
+         }
+      }
+
+      current = current.nextNode();
+   }
+
+   return constant;
+}
+
+ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode)
 {
    if (target.reference == V_OBJARRAY) {
       target.reference = resolvePrimitiveArray(scope, scope.moduleScope->arrayTemplateReference, target.element, false);
@@ -4578,6 +4614,7 @@ ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInf
       counter++;
    }
 
+   target.kind = okObject;
    if (size < 0) {
       SNode op = node.insertNode(lxCreatingStruct, counter * (-size));
       op.appendNode(lxType, target.reference);
@@ -4586,11 +4623,23 @@ ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInf
       //      writer.inject(lxStruct, counter * (-size));
    }
    else {
-      SNode op = node.insertNode(lxCreatingClass, counter);
-      op.appendNode(lxType, target.reference);
-   }
+      if (EAttrs::test(mode, HINT_CONSTEXPR) && isConstantList(node)) {
+         ref_t reference = scope.moduleScope->mapAnonymous();
 
-   target.kind = okObject;
+         node = lxConstantList;
+         node.setArgument(reference | mskConstArray);
+         node.appendNode(lxType, target.reference);
+
+         _writer.generateConstantList(node, scope.module, reference);
+
+         target.kind = okArrayConst;
+         target.param = reference;
+      }
+      else {
+         SNode op = node.insertNode(lxCreatingClass, counter);
+         op.appendNode(lxType, target.reference);
+      }
+   }
 
    return target;
 }
@@ -4903,7 +4952,7 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
 
    switch (current.type) {
       case lxCollection:
-         objectInfo = compileCollection(current, scope, objectInfo);
+         objectInfo = compileCollection(current, scope, objectInfo, mode);
          break;
 //      case lxDimensionAttr:
 //         if (current.nextNode() == lxTypecast && objectInfo.kind == okClass) {
@@ -5273,9 +5322,9 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
       case okRealConstant:
          terminal.set(lxConstantReal, object.param);
          break;
-//      case okArrayConst:
-//         writer.newNode(lxConstantList, object.param);
-//         break;
+      case okArrayConst:
+         terminal.set(lxConstantList, object.param);
+         break;
       case okParam:
       case okLocal:
          setParamTerminal(terminal, scope, object, mode, lxLocal);
@@ -5503,10 +5552,6 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
    }
    else {
       switch (terminal.type) {
-         //      //case lxConstantList:
-         //      //      // HOTFIX : recognize predefined constant lists
-         //      //      object = ObjectInfo(okArrayConst, terminal.argument, scope.moduleScope->arrayReference);
-         //      //   break;
          case lxLiteral:
             object = ObjectInfo(okLiteralConstant, scope.moduleScope->module->mapConstant(token), scope.moduleScope->literalReference);
             break;
@@ -7086,6 +7131,9 @@ ref_t Compiler :: resolveConstant(ObjectInfo retVal, ref_t& parentRef)
          parentRef = retVal.param;
          return retVal.param;
       case okConstantSymbol:
+         parentRef = retVal.reference;
+         return retVal.param;
+      case okArrayConst:
          parentRef = retVal.reference;
          return retVal.param;
       default:
@@ -9183,6 +9231,10 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal, bo
          scope.info.type = SymbolExpressionInfo::Type::ConstantSymbol;
          scope.info.exprRef = classRef;
       }
+      else if (retVal.kind == okArrayConst) {
+         scope.info.type = SymbolExpressionInfo::Type::ConstantSymbol;
+         scope.info.exprRef = classRef;
+      }
 
       nsScope->defineConstantSymbol(classRef, parentRef);
 
@@ -9290,23 +9342,6 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal, bo
 
          parentRef = scope.moduleScope->superReference;
       }
-      //else if (retVal.kind == okObject) {
-      //   SNode root = node.findSubNodeMask(lxObjectMask);
-
-      //   if (root == lxConstantList/* && !accumulatorMode*/) {
-      //      SymbolExpressionInfo info;
-      //      info.expressionClassRef = scope.outputRef;
-      //      info.constant = scope.constant;
-      //      info.listRef = root.argument;
-
-      //      // save class meta data
-      //      MemoryWriter metaWriter(scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, false), 0);
-      //      info.save(&metaWriter);
-
-      //      return true;
-      //   }
-      //   else return false;
-      //}
       else return false;
 
       dataWriter.Memory()->addReference(parentRef | mskVMTRef, (ref_t)-4);
@@ -9342,12 +9377,12 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 
    SNode expression = node.findChild(lxExpression);
 
-//   CodeScope codeScope(&scope);
-//
+   EAttr exprMode = scope.info.type == SymbolExpressionInfo::Type::Constant ? HINT_CONSTEXPR : EAttr::eaNone;
+
    ExprScope exprScope(&scope);
    // HOTFIX : due to implementation (compileSymbolConstant requires constant types) typecast should be done explicitly
    ObjectInfo retVal = compileExpression(expression, exprScope,
-      mapObject(expression, exprScope, HINT_ROOTSYMBOL), 0, EAttr::eaNone);
+      mapObject(expression, exprScope, HINT_ROOTSYMBOL), 0, exprMode);
 
    if (scope.info.exprRef == 0) {
       ref_t ref = resolveObjectReference(scope, retVal, true);
@@ -10251,46 +10286,12 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeOpDoubleAssigning(scope, node);
       case 7:
          return optimizeCallDoubleAssigning(scope, node);
-         //      case 4:
-//         return optimizeEmbeddableReturn(scope, node, true);
-//      case 5:
-//         return optimizeAssigningBoxing(scope, node);
-//      case 6:
-//         return optimizeConstantAssigning(scope, node);
-//      case 7:
-//         return optimizeStacksafeCall(scope, node);
-//      case 8:
-//         return optimizeStacksafeOp(scope, node);
-//      case 9:
-//         return optimizeAssigningOp(scope, node);
-//      case 10:
-//         return optimizeDoubleAssigning(scope, node);
-//      case 14:
-//         return optimizeConstants(scope, node);
-//      case 15:
-//         return optimizeArgBoxing(scope, node);
-//      case 16:
-//         return optimizeArgOp(scope, node);
-//      case 17:
-//         return optimizeByRefAssigning(scope, node);
-//      case 18:
-//         return optimizeDuplicateboxing(scope, node);
-//      case 19:
-//         return optimizeUnboxing(scope, node);
-//      case 20:
-//         return optimizeNestedExpression(scope, node);
-//      case 21:
-//         return optimizeNewArrBoxing(scope, node);
-//      case 22:
-//         return optimizeAssigningTargetBoxing(scope, node);
       default:
          break;
    }
 
    return false;
 }
-
-
 
 bool Compiler :: matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns)
 {

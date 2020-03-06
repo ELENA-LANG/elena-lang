@@ -4,7 +4,7 @@ import extensions;
 
 // --- RusLatRules ---
 
-/*const*/ rusLatRules = new object[]
+const rusLatRules = new object[]
 {
     new { from = "а"; to = "a"; },
     new { from = "б"; to = "b"; },
