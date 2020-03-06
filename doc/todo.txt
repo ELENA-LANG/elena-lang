@@ -24,6 +24,7 @@ In development:
                 * db sample
                 * script samples
                 * gui samples
+                * socket samples
                 * uncomment all code in LIB50
                 * implement some roseta code samples
                 * String / WideString - add<'Char>
@@ -31,30 +32,61 @@ In development:
                 * api doc - with description
                 * xforms
 
-              dev - test / implementation
-                * CharValue.new = $0 -> should create a new class
+              dev - elena50
+                * closure unboxing: field addr
+                * external code : long, real ret value
+                * closures: presaved arguments
+                * closures: race conditions
+                * closures: returning a value
+                * #190 : Closure : auto boxing / unboxing local variables 
+                * public / internal / private extensions?
+                * auto returning
+                * extension message - can be applied only to the generic extension?
+                * invoke extension directly
+                * ifheap - is not correctly recognize data allocated classes
+
+              dev - new features
+                * multi-return methods : dynamic objects
                 * function closures : strong one - should be resolved directly if possible
-                * test : branching external implementation : returning a value from closure 
-                * do we need lxEmbeddableAttr and optimiation rule?
-                * warn if the extension method is called from itself (short-cutting)
-                * static methods : multimethods
-                * stack safe operation returning itself - should be boxed if it is used as an unsafe argument
-                * tune ByteCodeWriter::allocateStack - number of direct operations (more then 4?)
-                * auto conversion methods should be marked as idle
-                * boxArgument - fieldexpr should be better mapped
                 * stack allocated variables : assigning nil, default constructor call, ...
                 * stack allocation should not be cleared
-                * stack allocates classes should clear its body
-                * assigning struct field with int constant
-                * boxing external operation
-                * ifheap - is not correctly recognize data allocated classes
+                * internal extensions?
+                * system'Extension : variadic argument should be boxed directly into extension
+                * public / private / internal / protected fields
+                * if all constructors are internal - can be inherited only inside the module
+                * replacing embeddable constructor call with direct operarions?
+                * setting several properties in row  new A().set(subj A,2).set(subj B,3) 
+                * initialize property
+                * countable
+                * implement analog of C# enum
+                * analog of C# $ strings
+                * break / contninue
+                * method templates
+                * function return type : e.g. int f() = 1;
+                * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
+                * should extensions hasan access to the fields / static fields / class constants?
+                * properties in properties
+                * readonly fields
+                * closures: unboxing : struct fields
+                * auto determining the closure return value for closure templates
+                * stack allocated class and default constructor
+                * extension to read package info
+                * auto symbol
+                * auto method
+                * auto field
+                * complex message names?
+                * methods with reference name
+                * fields with reference name
+                * emptyWideString cannot be used before its declaration (see String)
+                * property - append, ...
+                * should child have an access to the parent static fields?
+                * meta attributes
+                * private method should be possible to use for internal work
                 * it should be possible to extend attributes / template statements from anoter libraries
-                * test if big alloc is proper working
-                * adding source path link on tempate based classes with field initializers
-                * closure unboxing: field addr
-                * create a big list (bigger than YG)
-                * test const fields : override the parent constant value
-                * test global references : with new, var, cast, parent, symbol
+
+              dev - test / implementation
+                * CharValue.new = $0 -> should create a new class
+                * test : branching external implementation : returning a value from closure 
 
               dev - test / optimization
                 * align block code by 16
@@ -91,29 +123,16 @@ In development:
                 * CreateClass / CreateStruct with initializers - no need to clear newly created object
                 * resolving byref template - cache the resolved results
                 * read / write byte, short - without AND operation
+                * assigning struct field with int constant
+                * auto conversion methods should be marked as idle
+                * resend to constant - no need for frame
 
               dev - usability
                 * ide message : display internal error
                 * ref argument should be a variable
                 * compile single file project
                 * warn an operation with not initialized variable: var a.test();
-
-              dev - elena50
-                * external code : long, real ret value
-                * closures: presaved arguments
-                * closures: race conditions
-                * closures: returning a value
-                * #190 : Closure : auto boxing / unboxing local variables 
-                * public / internal / private extensions?
-                * auto returning
-                * extension message - can be applied only to the generic extension?
-                * invoke extension directly
-
-              xdev elena50
-                * script samples
-                * gui samples
-                * db samples
-                * socket samples
+                * warn if the extension method is called from itself (short-cutting)
 
               xdev - linux32
                 * (re)implement internal String.read<int,ref<byte>>
@@ -134,48 +153,6 @@ In development:
               dev50 - source code
                 * uncomment validateUnresolved
                 * remove all commented code
-
-              dev - new features
-                * multi-return methods : dynamic objects
-                * internal extensions?
-                * system'Extension : variadic argument should be boxed directly into extension
-                * resend to constant - no need for frame
-                * public / private / internal / protected fields
-                * if all constructors are internal - can be inherited only inside the module
-                * replacing embeddable constructor call with direct operarions?
-                * setting several properties in row  new A().set(subj A,2).set(subj B,3) 
-                * initialize property
-                * countable
-                * implement analog of C# enum
-                * analog of C# $ strings
-                * break / contninue
-                * method templates
-                * function return type : e.g. int f() = 1;
-                * it should be possible to create a class from static method (using self)
-                * public / private / internal / protected properties
-                * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
-                * fields with reference name
-                * reference identifier name?
-                * should extensions hasan access to the fields / static fields / class constants?
-                * properties in properties
-                * readonly fields
-                * closures: unboxing : struct fields
-                * auto determining the closure return value for closure templates
-                * stack allocated class and default constructor
-                * extension to read package info
-                * auto symbol
-                * auto method
-                * auto field
-                * reference message??
-                * variable : identifier / reference
-                * complex message names?
-                * methods with reference name
-                * fields with reference name
-                * emptyWideString cannot be used before its declaration (see String)
-                * property - append, ...
-                * should child have an access to the parent static fields?
-                * meta attributes
-                * private method should be possible to use for internal work
 
               dev1
                 * move all description to meta info using descr inline template

@@ -1,6 +1,7 @@
 Declarations
   Namespaces
     * nested namespaces (import is declared for the namespace)
+    * reference identifier
   Classes
     Constructors
       * Normal constructors - the default one is auto called +
@@ -21,6 +22,7 @@ Declarations
         - resending : to another constructor / to parent one +
     Static Methods
       * inheritable : cannot be overriden, accessible in all parent class
+      * sealed static methods
     Methods
       * Visibility : private / protected / internal ones +
       * yield methods
