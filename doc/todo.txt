@@ -47,13 +47,11 @@ In development:
 
               dev - new features
                 * multi-return methods : dynamic objects
+
                 * function closures : strong one - should be resolved directly if possible
                 * stack allocated variables : assigning nil, default constructor call, ...
                 * stack allocation should not be cleared
-                * internal extensions?
                 * system'Extension : variadic argument should be boxed directly into extension
-                * public / private / internal / protected fields
-                * if all constructors are internal - can be inherited only inside the module
                 * replacing embeddable constructor call with direct operarions?
                 * setting several properties in row  new A().set(subj A,2).set(subj B,3) 
                 * initialize property
@@ -63,8 +61,6 @@ In development:
                 * break / contninue
                 * method templates
                 * function return type : e.g. int f() = 1;
-                * property : auto injected attributes should be ignored if it is not allowed (e.g. public)??
-                * should extensions hasan access to the fields / static fields / class constants?
                 * properties in properties
                 * readonly fields
                 * closures: unboxing : struct fields
@@ -74,14 +70,11 @@ In development:
                 * auto symbol
                 * auto method
                 * auto field
-                * complex message names?
-                * methods with reference name
-                * fields with reference name
                 * emptyWideString cannot be used before its declaration (see String)
                 * property - append, ...
                 * should child have an access to the parent static fields?
                 * meta attributes
-                * private method should be possible to use for internal work
+                * private extension method should be possible to use for internal work
                 * it should be possible to extend attributes / template statements from anoter libraries
 
               dev - test / implementation
