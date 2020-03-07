@@ -49,7 +49,7 @@ public sealed class IntMatrixSpace : Space
     int       theN;
     int       theM;
     
-    constructor new(int n, int m)
+    constructor allocate(int n, int m)
     {
         theN := n;
         theM := m;
@@ -65,8 +65,8 @@ public sealed class IntMatrixSpace : Space
         }
     }
 
-    constructor new(int n, int m, RuleSet rs)
-        <= new(n, m)
+    constructor allocate(int n, int m, RuleSet rs)
+        <= allocate(n, m)
     {
         self.internalUpdate(rs, theMatrix)
     }

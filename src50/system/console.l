@@ -8,7 +8,7 @@ public interface IConsoleReader
     
     abstract read(ref char retVal) {}
     
-//    abstract get bool KeyAvailable() {}
+    get abstract bool KeyAvailable() {}
 }
 
 // --- Console ---
@@ -43,7 +43,7 @@ sealed class Console
     {
         writer.write(s);
         
-//        theWriter.refresh();
+        writer.refresh();
     }
 
     /// Writes the specified literal value to the standard output stream.
@@ -51,7 +51,7 @@ sealed class Console
     {
         writer.write(s);
         
-//        theWriter.refresh()
+        writer.refresh()
     }
 
     /// the current line terminator to the standard output stream.
@@ -59,7 +59,7 @@ sealed class Console
     {
         writer.writeLine(s);
         
-//        theWriter.refresh();
+        writer.refresh();
     }
 
     /// the current line terminator to the standard output stream.
@@ -67,7 +67,7 @@ sealed class Console
     {
         writer.writeLine(s);
         
-//        theWriter.refresh();
+        writer.refresh();
     }
     
     /// the current line terminator to the standard output stream.
@@ -75,23 +75,23 @@ sealed class Console
     {
         writer.writeLine();
         
-//        theWriter.refresh();
+        writer.refresh();
     }
 
-//    /// Clears the console
-//    clear()
-//        => theWriter;
-//
-//    setCursorPosition(int x, int y)
-//        => theWriter;
+    /// Clears the console
+    clear()
+        => writer;
+
+    setCursorPosition(int x, int y)
+        => writer;
 
     /// Reads the next line of characters from the standard input stream.
     string readLine()
         = reader.readLine();
 
-////    /// Reads the next line of characters from the standard input stream.
-////    wide readWideLine
-////        = theReader readWide.
+//    /// Reads the next line of characters from the standard input stream.
+//    wide readWideLine()
+//        = theReader.readWideLine();
 
     /// Reads the next character from the input stream
     char readChar()
@@ -101,10 +101,10 @@ sealed class Console
         ^ retVal
     }
 
-//    get bool KeyAvailable()
-//        => theReader;
-//
-////    /// Reads the next key code from the input stream
+    get bool KeyAvailable()
+        => reader;
+
+//    /// Reads the next key code from the input stream
 ////    readKey
 ////    [
 ////        int key := 0.

@@ -4,56 +4,56 @@ namespace io
 
     const int FILE_TYPE_CHAR = 2;
 
-//sealed struct CONSOLE_SCREEN_BUFFER_INFO
-//{
-//    COORD      dwSize;    
-//    COORD      dwCursorPosition;    
-//    short      wAttributes;
-//    SMALL_RECT srWindow;
-//    COORD      dwMaximumWindowSize;
-//    
-//    embeddable constructor()
-//    {
-//    }
-//
-//    SizeX
-//    {
-//        short get()
-//        {
-//            short retVal := dwSize.X;
-//            
-//            ^ retVal
-//        }
-//    }
-//
-//    SizeY
-//    {
-//        short get()
-//        {
-//            short retVal := dwSize.Y;
-//            
-//            ^ retVal
-//        }
-//    }
-//
-//    readSizeTo(COORD r)
-//    {
-//        short x := dwSize.X;
-//        short y := dwSize.Y;
-//        
-//        r.write(x, y)
-//    }
-//
-//    readCursorPositionTo(COORD r)
-//    {
-//        COORD copy := dwCursorPosition;
-//        
-//        short x := copy.X;
-//        short y := copy.Y;
-//        
-//        r.write(x, y)
-//    }
-//}
+    sealed struct CONSOLE_SCREEN_BUFFER_INFO
+    {
+        COORD      dwSize;    
+        COORD      dwCursorPosition;    
+        short      wAttributes;
+        SMALL_RECT srWindow;
+        COORD      dwMaximumWindowSize;
+        
+        embeddable constructor()
+        {
+        }
+    
+        short SizeX
+        {
+            get()
+            {
+                short retVal := dwSize.X;
+                
+                ^ retVal
+            }
+        }
+    
+        short SizeY
+        {
+            get()
+            {
+                short retVal := dwSize.Y;
+                
+                ^ retVal
+            }
+        }
+    
+        readSizeTo(COORD r)
+        {
+            short x := dwSize.X;
+            short y := dwSize.Y;
+            
+            r.write(x, y)
+        }
+    
+        readCursorPositionTo(COORD r)
+        {
+            COORD copy := dwCursorPosition;
+            
+            short x := copy.X;
+            short y := copy.Y;
+            
+            r.write(x, y)
+        }
+    }
 
     // --- ConsoleHandleFactory --
     
@@ -105,11 +105,11 @@ namespace io
             self.write(cast wide(s))
         }
     
-    //    writeLine(wide s)
-    //    {
-    //        self.write(s);
-    //        self.write(theNewLineSymbol);
-    //    }
+        writeLine(wide s)
+        {
+            self.write(s);
+            self.write(newLine);
+        }
     
         writeLine()
         {
@@ -125,39 +125,39 @@ namespace io
             // !!check the result of the operation
         }
         
-    //    clear()
-    //    {
-    //        auto buffer := new CONSOLE_SCREEN_BUFFER_INFO();
-    //        int  length := 0;
-    //        int  retVal := 0;
-    //
-    //        extern KERNEL32.GetConsoleScreenBufferInfo(theHandle, buffer);
-    //
-    //        short sizeX := buffer.SizeX;
-    //        short sizeY := buffer.SizeY;
-    //                
-    //        length := sizeX * sizeY;
-    //        
-    //        extern KERNEL32.FillConsoleOutputCharacterW(theHandle, cast short(32), length, 0, ref retVal);
-    //        
-    //        extern KERNEL32.SetConsoleCursorPosition(theHandle, 0)
-    //    }
-    //
-    //    setCursorPosition(int x, int y)
-    //    {
-    //        int coord := y * 10000h + x;
-    //                
-    //        extern KERNEL32.SetConsoleCursorPosition(theHandle, coord)
-    //    }
-    //
-    //    refresh()
-    //    {
-    //    }    
+        clear()
+        {
+            auto buffer := new CONSOLE_SCREEN_BUFFER_INFO();
+            int  length := 0;
+            int  retVal := 0;
     
-//        close()
-//        {
-//            extern KERNEL32.CloseHandle(theHandle)
-//        }
+            extern KERNEL32.GetConsoleScreenBufferInfo(handle, buffer);
+    
+            short sizeX := buffer.SizeX;
+            short sizeY := buffer.SizeY;
+                    
+            length := sizeX * sizeY;
+            
+            extern KERNEL32.FillConsoleOutputCharacterW(handle, cast short(32), length, 0, ref retVal);
+            
+            extern KERNEL32.SetConsoleCursorPosition(handle, 0)
+        }
+    
+        setCursorPosition(int x, int y)
+        {
+            int coord := y * 10000h + x;
+                    
+            extern KERNEL32.SetConsoleCursorPosition(handle, coord)
+        }
+    
+        refresh()
+        {
+        }    
+    
+        close()
+        {
+            extern KERNEL32.CloseHandle(handle)
+        }
     }
 
     // --- FileWriter ---
@@ -202,11 +202,11 @@ namespace io
             }
         }
         
-    //    writeLine(wide s)
-    //    {
-    //        self.write(s);
-    //        self.write(theNewLineSymbol);
-    //    }
+        writeLine(wide s)
+        {
+            self.write(s);
+            self.write(theNewLineSymbol);
+        }
         
         writeLine()
         {
@@ -331,43 +331,43 @@ namespace io
     ////                    
     ////        byteArrayHelper read(T<ByteArray>(aDump), 8, aKey)
     ////    ]
-    //
-    //    get bool KeyAvailable()
-    //    {
-    //        byte  dump[20];
-    //        int   numberRead := 0;
-    //        short eventType := 0;
-    //        int   keyDown := 0;
-    //        
-    //        while (true)
-    //        {
-    //            numberRead := 0;
-    //            
-    //            extern
-    //            {
-    //                extern KERNEL32.PeekConsoleInputW(theHandle, dump, 1, ref numberRead)
-    //            };
-    //                        
-    //            if (0 == numberRead)
-    //                { ^ false };
-    //                            
-    //            dump.read(0, ref eventType);
-    //            if (eventType == 1)
-    //            {
-    //                dump.read(4, ref keyDown);
-    //                    
-    //                if (keyDown == 1)
-    //                    { ^ true }
-    //            };
-    //
-    //            extern
-    //            {
-    //                extern KERNEL32.ReadConsoleInputW(theHandle, dump, 1, ref numberRead)
-    //            }                
-    //        };
-    //        
-    //        ^ false
-    //    }
+    
+        get bool KeyAvailable()
+        {
+            byte  dump[20];
+            int   numberRead := 0;
+            short eventType := 0;
+            int   keyDown := 0;
+            
+            while (true)
+            {
+                numberRead := 0;
+                
+                extern
+                {
+                    extern KERNEL32.PeekConsoleInputW(handle, dump, 1, ref numberRead)
+                };
+                            
+                if (0 == numberRead)
+                    { ^ false };
+                                
+                dump.read(0, ref eventType);
+                if (eventType == 1)
+                {
+                    dump.read(4, ref keyDown);
+                        
+                    if (keyDown == 1)
+                        { ^ true }
+                };
+    
+                extern
+                {
+                    extern KERNEL32.ReadConsoleInputW(handle, dump, 1, ref numberRead)
+                }                
+            };
+            
+            ^ false
+        }
 
         read(short[] dump, ref int retVal)
         {
@@ -425,11 +425,11 @@ namespace io
     ////        
     ////        ^ CharValue new char:aRetVal
     ////    ]
-    //
-    //    close()
-    //    {
-    //        extern KERNEL32.CloseHandle(theHandle)
-    //    }
+    
+        close()
+        {
+            extern KERNEL32.CloseHandle(handle)
+        }
     }
 
     // --- Console Standard Symbols

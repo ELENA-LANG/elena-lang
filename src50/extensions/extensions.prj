@@ -28,5 +28,8 @@
             <include>routines\enumerating.l</include>
             <include>routines\combinations.l</include>
         </module>
+        <module name="threading">
+            <include>threading\threading.l</include>
+        </module>
     </files>
 </configuration>

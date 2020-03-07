@@ -14,7 +14,7 @@ sealed class Model
     
     constructor newRandomset(RuleSet transformSet)
     {
-        theSpace := new IntMatrixSpace(maxY, maxX, randomSet);
+        theSpace := IntMatrixSpace.allocate(maxY, maxX, randomSet);
 
         theRuleSet := transformSet;
         
@@ -23,7 +23,7 @@ sealed class Model
     
     constructor newLoaded(RuleSet initSet, RuleSet transformSet)
     {
-        theSpace := new IntMatrixSpace(maxY, maxX, initSet);
+        theSpace := IntMatrixSpace.allocate(maxY, maxX, initSet);
                         
         theRuleSet := transformSet;
         

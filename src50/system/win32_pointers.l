@@ -153,104 +153,104 @@ public sealed const struct UnsafePointer
 //        = thePointer == 0;
 }
 
-//// --- COORD ---
-//
-//public sealed struct COORD
-//{
-//    short theX;
-//    short theY;
-//    
-//    embeddable constructor()
-//    {
-//        theX := 0;
-//        theY := 0;
-//    }
-//    
-//    write(short X, short Y)
-//    {
-//        theX := X;
-//        theY := Y
-//    }
-//    
-//    write(COORD r)
-//    {
-//        short tmp := r.X;
-//        theX := tmp;
-//        
-//        tmp := r.Y;
-//        theY := tmp
-//    }
-//    
-//    X
-//    {
-//        short get()
-//        {
-//            ^ theX
-//        }
-//    }
-//    
-//    Y
-//    {    
-//        short get()
-//        {
-//            ^ theY
-//        }
-//    }
-//}
-//
-//// --- SMALL_RECT --
-//
-//public sealed struct SMALL_RECT
-//{
-//    short theLeft;
-//    short theTop;
-//    short theRight;
-//    short theBottom;
-//    
-//    Left
-//    {
-//        short get()
-//        {
-//            ^ theLeft
-//        }
-//    }
-//    
-//    Top
-//    {
-//        short get()
-//        {
-//            ^ theTop
-//        }
-//    }
-//    
-//    Right
-//    {
-//        short get()
-//        {
-//            ^ theRight
-//        }        
-//    }
-//    
-//    Bottom
-//    {
-//        get()
-//        {
-//            ^ theBottom
-//        }
-//    }
-//    
-//    write(SMALL_RECT r)
-//    {
-//        short tmp := r.Left;
-//        theLeft := tmp;
-//        
-//        tmp := r.Top;
-//        theTop := tmp;
-//        
-//        tmp := r.Right;
-//        theRight := tmp;
-//        
-//        tmp := r.Bottom;
-//        theBottom := tmp;
-//    }
-//}    
+// --- COORD ---
+
+public sealed struct COORD
+{
+    short theX;
+    short theY;
+    
+    embeddable constructor()
+    {
+        theX := 0;
+        theY := 0;
+    }
+    
+    write(short X, short Y)
+    {
+        theX := X;
+        theY := Y
+    }
+    
+    write(COORD r)
+    {
+        short tmp := r.X;
+        theX := tmp;
+        
+        tmp := r.Y;
+        theY := tmp
+    }
+    
+    short X
+    {
+        get()
+        {
+            ^ theX
+        }
+    }
+    
+    short Y
+    {    
+        get()
+        {
+            ^ theY
+        }
+    }
+}
+
+// --- SMALL_RECT --
+
+public sealed struct SMALL_RECT
+{
+    short theLeft;
+    short theTop;
+    short theRight;
+    short theBottom;
+    
+    short Left
+    {
+        get()
+        {
+            ^ theLeft
+        }
+    }
+    
+    short Top
+    {
+        get()
+        {
+            ^ theTop
+        }
+    }
+    
+    short Right
+    {
+        get()
+        {
+            ^ theRight
+        }        
+    }
+    
+    short Bottom
+    {
+        get()
+        {
+            ^ theBottom
+        }
+    }
+    
+    write(SMALL_RECT r)
+    {
+        short tmp := r.Left;
+        theLeft := tmp;
+        
+        tmp := r.Top;
+        theTop := tmp;
+        
+        tmp := r.Right;
+        theRight := tmp;
+        
+        tmp := r.Bottom;
+        theBottom := tmp;
+    }
+}    
