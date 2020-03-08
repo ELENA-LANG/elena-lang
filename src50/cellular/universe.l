@@ -54,7 +54,7 @@ public sealed class IntMatrixSpace : Space
         theN := n;
         theM := m;
         
-        theMatrix := new IntMatrix(n, m);
+        theMatrix := IntMatrix.allocate(n, m);
 
         for (int i := 0, i < theN, i+=1)
         {
@@ -87,7 +87,7 @@ public sealed class IntMatrixSpace : Space
 
     update(RuleSet rs)
     {
-        IntMatrix newMatrix := new IntMatrix(theN, theM);
+        IntMatrix newMatrix := IntMatrix.allocate(theN, theM);
         
         self.internalUpdate(rs, newMatrix);
         

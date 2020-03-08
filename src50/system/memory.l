@@ -225,7 +225,7 @@ public sealed Matrix<T>
     int theRows;
     int theColumns;
     
-    constructor(int rows, int columns)
+    constructor allocate(int rows, int columns)
     {
         theRows := rows;
         theColumns := columns;
@@ -235,9 +235,9 @@ public sealed Matrix<T>
         theArray := new T[](len)
     }
     
-//    constructor(rows, columns)
-//        <= (cast int(rows), cast int(columns));
-//    
+    constructor allocate(rows, columns)
+        <= allocate(cast int(rows), cast int(columns));
+    
 ////    constructor(params)
 ////    [
 ////        theRows := params rows.
@@ -324,7 +324,7 @@ public sealed Matrix<T>
 
     T at(int i, int j)
     {
-        T retVal := T.Default;
+        T retVal := T.MinValue;
         self.read(i, j, ref retVal);
         ^ retVal
     }
@@ -547,7 +547,7 @@ public sealed class IntMatrix
     int   theRows;
     int   theColumns;
     
-    constructor(int rows, int columns)
+    constructor allocate(int rows, int columns)
     {
         theRows := rows;
         theColumns := columns;
@@ -555,8 +555,8 @@ public sealed class IntMatrix
         theArray := new int[](columns * rows)
     }
         
-//    constructor new(Rows,Columns)
-//        <= new(T<int>(Rows), T<int>(Columns)).
+    constructor allocate(rows,columns)
+        <= allocate(cast int(rows), cast int(columns));
         
     /// Reads the matrix lengths to the output parameter
     readLengthsTo(ref int rows, ref int columns)
@@ -799,7 +799,7 @@ public sealed const struct String : BaseValue
     constructor copy(int size, string s)
         <= allocate(size)
     {
-        intern system'core_routines'__literal.copy(s, self)
+        intern system'core_routines'__literal.copy(self, s)
     }
 
     /// Creates the literal string with specified length fills with specified character value        
@@ -1064,7 +1064,7 @@ public sealed const struct WideString : BaseValue
     constructor copy(int size, wide s)
         <= allocate(size)
     {
-        intern system'core_routines'__wide.copy(s, self)
+        intern system'core_routines'__wide.copy(self, s)
     }
 
     /// Creates the literal string with specified length fills with specified character value        

@@ -10,13 +10,14 @@ In development:
                 * compile hello world
 
               dev - rosetta code samples
-                * Conway's Game of Life
+                * Define a primitive data type
 
               dev - migration
                 * rosetta code samples : arithmeval
                 * rosetta code samples : test twentyfour
                 * rosetta code samples : Anagrams
                 * rosetta code samples : Amicable pairs
+                * Conway's Game of Life - GC
                 * Amicable pairs using yield method
                 * migrate changes from core to corex
                 * anagram sample with corex
