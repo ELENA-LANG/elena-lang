@@ -5651,15 +5651,15 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
       ref_t messageRef = encodeMessage(object.extraparam, 2, 0);
       NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
       Pair<ref_t, ref_t>  constInfo = nsScope->extensions.get(messageRef);
-      if (constInfo.value2 != 0) {
+      if (constInfo.value1 != 0) {
          ref_t signRef = 0;
          scope.module->resolveAction(object.extraparam, signRef);
-         if (!_logic->injectConstantConstructor(terminal, *scope.moduleScope, *this, constInfo.value2, messageRef))
+         if (!_logic->injectConstantConstructor(terminal, *scope.moduleScope, *this, constInfo.value1, messageRef))
             scope.raiseError(errInvalidConstant, terminal);
       }
       else scope.raiseError(errInvalidConstant, terminal);
 
-      object = ObjectInfo(okObject, constInfo.value2);
+      object = ObjectInfo(okObject, constInfo.value1);
    }
    else if (object.kind == okUnknown) {
       scope.raiseError(errUnknownObject, terminal);
