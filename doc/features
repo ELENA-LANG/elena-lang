@@ -93,6 +93,7 @@ Code
   Message Dispaching
   Modificators
     * __weak attribute
+  custom literal constant
 Mixins
 Project
   Options
