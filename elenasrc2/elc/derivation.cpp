@@ -23,14 +23,14 @@ constexpr auto MODE_PROPERTYMETHOD        = -4;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- DerivationWriter ---
 
@@ -1135,6 +1135,17 @@ inline bool isFieldPlaceholder(SNode node, _ModuleScope* scope)
    return false;
 }
 
+inline void copyTemplateArgs(SNode src, SNode dst)
+{
+   SNode current = src.firstChild();
+   while (current != lxNone) {
+      SNode token = dst.appendNode(lxToken);
+      SyntaxTree::copyNode(current, token);
+
+      current = current.nextNode();
+   }
+}
+
 void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
 {
 //   //// COMPILER MAGIC : property declaration
@@ -1164,12 +1175,20 @@ void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, 
          else {
             SNode prev = current;
             SNode nameNode = node.prevNode();
-            while (nameNode.compare(lxNameAttr, lxType, lxAttribute)) {
-               prev = prev.prependSibling(lxToken);
-               SyntaxTree::copyNode(nameNode, prev);
+            while (nameNode.compare(lxNameAttr, lxType, lxAttribute, lxTemplateArgs)) {
+               if (nameNode == lxTemplateArgs) {
+                  prev = prev.prependSibling(lxTemplateArgs);
+                  copyTemplateArgs(nameNode, prev);
+               }
+               else {
+                  prev = prev.prependSibling(lxToken);
+                  SyntaxTree::copyNode(nameNode, prev);
+               }
 
                nameNode = nameNode.prevNode();
             }
+
+            test2(node);
          }
       }
       current = current.nextNode();
