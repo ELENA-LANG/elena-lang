@@ -290,6 +290,7 @@ class TemplateGenerator
    void copyTreeNode(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyMethodTree(SyntaxWriter& writer, SNode node, TemplateScope& scope);
    void copyModuleInfo(SyntaxWriter& writer, SNode node, TemplateScope& scope);
+   void copyTemplateIdenParam(SyntaxWriter& writer, SNode nodeToInject, TemplateScope& scope);
 
    bool generateTemplate(SyntaxWriter& writer, TemplateScope& scope, bool declaringClass, 
       bool importModuleInfo, int bookmark);

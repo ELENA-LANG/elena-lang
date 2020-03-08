@@ -23,14 +23,14 @@ constexpr auto MODE_PROPERTYMETHOD        = -4;
 
 constexpr auto EXPRESSION_IMPLICIT_MODE   = 0x1;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- DerivationWriter ---
 
@@ -1187,8 +1187,6 @@ void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, 
 
                nameNode = nameNode.prevNode();
             }
-
-            test2(node);
          }
       }
       current = current.nextNode();
@@ -1497,7 +1495,7 @@ void DerivationWriter :: generatePropertyTemplateTree(SyntaxWriter& writer, SNod
       //derivationScope.nestedLevel += 0x100;
       generateAttributes(paramWriter, current, derivationScope, buffer);
       //derivationScope.nestedLevel -= 0x100;
-      
+
       current = current.prevNode();
    }
 
@@ -2204,6 +2202,27 @@ void TemplateGenerator :: copyExpressionTree(SyntaxWriter& writer, SNode node, T
    writer.closeNode();
 }
 
+void TemplateGenerator :: copyTemplateIdenParam(SyntaxWriter& writer, SNode nodeToInject, TemplateScope& scope)
+{
+   if (nodeToInject.type == lxType && nodeToInject.argument == V_TEMPLATE) {
+      SNode attrNode = nodeToInject.firstChild();
+      // copy a template name
+      copyTreeNode(writer, attrNode, scope);
+      writer.closeNode();
+      writer.newNode(lxTemplateArgs);
+      attrNode = attrNode.nextNode();
+      while (attrNode == lxType) {
+         writer.newNode(lxToken);
+         copyTemplateIdenParam(writer, attrNode, scope);
+         writer.closeNode();
+
+         attrNode = attrNode.nextNode();
+      }
+      // copy template attributes
+   }
+   else copyChildren(writer, nodeToInject, scope);
+}
+
 void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, TemplateScope& scope)
 {
    if (test(current.type, lxTerminalMask/* | lxObjectMask*/)) {
@@ -2287,7 +2306,7 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
       if (current.argument < 0x100) {
          SNode nodeToInject = scope.parameterValues.get(current.argument);
 
-         copyChildren(writer, nodeToInject, scope);
+         copyTemplateIdenParam(writer, nodeToInject, scope);
       }
       else {
          // if it is a nested template
