@@ -282,10 +282,10 @@ namespace math
     //
     //    real exp()
     //        = cast real(self).exp();
-    //    
-    //    real ln()
-    //        = cast real(self).ln();
-    //  
+        
+        real ln()
+            = cast real(self).ln();
+      
     //    real log2()
     //    {
     //        real x := mixin mathOp(self).ln();

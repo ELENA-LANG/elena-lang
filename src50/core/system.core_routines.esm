@@ -1848,6 +1848,16 @@ procedure __int."readHashCodeTo$system@RealNumber$@system@ref#1&system@IntNumber
 
 end
 
+procedure __int."readHashCodeTo$system@CharValue$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quitn  2
+
+end
+
 procedure __longconvertor."convert$system@IntNumber$@system@ref#1&system@LongNumber[2]"
   
   peeksi 1

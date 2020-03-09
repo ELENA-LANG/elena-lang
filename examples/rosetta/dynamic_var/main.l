@@ -13,12 +13,12 @@ class TestClass
         theVariables := new DynamicStruct()
     }
     
-    closure()
+    function()
     {
         auto prop := new MessageName(console.write:"Enter the variable name:".readLine());
         (prop.setPropertyMessage())(theVariables,42);
         
-        console.printLine(prop.Printable,"=",(prop.getPropertyMessage())(theVariables)).readChar()     
+        console.printLine(prop.toPrintable(),"=",(prop.getPropertyMessage())(theVariables)).readChar()     
     }
 }
 

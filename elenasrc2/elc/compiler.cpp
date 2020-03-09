@@ -4449,6 +4449,9 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
                node.insertNode(lxTempLocal, tempLocal);
                node.injectAndReplaceNode(lxSeqExpression);
                node.appendNode(lxTempLocal, tempLocal);
+
+               // hotfix : find initializing node again
+               node = member.parentNode();
             }
 
             injectMemberPreserving(member, ownerScope, lxTempLocal, tempLocal, info, (*outer_it).reference);

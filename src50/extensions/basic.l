@@ -85,40 +85,40 @@ public sealed class Real : BaseVariable, ref<real>
     dispatch() => value;
 }
 
-//public sealed class LongInteger : BaseVariable, ref<long>
-//{
-//    constructor()
-//    {
-//        theValue := 0l
-//    }
-//    
-//    constructor(long n) 
-//    {
-//        theValue := n
-//    }
-//    
-////    constructor new : n
-////        <= new(T<long>(n)).
-//        
-//    append(n)
-//        <= append(cast long(n));
-//
-//    reduce(n)
-//        <= reduce(cast long(n));
-//                
-//    append(long n)
-//    {
-//        long v := theValue;
-//        v := v + n;
-//        
-//        theValue := v
-//    }
-//    
-//    reduce(long n)
-//    {
-//        long v := theValue;
-//        v := v - n;
-//        
-//        theValue := v
-//    }
-//}
+public sealed class LongInteger : BaseVariable, ref<long>
+{
+    constructor()
+    {
+        value := 0l
+    }
+    
+    constructor(long n) 
+    {
+        value := n
+    }
+    
+//    constructor new : n
+//        <= new(T<long>(n)).
+        
+    append(n)
+        <= append(cast long(n));
+
+    reduce(n)
+        <= reduce(cast long(n));
+                
+    append(long n)
+    {
+        long v := value;
+        v := v + n;
+        
+        value := v
+    }
+    
+    reduce(long n)
+    {
+        long v := value;
+        v := v - n;
+        
+        value := v
+    }
+}

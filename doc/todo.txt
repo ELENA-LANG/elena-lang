@@ -13,7 +13,7 @@ In development:
                 * Generic handler with variable number of parameters
 
               dev - rosetta code samples
-                * Delete a file
+                * Entropy
 
               dev - migration
                 * rosetta code samples : arithmeval

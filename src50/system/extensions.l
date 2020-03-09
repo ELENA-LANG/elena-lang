@@ -398,8 +398,8 @@ public extension intOp : IntNumber
         ^ retVal
     }
     
-//    real realDiv(n)
-//        = new RealNumber(self).divide:n;
+    real realDiv(n)
+        = new RealNumber(self).divide:n;
    
     int sqr()
     {
@@ -632,14 +632,14 @@ public extension realOp : RealNumber
 //        
 //        ^ retVal
 //    }
-//    
-//    real ln()
-//    {
-//        real n := self;
-//        real retVal := realOpController.ln(n);
-//        
-//        ^ retVal
-//    }
+    
+    real ln()
+    {
+        real n := self;
+        real retVal := realOpController.ln(n);
+        
+        ^ retVal
+    }
     
     real sqrt()
     {
@@ -1668,16 +1668,16 @@ public extension stringWeakOp
 
 public extension charOp : CharValue
 {
-//    Hashcode
-//    {
-//        // Reads the object hash code into the output parameter
-//        int get()
-//        {
-//            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
+    int Hashcode
+    {
+        // Reads the object hash code into the output parameter
+        get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
     
     bool isWhitespace()
     {
