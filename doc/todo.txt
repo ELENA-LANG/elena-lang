@@ -9,6 +9,9 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
+              dev - tutorials
+                * Generic handler with variable number of parameters
+
               dev - rosetta code samples
                 * Delete a file
 
@@ -23,6 +26,8 @@ In development:
                 * anagram sample with corex
                 * collatz sample
                 * db sample
+                * ExpressionTree1
+                * ExpressionTree2
                 * script samples
                 * gui samples
                 * socket samples

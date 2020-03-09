@@ -574,32 +574,6 @@ void ByteCodeWriter :: clearDynamicObject(CommandTape& tape)
    tape.write(bcFillR, 0);
 }
 
-//void ByteCodeWriter :: initDynamicObject(CommandTape& tape, LexicalType sourceType, ref_t sourceArgument)
-//{
-//   tape.write(bcBCopyA);
-//   tape.write(bcCount);
-//
-//   loadObject(tape, sourceType, sourceArgument, 0);
-//
-//   tape.write(bcDCopy, 0);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcXSet);
-//   tape.write(bcNext, baCurrentLabel);
-//   tape.releaseLabel();
-//
-//   tape.write(bcACopyB);
-//}
-//
-//void ByteCodeWriter :: newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument)
-//{
-//   loadBase(tape, field, argument, 0);
-//   newObject(tape, 1, reference);
-//   tape.write(bcBSwap);
-//   tape.write(bcAXSaveBI, 0);
-//   tape.write(bcACopyB);
-//}
-
 void ByteCodeWriter :: newDynamicObject(CommandTape& tape, ref_t reference)
 {
    // create
@@ -5664,7 +5638,11 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
             if (structMode) {
                copyToFieldAddress(tape, size, current.argument * size);
             }
-            else tape.write(createMode ? bcXSetI : bcSetI, current.argument);
+            else {
+               tape.write(createMode ? bcXSetI : bcSetI, current.argument);
+
+               createMode = true; // HOTFIX : we have to mark the source object only once
+            }
             releaseStack(tape);
          }
          current = current.nextNode();
@@ -6595,12 +6573,14 @@ void ByteCodeWriter :: generateClass(_ModuleScope& scope, CommandTape& tape, SNo
    //tape.clearArguments();
 }
 
-//void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
-//{
-//   declareInitializer(tape, reference);
-//   loadObject(tape, type, argument, 0);
-//   endInitializer(tape);
-//}
+void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
+{
+   FlowScope scope;
+
+   declareInitializer(tape, reference);
+   loadObject(tape, type, argument, scope, 0);
+   endInitializer(tape);
+}
 
 void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, SNode root)
 {

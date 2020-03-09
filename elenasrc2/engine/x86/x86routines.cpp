@@ -14,6 +14,8 @@ const pos_t page_size = 0x10;
 const pos_t page_size_order = 0x04;
 const pos_t page_size_order_minus2 = 0x02;
 const pos_t page_mask = 0x0FFFFFFF0;
+const pos_t page_ceil = 0x17;
+const pos_t page_align_mask = 0x000FFFF0;
 
 void SystemRoutineProvider :: Init(SystemEnv* env)
 {
@@ -218,82 +220,89 @@ inline void* getVMTPtr(size_t objptr)
    return getObjectPage(objptr)->vmtPtr;
 }
 
+inline void setVMTPtr(size_t objptr, void* ptr)
+{
+   getObjectPage(objptr)->vmtPtr = ptr;
+}
+
 inline void orSize(size_t objptr, int mask)
 {
    getObjectPage(objptr)->size |= mask;
 }
 
+inline void CopyObectData(size_t bytesToCopy, void* dst, void* src)
+{
+   bytesToCopy += 3;
+   bytesToCopy &= 0xFFFFC;
+
+#ifdef _WIN32
+   __asm {
+         mov  esi, src
+         mov  edi, dst
+         mov  ecx, bytesToCopy
+      labYGCopyData :
+         mov  eax, [esi]
+         sub  ecx, 4
+         mov[edi], eax
+         lea  esi, [esi + 4]
+         lea  edi, [edi + 4]
+         jnz  short labYGCopyData
+   }
+#endif
+
+}
+
 inline void CollectYG(GCRoot* root, size_t start, size_t end, ObjectPage*& shadowHeap)
 {
    size_t* ptr = (size_t*)root->stackPtr;
-   size_t size = root->size;
+   size_t  size = root->size;
+   size_t  new_ptr = 0;
+   GCRoot  current;
 
    // ; collect roots
    while (size > 0) {
+      // ; check if it valid reference
       if (*ptr >= start && *ptr < end) {
-         // ; check if it valid reference
+         current.stackPtrAddr = *ptr;
 
          // ; check if it was collected
-         if (getSize(*ptr) >= 0) {
+         current.size = getSize((size_t)current.stackPtr);
+         if (current.size >= 0) {
             // ; copy object size
-            shadowHeap->size = getSize(*ptr);
+            shadowHeap->size = current.size;
 
             // ; copy object vmt
-            shadowHeap->vmtPtr = getVMTPtr(*ptr);
+            shadowHeap->vmtPtr = getVMTPtr(current.stackPtrAddr);
 
             // ; mark as collected
-            orSize(*ptr, 0x80000000);
+            orSize(current.stackPtrAddr, 0x80000000);
 
             // ; reserve shadow YG
-         //      mov  ecx, edi
-         //      add  ecx, page_ceil
-         //      lea  edi, [ebp + elObjectOffset]
-         //      and ecx, page_align_mask
-         //      mov[esi], edi          // ; update reference 
-         //      add  ebp, ecx
-         //
+            new_ptr = (size_t)shadowHeap + elObjectOffset;
+
+            shadowHeap = (ObjectPage*)((size_t)shadowHeap + (current.size + page_ceil) & page_align_mask);
+
+            // ; update reference 
+            *ptr = new_ptr;
+
+            // ; get object size
+            current.size &= 0x8FFFFF;
+            
+            //      // ; save ESI
+            //      push esi
+            //      mov  esi, eax
+            //
+            // ; save new reference
+            setVMTPtr(current.stackPtrAddr, (void*)new_ptr);
+            
+            if (current.size < 0x800000) {
+               // ; check if the object has fields
+               CollectYG(&current, start, end, shadowHeap);
+            }
+            else if (current.size != 0x800000) {
+               CopyObectData(current.size, (void*)new_ptr, current.stackPtr);
+            }
          }
-
-         //      // ; get object size
-         //      mov  ecx, [eax - elSizeOffset]
-         //      and ecx, 8FFFFFh
-         //
-         //      // ; save ESI
-         //      push esi
-         //      mov  esi, eax
-         //
-         //      // ; save new reference
-         //      mov[eax - elVMTOffset], edi
-         //
-         //      // ; check if the object has fields
-         //      cmp  ecx, 800000h
-         //
-         //      // ; save original reference
-         //      push eax
-         //
-         //      // ; collect object fields if it has them
-         //      jb   labYGCheck
-         //
-         //      lea  esp, [esp + 4]
-         //      jz   short labYGSkipCopyData
-         //
-         //      // ; copy meta data object to shadow YG
-         //      add  ecx, 3
-         //      and ecx, 0FFFFCh
-         //
-         //      labYGCopyData :
-         //   mov  eax, [esi]
-         //      sub  ecx, 4
-         //      mov[edi], eax
-         //      lea  esi, [esi + 4]
-         //      lea  edi, [edi + 4]
-         //      jnz  short labYGCopyData
-         //
-         //      labYGSkipCopyData :
-         //   pop  esi
-         //      pop  ecx
-         //      jmp  labYGNext
-
       }
       ptr++;
       size -= 4;

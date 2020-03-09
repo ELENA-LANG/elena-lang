@@ -42,9 +42,9 @@ Declarations
       * abstract / sealed / predefined +
       * inline arg
 
-      * Build-in Variables
+      * Build-in Variables +
         - self vs this self
-        - __received
+        - __received +
         - class / global predicate
 
     Properties

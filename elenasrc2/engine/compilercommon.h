@@ -52,7 +52,7 @@ constexpr auto V_EMBEDDABLE      = 0x80002002u;
 constexpr auto V_WRAPPER         = 0x80002003u;
 constexpr auto V_WEAKOP          = 0x80002004u;
 constexpr auto V_LOOP            = 0x80002005u;
-//constexpr auto V_PRELOADED       = 0x80002006u;
+constexpr auto V_PRELOADED       = 0x80002006u;
 constexpr auto V_LAZY            = 0x80002009u;
 
 /// scope:
@@ -690,7 +690,6 @@ public:
    virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
    virtual bool isStacksafeArg(ClassInfo& info) = 0;
    virtual bool isStacksafeArg(_ModuleScope& scope, ref_t reference) = 0;
-////   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
@@ -737,7 +736,8 @@ public:
    virtual bool validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/) = 0;
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
-   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, /*bool& preloadedOne, */Visibility& visibility) = 0;
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
+      Visibility& visibility) = 0;
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, int hints) = 0;
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
 

@@ -163,6 +163,6 @@ public extension commonOp
     /// Returns the parameter        
     back(o) = o;
  
-//    then(Func code)
-//        = code();
+    then(Func code)
+        = code();
 }

@@ -618,7 +618,7 @@ Compiler::SymbolScope :: SymbolScope(NamespaceScope* parent, ref_t reference, Vi
    : SourceScope(parent, reference, visibility)
 {
    staticOne = false;
-   //preloaded = false;
+   preloaded = false;
 }
 
 //ObjectInfo Compiler::SymbolScope :: mapTerminal(ident_t identifier)
@@ -1840,7 +1840,9 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value, constant, scope.staticOne, /*scope.preloaded, */scope.visibility)) {
+         if (!_logic->validateSymbolAttribute(value, constant, scope.staticOne, scope.preloaded, 
+            scope.visibility)) 
+         {
             current.setArgument(0); // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
@@ -7949,18 +7951,18 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    //compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
 }
 
-//void Compiler :: compilePreloadedCode(SymbolScope& scope)
-//{
-//   _Module* module = scope.moduleScope->module;
-//
-//   IdentifierString sectionName("'", INITIALIZER_SECTION);
-//
-//   CommandTape tape;
-//   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbolReference, scope.reference);
-//
-//   // create byte code sections
-//   _writer.saveTape(tape, *scope.moduleScope);
-//}
+void Compiler :: compilePreloadedCode(SymbolScope& scope)
+{
+   _Module* module = scope.moduleScope->module;
+
+   IdentifierString sectionName("'", INITIALIZER_SECTION);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, module->mapReference(sectionName), lxSymbolReference, scope.reference);
+
+   // create byte code sections
+   _writer.saveTape(tape, *scope.moduleScope);
+}
 
 ref_t Compiler :: compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node)
 {
@@ -9412,9 +9414,9 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 
    scope.save();
 
-//   if (scope.preloaded) {
-//      compilePreloadedCode(scope);
-//   }
+   if (scope.preloaded) {
+      compilePreloadedCode(scope);
+   }
 
    pos_t sourcePathRef = scope.saveSourcePath(_writer);
    CommandTape tape;

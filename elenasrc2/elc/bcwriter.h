@@ -400,7 +400,7 @@ public:
    int writeString(ident_t path);
 
    void generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, bool(*cond)(LexicalType));
-//   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);
    void generateConstantList(SNode node, _Module* module, ref_t reference);

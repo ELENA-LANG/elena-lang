@@ -1950,7 +1950,8 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
    }
 }
 
-bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, /*bool& preloadedOne, */Visibility& visibility)
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
+   Visibility& visibility)
 {
    if (attrValue == (int)V_CONST) {
       constant = true;
@@ -1965,11 +1966,11 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
 
       return true;
    }
-//   else if (attrValue == (int)V_PRELOADED) {
-//      preloadedOne = true;
-//
-//      return true;
-//   }
+   else if (attrValue == (int)V_PRELOADED) {
+      preloadedOne = true;
+
+      return true;
+   }
    else if (attrValue == (int)V_PUBLIC) {
       visibility = Visibility::Public;
 

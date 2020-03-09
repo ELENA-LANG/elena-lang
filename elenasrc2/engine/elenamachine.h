@@ -111,7 +111,11 @@ struct FrameHeader
 struct GCRoot
 {
    size_t size;
-   void*  stackPtr;
+   union
+   {
+      void*  stackPtr;
+      size_t stackPtrAddr;
+   };   
 };
 
 // --- SystemRoutineProvider ---

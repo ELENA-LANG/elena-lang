@@ -532,6 +532,7 @@ private:
    {
       SymbolExpressionInfo info;
       bool                 staticOne;
+      bool                 preloaded;
 
 ////      virtual ObjectInfo mapTerminal(ident_t identifier);
 
@@ -1182,7 +1183,7 @@ private:
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
    ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
-//   void compilePreloadedCode(SymbolScope& scope);
+   void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedCode(_ModuleScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 

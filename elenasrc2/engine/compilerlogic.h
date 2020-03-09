@@ -185,10 +185,7 @@ public:
    virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, size_t signLen, 
       int& stackSafeAttr, bool ignoreMultimethod);
 
-////   virtual bool injectDefaultCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef, ref_t classClassRef);
-////   virtual bool injectImplicitCreation(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t targetRef);
    virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef);
-////////   virtual void injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode);
    virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, ref_t message, 
       ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags);
    virtual void injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
@@ -204,12 +201,11 @@ public:
    virtual bool validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/);
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable);
-   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, /*bool& preloadedOne, */Visibility& visibility);
-////////   virtual bool validateWarningAttribute(int& attrValue);
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
+      Visibility& visibility);
    virtual bool validateMessage(_ModuleScope& scope, ref_t message, int hints);
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg);
 
-//////   virtual bool validateClassFlag(ClassInfo& info, int flag);
    virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
       bool& disptacherNotAllowed, bool& emptyStructure);
 
@@ -228,8 +224,6 @@ public:
 //   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode);
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
    virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node);
-
-//////   virtual void optimizeDuplicateBoxing(SNode node);
 
    virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, 
       int& stackSafeAttr, bool selfCall);
