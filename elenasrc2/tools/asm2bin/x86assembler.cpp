@@ -3391,6 +3391,16 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
       if (token.check("dd")) {
          token.read();
          Operand operand = defineOperand(token, info, "Invalid constant");
+			if (operand.type != x86Helper::otUnknown) {
+				token.read();
+
+				if (token.check("+")) {
+					operand.offset += token.readInteger(constants);
+
+					token.read();
+				}
+			}
+
          if (operand.type==x86Helper::otDD) {
             x86Helper::writeImm(&writer, operand);
          }
@@ -3420,7 +3430,7 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
       else if (token.Eof()) {
          token.raiseErr("Invalid end of the file\n");
       }
-      else token.read();
+      else token.raiseErr("Invalid operand (%d)");
    }
 }
 

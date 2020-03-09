@@ -128,7 +128,7 @@ end
 
 rstructure %VOIDPTR
 
-  dd rdata : %VOID
+  dd rdata : %VOID + elPackageOffset
   dd 0
 
 end
