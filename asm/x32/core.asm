@@ -293,7 +293,7 @@ labCollectFrame:
   mov  [data : %CORE_GC_TABLE + gc_yg_end], edx
   mov  ebx, [esp]
   mov  [data : %CORE_GC_TABLE + gc_shadow], eax  
-  mov  ebx, [ebx+4]                           // ; restore object size
+  mov  ebx, [ebx]                           // ; restore object size
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], ecx
 
   sub  edx, ebp

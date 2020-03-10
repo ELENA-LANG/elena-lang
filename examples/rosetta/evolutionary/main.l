@@ -31,7 +31,7 @@ class EvoAlgorithm : Enumerator
     object theCurrent;
     object theVariantCount;
 
-    constructor new:of(s,count)
+    constructor new(s,count)
     {
         theTarget := s;
         theVariantCount := count.toInt();
@@ -65,7 +65,7 @@ class EvoAlgorithm : Enumerator
 public program()
 {
     var attempt := new Integer();
-    EvoAlgorithm.new:Target &of:C.forEach:(current)
+    EvoAlgorithm.new(Target,C).forEach:(current)
     {
         console 
             .printPaddingLeft(10,"#",attempt.append(1))

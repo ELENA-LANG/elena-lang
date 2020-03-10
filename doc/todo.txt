@@ -13,14 +13,14 @@ In development:
                 * Generic handler with variable number of parameters
 
               dev - rosetta code samples
-                * Entropy
+                * Evolutionary algorithm
+                * Exceptions
 
               dev - migration
                 * rosetta code samples : arithmeval
                 * rosetta code samples : test twentyfour
                 * rosetta code samples : Anagrams
                 * rosetta code samples : Amicable pairs
-                * Conway's Game of Life - GC
                 * Amicable pairs using yield method
                 * migrate changes from core to corex
                 * anagram sample with corex
@@ -89,6 +89,7 @@ In development:
 
               dev - test / optimization
                 * align block code by 16
+                * use stosd over stos
                 * optimize pi sample ( < 5s )
                 * closure initializing (do not fill with zeros, more effective assigning)
                 * double assigning : operation with struct field : var s := x + /*y*/1; (where x is a word field)

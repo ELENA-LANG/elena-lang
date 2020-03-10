@@ -3439,6 +3439,22 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
 
          return source;
       }
+      else if ((source.kind == okLongConstant)
+         && targetRef == scope.moduleScope->longReference && !EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
+      {
+         // HOTFIX : allow to pass the constant directly
+         source.reference = scope.moduleScope->longReference;
+
+         return source;
+      }
+      else if ((source.kind == okRealConstant)
+         && targetRef == scope.moduleScope->realReference && !EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
+      {
+         // HOTFIX : allow to pass the constant directly
+         source.reference = scope.moduleScope->realReference;
+
+         return source;
+      }
       else if (source.kind == okExternal &&
          _logic->isCompatible(*scope.moduleScope, sourceRef, targetRef))
       {
