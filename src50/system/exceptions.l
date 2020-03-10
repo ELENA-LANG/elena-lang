@@ -86,12 +86,6 @@ public class Exception
     
     constructor new()
         <= new(self.__getClassName());
-
-////    constructor raise()
-////        <= new()
-////    {
-////        
-////    }
 }
 
 // --- FormatException ---

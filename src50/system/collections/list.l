@@ -764,17 +764,17 @@ namespace collections
         removeAt(n)
             <= remove(cast int(n));
         
-//    //    readCapacityTo(ref<int>{ aCapacity)
-//    //    [
-//    //        aCapacity value := theCapacity.
-//    //    ]
-//        
-//        /// Clears the list
-//        clear()
-//        {
-//            theLength.Value := 0
-//        }
-//        
+    //    readCapacityTo(ref<int>{ aCapacity)
+    //    [
+    //        aCapacity value := theCapacity.
+    //    ]
+        
+        /// Clears the list
+        clear()
+        {
+            theLength.Value := 0
+        }
+        
 //        trim(int pos)
 //        {
 //            if (pos > (cast int(theLength)))

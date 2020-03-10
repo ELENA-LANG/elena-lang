@@ -13,8 +13,8 @@ In development:
                 * Generic handler with variable number of parameters
 
               dev - rosetta code samples
-                * Evolutionary algorithm
-                * Exceptions
+                * script tutorials
+                * Execute Brain****/Elena
 
               dev - migration
                 * rosetta code samples : arithmeval

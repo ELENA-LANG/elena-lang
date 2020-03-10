@@ -28,6 +28,7 @@
        <include>console.l</include>
        <include>win32_app.l</include>
        <include>collections\list.l</include>
+       <include>collections\queues.l</include>
        <include>collections\tuples.l</include>
        <include>collections\maps.l</include>
        <include>math\math.l</include>
