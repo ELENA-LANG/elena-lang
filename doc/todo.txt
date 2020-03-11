@@ -10,7 +10,6 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : Unbias a random generator
                 * rosetta code samples : Twelve statements
                 * rosetta code samples : Truncate a file
                 * rosetta code samples : Truncatable primes

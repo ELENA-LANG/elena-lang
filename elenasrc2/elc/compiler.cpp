@@ -6404,7 +6404,11 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
       weakSignature = false;
 
-      scope.parameters.add(SELF_VAR, Parameter(1, signature[0]));
+      int size = 0;
+      if (!declarationMode)
+         size = _logic->defineStructSize(*scope.moduleScope, signature[0], 0);
+
+      scope.parameters.add(SELF_VAR, Parameter(1, signature[0], 0, size));
 
       flags |= FUNCTION_MESSAGE;
    }
