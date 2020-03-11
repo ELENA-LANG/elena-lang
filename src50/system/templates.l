@@ -106,12 +106,12 @@ public interface<T>
     cast bool(expr) ! if_block
 }
 
-//// --- ifnot-else statement ---
-//
-//public ifnot<ifnot_block,else_block>:else(expr)
-//{
-//    cast bool(expr) ? else_block : ifnot_block
-//}
+// --- ifnot-else statement ---
+
+#declare ifnot:else<expr>(ifnot_block,else_block)
+{
+    cast bool(expr) ? else_block : ifnot_block
+}
 
 // --- while statement ---
 
@@ -150,14 +150,14 @@ public interface<T>
     __loop: cast bool(cond_expr) ? { loop_body; step_expr }
 }
 
-//// --- for statement ---
-//
-//public for<loop_body>(init_expr, cond_expr, step1_expr, step2_expr)
-//{
-//    init_expr;
-//    
-//    (__loop: cast bool(cond_expr) ? { loop_body; step1_expr; step2_expr })
-//}
+// --- for statement ---
+
+#declare for<init_expr, cond_expr, step_expr1, step_expr2>(loop_body)
+{
+    init_expr;
+    
+    __loop: cast bool(cond_expr) ? { loop_body; step1_expr; step2_expr }
+}
 
 // --- doUntil statement ---
 
@@ -203,29 +203,29 @@ public interface<T>
 //{
 //    try_block $fnl finally_block | on(catch_block1,catch_block2);
 //}
-//
-//// -- finally statement ---
-//
-//public try<try_block,finally_block>:finally()
-//{
-//    try_block $fnl finally_block | raise();
-//}
-//
-//// --- using statement ---
-//
-//public using<block>(expr)
-//{
-//    auto v := expr;
-//    
-//    try
-//    {
-//        block;
-//    }
-//    finally
-//    {
-//        v.close()
-//    }
-//}
+
+// -- finally statement ---
+
+#declare try:finally(try_block,finally_block)
+{
+    try_block $fnl finally_block | raise();
+}
+
+// --- using statement ---
+
+#declare using<expr>(block)
+{
+    auto v := expr;
+    
+    try
+    {
+        block;
+    }
+    finally
+    {
+        v.close()
+    }
+}
 
 // === operator templates ===
 

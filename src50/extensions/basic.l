@@ -52,9 +52,13 @@ public sealed class Real : BaseVariable, ref<real>
         value := n
     }
     
-    constructor new()
+    constructor()
     {
         value := 0.0r
+    }
+    
+    constructor new()
+    {
     }
         
 //    constructor new : n

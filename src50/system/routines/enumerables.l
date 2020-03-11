@@ -562,32 +562,32 @@ public extension indexableOp
         ^ true                
     }
             
-//    sequenceReverse()
-//        = self.sequenceReverse(0, self.Length);
-//            
-//    sequenceReverse(int index, int counter)
-//    {
-//        Indexer it := self.indexer();
-//        
-//        int      i := index;
-//        int      j := counter;
-//        j := j + i;
-//        j := j - 1;
-//        
-//        while (i < j)
-//        {
-//            it.Index := i;
-//            var temp1 := it.get();
-//            it.Index := j;
-//            var temp2 := it.get();
-//            it.set:temp1;
-//            it.Index := i;
-//            it.set:temp2;
-//            
-//            i := i + 1;
-//            j := j - 1
-//        };
-//        
-//        ^ self
-//    }    
+    sequenceReverse()
+        = self.sequenceReverse(0, self.Length);
+            
+    sequenceReverse(int index, int counter)
+    {
+        Indexer it := self.indexer();
+        
+        int      i := index;
+        int      j := counter;
+        j := j + i;
+        j := j - 1;
+        
+        while (i < j)
+        {
+            it.Index := i;
+            var temp1 := it.get();
+            it.Index := j;
+            var temp2 := it.get();
+            it.set:temp1;
+            it.Index := i;
+            it.set:temp2;
+            
+            i := i + 1;
+            j := j - 1
+        };
+        
+        ^ self
+    }    
 }

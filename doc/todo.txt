@@ -10,12 +10,23 @@ In development:
                 * compile hello world
 
               dev - rosetta code samples
-                * First class function
+                * Search a list
 
               dev - migration
+                * rosetta code samples : Rot-13
+                * rosetta code samples : Roman numerals/Encode
+                * rosetta code samples : Reflection/List methods
+                * rosetta code samples : Reflection/List properties
+                * rosetta code samples : Real constants and functions
+                * rosetta code samples : N'th
+                * rosetta code samples : Maximum triangle path sum
+                * rosetta code samples : Magic squares of doubly even order
+                * rosetta code samples : JSON
+                * rosetta code samples : Integer sequence
                 * rosetta code samples : arithmeval
                 * rosetta code samples : test twentyfour
                 * rosetta code samples : Anagrams
+                * rosetta code samples : Hailstone sequence
                 * rosetta code samples : Amicable pairs
                 * Amicable pairs using yield method
                 * migrate changes from core to corex
@@ -25,7 +36,11 @@ In development:
                 * ExpressionTree1
                 * ExpressionTree2
                 * Execute Brain****/Elena
+                * Runtime evaluation
+                * Runtime evaluation/In an environment
                 * script samples
+                * Hello world/Graphical
+                * GUI component interaction
                 * gui samples
                 * socket samples
                 * uncomment all code in LIB50

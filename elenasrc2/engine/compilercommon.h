@@ -97,7 +97,7 @@ constexpr auto V_BINARY          = 0x80000804u;
 constexpr auto V_PTRBINARY       = 0x80000805u;
 constexpr auto V_MESSAGE         = 0x80000806u;
 constexpr auto V_SUBJECT         = 0x80000807u;
-//constexpr auto V_SYMBOL          = 0x80000808u;
+constexpr auto V_SYMBOL          = 0x80000808u;
 constexpr auto V_INLINEARG       = 0x80000809u;
 ////constexpr auto V_INLINEATTRIBUTE = 0x8000080Au;
 

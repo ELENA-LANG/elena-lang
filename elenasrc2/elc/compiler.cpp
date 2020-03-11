@@ -6006,59 +6006,6 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
          else throw InternalError("Not yet implemented"); // !! temporal
       }
 
-//      if (current == lxExtArgument) {
-//         ref_t classReference = current.findChild(lxExtArgumentRef).argument;
-//         ClassInfo classInfo;
-//         if (classReference) {
-//            ref_t primitiveRef = classReference;
-//            bool variableOne = false;
-//            if (!isPrimitiveRef(classReference)) {
-//               _logic->defineClassInfo(*nsScope.moduleScope, classInfo, classReference);
-//
-//               variableOne = _logic->isVariable(classInfo);
-//               primitiveRef = _logic->retrievePrimitiveReference(*nsScope.moduleScope, classInfo);
-//            }
-//
-//            switch (primitiveRef) {
-//               case V_INT32:
-//               case V_PTR32:
-//               case V_DWORD:
-//               case V_SUBJECT:
-//               case V_MESSAGE:
-//                  current.set(variableOne ? lxExtArgument : lxIntExtArgument, 0);
-//                  break;
-//               case V_INT8ARRAY:
-//               case V_INT16ARRAY:
-//               case V_INT32ARRAY:
-//                  current.set(lxExtArgument, 0);
-//                  break;
-//               //case V_SYMBOL:
-//               //{
-//               //   current.set(lxExtInteranlRef, 0);
-//               //   // HOTFIX : ignore call operation
-//               //   SNode callNode = current.findChild(lxCalling);
-//               //   callNode.set(lxExpression, 0);
-//               //   break;
-//               //}
-//               default:
-//                  if (test(classInfo.header.flags, elStructureRole)) {
-//                     // HOTFIX : to allow pass system'Handle value directly
-//                     if (!variableOne && classInfo.size == 4) {
-//                        current.set(lxIntExtArgument, 0);
-//                     }
-//                     else current.set(lxExtArgument, 0);
-//                  }
-//                  //else if (test(classInfo.header.flags, elWrapper)) {
-//                  //   //HOTFIX : allow to pass a normal object
-//                  //   current.set(lxExtArgument, 0);
-//                  //}
-//                  else nsScope.raiseError(errInvalidOperation, current);
-//                  break;
-//            }
-//         }
-//         else nsScope.raiseError(errInvalidOperation, current);
-//      }
-
       current = current.nextNode(lxObjectMask);
    }
 }
@@ -6069,16 +6016,10 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope, ref_t e
 
    _ModuleScope* moduleScope = scope.moduleScope;
 
-////   bool rootMode = test(mode, HINT_ROOT);
    bool stdCall = false;
    bool apiCall = false;
 
    SNode targetNode = node.prevNode();
-//   // HOTFIX : comment out dll reference
-//   //targetNode = lxIdle;
-//
-//   //SNode messageNode = node.findChild(lxMessage);
-//   writer.appendNode(lxBreakpoint, dsAtomicStep);
 
    ident_t dllAlias = targetNode.findSubNodeMask(lxTerminalMask).identifier();
    ident_t functionName = node.firstChild(lxTerminalMask).identifier();
