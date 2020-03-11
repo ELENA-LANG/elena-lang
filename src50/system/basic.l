@@ -2196,7 +2196,7 @@ public sealed class KeyValue
     bool equal(o)
         => theObject;
                                                                                       
-    get string Printable()
+    string toPrintable()
         => theObject;
                                                                                       
     /// Redirects the incoming messages to the object

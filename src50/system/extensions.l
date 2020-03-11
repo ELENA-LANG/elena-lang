@@ -1273,35 +1273,35 @@ public extension stringOp : String
         ^ self
     }
 
-//    bool startingWith(string s)
-//    {
-//        int n := 0;
-//        self.indexOf(0, s, ref n);
-//        
-//        ^ 0 == n
-//    }
-//        
-//    bool endingWith(string s)
-//    {
-//        int l1 := self.Length;
-//        int l2 := s.Length;
-//
-//        int n := 0;
-//        self.indexOf(l1 - l2, s, ref n);
-//        
-//        ^ n != -1
-//    }
-//        
-//    bool containing(string s)
-//    {
-//        int l1 := self.Length;
-//        int l2 := s.Length;
-//
-//        self.indexOf(0, s, ref int n);
-//        
-//        ^ n != -1
-//    }
-//
+    bool startingWith(string s)
+    {
+        int n := 0;
+        self.indexOf(0, s, ref n);
+        
+        ^ 0 == n
+    }
+        
+    bool endingWith(string s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+
+        int n := 0;
+        self.indexOf(l1 - l2, s, ref n);
+        
+        ^ n != -1
+    }
+        
+    bool containing(string s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+
+        self.indexOf(0, s, ref int n);
+        
+        ^ n != -1
+    }
+
 ////    replaceFirst literal:aReplacee literal:aReplacer
 ////    [
 ////        int aReplaceeLen := aReplacee length.

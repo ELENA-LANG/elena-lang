@@ -233,47 +233,47 @@ public extension enumerableOp
         }
     }
 
-//    get MaximalMember()
-//    {
-//        auto en := cast Enumerator(self.enumerator());
-//        
-//        object maximal := nil;
-//        while (en.next())
-//        {
-//            var item := en.get();
-//            if (nil == maximal)
-//            {
-//                maximal := item
-//            }
-//            else if (maximal < item)
-//            {
-//                maximal := item
-//            }
-//        };
-//        
-//        ^ maximal   
-//    }
-//    
-//    get MinimalMember()
-//    {
-//        auto en := cast Enumerator(self.enumerator());
-//        
-//        object maximal := nil;
-//        while (en.next())
-//        {
-//            var item := en.get();
-//            if (nil == maximal)
-//            {
-//                maximal := item
-//            }
-//            else if (maximal > item)
-//            {
-//                maximal := item
-//            }
-//        };
-//        
-//        ^ maximal   
-//    }
+    get MaximalMember()
+    {
+        auto en := cast Enumerator(self.enumerator());
+        
+        object maximal := nil;
+        while (en.next())
+        {
+            var item := en.get();
+            if (nil == maximal)
+            {
+                maximal := item
+            }
+            else if (maximal < item)
+            {
+                maximal := item
+            }
+        };
+        
+        ^ maximal   
+    }
+    
+    get MinimalMember()
+    {
+        auto en := cast Enumerator(self.enumerator());
+        
+        object maximal := nil;
+        while (en.next())
+        {
+            var item := en.get();
+            if (nil == maximal)
+            {
+                maximal := item
+            }
+            else if (maximal > item)
+            {
+                maximal := item
+            }
+        };
+        
+        ^ maximal   
+    }
     
     get LastMember()
     {
@@ -297,23 +297,23 @@ public extension enumerableOp
 //        
 //        ^ counter
 //    }
-//    
-//    allMatchedBy(Func1 f)
-//    {
-//        auto   en := cast Enumerator(self.enumerator());
-//        while (en.next())
-//        {
-//            ifnot (f(en.get()))
-//            {
-//                ^ false
-//            }
-//        };
-//        
-//        ^ true
-//    }
-//    
-////    allMatchedBy(ExtensionMessage extMessage)
-////        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
+    
+    allMatchedBy(Func1 f)
+    {
+        auto   en := cast Enumerator(self.enumerator());
+        while (en.next())
+        {
+            ifnot (f(en.get()))
+            {
+                ^ false
+            }
+        };
+        
+        ^ true
+    }
+    
+//    allMatchedBy(ExtensionMessage extMessage)
+//        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
 
     summarize(var)
     {
@@ -346,17 +346,17 @@ public extension enumerableOp
     repeatTill(n)
         = RangeEnumerator.new(self, n - 1, 1);
 
-////    repeatTo:n
-////        = RangeEnumerator from:self to:n by:1.
-//
-//    top(counter)
-//        = new TopFilter(cast int(counter), cast Enumerator(self.enumerator()));
+//    repeatTo:n
+//        = RangeEnumerator from:self to:n by:1.
+
+    top(counter)
+        = TopFilter.new(cast int(counter), cast Enumerator(self.enumerator()));
+        
+//    till:max repeat:aRepeater
+//        = Repeater new(self, max, aRepeater).
 //        
-////    till:max repeat:aRepeater
-////        = Repeater new(self, max, aRepeater).
-////        
-////    to:max repeat:aRepeater
-////        = Repeater new(self, max + 1, aRepeater).
+//    to:max repeat:aRepeater
+//        = Repeater new(self, max + 1, aRepeater).
         
     accumulate(variable, operation)
     {
@@ -374,14 +374,14 @@ public extension enumerableOp
     zipForEach(enumerable, func2)
         = self.zipBy(enumerable, func2).forEach:idleFunc1;
         
-//    orderBy(orderFunc)
-//        = OrderingEnumerator.new(orderFunc, cast Enumerator(self.enumerator()));
-//        
-//    groupBy(groupFunc)
-//        = GroupingEnumerator.new(groupFunc, cast Enumerator(self.enumerator()));
-//        
-////    join(object list) on(Func2 filter_f) selectBy(Func2 select_f)
-////        = JoinEnumerator new(filter_f, select_f, T<Enumerator>(self enumerator), T<Enumerator>(list enumerator)).        
+    orderBy(orderFunc)
+        = OrderingEnumerator.new(orderFunc, cast Enumerator(self.enumerator()));
+        
+    groupBy(groupFunc)
+        = GroupingEnumerator.new(groupFunc, cast Enumerator(self.enumerator()));
+        
+//    join(object list) on(Func2 filter_f) selectBy(Func2 select_f)
+//        = JoinEnumerator new(filter_f, select_f, T<Enumerator>(self enumerator), T<Enumerator>(list enumerator)).        
 }
 
 // --- indexableOp ---
@@ -495,27 +495,27 @@ public extension indexableOp
     populate(action)
         = self.populate:(int n){ ^action(n) };
 
-//    bool isSorted(Func2 compareFunc)
-//    {
-//        auto it := cast Indexer(self.indexer());
-//        if (it.Available)
-//        {
-//            var previous := it.get();
-//            it.appendIndex:1;
-//            while (it.Available)
-//            {
-//                ifnot (compareFunc(previous, it.get()))
-//                {
-//                    ^ false
-//                };
-//                
-//                previous := it.get();
-//                it.appendIndex:1
-//            }
-//        };
-//        
-//        ^ true
-//    }
+    bool isSorted(Func2 compareFunc)
+    {
+        auto it := cast Indexer(self.indexer());
+        if (it.Available)
+        {
+            var previous := it.get();
+            it.appendIndex:1;
+            while (it.Available)
+            {
+                ifnot (compareFunc(previous, it.get()))
+                {
+                    ^ false
+                };
+                
+                previous := it.get();
+                it.appendIndex:1
+            }
+        };
+        
+        ^ true
+    }
 
     sort(Func2 compareFunc)
     {
@@ -532,9 +532,9 @@ public extension indexableOp
         ^ copy.sort(ifOrdered)
     }
 
-//    isAscendant()
-//        = self.isSorted(ifOrdered);
-//
+    isAscendant()
+        = self.isSorted(ifOrdered);
+
 //    Subarray(int index, int length)
 //    {
 //        auto it := cast Indexer(self.indexer());

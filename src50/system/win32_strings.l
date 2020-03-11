@@ -82,30 +82,30 @@ public extension caseStringOp : String
         ^ retVal
     }
     
-//    string lowerCase()
-//    {
-//        string retVal := emptyString;
-//        int    index := 0;
-//        char   current := $0;
-//        char   converted := $0;
-//        int    currentLen := 0;
-//        
-//        int     length := self.Length;
-//        
-//        while (index < length)
-//        {
-//            self.read(index, ref current);
-//            currentLen := current.Length;
-//            
-//            converted := characterController.toLowerCase(current);
-//            
-//            retVal := retVal.add(converted);
-//            
-//            index := index + currentLen
-//        };
-//            
-//        ^ retVal
-//    }
+    string lowerCase()
+    {
+        string retVal := emptyString;
+        int    index := 0;
+        char   current := $0;
+        char   converted := $0;
+        int    currentLen := 0;
+        
+        int     length := self.Length;
+        
+        while (index < length)
+        {
+            self.read(index, ref current);
+            currentLen := current.Length;
+            
+            converted := characterController.toLowerCase(current);
+            
+            retVal := retVal.add(converted);
+            
+            index := index + currentLen
+        };
+            
+        ^ retVal
+    }
 }
 
 //// --- caseLitrealOp ---

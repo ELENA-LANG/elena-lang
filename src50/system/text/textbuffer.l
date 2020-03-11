@@ -50,7 +50,7 @@ namespace text
         string Value
             = String.copy(0, theLength.Value, theBuffer);
     
-        get string toPrintable()
+        string toPrintable()
             = self.Value;
     
     ////    cast T<wide>

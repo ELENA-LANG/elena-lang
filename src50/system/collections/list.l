@@ -689,34 +689,34 @@ namespace collections
             theLength.append(1)
         }
         
-//        appendRange(subarray)
-//        {
-//            if (nil != subarray)
-//            {
-//                int len := subarray.Length;
-//                for(int i := 0, i < len, i += 1)
-//                {
-//                    self.append(subarray.at(i))
-//                }
-//            }
-//        }
-//    
-//        appendRange(Indexable indexable)
-//        {
-//            if (nil != indexable)
-//            {
-//                int len := indexable.Length;
-//                Indexer it := indexable.indexer();
-//                
-//                while (it.Available)
-//                {       
-//                    self.append(it.get());
-//                    
-//                    it.appendIndex(1)
-//                }
-//            }
-//        }
-//                    
+        appendRange(subarray)
+        {
+            if (nil != subarray)
+            {
+                int len := subarray.Length;
+                for(int i := 0, i < len, i += 1)
+                {
+                    self.append(subarray.at(i))
+                }
+            }
+        }
+    
+        appendRange(Indexable indexable)
+        {
+            if (nil != indexable)
+            {
+                int len := indexable.Length;
+                Indexer it := indexable.indexer();
+                
+                while (it.Available)
+                {       
+                    self.append(it.get());
+                    
+                    it.appendIndex(1)
+                }
+            }
+        }
+                    
 //    //    /// Inserts a new object to the specified position
 //    //    insert(int anIndex, object anObject)
 //    //    [

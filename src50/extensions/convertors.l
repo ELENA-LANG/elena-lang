@@ -36,9 +36,9 @@ singleton stringExConvertor
 {
 ////    literal convert(RealMatrix a)
 ////        = realmatrixExConvertor toLiteral(a).
-//
-//    string convert(IntMatrix a)
-//        = intmatrixExConvertor.toString(a);
+
+    string convert(IntMatrix a)
+        = intmatrixExConvertor.toString(a);
 
     string convert(Indexer it)
     {
@@ -203,43 +203,43 @@ singleton stringExConvertor
 //////        ^ IntArray new int:(alist length); set every: (&int:i)[ alist getAt int:i; toInt ]
 //////    ]
 ////}
-//
-//public singleton intmatrixExConvertor
-//{
-////    convert(Array a)
-////    [
-////        int n := a length.
-////        int m := a[0] length.
-////        
-////        ^ IntMatrix new(n, m); populate(:i:j)<int,int,int>( a getAt(i); toArray; getAt(j); toInt ).
-////    ]
-//    
-//    toString(IntMatrix matrix)
-//    {
-//        auto output := new TextBuilder();
+
+public singleton intmatrixExConvertor
+{
+//    convert(Array a)
+//    [
+//        int n := a length.
+//        int m := a[0] length.
 //        
-//        int l := 0;
-//        matrix.readLengthsTo(ref int n, ref int m);
-//        
-//        for (int i := 0, i < n, i += 1)
-//        {
-//            for (int j := 0, j < m, j += 1)
-//            {
-//                matrix.read(i, j, ref int r);
-//                
-//                output.write:r.write:","
-//            };
-//            l := output.Length;
-//            l -= 1;
-//            output.Length := l;
-//            
-//            output.write(forward newLine)
-//        };
-//        
-//        ^ output.Value
-//    }
-//}
-//
+//        ^ IntMatrix new(n, m); populate(:i:j)<int,int,int>( a getAt(i); toArray; getAt(j); toInt ).
+//    ]
+    
+    toString(IntMatrix matrix)
+    {
+        auto output := new TextBuilder();
+        
+        int l := 0;
+        matrix.readLengthsTo(ref int n, ref int m);
+        
+        for (int i := 0, i < n, i += 1)
+        {
+            for (int j := 0, j < m, j += 1)
+            {
+                matrix.read(i, j, ref int r);
+                
+                output.write:r.write:","
+            };
+            l := output.Length;
+            l -= 1;
+            output.Length := l;
+            
+            output.write(forward newLine)
+        };
+        
+        ^ output.Value
+    }
+}
+
 ////public singleton realmatrixExConvertor
 ////{
 ////    convert(Array a)

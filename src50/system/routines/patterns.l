@@ -656,58 +656,58 @@ public class RangeEnumerator : Enumerator
 //    enumerable = theVariable.
 //}
 
-//// --- GroupingEnumerator ---
-//
-//public class GroupingEnumerator : Enumerator
-//{
-//    Dictionary theDictionary;
-//    Enumerator theEnumerator;
-//    Func1      theGroupFunc;   
-//    Enumerator theGroupEnumerator;
-//    
-//    constructor new(Func1 grouper, Enumerator enumerator)
-//    {
-//        theGroupFunc := grouper;
-//        theDictionary := new Dictionary();
-//        theEnumerator := enumerator;
-//        
-//        self.reset()
-//    }
-//    
-////    constructor new(ExtensionMessage fn, Enumerator enumerator)
-////        <= new((:x)(x~fn eval), enumerator).
-//    
-//    reset()
-//    {
-//        theEnumerator.reset();
-//        
-//        while (theEnumerator.next())
-//        {
-//            var item := theEnumerator.get();
-//            var key := theGroupFunc(item);
-//            
-//            var groupItem := theDictionary[key];
-//            if (nil == groupItem)
-//            {
-//                groupItem := new ArrayList();
-//                
-//                theDictionary[key] := groupItem
-//            };
-//            
-//            groupItem.append:item
-//        };
-//        
-//        theGroupEnumerator := theDictionary.enumerator();
-//    }
-//    
-//    get() = theGroupEnumerator.get();
-//    
-//    bool next()
-//        = theGroupEnumerator.next();
-//        
-//    enumerable()
-//        => theEnumerator;
-//}
+// --- GroupingEnumerator ---
+
+public class GroupingEnumerator : Enumerator
+{
+    Dictionary theDictionary;
+    Enumerator theEnumerator;
+    Func1      theGroupFunc;   
+    Enumerator theGroupEnumerator;
+    
+    constructor new(Func1 grouper, Enumerator enumerator)
+    {
+        theGroupFunc := grouper;
+        theDictionary := Dictionary.new();
+        theEnumerator := enumerator;
+        
+        self.reset()
+    }
+    
+//    constructor new(ExtensionMessage fn, Enumerator enumerator)
+//        <= new((:x)(x~fn eval), enumerator).
+    
+    reset()
+    {
+        theEnumerator.reset();
+        
+        while (theEnumerator.next())
+        {
+            var item := theEnumerator.get();
+            var key := theGroupFunc(item);
+            
+            var groupItem := theDictionary[key];
+            if (nil == groupItem)
+            {
+                groupItem := new ArrayList();
+                
+                theDictionary[key] := groupItem
+            };
+            
+            groupItem.append:item
+        };
+        
+        theGroupEnumerator := theDictionary.enumerator();
+    }
+    
+    get() = theGroupEnumerator.get();
+    
+    bool next()
+        = theGroupEnumerator.next();
+        
+    enumerable()
+        => theEnumerator;
+}
 
 // --- OrderingEnumerator ---
 
