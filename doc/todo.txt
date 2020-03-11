@@ -10,7 +10,6 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : Zero to the zero power
                 * rosetta code samples : Word wrap
                 * rosetta code samples : Wireworld
                 * rosetta code samples : Walk a directory/Non-recursively

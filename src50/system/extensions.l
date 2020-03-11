@@ -362,20 +362,20 @@ public extension intOp : IntNumber
         ^ n
     }
 
-//    int power(int y)
-//    {
-//        int x := self;
-//        int r := 1;
-//        if (x == 0)
-//            { r := 0 };
-//        
-//        for(int i := 0, i < y, i += 1)
-//        {
-//            r := r * x
-//        };
-//        
-//        ^ r
-//    }
+    int power(int y)
+    {
+        int x := self;
+        int r := 1;
+        if (x == 0)
+            { r := 0 };
+        
+        for(int i := 0, i < y, i += 1)
+        {
+            r := r * x
+        };
+        
+        ^ r
+    }
   
     int mod(int y)
     {
@@ -428,8 +428,8 @@ public extension intOp : IntNumber
         ^ n
     }
 
-//    power(n)
-//        = self.power(cast int(n));
+    power(n)
+        = self.power(cast int(n));
                 
     bool isOdd()
         = (self && 1) != 0;
@@ -524,19 +524,19 @@ public extension longOp : LongNumber
         ^ new LongNumber(x - z)
     }
     
-//    long power(long y)
-//    {
-//        long x := self;
-//        long r := 1;
-//        
-//        for(long i := 0l, i < y, i += 1l)
-//        {
-//            r := r * x;
-//        };
-//        
-//        ^ new LongNumber(r)
-//    }
-//    
+    long power(long y)
+    {
+        long x := self;
+        long r := 1;
+        
+        for(long i := 0l, i < y, i += 1l)
+        {
+            r := r * x;
+        };
+        
+        ^ new LongNumber(r)
+    }
+    
 ////    long power(int y)
 ////    [
 ////        long x := self.
@@ -569,21 +569,21 @@ public extension longOp : LongNumber
     bool isOdd()
         = self.mod:2l != 0;
         
-//    bool isEven()
-//        = self.mod:2l == 0;
-//        
-//    bool isZero()
-//        = self.equal(0l);
-//        
-//    bool isPositive()
-//        = self > 0l;
-//        
-//    bool isNegative()
-//        = self < 0l;
-//        
-//    bool isNonnegative()
-//        = self <= 0l;
-//
+    bool isEven()
+        = self.mod:2l == 0;
+        
+    bool isZero()
+        = self.equal(0l);
+        
+    bool isPositive()
+        = self > 0l;
+        
+    bool isNegative()
+        = self < 0l;
+        
+    bool isNonnegative()
+        = self <= 0l;
+
 ////    int high
 ////    [
 ////        long aWord := self.
@@ -617,14 +617,14 @@ public extension realOp : RealNumber
         }
     }
     
-//    get real Absolute()
-//    {
-//        real n := self;        
-//        real retVal := realOpController.abs(n);
-//        
-//        ^ retVal
-//    }
-//        
+    get real Absolute()
+    {
+        real n := self;        
+        real retVal := realOpController.abs(n);
+        
+        ^ retVal
+    }
+        
     real exp()
     {
         real n := self;        
