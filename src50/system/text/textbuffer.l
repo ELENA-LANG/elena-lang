@@ -55,16 +55,16 @@ namespace text
     
     ////    cast T<wide>
     ////        = WideLiteralValue new(0, T<int>(theLength), theBuffer).
-    //
-    //    writeLine()
-    //    {
-    //        self.write(forward newLine)
-    //    }
-    //
-    //    append(line)
-    //    {
-    //        self.write:line
-    //    }
+
+        writeLine()
+        {
+            self.write(forward newLine)
+        }
+    
+        append(line)
+        {
+            self.write:line
+        }
                                         
         private reserve(int len)
         {

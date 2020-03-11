@@ -10,11 +10,6 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : Word wrap
-                * rosetta code samples : Wireworld
-                * rosetta code samples : Walk a directory/Non-recursively
-                * rosetta code samples : Variables
-                * rosetta code samples : UTF-8 encode and decode 
                 * rosetta code samples : Unbias a random generator
                 * rosetta code samples : Twelve statements
                 * rosetta code samples : Truncate a file
@@ -46,6 +41,7 @@ In development:
                 * rosetta code samples : Anagrams
                 * rosetta code samples : Hailstone sequence
                 * rosetta code samples : Amicable pairs
+                * rosetta code samples : Wireworld
                 * rosetta code samples : World Cup group stage
                 * rosetta code samples : Zeckendorf arithmetic
                 * rosetta code samples : Zeckendorf number representation

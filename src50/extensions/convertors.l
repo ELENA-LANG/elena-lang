@@ -155,16 +155,16 @@ singleton stringExConvertor
 ////////        ^ anOutput wide
 ////////    ]
 ////////}.
-//
-//public singleton byteArrayExConvertor
-//{
-//    byte[] convert(string s)
-//        = UTF8Encoder.toByteArray(0, s.Length, s);
-//    
-//    byte[] convert(wide s)
-//        = UTF16Encoder.toByteArray(0, s.Length, s);
-//}
-//
+
+public singleton byteArrayExConvertor
+{
+    byte[] convert(string s)
+        = UTF8Encoder.toByteArray(0, s.Length, s);
+    
+    byte[] convert(wide s)
+        = UTF16Encoder.toByteArray(0, s.Length, s);
+}
+
 ////public singleton intarrayConvertorEx
 ////{
 ////    T<IntArray> convert(Enumerator<int> e)
@@ -358,10 +358,10 @@ public extension convertorOp
 
 ////    T<IntArray> toIntArray
 ////        = intarrayConvertorEx convert:self.
-//    
-//    byte[] toByteArray()
-//        = byteArrayExConvertor.convert:self;
-//    
+    
+    byte[] toByteArray()
+        = byteArrayExConvertor.convert:self;
+    
 ////    T<IntMatrix> toIntMatrix
 ////        = intmatrixExConvertor convert:self.
     

@@ -178,6 +178,9 @@ namespace text
     
         constructor(string s, int count)
         {
+            theValue := emptyString;
+            theNewLine := forward newLine;
+            
             for (int i := 0, i < count, i += 1)
             {
                 self.append(s);
