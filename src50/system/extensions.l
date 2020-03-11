@@ -1157,14 +1157,14 @@ public extension stringOp : String
         }    
     }
 
-////    indexOf : anObject
-////        = self indexOf:anObject at:0.
-////
-//    int indexOf(string s)
-//        = self.indexOf(0, s);
+//    indexOf : anObject
+//        = self indexOf:anObject at:0.
 //
-//    int indexOf(char ch)
-//        = self.indexOf(0, ch);
+    int indexOf(string s)
+        = self.indexOf(0, s);
+
+    int indexOf(char ch)
+        = self.indexOf(0, ch);
         
     string Substring(index)
         = self.Substring(cast int(index));
