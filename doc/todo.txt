@@ -10,8 +10,6 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : Trabb Pardo-Knuth algorithm
-                * rosetta code samples : String prepend
                 * rosetta code samples : String length
                 * rosetta code samples : String case
                 * rosetta code samples : Sort disjoint sublist
@@ -41,6 +39,7 @@ In development:
                 * rosetta code samples : Zeckendorf number representation
                 * rosetta code samples : Zhang-Suen thinning algorithm
                 * Amicable pairs using yield method
+                * rosetta code samples : Trabb Pardo-Knuth algorithm
                 * migrate changes from core to corex
                 * anagram sample with corex
                 * collatz sample

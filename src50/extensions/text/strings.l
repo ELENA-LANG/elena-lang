@@ -213,10 +213,10 @@ namespace text
         append(char ch)
             <= write(ch); 
         
-    //    insert:s at:index
-    //    [
-    //        theValue := theValue insert:s at:index.
-    //    ]
+        insert(index, s)
+        {
+            theValue := theValue.insert(index, s)
+        }
     
         replace(string s, string s2)
         {
