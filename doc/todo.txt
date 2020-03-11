@@ -10,7 +10,6 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : String length
                 * rosetta code samples : String case
                 * rosetta code samples : Sort disjoint sublist
                 * rosetta code samples : Sort three variables

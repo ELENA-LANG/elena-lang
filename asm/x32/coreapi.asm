@@ -3644,6 +3644,79 @@ err2:
 
 end
 
+procedure coreapi'ws_encodew
+
+  mov  ebx, [esp+8]
+  mov  esi, [esp+4]
+  mov  ecx, [ebx]
+  mov  edi, [esp+16]
+  mov  eax, [esp+12]
+
+  push edi
+  add  eax, ebx
+  push eax
+  push ebx
+
+labNext:
+  mov  ebx, dword ptr [eax]
+  add  eax, 2
+  and  ebx, 0FFFFh
+  cmp  ebx, 0D800h
+  jl   short lab1
+  cmp  ebx, 0DBFFh
+  jg   short err2
+
+  sub  ecx, 2
+  jl   short err
+
+  mov  esi, ebx
+  shl  esi, 10
+  mov  ebx, dword ptr [eax]
+  add  eax, 2
+  and  ebx, 0FFFFh
+  cmp  ebx, 0DC00h
+  jl   short lab2
+  cmp  ebx, 0DFFFh
+  jg   short err2
+  
+lab2:
+  add  ebx, esi
+  sub  ebx, 35FDC00h
+
+lab1:
+  mov  esi, ebx
+  sub  ecx, 2
+
+labSave:
+  mov  [edi], esi
+  add  edi, 4
+
+  test ecx, ecx
+  jnz  labNext
+
+err:
+  pop  ebx
+  mov  edx, eax
+  pop  eax
+  sub  edx, eax
+  mov  ecx, edi
+  pop  edi
+  sub  ecx, edi
+  shr  ecx, 2
+  mov  eax, [esp+20]
+  mov  [eax], ecx
+  mov  esi, [esp+8]
+  mov  [esi], edx
+
+  ret
+  
+err2:
+  add  esp, 12
+  xor  ebx, ebx
+  ret 
+
+end
+
 // ; s_decode(index,out length, src, dst, out len2)
 procedure coreapi's_decode
 
@@ -3765,6 +3838,85 @@ err:
 end
 
 procedure coreapi'ws_decode
+
+   mov  ebx, [esp+8]
+   mov  esi, [esp+4]
+   mov  ecx, [ebx]
+   mov  edi, [esp+16]
+   mov  ebx, [esi]
+   mov  eax, [esp+12]
+
+   push edi
+   lea  eax, [eax + ebx * 4]
+   push eax
+   push ebx
+
+labNext:
+   mov  ebx, [eax]
+   cmp  ebx, dword ptr 128
+   jl   short labCH1
+
+   cmp  ebx, 0800h
+   jl   short lab1
+
+   sub  ecx, 2
+   jl   short err
+
+   mov  edx, ebx
+   shr  edx, 10
+   add  edx, 0D7C0h
+   mov  word ptr [edi], dx
+   add  edi, 2
+
+   mov  edx, ebx
+   and  edx, 03FFh
+   add  edx, 0DC00h
+   mov  word ptr [edi], dx
+   add  edi, 2
+   jmp  short labSave
+   
+lab1:
+   mov  word ptr [edi], bx
+   add  edi, 2
+   sub  ecx, 1
+   jmp  short labSave
+
+labCH1:
+   mov  word ptr [edi], bx
+   add  edi, 2
+   sub  ecx, 1
+      
+labSave:
+   add  eax, 4
+   test ecx, ecx
+   jnz  labNext
+
+err:
+   pop  ebx
+   mov  edx, eax
+   pop  eax
+   sub  edx, eax
+   shr  edx, 2
+   mov  ecx, edi
+   pop  edi
+   sub  ecx, edi
+   shr  ecx, 1
+   mov  eax, [esp+20]
+   mov  [eax], ecx
+   mov  esi, [esp+8]
+   mov  [esi], edx
+   mov  ebx, eax
+
+   ret
+  
+err2:
+   add  esp, 12
+   xor  ebx, ebx
+   ret    
+
+end
+
+procedure coreapi'ws_decodew
 
    mov  ebx, [esp+8]
    mov  esi, [esp+4]

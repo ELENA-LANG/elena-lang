@@ -239,17 +239,17 @@ namespace text
     //    charCount(wide aLiteral, ref<int> aRetVal)
     //        => system'core_routines'__utf16encoder.
             
+        convert(int index, int size, short[] array, char[] output, ref int outputLength)
+            => system'core_routines'__utf16encoder;
+            
+        convert(int index, int size, char[] array, short[] output, ref int outputLength)
+            => intern system'core_routines'__utf16encoder;
+            
         convert(int index, int length, wide s, short[] array)
         {
             s.saveToShortArray(index, array, length)
         }
     
-//        convert(int index, int size, short[] array, char[] output, ref int outputLength)
-//            => system'core_routines'__utf16encoder;
-            
-        convert(int index, int size, char[] array, short[] output, ref int outputLength)
-            => intern system'core_routines'__utf16encoder;
-            
         convert(int index, ref int size, string s, short[] output, ref int outputLength)
         {
             char temp[64];
