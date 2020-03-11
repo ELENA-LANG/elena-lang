@@ -3580,7 +3580,7 @@ procedure coreapi'ws_encode
   mov  eax, [esp+12]
 
   push edi
-  add  eax, ebx
+  add  eax, [esi]
   push eax
   push ebx
 
@@ -3650,10 +3650,12 @@ procedure coreapi'ws_encodew
   mov  esi, [esp+4]
   mov  ecx, [ebx]
   mov  edi, [esp+16]
+  shl  ecx, 1
   mov  eax, [esp+12]
 
   push edi
-  add  eax, ebx
+  add  eax, [esi]
+  add  eax, [esi]
   push eax
   push ebx
 
@@ -3705,8 +3707,6 @@ err:
   shr  ecx, 2
   mov  eax, [esp+20]
   mov  [eax], ecx
-  mov  esi, [esp+8]
-  mov  [esi], edx
 
   ret
   

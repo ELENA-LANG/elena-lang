@@ -240,7 +240,7 @@ namespace text
     //        => system'core_routines'__utf16encoder.
             
         convert(int index, int size, short[] array, char[] output, ref int outputLength)
-            => system'core_routines'__utf16encoder;
+            => intern system'core_routines'__utf16encoder;
             
         convert(int index, int size, char[] array, short[] output, ref int outputLength)
             => intern system'core_routines'__utf16encoder;
