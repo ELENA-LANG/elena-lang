@@ -391,153 +391,153 @@ public sealed Matrix<T>
 ////    ]
 }
 
-//// === basic memory classes ===
-//
-//// --- BitArray ---
-//
-//public sealed class BitArray
-//{
-//    int[] theArray;
-//    int   theLength;
+// === basic memory classes ===
+
+// --- BitArray ---
+
+public sealed class BitArray
+{
+    int[] theArray;
+    int   theLength;
+    
+    /// Creates the array with the specified length
+    constructor allocate(int length)
+    {
+        theLength := length;
+        theArray := new int[](length / 32 + 1)
+    }
+    
+    int Length
+    {
+        get()
+        {
+            ^ theLength
+        }
+    }
+    
+    at(index)
+        = self.at(cast int(index));
+    
+    bool at(int index)
+    {
+        int arr_index := index / 32;
+        int bit_index := arr_index * 32;
+        bit_index := index - arr_index;
+        
+        int bit_mask := 1;
+        if (bit_index != 0)
+            { bit_mask := bit_mask $shl bit_index };
+        
+        int bits := theArray[arr_index];
+        
+        ^ (bits && bit_mask) != 0
+    }
+
+//    setAt:index:value
+//    [
+//        $self setAt int:index bool:value.
+//    ]
+    
+    setAt(int index, bool value)
+    {
+        int arr_index := index / 32;
+        int bit_index := arr_index * 32;
+        bit_index := index - arr_index;
+        
+        int bit_mask := 1;
+        if (bit_index != 0)
+            { bit_mask := bit_mask $shl bit_index };
+        
+        int bits := theArray[arr_index];
+        
+        if(value)
+        { 
+            bits := bits || bit_mask 
+        }
+        else
+        {  
+            bit_mask := bit_mask.Inverted;
+            
+            bits := bits && bit_mask
+        };
+            
+        theArray[arr_index] := bits
+    }
+    
+    /// Returns the array enumerator
+    Enumerator<bool> enumerator() = new BitArrayEnumerator(self);
+
+    /// Returns the array indexer
+    Indexer<bool> indexer() = new BitArrayIndexer(self);
+}
+
+// --- BitArray32 ---
+
+public sealed class BitArray32
+{
+    int theValue;
+    
+    constructor load(int value)
+    {
+        theValue := value
+    }
+    
+//    constructor new:value
+//        <= new int:value.
+    
+    int Length = 32;
+    
+    write(int value)
+    {
+        theValue := value
+    }
 //    
-//    /// Creates the array with the specified length
-//    constructor allocate(int length)
-//    {
-//        theLength := length;
-//        theArray := new int[](length / 32 + 1)
-//    }
-//    
-//    Length
-//    {
-//        int get()
-//        {
-//            ^ theLength
-//        }
-//    }
-//    
-//    at(index)
-//        = self.at(cast int(index));
-//    
-//    bool at(int index)
-//    {
-//        int arr_index := index / 32;
-//        int bit_index := arr_index * 32;
-//        bit_index := index - arr_index;
-//        
-//        int bit_mask := 1;
-//        if (bit_index != 0)
-//            { bit_mask := bit_mask $shl bit_index };
-//        
-//        int bits := theArray[arr_index];
-//        
-//        ^ (bits && bit_mask) != 0
-//    }
-//
-////    setAt:index:value
-////    [
-////        $self setAt int:index bool:value.
-////    ]
-//    
-//    setAt(int index, bool value)
-//    {
-//        int arr_index := index / 32;
-//        int bit_index := arr_index * 32;
-//        bit_index := index - arr_index;
-//        
-//        int bit_mask := 1;
-//        if (bit_index != 0)
-//            { bit_mask := bit_mask $shl bit_index };
-//        
-//        int bits := theArray[arr_index];
-//        
-//        if(value)
-//        { 
-//            bits := bits || bit_mask 
-//        }
-//        else
-//        {  
-//            bit_mask := bit_mask.Inverted;
-//            
-//            bits := bits && bit_mask
-//        };
-//            
-//        theArray[arr_index] := bits
-//    }
-//    
-//    /// Returns the array enumerator
-//    Enumerator<bool> enumerator() = new BitArrayEnumerator(self);
-//
-//    /// Returns the array indexer
-//    Indexer<bool> indexer() = new BitArrayIndexer(self);
-//}
-//
-//// --- BitArray32 ---
-//
-//public sealed class BitArray32
-//{
-//    int theValue;
-//    
-//    constructor load(int value)
-//    {
-//        theValue := value
-//    }
-//    
-////    constructor new:value
-////        <= new int:value.
-//    
-//    int Length = 32;
-//    
-//    write(int value)
-//    {
-//        theValue := value
-//    }
-////    
-////    write : value
-////    [
-////        value cast:%write to:$self.
-////    ]
-//    
-////    getAt:index
-////        = $self getAt int:index.
-//    
-//    bool at(int index)
-//    {
-//        int bit_mask := 1;
-//        if (index != 0)
-//            { bit_mask := bit_mask $shl index };
-//        
-//        ^ (theValue && bit_mask) != 0
-//    }
-//    
-////    setAt:index:value
-////    [
-////        $self setAt int:index bool:value.
-////    ]
-//    
-//    setAt(int index, bool value)
-//    {
-//        int bit_mask := 1;
-//        if (index != 0)
-//            { bit_mask := bit_mask $shl index };
-//        
-//        if(value)
-//        { 
-//            theValue := theValue || bit_mask 
-//        }
-//        else
-//        {  
-//            bit_mask := bit_mask.Inverted;
-//            
-//            theValue := theValue && bit_mask
-//        }
-//    }
-//    
-//    /// Returns the array enumerator
-//    Enumerator<bool> enumerator() = new BitArray32Enumerator(self);
-//
-//    /// Returns the array indexer
-//    Indexer<bool> indexer() = new BitArray32Indexer(self);
-//}
+//    write : value
+//    [
+//        value cast:%write to:$self.
+//    ]
+    
+//    getAt:index
+//        = $self getAt int:index.
+    
+    bool at(int index)
+    {
+        int bit_mask := 1;
+        if (index != 0)
+            { bit_mask := bit_mask $shl index };
+        
+        ^ (theValue && bit_mask) != 0
+    }
+    
+//    setAt:index:value
+//    [
+//        $self setAt int:index bool:value.
+//    ]
+    
+    setAt(int index, bool value)
+    {
+        int bit_mask := 1;
+        if (index != 0)
+            { bit_mask := bit_mask $shl index };
+        
+        if(value)
+        { 
+            theValue := theValue || bit_mask 
+        }
+        else
+        {  
+            bit_mask := bit_mask.Inverted;
+            
+            theValue := theValue && bit_mask
+        }
+    }
+    
+    /// Returns the array enumerator
+    Enumerator<bool> enumerator() = new BitArray32Enumerator(self);
+
+    /// Returns the array indexer
+    Indexer<bool> indexer() = new BitArray32Indexer(self);
+}
 
 // --- IntMatrix ---
 
@@ -2370,243 +2370,243 @@ class ArrayEnumerator : Enumerator
     enumerable() = theArray;
 }
 
-//// --- BitArrayIndexer ---
-//
-///// An array indexer
-//class BitArrayIndexer : Indexer<bool>
-//{
-//    BitArray theArray;
-//    ref<int> theIndex;
-//
-//    /// Returns the parameter indexer
-//    constructor(BitArray anArray)
-//    {
-//        theArray := anArray;
-//        theIndex := 0
-//    }
-//    
-//    /// Returns false if the index out of range
-//    get bool Available()
-//    {
-//        int length := theArray.Length;
-//        int index := theIndex.Value;
-//        
-//        ^ index < length
-//    }
-//
-//    /// Returns the current member
-//    bool get()
-//    {
-//        int index := theIndex.Value;
-//        
-//        ^ theArray.at(index)
-//    }
-//    
-//    /// Sets the current member
-//    set(bool val)
-//    {
-//        int index := theIndex.Value;
-//        
-//        theArray.setAt(theIndex, val)
-//    }
-//    
-//    Index
-//    {
-//        /// Reads the current index and saves it into an output parameter
-//        int get()
-//        {
-//            theIndex.readValueTo(ref int retVal);
-//            
-//            ^ retVal
-//        }
-//        
-//        /// Sets the index by specified value
-//        set(int val)
-//        {
-//            theIndex.Value := val
-//        }
-//    }
-//    
-//    appendIndex(int val)
-//    {
-//        theIndex.append(val)
-//    }
-//    
-//    Length
-//    {
-//        /// Reads the length to the output parameter    
-//        int get()
-//        {
-//            int retVal := theArray.Length;
-//            
-//            ^ retVal
-//        }
-//    }
-//        
-//    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };        
-//}
-//
-//// --- BitArrayEnumerator ---
-//
-///// An array enumerator
-//class BitArrayEnumerator : Enumerator<bool>
-//{
-//    BitArray theArray;
-//    ref<int> theIndex;
-//    
-//    /// Creates an array enumerator
-//    constructor(BitArray a)
-//    {
-//        theArray := a;
-//        theIndex := -1
-//    }
-//
-//    /// Resets the enumerator
-//    reset()
-//    {
-//        theIndex.Value := -1
-//    }
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next()
-//    {
-//        int length := theArray.Length;
-//        
-//        theIndex.append(1);
-//        
-//        int index := theIndex.Value;
-//
-//        ^ index < length
-//    }
-//    
-//    /// Returns the current object
-//    bool get()
-//    {
-//        int index := theIndex.Value;
-//        
-//        ^ theArray.at(index)
-//    }
-//        
-//    enumerable() = theArray;
-//    
-//    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
-//}
-//
-//// --- BitArray32Indexer ---
-//
-///// An array indexer
-//class BitArray32Indexer : Indexer<bool>
-//{
-//    BitArray32 theArray;
-//    ref<int>   theIndex;
-//
-//    /// Returns the parameter indexer
-//    constructor(BitArray32 bs)
-//    {
-//        theArray := bs;
-//        theIndex := 0
-//    }
-//    
-//    /// Returns false if the index out of range
-//    get bool Available()
-//    {
-//        int index := theIndex;
-//        
-//        ^ index < 32
-//    }
-//
-//    /// Returns the current member
-//    bool get()
-//    {
-//        int index := theIndex;
-//        
-//        ^ theArray.at(index)
-//    }
-//    
-//    /// Sets the current member
-//    set(bool val)
-//    {
-//        int index := theIndex;
-//        
-//        theArray.setAt(index, val)
-//    }
-//
-//    Index
-//    {    
-//        /// Reads the current index and saves it into an output parameter
-//        int get()
-//        {
-//            theIndex.readValueTo(ref int retVal);
-//            
-//            ^ retVal
-//        }
-//        
-//        /// Sets the index by specified value
-//        set(int val)
-//        {
-//            theIndex.Value := val
-//        }
-//    }
-//    
-//    appendIndex(int val)
-//    {
-//        theIndex.append(val)
-//    }
-//    
-//    Length
-//    {
-//        /// Reads the length to the output parameter    
-//        int get()
-//            => theArray;
-//    }
-//        
-//    Indexer cast() = new Indexer::{ embeddable dispatch() => self; };        
-//}
-//
-//// --- BitArray32Enumerator ---
-//
-///// An array enumerator
-//class BitArray32Enumerator : Enumerator<bool>
-//{
-//    BitArray32 theArray;
-//    ref<int>   theIndex;
-//    
-//    /// Creates an array enumerator
-//    constructor(BitArray32 bs)
-//    {
-//        theArray := bs;
-//        theIndex := -1
-//    }
-//
-//    /// Resets the enumerator
-//    reset()
-//    {
-//        theIndex.Value := -1
-//    }
-//
-//    /// Goes to the next enumeration member and returns true if it is not the last member
-//    bool next()
-//    {
-//        theIndex.append(1);
-//
-//        int index := theIndex;
-//
-//        ^ index < 32
-//    }
-//    
-//    /// Returns the current object
-//    bool get()
-//    {
-//        int index := theIndex;
-//        
-//        ^ theArray.at(index)
-//    }
-//        
-//    enumerable() = theArray;        
-//    
-//    Enumerator cast() = new Enumerator::{ embeddable dispatch() => self; };
-//}
-//
+// --- BitArrayIndexer ---
+
+/// An array indexer
+class BitArrayIndexer : Indexer<bool>
+{
+    BitArray theArray;
+    ref<int> theIndex;
+
+    /// Returns the parameter indexer
+    constructor(BitArray anArray)
+    {
+        theArray := anArray;
+        theIndex := 0
+    }
+    
+    /// Returns false if the index out of range
+    get bool Available()
+    {
+        int length := theArray.Length;
+        int index := theIndex.Value;
+        
+        ^ index < length
+    }
+
+    /// Returns the current member
+    bool get()
+    {
+        int index := theIndex.Value;
+        
+        ^ theArray.at(index)
+    }
+    
+    /// Sets the current member
+    set(bool val)
+    {
+        int index := theIndex.Value;
+        
+        theArray.setAt(theIndex, val)
+    }
+    
+    int Index
+    {
+        /// Reads the current index and saves it into an output parameter
+        get()
+        {
+            theIndex.readValueTo(ref int retVal);
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int val)
+        {
+            theIndex.Value := val
+        }
+    }
+    
+    appendIndex(int val)
+    {
+        theIndex.append(val)
+    }
+    
+    int Length
+    {
+        /// Reads the length to the output parameter    
+        get()
+        {
+            int retVal := theArray.Length;
+            
+            ^ retVal
+        }
+    }
+        
+    Indexer cast() = new Indexer { embeddable dispatch() => self; };        
+}
+
+// --- BitArrayEnumerator ---
+
+/// An array enumerator
+class BitArrayEnumerator : Enumerator<bool>
+{
+    BitArray theArray;
+    ref<int> theIndex;
+    
+    /// Creates an array enumerator
+    constructor(BitArray a)
+    {
+        theArray := a;
+        theIndex := -1
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        int length := theArray.Length;
+        
+        theIndex.append(1);
+        
+        int index := theIndex.Value;
+
+        ^ index < length
+    }
+    
+    /// Returns the current object
+    bool get()
+    {
+        int index := theIndex.Value;
+        
+        ^ theArray.at(index)
+    }
+        
+    enumerable() = theArray;
+    
+    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}
+
+// --- BitArray32Indexer ---
+
+/// An array indexer
+class BitArray32Indexer : Indexer<bool>
+{
+    BitArray32 theArray;
+    ref<int>   theIndex;
+
+    /// Returns the parameter indexer
+    constructor(BitArray32 bs)
+    {
+        theArray := bs;
+        theIndex := 0
+    }
+    
+    /// Returns false if the index out of range
+    get bool Available()
+    {
+        int index := theIndex;
+        
+        ^ index < 32
+    }
+
+    /// Returns the current member
+    bool get()
+    {
+        int index := theIndex;
+        
+        ^ theArray.at(index)
+    }
+    
+    /// Sets the current member
+    set(bool val)
+    {
+        int index := theIndex;
+        
+        theArray.setAt(index, val)
+    }
+
+    int Index
+    {    
+        /// Reads the current index and saves it into an output parameter
+        get()
+        {
+            theIndex.readValueTo(ref int retVal);
+            
+            ^ retVal
+        }
+        
+        /// Sets the index by specified value
+        set(int val)
+        {
+            theIndex.Value := val
+        }
+    }
+    
+    appendIndex(int val)
+    {
+        theIndex.append(val)
+    }
+    
+    int Length
+    {
+        /// Reads the length to the output parameter    
+        get()
+            => theArray;
+    }
+        
+    Indexer cast() = new Indexer { embeddable dispatch() => self; };        
+}
+
+// --- BitArray32Enumerator ---
+
+/// An array enumerator
+class BitArray32Enumerator : Enumerator<bool>
+{
+    BitArray32 theArray;
+    ref<int>   theIndex;
+    
+    /// Creates an array enumerator
+    constructor(BitArray32 bs)
+    {
+        theArray := bs;
+        theIndex := -1
+    }
+
+    /// Resets the enumerator
+    reset()
+    {
+        theIndex.Value := -1
+    }
+
+    /// Goes to the next enumeration member and returns true if it is not the last member
+    bool next()
+    {
+        theIndex.append(1);
+
+        int index := theIndex;
+
+        ^ index < 32
+    }
+    
+    /// Returns the current object
+    bool get()
+    {
+        int index := theIndex;
+        
+        ^ theArray.at(index)
+    }
+        
+    enumerable() = theArray;        
+    
+    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}
+
 //// template test cases
 //T1 { static Default = nil; }
 //T2;
