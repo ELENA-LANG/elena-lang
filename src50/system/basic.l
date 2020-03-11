@@ -1740,8 +1740,8 @@ public sealed const struct RealNumber : BaseNumber
     static real NaN
         = 0.0r / 0.0r;
 
-//    static real Pi
-//        = Pi_value;
+    static real Pi
+        = Pi_value;
 
     constructor(int n)
         = realConvertor.convert(n);
@@ -2762,9 +2762,9 @@ public singleton realOpController
     }        
 }
 
-//public real Pi_value = realOpController.pi();
-//
-//public real E_value = realOpController.e();
+public real Pi_value = realOpController.pi();
+
+public real E_value = realOpController.e();
 
 // === basic type extensions ===
 

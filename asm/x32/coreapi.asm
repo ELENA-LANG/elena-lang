@@ -3758,6 +3758,7 @@ err:
    mov  [eax], ecx
    mov  esi, [esp+8]
    mov  [esi], edx
+   mov  ebx, eax
 
    ret
 

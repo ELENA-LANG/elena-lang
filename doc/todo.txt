@@ -9,12 +9,8 @@ In development:
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
 
-              dev - tutorials
-                * Generic handler with variable number of parameters
-
               dev - rosetta code samples
-                * script tutorials
-                * Execute Brain****/Elena
+                * First class function
 
               dev - migration
                 * rosetta code samples : arithmeval
@@ -28,6 +24,7 @@ In development:
                 * db sample
                 * ExpressionTree1
                 * ExpressionTree2
+                * Execute Brain****/Elena
                 * script samples
                 * gui samples
                 * socket samples
@@ -50,6 +47,9 @@ In development:
                 * extension message - can be applied only to the generic extension?
                 * invoke extension directly
                 * ifheap - is not correctly recognize data allocated classes
+
+              dev - tutorials
+                * Generic handler with variable number of parameters
 
               dev - new features
                 * multi-return methods : dynamic objects

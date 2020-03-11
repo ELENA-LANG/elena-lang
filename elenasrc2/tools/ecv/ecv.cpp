@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   66
+#define REVISION_VERSION   67
 
 using namespace _ELENA_;
 
@@ -1191,6 +1191,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       bool isMultidispatcher = test(hints, tpMultimethod);
       bool isInternal = test(hints, tpInternal);
       bool isPrivate = (hints & tpMask) == tpPrivate;
+      bool isFunction = test(entry.message, FUNCTION_MESSAGE);
 
       // print the method name
       temp.copy(className);
@@ -1213,6 +1214,8 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          prefix.append("@internal ");
       if (isPrivate)
          prefix.append("@private ");
+      if (isFunction)
+         prefix.append("@function ");
 
       printLine(prefix, temp);
 

@@ -434,21 +434,21 @@ public extension intOp : IntNumber
     bool isOdd()
         = (self && 1) != 0;
         
-//    bool isEven()
-//        = self.and(1) == 0;
-//        
-//    bool isZero()
-//        = self.equal(0);
-//        
-//    bool isPositive()
-//        = self > 0;
-//        
-//    bool isNegative()
-//        = self < 0;
-//        
-//    bool isNonnegative()
-//        = self <= 0;
-//
+    bool isEven()
+        = self.and(1) == 0;
+        
+    bool isZero()
+        = self.equal(0);
+        
+    bool isPositive()
+        = self > 0;
+        
+    bool isNegative()
+        = self < 0;
+        
+    bool isNonnegative()
+        = self <= 0;
+
 ////    high
 ////    [
 ////        int aWord := self.
@@ -625,13 +625,13 @@ public extension realOp : RealNumber
 //        ^ retVal
 //    }
 //        
-//    real exp()
-//    {
-//        real n := self;        
-//        real retVal := realOpController.exp(n);
-//        
-//        ^ retVal
-//    }
+    real exp()
+    {
+        real n := self;        
+        real retVal := realOpController.exp(n);
+        
+        ^ retVal
+    }
     
     real ln()
     {
@@ -743,149 +743,149 @@ public extension realOp : RealNumber
 ////    
 ////        ^neg iif(a * -1.0r, a). 
 ////    ]
-//    
-//    real truncate(int precision)
-//    {
-//        real a := self;
-//        bool neg := false;
-//        if(self.isNegative())
-//        {
-//            a := a * -1.0r;
-//            neg := true
-//        };
-//       
-//        int b := 10.power(precision);
-//        real c := (a * b).Integer; // returns the integer part of the real number
-//
-//        a := c / b;
-//
-//        ^ neg ? (a * -1.0r) : a 
-//    }
-//
-//    get real Integer()
-//    {
-//        real n := self;
-//        real retVal := realOpController.truncate(n);
-//        
-//        ^ retVal
-//    }
-//
-//    real frac()
-//    {
-//        real n := self;
-//        real retVal := realOpController.abs(n);
-//        
-//        retVal := n - retVal;
-//        
-//        ^ retVal
-//    }
-//
-//    real sin()
-//    {
-//        real n := self;  
-//        real retVal := realOpController.sin(n);
-//        
-//        ^ retVal
-//    }
-//
-//    real cos()
-//    {
-//        real n := self;
-//        real retVal := realOpController.cos(n);
-//        
-//        ^ retVal
-//    }
-//
-//    real tan()
-//    {
-//        real n := self;
-//        
-//        real sinVal := realOpController.sin(n);
-//        real cosVal := realOpController.cos(n);
-//        
-//        n := sinVal / cosVal;
-//        
-//        ^ n
-//    }
-//
-//    real arctan()
-//    {
-//        real n := self;
-//        real retVal :=realOpController.arctan(n);
-//        
-//        ^ retVal
-//    }
-//            
-//    real arcsin()
-//    {
-//        real n := self;
-//        real retVal := 0.0r;
-//        
-//        retVal := n * n;    
-//        retVal := 1.0r - retVal;
-//        real arg := realOpController.sqrt(retVal);
-//        
-//        arg := n / arg;
-//        retVal := realOpController.arctan(arg);
-//        
-//        ^ retVal
-//    }
-//            
-//    real arccos()
-//    {
-//        real n := self;        
-//        real retVal := 0.0r;
-//        
-//        retVal := n * n;    
-//        retVal := 1.0r - retVal;        
-//        real arg := realOpController.sqrt(retVal);
-//        
-//        arg := arg / n;
-//        retVal := realOpController.arctan(arg);
-//        
-//        ^ retVal
-//    }
-//            
-//    get real Radian()
-//    {
-//        real value := self;
-//        
-//        value := value * Pi_value;
-//        value := value / 180.0r;
-//        
-//        ^ value
-//    }
-//            
-//    get real Degree()
-//    {
-//        real value := self;
-//        
-//        value := value * 180.0r;
-//        value := value / Pi_value;
-//        
-//        ^ value
-//    }
-//            
-//    get real Reciprocal()
-//    {
-//        real value := self;
-//        
-//        value := 1.0r / value;
-//        
-//        ^ value
-//    }    
-//            
-//    bool isZero()
-//        = self == 0.0r;
-//        
-//    bool isPositive()
-//        = self > 0.0r;
-//        
-//    bool isNegative()
-//        = self < 0.0r;
-//        
-//    bool isNonnegative()
-//        = self <= 0.0r;
+    
+    real truncate(int precision)
+    {
+        real a := self;
+        bool neg := false;
+        if(self.isNegative())
+        {
+            a := a * -1.0r;
+            neg := true
+        };
+       
+        int b := 10.power(precision);
+        real c := (a * b).Integer; // returns the integer part of the real number
+
+        a := c / b;
+
+        ^ neg ? (a * -1.0r) : a 
+    }
+
+    get real Integer()
+    {
+        real n := self;
+        real retVal := realOpController.truncate(n);
+        
+        ^ retVal
+    }
+
+    real frac()
+    {
+        real n := self;
+        real retVal := realOpController.abs(n);
+        
+        retVal := n - retVal;
+        
+        ^ retVal
+    }
+
+    real sin()
+    {
+        real n := self;  
+        real retVal := realOpController.sin(n);
+        
+        ^ retVal
+    }
+
+    real cos()
+    {
+        real n := self;
+        real retVal := realOpController.cos(n);
+        
+        ^ retVal
+    }
+
+    real tan()
+    {
+        real n := self;
+        
+        real sinVal := realOpController.sin(n);
+        real cosVal := realOpController.cos(n);
+        
+        n := sinVal / cosVal;
+        
+        ^ n
+    }
+
+    real arctan()
+    {
+        real n := self;
+        real retVal :=realOpController.arctan(n);
+        
+        ^ retVal
+    }
+            
+    real arcsin()
+    {
+        real n := self;
+        real retVal := 0.0r;
+        
+        retVal := n * n;    
+        retVal := 1.0r - retVal;
+        real arg := realOpController.sqrt(retVal);
+        
+        arg := n / arg;
+        retVal := realOpController.arctan(arg);
+        
+        ^ retVal
+    }
+            
+    real arccos()
+    {
+        real n := self;        
+        real retVal := 0.0r;
+        
+        retVal := n * n;    
+        retVal := 1.0r - retVal;        
+        real arg := realOpController.sqrt(retVal);
+        
+        arg := arg / n;
+        retVal := realOpController.arctan(arg);
+        
+        ^ retVal
+    }
+            
+    get real Radian()
+    {
+        real value := self;
+        
+        value := value * Pi_value;
+        value := value / 180.0r;
+        
+        ^ value
+    }
+            
+    get real Degree()
+    {
+        real value := self;
+        
+        value := value * 180.0r;
+        value := value / Pi_value;
+        
+        ^ value
+    }
+            
+    get real Reciprocal()
+    {
+        real value := self;
+        
+        value := 1.0r / value;
+        
+        ^ value
+    }    
+            
+    bool isZero()
+        = self == 0.0r;
+        
+    bool isPositive()
+        = self > 0.0r;
+        
+    bool isNegative()
+        = self < 0.0r;
+        
+    bool isNonnegative()
+        = self <= 0.0r;
 }
 
 //// --- intArrayOp ---

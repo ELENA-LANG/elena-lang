@@ -17,8 +17,8 @@ extension op
  
 public program()
 {
-   var fs := new::( mssgconst sin<mathOp>[0], mssgconst cos<mathOp>[0], (x => power(x, 3.0r)) );
-   var gs := new::( mssgconst arcsin<mathOp>[0], mssgconst arccos<mathOp>[0], (x => power(x, 1.0r / 3)) );
+   var fs := new object[]{ mssgconst sin<mathOp>[1], mssgconst cos<mathOp>[1], (x => power(x, 3.0r)) };
+   var gs := new object[]{ mssgconst arcsin<mathOp>[1], mssgconst arccos<mathOp>[1], (x => power(x, 1.0r / 3)) };
  
    fs.zipBy(gs, (f,g => 0.5r.compose(f,g)))
      .forEach:printingLn

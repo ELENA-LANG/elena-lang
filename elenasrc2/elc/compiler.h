@@ -977,8 +977,9 @@ private:
       bool unboxWrapper = true);
 
 ////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
-   ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, bool declarationMode);
-   ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode);
+   ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, 
+      bool declarationMode, bool extensionAllowed);
+   ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode, bool extensionAllowed);
 
    ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
    ref_t generateConstant(_CompileScope& scope, ObjectInfo retVal);
@@ -1033,7 +1034,7 @@ private:
 ////      int dummy;
 ////      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
 ////   }
-   ref_t mapMessage(SNode node, ExprScope& scope, bool variadicOne);
+   ref_t mapMessage(SNode node, ExprScope& scope, bool variadicOne, bool extensionCall);
    ref_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags, 
       IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
       bool withoutWeakMessages, bool noSignature);

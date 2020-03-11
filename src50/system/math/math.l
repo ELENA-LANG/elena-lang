@@ -9,29 +9,29 @@ namespace math
     ////        system'NotSupportedException new; raise
     ////    ]
         
-    //    absolute(byte n)
-    //        = n.Absolute;
-    //        
-    //    absolute(short n)
-    //        = n.Absolute;
-    //        
-    //    absolute(int n)
-    //        = n.Absolute;
-    //        
-    //    absolute(long n)
-    //        = n.Absolute;
-    //        
-    //    absolute(real n)
-    //        = n.Absolute;
-    //        
-    //    absolute(n)
-    //        <= absolute(n.Value);
+        absolute(byte n)
+            = n.Absolute;
             
-    //    mod(byte n, object m)
-    //        = n~byteOp mod:m.
-    //        
-    //    mod(short n, object m)
-    //        = n~shortOp mod:m.
+        absolute(short n)
+            = n.Absolute;
+            
+        absolute(int n)
+            = n.Absolute;
+            
+        absolute(long n)
+            = n.Absolute;
+            
+        absolute(real n)
+            = n.Absolute;
+            
+        absolute(n)
+            <= absolute(n.Value);
+            
+//        mod(byte n, object m)
+//            = n~byteOp mod:m.
+//            
+//        mod(short n, object m)
+//            = n~shortOp mod:m.
             
         mod(int n, object m)
             = n.mod:m;
@@ -181,43 +181,38 @@ namespace math
     //    real power(real n, real m)
     //        = mixin realOp(n).power(m);        
     //        
-    //    power(byte n, int m)
-    //        = mixin byteOp(n).power(m);       
-    //        
-    //    power(short n, int m)
-    //        = mixin shortOp(n).power(m);        
-    //        
-    //    power(int n, int m)
-    //        = mixin intOp(n).power(m);      
-    //        
-    //    power(long n, int m)
-    //        = mixin longOp(n).power(m);
-    //        
-    //    power(object n, object m)
-    //        <= power(n.Value, m);
-    //        
-    //    sqr(byte n)
-    //        = n.sqr();
-    //        
-    ////    sqr value:n
-    ////    [
-    ////        system'NotSupportedException new; raise
-    ////    ]
-    //
-    //    sqr(short n)
-    //        = n.sqr();
-    //        
-    //    sqr(int n)
-    //        = n.sqr();
-    //        
-    //    sqr(long n)
-    //        = n.sqr();
-    //        
-    //    sqr(real n)
-    //        = n.sqr();
-    //        
-    //    sqr(n)
-    //        <= sqr(n.Value);
+//        power(byte n, int m)
+//            = mixin byteOp(n).power(m);       
+//            
+//        power(short n, int m)
+//            = mixin shortOp(n).power(m);        
+//            
+//        power(int n, int m)
+//            = mixin intOp(n).power(m);      
+//            
+//        power(long n, int m)
+//            = mixin longOp(n).power(m);
+            
+        power(object n, object m)
+            <= power(n.Value, m);
+            
+        sqr(byte n)
+            = n.sqr();
+            
+        sqr(short n)
+            = n.sqr();
+            
+        sqr(int n)
+            = n.sqr();
+            
+        sqr(long n)
+            = n.sqr();
+            
+        sqr(real n)
+            = n.sqr();
+            
+        sqr(n)
+            <= sqr(n.Value);
     }
     
     // --- mathOp ---
@@ -247,111 +242,111 @@ namespace math
     //
     //    bool isNonnegative()
     //        = mathController.isNonnegative(self);
-    //
-    //    real floor()
-    //    {
-    //        real x := cast real(self);
-    //        
-    //        if (x >= 0)
-    //        {
-    //            ^ x.Integer
-    //        }
-    //        else
-    //        {
-    //            real y := x.Integer;
-    //            
-    //            ^ (y == x).iif(y,y-1)
-    //        }
-    //    }
-    //
-    //    real ceil()
-    //    {
-    //        real x := cast real(self);
-    //        
-    //        if (x < 0)
-    //        {
-    //            ^ x.Integer
-    //        }
-    //        else
-    //        {
-    //            real y := x.Integer;
-    //            
-    //            ^ (y == x).iif(y,y+1)
-    //        }
-    //    }
-    //
-    //    real exp()
-    //        = cast real(self).exp();
+
+        real floor()
+        {
+            real x := cast real(self);
+            
+            if (x >= 0)
+            {
+                ^ x.Integer
+            }
+            else
+            {
+                real y := x.Integer;
+                
+                ^ (y == x).iif(y,y-1)
+            }
+        }
+    
+        real ceil()
+        {
+            real x := cast real(self);
+            
+            if (x < 0)
+            {
+                ^ x.Integer
+            }
+            else
+            {
+                real y := x.Integer;
+                
+                ^ (y == x).iif(y,y+1)
+            }
+        }
+    
+        real exp()
+            = cast real(self).exp();
         
         real ln()
             = cast real(self).ln();
       
-    //    real log2()
-    //    {
-    //        real x := mixin mathOp(self).ln();
-    //        real y := mixin mathOp(2).ln();
-    //        
-    //        ^ x / y
-    //    }
-    //        
-    //    real log10()
-    //    {
-    //        real x := mixin mathOp(self).ln();
-    //        real y := mixin mathOp(10).ln();
-    //        
-    //        ^ x / y
-    //    }
-    //    
-    //    sqrt()
-    //        = cast real(self).sqrt();
-    //
-    //    power(p)
-    //        = mathController.power(self, p);
-    //
-    //    sqr()
-    //        = mathController.sqr(self);
-    //        
-    //    Rounded
-    //        = cast real(self).Rounded;
-    //
-    //    RoundedInt
-    //        = intConvertor.convert(cast real(self).Rounded);
-    //
-    //    Integer
-    //        = cast real(self).Integer;
-    //
-    //    IntegerInt
-    //        = intConvertor.convert(cast real(self).Integer);
-    //
-    //    frac()
-    //        = cast real(self).frac();
-    //
-    //    sin()
-    //        = cast real(self).sin();
-    //
-    //    cos()
-    //        = cast real(self).cos();
-    //
-    //    tan()
-    //        = cast real(self).tan();
-    //
-    //    arctan()
-    //        = cast real(self).arctan();
-    //            
-    //    arcsin()
-    //        = cast real(self).arcsin();
-    //                    
-    //    arccos()
-    //        = cast real(self).arccos();
-    //            
-    //    Radian
-    //        = cast real(self).Radian;
-    //            
-    //    Degree
-    //        = cast real(self).Degree;
-    //            
-    //    Reciprocal
-    //        = cast real(self).Reciprocal;
+        real log2()
+        {
+            real x := mathOp.ln(self);
+            real y := mathOp.ln(2);
+            
+            ^ x / y
+        }
+            
+        real log10()
+        {
+            real x := mathOp.ln(self).ln();
+            real y := mathOp.ln(10);
+            
+            ^ x / y
+        }
+        
+        sqrt()
+            = cast real(self).sqrt();
+    
+        power(p)
+            = mathController.power(self, p);
+    
+        sqr()
+            = mathController.sqr(self);
+            
+        Rounded
+            = cast real(self).Rounded;
+    
+        RoundedInt
+            = intConvertor.convert(cast real(self).Rounded);
+    
+        Integer
+            = cast real(self).Integer;
+    
+        IntegerInt
+            = intConvertor.convert(cast real(self).Integer);
+    
+        frac()
+            = cast real(self).frac();
+    
+        sin()
+            = cast real(self).sin();
+    
+        cos()
+            = cast real(self).cos();
+    
+        tan()
+            = cast real(self).tan();
+    
+        arctan()
+            = cast real(self).arctan();
+                
+        arcsin()
+            = cast real(self).arcsin();
+                        
+        arccos()
+            = cast real(self).arccos();
+                
+        Radian
+            = cast real(self).Radian;
+                
+        Degree
+            = cast real(self).Degree;
+                
+        Reciprocal
+            = cast real(self).Reciprocal;
     }
 
 }

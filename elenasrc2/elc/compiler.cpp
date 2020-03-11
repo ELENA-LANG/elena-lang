@@ -66,13 +66,7 @@ constexpr auto HINT_PARAMETER       = EAttr::eaParameter;
 constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
 constexpr auto HINT_CONSTEXPR       = EAttr::eaConstExpr;
-
-//constexpr auto HINT_AUTOSIZE        = EAttr::eaAutoSize;
-////constexpr auto HINT_NOCONDBOXING    = 0x04000000;
-//constexpr auto HINT_ASSIGNING_EXPR  = EAttr::eaAssigningExpr;
-//constexpr auto HINT_CALL_MODE       = EAttr::eaCallExpr;
-//constexpr auto HINT_RETEXPR         = EAttr::eaRetExpr;
-//constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
+constexpr auto HINT_CALLOP          = EAttr::eaCallOp;
 
 // scope modes
 constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
@@ -447,11 +441,11 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
       ref_t r = moduleScope->loadClassInfo(info, reference, true);
       if (r) {
          // if it is an extension
-         /*if (test(info.header.flags, elExtension)) {
+         if (test(info.header.flags, elExtension)) {
             return ObjectInfo(okExtension, reference, reference);
          }
          // if it is a stateless symbol
-         else */if (test(info.header.flags, elStateless)) {
+         else if (test(info.header.flags, elStateless)) {
             return ObjectInfo(okSingleton, reference, reference);
          }
          // if it is a normal class
@@ -1687,12 +1681,13 @@ void Compiler :: compileParentDeclaration(SNode baseNode, ClassScope& scope, ref
       scope.raiseError(errUnknownBaseClass, baseNode);
 }
 
-ref_t Compiler :: resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode)
+ref_t Compiler :: resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode, bool extensionAllowed)
 {
-   return resolveTypeIdentifier(scope, terminal.identifier(), terminal.type, declarationMode);
+   return resolveTypeIdentifier(scope, terminal.identifier(), terminal.type, declarationMode, extensionAllowed);
 }
 
-ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType type, bool declarationMode)
+ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType type, 
+   bool declarationMode, bool extensionAllowed)
 {
    ObjectInfo identInfo;
 
@@ -1712,6 +1707,9 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalT
       case okSymbol:
          if (declarationMode)
             return identInfo.param;
+      case okExtension:
+         if (extensionAllowed)
+            return identInfo.param;;
       default:
          return 0;
    }
@@ -2600,9 +2598,11 @@ ObjectInfo Compiler :: compileSubjectReference(SNode terminal, ExprScope& scope,
    return retVal;
 }
 
-ref_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool variadicOne)
+ref_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool variadicOne, bool extensionCall)
 {
    ref_t actionFlags = variadicOne ? VARIADIC_MESSAGE : 0;
+   if (extensionCall)
+      actionFlags |= FUNCTION_MESSAGE;
 
 //   IdentifierString signature;
    IdentifierString messageStr;
@@ -3756,7 +3756,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
       retVal = compileExternalCall(node, scope, expectedRef, extMode);
    }
    else {
-      ref_t messageRef = mapMessage(node, scope, variadicOne);
+      ref_t messageRef = mapMessage(node, scope, variadicOne, target.kind == okExtension);
 
       if (target.kind == okInternal) {
          retVal = compileInternalCall(node.parentNode(), scope, messageRef, implicitSignatureRef, target);
@@ -4160,7 +4160,7 @@ ObjectInfo Compiler :: compilePropAssigning(SNode node, ExprScope& scope, Object
    ObjectInfo retVal;
 
    // tranfer the message into the property set one
-   ref_t messageRef = mapMessage(node, scope, false);
+   ref_t messageRef = mapMessage(node, scope, false, false);
    ref_t actionRef, flags;
    int argCount;
    decodeMessage(messageRef, actionRef, argCount, flags);
@@ -5064,7 +5064,7 @@ ref_t Compiler :: mapTemplateAttribute(SNode node, Scope& scope)
    templateName.appendInt(paramCounter);
 
    // NOTE : check it in declararion mode - we need only reference
-   return resolveTypeIdentifier(scope, templateName.c_str(), terminalNode.type, true);
+   return resolveTypeIdentifier(scope, templateName.c_str(), terminalNode.type, true, false);
 }
 
 //ref_t Compiler :: mapTypeAttribute(SNode member, Scope& scope)
@@ -5184,7 +5184,7 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
 {
    ref_t typeRef = 0;
    if (test(node.type, lxTerminalMask)) {
-      typeRef = resolveTypeIdentifier(scope, node, declarationMode);
+      typeRef = resolveTypeIdentifier(scope, node, declarationMode, allowRole);
    }
    else if (node == lxArrayType) {
       typeRef = resolvePrimitiveArray(scope,
@@ -5198,7 +5198,7 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
          typeRef = resolveTemplateDeclaration(node, scope, declarationMode);
       }
       else if (!typeRef)
-         typeRef = resolveTypeIdentifier(scope, node.firstChild(lxTerminalMask), declarationMode);
+         typeRef = resolveTypeIdentifier(scope, node.firstChild(lxTerminalMask), declarationMode, allowRole);
    }
 
    validateType(scope, node, typeRef, declarationMode, allowRole);
@@ -5334,7 +5334,9 @@ void Compiler :: recognizeTerminal(SNode& terminal, ObjectInfo object, ExprScope
          terminal.set(lxClassSymbol, object.param);
          break;
       case okExtension:
-         scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
+         if (!EAttrs::test(mode, HINT_CALLOP)) {
+            scope.raiseWarning(WARNING_LEVEL_3, wrnExplicitExtension, terminal);
+         }
       case okConstantSymbol:
       case okSingleton:
          terminal.set(lxConstantSymbol, object.param);
@@ -5832,10 +5834,13 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ref_t ta
       objMode.include(HINT_PROP_MODE);
       mode = mode | HINT_PROP_MODE;
    }
-   else if (isCallingOp(operationNode) && EAttrs::testany(mode, HINT_NOBOXING)) {
-      objMode.exclude(HINT_NOBOXING);
+   else if (isCallingOp(operationNode)) {
+      if (EAttrs::testany(mode, HINT_NOBOXING)) {
+         objMode.exclude(HINT_NOBOXING);
 
-      mode = EAttrs::exclude(mode, HINT_NOBOXING);
+         mode = EAttrs::exclude(mode, HINT_NOBOXING);
+      }
+      objMode.include(HINT_CALLOP);
    }
 
    return compileExpression(node, scope,
@@ -6888,7 +6893,7 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
 //
 //      implicitConstructor = true;
 //   }
-   /*else */messageRef = mapMessage(messageNode, resendScope, false);
+   /*else */messageRef = mapMessage(messageNode, resendScope, false, false);
 
    ref_t classRef = classClassScope.reference;
    bool found = false;
