@@ -1313,43 +1313,46 @@ public extension stringOp : String
 ////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
 ////            [ ^ self ].
 ////    ]    
-//    
-//    string replace(string replacee, string replacer)
-//    {
-//        string target := emptyString;
-//        int    start := 0;
-//        int    end := 0;
-//        int    replaceeLen := replacee.Length;
-//        
-//        self.indexOf(start, replacee, ref end);
-//        
-//        while (end != -1)
-//        {
-//            target := target
-//                .add(self.Substring(start, end - start))
-//                .add(replacer);
-//            
-//            start := end + replaceeLen;
-//            
-//            self.indexOf(start, replacee, ref end)
-//        };
-//    
-//        if(start != 0)
-//        {
-//            ^ target.add(self.Substring(start))
-//        }
-//        else
-//        {
-//            ^ self
-//        }
-//    }
-//    
-//    bool isEmpty()
-//    {
-//        int length := self.Length;
-//        
-//        ^ length == 0
-//    }
+    
+    string replace(replacee, replacer)
+        = stringOp.replace(self, cast string(replacee), cast string(replacer));
+    
+    string replace(string replacee, string replacer)
+    {
+        string target := emptyString;
+        int    start := 0;
+        int    end := 0;
+        int    replaceeLen := replacee.Length;
+        
+        self.indexOf(start, replacee, ref end);
+        
+        while (end != -1)
+        {
+            target := target
+                .add(self.Substring(start, end - start))
+                .add(replacer);
+            
+            start := end + replaceeLen;
+            
+            self.indexOf(start, replacee, ref end)
+        };
+    
+        if(start != 0)
+        {
+            ^ target.add(self.Substring(start))
+        }
+        else
+        {
+            ^ self
+        }
+    }
+    
+    bool isEmpty()
+    {
+        int length := self.Length;
+        
+        ^ length == 0
+    }
 }
 
 // --- wideOp ---
@@ -1503,43 +1506,43 @@ public extension wideOp : WideString
 ////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex wide:aReplacee ];
 ////            [ ^ self ].
 ////    ]
-//        
-//    replace(wide replacee, wide replacer)
-//    {
-//        wide target := emptyWideString;
-//        int  start := 0;
-//        int  end := 0;
-//        int  replaceeLen := replacee.Length;
-//        
-//        self.indexOf(start, replacee, ref end);
-//        
-//        while (end != -1)
-//        {
-//            target := target
-//                .add(self.Substring(start, end - start))
-//                .add:replacer;
-//            
-//            start := end + replaceeLen;
-//            
-//            self.indexOf(start, replacee, ref end)
-//        };
-//    
-//        if (start != 0)
-//        { 
-//            ^ target.add(self.Substring(start)) 
-//        }
-//        else
-//        { 
-//            ^ self 
-//        }
-//    }
-//
-//    bool isEmpty()
-//    {
-//        int length := self.Length;
-//        
-//        ^ length == 0
-//    }
+        
+    replace(wide replacee, wide replacer)
+    {
+        wide target := emptyWideString;
+        int  start := 0;
+        int  end := 0;
+        int  replaceeLen := replacee.Length;
+        
+        self.indexOf(start, replacee, ref end);
+        
+        while (end != -1)
+        {
+            target := target
+                .add(self.Substring(start, end - start))
+                .add:replacer;
+            
+            start := end + replaceeLen;
+            
+            self.indexOf(start, replacee, ref end)
+        };
+    
+        if (start != 0)
+        { 
+            ^ target.add(self.Substring(start)) 
+        }
+        else
+        { 
+            ^ self 
+        }
+    }
+
+    bool isEmpty()
+    {
+        int length := self.Length;
+        
+        ^ length == 0
+    }
 }
 
 public extension stringWeakOp
