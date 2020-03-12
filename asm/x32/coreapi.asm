@@ -1477,8 +1477,10 @@ procedure coreapi'uinttostr
    mov  edi, [esp+12]
 
    push ebp
+   mov  eax, [eax]
    mov  ebp, esp
    xor  ecx, ecx
+
    cmp  eax, esi
    jb   short Lab5
 Lab1:
@@ -1506,8 +1508,8 @@ Lab8:
    add  esi, 1
    sub  ecx, 1
    jnz  short Lab2
-   mov  ecx, esi
-   sub  ecx, edi
+   mov  edx, esi
+   sub  edx, edi
    pop  ebp
 
    ret
