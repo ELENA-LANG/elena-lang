@@ -1831,7 +1831,7 @@ void Compiler :: validateType(Scope& scope, SNode current, ref_t typeRef, bool i
 //   return typeRef;
 //}
 
-void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode)
+void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool ignoreType)
 {
    bool constant = false;
    ref_t outputRef = 0;
@@ -1846,7 +1846,8 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
          }
       }
-      else if (current.compare(lxType, lxArrayType)) {
+      else if (current.compare(lxType, lxArrayType) && !ignoreType) {
+         // HOTFIX : do not resolve the output type for identifier declaration mode
          outputRef = resolveTypeAttribute(current, scope, declarationMode, false);
       }
 
@@ -4248,11 +4249,15 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
          methodScope.outputRef = V_AUTO;
 
       compileActionMethod(current, methodScope);
-   }
 
-   if (methodScope.outputRef == V_AUTO)
-      // if the output was not defined - ignore it
-      methodScope.outputRef = 0;
+      // HOTFIX : inject an output type if required or used super class
+      if (methodScope.outputRef == V_AUTO) {
+         methodScope.outputRef = scope.moduleScope->superReference;
+      }
+
+      if (methodScope.outputRef)
+         current.insertNode(lxType, methodScope.outputRef);
+   }
 
    // the parent is defined after the closure compilation to define correctly the output type
    ref_t parentRef = scope.info.header.parentRef;
@@ -4273,15 +4278,16 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
    // NOTE : the fields are presaved, so the closure parent should be stateless
    compileParentDeclaration(SNode(), scope, parentRef, true);
 
+   // set the message output if available
+   if (methodScope.outputRef)
+      scope.addAttribute(methodScope.message, maReference, methodScope.outputRef);
+
    if (multiMethod) {
       // inject a virtual invoke multi-method if required
       List<ref_t> implicitMultimethods;
       implicitMultimethods.add(multiMethod);
 
       _logic->injectVirtualMultimethods(*scope.moduleScope, node, *this, implicitMultimethods, lxClassMethod);
-
-      // HOTFIX : exclude, because it will be injected once again
-      scope.info.methodHints.exclude(Attribute(methodScope.message, maReference));
 
       generateClassDeclaration(node, scope);
 
@@ -4298,10 +4304,6 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
 
       // exclude abstract flag if presented
       scope.removeHint(methodScope.message, tpAbstract);
-
-      // set the message output if available
-      if (methodScope.outputRef)
-         scope.info.methodHints.add(Attribute(methodScope.message, maReference), methodScope.outputRef);
 
       generateClassDeclaration(SNode(), scope);
    }
@@ -9184,7 +9186,7 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope)
 
 void Compiler :: compileSymbolDeclaration(SNode node, SymbolScope& scope)
 {
-   declareSymbolAttributes(node, scope, true);
+   declareSymbolAttributes(node, scope, true, false);
 
 //   if (scope.moduleScope->module->mapSection(scope.reference | mskMetaRDataRef, true) == nullptr) {
       scope.save();
@@ -10590,7 +10592,7 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
          case lxSymbol:
          {
             SymbolScope symbolScope(&scope, current.argument, scope.defaultVisibility);
-            declareSymbolAttributes(current, symbolScope, false);
+            declareSymbolAttributes(current, symbolScope, false, false);
 
             compileSymbolImplementation(/*expressionTree, */current, symbolScope);
             break;
@@ -10662,7 +10664,7 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
          case lxSymbol:
             if (!scope.moduleScope->isDeclared(current.argument)) {
                SymbolScope symbolScope(&scope, current.argument, scope.defaultVisibility);
-               declareSymbolAttributes(current, symbolScope, true);
+               declareSymbolAttributes(current, symbolScope, true, false);
 
                // declare symbol
                compileSymbolDeclaration(current, symbolScope);
@@ -10790,7 +10792,7 @@ void Compiler :: declareMembers(SNode current, NamespaceScope& scope)
          case lxSymbol:
          {
             SymbolScope symbolScope(&scope, scope.defaultVisibility);
-            declareSymbolAttributes(current, symbolScope, true);
+            declareSymbolAttributes(current, symbolScope, true, true);
 
             symbolScope.reference = scope.mapNewTerminal(current.findChild(lxNameAttr), symbolScope.visibility);
             current.setArgument(symbolScope.reference);

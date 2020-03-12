@@ -706,24 +706,24 @@ public extension realOp : RealNumber
 //    power : aPower
 //        = self~realOp power(T<int>(aPower)).
 
-//    real sqr()
-//    {
-//        real n := self;        
-//        real retVal := 0.0r;
-//        
-//        retVal := n * n;
-//        
-//        ^ retVal
-//    }
-//
-//    get real Rounded()
-//    {
-//        real n := self;        
-//        real retVal := realOpController.round(n);
-//        
-//        ^ retVal
-//    }
-//    
+    real sqr()
+    {
+        real n := self;        
+        real retVal := 0.0r;
+        
+        retVal := n * n;
+        
+        ^ retVal
+    }
+
+    get real Rounded()
+    {
+        real n := self;        
+        real retVal := realOpController.round(n);
+        
+        ^ retVal
+    }
+    
 ////    real round(int precision)
 ////    [
 ////        real a := self.

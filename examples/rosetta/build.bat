@@ -140,16 +140,6 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-..\..\bin\elc simple_windowed_app\simple_windowed_app.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-..\..\bin\elc gui_component_interaction\gui_component_interaction.prj
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
 ..\..\bin\elc string_append\string_append.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -275,6 +265,16 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 ..\..\bin\elc ycombinator\ycombinator.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc simple_windowed_app\simple_windowed_app.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+..\..\bin\elc gui_component_interaction\gui_component_interaction.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

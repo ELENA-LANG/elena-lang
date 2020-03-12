@@ -999,6 +999,8 @@ labStart:
   lea   edi, [eax+8]
   sub   esi, ecx
   jmp   labSplit
+  nop
+  nop
 labFound:
   jmp   [edi+esi*8+4]
 
@@ -1308,6 +1310,8 @@ inline %3Dh
   mov   eax, [esp]
   mov   edx, 0
   fld   qword ptr [eax]  
+
+  push  eax               // ; reserve space on CPU stack
 
   fstcw word ptr [esp]    // ;get current control word
   mov   ax,[esp]

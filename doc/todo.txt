@@ -10,10 +10,6 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : Sort three variables
-                * rosetta code samples : Sort using a custom comparator
-                * rosetta code samples : Sorting algorithms/Comb sort
-                * rosetta code samples : Short-circuit evaluation
                 * rosetta code samples : Sequence of primes by trial division
                 * rosetta code samples : Rot-13
                 * rosetta code samples : Roman numerals/Encode

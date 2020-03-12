@@ -43,7 +43,7 @@ Declarations
       * inline arg
 
       * Build-in Variables +
-        - self vs this self
+        - self vs this self +
         - __received +
         - class / global predicate
 

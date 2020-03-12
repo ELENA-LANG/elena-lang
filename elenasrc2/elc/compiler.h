@@ -1011,7 +1011,7 @@ private:
    void validateClassFields(SNode node, ClassScope& scope);
 
 //   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
-   void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode);
+   void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool ignoreType);
    void declareClassAttributes(SNode node, ClassScope& scope, bool visibilityOnly);
 ////   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
