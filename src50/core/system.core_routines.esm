@@ -6,6 +6,7 @@ define SPECIAL_MESSAGE       00000020h
 define SPECIAL_MESSAGE_INV  0FFFFFFDFh
 
 define elSubject             04000000h
+define elStructure          000000008h
 
 // ; external methods
 
@@ -62,6 +63,29 @@ procedure __object."raise[1]"
 
   freei 1
   peeksi 0
+  throw
+  
+end
+
+procedure __object."setField$system@IntNumber$system@Object[3]"
+
+  peeksi 1
+  flag
+  and elStructure
+  elsen labErr 0
+  len
+  peeksi 2
+  notless labErr
+  lessn labErr 0
+  pushsi 3
+  set
+  freei 1
+  quitn 3
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[1]"
   throw
   
 end

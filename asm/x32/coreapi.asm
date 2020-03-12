@@ -4349,6 +4349,40 @@ labSkip2:
 
 end
 
+// ; read_vmt (int,class,len,dump) = len
+procedure coreapi'core_readvmt
+
+   xor  esi, esi
+   mov  edx, [esp+12]
+   mov  eax, [esp+8]
+   mov  ecx, [eax - elVMTSizeOffset]
+   mov  ebx, [esp+4]
+   mov  edi, [esp+16]   
+   sub  ecx, ebx
+   jz   labEnd
+
+labNext:   
+   sub  edx, 1
+   test edx, edx
+   jz   labEnd
+
+   push edx
+   mov  edx, [eax + ebx * 8]
+   mov  [edi+esi*4], edx
+   pop  edx
+   add  esi, 1
+   
+labContinue:
+   add  ebx, 1
+   sub  ecx, 1
+   jnz  labNext
+   
+labEnd:
+   mov  edx, esi
+   ret
+   
+end
+
 procedure coreapi'default_handler                                                       
 
   // ; exit code
