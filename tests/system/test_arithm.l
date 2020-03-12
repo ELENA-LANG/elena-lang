@@ -181,39 +181,47 @@ import extensions;
 //////        anAction eval &line1:"Action Test" &line2:" passed".
 //////    ]
 //////}.
+
+class MyException : Exception
+{
+    constructor new(s)
+        <= new(s);
+}
+
+class MyException2 : Exception
+{
+    constructor new(s)
+        <= new(s);
+}
+
+singleton ExecTester
+{
+//    do : anAction [ anAction eval. ]
 //
-//class MyException : Exception;
-//
-//class MyException2 : Exception;
-//
-//singleton ExecTester
-//{
-////    do : anAction [ anAction eval. ]
-////
-////    do:x with:y
-////    [
-////    ]
-////            
-////    run : anAction
-////    [
-////        anAction eval x:"Eval Works!!".
-////    ]
-//    
-//    break()
-//    {
-//        MyException.new:"OnError handler works".raise()
-//    }
-//    
-//    break2()
-//    {
-//        MyException2.new:"OnError2 handler works".raise()
-//    }
-//    
-//    break3()
-//    {
-//        MyException2.new:"Nested OnError2 handler works".raise()
-//    }
-//}
+//    do:x with:y
+//    [
+//    ]
+//            
+//    run : anAction
+//    [
+//        anAction eval x:"Eval Works!!".
+//    ]
+    
+    break()
+    {
+        MyException.new:"OnError handler works".raise()
+    }
+    
+    break2()
+    {
+        MyException2.new:"OnError2 handler works".raise()
+    }
+    
+    break3()
+    {
+        MyException2.new:"Nested OnError2 handler works".raise()
+    }
+}
 
 objectTest()
 {
@@ -548,46 +556,57 @@ literalTest()
 //////    ]
 //////    &until:[j == 0].
 //////].
-//
-//// --- ExceptionTest ---
-//
-//ExceptionTest()
-//{
-//    ExecTester.break() | on:(e){ console.writeLine:"Throw works!"};
-//    
-//    ExecTester.break() | on:(e){ console.writeLine(e.Message) };
-//    
-//    try
-//    {
-//        ExecTester.break2()
-//    }
-//    catch:(MyException e)
-//    {
-//        Assert.ifTrue(false)
-//    }
-//    catch:(MyException2 e)
-//    {
-//        console.writeLine(e.Message)
-//    };
-//    
-//    try
-//    {
-//        try
-//        {
-//            ExecTester.break3()
-//        }
-//        catch:(MyException e)
-//        {
-//            console.writeLine:"!!Wrong handler";
-//            Assert.ifTrue(false)
-//        }
-//    }
-//    catch:(MyException2 e)
-//    {
-//        console.printLine(e.Message)
-//    }
-//}
-//
+
+// --- ExceptionTest ---
+
+exceptionTest()
+{
+    console.write("exceptionTest..");
+    
+    bool raised := false;
+    ExecTester.break() | on:(e){ raised := true };
+    Assert.ifTrue(raised);
+    
+    bool passed := false;
+    try
+    {
+        ExecTester.break2()
+    }
+    catch::
+    {
+        function(MyException e)
+        {
+            Assert.ifTrue(false)
+        }
+        function(MyException2 e)
+        {
+            passed := true;
+        }        
+    };
+    Assert.ifTrue(passed);
+    
+    bool passed2 := false;
+    try
+    {
+        try
+        {
+            ExecTester.break3()
+        }
+        catch(MyException e)
+        {
+            console.writeLine:"!!Wrong handler";
+            Assert.ifTrue(false)
+        }
+    }
+    catch(MyException2 e)
+    {
+        passed2 := true;
+    };
+    Assert.ifTrue(passed2);
+    
+    console.writeLine("done")
+}
+
 //////// --- TextBufferTest ---
 //////
 //////#symbol TextBufferTest =
@@ -962,69 +981,69 @@ literalTest()
 ////    
 ////    console writeLine("done").
 ////].
-//
-//class NestedTester
-//{
-//    int param1;
-//    int param2;
-//    
-//    constructor()
-//    {
-//        param1 := 1;
-//        param2 := 2;
-//    } 
-//    
-//    validate()
-//    {
-//        var c := { ^ param2 };        
-//        
-//        Assert.ifTrue(c() == param2);
-//    }
-//}
-//
-//nestedTest()
-//{
-//    console.write("NestedTest..");
-//    
-//    auto tester := new NestedTester();
-//        
-//    tester.validate();
-//    
-//    console.writeLine("done")
-//}
-//
-//class NestetNestedTester
-//{
-//    int param1;
-//    int param2;
-//    
-//    constructor()
-//    {
-//        param1 := 1;
-//        param2 := 2;
-//    } 
-//    
-//    validate()
-//    {
-//        var c := { ^ { ^ param2 } };        
-//        var cc := c();
-//        
-//        Assert.ifTrue(cc() == param2);
-//    }
-//}
-//
-//
-//nestetNestedTest()
-//{
-//    console.write("NestetNestedTest..");
-//    
-//    auto tester := new NestetNestedTester();
-//        
-//    tester.validate();
-//    
-//    console.writeLine("done")
-//}
-//
+
+class NestedTester
+{
+    int param1;
+    int param2;
+    
+    constructor()
+    {
+        param1 := 1;
+        param2 := 2;
+    } 
+    
+    validate()
+    {
+        var c := { ^ param2 };        
+        
+        Assert.ifTrue(c() == param2);
+    }
+}
+
+nestedTest()
+{
+    console.write("nestedTest..");
+    
+    auto tester := new NestedTester();
+        
+    tester.validate();
+    
+    console.writeLine("done")
+}
+
+class NestetNestedTester
+{
+    int param1;
+    int param2;
+    
+    constructor()
+    {
+        param1 := 1;
+        param2 := 2;
+    } 
+    
+    validate()
+    {
+        var c := { ^ { ^ param2 } };        
+        var cc := c();
+        
+        Assert.ifTrue(cc() == param2);
+    }
+}
+
+
+nestetNestedTest()
+{
+    console.write("nestetNestedTest..");
+    
+    auto tester := new NestetNestedTester();
+        
+    tester.validate();
+    
+    console.writeLine("done")
+}
+
 //duplicateStructBoxing()
 //{
 //    console.write("duplicateStructBoxing..");

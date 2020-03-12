@@ -10,8 +10,6 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : String case
-                * rosetta code samples : Sort disjoint sublist
                 * rosetta code samples : Sort three variables
                 * rosetta code samples : Sort using a custom comparator
                 * rosetta code samples : Sorting algorithms/Comb sort
@@ -27,8 +25,7 @@ In development:
                 * rosetta code samples : Magic squares of doubly even order
                 * rosetta code samples : JSON
                 * rosetta code samples : Integer sequence
-                * rosetta code samples : arithmeval
-                * rosetta code samples : test twentyfour
+
                 * rosetta code samples : Anagrams
                 * rosetta code samples : Hailstone sequence
                 * rosetta code samples : Amicable pairs
@@ -39,6 +36,7 @@ In development:
                 * rosetta code samples : Zhang-Suen thinning algorithm
                 * Amicable pairs using yield method
                 * rosetta code samples : Trabb Pardo-Knuth algorithm
+                * system_test : exceptionTest
                 * migrate changes from core to corex
                 * anagram sample with corex
                 * collatz sample

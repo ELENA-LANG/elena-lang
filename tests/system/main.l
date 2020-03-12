@@ -25,7 +25,7 @@ public program()
 //    arrayTest();
 ////    OpenArgTest eval.
 ////    MethodNotFoundTest eval.
-//    ExceptionTest();
+    //exceptionTest();
 ////    DateTest eval.
 ////    ListTest eval.
 ////    DictionaryTest eval.
@@ -48,8 +48,8 @@ public program()
 //    shortCircuitBooleanOperation();
 //    variadicTest();
 ////    proberTest().
-//    nestedTest();
-//    nestetNestedTest();
+    nestedTest();
+    nestetNestedTest();
 //    duplicateStructBoxing();
 //    duplicateBoxing();
 

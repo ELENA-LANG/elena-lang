@@ -67,6 +67,7 @@ constexpr auto HINT_LAZY_EXPR       = EAttr::eaLazy;
 constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the argument list should be unboxed
 constexpr auto HINT_CONSTEXPR       = EAttr::eaConstExpr;
 constexpr auto HINT_CALLOP          = EAttr::eaCallOp;
+constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
 
 // scope modes
 constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
@@ -774,7 +775,7 @@ ObjectInfo Compiler::MethodScope :: mapParameter(Parameter param, EAttr mode)
       // if the parameter may be stack-allocated
       return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, (ref_t)-1);
    }
-   else if (param.class_ref == V_WRAPPER && !EAttrs::testany(mode, HINT_PROP_MODE/* | HINT_REFEXPR*/)) {
+   else if (param.class_ref == V_WRAPPER && !EAttrs::testany(mode, HINT_PROP_MODE | HINT_REFEXPR)) {
       return ObjectInfo(okParamField, prefix - param.offset, param.element_ref, 0, 0);
    }
    else return ObjectInfo(okParam, prefix - param.offset, param.class_ref, param.element_ref, 0);
@@ -4851,7 +4852,7 @@ ref_t Compiler :: resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef,
 
 ObjectInfo Compiler :: compileReferenceExpression(SNode node, ExprScope& scope, EAttr mode)
 {
-   ObjectInfo objectInfo = mapTerminal(node, scope, mode/* | HINT_REFEXPR*/);
+   ObjectInfo objectInfo = mapTerminal(node, scope, mode | HINT_REFEXPR);
    ref_t operandRef = resolveObjectReference(scope, objectInfo, true, false);
    if (!operandRef)
       operandRef = scope.moduleScope->superReference;
