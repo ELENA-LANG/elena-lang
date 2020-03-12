@@ -156,7 +156,7 @@ public interface<T>
 {
     init_expr;
     
-    __loop: cast bool(cond_expr) ? { loop_body; step1_expr; step2_expr }
+    __loop: cast bool(cond_expr) ? { loop_body; step_expr1; step_expr2 }
 }
 
 // --- doUntil statement ---

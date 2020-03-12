@@ -10,8 +10,6 @@ In development:
                 * compile hello world
 
               dev - migration
-                * rosetta code samples : Maximum triangle path sum
-                * rosetta code samples : Magic squares of doubly even order
                 * rosetta code samples : Reflection/List methods
                 * rosetta code samples : Reflection/List properties
                 * rosetta code samples : JSON

@@ -9595,6 +9595,15 @@ void Compiler :: injectMemberPreserving(SNode node, ExprScope& scope, LexicalTyp
       fieldExpr.appendNode(tempType, tempLocal);
       fieldExpr.appendNode(lxField, memberIndex);
    }
+   else if (member.kind == okOuter) {
+      SNode assignNode = current.appendNode(lxAssigning);
+      SNode target = assignNode.appendNode(lxVirtualReference);
+      recognizeTerminal(target, member, scope, HINT_NODEBUGINFO);
+
+      SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
+      fieldExpr.appendNode(tempType, tempLocal);
+      fieldExpr.appendNode(lxField, memberIndex);
+   }
    else throw InternalError("Not yet implemented"); // !! temporal
 }
 
