@@ -303,260 +303,22 @@ inline void CollectYG(GCRoot* root, size_t start, size_t end, ObjectPage*& shado
                CopyObectData(current.size, (void*)new_ptr, current.stackPtr);
             }
          }
+         else {
+            //   // ; update reference
+            //   mov  edi, [eax - elVMTOffset]
+            //   mov[esi], edi
+            current.stackPtr = getVMTPtr(current.stackPtrAddr);
+         }
       }
       ptr++;
       size -= 4;
    }
-
-
-   //      // ; start collecting: esi => ebp, [ebx, edx] ; ecx - count
-   //      labCollectYG :
-   //   push 0
-   //
-   //      lea  ecx, [ecx + 4]
-   //      lea  esi, [esi - 4]
-   //
-   //      labYGNext :
-   //      lea  esi, [esi + 4]
-   //      sub  ecx, 4
-   //      jz   labYGResume
-   //
-   //      labYGCheck :
-   //   mov  eax, [esi]
-
-   //
-   //if (ptr >= start && ptr < end) {
-
-   //}
-
-   //      mov  edi, eax
-   //      cmp  edi, ebx
-   //      setb al
-   //      cmp  edx, edi
-   //      setb ah
-   //      test eax, 0FFFFh
-   //      mov  eax, edi
-   //      jnz  labYGNext
-   //
-   //
-   //      labYGResume :
-   //   // ; copy object to shadow YG
-   //   pop  edi
-   //      test edi, edi
-   //      jz   short labYGEnd
-   //
-   //      mov  ecx, [edi - elSizeOffset]
-   //      mov  esi, [edi - elVMTOffset]
-   //      and ecx, 0FFFFFh
-   //
-   //      labYGCopy :
-   //   mov  eax, [edi]
-   //      sub  ecx, 4
-   //      mov[esi], eax
-   //      lea  esi, [esi + 4]
-   //      lea  edi, [edi + 4]
-   //      jnz  short labYGCopy
-   //
-   //      pop  esi
-   //      pop  ecx
-   //      jmp  labYGNext
-   //
-   //      nop
-   //      labYGEnd :
-   //   ret
-   //
-   //      labYGContinue :
-   //   // ; update reference
-   //   mov  edi, [eax - elVMTOffset]
-   //      mov[esi], edi
-   //      jmp  labYGNext
-   //
 }
 
-void SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots)
+inline void FullCollect()
 {
-   //labYGCollect:
-   //   // ; restore ecx
-   //   sub  ecx, eax
-   //
-   //      // ; save registers
-   //      push ebp
-   //
-   //      // ; lock frame
-   //      mov[data:% CORE_GC_TABLE + gc_stack_frame], esp
-   //
-   //      push ecx
-   //
-   //      // ; create set of roots
-   //      mov  ebp, esp
-   //      xor ecx, ecx
-   //      push ecx        // ; reserve place 
-   //      push ecx
-   //      push ecx
-   //
-   //      // ; save static roots
-   //      mov  esi, data :% CORE_STATICROOT
-   //      mov  ecx, [data:% CORE_GC_TABLE + gc_rootcount]
-   //      push esi
-   //      push ecx
-   //
-   //      // ; collect frames
-   //      mov  eax, [data:% CORE_GC_TABLE + gc_stack_frame]
-   //      mov  ecx, eax
-   //
-   //      labYGNextFrame :
-   //   mov  esi, eax
-   //      mov  eax, [esi]
-   //      test eax, eax
-   //      jnz  short labYGNextFrame
-   //
-   //      push ecx
-   //      sub  ecx, esi
-   //      neg  ecx
-   //      push ecx
-   //
-   //      mov  eax, [esi + 4]
-   //      test eax, eax
-   //      mov  ecx, eax
-   //      jnz  short labYGNextFrame
-   //
-   //      // === Minor collection ===
-   //      mov[ebp - 4], esp      // ; save position for roots
-   //
-   //      // ; save mg -> yg roots 
-   //      mov  ebx, [data:% CORE_GC_TABLE + gc_mg_current]
-   //      mov  edi, [data:% CORE_GC_TABLE + gc_mg_start]
-   //      sub  ebx, edi                                        // ; we need to check only MG region
-   //      jz   labWBEnd                                        // ; skip if it is zero
-   //      mov  esi, [data:% CORE_GC_TABLE + gc_mg_wbar]
-   //      shr  ebx, page_size_order
-   //      // ; lea  edi, [edi + elObjectOffset]
-   //
-   //      labWBNext :
-   //   cmp[esi], 0
-   //      lea  esi, [esi + 4]
-   //      jnz  short labWBMark
-   //      sub  ebx, 4
-   //      ja   short labWBNext
-   //      nop
-   //      nop
-   //      jmp  short labWBEnd
-   //
-   //      labWBMark :
-   //   lea  eax, [esi - 4]
-   //      sub  eax, [data:% CORE_GC_TABLE + gc_mg_wbar]
-   //      mov  edx, [esi - 4]
-   //      shl  eax, page_size_order
-   //      lea  eax, [edi + eax + elObjectOffset]
-   //
-   //      test edx, 0FFh
-   //      jz   short labWBMark2
-   //      mov  ecx, [eax - elSizeOffset]
-   //      push eax
-   //      and ecx, 0FFFFFh
-   //      push ecx
-   //
-   //      labWBMark2 :
-   //   lea  eax, [eax + page_size]
-   //      test edx, 0FF00h
-   //      jz   short labWBMark3
-   //      mov  ecx, [eax - elSizeOffset]
-   //      push eax
-   //      and ecx, 0FFFFFh
-   //      push ecx
-   //
-   //      labWBMark3 :
-   //   lea  eax, [eax + page_size]
-   //      test edx, 0FF0000h
-   //      jz   short labWBMark4
-   //      mov  ecx, [eax - elSizeOffset]
-   //      push eax
-   //      and ecx, 0FFFFFh
-   //      push ecx
-   //
-   //      labWBMark4 :
-   //   lea  eax, [eax + page_size]
-   //      test edx, 0FF000000h
-   //      jz   short labWBNext
-   //      mov  ecx, [eax - elSizeOffset]
-   //      push eax
-   //      and ecx, 0FFFFFh
-   //      push ecx
-   //      jmp  short labWBNext
-   //
-   //      labWBEnd :
-   //   // ; save the stack restore-point
-   //   push ebp
+   throw InternalError("Not yet implemented"); // !! temporal
 
-
-
-   //      // ; init registers
-   //      mov  ebx, [data:% CORE_GC_TABLE + gc_yg_start]
-   //      mov  edx, [data:% CORE_GC_TABLE + gc_yg_end]
-   //      mov  ebp, [data:% CORE_GC_TABLE + gc_shadow]
-   //
-   //      
-   //      lea  eax, [esp + 4]
-   //      mov  ecx, [eax]
-   //      mov  esi, [esp + 8]
-   //      mov[data:% CORE_GC_TABLE + gc_yg_current], ebp
-   //
-   //      labCollectFrame :
-   //   push eax
-
-   ObjectPage* shadowPtr = (ObjectPage*)table->gc_shadow;
-   while (roots->stackPtr) {
-      CollectYG(roots, table->gc_yg_start, table->gc_yg_end, shadowPtr);
-
-      roots++;
-   }
-
-   //      pop  eax
-   //      lea  eax, [eax + 8]
-   //      mov  esi, [eax + 4]
-   //      test esi, esi
-   //      mov  ecx, [eax]
-   //      jnz short labCollectFrame
-   //
-   //      // ; save gc_yg_current to mark survived objects
-   //      mov[data:% CORE_GC_TABLE + gc_yg_current], ebp
-   //
-   //      // ; switch main YG heap with a shadow one
-   //      mov  eax, [data:% CORE_GC_TABLE + gc_yg_start]
-   //      mov  ebx, [data:% CORE_GC_TABLE + gc_shadow]
-   //      mov  ecx, [data:% CORE_GC_TABLE + gc_yg_end]
-   //      mov  edx, [data:% CORE_GC_TABLE + gc_shadow_end]
-   //
-   //      mov[data:% CORE_GC_TABLE + gc_yg_start], ebx
-   //      mov[data:% CORE_GC_TABLE + gc_yg_end], edx
-   //      mov  ebx, [esp]
-   //      mov[data:% CORE_GC_TABLE + gc_shadow], eax
-   //      mov  ebx, [ebx + 4]                           // ; restore object size
-   //      mov[data:% CORE_GC_TABLE + gc_shadow_end], ecx
-   //
-   //      sub  edx, ebp
-   //
-   //      pop  ebp
-   //      mov  esp, [ebp - 4]  // ; remove wb-roots
-   //
-   //      // ; check if it is enough place
-   //      cmp  ebx, edx
-   //      jae  short labFullCollect
-   //
-   //      // ; free root set
-   //      mov  esp, ebp
-   //
-   //      // ; restore registers
-   //      pop  ecx
-   //      pop  ebp
-   //
-   //      // ; try to allocate once again
-   //      mov  eax, [data:% CORE_GC_TABLE + gc_yg_current]
-   //      add  ecx, eax
-   //      lea  ebx, [eax + elObjectOffset]
-   //      mov[data:% CORE_GC_TABLE + gc_yg_current], ecx
-   //      ret
-   //
    //      labFullCollect :
    //   // ; ====== Major Collection ====
    //   // ; save the stack restore-point
@@ -951,5 +713,175 @@ void SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots)
    //      nop
    //
    //      ret
+   //      push ecx
+   //      push ecx
+   //
+   //      // ; save static roots
+   //      mov  esi, data :% CORE_STATICROOT
+   //      mov  ecx, [data:% CORE_GC_TABLE + gc_rootcount]
+   //      push esi
+   //      push ecx
+   //
+   //      // ; collect frames
+   //      mov  eax, [data:% CORE_GC_TABLE + gc_stack_frame]
+   //      mov  ecx, eax
+   //
+   //      labYGNextFrame :
+   //   mov  esi, eax
+   //      mov  eax, [esi]
+   //      test eax, eax
+   //      jnz  short labYGNextFrame
+   //
+   //      push ecx
+   //      sub  ecx, esi
+   //      neg  ecx
+   //      push ecx
+   //
+   //      mov  eax, [esi + 4]
+   //      test eax, eax
+   //      mov  ecx, eax
+   //      jnz  short labYGNextFrame
+   //
+   //      // === Minor collection ===
+   //      mov[ebp - 4], esp      // ; save position for roots
+   //
+   //      // ; save mg -> yg roots 
+   //      mov  ebx, [data:% CORE_GC_TABLE + gc_mg_current]
+   //      mov  edi, [data:% CORE_GC_TABLE + gc_mg_start]
+   //      sub  ebx, edi                                        // ; we need to check only MG region
+   //      jz   labWBEnd                                        // ; skip if it is zero
+   //      mov  esi, [data:% CORE_GC_TABLE + gc_mg_wbar]
+   //      shr  ebx, page_size_order
+   //      // ; lea  edi, [edi + elObjectOffset]
+   //
+   //      labWBNext :
+   //   cmp[esi], 0
+   //      lea  esi, [esi + 4]
+   //      jnz  short labWBMark
+   //      sub  ebx, 4
+   //      ja   short labWBNext
+   //      nop
+   //      nop
+   //      jmp  short labWBEnd
+   //
+   //      labWBMark :
+   //   lea  eax, [esi - 4]
+   //      sub  eax, [data:% CORE_GC_TABLE + gc_mg_wbar]
+   //      mov  edx, [esi - 4]
+   //      shl  eax, page_size_order
+   //      lea  eax, [edi + eax + elObjectOffset]
+   //
+   //      test edx, 0FFh
+   //      jz   short labWBMark2
+   //      mov  ecx, [eax - elSizeOffset]
+   //      push eax
+   //      and ecx, 0FFFFFh
+   //      push ecx
+   //
+   //      labWBMark2 :
+   //   lea  eax, [eax + page_size]
+   //      test edx, 0FF00h
+   //      jz   short labWBMark3
+   //      mov  ecx, [eax - elSizeOffset]
+   //      push eax
+   //      and ecx, 0FFFFFh
+   //      push ecx
+   //
+   //      labWBMark3 :
+   //   lea  eax, [eax + page_size]
+   //      test edx, 0FF0000h
+   //      jz   short labWBMark4
+   //      mov  ecx, [eax - elSizeOffset]
+   //      push eax
+   //      and ecx, 0FFFFFh
+   //      push ecx
+   //
+   //      labWBMark4 :
+   //   lea  eax, [eax + page_size]
+   //      test edx, 0FF000000h
+   //      jz   short labWBNext
+   //      mov  ecx, [eax - elSizeOffset]
+   //      push eax
+   //      and ecx, 0FFFFFh
+   //      push ecx
+   //      jmp  short labWBNext
+   //
+   //      labWBEnd :
+   //   // ; save the stack restore-point
+   //   push ebp
+
+
+
+   //      // ; init registers
+   //      mov  ebx, [data:% CORE_GC_TABLE + gc_yg_start]
+   //      mov  edx, [data:% CORE_GC_TABLE + gc_yg_end]
+   //      mov  ebp, [data:% CORE_GC_TABLE + gc_shadow]
+   //
+   //      
+   //      lea  eax, [esp + 4]
+   //      mov  ecx, [eax]
+   //      mov  esi, [esp + 8]
+   //      mov[data:% CORE_GC_TABLE + gc_yg_current], ebp
+   //
+   //      labCollectFrame :
+   //   push eax
+
+}
+
+void SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t size)
+{
+   //labYGCollect:
+   //   // ; restore ecx
+   //   sub  ecx, eax
+   //
+   //      // ; save registers
+   //      push ebp
+   //
+   //      // ; lock frame
+   //      mov[data:% CORE_GC_TABLE + gc_stack_frame], esp
+   //
+   //      push ecx
+   //
+   //      // ; create set of roots
+   //      mov  ebp, esp
+   //      xor ecx, ecx
+   //      push ecx        // ; reserve place      
+
+   ObjectPage* shadowPtr = (ObjectPage*)table->gc_shadow;
+   while (roots->stackPtr) {
+      CollectYG(roots, table->gc_yg_start, table->gc_yg_end, shadowPtr);
+
+      roots++;
+   }
+
+   // ; save gc_yg_current to mark  objects
+   table->gc_yg_current = (pos_t)shadowPtr;
+
+   // ; switch main YG heap with a shadow one
+   pos_t tmp = table->gc_yg_start;
+   table->gc_yg_start = table->gc_shadow;
+   table->gc_shadow = tmp;
+   tmp = table->gc_yg_end;
+   table->gc_yg_end = table->gc_shadow_end;
+   table->gc_shadow_end = tmp;
+
+   if (table->gc_yg_end - table->gc_yg_current < size) {
+      FullCollect();
+   }
+   //
+   //      // ; free root set
+   //      mov  esp, ebp
+   //
+   //      // ; restore registers
+   //      pop  ecx
+   //      pop  ebp
+   //
+   //      // ; try to allocate once again
+   //      mov  eax, [data:% CORE_GC_TABLE + gc_yg_current]
+   //      add  ecx, eax
+   //      lea  ebx, [eax + elObjectOffset]
+   //      mov[data:% CORE_GC_TABLE + gc_yg_current], ecx
+   //      ret
+   //
 }
 

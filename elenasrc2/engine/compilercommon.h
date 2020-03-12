@@ -524,8 +524,9 @@ public:
       eaInlineArg          = 0x00200000000,
       eaConstExpr          = 0x00400000000,
       eaCallOp             = 0x00800000000,
+      eaRefExpr            = 0x01000000000,
 
-      eaScopeMask          = 0x0000041400A,
+      eaScopeMask          = 0x0100041400A,
       eaObjectMask         = 0x008A821B2F4,
 
 //      eaWrap               = 0x00000001000,

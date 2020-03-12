@@ -151,7 +151,7 @@ public:
 
    static void CloseFrame(SystemEnv* env, FrameHeader* frameHeader);
 
-   static void GCRoutine(GCTable* table, GCRoot* roots);
+   static void GCRoutine(GCTable* table, GCRoot* roots, size_t size);
 
 } __routineProvider;
 
