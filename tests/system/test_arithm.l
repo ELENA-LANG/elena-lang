@@ -214,12 +214,12 @@ singleton ExecTester
     
     break2()
     {
-        MyException2.new:"OnError2 handler works".raise()
+        MyException2.new("OnError2 handler works").raise()
     }
     
     break3()
     {
-        MyException2.new:"Nested OnError2 handler works".raise()
+        MyException2.new("Nested OnError2 handler works").raise()
     }
 }
 
@@ -590,7 +590,7 @@ exceptionTest()
     {
         try
         {
-            ExecTester.break3()
+            MyException2.new("Nested OnError2 handler works").raise()
         }
         catch(MyException e)
         {

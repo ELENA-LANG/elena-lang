@@ -16,7 +16,6 @@ In development:
                 * expression tree to source
 
               dev - migration
-                * system_test : exceptionTest
                 * collatz sample
                 * db sample
                 * ExpressionTree1
@@ -38,6 +37,7 @@ In development:
                 * socket samples
 
                 * rosetta code samples : Zhang-Suen thinning algorithm
+                * system_test : exceptionTest
 
                 * uncomment all code in LIB50
                 * String / WideString - add<'Char>

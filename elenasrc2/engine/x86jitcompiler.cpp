@@ -1152,8 +1152,6 @@ void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
 
 void _ELENA_::compileNop(int, x86JITScope& scope)
 {
-   scope.code->align(4, 0x90);
-
    // nop command is used to indicate possible label
    // fix the label if it exists
    if (scope.lh.checkLabel(scope.tape->Position() - 1)) {
