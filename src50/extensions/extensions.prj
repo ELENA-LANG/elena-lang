@@ -30,6 +30,9 @@
             <include>routines\combinations.l</include>
             <include>routines\compound.l</include>
         </module>
+        <module name="dynamic">
+            <include>dynamic\json.l</include>
+        </module>
         <module name="threading">
             <include>threading\threading.l</include>
         </module>

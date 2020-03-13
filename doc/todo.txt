@@ -8,12 +8,14 @@ In development:
               dev2 - linux32
                 * uncomment LoadClassName, LoadMessageName
                 * compile hello world
+                * compile ecv
+                * compile all console / files examples
+
+              dev2 - research
+                * source to expression tree
+                * expression tree to source
 
               dev - migration
-                * rosetta code samples : Reflection/List methods
-                * rosetta code samples : Reflection/List properties
-                * rosetta code samples : JSON
-
                 * rosetta code samples : Anagrams
                 * rosetta code samples : Hailstone sequence
                 * rosetta code samples : Amicable pairs
@@ -45,11 +47,12 @@ In development:
                 * rosetta code samples : Time a function
                 * socket samples
                 * uncomment all code in LIB50
-                * implement some roseta code samples
                 * String / WideString - add<'Char>
-                * regression tests
                 * api doc - with description
+                * regression tests
+                * graph - use script to define the function (+tutorial)
                 * xforms
+                * implement some roseta code samples
 
               dev - elena50
                 * closure unboxing: field addr
@@ -58,17 +61,21 @@ In development:
                 * closures: race conditions
                 * closures: returning a value
                 * #190 : Closure : auto boxing / unboxing local variables 
-                * public / internal / private extensions?
-                * auto returning
                 * extension message - can be applied only to the generic extension?
-                * invoke extension directly
                 * ifheap - is not correctly recognize data allocated classes
 
-              dev - tutorials
+              dev2 - tutorials
                 * Generic handler with variable number of parameters
+                * migrate tutorials from reddit
+                * duck typing tutorial
+                * yieldable method tutorial
+                * migrate all existing ones
+                * tutorials
+                * rosetta code : AmicablePairs using yieldable method
 
               dev - new features
                 * multi-return methods : dynamic objects
+                * declaring several variables in a row?
 
                 * function closures : strong one - should be resolved directly if possible
                 * stack allocated variables : assigning nil, default constructor call, ...
@@ -98,6 +105,15 @@ In development:
                 * meta attributes
                 * private extension method should be possible to use for internal work
                 * it should be possible to extend attributes / template statements from anoter libraries
+                * abstract class cannot be sealed
+                * do not allow to write something like
+                  A{ int dump[4] := 3; }  // !! error
+                * (re)implement manifest
+                * support class / method / field / static field meta description
+                * do-while - if the second agrument is code brackets?
+                * static fields should be accessaible from storng typed extensions
+                * yield can be used only for yieldable method
+                * yieldable method can be declared only for normal class
 
               dev - test / implementation
                 * CharValue.new = $0 -> should create a new class
@@ -142,6 +158,12 @@ In development:
                 * assigning struct field with int constant
                 * auto conversion methods should be marked as idle
                 * resend to constant - no need for frame
+                * optimize GC : copying blocks
+                * optimize GC : bit cards
+                * optimize copying operation
+                * optimite yield operstions
+                * improve compiler speed
+                * move all description to meta info using descr inline template
 
               dev - usability
                 * ide message : display internal error
@@ -170,64 +192,13 @@ In development:
                 * uncomment validateUnresolved
                 * remove all commented code
 
-              dev1
-                * move all description to meta info using descr inline template
-                * write - Programming in ELENA : manual
-                * migrate tutorials from reddit
-                * duck typing tutorial
-                * yieldable method tutorial
-                * migrate all existing ones
-                * tutorials
-                * rosetta code : AmicablePairs using yieldable method
-
-              dev2 - inline assembly in RT / VM
-                * get rid of ExecuteInFrame, provide special function to invoke the function from external
-
-              dev2
-                * refactor code generation (ByteCodeWriter), there should be a context to keep track on the current register
-                  load, get rid of code duplication, simplify opertion / assinging, 
-                * implement enum type
-                * BoolValue cannot be inherited
-                * support break and continue statements
-                * implenent break / continue analog
-                * addai, saveai
-                * optimize GC : copying blocks
-                * optimize GC : bit cards
-                * optimize copying operation
-                * optimize pi sample
-                * optimite yield operstions
-                * abstract class cannot be sealed
-                * do not allow to write something like
-                  A{ int dump[4] := 3; }  // !! error
-                * (re)implement manifest
-                * support class / method / field / static field meta description
-                * do-while - if the second agrument is code brackets?
-                * static fields should be accessaible from storng typed extensions
-                * improve compilation speed
-                * yield can be used only for yieldable method
-                * yieldable method can be declared only for normal class
-
-              xdev - linux32
-                * compile ecv
-                * compile all console / files examples
-
               xdev - ide
                 * error by viewing translit sample
 
               dev3
                 * port Linux IDE
 
-              dev4
-                * test (Runtime evaluation,Runtime evaluation/In an environment,Sorting algorithms/Sleep sort,
-                  Walk a directory/Non-recursively, Wireworld, Zhang-Suen thinning algorithm,Zeckendorf arithmetic)
-
-              dev5
-                * xforms
-                * graph - use script to define the function (+tutorial)
-                * source to expression tree
-                * expression tree to source
-
-              dev6
+              dev2 - api
                 * template extensions
                 * missing algorithms (template extensions)
                 * missing system'routines'stex
@@ -238,95 +209,46 @@ In development:
 ------                                                           
 Pipeline:
 ------   
-              xdev
-                * chat sample
-
-              xdev
                 * fix bug with inserting unicode character
-                             
-              xdev - lib
                 * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
-
-              xdev
-                * operation with numeric constant should be used with constant symbol as well
-                * i += i + 1; Tester.test(i*2+1)
-                * optimize pi sample
-
-              xdev - lib
                 * should toReal work only for real numbers without fraction?
-
-              xdev syntax
                 * generate out of memory exception
-                * create big objects directly in mg
-
-              ydev
                 * script : support several operation in a row
                 * following rule does not work - function* code $eof
-
-              xdev - language
                 * 2*i should be compiled as i*2
                 * call a property directly
                 * optimize:
                      int dump[4];
                      dump[i*2] := 3;
-
-              xdev - bytecode optimization
                 * operations with stack-allocated array : dump[0] := 1;
                 * operation with dynamic array should be direct???
                 * inline arg : variadic normal arg list
                 * inline arg : variadic long arg list
-                                                                                      
-              xdev - usability
                 * uncomment IDEController :: isOutaged
                 * uncomment exclude from the project command
-
-              ydev
                 * build : returning (goto)
                 * ?fields
-
-              xdev
                 * inject target boxing if it is stack allocated and the message call is not stacksafe
                 * analizeSubExpression
                 * analizeAltExpression
-
-              xdev tests
                 * #271
                 * operations with weak array
                 * operations with variadic array
                 * check nil boxing
                 * check boxing of incompatible types
-
-              xdev
                 * fixing #476
                 * redesign invoke1..invoke31 - they should use the same class with messageid as a field
-
-              xdev
                 * primitive op where i is fields - i+=k
                 * primitive op where i,k are fields - i+k
-
-              xdev
                 * new system'dynamics'DynamicStruct() - raise an error
                 * support lazyOp
-
-              xdev  - int op - test and optimize
                 * Tester.test(n+m*n);
-                * pi sample
-
-              xdev
                  * remove idle variable / field / constant (e.g. 2)
                  * import hashtable design
-
-              xdev
                 * debugger should show ref variable value
-
-              ydev
                 * get rid of tape support??
-
-              ydev - build tape
                 * support variadic argument list (if the number of arguments is bigger than 0x1F)
                 * ssupport namespace import, so the build script can be shortened
-
-              xdev
                  * opzimiation extension operation with a byte array parameter
                  * optimize i += 1
                  * optimize assign inp_op direct_call embeddable
@@ -336,15 +258,6 @@ Pipeline:
                  * optimize dirty_ptr := dirty_ptr + int
                  * building expression tree - raise an exceptoion with missing class name
                  * the following code should not be allowed - real n := n;
-
-              ydev
-                 * graph sample
-
-              zdev
-                 * reflector
-                 * generate LIB40 API Doc
-
-              xdev - elena 4.0
                  * primitive operations #86
 
                  * unboxing explicit local allocated extension #200
@@ -372,27 +285,9 @@ Pipeline:
 
                  * Various optimizations #431
                  * fix zeckendorf_arithm 
-
-              dev - ide
                  * debugger : display message name
-
-              dev - elena 4.0
-                 * working on xforms
-
-              ydev
-                * closure
-
-              dev - script engine
-                * parse script and save it
-
-              dev - elena 4.0
                  * optimize hash table implementation (both weak and strong typed)
                  * implement jsonObject.serializeTo(MyDTO);
-                 * test: internal prop x, internal prop int x
-                 * test prop, event
-                 * prop public int x
-                 * abstract class cannot be created
-                 * read package info
                  * support seriaization properties - indicating which properties should be serilized
                  * support constants - declared only once and used through the class hierarchy
                  * support static fields - after declaration - every class child should initialize it
@@ -404,21 +299,11 @@ Pipeline:
                  * fields : a += b
 
                  * (re)implement hashTable, using links, load control and so on
-                 * fix : Hailstone sequence
-                 * fix : Trigonometric functions (arctan)
 
-                 * Reflection/List methods, Reflection/List properties, Runtime evaluation,Runtime evaluation/In an environment,
-                 * Zhang-Suen thinning algorithm
-                 * Support enumeration list #265
-                 * Sockets
-                 * property template - should support public / internal visibility attributes
-                 * (re)implement UTF8Encoder.convert(..,string,byte[]) method
                  * implement Heap, Balanced Search Tree and Hash tables, review Map<T,Key> template, if it could be
                    optimized
                  * implement correctly - a[i][j] += 1 (see World Cup group stage)
-                 * Wireworld
                  * modify quicksort to use insert selection for smaller amount (test on anagram)
-                 * optimize calendar'Date.prop#Printable - do we need to copy value
 
                  * embeddable returning value : do not duplicate the method code - the original method should call
                    static one
@@ -469,7 +354,6 @@ Pipeline:
 
                  * long constant should not be boxed like int constants
 
-
                  * reddit post - Switch statement
 
                  * identifier - message message
@@ -483,8 +367,6 @@ Pipeline:
                  * test boxing / unboxing with dynamic reference
                  * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one
-
-                 * support c style return statement - return x;
 
                  * Indexer.Index property - should support abstract get and set accessors
                  * unboxing of boxing (in case if analizer does not resolve the issue)
@@ -503,44 +385,12 @@ Pipeline:
                  * sealed static fields, cannot be changed in the child classes?!
                  * remove all temporal exceptions
  
-              dev - debugger
                  * debugger : step over message operation
                  * fix debugger watch : bsort - ref<int> is not correctly recognized
-
-              dev - tests          
-                 * test elt
-
-              exp - live programming
-                 * implement code generation
-                 * implement code transformation
-                 * use script to build objects
-                 * use script to parse
-                 * use script generate code
-
-              dev - tests          
                  * test vm sta : preloaded symbols / initializers
                  * test vm sta : exception handlers
                  * vm : Runtime evaluation, Runtime evaluation/In an environment
                  * mta system : check the situation when too many threads (> MAX_THREAD)
                  * nested code : read only outer field
-
-              dev - general implementation
-                 *  #77 : migrate GC algorithm
-                 *  #77 : get rid of core_win, all functionality should be moved to elenart / elenavm
-                 *  #77 : retiring core / corex 
-                 *  #77 : get rid of tt_ptr field
-                 * move system'core_routines'__exception register call to the system entry symbol
-
-              dev - general implementation
-                 * &0l - should be dynamically created
-
-              dev - tests          
-                 * gui : GUI component interaction, Hello world/Graphical, Simple windowed application
-
-              dev - general implementation
-                 * (re)implement sockets
-                 * (re)implement tcpserver / tcpclient
-
-              xdev - general optimization  
-                 - closers passed as parameters should be stack-allocated
+                 * closers passed as parameters should be stack-allocated
 

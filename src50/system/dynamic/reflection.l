@@ -65,10 +65,10 @@ public extension classROp
         for(int i := 0, i < retVal, i += 1)
         {
            int id := tmp_array[i];
-           if (id.allMask(40h))
+           if (id.allMask(41h))
            {
                int count := id && 01Fh;
-               if (count == 0) {
+               if (count == 1) {
                    Message message;
                    intern system'core_routines'__message.copy(message, tmp_array[i]);
                    
