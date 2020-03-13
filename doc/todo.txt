@@ -16,9 +16,6 @@ In development:
                 * expression tree to source
 
               dev - migration
-                * rosetta code samples : Zhang-Suen thinning algorithm
-                * rosetta code samples : Zeckendorf arithmetic
-
                 * system_test : exceptionTest
                 * collatz sample
                 * db sample
@@ -39,6 +36,9 @@ In development:
                 * rosetta code samples : Sorting algorithms/Sleep sort
                 * rosetta code samples : Time a function
                 * socket samples
+
+                * rosetta code samples : Zhang-Suen thinning algorithm
+
                 * uncomment all code in LIB50
                 * String / WideString - add<'Char>
                 * api doc - with description

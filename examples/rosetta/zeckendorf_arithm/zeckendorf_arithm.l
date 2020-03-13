@@ -45,10 +45,8 @@ sealed struct ZeckendorfNumber
                 dLen := i
             };
             
-            int v2 := dVal $shr (i * 2);
             int v := (dVal $shr (i * 2)) && 3;
-            
-            ((dVal $shr (i * 2)) && 3) =>
+            v =>    
                 0 { ^ self }
                 1 { ^ self }
                 2 {
@@ -190,13 +188,10 @@ sealed struct ZeckendorfNumber
         dLen := l
     }
     
-    get string Printable()
+    string toPrintable()
     {
         if (dVal == 0)
             { ^ "0" };
-            
-        //int n := dVal $shr (dLen * 2);
-        //int r := (dVal $shr (dLen * 2)) && 3;            
             
         string s := dig1[(dVal $shr (dLen * 2)) && 3];
         int i := dLen - 1;
