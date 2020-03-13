@@ -16,8 +16,6 @@ In development:
                 * expression tree to source
 
               dev - migration
-                * rosetta code samples : Trabb Pardo-Knuth algorithm
-
                 * rosetta code samples : Zhang-Suen thinning algorithm
                 * rosetta code samples : Zeckendorf arithmetic
 

@@ -105,6 +105,28 @@ namespace math
     //        = x.Reciprocal;
     //}
     
+    public singleton abs
+    {
+        real function(real loperand)
+            = loperand.Absolute;
+            
+        int function(int loperand)
+            = loperand.Absolute;
+            
+        byte function(byte loperand)
+            = loperand.Absolute;
+            
+        short function(short loperand)
+            = loperand.Absolute;
+           
+        uint function(uint loperand)
+            = loperand;
+            
+        long function(long loperand)
+            = loperand.Absolute;
+        
+    }
+    
     public singleton modulo
     {
         function(loperand, roperand)
