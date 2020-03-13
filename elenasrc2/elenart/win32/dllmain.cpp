@@ -84,9 +84,9 @@ EXTERN_DLL_EXPORT void StopThread(int exitCode)
    _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);
 }
 
-EXTERN_DLL_EXPORT void GCCollect(void* roots, size_t size)
+EXTERN_DLL_EXPORT void* GCCollect(void* roots, size_t size)
 {
-   SystemRoutineProvider::GCRoutine(((SystemEnv*)_SystemEnv)->Table, (GCRoot*)roots, size);
+   return SystemRoutineProvider::GCRoutine(((SystemEnv*)_SystemEnv)->Table, (GCRoot*)roots, size);
 }
 
 void loadModulePath(HMODULE hModule, Path& rootPath, bool includeName)

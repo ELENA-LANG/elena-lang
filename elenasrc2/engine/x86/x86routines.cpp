@@ -205,6 +205,11 @@ struct ObjectPage
    int   body[2];
 };
 
+inline pos_t getObjectPtr(size_t pagePtr)
+{
+   return pagePtr + elObjectOffset;
+}
+
 inline ObjectPage* getObjectPage(size_t objptr)
 {
    return (ObjectPage*)objptr - elObjectOffset;
@@ -828,7 +833,7 @@ inline void FullCollect()
 
 }
 
-void SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t size)
+void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t size)
 {
    //labYGCollect:
    //   // ; restore ecx
@@ -867,21 +872,15 @@ void SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t size
 
    if (table->gc_yg_end - table->gc_yg_current < size) {
       FullCollect();
+
+      return nullptr; // !! temporal
    }
-   //
-   //      // ; free root set
-   //      mov  esp, ebp
-   //
-   //      // ; restore registers
-   //      pop  ecx
-   //      pop  ebp
-   //
-   //      // ; try to allocate once again
-   //      mov  eax, [data:% CORE_GC_TABLE + gc_yg_current]
-   //      add  ecx, eax
-   //      lea  ebx, [eax + elObjectOffset]
-   //      mov[data:% CORE_GC_TABLE + gc_yg_current], ecx
-   //      ret
-   //
+   else {
+      pos_t allocated = table->gc_yg_current;
+
+      table->gc_yg_current += size;
+
+      return (void*)getObjectPtr(allocated);
+   }
 }
 

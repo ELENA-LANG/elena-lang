@@ -2455,6 +2455,16 @@ labDefault:
   
 end
 
+procedure __message."copy$system@Message$system@IntNumber[2]"
+
+  peeksi 2  
+  load
+  peeksi 1
+  save
+  quitn  2
+
+end
+
 procedure __signature."#dispatch[1]"
 
   pushd

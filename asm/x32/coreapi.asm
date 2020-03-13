@@ -5,6 +5,7 @@ define INIT_RND          10012h
 define CORE_ET_TABLE     2000Bh
 
 define elSizeOffset      0008h
+define elVMTSizeOffset   000Ch
 
 // ; --- API ---
 
