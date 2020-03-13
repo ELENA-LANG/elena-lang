@@ -16,17 +16,12 @@ In development:
                 * expression tree to source
 
               dev - migration
-                * rosetta code samples : Amicable pairs
-                * rosetta code samples : Wireworld
-                * rosetta code samples : World Cup group stage
-                * rosetta code samples : Zeckendorf arithmetic
-                * rosetta code samples : Zeckendorf number representation
-                * rosetta code samples : Zhang-Suen thinning algorithm
-                * Amicable pairs using yield method
                 * rosetta code samples : Trabb Pardo-Knuth algorithm
+
+                * rosetta code samples : Zhang-Suen thinning algorithm
+                * rosetta code samples : Zeckendorf arithmetic
+
                 * system_test : exceptionTest
-                * migrate changes from core to corex
-                * anagram sample with corex
                 * collatz sample
                 * db sample
                 * ExpressionTree1
@@ -39,6 +34,8 @@ In development:
                 * Simple windowed application
                 * GUI component interaction
                 * gui samples
+                * migrate changes from core to corex
+                * anagram sample with corex
                 * rosetta code samples : Sleep
                 * rosetta code samples : Sockets
                 * rosetta code samples : Sorting algorithms/Sleep sort
@@ -50,6 +47,7 @@ In development:
                 * regression tests
                 * graph - use script to define the function (+tutorial)
                 * xforms
+                * Amicable pairs using yield method
                 * implement some roseta code samples
 
               dev - elena50
