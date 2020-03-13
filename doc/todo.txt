@@ -16,8 +16,6 @@ In development:
                 * expression tree to source
 
               dev - migration
-                * rosetta code samples : Anagrams
-                * rosetta code samples : Hailstone sequence
                 * rosetta code samples : Amicable pairs
                 * rosetta code samples : Wireworld
                 * rosetta code samples : World Cup group stage

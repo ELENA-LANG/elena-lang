@@ -888,44 +888,44 @@ public extension realOp : RealNumber
         = self <= 0.0r;
 }
 
-//// --- intArrayOp ---
+// --- intArrayOp ---
+
+public extension intArrayOp : Array<int>
+{
+    /// Copies the short array at the specified position
+    write(int index, int length, int[] array)
+        => intern system'core_routines'__intarray;
+
+//    exchange(int anIndex1, int anIndex2)
+//    [
+//        int n1 := 0.
+//        int n2 := 0.
 //
-//public extension intArrayOp : Array<int>
-//{
-//    /// Copies the short array at the specified position
-//    write(int index, int length, int[] array)
-//        => system'core_routines'__intarray;
+//        self read(anIndex1, &n1).
+//        self read(anIndex2, &n2).
+//        
+//        self write(anIndex1, n2).
+//        self write(anIndex2, n1).
+//    ]
 //
-////    exchange(int anIndex1, int anIndex2)
-////    [
-////        int n1 := 0.
-////        int n2 := 0.
-////
-////        self read(anIndex1, &n1).
-////        self read(anIndex2, &n2).
-////        
-////        self write(anIndex1, n2).
-////        self write(anIndex2, n1).
-////    ]
-////
-////    populate(Func<int,int> f)
-////    [
-////        int anIndex := 0.
-////        int aLength := self length.
-////        
-////        while (anIndex < aLength)
-////        [            
-////            self write(anIndex, f(anIndex)).
-////            
-////            anIndex := anIndex + 1
-////        ].
-////        
-////        ^ self
-////    ]
-////    
-////    populate(Func1 f)
-////        = self~intArrayOp populate(:n)<int,int>[ ^f(n) ].    
-//}
+//    populate(Func<int,int> f)
+//    [
+//        int anIndex := 0.
+//        int aLength := self length.
+//        
+//        while (anIndex < aLength)
+//        [            
+//            self write(anIndex, f(anIndex)).
+//            
+//            anIndex := anIndex + 1
+//        ].
+//        
+//        ^ self
+//    ]
+//    
+//    populate(Func1 f)
+//        = self~intArrayOp populate(:n)<int,int>[ ^f(n) ].    
+}
 
 // --- arrayOp ---
 

@@ -1244,6 +1244,28 @@ labErr:
 
 end
 
+procedure __intarray."write$@system@Array#1&system@IntNumber$system@IntNumber$system@IntNumber$@system@Array#1&system@IntNumber[4]"
+
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  pushsi 4
+  
+  callextr api : ninsert
+  ifn labErr 0 
+
+  peeksi 0
+  freei  4
+  quitn  4
+
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
 procedure __chararray."write$@system@Array#1&system@CharValue$system@IntNumber$system@IntNumber$@system@Array#1&system@CharValue[4]"
 
   pushsi 4
