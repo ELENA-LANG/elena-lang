@@ -16,7 +16,6 @@ In development:
                 * expression tree to source
 
               dev - migration
-                * collatz sample
                 * db sample
                 * ExpressionTree1
                 * ExpressionTree2
