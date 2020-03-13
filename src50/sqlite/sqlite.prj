@@ -1,0 +1,20 @@
+<configuration>
+    <project>
+        <output>..\..\lib50</output>
+        <namespace>sqlite</namespace>
+        <template>lib</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <manifest>
+       <name>ELENA SQLite Provider Library</name>
+       <version>5.0.0</version>
+       <author>Alex Rakov</author>
+    </manifest>
+    <files>
+        <module>
+            <include>reader.l</include>
+            <include>data_table.l</include>
+            <include>common.l</include>
+        </module>
+    </files>
+</configuration>

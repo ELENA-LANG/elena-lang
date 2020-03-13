@@ -5101,11 +5101,11 @@ void Compiler :: compileTemplateAttributes(SNode current, List<SNode>& parameter
 //
 //   ExpressionAttributes attributes;
    while (current != lxNone) {
-      if (current == lxType) {
+      if (current.compare(lxType, lxArrayType)) {
          ref_t typeRef = current.argument;
          if (!typeRef || typeRef == V_TEMPLATE) {
             typeRef = resolveTypeAttribute(current, scope, declarationMode, false);
-            current.setArgument(typeRef);
+            current.set(lxType, typeRef);
 
             SNode terminalNode = injectAttributeIdentidier(current, scope);
          }

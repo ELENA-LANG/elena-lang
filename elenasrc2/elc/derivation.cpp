@@ -1000,7 +1000,17 @@ void DerivationWriter :: generateTemplateAttributes(SyntaxWriter& writer, SNode 
    ref_t attributeCategory = 0u;
    while (current != lxNone) {
       if (current == lxToken) {
-         generateExpressionAttribute(writer, current, derivationScope, attributeCategory, 0, true);
+         int dimensionCounter = 0;
+         SNode dimNode = current.nextNode();
+         while (dimNode.compare(lxTemplateArgs, lxDynamicSizeDecl)) {
+            if (dimNode == lxDynamicSizeDecl) {
+               dimensionCounter++;
+            }
+
+            dimNode = dimNode.nextNode();
+         }
+
+         generateExpressionAttribute(writer, current, derivationScope, attributeCategory, dimensionCounter, true);
       }
       current = current.nextNode();
    }
@@ -1709,14 +1719,19 @@ void DerivationWriter :: generateStatementTemplateTree(SyntaxWriter& writer, SNo
 void DerivationWriter :: generateExpressionAttribute(SyntaxWriter& writer, SNode current, Scope& derivationScope, 
    ref_t& previousCategory, int dimensionCounter, bool templateArgMode/*, bool onlyAttributes*/)
 {
-   SNode assignNode = current.nextNode().nextNode();
-   // HOTFIX : skip the dimension token
-   for (int i = 0; i < dimensionCounter; i++) {
-      assignNode = assignNode.nextNode();
-   }
-
-   bool allowType = /*!onlyAttributes && (*/templateArgMode || assignNode != lxToken/*)*/;
+   bool allowType = false;
    bool allowProperty = false;
+
+   if (!templateArgMode) {
+      SNode assignNode = current.nextNode().nextNode();
+      // HOTFIX : skip the dimension token
+      for (int i = 0; i < dimensionCounter; i++) {
+         assignNode = assignNode.nextNode();
+      }
+
+      allowType = assignNode != lxToken;
+   }
+   else allowType = true;
    
 //   if (dimensionCounter && !allowType)
 //      _scope->raiseError(errInvalidSyntax, _filePath, current.findChild(lxDynamicSizeDecl));
