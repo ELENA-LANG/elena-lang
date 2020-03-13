@@ -238,42 +238,35 @@ public sealed Matrix<T>
     constructor allocate(rows, columns)
         <= allocate(cast int(rows), cast int(columns));
     
-////    constructor(params)
-////    [
-////        theRows := params rows.
-////        theColumns := params columns.
-////        
-////        int len := theRows * theColumns.
-////        
-////        theArray := V<template_subj>(/*theRows * theColumns*/len).
-////        
-////        auto it := T<Indexer2D>(params) ?? nil.
-////        ifnot(nil == it)
-////            [
-////                int i := 0.
-////                int j := 0.
-////                
-////                while (i < theRows)
-////                [
-////                    j := 0.
-////                    while (j < theColumns)
-////                    [
-////                        it writeIndex1(i).
-////                        it writeIndex2(j).
-////                        
-////                        template_subj val := it get.
-////                        
-////                        self setAt(i, j, val).
-////                        
-////                        j := j + 1
-////                    ].
-////                    
-////                    i := i + 1
-////                ]
-////            ]
-////    ]    
-////    
-////    /// Reads the matrix lengths to the output parameter
+    constructor load(params)
+    {
+        theRows := params.Rows;
+        theColumns := params.Columns;
+        
+        int len := theRows * theColumns;
+        
+        theArray := new T[](/*theRows * theColumns*/len);
+        
+        int i := 0;
+        int j := 0;
+        
+        while (i < theRows)
+        {
+            j := 0;
+            while (j < theColumns)
+            {
+                T val := params.at(i,j);
+                
+                self.setAt(i, j, val);
+                
+                j := j + 1
+            };
+            
+            i := i + 1
+        }
+    }    
+    
+//    /// Reads the matrix lengths to the output parameter
 ////    readLengths(ref<int> Rows, ref<int> Columns)
 ////    [
 ////        Rows value := theRows.
@@ -281,30 +274,30 @@ public sealed Matrix<T>
 ////    ]
 ////
 ////    int rvprop length  :: readLengthTo.    
-//
-//    Length
-//    {
-//        int get()
-//        {
-//            ^ theRows
-//        }
-//    }    
-//
-//    Columns
-//    {
-//        int get()
-//        {
-//            ^ theColumns
-//        }
-//    }
-//
-//    Rows
-//    {
-//        int get()
-//        {
-//            ^ theRows
-//        }
-//    }
+
+    int Length
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }    
+
+    int Columns
+    {
+        get()
+        {
+            ^ theColumns
+        }
+    }
+
+    int Rows
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }
 
     /// Writes an integer value at the specified position
     setAt(int i, int j, T v)
@@ -329,66 +322,61 @@ public sealed Matrix<T>
         ^ retVal
     }
 
-////    setAt(i, j, v)
-////    [
-////        self setAt(T<int>(i), T<int>(j), T<template_subj>(v)).    
-////    ]
-////
-////    /// Returns a row
-////    getAt(i) =
-////    {
-////        length = theColumns.
-////        
-////        getAt(j)
-////            = self getAt(i,j).
-////        
-////        setAt(j, v)
-////        [
-////            self setAt(i,j,v).
-////        ]
-////    }.
-//////    
-//////    indexer2d = Indexer2D
-//////    {
-//////        
-//////    }.
-////
-////    enumerator 
-////    [
-////        ref<int> i := 0.
-////        ref<int> j := -1.
-////        int length1 := theRows.
-////        int length2 := theColumns.
-////        
-////        ^ Enumerator::
-////          {
-////              get = self getAt(i value, j value).
-////              
-////              enumerable = self.
-////              
-////              reset [ i value := 0. j value := -1. ]
-////              
-////              bool next
-////              [
-////                  ifnot (i < length1)
-////                  [
-////                     ^ false.
-////                  ].
-////                  
-////                  j := j + 1.
-////                  
-////                  ifnot (j < length2)
-////                  [
-////                      j := -1.
-////                      i := i + 1.
-////                      
-////                      ^ false
-////                  ].
-////                  
-////                  ^ true
-////              ]
-////          }.
-////    ]
+//    setAt(i, j, v)
+//    [
+//        self setAt(T<int>(i), T<int>(j), T<template_subj>(v)).    
+//    ]
+
+    /// Returns a row
+    at(i) = new
+    {
+        Length = theColumns;
+        
+        at(j)
+            = self.at(i,j);
+        
+        setAt(j, v)
+        {
+            self.setAt(i,j,v)
+        }
+    };
+
+    Enumerator enumerator() 
+    {
+        int i := 0;
+        int j := -1;
+        int length1 := theRows;
+        int length2 := theColumns;
+        
+        ^ new Enumerator
+          {
+              get() = self.at(i, j);
+              
+              enumerable() = self;
+              
+              reset() { i := 0; j := -1; }
+              
+              bool next()
+              {
+                  ifnot (i < length1)
+                  {
+                     ^ false
+                  };
+                  
+                  j := j + 1;
+                  
+                  ifnot (j < length2)
+                  {
+                      j := -1;
+                      i := i + 1;
+                      
+                      ^ false
+                  };
+                  
+                  ^ true
+              }
+          }
+    }
 }
 
 // === basic memory classes ===

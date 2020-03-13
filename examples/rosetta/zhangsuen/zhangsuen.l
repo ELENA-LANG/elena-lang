@@ -50,7 +50,7 @@ extension zhangsuenOp : Matrix<CharValue>
         if(self.numTransitions(r,c) != 1)
             { ^ false };
  
-        ifnot (self.atLeastOneIsWhite(r,c,firstStep iif(0,1)))
+        ifnot (self.atLeastOneIsWhite(r,c,firstStep.iif(0,1)))
             { ^ false };
  
         toWhite.append(new { x = c; y = r; });
@@ -62,7 +62,7 @@ extension zhangsuenOp : Matrix<CharValue>
     {
         int count := 0;
  
-        for (int i := 0, i < nbsr.Length, i += 1)
+        for (int i := 0, i < nbrs.Length, i += 1)
         {
             if (self[r + nbrs[i][1]][c + nbrs[i][0]] == $35)
                 { count += 1 }
@@ -72,102 +72,97 @@ extension zhangsuenOp : Matrix<CharValue>
     }
  
     numTransitions(r,c)
-    [
-        int count := 0.
+    {
+        int count := 0;
  
-        0 till(nbrs length - 1) do(:i)
-        [
+        for (int i := 0, i < nbrs.Length, i += 1)
+        {
             if (self[r + nbrs[i][1]][c + nbrs[i][0]] == $32)
-            [
+            {
                 if (self[r + nbrs[i + 1][1]][c + nbrs[i + 1][0]] == $35)
-                [
-                    count := count + 1.
-                ].
-            ].
-        ].
+                {
+                    count := count + 1
+                }
+            }
+        };
  
-        ^ count.
-    ]  
+        ^ count
+    }  
  
     atLeastOneIsWhite(r, c, step)
-    [
-        int count := 0.
-        var group := nbrGroups[step].
-        0 till:2 do(:i)
-        [            
-            0 till(group[i] length) seek(:j)
-            [
-                var nbr := nbrs[group[i][j]].
+    {
+        int count := 0;
+        var group := nbrGroups[step];
+        for(int i := 0, i < 3, i += 1)
+        {            
+            for(int j := 0, j < group[i].Length, j += 1)
+            {
+                var nbr := nbrs[group[i][j]];
  
                 if (self[r + nbr[1]][c + nbr[0]] == $32)
-                    [ count := count + 1. ^ true ].
+                    { count := count + 1; ^ true };
  
-                ^ false.                    
-            ].
-        ].
+                ^ false
+            }
+        };
  
-        ^ count > 1.
-    ]    
+        ^ count > 1
+    }    
  
-    thinImage
-    [
-        bool firstStep := false.
-        bool hasChanged := true.
-        var toWhite := List new.
+    thinImage()
+    {
+        bool firstStep := false;
+        bool hasChanged := true;
+        var toWhite := new List();
  
         while (hasChanged || firstStep)
-        [
-            hasChanged := false.
-            firstStep := firstStep inverted.
+        {
+            hasChanged := false;
+            firstStep := firstStep.Inverted;
  
-            1 till(self rows - 1) do(:r) 
-            [
-                1 till(self columns - 1) do(:c)
-                [
-                    if(self proceed(r,c,toWhite,firstStep))
-                        [ hasChanged := true ].
-                ].
-            ].
+            for(int r := 1, r < self.Rows, r += 1)
+            {
+                for(int c := 1, c < self.Columns, c += 1)
+                {
+                    if(self.proceed(r,c,toWhite,firstStep))
+                        { hasChanged := true }
+                }
+            };
  
-            toWhite forEach(:p)[ self[p y][p x] := $32. ].                
-            toWhite clear.
-        ].
-    ]
+            toWhite.forEach:(p){ self[p.y][p.x] := $32 };                
+            toWhite.clear()
+        }
+    }
  
-    print
-    [
-        var it := self enumerator.
+    print()
+    {
+        var it := self.enumerator();
  
-        it forEach(:ch) [ console print(ch," ") ].
-        while (it next)
-        [
-            console writeLine.
- 
-            it forEach(:ch) [ console print(ch," ") ].
-        ].
-    ]
+        it.forEach:(ch){ console.print(ch," ") };
+        while (it.next())
+        {
+            console.writeLine();
+
+            it.forEach:(ch){ console.print(ch," ") }
+        }
+    }
 }
  
 public program()
 {
-    Matrix<CharValue> grid := MatrixSpace::
+    Matrix<CharValue> grid := class Matrix<CharValue>.load(new
     {
-        int rows = image length.
+        int Rows = image.Length;
  
-        int columns = image[0] length.
+        int Columns = image[0].Length;
  
-        getAt(int i, int j)
-            = image[i][j].
+        at(int i, int j)
+            = image[i][j];
+    });
  
-        setAt(int i, int j, object o)
-        [
-            image[i][j] := o.
-        ]
-    }.
+    grid.thinImage();
  
-    grid thinImage.
- 
-    grid print.
+    grid.print();
  
     console.readChar()
 }
