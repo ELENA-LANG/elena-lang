@@ -67,111 +67,112 @@ public sealed class DBConnection
     {
         ifnot (theOpen) { DBException.new:"SQLite database is not open.".raise() };
 
-//        using(auto command := DBCommand.new(self, sqlText))
-//        {
-//            command.eval()
-//        }
+        using(auto command := DBCommand.new(self, sqlText))
+        {
+            command.eval()
+        }
     }
 
-//    executeQuery(string sqlText)
-//    {
-//        ifnot (theOpen) { DBException.new:"SQLite database is not open.".raise() };
-//
-//        auto command := DBCommand.new(self, sqlText);
-//
-//        var table := DBTable.new(command.sql_field_names());
-//        using(auto reader := DBReader.new(command))
-//        {
-//            auto en := reader.enumerator();
-//            while (en.next()) {
-//                table.appendRow(en.get())
-//            }
-//        };
-//
-//        ^ table
-//    }
-//        
-//    numberOfTable()
-//    {
-//        ifnot (theOpen) { DBException.new:"SQLite database is not open.".raise() };
-//
-//        auto command := DBCommand.new(self, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';");
-//
-//        var numberOfTable := command.evalScalar();
-//        
-//        command.close();
-//
-//        ^ numberOfTable
-//    }
-//
-//    tables()
-//    {
-//        ifnot (theOpen) { DBException.new:"SQLite database is not open.".raise() };
-//
-//        auto command := DBCommand.new(self, "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';");
-//
-//        auto nameOfTables := new ArrayList();
-//        
-//        while (command.evalNext())
-//        {
-//            nameOfTables.append(command.at(0))
-//        };
-//        
-//        command.close();
-//        
-//        ^ nameOfTables
-//    }
-//
-//    close()
-//    {
-//        if (theOpen)
-//            { extern sqlite3.sqlite3_close(theDBHandle) };
-//            
-//        theOpen := false
-//    }
+    executeQuery(string sqlText)
+    {
+        ifnot (theOpen) { DBException.new:"SQLite database is not open.".raise() };
+
+        auto command := DBCommand.new(self, sqlText);
+
+        var table := DBTable.new(command.sql_field_names());
+        using(auto reader := DBReader.new(command))
+        {
+            auto en := reader.enumerator();
+            while (en.next()) {
+                table.appendRow(en.get())
+            }
+        };
+
+        ^ table
+    }
+        
+    numberOfTable()
+    {
+        ifnot (theOpen) { DBException.new:"SQLite database is not open.".raise() };
+
+        auto command := DBCommand.new(self, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';");
+
+        var numberOfTable := command.evalScalar();
+        
+        command.close();
+
+        ^ numberOfTable
+    }
+
+    tables()
+    {
+        ifnot (theOpen) { DBException.new:"SQLite database is not open.".raise() };
+
+        auto command := DBCommand.new(self, "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';");
+
+        auto nameOfTables := new ArrayList();
+        
+        while (command.evalNext())
+        {
+            nameOfTables.append(command.at(0))
+        };
+        
+        command.close();
+        
+        ^ nameOfTables
+    }
+
+    close()
+    {
+        if (theOpen)
+            { extern sqlite3.sqlite3_close(theDBHandle) };
+            
+        theOpen := false
+    }
 }
 
 // --- Commnad ---
 
 public sealed class DBCommand
 {
-//    DBConnection theConnection;
-//    Handle       theCommandHandle;
-//    
-//    constructor new(DBConnection connection, string text)
-//    {
-//        theConnection := connection;
-//            
-//        ifnot (theConnection.isAvailable()) { DBException.new:"SQLite database is not open.".raise() };
-//
-//        self.prepare(text)
-//    }
-//    
-//    Handle cast() = theCommandHandle;
-//    
-//    private prepare(string text)
-//    {
-//        int handle := 0; 
-//        int textLen := text.Length;
-//        
-//        int retVal := extern sqlite3.sqlite3_prepare_v2(
-//                                                cast int(theConnection),
-//                                                text,
-//                                                textLen,
-//                                                ref handle,
-//                                                0);
-//        if (retVal != SQLITE_OK) { DBException.new(theConnection.last_error_message()).raise() };
-//        
-//        theCommandHandle := handle
-//    }
-//    
+    DBConnection theConnection;
+    Handle       theCommandHandle;
+    
+    constructor new(DBConnection connection, string text)
+    {
+        theConnection := connection;
+            
+        ifnot (theConnection.isAvailable()) { DBException.new:"SQLite database is not open.".raise() };
+
+        self.prepare(text)
+    }
+    
+    Handle cast() = theCommandHandle;
+    
+    private prepare(string text)
+    {
+        int cnn := cast int(theConnection);
+        int handle := 0; 
+        int textLen := text.Length;
+        
+        int retVal := extern sqlite3.sqlite3_prepare_v2(
+                                                /*cast int(theConnection)*/cnn,
+                                                text,
+                                                textLen,
+                                                ref handle,
+                                                0);
+        if (retVal != SQLITE_OK) { DBException.new(theConnection.last_error_message()).raise() };
+        
+        theCommandHandle := handle
+    }
+    
 //    eval()
 //    {
 //        int retPrc := extern sqlite3.sqlite3_step(theCommandHandle);
 //
 //        if (retPrc != SQLITE_DONE) { DBException.new:"Could not execute SQL statement.".raise() }
 //    }
-//    
+    
 //    bool evalNext()
 //    {
 //        int retPrc := extern sqlite3.sqlite3_step(theCommandHandle);

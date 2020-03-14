@@ -4122,6 +4122,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 
       if (resolveAutoType(exprVal, target, scope)) {
          targetRef = resolveObjectReference(scope, exprVal, false);
+         retVal.reference = targetRef;
       }
       else scope.raiseError(errInvalidOperation, node);
    }
