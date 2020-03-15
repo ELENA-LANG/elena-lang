@@ -110,15 +110,15 @@ public sealed const struct UnsafePointer
         ^ val
     }
 
-//    // unsafe code
-//    string cast()
-//    {
-//        int  len := extern KERNEL32.lstrlenA(self);
-//        string s := String.allocate(len);
-//        extern KERNEL32.lstrcpyA(s, self);
-//        
-//        ^ s
-//    }        
+    // unsafe code
+    string cast()
+    {
+        int  len := extern KERNEL32.lstrlenA(self);
+        string s := String.allocate(len);
+        extern KERNEL32.lstrcpyA(s, self);
+        
+        ^ s
+    }        
 
     // unsafe code
     wide cast()

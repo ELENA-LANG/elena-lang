@@ -16,7 +16,6 @@ In development:
                 * expression tree to source
 
               dev - migration
-                * db sample
                 * ExpressionTree1
                 * ExpressionTree2
                 * Execute Brain****/Elena
@@ -38,6 +37,7 @@ In development:
                 * rosetta code samples : Zhang-Suen thinning algorithm
                 * system_test : exceptionTest
 
+                * sqlite : support float / blob
                 * uncomment all code in LIB50
                 * String / WideString - add<'Char>
                 * api doc - with description

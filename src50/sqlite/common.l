@@ -156,7 +156,7 @@ public sealed class DBCommand
         int textLen := text.Length;
         
         int retVal := extern sqlite3.sqlite3_prepare_v2(
-                                                /*cast int(theConnection)*/cnn,
+                                                cnn,
                                                 text,
                                                 textLen,
                                                 ref handle,
@@ -166,103 +166,103 @@ public sealed class DBCommand
         theCommandHandle := handle
     }
     
-//    eval()
-//    {
-//        int retPrc := extern sqlite3.sqlite3_step(theCommandHandle);
-//
-//        if (retPrc != SQLITE_DONE) { DBException.new:"Could not execute SQL statement.".raise() }
-//    }
+    eval()
+    {
+        int retPrc := extern sqlite3.sqlite3_step(theCommandHandle);
+
+        if (retPrc != SQLITE_DONE) { DBException.new:"Could not execute SQL statement.".raise() }
+    }
     
-//    bool evalNext()
-//    {
-//        int retPrc := extern sqlite3.sqlite3_step(theCommandHandle);
-//
-//        ^ (retPrc == SQLITE_ROW)
-//    }
-//    
-//    evalScalar()
-//    {
-//        int retPrc := extern sqlite3.sqlite3_step(theCommandHandle);
-//
-//        if (retPrc != SQLITE_ROW) { ^ nil };
-//
-//        ^ self.at(0)
-//    }
-//    
-//    DBReader reader() = DBReader.new(self);
-//    
-//    Enumerator enumerator() = sqlite'DBReader.new(self);
-//    
-//    at(int index)
-//    {
-//        int columnType := extern sqlite3.sqlite3_column_type(theCommandHandle, index);
-//        
-//        columnType =>
-//            SQLITE_INTEGER
-//                {
-//                    int val := extern sqlite3.sqlite3_column_int(theCommandHandle, index);
-//                    
-//                    ^ val
-//                }
-//            SQLITE_TEXT
-//                {
-//                    dirty_ptr columnTextPtr := extern sqlite3.sqlite3_column_text(theCommandHandle, index);
-//        
-//                    ^ cast string(columnTextPtr)
-//                }
+    bool evalNext()
+    {
+        int retPrc := extern sqlite3.sqlite3_step(theCommandHandle);
+
+        ^ (retPrc == SQLITE_ROW)
+    }
+    
+    evalScalar()
+    {
+        int retPrc := extern sqlite3.sqlite3_step(theCommandHandle);
+
+        if (retPrc != SQLITE_ROW) { ^ nil };
+
+        ^ self.at(0)
+    }
+    
+    DBReader reader() = DBReader.new(self);
+    
+    Enumerator enumerator() = sqlite'DBReader.new(self);
+    
+    at(int index)
+    {
+        int columnType := extern sqlite3.sqlite3_column_type(theCommandHandle, index);
+        
+        columnType =>
+            SQLITE_INTEGER
+                {
+                    int val := extern sqlite3.sqlite3_column_int(theCommandHandle, index);
+                    
+                    ^ val
+                }
+            SQLITE_TEXT
+                {
+                    dirty_ptr columnTextPtr := extern sqlite3.sqlite3_column_text(theCommandHandle, index);
+        
+                    ^ cast string(columnTextPtr)
+                }
 //            SQLITE_FLOAT
 //                {
 //                    real val := extern sqlite3.sqlite3_column_double(theCommandHandle, index);
 //                    
 //                    ^ val
 //                }
-////            SQLITE_BLOB
-////                [
-////                    dirty_ptr blob := system'external'sqlite3 sqlite3_column_blob(theCommandHandle, anIndex).
-////                    int len := system'external'sqlite3 sqlite3_column_bytes(theCommandHandle, anIndex).
-////                    
-////                    T<ByteArray> arr := ByteArray new(len).
-////        
-////                    blob read(arr, len).
-////        
-////                    ^ arr
-////                ];
-//            SQLITE_NULL
-//                {
-//                    ^ nil
-//                }
-//            :
-//                {
-//                    DBException.new:"Unsupported type".raise()
-//                }
-//    }
-//    
-//    int readFieldCount()
-//    {
-//        int ret := extern sqlite3.sqlite3_column_count(theCommandHandle);
+//            SQLITE_BLOB
+//                [
+//                    dirty_ptr blob := system'external'sqlite3 sqlite3_column_blob(theCommandHandle, anIndex).
+//                    int len := system'external'sqlite3 sqlite3_column_bytes(theCommandHandle, anIndex).
+//                    
+//                    T<ByteArray> arr := ByteArray new(len).
 //        
-//        ^ ret
-//    }
-//    
-//    string[] sql_field_names()
-//    {
-//        int field_count := self.readFieldCount();
+//                    blob read(arr, len).
 //        
-//        auto names := new string[](field_count);
-//        for(int i := 0, i < field_count, i += 1)
-//        {
-//            dirty_ptr columnNamePtr := extern sqlite3.sqlite3_column_origin_name(theCommandHandle, i);
-//            
-//            names[i] := cast string(columnNamePtr)
-//        };
-//        
-//        ^ names
-//    }
-//    
-//    close()
-//    {
-//        int retVal := extern sqlite3.sqlite3_finalize(theCommandHandle);
-//        
-//        if (retVal != SQLITE_OK) { DBException.new:"Could not finalize SQL statement.".raise() };
-//    }
+//                    ^ arr
+//                ];
+            SQLITE_NULL
+                {
+                    ^ nil
+                }
+            :
+                {
+                    DBException.new:"Unsupported type".raise()
+                }
+    }
+    
+    int readFieldCount()
+    {
+        int ret := extern sqlite3.sqlite3_column_count(theCommandHandle);
+        
+        ^ ret
+    }
+    
+    string[] sql_field_names()
+    {
+        int field_count := self.readFieldCount();
+        
+        auto names := new string[](field_count);
+        for(int i := 0, i < field_count, i += 1)
+        {
+            dirty_ptr columnNamePtr := extern sqlite3.sqlite3_column_origin_name(theCommandHandle, i);
+            
+            names[i] := cast string(columnNamePtr)
+        };
+        
+        ^ names
+    }
+    
+    close()
+    {
+        int retVal := extern sqlite3.sqlite3_finalize(theCommandHandle);
+        
+        if (retVal != SQLITE_OK) { DBException.new:"Could not finalize SQL statement.".raise() };
+    }
 }

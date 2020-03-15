@@ -3650,7 +3650,9 @@ ref_t Compiler :: resolveVariadicMessage(Scope& scope, ref_t message)
 
    ident_t actionName = scope.module->resolveAction(actionRef, dummy);
 
-   return encodeMessage(scope.module->mapAction(actionName, 0, false), 2, flags | VARIADIC_MESSAGE);
+   int argMultuCount = test(message, FUNCTION_MESSAGE) ? 1 : 2;
+
+   return encodeMessage(scope.module->mapAction(actionName, 0, false), argMultuCount, flags | VARIADIC_MESSAGE);
 }
 
 bool Compiler :: isSelfCall(ObjectInfo target)
@@ -3686,7 +3688,8 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
    // check if the object handles the variadic message
    if (targetRef) {
       resolvedStackSafeAttr = 0;
-      resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, resolveVariadicMessage(scope, generalMessageRef),
+      resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, 
+         resolveVariadicMessage(scope, generalMessageRef),
          targetRef, implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
 
       if (resolvedMessageRef != 0) {
@@ -5997,17 +6000,17 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
          }
          if (objNode.type != lxSymbolReference && (!test(objNode.type, lxOpScopeMask) || objNode == lxFieldExpression)) {
             if (_logic->isCompatible(*scope.moduleScope, V_DWORD, typeRef) && !_logic->isVariable(*scope.moduleScope, typeRef)) {
-                  // if it is a integer variable
-                  SyntaxTree::copyNode(objNode, callNode
-                     .appendNode(lxExtIntArg)
-                     .appendNode(objNode.type, objNode.argument));
+               // if it is a integer variable
+               SyntaxTree::copyNode(objNode, callNode
+                  .appendNode(lxExtIntArg)
+                  .appendNode(objNode.type, objNode.argument));
             }
             else SyntaxTree::copyNode(objNode, callNode
                .appendNode(objNode.type, objNode.argument));
 
             current = lxIdle;
          }
-         else throw InternalError("Not yet implemented"); // !! temporal
+         else scope.raiseError(errInvalidOperation, current); // !! temporal
       }
 
       current = current.nextNode(lxObjectMask);
@@ -6333,9 +6336,13 @@ ref_t Compiler :: mapMethodName(MethodScope& scope, int paramCount, ref_t action
    IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
    bool withoutWeakMessages, bool noSignature)
 {
-   if (test(flags, VARIADIC_MESSAGE) && !test(flags, FUNCTION_MESSAGE))
+   if (test(flags, VARIADIC_MESSAGE)) {
       paramCount = 1;
-
+      // HOTFIX : extension is a special case - target should be included as well for variadic function
+      if (scope.extensionMode && test(flags, FUNCTION_MESSAGE))
+         paramCount++;
+   }
+      
    // NOTE : a message target should be included as well for a normal message
    int argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
    argCount += paramCount;
@@ -6638,7 +6645,11 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGene
       }
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
-         resendNode.appendNode(lxMessage, encodeMessage(getAction(scope.moduleScope->dispatch_message), 2, VARIADIC_MESSAGE));
+         // HOTFIX : an extension is a special case of a variadic function and a target should be included
+         int argCount = !scope.extensionMode && test(scope.message, FUNCTION_MESSAGE) ? 1 : 2;
+
+         resendNode.appendNode(lxMessage, encodeMessage(getAction(scope.moduleScope->dispatch_message), 
+            argCount, VARIADIC_MESSAGE));
 
          resendNode
             .appendNode(lxCallTarget, scope.moduleScope->superReference)
@@ -8726,7 +8737,14 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
    if (test(flags, VARIADIC_MESSAGE)) {
       // COMPILER MAGIC : for variadic message - use the most general message
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
-      ref_t genericMessage = encodeMessage(genericActionRef, 2, flags);
+      
+      int genericArgCount = 2;
+      // HOTFIX : a variadic extension is a special case of variadic function
+      // - so the target should be included as well
+      if (test(messageRef, FUNCTION_MESSAGE) && scope.extensionClassRef == 0)
+         genericArgCount = 1;
+
+      ref_t genericMessage = encodeMessage(genericActionRef, genericArgCount, flags);
 
       return genericMessage;
    }
@@ -11298,50 +11316,6 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
 
    injectVirtualMultimethod(scope, classNode, message, methodType, resendMessage, privateOne);
 }
-
-//void Compiler :: injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType)
-//{
-//   SNode methNode = classNode.appendNode(methodType, message);
-//   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
-//   methNode.appendNode(lxAutoMultimethod); // !! HOTFIX : add a attribute for the nested class compilation (see compileNestedVMT)
-//   methNode.appendNode(lxAttribute, tpMultimethod);
-//   if (methodType == lxConstructor)
-//      methNode.appendNode(lxAttribute, tpConstructor);
-//
-//   if (test(message, SPECIAL_MESSAGE))
-//      methNode.appendNode(lxAttribute, tpFunction);
-//
-//   methNode
-//      .appendNode(lxResendExpression, scope.constructor_message) // NOTE : dummy message, it is overwritten by the conversion message
-//      .appendNode(lxTypecasting);
-//}
-//
-////void Compiler :: injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType)
-////{
-////   ref_t actionRef = getAction(message);
-////   ref_t signRef = 0;
-////   IdentifierString sign(scope.module->resolveAction(actionRef, signRef));
-////   int paramCount = getAbsoluteParamCount(message);
-////
-////   size_t signatureLen = 0;
-////   ref_t  signatures[OPEN_ARG_COUNT];
-////   for (int i = OPEN_ARG_COUNT + 1; i <= paramCount; i++) {
-////      signatures[signatureLen++] = scope.superReference;
-////   }
-////   signatures[signatureLen++] = scope.arrayReference;
-////
-////   ref_t resendActionRef = scope.module->mapAction(sign, scope.module->mapSignature(signatures, signatureLen, false), false);
-////   ref_t resendMessage = encodeMessage(resendActionRef, getParamCount(message) + 1);
-////
-////   SNode methNode = classNode.appendNode(methodType, resendMessage);
-////   methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
-////   methNode.appendNode(lxAttribute, tpArgDispatcher);
-////   if (methodType == lxConstructor)
-////      methNode.appendNode(lxAttribute, tpConstructor);
-////
-////   SNode codeNode = methNode.appendNode(lxResendExpression, message);
-////   codeNode.appendNode(lxArgDispatcherAttr);
-////}
 
 void Compiler :: injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument)
 {
