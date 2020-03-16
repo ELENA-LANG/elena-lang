@@ -3148,6 +3148,95 @@ labEnd:
 
 end
 
+procedure __dynamicmssg_closure."params##invoke$system@Object[1]"
+
+  popd
+  popa
+  pushd
+  load
+  peeksi  1
+  jumpvi  0
+
+end
+
+procedure __closuretape."#dispatch[1]"
+
+  pushd
+
+  //; check if it is a closure call, otherwise handle it by default
+  and     SPECIAL_MESSAGE
+  ifn     labDefault 0 
+
+  popd
+  mcount
+
+  open    5
+  reserve 2
+  pusha
+  
+  savefi  -3
+  movn    0  
+  savefi  -2
+  
+  pushn   -1
+  
+  movf    -6
+  
+// ; copy message parameters
+  loadfi  -3
+  ifn     labSkipCopy 0
+labNextParam:
+  dec     1
+  push
+  elsen   labNextParam 0
+
+labSkipCopy:
+  peekfi  1
+
+labNext:
+  breakpoint
+
+  loadfi  -2
+
+  ifcount labEnd
+
+  get
+  inc 1
+  savefi  -2
+
+  vcallrm system'dynamic'DynamicClosure mssgconst : "params##invoke<system'Object>[1]"
+  pusha
+  peekfi  1
+  jump    labNext
+
+labEnd:
+  popa
+
+  loadfi  -3
+  dec     1
+  restore 4
+  close
+
+  mquit
+
+labDefault:
+  popd
+  bsredirect  
+
+  open     4
+  reserve  2
+  savesi   3
+  pushs   -3
+  pusha
+  movr     class : system'Message
+  pushr    class : system'MethodNotFoundException
+  storesi  5
+  peeksi   0
+  pushr    mssgconst : "new[3]"
+  throw
+
+end
+
 // ; system routines
 
 procedure critical_exception_handler

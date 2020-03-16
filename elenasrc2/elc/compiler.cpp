@@ -1521,8 +1521,8 @@ void Compiler :: importCode(SNode node, Scope& scope, ref_t functionRef, ref_t m
       virtualReference.append("$");
    }
 
-//   if (test(flags, VARIADIC_MESSAGE))
-//      virtualReference.append("params#");
+   if (test(flags, VARIADIC_MESSAGE))
+      virtualReference.append("params#");
 
    ref_t signature = 0;
    virtualReference.append(moduleScope->module->resolveAction(actionRef, signature));

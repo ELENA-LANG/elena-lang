@@ -158,7 +158,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &loadFunction, &compileHook, &compileHook,
-   &loadIndexOp, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileIfE, &compileElseE, &compileNop,
+   &loadIndexOp, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileIfE, &compileElseE, &compileIfCount,
 
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFPOp, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFPOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadFPOp, &loadIndexOp,
@@ -1213,8 +1213,19 @@ void _ELENA_::compileIfE(int, x86JITScope& scope)
 {
    int jumpOffset = scope.argument;
 
-   // cmp dwotd ptr[ebx], edx
+   // cmp dword ptr[ebx], edx
    scope.code->writeWord(0x1339);
+
+   // try to use short jump if offset small (< 0x10?)
+   //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
+   compileJumpIfNot(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
+}
+
+void _ELENA_ :: compileIfCount(int opcode, x86JITScope& scope)
+{
+   int jumpOffset = scope.argument;
+
+   loadOneByteOp(opcode, scope);
 
    // try to use short jump if offset small (< 0x10?)
    //NOTE: due to compileJumpX implementation - compileJumpIfNot is called

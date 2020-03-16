@@ -1,18 +1,18 @@
-//// --- DynamicClosure ---
-//
-//public interface DynamicClosure
-//{
-//    abstract closure(params object[] args) {}
-//}
-//
-//// --- DynamicMessageClosure ---
-//
-//public singleton DynamicMessageClosure : DynamicClosure
-//{
-//    closure(params object[] args)
-//        => system'core_routines'__dynamicmssg_closure;
-//}
-//
+// --- DynamicClosure ---
+
+public interface DynamicClosure
+{
+    abstract function(params object[] args) {}
+}
+
+// --- DynamicMessageClosure ---
+
+public singleton DynamicMessageClosure : DynamicClosure
+{
+    function(params object[] args)
+        => intern system'core_routines'__dynamicmssg_closure;
+}
+
 //// --- MessageClosure ---
 //
 //public struct MessageClosure : DynamicClosure

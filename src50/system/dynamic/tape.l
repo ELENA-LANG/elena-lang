@@ -1,67 +1,64 @@
-//import system'collections;
-//import system'io;
-//
-//// --- ClosureTape ---
-//
-//public mixin ClosureTape
-//{
-//    __string DynamicClosure[] theList;
-//    
-//    internal constructor allocate(int len)
-//        = new DynamicClosure[](len);
-//
-//    constructor(params DynamicClosure[] args)
-//        <= new(params args);
-//            
-//    constructor new(params DynamicClosure[] args)
-//        <= allocate(args.Length)
-//    {
-//        self.setFields(params args)
-//    }
-//
-//    constructor new (List<DynamicClosure> list)        
-//        <= allocate(list.Length)
-//    {
-//        int i := list.Length;
-//        while (i > 0)
-//        {
-//            i -= 1;
-//            
-//            theList[i] := list[i]
-//        }
-//    }
-//        
-////    constructor new (List<DynamicClosure> list, int index, int length)        
-////        <= new(length);
-////    [
-////        int i := index.
-////        int c := 0.
-////        while (c < length)
-////        [
-////            theList[c] := list[i].
-////
-////            c += 1.
-////            i += 1.
-////        ]
-////    ]
-//        
-//    constructor new(List<object> list, int index, int length)        
-//        <= allocate(length)
-//    {
-//        int i := index;
-//        int c := 0;
+import system'collections;
+import system'io;
+
+// --- ClosureTape ---
+
+public mixin ClosureTape
+{
+    __string DynamicClosure[] theList;
+    
+    internal constructor allocate(int len)
+        = new DynamicClosure[](len);
+
+    constructor load(params DynamicClosure[] args)
+        <= allocate(args.Length)
+    {
+        self.setFields(params args)
+    }
+
+    constructor load(List<DynamicClosure> list)        
+        <= allocate(list.Length)
+    {
+        int i := list.Length;
+        while (i > 0)
+        {
+            i -= 1;
+            
+            theList[i] := list[i]
+        }
+    }
+        
+//    constructor new (List<DynamicClosure> list, int index, int length)        
+//        <= new(length);
+//    [
+//        int i := index.
+//        int c := 0.
 //        while (c < length)
-//        {
-//            theList[c] := list[i];
+//        [
+//            theList[c] := list[i].
 //
-//            c += 1;
-//            i += 1
-//        }
-//    }
-//        
-//    dispatch() => system'core_routines'__closuretape;
-//}
-//
+//            c += 1.
+//            i += 1.
+//        ]
+//    ]
+        
+    constructor load(List<object> list, int index, int length)        
+        <= allocate(length)
+    {
+        int i := index;
+        int c := 0;
+        while (c < length)
+        {
+            theList[c] := list[i];
+
+            c += 1;
+            i += 1
+        }
+    }
+        
+    dispatch() => intern system'core_routines'__closuretape;
+}
+
 //// --- Class ---
 //
 //public mixin ClosureClass

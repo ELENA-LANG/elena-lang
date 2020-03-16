@@ -176,7 +176,7 @@ enum ByteCode
    bcElseD           = 0xAC,
    bcIf              = 0xAD,
    bcElse            = 0xAE,
-//   bcNext            = 0xAF,
+   bcIfCount         = 0xAF,
 
    bcPushN           = 0xB0,
    bcMovN            = 0xB1,
@@ -421,6 +421,7 @@ public:
          //case bcIfB:
          case bcElseD:
          case bcIf:
+         case bcIfCount:
          case bcElse:
          //case bcLess:
          case bcNotLess:

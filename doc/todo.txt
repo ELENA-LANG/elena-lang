@@ -6,14 +6,17 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev2 - linux32
-                * uncomment LoadClassName, LoadMessageName
                 * compile hello world
+                * method not found exception handling
                 * compile ecv
                 * compile all console / files examples
 
               dev2 - research
                 * source to expression tree
                 * expression tree to source
+
+              dev2 - tutorials
+                * migrate tutorials
 
               dev - migration
                 * ExpressionTree1
@@ -58,7 +61,6 @@ In development:
                 * ifheap - is not correctly recognize data allocated classes
 
               dev2 - tutorials
-                * Generic handler with variable number of parameters
                 * migrate tutorials from reddit
                 * duck typing tutorial
                 * yieldable method tutorial

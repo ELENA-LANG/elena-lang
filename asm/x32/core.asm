@@ -2239,6 +2239,18 @@ inline % 0A8h
 
 end
 
+// ; ifcount
+// ; - partial opcode
+inline % 0AFh
+
+  mov  ecx, 0FFFFFh
+  mov  eax, [ebx-elSizeOffset]
+  and  eax, ecx
+  shr  eax, 2
+  cmp  eax, edx
+
+end
+
 // ; movn
 inline % 0B1h
 
