@@ -68,10 +68,10 @@ namespace io
 //        [
 //        ]
     
-//        #method refresh
-//        [
-//            system'external'libc fflush &int:theHandle.
-//        ]
+        refresh()
+        {
+            //system'external'libc fflush &int:theHandle.
+        }
                 
         close()
         {

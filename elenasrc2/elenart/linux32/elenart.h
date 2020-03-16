@@ -19,8 +19,6 @@
 
 extern "C"
 {
-   DLL_PUBLIC void Test();
-
    DLL_PUBLIC void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);
 
    DLL_PUBLIC void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);
@@ -35,13 +33,13 @@ extern "C"
 
    DLL_PUBLIC void StopThread(int exitCode);
 
+   DLL_PUBLIC void* GCCollect(void* roots, size_t size);
+
    DLL_PUBLIC int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
    DLL_PUBLIC int LoadAddressInfo(size_t retPoint, char* lineInfo, int length);
 
    DLL_PUBLIC int LoadClassName(void* object, char* buffer, int length);
-
-   DLL_PUBLIC void* LoadSymbol(void* referenceName);
 
    DLL_PUBLIC void* EvaluateTape(void* tape);
 

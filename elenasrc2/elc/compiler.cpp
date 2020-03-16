@@ -1687,7 +1687,7 @@ ref_t Compiler :: resolveTypeIdentifier(Scope& scope, SNode terminal, bool decla
    return resolveTypeIdentifier(scope, terminal.identifier(), terminal.type, declarationMode, extensionAllowed);
 }
 
-ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType type, 
+ref_t Compiler :: resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType type,
    bool declarationMode, bool extensionAllowed)
 {
    ObjectInfo identInfo;
@@ -1839,8 +1839,8 @@ void Compiler :: declareSymbolAttributes(SNode node, SymbolScope& scope, bool de
    while (current != lxNone) {
       if (current == lxAttribute) {
          int value = current.argument;
-         if (!_logic->validateSymbolAttribute(value, constant, scope.staticOne, scope.preloaded, 
-            scope.visibility)) 
+         if (!_logic->validateSymbolAttribute(value, constant, scope.staticOne, scope.preloaded,
+            scope.visibility))
          {
             current.setArgument(0); // HOTFIX : to prevent duplicate warnings
             scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
@@ -2367,7 +2367,7 @@ void Compiler :: setParamFieldTerminal(SNode& node, ExprScope&, ObjectInfo objec
    node.appendNode(lxField, 0);
 }
 
-void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing, 
+void Compiler :: appendBoxingInfo(SNode node, _CompileScope& scope, ObjectInfo object, bool noUnboxing,
    int fixedSize, ref_t targetRef)
 {
    // if the parameter may be stack-allocated
@@ -2715,7 +2715,7 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
          auto extInfo = *it;
          ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
          int extStackAttr = 0;
-         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2, 
+         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2,
             signaturues, signatureLen, extStackAttr))
          {
             if (!resolvedMessage) {
@@ -3063,7 +3063,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, int operat
 
          SNode valExpr = node.appendNode(lxBoxableExpression);
          valExpr.appendNode(lxLocalAddress, retVal.param);
-         appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING), 
+         appendBoxingInfo(valExpr, scope, retVal, EAttrs::test(mode, HINT_NOUNBOXING),
             0, resolveObjectReference(scope, retVal, false));
       }
    }
@@ -3321,18 +3321,18 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
    bool boxingMode, bool withoutLocalBoxing, bool inPlace, bool condBoxing)
 {
    if (current == lxExpression) {
-      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, 
+      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing,
          inPlace, condBoxing);
    }
    else if (current == lxSeqExpression) {
-      boxArgument(boxExprNode, current.lastChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, 
+      boxArgument(boxExprNode, current.lastChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing,
          true, condBoxing);
    }
    else if (current.compare(lxBoxableExpression, lxCondBoxableExpression)) {
       // resolving double boxing
       current.set(lxExpression, 0);
 
-      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, 
+      boxArgument(boxExprNode, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing,
          inPlace, condBoxing);
    }
    else if (current == lxArgBoxableExpression) {
@@ -3367,7 +3367,7 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
                   tempLocal = scope.newTempLocal();
                   scope.tempLocals.add(key, tempLocal);
 
-                  boxExpressionInRoot(boxExprNode, current, scope, lxTempLocal, tempLocal, 
+                  boxExpressionInRoot(boxExprNode, current, scope, lxTempLocal, tempLocal,
                      !boxingMode, condBoxing);
                }
                else current.set(lxTempLocal, tempLocal);
@@ -3384,7 +3384,7 @@ void Compiler :: analizeOperand(SNode& current, ExprScope& scope, bool boxingMod
       case lxBoxableExpression:
       case lxCondBoxableExpression:
       case lxPrimArrBoxableExpression:
-         boxArgument(current, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing, 
+         boxArgument(current, current.firstChild(lxObjectMask), scope, boxingMode, withoutLocalBoxing,
             inPlace, current == lxCondBoxableExpression);
          current.set(lxExpression, 0);
          break;
@@ -3676,7 +3676,7 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
    ref_t targetRef = resolveObjectReference(scope, target, true);
 
    // try to resolve the message as is
-   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef, 
+   resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, generalMessageRef, targetRef,
       implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
    if (resolvedMessageRef != 0) {
       stackSafeAttr = resolvedStackSafeAttr;
@@ -3688,7 +3688,7 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
    // check if the object handles the variadic message
    if (targetRef) {
       resolvedStackSafeAttr = 0;
-      resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope, 
+      resolvedMessageRef = _logic->resolveMultimethod(*scope.moduleScope,
          resolveVariadicMessage(scope, generalMessageRef),
          targetRef, implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
 
@@ -3767,8 +3767,9 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
          retVal = compileInternalCall(node.parentNode(), scope, messageRef, implicitSignatureRef, target);
       }
       else if (inlineArg) {
+         SNode parentNode = node.parentNode();
          bool dummy = false;
-         retVal = compileMessage(node.parentNode(), scope, target, messageRef, mode | HINT_INLINEARGMODE, 0, dummy);
+         retVal = compileMessage(parentNode, scope, target, messageRef, mode | HINT_INLINEARGMODE, 0, dummy);
       }
       else {
          int stackSafeAttr = 0;
@@ -4156,7 +4157,8 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 
    SNode fieldNode = node.firstChild(lxObjectMask);
    analizeOperand(fieldNode, scope, false, true, true);
-   analizeOperand(fieldNode.nextNode(lxObjectMask), scope, !noBoxing, true, true);
+   SNode rargNode = fieldNode.nextNode(lxObjectMask);
+   analizeOperand(rargNode, scope, !noBoxing, true, true);
 
    return retVal;
 }
@@ -6333,7 +6335,7 @@ void Compiler :: declareArgumentAttributes(SNode node, Scope& scope, ref_t& clas
 }
 
 ref_t Compiler :: mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags,
-   IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
+   IdentifierString& actionStr, ref_t* signature, size_t signatureLen,
    bool withoutWeakMessages, bool noSignature)
 {
    if (test(flags, VARIADIC_MESSAGE)) {
@@ -6342,7 +6344,7 @@ ref_t Compiler :: mapMethodName(MethodScope& scope, int paramCount, ref_t action
       if (scope.extensionMode && test(flags, FUNCTION_MESSAGE))
          paramCount++;
    }
-      
+
    // NOTE : a message target should be included as well for a normal message
    int argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
    argCount += paramCount;
@@ -6562,7 +6564,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
             // check if protected method already declared
             ref_t publicMessage = mapMethodName(scope, paramCount, actionRef, flags, actionStr,
                signature, signatureLen, withoutWeakMessages, noSignature);
-            
+
             ref_t declaredMssg = scope.getAttribute(publicMessage, maProtected);
             if (!declaredMssg) {
                ident_t className = scope.module->resolveReference(scope.getClassRef());
@@ -6591,7 +6593,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       if (constantConversion) {
          NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
-         nsScope->saveExtension(scope.message, scope.getClassRef(), scope.message, 
+         nsScope->saveExtension(scope.message, scope.getClassRef(), scope.message,
             scope.getClassVisibility() != Visibility::Public);
       }
    }
@@ -6648,7 +6650,7 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGene
          // HOTFIX : an extension is a special case of a variadic function and a target should be included
          int argCount = !scope.extensionMode && test(scope.message, FUNCTION_MESSAGE) ? 1 : 2;
 
-         resendNode.appendNode(lxMessage, encodeMessage(getAction(scope.moduleScope->dispatch_message), 
+         resendNode.appendNode(lxMessage, encodeMessage(getAction(scope.moduleScope->dispatch_message),
             argCount, VARIADIC_MESSAGE));
 
          resendNode
@@ -8737,7 +8739,7 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
    if (test(flags, VARIADIC_MESSAGE)) {
       // COMPILER MAGIC : for variadic message - use the most general message
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
-      
+
       int genericArgCount = 2;
       // HOTFIX : a variadic extension is a special case of variadic function
       // - so the target should be included as well
@@ -9671,12 +9673,12 @@ void Compiler :: injectCopying(SNode& copyingNode, int size, bool variadic, bool
    else copyingNode.injectAndReplaceNode(lxByRefAssigning);
 }
 
-void Compiler :: injectCreating(SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode, int size, 
+void Compiler :: injectCreating(SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode, int size,
    ref_t typeRef, bool variadic)
 {
    // NOTE that objNode may be no longer valid, so only cached values are used!
 
-   SNode newNode = insertMode ? 
+   SNode newNode = insertMode ?
       assigningNode.insertNode(lxCreatingStruct, size) : assigningNode.appendNode(lxCreatingStruct, size);
 
    if (variadic) {
@@ -9779,7 +9781,7 @@ void Compiler :: boxExpressionInRoot(SNode node, SNode objNode, ExprScope& scope
    else scope.raiseError(errInvalidBoxing, node);
 }
 
-void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scope, 
+void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scope,
    bool localBoxingMode, bool condBoxing)
 {
    SNode rootNode = node.parentNode();
@@ -9848,7 +9850,7 @@ void Compiler :: boxExpressionInPlace(SNode node, SNode objNode, ExprScope& scop
             SNode assignNode = boxExpr.insertNode(lxAssigning);
             assignNode.insertNode(lxTempLocal, tempLocal);
 
-            // !!NOTE: objNode is no longer valid, but injectCreating uses only 
+            // !!NOTE: objNode is no longer valid, but injectCreating uses only
             //         cached values of a type and an argument
             injectCreating(assignNode, objNode, scope, false, size, typeRef, variadic);
          }
@@ -10257,7 +10259,7 @@ bool Compiler :: optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node)
       node = lxIdle;
 
       return false;
-   }      
+   }
 
    SNode temp = callNode.lastChild(lxObjectMask);
    if (temp == lxExpression)
@@ -11131,7 +11133,7 @@ void Compiler :: injectBoxingExpr(SNode& node, bool variable, int size, ref_t ta
       // HOTFIX : to indicate a primitive array boxing
       node = lxPrimArrBoxableExpression;
    }
-   
+
    node.appendNode(lxType, targetClassRef);
    node.appendNode(lxSize, size);
 
@@ -11262,7 +11264,7 @@ void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref
    codeNode.appendNode(lxRedirect, embeddedMessageRef);
 }
 
-void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, 
+void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType,
    ref_t resendMessage, bool privateOne)
 {
    SNode methNode = classNode.appendNode(methodType, message);

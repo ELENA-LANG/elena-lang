@@ -63,8 +63,6 @@ void init()
 
 void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)
 {
-   //putchar('!');
-
    header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler
@@ -125,6 +123,11 @@ void CloseFrame(void* systemEnv, void* frameHeader)
 //   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
 }
 
+void* GCCollect(void* roots, size_t size)
+{
+   return nullptr;
+}
+
 void Exit(int exitCode)
 {
    _Instance->Exit(exitCode);
@@ -135,100 +138,92 @@ void StopThread(int exitCode)
 //   _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);
 }
 
-//int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
-//{
-//   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
-//}
-//
-//int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
-//{
-//   return _Instance->loadAddressInfo(retPoint, lineInfo, length);
-//}
+int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+{
+   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
+}
+
+int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
+{
+   return _Instance->loadAddressInfo(retPoint, lineInfo, length);
+}
 
 int LoadClassName(void* object, char* buffer, int length)
 {
-//   return _Instance->loadClassName((size_t)object, buffer, length);
-
-    return 0; // temporal
+   return _Instance->loadClassName((size_t)object, buffer, length);
 }
 
-//void* EvaluateTape(void* tape)
-//{
-//   // !! terminator code
-//   return NULL;
-//}
-//
-//void* InterpretTape(void* tape)
-//{
-//   // !! terminator code
-//   return NULL;
-//}
-//
-//void* GetVMLastError(void* retVal)
-//{
-//   return NULL;
-//}
-//
-//int LoadSubjectName(void* subject, char* lineInfo, int length)
-//{
-//   return _Instance->loadSubjectName((size_t)subject, lineInfo, length);
-//}
-//
-//void* LoadSubject(void* subjectName)
-//{
-//   return _Instance->loadSubject((const char*)subjectName);
-//}
+void* EvaluateTape(void* tape)
+{
+   // !! terminator code
+   return NULL;
+}
+
+void* InterpretTape(void* tape)
+{
+   // !! terminator code
+   return NULL;
+}
+
+void* GetVMLastError(void* retVal)
+{
+   return NULL;
+}
+
+int LoadSubjectName(void* subject, char* lineInfo, int length)
+{
+   return _Instance->loadSubjectName((size_t)subject, lineInfo, length);
+}
+
+void* LoadSubject(void* subjectName)
+{
+   return _Instance->loadSubject((const char*)subjectName);
+}
 
 int LoadMessageName(void* message, char* lineInfo, int length)
 {
-//   return _Instance->loadMessageName((ref_t)message, lineInfo, length);
-
-    return 0; // !! temporal
+   return _Instance->loadMessageName((ref_t)message, lineInfo, length);
 }
 
-//void* LoadMessage(void* messageName)
-//{
-//   return _Instance->loadMessage((const char*)messageName);
-//}
-//
-//void* LoadClassByString(void* systemEnv, void* referenceName)
-//{
-//   throw InternalError("Not yet implemented"); // !! temporal
-//
-//   //return _Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
-//}
-//
-//void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
-//{
-//   if (length < 0x100) {
-//      IdentifierString str((const char*)referenceName, index, length);
-//
-//      return LoadClassByString(systemEnv, (void*)str.c_str());
-//   }
-//   else {
-//      DynamicString<char> str((const char*)referenceName, index, length);
-//
-//      return LoadClassByString(systemEnv, (void*)str.str());
-//   }
-//}
-//
-//void* LoadSymbolByString(void* systemEnv, void* referenceName)
-//{
-//   throw InternalError("Not yet implemented"); // !! temporal
-//
-//   //return _Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
-//}
-//
-//void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
-//{
-//   if (length < 0x100) {
-//      IdentifierString str((const char*)referenceName, index, length);
-//
-//      return LoadSymbolByString(systemEnv, (void*)str.c_str());
-//   }
-//   else {
-//      DynamicString<char> str((const char*)referenceName, index, length);
-//
-//      return LoadSymbolByString(systemEnv, (void*)str.str());
-//   }
-//}
+void* LoadMessage(void* messageName)
+{
+   return _Instance->loadMessage((const char*)messageName);
+}
+
+void* LoadClassByString(void* systemEnv, void* referenceName)
+{
+   return _Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
+}
+
+void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName, index, length);
+
+      return LoadClassByString(systemEnv, (void*)str.c_str());
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadClassByString(systemEnv, (void*)str.str());
+   }
+}
+
+void* LoadSymbolByString(void* systemEnv, void* referenceName)
+{
+   return _Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
+}
+
+void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName, index, length);
+
+      return LoadSymbolByString(systemEnv, (void*)str.c_str());
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadSymbolByString(systemEnv, (void*)str.str());
+   }
+}
