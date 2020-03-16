@@ -21,21 +21,21 @@ public interface<T>
     }
 }
 
-//property prop<__name>
-//{
-//    __name;
-//    
-//    get __name()
-//    {
-//        ^ __name
-//    }    
-//    
-//    set __name(value)
-//    {
-//        __name := value
-//    }
-//}
-//
+#property prop<__name>
+{
+    field;
+    
+    get()
+    {
+        ^ __name
+    }    
+    
+    set(value)
+    {
+        __name := value
+    }
+}
+
 //property prop<T, __name>
 //{
 //    T __name;

@@ -48,9 +48,9 @@ Declarations
         - class / global predicate
 
     Properties
-      * implicit
-      * explicit
-      * abstract
+      * implicit +
+      * explicit +
+      * abstract +
       * multi-return
     Fields
       * fixed-size arrays +
