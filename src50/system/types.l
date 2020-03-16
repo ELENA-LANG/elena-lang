@@ -77,7 +77,7 @@
 #define mssgconst   80000806h
 #define subj        80000807h
 #define subjconst   80000807h
-//#define __symbol    80000808h
+#define __symbol    80000808h
 #define inlinearg   80000809h
 
 ////__extmssg       = #21.

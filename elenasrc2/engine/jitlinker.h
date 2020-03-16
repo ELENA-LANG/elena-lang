@@ -142,7 +142,7 @@ class JITLinker : _JITLoaderListener
    int getVMTMethodIndex(void* vaddress, int messageID);
    size_t getVMTFlags(void* vaddress);
 
-//   void generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask);
+   void generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask);
 
    void fixReferences(References& relocations, _Memory* image);
    void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress, bool constArrayMode);

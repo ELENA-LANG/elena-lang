@@ -311,7 +311,7 @@ namespace _ELENA_
    constexpr int elSubject             = 0x04000000;
    constexpr int elExtMessage          = 0x08200000;
    constexpr int elGroup               = 0x10000000;
-//   constexpr int elSymbol              = 0x00100000;
+   constexpr int elSymbol              = 0x20000000;
 
 //   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
@@ -326,7 +326,7 @@ namespace _ELENA_
    constexpr int elDebugShorts         = 0x00080000;
    constexpr int elDebugPTR            = 0x00090000;
    constexpr int elDebugWideLiteral    = 0x000A0000;
-//   constexpr int elDebugReference      = 0x000B0000;   // symbol reference
+   constexpr int elDebugReference      = 0x000B0000;   // symbol reference
    constexpr int elDebugSubject        = 0x000C0000;
 ////////   const int elDebugReals          = 0x000D0000;
    constexpr int elDebugMessage        = 0x000E0000;

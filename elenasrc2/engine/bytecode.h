@@ -169,7 +169,7 @@ enum ByteCode
    bcCallExtR        = 0xA5,
    bcHook            = 0xA6,
    bcAddress         = 0xA7,
-//   bcACallI          = 0xA8,
+   bcCallI           = 0xA8,
 //   bcLess            = 0xA9,
    bcNotLess         = 0xAA,
    bcNotGreater      = 0xAB,

@@ -1,20 +1,20 @@
-//// --- Symbol ---
-//
-///// A dynamic symbol
-//public sealed const struct Symbol
-//{
-//    __symbol theValue;
-//    
-//    /// Loads a symbol
-//    constructor(string name)
-//    {
-//        intern system'core_routines'__symbol.load(self, name)
-//    }
-//        
-//    /// Redirects incoming messages to the symbol
-//    dispatch() => system'core_routines'__symbol;
-//}
-//
+// --- Symbol ---
+
+/// A dynamic symbol
+public sealed const struct Symbol
+{
+    __symbol theValue;
+    
+    /// Loads a symbol
+    constructor(string name)
+    {
+        intern system'core_routines'__symbol.load(self, name)
+    }
+        
+    /// Redirects incoming messages to the symbol
+    dispatch() => intern system'core_routines'__symbol;
+}
+
 //public sealed const struct ClassReference
 //{
 //    embeddable __raw theValue[4];
@@ -36,19 +36,19 @@ public sealed const struct Message
 {
     embeddable __mssg theValue[4];
 
-//    constructor(string name)
-//    {
-//        intern system'core_routines'__message.load(self, name)
-//    }
+    constructor(string name)
+    {
+        intern system'core_routines'__message.load(self, name)
+    }
+    
+//    internal constructor newInteral(int message)
+//    [
+//        system'core_routines'__message copy(self, message).
+//    ]
 //    
-////    internal constructor newInteral(int message)
-////    [
-////        system'core_routines'__message copy(self, message).
-////    ]
-////    
-////    /// Loads a message
-////    constructor new(mssg message)
-////        = message.
+//    /// Loads a message
+//    constructor new(mssg message)
+//        = message.
 
     get MessageName MessageName()
     {

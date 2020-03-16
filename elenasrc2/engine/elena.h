@@ -542,10 +542,10 @@ enum ClassAttribute : int
 {
    caNone               = 0x000,
    caInitializer        = 0x001,
-//   // if the class can be loaded dynamically
-//   caSerializable       = 0x002,
-//   // if the symbol can be loaded dynamically
-//   caSymbolSerializable = 0x003,
+   // if the class can be loaded dynamically
+   caSerializable       = 0x002,
+   // if the symbol can be loaded dynamically
+   caSymbolSerializable = 0x003,
    caInfo               = 0x004
 };
 

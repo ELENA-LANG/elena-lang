@@ -2231,6 +2231,14 @@ inline % 0A7h
 
 end
 
+// ; calli
+inline % 0A8h
+
+  mov  esi, [ebx + __arg1]
+  call esi
+
+end
+
 // ; movn
 inline % 0B1h
 

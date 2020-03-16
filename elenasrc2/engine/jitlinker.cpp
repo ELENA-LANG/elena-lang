@@ -757,30 +757,30 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
    return vaddress;
 }
 
-//void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask)
-//{
-//   SectionInfo tableInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
-//   
-//   MemoryWriter writer(tableInfo.section);
-//
-//   IdentifierString fullName;
-//   if (referenceInfo.isRelative()) {
-//      fullName.copy(referenceInfo.module->Name());
-//      fullName.append(referenceInfo.referenceName);
-//   }
-//   else fullName.copy(referenceInfo.referenceName);
-//
-//   writer.writeDWord(category);
-//   writer.writeDWord(fullName.Length() + 9);
-//   writer.writeLiteral(fullName.ident());
-//
-//   void* address = resolve(referenceInfo, mask, false);
-//
-//   if (!_virtualMode) {
-//      writer.writeDWord((size_t)address);
-//   }
-//   else writer.writeRef((ref_t)address, 0);
-//}
+void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask)
+{
+   SectionInfo tableInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
+   
+   MemoryWriter writer(tableInfo.section);
+
+   IdentifierString fullName;
+   if (referenceInfo.isRelative()) {
+      fullName.copy(referenceInfo.module->Name());
+      fullName.append(referenceInfo.referenceName);
+   }
+   else fullName.copy(referenceInfo.referenceName);
+
+   writer.writeDWord(category);
+   writer.writeDWord(fullName.Length() + 9);
+   writer.writeLiteral(fullName.ident());
+
+   void* address = resolve(referenceInfo, mask, false);
+
+   if (!_virtualMode) {
+      writer.writeDWord((size_t)address);
+   }
+   else writer.writeRef((ref_t)address, 0);
+}
 
 void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes)
 {
@@ -791,12 +791,12 @@ void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::Cate
          case caInitializer:
             _initializers.add(ModuleReference(referenceInfo.module, *it));
             break;
-//         case caSymbolSerializable:
-//            generateMetaAttribute(attr.value1, referenceInfo, mskSymbolRef);
-//            break;
-//         case caSerializable:
-//            generateMetaAttribute(attr.value1, referenceInfo, mskVMTRef);
-//            break;
+         case caSymbolSerializable:
+            generateMetaAttribute(attr.value1, referenceInfo, mskSymbolRef);
+            break;
+         case caSerializable:
+            generateMetaAttribute(attr.value1, referenceInfo, mskVMTRef);
+            break;
          default:
             break;
       }

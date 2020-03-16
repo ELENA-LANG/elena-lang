@@ -7921,7 +7921,7 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
 {
    CommandTape tape;
 
-   //bool publicAttr = scope.info.mattributes.exist(Attribute(caSerializable, 0));
+   bool publicAttr = scope.info.mattributes.exist(Attribute(caSerializable, 0));
 
    SyntaxTree tree;
    SyntaxWriter writer(tree);
@@ -7932,7 +7932,7 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    // create byte code sections
    _writer.saveTape(tape, *scope.moduleScope);
 
-   //compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
+   compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
 }
 
 void Compiler :: compilePreloadedCode(SymbolScope& scope)
@@ -9013,10 +9013,10 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    bool extensionDeclaration = isExtensionDeclaration(node);
    compileParentDeclaration(node.findChild(lxParent), scope, extensionDeclaration);
 
-//   if (publicClass) {
-//      // add seriazible meta attribute for the public class
-//      scope.info.mattributes.add(Attribute(caSerializable, 0), INVALID_REF);
-//   }
+   if (scope.visibility == Visibility::Public) {
+      // add seriazible meta attribute for the public class
+      scope.info.mattributes.add(Attribute(caSerializable, 0), INVALID_REF);
+   }
 
    // COMPILER MAGIC : "inherit" sealed static methods
    for (auto a_it = scope.info.methodHints.start(); !a_it.Eof(); a_it++) {
@@ -9192,9 +9192,6 @@ void Compiler :: compileClassImplementation(SNode node, ClassScope& scope)
       validateClassFields(node, scope);
    }
 
-//   if (scope.info.staticValues.Count() > 0)
-//      copyStaticFieldValues(node, scope);
-//
    compileVMT(node, scope);
 
    generateClassImplementation(node, scope);
@@ -9355,21 +9352,21 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal, bo
    return true;
 }
 
-//void Compiler :: compileSymbolAttribtes(_ModuleScope& moduleScope, ref_t reference, bool publicAttr)
-//{
-//   ClassInfo::CategoryInfoMap mattributes;
-//   if (publicAttr) {
-//      // add seriazible meta attribute for the public symbol
-//      mattributes.add(Attribute(caSymbolSerializable, 0), INVALID_REF);
-//   }
-//
-//   if (mattributes.Count() > 0) {
-//      // initialize attribute section writers
-//      MemoryWriter attrWriter(moduleScope.mapSection(reference | mskSymbolAttributeRef, false));
-//
-//      mattributes.write(&attrWriter);
-//   }
-//}
+void Compiler :: compileSymbolAttribtes(_ModuleScope& moduleScope, ref_t reference, bool publicAttr)
+{
+   ClassInfo::CategoryInfoMap mattributes;
+   if (publicAttr) {
+      // add seriazible meta attribute for the public symbol
+      mattributes.add(Attribute(caSymbolSerializable, 0), INVALID_REF);
+   }
+
+   if (mattributes.Count() > 0) {
+      // initialize attribute section writers
+      MemoryWriter attrWriter(moduleScope.mapSection(reference | mskSymbolAttributeRef, false));
+
+      mattributes.write(&attrWriter);
+   }
+}
 
 void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 {
@@ -10608,7 +10605,7 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
             declareClassAttributes(current, classScope, false);
             scope.moduleScope->loadClassInfo(classScope.info, current.argument, false);
 
-            compileClassImplementation(/*expressionTree, */current, classScope);
+            compileClassImplementation(current, classScope);
 
             // compile class class if it available
             if (classScope.info.header.classRef != classScope.reference && classScope.info.header.classRef != 0) {
@@ -10625,7 +10622,7 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
             SymbolScope symbolScope(&scope, current.argument, scope.defaultVisibility);
             declareSymbolAttributes(current, symbolScope, false, false);
 
-            compileSymbolImplementation(/*expressionTree, */current, symbolScope);
+            compileSymbolImplementation(current, symbolScope);
             break;
          }
          case lxNamespace:

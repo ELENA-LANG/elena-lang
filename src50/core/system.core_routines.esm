@@ -2487,6 +2487,26 @@ procedure __message."copy$system@Message$system@IntNumber[2]"
 
 end
 
+procedure __message."load$system@Message$system@String[2]"
+
+  peeksi   2
+  pusha
+  callextr extern : LoadMessage
+  freei    1
+  ifn      labErr 0
+  peeksi   1
+  save
+
+  quitn 2
+ 
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
 procedure __signature."#dispatch[1]"
 
   pushd
@@ -2607,6 +2627,41 @@ labDefault:
   pushr    mssgconst : "new[3]"
   throw
   
+end
+
+procedure __symbol."#dispatch[1]"
+
+  open     3
+  reserve  1
+  savesi   2
+  calli    0
+  loadsi   2
+  restore  3
+  close
+  jumpvi   0
+
+end
+
+procedure __symbol."load$system@Symbol$system@String[2]"
+
+  peeksi   2
+  pusha
+  loadenv
+  pushd
+  callextr extern : LoadSymbolByString
+  freei    2
+  ifn      labErr 0
+  peeksi   1
+  save
+
+  quitn 2
+ 
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw
+
 end
 
 procedure __struct."#dispatch[1]"
