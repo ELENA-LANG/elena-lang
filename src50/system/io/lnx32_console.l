@@ -90,14 +90,14 @@ namespace io
         {
            self.read(ref byte ch);
     
-           charConvertor.convert(ch, ref retVal)
+           retVal := charConvertor.convert(ch)
         }
               
         read(ref byte retVal)
         {
            int ch := extern libc.getchar();
 
-           byteConvertor.convert(ch, ref retVal)
+           retVal := byteConvertor.convert(ch)
         }
     
         read(byte[] buffer, ref int retVal)
