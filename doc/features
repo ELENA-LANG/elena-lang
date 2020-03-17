@@ -9,6 +9,7 @@ Declarations
       * constructors with resend expression - no default constructor call +
       * conversion constructor
         - default constructor / in-place initialization is not called +
+        - call explicit constructor
       * Default constructor
         - impicit : if no constructors are declared - default one is auto-generated +
         - implicit protected - if there are constructors - protected one is auto-generated +
