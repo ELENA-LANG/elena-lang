@@ -1,48 +1,48 @@
 namespace expressions
 {
-//import system'collections;
-//import system'routines;
-//
-//preloaded used = new object[]::(Expression,DynamicSingleton,SymbolCollection);
-//
-//public class ScopeVariable
-//{
-//    prop string Name;
-//    
-//    bool equal(ScopeVariable var)
-//    {
-//        ^ var.Name == Name
-//    }
-//    
-//    constructor(string name)
-//    {
-//        Name := name
-//    }
-//}
-//
-//public interface ExpressionScope
-//{
-//    abstract get int ScopeLevel() {}
-//    
-//    abstract Expression resolve(ScopeVariable variable, ref int index) {}
-//    
-//    abstract declare(ScopeVariable variable) {}
-//}
-//
-//public singleton IdleExpressionScope : ExpressionScope
-//{
-//    int ScopeLevel = 0;
-//    
-//    Expression resolve(ScopeVariable variable, ref int index) 
-//    {
-//        ^ nil
-//    }
-//    
-//    declare(ScopeVariable variable)
-//    {
-//        ^ nil
-//    }
-//}
+    import system'collections;
+    import system'routines;
+
+    preloaded used = new object[]{Expression,DynamicSingleton,SymbolCollection};
+    
+    public class ScopeVariable
+    {
+        prop string Name;
+        
+        bool equal(ScopeVariable var)
+        {
+            ^ var.Name == Name
+        }
+        
+        constructor(string name)
+        {
+            Name := name
+        }
+    }
+    
+    public interface ExpressionScope
+    {
+        get abstract int ScopeLevel() {}
+        
+        abstract Expression resolve(ScopeVariable variable, ref int index) {}
+        
+        abstract declare(ScopeVariable variable) {}
+    }
+
+public singleton IdleExpressionScope : ExpressionScope
+{
+    int ScopeLevel = 0;
+    
+    Expression resolve(ScopeVariable variable, ref int index) 
+    {
+        ^ nil
+    }
+    
+    declare(ScopeVariable variable)
+    {
+        ^ nil
+    }
+}
 
     public interface Expression
     {    
@@ -57,10 +57,10 @@ namespace expressions
 //            
 //        static Expression IntConstant(string value)
 //            = new IntConstantExpression(value);
-//            
-//        static Expression Symbol(string s)
-//            = new SymbolExpression(s);
-//            
+            
+        static Expression Symbol(string s)
+            = new SymbolExpression(s);
+            
 //        static Expression ClassReference(string s)
 //            = new ConstantExpression(new ClassReference(s));
 //            
@@ -156,28 +156,28 @@ namespace expressions
 //    
 //        static Expression Nested(DynamicSingleton expr)
 //            = new NestedExpression(expr);          
-//                                  
-//        abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
-//    
-//        saveTo(List<Tuple<Message,ClosureTape>> list)
-//        {
-//            NotSupportedException.raise()
-//        }
-//                            
-//        // temporal generic solution
-//        eval()
-//        {
-//            ^ (self.compiled())();
-//        }
-//            
-//        ClosureTape compiled()
-//        {
-//            List<DynamicClosure> list := new List<DynamicClosure>(8);
-//            
-//            self.saveTo(list, IdleExpressionScope);
-//            
-//            ^ ClosureTape.new:list
-//        }
+                                  
+        abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
+    
+        saveTo(List<Tuple<Message,ClosureTape>> list)
+        {
+            NotSupportedException.raise()
+        }
+                            
+        // temporal generic solution
+        eval()
+        {
+            ^ (self.compiled())();
+        }
+            
+        ClosureTape compiled()
+        {
+            List<DynamicClosure> list := new List<DynamicClosure>(8);
+            
+            self.saveTo(list, IdleExpressionScope);
+            
+            ^ ClosureTape.load(list)
+        }
     }
 
 //public class StatementExpression : Expression
@@ -465,24 +465,24 @@ namespace expressions
 //        this object := intConvertor.convert(o)
 //    }
 //}
-//
-//public class SymbolExpression : Expression
-//{
-//    Symbol symbol;
-//    
-//    constructor(string s)
-//    {
-//        symbol := new Symbol(s)
-//    }
-//    
-//    eval()
-//        = symbol;
-//        
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        list.append(new ConstantClosure(symbol));        
-//    }                
-//}
+
+    public class SymbolExpression : Expression
+    {
+        Symbol symbol;
+        
+        constructor(string s)
+        {
+            symbol := new Symbol(s)
+        }
+        
+        eval()
+            = symbol;
+            
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            list.append(ConstantClosure.load(symbol));        
+        }                
+    }
 
     public class MessageCallExpression : Expression
     {
@@ -490,84 +490,84 @@ namespace expressions
         Expression   _target;
         Expression[] _arguments;
         
-//        constructor new(mssg message, Expression t, params Expression[] arguments)
-//        {
-//            _message := message;
-//            _target := t;
-//            _arguments := arguments;
-//        }
-//        
-//        constructor new(mssg message, Expression t)
-//        {
-//            _message := message;
-//            _target := t;
-//            _arguments := new Expression[](0);
-//        }
-//        
-//        constructor(Expression t, string message)
-//            <= new(new Message(message + "[0]"), t);
-//        
-//        constructor(Expression t, string message, Expression p1)
-//            <= new(new Message(message + "[1]"), t, p1);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2)
-//            <= new(new Message(message + "[2]"), t, p1, p2);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3)
-//            <= new(new Message(message + "[3]"), t, p1, p2, p3);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4)
-//            <= new(new Message(message + "[4]"), t, p1, p2, p3, p4);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5)
-//            <= new(new Message(message + "[5]"), t, p1, p2, p3, p4, p5);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6)
-//            <= new(new Message(message + "[6]"), t, p1, p2, p3, p4, p5, p6);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7)
-//            <= new(new Message(message + "[7]"), t, p1, p2, p3, p4, p5, p6, p7);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8)
-//            <= new(new Message(message + "[8]"), t, p1, p2, p3, p4, p5, p6, p7, p8);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
-//            <= new(new Message(message + "[9]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
-//            <= new(new Message(message + "[10]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                    Expression p11)
-//            <= new(new Message(message + "[11]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
-//        
-//        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                    Expression p11, Expression p12)
-//            <= new(new Message(message + "[12]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-//        
-//        saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//        {
-//            int len := _arguments.Length;
-//            int i := len;
-//            while(i > 0)
-//            {
-//                i -= 1;
-//                
-//                _arguments[i].saveTo(list, scope);
-//            };
-//            
-//            _target.saveTo(list, scope);
-//            
-//            list.append(new MessageClosure(_message))
-//        }
+        constructor new(Message message, Expression t, params Expression[] arguments)
+        {
+            _message := message;
+            _target := t;
+            _arguments := arguments;
+        }
+        
+        constructor new(Message message, Expression t)
+        {
+            _message := message;
+            _target := t;
+            _arguments := new Expression[](0);
+        }
+        
+        constructor(Expression t, string message)
+            <= new(new Message(message + "[0]"), t);
+        
+        constructor(Expression t, string message, Expression p1)
+            <= new(new Message(message + "[1]"), t, p1);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2)
+            <= new(new Message(message + "[2]"), t, p1, p2);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3)
+            <= new(new Message(message + "[3]"), t, p1, p2, p3);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4)
+            <= new(new Message(message + "[4]"), t, p1, p2, p3, p4);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+            <= new(new Message(message + "[5]"), t, p1, p2, p3, p4, p5);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+            <= new(new Message(message + "[6]"), t, p1, p2, p3, p4, p5, p6);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+            <= new(new Message(message + "[7]"), t, p1, p2, p3, p4, p5, p6, p7);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+            <= new(new Message(message + "[8]"), t, p1, p2, p3, p4, p5, p6, p7, p8);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+            <= new(new Message(message + "[9]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+            <= new(new Message(message + "[10]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+            <= new(new Message(message + "[11]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+            <= new(new Message(message + "[12]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            int len := _arguments.Length;
+            int i := len;
+            while(i > 0)
+            {
+                i -= 1;
+                
+                _arguments[i].saveTo(list, scope);
+            };
+            
+            _target.saveTo(list, scope);
+            
+            list.append(MessageClosure.load(_message))
+        }
     }
 
 //public class DynamicMessageCallExpression : Expression
@@ -1099,93 +1099,93 @@ namespace expressions
 //        list.append(new ConstantClosure(tape));
 //    }      
 //}
-//
-//public abstract DynamicSymbol
-//{
-//    abstract compiled() {}
-//}
-//
-//public class DynamicSingleton : DynamicSymbol
-//{
-//    Expression[] methods;
-//
-//    constructor()
-//    {
-//        this methods := new Expression[](0);
-//    }
-//        
-//    constructor(Expression method)
-//    {
-//        this methods := new Expression[]::(method);
-//    }
-//    
-//    constructor(Expression method1, Expression method2)
-//    {
-//        this methods := new Expression[]::(method1, method2);                
-//    }
-//    
-//    constructor(Expression method1, Expression method2, Expression method3)
-//    {
-//        this methods := new Expression[]::(method1, method2, method3);                
-//    }
-//    
-//    constructor(params Expression[] methods)
-//    {
-//        this methods := methods;                
-//    }
-//    
-//    constructor new(params Expression[] methods)
-//    {
-//        this methods := methods;                
-//    }
-//    
-//    compiled()
-//    {
-//        auto list := new List<Tuple<Message,ClosureTape>>();
-//        methods.forEach:(m){m.saveTo(list)};
-//        
-//        ^ ClosureClass.create(list);
-//    }
-//}
-//
-//public class SymbolInfo
-//{
-//    prop string Name;
-//    prop DynamicSymbol Symbol;
-//    
-//    constructor(string name, DynamicSymbol symbol)
-//    {
-//        Name := name;
-//        Symbol := symbol
-//    } 
-//}
-//
-//public class SymbolCollection
-//{
-//    SymbolInfo[] symbols;
-//    
-//    constructor(params SymbolInfo[] symbols)
-//    {
-//        this symbols := symbols;                
-//    }
-//    
-//    compiled()
-//    {
-//        auto set := new DynamicStruct();
-//        
-//        int len := symbols.Length;
-//        for (int i := 0, i < len, i+=1) {
-//            auto info := symbols[i];
-//            
-//            MessageName name := new MessageName(info.Name);
-//            Message prop := name.setPropertyMessage(); 
-//
-//            var tape := info.Symbol.compiled();
-// 
-//            prop(set, tape);
-//        };
-//        
-//        ^ set
-//    }
-//}
+
+public abstract DynamicSymbol
+{
+    abstract compiled() {}
+}
+
+public class DynamicSingleton : DynamicSymbol
+{
+    Expression[] methods;
+
+    constructor()
+    {
+        this methods := new Expression[](0);
+    }
+        
+    constructor(Expression method)
+    {
+        this methods := new Expression[]{method};
+    }
+    
+    constructor(Expression method1, Expression method2)
+    {
+        this methods := new Expression[]{method1, method2};                
+    }
+    
+    constructor(Expression method1, Expression method2, Expression method3)
+    {
+        this methods := new Expression[]{method1, method2, method3};                
+    }
+    
+    constructor(params Expression[] methods)
+    {
+        this methods := methods;                
+    }
+    
+    constructor new(params Expression[] methods)
+    {
+        this methods := methods;                
+    }
+    
+    compiled()
+    {
+        auto list := new List<Tuple<Message,ClosureTape>>();
+        methods.forEach:(m){m.saveTo(list)};
+        
+        ^ ClosureClass.create(list);
+    }
+}
+
+public class SymbolInfo
+{
+    prop string Name;
+    prop DynamicSymbol Symbol;
+    
+    constructor(string name, DynamicSymbol symbol)
+    {
+        Name := name;
+        Symbol := symbol
+    } 
+}
+
+public class SymbolCollection
+{
+    SymbolInfo[] symbols;
+    
+    constructor(params SymbolInfo[] symbols)
+    {
+        this symbols := symbols;                
+    }
+    
+    compiled()
+    {
+        auto set := new DynamicStruct();
+        
+        int len := symbols.Length;
+        for (int i := 0, i < len, i+=1) {
+            auto info := symbols[i];
+            
+            MessageName name := new MessageName(info.Name);
+            Message prop := name.setPropertyMessage(); 
+
+            var tape := info.Symbol.compiled();
+ 
+            prop(set, tape);
+        };
+        
+        ^ set
+    }
+}
 }

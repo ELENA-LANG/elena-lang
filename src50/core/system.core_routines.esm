@@ -5,8 +5,9 @@ define ARG_MASK              0000001Fh
 define SPECIAL_MESSAGE       00000020h
 define SPECIAL_MESSAGE_INV  0FFFFFFDFh
 
+define elStructure           00000008h
 define elSubject             04000000h
-define elStructure          000000008h
+define elMessage             00200000h
 
 // ; external methods
 
@@ -3232,6 +3233,58 @@ labEnd:
 labDefault:
   popd
   bsredirect  
+
+  open     4
+  reserve  2
+  savesi   3
+  pushs   -3
+  pusha
+  movr     class : system'Message
+  pushr    class : system'MethodNotFoundException
+  storesi  5
+  peeksi   0
+  pushr    mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __closureclass."#dispatch[1]"
+
+  bsredirect
+
+  pusha
+  pushd
+  pushn   0
+
+labNext:
+  peeksi  2
+  loadsi  0
+  ifcount labEnd
+  get
+  inc     1
+  savesi  0
+
+  flag
+  and     elMessage
+  ifn     labNext 0
+
+  loadsi  1
+  else    labNext
+
+labCall:
+  popd
+  get
+  popd
+  freei   1
+  or      20h // ; set special flag
+  jumpvi  0
+
+labQuit:
+  quitn   1
+  
+labEnd:
+  loadsi  1
+  freei   3
 
   open     4
   reserve  2

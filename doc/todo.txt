@@ -6,8 +6,9 @@ In development:
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
               dev2 - linux32
-                * compile hello world
                 * method not found exception handling
+                * compile int sample
+                * compile console samples
                 * compile ecv
                 * compile all console / files examples
 
@@ -17,9 +18,6 @@ In development:
 
               dev2 - tutorials
                 * migrate tutorials
-
-              dev - implementation
-                * call explicit constructor from conversion constructor
 
               dev - migration
                 * ExpressionTree1
