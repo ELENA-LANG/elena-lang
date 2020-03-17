@@ -699,6 +699,11 @@ bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
    return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpPrivate;
 }
 
+bool CompilerLogic :: isMixinMethod(ClassInfo& info, ref_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpMixin);
+}
+
 bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
@@ -1691,7 +1696,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
       case V_NOSTRUCT:
          attrValue = elNonStructureRole;
          return true;
-      case V_GROUP:
+      case V_MIXIN:
          attrValue = elGroup;
          return true;
 //      //case V_TAPEGROUP:
@@ -1752,6 +1757,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          return true;
       case V_GENERIC:
          attrValue = (tpGeneric | tpSealed);
+         return true;
+      case V_MIXIN:
+         attrValue = tpMixin;
          return true;
       case V_PRIVATE:
          attrValue = (tpPrivate | tpSealed);

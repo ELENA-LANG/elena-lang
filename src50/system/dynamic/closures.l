@@ -2,14 +2,14 @@
 
 public interface DynamicClosure
 {
-    abstract function(params object[] args) {}
+    abstract mixin function(params object[] args) {}
 }
 
 // --- DynamicMessageClosure ---
 
 public singleton DynamicMessageClosure : DynamicClosure
 {
-    function(params object[] args)
+    mixin function(params object[] args)
         => intern system'core_routines'__dynamicmssg_closure;
 }
 
@@ -27,7 +27,7 @@ public struct MessageClosure : DynamicClosure
         theMessage := message
     }
     
-    function(params object[] args)
+    mixin function(params object[] args)
         => intern system'core_routines'__mssg_closure;
 }
 
@@ -42,7 +42,7 @@ public class ConstantClosure : DynamicClosure
         this constant := constant;
     }
     
-    function(params object[] args)
+    mixin function(params object[] args)
         = constant;
 }
 

@@ -171,28 +171,15 @@ inline SNode findRootNode(SNode node, LexicalType type1, LexicalType type2, Lexi
 //   return current;
 //}
 //
-////inline SNode goToNode(SNode current, LexicalType type, ref_t argument)
-////{
-////   while (current != lxNone && current != type && current.argument != argument)
-////      current = current.nextNode();
-////
-////   return current;
-////}
-//
-//inline bool validateGenericClosure(ref_t* signature, size_t length)
-//{
-//   for (size_t i = 1; i < length; i++) {
-//      if (signature[i - 1] != signature[i])
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
-//////inline bool checkNode(SNode node, LexicalType type, ref_t argument)
-//////{
-//////   return node == type && node.argument == argument;
-//////}
+inline bool validateGenericClosure(ref_t* signature, size_t length)
+{
+   for (size_t i = 1; i < length; i++) {
+      if (signature[i - 1] != signature[i])
+         return false;
+   }
+
+   return true;
+}
 
 inline bool isConstantArg(SNode current)
 {
@@ -735,7 +722,7 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
    this->nestedMode = parent->getScope(Scope::ScopeLevel::slOwnerClass) != parent;
 //   this->subCodeMode = false;
    this->abstractMethod = false;
-//   this->genericClosure = false;
+   this->mixinFunction = false;
    this->embeddableRetMode = false;
    this->targetSelfMode = false;
    this->yieldMethod = false;
@@ -6395,14 +6382,6 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
 
    if (identNode == lxIdentifier) {
       actionStr.copy(identNode.identifier());
-      //// COMPILER MAGIC : adding complex message name
-      //SNode messageNode = nameNode.nextNode();
-      //while (messageNode == lxMessage) {
-      //   actionStr.append(':');
-      //   actionStr.append(messageNode.firstChild(lxTerminalMask).identifier());
-
-      //   messageNode = messageNode.nextNode();
-      //}
    }
    else unnamedMessage = true;
 
@@ -6522,8 +6501,8 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          actionStr.copy(CONSTRUCTOR_MESSAGE);
          unnamedMessage = false;
       }
-      else if (test(scope.hints, tpSealed | tpGeneric)/* && paramCount < OPEN_ARG_COUNT*/) {
-         if (signatureLen > 0 || !unnamedMessage)
+      else if (test(scope.hints, tpSealed | tpGeneric)) {
+         if (signatureLen > 0 || !unnamedMessage || test(scope.hints, tpFunction))
             scope.raiseError(errInvalidHint, node);
 
          actionStr.copy(GENERIC_PREFIX);
@@ -6536,16 +6515,20 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          actionStr.copy(INVOKE_MESSAGE);
 
          flags |= FUNCTION_MESSAGE;
-         //// Compiler Magic : if it is a generic closure - ignore fixed argument
-         //if (scope.withOpenArg) {
-         //   if (validateGenericClosure(signature, signatureLen)) {
-         //      signatureLen = 1;
-         //      scope.genericClosure = true;
-         //   }
-         //   // generic clsoure should have a homogeneous signature (i.e. same types)
-         //   else scope.raiseError(errIllegalMethod, node);
-         //}
+         // Compiler Magic : if it is a generic closure - ignore fixed argument
+         if (test(scope.hints, tpMixin)) {
+            if (scope.withOpenArg && validateGenericClosure(signature, signatureLen)) {
+               signatureLen = 1;
+               scope.mixinFunction = true;
+            }
+            // mixin function should have a homogeneous signature (i.e. same types) and be variadic
+            else scope.raiseError(errIllegalMethod, node);
+         }
       }
+
+      if (test(scope.hints, tpMixin) && !test(scope.hints, tpFunction))
+         // only mixin function is supported
+         scope.raiseError(errIllegalMethod, node);
 
       if (testany(scope.hints, tpGetAccessor | tpSetAccessor)) {
          flags |= PROPERTY_MESSAGE;
@@ -6598,12 +6581,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       }
    }
 
-//   if (scope.genericClosure) {
-//      // Compiler Magic : if it is a generic closure - ignore fixed argument but it should be removed from the stack
-//      scope.rootToFree += (paramCount - 2);
-//
-//      scope.message = overwriteParamCount(scope.message, 1);
-//   }
+   if (scope.mixinFunction) {
+      // Compiler Magic : if it is a mixin function - argument size cannot be directly defined
+      scope.message = overwriteArgCount(scope.message, 0);
+   }
 }
 
 void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
@@ -7112,7 +7093,11 @@ void Compiler :: beginMethod(SNode node, MethodScope& scope)
 void Compiler :: endMethod(SNode node, MethodScope& scope)
 {
    node.insertNode(lxAllocated, scope.reserved1 - scope.preallocated);  // allocate the space for the local variables excluding preallocated ones ("$this", "$message")
-   node.insertNode(lxArgCount, getArgCount(scope.message)/* + scope.rootToFree*/);
+   if (scope.mixinFunction) {
+      // generic functions are special case of functions, consuming only fixed part of the argument list
+      node.insertNode(lxArgCount, scope.parameters.Count() - 1);
+   }
+   else node.insertNode(lxArgCount, getArgCount(scope.message));
    node.insertNode(lxReserved, scope.reserved2);
 }
 
@@ -8050,9 +8035,12 @@ void Compiler :: initialize(ClassScope& scope, MethodScope& methodScope)
    methodScope.abstractMethod = _logic->isMethodAbstract(scope.info, methodScope.message);
    methodScope.yieldMethod = _logic->isMethodYieldable(scope.info, methodScope.message);
    methodScope.generic = _logic->isMethodGeneric(scope.info, methodScope.message);
+   if (_logic->isMixinMethod(scope.info, methodScope.message)) {
+      if (methodScope.withOpenArg && methodScope.functionMode)
+         methodScope.mixinFunction = true;
+   }   
+
    methodScope.targetSelfMode = test(methodScope.hints, tpTargetSelf);
-//   if (methodScope.withOpenArg && methodScope.functionMode)
-//      methodScope.genericClosure = true;
    methodScope.constMode = test(methodScope.hints, tpConstant);
 }
 

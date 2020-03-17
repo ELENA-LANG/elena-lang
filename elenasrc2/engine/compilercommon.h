@@ -79,7 +79,7 @@ constexpr auto V_EXTERN          = 0x80001015u;
 constexpr auto V_INTERN          = 0x80001016u;
 constexpr auto V_FORWARD         = 0x80001017u;
 constexpr auto V_IMPORT          = 0x80001018u;
-constexpr auto V_GROUP           = 0x80001019u;
+constexpr auto V_MIXIN           = 0x80001019u;
 constexpr auto V_NOSTRUCT        = 0x8000101Bu;
 constexpr auto V_AUTO            = 0x8000101Cu;
 constexpr auto V_INITIALIZER     = 0x8000101Du;
@@ -153,7 +153,7 @@ enum MethodHint
    tpMultimethod  = 0x0001000,
    tpStatic       = 0x0004000,
    tpGetAccessor  = 0x0008000,
-//   tpSpecial     = 0x0010000,
+   tpMixin        = 0x0010000,
    tpAbstract     = 0x0020000,
    tpInternal     = 0x0040000,
    tpPredefined   = 0x0080000, // virtual class declaration
@@ -695,6 +695,7 @@ public:
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodYieldable(ClassInfo& info, ref_t message) = 0;
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message) = 0;
+   virtual bool isMixinMethod(ClassInfo& info, ref_t message) = 0;
    virtual bool isMultiMethod(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isFunction(ClassInfo& info, ref_t message) = 0;
 //   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;

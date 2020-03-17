@@ -29,20 +29,20 @@ namespace expressions
         abstract declare(ScopeVariable variable) {}
     }
 
-public singleton IdleExpressionScope : ExpressionScope
-{
-    int ScopeLevel = 0;
-    
-    Expression resolve(ScopeVariable variable, ref int index) 
+    public singleton IdleExpressionScope : ExpressionScope
     {
-        ^ nil
+        int ScopeLevel = 0;
+        
+        Expression resolve(ScopeVariable variable, ref int index) 
+        {
+            ^ nil
+        }
+        
+        declare(ScopeVariable variable)
+        {
+            ^ nil
+        }
     }
-    
-    declare(ScopeVariable variable)
-    {
-        ^ nil
-    }
-}
 
     public interface Expression
     {    
@@ -51,12 +51,12 @@ public singleton IdleExpressionScope : ExpressionScope
 //        
 //        static Expression CodeBlock(Expression[] statements)
 //            = CodeblockExpression.new(statements);
-//        
-//        static Expression Constant(object o)
-//            = new ConstantExpression(o);
-//            
-//        static Expression IntConstant(string value)
-//            = new IntConstantExpression(value);
+        
+        static Expression Constant(object o)
+            = new ConstantExpression(o);
+            
+        static Expression IntConstant(string value)
+            = new IntConstantExpression(value);
             
         static Expression Symbol(string s)
             = new SymbolExpression(s);
@@ -81,13 +81,13 @@ public singleton IdleExpressionScope : ExpressionScope
 //           
 //        static Expression DynamicMessageCall(Expression t)
 //            = DynamicMessageCallExpression.new(t);
-//            
-//        static Expression GetProperty(MessageName name, Expression t)
-//            = GetPropertyExpression.new(name, t);
-//            
-//        static Expression SetProperty(MessageName name, Expression t, Expression v)
-//            = SetPropertyExpression.new(name, t, v);
-//           
+            
+        static Expression GetProperty(MessageName name, Expression t)
+            = GetPropertyExpression.new(name, t);
+            
+        static Expression SetProperty(MessageName name, Expression t, Expression v)
+            = SetPropertyExpression.new(name, t, v);
+           
 //        static Expression GetDynamicProperty(Expression m, Expression t)
 //            = GetDynamicPropertyExpression.new(m, t);
 //            
@@ -439,32 +439,32 @@ public singleton IdleExpressionScope : ExpressionScope
 //        }        
 //    }
 //}
-//
-//public class ConstantExpression : Expression
-//{
-//    object object;
-//    
-//    constructor(o)
-//    {
-//        this object := o
-//    }
-//    
-//    eval()
-//        = object;
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        list.append(new ConstantClosure(object));
-//    }
-//}
-//
-//public class IntConstantExpression : ConstantExpression
-//{
-//    constructor(o)
-//    {
-//        this object := intConvertor.convert(o)
-//    }
-//}
+
+    public class ConstantExpression : Expression
+    {
+        object object;
+        
+        constructor(o)
+        {
+            this object := o
+        }
+        
+        eval()
+            = object;
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            list.append(ConstantClosure.load(object));
+        }
+    }
+    
+    public class IntConstantExpression : ConstantExpression
+    {
+        constructor(o)
+        {
+            this object := intConvertor.convert(o)
+        }
+    }
 
     public class SymbolExpression : Expression
     {
@@ -647,30 +647,30 @@ public singleton IdleExpressionScope : ExpressionScope
 //        list.append(DynamicMessageClosure)
 //    }
 //}
-//
-//public class GetPropertyExpression : Expression
-//{
-//    MessageName _name;
-//    Expression  _target;
-//    
-//    constructor(Expression t, string message)
-//        <= new(new MessageName(message), t);
-//        
-//    constructor new(MessageName name, Expression t)
-//    {
-//        _name := name;
-//        _target := t
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        _target.saveTo(list, scope);
-//        
-//        auto mssg := _name.getPropertyMessage();
-//        list.append(new MessageClosure(mssg))
-//    }
-//}
-//
+
+    public class GetPropertyExpression : Expression
+    {
+        MessageName _name;
+        Expression  _target;
+        
+        constructor(Expression t, string message)
+            <= new(new MessageName(message), t);
+            
+        constructor new(MessageName name, Expression t)
+        {
+            _name := name;
+            _target := t
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            _target.saveTo(list, scope);
+            
+            auto mssg := _name.getPropertyMessage();
+            list.append(MessageClosure.load(mssg))
+        }
+    }
+
 //public class GetDynamicPropertyExpression : Expression
 //{
 //    Expression _property;
@@ -700,33 +700,33 @@ public singleton IdleExpressionScope : ExpressionScope
 //        list.append(DynamicMessageClosure)
 //    }
 //}
-//
-//public class SetPropertyExpression : Expression
-//{
-//    MessageName _name;
-//    Expression  _target;
-//    Expression  _value;
-//    
-//    constructor(Expression t, string message, Expression v)
-//        <= new(new MessageName(message), t, v);
-//        
-//    constructor new(MessageName name, Expression t, Expression v)
-//    {
-//        _name := name;
-//        _target := t;
-//        _value := v
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        _value.saveTo(list, scope);
-//        _target.saveTo(list, scope);
-//        
-//        auto mssg := _name.setPropertyMessage();
-//        list.append(new MessageClosure(mssg))        
-//    }
-//}
-//
+
+    public class SetPropertyExpression : Expression
+    {
+        MessageName _name;
+        Expression  _target;
+        Expression  _value;
+        
+        constructor(Expression t, string message, Expression v)
+            <= new(new MessageName(message), t, v);
+            
+        constructor new(MessageName name, Expression t, Expression v)
+        {
+            _name := name;
+            _target := t;
+            _value := v
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            _value.saveTo(list, scope);
+            _target.saveTo(list, scope);
+            
+            auto mssg := _name.setPropertyMessage();
+            list.append(MessageClosure.load(mssg))        
+        }
+    }
+
 //public class SetDynamicPropertyExpression : Expression
 //{
 //    Expression _property;

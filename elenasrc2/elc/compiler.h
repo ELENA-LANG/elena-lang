@@ -566,7 +566,7 @@ private:
       bool         withOpenArg;
       bool         classStacksafe;
       bool         generic;
-//      bool         genericClosure;
+      bool         mixinFunction;
       bool         extensionMode;
       bool         multiMethod;
       bool         functionMode;

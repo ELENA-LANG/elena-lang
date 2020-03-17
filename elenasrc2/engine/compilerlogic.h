@@ -152,6 +152,7 @@ public:
    virtual bool isAbstract(ClassInfo& info);
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
    virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
+   virtual bool isMixinMethod(ClassInfo& info, ref_t message);
    virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
    virtual bool isMethodYieldable(ClassInfo& info, ref_t message);
 //   virtual bool isMethodInternal(ClassInfo& info, ref_t message);

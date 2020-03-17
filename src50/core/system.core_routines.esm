@@ -3151,7 +3151,7 @@ labEnd:
 
 end
 
-procedure __dynamicmssg_closure."params##invoke$system@Object[1]"
+procedure __dynamicmssg_closure."params##invoke$system@Object[0]"
 
   popd
   popa
@@ -3162,7 +3162,7 @@ procedure __dynamicmssg_closure."params##invoke$system@Object[1]"
 
 end
 
-procedure __mssg_closure."params##invoke$system@Object[1]"
+procedure __mssg_closure."params##invoke$system@Object[0]"
 
   load
   peeksi  1
@@ -3215,7 +3215,7 @@ labNext:
   inc 1
   savefi  -2
 
-  vcallrm system'dynamic'DynamicClosure mssgconst : "params##invoke<system'Object>[1]"
+  vcallrm system'dynamic'DynamicClosure mssgconst : "params##invoke<system'Object>[0]"
   pusha
   peekfi  1
   jump    labNext

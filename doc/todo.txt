@@ -20,7 +20,6 @@ In development:
                 * migrate tutorials
 
               dev - migration
-                * ExpressionTree1
                 * ExpressionTree2
                 * Execute Brain****/Elena
                 * Runtime evaluation
@@ -73,6 +72,7 @@ In development:
                 * multi-return methods : dynamic objects
                 * declaring several variables in a row?
 
+                * mixin variadic function cannot be used directly??
                 * function closures : strong one - should be resolved directly if possible
                 * stack allocated variables : assigning nil, default constructor call, ...
                 * stack allocation should not be cleared
