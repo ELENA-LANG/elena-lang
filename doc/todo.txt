@@ -21,6 +21,9 @@ In development:
 
               dev - migration
                 * ExpressionTree2
+                * ScriptTutorial1 
+                * ScriptTutorial2
+
                 * Execute Brain****/Elena
                 * Runtime evaluation
                 * Runtime evaluation/In an environment
