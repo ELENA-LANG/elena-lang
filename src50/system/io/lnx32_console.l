@@ -6,15 +6,15 @@ namespace io
     {
         handle stdout()
         {
-           /*handle libHandle := extern libdl.dlopen(
+           handle libHandle := extern libdl.dlopen(
                                               "libc.so.6",
                                               1);
     
-           /*dirty_ptr variable := extern libdl.dlsym(
+           dirty_ptr variable := extern libdl.dlsym(
                             libHandle,
                             "stdout");
-*/    
-            int handle/* := variable.Value*/;
+
+            int handle := variable.Value;
     
            ^ handle
         }
@@ -27,9 +27,9 @@ namespace io
         handle handle;
         string newLine;
     
-        constructor(/*handle h*/)
+        constructor(handle h)
         {
-            //handle := h;
+            handle := h;
             newLine := forward newLine;
         }
     
@@ -70,7 +70,7 @@ namespace io
     
         refresh()
         {
-            //system'external'libc fflush &int:theHandle.
+            extern libc.fflush(handle)
         }
                 
         close()
@@ -95,9 +95,9 @@ namespace io
               
         read(ref byte retVal)
         {
-           // int ch := extern libc.getchar();
+           int ch := extern libc.getchar();
 
-           // byteConvertor.convert(ch, ref retVal)
+           byteConvertor.convert(ch, ref retVal)
         }
     
         read(byte[] buffer, ref int retVal)
@@ -167,7 +167,7 @@ namespace io
 
     // --- Console Standard Symbols
     
-    symbol stdConsoleWriter = new ConsoleWriter(/*globalVariables.stdout()*/);
+    symbol stdConsoleWriter = new ConsoleWriter(globalVariables.stdout());
 
     symbol stdConsoleReader = new ConsoleReader();
 

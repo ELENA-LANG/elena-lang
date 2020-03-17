@@ -1,11 +1,16 @@
-[project]
-template=console
-executable=u_helloworld
-namespace=u_helloworld
-debuginfo=-1
-
-[files]
-u_helloworld.l
-
-[forwards]
-'program=u_helloworld'Program
+<configuration>
+    <project>
+        <executable>helloworld</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>u_helloworld</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>helloworld.l</include>
+        </module>
+    </files>
+</configuration>
