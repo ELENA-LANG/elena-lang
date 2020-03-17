@@ -13,42 +13,39 @@ public singleton DynamicMessageClosure : DynamicClosure
         => intern system'core_routines'__dynamicmssg_closure;
 }
 
-//// --- MessageClosure ---
-//
-//public struct MessageClosure : DynamicClosure
-//{
-//    embeddable mssg theMessage;
-//    
-//    constructor(string message)
-//        <= (new Message(message));
-//    
-//    constructor(mssg message)
-//    {
-//        theMessage := message
-//    }
-//    
-//    constructor new(mssg message)
-//        <= (message);
-//    
-//    closure(params object[] args)
-//        => system'core_routines'__mssg_closure;
-//}
-//
-//// --- ConstantClosure --- 
-//
-//public class ConstantClosure : DynamicClosure
-//{
-//    object constant;
-//    
-//    constructor(constant)
-//    {
-//        this constant := constant;
-//    }
-//    
-//    closure(params object[] args)
-//        = constant;
-//}
-//
+// --- MessageClosure ---
+
+public struct MessageClosure : DynamicClosure
+{
+    embeddable Message theMessage;
+    
+    constructor load(string message)
+        <= load(new Message(message));
+    
+    constructor load(Message message)
+    {
+        theMessage := message
+    }
+    
+    function(params object[] args)
+        => intern system'core_routines'__mssg_closure;
+}
+
+// --- ConstantClosure --- 
+
+public class ConstantClosure : DynamicClosure
+{
+    object constant;
+    
+    constructor load(constant)
+    {
+        this constant := constant;
+    }
+    
+    function(params object[] args)
+        = constant;
+}
+
 //// --- AssigningClosure ---
 //
 //public struct AssigningClosure : DynamicClosure

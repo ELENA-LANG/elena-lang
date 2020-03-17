@@ -23,8 +23,8 @@ public extension classROp
 //        system'core_routines'__object readLength(self, retVal)
 //    ]
 
-//    setField(int index, object object)
-//        => intern system'core_routines'__object;
+    setField(int index, object object)
+        => intern system'core_routines'__object;
         
 //    getField(int anIndex)
 //        => system'core_routines'__object.

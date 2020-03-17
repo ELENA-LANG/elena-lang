@@ -67,20 +67,22 @@ procedure __object."raise[1]"
   
 end
 
-procedure __object."setField$system@IntNumber$system@Object[3]"
+procedure __object."setField$system@Object$system@IntNumber$system@Object[3]"
 
-  peeksi 1
+  peeksi  1
   flag
-  and elStructure
-  elsen labErr 0
+  and     elStructure
+  elsen   labErr 0
   len
-  peeksi 2
+  peeksi  2
   notless labErr
-  lessn labErr 0
-  pushsi 3
+  lessn   labErr 0
+  load
+  peeksi  1
+  pushsi  3
   set
-  freei 1
-  quitn 3
+  freei   1
+  quitn   3
 
 labErr:
   open 1
@@ -3153,6 +3155,14 @@ procedure __dynamicmssg_closure."params##invoke$system@Object[1]"
   popd
   popa
   pushd
+  load
+  peeksi  1
+  jumpvi  0
+
+end
+
+procedure __mssg_closure."params##invoke$system@Object[1]"
+
   load
   peeksi  1
   jumpvi  0
