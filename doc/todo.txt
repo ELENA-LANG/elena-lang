@@ -18,6 +18,9 @@ In development:
               dev2 - tutorials
                 * migrate tutorials
 
+              dev - implementation
+                * call explicit constructor from conversion constructor
+
               dev - migration
                 * ExpressionTree1
                 * ExpressionTree2

@@ -7552,7 +7552,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
          bodyNode = SNode();
       }
       else {
-         if (isDefConvConstructor)
+         if (isDefConvConstructor && getArgCount(scope.message) <= 1)
             scope.raiseError(errInvalidOperation, node);
 
          compileConstructorResendExpression(bodyNode, codeScope, classClassScope, withFrame);
