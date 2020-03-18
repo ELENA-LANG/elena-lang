@@ -222,6 +222,7 @@ ELENA byte codes (or ecodes)
 
  rint                       - real[sp] << int(real[acc]) 
 
+ sub                        - index -= int[acc]
 
  Comparision operations:
  ----------------------- 

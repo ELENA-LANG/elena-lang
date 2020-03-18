@@ -2667,6 +2667,35 @@ labErr:
 
 end
 
+procedure __class."#dispatch[1]"
+
+  geti    0
+  jumpvi  0
+
+end
+
+procedure __class."load$system@ClassReference$system@String[2]"
+
+  peeksi   2
+  pusha
+  loadenv
+  pushd
+  callextr extern : LoadClassByString
+  freei    2
+  ifn      labErr 0
+  peeksi   1
+  save
+
+  quitn 2
+ 
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
 procedure __struct."#dispatch[1]"
 
   bsredirect
@@ -3167,6 +3196,24 @@ procedure __mssg_closure."params##invoke$system@Object[0]"
   load
   peeksi  1
   jumpvi  0
+
+end
+
+procedure __local_closure."params##invoke$system@Object[0]"
+
+  pusha
+  movn   0
+labSearch:
+  movs   -2
+  get
+  inc 1
+  elser  labSearch terminal
+  dec    1
+  popa
+  sub
+  get
+
+  quit
 
 end
 

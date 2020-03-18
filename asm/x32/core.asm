@@ -1020,6 +1020,13 @@ inline % 0Fh
 
 end
 
+// ; sub
+inline % 13h
+
+  sub  edx, [ebx]
+  
+end
+
 // ; close
 inline % 15h
 

@@ -61,14 +61,14 @@ namespace expressions
         static Expression Symbol(string s)
             = new SymbolExpression(s);
             
-//        static Expression ClassReference(string s)
-//            = new ConstantExpression(new ClassReference(s));
-//            
-//        static Expression New(Expression t)
-//            = new MessageCallExpression(t, "#constructor");
-//           
-//        static Expression New(Expression t, Expression p0)
-//            = new MessageCallExpression(t, "#constructor", p0);
+        static Expression ClassReference(string s)
+            = new ConstantExpression(new ClassReference(s));
+            
+        static Expression New(Expression t)
+            = new MessageCallExpression(t, "#constructor");
+           
+        static Expression New(Expression t, Expression p0)
+            = new MessageCallExpression(t, "#constructor", p0);
            
         static Expression MessageCall(Message message, Expression t, params Expression[] arguments)
             = MessageCallExpression.new(message,t,params arguments);
@@ -88,12 +88,12 @@ namespace expressions
         static Expression SetProperty(MessageName name, Expression t, Expression v)
             = SetPropertyExpression.new(name, t, v);
            
-//        static Expression GetDynamicProperty(Expression m, Expression t)
-//            = GetDynamicPropertyExpression.new(m, t);
-//            
-//        static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
-//            = SetDynamicPropertyExpression.new(m, t, v);
-//           
+        static Expression GetDynamicProperty(Expression m, Expression t)
+            = GetDynamicPropertyExpression.new(m, t);
+            
+        static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
+            = SetDynamicPropertyExpression.new(m, t, v);
+           
 //        static Declaration(ScopeVariable variable)
 //            = new DeclarationExpression(variable);
 //           
@@ -105,13 +105,13 @@ namespace expressions
 //              
 //        static Expression DeclareAndAssigning(ScopeVariable variable, Expression expr)
 //            = new DeclaringAndAssigningExpression(variable, expr);
-//              
-//        static Expression Variable(ScopeVariable variable)
-//            = new VariableExpression(variable);
-//              
-//        static Expression Variable(string variable)
-//            = new VariableExpression(new ScopeVariable(variable));
-//              
+              
+        static Expression Variable(ScopeVariable variable)
+            = new VariableExpression(variable);
+              
+        static Expression Variable(string variable)
+            = new VariableExpression(new ScopeVariable(variable));
+              
 //        static Expression Statement(params Expression[] expressions)
 //            = StatementExpression.new(params expressions);
 //              
@@ -671,35 +671,35 @@ namespace expressions
         }
     }
 
-//public class GetDynamicPropertyExpression : Expression
-//{
-//    Expression _property;
-//    Expression _target;
-//    
-//    constructor(Expression t, Expression p)
-//        <= new(p, t);
-//        
-//    constructor new(Expression p, Expression t)
-//    {
-//        _property := Expression.MessageCall( 
-//                        new Message("getPropertyMessage[0]"),
-//                        Expression.New(
-//                            Expression.ClassReference("system'MessageName"),
-//                            p
-//                        )
-//                     );
-//        
-//        _target := t
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        _target.saveTo(list, scope);
-//        _property.saveTo(list, scope);
-//        
-//        list.append(DynamicMessageClosure)
-//    }
-//}
+    public class GetDynamicPropertyExpression : Expression
+    {
+        Expression _property;
+        Expression _target;
+        
+        constructor(Expression t, Expression p)
+            <= new(p, t);
+            
+        constructor new(Expression p, Expression t)
+        {
+            _property := Expression.MessageCall( 
+                            new Message("getPropertyMessage[0]"),
+                            Expression.New(
+                                Expression.ClassReference("system'MessageName"),
+                                p
+                            )
+                         );
+            
+            _target := t
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            _target.saveTo(list, scope);
+            _property.saveTo(list, scope);
+            
+            list.append(DynamicMessageClosure)
+        }
+    }
 
     public class SetPropertyExpression : Expression
     {
@@ -727,39 +727,39 @@ namespace expressions
         }
     }
 
-//public class SetDynamicPropertyExpression : Expression
-//{
-//    Expression _property;
-//    Expression  _target;
-//    Expression  _value;
-//    
-//    constructor(Expression t, Expression p, Expression v)
-//        <= new(p, t, v);
-//        
-//    constructor new(Expression p, Expression t, Expression v)
-//    {
-//        _property := Expression.MessageCall( 
-//                        new Message("setPropertyMessage[0]"),
-//                        Expression.New(
-//                            Expression.ClassReference("system'MessageName"),
-//                            p
-//                        )
-//                     );
-//        
-//        _target := t;
-//        _value := v
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        _value.saveTo(list, scope);
-//        _target.saveTo(list, scope);
-//        _property.saveTo(list, scope);
-//        
-//        list.append(DynamicMessageClosure)
-//    }
-//}
-//
+    public class SetDynamicPropertyExpression : Expression
+    {
+        Expression _property;
+        Expression  _target;
+        Expression  _value;
+        
+        constructor(Expression t, Expression p, Expression v)
+            <= new(p, t, v);
+            
+        constructor new(Expression p, Expression t, Expression v)
+        {
+            _property := Expression.MessageCall( 
+                            new Message("setPropertyMessage[0]"),
+                            Expression.New(
+                                Expression.ClassReference("system'MessageName"),
+                                p
+                            )
+                         );
+            
+            _target := t;
+            _value := v
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            _value.saveTo(list, scope);
+            _target.saveTo(list, scope);
+            _property.saveTo(list, scope);
+            
+            list.append(DynamicMessageClosure)
+        }
+    }
+
 //public class DeclarationExpression : Expression
 //{
 //    ScopeVariable variable;
@@ -819,24 +819,24 @@ namespace expressions
 //        super.saveTo(list, scope);
 //    }
 //}
-//
-//public class VariableExpression : Expression
-//{
-//    ScopeVariable variable;
-//    
-//    constructor(ScopeVariable variable)
-//    {
-//        this variable := variable
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        scope.resolve(variable, ref int index);
-//        
-//        list.append(new LocalClosure(index));
-//    }
-//}
-//
+
+    public class VariableExpression : Expression
+    {
+        ScopeVariable variable;
+        
+        constructor(ScopeVariable variable)
+        {
+            this variable := variable
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            scope.resolve(variable, ref int index);
+            
+            list.append(new LocalClosure(index));
+        }
+    }
+
 //public class ReturnExpression : Expression
 //{
 //    Expression expr;

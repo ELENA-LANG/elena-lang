@@ -35,7 +35,7 @@ enum ByteCode
    bcNot             = 0x10,
 //   bcLen             = 0x11,
 //   bcBCopyA          = 0x12,
-//   bcDec             = 0x13,
+   bcSub             = 0x13,
 //   bcPopB            = 0x14,
    bcClose           = 0x15,
    bcRExp            = 0x16,
