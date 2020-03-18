@@ -73,24 +73,24 @@ public struct LocalClosure : DynamicClosure
     }
     
     mixin function(params object[] args)
-        => system'core_routines'__local_closure;    
+        => intern system'core_routines'__local_closure;    
 }
 
-//// --- ReleaseClosure ---
-//
-//public struct ReleaseClosure : DynamicClosure
-//{
-//    embeddable int counter;
-//    
-//    constructor(int counter)
-//    {
-//        this counter := counter
-//    }
-//    
-//    closure(params object[] args)
-//        => system'core_routines'__free_closure;    
-//}
-//
+// --- ReleaseClosure ---
+
+public struct ReleaseClosure : DynamicClosure
+{
+    embeddable int counter;
+    
+    constructor(int counter)
+    {
+        this counter := counter
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__free_closure;    
+}
+
 //// --- GoToClosure ---
 //
 //public struct GoToClosure : DynamicClosure
@@ -133,10 +133,10 @@ public struct LocalClosure : DynamicClosure
 //    closure(params object[] args)
 //        => system'core_routines'__jumpifnot_closure;
 //}
-//
-//public singleton JumpToEnd : DynamicClosure
-//{
-//    closure(params object[] args)
-//        => system'core_routines'__exit_closure;
-//}
-//
+
+public singleton JumpToEnd : DynamicClosure
+{
+    mixin function(params object[] args)
+        => intern system'core_routines'__exit_closure;
+}
+

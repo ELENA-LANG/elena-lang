@@ -3217,6 +3217,26 @@ labSearch:
 
 end
 
+procedure __free_closure."params##invoke$system@Object[0]"
+
+  load
+  movs  -1
+  get
+
+  mquit
+
+end
+
+procedure __exit_closure."params##invoke$system@Object[0]"
+
+  peekfi  1
+  count
+  savefi  -2  
+  peeksi  1
+  quit
+
+end
+
 procedure __closuretape."#dispatch[1]"
 
   pushd
