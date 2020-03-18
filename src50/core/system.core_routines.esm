@@ -3204,13 +3204,14 @@ procedure __local_closure."params##invoke$system@Object[0]"
   pusha
   movn   0
 labSearch:
-  movs   -2
+  movs   2
   get
   inc 1
   elser  labSearch terminal
   dec    1
   popa
   sub
+  movs   1
   get
 
   quit
@@ -3291,7 +3292,6 @@ labEnd:
   popa
 
   loadfi  -3
-  dec     1
   restore 4
   close
 

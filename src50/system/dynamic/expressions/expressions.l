@@ -126,18 +126,18 @@ namespace expressions
 //              
 //        static Expression ActionMethod(Expression body)
 //            = new ActionMethodExpression(body);        
-//              
-//        static Expression Method(string name, Expression body)
-//            = new MethodExpression(name, body);        
-//              
-//        static Expression Method(string name, ScopeVariable param1, Expression body)
-//            = new MethodExpression(name, param1, body);        
-//              
-//        static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
-//            = new MethodExpression(name, param1, param2, body);        
-//              
-//        static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
-//            = new MethodExpression(name, param1, param2, param3, body);        
+              
+        static Expression Method(string name, Expression body)
+            = new MethodExpression(name, body);        
+              
+        static Expression Method(string name, ScopeVariable param1, Expression body)
+            = new MethodExpression(name, param1, body);        
+              
+        static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
+            = new MethodExpression(name, param1, param2, body);        
+              
+        static Expression Method(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
+            = new MethodExpression(name, param1, param2, param3, body);        
               
         static Expression Closure(Expression body)
             = new ClosureExpression(body);        
@@ -913,88 +913,88 @@ namespace expressions
 //        list.append(new ConstantClosure(nilValue)); // !! should be redesigned
 //    }
 //}
-//
-//public class MethodExpression : Expression
-//{
-//    Message         message;
-//    ScopeVariable[] parameters;
-//    Expression      body;
-//    
-//    constructor(Message message, Expression body)
-//    {
-//        this parameters := new ScopeVariable[]::( new ScopeVariable("self") );
-//        this message := message;
-//        
-//        this body := body;
-//    }
-//     
-//    constructor(string name, Expression body)
-//    {
-//        this parameters := new ScopeVariable[]::( new ScopeVariable("self") );
-//        this message := new Message(name + "[0]");
-//        
-//        this body := body;
-//    } 
-//    
-//    constructor(string name, ScopeVariable param1, Expression body)
-//    {
-//        this parameters := new ScopeVariable[]::( param1, new ScopeVariable("self") );
-//        this message := new Message(name + "[1]");
-//        
-//        this body := body;
-//    } 
-//    
-//    constructor(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
-//    {
-//        this parameters := new ScopeVariable[]::( param2, param1, new ScopeVariable("self") );
-//        this message := new Message(name + "[2]");
-//        
-//        this body := body;
-//    }
-//    
-//    constructor(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
-//    {
-//        this parameters := new ScopeVariable[]::( param3, param2, param1, new ScopeVariable("self") );
-//        this message := new Message(name + "[3]");
-//        
-//        this body := body;
-//    }        
-// 
-//    saveTo(List<Tuple<Message,ClosureTape>> list)
-//    {
-//        list.append(new Tuple<Message,ClosureTape>(message, self.compiled()));
-//    }
-//           
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        auto methodScope := new ExpressionScope::
-//        {
-//            get int ScopeLevel = parameters.Length;
-//            
-//            Expression resolve(ScopeVariable variable, ref int index)
-//            {
-//                int len := parameters.Length;
-//                for(int i := 0, i < len, i+=1) {
-//                    if (parameters[i] == variable)
-//                    {
-//                        index := i + 1;
-//                        
-//                        ^ self
-//                    }
-//                };
-//                
-//                ^ scope.resolve(variable, ref index)
-//            }
-//    
-//            declare(ScopeVariable variable)
-//            {
-//            }            
-//        };
-//
-//        body.saveTo(list, methodScope);        
-//    }    
-//}
-//
+
+    public class MethodExpression : Expression
+    {
+        Message         message;
+        ScopeVariable[] parameters;
+        Expression      body;
+        
+        constructor(Message message, Expression body)
+        {
+            this parameters := new ScopeVariable[]{ new ScopeVariable("self") };
+            this message := message;
+            
+            this body := body;
+        }
+         
+        constructor(string name, Expression body)
+        {
+            this parameters := new ScopeVariable[]{ new ScopeVariable("self") };
+            this message := new Message(name + "[0]");
+            
+            this body := body;
+        } 
+        
+        constructor(string name, ScopeVariable param1, Expression body)
+        {
+            this parameters := new ScopeVariable[]{ param1, new ScopeVariable("self") };
+            this message := new Message(name + "[1]");
+            
+            this body := body;
+        } 
+        
+        constructor(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
+        {
+            this parameters := new ScopeVariable[]{ param2, param1, new ScopeVariable("self") };
+            this message := new Message(name + "[2]");
+            
+            this body := body;
+        }
+        
+        constructor(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
+        {
+            this parameters := new ScopeVariable[]{ param3, param2, param1, new ScopeVariable("self") };
+            this message := new Message(name + "[3]");
+            
+            this body := body;
+        }        
+     
+        saveTo(List<Tuple<Message,ClosureTape>> list)
+        {
+            list.append(new Tuple<Message,ClosureTape>(message, self.compiled()));
+        }
+               
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            auto methodScope := new ExpressionScope
+            {
+                get int ScopeLevel = parameters.Length;
+                
+                Expression resolve(ScopeVariable variable, ref int index)
+                {
+                    int len := parameters.Length;
+                    for(int i := 0, i < len, i+=1) {
+                        if (parameters[i] == variable)
+                        {
+                            index := i + 1;
+                            
+                            ^ self
+                        }
+                    };
+                    
+                    ^ scope.resolve(variable, ref index)
+                }
+        
+                declare(ScopeVariable variable)
+                {
+                }            
+            };
+    
+            body.saveTo(list, methodScope);        
+        }    
+    }
+
 //public class GetMethodExpression : MethodExpression
 //{
 //    constructor(string name, Expression body)
