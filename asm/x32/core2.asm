@@ -168,9 +168,9 @@ labWBMark4:
   jmp  short labWBNext
   
 labWBEnd:
-  mov  ebx, [ebp-4]
-  push ebx
+  mov  ebx, [ebp]
   mov  eax, esp
+  push ebx
   push eax
   call extern 'rt_dlls.GCCollect
 

@@ -212,7 +212,7 @@ inline pos_t getObjectPtr(size_t pagePtr)
 
 inline ObjectPage* getObjectPage(size_t objptr)
 {
-   return (ObjectPage*)objptr - elObjectOffset;
+   return (ObjectPage*)(objptr - elObjectOffset);
 }
 
 inline int getSize(size_t objptr)
@@ -272,7 +272,7 @@ inline void CollectYG(GCRoot* root, size_t start, size_t end, ObjectPage*& shado
 
          // ; check if it was collected
          current.size = getSize((size_t)current.stackPtr);
-         if (current.size >= 0) {
+         if (!(current.size & 0x80000000)) {
             // ; copy object size
             shadowHeap->size = current.size;
 
@@ -285,7 +285,7 @@ inline void CollectYG(GCRoot* root, size_t start, size_t end, ObjectPage*& shado
             // ; reserve shadow YG
             new_ptr = (size_t)shadowHeap + elObjectOffset;
 
-            shadowHeap = (ObjectPage*)((size_t)shadowHeap + (current.size + page_ceil) & page_align_mask);
+            shadowHeap = (ObjectPage*)((size_t)shadowHeap + ((current.size + page_ceil) & page_align_mask));
 
             // ; update reference 
             *ptr = new_ptr;
@@ -312,7 +312,7 @@ inline void CollectYG(GCRoot* root, size_t start, size_t end, ObjectPage*& shado
             //   // ; update reference
             //   mov  edi, [eax - elVMTOffset]
             //   mov[esi], edi
-            current.stackPtr = getVMTPtr(current.stackPtrAddr);
+            *ptr = (size_t)getVMTPtr(current.stackPtrAddr);
          }
       }
       ptr++;
