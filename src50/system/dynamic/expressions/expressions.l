@@ -931,7 +931,7 @@ namespace expressions
         constructor(string name, Expression body)
         {
             this parameters := new ScopeVariable[]{ new ScopeVariable("self") };
-            this message := new Message(name + "[0]");
+            this message := new Message(name + "[1]");
             
             this body := body;
         } 
@@ -939,7 +939,7 @@ namespace expressions
         constructor(string name, ScopeVariable param1, Expression body)
         {
             this parameters := new ScopeVariable[]{ param1, new ScopeVariable("self") };
-            this message := new Message(name + "[1]");
+            this message := new Message(name + "[2]");
             
             this body := body;
         } 
@@ -947,7 +947,7 @@ namespace expressions
         constructor(string name, ScopeVariable param1, ScopeVariable param2, Expression body)
         {
             this parameters := new ScopeVariable[]{ param2, param1, new ScopeVariable("self") };
-            this message := new Message(name + "[2]");
+            this message := new Message(name + "[3]");
             
             this body := body;
         }
@@ -955,7 +955,7 @@ namespace expressions
         constructor(string name, ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
         {
             this parameters := new ScopeVariable[]{ param3, param2, param1, new ScopeVariable("self") };
-            this message := new Message(name + "[3]");
+            this message := new Message(name + "[4]");
             
             this body := body;
         }        
@@ -1100,92 +1100,92 @@ namespace expressions
 //    }      
 //}
 
-public abstract DynamicSymbol
-{
-    abstract compiled() {}
-}
-
-public class DynamicSingleton : DynamicSymbol
-{
-    Expression[] methods;
-
-    constructor()
+    public abstract DynamicSymbol
     {
-        this methods := new Expression[](0);
-    }
-        
-    constructor(Expression method)
-    {
-        this methods := new Expression[]{method};
+        abstract compiled() {}
     }
     
-    constructor(Expression method1, Expression method2)
+    public class DynamicSingleton : DynamicSymbol
     {
-        this methods := new Expression[]{method1, method2};                
-    }
+        Expression[] methods;
     
-    constructor(Expression method1, Expression method2, Expression method3)
-    {
-        this methods := new Expression[]{method1, method2, method3};                
-    }
-    
-    constructor(params Expression[] methods)
-    {
-        this methods := methods;                
-    }
-    
-    constructor new(params Expression[] methods)
-    {
-        this methods := methods;                
-    }
-    
-    compiled()
-    {
-        auto list := new List<Tuple<Message,ClosureTape>>();
-        methods.forEach:(m){m.saveTo(list)};
-        
-        ^ ClosureClass.create(list);
-    }
-}
-
-public class SymbolInfo
-{
-    prop string Name;
-    prop DynamicSymbol Symbol;
-    
-    constructor(string name, DynamicSymbol symbol)
-    {
-        Name := name;
-        Symbol := symbol
-    } 
-}
-
-public class SymbolCollection
-{
-    SymbolInfo[] symbols;
-    
-    constructor(params SymbolInfo[] symbols)
-    {
-        this symbols := symbols;                
-    }
-    
-    compiled()
-    {
-        auto set := new DynamicStruct();
-        
-        int len := symbols.Length;
-        for (int i := 0, i < len, i+=1) {
-            auto info := symbols[i];
+        constructor()
+        {
+            this methods := new Expression[](0);
+        }
             
-            MessageName name := new MessageName(info.Name);
-            Message prop := name.setPropertyMessage(); 
-
-            var tape := info.Symbol.compiled();
- 
-            prop(set, tape);
-        };
+        constructor(Expression method)
+        {
+            this methods := new Expression[]{method};
+        }
         
-        ^ set
+        constructor(Expression method1, Expression method2)
+        {
+            this methods := new Expression[]{method1, method2};                
+        }
+        
+        constructor(Expression method1, Expression method2, Expression method3)
+        {
+            this methods := new Expression[]{method1, method2, method3};                
+        }
+        
+        constructor(params Expression[] methods)
+        {
+            this methods := methods;                
+        }
+        
+        constructor new(params Expression[] methods)
+        {
+            this methods := methods;                
+        }
+        
+        compiled()
+        {
+            auto list := new List<Tuple<Message,ClosureTape>>();
+            methods.forEach:(m){m.saveTo(list)};
+            
+            ^ ClosureClass.create(list);
+        }
     }
-}
+    
+    public class SymbolInfo
+    {
+        prop string Name;
+        prop DynamicSymbol Symbol;
+        
+        constructor(string name, DynamicSymbol symbol)
+        {
+            Name := name;
+            Symbol := symbol
+        } 
+    }
+    
+    public class SymbolCollection
+    {
+        SymbolInfo[] symbols;
+        
+        constructor(params SymbolInfo[] symbols)
+        {
+            this symbols := symbols;                
+        }
+        
+        compiled()
+        {
+            auto set := new DynamicStruct();
+            
+            int len := symbols.Length;
+            for (int i := 0, i < len, i+=1) {
+                auto info := symbols[i];
+                
+                MessageName name := new MessageName(info.Name);
+                Message prop := name.setPropertyMessage(); 
+    
+                var tape := info.Symbol.compiled();
+     
+                prop(set, tape);
+            };
+            
+            ^ set
+        }
+    }
 }

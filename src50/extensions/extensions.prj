@@ -33,6 +33,9 @@
         <module name="dynamic">
             <include>dynamic\json.l</include>
         </module>
+        <module name="scripting">
+            <include>scripting\interpreter.l</include>
+        </module>
         <module name="threading">
             <include>threading\threading.l</include>
         </module>
