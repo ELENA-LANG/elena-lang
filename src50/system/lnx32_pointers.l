@@ -152,9 +152,9 @@ public sealed const struct UnsafePointer
 //    {
 //        intern system'core_routines'__dptr.copyTo(self, target, len);
 //    }
-//            
-//    bool isEmpty()
-//        = thePointer == 0;
+            
+    bool isEmpty()
+        = thePointer == 0;
 }
 
                 

@@ -126,33 +126,32 @@ public class ScriptEngine
     string loadScriptAsText(string script)
         <= evaluateScriptAsText(script);
     
-//    loadScript(string script)
-//    {
-//        dirty_ptr tape := extern elenasm.InterpretScopeScript
-//                            (scopeId, script);
-//            
-//        if (tape.isEmpty())
-//            {   ScriptEngineException.new(self.lastScriptError()).raise() };
-//            
-//        extern elenasm.Release(tape)
-//    }
-//    
-//    loadScriptFile(string path, int encoding, int autoDetect)
-//    {
-//        dirty_ptr tape := extern elenasm.InterpretScopeFile
-//                            (scopeId, path, encoding, autoDetect);
-//            
-//        if (tape.isEmpty())
-//            {   ScriptEngineException.new(self.lastScriptError()).raise() };
-//            
-//        extern elenasm.Release(tape)
-//    }
-//    
-//    loadPath(string path)
-//    {
-//        self.loadScriptFile(path, 0, -1)
-//    }
-//        
+    loadScript(string script)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeScript
+                            (scopeId, script);
+            
+        if (tape.isEmpty())
+            {   ScriptEngineException.new(self.lastScriptError()).raise() };
+            
+        extern elenasm.Release(tape)
+    }
+    
+    loadScriptFile(string path, int encoding, int autoDetect)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeFile
+                            (scopeId, path, encoding, autoDetect);
+            
+        if (tape.isEmpty())
+            {   ScriptEngineException.new(self.lastScriptError()).raise() };
+            
+        extern elenasm.Release(tape)
+    }
+    
+    loadPath(string path)
+    {
+        self.loadScriptFile(path, 0, -1)
+    }
 }
 
 // --- globlas ---
