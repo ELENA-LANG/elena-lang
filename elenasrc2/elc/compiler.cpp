@@ -17,14 +17,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -4153,6 +4153,8 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
    analizeOperand(fieldNode, scope, false, true, true);
    SNode rargNode = fieldNode.nextNode(lxObjectMask);
    analizeOperand(rargNode, scope, !noBoxing, true, true);
+
+   test2(node);
 
    return retVal;
 }
@@ -9641,6 +9643,7 @@ void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope
    int size = node.findChild(lxSize).argument;
 
    SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
+   newNode.appendNode(lxType, typeRef);
 
    // saving index
    // inject copying to the boxed object if it is a structure

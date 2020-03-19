@@ -2,26 +2,26 @@
 //import extensions;
 //import system'dynamic;
 //import system'collections;
-//
-//// --- IOException ---
-//
-//public class ScriptEngineException : Exception
-//{
-//    constructor new(string l)
-//        <= new(l);
-//}
-//
-//// --- scriptEngine ---
-//
-//public class ScriptEngine
-//{
-//    int scopeId;
-//    
-//    constructor()
-//    {
-//        scopeId := extern elenasm.NewScope()
-//    }
-//    
+
+// --- IOException ---
+
+public class ScriptEngineException : Exception
+{
+    constructor new(string l)
+        <= new(l);
+}
+
+// --- scriptEngine ---
+
+public class ScriptEngine
+{
+    int scopeId;
+    
+    constructor()
+    {
+        scopeId := extern elenasm.NewScope()
+    }
+    
 //    internal lastScriptError()
 //    {
 //        byte buffer[256];
@@ -87,45 +87,45 @@
 //
 //        ^ self.buildTape(tape)             
 //    }
-//
-//    string loadScriptFileAsText(string path, int encoding, int autoDetect)
-//    {
-//        dirty_ptr tape := extern elenasm.InterpretScopeFile
-//                            (scopeId, path, encoding, autoDetect);
-//            
-//        if (tape.isEmpty())
-//            { ScriptEngineException.new(self.lastScriptError()).raise() };
-//
-//        auto retVal := cast string(tape);    
-//                                    
-//        extern elenasm.Release(tape);
-//        
-//        ^ retVal
-//    }
-//    
-//    string evaluateScriptAsText(string script)
-//    {
-//        dirty_ptr tape := extern elenasm.InterpretScopeScript
-//                            (scopeId, script);
-//            
-//        if (tape.isEmpty())
-//            { ScriptEngineException.new(self.lastScriptError()).raise() };
-//
-//        auto retVal := cast string(tape);    
-//                                    
-//        extern elenasm.Release(tape);
-//        
-//        ^ retVal
-//    }
-//        
-//    string loadPathAsText(string path)
-//    {
-//        ^ self.loadScriptFileAsText(path, 0, -1)
-//    }
-//    
-//    string loadScriptAsText(string script)
-//        <= evaluateScriptAsText(script);
-//    
+
+    string loadScriptFileAsText(string path, int encoding, int autoDetect)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeFile
+                            (scopeId, path, encoding, autoDetect);
+            
+        if (tape.isEmpty())
+            { ScriptEngineException.new(self.lastScriptError()).raise() };
+
+        auto retVal := cast string(tape);    
+                                    
+        extern elenasm.Release(tape);
+        
+        ^ retVal
+    }
+    
+    string evaluateScriptAsText(string script)
+    {
+        dirty_ptr tape := extern elenasm.InterpretScopeScript
+                            (scopeId, script);
+            
+        if (tape.isEmpty())
+            { ScriptEngineException.new(self.lastScriptError()).raise() };
+
+        auto retVal := cast string(tape);    
+                                    
+        extern elenasm.Release(tape);
+        
+        ^ retVal
+    }
+        
+    string loadPathAsText(string path)
+    {
+        ^ self.loadScriptFileAsText(path, 0, -1)
+    }
+    
+    string loadScriptAsText(string script)
+        <= evaluateScriptAsText(script);
+    
 //    loadScript(string script)
 //    {
 //        dirty_ptr tape := extern elenasm.InterpretScopeScript
@@ -153,8 +153,8 @@
 //        self.loadScriptFile(path, 0, -1)
 //    }
 //        
-//}
-//
-//// --- globlas ---
-//
-//static globals = new system'collections'Dictionary();
+}
+
+// --- globlas ---
+
+static globals = system'collections'Dictionary.new();

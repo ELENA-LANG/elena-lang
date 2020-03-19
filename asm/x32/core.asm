@@ -2329,7 +2329,8 @@ end
 // ; savefi
 inline % 0BCh
 
-  mov  [ebp + __arg1], edx
+  mov  eax, [ebp + __arg1]
+  mov  [eax], edx
 
 end
 

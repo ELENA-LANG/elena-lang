@@ -71,6 +71,9 @@ In development:
                 * tutorials
                 * rosetta code : AmicablePairs using yieldable method
 
+              dev - refactoring
+                * loadfi vs loadf, savefi vs savef
+
               dev - new features
                 * multi-return methods : dynamic objects
                 * declaring several variables in a row?
