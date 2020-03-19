@@ -20,9 +20,9 @@ In development:
                 * migrate tutorials
 
               dev - migration
+                * ParsingExpression1
+                * ParsingExpression2
                 * ExpressionTree2
-                * ScriptTutorial1 
-                * ScriptTutorial2
 
                 * Execute Brain****/Elena
                 * Runtime evaluation
@@ -119,7 +119,7 @@ In development:
                 * test : branching external implementation : returning a value from closure 
 
               dev - test / optimization
-                * align block code by 16
+                * i += j
                 * use stosd over stos
                 * optimize pi sample ( < 5s )
                 * closure initializing (do not fill with zeros, more effective assigning)

@@ -1027,6 +1027,15 @@ inline % 13h
   
 end
 
+// ; swapd
+inline % 14h
+
+  mov  eax, [esp]
+  mov  [esp], edx
+  mov  edx, eax 
+
+end
+
 // ; close
 inline % 15h
 

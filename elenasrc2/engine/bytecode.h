@@ -36,7 +36,7 @@ enum ByteCode
 //   bcLen             = 0x11,
 //   bcBCopyA          = 0x12,
    bcSub             = 0x13,
-//   bcPopB            = 0x14,
+   bcSwapD           = 0x14,
    bcClose           = 0x15,
    bcRExp            = 0x16,
    bcQuit            = 0x17,

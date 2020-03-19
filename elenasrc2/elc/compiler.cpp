@@ -3891,8 +3891,15 @@ inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference/*, bool i
    IdentifierString name(moduleScope->module->resolveReference(reference));
    name.append(STATICFIELD_POSTFIX);
 
-   return moduleScope->mapAnonymous(name.c_str()) | mask;
+   return moduleScope->mapAnonymous(name.c_str() + 1) | mask;
+}
 
+inline ref_t mapConstant(_ModuleScope* moduleScope, ref_t reference)
+{
+   IdentifierString name(moduleScope->module->resolveReference(reference));
+   name.append(CONSTANT_POSTFIX);
+
+   return moduleScope->mapAnonymous(name.c_str() + 1);
 }
 
 void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode)
@@ -4583,6 +4590,8 @@ inline bool isConstant(SNode current)
       case lxConstantString:
       case lxConstantWideStr:
       case lxConstantSymbol:
+      case lxConstantInt:
+      case lxClassSymbol:
          return true;
       default:
          return false;
@@ -4657,7 +4666,12 @@ ObjectInfo Compiler :: compileCollection(SNode node, ExprScope& scope, ObjectInf
    }
    else {
       if (EAttrs::test(mode, HINT_CONSTEXPR) && isConstantList(node)) {
-         ref_t reference = scope.moduleScope->mapAnonymous();
+         ref_t reference = 0;
+         SymbolScope* owner = (SymbolScope*)scope.getScope(Scope::ScopeLevel::slSymbol);
+         if (owner) {
+            reference = mapConstant(scope.moduleScope, owner->reference);
+         }
+         else reference = scope.moduleScope->mapAnonymous();
 
          node = lxConstantList;
          node.setArgument(reference | mskConstArray);

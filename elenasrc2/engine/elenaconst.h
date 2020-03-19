@@ -476,7 +476,7 @@ namespace _ELENA_
    constexpr auto CLASSCLASS_POSTFIX         = "#class";
    constexpr auto GENERIC_PREFIX             = "#generic";
 //      ////   #define EMBEDDED_PREFIX          "#embedded"
-//      ////   #define TARGET_POSTFIX           "##"
+   constexpr auto CONSTANT_POSTFIX           = "#";
    constexpr auto STATICFIELD_POSTFIX        = "#static";
 
    constexpr auto EMBEDDAMLE_PREFIX          = "auto#";

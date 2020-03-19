@@ -3368,6 +3368,95 @@ labEnd:
 
 end
 
+procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
+
+  open     0Ah
+  reserve  7h
+  pusha    
+  // int i := 0;
+  xsavef   -2 0
+  // byte command := 0;
+  xsavef   -3 0
+  // int size := 0;
+  xsavef   -4 0
+  // while (i < len) {
+  Lab00:   nop
+  snop  
+  
+  peekfi     -10 // len
+  pusha      
+  movf       -2
+  nless      
+  select     const : false const : true
+  freei      1h
+  ifr        Lab01 const : false 
+
+  //command := buffer[i];
+  peekfi     -9
+  loadfi     -2
+  get
+  and        0FFh
+  savefi     -3
+
+  // i += 1;
+  xaddf      -2 1
+
+  // size := buffer[i];
+  peekfi     -9
+  loadfi     -2
+  get
+  savefi     -4
+
+  // i += 4;
+  xaddf      -2 4
+
+  // commands[command](size,buffer,i);
+  movr       constarray : "'$private'commands#$inline0"
+  loadsi     -3
+  get
+  callvi     0
+  pusha
+
+  // i += size
+  movf    -2
+  naddf   -4
+
+  jump     Lab00
+  Lab01:   nop
+  popa
+  restore  9h
+  close    
+  quitn    3h
+
+end
+
+procedure __invoke0."#dispatch[1]"   // -3 - size, -2 - index, -9 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -3
+  pushfi   -2
+  pushf    -9
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[0]"
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+
 // ; system routines
 
 procedure critical_exception_handler

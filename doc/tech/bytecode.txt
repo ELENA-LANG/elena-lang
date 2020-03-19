@@ -108,6 +108,10 @@ ELENA byte codes (or ecodes)
                        
  storesi i                  - [sp+i] <= acc
 
+ swap                       - [sp] <=> acc
+
+ swapd                      - [sp] <=> index
+
  xload n                    - [acc + n] >> index 
 
  xselectr r1, r2            - acc = (acc = 0 ? r1 : r2) 
