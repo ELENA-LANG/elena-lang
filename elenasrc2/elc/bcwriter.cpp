@@ -5077,7 +5077,6 @@ void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType 
 {
    switch (type) {
       case lxConstantChar:
-      //case lxConstantClass:
       case lxConstantInt:
       case lxConstantLong:
       case lxConstantList:
@@ -5085,6 +5084,10 @@ void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType 
       case lxConstantString:
       case lxConstantWideStr:
       case lxConstantSymbol:
+      case lxClassSymbol:
+      case lxMessageConstant:
+      case lxExtMessageConstant:
+      case lxSubjectConstant:
          writer.writeRef(argument | defineConstantMask(type), 0);
          break;
       case lxNil:
@@ -5092,6 +5095,7 @@ void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType 
          break;
    }
 }
+
 
 void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t reference)
 {

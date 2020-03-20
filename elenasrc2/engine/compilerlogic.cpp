@@ -1718,7 +1718,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
          attrValue = 0;
          return true;
       case V_SINGLETON:
-         attrValue = elRole | elSealed/* | elNestedClass*/;
+         attrValue = elRole | elSealed | elStateless/* | elNestedClass*/;
          return true;
       default:
          return false;

@@ -2414,6 +2414,24 @@ procedure __dptr."readVal$system@UnsafePointer$@system@ref#1&system@IntNumber[2]
 
 end
 
+procedure __dptr."copyTo$system@UnsafePointer$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
+
+  pushn  0
+  peeksi 2
+  pushai 0
+  pushsi 5
+  movs   2
+  pusha
+  pushsi 6
+  // subcopy(target,index,size,arr)
+  callextr api : subcopy
+  
+  peeksi 0
+  freei  5
+  quitn  3
+
+end
+
 procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[2]"
 
   peeksi 1
@@ -3383,18 +3401,18 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
   Lab00:   nop
   snop  
   
-  peekfi     -10 // len
+  peekfi     -13 // len
   pusha      
-  movf       -2
+  movf       -2  // i
   nless      
   select     const : false const : true
   freei      1h
   ifr        Lab01 const : false 
 
   //command := buffer[i];
-  peekfi     -9
+  peekfi     -12 // buffer
   loadfi     -2
-  get
+  read
   and        0FFh
   savef      -3
 
@@ -3402,24 +3420,24 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
   xaddf      -2 1
 
   // size := buffer[i];
-  peekfi     -9
+  peekfi     -12
   loadfi     -2
-  get
+  read
   savef      -4
 
   // i += 4;
   xaddf      -2 4
 
   // commands[command](size,buffer,i);
-  movr       constarray : "'$private'commands#$inline0"
-  loadsi     -3
+  loadfi     -3
+  movr       constarray : "system'dynamic'$private'commands#$inline0"
   get
   callvi     0
   pusha
 
   // i += size
-  movf    -2
-  naddf   -4
+  movf    -4
+  naddf   -2
 
   jump     Lab00
   Lab01:   nop
@@ -3430,12 +3448,12 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
 
 end
 
-procedure __invoke0."#dispatch[1]"   // -3 - size, -2 - index, -9 - buffer
+procedure __invoke0."#dispatch[1]"   // 4 - size, -2 - index, -12 - buffer
 
   // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -3
+  pushfi   -4
   pushfi   -2
-  pushf    -9
+  pushfi   -12
   loadenv
   pushd
   callextr extern : LoadClassByBuffer
@@ -3444,7 +3462,8 @@ procedure __invoke0."#dispatch[1]"   // -3 - size, -2 - index, -9 - buffer
   swapd    
   pushd
 
-  movm     mssgconst : "#constructor[0]"
+  movm     mssgconst : "#constructor[1]"
+  peeksi   1
   jumpvi   0
 
 labNotFound:
@@ -3456,6 +3475,904 @@ labNotFound:
 
 end
 
+procedure __invoke1."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[2]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke2."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi    -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[3]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke3."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[4]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke4."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[5]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke5."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[6]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke6."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[7]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke7."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[8]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke8."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[9]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke9."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[10]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke10."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[11]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke11."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[12]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke12."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[13]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke13."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[14]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke14."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[15]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke15."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[16]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke16."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[17]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke17."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[18]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke18."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[19]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke19."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[20]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke20."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[21]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke21."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[22]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke22."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[23]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke23."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[24]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke24."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[25]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke25."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[26]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke26."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[27]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke27."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[28]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke28."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[29]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke29."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[30]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke30."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "#constructor[31]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invoke31."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "params##constructor[1]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __invokeV1."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
+
+  // extern elenart.LoadClassByBuffer(buffer, i, size)
+  pushfi   -4
+  pushfi   -2
+  pushfi   -12
+  loadenv
+  pushd
+  callextr extern : LoadClassByBuffer
+  freei    4
+  ifn      labNotFound 0
+  swapd    
+  pushd
+
+  movm     mssgconst : "params##constructor[1]"
+  peeksi   1
+  jumpvi   0
+
+labNotFound:
+
+  open 1
+  pushr class : system'InvalidOperationException
+  pushr mssgconst : "new[1]"
+  throw
+
+end
+
+procedure __loadString."#dispatch[1]" // -4 - size, -2 - index, -12 - buffer
+
+  // UTF8Encoding.toString(i,size,buffer)
+  pushfi -12
+  pushf  -4
+  pushf  -2    
+  movr   const : system'text'UTF8Encoding
+  pusha  
+  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+
+  quit
+
+end
+
+procedure __freeVArg."#dispatch[1]"
+
+  popd
+
+labNext:
+  popa
+  elser labNext terminal  
+  
+  pushd
+  quit
+
+end
+
+procedure __loadNil."#dispatch[1]"
+
+  movr 0
+  quit
+
+end
 
 // ; system routines
 

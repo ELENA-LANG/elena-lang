@@ -143,11 +143,11 @@ public sealed const struct UnsafePointer
 //        
 //        target.write(offs, val)
 //    }
-//
-//    copyTo(byte[] target, int len)
-//    {
-//        intern system'core_routines'__dptr.copyTo(self, target, len);
-//    }
+
+    copyTo(byte[] target, int len)
+    {
+        intern system'core_routines'__dptr.copyTo(self, target, len);
+    }
             
     bool isEmpty()
         = thePointer == 0;
