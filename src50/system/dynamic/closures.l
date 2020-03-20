@@ -46,20 +46,20 @@ public class ConstantClosure : DynamicClosure
         = constant;
 }
 
-//// --- AssigningClosure ---
-//
-//public struct AssigningClosure : DynamicClosure
-//{
-//    embeddable int index;
-//    
-//    constructor(int index)
-//    {
-//        this index := index
-//    }
-//    
-//    closure(params object[] args)
-//        => system'core_routines'__assign_closure;    
-//}
+// --- AssigningClosure ---
+
+public struct AssigningClosure : DynamicClosure
+{
+    embeddable int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__assign_closure;    
+}
 
 // --- LocalClosure ---
 
@@ -91,48 +91,48 @@ public struct ReleaseClosure : DynamicClosure
         => intern system'core_routines'__free_closure;    
 }
 
-//// --- GoToClosure ---
-//
-//public struct GoToClosure : DynamicClosure
+// --- GoToClosure ---
+
+public struct GoToClosure : DynamicClosure
+{
+    int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__jump_closure;
+}
+
+//public struct JumpIfClosure :: DynamicClosure
 //{
-//    int index;
+//    int index.
 //    
-//    constructor(int index)
-//    {
-//        this index := index
-//    }
+//    constructor new(int index)
+//    [
+//        @index := index.
+//    ]
 //    
-//    closure(params object[] args)
-//        => system'core_routines'__jump_closure;
+//    generic closure(V<object> args)
+//        => system'core_routines'__jumpif_closure.    
 //}
-//
-////public struct JumpIfClosure :: DynamicClosure
-////{
-////    int index.
-////    
-////    constructor new(int index)
-////    [
-////        @index := index.
-////    ]
-////    
-////    generic closure(V<object> args)
-////        => system'core_routines'__jumpif_closure.    
-////}
-//
-//// --- JumpIfNotClosure ---
-//
-//public struct JumpIfNotClosure : DynamicClosure
-//{
-//    int index;
-//    
-//    constructor(int index)
-//    {
-//        this index := index
-//    }
-//    
-//    closure(params object[] args)
-//        => system'core_routines'__jumpifnot_closure;
-//}
+
+// --- JumpIfNotClosure ---
+
+public struct JumpIfNotClosure : DynamicClosure
+{
+    int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__jumpifnot_closure;
+}
 
 public singleton JumpToEnd : DynamicClosure
 {

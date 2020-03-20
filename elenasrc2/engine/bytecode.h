@@ -64,7 +64,7 @@ enum ByteCode
    bcRLn             = 0x2C,
    bcRead            = 0x2D,
    bcClone           = 0x2E,           
-//   bcXSet            = 0x2F,
+   bcXSet            = 0x2F,
 
    bcRAbs            = 0x30,
    bcLen             = 0x31,

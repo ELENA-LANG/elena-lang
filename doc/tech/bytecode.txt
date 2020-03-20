@@ -94,6 +94,8 @@ ELENA byte codes (or ecodes)
 
  set                        - [sp] => acc[index]
 
+ xset                       - [sp] => acc[index]; direct operation
+
  seti i                     - [sp] => acc[i]         
 
  setv                       - acc[0].verb <= index

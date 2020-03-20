@@ -76,11 +76,11 @@ namespace expressions
         static Expression MessageCall(Message message, Expression t)
             = MessageCallExpression.new(message,t);
             
-//        static Expression DynamicMessageCall(Expression t, params Expression[] arguments)
-//            = DynamicMessageCallExpression.new(t,params arguments);
-//           
-//        static Expression DynamicMessageCall(Expression t)
-//            = DynamicMessageCallExpression.new(t);
+        static Expression DynamicMessageCall(Expression t, params Expression[] arguments)
+            = DynamicMessageCallExpression.new(t,params arguments);
+           
+        static Expression DynamicMessageCall(Expression t)
+            = DynamicMessageCallExpression.new(t);
             
         static Expression GetProperty(MessageName name, Expression t)
             = GetPropertyExpression.new(name, t);
@@ -94,17 +94,17 @@ namespace expressions
         static Expression SetDynamicProperty(Expression m, Expression t, Expression v)
             = SetDynamicPropertyExpression.new(m, t, v);
            
-//        static Declaration(ScopeVariable variable)
-//            = new DeclarationExpression(variable);
-//           
-//        static Expression Assigning(ScopeVariable variable, Expression expr)
-//            = new AssigningExpression(variable, expr);
-//              
-//        static Expression Assigning(string variable, Expression expr)
-//            = new AssigningExpression(new ScopeVariable(variable), expr);
-//              
-//        static Expression DeclareAndAssigning(ScopeVariable variable, Expression expr)
-//            = new DeclaringAndAssigningExpression(variable, expr);
+        static Declaration(ScopeVariable variable)
+            = new DeclarationExpression(variable);
+           
+        static Expression Assigning(ScopeVariable variable, Expression expr)
+            = new AssigningExpression(variable, expr);
+              
+        static Expression Assigning(string variable, Expression expr)
+            = new AssigningExpression(new ScopeVariable(variable), expr);
+              
+        static Expression DeclareAndAssigning(ScopeVariable variable, Expression expr)
+            = new DeclaringAndAssigningExpression(variable, expr);
               
         static Expression Variable(ScopeVariable variable)
             = new VariableExpression(variable);
@@ -112,20 +112,20 @@ namespace expressions
         static Expression Variable(string variable)
             = new VariableExpression(new ScopeVariable(variable));
               
-//        static Expression Statement(params Expression[] expressions)
-//            = StatementExpression.new(params expressions);
-//              
-//        static Expression If(Expression cond, Expression body)
-//            = new IfExpression(cond, body);
-//              
-//        static Expression Loop(Expression cond, Expression body)
-//            = new LoopExpression(cond, body);
-//            
-//        static Expression GetMethod(string name, Expression body)
-//            = new GetMethodExpression(name, body);        
-//              
-//        static Expression ActionMethod(Expression body)
-//            = new ActionMethodExpression(body);        
+        static Expression Statement(params Expression[] expressions)
+            = StatementExpression.new(params expressions);
+              
+        static Expression If(Expression cond, Expression body)
+            = new IfExpression(cond, body);
+              
+        static Expression Loop(Expression cond, Expression body)
+            = new LoopExpression(cond, body);
+            
+        static Expression GetMethod(string name, Expression body)
+            = new GetMethodExpression(name, body);        
+              
+        static Expression ActionMethod(Expression body)
+            = new ActionMethodExpression(body);        
               
         static Expression Method(string name, Expression body)
             = new MethodExpression(name, body);        
@@ -154,8 +154,8 @@ namespace expressions
         static Expression Return(Expression expr)
             = new ReturnExpression(expr);
     
-//        static Expression Nested(DynamicSingleton expr)
-//            = new NestedExpression(expr);          
+        static Expression Nested(DynamicSingleton expr)
+            = new NestedExpression(expr);          
                                   
         abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
     
@@ -180,113 +180,113 @@ namespace expressions
         }
     }
 
-//public class StatementExpression : Expression
-//{
-//    Expression[] statements;
-//
-//    constructor(Expression p1)
-//        <= new(p1);
-//    
-//    constructor(Expression p1, Expression p2)
-//        <= new(p1, p2);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3)
-//        <= new(p1, p2, p3);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4)
-//        <= new(p1, p2, p3, p4);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5)
-//        <= new(p1, p2, p3, p4, p5);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6)
-//        <= new(p1, p2, p3, p4, p5, p6);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7)
-//        <= new(p1, p2, p3, p4, p5, p6, p7);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12, Expression p13)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12, Expression p13, Expression p14)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
-//                Expression p17)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
-//                Expression p17, Expression p18)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
-//                Expression p17, Expression p18, Expression p19)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19);
-//    
-//    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
-//                Expression p17, Expression p18, Expression p19, Expression p20)
-//        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
-//        
-//    constructor new(params Expression[] statements)
-//    {
-//        this statements := statements
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        int len := statements.Length;
-//        for(int i := 0, i < len, i+=1) {
-//            statements[i].saveTo(list, scope)
-//        };
-//    }
-//}
+    public class StatementExpression : Expression
+    {
+        Expression[] statements;
+    
+        constructor(Expression p1)
+            <= new(p1);
+        
+        constructor(Expression p1, Expression p2)
+            <= new(p1, p2);
+        
+        constructor(Expression p1, Expression p2, Expression p3)
+            <= new(p1, p2, p3);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4)
+            <= new(p1, p2, p3, p4);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+            <= new(p1, p2, p3, p4, p5);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+            <= new(p1, p2, p3, p4, p5, p6);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+            <= new(p1, p2, p3, p4, p5, p6, p7);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                    Expression p17)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                    Expression p17, Expression p18)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                    Expression p17, Expression p18, Expression p19)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                    Expression p17, Expression p18, Expression p19, Expression p20)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
+            
+        constructor new(params Expression[] statements)
+        {
+            this statements := statements
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            int len := statements.Length;
+            for(int i := 0, i < len, i+=1) {
+                statements[i].saveTo(list, scope)
+            };
+        }
+    }
 
     public class CodeblockExpression : Expression
     {
@@ -570,83 +570,83 @@ namespace expressions
         }
     }
 
-//public class DynamicMessageCallExpression : Expression
-//{
-//    Expression[] _arguments;
-//    
-//    constructor new(params Expression[] arguments)
-//    {
-//        _arguments := arguments;
-//    }
-//    
-//    constructor new()
-//    {
-//        _arguments := new Expression[](0);
-//    }
-//    
-//    constructor(Expression t)
-//        <= new(t);
-//    
-//    constructor(Expression t, Expression p1)
-//        <= new(t, p1);
-//    
-//    constructor(Expression t, Expression p1, Expression p2)
-//        <= new(t, p1, p2);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3)
-//        <= new(t, p1, p2, p3);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4)
-//        <= new(t, p1, p2, p3, p4);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5)
-//        <= new(t, p1, p2, p3, p4, p5);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6)
-//        <= new(t, p1, p2, p3, p4, p5, p6);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7)
-//        <= new(t, p1, p2, p3, p4, p5, p6, p7);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8)
-//        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
-//        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
-//        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11)
-//        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
-//    
-//    constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
-//                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-//                Expression p11, Expression p12)
-//        <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        int len := _arguments.Length;
-//        int i := len;
-//        while(i > 0)
-//        {
-//            i -= 1;
-//            
-//            _arguments[i].saveTo(list, scope);
-//        };
-//        
-//        list.append(DynamicMessageClosure)
-//    }
-//}
+    public class DynamicMessageCallExpression : Expression
+    {
+        Expression[] _arguments;
+        
+        constructor new(params Expression[] arguments)
+        {
+            _arguments := arguments;
+        }
+        
+        constructor new()
+        {
+            _arguments := new Expression[](0);
+        }
+        
+        constructor(Expression t)
+            <= new(t);
+        
+        constructor(Expression t, Expression p1)
+            <= new(t, p1);
+        
+        constructor(Expression t, Expression p1, Expression p2)
+            <= new(t, p1, p2);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3)
+            <= new(t, p1, p2, p3);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4)
+            <= new(t, p1, p2, p3, p4);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+            <= new(t, p1, p2, p3, p4, p5);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+            <= new(t, p1, p2, p3, p4, p5, p6);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            int len := _arguments.Length;
+            int i := len;
+            while(i > 0)
+            {
+                i -= 1;
+                
+                _arguments[i].saveTo(list, scope);
+            };
+            
+            list.append(DynamicMessageClosure)
+        }
+    }
 
     public class GetPropertyExpression : Expression
     {
@@ -760,65 +760,66 @@ namespace expressions
         }
     }
 
-//public class DeclarationExpression : Expression
-//{
-//    ScopeVariable variable;
-//    Expression    defaultValue;
-//    
-//    constructor(ScopeVariable variable)
-//    {
-//        this variable := variable;
-//        
-//        defaultValue := new ConstantExpression(nilValue)
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        scope.declare(variable);
-//        
-//        defaultValue.saveTo(list, scope);
-//        
-//        scope.resolve(variable, ref int index);        
-//        list.append(new LocalClosure(index));        
-//    }    
-//}
-//
-//public class AssigningExpression : Expression
-//{
-//    ScopeVariable variable;
-//    Expression    expression;  
-//    
-//    constructor(ScopeVariable variable, Expression expression)
-//    {
-//        this variable := variable;
-//        this expression := expression
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        scope.resolve(variable, ref int index);
-//        
-//        expression.saveTo(list, scope);
-//        list.append(new AssigningClosure(index));
-//    }
-//}
-//
-//public class DeclaringAndAssigningExpression : AssigningExpression
-//{
-//    constructor(ScopeVariable variable, Expression expression)
-//        <= (variable, expression)
-//    {
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        scope.declare(variable);
-//        
-//        new ConstantExpression(nilValue).saveTo(list, scope);
-//        
-//        super.saveTo(list, scope);
-//    }
-//}
+    public class DeclarationExpression : Expression
+    {
+        ScopeVariable variable;
+        Expression    defaultValue;
+        
+        constructor(ScopeVariable variable)
+        {
+            this variable := variable;
+            
+            defaultValue := new ConstantExpression(nilValue)
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            scope.declare(variable);
+            
+            defaultValue.saveTo(list, scope);
+            
+            scope.resolve(variable, ref int index);        
+            list.append(new LocalClosure(index));        
+        }    
+    }
+
+    public class AssigningExpression : Expression
+    {
+        ScopeVariable variable;
+        Expression    expression;  
+        
+        constructor(ScopeVariable variable, Expression expression)
+        {
+            this variable := variable;
+            this expression := expression
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            scope.resolve(variable, ref int index);
+            
+            expression.saveTo(list, scope);
+            list.append(new AssigningClosure(index));
+        }
+    }
+
+    public class DeclaringAndAssigningExpression : AssigningExpression
+    {
+        constructor(ScopeVariable variable, Expression expression)
+        {
+            this variable := variable;
+            this expression := expression
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            scope.declare(variable);
+            
+            new ConstantExpression(nilValue).saveTo(list, scope);
+            
+            super.saveTo(list, scope);
+        }
+    }
 
     public class VariableExpression : Expression
     {
@@ -853,66 +854,66 @@ namespace expressions
         }
     }
 
-//public class IfExpression : Expression
-//{
-//    Expression condition;
-//    Expression body;
-//    
-//    constructor(Expression condition, Expression body)
-//    {
-//        this condition := condition;
-//        this body := body;
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        condition.saveTo(list, scope);
-//        int bookmark := list.Length;
-//        list.append(cast DynamicClosure(nilValue));
-//        body.saveTo(list, scope);
-//        
-//        //int offs := list.Length - bookmark - 1;
-//        int offs := list.Length - bookmark;
-//        offs := offs - 1;
-//        
-//        list[bookmark] := new JumpIfNotClosure(offs);
-//        list.append(new ConstantClosure(nilValue)); // !! should be redesigned
-//    }
-//}
-//
-//public class LoopExpression : Expression
-//{
-//    Expression condition;
-//    Expression body;
-//    
-//    constructor(Expression condition, Expression body)
-//    {
-//        this condition := condition;
-//        this body := body
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        int top := list.Length;
-//        
-//        condition.saveTo(list, scope);
-//        int bookmark := list.Length;
-//        list.append(cast DynamicClosure(nilValue));
-//        body.saveTo(list, scope);
-//        
-//        int offs := top - list.Length - 1;
-//        
-//        list.append(new GoToClosure(offs));
-//        
-//        //offs := list.Length - bookmark - 1;
-//        offs := list.Length - bookmark;
-//        offs := offs - 1;
-//        
-//        list[bookmark] := new JumpIfNotClosure(offs);
-//        
-//        list.append(new ConstantClosure(nilValue)); // !! should be redesigned
-//    }
-//}
+    public class IfExpression : Expression
+    {
+        Expression condition;
+        Expression body;
+        
+        constructor(Expression condition, Expression body)
+        {
+            this condition := condition;
+            this body := body;
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            condition.saveTo(list, scope);
+            int bookmark := list.Length;
+            list.append(cast DynamicClosure(nilValue));
+            body.saveTo(list, scope);
+            
+            //int offs := list.Length - bookmark - 1;
+            int offs := list.Length - bookmark;
+            offs := offs - 1;
+            
+            list[bookmark] := new JumpIfNotClosure(offs);
+            list.append(ConstantClosure.load(nilValue)); // !! should be redesigned
+        }
+    }
+
+    public class LoopExpression : Expression
+    {
+        Expression condition;
+        Expression body;
+        
+        constructor(Expression condition, Expression body)
+        {
+            this condition := condition;
+            this body := body
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            int top := list.Length;
+            
+            condition.saveTo(list, scope);
+            int bookmark := list.Length;
+            list.append(cast DynamicClosure(nilValue));
+            body.saveTo(list, scope);
+            
+            int offs := top - list.Length - 1;
+            
+            list.append(new GoToClosure(offs));
+            
+            //offs := list.Length - bookmark - 1;
+            offs := list.Length - bookmark;
+            offs := offs - 1;
+            
+            list[bookmark] := new JumpIfNotClosure(offs);
+            
+            list.append(ConstantClosure.load(nilValue)); // !! should be redesigned
+        }
+    }
 
     public class MethodExpression : Expression
     {
@@ -995,30 +996,30 @@ namespace expressions
         }    
     }
 
-//public class GetMethodExpression : MethodExpression
-//{
-//    constructor(string name, Expression body)
-//    //    <= (new MessageName(name).getPropertyMessage(), body);   // !! temporally commented out
-//    {
-//        this parameters := new ScopeVariable[]::( new ScopeVariable("self") );
-//        this message := new MessageName(name).getPropertyMessage();
-//        
-//        this body := body;
-//    }
-//
-//}
-//
-//public class ActionMethodExpression : MethodExpression
-//{
-//    constructor(Expression body)
-//    //    <= (new Message("[0]"), body);   // !! temporally commented out
-//    {
-//        this parameters := new ScopeVariable[]::( new ScopeVariable("self") );
-//        this message := new Message("[0]");
-//        
-//        this body := body;
-//    }
-//}
+    public class GetMethodExpression : MethodExpression
+    {
+        constructor(string name, Expression body)
+        //    <= (new MessageName(name).getPropertyMessage(), body);   // !! temporally commented out
+        {
+            this parameters := new ScopeVariable[]{ new ScopeVariable("self") };
+            this message := new MessageName(name).getPropertyMessage();
+            
+            this body := body;
+        }
+    
+    }
+
+    public class ActionMethodExpression : MethodExpression
+    {
+        constructor(Expression body)
+        //    <= (new Message("[0]"), body);   // !! temporally commented out
+        {
+            this parameters := new ScopeVariable[]{ new ScopeVariable("self") };
+            this message := new Message("[0]");
+            
+            this body := body;
+        }
+    }
 
     public class ClosureExpression : Expression
     {
@@ -1083,22 +1084,22 @@ namespace expressions
         }    
     }
 
-//public class NestedExpression : Expression
-//{
-//    DynamicSingleton singleton;
-//    
-//    constructor(DynamicSingleton singleton)
-//    {
-//        this singleton := singleton;
-//    }
-//    
-//    saveTo(List<DynamicClosure> list, ExpressionScope scope)
-//    {
-//        var tape := singleton.compiled();
-//        
-//        list.append(new ConstantClosure(tape));
-//    }      
-//}
+    public class NestedExpression : Expression
+    {
+        DynamicSingleton singleton;
+        
+        constructor(DynamicSingleton singleton)
+        {
+            this singleton := singleton;
+        }
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            var tape := singleton.compiled();
+            
+            list.append(ConstantClosure.load(tape));
+        }      
+    }
 
     public abstract DynamicSymbol
     {

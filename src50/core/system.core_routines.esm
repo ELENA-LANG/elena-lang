@@ -3236,6 +3236,50 @@ labSearch:
 
 end
 
+procedure __assign_closure."params##invoke$system@Object[0]"
+
+  pusha
+  movn   0
+labSearch:
+  movs   2
+  get
+  inc 1
+  elser  labSearch terminal
+  dec    1
+  popa
+  sub
+  movs   1
+  xset
+
+  quitn 1
+
+end
+
+procedure __jump_closure."params##invoke$system@Object[0]"
+
+  naddf  -2
+  peeksi  1
+  quitn   1
+
+end
+
+procedure __jumpifnot_closure."params##invoke$system@Object[0]"
+
+  pusha
+
+  peeksi  1
+  elser   labSkip const : system'false
+
+  peeksi 0
+  naddf  -2
+
+labSkip:
+  freei   1
+  peeksi  2
+  quitn   2
+
+end
+
 procedure __free_closure."params##invoke$system@Object[0]"
 
   load

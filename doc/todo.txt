@@ -20,8 +20,6 @@ In development:
                 * migrate tutorials
 
               dev - migration
-                * ParsingExpression1
-                * ParsingExpression2
                 * ExpressionTree2
 
                 * Execute Brain****/Elena

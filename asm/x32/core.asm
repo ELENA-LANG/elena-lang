@@ -1279,6 +1279,14 @@ inline % 02Eh
 
 end
 
+// ; xset
+inline % 2Fh
+            
+   mov  eax, [esp]                  
+   mov  [ebx + edx * 4], eax
+
+end
+
 // ; rabs
 inline %30h
 
