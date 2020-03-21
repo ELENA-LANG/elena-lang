@@ -20,8 +20,6 @@ In development:
                 * migrate tutorials
 
               dev - migration
-                * ExpressionTree2
-
                 * Execute Brain****/Elena
                 * Runtime evaluation
                 * Runtime evaluation/In an environment

@@ -3268,7 +3268,7 @@ procedure __jumpifnot_closure."params##invoke$system@Object[0]"
   pusha
 
   peeksi  1
-  elser   labSkip const : system'false
+  elser   labSkip const : false
 
   peeksi 0
   naddf  -2
