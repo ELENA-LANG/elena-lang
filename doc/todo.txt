@@ -20,7 +20,7 @@ In development:
                 * migrate tutorials
 
               dev - implementing
-                * extension direct call
+                * extension direct call - using message variable
 
               dev - migration
                 * script samples

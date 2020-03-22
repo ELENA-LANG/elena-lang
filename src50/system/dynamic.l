@@ -178,3 +178,19 @@ public mixin Extension
     
     dispatch() => intern system'core_routines'__extension;
 }
+
+// --- ExplicitExtension ---
+
+public mixin ExtensionVariable
+{
+    object extension;
+    object target;
+    
+    constructor(extension, target)
+    {
+        this target := target;
+        this extension := extension;
+    }
+    
+    dispatch() => intern system'core_routines'__extensionvar;
+}

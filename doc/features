@@ -66,7 +66,7 @@ Declarations
   Templates
   Extensions
     * public / internal
-    * direct call
+    * direct call - op.testMe(1)
   Extension Templates
   Property templates
 Code

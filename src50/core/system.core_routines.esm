@@ -3146,6 +3146,18 @@ procedure __extension."#dispatch[1]"
 
 end
 
+procedure __extensionvar."#dispatch[1]"
+
+  pusha
+  geti    1
+  storesi 2
+  popa
+  geti    0
+  or      SPECIAL_MESSAGE
+  jumpvi  0
+
+end
+
 procedure __event."#dispatch[1]"
 
   bsredirect  

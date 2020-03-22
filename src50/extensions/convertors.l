@@ -417,8 +417,16 @@ public extension convertorOp
         = new Variant(self).saveTo(target);
 }
 
-//public convertor 
-//    = new { generic(n) = __received(mixin extensions'convertorOp(n)); };
+public convertor 
+    = new 
+    { 
+        generic(n)
+        {
+            MessageName mssg := __received.MessageName;
+            
+            ^ mssg(new ExtensionVariable(extensions'convertorOp, n))
+        }
+    };
 
 public extension dateFormatterOp : Date
 {
