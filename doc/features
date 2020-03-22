@@ -66,6 +66,7 @@ Declarations
   Templates
   Extensions
     * public / internal
+    * direct call
   Extension Templates
   Property templates
 Code

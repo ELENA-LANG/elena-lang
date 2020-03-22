@@ -418,7 +418,7 @@ public extension convertorOp
 }
 
 //public convertor 
-//    = new::{ generic(n) = __received(mixin extensions'convertorOp(n)); };
+//    = new { generic(n) = __received(mixin extensions'convertorOp(n)); };
 
 public extension dateFormatterOp : Date
 {

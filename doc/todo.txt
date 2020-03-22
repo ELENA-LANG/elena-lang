@@ -19,12 +19,14 @@ In development:
               dev2 - tutorials
                 * migrate tutorials
 
-              dev - migration
+              dev - implementing
+                * extension direct call
 
-                * Execute Brain****/Elena
+              dev - migration
+                * script samples
                 * Runtime evaluation
                 * Runtime evaluation/In an environment
-                * script samples
+                * Execute Brain****/Elena
                 * Hello world/Graphical
                 * Simple windowed application
                 * GUI component interaction

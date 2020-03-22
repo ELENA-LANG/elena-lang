@@ -2906,12 +2906,16 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
       int message = resolveOperatorMessage(scope, operator_id, 2);
 
       compileClosure(roperandNode, scope, defineBranchingOperandMode(roperandNode));
+      // HOTFIX : comment out the method code 
+      roperandNode = lxIdle;
 
       SNode elseNode = roperandNode.nextNode();
       if (elseNode != lxNone) {
          message = overwriteArgCount(message, 3);
 
          compileClosure(elseNode, scope, defineBranchingOperandMode(elseNode));
+         // HOTFIX : comment out the method code 
+         elseNode = lxIdle;
       }
 
       SNode parentNode = roperandNode.parentNode();
@@ -5001,20 +5005,6 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
       case lxCollection:
          objectInfo = compileCollection(current, scope, objectInfo, mode);
          break;
-//      case lxDimensionAttr:
-//         if (current.nextNode() == lxTypecast && objectInfo.kind == okClass) {
-//            // COMPILER MAGIC : if it is a primitive array creation
-//            objectInfo.element = objectInfo.param;
-//            for (ref_t i = 1; i < current.argument; i++) {
-//               objectInfo.element = resolvePrimitiveArray(scope, objectInfo.element, false);
-//            }
-//            objectInfo.param = resolvePrimitiveArray(scope, objectInfo.element, false);
-//            objectInfo.reference = V_OBJARRAY;
-//
-//            objectInfo = compileOperation(writer, current.nextNode(), scope, objectInfo, expectedRef, mode);
-//         }
-//         else scope.raiseError(errIllegalOperation, current);
-//         break;
       case lxMessage:
          if (EAttrs::test(mode, HINT_LOOP)) {
             EAttrs subMode(mode, HINT_LOOP);

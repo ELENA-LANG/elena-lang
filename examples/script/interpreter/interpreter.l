@@ -21,7 +21,6 @@ class TapeAssembler
     }
     
     constructor load(assembly_program)
-        <= ()
     {
         assembly_program(self)
     }    
@@ -178,7 +177,6 @@ class TapeCGenerator
     }
 
     constructor load(assembly_program)
-        <= ()
     {
         assembly_program(self)
     }    
