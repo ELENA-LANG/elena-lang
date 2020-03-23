@@ -55,6 +55,8 @@ In development:
 
               dev - elena50
                 * closure unboxing: field addr
+                * check why system'dynamic'expressions'SymbolInfo#class cannot resolve DynamicSingleton
+                  in dynamic mode
                 * external code : long, real ret value
                 * closures: presaved arguments
                 * closures: race conditions

@@ -50,7 +50,7 @@ class DerivationTree
 
     constructor()
     {
-        theRoot := new BaseTreeNode::{ this Level := -1; add(node) = node; }
+        theRoot := new BaseTreeNode{ this Level := -1; add(node) = node; }
     }
 }
 
@@ -78,13 +78,13 @@ class BaseTreeNode
         }
     }
 
-    constructor(level,function)
+    constructor new(level,function)
     {
         Level := level;
         theFunction := function
     }
     
-    constructor(level)
+    constructor new(level)
     {
         Level := level
     }
@@ -139,8 +139,8 @@ class TreeNode : BaseTreeNode
         ^ theFunction(theLeft.Value, theRight.Value)
     }
     
-    constructor(baseLevel, function)
-        <= (baseLevel, function);
+    constructor new(baseLevel, function)
+        <= new(baseLevel, function);
 }
 
 // --- TreeLeaf ---
@@ -156,14 +156,14 @@ class TreeLeaf : BaseTreeNode
 
     Value = theFunction(theToken.Value);
             
-    constructor(level, function)
-        <= (level,function)
+    constructor new(level, function)
+        <= new(level,function)
     {
         theToken := new StringWriter();
     }
     
     constructor(level)
-        <= (level)
+        <= new(level)
     {
         theToken := new StringWriter();
     }
@@ -209,8 +209,8 @@ class FunctionNode : TreeLeaf
         ^ symbol(inlinearg args);
     }
         
-    constructor(baseLevel)
-        <= (baseLevel)
+    constructor new(baseLevel)
+        <= new(baseLevel)
     {
         theArgNodes := new List();
         theArgNodes.append(nil);
@@ -290,14 +290,14 @@ class StateMachine
 
     newNumberLeaf(leafLevel)
     {
-        theLeaf := new TreeLeaf(level + leafLevel, mssgconst toReal<convertorOp>[0]);
+        theLeaf := TreeLeaf.new(level + leafLevel, mssgconst toReal<convertorOp>[0]);
         
         theDerivationTree.append(theLeaf)
     }
     
     newFunctionLeaf(leafLevel)
     {
-        theLeaf := new FunctionNode(level + leafLevel);
+        theLeaf := FunctionNode.new(level + leafLevel);
         
         theDerivationTree.append(theLeaf)
     }
@@ -316,7 +316,7 @@ class StateMachine
             "*" { function := mssgconst multiply[1]}
             "/" { function := mssgconst divide[1]};
             
-        theDerivationTree.append(new TreeNode(level + nodeLevel, function));
+        theDerivationTree.append(TreeNode.new(level + nodeLevel, function));
     }
 
     dispatch() => theCurrentState;

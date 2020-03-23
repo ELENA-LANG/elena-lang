@@ -308,92 +308,92 @@ namespace expressions
         constructor(params Expression[] statements)
             <= new(params statements);
         
-    //    constructor(Expression p1, Expression p2)
-    //        <= new(p1, p2);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3)
-    //        <= new(p1, p2, p3);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4)
-    //        <= new(p1, p2, p3, p4);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5)
-    //        <= new(p1, p2, p3, p4, p5);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6)
-    //        <= new(p1, p2, p3, p4, p5, p6);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11, Expression p12)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11, Expression p12, Expression p13)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11, Expression p12, Expression p13, Expression p14)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
-    //                Expression p17)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
-    //                Expression p17, Expression p18)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
-    //                Expression p17, Expression p18, Expression p19)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19);
-    //    
-    //    constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
-    //                Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
-    //                Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
-    //                Expression p17, Expression p18, Expression p19, Expression p20)
-    //        <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
+        constructor(Expression p1, Expression p2)
+            <= new(p1, p2);
+        
+        constructor(Expression p1, Expression p2, Expression p3)
+            <= new(p1, p2, p3);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4)
+            <= new(p1, p2, p3, p4);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+            <= new(p1, p2, p3, p4, p5);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+            <= new(p1, p2, p3, p4, p5, p6);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+            <= new(p1, p2, p3, p4, p5, p6, p7);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                    Expression p17)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                    Expression p17, Expression p18)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                    Expression p17, Expression p18, Expression p19)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19);
+        
+        constructor(Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12, Expression p13, Expression p14, Expression p15, Expression p16,
+                    Expression p17, Expression p18, Expression p19, Expression p20)
+            <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
         
         saveTo(List<DynamicClosure> list, ExpressionScope scope)
         {
@@ -1130,6 +1130,32 @@ namespace expressions
             this methods := new Expression[]{method1, method2, method3};                
         }
         
+        constructor(Expression method1, Expression method2, Expression method3, Expression method4)
+            <= new(method1, method2, method3, method4);
+        
+        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5)
+            <= new(method1, method2, method3, method4, method5);
+        
+        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
+                    Expression method6)
+            <= new(method1, method2, method3, method4, method5, method6);
+        
+        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
+                    Expression method6, Expression method7)
+            <= new(method1, method2, method3, method4, method5, method6, method7);
+        
+        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
+                    Expression method6, Expression method7, Expression method8)
+            <= new(method1, method2, method3, method4, method5, method6, method7, method8);
+        
+        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
+                    Expression method6, Expression method7, Expression method8, Expression method9)
+            <= new(method1, method2, method3, method4, method5, method6, method7, method8, method9);
+        
+        constructor(Expression method1, Expression method2, Expression method3, Expression method4, Expression method5,
+                    Expression method6, Expression method7, Expression method8, Expression method9, Expression method10)
+            <= new(method1, method2, method3, method4, method5, method6, method7, method8, method9, method10);
+        
         constructor(params Expression[] methods)
         {
             this methods := methods;                
@@ -1164,8 +1190,23 @@ namespace expressions
     public class SymbolCollection
     {
         SymbolInfo[] symbols;
-        
+
+        constructor(SymbolInfo symbol1)
+            <= load(symbol1);
+                
+        constructor(SymbolInfo symbol1, SymbolInfo symbol2)
+            <= load(symbol1, symbol2);
+                
+        constructor(SymbolInfo symbol1, SymbolInfo symbol2, SymbolInfo symbol3)
+            <= load(symbol1, symbol2, symbol3);
+                
+        constructor(SymbolInfo symbol1, SymbolInfo symbol2, SymbolInfo symbol3, SymbolInfo symbol4)
+            <= load(symbol1, symbol2, symbol3, symbol4);
+
         constructor(params SymbolInfo[] symbols)
+            <= load(params symbols);
+                                
+        constructor load(params SymbolInfo[] symbols)
         {
             this symbols := symbols;                
         }

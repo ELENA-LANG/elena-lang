@@ -3,9 +3,9 @@ import extensions'scripting;
 
 // --- testCase ---
 
-preloaded subjects = new::(subjconst States,subjconst State0,subjconst State1,subjconst State2,subjconst State3);
+preloaded subjects = new object[]{ subjconst States,subjconst State0,subjconst State1,subjconst State2,subjconst State3 };
 
-preloaded functions = new::(extensions'math'sqrt,extensions'math'min);
+preloaded functions = new object[]{ extensions'math'sqrt,extensions'math'min };
 
 public static dynamicRules = 
     lscript.evalPath("calc.es").States;

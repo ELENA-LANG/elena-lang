@@ -13,6 +13,7 @@
    #define object         ::= singleton;
    #define object         ::= identifier;
    #define object         ::= integer;
+   #define object         ::= literal;
 
    #define singleton      ::= <= nested ( => "{" method* "}" <= ) =>;
 
@@ -44,4 +45,5 @@
    #define message        ::= <= message = $identifier =>;
    #define identifier     ::= <= identifier = $identifier =>;
    #define integer        ::= <= integer = $numeric =>;
+   #define literal        ::= <= literal = "$literal" =>;
 ]]

@@ -35,6 +35,7 @@
         </module>
         <module name="scripting">
             <include>scripting\interpreter.l</include>
+            <include>scripting\lscript.l</include>
         </module>
         <module name="threading">
             <include>threading\threading.l</include>
