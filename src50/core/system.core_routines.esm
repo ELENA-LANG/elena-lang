@@ -4357,7 +4357,7 @@ procedure __invoke31."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
   swapd    
   pushd
 
-  movm     mssgconst : "params##constructor[1]"
+  movm     mssgconst : "params##constructor[2]"
   peeksi   1
   jumpvi   0
 
@@ -4384,7 +4384,7 @@ procedure __invokeV1."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
   swapd    
   pushd
 
-  movm     mssgconst : "params##constructor[1]"
+  movm     mssgconst : "params##constructor[2]"
   peeksi   1
   jumpvi   0
 
@@ -4418,16 +4418,18 @@ procedure __freeVArg."#dispatch[1]"
 
 labNext:
   popa
-  elser labNext terminal  
-  
+  swap
+  elser   labNext terminal  
+
+  popa
   pushd
   quit
 
 end
 
-procedure __loadNil."#dispatch[1]"
+procedure __loadTerminator."#dispatch[1]"
 
-  movr 0
+  movr  terminal
   quit
 
 end

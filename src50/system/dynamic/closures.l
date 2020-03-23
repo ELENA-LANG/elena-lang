@@ -19,6 +19,9 @@ public struct MessageClosure : DynamicClosure
 {
     embeddable Message theMessage;
     
+    constructor(string message)
+        <= load(new Message(message));
+    
     constructor load(string message)
         <= load(new Message(message));
     

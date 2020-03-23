@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2019, by Alexei Rakov
+//                                              (C)2011-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -182,7 +182,7 @@ void Transformer :: parse(_ScriptReader& reader, MemoryDump* output)
 constexpr auto invokeV1 = 32;
 constexpr auto loadStringCommand = 33;
 constexpr auto freeVArg = 34; 
-constexpr auto loadNil = 35;
+constexpr auto loadTerminator = 35;
 
 Builder :: Builder()
 {
@@ -209,7 +209,7 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
       else if (bm.state == -1) {
          if (counter > ARG_COUNT) {
             writer.insertDWord(start, 0);
-            writer.insertByte(start, (char)loadNil);
+            writer.insertByte(start, (char)loadTerminator);
 
             writer.writeByte(invokeV1);
             saveToken(writer, reader, bm);
@@ -236,7 +236,7 @@ void Builder :: saveClass(MemoryWriter& writer, _ScriptReader& reader, Stack<Scr
 
    if (counter > ARG_COUNT) {
       writer.insertDWord(start, 0);
-      writer.insertByte(start, (char)loadNil);
+      writer.insertByte(start, (char)loadTerminator);
 
       writer.writeByte(invokeV1);
       saveToken(writer, reader, bm);

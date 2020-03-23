@@ -10,6 +10,99 @@ public mixin ClosureTape
     internal constructor allocate(int len)
         = new DynamicClosure[](len);
 
+    constructor(params DynamicClosure[] args)
+        <= load(params args);
+            
+    constructor(DynamicClosure arg1)
+        <= load(arg1);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2)
+        <= load(arg1,arg2);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3)
+        <= load(arg1,arg2,arg3);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4)
+        <= load(arg1,arg2,arg3,arg4);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5)
+        <= load(arg1,arg2,arg3,arg4,arg5);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11, DynamicClosure arg12)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
+                DynamicClosure arg16)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
+                DynamicClosure arg16, DynamicClosure arg17)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
+                DynamicClosure arg16, DynamicClosure arg17, DynamicClosure arg18)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
+                DynamicClosure arg16, DynamicClosure arg17, DynamicClosure arg18, DynamicClosure arg19)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19);            
+            
+    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
+                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
+                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
+                DynamicClosure arg16, DynamicClosure arg17, DynamicClosure arg18, DynamicClosure arg19, DynamicClosure arg20)
+        <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20);            
+            
     constructor load(params DynamicClosure[] args)
         <= allocate(args.Length)
     {
@@ -176,13 +269,13 @@ singleton invoke31 { dispatch() => intern system'core_routines'__invoke31; }
 singleton invokeV1 { dispatch() => intern system'core_routines'__invokeV1; }
 singleton loadString { dispatch() => intern system'core_routines'__loadString; }
 singleton freeVArg { dispatch() => intern system'core_routines'__freeVArg; }
-singleton loadNil { dispatch() => intern system'core_routines'__loadNil; }
+singleton loadTerminator { dispatch() => intern system'core_routines'__loadTerminator; }
 
 const /*object[]*/ commands = new object[]{
     invoke0,invoke1,invoke2,invoke3,invoke4,invoke5,invoke6,invoke7,invoke8,invoke9,
     invoke10,invoke11,invoke12,invoke13,invoke14,invoke15,invoke16,invoke17,invoke18,invoke19,
     invoke20,invoke21,invoke22,invoke23,invoke24,invoke25,invoke26,invoke27,invoke28,invoke29,
-    invoke30,invoke31,invokeV1,loadString,freeVArg,loadNil};
+    invoke30,invoke31,invokeV1,loadString,freeVArg,loadTerminator};
 
 public singleton StreamTapeInterpreter
 {

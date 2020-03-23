@@ -23,7 +23,8 @@ In development:
                 * extension direct call - using message variable
 
               dev - migration
-                * script samples
+                * calc sample
+                * fibonacci sample
                 * Runtime evaluation
                 * Runtime evaluation/In an environment
                 * Execute Brain****/Elena

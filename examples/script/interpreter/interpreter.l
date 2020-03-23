@@ -351,7 +351,7 @@ public solution5()
     console.writeLine(bfProgram)
 }
 
-const int Solution = 1;
+const int Solution = 4;
 
 public program()
 {
