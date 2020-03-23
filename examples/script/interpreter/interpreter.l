@@ -35,9 +35,9 @@ class TapeAssembler
     {
         var loop := Expression.Loop(
                           Expression.MessageCall(
-                             new Message("notequal[1]"),
+                             new Message("notequal[2]"),
                              Expression.MessageCall(
-                                new Message("at[1]"),
+                                new Message("at[2]"),
                                 Expression.Variable("tape"),
                                 Expression.Variable("ptr")
                              ),
@@ -53,11 +53,11 @@ class TapeAssembler
     {
         theTape.append(
             Expression.MessageCall(
-                new Message("setAt[2]"),
+                new Message("setAt[3]"),
                 Expression.Variable(new ScopeVariable("tape")),
                 Expression.Variable(new ScopeVariable("ptr")),
                 Expression.MessageCall(
-                    new Message("readChar[0]"),
+                    new Message("readChar[1]"),
                     Expression.Constant(console)
                 )
             )
@@ -68,10 +68,10 @@ class TapeAssembler
     {
         theTape.append(
             Expression.MessageCall(
-                 new Message("write[1]"),
+                 new Message("write[2]"),
                  Expression.Constant(console), 
                  Expression.MessageCall(
-                   new Message("at[1]"),
+                   new Message("at[2]"),
                    Expression.Variable(new ScopeVariable("tape")),
                    Expression.Variable(new ScopeVariable("ptr"))
                  )
@@ -85,7 +85,7 @@ class TapeAssembler
             Expression.Assigning(
                 new ScopeVariable("ptr"),
                 Expression.MessageCall(
-                    new Message("add[1]"),
+                    new Message("add[2]"),
                     Expression.Variable(new ScopeVariable("ptr")),
                     Expression.Constant(1))))
     }
@@ -96,7 +96,7 @@ class TapeAssembler
             Expression.Assigning(
                 new ScopeVariable("ptr"),
                 Expression.MessageCall(
-                    new Message("subtract[1]"),
+                    new Message("subtract[2]"),
                     Expression.Variable(new ScopeVariable("ptr")),
                     Expression.Constant(1))))
     }
@@ -105,19 +105,19 @@ class TapeAssembler
     {
         theTape.append(
             Expression.MessageCall(
-                new Message("setAt[2]"),            
+                new Message("setAt[3]"),            
                 Expression.Variable("tape"),
                 Expression.Variable("ptr"), 
                 Expression.MessageCall(
-                    new Message("load[1]"),                    
+                    new Message("load[2]"),                    
                     Expression.Constant(CharValue),
                     Expression.MessageCall(
-                        new Message("add[1]"),
+                        new Message("add[2]"),
                         Expression.MessageCall(                                    
-                            new Message("toInt[1]"),                           
+                            new Message("toInt[2]"),                           
                             Expression.Constant(convertor),
                             Expression.MessageCall(
-                                new Message("at[1]"),
+                                new Message("at[2]"),
                                 Expression.Variable("tape"),
                                 Expression.Variable("ptr")
                             )
@@ -132,19 +132,19 @@ class TapeAssembler
     {
         theTape.append(
             Expression.MessageCall(
-                new Message("setAt[2]"),            
+                new Message("setAt[3]"),            
                 Expression.Variable("tape"),
                 Expression.Variable("ptr"), 
                 Expression.MessageCall(
-                    new Message("load[1]"),                    
+                    new Message("load[2]"),                    
                     Expression.Constant(CharValue),
                     Expression.MessageCall(
-                        new Message("subtract[1]"),
+                        new Message("subtract[2]"),
                         Expression.MessageCall(                                    
-                            new Message("toInt[1]"),                           
+                            new Message("toInt[2]"),                           
                             Expression.Constant(convertor),
                             Expression.MessageCall(
-                                new Message("at[1]"),
+                                new Message("at[2]"),
                                 Expression.Variable("tape"),
                                 Expression.Variable("ptr")
                             )
@@ -246,20 +246,20 @@ public solution1()
                       ),
                       // tape[ptr] := console.readChar()
                       Expression.MessageCall(
-                        new Message("setAt[2]"),
+                        new Message("setAt[3]"),
                         Expression.Variable(new ScopeVariable("tape")),
                         Expression.Variable(new ScopeVariable("ptr")),
                         Expression.MessageCall(
-                           new Message("readChar[0]"),
+                           new Message("readChar[1]"),
                            Expression.Constant(console)
                         )
                       ),
                       // while (tape[ptr]!=0) {
                       Expression.Loop(                      
                           Expression.MessageCall(
-                            new Message("notequal[1]"),
+                            new Message("notequal[2]"),
                              Expression.MessageCall(
-                                new Message("at[1]"),
+                                new Message("at[2]"),
                                 Expression.Variable(new ScopeVariable("tape")),
                                 Expression.Variable(new ScopeVariable("ptr"))
                              ),
@@ -268,21 +268,21 @@ public solution1()
                           Expression.CodeBlock(                          
                               // console.write(tape[ptr])  
                               Expression.MessageCall(
-                                 new Message("write[1]"),
+                                 new Message("write[2]"),
                                  Expression.Constant(console), 
                                  Expression.MessageCall(
-                                   new Message("at[1]"),
+                                   new Message("at[2]"),
                                    Expression.Variable(new ScopeVariable("tape")),
                                    Expression.Variable(new ScopeVariable("ptr"))
                                  )
                               ),                                 
                               // tape[ptr] := console readChar
                               Expression.MessageCall(
-                                new Message("setAt[2]"),
+                                new Message("setAt[3]"),
                                 Expression.Variable(new ScopeVariable("tape")),
                                 Expression.Variable(new ScopeVariable("ptr")), 
                                 Expression.MessageCall(
-                                    new Message("readChar[0]"),
+                                    new Message("readChar[1]"),
                                     Expression.Constant(console)
                                 )
                               )
@@ -351,7 +351,7 @@ public solution5()
     console.writeLine(bfProgram)
 }
 
-const int Solution = 4;
+const int Solution = 1;
 
 public program()
 {

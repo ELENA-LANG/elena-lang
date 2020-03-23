@@ -3261,7 +3261,9 @@ labSearch:
   popa
   sub
   movs   1
+  pushsi 1
   xset
+  freei  1
 
   quitn 1
 
@@ -3279,10 +3281,10 @@ procedure __jumpifnot_closure."params##invoke$system@Object[0]"
 
   pusha
 
-  peeksi  1
+  peeksi  2
   elser   labSkip const : false
 
-  peeksi 0
+  peeksi 0 
   naddf  -2
 
 labSkip:
