@@ -900,30 +900,6 @@ inline bool IsExprOperator(int operator_id)
    }
 }
 
-//inline bool IsShiftOperator(int operator_id)
-//{
-//   switch (operator_id) {
-//      case SHIFTR_OPERATOR_ID:
-//      case SHIFTL_OPERATOR_ID:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-
-//////inline bool IsRealExprOperator(int operator_id)
-//////{
-//////   switch (operator_id) {
-//////   case ADD_MESSAGE_ID:
-//////   case SUB_MESSAGE_ID:
-//////   case MUL_MESSAGE_ID:
-//////   case DIV_MESSAGE_ID:
-//////      return true;
-//////   default:
-//////      return false;
-//////   }
-//////}
-
 inline bool isOpenArg(ref_t message)
 {
    return test(message, VARIADIC_MESSAGE);

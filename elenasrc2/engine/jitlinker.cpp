@@ -51,7 +51,7 @@ ref_t JITLinker::ReferenceHelper :: resolveMessage(ref_t reference, _Module* mod
    if (!module)
       module = _module;
 
-   return _owner->resolveMessage(module, reference);
+   return _owner->resolveMessage(module, reference, _references);
 }
 
 void JITLinker::ReferenceHelper :: addBreakpoint(size_t position)
@@ -73,12 +73,6 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
 {
    ref_t mask = reference & mskAnyRef;
    ref_t refID = reference & ~mskAnyRef;
-
-   //// check if it is a constant, resolve it immediately
-   //if (mask == mskLinkerConstant) {
-   //   writer.writeDWord(getLinkerConstant(refID));
-   //   return;
-   //}
 
    if (!module)
       module = _module;
@@ -189,7 +183,7 @@ ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_
    return actionRef;
 }
 
-ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool variadicOne)
+ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool variadicOne, References* references)
 {
    if (!signature)
       return 0;
@@ -202,8 +196,6 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
    for (size_t i = 0; i != count; i++) {
       signatureName.append('$');
       ident_t referenceName = module->resolveReference(signatures[i]);
-      if (referenceName.empty())
-         count += 0;
 
       if (isWeakReference(referenceName)) {
          if (isTemplateWeakReference(referenceName)) {
@@ -247,6 +239,15 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
 
          ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
          writer.writeRef(typeClassRef | mskVMTRef, 0);
+
+         // NOTE : indicate weak class reference, to be later resolved if required
+         if (references) {
+            void* vaddress = _loader->resolveReference(
+               _loader->retrieveReference(info.module, typeClassRef, mskVMTRef), mskVMTRef);
+
+            if (vaddress == LOADER_NOTLOADED)
+               references->add(INVALID_REF, RefInfo(typeClassRef | mskVMTRef, info.module));
+         }
       }
 
       if (variadicOne) {
@@ -280,7 +281,7 @@ ident_t JITLinker :: retrieveResolvedAction(ref_t reference)
    return messageTable.module->resolveAction(reference, signature);
 }
 
-ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
+ref_t JITLinker :: resolveMessage(_Module* module, ref_t message, References* references)
 {
    SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
 
@@ -292,7 +293,7 @@ ref_t JITLinker :: resolveMessage(_Module* module, ref_t message)
    ref_t signature;
    ident_t actionName = module->resolveAction(actionRef, signature);
 
-   ref_t resolvedSignature = resolveSignature(module, signature, test(message, VARIADIC_MESSAGE));
+   ref_t resolvedSignature = resolveSignature(module, signature, test(message, VARIADIC_MESSAGE), references);
    ref_t resolvedAction = messageTable.module->mapAction(actionName, resolvedSignature, true);
    if (!resolvedAction) {
       resolvedAction = mapAction(messageTable, actionName, resolveWeakAction(messageTable, actionName), resolvedSignature);
@@ -382,10 +383,12 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
       ////   else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
       ////}
       // otherwise
-      else {   
+      else {
          void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, currentMask), currentMask, false);
 
-         resolveReference(image, it.key(), (ref_t)refVAddress, currentMask, _virtualMode);
+         // NOTE : check if it is a weak class reference (used for Message table generation)
+         if (it.key() != INVALID_REF)
+            resolveReference(image, it.key(), (ref_t)refVAddress, currentMask, _virtualMode);
       }
       it++;
    }
@@ -812,17 +815,18 @@ void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int ma
    // create VMT
    void* vaddress = createBytecodeVMTSection(referenceInfo, mask, sectionInfo, references);
 
-   // fix not loaded references
-   fixReferences(references, _loader->getTargetSection(mskClassRef));
-
    //HOTFIX : resolve class symbol as well
    if (_classSymbolAutoLoadMode)
       resolve(referenceInfo, mskSymbolRef, true);
 
+   // fix not loaded references
+   fixReferences(references, _loader->getTargetSection(mskClassRef));
+
    return vaddress;
 }
 
-void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress, bool constArrayMode)
+void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress, 
+   bool constArrayMode, References* messageReferences)
 {
    // resolve section references
    _ELENA_::RelocationMap::Iterator it(sectionInfo.section->getReferences());
@@ -833,14 +837,14 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
       currentRef = it.key() & ~mskAnyRef;
 
       if (currentMask == 0) {
-         (*image)[*it + position] = resolveMessage(sectionInfo.module, (*sectionInfo.section)[*it]);
+         (*image)[*it + position] = resolveMessage(sectionInfo.module, (*sectionInfo.section)[*it], messageReferences);
       }
       else if (currentMask == mskVMTEntryOffset) {
          void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, mskVMTRef), mskVMTRef, false);
 
          // message id should be replaced with an appropriate method address
          size_t offset = *it;
-         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position]);
+         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position], messageReferences);
 
          (*image)[offset + position] = getVMTMethodIndex(refVAddress, messageID);
       }
@@ -849,7 +853,7 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
 
          // message id should be replaced with an appropriate method address
          size_t offset = *it;
-         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position]);
+         size_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position], messageReferences);
 
          (*image)[offset + position] = resolveVMTMethodAddress(sectionInfo.module, currentRef, messageID);
          if (_virtualMode) {
@@ -878,6 +882,8 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
 
 void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 {
+   References messageReferences(RefInfo(0, nullptr));
+
    bool constantValue = true;
    ident_t value = NULL;
    ReferenceInfo vmtReferenceInfo = referenceInfo;
@@ -954,7 +960,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
       _compiler->compileCollection(&writer, sectionInfo.section);
 
       vmtVAddress = NULL; // !! to support dump array
-      fixSectionReferences(sectionInfo, image, position, vmtVAddress, true);
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress, true, &messageReferences);
       constantValue = true;
    }
    else if (vmtVAddress == LOADER_NOTLOADED) {
@@ -962,7 +968,7 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
       SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
       _compiler->compileBinary(&writer, sectionInfo.section);
 
-      fixSectionReferences(sectionInfo, image, position, vmtVAddress, false);
+      fixSectionReferences(sectionInfo, image, position, vmtVAddress, false, &messageReferences);
       constantValue = true;
    }
 
@@ -980,6 +986,9 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
 
    // fix object VMT reference
    resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
+
+   // load message references
+   fixReferences(messageReferences, nullptr);
 
    return vaddress;
 }
