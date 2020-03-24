@@ -162,7 +162,7 @@ class TreeLeaf : BaseTreeNode
         theToken := new StringWriter();
     }
     
-    constructor(level)
+    constructor new(level)
         <= new(level)
     {
         theToken := new StringWriter();
@@ -248,7 +248,10 @@ class StateMachine
 
     get generic()
     {
-        theCurrentState := (__received.getPropertyMessage())(theStates);
+        MessageName mssg := __received.MessageName;
+        Message prop := mssg.getPropertyMessage();
+        
+        theCurrentState := prop(theStates);
     }
 
     incLevel(diff)
@@ -290,7 +293,7 @@ class StateMachine
 
     newNumberLeaf(leafLevel)
     {
-        theLeaf := TreeLeaf.new(level + leafLevel, mssgconst toReal<convertorOp>[0]);
+        theLeaf := TreeLeaf.new(level + leafLevel, mssgconst toReal<convertorOp>[1]);
         
         theDerivationTree.append(theLeaf)
     }
@@ -311,10 +314,10 @@ class StateMachine
     {
         var function;
         operator =>
-            "+" { function := mssgconst add[1]}
-            "-" { function := mssgconst subtract[1]}        
-            "*" { function := mssgconst multiply[1]}
-            "/" { function := mssgconst divide[1]};
+            "+" { function := mssgconst add[2]}
+            "-" { function := mssgconst subtract[2]}        
+            "*" { function := mssgconst multiply[2]}
+            "/" { function := mssgconst divide[2]};
             
         theDerivationTree.append(TreeNode.new(level + nodeLevel, function));
     }

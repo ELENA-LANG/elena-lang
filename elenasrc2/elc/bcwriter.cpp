@@ -4751,6 +4751,7 @@ void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::N
 
 void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
+   doGenericHandler(tape);
    if (node.argument != 0) {
       // if it is a generic dispatcher with the custom target
       tape.write(bcPushD);
@@ -4758,7 +4759,6 @@ void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node n
       doGenericHandler(tape);
       tape.write(bcPopD);
    }
-   doGenericHandler(tape);
 
    generateExpression(tape, node, scope);
 }

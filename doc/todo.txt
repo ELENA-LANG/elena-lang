@@ -24,6 +24,8 @@ In development:
 
               dev - migration
                 * calc sample
+                * interpreter : sample3, solution 5
+
                 * fibonacci sample
                 * Runtime evaluation
                 * Runtime evaluation/In an environment
