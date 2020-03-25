@@ -23,7 +23,7 @@ constexpr auto V_CATEGORY_MAX    = 0x0000F000u;
 
 /// modificator
 constexpr auto V_IGNOREDUPLICATE = 0x80006001u;
-//constexpr auto V_SCRIPTSELFMODE  = 0x80006002u;
+constexpr auto V_SCRIPTSELFMODE  = 0x80006002u;
 //constexpr auto V_AUTOSIZE        = 0x80006003u;
 constexpr auto V_NODEBUGINFO     = 0x80006004u;
 

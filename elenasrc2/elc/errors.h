@@ -96,13 +96,13 @@ namespace _ELENA_
    constexpr auto errIllegalStaticMethod        = "%s(%d:%d): error 176: Static method cannot be declared\n";
 
 
-   #define errUnknownBaseClass	   "internal error 500: Base class doesn't exist\n"
-   #define errNotDefinedBaseClass	"internal error 501: Base class doesn't defined\n"
-   #define errNoDispatcher	         "internal error 502: Default dispatch method is not declared in the base class\n"
-   #define errClosureError          "internal error 503: closure cannot be generated"
+   constexpr auto errUnknownBaseClass           = "internal error 500: Base class doesn't exist\n";
+   constexpr auto errNotDefinedBaseClass        = "internal error 501: Base class doesn't defined\n";
+   constexpr auto errNoDispatcher               = "internal error 502: Default dispatch method is not declared in the base class\n";
+   constexpr auto errClosureError               = "internal error 503: closure cannot be generated";
 ////   #define errCrUnknownReference    "reference cannot be resolved"
-   #define errCommandSetAbsent     "internal error 600: command set is not defined"
-   #define errFatalLinker          "internal error 601: linker fatal error"
+   constexpr auto errCommandSetAbsent           = "internal error 600: command set is not defined";
+   constexpr auto errFatalLinker                = "internal error 601: linker fatal error";
 
   // --- Linker error messages ---
    #define errUnknownModule         "linker: error 201: Unknown module '%s'\n"
@@ -114,8 +114,8 @@ namespace _ELENA_
    #define errInvalidModuleVersion  "linker: error 210: Obsolete module file '%s'\n"
    #define errConstantExpectedLink  "linker: error 211: Symbol '%s' cannot be constant\n"
    #define errEmptyTarget           "linker: error 212: Target is not specified\n"
-//   #define errInvalidTargetOption   "linker: error 213: Invalid target option '%s'\n"
-//
+   #define errInvalidTargetOption   "linker: error 213: Invalid target option '%s'\n"
+
 ////  // --- Compiler internal error messages ---
 //////   #define errReferenceOverflow     "error 301: The section reference overflow\n"
 

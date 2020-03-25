@@ -1819,9 +1819,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_SETACCESSOR:
          attrValue = tpSetAccessor;
          return true;
-//      case V_SCRIPTSELFMODE:
-//         attrValue = tpTargetSelf;
-//         return true;
+      case V_SCRIPTSELFMODE:
+         attrValue = tpTargetSelf;
+         return true;
       case V_YIELDABLE:
          attrValue = tpYieldable;
          return true;

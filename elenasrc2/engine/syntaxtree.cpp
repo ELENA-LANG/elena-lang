@@ -17,33 +17,34 @@ using namespace _ELENA_;
 
 void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 {
-//   tokens.add("root", lxRoot);
-//   tokens.add("namespace", lxNamespace);
-//   tokens.add("class", lxClass);
-//   tokens.add("singleton", lxClass);
-//   tokens.add("nested", lxNestedClass);
-//   tokens.add("script_method", lxClassMethod);
-//   tokens.add("method", lxClassMethod);
+   tokens.add("root", lxRoot);
+   tokens.add("namespace", lxNamespace);
+   tokens.add("public_namespace", lxNamespace);
+   tokens.add("class", lxClass);
+   tokens.add("singleton", lxClass);
+   tokens.add("nested", lxNestedClass);
+   tokens.add("script_method", lxClassMethod);
+   tokens.add("method", lxClassMethod);
 //   tokens.add("action", lxClassMethod);
-//   tokens.add("get_method", lxClassMethod);
-//   tokens.add("message", lxMessage);
-//   tokens.add("code", lxCode);
+   tokens.add("get_method", lxClassMethod);
+   tokens.add("message", lxMessage);
+   tokens.add("code", lxCode);
    tokens.add("expression", lxExpression);
-//   tokens.add("returning", lxReturning);
-//   tokens.add("symbol", lxSymbol);
-//   tokens.add("preloaded_symbol", lxSymbol);
-//   tokens.add("literal", lxLiteral);
-//   tokens.add("identifier", lxIdentifier);
-//   tokens.add("integer", lxInteger);
-//   tokens.add("parameter", lxMethodParameter);
+   tokens.add("returning", lxReturning);
+   tokens.add("symbol", lxSymbol);
+   tokens.add("preloaded_symbol", lxSymbol);
+   tokens.add("literal", lxLiteral);
+   tokens.add("identifier", lxIdentifier);
+   tokens.add("integer", lxInteger);
+   tokens.add("parameter", lxMethodParameter);
 //   tokens.add("include", lxInclude);
-//   tokens.add("forward", lxForward);
-//   tokens.add("reference", lxReference);
-//   tokens.add("variable", lxVariable);
-//   tokens.add("assign", lxAssign);
-//   tokens.add("operator", lxOperator);
-//   tokens.add("nameattr", lxNameAttr);
-//   tokens.add("property_parameter", lxPropertyParam);
+   tokens.add("forward", lxForward);
+   tokens.add("reference", lxReference);
+   tokens.add("variable", lxVariable);
+   tokens.add("assign", lxAssign);
+   tokens.add("operator", lxOperator);
+   tokens.add("nameattr", lxNameAttr);
+   tokens.add("property_parameter", lxPropertyParam);
 
    if (fullMode) {
 //      tokens.add("argarrop", lxArgArrOp);

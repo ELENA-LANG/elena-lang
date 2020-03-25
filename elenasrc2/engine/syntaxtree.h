@@ -1324,18 +1324,18 @@ public:
       return _body.Length() > 0;
    }
 
-//   void load(_Memory* section)
-//   {
-//      _body.clear();
-//      _strings.clear();
-//
-//      MemoryReader reader(section);
-//      int bodyLength = reader.getDWord();
-//      _body.load(&reader, bodyLength);
-//
-//      int stringLength = reader.getDWord();
-//      _strings.load(&reader, stringLength);
-//   }
+   void load(_Memory* section)
+   {
+      _body.clear();
+      _strings.clear();
+
+      MemoryReader reader(section);
+      int bodyLength = reader.getDWord();
+      _body.load(&reader, bodyLength);
+
+      int stringLength = reader.getDWord();
+      _strings.load(&reader, stringLength);
+   }
 
    void clear()
    {

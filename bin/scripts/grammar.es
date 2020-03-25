@@ -12,6 +12,13 @@
                                      "namespace" "(" member* ")"
 <= ) =>;
 
+   #define namespace      ::= 
+<= 
+   system'dynamic'expressions'SymbolCollection ( 
+=>
+                                     "public_namespace" "(" member* ")"
+<= ) =>;
+
    #define member         ::=
 <= 
      system'dynamic'expressions'SymbolInfo ( 

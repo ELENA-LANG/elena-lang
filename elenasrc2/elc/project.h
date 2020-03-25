@@ -11,7 +11,7 @@
 
 #include "libman.h"
 #include "compilercommon.h"
-//#include "separser.h"
+#include "separser.h"
 
 namespace _ELENA_
 {

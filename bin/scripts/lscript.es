@@ -1,7 +1,7 @@
 [[
    #grammar cf
 
-   #define start          ::= <= root ( namespace ( => member+ $eof <= )) =>;
+   #define start          ::= <= root ( public_namespace ( => member+ $eof <= )) =>;
    #define start          ::= $eof;
 
    #define member         ::= symbol;

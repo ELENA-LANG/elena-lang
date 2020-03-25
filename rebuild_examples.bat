@@ -98,6 +98,11 @@ bin\elc examples\script\calculator\calc.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elc examples\script\calculator\calc_static.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 @echo off 
 goto:eof
 @echo on

@@ -23,7 +23,6 @@ In development:
                 * extension direct call - using message variable
 
               dev - migration
-                * calc sample
                 * interpreter : sample3, solution 5
 
                 * fibonacci sample
