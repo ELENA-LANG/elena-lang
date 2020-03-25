@@ -4384,6 +4384,65 @@ labEnd:
    
 end
 
+// ; strcharlen(s,len)
+procedure coreapi'strcharlen
+
+  mov  eax, [esp+4]
+  mov  ecx, [esp+8]                                         
+  push eax
+
+  xor  edx, edx
+  xor  ebx, ebx
+
+labNext:
+  mov  dl, byte ptr [eax]
+  cmp  edx, 00000080h
+  jl   short lab1
+  cmp  edx, 000000E0h
+  jl   short lab2
+  cmp  edx, 000000F0h
+  jl   short lab3
+  cmp  edx, 000000F5h
+  jl   short lab4
+
+lab1:
+  add  ebx, 1
+  add  eax, 1
+  sub  ecx, 1
+  jnz  short labNext
+  mov  edx, ebx
+  pop  eax
+  ret
+  
+lab2:
+  add  ebx, 1
+  add  eax, 2
+  sub  ecx, 2
+  jnz  short labNext
+  mov  edx, ebx
+  pop  eax
+  ret
+  
+lab3:
+  add  ebx, 1
+  add  eax, 3
+  sub  ecx, 3
+  jnz  short labNext
+  mov  edx, ebx
+  pop  eax
+  ret
+  
+lab4:
+  add  ebx, 1
+  add  eax, 4
+  sub  ecx, 4
+  jnz  short labNext
+  mov  edx, ebx
+  pop  ebx
+  ret
+
+end
+
 procedure coreapi'default_handler                                                       
 
   // ; exit code

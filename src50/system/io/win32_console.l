@@ -278,6 +278,7 @@ namespace io
             byte  dump[20];
             int   numberRead := 0;
             short eventType := 0;
+            short charCode := 0;
             int   keyDown := 0;
     
             bool found := false;
@@ -301,7 +302,9 @@ namespace io
                 };
             };
     
-            dump.read(14, ref retVal)
+            dump.read(14, ref charCode);
+            
+            retVal := system'text'UTF16Encoding.toChar(charCode)
         }
     
     ////    read(ref<int> aKey)

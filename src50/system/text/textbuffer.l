@@ -257,19 +257,19 @@ namespace text
     //        theLength append(aLength).
     //    ]
 
-    //    insert(int index, string s)
-    //    {
-    //        int length := 0;
-    //        UTF8Encoding.charCount(s, ref length);
-    //
-    //        self.reserve(length);
-    //        
-    //        theBuffer.move(index, cast int(theLength), length);
-    //        
-    //        s.save(index, theBuffer, ref length);
-    //        
-    //        theLength.append(length)
-    //    }
+        insert(int index, string s)
+        {
+            int length := 0;
+            UTF8Encoding.charCount(s, ref length);
+    
+            self.reserve(length);
+            
+            theBuffer.move(index, cast int(theLength), length);
+            
+            s.save(index, theBuffer, ref length);
+            
+            theLength.append(length)
+        }
     //
     ////    insert(int anIndex, wide aLiteral)
     ////    [

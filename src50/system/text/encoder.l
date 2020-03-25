@@ -204,8 +204,8 @@ namespace text
     {
         Encoder encoder() = UTF8Encoder;
         
-    //    charCount(string s, ref int retVal)
-    //        => system'core_routines'__utf8encoder;
+        charCount(string s, ref int retVal)
+            => intern system'core_routines'__utf8encoder;
         
         convert(int index, int length, string s, byte[] array)
         {
@@ -236,8 +236,8 @@ namespace text
     {
         Encoder encoder = UTF16Encoder;
         
-    //    charCount(wide aLiteral, ref<int> aRetVal)
-    //        => system'core_routines'__utf16encoder.
+//        charCount(wide aLiteral, ref<int> aRetVal)
+//            => intern system'core_routines'__utf16encoder.
             
         convert(int index, int size, short[] array, char[] output, ref int outputLength)
             => intern system'core_routines'__utf16encoder;
@@ -296,6 +296,16 @@ namespace text
         string toWide(int index, int length, short[] array)
         {
             ^ WideString.fromShortArray(index, length, array)
+        }
+        
+        char toChar(short w)
+        {
+            short buffer[2];
+            buffer[0] := w;
+            
+            charConvertor.convert(0, buffer, ref char retVal);
+            
+            ^ retVal 
         }
     }
     

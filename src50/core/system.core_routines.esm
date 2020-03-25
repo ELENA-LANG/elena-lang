@@ -2926,6 +2926,21 @@ labErr:
   
 end
 
+procedure __utf8encoder."charCount$system@String$@system@ref#1&system@IntNumber[3]"
+
+  peeksi   2
+  len
+  dec      1
+  pushd
+  pusha
+  callextr api : strcharlen
+  freei    2
+  peeksi   3
+  save
+  quitn 3
+
+end
+
 procedure __utf16encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber$@system@Array#1&system@ByteNumber$@system@Array#1&system@CharValue$@system@ref#1&system@IntNumber[6]"
 
   pushsi 6
