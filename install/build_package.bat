@@ -35,6 +35,7 @@ copy %~dp0\..\bin\ecv.exe %~dp0\output\bin
 copy %~dp0\..\bin\og.exe %~dp0\output\bin
 copy %~dp0\..\bin\elenavm.dll %~dp0\output\bin
 copy %~dp0\..\bin\elenart.dll %~dp0\output\bin
+copy %~dp0\..\bin\elenasm.dll %~dp0\output\bin
 copy %~dp0\..\bin\winstub.ex_ %~dp0\output\bin
 copy %~dp0\..\bin\elc.cfg %~dp0\output\bin
 copy %~dp0\..\bin\elenavm.cfg %~dp0\output\bin
@@ -54,6 +55,14 @@ xcopy %~dp0\..\src50\system\*.prj %~dp0\output\src50\system /s
 md %~dp0\output\src50\extensions
 xcopy %~dp0\..\src50\extensions\*.l %~dp0\output\src50\extensions /s
 xcopy %~dp0\..\src50\extensions\*.prj %~dp0\output\src50\extensions /s
+
+md %~dp0\output\src50\sqlite
+xcopy %~dp0\..\src50\sqlite\*.l %~dp0\output\src50\sqlite /s
+xcopy %~dp0\..\src50\sqlite\*.prj %~dp0\output\src50\sqlite /s
+
+md %~dp0\output\src50\cellular
+xcopy %~dp0\..\src50\cellular\*.l %~dp0\output\src50\cellular /s
+xcopy %~dp0\..\src50\cellular\*.prj %~dp0\output\src50\cellular /s
 
 %~dp0\..\bin\sg %~dp0\..\dat\sg\syntax.txt
 @echo off 
@@ -88,6 +97,16 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 %~dp0\output\bin\elc %~dp0\output\src50\extensions\extensions.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output\bin\elc %~dp0\output\src50\cellular\cellular.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output\bin\elc %~dp0\output\src50\sqlite\sqlite.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

@@ -7,7 +7,7 @@
    #define module         ::= 
 <= 
   root ( 
-    namespace (
+    public_namespace (
       symbol (
         nameattr ( identifier = program )
         expression (

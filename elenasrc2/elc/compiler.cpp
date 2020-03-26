@@ -3115,10 +3115,10 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
 //         // HOTFIX : to compile switch statement
 //         roperand = ObjectInfo(okLocal, roperandNode.argument);
 //      }*/
-//      if (test(roperandNode.type, lxTerminalMask)) {
-//         roperand = compileObject(writer, roperandNode, scope, 0, EAttr::eaNone);
-//      }
-      /*else */roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
+      if (test(roperandNode.type, lxTerminalMask)) {
+         roperand = mapTerminal(roperandNode, scope, EAttr::eaNone);
+      }
+      else roperand = compileExpression(roperandNode, scope, 0, EAttr::eaNone);
    }
 
    return compileOperator(opNode, scope, operator_id, argCount, loperand, roperand, roperand2, mode);
