@@ -23,13 +23,11 @@ In development:
                 * extension direct call - using message variable
 
               dev - migration
-                * interpreter : sample3, solution 5
-
-                * fibonacci sample
                 * Runtime evaluation
                 * Runtime evaluation/In an environment
                 * Execute Brain****/Elena
                 * Hello world/Graphical
+
                 * Simple windowed application
                 * GUI component interaction
                 * gui samples

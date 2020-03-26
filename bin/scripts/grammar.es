@@ -27,12 +27,26 @@
 <=   ) =>;
 
   #define symbol_expr     ::= "expression" "(" nested_symbol ")"; 
+  #define symbol_expr     ::= "expression" "(" symbol_expr ")"; 
                               
   #define nested_symbol   ::= 
 <=
        system'dynamic'expressions'DynamicSingleton (
 =>
                                    "nested" "(" member* ")"
+<=     ) =>;
+
+  #define symbol_expr   ::= 
+<=
+       system'dynamic'expressions'DynamicExpressionSymbol (
+=>
+                                   expr_operation
+<=     ) =>;
+
+<=
+       system'dynamic'expressions'DynamicSingleton (
+=>
+                                   object
 <=     ) =>;
 
   #define member          ::= method;
@@ -117,7 +131,9 @@
                )
 =>;
 
-  #define operation       ::=
+  #define operation       ::= expr_operation;
+
+  #define expr_operation  ::=
 <=
                system'dynamic'expressions'GetPropertyExpression (
 =>
@@ -126,7 +142,7 @@
                )
 =>; 
 
-  #define operation       ::=
+  #define expr_operation  ::=
 <=
                system'dynamic'expressions'MessageCallExpression (
 =>
@@ -210,6 +226,7 @@
 
   #define message         ::= "message" "=" ident_quote;
   #define identifier      ::= "identifier" "=" ident_quote;
+  #define reference       ::= "reference" "=" ref_quote;
 
   #define ident_quote  ::= <= "$identifier" =>;
   #define ref_quote    ::= <= "$reference" =>;

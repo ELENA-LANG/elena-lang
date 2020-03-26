@@ -14,6 +14,7 @@
    #define object         ::= identifier;
    #define object         ::= integer;
    #define object         ::= literal;
+   #define object         ::= reference;
 
    #define singleton      ::= <= nested ( => "{" method* "}" <= ) =>;
 
@@ -46,4 +47,5 @@
    #define identifier     ::= <= identifier = $identifier =>;
    #define integer        ::= <= integer = $numeric =>;
    #define literal        ::= <= literal = "$literal" =>;
+   #define reference      ::= <= reference = "$reference" =>;
 ]]

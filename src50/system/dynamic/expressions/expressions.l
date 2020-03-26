@@ -1105,7 +1105,22 @@ namespace expressions
     {
         abstract compiled() {}
     }
-    
+ 
+    public class DynamicExpressionSymbol : DynamicSymbol
+    {
+        Expression expr;
+        
+        constructor(Expression expr)
+        {
+            this expr := expr
+        }
+        
+        compiled()
+        {
+            ^ expr.compiled()
+        }        
+    }
+          
     public class DynamicSingleton : DynamicSymbol
     {
         Expression[] methods;
