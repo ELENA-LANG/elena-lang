@@ -13,4 +13,15 @@ public singleton lscript
         
     load(string path)
         = lscriptEngine.loadPath(path);
+        
+    interpret(string script)
+    {
+        var full_script := "program=" + script + ";";
+        
+        var ns := self.eval(full_script);
+    
+        var s := ns.program;
+                            
+        ^ s();                                            
+    }        
 }

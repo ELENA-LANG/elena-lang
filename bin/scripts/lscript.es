@@ -47,5 +47,5 @@
    #define identifier     ::= <= identifier = $identifier =>;
    #define integer        ::= <= integer = $numeric =>;
    #define literal        ::= <= literal = "$literal" =>;
-   #define reference      ::= <= reference = "$reference" =>;
+   #define reference      ::= <= reference = $reference =>;
 ]]

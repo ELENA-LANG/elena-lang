@@ -3,7 +3,7 @@ namespace expressions
     import system'collections;
     import system'routines;
 
-    preloaded used = new object[]{Expression,DynamicSingleton,SymbolCollection};
+    preloaded used = new object[]{Expression,DynamicSingleton,DynamicExpressionSymbol,SymbolCollection};
     
     public class ScopeVariable
     {

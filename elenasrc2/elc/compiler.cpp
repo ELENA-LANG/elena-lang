@@ -9409,7 +9409,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
    // optimize
    optimizeTape(tape);
 
-//   compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
+   compileSymbolAttribtes(*scope.moduleScope, scope.reference, scope.visibility == Visibility::Public);
 
    // create byte code sections
    _writer.saveTape(tape, *scope.moduleScope);

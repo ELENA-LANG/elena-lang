@@ -27,7 +27,7 @@
 <=   ) =>;
 
   #define symbol_expr     ::= "expression" "(" nested_symbol ")"; 
-  #define symbol_expr     ::= "expression" "(" symbol_expr ")"; 
+  #define symbol_expr     ::= "expression" "(" expr_symbol ")"; 
                               
   #define nested_symbol   ::= 
 <=
@@ -36,7 +36,7 @@
                                    "nested" "(" member* ")"
 <=     ) =>;
 
-  #define symbol_expr   ::= 
+  #define expr_symbol     ::= 
 <=
        system'dynamic'expressions'DynamicExpressionSymbol (
 =>

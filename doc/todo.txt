@@ -19,6 +19,9 @@ In development:
               dev2 - tutorials
                 * migrate tutorials
 
+              dev2 - usability
+                * dynamic loading : give the symbol / class / message / subject name in the InvlidArgument exception
+
               dev - implementing
                 * extension direct call - using message variable
 
