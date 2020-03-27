@@ -251,7 +251,7 @@ CompilerLogic :: CompilerLogic()
 
 }
 
-int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result)
+int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result, bool resolveProtected)
 {
    bool methodFound = info.methods.exist(message);
 
@@ -286,6 +286,10 @@ int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo
       //HOTFIX : to recognize the predefined messages
       result.outputReference = info.methodHints.get(Attribute(message, maReference));
 
+      if (resolveProtected) {
+         result.protectedRef = info.methodHints.get(Attribute(message, maProtected));
+      }
+
       //HOTFIX : to recognize the sealed private method call
       //         hint search should be done even if the method is not declared
       return info.methodHints.get(Attribute(message, maHint));
@@ -301,7 +305,8 @@ ref_t CompilerLogic :: resolveArrayElement(_ModuleScope& scope, ref_t reference)
    else return 0;
 }
 
-int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result)
+int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, 
+   ChechMethodInfo& result, bool resolveProtected)
 {
    ClassInfo info;
    result.found = defineClassInfo(scope, info, reference);
@@ -313,7 +318,7 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
       if (test(info.header.flags, elWithCustomDispatcher))
          result.withCustomDispatcher = true;
 
-      int hint = checkMethod(info, message, result);
+      int hint = checkMethod(info, message, result, resolveProtected);
 //      //if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
 //      //   hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
 //      //   if (hint != tpUnknown) {
@@ -340,7 +345,7 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
 
 int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
 {
-   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result);
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result, false);
    int callType = methodHint & tpMask;
 
    result.stackSafe = test(methodHint, tpStackSafe);

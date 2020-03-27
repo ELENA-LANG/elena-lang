@@ -633,6 +633,7 @@ public:
 //      bool  dynamicRequired;
       ref_t outputReference;
       ref_t constRef;
+      ref_t protectedRef;
 
       ChechMethodInfo()
       {
@@ -640,6 +641,7 @@ public:
          embeddable = found = false;
          outputReference = 0;
          constRef = 0;
+         protectedRef = 0;
          withCustomDispatcher = false;
          stackSafe = false;
 //         function = false;
@@ -647,8 +649,10 @@ public:
       }
    };
 
-   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result) = 0;
-   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result) = 0;
+   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, 
+      ChechMethodInfo& result, bool resolveProtected) = 0;
+   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result, 
+      bool resolveProtected) = 0;
 
    // retrieve the class info / size
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;

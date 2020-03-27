@@ -32,37 +32,37 @@ public sealed const struct Handle
 }
 
 //// --- RTPointer ---
-//
-//public static rt_sync = new Object();
-//
-//public sealed const struct RTPointer
-//{
-//    int theIndex;
-//
-//    constructor(int n)
-//    {
-//        theIndex := n
-//    }
-//    
-//    constructor assign(object)
-//    {
-//        intern system'core_routines'__rtptr.new(self, object)
-//    }
-//
-//    Index
-//    {
-//        int get()
-//        {
-//            ^ theIndex
-//        }
-//    }
-//        
-//    get()
-//        => system'core_routines'__rtptr;
-//
-//    free()
-//        => system'core_routines'__rtptr;
-//}
+
+public static rt_sync = new Object();
+
+public sealed const struct RTPointer
+{
+    int theIndex;
+
+    constructor(int n)
+    {
+        theIndex := n
+    }
+    
+    constructor assign(object)
+    {
+        intern system'core_routines'__rtptr.new(self, object)
+    }
+
+    int Index
+    {
+        get()
+        {
+            ^ theIndex
+        }
+    }
+        
+    get()
+        => system'core_routines'__rtptr;
+
+    free()
+        => system'core_routines'__rtptr;
+}
 
 // --- UnsafePointer ---
 

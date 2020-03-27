@@ -64,6 +64,10 @@ md %~dp0\output\src50\cellular
 xcopy %~dp0\..\src50\cellular\*.l %~dp0\output\src50\cellular /s
 xcopy %~dp0\..\src50\cellular\*.prj %~dp0\output\src50\cellular /s
 
+md %~dp0\output\src50\forms
+xcopy %~dp0\..\src50\forms\*.l %~dp0\output\src50\forms /s
+xcopy %~dp0\..\src50\forms\*.prj %~dp0\output\src50\forms /s
+
 %~dp0\..\bin\sg %~dp0\..\dat\sg\syntax.txt
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -107,6 +111,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 %~dp0\output\bin\elc %~dp0\output\src50\sqlite\sqlite.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output\bin\elc %~dp0\output\src50\forms\forms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

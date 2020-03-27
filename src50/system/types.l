@@ -103,7 +103,7 @@ type char       = CharValue;
 type string     = String;
 type wide       = WideString;
 type handle     = Handle;
-//type rt_ptr     = RTPointer;
+type rt_ptr     = RTPointer;
 type dirty_ptr  = UnsafePointer;
 
 /// descr inline template

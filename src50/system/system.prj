@@ -68,5 +68,19 @@
      <module name="threading">
        <include>threading\win32_handlers.l</include>
      </module>
+     <module name="drawing">
+       <include>drawing\common.l</include>
+       <include>drawing\win32_handles.l</include>
+       <include>drawing\win32_graphics.l</include>
+     </module>
+     <module name="winforms">
+       <include>winforms\win32_exceptions.l</include>
+       <include>winforms\win32_common.l</include>
+       <include>winforms\win32_handles.l</include>
+       <include>winforms\win32_controls.l</include>
+       <include>winforms\win32_windows.l</include>
+       <include>winforms\win32_dialogs.l</include>
+       <include>winforms\win32_app.l</include>
+     </module>
   </files>
 </configuration>

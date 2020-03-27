@@ -55,12 +55,6 @@ class CompilerLogic : public _CompilerLogic
 
    typedef List<OperatorInfo> OperatorList;
 
-//   int checkMethod(ClassInfo& info, ref_t message)
-//   {
-//      ChechMethodInfo dummy;
-//      return checkMethod(info, message, dummy);
-//   }   
-
    OperatorList operators;
 
    bool isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures, size_t len);
@@ -83,8 +77,8 @@ public:
    virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage,
       ref_t* sourceSignatures, size_t len, int& stackSafeAttr);
 
-   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result);
-   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result);
+   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result, bool resolveProtected);
+   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result, bool resolveProtected);
 
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 

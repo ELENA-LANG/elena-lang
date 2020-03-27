@@ -16,6 +16,9 @@ In development:
                 * source to expression tree
                 * expression tree to source
 
+              dev2 - documentations
+                * info : abstract class cannot have public constructors
+
               dev2 - tutorials
                 * migrate tutorials
 
@@ -26,8 +29,6 @@ In development:
                 * extension direct call - using message variable
 
               dev - migration
-                * Execute Brain****/Elena
-
                 * Hello world/Graphical
                 * Simple windowed application
                 * GUI component interaction

@@ -6741,7 +6741,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
             ref_t sourceRef = resolveObjectReference(exprScope, target, false, false);
 
             _CompilerLogic::ChechMethodInfo methodInfo;
-            if (_logic->checkMethod(*exprScope.moduleScope, sourceRef, methodScope->message, methodInfo) != tpUnknown) {
+            if (_logic->checkMethod(*exprScope.moduleScope, sourceRef, methodScope->message, methodInfo, false) != tpUnknown) {
                directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, methodInfo.outputReference);
             }
          }
@@ -6896,16 +6896,24 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
       while (parent != 0) {
          moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(parent));
 
-         if (checkMethod(*moduleScope, info.header.classRef, messageRef) != tpUnknown) {
+         ref_t protectedConstructor = 0;
+         if (checkMethod(*moduleScope, info.header.classRef, messageRef, protectedConstructor) != tpUnknown) {
             classRef = info.header.classRef;
             found = true;
 
             target.reference = classRef;
-            /*if (implicitConstructor) {
-               messageRef = _logic->resolveImplicitConstructor(*scope.moduleScope, parent,
-                  implicitSignatureRef, getParamCount(messageRef), stackSafeAttr, false);
-            }
-            else */messageRef = resolveMessageAtCompileTime(target, resendScope, messageRef, implicitSignatureRef, false, stackSafeAttr);
+            messageRef = resolveMessageAtCompileTime(target, resendScope, messageRef, implicitSignatureRef, 
+               false, stackSafeAttr);
+
+            break;
+         }
+         else if (protectedConstructor) {
+            classRef = info.header.classRef;
+            found = true;
+
+            target.reference = classRef;
+            messageRef = resolveMessageAtCompileTime(target, resendScope, protectedConstructor, implicitSignatureRef, 
+               false, stackSafeAttr);
 
             break;
          }
@@ -7562,6 +7570,12 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
       SNode callNode = node.insertNode(lxCalling_1, defConstrMssg);
       callNode.appendNode(lxResult);
    }
+   else if (!test(classFlags, elDynamicRole) && test(classFlags, elAbstract)) {
+      // HOTFIX : allow to call the non-declared default constructor for abstract
+      // class constructors
+      SNode callNode = node.insertNode(lxCalling_1, defConstrMssg);
+      callNode.appendNode(lxResult);
+   }
    // if it is a dynamic object implicit constructor call is not possible
    else scope.raiseError(errIllegalConstructor, node);
 
@@ -8070,8 +8084,10 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& withConstructor
          else methodScope.message = current.argument;
 
          if (test(methodScope.hints, tpConstructor)) {
-            if ((_logic->isAbstract(scope.info) || scope.abstractMode) && !methodScope.isPrivate()) {
-               // abstract class cannot have nonprivate constructors
+            if ((_logic->isAbstract(scope.info) || scope.abstractMode) && !methodScope.isPrivate() 
+               && !test(methodScope.hints, tpProtected)) 
+            {
+               // abstract class cannot have nonpublic constructors
                scope.raiseError(errIllegalMethod, current);
             }
             else current = lxConstructor;
@@ -8574,6 +8590,20 @@ inline bool checkNonpublicDuplicates(ClassInfo& info, ref_t publicMessage)
       Attribute key = it.key();
       if (key.value1 == publicMessage && (key.value2 == maPrivate || key.value2 == maProtected || key.value2 == maInternal))
          return true;
+   }
+
+   return false;
+}
+
+inline bool isDeclaredProtected(ClassInfo& info, ref_t publicMessage, ref_t& protectedMessage)
+{
+   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+      Attribute key = it.key();
+      if (key.value1 == publicMessage && (key.value2 == maProtected)) {
+         protectedMessage = *it;
+
+         return true;
+      }         
    }
 
    return false;

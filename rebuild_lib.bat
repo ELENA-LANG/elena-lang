@@ -59,10 +59,10 @@ rem @echo off
 rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
 rem @echo on
 
-rem bin\elc src50\forms\forms.prj
-rem @echo off 
-rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
-rem @echo on
+bin\elc src50\forms\forms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 bin\elc src50\sqlite\sqlite.prj
 @echo off 

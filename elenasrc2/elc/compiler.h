@@ -952,10 +952,21 @@ private:
    {
       _CompilerLogic::ChechMethodInfo dummy;
 
-      return _logic->checkMethod(scope, reference, message, dummy);
+      return _logic->checkMethod(scope, reference, message, dummy, false);
    }
 
-////   bool verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount);
+   int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ref_t& protectedRef)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      int retVal = _logic->checkMethod(scope, reference, message, dummy, true);
+
+      protectedRef = dummy.protectedRef;
+
+      return retVal;
+   }
+
+   ////   bool verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount);
 
    bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
 
