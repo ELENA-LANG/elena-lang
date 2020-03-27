@@ -322,11 +322,6 @@ public closed class Label : BaseWinControl, interface<IControl>
     {
     }
 
-    constructor()
-        <= new()
-    {
-    }
-    
     internal createHandle()
     {
         WindowHandle parent := theParent;
@@ -438,9 +433,6 @@ abstract class BaseEdit : BaseWinControl
 
 public sealed class Edit : BaseEdit, interface<IControl>
 {
-    constructor()
-        <= new();
-    
     constructor new()
         <= new()
     {
@@ -543,11 +535,6 @@ public sealed class Button : BaseButton, interface<IControl>
     {
     }
 
-    constructor()
-        <= new()
-    {
-    }
-    
     internal createHandle()
     {
         WindowHandle parent := theParent;
@@ -961,18 +948,24 @@ public abstract class BasePanel : BaseWinContainer
         theControls.append(control)        
     }
     
-    set Width(int v)
+    int Width
     {
-        super.Width := v;
-        
-        theFrame.Width := v
+        set(int v)
+        {
+            super.Width := v;
+            
+            theFrame.Width := v
+        }        
     }
     
-    set Height(int h)
+    int Height
     {
-        super.Height := h;
-        
-        theFrame.Height := h
+        set(int h)
+        {
+            super.Height := h;
+            
+            theFrame.Height := h
+        }
     }
             
     setRegion(int x, int y, int width, int height)
@@ -982,15 +975,18 @@ public abstract class BasePanel : BaseWinContainer
         theFrame.setRegion(0, 0, width, height);
     }
     
-    set Caption(string caption)
+    string Caption
     {
-        theFrame.Caption := caption
-    }
-    
-    set Caption(wide caption)
-    {
-        theFrame.Caption := caption
-    }
+        set(string caption)
+        {
+            theFrame.Caption := caption
+        }
+        
+        set(wide caption)
+        {
+            theFrame.Caption := caption
+        }
+    }    
     
     internal resize(WindowHandle handle, int width, int height)
     {

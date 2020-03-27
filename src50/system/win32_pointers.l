@@ -58,10 +58,10 @@ public sealed const struct RTPointer
     }
         
     get()
-        => system'core_routines'__rtptr;
+        => intern system'core_routines'__rtptr;
 
     free()
-        => system'core_routines'__rtptr;
+        => intern system'core_routines'__rtptr;
 }
 
 // --- UnsafePointer ---
@@ -130,19 +130,19 @@ public sealed const struct UnsafePointer
         ^ s
     }
     
-//    saveTo(byte[] target, int offs)
-//    {
-//        intern system'core_routines'__dptr.readVal(self, ref int val);
-//        
-//        target.write(offs, val)
-//    }
-//    
-//    savePtrTo(byte[] target, int offs)
-//    {
-//        intern system'core_routines'__dptr.read(self, ref int val);
-//        
-//        target.write(offs, val)
-//    }
+    saveTo(byte[] target, int offs)
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        target.write(offs, val)
+    }
+    
+    savePtrTo(byte[] target, int offs)
+    {
+        intern system'core_routines'__dptr.read(self, ref int val);
+        
+        target.write(offs, val)
+    }
 
     copyTo(byte[] target, int len)
     {

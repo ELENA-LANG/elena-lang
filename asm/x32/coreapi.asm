@@ -1,6 +1,8 @@
 // --- System Core API  --
-
+define GC_ALLOC	         10001h
 define INIT_RND          10012h
+define CALC_SIZE         1001Fh
+define GET_COUNT         10020h
 
 define CORE_ET_TABLE     2000Bh
 
@@ -331,6 +333,31 @@ procedure coreapi'subcopy
 labNext:
   mov  edx, [eax + ebx]
   mov  byte ptr [esi], dl
+  add  ebx, 1
+  add  esi, 1
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+end
+
+// wsubcopy(target,index,size,arr)
+procedure coreapi'wsubcopy
+
+  mov  eax, [esp+16]
+  mov  edx, [esp+12]
+  mov  esi, [esp+4]
+  mov  ecx, [edx]
+  mov  edi, [esp+8]
+  test ecx, ecx
+  mov  ebx, [edi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, [eax + ebx*2]
+  mov  word ptr [esi], dx
   add  ebx, 1
   add  esi, 1
   sub  ecx, 1
@@ -4439,6 +4466,115 @@ lab4:
   jnz  short labNext
   mov  edx, ebx
   pop  ebx
+  ret
+
+end
+
+// ; resolve_index (index)
+procedure coreapi'resolve_index
+
+  mov  esi, [esp + 4]
+  mov  ecx, [esi]
+  mov  eax, [stat : "$elena'@referencetable"]
+  mov  ebx, [eax + ecx * 4]
+  
+  ret 4
+
+end
+
+procedure coreapi'resolve_index_value
+
+  mov  esi, [stat : "$elena'@referencetable"]
+  mov  ebx, [esi + edx * 4]
+  
+  ret
+
+end
+
+procedure coreapi'alloc_index
+
+  mov  eax, [stat : "$elena'@referencetable"]
+  
+  test eax, eax
+  jnz  short labStart
+
+  mov  edx, 080h
+  call code : %CALC_SIZE
+  call code : %GC_ALLOC
+  mov  [ebx-elSizeOffset], 80h
+  xor  edx, edx
+  mov  ecx, 20h
+labCopy:
+  sub  ecx, 1
+  mov  [ebx+ecx*4], edx
+  test ecx, ecx
+  jnz  short labCopy
+
+  mov  [stat : "$elena'@referencetable"], ebx
+
+labStart:
+  // ; try to reuse existing slots
+  call code : %GET_COUNT
+  mov  ecx, edx
+  xor  edx, edx
+labNext:
+  cmp  [ebx+edx*4], 0
+  jz   short labReuse
+  add  edx, 1
+  cmp  edx, ecx
+  jb   short labNext                                                                                               
+
+  // ; if no place reallocate the reference table
+  call code : %GET_COUNT
+  add  edx, 10h
+
+  push ebx
+  call code : %CALC_SIZE
+  call code : %GC_ALLOC
+  push ebx
+  mov  ebx, [esp+4]
+  call code : %GET_COUNT
+  mov  ecx, edx
+  add  edx, 10h
+  mov  edi, edx
+  pop  ebx
+
+  mov  [ebx-elSizeOffset], edx
+  pop  eax
+ 
+  xor  edx, edx
+labCopy2:
+  mov  esi, [eax+edx*4]
+  mov  [ebx+edx*4], esi
+  add  edx, 1
+  cmp  edx, ecx
+  jb   short labCopy2
+
+  mov  ecx, edi
+  xor  esi, esi
+labFill:
+  mov  [ebx+edx*4], esi
+  add  edx, 1
+  cmp  edx, ecx
+  jb   short labFill
+
+  mov  [stat : "$elena'@referencetable"], ebx
+  jmp  labStart
+
+labReuse:
+  mov  [ebx + edx * 4], const : "system'nilValue"
+
+  ret
+
+end
+
+// ; free_index
+procedure coreapi'free_index
+
+  mov  ecx, [esp+4]
+  mov  esi, [stat : "$elena'@referencetable"]
+  mov  [esi + ecx * 4], 0
+  
   ret
 
 end

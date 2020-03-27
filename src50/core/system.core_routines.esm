@@ -442,6 +442,21 @@ procedure __literal."system$$saveToByteArray$system@IntNumber$@system@Array#1&sy
 
 end
 
+procedure __wide."system$$saveToShortArray$system@IntNumber$@system@Array#1&system@ShortNumber$system@IntNumber[4]"
+
+  pushsi 3
+  pushsi 3
+  pushsi 6
+  pushsi 4
+
+  callextr api : wsubcopy
+  
+  peeksi 0
+  freei  4
+  quitn  4
+
+end
+
 procedure __wide."copy$system@WideString$system@IntNumber$system@IntNumber$system@WideString[4]"
 
   pushsi 4
@@ -4459,6 +4474,367 @@ procedure __loadTerminator."#dispatch[1]"
   movr  terminal
   quit
 
+end
+
+procedure __rtptr."new$system@RTPointer$system@Object[2]"
+
+  callr    system'rt_sync
+  pusha
+labWait:
+  snop
+  trylock
+  elsen    labWait 0 
+
+  callextr api : alloc_index  
+  pushsi   3
+  set  
+
+  popa
+  freelock
+
+  peeksi   1
+  save
+
+  quitn 2
+
+end
+
+procedure __rtptr."free[1]"
+                      
+  callr    system'rt_sync
+  pusha
+labWait:
+  snop
+  trylock
+  elsen    labWait 0 
+
+  peeksi   2
+  load
+  pushd
+  callextr api : free_index
+  freei    1
+
+  popa
+  freelock
+
+  quitn 1
+  
+end
+
+procedure __rtptr.get[1]
+
+  pusha
+  callextr api : resolve_index
+
+  quitn 1
+
+end
+
+procedure __hwnd."system@winforms$$fillWndClass$@system@Array#1&system@ByteNumber$system@WideString$system@IntNumber$system@winforms@HInstance$system@IntNumber[6]"
+
+  peeksi   4
+  load
+  peeksi   2
+  save
+  peeksi   5
+  load
+  peeksi   2
+  savei    4
+  peeksi   6
+  load
+  peeksi   2
+  savei    7
+  pushsi   3
+  xseti    9
+  freei    1
+  pushr    intern : system'core_routines'win_WndProc
+  xseti    1
+  freei    1
+  movn     0
+  savei    2
+  savei    3
+  savei    5
+  savei    6
+  savei    8
+  quitn 6
+
+end
+
+// ; win32 constants
+define WM_CREATE            1
+define WM_DESTROY           2
+define WM_SIZE              5
+define WM_PAINT             000Fh
+define WM_CLOSE             0010h
+define WM_SETCURSOR         0020h
+define WM_KEYDOWN           0100h
+define WM_KEYUP             0101h
+define WM_COMMAND           0111h
+define GWL_USERDATA         0FFFFFFEBh
+
+procedure win_WndProc
+
+  loadsi   2
+  ifn      labPaint WM_PAINT
+  ifn      labCreate WM_CREATE
+  ifn      labCursor  WM_SETCURSOR
+  ifn      labSize  WM_SIZE
+  ifn      labCommand WM_COMMAND
+  ifn      labDestroy WM_DESTROY
+  ifn      labDestroy WM_CLOSE
+
+labEnd:
+  loadsi   4
+  pushd
+  loadsi   4
+  pushd
+  loadsi   4 
+  pushd
+  loadsi   4
+  pushd
+  callextr extern : 'dlls'USER32.DefWindowProcW
+  quitn    4 
+  
+labCreate:
+  open     1
+  reserve  0  // ; open new frame
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : OpenFrame
+  freei    2
+
+  pushn    0
+  movs     0  
+  pusha
+  peekfi   -7
+  pusha
+  movf     -6
+  pusha
+  movf     -5
+  pusha
+  movf     -4
+  pusha
+
+  peekfi   -7
+  pusha
+  callextr api : resolve_index  
+
+  pusha  
+  vcallrm  system'winforms'WindowCallback mssgconst : "wm_create<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'CREATESTRUCT,'$auto'system@ref#1&system@IntNumber>[5]"
+  popa
+
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : CloseFrame
+  restore  2
+  close
+
+  quitn    4
+  
+labDestroy:
+  open     1
+  reserve  0  // ; open new frame
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : OpenFrame
+  freei    2
+
+  peeksi   4
+  pushn    GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn      labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn    0
+  pushs    0
+
+  pushf    -5
+  pushf    -4
+
+  pusha  
+  vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[3]"
+  popa
+
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : CloseFrame
+  restore  2
+  close
+
+  quitn    4
+  
+labCommand:
+  open     1
+  reserve  0  // ; open new frame
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : OpenFrame
+  freei    2   
+
+  peeksi   4
+  pushn    GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn      labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn    0
+  pushs    0
+
+  pushf    -7
+  pushf    -6
+  pushf    -5
+  pushf    -4
+
+  pusha  
+  vcallrm  system'winforms'WindowCallback mssgconst : "wm_command<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'WindowHandle,'$auto'system@ref#1&system@IntNumber>[5]"
+  popa
+
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : CloseFrame
+  restore  2
+  close
+
+  quitn    4
+  
+labCursor:
+  open     1
+  reserve  0  // ; open new frame
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : OpenFrame
+  freei    2   
+
+  peeksi   4
+  pushn    GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn      labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn    0
+  pushs    0  
+
+  pushf    -7
+  pushf    -6
+  pushf    -5
+  pushf    -4
+
+  pusha  
+  vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[5]"
+  popa
+
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : CloseFrame
+  restore  2
+  close
+
+  quitn    4
+  
+labPaint:
+  open     1
+  reserve  0  // ; open new frame
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : OpenFrame
+  freei    2
+
+  peeksi   4
+  pushn    GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn      labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn    0
+  pushs    0  
+
+  pushf    -5
+  pushf    -4
+
+  pusha  
+  vcallrm  system'winforms'WindowCallback mssgconst : "wm_paint<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[3]"
+  popa
+
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : CloseFrame
+  restore  2
+  close
+
+  quitn    4
+  
+labSize:
+  open     1
+  reserve  0  // ; open new frame
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : OpenFrame
+  freei    2
+
+  peeksi   4
+  pushn    GWL_USERDATA
+  pusha
+  callextr extern : 'dlls'USER32.GetWindowLongW
+  ifn      labEnd2 0  
+
+  callextr api : resolve_index_value  
+  pushn    0
+  pushs    0  
+
+  pushf    -7
+  pushf    -6
+  pushf    -5
+  pushf    -4
+
+  pusha  
+  vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[5]"
+  popa
+
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : CloseFrame
+  restore  2
+  close
+
+  quitn    4
+
+labEnd2:
+  movs     0
+  pusha
+  loadenv
+  pushd
+  callextr extern : CloseFrame
+  freei    4
+  jump     labEnd
+  
 end
 
 // ; system routines

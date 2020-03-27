@@ -3,7 +3,7 @@
 singleton windowClassControl
 {
     internal fillWndClass(byte[] array, wide name, int style, HInstance instance, int background)
-        => system'core_routines'__hwnd;
+        => intern system'core_routines'__hwnd;
     
     wide createClass(string name, HInstance instance, int style, int background)
     {

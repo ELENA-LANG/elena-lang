@@ -1796,27 +1796,27 @@ public extension byteArrayHelper : Array<byte>
     write(int index, real value)
         => intern system'core_routines'__bytearray;
 
-//    /// Fills the sub array with a specified value
-//    fill(int offset, int length, byte val)
-//    {
-//        int totalLength := self.Length;
-//        
-//        int i := offset;
-//        int m := offset + length;
-//        
-//        if (i > totalLength)
-//            { system'InvalidArgumentException.new().raise() };
-//        
-//        if (m > totalLength)
-//            { system'InvalidArgumentException.new().raise() };
-//            
-//        while(i < m)
-//        {
-//            self[i] :=  val;
-//            
-//            i := i + 1
-//        }
-//    }
+    /// Fills the sub array with a specified value
+    fill(int offset, int length, byte val)
+    {
+        int totalLength := self.Length;
+        
+        int i := offset;
+        int m := offset + length;
+        
+        if (i > totalLength)
+            { system'InvalidArgumentException.new().raise() };
+        
+        if (m > totalLength)
+            { system'InvalidArgumentException.new().raise() };
+            
+        while(i < m)
+        {
+            self[i] :=  val;
+            
+            i := i + 1
+        }
+    }
 }
 
 // --- charArrayHelper ---

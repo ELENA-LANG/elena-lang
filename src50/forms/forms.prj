@@ -4,7 +4,7 @@
         <namespace>forms</namespace>
         <debuginfo>-1</debuginfo>
         <options>-w3</options>
-        <output>..\..\lib40</output>
+        <output>..\..\lib50</output>
     </project>
     <manifest>
       <name>ELENA GUI Library</name>

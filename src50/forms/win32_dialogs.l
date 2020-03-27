@@ -42,7 +42,7 @@ class FileDialog
     string Selected
         = theSelectedPath;
     
-    constructor(parent)
+    constructor new(parent)
     {
         theParent := parent
     }

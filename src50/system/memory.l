@@ -1285,8 +1285,8 @@ public sealed const struct WideString : BaseValue
     save(int index, char[] array, ref int length)
         => intern system'core_routines'__wide;
 
-//    internal saveToShortArray(int index, short[] array, int retVal)
-//        => system'core_routines'__wide;
+    internal saveToShortArray(int index, short[] array, int retVal)
+        => intern system'core_routines'__wide;
 
     /// Returns the object enumerator
     Enumerator<char> enumerator() = new WideStringEnumerator(self);
