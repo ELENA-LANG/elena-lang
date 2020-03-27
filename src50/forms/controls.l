@@ -13,7 +13,7 @@ import system'drawing;
 
 // --- BaseControl ---
 
-public class BaseControl
+public abstract class BaseControl
 {
     bool   theVisible;
     bool   theEnabled;
@@ -23,7 +23,7 @@ public class BaseControl
     wide   theCaption;
     object theParent;
     
-    constructor new()
+    protected constructor new()
     {
         theVisible := true;
         theEnabled := true;

@@ -6817,6 +6817,20 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
    }
 }
 
+inline ref_t resolveProtectedMessage(ClassInfo& info, ref_t protectedMessage)
+{
+   for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+      if (*it == protectedMessage) {
+         Attribute key = it.key();
+         if (key.value2 == maProtected) {
+            return key.value1;
+         }
+      }
+   }
+
+   return 0;
+}
+
 void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeScope, ClassScope& classClassScope,
    bool& withFrame)
 {
@@ -6891,6 +6905,11 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    }
    // otherwise search in the parent class constructors
    else {
+      ref_t publicRef = resolveProtectedMessage(classClassScope.info, messageRef);
+      // HOTFIX : replace protected message with public one
+      if (publicRef)
+         messageRef = publicRef;
+
       ref_t parent = classScope->info.header.parentRef;
       ClassInfo info;
       while (parent != 0) {

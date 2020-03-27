@@ -55,7 +55,7 @@ public abstract class BaseWinControl : BaseControl
 {
     WindowHandle theHandle;
 
-    constructor new()
+    protected constructor new()
         <= new()
     {
     }
@@ -228,7 +228,7 @@ public abstract class BaseWinContainer : BaseWinControl
     List<IControl> theControls;
 //    func1    theResize.
     
-    constructor new()
+    protected constructor new()
         <= new()
     {
         theControls := new List<IControl>();
@@ -388,7 +388,7 @@ abstract class BaseEdit : BaseWinControl
 {
 //    func1 theChanged.
 //    
-    constructor new()
+    protected constructor new()
         <= new()
     {
     }
@@ -509,7 +509,7 @@ public abstract class BaseButton : BaseWinControl
 {
     event Func1 onClick;
     
-    constructor new()
+    protected constructor new()
         <= new()
     {
 //        theTabStop := true.
@@ -938,7 +938,7 @@ public abstract class BasePanel : BaseWinContainer
 {
     Frame theFrame;
     
-    constructor new()
+    protected constructor new()
         <= new()
     {
         theFrame := Frame.new();
@@ -1283,7 +1283,7 @@ public sealed class ImageList : Object, interface<IControl>
 
     Parent = theParent;    
 
-    internal set Parent(object o)
+    set internal Parent(object o)
     {
         theParent := o
     }

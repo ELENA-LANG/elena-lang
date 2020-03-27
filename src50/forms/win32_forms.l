@@ -7,7 +7,7 @@ public abstract class BaseWinForm : BaseWinContainer
 {
 //    func1 theOpenEvent.
     
-    constructor new()
+    protected constructor new()
         <= new()
     {
     }
