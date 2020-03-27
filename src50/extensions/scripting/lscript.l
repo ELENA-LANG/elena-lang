@@ -22,6 +22,12 @@ public singleton lscript
     
         var s := ns.program;
                             
-        ^ s();                                            
+        if (script[0]==$123) {
+            ^ s
+        }                            
+        else
+        {
+            ^ s();
+        }                    
     }        
 }

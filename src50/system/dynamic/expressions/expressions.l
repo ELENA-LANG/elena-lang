@@ -70,6 +70,9 @@ namespace expressions
         static Expression New(Expression t, Expression p0)
             = new MessageCallExpression(t, "#constructor", p0);
            
+        static Expression FunctionCall(params Expression[] arguments)
+            = FunctionCallExpression.new(params arguments);
+           
         static Expression MessageCall(Message message, Expression t, params Expression[] arguments)
             = MessageCallExpression.new(message,t,params arguments);
            
@@ -567,6 +570,95 @@ namespace expressions
             _target.saveTo(list, scope);
             
             list.append(MessageClosure.load(_message))
+        }
+    }
+
+    public class FunctionCallExpression : Expression
+    {
+        Message      _message;
+        Expression   _target;
+        Expression[] _arguments;
+        
+        constructor new(Expression t, params Expression[] arguments)
+        {
+            int len := arguments.Length;
+            string messageStr := "#invoke[" + len.toPrintable() + "]";
+            
+            _message := new Message(messageStr);
+            _target := t;
+            _arguments := arguments;
+        }
+        
+        constructor new(Expression t)
+        {
+            _message := new Message("#invoke[0]");
+            _target := t;
+            _arguments := new Expression[](0);
+        }
+        
+        constructor(Expression t)
+            <= new(t);
+        
+        constructor(Expression t, Expression p1)
+            <= new(t, p1);
+        
+        constructor(Expression t, Expression p1, Expression p2)
+            <= new(t, p1, p2);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3)
+            <= new(t, p1, p2, p3);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4)
+            <= new(t, p1, p2, p3, p4);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+            <= new(t, p1, p2, p3, p4, p5);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+            <= new(t, p1, p2, p3, p4, p5, p6);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+        constructor(Expression t, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+            <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+        
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            int len := _arguments.Length;
+            int i := len;
+            while(i > 0)
+            {
+                i -= 1;
+                
+                _arguments[i].saveTo(list, scope);
+            };
+            
+            _target.saveTo(list, scope);
+            
+            list.append(FunctionClosure.load(_message))
         }
     }
 

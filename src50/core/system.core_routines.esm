@@ -3244,6 +3244,18 @@ procedure __mssg_closure."params##invoke$system@Object[0]"
 
 end
 
+procedure __fun_closure."params##invoke$system@Object[0]"
+
+  popd
+  swapd
+  pushd
+  load
+  or      SPECIAL_MESSAGE
+  popa
+  jumpvi  0
+
+end
+
 procedure __local_closure."params##invoke$system@Object[0]"
 
   pusha

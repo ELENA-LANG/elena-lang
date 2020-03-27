@@ -26,11 +26,9 @@ In development:
                 * extension direct call - using message variable
 
               dev - migration
-                * Runtime evaluation
-                * Runtime evaluation/In an environment
                 * Execute Brain****/Elena
-                * Hello world/Graphical
 
+                * Hello world/Graphical
                 * Simple windowed application
                 * GUI component interaction
                 * gui samples
@@ -54,6 +52,7 @@ In development:
                 * xforms
                 * Amicable pairs using yield method
                 * implement some roseta code samples
+                * elt
 
               dev - elena50
                 * closure unboxing: field addr

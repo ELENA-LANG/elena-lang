@@ -10,6 +10,8 @@
 
    #define expression     ::= <= expression ( => object operations? <= ) =>; 
 
+   #define ret_expr       ::= <= returning ( => "^" expression ";" <= ) =>;
+
    #define object         ::= singleton;
    #define object         ::= identifier;
    #define object         ::= integer;
@@ -24,12 +26,13 @@
    #define parameters     ::= parameter next_parameter*;
    #define next_parameter ::= "," parameter;
 
-   #define body           ::= <= code ( => "{" statement* "}" <= ) =>;
+   #define body           ::= <= code ( => "{" statement* ret_expr? "}" <= ) =>;
    #define ret_body       ::= <= code ( returning ( => "=" expression ";" <= ) ) =>;
    #define statement      ::= expression ";";
 
    #define operations     ::= "." property;
    #define operations     ::= "." message m_args;
+   #define operations     ::= <= message ( ) => m_args;
 
    #define m_args         ::= "(" ")";
    #define m_args         ::= "(" m_arg next_arg* ")";

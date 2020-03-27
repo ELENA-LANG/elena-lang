@@ -34,6 +34,27 @@ public struct MessageClosure : DynamicClosure
         => intern system'core_routines'__mssg_closure;
 }
 
+// --- FunctionClosure ---
+
+public struct FunctionClosure : DynamicClosure
+{
+    embeddable Message theMessage;
+    
+    constructor(string message)
+        <= load(new Message(message));
+    
+    constructor load(string message)
+        <= load(new Message(message));
+    
+    constructor load(Message message)
+    {
+        theMessage := message
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__fun_closure;
+}
+
 // --- ConstantClosure --- 
 
 public class ConstantClosure : DynamicClosure

@@ -151,6 +151,15 @@
                )
 =>; 
 
+  #define expr_operation  ::=
+<=
+               system'dynamic'expressions'FunctionCallExpression (
+=>
+                                 object idle_mssg expression*
+<=
+               )
+=>; 
+
   #define operation       ::=
 <=
                system'dynamic'expressions'MessageCallExpression (
@@ -220,6 +229,8 @@
                     )
 =>;
       
+  #define idle_mssg       ::= "message" "(" ")";
+
   #define s_name          ::= "nameattr" "(" identifier ")" ;
   #define m_name          ::= "nameattr" "(" identifier ")" ;
   #define p_name          ::= "nameattr" "(" identifier ")" ;

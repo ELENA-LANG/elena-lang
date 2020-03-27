@@ -1024,11 +1024,26 @@ bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
 
 void* Instance :: parseMessage(ident_t message)
 {
+   size_t start = 0;
+   bool funtionMode = false;
+   if (message.startsWith(INVOKE_MESSAGE)) {
+      // HOTFIX : recognize invoke message 
+      start = getlength(INVOKE_MESSAGE);
+      if (message[start] != '[')
+         return nullptr;
+
+      funtionMode = true;
+   }
+   else if (message.startsWith(CONSTRUCTOR_MESSAGE)) {
+      // HOTFIX : recognize constructor message
+      start = 1;
+   }
+
    IdentifierString messageName;
    size_t subject = 0;
    size_t param = 0;
    int paramCount = -1;
-   for (size_t i = 0; i < getlength(message); i++) {
+   for (size_t i = start; i < getlength(message); i++) {
       if (message[i] == '[') {
          if (message[getlength(message) - 1] == ']') {
             messageName.copy(message + i + 1, getlength(message) - i - 2);
@@ -1049,13 +1064,13 @@ void* Instance :: parseMessage(ident_t message)
 
    ref_t flags = 0;
 
-   if (param != 0) {
-      messageName.copy(message + subject, param - subject);
-   }
-   else if (paramCount != -1) {
+   if (funtionMode) {
       messageName.copy(INVOKE_MESSAGE);
 
       flags |= FUNCTION_MESSAGE;
+   }
+   else if (param != 0) {
+      messageName.copy(message + subject, param - subject);
    }
    else messageName.copy(message + subject);
 
