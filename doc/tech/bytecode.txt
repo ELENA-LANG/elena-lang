@@ -400,4 +400,3 @@ ELENA byte codes (or ecodes)
  notgreater label           - jump to the label if acc[0] <= index
  
  notless label              - jump to the label if acc[0] >= index
-
