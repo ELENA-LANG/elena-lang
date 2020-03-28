@@ -228,10 +228,6 @@ Pipeline:
                 * uncomment IDEController :: isOutaged
                 * uncomment exclude from the project command
                 * build : returning (goto)
-                * ?fields
-                * inject target boxing if it is stack allocated and the message call is not stacksafe
-                * analizeSubExpression
-                * analizeAltExpression
                 * #271
                 * operations with weak array
                 * operations with variadic array
@@ -242,14 +238,12 @@ Pipeline:
                 * primitive op where i is fields - i+=k
                 * primitive op where i,k are fields - i+k
                 * new system'dynamics'DynamicStruct() - raise an error
-                * support lazyOp
                 * Tester.test(n+m*n);
                  * remove idle variable / field / constant (e.g. 2)
                  * import hashtable design
                 * debugger should show ref variable value
                 * get rid of tape support??
-                * support variadic argument list (if the number of arguments is bigger than 0x1F)
-                * ssupport namespace import, so the build script can be shortened
+                * support namespace import, so the build script can be shortened
                  * opzimiation extension operation with a byte array parameter
                  * optimize i += 1
                  * optimize assign inp_op direct_call embeddable
@@ -269,10 +263,6 @@ Pipeline:
                  * optimize gc - mg -> yg 
                  * migrate nodepad
                  * optimize intOp.Absolute method
-                 * migrate chat sample
-                 * test zeckendorf,zuang,wireworld
-                 * uncomment c_a_g code
-                 * migrate sqlite
                  * variadic closure : correctly free argument list - using the code to free until the zero is encounter
                  * gui : check default error handler
                  * bool_expr ? 1 : 0 - the expression result should be strong-typed
@@ -285,7 +275,6 @@ Pipeline:
                  * Handle, Char : there should be special enbeddable cast T<int> = field - to allow using the integer field
 
                  * Various optimizations #431
-                 * fix zeckendorf_arithm 
                  * debugger : display message name
                  * optimize hash table implementation (both weak and strong typed)
                  * implement jsonObject.serializeTo(MyDTO);
