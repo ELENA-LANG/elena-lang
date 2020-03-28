@@ -12,8 +12,8 @@ public class MainWindow : SDIDialog
     constructor new()
        <= new()
     {        
-        lblClicks := new Label();
-        btmClickMe := new Button();
+        lblClicks := Label.new();
+        btmClickMe := Button.new();
         
         clicksCount := 0;
         self

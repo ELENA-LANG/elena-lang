@@ -38,24 +38,24 @@ public class MainWindow : SDIDialog
         <= new()
     {
         // Controls
-        LabelName := new Label();
-        LabelSurName := new Label();
-        LabelOtName := new Label();
-        LabelEmail := new Label();
-        LabelAge := new Label();
-        LabelPhoneNumber := new Label();
-        LabelAbout := new Label();
-        LabelDel := new Label();
-        Name := new Edit();
-        SurName := new Edit();
-        OtName := new Edit();
-        Email := new Edit();
-        Age := new Edit();
-        PhoneNumber := new Edit();
-        BtmExit := new Button();
-        BtmSave := new Button();
-        BtmDelTxt := new Button();
-        BtmInfo := new Button();
+        LabelName := Label.new();
+        LabelSurName := Label.new();
+        LabelOtName := Label.new();
+        LabelEmail := Label.new();
+        LabelAge := Label.new();
+        LabelPhoneNumber := Label.new();
+        LabelAbout := Label.new();
+        LabelDel := Label.new();
+        Name := Edit.new();
+        SurName := Edit.new();
+        OtName := Edit.new();
+        Email := Edit.new();
+        Age := Edit.new();
+        PhoneNumber := Edit.new();
+        BtmExit := Button.new();
+        BtmSave := Button.new();
+        BtmDelTxt := Button.new();
+        BtmInfo := Button.new();
     
         self
             .appendControl:LabelName
@@ -161,7 +161,7 @@ public class MainWindow : SDIDialog
         // Save
         BtmSave.onClick := (args)
             {
-                var dialog := new SaveFileDialog(self);
+                var dialog := SaveFileDialog.new(self);
                 dialog.addFilter("Text Files", "*.txt");
                 dialog.Caption := "Select a file";
                 

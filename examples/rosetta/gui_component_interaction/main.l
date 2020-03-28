@@ -10,9 +10,9 @@ public class MainWindow : SDIDialog
     constructor new()
         <= new()
     {
-        btmIncrement := new Button();
-        btmRandom    := new Button();
-        txtNumber    := new Edit();
+        btmIncrement := Button.new();
+        btmRandom    := Button.new();
+        txtNumber    := Edit.new();
  
         self
             .appendControl:btmIncrement

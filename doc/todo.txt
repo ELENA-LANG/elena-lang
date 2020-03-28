@@ -23,15 +23,10 @@ In development:
                 * migrate tutorials
 
               dev2 - usability
-                * dynamic loading : give the symbol / class / message / subject name in the InvlidArgument exception
-
-              dev - implementing
-                * extension direct call - using message variable
+                * dynamic loading : give the symbol / class / message / subject name in the InvalidArgument exception
 
               dev - migration
-                * Hello world/Graphical
-                * Simple windowed application
-                * GUI component interaction
+                * agenda
                 * gui samples
                 * migrate changes from core to corex
                 * anagram sample with corex

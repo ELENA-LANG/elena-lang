@@ -1092,6 +1092,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   len
   peeksi  2
   notless labErr
+  load
   lessn   labErr 0
  
   peeksi  2
@@ -1118,6 +1119,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   len
   peeksi  2
   notless labErr
+  load
   lessn   labErr 0
 
   peeksi  2
@@ -1143,6 +1145,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   len
   peeksi  2
   notless labErr
+  load
   lessn   labErr 0
 
   peeksi  2
@@ -1168,10 +1171,13 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   len
   peeksi  2
   notless labErr
+  load
   lessn   labErr 0
 
   pushsi  3
+  peeksi  2
   xwrite  4
+  freei   1
   quitn 3
 
 labErr:
@@ -1188,10 +1194,13 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   len
   peeksi  2
   notless labErr
+  load
   lessn   labErr 0
 
   pushsi  3
+  peeksi  2
   xwrite  4
+  freei   1
   quitn 3
 
 labErr:
@@ -1208,10 +1217,13 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   len
   peeksi  2
   notless labErr
+  load
   lessn   labErr 0
 
   pushsi  3
+  peeksi  2
   xwrite  2
+  freei   1
   quitn 3
 
 labErr:
@@ -1228,10 +1240,13 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   len
   peeksi  2
   notless labErr
+  load
   lessn   labErr 0
 
   pushsi  3
+  peeksi  2
   xwrite  8
+  freei   1
   quitn 3
 
 labErr:
@@ -1248,10 +1263,13 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   len
   peeksi  2
   notless labErr
+  load
   lessn   labErr 0
 
   pushsi  3
+  peeksi  2
   xwrite  8
+  freei   1
   quitn 3
 
 labErr:
