@@ -118,6 +118,18 @@ bin\elc examples\gui\agenda\agenda.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elc examples\gui\graphs\graphs.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elc examples\gui\c_a_g\c_area_gui.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+rem bin\elc examples\gui\notepad\notepad.prj
+
 @echo off 
 goto:eof
 @echo on

@@ -26,8 +26,6 @@ In development:
                 * dynamic loading : give the symbol / class / message / subject name in the InvalidArgument exception
 
               dev - migration
-                * agenda
-                * gui samples
                 * migrate changes from core to corex
                 * anagram sample with corex
                 * rosetta code samples : Sleep
@@ -44,11 +42,11 @@ In development:
                 * String / WideString - add<'Char>
                 * api doc - with description
                 * regression tests
-                * graph - use script to define the function (+tutorial)
-                * xforms
                 * Amicable pairs using yield method
                 * implement some roseta code samples
                 * elt
+                * xforms
+                * graph - use script to define the function (+tutorial)
 
               dev - elena50
                 * closure unboxing: field addr
@@ -195,6 +193,9 @@ In development:
 
               xdev - ide
                 * error by viewing translit sample
+
+              dev - samples
+                * nodepad
 
               dev3
                 * port Linux IDE
