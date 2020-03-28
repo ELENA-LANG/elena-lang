@@ -429,12 +429,12 @@ end
 
 procedure __literal."system$$saveToByteArray$system@IntNumber$@system@Array#1&system@ByteNumber$system@IntNumber[4]"
 
-  pushsi 3
-  pushsi 3
-  pushsi 6
+  pushsi 1
+  pushsi 5
   pushsi 4
+  pushsi 6
 
-  callextr api : subcopy
+  callextr api : subcopyto
   
   peeksi 0
   freei  4
@@ -444,12 +444,13 @@ end
 
 procedure __wide."system$$saveToShortArray$system@IntNumber$@system@Array#1&system@ShortNumber$system@IntNumber[4]"
 
-  pushsi 3
-  pushsi 3
-  pushsi 6
+  pushsi 1
+  pushsi 5
   pushsi 4
+  pushsi 6
 
-  callextr api : wsubcopy
+  // ; wsubcopy(target,index,size,arr)
+  callextr api : wsubcopyto
   
   peeksi 0
   freei  4

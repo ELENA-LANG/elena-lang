@@ -328,6 +328,7 @@ class ByteCodeWriter
    void pushIntValue(CommandTape& tape);
 
    void saveIndexToFieldExpression(CommandTape& tape, SNode dstObj, SNode source, FlowScope& scope);
+   void saveIndexToObject(CommandTape& tape, SNode dstObj, SNode source, FlowScope& scope, int size);
    void saveFieldExpression(CommandTape& tape, SNode dstObj, SNode source, int size, FlowScope& scope);
    SyntaxTree::Node loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode);
 

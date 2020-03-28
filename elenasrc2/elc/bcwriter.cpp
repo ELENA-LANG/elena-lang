@@ -3646,6 +3646,18 @@ void ByteCodeWriter :: saveIndexToFieldExpression(CommandTape& tape, SNode dstOb
    else throw InternalError("not yet implemente"); // !! temporal
 }
 
+void ByteCodeWriter :: saveIndexToObject(CommandTape& tape, SNode dstObj, SNode srcObj, FlowScope& scope, int size)
+{
+   generateObject(tape, dstObj, scope, STACKOP_MODE);
+   generateObject(tape, srcObj, scope);
+
+   tape.write(bcPopA);
+   if (size == 4) {
+      tape.write(bcSave);
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
 void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope, bool condCopying)
 {
    if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
@@ -3754,15 +3766,20 @@ void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::N
    //   copyFromLocalAddress(tape, node.argument, srcObj.argument);
    //}
    /*else */if (dstObj.compare(lxLocal, lxTempLocal, lxSelfLocal)) {
+      // !! never used???
       loadObject(tape, source, scope);
       saveToLocal(tape, 4, dstObj.argument);
    }
    else if (dstObj == lxLocalAddress) {
+      // !! never used???
       loadObject(tape, source, scope); // NOTE : it should load the index
       saveToLocalAddress(tape, 4, dstObj.argument);
    }
    else if (dstObj == lxFieldExpression) {
       saveIndexToFieldExpression(tape, dstObj, srcObj, scope);
+   }
+   else if (dstObj == lxCreatingStruct) {
+      saveIndexToObject(tape, dstObj, srcObj, scope, node.argument);
    }
    else throw InternalError("not yet implemente"); // !! temporal
 }

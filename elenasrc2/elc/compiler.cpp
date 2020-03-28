@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -3335,9 +3335,9 @@ void Compiler :: boxArgument(SNode boxExprNode, SNode current, ExprScope& scope,
          current.setArgument(typeRef);
       }
       else if (current.compare(lxStdExternalCall, lxExternalCall, lxCoreAPICall)) {
-         int tempLocal = scope.newTempLocal();
-
-         injectIndexBoxingTempLocal(boxExprNode, current, scope, lxTempLocal, tempLocal);
+         if (boxingMode) {
+            injectIndexBoxing(boxExprNode, current, scope);
+         }
       }
       else if (boxingMode || (current == lxFieldExpression && !withoutLocalBoxing)) {
          if (inPlace || (test(current.type, lxOpScopeMask) && current != lxFieldExpression)) {
@@ -9665,31 +9665,18 @@ void Compiler :: injectMemberPreserving(SNode node, ExprScope& scope, LexicalTyp
    else throw InternalError("Not yet implemented"); // !! temporal
 }
 
-void Compiler :: injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
-   int tempLocal)
+void Compiler :: injectIndexBoxing(SNode node, SNode objNode, ExprScope& scope)
 {
-   SNode parent = node;
-   SNode current = injectRootSeqExpression(parent);
-
-   // inject creating a boxed object
-   SNode assigningNode = current.insertNode(lxAssigning);
-   assigningNode.appendNode(tempType, tempLocal);
-
    ref_t typeRef = node.findChild(lxType).argument;
    int size = node.findChild(lxSize).argument;
 
-   SNode newNode = assigningNode.appendNode(lxCreatingStruct, size);
+   if (typeRef == V_DWORD)
+      typeRef = scope.moduleScope->intReference;
+
+   objNode.injectAndReplaceNode(lxSaving, size);
+
+   SNode newNode = objNode.insertNode(lxCreatingStruct, size);
    newNode.appendNode(lxType, typeRef);
-
-   // saving index
-   // inject copying to the boxed object if it is a structure
-   SNode copyingNode = objNode;
-   copyingNode.injectAndReplaceNode(lxSaving, size);
-
-   copyingNode.insertNode(tempType, tempLocal);
-   copyingNode.injectAndReplaceNode(lxSeqExpression);
-
-   copyingNode.appendNode(tempType, tempLocal);
 }
 
 void Compiler :: injectCopying(SNode& copyingNode, int size, bool variadic, bool primArray)

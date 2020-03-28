@@ -1255,8 +1255,7 @@ private:
 
    void injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal, 
       ObjectInfo member, int memberIndex);
-   void injectIndexBoxingTempLocal(SNode node, SNode objNode, ExprScope& scope, LexicalType tempType,
-      int tempLocal);
+   void injectIndexBoxing(SNode node, SNode objNode, ExprScope& scope);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);
    void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));

@@ -319,6 +319,31 @@ labEnd:
 end
 
 // subcopyz(target,index,size,arr)
+procedure coreapi'subcopyto
+
+  mov  eax, [esp+16]
+  mov  edx, [esp+12]
+  mov  esi, [esp+4]
+  mov  ecx, [edx]
+  mov  edi, [esp+8]
+  test ecx, ecx
+  mov  ebx, [edi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, [eax]
+  mov  byte ptr [esi + ebx], dl
+  add  ebx, 1
+  add  eax, 1
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+end
+
+// subcopyz(target,index,size,arr)
 procedure coreapi'subcopy
 
   mov  eax, [esp+16]
@@ -344,7 +369,7 @@ labEnd:
 end
 
 // wsubcopy(target,index,size,arr)
-procedure coreapi'wsubcopy
+procedure coreapi'wsubcopyto
 
   mov  eax, [esp+16]
   mov  edx, [esp+12]
@@ -356,10 +381,10 @@ procedure coreapi'wsubcopy
   jz   short labEnd
 
 labNext:
-  mov  edx, [eax + ebx*2]
-  mov  word ptr [esi], dx
+  mov  edx, [eax]
+  mov  word ptr [esi + ebx*2], dx
   add  ebx, 1
-  add  esi, 1
+  add  eax, 2
   sub  ecx, 1
   jnz  short labNext
 
