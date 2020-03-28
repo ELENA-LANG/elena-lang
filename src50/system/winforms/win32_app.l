@@ -19,7 +19,7 @@ public class SDIApplication //:: BaseApplication
     
     MainWindow = theMainWindow;
     
-    closure()
+    function()
     {
         theMainWindow.open();
 

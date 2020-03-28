@@ -4493,9 +4493,9 @@ end
 
 procedure coreapi'alloc_index
 
-  mov  eax, [stat : "$elena'@referencetable"]
+  mov  ebx, [stat : "$elena'@referencetable"]
   
-  test eax, eax
+  test ebx, ebx
   jnz  short labStart
 
   mov  edx, 080h

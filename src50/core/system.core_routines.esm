@@ -4487,7 +4487,8 @@ labWait:
 
   callextr api : alloc_index  
   pushsi   3
-  set  
+  set 
+  freei    1 
 
   popa
   freelock
@@ -4622,7 +4623,7 @@ labCreate:
   callextr api : resolve_index  
 
   pusha  
-  vcallrm  system'winforms'WindowCallback mssgconst : "wm_create<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'CREATESTRUCT,'$auto'system@ref#1&system@IntNumber>[5]"
+  vcallrm  system'winforms'WindowCallback mssgconst : "wm_create<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'CREATESTRUCT,'$auto'system@ref#1&system@IntNumber>[6]"
   popa
 
   movs     0
@@ -4659,7 +4660,7 @@ labDestroy:
   pushf    -4
 
   pusha  
-  vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[3]"
+  vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[4]"
   popa
 
   movs     0
@@ -4698,7 +4699,7 @@ labCommand:
   pushf    -4
 
   pusha  
-  vcallrm  system'winforms'WindowCallback mssgconst : "wm_command<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'WindowHandle,'$auto'system@ref#1&system@IntNumber>[5]"
+  vcallrm  system'winforms'WindowCallback mssgconst : "wm_command<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'WindowHandle,'$auto'system@ref#1&system@IntNumber>[6]"
   popa
 
   movs     0
@@ -4737,7 +4738,7 @@ labCursor:
   pushf    -4
 
   pusha  
-  vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[5]"
+  vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[6]"
   popa
 
   movs     0
@@ -4774,7 +4775,7 @@ labPaint:
   pushf    -4
 
   pusha  
-  vcallrm  system'winforms'WindowCallback mssgconst : "wm_paint<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[3]"
+  vcallrm  system'winforms'WindowCallback mssgconst : "wm_paint<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[4]"
   popa
 
   movs     0
@@ -4813,7 +4814,7 @@ labSize:
   pushf    -4
 
   pusha  
-  vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[5]"
+  vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[6]"
   popa
 
   movs     0
