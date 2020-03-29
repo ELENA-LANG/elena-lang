@@ -31,12 +31,6 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, vo
 EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,
    ProgramHeader* header)
 {
-   //ProgramHeader header;
-   //// initialize the exception handler
-   //__asm {
-   //   mov header.root_exception_struct.core_catch_frame, ebp
-   //   mov header.root_exception_struct.core_catch_level, esp
-   //}
    header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler

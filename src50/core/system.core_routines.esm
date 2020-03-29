@@ -4924,6 +4924,28 @@ symbol vm_sta_start
 
 end
 
+symbol mta_start
+
+  open    1
+  reserve sizeof ProgramHeader
+
+  pushs    -2
+  callextr api : initProgramHeader
+  pushr    entry : "$forwards'$program"
+  pushr    api : seh_handler
+  pushr    api : default_handler
+  alloci   1
+  loadenv
+  savesi   0
+  callextr extern : InitializeMTA
+  freei    4
+
+  restore  sizeof ProgramHeader_2
+  close
+  quit
+
+end
+
 symbol sta_start
 
   open    1
@@ -4957,5 +4979,25 @@ procedure thread_start
   callextr extern : StartThread
   freei    4
   quitn 1
+
+end
+
+procedure invoker
+
+  movs     1  
+  pusha
+  callextr api : resolve_index
+  pusha
+  movm     mssgconst : "#invoke[0]"
+  callvi   0
+  ifr      labError 0
+  freei    1
+  quitn 1
+
+labError:
+  open 1
+  pushr class : system'NotSupportedException
+  pushr mssgconst : "new[1]"
+  throw
 
 end
