@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>5.0.3</version>
+     <version>5.0.4</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -67,6 +67,8 @@
      </module>
      <module name="threading">
        <include>threading\win32_handlers.l</include>
+       <include>threading\thread.l</include>
+       <include>threading\thread_patterns.l</include>
      </module>
      <module name="drawing">
        <include>drawing\common.l</include>

@@ -4679,3 +4679,11 @@ lab6:
   pop ebp
   ret
 end
+
+procedure coreapi'thread_default_handler
+
+  // ; exit code
+  push 0FFFFFFFFh
+  call extern 'rt_dlls.StopThread
+
+end

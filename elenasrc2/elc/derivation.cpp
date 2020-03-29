@@ -645,7 +645,7 @@ void DerivationWriter :: declareStatement(SNode node, ScopeType templateType)
    if (_scope->attributes.exist(name))
       raiseWarning(WARNING_LEVEL_2, wrnAmbiguousIdentifier, nameTerminal);
 
-   ReferenceNs fullName("'", name.ident());
+   IdentifierString fullName("'", name.ident());
    ref_t reference = _scope->module->mapReference(fullName.c_str());
 
    // check for duplicate declaration
@@ -1596,30 +1596,48 @@ void DerivationWriter :: generateClosureTree(SyntaxWriter& writer, SNode& node, 
       node = node.nextNode();
 }
 
-//ref_t DerivationWriter :: resolveTemplate(ident_t templateName)
-//{
+ref_t DerivationWriter :: resolveTemplate(ident_t templateName)
+{
+   SNode node = _output.CurrentNode();
+   while (node != lxNone) {
+      if (node == lxNamespace) {
+         SNode current = node.findChild(lxImport);
+         while (current != lxNone) {
+            if (current == lxImport) {
+               IdentifierString fullName(current.identifier());
+               fullName.append("'");
+               fullName.append(templateName);
+               
+               ref_t templateRef = 0;
+               _Module* templateModule = _scope->loadReferenceModule(fullName.c_str(), templateRef);
+               if (templateModule != nullptr && templateModule->mapSection(templateRef | mskSyntaxTreeRef, true) != nullptr) {
+                  if (_scope->module != templateModule) {
+                     return importReference(templateModule, templateRef, _scope->module);
+                  }
+                  else return templateRef;
+               }
+            }
+            current = current.nextNode();
+         }
+      }
+
+      node = node.parentNode();
+   }
+
 //   for (auto it = _importedNs.start(); !it.Eof(); it++) {
-//      IdentifierString fullName(*it);
-//      fullName.append("'");
-//      fullName.append(templateName);
-//
-//      ref_t templateRef = 0;
-//      _Module* templateModule = _scope->loadReferenceModule(fullName.c_str(), templateRef);
-//      if (templateModule != nullptr && templateModule->mapSection(templateRef | mskSyntaxTreeRef, true) != nullptr) {
-//         if (_scope->module != templateModule) {
-//            return importReference(templateModule, templateRef, _scope->module);
-//         }
-//         else return templateRef;
-//      }
 //   }
 //
 //   return 0;
-//}
+}
 
 void DerivationWriter :: generateStatementTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope&)
 {
    ref_t templateRef = _scope->attributes.get(templateName.c_str());
-//   ref_t templateRef = resolveTemplate(templateName);
+   if (!templateRef) {
+      // bad luck : we have to find the template reference directly
+      templateRef = resolveTemplate(templateName);
+   }
+
    if (!templateRef)
       raiseError(errInvalidSyntax, node.parentNode());
 
