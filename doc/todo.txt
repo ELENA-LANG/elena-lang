@@ -13,6 +13,8 @@ In development:
                 * compile all console / files examples
 
               dev2 - research
+                * xforms
+                * graph - use script to define the function (+tutorial)
                 * source to expression tree
                 * expression tree to source
 
@@ -37,6 +39,7 @@ In development:
                 * rosetta code samples : Zhang-Suen thinning algorithm
                 * system_test : exceptionTest
                 * sqlite : support float / blob
+                * active issues
                 * uncomment all code in LIB50
                 * String / WideString - add<'Char>
                 * api doc - with description
@@ -44,8 +47,7 @@ In development:
                 * Amicable pairs using yield method
                 * implement some roseta code samples
                 * elt
-                * xforms
-                * graph - use script to define the function (+tutorial)
+                * upndown
 
               dev - elena50
                 * closure unboxing: field addr
@@ -58,6 +60,7 @@ In development:
                 * #190 : Closure : auto boxing / unboxing local variables 
                 * extension message - can be applied only to the generic extension?
                 * ifheap - is not correctly recognize data allocated classes
+                * if bug structure is allocated - it will be marked as root - will it work?
 
               dev2 - tutorials
                 * migrate tutorials from reddit
@@ -68,6 +71,7 @@ In development:
                 * rosetta code : AmicablePairs using yieldable method
 
               dev - refactoring
+                * do we need ENDFRAME?
                 * loadfi vs loadf, savefi vs savef
 
               dev - new features

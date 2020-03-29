@@ -72,7 +72,7 @@ define page_align_mask   000FFFF0h
 define SUBJ_MASK          1FFFFFFh                          
 
 // --- GC_ALLOC ---
-// in: ecx - counter ; ebx - size ; ecx - actual size ; out: eax - created object ; edi contains the object or zero
+// in: ecx - size ; out: ebx - created object
 procedure %GC_ALLOC
 
   // ; GCXT: set lock
@@ -89,12 +89,11 @@ labWait:
   add  ecx, eax
   cmp  ecx, edx
   jae  short labYGCollect
-  mov  [eax], ebx
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   
   // ; GCXT: clear sync field
   mov  edx, 0FFFFFFFFh
-  lea  eax, [eax + elObjectOffset]
+  lea  ebx, [eax + elObjectOffset]
   
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
@@ -111,7 +110,6 @@ labYGCollect:
   mov  eax, [data : %CORE_TLS_INDEX]
 
   // ; GCXT: save registers
-  push edi
   mov  eax, [edx+eax*4]
   push ebp
   
@@ -121,7 +119,6 @@ labYGCollect:
   mov  [eax + tls_stack_frame], esp
   
   push ecx
-  push ebx
 
   // ; === GCXT: safe point ===
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
@@ -148,10 +145,8 @@ labYGCollect:
   call extern 'dlls'kernel32.WaitForSingleObject
 
   // ; restore registers and try again
-  pop  ebx
   pop  ecx
   pop  ebp
-  pop  edi
 
   jmp  labStart
 
@@ -370,7 +365,7 @@ labCollectFrame:
   mov  [data : %CORE_GC_TABLE + gc_yg_end], edx
   mov  ebx, [esp]
   mov  [data : %CORE_GC_TABLE + gc_shadow], eax  
-  mov  ebx, [ebx+4]                           // ; restore object size  
+  mov  ebx, [ebx]                           // ; restore object size  
   mov  [data : %CORE_GC_TABLE + gc_shadow_end], ecx
 
   sub  edx, ebp
@@ -386,15 +381,13 @@ labCollectFrame:
   mov  esp, ebp
 
   // ; restore registers
-  pop  ebx
+  pop  ecx
 
   // ; try to allocate once again
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  ecx, [esp]
-  mov  [eax], ebx
   add  ecx, eax
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   lea  edi, [eax + elObjectOffset]
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
 
   // ; GCXT: signal the collecting thread that GC is ended
   // ; should it be placed into critical section?
@@ -405,10 +398,8 @@ labCollectFrame:
   push esi
   call extern 'dlls'kernel32.SetEvent 
 
-  mov  eax, edi
-  pop  ecx
+  mov  ebx, edi
   pop  ebp
-  pop  edi  
 
   ret
 
@@ -606,16 +597,14 @@ labFixRoot:
 	
   // ; free root set
   mov  esp, [esp]
-  pop  ebx
+  pop  ecx
 
   // ; allocate
   mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  ecx, [esp]
   mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
   add  ecx, eax
   cmp  ecx, edx
   jae  labBigAlloc
-  mov  [eax], ebx
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
   lea  edi, [eax + elObjectOffset]
 
@@ -628,19 +617,15 @@ labFixRoot:
   push esi
   call extern 'dlls'kernel32.SetEvent 
 
-  mov  eax, edi
-  pop  ecx
+  mov  ebx, edi
   pop  ebp
-  pop  edi  
   ret
 
 labError:
   // ; restore stack
   mov  esp, [esp]
-  pop  ebx
   pop  ecx
   pop  ebp
-  pop  edi 
 
 labError2:
   mov  ebx, 17h
@@ -650,7 +635,6 @@ labError2:
 // ; bad luck, we have to expand GC
 labBigAlloc2:
   push ecx
-  push ebx
 
   mov  eax, [data : %CORE_GC_TABLE + gc_end]
   mov  ecx, 2A000h
@@ -668,7 +652,6 @@ labBigAlloc2:
   add  ecx, 15000h
   mov  [data : %CORE_GC_TABLE + gc_end], ecx
 
-  pop  ebx
   pop  ecx
 
 labBigAlloc:
@@ -682,22 +665,17 @@ labBigAlloc:
   add  ecx, eax
   cmp  ecx, edx
   jae  labBigAlloc2
-  mov  [eax], ebx
   mov  [data : %CORE_GC_TABLE + gc_mg_current], ecx
-  lea  eax, [eax + elObjectOffset]
+  lea  ebx, [eax + elObjectOffset]
 
   // ; mark it as root in WB
-  cmp  ebx, 0800000h
-  jae  short labSkipBigAlloc
-
-  mov  ecx, eax
+  mov  ecx, ebx
   mov  esi, [data : %CORE_GC_TABLE + gc_header]
   sub  ecx, [data : %CORE_GC_TABLE + gc_start]
   shr  ecx, page_size_order
   mov  byte ptr [ecx + esi], 1  
 
-labSkipBigAlloc:
-  mov  edi, eax
+  mov  edi, ebx
   // ; GCXT: signal the collecting thread that GC is ended
   // ; should it be placed into critical section?
   xor  ecx, ecx
@@ -707,10 +685,8 @@ labSkipBigAlloc:
   push esi
   call extern 'dlls'kernel32.SetEvent 
 
-  mov  eax, edi
-  pop  ecx
+  mov  ebx, edi
   pop  ebp
-  pop  edi  
   ret  
 
   // ; start collecting: esi => ebp, [ebx, edx] ; ecx - count
@@ -983,82 +959,12 @@ procedure % ENDFRAME
 
 end
 
-/*
-procedure % RESTORE_ET
-
-  // ; GCXT: get current thread frame
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  ecx, fs:[2Ch]
-  mov  ebx, [ecx+ebx*4]
-
-  pop  edx
-  mov  ebx, [ebx + tls_et_current]
-  mov  esp, [ebx + 4]
-  push edx
-
-  ret
-
-end 
-*/
-
-// ; NOTE : some functions (e.g. system'core_routines'win_WndProc) assumes the function reserves 12 bytes
-// ; does not affect eax
-procedure % OPENFRAME
-
-  // ; GCXT: get thread table entry from tls
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  esi, fs:[2Ch]
-  xor  edi, edi
-  mov  esi, [esi+ebx*4]
-                                        
-  // ; save return pointer
-  pop  ecx  
-
-  // ; GCXT: get thread table entry from tls
-  // ; save previous pointer / size field
-  mov  esi, [esi + tls_stack_frame]
-  push ebp
-  push esi                                
-  push edi                              
-  mov  ebp, esp
-  
-  // ; restore return pointer
-  push ecx   
-  ret
-
-end
-
-// ; does not affect eax
-procedure % CLOSEFRAME
-
-  // ; GCXT: get thread table entry from tls
-  mov  ebx, [data : %CORE_TLS_INDEX]
-  mov  esi, fs:[2Ch]
-  xor  edi, edi
-  mov  esi, [esi+ebx*4]
-                                        
-  // ; save return pointer
-  pop  ecx  
-
-  // ; GCXT
-  lea  esp, [esp+4]
-  pop  edx
-  mov  [esi + tls_stack_frame], edx
-  pop  ebp
-  
-  // ; restore return pointer
-  push ecx   
-  ret
-
-end
-
 // --- THREAD_WAIT ---
 // GCXT: it is presumed that gc lock is on, edx - contains the collecting thread event handle
 
 procedure % THREAD_WAIT
 
-  push eax
-  push edi
+  push ebx
   push ebp
   mov  edi, esp
 
@@ -1097,8 +1003,7 @@ labWait:
   call extern 'dlls'kernel32.WaitForSingleObject
 
   add  esp, 4
-  pop  edi
-  pop  eax
+  pop  ebx
 
   ret
 
@@ -1127,11 +1032,11 @@ inline % 7
 
   // ; GCXT: get current thread frame
   mov  esi, [data : %CORE_TLS_INDEX]
-  mov  edx, fs:[2Ch]
-  mov  esi, [edx+esi*4]
-  mov  edx, [esi + tls_et_current]
+  mov  eax, fs:[2Ch]
+  mov  esi, [eax+esi*4]
+  mov  eax, [esi + tls_et_current]
 
-  jmp  [edx]
+  jmp  [eax]
 
 end
 
@@ -1139,16 +1044,16 @@ end
 inline % 1Dh
 
   // ; GCXT: get current thread frame
-  mov  edx, [data : %CORE_TLS_INDEX]
+  mov  eax, [data : %CORE_TLS_INDEX]
   mov  esi, fs:[2Ch]
-  mov  edx, [esi+edx*4]
+  mov  eax, [esi+eax*4]
 
-  mov  esi, [edx + tls_et_current]
+  mov  esi, [eax + tls_et_current]
 
   mov  esp, [esi + 4]
   mov  ebp, [esi + 8]
   pop  esi
-  mov  [edx + tls_et_current], esi
+  mov  [eax + tls_et_current], esi
   
 end
 
@@ -1156,9 +1061,9 @@ end
 inline % 25h
        
   add  esp, 4
-  mov  edx, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
-  mov  esi, [edx+eax*4]
+  mov  esi, [ecx+eax*4]
   mov  [esi + tls_flags], 0
 
 end
@@ -1166,9 +1071,9 @@ end
 // ; exclude
 inline % 26h
                                                        
-  mov  edx, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
   mov  eax, [data : %CORE_TLS_INDEX]
-  mov  esi, [edx+eax*4]
+  mov  esi, [ecx+eax*4]
   mov  [esi + tls_flags], 1
   push ebp     
   mov  [esi + tls_stack_frame], esp
@@ -1183,18 +1088,18 @@ inline % 27h
   xor eax, eax
   mov ebx, 1
   lock cmpxchg byte ptr[esi - elSyncOffset], bl
-  mov  ebx, eax
-  mov  eax, esi
+  mov  edx, eax
+  mov  ebx, esi
 
 end
 
 // ; freelock
 inline % 28h
 
-  mov  edx, -1
+  mov  ecx, -1
 
   // ; free lock
-  lock xadd byte ptr [eax - elSyncOffset], dl
+  lock xadd byte ptr [ebx - elSyncOffset], cl
 
 end
 
@@ -1203,15 +1108,15 @@ inline % 29h
 
   // ; GCXT: get current thread frame
   mov  esi, [data : %CORE_TLS_INDEX]
-  mov  edx, fs:[2Ch]
-  mov  edx, [edx+esi*4]
+  mov  ecx, fs:[2Ch]
+  mov  ecx, [ecx+esi*4]
 
-  mov  esi, [edx + tls_et_current]
+  mov  esi, [ecx + tls_et_current]
   mov  esi, [esi + 4]
   mov  esi, [esi]
-  mov  [edx + tls_et_current], esi
+  mov  [ecx + tls_et_current], esi
 
-  jmp  [edx + tls_et_current]
+  jmp  [ecx + tls_et_current]
 
 end
 
@@ -1223,9 +1128,9 @@ inline % 0A6h
   call code : %HOOK
 
   // ; GCXT: get current thread frame
-  mov  ebx, [data : %CORE_TLS_INDEX]
+  mov  eax, [data : %CORE_TLS_INDEX]
   mov  edx, fs:[2Ch]
-  mov  ebx, [edx+ebx*4]
+  mov  eax, [edx+eax*4]
 
   push [ebx + tls_et_current]
 
@@ -1234,6 +1139,6 @@ inline % 0A6h
   push esi
   push ecx
 
-  mov  [ebx + tls_et_current], esp
+  mov  [eax + tls_et_current], esp
   
 end

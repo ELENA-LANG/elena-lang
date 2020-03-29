@@ -573,12 +573,14 @@ labBigAlloc:
   mov  [data : %CORE_GC_TABLE + gc_mg_current], ecx
   lea  ebx, [eax + elObjectOffset]
 
+  // ; mark it as root in WB
   mov  ecx, ebx
   mov  esi, [data : %CORE_GC_TABLE + gc_header]
   sub  ecx, [data : %CORE_GC_TABLE + gc_start]
   shr  ecx, page_size_order
   mov  byte ptr [ecx + esi], 1  
 
+  pop  ebp
   ret  
 
   // ; start collecting: esi => ebp, [ebx, edx] ; ecx - count
