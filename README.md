@@ -5,14 +5,15 @@ ELENA is a general-purpose, object-oriented language with late binding. It featu
 This is the GitHub repository of ELENA source code including compiler, IDE, ELENA libraries and samples.
 
 ## Resources
+- **ELENa API** <https://elena-lang.github.io/api/index.html>
+- **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
+- **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
 - **Wiki:** <https://github.com/ELENA-LANG/elena-lang/wiki/>
 - **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
 - **Source code:** <https://github.com/ELENA-LANG/elena-lang>
 - **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Twitter:** <https://twitter.com/elena_language>
 - **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
-- **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
-- **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
 
 ## Currently Supported Platforms
 
