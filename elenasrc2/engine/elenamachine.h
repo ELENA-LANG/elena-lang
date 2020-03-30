@@ -32,6 +32,7 @@ struct _Entry
       int  (*entry)(void);
       int  (*evaluate)(void*);
       int  (*evaluate2)(pos_t, void*);
+      int  (*evaluate3)(pos_t, void*, void*);
    };
 
    _Entry()

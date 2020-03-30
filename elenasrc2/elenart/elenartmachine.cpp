@@ -40,22 +40,23 @@ void ELENARTMachine :: startMTA(ProgramHeader* frameHeader, SystemEnv* env, void
    __routineProvider.InitMTA((SystemEnv*)env, frameHeader);
 
    _Entry entry;
-   entry.address = programEntry;
+   entry.address = env->Invoker;
 
-   (*entry.entry)();
+   // executing the program
+   int retVal = entry.evaluate3(0, programEntry, nullptr);
 
    // winding down system
    Exit(0);
 }
 
-void ELENARTMachine :: startThread(ProgramHeader* frameHeader, SystemEnv* env, void* entryPoint, int index)
+void ELENARTMachine :: startThread(ProgramHeader* frameHeader, SystemEnv* env, void* threadEntry, int index)
 {
    __routineProvider.NewThread(env, frameHeader);
 
    _Entry entry;
-   entry.address = entryPoint;
+   entry.address = env->Invoker;
 
-   (*entry.evaluate)((void*)index);
+   entry.evaluate3(0, threadEntry, &index);
 
    __routineProvider.ExitThread(env, 0, false);
 }

@@ -4860,7 +4860,7 @@ end
 procedure __thread."readThreadProc$@system@ref#1&system@IntNumber[1]"
 
   pushr    intern : system'core_routines'thread_start
-  peeksi   1
+  peeksi   2
   xseti    0
   freei    1
   quitn    1
@@ -4971,21 +4971,31 @@ end
 procedure thread_start
 
   loadsi   1
+  open     1
+  reserve  sizeof ProgramHeader
+
   pushd
-  pushr    intern : system'core_routines'invoker
+  pushs    -2
+  callextr api : initProgramHeader
+
+  pushr    intern : system'core_routines'threadEntry
   pushr    api : thread_default_handler
   loadenv
   pushd
   callextr extern : StartThread
-  freei    4
-  quitn 1
+  freei    5
+
+  restore  sizeof ProgramHeader_2
+  close
+  quitn    1
 
 end
 
-procedure invoker
+procedure threadEntry
 
-  movs     1  
-  pusha
+  movs     1
+  load
+  pushd
   callextr api : resolve_index
   pusha
   movm     mssgconst : "#invoke[0]"

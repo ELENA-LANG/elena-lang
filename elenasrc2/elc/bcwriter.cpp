@@ -1006,17 +1006,17 @@ void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
    declareCatch(tape);
    doCatch(tape);
 
+   tape.write(bcSwap);
    freeLock(tape);
-   releaseStack(tape);
-   tape.write(bcPushA);
 
    // throw
    tape.write(bcThrow);
 
    endCatch(tape);
 
+   tape.write(bcSwap);
    freeLock(tape);
-   releaseStack(tape);
+   tape.write(bcPopA);
 
    // HOTFIX : contains no symbol ending tag, to correctly place an expression end debug symbol
    // storer static

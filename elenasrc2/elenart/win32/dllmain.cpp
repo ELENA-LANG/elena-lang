@@ -43,17 +43,12 @@ EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, vo
    _Instance->startMTA(header, (SystemEnv*)systemEnv, entryPoint);
 }
 
-EXTERN_DLL_EXPORT int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int index)
+EXTERN_DLL_EXPORT int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint,
+   ProgramHeader* header, int index)
 {
-   ProgramHeader header;
-   // initialize the exception handler
-   __asm {
-      mov header.root_exception_struct.core_catch_frame, ebp
-      mov header.root_exception_struct.core_catch_level, esp
-   }
-   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
-   _Instance->startThread(&header, (SystemEnv*)systemEnv, entryPoint, index);
+   _Instance->startThread(header, (SystemEnv*)systemEnv, entryPoint, index);
 
    return 0;
 }

@@ -67,7 +67,7 @@ procedure % INIT_RND
   
 end
 
-// INVOKER(prevFrame, function)
+// INVOKER(prevFrame, function, arg)
 procedure % INVOKER
 
   // ; save registers
@@ -75,6 +75,7 @@ procedure % INVOKER
   push esi
   mov  esi, [esp+8]   // ; prevFrame
   push edi
+  mov  edi, [esp+20]  // ; arg
   push ecx
   push ebx
   push ebp
@@ -83,8 +84,10 @@ procedure % INVOKER
   push esi            // ; FrameHeader.previousFrame
   push 0              // ; FrameHeader.reserved
   mov  ebp, esp       // ; FrameHeader
+  push edi            // ; arg
+
   call eax
-  add  esp, 8         // ; clear FrameHeader
+  add  esp, 12        // ; clear FrameHeader+arg
 
   // ; restore registers
   pop  ebp
