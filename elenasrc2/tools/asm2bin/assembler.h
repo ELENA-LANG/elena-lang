@@ -166,7 +166,7 @@ struct TokenInfo
             return align(sizeof(ProgramHeader), 4) >> 2;
          }
          else if (check("ProgramHeader_2")) {
-            return align(sizeof(ProgramHeader), 4) >> 2 + 2;
+            return (align(sizeof(ProgramHeader), 4) >> 2) + 2;
          }
          else raiseErr("Invalid number (%d)\n");
       }

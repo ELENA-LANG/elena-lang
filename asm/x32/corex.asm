@@ -1129,10 +1129,10 @@ inline % 0A6h
 
   // ; GCXT: get current thread frame
   mov  eax, [data : %CORE_TLS_INDEX]
-  mov  edx, fs:[2Ch]
-  mov  eax, [edx+eax*4]
+  mov  edi, fs:[2Ch]
+  mov  eax, [edi+eax*4]
 
-  push [ebx + tls_et_current]
+  push [eax + tls_et_current]
 
   mov  esi, esp 
   push ebp

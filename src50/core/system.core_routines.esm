@@ -4993,16 +4993,15 @@ end
 
 procedure threadEntry
 
-  movs     1
-  load
-  pushd
+  peeksi   1
+  pusha
   callextr api : resolve_index
   pusha
   movm     mssgconst : "#invoke[0]"
   callvi   0
   ifr      labError 0
   freei    1
-  quitn 1
+  quit
 
 labError:
   open 1
