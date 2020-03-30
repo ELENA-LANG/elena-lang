@@ -58,9 +58,9 @@ public singleton threadControl
 
 public extension threadOp
 {
-//    enterCriticalSection()
-//        => intern system'core_routines'__thread;
-//        
-//    leaveCriticalSection()
-//        => intern system'core_routines'__thread; 
+    enterCriticalSection()
+        => intern system'core_routines'__thread;
+        
+    leaveCriticalSection()
+        => intern system'core_routines'__thread; 
 } 
