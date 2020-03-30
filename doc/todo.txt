@@ -28,18 +28,13 @@ In development:
                 * dynamic loading : give the symbol / class / message / subject name in the InvalidArgument exception
 
               dev - migration
-                * migrate changes from core to corex
-                * anagram sample with corex
-                * rosetta code samples : Sleep
-                * rosetta code samples : Sockets
-                * rosetta code samples : Sorting algorithms/Sleep sort
-                * rosetta code samples : Time a function
                 * socket samples
+                * rosetta code samples : Sockets
 
+                * active issues
                 * rosetta code samples : Zhang-Suen thinning algorithm
                 * system_test : exceptionTest
                 * sqlite : support float / blob
-                * active issues
                 * uncomment all code in LIB50
                 * String / WideString - add<'Char>
                 * api doc - with description
@@ -63,6 +58,8 @@ In development:
                 * if bug structure is allocated - it will be marked as root - will it work?
 
               dev2 - tutorials
+                * duck_typing_in_elena_programming_language
+                * tutorials
                 * migrate tutorials from reddit
                 * duck typing tutorial
                 * yieldable method tutorial

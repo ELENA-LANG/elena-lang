@@ -401,7 +401,7 @@ void DerivationWriter :: recognizeDefinition(SNode scopeNode)
    SNode bodyNode = scopeNode.firstChild();
    if (scopeNode.existChild(lxCode, lxReturning)) {
       // mark one method class declaration
-      scopeNode.set(lxClass, MODE_FUNCTION);
+      scopeNode.set(lxClass, (ref_t)MODE_FUNCTION);
    }
    else if (bodyNode == lxExpression) {
       scopeNode = lxSymbol;
@@ -773,7 +773,7 @@ void DerivationWriter :: recognizeClassMebers(SNode node/*, DerivationScope& sco
          int mode = 0;
          if (bodyNode == lxExpression) {
             // if it is a property, mark it as a get-property
-            current.set(lxClassMethod, MODE_PROPERTYMETHOD);
+            current.set(lxClassMethod, (ref_t)MODE_PROPERTYMETHOD);
 
             recognizeMethodMebers(current);
          }
@@ -905,7 +905,7 @@ void DerivationWriter :: generateSymbolTree(SyntaxWriter& writer, SNode node, Sc
    writer.closeNode();
 }
 
-void DerivationWriter :: generateClassImport(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
+void DerivationWriter :: generateClassImport(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree&)
 {
    writer.newNode(lxClassImport, 0);
  
@@ -1149,8 +1149,13 @@ inline void copyTemplateArgs(SNode src, SNode dst)
 {
    SNode current = src.firstChild();
    while (current != lxNone) {
-      SNode token = dst.appendNode(lxToken);
-      SyntaxTree::copyNode(current, token);
+      if (current == lxDynamicSizeDecl) {
+         dst.appendNode(lxDynamicSizeDecl);
+      }
+      else {
+         SNode token = dst.appendNode(lxToken);
+         SyntaxTree::copyNode(current, token);
+      }
 
       current = current.nextNode();
    }
@@ -1185,9 +1190,13 @@ void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, 
          else {
             SNode prev = current;
             SNode nameNode = node.prevNode();
-            while (nameNode.compare(lxNameAttr, lxType, lxAttribute, lxTemplateArgs)) {
+            while (nameNode.compare(lxNameAttr, lxType, lxAttribute, lxTemplateArgs, lxDynamicSizeDecl)) {
                if (nameNode == lxTemplateArgs) {
                   prev = prev.prependSibling(lxTemplateArgs);
+                  copyTemplateArgs(nameNode, prev);
+               }
+               else if (nameNode == lxDynamicSizeDecl) {
+                  prev = prev.prependSibling(lxDynamicSizeDecl);
                   copyTemplateArgs(nameNode, prev);
                }
                else {
@@ -1394,7 +1403,7 @@ void DerivationWriter :: generateCodeTree(SyntaxWriter& writer, SNode node, Scop
    writer.closeNode();
 }
 
-void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode current, Scope& derivationScope, bool closureMode)
+void DerivationWriter :: generateCodeExpression(SyntaxWriter& writer, SNode current, Scope& derivationScope, bool)
 {
    /*if (closureMode) {
       generateCodeTree(writer, current, derivationScope);
@@ -1457,7 +1466,7 @@ void DerivationWriter :: generatePropertyBody(SyntaxWriter& writer, SNode node, 
    }
 }
 
-void DerivationWriter :: generateInlineTemplateTree(SyntaxWriter& writer, SNode node, SNode owner, Scope& derivationScope, SyntaxTree& buffer)
+void DerivationWriter :: generateInlineTemplateTree(SyntaxWriter&, SNode node, SNode, Scope& derivationScope, SyntaxTree& buffer)
 {
    // inject a bookmark into the owner scope
    _output.appendNode(lxBookmark, ++derivationScope.bookmark);
@@ -1624,10 +1633,7 @@ ref_t DerivationWriter :: resolveTemplate(ident_t templateName)
       node = node.parentNode();
    }
 
-//   for (auto it = _importedNs.start(); !it.Eof(); it++) {
-//   }
-//
-//   return 0;
+   return 0;
 }
 
 void DerivationWriter :: generateStatementTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, Scope&)
@@ -2244,10 +2250,18 @@ void TemplateGenerator :: copyTemplateIdenParam(SyntaxWriter& writer, SNode node
       writer.closeNode();
       writer.newNode(lxTemplateArgs);
       attrNode = attrNode.nextNode();
-      while (attrNode == lxType) {
-         writer.newNode(lxToken);
-         copyTemplateIdenParam(writer, attrNode, scope);
-         writer.closeNode();
+      while (attrNode.compare(lxType, lxArrayType)) {
+         if (attrNode == lxType) {
+            writer.newNode(lxToken);
+            copyTemplateIdenParam(writer, attrNode, scope);
+            writer.closeNode();
+         }
+         else {
+            writer.newNode(lxToken);
+            copyTemplateIdenParam(writer, attrNode.findChild(lxType), scope);
+            writer.closeNode();
+            writer.appendNode(lxDynamicSizeDecl);
+         }
 
          attrNode = attrNode.nextNode();
       }

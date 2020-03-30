@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -512,7 +512,7 @@ void Compiler::NamespaceScope :: loadExtensions(ident_t ns)
    if (section) {
       MemoryReader metaReader(section);
       while (!metaReader.Eof()) {
-         ref_t extRef = metaReader.getDWord();
+         extRef = metaReader.getDWord();
          ref_t message = metaReader.getDWord();
          ref_t strongMessage = metaReader.getDWord();
 
@@ -2397,7 +2397,7 @@ void Compiler :: setParamTerminal(SNode& node, ExprScope& scope, ObjectInfo obje
    }
 }
 
-void Compiler :: setParamsTerminal(SNode& node, _CompileScope& scope, ObjectInfo object, EAttr mode, ref_t wrapRef)
+void Compiler :: setParamsTerminal(SNode& node, _CompileScope&, ObjectInfo object, EAttr, ref_t wrapRef)
 {
    node.set(lxBlockLocalAddr, object.param);
 
@@ -2568,7 +2568,7 @@ ObjectInfo Compiler :: compileMessageReference(SNode terminal, ExprScope& scope)
    return retVal;
 }
 
-ObjectInfo Compiler :: compileSubjectReference(SNode terminal, ExprScope& scope, EAttr mode)
+ObjectInfo Compiler :: compileSubjectReference(SNode terminal, ExprScope& scope, EAttr)
 {
    ObjectInfo retVal;
    IdentifierString messageName;
@@ -2688,7 +2688,7 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
       signatureLen++;
 
       int argCount = getArgCount(messageRef);
-      while (signatureLen < argCount) {
+      while (signatureLen < (ref_t)argCount) {
          signaturues[signatureLen] = scope.moduleScope->superReference;
          signatureLen++;
       }
@@ -3417,7 +3417,7 @@ void Compiler :: analizeOperands(SNode& node, ExprScope& scope, int stackSafeAtt
 
 ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode)
 {
-   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
+   //NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
    bool noUnboxing = EAttrs::test(mode, HINT_NOUNBOXING);
    ref_t sourceRef = resolveObjectReference(scope, source, false);
@@ -3832,7 +3832,7 @@ void Compiler :: inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, 
    }
 }
 
-inline SNode findBookmarkOwner(SNode node, int bookmark)
+inline SNode findBookmarkOwner(SNode node, ref_t bookmark)
 {
    while (!node.compare(lxClass, lxNone))
       node = node.parentNode();
@@ -3851,7 +3851,7 @@ inline SNode findBookmarkOwner(SNode node, int bookmark)
    return node;
 }
 
-void Compiler :: compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope)
+void Compiler :: compileMetaConstantAssigning(ObjectInfo, SNode node, ClassScope& scope)
 {
    int bm = node.parentNode().findChild(lxBookmarkReference).argument;
 
@@ -5205,7 +5205,7 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
    return typeRef;
 }
 
-EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, EAttr mode)
+EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, EAttr)
 {
    EAttrs exprAttr;
 
@@ -5293,7 +5293,7 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t targetRef, EAttr mode)
 {
    // renaming top expression into sequence one to be used in root boxing routines
-   node.set(lxSeqExpression, -1);
+   node.set(lxSeqExpression, (ref_t)-1);
 
    // inject a root expression
    node = node.injectNode(lxExpression);
@@ -6009,7 +6009,7 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
    }
 }
 
-ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode)
+ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope, ref_t expectedRef, EAttr)
 {
    ObjectInfo retVal(okExternal);
 
@@ -7280,7 +7280,6 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
 
    // if the method returns itself
    if (retVal.kind == okUnknown) {
-      ObjectInfo retVal;
       if (test(scope.hints, tpSetAccessor)) {
          retVal = scope.mapParameter(*scope.parameters.start(), EAttr::eaNone);
       }
@@ -8741,7 +8740,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
             privateName.append(scope.module->resolveAction(getAction(message), signRef));
             ref_t signArgs[ARG_COUNT];
             size_t signLen = scope.module->resolveSignature(signRef, signArgs);
-            if (signLen == argCount - 1) {
+            if (signLen == (size_t)argCount - 1) {
                // HOTFIX : inject emmeddable returning argument attribute only if the message is strong
                signArgs[signLen++] = resolvePrimitiveReference(scope, V_WRAPPER, outputRef, true);
                ref_t embeddableMessage = encodeMessage(
@@ -8803,7 +8802,7 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
 void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool closed, LexicalType methodType,
    bool allowTypeAttribute)
 {
-   bool extensionMode = scope.extensionClassRef != 0;
+   //bool extensionMode = scope.extensionClassRef != 0;
    bool templateMethods = false;
    List<ref_t> implicitMultimethods;
 
@@ -9923,7 +9922,7 @@ bool Compiler :: optimizeEmbeddableCall(_ModuleScope& scope, SNode& node)
    else return false;
 }
 
-bool Compiler :: optimizeConstantAssigning(_ModuleScope& scope, SNode& node)
+bool Compiler :: optimizeConstantAssigning(_ModuleScope&, SNode& node)
 {
    SNode parent = node.parentNode();
    while (parent == lxExpression)
@@ -9992,7 +9991,7 @@ inline void commentNode(SNode& node)
 
 }
 
-bool Compiler :: optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node)
+bool Compiler :: optimizeOpDoubleAssigning(_ModuleScope&, SNode& node)
 {
    bool applied = false;
 
@@ -10248,7 +10247,7 @@ bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
 //   else return false;
 //}
 
-bool Compiler :: optimizeConstProperty(_ModuleScope& scope, SNode& node)
+bool Compiler :: optimizeConstProperty(_ModuleScope&, SNode& node)
 {
    SNode callNode = node.parentNode();
 
@@ -10268,7 +10267,7 @@ inline void commetNode(SNode& node)
    }
 }
 
-bool Compiler :: optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node)
+bool Compiler :: optimizeCallDoubleAssigning(_ModuleScope&, SNode& node)
 {
    SNode callNode = node.parentNode();
    SNode seqNode = callNode.parentNode();
@@ -11170,7 +11169,7 @@ void Compiler :: injectBoxingExpr(SNode& node, bool variable, int size, ref_t ta
 //   writer.closeNode();
 }
 
-void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef, int stackSafeAttr, bool embeddableAttr)
+void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef, int, bool embeddableAttr)
 {
    if (node == lxExpression) {
    }
@@ -11292,7 +11291,7 @@ void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref
    codeNode.appendNode(lxRedirect, embeddedMessageRef);
 }
 
-void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType,
+void Compiler :: injectVirtualMultimethod(_ModuleScope&, SNode classNode, ref_t message, LexicalType methodType,
    ref_t resendMessage, bool privateOne)
 {
    SNode methNode = classNode.appendNode(methodType, message);
@@ -11387,7 +11386,7 @@ void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, re
 //
 //}
 
-void Compiler :: injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne)
+void Compiler :: injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t, bool protectedOne)
 {
    ref_t message = protectedOne ? scope.protected_constructor_message : scope.constructor_message;
    SNode methNode = classNode.appendNode(lxConstructor, message);

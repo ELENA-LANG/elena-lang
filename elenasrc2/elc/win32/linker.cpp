@@ -701,8 +701,8 @@ bool Linker :: createDebugFile(ImageInfo& info, path_t debugFilePath)
    // signature
    debugFile.write(DEBUG_MODULE_SIGNATURE, strlen(DEBUG_MODULE_SIGNATURE));
 
-   // save entry point
-   ref_t imageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
+   //// save entry point
+   //ref_t imageBase = info.project->IntSetting(opImageBase, IMAGE_BASE);
    ref_t entryPoint = info.map.code + info.map.base + info.image->getDebugEntryPoint();
 
    debugFile.writeDWord(debugInfo->Length());

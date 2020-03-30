@@ -71,6 +71,14 @@ md %~dp0\output\src50\forms
 xcopy %~dp0\..\src50\forms\*.l %~dp0\output\src50\forms /s
 xcopy %~dp0\..\src50\forms\*.prj %~dp0\output\src50\forms /s
 
+md %~dp0\output\src50\net
+xcopy %~dp0\..\src50\net\*.l %~dp0\output\src50\net /s
+xcopy %~dp0\..\src50\net\*.prj %~dp0\output\src50\net /s
+
+md %~dp0\output\src50\algorithms
+xcopy %~dp0\..\src50\algorithms\*.l %~dp0\output\src50\algorithms /s
+xcopy %~dp0\..\src50\algorithms\*.prj %~dp0\output\src50\algorithms /s
+
 %~dp0\..\bin\sg %~dp0\..\dat\sg\syntax.txt
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
@@ -119,6 +127,16 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 %~dp0\output\bin\elc %~dp0\output\src50\forms\forms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output\bin\elc %~dp0\output\src50\net\net.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output\bin\elc %~dp0\output\src50\algorithms\algorithms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

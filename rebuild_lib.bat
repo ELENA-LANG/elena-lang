@@ -54,10 +54,10 @@ bin\elc src50\extensions\extensions.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src50\net\net.prj
-rem @echo off 
-rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
-rem @echo on
+bin\elc src50\net\net.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 bin\elc src50\forms\forms.prj
 @echo off 
@@ -74,10 +74,10 @@ bin\elc src50\cellular\cellular.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc src50\algorithms\algorithms.prj
-rem @echo off 
-rem if %ERRORLEVEL% EQU -2 GOTO CompilerError
-rem @echo on
+bin\elc src50\algorithms\algorithms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 rem bin\elc src50\graphics\graphics.prj
 rem bin\elc src50\xforms\xforms.prj

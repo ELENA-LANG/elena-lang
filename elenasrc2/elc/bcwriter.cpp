@@ -1943,7 +1943,7 @@ void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, i
    }
 }
 
-void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, int argument, int immValue)
+void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, int, int immValue)
 {
    switch (operator_id) {
       case REFER_OPERATOR_ID:
@@ -2229,7 +2229,7 @@ void ByteCodeWriter :: translateBreakpoint(CommandTape& tape, SNode node, FlowSc
   // else return false;
 }
 
-void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode)
+void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int)
 {
    switch (type)
    {
@@ -2358,7 +2358,7 @@ void ByteCodeWriter :: pushIntValue(CommandTape& tape)
    tape.write(bcPushAI, 0);
 }
 
-void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode)
+void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int)
 {
 //   bool basePresaved = test(mode, BASE_PRESAVED);
 
@@ -2665,7 +2665,7 @@ void ByteCodeWriter :: generateNewArrOperation(CommandTape& tape, SyntaxTree::No
    scope.clear();
 }
 
-void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+void ByteCodeWriter :: generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
 {
    int freeArgs = 0;
    bool lenMode = node.argument == LEN_OPERATOR_ID;
@@ -2882,7 +2882,7 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
 
 }
 
-void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+void ByteCodeWriter :: generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
 {
    int operation = node.argument;
    bool invertSelectMode = false;
@@ -3352,7 +3352,7 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    bool argUnboxMode = false;
    bool openArg = false;
 
-   int argCount = 0;
+   size_t argCount = 0;
 
    // analizing a sub tree
    SNode current = node.firstChild(lxObjectMask);
@@ -3684,7 +3684,7 @@ void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dst
    else throw InternalError("not yet implemente"); // !! temporal
 }
 
-void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
 {
    SNode target;
    SNode source;
@@ -3734,7 +3734,7 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
    else copyExpression(tape, source, dstObj, node.argument, scope, node == lxCondCopying);
 }
 
-void ByteCodeWriter :: generateIndexLoadingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+void ByteCodeWriter :: generateIndexLoadingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope&, int)
 {
    SNode source = node.findSubNodeMask(lxObjectMask);
    if (source == lxLocalAddress) {
@@ -3743,7 +3743,7 @@ void ByteCodeWriter :: generateIndexLoadingExpression(CommandTape& tape, SyntaxT
    else throw InternalError("Not yet implemented"); // !! temporal
 }
 
-void ByteCodeWriter :: generateIndexSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+void ByteCodeWriter :: generateIndexSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope&, int)
 {
    SNode target = node.findSubNodeMask(lxObjectMask);
    if (target == lxLocalAddress) {
@@ -3752,7 +3752,7 @@ void ByteCodeWriter :: generateIndexSavingExpression(CommandTape& tape, SyntaxTr
    else throw InternalError("Not yet implemented"); // !! temporal
 }
 
-void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
 {
    SNode target;
    SNode source;
@@ -3796,7 +3796,7 @@ void ByteCodeWriter :: generateByRefAssigningExpression(CommandTape& tape, Synta
    releaseStack(tape);
 }
 
-void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
+void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
 {
 //   if (test(mode, BASE_PRESAVED))
 //      tape.write(bcPushB);
@@ -5023,7 +5023,7 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
    else endIdleMethod(tape);
 }
 
-void ByteCodeWriter :: generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef, bool(*cond)(LexicalType))
+void ByteCodeWriter :: generateClass(_ModuleScope&, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef, bool(*cond)(LexicalType))
 {
 #ifdef FULL_OUTOUT_INFO
    // info

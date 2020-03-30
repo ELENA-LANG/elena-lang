@@ -820,7 +820,7 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
    }
 }
 
-void CompilerLogic :: injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler)
+void CompilerLogic :: injectVirtualFields(_ModuleScope&, SNode node, ref_t, ClassInfo& info, _Compiler& compiler)
 {
    // generate yield fields
    if (test(info.header.flags, elWithYieldable)) {
@@ -920,7 +920,7 @@ void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node,
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-      ref_t message = *it;
+      //ref_t message = *it;
 
       /*if (methodType == lxConstructor && getParamCount(message) == 1 
          && getAction(message) == getAction(scope.constructor_message)) 
@@ -1095,7 +1095,7 @@ void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compil
    }
 
    if (IsExprOperator(operator_id) && operationType != lxBoolOp) {
-      int size = defineStructSize(*scope.moduleScope, reference, elementRef);
+      size = defineStructSize(*scope.moduleScope, reference, elementRef);
 
       compiler.injectExprOperation(scope, node, size, tempLocal, (LexicalType)operationType, operator_id, reference);
    }

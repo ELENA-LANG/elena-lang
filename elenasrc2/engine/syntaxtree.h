@@ -911,6 +911,11 @@ public:
       {
          return (this->type == type1) || (this->type == type2) || (this->type == type3) || (this->type == type4);
       }
+      bool compare(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
+      {
+         return (this->type == type1) || (this->type == type2) || (this->type == type3) 
+            || (this->type == type4) || (this->type == type5);
+      }
 
       Node()
       {
