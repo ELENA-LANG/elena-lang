@@ -30,9 +30,7 @@ In development:
                 * dynamic loading : give the symbol / class / message / subject name in the InvalidArgument exception
 
               dev - elena50
-                * meta attributes
-                * support class / method / field / static field meta description
-                * api : ignore protected constructors
+                * support method meta description
                 * dto
 
               dev - migration
@@ -53,6 +51,8 @@ In development:
                 * upndown
 
               dev - elena50
+                * api : ignore protected constructors
+                * support field / static field meta description
                 * closure unboxing: field addr
                 * check why system'dynamic'expressions'SymbolInfo#class cannot resolve DynamicSingleton
                   in dynamic mode

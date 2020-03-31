@@ -1216,6 +1216,17 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          temp.append(typeName);
       }
 
+      ref_t val = info.mattributes.get(ClassInfo::Attribute(caInfo, entry.message));
+      if (val) {
+         ReferenceNs sectionName("'", METAINFO_SECTION);
+         _Memory* section = module->mapSection(module->mapReference(sectionName, true) | mskMetaRDataRef, true);
+
+         ident_t desc = (const char*)section->get(val);
+
+         temp.append(";;");
+         temp.append(desc);
+      }
+
       prefix.copy("@method ");
       if (isAbstract)
          prefix.append("@abstract ");

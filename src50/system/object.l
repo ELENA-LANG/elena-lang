@@ -9,12 +9,10 @@ public class Object
     /// class constant - a package info
     const __packageInfo      := @package; 
     
-    /// Creates the object
+    [info:"Creates the object"]
     constructor() {}
     
-    /// Returns true if the specified object is equal to the current object; otherwise, false.
-    ///
-    /// By default compares the object references.
+    [info:"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references."]
     bool equal(o) => intern system'core_routines'__object;
     
     bool notequal(o) = self.equal(o).Inverted;

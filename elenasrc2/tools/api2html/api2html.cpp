@@ -41,7 +41,8 @@ struct ApiMethodInfo
    IdentifierString       prefix;
    IdentifierString       name;
    IdentifierString       retType;
-   
+   IdentifierString       shortdescr;
+
    List<IdentifierString> params;
 
    ApiMethodInfo()
@@ -537,6 +538,11 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
    writer.writeLiteralNewLine(")");
 
    writer.writeLiteralNewLine("</CODE>");
+   if (info->shortdescr.Length() > 0) {
+      writer.writeLiteralNewLine("<div class=\"block\">");
+      writer.writeLiteral(info->shortdescr);
+      writer.writeLiteralNewLine("</div>");
+   }
    writer.writeLiteralNewLine("</TD>");
 }
 
@@ -1410,6 +1416,11 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
          }
          else {
             ApiMethodInfo* methodInfo = new ApiMethodInfo();
+            int descr_index = ident_t(line).find(";;");
+            if (descr_index != NOTFOUND_POS) {
+               methodInfo->shortdescr.copy(line.c_str() + descr_index + 2);
+               line.truncate(descr_index);
+            }
 
             parseMethod(methodInfo, line.c_str() + 8, false, false, info->templateBased, rootNs);
 
