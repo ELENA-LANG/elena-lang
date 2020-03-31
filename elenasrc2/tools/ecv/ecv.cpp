@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   69
+#define REVISION_VERSION   70
 
 using namespace _ELENA_;
 
@@ -1173,6 +1173,16 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
 
       listFlags(info.header.flags, row, pageSize);
       listFields(module, info, row, pageSize);
+
+      ref_t val = info.mattributes.get(ClassInfo::Attribute(caInfo, 0));
+      if (val) {
+         ReferenceNs sectionName("'", METAINFO_SECTION);
+         _Memory* section = module->mapSection(module->mapReference(sectionName, true) | mskMetaRDataRef, true);
+
+         ident_t desc = (const char*)section->get(val);
+
+         printLine("@classinfo ", desc);
+      }
    }
 
    //if (header.classRef != 0 && withConstructors) {
@@ -1226,68 +1236,68 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
    }
 }
 
-//inline bool isTemplateBased(ident_t reference)
-//{
-//   for (int i = 0; i < getlength(reference); i++) {
-//      if (reference[i] == '#' && reference[i + 1] >= '0' && reference[i + 1] <= '9')
-//         return true;
-//   }
-//
-//   return false;
-//}
-//
+inline bool isTemplateBased(ident_t reference)
+{
+   for (int i = 0; i < getlength(reference); i++) {
+      if (reference[i] == '#' && reference[i + 1] >= '0' && reference[i + 1] <= '9')
+         return true;
+   }
+
+   return false;
+}
+
 void printSymbolInfo(_Module* module, ident_t refName, ref_t ref)
 {
    IdentifierString name(refName);
    
-   //_Memory* metaData = module->mapSection(ref | mskMetaRDataRef, true);
-   //if (metaData != NULL && metaData->Length() == sizeof(SymbolExpressionInfo)) {
-   //   SymbolExpressionInfo info;
+   _Memory* metaData = module->mapSection(ref | mskMetaRDataRef, true);
+   if (metaData != NULL && metaData->Length() == sizeof(SymbolExpressionInfo)) {
+      SymbolExpressionInfo info;
 
-   //   MemoryReader reader(metaData);
-   //   info.load(&reader);
+      MemoryReader reader(metaData);
+      info.load(&reader);
 
-   //   if (info.expressionClassRef) {
-   //      name.append(" of ");
-   //      name.append(module->resolveReference(info.expressionClassRef));
-   //   }
-   //}
+      if (info.type == SymbolExpressionInfo::Type::Constant) {
+         name.append(" of ");
+         name.append(module->resolveReference(info.exprRef));
+      }
+   }
 
    printLine("symbol ", name.c_str());
 }
 
 void printAPI(_Module* module, int pageSize, bool publicOnly)
 {
-   //ReferenceMap::Iterator it = ((Module*)module)->References();
-   //while (!it.Eof()) {
-   //   ident_t reference = it.key();
-   //   bool publicOne = true;
-   //   if (reference.find(INLINE_CLASSNAME) == 1)
-   //      publicOne = false;
-   //   if (reference.startsWith(PRIVATE_PREFIX_NS))
-   //      publicOne = false;
+   ReferenceMap::Iterator it = ((Module*)module)->References();
+   while (!it.Eof()) {
+      ident_t reference = it.key();
+      bool publicOne = true;
+      if (reference.find(INLINE_CLASSNAME) == 1)
+         publicOne = false;
+      if (reference.startsWith(PRIVATE_PREFIX_NS))
+         publicOne = false;
 
-   //   if (reference[0] == '\'' && (!publicOnly || publicOne)) {
-   //      if (module->mapSection(*it | mskVMTRef, true)) {
-   //         if (isTemplateBased(reference)) {
-   //            if (reference.find("$private@T1") != NOTFOUND_POS) {
-   //               listClassMethods(module, reference.c_str() + 1, pageSize, true, true);
-   //               printLine();
-   //            }
-   //         }
-   //         else {
-   //            listClassMethods(module, reference.c_str() + 1, pageSize, true, true);
-   //            printLine();
-   //         }
-   //      }
-   //      else if (module->mapSection(*it | mskSymbolRef, true)) {
-   //         printSymbolInfo(module, reference, *it);
-   //         printLine();
-   //      }
-   //   }
+      if (reference[0] == '\'' && (!publicOnly || publicOne)) {
+         if (module->mapSection(*it | mskVMTRef, true)) {
+            if (isTemplateBased(reference)) {
+               if (reference.find("$private@T1") != NOTFOUND_POS) {
+                  listClassMethods(module, reference.c_str() + 1, pageSize, true, true);
+                  printLine();
+               }
+            }
+            else {
+               listClassMethods(module, reference.c_str() + 1, pageSize, true, true);
+               printLine();
+            }
+         }
+         else if (module->mapSection(*it | mskSymbolRef, true)) {
+            printSymbolInfo(module, reference, *it);
+            printLine();
+         }
+      }
 
-   //   it++;
-   //}
+      it++;
+   }
 }
 
 void listClasses(_Module* module, int pageSize)

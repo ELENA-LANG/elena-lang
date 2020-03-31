@@ -1,6 +1,6 @@
 // --- super object ---
 
-//[info:"a common ancestor"]
+[info:"a common ancestor"]
 public class Object
 {
     /// class constant - a class name 

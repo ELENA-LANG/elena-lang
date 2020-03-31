@@ -64,6 +64,7 @@ struct ApiClassInfo
    IdentifierString prefix;
    IdentifierString fullName;
    IdentifierString name;
+   IdentifierString shortdesc;
 
    List<IdentifierString> parents;
    List<ApiFieldInfo*> fields;
@@ -289,7 +290,7 @@ void writeRefName(TextFileWriter& writer, ident_t name, bool allowResolvedTempla
 
 void writeClassName(TextFileWriter& writer, ApiClassInfo* info)
 {
-   const char* descr = /*config.getSetting(name, "#shortdescr", NULL)*/nullptr;
+   const char* descr = info->shortdesc;
    if (!emptystr(descr)) {
       writer.writeLiteral(descr);
    }
@@ -1442,6 +1443,9 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
       else if (ident_t(line).startsWith("@field ")) {
          parseField(info, line.c_str() + 7, rootNs);
       }
+      else if (ident_t(line).startsWith("@classinfo ")) {
+         info->shortdesc.copy(line.c_str() + 11);
+      }
       else if (line.Length() == 0)
          return;
    }
@@ -1668,7 +1672,7 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line Html Documentation generator (C)2006-19 by Alexei Rakov\n");
+   printf("ELENA command line Html Documentation generator (C)2006-20 by Alexei Rakov\n");
 
    if (argc != 2) {
       printf("api2html <file>\n");
@@ -1725,7 +1729,6 @@ int main(int argc, char* argv[])
       writeHeader(summaryWriter, (*it)->name.c_str(), nullptr);
       writeHeader(bodyWriter, (*it)->name.c_str(), summaryname);
 
-      //
       //	const char* package = config.getSetting("#general#", "#name");
       const char* shortDescr = /*config.getSetting("#general#", "#shortdescr")*/nullptr;
 

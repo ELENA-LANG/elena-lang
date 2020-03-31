@@ -10566,6 +10566,10 @@ int Compiler :: saveMetaInfo(_ModuleScope& scope, ident_t info)
       MemoryWriter metaWriter(section);
 
       position = metaWriter.Position();
+      if (!position) {
+         metaWriter.writeByte(0);
+         position++;
+      }
 
       metaWriter.writeLiteral(info);
    }
