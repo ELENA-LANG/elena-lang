@@ -32,6 +32,7 @@ In development:
               dev - elena50
                 * meta attributes
                 * support class / method / field / static field meta description
+                * api : ignore protected constructors
                 * dto
 
               dev - migration
