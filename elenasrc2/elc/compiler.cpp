@@ -3888,9 +3888,9 @@ void Compiler :: compileMetaConstantAssigning(ObjectInfo, SNode node, ClassScope
    else scope.raiseError(errIllegalOperation, node);
 }
 
-inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference/*, bool isArray*/)
+inline ref_t mapStaticField(_ModuleScope* moduleScope, ref_t reference, bool isArray)
 {
-   int mask = /*isArray ? mskConstArray : */mskConstantRef;
+   int mask = isArray ? mskConstArray : mskConstantRef;
    IdentifierString name(moduleScope->module->resolveReference(reference));
    name.append(STATICFIELD_POSTFIX);
 
@@ -3917,7 +3917,7 @@ void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, Cl
       ref_t parentListRef = parentInfo.staticValues.get(target.param) & ~mskAnyRef;
 
       if (parentListRef != 0 && parentListRef == targtListRef) {
-         valueRef = mapStaticField(scope.moduleScope, scope.reference/*, isArray*/);
+         valueRef = mapStaticField(scope.moduleScope, scope.reference, true);
          scope.info.staticValues.exclude(target.param);
          scope.info.staticValues.add(target.param, valueRef);
          scope.save();
@@ -7930,7 +7930,7 @@ void Compiler :: generateClassFields(SNode node, ClassScope& scope, bool singleF
             //if (!isValidAttributeType(scope, attrs))
             //   scope.raiseError(errIllegalField, current);
 
-            generateClassStaticField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.isStaticField, attrs.isConstAttr/*, attrs.isArray*/);
+            generateClassStaticField(scope, current, attrs.fieldRef, attrs.elementRef, attrs.isStaticField, attrs.isConstAttr, attrs.isArray);
          }
          else if (!isClassClassMode)
             generateClassField(scope, current, attrs, singleField);
@@ -8331,7 +8331,8 @@ inline SNode findInitNode(SNode node, ident_t name)
    return current;
 }
 
-void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t, bool isStatic, bool isConst/*, bool isArray*/)
+void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t, bool isStatic, 
+   bool isConst, bool isArray)
 {
    _Module* module = scope.module;
 
@@ -8406,7 +8407,14 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
                   }
                   else scope.raiseError(errInvalidOperation, current);
                }
-               else statRef = mapStaticField(scope.moduleScope, scope.reference/*, isArray*/);
+               else statRef = mapStaticField(scope.moduleScope, scope.reference, isArray);
+            }
+            else if (isArray) {
+               //HOTFIX : allocate an empty array
+               statRef = mapStaticField(scope.moduleScope, scope.reference, isArray);
+
+               auto section = scope.module->mapSection((statRef & ~mskAnyRef) | mskRDataRef, false);
+               section->addReference(fieldRef | mskVMTRef, (ref_t)-4);
             }
             else scope.raiseError(errInvalidOperation, current);
 
@@ -8414,11 +8422,6 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
 
             current.appendNode(lxStatConstRef, statRef);
             current.appendNode(lxStatIndex, index);
-
-            //if (isArray) {
-            //   //HOTFIX : allocate an empty array
-            //   scope.module->mapSection((statRef & ~mskAnyRef) | mskRDataRef, false);
-            //}
          }
          else scope.raiseError(errDuplicatedField, current);
          //else scope.info.staticValues.add(index, (ref_t)mskStatRef);
@@ -9283,7 +9286,7 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal, bo
    MemoryWriter dataWriter(module->mapSection(scope.reference | mskRDataRef, false));
 
    if (accumulatorMode) {
-      if (dataWriter.Position() == 0) {
+      if (dataWriter.Position() == 0 && ((Section*)dataWriter.Memory())->References().Eof()) {
          dataWriter.Memory()->addReference(accumulatorRef | mskVMTRef, (ref_t)-4);
       }
 

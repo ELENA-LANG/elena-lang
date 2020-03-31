@@ -2203,13 +2203,13 @@ public sealed class KeyValue
     dispatch() => theObject;
 }
 
-//// --- DTO --
-//
+// --- DTO --
+
 //public class DTO
 //{
-//    attribute MessageName[] __dto_properties;
+//    const MessageName[] __dto_properties;
 //    
-//    MessageName[] __dto_properties()
+//    sealed static MessageName[] __dto_properties()
 //    {
 //        ^ __dto_properties
 //    }

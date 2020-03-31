@@ -130,6 +130,16 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 
 rem bin\elc examples\gui\notepad\notepad.prj
 
+bin\elc examples\net\chat\chatserver.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elc examples\net\chat\chat.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 @echo off 
 goto:eof
 @echo on
