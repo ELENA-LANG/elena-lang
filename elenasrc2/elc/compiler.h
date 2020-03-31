@@ -1104,9 +1104,12 @@ private:
 
    SNode injectAttributeIdentidier(SNode current, Scope& scope);
    void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
+   EAttr recognizeExpressionAttributes(SNode& current, Scope& scope, ref_t& typeRef, bool& newVariable);
    EAttr declareExpressionAttributes(SNode& node, ExprScope& scope, EAttr mode);
 
    void recognizeTerminal(SNode& node, ObjectInfo info, ExprScope& scope, EAttr mode);
+
+   ObjectInfo mapMetaField(ident_t token);
 
    ObjectInfo mapIntConstant(ExprScope& scope, int value);
    ObjectInfo mapRealConstant(ExprScope& scope, double val);

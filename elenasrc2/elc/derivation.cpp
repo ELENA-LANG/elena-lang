@@ -355,13 +355,6 @@ void DerivationWriter :: generateTemplateTree(SNode node, ScopeType templateType
    
    SNode nameNode = argsNode.prevNode();
 
-   //SyntaxTree templateTree;
-   //SyntaxWriter templateWriter(templateTree);
-
-   //templateWriter.newNode(lxRoot);
-   //
-   //templateWriter.closeNode();
-
    SNode identNode = nameNode.firstChild(lxTerminalMask);
    IdentifierString name(identNode.identifier());
    int paramCounter = templateScope.parameters.Count();
@@ -588,9 +581,12 @@ void DerivationWriter :: declareAttribute(SNode node)
 
 void DerivationWriter :: declareStatement(SNode node, ScopeType templateType)
 {
+   SNode args = templateType == stCodeTemplate
+      ? node.findChild(lxTemplateArgs) : node.findChild(lxInlineArgs).findChild(lxTemplateArgs);
+
    Scope templateScope;
    templateScope.templateMode = templateType;
-   loadTemplateParameters(templateScope, node.findChild(lxTemplateArgs));
+   loadTemplateParameters(templateScope, args);
 
    int exprCounter = templateScope.parameters.Count();
    if (templateScope.templateMode == ScopeType::stCodeTemplate) {
@@ -605,7 +601,7 @@ void DerivationWriter :: declareStatement(SNode node, ScopeType templateType)
 
    if (templateScope.templateMode == ScopeType::stPropertyTemplate) {
       // NOTE : property template body is copied as is
-      SNode current = node.findChild(lxTemplateArgs).nextNode();
+      SNode current = node.findChild(lxInlineArgs).nextNode();
       while (current != lxNone) {
          copyScope(templateWriter, current, templateScope);
 
@@ -834,7 +830,6 @@ void DerivationWriter :: copyScope(SyntaxWriter& writer, SNode node, Scope& scop
    }
 
    writer.closeNode();
-
 }
 
 void DerivationWriter :: generateScope(SyntaxWriter& writer, SNode node, Scope& scope)
@@ -1163,12 +1158,6 @@ inline void copyTemplateArgs(SNode src, SNode dst)
 
 void DerivationWriter :: generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer)
 {
-//   //// COMPILER MAGIC : property declaration
-//   //bool withPropertyTemplate = false;
-//   //bool withAttributes = false;
-//   //bool withInitializer = false;
-//   //checkFieldPropAttributes(node, withPropertyTemplate, withInitializer, withAttributes);
-
    // inject property info
    SNode current = node.firstChild();
    while (current != lxNone) {

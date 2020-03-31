@@ -2205,15 +2205,15 @@ public sealed class KeyValue
 
 // --- DTO --
 
-//public class DTO
-//{
-//    const MessageName[] __dto_properties;
-//    
-//    sealed static MessageName[] __dto_properties()
-//    {
-//        ^ __dto_properties
-//    }
-//}
+public class DTO
+{
+    const MessageName[] __dto_properties;
+    
+    sealed static MessageName[] __dto_properties()
+    {
+        ^ __dto_properties
+    }
+}
 
 // === Basic Convertors ===
 

@@ -3976,10 +3976,17 @@ bool Compiler :: recognizeCompileTimeAssigning(SNode node, ClassScope& scope)
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxFieldInit) {
-         EAttr mode = EAttr::eaNone;
-         SNode identNode = current.findChild(lxIdentifier);
+         ref_t dummy = 0;
+         bool dummy2 = false;
+
+         SNode identNode = current.firstChild();
+         EAttr mode = recognizeExpressionAttributes(identNode, scope, dummy, dummy2);
          if (identNode != lxNone) {
-            ObjectInfo field = scope.mapField(identNode.identifier(), mode);
+            ObjectInfo field;
+            if (EAttrs::test(mode, HINT_METAFIELD)) {
+               field = mapMetaField(identNode.identifier());
+            }
+            else field = scope.mapField(identNode.identifier(), mode);
             switch (field.kind)
             {
                case okStaticConstantField:
@@ -4003,14 +4010,13 @@ bool Compiler :: recognizeCompileTimeAssigning(SNode node, ClassScope& scope)
 
 void Compiler :: compileCompileTimeAssigning(SNode node, ClassScope& classScope)
 {
-   SNode targetNode = node.firstChild(lxTerminalMask);
    SNode assignNode = node.findChild(lxAssign);
    SNode sourceNode = assignNode.nextNode();
    bool accumulateMode = assignNode.argument == INVALID_REF;
 
    ExprScope scope(&classScope);
 
-   ObjectInfo target = mapTerminal(targetNode, scope, EAttr::eaNone);
+   ObjectInfo target = mapObject(node, scope, EAttr::eaNone);
 
    // HOTFIX : recognize static field initializer
    if (target.kind == okStaticField || target.kind == okStaticConstantField || target.kind == okMetaField) {
@@ -5217,14 +5223,9 @@ ref_t Compiler :: resolveTypeAttribute(SNode node, Scope& scope, bool declaratio
    return typeRef;
 }
 
-EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, EAttr)
+EAttr Compiler :: recognizeExpressionAttributes(SNode& current, Scope& scope, ref_t& typeRef, bool& newVariable)
 {
-   EAttrs exprAttr;
-
-//   bool  invalidExpr = false;
-   bool  newVariable = false;
-//   bool  dynamicSize = false;
-   ref_t typeRef = 0;
+   EAttrs exprAttr = EAttr::eaNone;
 
    // HOTFIX : skip bookmark reference
    if (current == lxBookmarkReference)
@@ -5235,25 +5236,21 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
       if (!_logic->validateExpressionAttribute(value, exprAttr, newVariable))
          scope.raiseError(errInvalidHint, current);
 
-//      if (!newVariable && exprAttr.test(EAttr::eaType) && !exprAttr.test(EAttr::eaCast)) {
-//         // if it is a variable declaration
-//         newVariable = true;
-
-         if (value == V_AUTO)
-            typeRef = value;
-//      }
+      if (value == V_AUTO)
+         typeRef = value;
 
       current = current.nextNode();
    }
 
-//   if (exprAttr.test(EAttr::eaWrap)) {
-//      SNode msgNode = goToNode(current, lxMessage/*, lxCollection*/);
-//      msgNode = lxWrapping;
-//      exprAttr.include(EAttr::eaVirtualExpr);
-//   }
-//   if (exprAttr.test(EAttr::eaInlineArg) && !exprAttr.test(EAttr::eaParameter)) {
-//      scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-//   }
+   return exprAttr;
+}
+
+EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, EAttr)
+{
+   bool  newVariable = false;
+   ref_t typeRef = 0;
+
+   EAttrs exprAttr = recognizeExpressionAttributes(current, scope, typeRef, newVariable);
 
    if (exprAttr.testAndExclude(EAttr::eaIgnoreDuplicates)) {
       scope.ignoreDuplicates = true;
@@ -5264,23 +5261,13 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
          typeRef = resolveTypeAttribute(current, scope, false, false);
 
          newVariable = true;
-//         //if (current.existChild(lxArrayType)) {
-//         //   dynamicSize = true;
-//         //}
       }
       else scope.raiseError(errIllegalOperation, current);
 
       current = current.nextNode();
    }
 
-//   if (invalidExpr) {
-//      scope.raiseError(errInvalidSyntax, current.parentNode());
-//   }
-
    if (newVariable) {
-//      if (EAttrs(mode).test(EAttr::eaRetExpr))
-//         scope.raiseError(errInvalidSyntax, current.parentNode());
-
       if (!typeRef)
          typeRef = scope.moduleScope->superReference;
 
@@ -5554,6 +5541,14 @@ ObjectInfo Compiler :: mapRealConstant(ExprScope& scope, double val)
    return ObjectInfo(okRealConstant, scope.moduleScope->module->mapConstant((const char*)s), V_REAL64);
 }
 
+ObjectInfo Compiler :: mapMetaField(ident_t token)
+{
+   if (token.compare(META_INFO_NAME)) {
+      return ObjectInfo(okMetaField, ClassAttribute::caInfo);
+   }
+   else return ObjectInfo();
+}
+
 ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
 {
    //   EAttrs mode(modeAttr);
@@ -5580,9 +5575,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
          object = scope.mapMember(token);
       }
       else if (EAttrs::test(mode, HINT_METAFIELD)) {
-         if (token.compare(META_INFO_NAME)) {
-            object = ObjectInfo(okMetaField, ClassAttribute::caInfo);
-         }
+         object = mapMetaField(token);
       }
       else if (EAttrs::test(mode, HINT_FORWARD)) {
          IdentifierString forwardName(FORWARD_MODULE, "'", token);

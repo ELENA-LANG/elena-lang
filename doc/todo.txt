@@ -1,9 +1,15 @@
 ------                                 
 In development:
 ------         
+              dev2 - tutorials
+                * migrate tutorials
+
               dev2 - refactoring
                 * mov GC to C code : #77
                 * get rid of EXPAND_HEAP, NEW_HEAP
+
+              dev2 - research
+                * xforms
 
               dev2 - linux32
                 * method not found exception handling
@@ -13,7 +19,6 @@ In development:
                 * compile all console / files examples
 
               dev2 - research
-                * xforms
                 * graph - use script to define the function (+tutorial)
                 * source to expression tree
                 * expression tree to source
@@ -21,11 +26,13 @@ In development:
               dev2 - documentations
                 * info : abstract class cannot have public constructors
 
-              dev2 - tutorials
-                * migrate tutorials
-
               dev2 - usability
                 * dynamic loading : give the symbol / class / message / subject name in the InvalidArgument exception
+
+              dev - elena50
+                * meta attributes
+                * support class / method / field / static field meta description
+                * dto
 
               dev - migration
                 * socket samples
@@ -56,6 +63,7 @@ In development:
                 * extension message - can be applied only to the generic extension?
                 * ifheap - is not correctly recognize data allocated classes
                 * if bug structure is allocated - it will be marked as root - will it work?
+                * warn if the method is not found for sealed / limited classes (including conversions)
 
               dev2 - tutorials
                 * duck_typing_in_elena_programming_language
@@ -101,14 +109,12 @@ In development:
                 * emptyWideString cannot be used before its declaration (see String)
                 * property - append, ...
                 * should child have an access to the parent static fields?
-                * meta attributes
                 * private extension method should be possible to use for internal work
                 * it should be possible to extend attributes / template statements from anoter libraries
                 * abstract class cannot be sealed
                 * do not allow to write something like
                   A{ int dump[4] := 3; }  // !! error
                 * (re)implement manifest
-                * support class / method / field / static field meta description
                 * do-while - if the second agrument is code brackets?
                 * static fields should be accessaible from storng typed extensions
                 * yield can be used only for yieldable method
