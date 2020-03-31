@@ -3905,6 +3905,18 @@ inline ref_t mapConstant(_ModuleScope* moduleScope, ref_t reference)
    return moduleScope->mapAnonymous(name.c_str() + 1);
 }
 
+inline bool isInherited(_Module* module, ref_t reference, ref_t staticRef)
+{
+   ident_t name = module->resolveReference(reference);
+   ident_t statName = module->resolveReference(staticRef);
+   size_t len = getlength(name);
+
+   if (statName[len] == '#' && statName.compare(name, 0, len)) {
+      return true;
+   }
+   else return false;
+}
+
 void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode)
 {
    ref_t valueRef = scope.info.staticValues.get(target.param);
@@ -3916,7 +3928,7 @@ void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, Cl
       ref_t targtListRef = valueRef & ~mskAnyRef;
       ref_t parentListRef = parentInfo.staticValues.get(target.param) & ~mskAnyRef;
 
-      if (parentListRef != 0 && parentListRef == targtListRef) {
+      if (parentListRef != 0 && !isInherited(scope.module, scope.reference, targtListRef)) {
          valueRef = mapStaticField(scope.moduleScope, scope.reference, true);
          scope.info.staticValues.exclude(target.param);
          scope.info.staticValues.add(target.param, valueRef);
