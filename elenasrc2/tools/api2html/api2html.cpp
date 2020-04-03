@@ -1321,9 +1321,6 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    pos_t end = info->name.ident().find('[') + 1;
    if (end != 0)  {
       pos_t size_end = info->name.ident().find(']') + 1;
-      if (size_end == 0)
-         size_end += 0;
-
       String<char, 4> tmp;
       tmp.copy(info->name.c_str() + end, size_end - end - 1);
       paramCount = ident_t(tmp.c_str()).toInt();
