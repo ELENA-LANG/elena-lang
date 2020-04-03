@@ -1327,6 +1327,8 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
       String<char, 4> tmp;
       tmp.copy(info->name.c_str() + end, size_end - end - 1);
       paramCount = ident_t(tmp.c_str()).toInt();
+      if (!info->special)
+         paramCount--;
 
       info->name.truncate(end - 1);
    }

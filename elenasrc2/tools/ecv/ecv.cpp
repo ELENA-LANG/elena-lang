@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   71
+#define REVISION_VERSION   72
 
 using namespace _ELENA_;
 

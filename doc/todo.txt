@@ -29,9 +29,6 @@ In development:
               dev2 - usability
                 * dynamic loading : give the symbol / class / message / subject name in the InvalidArgument exception
 
-              dev - elena50
-                * dto
-
               dev - migration
                 * socket samples
                 * rosetta code samples : Sockets
