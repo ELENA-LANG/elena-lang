@@ -1016,6 +1016,8 @@ private:
 
 //   bool isValidAttributeType(Scope& scope, _CompilerLogic::FieldAttributes& attrs);
 
+   void resolveMetaConstant(SNode node);
+
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false);
    void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode);
    void generateClassFields(SNode member, ClassScope& scope, bool singleField);

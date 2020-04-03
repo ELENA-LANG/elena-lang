@@ -447,6 +447,7 @@ namespace _ELENA_
   // --- ELENA meta variables ---
    constexpr auto CLASSNAME_VAR              = "@classname";       // the class name
    constexpr auto PACKAGE_VAR                = "@package";         // the package info
+   constexpr auto SUBJECT_VAR                = "@subject";
 
    constexpr auto INLINE_CLASSNAME           = "$inline";          // nested class generic name
 

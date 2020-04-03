@@ -961,7 +961,10 @@ ObjectInfo Compiler::ExprScope :: mapMember(ident_t identifier)
    else {
       ClassScope* classScope = (ClassScope*)getScope(Scope::ScopeLevel::slClass);
       if (classScope != nullptr) {
-         return classScope->mapField(identifier, methodScope->scopeMode);
+         if (methodScope != nullptr) {
+            return classScope->mapField(identifier, methodScope->scopeMode);
+         }
+         else return classScope->mapField(identifier, INITIALIZER_SCOPE);
       }
    }
    return ObjectInfo();
@@ -2576,6 +2579,11 @@ ObjectInfo Compiler :: compileSubjectReference(SNode terminal, ExprScope& scope,
       ident_t name = terminal.identifier();
       messageName.copy(name);
    }
+   else if (terminal == lxSubjectRef) {
+      ref_t dummy = 0;
+      ident_t name = scope.module->resolveAction(terminal.argument, dummy);
+      messageName.copy(name);
+   }
 
    retVal.kind = okMessageNameConstant;
    retVal.param = scope.moduleScope->module->mapReference(messageName);
@@ -2693,7 +2701,7 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
          signatureLen++;
       }
 
-      ref_t full_sign = scope.module->mapSignature(signaturues, signatureLen, false);
+      /*ref_t full_sign = */scope.module->mapSignature(signaturues, signatureLen, false);
       ref_t resolvedMessage = 0;
       ref_t resolvedExtRef = 0;
       int resolvedStackSafeAttr = 0;
@@ -3970,6 +3978,36 @@ bool Compiler :: resolveAutoType(ObjectInfo source, ObjectInfo& target, ExprScop
    return scope.resolveAutoType(target, sourceRef, source.element);
 }
 
+inline ref_t resolveSubjectVar(SNode current)
+{
+   int bm = current.findChild(lxBookmarkReference).argument;
+   if (bm) {
+      SNode targetNode = findBookmarkOwner(current.parentNode(), bm);
+      if (targetNode.compare(lxClassMethod, lxConstructor, lxStaticMethod)) {
+         return getAction(targetNode.argument);
+      }
+   }
+
+   return 0;
+}
+
+void Compiler :: resolveMetaConstant(SNode node)
+{
+   SNode assignNode = node.findChild(lxAssign);
+   if (assignNode != lxNone) {
+      SNode exprNode = assignNode.nextNode().findSubNode(lxMetaConstant);
+      if (exprNode != lxNone) {
+         if (exprNode.identifier().compare(SUBJECT_VAR)) {
+            ref_t subjRef = resolveSubjectVar(node);
+            if (subjRef) {
+               exprNode.set(lxSubjectRef, subjRef);
+            }
+         }
+
+      }
+   }
+}
+
 bool Compiler :: recognizeCompileTimeAssigning(SNode node, ClassScope& scope)
 {
    bool idle = true;
@@ -3980,6 +4018,10 @@ bool Compiler :: recognizeCompileTimeAssigning(SNode node, ClassScope& scope)
          bool dummy2 = false;
 
          SNode identNode = current.firstChild();
+         if (identNode == lxBookmarkReference) {
+            resolveMetaConstant(current);
+         }
+
          EAttr mode = recognizeExpressionAttributes(identNode, scope, dummy, dummy2);
          if (identNode != lxNone) {
             ObjectInfo field;
@@ -5665,6 +5707,9 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
             object = ObjectInfo(okExplicitConstant, scope.moduleScope->module->mapConstant(action), 0, 0, actionRef);
             break;
          }
+         case lxSubjectRef:
+            object = compileSubjectReference(terminal, scope, mode);
+            break;
          default:
             object = scope.mapTerminal(token, terminal == lxReference, mode & HINT_SCOPE_MASK);
             break;
@@ -8409,6 +8454,15 @@ void Compiler :: generateClassStaticField(ClassScope& scope, SNode current, ref_
 
                      // comment out the initializer
                      initNode = lxIdle;
+                  }
+                  else if (assignNode.identifier().compare(SUBJECT_VAR)) {
+                     ref_t subjRef = resolveSubjectVar(current);
+                     if (subjRef) {
+                        assignNode.set(lxSubjectRef, subjRef);
+
+                        statRef = mapStaticField(scope.moduleScope, scope.reference, isArray);
+                     }
+                     else scope.raiseError(errInvalidOperation, current);
                   }
                   else scope.raiseError(errInvalidOperation, current);
                }

@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   70
+#define REVISION_VERSION   71
 
 using namespace _ELENA_;
 
@@ -1146,21 +1146,21 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       }
 
       if (apiMode) {
-         //if (test(info.header.flags, elExtension)) {
-         //   IdentifierString title(className);
-         //   title.append(" of ");
+         if (test(info.header.flags, elExtension)) {
+            IdentifierString title(className);
+            title.append(" of ");
 
-         //   //auto target = info.fieldTypes.get(-1);
-         //   //if (target.value1) {
-         //   //   ident_t targetName = module->resolveReference(target.value1);
+            auto target = info.fieldTypes.get(-1);
+            if (target.value1) {
+               ident_t targetName = module->resolveReference(target.value1);
 
-         //   //   title.append(targetName);
-         //   //}
-         //   //else title.append("system'Object");
+               title.append(targetName);
+            }
+            else title.append("system'Object");
 
-         //   printLine("extension '", title.c_str());
-         //}
-         /*else */printLine("class '", className);
+            printLine("extension '", title.c_str());
+         }
+         else printLine("class '", className);
       }
 
       if (info.header.parentRef) {

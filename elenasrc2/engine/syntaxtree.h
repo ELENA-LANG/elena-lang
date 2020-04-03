@@ -262,6 +262,7 @@ enum LexicalType
    lxStatIndex                = 0x000F26,
    lxRetEmbeddableAttr        = 0x000F27,
    lxElementType              = 0x000F28, // arg - reference
+   lxSubjectRef               = 0x000F29, // arg - reference
 };
 
 // --- SyntaxTree ---
