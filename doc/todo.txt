@@ -6,6 +6,7 @@ In development:
                 * ELENA 4.0 : Serializing a DTO to Json and back
 
               dev2 - refactoring
+                * migrating MG
                 * mov GC to C code : #77
                 * get rid of EXPAND_HEAP, NEW_HEAP
 

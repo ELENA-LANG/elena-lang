@@ -178,6 +178,7 @@ labWBEnd:
 
   mov  esp, ebp 
   pop  ecx 
+  pop  ebp
 
   ret
 
