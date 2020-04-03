@@ -151,41 +151,41 @@ extension jsonSerializer : TextBuilder
         self.write:""""
     }
     
-//    serialize(DTO object)
-//    {
-//        self.write:"{";
-//
-//        auto props := object.__dto_properties();
-////        if (nil == props)
-////        [
-////            props := object __properties.
-////        ].
-//        
-//        int len := props.Length;
-//        for (int i := 0, i < len, i += 1)
-//        {
-//            auto prop := props[i];
-//            var val := mixin prop(object).get;
-//            
-//            if (nil != val)
-//            {
-//                self.print("""",prop.Printable,""":");
-//                
-//                self.serialize(val);
-//                
-//                self.write:","
-//            }
-//        };
-//                                                
-//        int outputLen := self.Length;
-//        if(outputLen > 1)
-//        {
-//            outputLen -= 1;
-//            self.Length := outputLen
-//        };
-//        
-//        self.write:"}"
-//    }    
+    serialize(DTO object)
+    {
+        self.write:"{";
+
+        auto props := object.__getClass().__dto_properties();
+//        if (nil == props)
+//        [
+//            props := object __properties.
+//        ].
+        
+        int len := props.Length;
+        for (int i := 0, i < len, i += 1)
+        {
+            auto prop := props[i];
+            var val := prop.getPropertyValue(object);
+            
+            if (nil != val)
+            {
+                self.print("""",prop.toPrintable(),""":");
+                
+                self.serialize(val);
+                
+                self.write:","
+            }
+        };
+                                                
+        int outputLen := self.Length;
+        if(outputLen > 1)
+        {
+            outputLen -= 1;
+            self.Length := outputLen
+        };
+        
+        self.write:"}"
+    }    
 
 //    serialize(Array array)
 //    [

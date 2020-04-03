@@ -3,6 +3,7 @@ In development:
 ------         
               dev2 - tutorials
                 * migrate tutorials
+                * ELENA 4.0 : Serializing a DTO to Json and back
 
               dev2 - refactoring
                 * mov GC to C code : #77
