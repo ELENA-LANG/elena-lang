@@ -29,8 +29,8 @@ public extension classROp
 //    getField(int anIndex)
 //        => system'core_routines'__object.
         
-//    bool respondTo(Message m)
-//        => intern system'core_routines'__object;
+    bool respondTo(Message m)
+        => intern system'core_routines'__object;
 
     Message[] __getMessages()
     {

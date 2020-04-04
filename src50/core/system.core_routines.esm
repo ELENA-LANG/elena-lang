@@ -93,6 +93,22 @@ labErr:
   
 end
 
+procedure __object."respondTo$system@Object$system@Message[2]"
+
+  peeksi   2 // ; get message
+  load       // ; load message id
+  peeksi   1
+  mindex
+  ifn      labFalse 0FFFFFFFFh
+  movr     const : true
+  quitn    2
+
+labFalse:
+  movr     const : false
+  quitn    2
+
+end
+
 procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1

@@ -1,6 +1,14 @@
 ------                                 
 In development:
 ------         
+              dev2 - api
+                * use manifest info for module description
+                * description
+                * ignore protected constructors
+                * extension - ignore the target argument
+                * templates
+                * extension template
+
               dev2 - tutorials
                 * migrate tutorials
                 * ELENA 4.0 : Serializing a DTO to Json and back
@@ -41,7 +49,6 @@ In development:
                 * sqlite : support float / blob
                 * uncomment all code in LIB50
                 * String / WideString - add<'Char>
-                * api doc - with description
                 * regression tests
                 * Amicable pairs using yield method
                 * implement some roseta code samples
@@ -49,7 +56,6 @@ In development:
                 * upndown
 
               dev - elena50
-                * api : ignore protected constructors
                 * support module description from manifest
                 * support field / static field meta description
                 * closure unboxing: field addr

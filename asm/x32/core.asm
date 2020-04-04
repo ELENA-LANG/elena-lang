@@ -1330,6 +1330,37 @@ inline % 36h
 
 end
 
+// ; mindex
+inline % 37h
+
+  mov  ecx, edx
+  mov  edi, [ebx-4]
+  xor  edx, edx
+  mov  esi, [edi - elVMTSizeOffset]
+
+labSplit:
+  test esi, esi
+  jz   short labEnd
+
+labStart:
+  shr   esi, 1
+  setnc dl
+  cmp   ecx, [edi+esi*8]
+  jb    short labSplit
+  nop
+  nop
+  jz    short labFound
+  lea   edi, [edi+esi*8+8]
+  sub   esi, edx
+  jnz   short labStart
+  nop
+  nop
+labEnd:
+  mov  edx, 0FFFFFFFFh
+labFound:
+
+end
+
 // ; rround
 inline %3Dh
 

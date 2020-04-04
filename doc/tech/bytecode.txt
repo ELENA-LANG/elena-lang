@@ -361,6 +361,8 @@ ELENA byte codes (or ecodes)
  
  mcount                     - message[index].Count >> index   
 
+ mindex                     - search for ext in acc:VMT; out: index or -1
+ 
  mtredirect r, m            - search in message table r the message in index and provided parameter list; if found jumps to it;
 
  new vmt, i                 - create the object with the specified

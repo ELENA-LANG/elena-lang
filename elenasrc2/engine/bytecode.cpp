@@ -23,7 +23,7 @@ const char* _fnOpcodes[256] =
    "rcos", "rarctan", "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",
    "freelock", OPCODE_UNKNOWN, "loadenv", OPCODE_UNKNOWN, "rln", "read", "clone", "xset",
 
-   "rabs", "len", "rload", "flag", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "class", OPCODE_UNKNOWN,
+   "rabs", "len", "rload", "flag", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "class", "mindex",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rround", "equal", OPCODE_UNKNOWN,
 
    "nequal", "nless", OPCODE_UNKNOWN, "lequal", "lless", "rset", "rsave", "save",
