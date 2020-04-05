@@ -168,8 +168,10 @@ namespace expressions
     
         static Expression Nested(DynamicSingleton expr)
             = new NestedExpression(expr);          
-                                  
-        abstract saveTo(List<DynamicClosure> list, ExpressionScope scope) {}
+                               
+        abstract prepare(ExpressionScope scope) {}
+                                        
+        abstract saveTo(List<DynamicClosure> list) {}
     
         saveTo(List<Tuple<Message,ClosureTape>> list)
         {
@@ -186,7 +188,8 @@ namespace expressions
         {
             List<DynamicClosure> list := new List<DynamicClosure>(8);
             
-            self.saveTo(list, IdleExpressionScope);
+            self.prepare(IdleExpressionScope);
+            self.saveTo(list);
             
             ^ ClosureTape.load(list)
         }
@@ -291,18 +294,27 @@ namespace expressions
             this statements := statements
         }
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
             int len := statements.Length;
             for(int i := 0, i < len, i+=1) {
-                statements[i].saveTo(list, scope)
+                statements[i].prepare(scope)
+            };
+        }
+        
+        saveTo(List<DynamicClosure> list)
+        {
+            int len := statements.Length;
+            for(int i := 0, i < len, i+=1) {
+                statements[i].saveTo(list)
             };
         }
     }
 
     public class CodeblockExpression : Expression
     {
-        Expression[] statements;
+        Expression[]        statements;
+        List<ScopeVariable> variables;
         
         constructor new(params Expression[] statements)
         {
@@ -407,9 +419,9 @@ namespace expressions
                     Expression p17, Expression p18, Expression p19, Expression p20)
             <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
-            auto variables := new List<ScopeVariable>();
+            variables := new List<ScopeVariable>();
             
             auto codeScope := new ExpressionScope
             {
@@ -438,10 +450,18 @@ namespace expressions
                 }            
             };
             
+            int len := statements.Length;
+            for(int i := 0, i < len, i+=1) {
+                statements[i].prepare(codeScope);
+            }
+        }
+        
+        saveTo(List<DynamicClosure> list)
+        {            
             var eosClosure := new ReleaseClosure(1);
             int len := statements.Length;
             for(int i := 0, i < len, i+=1) {
-                statements[i].saveTo(list, codeScope);
+                statements[i].saveTo(list);
                 list.append(eosClosure)
             };
             
@@ -464,7 +484,11 @@ namespace expressions
         eval()
             = object;
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
+        {
+        }
+        
+        saveTo(List<DynamicClosure> list)
         {
             list.append(ConstantClosure.load(object));
         }
@@ -489,8 +513,12 @@ namespace expressions
         
         eval()
             = symbol;
-            
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+
+        prepare(ExpressionScope scope)
+        {
+        }
+                        
+        saveTo(List<DynamicClosure> list)
         {
             list.append(ConstantClosure.load(symbol));        
         }                
@@ -565,7 +593,17 @@ namespace expressions
                     Expression p11, Expression p12)
             <= new(new Message(message + "[13]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
+        {
+            _target.prepare(scope);
+            
+            int len := _arguments.Length;
+            for(int i := 0, i < len, i+=1) {
+                _arguments[i].prepare(scope);
+            }
+        }
+        
+        saveTo(List<DynamicClosure> list)
         {
             int len := _arguments.Length;
             int i := len;
@@ -573,10 +611,10 @@ namespace expressions
             {
                 i -= 1;
                 
-                _arguments[i].saveTo(list, scope);
+                _arguments[i].saveTo(list);
             };
             
-            _target.saveTo(list, scope);
+            _target.saveTo(list);
             
             list.append(MessageClosure.load(_message))
         }
@@ -653,8 +691,18 @@ namespace expressions
                     Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
                     Expression p11, Expression p12)
             <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-        
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+
+        prepare(ExpressionScope scope)
+        {
+            _target.prepare(scope);
+            
+            int len := _arguments.Length;
+            for(int i := 0, i < len, i+=1) {
+                _arguments[i].prepare(scope);
+            }
+        }
+                
+        saveTo(List<DynamicClosure> list)
         {
             int len := _arguments.Length;
             int i := len;
@@ -662,10 +710,10 @@ namespace expressions
             {
                 i -= 1;
                 
-                _arguments[i].saveTo(list, scope);
+                _arguments[i].saveTo(list);
             };
             
-            _target.saveTo(list, scope);
+            _target.saveTo(list);
             
             list.append(FunctionClosure.load(_message))
         }
@@ -733,8 +781,16 @@ namespace expressions
                     Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
                     Expression p11, Expression p12)
             <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
-        
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+
+        prepare(ExpressionScope scope)
+        {
+            int len := _arguments.Length;
+            for(int i := 0, i < len, i+=1) {
+                _arguments[i].prepare(scope);
+            }
+        }
+                
+        saveTo(List<DynamicClosure> list)
         {
             int len := _arguments.Length;
             int i := len;
@@ -742,7 +798,7 @@ namespace expressions
             {
                 i -= 1;
                 
-                _arguments[i].saveTo(list, scope);
+                _arguments[i].saveTo(list);
             };
             
             list.append(DynamicMessageClosure)
@@ -763,9 +819,14 @@ namespace expressions
             _target := t
         }
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
-            _target.saveTo(list, scope);
+            _target.prepare(scope);
+        }
+        
+        saveTo(List<DynamicClosure> list)
+        {
+            _target.saveTo(list);
             
             auto mssg := _name.getPropertyMessage();
             list.append(MessageClosure.load(mssg))
@@ -793,10 +854,16 @@ namespace expressions
             _target := t
         }
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
-            _target.saveTo(list, scope);
-            _property.saveTo(list, scope);
+            _target.prepare(scope);
+            _property.prepare(scope);
+        }
+        
+        saveTo(List<DynamicClosure> list)
+        {
+            _target.saveTo(list);
+            _property.saveTo(list);
             
             list.append(DynamicMessageClosure)
         }
@@ -818,10 +885,16 @@ namespace expressions
             _value := v
         }
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
-            _value.saveTo(list, scope);
-            _target.saveTo(list, scope);
+            _target.prepare(scope);
+            _value.prepare(scope);
+        }
+        
+        saveTo(List<DynamicClosure> list)
+        {
+            _value.saveTo(list);
+            _target.saveTo(list);
             
             auto mssg := _name.setPropertyMessage();
             list.append(MessageClosure.load(mssg))        
@@ -851,11 +924,18 @@ namespace expressions
             _value := v
         }
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
-            _value.saveTo(list, scope);
-            _target.saveTo(list, scope);
-            _property.saveTo(list, scope);
+            _property.prepare(scope);
+            _target.prepare(scope);
+            _value.prepare(scope);
+        }
+        
+        saveTo(List<DynamicClosure> list)
+        {
+            _value.saveTo(list);
+            _target.saveTo(list);
+            _property.saveTo(list);
             
             list.append(DynamicMessageClosure)
         }
@@ -865,6 +945,7 @@ namespace expressions
     {
         ScopeVariable variable;
         Expression    defaultValue;
+        LocalClosure  local;
         
         constructor(ScopeVariable variable)
         {
@@ -873,34 +954,50 @@ namespace expressions
             defaultValue := new ConstantExpression(nilValue)
         }
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
             scope.declare(variable);
             
-            defaultValue.saveTo(list, scope);
+            scope.resolve(variable, ref int index);
             
-            scope.resolve(variable, ref int index);        
-            list.append(new LocalClosure(index));        
+            local := new LocalClosure(index);
+            
+            defaultValue.prepare(scope)
+        }
+        
+        saveTo(List<DynamicClosure> list)
+        {
+            defaultValue.saveTo(list);
+            
+            list.append(local);        
         }    
     }
 
     public class AssigningExpression : Expression
     {
-        ScopeVariable variable;
-        Expression    expression;  
+        ScopeVariable    variable;
+        Expression       expression;  
+        AssigningClosure assigning;
         
         constructor(ScopeVariable variable, Expression expression)
         {
             this variable := variable;
             this expression := expression
         }
-        
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+
+        prepare(ExpressionScope scope)
         {
             scope.resolve(variable, ref int index);
             
-            expression.saveTo(list, scope);
-            list.append(new AssigningClosure(index));
+            assigning := new AssigningClosure(index);
+            
+            expression.prepare(scope)
+        }
+                
+        saveTo(List<DynamicClosure> list)
+        {
+            expression.saveTo(list);
+            list.append(assigning);
         }
     }
 
@@ -911,38 +1008,50 @@ namespace expressions
             this variable := variable;
             this expression := expression
         }
-        
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+
+        prepare(ExpressionScope scope)
         {
             scope.declare(variable);
             
-            new ConstantExpression(nilValue).saveTo(list, scope);
+            super.prepare(scope);
+        }
+                
+        saveTo(List<DynamicClosure> list)
+        {
+            new ConstantExpression(nilValue).saveTo(list);
             
-            super.saveTo(list, scope);
+            super.saveTo(list);
         }
     }
 
     public class VariableExpression : Expression
     {
         ScopeVariable variable;
+        LocalClosure  local;
         
         constructor(ScopeVariable variable)
         {
             this variable := variable
         }
-        
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+
+        prepare(ExpressionScope scope)
         {
             scope.resolve(variable, ref int index);
             
-            list.append(new LocalClosure(index));
+            local := new LocalClosure(index)
+        }
+                
+        saveTo(List<DynamicClosure> list)
+        {
+            list.append(local);
         }
     }
 
     public class TempVariableBlockExpression : Expression
     {
-        Expression    target;
-        Expression[]  statements;  
+        Expression       target;
+        Expression[]     statements;  
+        AssigningClosure assigning;
 
         constructor new(Expression target, params Expression[] statements)
         {
@@ -983,7 +1092,7 @@ namespace expressions
                     Expression s6, Expression s7, Expression s8)
             <= new(target, s1, s2, s3, s4, s5, s6, s7, s8); 
                         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
             var tempLocal := new ScopeVariable("$$" + (scope.ScopeLevel + 1).toPrintable());
             
@@ -1015,13 +1124,24 @@ namespace expressions
 
             scope.resolve(tempLocal, ref int index);
             
-            target.saveTo(list, scope);
-            list.append(new AssigningClosure(index));
+            assigning := new AssigningClosure(index);
+            
+            target.prepare(codeScope);
+            int len := statements.Length;
+            for(int i := 0, i < len, i+=1) {
+                statements[i].prepare(codeScope);
+            };                        
+        }
+                        
+        saveTo(List<DynamicClosure> list)
+        {
+            target.saveTo(list);
+            list.append(assigning);
 
             var eosClosure := new ReleaseClosure(1);
             int len := statements.Length;
             for(int i := 0, i < len, i+=1) {
-                statements[i].saveTo(list, codeScope);
+                statements[i].saveTo(list);
                 list.append(eosClosure)
             };                        
         }
@@ -1036,9 +1156,14 @@ namespace expressions
             this expr := expr
         }
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
-            expr.saveTo(list, scope);
+            expr.prepare(scope);
+        }
+        
+        saveTo(List<DynamicClosure> list)
+        {
+            expr.saveTo(list);
             list.append(JumpToEnd)
         }
     }
@@ -1053,13 +1178,19 @@ namespace expressions
             this condition := condition;
             this body := body;
         }
-        
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+
+        prepare(ExpressionScope scope)
         {
-            condition.saveTo(list, scope);
+            condition.prepare(scope);
+            body.prepare(scope);
+        }
+                
+        saveTo(List<DynamicClosure> list)
+        {
+            condition.saveTo(list);
             int bookmark := list.Length;
             list.append(cast DynamicClosure(nilValue));
-            body.saveTo(list, scope);
+            body.saveTo(list);
             
             //int offs := list.Length - bookmark - 1;
             int offs := list.Length - bookmark;
@@ -1080,15 +1211,21 @@ namespace expressions
             this condition := condition;
             this body := body
         }
-        
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+
+        prepare(ExpressionScope scope)
+        {
+            condition.prepare(scope);
+            body.prepare(scope);
+        }
+                
+        saveTo(List<DynamicClosure> list)
         {
             int top := list.Length;
             
-            condition.saveTo(list, scope);
+            condition.saveTo(list);
             int bookmark := list.Length;
             list.append(cast DynamicClosure(nilValue));
-            body.saveTo(list, scope);
+            body.saveTo(list);
             
             int offs := top - list.Length - 1;
             
@@ -1154,8 +1291,8 @@ namespace expressions
         {
             list.append(new Tuple<Message,ClosureTape>(message, self.compiled()));
         }
-               
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+
+        prepare(ExpressionScope scope)
         {
             auto methodScope := new ExpressionScope
             {
@@ -1181,7 +1318,12 @@ namespace expressions
                 }            
             };
     
-            body.saveTo(list, methodScope);        
+            body.prepare(methodScope);        
+        }
+
+        saveTo(List<DynamicClosure> list)
+        {
+            body.saveTo(list);        
         }    
     }
 
@@ -1243,7 +1385,7 @@ namespace expressions
             this body := body;
         }        
      
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
         {
             auto closureScope := new ExpressionScope
             {
@@ -1268,8 +1410,13 @@ namespace expressions
                 {
                 }            
             };
-    
-            body.saveTo(list, closureScope);        
+            
+            body.prepare(closureScope);
+        }
+     
+        saveTo(List<DynamicClosure> list)
+        {    
+            body.saveTo(list);        
         }    
     }
 
@@ -1282,7 +1429,11 @@ namespace expressions
             this singleton := singleton;
         }
         
-        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        prepare(ExpressionScope scope)
+        {
+        }
+        
+        saveTo(List<DynamicClosure> list)
         {
             var tape := singleton.compiled();
             
