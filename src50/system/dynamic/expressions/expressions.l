@@ -457,7 +457,14 @@ namespace expressions
         }
         
         saveTo(List<DynamicClosure> list)
-        {            
+        {       
+            var newLocal := new ConstantExpression(nilValue);
+            int l := variables.Length;
+            for (int i:=0, i < l, i+=1)
+            {
+                newLocal.saveTo(list)
+            };
+            
             var eosClosure := new ReleaseClosure(1);
             int len := statements.Length;
             for(int i := 0, i < len, i+=1) {
@@ -465,7 +472,6 @@ namespace expressions
                 list.append(eosClosure)
             };
             
-            int l := variables.Length;
             if (l != 0) {
                 list.append(new ReleaseClosure(variables.Length))
             }        
@@ -944,14 +950,11 @@ namespace expressions
     public class DeclarationExpression : Expression
     {
         ScopeVariable variable;
-        Expression    defaultValue;
         LocalClosure  local;
         
         constructor(ScopeVariable variable)
         {
             this variable := variable;
-            
-            defaultValue := new ConstantExpression(nilValue)
         }
         
         prepare(ExpressionScope scope)
@@ -961,14 +964,10 @@ namespace expressions
             scope.resolve(variable, ref int index);
             
             local := new LocalClosure(index);
-            
-            defaultValue.prepare(scope)
         }
         
         saveTo(List<DynamicClosure> list)
         {
-            defaultValue.saveTo(list);
-            
             list.append(local);        
         }    
     }
@@ -1104,7 +1103,7 @@ namespace expressions
                 
                 Expression resolve(ScopeVariable variable, ref int index)
                 {
-                    var current := variable;
+                    ScopeVariable current := variable;
                     
                     if (variable.Name == "$$current")
                     {
@@ -1115,7 +1114,7 @@ namespace expressions
                         current := new ScopeVariable("$$current");
                     };
                     
-                    ^ scope.resolve(variable, ref index)
+                    ^ scope.resolve(current, ref index)
                 }
         
                 declare(ScopeVariable variable)
@@ -1135,10 +1134,11 @@ namespace expressions
                         
         saveTo(List<DynamicClosure> list)
         {
+            var eosClosure := new ReleaseClosure(1);
             target.saveTo(list);
             list.append(assigning);
+            list.append(eosClosure);
 
-            var eosClosure := new ReleaseClosure(1);
             int len := statements.Length;
             for(int i := 0, i < len, i+=1) {
                 statements[i].saveTo(list);
