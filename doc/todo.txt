@@ -1,45 +1,62 @@
 ------                                 
 In development:
 ------         
-              dev2 - api
-                * use manifest info for module description
-                * description
-                * ignore protected constructors
-                * extension - ignore the target argument
-                * templates
-                * extension template
 
-              dev2 - tutorials
-                * migrate tutorials
+  [compiler]
+    * !linux : method not found exception handling
+    * GC : mov GC to C code : #77
+
+  [project]
+    * issues : close all open issues for 5.0
+    * release 5.0
+
+  [documentation]
+    * !tutorials : migrate all tutorials
+    * api : use manifest info for module description
+
+  [samples/api]
+    * !pi2 : debug
+    * chat
+    * rosetta code samples
+    * timer
+    * upndown
+    * nodepad
+
+  [!language]
+    * !new feature : nested code block
+      - nested code
+      - built-in temporal variables
+
+  [research]
+    * !xforms : simple build script
+
+  [IDE]
+    * debugger : step over fine tuning
+    * linux
+
+------                                                           
+Pipeline:
+------   
+                * system'dynamic'expressions: do we need TempVariableBlock? it cannot be translated into the normal code
+                * system'dynamic'expressions: review tape generation, test cases
+                * api : description
+                * api : ignore protected constructors
+                * api : extension - ignore the target argument
+                * api : templates
+                * api : extension template
                 * ELENA 4.0 : Serializing a DTO to Json and back
-
-              dev2 - refactoring
                 * migrating MG
-                * mov GC to C code : #77
                 * get rid of EXPAND_HEAP, NEW_HEAP
-
-              dev2 - research
                 * xforms
-
-              dev2 - linux32
-                * method not found exception handling
                 * compile int sample
                 * compile console samples
                 * compile ecv
                 * compile all console / files examples
-
-              dev2 - research
                 * graph - use script to define the function (+tutorial)
                 * source to expression tree
                 * expression tree to source
-
-              dev2 - documentations
                 * info : abstract class cannot have public constructors
-
-              dev2 - usability
                 * dynamic loading : give the symbol / class / message / subject name in the InvalidArgument exception
-
-              dev - migration
                 * socket samples
                 * rosetta code samples : Sockets
 
@@ -54,8 +71,6 @@ In development:
                 * implement some roseta code samples
                 * elt
                 * upndown
-
-              dev - elena50
                 * support module description from manifest
                 * support field / static field meta description
                 * closure unboxing: field addr
@@ -70,8 +85,6 @@ In development:
                 * ifheap - is not correctly recognize data allocated classes
                 * if bug structure is allocated - it will be marked as root - will it work?
                 * warn if the method is not found for sealed / limited classes (including conversions)
-
-              dev2 - tutorials
                 * duck_typing_in_elena_programming_language
                 * tutorials
                 * migrate tutorials from reddit
@@ -80,12 +93,8 @@ In development:
                 * migrate all existing ones
                 * tutorials
                 * rosetta code : AmicablePairs using yieldable method
-
-              dev - refactoring
                 * do we need ENDFRAME?
                 * loadfi vs loadf, savefi vs savef
-
-              dev - new features
                 * multi-return methods : dynamic objects
                 * declaring several variables in a row?
 
@@ -125,12 +134,8 @@ In development:
                 * static fields should be accessaible from storng typed extensions
                 * yield can be used only for yieldable method
                 * yieldable method can be declared only for normal class
-
-              dev - test / implementation
                 * CharValue.new = $0 -> should create a new class
                 * test : branching external implementation : returning a value from closure 
-
-              dev - test / optimization
                 * i += j
                 * use stosd over stos
                 * optimize pi sample ( < 5s )
@@ -175,54 +180,30 @@ In development:
                 * optimite yield operstions
                 * improve compiler speed
                 * move all description to meta info using descr inline template
-
-              dev - usability
                 * ide message : display internal error
                 * ref argument should be a variable
                 * compile single file project
                 * warn an operation with not initialized variable: var a.test();
                 * warn if the extension method is called from itself (short-cutting)
-
-              xdev - linux32
                 * (re)implement internal String.read<int,ref<byte>>
                 * (re)implement UnsafePointer.cast<string>
                 * (re)implement FileStrean.set length<int>
-
-              xdev debugger
                 * debugger : do not copy template parameter terminal info
                 * uncomment DebugController::parseMessage, cleanUp
                 * step over external / message / loop / if call?
                 * step over last statement (without terminator)
                 * watch message / subject info
-
-              dev50 - #495 Inheritable static methods
                 * sealed static methods : multimethods
 		* close issue 
-
-              dev50 - source code
                 * uncomment validateUnresolved
                 * remove all commented code
-
-              xdev - ide
                 * error by viewing translit sample
-
-              dev - samples
-                * nodepad
-
-              dev3
                 * port Linux IDE
-
-              dev2 - api
                 * template extensions
                 * missing algorithms (template extensions)
                 * missing system'routines'stex
-
-              xdev - amd64
                 * compile elenart64.dll
 
-------                                                           
-Pipeline:
-------   
                 * fix bug with inserting unicode character
                 * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)
                 * should toReal work only for real numbers without fraction?

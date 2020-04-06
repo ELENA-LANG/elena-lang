@@ -11,6 +11,7 @@
 [!] binary incompatible due to major version change
 [+] Explicit namespaces
 [+] Flat library hierarchy
+[+] #500 : Nested code blocks
 [+] #492 : Yield statement 
 [+] #380 : Run-time extension dispatching 
 [+] #494 : Method result multi-dispatching 

@@ -479,16 +479,15 @@ namespace collections
             theQueue := queue;
             theList := queue;
             
-            theIndex := queue.TopPointer;
+            theIndex := queue.TopPointer - 1;
             theTale := queue.TalePointer
         }
         
         bool next()
         {
+            theIndex += 1;
             if (theIndex < theTale)
             {
-                theIndex -= 1;
-                
                 ^ true
             }
             else
