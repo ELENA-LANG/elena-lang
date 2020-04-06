@@ -7,11 +7,11 @@ This is the GitHub repository of ELENA source code including compiler, IDE, ELEN
 ## Resources
 - **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
 - **ELENA API 5.0** <https://elena-lang.github.io/api/index.html>
+- **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
 - **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
 - **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
 - **Source code:** <https://github.com/ELENA-LANG/elena-lang>
-- **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Twitter:** <https://twitter.com/elena_language>
 - **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
 
