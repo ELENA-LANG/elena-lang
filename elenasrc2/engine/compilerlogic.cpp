@@ -1958,6 +1958,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_NODEBUGINFO:
          attributes.include(EAttr::eaNoDebugInfo);
          return true;
+      case V_PREVIOUS:
+         attributes.include(EAttr::eaPreviousScope);
+         return true;
       default:
          return false;
    }

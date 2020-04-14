@@ -88,6 +88,7 @@ constexpr auto V_TEMPLATE        = 0x8000101Eu;
 constexpr auto V_YIELD           = 0x80001020u;
 constexpr auto V_NAMESPACE       = 0x80001021u;
 constexpr auto V_META            = 0x80001022u;
+constexpr auto V_PREVIOUS        = 0x80001023u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -525,8 +526,9 @@ public:
       eaConstExpr          = 0x00400000000,
       eaCallOp             = 0x00800000000,
       eaRefExpr            = 0x01000000000,
+      eaPreviousScope      = 0x02000000000,
 
-      eaScopeMask          = 0x0100041400A,
+      eaScopeMask          = 0x0300041400A,
       eaObjectMask         = 0x008A821B2F4,
 
 //      eaWrap               = 0x00000001000,

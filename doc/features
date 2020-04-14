@@ -70,6 +70,7 @@ Declarations
   Extension Templates
   Property templates
 Code
+  nested scopes     
   Idenifiers
     * implicit
     * reference
@@ -81,6 +82,7 @@ Code
     * fixed-size array
     * in-place initializer
     * in-place declaration
+    * previous
   Operators
     * a ?? b / a.msg() ?? b
     * .?

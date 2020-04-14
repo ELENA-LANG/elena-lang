@@ -36,6 +36,7 @@ constexpr auto HINT_INTERNALOP      = EAttr::eaIntern;
 constexpr auto HINT_SCOPE_MASK      = EAttr::eaScopeMask;
 constexpr auto HINT_OBJECT_MASK     = EAttr::eaObjectMask;
 constexpr auto HINT_MODULESCOPE     = EAttr::eaModuleScope;
+constexpr auto HINT_PREVSCOPE       = EAttr::eaPreviousScope;
 constexpr auto HINT_NEWOP           = EAttr::eaNewOp;
 constexpr auto HINT_CASTOP          = EAttr::eaCast;
 constexpr auto HINT_SILENT          = EAttr::eaSilent;
@@ -131,45 +132,6 @@ inline SNode findRootNode(SNode node, LexicalType type1, LexicalType type2, Lexi
    return lastNode;
 }
 
-//inline bool isImportRedirect(SNode node)
-//{
-//   SNode terminal = node.firstChild(lxObjectMask);
-//   if (terminal == lxReference) {
-//      if (terminal.identifier().compare(INTERNAL_MASK, INTERNAL_MASK_LEN))
-//         return true;
-//   }
-//   return false;
-//}
-//
-//inline bool existChildWithArg(SNode node, LexicalType type, ref_t arg)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current.type == type && current.argument == arg)
-//         return true;
-//
-//      current = current.nextNode();
-//   }
-//
-//   return false;
-//}
-//
-//inline SNode goToNode(SNode current, LexicalType type)
-//{
-//   while (current != lxNone && current != type)
-//      current = current.nextNode();
-//
-//   return current;
-//}
-//
-//inline SNode goToNode(SNode current, LexicalType type1, LexicalType type2)
-//{
-//   while (current != lxNone && !current.compare(type1, type2))
-//      current = current.nextNode();
-//
-//   return current;
-//}
-//
 inline bool validateGenericClosure(ref_t* signature, size_t length)
 {
    for (size_t i = 1; i < length; i++) {
@@ -861,11 +823,15 @@ ObjectInfo Compiler::CodeScope :: mapLocal(ident_t identifier)
 
 ObjectInfo Compiler::CodeScope :: mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
 {
-   if (!referenceOne && !EAttrs::test(mode, HINT_MODULESCOPE)) {
-      ObjectInfo info = mapLocal(identifier);
-      if (info.kind != okUnknown)
-         return info;
+   if (!referenceOne) {
+      if (!EAttrs::testany(mode, HINT_MODULESCOPE | HINT_PREVSCOPE)) {
+         ObjectInfo info = mapLocal(identifier);
+         if (info.kind != okUnknown)
+            return info;
+      }
+      else mode = EAttrs::exclude(mode, HINT_PREVSCOPE);
    }
+
    return Scope::mapTerminal(identifier, referenceOne, mode);
 }
 
@@ -1987,50 +1953,6 @@ void Compiler :: declareFieldAttributes(SNode node, ClassScope& scope, FieldAttr
       }
    }
 }
-
-////void Compiler :: declareLocalAttributes(SNode node, CodeScope& scope, ObjectInfo& variable, int& size)
-////{
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxAttribute) {
-////         int value = current.argument;
-////         if (_logic->validateLocalAttribute(value)) {
-////            // negative value defines the target virtual class
-////            if (variable.extraparam == 0) {
-////               variable.extraparam = value;
-////            }
-////            //else if (value == V_OBJARRAY) {
-////            //   variable.element = variable.extraparam;
-////            //   variable.extraparam = value;
-////            //}
-////            else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-////         }
-////         else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
-////      }
-////      else if (current == lxSize) {
-////         size = current.argument;
-////      }
-////      else if (current == lxClassRefAttr) {
-////         if (variable.extraparam == 0) {
-////      //      NamespaceScope* namespaceScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-////
-////      //      variable.extraparam = namespaceScope->resolveImplicitIdentifier(current.identifier());
-////
-////            variable.extraparam = scope.moduleScope->mapFullReference(current.identifier(), true);
-////         }
-////         else scope.raiseError(errInvalidHint, node);
-////      }
-////      current = current.nextNode();
-////   }
-////
-////   if (size != 0 && variable.extraparam != 0) {
-////      if (!isPrimitiveRef(variable.extraparam)) {
-////         variable.element = variable.extraparam;
-////         variable.extraparam = _logic->definePrimitiveArray(*scope.moduleScope, variable.element);
-////      }
-////      else scope.raiseError(errInvalidHint, node);
-////   }
-////}
 
 void Compiler :: compileSwitch(SNode node, ExprScope& scope)
 {
@@ -9204,56 +9126,6 @@ void Compiler :: compileClassDeclaration(SNode node, ClassScope& scope)
    }
 }
 
-//inline ref_t mapClassName(_Module* module, ref_t reference)
-//{
-//   ident_t refName = module->resolveReference(reference);
-//
-//   return module->mapConstant(refName);
-//}
-//
-//void Compiler :: copyStaticFieldValues(SNode, ClassScope& scope)
-//{
-//   NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::slNamespace);
-//
-//   // inherit static field values
-//   auto staticValue_it = scope.info.staticValues.start();
-//   while (!staticValue_it.Eof()) {
-//      int index = staticValue_it.key();
-//      if (index == PACKAGE_ATTR_INDEX) {
-//         // if it is a built-in package attribute
-//         *staticValue_it = nsScope->packageReference | mskConstArray;
-//      }
-//      else if (index == NAME_ATTR_INDEX) {
-//         // if it is a built-in class attribute
-//         *staticValue_it = mapClassName(scope.module, scope.reference) | mskLiteralRef;
-//      }
-//      else {
-//         // if it is a used-defined attribute
-//         ref_t ref = *staticValue_it;
-//         if (ref != mskStatRef) {
-//            int mask = ref & mskAnyRef;
-//
-//            if (mask == mskConstArray) {
-//               // HOTFIX : inherit accumulating attribute list
-//               ClassInfo parentInfo;
-//               scope.moduleScope->loadClassInfo(parentInfo, scope.info.header.parentRef);
-//               ref_t targtListRef = *staticValue_it & ~mskAnyRef;
-//               ref_t parentListRef = parentInfo.staticValues.get(index) & ~mskAnyRef;
-//
-//               if (parentListRef != 0) {
-//                  // inherit the parent list
-//                  inheritClassConstantList(*scope.moduleScope, parentListRef, targtListRef);
-//               }
-//            }
-//         }
-//      }
-//
-//      staticValue_it++;
-//   }
-//
-//   scope.save();
-//}
-
 bool isClassMethod(LexicalType type)
 {
    return type == lxClassMethod;
@@ -10111,211 +9983,11 @@ bool Compiler :: optimizeOpDoubleAssigning(_ModuleScope&, SNode& node)
 
    return applied;
 }
-//
-//bool Compiler :: optimizeDirectRealOp(_ModuleScope& scope, SNode& node)
-//{
-//   SNode current = node.parentNode();
-//   SNode loperand = current.findSubNodeMask(lxObjectMask);
-//   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-//
-//   double d1 = scope.module->resolveConstant(loperand.argument).toDouble();
-//   double d2 = scope.module->resolveConstant(roperand.argument).toDouble();
-//   double val = 0;
-//   if (calculateRealOp(current.argument, d1, d2, val)) {
-//      loperand = lxIdle;
-//      roperand = lxIdle;
-//
-//      IdentifierString str;
-//      str.appendDouble(val);
-//      current.set(lxConstantReal, scope.module->mapConstant(str.c_str()));
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool Compiler :: optimizeDirectIntOp(_ModuleScope& scope, SNode& node)
-//{
-//   SNode current = node.parentNode();
-//   SNode loperand = current.findSubNodeMask(lxObjectMask);
-//   SNode roperand = current.firstChild(lxObjectMask).nextSubNodeMask(lxObjectMask);
-//
-//   int val = 0;
-//   if (calculateIntOp(current.argument, loperand.findChild(lxIntValue).argument, roperand.findChild(lxIntValue).argument, val)) {
-//      loperand = lxIdle;
-//      roperand = lxIdle;
-//
-//      IdentifierString str;
-//      str.appendHex(val);
-//      current.set(lxConstantInt, scope.module->mapConstant(str.c_str()));
-//      current.appendNode(lxIntValue, val);
-//
-//      return true;
-//   }
-//   else return false;
-//}
 
 bool Compiler :: optimizeBranching(_ModuleScope& scope, SNode& node)
 {
    return _logic->optimizeBranchingOp(scope, node);
 }
-
-//bool Compiler :: optimizeConstants(_ModuleScope& scope, SNode& sourceNode)
-//{
-//   bool applied = false;
-//
-//   SNode boxingNode = sourceNode.parentNode();
-//   ref_t targetRef = boxingNode.findChild(lxTarget).argument;
-//
-//   // HOTFIX : do not box constant classes
-//   if (sourceNode == lxConstantInt && targetRef == scope.intReference) {
-//      applied = true;
-//   }
-//   else if (sourceNode == lxConstantReal && targetRef == scope.realReference) {
-//      applied = true;
-//   }
-//   else if (sourceNode == lxConstantSymbol && targetRef == scope.intReference) {
-//      applied = true;
-//   }
-//   else if (sourceNode == lxMessageConstant && targetRef == scope.messageReference) {
-//      applied = true;
-//   }
-//   else if (sourceNode == lxSubjectConstant && targetRef == scope.messageNameReference) {
-//      applied = true;
-//   }
-//
-//   if (applied)
-//      optimizeBoxing(scope, boxingNode);
-//
-//   return applied;
-//}
-//
-//bool Compiler :: optimizeArgBoxing(_ModuleScope& scope, SNode& node)
-//{
-//   // HOTFIX : override the stacksafe attribute if the object must be boxed
-//   if (!node.existChild(lxBoxingRequired)) {
-//      node = lxExpression;
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-///*
-//         int stackSafeAttrs = rootNode.findChild(lxStacksafeAttr).argument;
-//         int flag = 1;
-//         SNode current = rootNode.firstChild(lxObjectMask);
-//         bool stackSafeArg = false;
-//         while (current != lxNone) {
-//            if (current == callNode && test(stackSafeAttrs, flag)) {
-//               stackSafeArg = true;
-//               break;
-//            }
-//
-//            current = current.nextNode(lxObjectMask);
-//            flag <<= 1;
-//         }
-//*/
-//
-//bool Compiler :: optimizeArgOp(_ModuleScope& scope, SNode& node)
-//{
-//   int stackSafeAttrs = 1;
-//
-//   SNode callNode = node.parentNode();
-//   if (callNode.compare(lxDirectCalling, lxSDirectCalling)) {
-//      // make sure variadic argument can be passed directly
-//      stackSafeAttrs = callNode.findChild(lxStacksafeAttr).argument;
-//   }
-//
-//   SNode calleeNode = callNode.firstChild(lxObjectMask);
-//   if (calleeNode == lxArgBoxing && test(stackSafeAttrs, 1)) {
-//      calleeNode = lxExpression;
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool Compiler :: optimizeByRefAssigning(_ModuleScope& scope, SNode& node)
-//{
-//   SNode assignNode = node.parentNode();
-//   if (assignNode.argument != 0) {
-//      optimizeBoxing(scope, node);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
-//bool Compiler :: optimizeDuplicateboxing(_ModuleScope& scope, SNode& node)
-//{
-//   node = lxIdle;
-//
-//   bool applied = false;
-//   SNode callNode = node.parentNode();
-//
-//   // check if there are more then 1 boxing left
-//   SNode current = callNode.firstChild();
-//   int nested = 0;
-//   while (current != lxNone) {
-//      if (current.compare(lxNested, lxBoxing, lxUnboxing)) {
-//         nested++;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
-//   if (nested > 1) {
-//      Map<Attribute, int> boxed;
-//      Map<int, int>       tempLocals;
-//
-//      int counter = 0;
-//      applied = analizeParameterBoxing(callNode, counter, boxed, tempLocals);
-//
-//      // inject boxed temporal variable
-//      counter = 0;
-//      injectBoxingTempLocal(callNode, counter, boxed, tempLocals);
-//   }
-//   return applied;
-//}
-//
-//bool Compiler :: optimizeUnboxing(_ModuleScope& scope, SNode& node)
-//{
-//   SNode child = node.firstChild(lxObjectMask);
-//   if (child == lxBoxing) {
-//      // to deal with unboxing -1, boxing n
-//      node.set(lxBoxing, child.argument);
-//   }
-//   else node = lxBoxing;
-//
-//   return true;
-//}
-//
-//bool Compiler :: optimizeNewArrBoxing(_ModuleScope& scope, SNode& node)
-//{
-//   SNode boxingNode = node.parentNode();
-//   if (boxingNode == lxBoxing && boxingNode.argument == -1) {
-//      SNode target = boxingNode.findChild(lxTarget);
-//      if (target.argument == node.argument) {
-//         optimizeBoxing(scope, boxingNode);
-//
-//         return true;
-//      }
-//   }
-//
-//   return false;
-//}
-//
-//bool Compiler :: optimizeAssigningTargetBoxing(_ModuleScope& scope, SNode& node)
-//{
-//   SNode nextArg = node.nextSubNodeMask(lxObjectMask);
-//   if (nextArg != lxNone) {
-//      optimizeBoxing(scope, node);
-//
-//      return true;
-//   }
-//   else return false;
-//}
 
 bool Compiler :: optimizeConstProperty(_ModuleScope&, SNode& node)
 {
@@ -10598,25 +10270,6 @@ void Compiler :: createPackageInfo(_Module* module, _ProjectManager& project)
 
    _writer.generateConstantList(tree.readRoot(), module, reference);
 }
-
-////void Compiler :: declareMetaAttributes(SNode node, NamespaceScope& scope)
-////{
-////   bool declared = false;
-////
-////   SNode current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == lxAttribute && current.argument == V_META) {
-////         // meta attribute is the only allowed
-////         declared = true;
-////      }
-////      else if (current == lxNameAttr && declared) {
-////         break;
-////      }
-////      else scope.raiseError(errInvalidHint, current);
-////
-////      current = current.nextNode();
-////   }
-////}
 
 int Compiler :: saveMetaInfo(_ModuleScope& scope, ident_t info)
 {
