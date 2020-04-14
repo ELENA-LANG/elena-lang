@@ -5995,6 +5995,14 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
             else retVal = compileRetExpression(current, scope, HINT_ROOT/* | HINT_RETEXPR*/);
             break;
          }
+         case lxCode:
+         {
+            // compile sub code
+            ExprScope exprScope(&scope);
+            compileSubCode(current, exprScope, false);
+
+            break;
+         }
          case lxEOP:
             needVirtualEnd = false;
             current.injectNode(lxTerminalMask); // injecting virtual terminal token
