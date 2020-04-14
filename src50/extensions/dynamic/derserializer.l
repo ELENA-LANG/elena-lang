@@ -18,7 +18,7 @@ public extension dynamicStructOp
 {
     serializeTo(class)
     {
-        var obj := class.new();
+        var obj := new class();
         
         ^ copyController.copy(self, obj)
     }

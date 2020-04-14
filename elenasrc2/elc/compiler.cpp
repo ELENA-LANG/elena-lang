@@ -5688,6 +5688,12 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
 
          recognizeTerminal(current, result, scope, mode);
       }
+      else if (current == lxType) {
+         ref_t typeRef = resolveTypeAttribute(current, scope, false, false);
+         result = mapClassSymbol(scope, typeRef);
+
+         recognizeTerminal(current, result, scope, mode);
+      }
       else result = mapTerminal(current, scope, mode);
 
       SNode mssgNode = node.findChild(lxMessage, lxCollection);
