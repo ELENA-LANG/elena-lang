@@ -115,14 +115,8 @@ namespace expressions
         static Expression Variable(string variable)
             = new VariableExpression(new ScopeVariable(variable));
 
-        static Expression CurrentTempVariable()
-            = new VariableExpression(new ScopeVariable("$$current"));              
-                                          
-        static Expression TempVariableBlock(Expression target, params Expression[] statements) 
-            = TempVariableBlockExpression.new(target, params statements);
-                                          
-        static Expression TempVariableBlock(Expression target) 
-            = TempVariableBlockExpression.new(target);
+        static Expression NestedCodeBlock(params Expression[] statements) 
+            = NestedBlockExpression.new(params statements);
                                           
         static Expression Statement(params Expression[] expressions)
             = StatementExpression.new(params expressions);
@@ -1046,104 +1040,87 @@ namespace expressions
         }
     }
 
-    public class TempVariableBlockExpression : Expression
+    public class NestedBlockExpression : CodeblockExpression
     {
-        Expression       target;
-        Expression[]     statements;  
-        AssigningClosure assigning;
-
-        constructor new(Expression target, params Expression[] statements)
+        constructor new(params Expression[] statements)
         {
-            this target := target;
             this statements := statements;
         }
 
-        constructor new(Expression target)
-        {
-            this target := target;
-            this statements := new Expression[](0);
-        }
-
-        constructor(Expression target, Expression s1)
-            <= new(target, s1); 
+        constructor(Expression s1)
+            <= new(s1); 
                         
-        constructor(Expression target, Expression s1, Expression s2)
-            <= new(target, s1, s2); 
+        constructor(Expression s1, Expression s2)
+            <= new(s1, s2); 
                         
-        constructor(Expression target, Expression s1, Expression s2, Expression s3)
-            <= new(target, s1, s2, s3); 
+        constructor(Expression s1, Expression s2, Expression s3)
+            <= new(s1, s2, s3); 
                         
-        constructor(Expression target, Expression s1, Expression s2, Expression s3, Expression s4)
-            <= new(target, s1, s2, s3, s4); 
+        constructor(Expression s1, Expression s2, Expression s3, Expression s4)
+            <= new(s1, s2, s3, s4); 
                         
-        constructor(Expression target, Expression s1, Expression s2, Expression s3, Expression s4, Expression s5)
-            <= new(target, s1, s2, s3, s4, s5); 
+        constructor(Expression s1, Expression s2, Expression s3, Expression s4, Expression s5)
+            <= new(s1, s2, s3, s4, s5); 
                         
-        constructor(Expression target, Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
+        constructor(Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
                     Expression s6)
-            <= new(target, s1, s2, s3, s4, s5, s6); 
+            <= new(s1, s2, s3, s4, s5, s6); 
                         
-        constructor(Expression target, Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
+        constructor(Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
                     Expression s6, Expression s7)
-            <= new(target, s1, s2, s3, s4, s5, s6, s7); 
+            <= new(s1, s2, s3, s4, s5, s6, s7); 
                         
-        constructor(Expression target, Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
+        constructor(Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
                     Expression s6, Expression s7, Expression s8)
-            <= new(target, s1, s2, s3, s4, s5, s6, s7, s8); 
+            <= new(s1, s2, s3, s4, s5, s6, s7, s8); 
                         
         prepare(ExpressionScope scope)
         {
-            var tempLocal := new ScopeVariable("$$" + (scope.ScopeLevel + 1).toPrintable());
+            variables := new List<ScopeVariable>();
             
-            scope.declare(tempLocal);
-            
+            int parentLevel := scope.ScopeLevel;
             auto codeScope := new ExpressionScope
             {
                 get int ScopeLevel() => scope;
                 
                 Expression resolve(ScopeVariable variable, ref int index)
                 {
-                    ScopeVariable current := variable;
-                    
-                    if (variable.Name == "$$current")
-                    {
-                        current := tempLocal;
-                    }
-                    else if (variable.Name == "$$previous")
-                    {
-                        current := new ScopeVariable("$$current");
+                    int len := variables.Length;
+                    for(int i := 0, i < len, i+=1) {
+                        if (variables[i] == variable)
+                        {
+                            index := parentLevel + i + 1;
+                            
+                            ^ self
+                        }
                     };
                     
-                    ^ scope.resolve(current, ref index)
+                    ^ scope.resolve(variable, ref index)
                 }
         
                 declare(ScopeVariable variable)
-                    => scope;
+                {
+                    variables.append(variable);
+                    
+                    var tempLocal := new ScopeVariable("$$" + scope.ScopeLevel.toPrintable());
+                    scope.declare(tempLocal);                    
+                }            
             };
-
-            scope.resolve(tempLocal, ref int index);
             
-            assigning := new AssigningClosure(index);
-            
-            target.prepare(codeScope);
             int len := statements.Length;
             for(int i := 0, i < len, i+=1) {
                 statements[i].prepare(codeScope);
-            };                        
+            }
         }
                         
         saveTo(List<DynamicClosure> list)
         {
             var eosClosure := new ReleaseClosure(1);
-            target.saveTo(list);
-            list.append(assigning);
-            list.append(eosClosure);
-
             int len := statements.Length;
             for(int i := 0, i < len, i+=1) {
                 statements[i].saveTo(list);
                 list.append(eosClosure)
-            };                        
+            };
         }
     }
 

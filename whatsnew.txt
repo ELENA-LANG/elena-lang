@@ -17,6 +17,7 @@
 [+] #380 : Run-time extension dispatching 
 [+] #494 : Method result multi-dispatching 
 [+] #495 : Inheritable static methods 
+[+] #501 : Modificator new can be used with a variable
 
 [ELC]
 [!] deep code refactoring - treamlining code generation, increasing 

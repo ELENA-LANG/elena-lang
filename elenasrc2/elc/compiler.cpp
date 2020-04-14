@@ -4928,7 +4928,6 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    if (target.kind == okClass || target.kind == okClassSelf) {
       targetRef = target.param;
    }
-   else throw InternalError("Not implemented"); // !! temporal
 
    EAttr paramsMode = EAttr::eaNone;
    bool variadicOne = false;
@@ -4967,7 +4966,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    bool dummy = false;
    ObjectInfo retVal = compileMessage(exprNode, scope, target, messageRef, mode | HINT_SILENT, stackSafeAttr, dummy);
 
-   if (!resolveObjectReference(scope, retVal, false)) {
+   if (targetRef && !resolveObjectReference(scope, retVal, false)) {
       scope.raiseError(errDefaultConstructorNotFound, exprNode);
    }
 
@@ -5686,14 +5685,10 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          result.param = resolvePrimitiveArray(scope,
             scope.moduleScope->arrayTemplateReference, result.element, false);
          result.reference = V_OBJARRAY;
-      }
-      else {
-         ref_t typeRef = resolveTypeAttribute(current, scope, false, false);
 
-         result = mapClassSymbol(scope, typeRef);
+         recognizeTerminal(current, result, scope, mode);
       }
-
-      recognizeTerminal(current, result, scope, mode);
+      else result = mapTerminal(current, scope, mode);
 
       SNode mssgNode = node.findChild(lxMessage, lxCollection);
       if (mssgNode == lxMessage) {

@@ -11,23 +11,25 @@ In development:
     * release 5.0
 
   [documentation]
-    * !tutorials : migrate all tutorials
+    * reddit : migrate all posts to ELENA 5.0  (using / finally statements in ELENA)
+    * tutorials : migrate all tutorials
     * api : use manifest info for module description
 
   [samples/api]
-    * !pi2 : debug
+    * fix : pi2, anagram
     * chat
     * rosetta code samples
     * timer
     * upndown
     * nodepad
 
-  [!language]
-    * !new feature : nested code block
-      - nested code
-      - built-in temporal variables
+  [language]
+    * new feature : implicit constructor with variadic argument list should auto generate the implemeation for every
+                      possible argument list (see system'dynamic'expressions);
+                    __nowarning - modifier to surpress warnings for the expression (e.g in extension module);
+                    catch several exceptions - could we simplify the code?
 
-  [research]
+  [!research]
     * !xforms : simple build script
 
   [IDE]
@@ -37,6 +39,7 @@ In development:
 ------                                                           
 Pipeline:
 ------   
+                * redux : closure tape generation (reusing local variables for nested scopes)
                 * debugger : sub code - do not show the variable from noncurrent sub codes
                 * system'dynamic'expressions: do we need TempVariableBlock? it cannot be translated into the normal code
                 * system'dynamic'expressions: review tape generation, test cases
