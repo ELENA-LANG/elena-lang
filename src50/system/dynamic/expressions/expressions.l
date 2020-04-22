@@ -24,6 +24,8 @@ namespace expressions
     {
         get abstract int ScopeLevel() {}
         
+        get abstract ExpressionScope Previous() {}
+        
         abstract Expression resolve(ScopeVariable variable, ref int index) {}
         
         abstract declare(ScopeVariable variable) {}
@@ -32,6 +34,8 @@ namespace expressions
     public singleton IdleExpressionScope : ExpressionScope
     {
         int ScopeLevel = 0;
+        
+        ExpressionScope Previous = nil;
         
         Expression resolve(ScopeVariable variable, ref int index) 
         {
@@ -109,11 +113,20 @@ namespace expressions
         static Expression DeclareAndAssigning(ScopeVariable variable, Expression expr)
             = new DeclaringAndAssigningExpression(variable, expr);
               
+        static Expression DeclareAndAssigning(string variable, Expression expr)
+            = new DeclaringAndAssigningExpression(new ScopeVariable(variable), expr);
+              
         static Expression Variable(ScopeVariable variable)
             = new VariableExpression(variable);
               
         static Expression Variable(string variable)
             = new VariableExpression(new ScopeVariable(variable));
+
+        static Expression PreviousVariable(ScopeVariable variable)
+            = new PreviousVariableExpression(variable);
+              
+        static Expression PreviousVariable(string variable)
+            = new PreviousVariableExpression(new ScopeVariable(variable));
 
         static Expression NestedCodeBlock(params Expression[] statements) 
             = NestedBlockExpression.new(params statements);
@@ -419,7 +432,9 @@ namespace expressions
             
             auto codeScope := new ExpressionScope
             {
-                get int ScopeLevel = scope.ScopeLevel + variables.Length;
+                ExpressionScope Previous = scope;
+                
+                int ScopeLevel = scope.ScopeLevel + variables.Length;
                 
                 Expression resolve(ScopeVariable variable, ref int index)
                 {
@@ -1002,6 +1017,12 @@ namespace expressions
             this expression := expression
         }
 
+        constructor(string variable, Expression expression)
+        {
+            this variable := new ScopeVariable(variable);
+            this expression := expression
+        }
+
         prepare(ExpressionScope scope)
         {
             scope.declare(variable);
@@ -1037,6 +1058,21 @@ namespace expressions
         saveTo(List<DynamicClosure> list)
         {
             list.append(local);
+        }
+    }
+
+    public class PreviousVariableExpression : VariableExpression
+    {
+        constructor(ScopeVariable variable)
+        {
+            this variable := variable
+        }
+
+        prepare(ExpressionScope scope)
+        {            
+            scope.Previous.resolve(variable, ref int index);
+            
+            local := new LocalClosure(index)
         }
     }
 
@@ -1082,6 +1118,8 @@ namespace expressions
             auto codeScope := new ExpressionScope
             {
                 get int ScopeLevel() => scope;
+                
+                ExpressionScope Previous = scope;
                 
                 Expression resolve(ScopeVariable variable, ref int index)
                 {
@@ -1273,7 +1311,9 @@ namespace expressions
         {
             auto methodScope := new ExpressionScope
             {
-                get int ScopeLevel = parameters.Length;
+                int ScopeLevel = parameters.Length;
+                
+                ExpressionScope Previous = scope;
                 
                 Expression resolve(ScopeVariable variable, ref int index)
                 {
@@ -1366,7 +1406,9 @@ namespace expressions
         {
             auto closureScope := new ExpressionScope
             {
-                get int ScopeLevel = parameters.Length;
+                int ScopeLevel = parameters.Length;
+                
+                ExpressionScope Previous = scope;
                 
                 Expression resolve(ScopeVariable variable, ref int index)
                 {
@@ -1542,7 +1584,7 @@ namespace expressions
         {
             this symbols := symbols;                
         }
-        
+ 
         compiled()
         {
             auto set := new DynamicStruct();

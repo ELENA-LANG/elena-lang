@@ -138,6 +138,15 @@ public class InvalidOperationException : Exception
         <= new(message);
 }
 
+// --- TypeLoaderException ---
+
+public class TypeLoaderException : Exception
+{
+    /// Creates the exception
+    constructor new(string className)
+        <= new("Type " + className + " cannot be loaded");
+}
+
 // --- MethodNotFound ---
 
 public sealed class MethodNotFoundException : Exception

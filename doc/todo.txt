@@ -29,6 +29,10 @@ In development:
                     __nowarning - modifier to surpress warnings for the expression (e.g in extension module);
                     catch several exceptions - could we simplify the code?
 
+  [API]
+    * usability : dynamic loading : give the symbol / message / subject name in the InvalidArgument exception
+
+
   [!research]
     * !xforms : simple build script
 
@@ -44,7 +48,6 @@ Pipeline:
                 * system'dynamic'expressions: do we need TempVariableBlock? it cannot be translated into the normal code
                 * system'dynamic'expressions: review tape generation, test cases
                 * api : description
-                * api : ignore protected constructors
                 * api : extension - ignore the target argument
                 * api : templates
                 * api : extension template
@@ -60,7 +63,6 @@ Pipeline:
                 * source to expression tree
                 * expression tree to source
                 * info : abstract class cannot have public constructors
-                * dynamic loading : give the symbol / class / message / subject name in the InvalidArgument exception
                 * socket samples
                 * rosetta code samples : Sockets
 

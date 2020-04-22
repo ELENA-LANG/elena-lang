@@ -1346,6 +1346,9 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    else if (info->name.compare("#constructor")) {
       info->name.copy("<i>constructor</i>");
    }
+   else if (info->name.compare("#constructor2")) {
+      info->name.copy("<i>protected constructor</i>");
+   }
    else if (info->name.compare("#cast")) {
       info->special = true;
       info->convertor = true;

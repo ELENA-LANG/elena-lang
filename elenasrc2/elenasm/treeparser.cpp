@@ -25,6 +25,10 @@ TreeScriptParser :: TreeScriptParser()
    _attributes.add("get_method", V_GETACCESSOR);
    _attributes.add("script_method", V_SCRIPTSELFMODE);
    _attributes.add("public_namespace", V_PUBLIC);
+   _attributes.add("script_function", V_SCRIPTSELFMODE);
+   _attributes.add("script_function", V_FUNCTION);
+   _attributes.add("variable_identifier", V_VARIABLE);
+   _attributes.add("new_reference", V_NEWOP);
 }
 
 void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer, LexicalType type)
@@ -45,14 +49,17 @@ void TreeScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& b
 {
    int type = _tokens.get(reader.lookup(bm));
    if (type != 0) {
-      int attr = _attributes.get(reader.lookup(bm));
+      auto attr_it = _attributes.getIt(reader.lookup(bm));
 
       bm = reader.read();
       if (reader.compare("(")) {
          writer.newBookmark();
          writer.newNode((LexicalType)type);
-         if (attr != 0)
-            writer.appendNode(lxAttribute, attr);
+         while (!attr_it.Eof()) {
+            writer.appendNode(lxAttribute, *attr_it);
+
+            attr_it = _attributes.nextIt(attr_it.key(), attr_it);
+         }            
 
          parseScope(reader, bm, writer, (LexicalType)type);
          writer.removeBookmark();

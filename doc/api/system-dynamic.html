@@ -95,7 +95,7 @@ sealed Class <SPAN CLASS="typeNameLabel">AssigningClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#AssigningClosure">AssigningClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#constructor2()
+<CODE><i>protected constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -621,7 +621,7 @@ Class <SPAN CLASS="typeNameLabel">ConstantClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ConstantClosure">ConstantClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#constructor2()
+<CODE><i>protected constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -993,7 +993,7 @@ sealed Class <SPAN CLASS="typeNameLabel">FunctionClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#FunctionClosure">FunctionClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#constructor2()
+<CODE><i>protected constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -1098,7 +1098,7 @@ sealed Class <SPAN CLASS="typeNameLabel">GoToClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#GoToClosure">GoToClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#constructor2()
+<CODE><i>protected constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -1203,7 +1203,7 @@ sealed Class <SPAN CLASS="typeNameLabel">JumpIfNotClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#JumpIfNotClosure">JumpIfNotClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#constructor2()
+<CODE><i>protected constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -1363,7 +1363,7 @@ sealed Class <SPAN CLASS="typeNameLabel">LocalClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#LocalClosure">LocalClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#constructor2()
+<CODE><i>protected constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -1486,7 +1486,7 @@ sealed Class <SPAN CLASS="typeNameLabel">MessageClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#MessageClosure">MessageClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#constructor2()
+<CODE><i>protected constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -1591,7 +1591,7 @@ sealed Class <SPAN CLASS="typeNameLabel">ReleaseClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ReleaseClosure">ReleaseClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#constructor2()
+<CODE><i>protected constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -1869,13 +1869,22 @@ extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>respondTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Message&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>__getMessages(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'MessageName&gt;</A></SPAN></CODE></TD>
@@ -1884,7 +1893,7 @@ extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
@@ -1893,7 +1902,7 @@ extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>

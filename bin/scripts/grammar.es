@@ -26,9 +26,25 @@
                                    "symbol" "(" s_name symbol_expr ")"
 <=   ) =>;
 
+   #define member         ::=
+<= 
+     system'dynamic'expressions'SymbolInfo ( 
+=>
+                                   "class" "(" s_name class_expr ")"
+<=   ) =>;
+
   #define symbol_expr     ::= "expression" "(" nested_symbol ")"; 
   #define symbol_expr     ::= "expression" "(" expr_symbol ")"; 
                               
+  #define class_expr      ::= 
+<=
+       system'dynamic'expressions'DynamicSingleton (
+=>
+                                   member*
+<=
+       )
+=>;
+
   #define nested_symbol   ::= 
 <=
        system'dynamic'expressions'DynamicSingleton (
@@ -50,17 +66,25 @@
 <=     ) =>;
 
   #define member          ::= method;
-  #define member          ::= action;
+  #define member          ::= function;
 
-  #define action          ::= 
+  #define function        ::= 
 <=
        system'dynamic'expressions'ActionMethodExpression (
 =>
-                                   "action" "(" parameter* body ")"
+                                   "function" "(" parameter* body ")"
 <=
        )
 =>;
 
+  #define function        ::= 
+<=
+       system'dynamic'expressions'ActionMethodExpression (
+=>
+                                   "script_function" "(" parameter* body ")"
+<=
+       )
+=>;
 
   #define method          ::= 
 <=
@@ -121,6 +145,18 @@
 
   #define expression      ::= "expression" "(" operation ")";
   #define expression      ::= "expression" "(" object ")";
+  #define expression      ::= "expression" "(" variable ")";
+
+  #define variable        ::= 
+<=
+               system'dynamic'expressions'DeclaringAndAssigningExpression (
+=>
+                                "variable_idetifier" "=" ident_quote assigning
+<=
+               )
+=>;
+
+  #define assigning       ::= "assign" expression;
 
   #define operation       ::=
 <=
@@ -138,6 +174,15 @@
                system'dynamic'expressions'GetPropertyExpression (
 =>
                                  object message "property_parameter" "(" ")"
+<=
+               )
+=>; 
+
+  #define expr_operation  ::=
+<=
+               system'dynamic'expressions'SetPropertyExpression (
+=>
+                                "expression" "(" object message "property_parameter" ")" "assign" object
 <=
                )
 =>; 
@@ -222,6 +267,20 @@
       
   #define object          ::=
 <=
+                    system'dynamic'expressions'MessageCallExpression ( 
+                       system'dynamic'expressions'ConstantExpression ( 
+                          system'ClassReference ( 
+=>
+                               "new_reference" "=" ref_quote "message"
+<=
+                          )
+                       )
+                       "#constructor"
+                    )
+=>;
+      
+  #define object          ::=
+<=
                     system'dynamic'expressions'ConstantExpression ( 
 =>
                            "literal" "=" quote
@@ -236,6 +295,7 @@
   #define p_name          ::= "nameattr" "(" identifier ")" ;
 
   #define message         ::= "message" "=" ident_quote;
+  #define message         ::= "message" "(" identifier ")";
   #define identifier      ::= "identifier" "=" ident_quote;
   #define reference       ::= "reference" "=" ref_quote;
 
