@@ -369,12 +369,43 @@ void CFParser :: setScriptPtr(ScriptBookmark& bm, Rule& rule, bool prefixMode)
    }
 }
 
+size_t CFParser :: defineGrammarBrackets(_ScriptReader& reader, ScriptBookmark& bm, size_t parentRuleId)
+{
+   size_t ruleId = autonameRule(parentRuleId);
+
+   Rule rule;
+   rule.type = rtNormal;
+   int applyMode = 0;
+
+   bm = reader.read();
+   while (!reader.compare("}")) {
+      if (reader.compare("|")) {
+         defineApplyRule(rule, applyMode);
+         addRule(ruleId, rule);
+
+         rule = Rule();
+         rule.type = rtNormal;
+         applyMode = 0;
+      }
+      else defineGrammarRuleMember(reader, bm, rule, ruleId, applyMode);
+
+      bm = reader.read();
+   }
+
+   defineApplyRule(rule, applyMode);
+
+   addRule(ruleId, rule);
+
+   return ruleId;
+}
+
 size_t CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, size_t parentRuleId, 
    size_t nonterminal, size_t terminal)
 {
    size_t ruleId = autonameRule(parentRuleId);
 
    Rule rule;
+   rule.type = rtNormal;
    rule.nonterminal = nonterminal;
    rule.terminal = terminal;
 
@@ -509,9 +540,29 @@ void CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& 
          rule.terminal = defineGrammarRuleMember(reader, bm, ruleId);
       }
       else if (bm.state != dfaQuote) {
-         //            rule.terminal = writeRegExprBodyText(reader, applyMode);
+         rule.terminal = writeRegExprBodyText(reader, applyMode);
       }
       else rule.terminal = writeBodyText(reader.lookup(bm));
+   }
+   else if (reader.compare("{")) {
+      int bracketRuleId = defineGrammarBrackets(reader, bm, ruleId);
+
+      if (rule.nonterminal == 0) {
+         //rule.prefixPtr = defineDSARule(token, reader);
+
+         rule.nonterminal = bracketRuleId;
+      }
+      else if (rule.terminal == 0) {
+         rule.type = rtChomski;
+
+         rule.terminal = bracketRuleId;
+      }
+      else {
+         if (rule.type == rtChomski) {
+            rule.terminal = defineGrammarRuleMember(reader, bm, ruleId, rule.terminal);
+         }
+         else rule.nonterminal = defineGrammarRuleMember(reader, bm, ruleId, rule.nonterminal);
+      }
    }
    else if (reader.compare("*") || reader.compare("+") || reader.compare("?")) {
       if (rule.terminal != 0 && rule.type == rtChomski) {
