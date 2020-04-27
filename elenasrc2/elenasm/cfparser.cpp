@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  :  ELENA VM Script Engine
 //
-//                                              (C)2011-2017, by Alexei Rakov
+//                                              (C)2011-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -353,7 +353,24 @@ size_t CFParser :: autonameRule(size_t parentRuleId)
    return mapRuleId(ns);
 }
 
-size_t CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, size_t parentRuleId, size_t nonterminal, size_t terminal)
+void CFParser :: setScriptPtr(ScriptBookmark& bm, Rule& rule, bool prefixMode)
+{
+   if (prefixMode) {
+      if (rule.postfix1Ptr)
+         throw EParseError(bm.column, bm.row);
+
+      rule.postfix1Ptr = _body.Length();
+   }
+   else {
+      if (rule.postfix1Ptr)
+         throw EParseError(bm.column, bm.row);
+
+      rule.postfix2Ptr = _body.Length();
+   }
+}
+
+size_t CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, size_t parentRuleId, 
+   size_t nonterminal, size_t terminal)
 {
    size_t ruleId = autonameRule(parentRuleId);
 
@@ -361,7 +378,9 @@ size_t CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, 
    rule.nonterminal = nonterminal;
    rule.terminal = terminal;
 
-   defineGrammarRule(reader, bm, rule, ruleId);
+   int applyMode = 0;
+   defineGrammarRuleMember(reader, bm, rule, ruleId, applyMode);
+   defineApplyRule(rule, applyMode);
 
    addRule(ruleId, rule);
 
@@ -373,16 +392,16 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
    bool prefixMode = false;
    if (rule.terminal == 0 && rule.nonterminal == 0) {
       prefixMode = true;
-      rule.prefixPtr = _body.Length();
+      rule.prefix1Ptr = _body.Length();
    }
-   else rule.postfixPtr = _body.Length();
+   else rule.prefix2Ptr = _body.Length();
 
    MemoryWriter writer(&_body);
    ScriptBookmark bm = reader.read();
    while (!reader.compare("=>") || bm.state == dfaQuote) {
       if (bm.state == dfaPrivate) {
-         if (rule.saveTo != NULL || !prefixMode)
-            throw EParseError(bm.column, bm.row);
+         if (rule.saveTo != NULL || (!prefixMode && !reader.compare(CURRENT_KEYWORD)))
+               throw EParseError(bm.column, bm.row);
 
          if (reader.compare(REFERENCE_KEYWORD)) {
             rule.terminal = (size_t)-1;
@@ -413,8 +432,10 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          }
 
          writer.writeChar((char)0);
-         rule.postfixPtr = _body.Length();
-         prefixMode = false;
+         setScriptPtr(bm, rule, prefixMode);
+
+   //      rule.postfixPtr = _body.Length();
+   //      prefixMode = false;
       }
       else if (bm.state == dfaQuote && reader.compare(REFERENCE_KEYWORD)) {
          rule.terminal = (size_t)-1;
@@ -423,8 +444,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          mode = REFERENCE_MODE;
 
          writer.writeChar((char)0);
-         rule.postfixPtr = _body.Length();
-         prefixMode = false;
+         setScriptPtr(bm, rule, prefixMode);
       }
       else if (bm.state == dfaQuote && reader.compare(IDENTIFIER_KEYWORD)) {
          rule.terminal = (size_t)-1;
@@ -433,8 +453,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          mode = IDENTIFIER_MODE;
 
          writer.writeChar((char)0);
-         rule.postfixPtr = _body.Length();
-         prefixMode = false;
+         setScriptPtr(bm, rule, prefixMode);
       }
       else if (bm.state == dfaQuote && reader.compare(LITERAL_KEYWORD)) {
          rule.terminal = (size_t)-1;
@@ -443,8 +462,7 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          mode = LITERAL_MODE;
 
          writer.writeChar((char)0);
-         rule.postfixPtr = _body.Length();
-         prefixMode = false;
+         setScriptPtr(bm, rule, prefixMode);
       }
       else if (bm.state == dfaQuote && reader.compare(NUMERIC_KEYWORD)) {
          rule.terminal = (size_t)-1;
@@ -453,13 +471,12 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          mode = NUMERIC_MODE;
 
          writer.writeChar((char)0);
-         rule.postfixPtr = _body.Length();
-         prefixMode = false;
+         setScriptPtr(bm, rule, prefixMode);
       }
       else {
-         if (prefixMode && rule.saveTo != 0) {
-            throw EParseError(bm.column, bm.row);
-         }
+   //      if (prefixMode && rule.saveTo != 0) {
+   //         throw EParseError(bm.column, bm.row);
+   //      }
 
          ident_t token = reader.lookup(bm);
 
@@ -475,129 +492,129 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
    writer.writeChar((char)0);
 }
 
+void CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId, int& applyMode)
+{
+   if (bm.state == dfaQuote || reader.compare("(")) {
+      if (rule.terminal) {
+         if (rule.nonterminal != 0) {
+            if (rule.type == rtChomski) {
+               rule.terminal = defineGrammarRuleMember(reader, bm, ruleId, rule.terminal);
+            }
+            else rule.nonterminal = defineGrammarRuleMember(reader, bm, ruleId, rule.nonterminal);
+         }
+         else rule.nonterminal = defineGrammarRuleMember(reader, bm, ruleId);
+      }
+      else if (rule.nonterminal) {
+         rule.type = rtChomski;
+         rule.terminal = defineGrammarRuleMember(reader, bm, ruleId);
+      }
+      else if (bm.state != dfaQuote) {
+         //            rule.terminal = writeRegExprBodyText(reader, applyMode);
+      }
+      else rule.terminal = writeBodyText(reader.lookup(bm));
+   }
+   else if (reader.compare("*") || reader.compare("+") || reader.compare("?")) {
+      if (rule.terminal != 0 && rule.type == rtChomski) {
+         if (reader.compare("+")) {
+            rule.terminal = definePlusGrammarRule(ruleId, rule.terminal);
+         }
+         else if (reader.compare("?")) {
+            rule.terminal = defineOptionalGrammarRule(ruleId, rule.terminal);
+         }
+         else rule.terminal = defineStarGrammarRule(ruleId, rule.terminal);
+      }
+      else if (rule.nonterminal != 0) {
+         if (reader.compare("+")) {
+            rule.nonterminal = definePlusGrammarRule(ruleId, rule.nonterminal);
+         }
+         else if (reader.compare("?")) {
+            rule.nonterminal = defineOptionalGrammarRule(ruleId, rule.nonterminal);
+         }
+         else rule.nonterminal = defineStarGrammarRule(ruleId, rule.nonterminal);
+      }
+      else throw EParseError(bm.column, bm.row);
+   }
+   else if (bm.state == dfaPrivate) {
+      if (rule.terminal) {
+         rule.nonterminal = defineGrammarRuleMember(reader, bm, ruleId, rule.nonterminal);
+      }
+      else if (rule.nonterminal) {
+         rule.type = rtChomski;
+         rule.terminal = defineGrammarRuleMember(reader, bm, ruleId);
+      }
+      else {
+         rule.terminal = (size_t)-1;
+         //            rule.prefixPtr = defineDSARule(token, reader);
+
+         if (reader.compare(LITERAL_KEYWORD)) {
+            applyMode = LITERAL_MODE;
+         }
+         else if (reader.compare(NUMERIC_KEYWORD)) {
+            applyMode = NUMERIC_MODE;
+         }
+         else if (reader.compare(EPS_KEYWORD)) {
+            if (rule.nonterminal)
+               throw EParseError(bm.column, bm.row);
+
+            rule.nonterminal = (size_t)-1;
+            rule.terminal = (size_t)-1;
+            applyMode = IDLE_MODE;
+         }
+         else if (reader.compare(EOF_KEYWORD)) {
+            applyMode = EOF_MODE;
+         }
+         else if (reader.compare(REFERENCE_KEYWORD)) {
+            applyMode = REFERENCE_MODE;
+         }
+         else if (reader.compare(IDENTIFIER_KEYWORD)) {
+            applyMode = IDENTIFIER_MODE;
+         }
+         else if (reader.compare(EOL_KEYWORD)) {
+            applyMode = EOL_MODE;
+         }
+         else if (reader.compare(ANYCHR_KEYWORD)) {
+            applyMode = LETTER_MODE;
+         }
+      }
+   }
+   else if (bm.state == dfaIdentifier) {
+      if (rule.nonterminal == 0) {
+         //rule.prefixPtr = defineDSARule(token, reader);
+
+         rule.nonterminal = mapRuleId(reader.lookup(bm));
+      }
+      else if (rule.terminal == 0) {
+         rule.type = rtChomski;
+
+         rule.terminal = mapRuleId(reader.lookup(bm));
+      }
+      else {
+         if (rule.type == rtChomski) {
+            rule.terminal = defineGrammarRuleMember(reader, bm, ruleId, rule.terminal);
+         }
+         else rule.nonterminal = defineGrammarRuleMember(reader, bm, ruleId, rule.nonterminal);
+      }
+   }
+}
+
 void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId)
 {
-   // read: terminal [nonterminal] ;
-   // read: nonterminal [nonterminal2] ;
+//   // read: terminal [nonterminal] ;
+//   // read: nonterminal [nonterminal2] ;
 
    rule.type = rtNormal;
    int applyMode = 0;
 
    while (!reader.compare(";") || bm.state == dfaQuote) {
-      if (bm.state == dfaQuote || reader.compare("(")) {
-         if (rule.terminal) {
-            if (rule.nonterminal != 0) {
-               if (rule.type == rtChomski) {
-                  rule.terminal = defineGrammarRule(reader, bm, ruleId, rule.terminal);
-               }
-               else rule.nonterminal = defineGrammarRule(reader, bm, ruleId, rule.nonterminal);
-            }
-            else rule.nonterminal = defineGrammarRule(reader, bm, ruleId);
-            break;
-         }
-         else if (rule.nonterminal) {
-            rule.type = rtChomski;
-            rule.terminal = defineGrammarRule(reader, bm, ruleId);
-            break;
-         }
-         else if (bm.state != dfaQuote) {
-            rule.terminal = writeRegExprBodyText(reader, applyMode);
-         }
-         else rule.terminal = writeBodyText(reader.lookup(bm));
-      }
-      else if (reader.compare("<=")) {
+      if (reader.compare("<=")) {
          saveScript(reader, rule, applyMode);
       }
-      else if (reader.compare("*") || reader.compare("+") || reader.compare("?")) {
-         if (rule.terminal != 0 && rule.type == rtChomski) {            
-            if (reader.compare("+")) {
-               rule.terminal = definePlusGrammarRule(ruleId, rule.terminal);
-            }
-            else if (reader.compare("?")) {
-               rule.terminal = defineOptionalGrammarRule(ruleId, rule.terminal);
-            }
-            else rule.terminal = defineStarGrammarRule(ruleId, rule.terminal);
-         }
-         else if (rule.nonterminal != 0) {
-            if (reader.compare("+")) {
-               rule.nonterminal = definePlusGrammarRule(ruleId, rule.nonterminal);
-            }
-            else if (reader.compare("?")) {
-               rule.nonterminal = defineOptionalGrammarRule(ruleId, rule.nonterminal);
-            }
-            else rule.nonterminal = defineStarGrammarRule(ruleId, rule.nonterminal);
-         }            
-         else throw EParseError(bm.column, bm.row);
-      }
-      else if (bm.state == dfaPrivate) {
-         if (rule.terminal) {
-            rule.nonterminal = defineGrammarRule(reader, bm, ruleId, rule.nonterminal);
-            break;
-         }
-         else if (rule.nonterminal) {
-            rule.type = rtChomski;
-            rule.terminal = defineGrammarRule(reader, bm, ruleId);
-            break;
-         }
-         else {
-            rule.terminal = (size_t)-1;
-//            rule.prefixPtr = defineDSARule(token, reader);
-
-            if (reader.compare(LITERAL_KEYWORD)) {
-               applyMode = LITERAL_MODE;
-            }
-            else if (reader.compare(NUMERIC_KEYWORD)) {
-               applyMode = NUMERIC_MODE;
-            }
-            else if (reader.compare(EPS_KEYWORD)) {
-               if (rule.nonterminal)
-                  throw EParseError(bm.column, bm.row);
-
-               rule.nonterminal = (size_t)-1;
-               rule.terminal = (size_t)-1;
-               applyMode = IDLE_MODE;
-            }
-            else if (reader.compare(EOF_KEYWORD)) {
-               applyMode = EOF_MODE;
-            }
-            else if (reader.compare(REFERENCE_KEYWORD)) {
-               applyMode = REFERENCE_MODE;
-            }
-            else if (reader.compare(IDENTIFIER_KEYWORD)) {
-               applyMode = IDENTIFIER_MODE;
-            }
-            else if (reader.compare(EOL_KEYWORD)) {
-               applyMode = EOL_MODE;
-            }
-            else if (reader.compare(ANYCHR_KEYWORD)) {
-               applyMode = LETTER_MODE;
-            }
-         }
-      }
-      else if (bm.state == dfaIdentifier) {
-         if (rule.nonterminal == 0) {
-            //rule.prefixPtr = defineDSARule(token, reader);
-
-            rule.nonterminal = mapRuleId(reader.lookup(bm));
-         }
-         else if (rule.terminal == 0) {
-            rule.type = rtChomski;
-
-            rule.terminal = mapRuleId(reader.lookup(bm));
-         }
-         else {
-            if (rule.type == rtChomski) {
-               rule.terminal = defineGrammarRule(reader, bm, ruleId, rule.terminal);
-            }
-            else rule.nonterminal = defineGrammarRule(reader, bm, ruleId, rule.nonterminal);
-            break;
-         }
-      }
+      else defineGrammarRuleMember(reader, bm, rule, ruleId, applyMode);
 
       bm = reader.read();
    }
 
-//   rule.postfixPtr = defineDSARule(token, reader);
+////   rule.postfixPtr = defineDSARule(token, reader);
 
    defineApplyRule(rule, applyMode);
 }
@@ -769,6 +786,8 @@ int CFParser :: buildDerivationTree(_ScriptReader& reader, size_t startRuleId, M
    throw EParseError(bm.column, bm.row);
 }
 
+constexpr auto POSTFIXSAVE_MODE = 0x80000000;
+
 void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptLog& log)
 {
    if (offset == 0)
@@ -792,24 +811,45 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
       item = stack.pop();
       if (item.ruleKey == 0) {
          size_t ptr = postfixes.pop();
-         if (ptr)
+         if (ptr) {
+            if (test(ptr, POSTFIXSAVE_MODE)) {
+               ptr &= ~POSTFIXSAVE_MODE;
+
+               log.write(getBodyText(ptr));
+
+               auto saveTo = (SaveToSign)postfixes.pop();
+               int terminal = postfixes.pop();
+
+               saveTo(scriptReader, this, terminal, log);
+
+               ptr = postfixes.pop();
+            }
             log.write(getBodyText(ptr));
+         }            
       }
       else {
          ident_t keyName = retrieveKey(_names.start(), item.ruleKey >> 8, DEFAULT_STR);
 
          Rule rule = _table.get(item.ruleKey);
-         if (rule.prefixPtr != 0) {
-            log.write(getBodyText(rule.prefixPtr));
+         if (rule.prefix1Ptr != 0) {
+            log.write(getBodyText(rule.prefix1Ptr));
 
             if (rule.saveTo != NULL)
                rule.saveTo(scriptReader, this, item.terminal, log);
 
             // HOTFIX: to prevent too long line
             log.write('\n');
+
+            log.write(getBodyText(rule.postfix1Ptr));
          }
 
-         postfixes.push(rule.postfixPtr);
+         if (rule.postfix2Ptr) {
+            postfixes.push(rule.postfix2Ptr);
+            postfixes.push(item.terminal);
+            postfixes.push((int)rule.saveTo);
+            postfixes.push(rule.prefix2Ptr | POSTFIXSAVE_MODE);
+         }
+         else postfixes.push(rule.prefix2Ptr);
       }
 
    }

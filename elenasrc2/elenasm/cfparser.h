@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                             (C)2011-2018, by Alexei Rakov
+//                                             (C)2011-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef cfparserH
@@ -28,16 +28,20 @@ public:
       rtEps,
    };
    
+   typedef void (*SaveToSign)(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log);
+
    struct Rule
    {
       RuleType type;
       size_t   terminal;    // in chomski form it is additional nonterminal as well
       size_t   nonterminal;
-      size_t   prefixPtr;
-      size_t   postfixPtr;
+      size_t   prefix1Ptr;
+      size_t   prefix2Ptr;
+      size_t   postfix1Ptr;
+      size_t   postfix2Ptr;
 
       bool(*apply)(Rule& rule, ScriptBookmark& bm, _ScriptReader& reader, CFParser* parser);
-      void (*saveTo)(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log);
+      SaveToSign saveTo;
 
       Rule()
       {
@@ -45,7 +49,8 @@ public:
          terminal = nonterminal = 0;
          apply = NULL;
          saveTo = NULL;
-         postfixPtr = prefixPtr = 0;
+         postfix1Ptr = prefix1Ptr = 0;
+         postfix2Ptr = prefix2Ptr = 0;
       }
    };
 
@@ -109,6 +114,8 @@ protected:
       return mapKey(_names, name, _names.Count() + 1);
    }
 
+   void setScriptPtr(ScriptBookmark& bm, Rule& rule, bool prefixMode);
+
    size_t autonameRule(size_t parentRuleId);
 
    void defineApplyRule(Rule& rule, int terminalType);
@@ -120,11 +127,12 @@ protected:
    void addRule(int id, Rule& rule);
 
    void saveScript(_ScriptReader& reader, Rule& rule, int& mode);
-   size_t defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, ref_t ruleId, size_t nonterminal = 0, size_t terminal = 0);   
    void defineIdleGrammarRule(ref_t ruleId);
    size_t defineOptionalGrammarRule(ref_t ruleId, size_t nonterminal);
    size_t defineStarGrammarRule(ref_t ruleId, size_t nonterminal);
    size_t definePlusGrammarRule(ref_t ruleId, size_t nonterminal);
+   void defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId, int& applyMode);
+   size_t defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, ref_t ruleId, size_t nonterminal = 0, size_t terminal = 0);
    void defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId);
 
    void predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer);
