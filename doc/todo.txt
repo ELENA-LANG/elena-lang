@@ -32,15 +32,15 @@ In development:
   [API]
     * usability : dynamic loading : give the symbol / message / subject name in the InvalidArgument exception
 
-  [research]
+  [!research]
     * !xforms : simple build script
 
   [IDE]
     * debugger : step over fine tuning
     * linux
 
-  [!tools]
-    * !elenasm : support { } brackets
+  [tools]
+    * elenasm : 
 
 ------                                                           
 Pipeline:

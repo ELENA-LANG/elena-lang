@@ -132,8 +132,10 @@ protected:
    size_t defineStarGrammarRule(ref_t ruleId, size_t nonterminal);
    size_t definePlusGrammarRule(ref_t ruleId, size_t nonterminal);
    size_t defineGrammarBrackets(_ScriptReader& reader, ScriptBookmark& bm, ref_t ruleId);
-   void defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId, int& applyMode);
    size_t defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, ref_t ruleId, size_t nonterminal = 0, size_t terminal = 0);
+
+   void defineGrammarRuleMemberPostfix(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId);
+   void defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId, int& applyMode);
    void defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Rule& rule, ref_t ruleId);
 
    void predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer);
