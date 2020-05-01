@@ -131,8 +131,18 @@
              )
 =>;
 
+  #define nested_body     ::=
+<=
+             system'dynamic'expressions'NestedBlockExpression (
+=>
+                                   "code" "(" statement* ")"
+<=
+             )
+=>;
+
   #define statement       ::= expression; 
   #define statement       ::= ret_expression; 
+  #define statement       ::= nested_body; 
 
   #define ret_expression  ::= 
 <=
@@ -242,6 +252,17 @@
                        system'dynamic'expressions'ScopeVariable (
 =>
                            "identifier" "=" ident_quote
+<=
+                       )
+                    )
+=>;
+      
+  #define object          ::=
+<=
+                    system'dynamic'expressions'PreviousVariableExpression ( 
+                       system'dynamic'expressions'ScopeVariable (
+=>
+                           "prev_identifier" "=" ident_quote
 <=
                        )
                     )
