@@ -580,7 +580,6 @@ labBigAlloc:
   shr  ecx, page_size_order
   mov  byte ptr [ecx + esi], 1  
 
-  pop  ebp
   ret  
 
   // ; start collecting: esi => ebp, [ebx, edx] ; ecx - count

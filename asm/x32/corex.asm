@@ -686,7 +686,6 @@ labBigAlloc:
   call extern 'dlls'kernel32.SetEvent 
 
   mov  ebx, edi
-  pop  ebp
   ret  
 
   // ; start collecting: esi => ebp, [ebx, edx] ; ecx - count

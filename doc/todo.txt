@@ -15,8 +15,8 @@ In development:
     * tutorials : migrate all tutorials
     * api : use manifest info for module description
 
-  [samples/api]
-    * fix : pi2, anagram
+  [!samples/api]
+    * !fix : pi2, anagram
     * chat
     * rosetta code samples
     * timer
@@ -32,8 +32,8 @@ In development:
   [API]
     * usability : dynamic loading : give the symbol / message / subject name in the InvalidArgument exception
 
-  [!research]
-    * !xforms : simple build script
+  [research]
+    * !xforms : XAML xforms script
 
   [IDE]
     * debugger : step over fine tuning
