@@ -3488,7 +3488,8 @@ ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr 
 {
    // HOTFIX : save the previous call node and set the new one : used for closure unboxing
    SNode prevCallNode = scope.callNode;
-   scope.callNode = node.parentNode();
+   if (node != lxNone)
+      scope.callNode = node.parentNode();
 
    EAttr paramMode = HINT_PARAMETER;
    bool externalMode = false;
@@ -9613,6 +9614,18 @@ void Compiler :: injectMemberPreserving(SNode node, ExprScope& scope, LexicalTyp
       SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
       fieldExpr.appendNode(tempType, tempLocal);
       fieldExpr.appendNode(lxField, memberIndex);
+
+      Attribute key(lxLocalAddress, member.param);
+      int boxedLocal = scope.tempLocals.get(key);
+      if (boxedLocal != NOTFOUND_POS) {
+         // HOTFIX : check if the variable is used several times - modify the boxed argument as well
+         SNode assignNode = current.appendNode(lxCopying, size);
+         assignNode.appendNode(lxTempLocal, boxedLocal);
+
+         SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
+         fieldExpr.appendNode(tempType, tempLocal);
+         fieldExpr.appendNode(lxField, memberIndex);
+      }
    }
    else if (member.kind == okLocal) {
       SNode assignNode = current.appendNode(lxAssigning);

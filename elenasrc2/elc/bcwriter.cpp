@@ -4164,12 +4164,14 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
    bool createMode = objNode == lxCreatingClass;
    bool structMode = objNode == lxCreatingStruct;
    bool onlyLocals = createMode;
+   int counter = 0;
    while (current != lxNone) {
       if (current == lxMember) {
+         counter++;
+
          SNode memberNode = current.findSubNodeMask(lxObjectMask);
          if (!memberNode.compare(lxLocal, lxSelfLocal)) {
             onlyLocals = false;
-            break;
          }
       }
       current = current.nextNode();
@@ -4186,6 +4188,7 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
          current = current.prevNode();
       }
       generateObject(tape, objNode, scope);
+
       current = node.findChild(lxMember);
       while (current != lxNone) {
          if (current == lxMember) {
@@ -4204,7 +4207,12 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
       }
    }
    else {
-      generateObject(tape, objNode, scope);
+      if (createMode && counter == objNode.argument) {
+         // HOTFIX : if the closure is initialized in-place - no need to initialize its fields with zeros
+         generateCreating(tape, objNode, scope, false);
+      }
+      else generateObject(tape, objNode, scope);
+
       current = node.findChild(lxMember);
       while (current != lxNone) {
          if (current == lxMember) {
@@ -4477,7 +4485,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          break;
       case lxCreatingClass:
       case lxCreatingStruct:
-         generateCreating(tape, node, scope);
+         generateCreating(tape, node, scope, true);
          break;
       case lxYieldReturning:
          generateYieldReturn(tape, node, scope);
@@ -4785,14 +4793,15 @@ void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node n
    generateExpression(tape, node, scope);
 }
 
-void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode)
 {
    SNode target = node.findChild(lxType);
 
    int size = node.argument;
    if (node == lxCreatingClass) {
       newObject(tape, size, target.argument);
-      clearObject(tape, size);
+      if (fillMode)
+         clearObject(tape, size);
    }
    else if (node == lxCreatingStruct) {
       if (size < 0) {
