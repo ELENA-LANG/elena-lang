@@ -51,7 +51,7 @@ public program()
     nestedTest();
     nestetNestedTest();
 //    duplicateStructBoxing();
-//    duplicateBoxing();
+    duplicateBoxing();
 
     stackSafeExtensions();
 

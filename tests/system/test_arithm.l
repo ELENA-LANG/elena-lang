@@ -1056,11 +1056,26 @@ nestetNestedTest()
 //    
 //    console.writeLine("done")
 //}
-//
-//duplicateBoxing()
-//{
-//    console.write("duplicateBoxing..");
-//    
+
+duplicateBoxing()
+{
+    console.write("duplicateBoxing..");
+
+    var t := 0;
+    console.then(
+    {
+        Assert.ifTrue(t == 0);
+        
+        t := 1;
+    }).then(
+    {
+        Assert.ifTrue(t == 1);
+        
+        t := 2;
+    });
+    
+    Assert.ifTrue(t == 2);
+            
 //    var mode := -1;
 //    var value := false;
 //    value ? { mode := 0 } : { mode := 1 }  ;
@@ -1071,9 +1086,9 @@ nestetNestedTest()
 //    value ? { mode := 0 } : { mode := 1 }  ;
 //    
 //    Assert.ifTrue(mode == 0);
-//    
-//    console.writeLine("done")
-//}
+    
+    console.writeLine("done")
+}
 
 public stackSafeExtensions()
 {

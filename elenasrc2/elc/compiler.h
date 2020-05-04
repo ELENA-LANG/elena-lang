@@ -788,6 +788,8 @@ private:
 
    struct ExprScope : public Scope
    {
+      SNode callNode;        // HOTFIX : used to implement closure unboxing, should refer to the closest message call
+
       bool ignoreDuplicates; // used for code templates, should be applied only to the statement
 
       int  tempAllocated1;

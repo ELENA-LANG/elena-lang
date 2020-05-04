@@ -30,7 +30,7 @@ void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
    int retVal = entry.evaluate2(0, programEntry);
 
    // winding down system
-   Exit(retVal);
+   Exit(0);
 }
 
 void ELENARTMachine :: startMTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)

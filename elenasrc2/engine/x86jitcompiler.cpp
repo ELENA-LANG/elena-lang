@@ -2435,6 +2435,15 @@ void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
    ecodes.writeDWord((size_t)address | mskCodeRef);
 }
 
+void x86JITCompiler :: generateProgramEnd(MemoryDump& tape)
+{
+   MemoryWriter ecodes(&tape);
+
+   ecodes.writeByte(bcQuit);
+
+   JITCompiler32::generateProgramEnd(tape);
+}
+
 //void x86JITCompiler :: generateArg(MemoryDump& tape, void* address)
 //{
 //   MemoryWriter ecodes(&tape);

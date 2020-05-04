@@ -4345,6 +4345,11 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxSeqExpression:
          generateExpression(tape, node, scope, mode & ~STACKOP_MODE);
          break;
+      case lxNestedSeqExpression:
+         tape.write(bcPushA);
+         generateExpression(tape, node, scope, mode & ~STACKOP_MODE);
+         tape.write(bcPopA);
+         break;
       case lxCalling_0:
       case lxCalling_1:
       case lxDirectCalling:

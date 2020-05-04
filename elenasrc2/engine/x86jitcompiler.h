@@ -216,6 +216,7 @@ public:
    virtual void setGCTable(void* ptr);
 
    virtual void generateSymbolCall(MemoryDump& tape, void* address);
+   virtual void generateProgramEnd(MemoryDump& tape);
 //   virtual void generateArg(MemoryDump& tape, void* address);
 //   virtual void generateExternalCall(MemoryDump& tape, ref_t functionReference);
 

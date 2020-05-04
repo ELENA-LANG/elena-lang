@@ -2,7 +2,7 @@
 In development:
 ------         
 
-  [compiler]
+  [!compiler]
     * !linux : method not found exception handling
     * GC : mov GC to C code : #77
 
@@ -15,9 +15,9 @@ In development:
     * tutorials : migrate all tutorials
     * api : use manifest info for module description
 
-  [!samples/api]
-    * !fix : pi2, anagram
-    * chat
+  [samples/api]
+    * fix : exceptionTest, unboxing
+    * !chat
     * rosetta code samples
     * timer
     * upndown
@@ -70,7 +70,6 @@ Pipeline:
 
                 * active issues
                 * rosetta code samples : Zhang-Suen thinning algorithm
-                * system_test : exceptionTest
                 * sqlite : support float / blob
                 * uncomment all code in LIB50
                 * String / WideString - add<'Char>

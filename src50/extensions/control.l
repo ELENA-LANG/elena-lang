@@ -259,13 +259,13 @@ public exchange(ref object l, ref object r)
     r := tmp
 }
 
-//public singleton control
-//{
-//    do:action
-//    [
-//        action().
-//    ]
-//}
+public singleton control
+{
+    do(action)
+    {
+        ^ action()
+    }
+}
 
 // --- invoker ---
 

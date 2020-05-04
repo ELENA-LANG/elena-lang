@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -3486,6 +3486,10 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
 
 ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr mode, bool& variadicOne, bool& inlineArg)
 {
+   // HOTFIX : save the previous call node and set the new one : used for closure unboxing
+   SNode prevCallNode = scope.callNode;
+   scope.callNode = node.parentNode();
+
    EAttr paramMode = HINT_PARAMETER;
    bool externalMode = false;
    if (EAttrs::test(mode, HINT_EXTERNALOP)) {
@@ -3546,6 +3550,9 @@ ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr 
 
       current = current.nextNode();
    }
+
+   // HOTFIX : restore the previous call node
+   scope.callNode = prevCallNode;
 
    if (signatureLen > 0 && signatureLen <= ARG_COUNT) {
       bool anonymous = true;
@@ -5265,6 +5272,8 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
 
    node = node.parentNode();
 
+   test2(node.parentNode());
+
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr, true);
 
@@ -6865,6 +6874,10 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    SNode argNode = expr.findChild(lxMessage).nextNode();
    ref_t implicitSignatureRef = compileMessageParameters(argNode, resendScope, EAttr::eaNone,
       variadicOne, inlineArg);
+
+   // HOTFIX : (re)initialize expr node in case the parent node was modified (due to unboxing)
+   if (argNode != lxNone)
+      expr = argNode.parentNode();
 
    ObjectInfo target(okClassSelf, resendScope.getClassRefId(), classRef);
    int stackSafeAttr = 0;
@@ -9568,10 +9581,24 @@ inline SNode injectRootSeqExpression(SNode& parent)
    return current;
 }
 
-void Compiler :: injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal, ObjectInfo member, int memberIndex)
+void Compiler :: injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal, ObjectInfo member, 
+   int memberIndex)
 {
    SNode parent = node;
-   SNode current = injectRootSeqExpression(parent);
+   SNode current;
+   if (scope.callNode != lxNone) {
+      // HOTFIX : closure member unboxing should be done right after the operation if it is possible
+      if (scope.callNode == lxExpression) {
+         scope.callNode.injectAndReplaceNode(lxSeqExpression);
+
+         current = scope.callNode.appendNode(lxNestedSeqExpression);
+      }
+      else if (scope.callNode == lxSeqExpression) {
+         current = scope.callNode.findChild(lxNestedSeqExpression);
+      }
+      else current = injectRootSeqExpression(parent);
+   }
+   else current = injectRootSeqExpression(parent);
 
    ref_t targetRef = resolveObjectReference(scope, member, false);
 
