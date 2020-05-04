@@ -676,6 +676,8 @@ private:
    // - CodeScope -
    struct CodeScope : public Scope
    {
+      SNode       parentCallNode; // HOTFIX : used to implement closure unboxing, should refer to the closest message call
+
       // scope local variables
       LocalMap     locals;
       bool         genericMethod;

@@ -16,8 +16,7 @@ In development:
     * api : use manifest info for module description
 
   [samples/api]
-    * !closure initializing (do not fill with zeros, more effective assigning)
-    * fix : exceptionTest, unboxing
+    * fix : 
     * chat
     * rosetta code samples
     * timer

@@ -4164,7 +4164,7 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
    bool createMode = objNode == lxCreatingClass;
    bool structMode = objNode == lxCreatingStruct;
    bool onlyLocals = createMode;
-   int counter = 0;
+   size_t counter = 0;
    while (current != lxNone) {
       if (current == lxMember) {
          counter++;

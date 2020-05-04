@@ -25,7 +25,7 @@ public program()
 //    arrayTest();
 ////    OpenArgTest eval.
 ////    MethodNotFoundTest eval.
-//    exceptionTest();
+    exceptionTest();
 ////    DateTest eval.
 ////    ListTest eval.
 ////    DictionaryTest eval.

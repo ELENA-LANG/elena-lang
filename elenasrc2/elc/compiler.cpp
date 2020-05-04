@@ -861,6 +861,8 @@ bool Compiler::CodeScope :: resolveAutoType(ObjectInfo& info, ref_t reference, r
 Compiler::ExprScope :: ExprScope(CodeScope* parent)
    : Scope(parent), tempLocals(NOTFOUND_POS)
 {
+   callNode = parent->parentCallNode;
+
    tempAllocated1 = parent->allocated1;
    tempAllocated2 = parent->allocated2;
 
@@ -5864,6 +5866,7 @@ ObjectInfo Compiler :: compileSubCode(SNode codeNode, ExprScope& scope, bool bra
    CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
 
    CodeScope subScope(codeScope);
+   subScope.parentCallNode = scope.callNode;
 
    if (branchingMode && codeNode == lxExpression) {
       //HOTFIX : inline branching operator
