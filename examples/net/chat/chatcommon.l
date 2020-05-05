@@ -13,9 +13,9 @@ class BaseClient
 {
     MemoryBuffer theBuffer;
     
-    constructor()
+    protected constructor new()
     {
-        theBuffer := new MemoryBuffer()
+        theBuffer := MemoryBuffer.allocate()
     }
 
     write(byte[] buffer, length)
@@ -48,12 +48,9 @@ class BaseClient
 
 class CommandDTO : DTO
 {
-    [dto]
-    prop int Command;
+    dto_prop int Command;
     
-    [dto]
-    prop string Value;
+    dto_prop string Value;
     
-    [dto]
-    prop string User;
+    dto_prop string User;
 }

@@ -14,13 +14,13 @@ sealed class ChatMember : BaseClient
     
     prop string Name;
 
-    constructor()
-        <= ()
+    constructor new()
+        <= new()
     {
     }
 
     constructor(TcpRemoteClient owner, ChatServer server)
-        <= ()
+        <= new()
     {
         theOwner := owner;
         
@@ -76,7 +76,7 @@ sealed class ChatServer
                             {
                                 console.printLine(member.Name,":",command.Value).
                                 
-                                member.Server.translate(new CommandDTO::
+                                member.Server.translate(new CommandDTO
                                                         { 
                                                             this Command := TRANSLATE; 
                                                             this Value := command.Value; 

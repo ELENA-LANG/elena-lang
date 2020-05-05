@@ -1767,11 +1767,11 @@ public extension byteArrayHelper : Array<byte>
         
 //    move(int index, int length, int offset)
 //        => system'core_routines'__bytearray;
-//                
-//    /// Copies a sub array to the provided one at the specified position
-//    read(int index, int length, byte[] dump)
-//        => system'core_routines'__bytearray;
-//        
+                
+    /// Copies a sub array to the provided one at the specified position
+    read(int index, int length, byte[] dump)
+        => intern system'core_routines'__bytearray;
+        
 //    /// Copies the byte array at the specified position
 //    write(int index, int length, byte[] dump)
 //        => system'core_routines'__bytearray;

@@ -6,7 +6,7 @@ class Client
     
     start(string userName, string ip, int port)
     {
-        theClient := ChatClient.create(ip, port, userName);
+        theClient := ChatClient.new(ip, port, userName);
         
         theClient.start()
     }
@@ -20,7 +20,7 @@ class Client
     }
 }
 
-public control = new Client().mixInto(new::
+public control = new Client().mixInto(new
 {
     greeting()
     {

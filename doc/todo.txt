@@ -2,7 +2,7 @@
 In development:
 ------         
 
-  [!compiler]
+  [compiler]
     * !linux : method not found exception handling
     * GC : mov GC to C code : #77
 
@@ -15,9 +15,9 @@ In development:
     * tutorials : migrate all tutorials
     * api : use manifest info for module description
 
-  [samples/api]
+  [!samples/api]
     * fix : 
-    * chat
+    * !chat
     * rosetta code samples
     * timer
     * upndown

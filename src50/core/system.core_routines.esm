@@ -1130,6 +1130,60 @@ labErr:
 
 end
 
+procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber[4]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr 0
+
+  pushsi 1
+  peeksi 4
+  pushai 0
+  peeksi 4
+  pushai 0
+  pushsi 7
+  // subcopy(target,index,size,arr)
+  callextr api : subcopy
+  quitn 4
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
+procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@system@ref#1&system@ShortNumber[4]"
+
+  peeksi  1
+  len
+  peeksi  2
+  notless labErr
+  load
+  lessn   labErr 0
+ 
+  peeksi  2
+  load
+  peeksi  1
+  read
+  and     0FFFFh
+  peeksi  3
+  save
+
+  quitn   3
+  
+labErr:
+  open 1
+  pushr class : system'InvalidArgumentException
+  pushr mssgconst : "new[1]"
+  throw  
+
+end
+
 procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@system@ref#1&system@IntNumber[3]"
 
   peeksi  1

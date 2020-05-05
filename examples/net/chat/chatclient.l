@@ -10,15 +10,15 @@ sealed class ChatClient : BaseClient
     int       thePort;
     string    theUserName;    
     
-    constructor()
-        <= ()
+    constructor new()
+        <= new()
     {
     }
     
-    constructor create(string ip, int port, string userName)
-        <= ()
+    constructor new(string ip, int port, string userName)
+        <= new()
     {
-        theNetworkClient := new TcpClient();
+        theNetworkClient := TcpClient.new();
         
         theAddress := ip;
         thePort := port;
@@ -27,7 +27,7 @@ sealed class ChatClient : BaseClient
     
     sendNickname()
     {
-        string json := new CommandDTO::{ this Command := INTRODUCTION; this Value := theUserName; }.toJson();
+        string json := new CommandDTO{ this Command := INTRODUCTION; this Value := theUserName; }.toJson();
         int len := json.Length;
         
         theNetworkClient.write(len).write(json);
@@ -35,7 +35,7 @@ sealed class ChatClient : BaseClient
     
     send(string text)
     {
-        string json := new CommandDTO::{ this Command := SEND; this Value := text; }.toJson();
+        string json := new CommandDTO{ this Command := SEND; this Value := text; }.toJson();
         int len := json.Length;
         
         theNetworkClient.write(len).write(json)
