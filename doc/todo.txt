@@ -3,7 +3,7 @@ In development:
 ------         
 
   [compiler]
-    * !linux : method not found exception handling
+    * !linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * GC : mov GC to C code : #77
 
   [project]
@@ -15,7 +15,7 @@ In development:
     * tutorials : migrate all tutorials
     * api : use manifest info for module description
 
-  [!samples/api]
+  [samples/api]
     * fix : 
     * !chat
     * rosetta code samples
@@ -32,7 +32,7 @@ In development:
   [API]
     * usability : dynamic loading : give the symbol / message / subject name in the InvalidArgument exception
 
-  [research]
+  [!research]
     * !xforms : XAML xforms script
 
   [IDE]

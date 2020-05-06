@@ -1,12 +1,16 @@
-﻿[project]
-executable=helloworld_dynamic.exe
-namespace=helloworld
-template=vm_xforms
-debuginfo=-1
-
-[files]
-hellowindow.l
-
-[forwards]
-'form=helloworld'dynamicForm
-
+<configuration>
+    <project>
+        <executable>helloworld_dynamic.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>helloworld</namespace>
+        <template>gui</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>hellowindow.l</include>
+        </module>
+    </files>
+</configuration>
