@@ -15,7 +15,7 @@
                 variable_idetifier = current 
                 assign
                 expression (
-                  new_reference = xforms'SDIDialog
+                  new_reference = forms'SDIDialog
                   message
                 )
               )

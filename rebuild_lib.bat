@@ -64,6 +64,11 @@ bin\elc src50\forms\forms.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elc src50\xforms\xforms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 bin\elc src50\sqlite\sqlite.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError

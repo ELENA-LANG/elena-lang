@@ -71,6 +71,10 @@ md %~dp0\output\src50\forms
 xcopy %~dp0\..\src50\forms\*.l %~dp0\output\src50\forms /s
 xcopy %~dp0\..\src50\forms\*.prj %~dp0\output\src50\forms /s
 
+md %~dp0\output\src50\xforms
+xcopy %~dp0\..\src50\xforms\*.l %~dp0\output\src50\xforms /s
+xcopy %~dp0\..\src50\xforms\*.prj %~dp0\output\src50\xforms /s
+
 md %~dp0\output\src50\net
 xcopy %~dp0\..\src50\net\*.l %~dp0\output\src50\net /s
 xcopy %~dp0\..\src50\net\*.prj %~dp0\output\src50\net /s
@@ -127,6 +131,11 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 %~dp0\output\bin\elc %~dp0\output\src50\forms\forms.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+%~dp0\output\bin\elc %~dp0\output\src50\xforms\xforms.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on

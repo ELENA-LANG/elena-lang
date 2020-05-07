@@ -1,16 +1,16 @@
-//import extensions'scripting
+import xforms;
 
-//class MainWindow
-//{
-//    object theForm.
-//    
-//    constructor new
-//    [
-//        theForm := 'form.
-//    ]
-//    
-//    dispatch => theForm.
-//}
+public class MainWindow
+{
+    theForm;
+    
+    constructor new()
+    {
+        theForm := /*'form*/xforms.load("<Form> </Form>")
+    }
+    
+    dispatch() => theForm;
+}
 
 //dynamicForm = Library new; evalSelf:
 //                (:l) [
@@ -21,9 +21,5 @@
 //                        eval:l
 //                ];
 //                first; eval.
-//                
+                
 //staticForm =    helloworld'stat'mainForm.
-
-public class MainWindow
-{
-}
