@@ -7,6 +7,7 @@
         <namespace>helloworld</namespace>
         <template>gui</template>
         <debuginfo>-1</debuginfo>
+        <classsymbolload>-1</classsymbolload>
     </project>
     <files>
         <module>

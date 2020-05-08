@@ -147,6 +147,15 @@ public class TypeLoaderException : Exception
         <= new("Type " + className + " cannot be loaded");
 }
 
+// --- SymbolLoaderException ---
+
+public class SymbolLoaderException : Exception
+{
+    /// Creates the exception
+    constructor new(string symbolName)
+        <= new("Symbol " + symbolName + " cannot be loaded");
+}
+
 // --- MethodNotFound ---
 
 public sealed class MethodNotFoundException : Exception

@@ -15,8 +15,8 @@
                 variable_idetifier = current 
                 assign
                 expression (
-                  new_reference = forms'SDIDialog
-                  message
+                  reference = forms'SDIDialog
+                  message = new
                 )
               )
 =>
