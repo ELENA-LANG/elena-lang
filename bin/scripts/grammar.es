@@ -285,10 +285,9 @@
 <=
                     )
 =>;
-      
-  #define object          ::=
+
+  #define new_expr          ::=
 <=
-                    system'dynamic'expressions'MessageCallExpression ( 
                        system'dynamic'expressions'ConstantExpression ( 
                           system'ClassReference ( 
 =>
@@ -297,6 +296,14 @@
                           )
                        )
                        "#constructor"
+=>;
+      
+  #define object          ::=
+<=
+                    system'dynamic'expressions'MessageCallExpression ( 
+=>
+                               new_expr object*
+<=
                     )
 =>;
       

@@ -46,9 +46,13 @@
           )
           assign
           expression (
+             new_reference = system'Variant
+             message
+             expression (
 =>
-              $identifier "=" value
+               $identifier "=" value
 <=
+             )
           )
         )
 =>;

@@ -6,7 +6,7 @@ public class MainWindow
     
     constructor new()
     {
-        theForm := /*'form*/xforms.load("<Form> </Form>")
+        theForm := /*'form*/xforms.load("<Form Height=""200"" Width=""200""> </Form>")
     }
     
     dispatch() => theForm;

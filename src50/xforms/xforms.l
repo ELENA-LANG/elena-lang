@@ -1,7 +1,7 @@
 import extensions'scripting;
 import forms;
 
-preloaded used = new object[]{SDIDialog};
+preloaded used = new object[]{ SDIDialog, Variant };
 
 static ScriptEngine xformsEngine
     = new ScriptEngine()

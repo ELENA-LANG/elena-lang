@@ -138,6 +138,11 @@ public abstract class BaseControl
         {
             theRegion.Width := n
         }
+        
+        set(o)
+        {
+            self.Width := cast int(o);
+        }
     }
 
     int Height
@@ -153,6 +158,11 @@ public abstract class BaseControl
         {
             theRegion.Height := n
         }
+        
+        set(o)
+        {
+            self.Height := cast int(o);
+        }
     }
 
     setRegion(int x, int y, int width, int height)
@@ -161,7 +171,8 @@ public abstract class BaseControl
     }
 
     Dimension Dimension = theRegion.Dimension;
-//    
+
+
 ////    #method is &tabstop = theTabStop.
 ////    
 ////    #method set &tabstop:aValue
