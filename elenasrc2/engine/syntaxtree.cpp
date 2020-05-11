@@ -37,6 +37,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
    tokens.add("literal", lxLiteral);
    tokens.add("identifier", lxIdentifier);
    tokens.add("variable_identifier", lxIdentifier);
+   tokens.add("prev_identifier", lxIdentifier);
    tokens.add("integer", lxInteger);
    tokens.add("parameter", lxMethodParameter);
 //   tokens.add("include", lxInclude);

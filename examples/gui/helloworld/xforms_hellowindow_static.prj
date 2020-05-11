@@ -1,6 +1,6 @@
 <configuration>
     <project>
-        <executable>helloworld_dynamic.exe</executable>
+        <executable>helloworld_static.exe</executable>
         <arguments></arguments>
         <output></output>
         <options></options>
@@ -11,13 +11,13 @@
     </project>
     <targets>
         <target name="grammar" type="2">
-           <option>[[ #grammar tree ]]</option>
-           <option>~\scripts\xforms.es</option>
+            <option>[[ #grammar tree ]]</option>
+            <option>~\scripts\xforms.es</option>
         </target>
     </targets>
     <files>
         <module name="stat" target="grammar">
-           <include>helloworld.xs</include>
+            <include>helloworld.xs</include>
         </module>
         <module>
             <include>hellowindow.l</include>

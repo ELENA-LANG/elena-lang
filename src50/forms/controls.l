@@ -113,6 +113,11 @@ public abstract class BaseControl
         {
             theRegion.X := n
         }
+        
+        set(v)
+        {
+            self.X := cast int(v)
+        }
     }
 
     int Y
@@ -127,6 +132,11 @@ public abstract class BaseControl
         set(int n)
         {
             theRegion.Y := n
+        }
+        
+        set(v)
+        {
+            self.Y := cast int(v)
         }
     }
 

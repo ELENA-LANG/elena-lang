@@ -29,6 +29,7 @@ TreeScriptParser :: TreeScriptParser()
    _attributes.add("script_function", V_FUNCTION);
    _attributes.add("variable_identifier", V_VARIABLE);
    _attributes.add("new_reference", V_NEWOP);
+   _attributes.add("prev_identifier", V_PREVIOUS);
 }
 
 void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, SyntaxWriter& writer, LexicalType type)

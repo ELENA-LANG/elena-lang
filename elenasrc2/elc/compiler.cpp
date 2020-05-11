@@ -5275,8 +5275,6 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
 
    node = node.parentNode();
 
-   test2(node.parentNode());
-
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr, true);
 
@@ -5898,8 +5896,6 @@ void Compiler :: compileEmbeddableRetExpression(SNode node, ExprScope& scope)
 
 ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 {
-   test2(node);
-
    ObjectInfo retVal;
 
    bool needVirtualEnd = true;

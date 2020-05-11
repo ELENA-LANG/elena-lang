@@ -57,10 +57,39 @@
         )
 =>;
 
-   #define form_closing_tag ::= 
-                           ">" "<" "/" "Form" ">";
+   #define member           ::=
+<=
+            code (
+              expression (
+                variable_identifier = current 
+                assign = 0
+                expression (
+                  reference = forms'Label
+                  message = new
+                )
+              )
+=>
+                            "<" "Label" property* label_closing_tag
+<=
+              expression (
+                expression (
+                  prev_identifier = current
+                )
+                message ( identifier = appendControl )
+                expression (
+                  identifier = current
+                )  
+              )
+            )
+=>;
 
-   #define value ::= <= literal = "$literal" =>;
+   #define form_closing_tag ::= 
+                           ">" member* "<" "/" "Form" ">";
+
+   #define label_closing_tag ::= 
+                           ">" "<" "/" "Label" ">";
+
+   #define value            ::= <= literal = "$literal" =>;
 
 ]]
         
