@@ -28,6 +28,16 @@ md %~dp0\output\examples\files\textdb
 md %~dp0\output\examples\script\calculator
 md %~dp0\output\examples\script\interpreter
 md %~dp0\output\examples\script\js
+md %~dp0\output\examples\gui\agenda
+md %~dp0\output\examples\gui\graphs
+md %~dp0\output\examples\gui\helloworld
+md %~dp0\output\examples\gui\c_a_g
+md %~dp0\output\examples\gui\c_a_g\formulas
+md %~dp0\output\examples\gui\c_a_g\formulas\Circulo
+md %~dp0\output\examples\gui\c_a_g\formulas\Paralelogramos 
+md %~dp0\output\examples\gui\c_a_g\formulas\Trapezio 
+md %~dp0\output\examples\gui\c_a_g\formulas\Triangulos 
+md %~dp0\output\examples\db\sqlite
 
 copy %~dp0\..\bin\asm2binx.exe %~dp0\output\bin
 copy %~dp0\..\bin\elc.exe %~dp0\output\bin
@@ -207,8 +217,8 @@ copy %~dp0\..\examples\console\trans\*.prj %~dp0\output\examples\console\trans
 copy %~dp0\..\examples\console\matrix\*.l %~dp0\output\examples\console\matrix
 copy %~dp0\..\examples\console\matrix\*.prj %~dp0\output\examples\console\matrix
 
-copy %~dp0\..\examples\console\pi\*.l %~dp0\output\examples\console\pi2
-copy %~dp0\..\examples\console\pi\*.prj %~dp0\output\examples\console\pi2
+copy %~dp0\..\examples\console\pi2\*.l %~dp0\output\examples\console\pi2
+copy %~dp0\..\examples\console\pi2\*.prj %~dp0\output\examples\console\pi2
 
 copy %~dp0\..\examples\files\textfile\*.l %~dp0\output\examples\files\textfile
 copy %~dp0\..\examples\files\textfile\*.prj %~dp0\output\examples\files\textfile
@@ -225,12 +235,35 @@ copy %~dp0\..\examples\script\calculator\*.es %~dp0\output\examples\script\calcu
 copy %~dp0\..\examples\script\js\*.l %~dp0\output\examples\script\js
 copy %~dp0\..\examples\script\js\*.prj %~dp0\output\examples\script\js
 copy %~dp0\..\examples\script\js\*.es %~dp0\output\examples\script\js
+copy %~dp0\..\examples\script\js\*.js %~dp0\output\examples\script\js
 
 copy %~dp0\..\examples\script\interpreter\*.l %~dp0\output\examples\script\interpreter
 copy %~dp0\..\examples\script\interpreter\*.prj %~dp0\output\examples\script\interpreter
 copy %~dp0\..\examples\script\interpreter\*.es %~dp0\output\examples\script\interpreter
+copy %~dp0\..\examples\script\interpreter\*.txt %~dp0\output\examples\script\interpreter
 
-7z a %~dp0\output\%1.zip %~dp0\output\*.* -r
+copy %~dp0\..\examples\gui\agenda\*.l %~dp0\output\examples\gui\agenda
+copy %~dp0\..\examples\gui\agenda\*.prj %~dp0\output\examples\gui\agenda
+
+copy %~dp0\..\examples\gui\c_a_g\*.l %~dp0\output\examples\gui\c_a_g
+copy %~dp0\..\examples\gui\c_a_g\*.prj %~dp0\output\examples\gui\c_a_g
+
+copy %~dp0\..\examples\gui\c_a_g\formulas\Circulo\*.bmp %~dp0\output\examples\gui\c_a_g\formulas\Circulo
+copy %~dp0\..\examples\gui\c_a_g\formulas\Paralelogramos\*.bmp %~dp0\output\examples\gui\c_a_g\formulas\Paralelogramos
+copy %~dp0\..\examples\gui\c_a_g\formulas\Trapezio\*.bmp %~dp0\output\examples\gui\c_a_g\formulas\Trapezio
+copy %~dp0\..\examples\gui\c_a_g\formulas\Triangulos\*.bmp %~dp0\output\examples\gui\c_a_g\formulas\Triangulos
+
+copy %~dp0\..\examples\gui\graphs\*.l %~dp0\output\examples\gui\graphs
+copy %~dp0\..\examples\gui\graphs\*.prj %~dp0\output\examples\gui\graphs
+
+copy %~dp0\..\examples\gui\helloworld\*.l %~dp0\output\examples\gui\helloworld
+copy %~dp0\..\examples\gui\helloworld\*.prj %~dp0\output\examples\gui\helloworld
+copy %~dp0\..\examples\gui\helloworld\*.xs %~dp0\output\examples\gui\helloworld
+
+copy %~dp0\..\examples\db\sqlite\*.l %~dp0\output\examples\db\sqlite
+copy %~dp0\..\examples\db\sqlite\*.prj %~dp0\output\examples\db\sqlite
+
+7z a %~dp0\output\%1.zip %~dp0\output\*.* %~dp0\output\* -r
 
 goto:eof
 ::ERRORS
