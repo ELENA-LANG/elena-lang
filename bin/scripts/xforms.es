@@ -83,11 +83,40 @@
             )
 =>;
 
+   #define member           ::=
+<=
+            code (
+              expression (
+                variable_identifier = current 
+                assign = 0
+                expression (
+                  reference = forms'Button
+                  message = new
+                )
+              )
+=>
+                            "<" "Button" property* button_closing_tag
+<=
+              expression (
+                expression (
+                  prev_identifier = current
+                )
+                message ( identifier = appendControl )
+                expression (
+                  identifier = current
+                )  
+              )
+            )
+=>;
+
    #define form_closing_tag ::= 
                            ">" member* "<" "/" "Form" ">";
 
    #define label_closing_tag ::= 
                            ">" "<" "/" "Label" ">";
+
+   #define button_closing_tag ::= 
+                           ">" "<" "/" "Button" ">";
 
    #define value            ::= <= literal = "$literal" =>;
 
