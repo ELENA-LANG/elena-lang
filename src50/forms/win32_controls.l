@@ -155,6 +155,11 @@ public abstract class BaseWinControl : BaseControl
                 theHandle.setCaption(s)
             }
         }
+        
+        set(v)
+        {
+            self.Caption := cast string(v)
+        }
     }
                                                                                                                                                                                                                                                                                         
 

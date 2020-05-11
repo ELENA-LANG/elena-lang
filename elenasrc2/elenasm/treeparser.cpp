@@ -65,6 +65,12 @@ void TreeScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& b
          writer.removeBookmark();
       }
       else if (reader.compare("=")) {
+         while (!attr_it.Eof()) {
+            writer.appendNode(lxAttribute, *attr_it);
+
+            attr_it = _attributes.nextIt(attr_it.key(), attr_it);
+         }
+
          bm = reader.read();
 
          writer.newNode((LexicalType)type, reader.lookup(bm));

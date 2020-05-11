@@ -81,6 +81,11 @@ public abstract class BaseControl
         {
             theCaption := s
         }        
+        
+        set(v)
+        {
+            self.Caption := cast string(v)
+        }
     }
 
 //    append caption : aValue

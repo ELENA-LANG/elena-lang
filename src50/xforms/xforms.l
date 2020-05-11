@@ -16,4 +16,11 @@ public singleton xforms
         
         ^ tape();
     }
+    
+    loadPath(string path)
+    {
+        var tape := xformsEngine.buildScriptFile(path).compiled().program;
+        
+        ^ tape();
+    }
 }

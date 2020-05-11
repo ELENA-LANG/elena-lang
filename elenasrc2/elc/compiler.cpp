@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -5898,6 +5898,8 @@ void Compiler :: compileEmbeddableRetExpression(SNode node, ExprScope& scope)
 
 ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 {
+   test2(node);
+
    ObjectInfo retVal;
 
    bool needVirtualEnd = true;

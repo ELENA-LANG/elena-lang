@@ -7,13 +7,13 @@
    #define form      ::= 
 <=
       root ( public_namespace (
-        class (
+        singleton (
           nameattr ( identifier = program )
           script_function (
             code (
               expression (
-                variable_idetifier = current 
-                assign
+                variable_identifier = current 
+                assign = 0
                 expression (
                   reference = forms'SDIDialog
                   message = new
@@ -42,12 +42,12 @@
             message (
               identifier = $current
             )
-            property_parameter
+            property_parameter = 0
           )
-          assign
+          assign = 0
           expression (
              new_reference = system'Variant
-             message
+             message = 0
              expression (
 =>
                $identifier "=" value

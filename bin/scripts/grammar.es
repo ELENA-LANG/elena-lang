@@ -30,7 +30,7 @@
 <= 
      system'dynamic'expressions'SymbolInfo ( 
 =>
-                                   "class" "(" s_name class_expr ")"
+                                   "singleton" "(" s_name class_expr ")"
 <=   ) =>;
 
   #define symbol_expr     ::= "expression" "(" nested_symbol ")"; 
@@ -161,13 +161,13 @@
 <=
                system'dynamic'expressions'DeclaringAndAssigningExpression (
 =>
-                                "variable_idetifier" "=" ident_quote assigning
+                                "variable_identifier" "=" ident_quote assigning
 <=
                )
 =>;
 
-  #define assigning       ::= "assign" expression;
-
+  #define assigning       ::= "assign" "=" "0"  expression;
+                                             
   #define operation       ::=
 <=
                system'dynamic'expressions'NestedExpression (
@@ -183,7 +183,7 @@
 <=
                system'dynamic'expressions'GetPropertyExpression (
 =>
-                                 object message "property_parameter" "(" ")"
+                                 object message "property_parameter" "=" "0"
 <=
                )
 =>; 
@@ -192,7 +192,7 @@
 <=
                system'dynamic'expressions'SetPropertyExpression (
 =>
-                                "expression" "(" object message "property_parameter" ")" "assign" object
+                                "expression" "(" object message "property_parameter" "=" "0" ")" "assign" "=" "0"  object
 <=
                )
 =>; 
@@ -291,7 +291,7 @@
                        system'dynamic'expressions'ConstantExpression ( 
                           system'ClassReference ( 
 =>
-                               "new_reference" "=" ref_quote "message"
+                               "new_reference" "=" ref_quote "message" "=" "0"
 <=
                           )
                        )

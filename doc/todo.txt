@@ -45,6 +45,7 @@ In development:
 ------                                                           
 Pipeline:
 ------   
+                * resend property (see forms Caption / Heigth and so on properties)
                 * duplicate boxing optimization : do not unbox presaved variable into temporal variable if it is not used
                   in the following sub expression (e.g a.then{ arg++ }.then{ arg++ }, second temp unboxing is not required;
                   the opcode can be optimized as well - get rid of duplicate acc loading code) - see duplicateTest
