@@ -2132,12 +2132,13 @@ void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& i
 
 bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOne)
 {
-   SNode object = SyntaxTree::findPattern(methodNode, 3,
-      SNodePattern(lxNewFrame),
-      SNodePattern(lxReturning),
-      SNodePattern(extensionOne ? lxLocal : lxSelfLocal));
+   SNode frameNode = methodNode.findChild(lxNewFrame);
+   SNode firstExpr = frameNode.firstChild(lxObjectMask);
+   if (firstExpr == lxReturning) {
+      SNode retNode = firstExpr.findSubNodeMask(lxObjectMask);
 
-   return extensionOne ? (object == lxLocal && object.argument == -1) : (object == lxSelfLocal && object.argument == 1);
+      return extensionOne ? (retNode == lxLocal && retNode.argument == -1) : (retNode == lxSelfLocal && retNode.argument == 1);
+   }
 }
 
 bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& messageRef)
@@ -2292,7 +2293,9 @@ bool CompilerLogic :: optimizeEmbeddable(SNode node, _ModuleScope& scope)
       SNode callTarget = node.findChild(lxCallTarget);
 
       ClassInfo info;
-      if (defineClassInfo(scope, info, callTarget.argument) && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == -1) {
+      if (defineClassInfo(scope, info, callTarget.argument) 
+         && info.methodHints.get(Attribute(node.argument, maEmbeddableIdle)) == INVALID_REF) 
+      {
          // if it is an idle call, remove it
          node = lxExpression;
 

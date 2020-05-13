@@ -11,7 +11,8 @@ movf pusha movr => pushf nop movr;
 movf pusha peekfi => pushf nop peekfi;
 movf peekfi => nop peekfi;
 movr pusha movr => pushr nop movr;
-movr peekfi => nop movr;
+movr pusha peekfi => pushr nop peekfi;
+movr peekfi => nop peekfi;
 
 storefi := 1 peekfi := 1 => storefi nop;
 storefi := 2 peekfi := 2 => storefi nop;

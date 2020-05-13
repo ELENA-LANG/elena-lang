@@ -85,7 +85,6 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 rem bin\elc src50\graphics\graphics.prj
-rem bin\elc src50\xforms\xforms.prj
 
 rem bin\elc src50\system\system_64.prj
 
