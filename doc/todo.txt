@@ -17,7 +17,7 @@ In development:
     * api : use manifest info for module description
 
   [samples/api]
-    * fix : 
+    * fix : helloworld (readChar), gameofline
     * !chat
     * rosetta code samples
     * timer
@@ -340,25 +340,18 @@ Pipeline:
                  * stringOpHelper should be able to call the original trim method, currently it is not possible to call trim
                    method for the anonymous object
                  * in the interface it was possible to declare a parameter of non-existing class
-                 * the following code - theIndexers[i] := arguments[i].indexer() - does not work correctly
-                   (see SequentialEnumerator)
+
+
                  * optimize SystemTime
                  * uncomment __closuretape."#dispatch[1]  - check the subject correctly
 
                  * test unboxing with variadic arg list
 
-                 * long constant should not be boxed like int constants
-
                  * reddit post - Switch statement
 
-                 * identifier - message message
-
-                 * the following code should be supported : newLength := newLength + cast int(theLength);
                  * TokenEnumerator : class TextBuilder should not be found (system'text is not imported)
-                 * test try / catch operation : method not found, printing calling stack
                  * (re)implement dynamic variadic argument resolving
                  * primitive array should be passed directly without unboxing if allowed
-                 * test - a[](...) - should be illegal
                  * test boxing / unboxing with dynamic reference
                  * support public & private templates
                  * property templates cannot be used directly and class templates cannot be used as a property one
@@ -381,10 +374,8 @@ Pipeline:
                  * remove all temporal exceptions
  
                  * debugger : step over message operation
-                 * fix debugger watch : bsort - ref<int> is not correctly recognized
                  * test vm sta : preloaded symbols / initializers
                  * test vm sta : exception handlers
-                 * vm : Runtime evaluation, Runtime evaluation/In an environment
                  * mta system : check the situation when too many threads (> MAX_THREAD)
                  * nested code : read only outer field
                  * closers passed as parameters should be stack-allocated

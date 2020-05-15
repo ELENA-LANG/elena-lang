@@ -205,9 +205,7 @@ public class SequentialEnumerator : BaseRowEnumerator
         
         for (int i := 0, i < theLength, i += 1)
         {
-            Indexer it := arguments[i].indexer();
-            
-            theIndexers[i] := /*arguments[i].indexer()*/it
+            theIndexers[i] := arguments[i].indexer()
         };
         
         self.reset()
