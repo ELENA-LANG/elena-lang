@@ -17,7 +17,7 @@ In development:
     * api : use manifest info for module description
 
   [samples/api]
-    * fix : helloworld (readChar), gameofline
+    * fix : gameofline
     * !chat
     * rosetta code samples
     * timer

@@ -2139,6 +2139,7 @@ bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOn
 
       return extensionOne ? (retNode == lxLocal && retNode.argument == -1) : (retNode == lxSelfLocal && retNode.argument == 1);
    }
+   else return false;
 }
 
 bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& messageRef)
