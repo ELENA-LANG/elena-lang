@@ -146,6 +146,9 @@ namespace expressions
         static Expression ActionMethod(Expression body)
             = new ActionMethodExpression(body);        
               
+        static Expression ActionMethod(ScopeVariable param1, Expression body)
+            = new ActionMethodExpression(param1, body);        
+              
         static Expression Method(string name, Expression body)
             = new MethodExpression(name, body);        
               
@@ -1364,6 +1367,15 @@ namespace expressions
         {
             this parameters := new ScopeVariable[]{ new ScopeVariable("self") };
             this message := new Message("[0]");
+            
+            this body := body;
+        }
+        
+        constructor(ScopeVariable param1, Expression body)
+        //    <= (new Message("[0]"), body);   // !! temporally commented out
+        {
+            this parameters := new ScopeVariable[]{ param1, new ScopeVariable("self") };
+            this message := new Message("[1]");
             
             this body := body;
         }

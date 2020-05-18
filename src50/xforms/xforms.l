@@ -14,13 +14,13 @@ public singleton xforms
     {
         var tape := xformsEngine.buildScript(script).compiled().program;
         
-        ^ tape();
+        ^ tape;
     }
     
     loadPath(string path)
     {
         var tape := xformsEngine.buildScriptFile(path).compiled().program;
         
-        ^ tape();
+        ^ tape;
     }
 }

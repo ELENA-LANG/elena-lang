@@ -10,6 +10,7 @@
         singleton (
           nameattr ( identifier = program )
           script_function (
+            parameter ( nameattr ( identifier = owner ) )
             code (
               expression (
                 variable_identifier = current 

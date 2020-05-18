@@ -6,7 +6,7 @@ public class MainWindow
     
     constructor new()
     {
-        theForm := forward form
+        theForm := (forward form)(self)
     }
     
     dispatch() => theForm;
@@ -14,4 +14,4 @@ public class MainWindow
 
 public dynamicForm = xforms.loadPath("helloworld.xs");
                 
-public staticForm  = helloworld'stat'program();
+public staticForm  = helloworld'stat'program;

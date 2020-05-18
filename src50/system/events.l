@@ -41,5 +41,10 @@ public sealed EventHandler<TF>
             __name.append(f);
         }
     }
+    
+    set(o)
+    {
+        self.__name := cast T(o)
+    }
 }
 
