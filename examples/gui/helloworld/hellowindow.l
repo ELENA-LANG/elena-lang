@@ -9,6 +9,11 @@ public class MainWindow
         theForm := (forward form)(self)
     }
     
+    onExit(arg)
+    {
+        forward program.stop()
+    }
+    
     dispatch() => theForm;
 }
 

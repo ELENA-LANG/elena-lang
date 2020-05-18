@@ -47,8 +47,9 @@
           )
           assign = 0
           expression (
-             new_reference = system'Variant
+             new_reference = xforms'PropVariant
              message = 0
+             expression ( identifier = owner )
              expression (
 =>
                $identifier "=" value

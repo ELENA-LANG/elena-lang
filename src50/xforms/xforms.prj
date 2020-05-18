@@ -1,4 +1,4 @@
-﻿<configuration>
+<configuration>
     <project>
         <template>lib</template>
         <namespace>xforms</namespace>
@@ -7,13 +7,14 @@
         <output>..\..\lib50</output>
     </project>
     <manifest>
-      <name>ELENA GUI Script Library</name>
-      <version>5.0.0</version>
-      <author>Alex Rakov</author>
+        <name>ELENA GUI Script Library</name>
+        <version>5.0.0</version>
+        <author>Alex Rakov</author>
     </manifest>
-  <files>
-     <module>
-       <include>xforms.l</include>
-     </module>
-  </files>
+    <files>
+        <module>
+            <include>common.l</include>
+            <include>xforms.l</include>
+        </module>
+    </files>
 </configuration>
