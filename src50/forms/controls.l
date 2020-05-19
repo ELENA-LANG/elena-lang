@@ -23,6 +23,8 @@ public abstract class BaseControl
     wide   theCaption;
     object theParent;
     
+    string id;
+    
     protected constructor new()
     {
         theVisible := true;
@@ -177,6 +179,22 @@ public abstract class BaseControl
         set(o)
         {
             self.Height := cast int(o);
+        }
+    }
+
+    string ID
+    {
+        get()
+            = id;
+            
+        set(string v)
+        {
+            id := v
+        }
+        
+        set(v)
+        {
+            self.ID := cast string(v); 
         }
     }
 

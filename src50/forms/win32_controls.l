@@ -1,4 +1,5 @@
 import system'collections;
+import system'routines;
 import system'drawing;
 import system'winforms;
 
@@ -7,6 +8,8 @@ import system'winforms;
 public interface IControl
 {
     get abstract object Control() {}
+    
+    get abstract string ID() {}
     
     abstract IControl retrieve(WindowHandle handle) {}
     
@@ -285,7 +288,28 @@ public abstract class BaseWinContainer : BaseWinControl
 
 //        ifnot($nil == theResize)
 //            [ theResize eval:$self ]
-    }  
+    }
+    
+    IControl findByID(string id)
+        = theControls.seekEach:(x => x.ID == id);
+        
+    Controls = new
+    {
+        get generic()
+        {
+            string id := __received.MessageName.toPrintable();
+            
+            auto ctrl := self.findByID(id);
+            if (ctrl != nil)
+            {
+                ^ ctrl.Control
+            }
+            else
+            {
+                ^ nil
+            }
+        }
+    };        
 }
 
 // --- Frame ---
@@ -1248,7 +1272,9 @@ public sealed class ImageList : Object, interface<IControl>
         theSize.Width := width;
         theSize.Height := height
     }
-   
+
+     prop string ID;
+         
 //    assign : aControl
 //       <= assign paintbox:(aControl paintbox).
  

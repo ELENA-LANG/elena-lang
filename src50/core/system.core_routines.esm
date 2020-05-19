@@ -2679,9 +2679,11 @@ procedure __signature."load$system@MessageName$system@String[2]"
   quitn 2
  
 labErr:
+  peeksi   2
   open 1
-  pushr class : system'InvalidArgumentException
-  pushr mssgconst : "new[1]"
+  pusha
+  pushr class : system'MessageLoaderException
+  pushr mssgconst : "new[2]"
   throw
 
   quitn 2

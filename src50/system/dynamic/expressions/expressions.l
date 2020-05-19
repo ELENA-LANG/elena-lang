@@ -1113,6 +1113,24 @@ namespace expressions
                     Expression s6, Expression s7, Expression s8)
             <= new(s1, s2, s3, s4, s5, s6, s7, s8); 
                         
+        constructor(Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
+                    Expression s6, Expression s7, Expression s8, Expression s9)
+            <= new(s1, s2, s3, s4, s5, s6, s7, s8, s9); 
+                        
+        constructor(Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
+                    Expression s6, Expression s7, Expression s8, Expression s9, Expression s10)
+            <= new(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10); 
+                        
+        constructor(Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
+                    Expression s6, Expression s7, Expression s8, Expression s9, Expression s10, 
+                    Expression s11)
+            <= new(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11); 
+                        
+        constructor(Expression s1, Expression s2, Expression s3, Expression s4, Expression s5, 
+                    Expression s6, Expression s7, Expression s8, Expression s9, Expression s10, 
+                    Expression s11, Expression s12)
+            <= new(s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12); 
+                        
         prepare(ExpressionScope scope)
         {
             variables := new List<ScopeVariable>();

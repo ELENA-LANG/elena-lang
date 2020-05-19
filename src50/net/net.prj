@@ -10,7 +10,7 @@
     </project>
     <manifest>
         <name>ELENA Network Provider Library</name>
-        <version>4.1.0</version>
+        <version>5.0.0</version>
         <author>Alex Rakov</author>
     </manifest>
     <files>

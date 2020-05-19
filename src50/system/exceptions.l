@@ -156,6 +156,15 @@ public class SymbolLoaderException : Exception
         <= new("Symbol " + symbolName + " cannot be loaded");
 }
 
+// --- MessageLoaderException ---
+
+public class MessageLoaderException : Exception
+{
+    /// Creates the exception
+    constructor new(string messageName)
+        <= new("Message name " + messageName + " cannot be loaded");
+}
+
 // --- MethodNotFound ---
 
 public sealed class MethodNotFoundException : Exception
