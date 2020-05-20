@@ -40,7 +40,7 @@
    #define m_arg          ::= expression;
    #define next_arg       ::= "," m_arg;
 
-   #define property       ::= message <= property_parameter ( ) =>;
+   #define property       ::= message <= property_parameter = 0 =>;
 
    #define s_name         ::= <= nameattr ( identifier = $identifier ) =>;
    #define m_name         ::= <= nameattr ( identifier = $identifier ) =>;

@@ -5,7 +5,7 @@ In development:
   [compiler]
     * !linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * GC : mov GC to C code : #77
-    * optimization : idle method
+    * optimization : idle method, pi
 
   [project]
     * issues : #370, close all open issues for 5.0
@@ -17,7 +17,7 @@ In development:
     * api : use manifest info for module description
 
   [samples/api]
-    * fix
+    * fix 
     * !chat
     * rosetta code samples: Sockets, Zhang-Suen thinning algorithm
     * timer
@@ -326,11 +326,9 @@ Pipeline:
 
                  * new anyToken { .. } - should raise an error?
                  * warn on operations with unassigned variable
-                 * the following code should generate an error : var a.doSomething(b)
+
                  * stringOpHelper should be able to call the original trim method, currently it is not possible to call trim
                    method for the anonymous object
-                 * in the interface it was possible to declare a parameter of non-existing class
-
 
                  * optimize SystemTime
                  * uncomment __closuretape."#dispatch[1]  - check the subject correctly
