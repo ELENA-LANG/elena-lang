@@ -204,7 +204,9 @@ public sealed struct AddrInfoReader
         dirty_ptr ptr := paddrinfo;
         ptr := ptr + 28;
         
-        paddrinfo := ptr
+        int r := ptr.Value;
+        
+        paddrinfo := dirty_ptr.load(ptr.Value)
     }
     
     read(AddrInfo info)
