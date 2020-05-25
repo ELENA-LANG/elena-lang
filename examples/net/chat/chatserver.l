@@ -1,4 +1,4 @@
-//import system'routines'stex.
+import system'routines'stex;
 ////import system'text.
 ////import system'io.
 import system'threading;

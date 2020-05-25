@@ -1351,6 +1351,34 @@ labErr:
 
 end
 
+procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$system@IntNumber$@system@Array#1&system@ByteNumber[4]"
+
+  peeksi   1
+  len
+  peeksi   2
+  notless  labErr
+  load
+  lessn    labErr 0
+
+  //; insert(dest,sour,index,size)
+  pushsi   3
+  pushsi   3
+  pushsi   6
+  pushsi   4
+
+  callextr api : insert
+  freei    4
+
+  quitn    4
+
+labErr:
+  open     1
+  pushr    class : system'InvalidArgumentException
+  pushr    mssgconst : "new[1]"
+  throw  
+
+end
+
 procedure __intarray."write$@system@Array#1&system@IntNumber$system@IntNumber$system@IntNumber$@system@Array#1&system@IntNumber[4]"
 
   pushsi 4

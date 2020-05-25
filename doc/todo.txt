@@ -32,7 +32,8 @@ In development:
                     break / continue
 
   [API]
-    * usability : dynamic loading : give the symbol / message / subject name in the InvalidArgument exception
+    * uncomment code
+    * usability : dynamic loading : give the symbol / message in the InvalidArgument exception
 
   [!research]
     * !xforms : XAML xforms script
