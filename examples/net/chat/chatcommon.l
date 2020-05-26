@@ -38,7 +38,10 @@ class BaseClient
                 
                 theBuffer.delete(0, package_len + 4);
                 
-                ^ s.fromJson()
+                //^ s.fromJson()
+                
+                var o := s.fromJson();
+                ^ o
             }
         };
         
