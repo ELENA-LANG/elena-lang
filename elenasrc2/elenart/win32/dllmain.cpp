@@ -43,10 +43,13 @@ EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, vo
    _Instance->startMTA(header, (SystemEnv*)systemEnv, entryPoint);
 }
 
-EXTERN_DLL_EXPORT int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint,
-   ProgramHeader* header, int index)
+EXTERN_DLL_EXPORT int StartThread(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,
+   int index, ProgramHeader* header)
 {
    header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+
+   // initialize the critical exception handler
+   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
 
    _Instance->startThread(header, (SystemEnv*)systemEnv, entryPoint, index);
 

@@ -5404,15 +5404,17 @@ end
 
 procedure thread_start
 
-  loadsi   1
   open     1
   reserve  sizeof ProgramHeader
 
-  pushd
   pushs    -2
   callextr api : initProgramHeader
 
+  loadfi   -9
+  pushd
+
   pushr    intern : system'core_routines'threadEntry
+  pushr    api : seh_handler
   pushr    api : thread_default_handler
   loadenv
   pushd

@@ -6,6 +6,7 @@ In development:
     * !linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * GC : mov GC to C code : #77
     * optimization : idle method, pi
+    * elenart : get rid of inline assembly
 
   [project]
     * issues : #370, close all open issues for 5.0
