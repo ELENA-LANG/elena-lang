@@ -834,6 +834,59 @@ labEnd:
 
 end
 
+// ; move(target,index,len,offs)
+procedure coreapi'move
+
+  mov  edx, [esp+8]
+  mov  eax, [esp+12]
+  mov  edi, [esp+4]      // ; target
+  mov  ecx, [eax]
+  mov  esi, [esp+16]
+  mov  ebx, [edx]        // ; index
+
+  test ecx, ecx          // ; len
+  jz   short labEnd
+
+  mov  edx, [esi]        // ; offs
+  cmp  edx, 0
+  jl   short labDelete
+
+  add  ebx, ecx
+  sub  ebx, 1
+
+  add  edx, ebx
+
+  add  edx, edi
+  add  ebx, edi
+
+labNext:
+  mov  esi, dword ptr [esi]
+  mov  dword ptr [edx], esi
+  sub  ebx, 1
+  sub  edx, 1
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+labDelete:
+  add  edx, ebx
+
+  add  edx, edi
+  add  ebx, edi
+
+labNext2:
+  mov  esi, dword ptr [ebx]
+  mov  dword ptr [edx], esi
+  add  ebx, 1
+  add  edx, 1
+  sub  ecx, 1
+  jnz  short labNext2
+  ret
+
+end
+
 // ; nmove(target,index,len,offs)
 procedure coreapi'nmove
 

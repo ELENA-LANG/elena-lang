@@ -1765,8 +1765,8 @@ public extension byteArrayHelper : Array<byte>
     read(int index, ref char retVal)
         => intern system'core_routines'__bytearray;                
         
-//    move(int index, int length, int offset)
-//        => system'core_routines'__bytearray;
+    move(int index, int length, int offset)
+        => intern system'core_routines'__bytearray;
                 
     /// Copies a sub array to the provided one at the specified position
     read(int index, int length, byte[] dump)
