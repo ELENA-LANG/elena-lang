@@ -2886,7 +2886,7 @@ ObjectInfo Compiler :: compileIsNilOperator(SNode current, ExprScope& scope, Obj
 
    ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef) ? loperandRef : 0;
 
-   return ObjectInfo(okObject, resultRef);
+   return ObjectInfo(okObject, 0, resultRef);
 }
 
 inline bool IsArrExprOperator(int operator_id, LexicalType type)
@@ -4209,6 +4209,19 @@ bool Compiler :: declareActionScope(ClassScope& scope, SNode argNode, MethodScop
    return lazyExpression;
 }
 
+inline void copyMethodParameters(SNode target, SNode arg)
+{
+   while (arg != lxNone) {
+      if (arg == lxMethodParameter) {
+         SNode paramNode = target.insertNode(lxMethodParameter).appendNode(lxNameAttr);
+
+         SyntaxTree::copyNode(arg, paramNode);
+      }
+
+      arg = arg.nextNode();
+   }
+}
+
 void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EAttr mode)
 {
    MethodScope methodScope(&scope);
@@ -4235,6 +4248,9 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
       // inject a method
       SNode current = node.findChild(lxCode, lxReturning);
       current.injectAndReplaceNode(lxClassMethod, methodScope.message);
+
+      //!!HOTFIX : copy method parameters to be used for debug info
+      copyMethodParameters(current, argNode);
 
       initialize(scope, methodScope);
       methodScope.functionMode = true;
@@ -9612,18 +9628,18 @@ void Compiler :: injectMemberPreserving(SNode node, ExprScope& scope, LexicalTyp
       SNode assignNode = current.appendNode(lxCopying, size);
       assignNode.appendNode(lxLocalAddress, member.param);
 
-      SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
-      fieldExpr.appendNode(tempType, tempLocal);
-      fieldExpr.appendNode(lxField, memberIndex);
+      SNode fieldAssignExpr = assignNode.appendNode(lxFieldExpression);
+      fieldAssignExpr.appendNode(tempType, tempLocal);
+      fieldAssignExpr.appendNode(lxField, memberIndex);
 
       Attribute key(lxLocalAddress, member.param);
       int boxedLocal = scope.tempLocals.get(key);
       if (boxedLocal != NOTFOUND_POS) {
          // HOTFIX : check if the variable is used several times - modify the boxed argument as well
-         SNode assignNode = current.appendNode(lxCopying, size);
-         assignNode.appendNode(lxTempLocal, boxedLocal);
+         SNode assignBoxNode = current.appendNode(lxCopying, size);
+         assignBoxNode.appendNode(lxTempLocal, boxedLocal);
 
-         SNode fieldExpr = assignNode.appendNode(lxFieldExpression);
+         SNode fieldExpr = assignBoxNode.appendNode(lxFieldExpression);
          fieldExpr.appendNode(tempType, tempLocal);
          fieldExpr.appendNode(lxField, memberIndex);
       }

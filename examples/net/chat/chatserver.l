@@ -59,7 +59,7 @@ sealed class ChatServer
         {
             lock (theLock)
             {
-                auto member := cast ChatMember(client.Parameter);
+                auto member := cast ChatMember(client.Parameter) ?? nil;
                 if(nil != member)
                 {
                     var command := member.readCommand();
