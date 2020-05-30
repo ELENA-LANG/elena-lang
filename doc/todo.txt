@@ -315,7 +315,6 @@ Pipeline:
                  * review elenasm - simplify the coordination info, probably it should be encoded into the log itself,
                    so no need to fill the list (what about the string in calc sample)
 
-                 * Thread.assign:(){} should be supported
                  * (re)implement tape debugger
 
                  * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
@@ -324,9 +323,7 @@ Pipeline:
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
                  * allow to work with ref<int> directly
-                 * uncomment validateClassDeclaration
 
-                 * new anyToken { .. } - should raise an error?
                  * warn on operations with unassigned variable
 
                  * stringOpHelper should be able to call the original trim method, currently it is not possible to call trim
@@ -339,7 +336,6 @@ Pipeline:
 
                  * reddit post - Switch statement
 
-                 * TokenEnumerator : class TextBuilder should not be found (system'text is not imported)
                  * (re)implement dynamic variadic argument resolving
                  * primitive array should be passed directly without unboxing if allowed
                  * test boxing / unboxing with dynamic reference
@@ -363,7 +359,6 @@ Pipeline:
                  * sealed static fields, cannot be changed in the child classes?!
                  * remove all temporal exceptions
  
-                 * debugger : step over message operation
                  * test vm sta : preloaded symbols / initializers
                  * test vm sta : exception handlers
                  * mta system : check the situation when too many threads (> MAX_THREAD)
