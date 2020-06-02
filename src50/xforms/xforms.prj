@@ -8,7 +8,7 @@
     </project>
     <manifest>
         <name>ELENA GUI Script Library</name>
-        <version>5.0.0</version>
+        <version>5.0.1</version>
         <author>Alex Rakov</author>
     </manifest>
     <files>

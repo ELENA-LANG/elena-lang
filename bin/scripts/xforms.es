@@ -111,6 +111,32 @@
             )
 =>;
 
+   #define member           ::=
+<=
+            code (
+              expression (
+                variable_identifier = current 
+                assign = 0
+                expression (
+                  reference = forms'Edit
+                  message = new
+                )
+              )
+=>
+                            "<" "Edit" property* edit_closing_tag
+<=
+              expression (
+                expression (
+                  prev_identifier = current
+                )
+                message ( identifier = appendControl )
+                expression (
+                  identifier = current
+                )  
+              )
+            )
+=>;
+
    #define form_closing_tag ::= 
                            ">" member* "<" "/" "Form" ">";
 
@@ -119,6 +145,9 @@
 
    #define button_closing_tag ::= 
                            ">" "<" "/" "Button" ">";
+
+   #define edit_closing_tag ::= 
+                           ">" "<" "/" "Edit" ">";
 
    #define value            ::= <= literal = "$literal" =>;
 
