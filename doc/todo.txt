@@ -49,6 +49,8 @@ In development:
 ------                                                           
 Pipeline:
 ------   
+                * uncomment all code in LIB50
+
                 * resend property (see forms Caption / Heigth and so on properties)
                 * duplicate boxing optimization : do not unbox presaved variable into temporal variable if it is not used
                   in the following sub expression (e.g a.then{ arg++ }.then{ arg++ }, second temp unboxing is not required;
@@ -61,7 +63,7 @@ Pipeline:
                 * api : extension - ignore the target argument
                 * api : templates
                 * api : extension template
-                * ELENA 4.0 : Serializing a DTO to Json and back
+
                 * migrating MG
                 * get rid of EXPAND_HEAP, NEW_HEAP
                 * graph - use script to define the function (+tutorial)
@@ -71,7 +73,6 @@ Pipeline:
 
                 * active issues
                 * sqlite : support float / blob
-                * uncomment all code in LIB50
                 * String / WideString - add<'Char>
                 * regression tests
                 * Amicable pairs using yield method

@@ -4,34 +4,16 @@ public sealed const struct Handle
 {
     embeddable __raw theHandle[4];
 
-////    constructor new(handle h)
-////    [
-////        theHandle := h
-////    ]
-////    
-////    constructor new(int h)
-////    [
-////        theHandle := h
-////    ]
+    static Handle MinValue
+        = 0;
 
-//    #constructor min
-//        = 0.
-//
     constructor(int n)
     {
         theHandle := n
     }
-
-////    cast T<int> = theHandle.
-////
-////    bool equal(handle anOperand)
-////        = theHandle == anOperand.
-////        
-////    bool equal(int anOperand)
-////        = theHandle == anOperand.
 }
 
-//// --- RTPointer ---
+// --- RTPointer ---
 
 public static rt_sync = new Object();
 
@@ -88,17 +70,17 @@ public sealed const struct UnsafePointer
     private setReference(o)
         => intern system'core_routines'__dptr;
                                          
-//    dirty_ptr add(int offs)
-//    {
-//        intern system'core_routines'__dptr.readVal(self, ref int val);
-//        
-//        val += offs;
-//        
-//        dirty_ptr ptr := UnsafePointer.load(val);
-//        
-//        ^ ptr
-//    }
-//
+    dirty_ptr add(int offs)
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        val += offs;
+        
+        dirty_ptr ptr := UnsafePointer.load(val);
+        
+        ^ ptr
+    }
+
     get int Value()
         = cast int(self);
 

@@ -41,15 +41,10 @@ public sealed const struct Message
         intern system'core_routines'__message.load(self, name)
     }
     
-//    internal constructor newInteral(int message)
-//    [
-//        system'core_routines'__message copy(self, message).
-//    ]
-//    
-//    /// Loads a message
-//    constructor new(mssg message)
-//        = message.
-
+    /// Compares the values
+    bool equal(Message mssg)
+        = theValue == mssg;
+    
     get MessageName MessageName()
     {
         intern system'core_routines'__message.getMessageName(self, ref MessageName retVal);
@@ -78,15 +73,9 @@ public sealed const struct ExtensionMessage
 {
     embeddable __mssg theValue[8];
     
-////    /// Loads a message
-////    constructor new(ExtensionMessage message)
-////        = message.
-////
-////    T<Signature> signature
-////        => system'core_routines'__message.
-//
-//    bool equal(ExtensionMessage aSubject)
-//        => system'core_routines'__extmessage.
+    /// Compares the values
+    bool equal(ExtensionMessage ext_mssg)
+        = theValue == ext_mssg;
 
     /// Dequalifies incoming messages if they are equal to its value and redirects to the target
     dispatch() => intern system'core_routines'__extmessage;
@@ -99,26 +88,11 @@ public sealed const struct MessageName
 {
     embeddable __subj theValue[4];
     
-////    /// Creates a dynamic signature
-////    constructor new(mssg message)
-////    [
-////        system'core_routines'__signature load(self, message)
-////    ]
-////        
-////    /// Creates a dynamic signature
-////    constructor new(Signature subject)
-////        = subject.
-
     /// Creates a dynamic signature
     constructor(string s)
     {
         intern system'core_routines'__signature.load(self, s)
     }
-
-//    saveTo(ref mssg message)
-//    {
-//        intern system'core_routines'__signature.saveTo(self, ref message)
-//    }
 
     Message getPropertyMessage()
     {
@@ -133,10 +107,6 @@ public sealed const struct MessageName
         
         ^ message        
     }
-
-////    /// Creates a dynamic signature
-////    constructor new(wide aSubjectName)
-////        <= new(T<literal>(aSubjectName)).
 
     /// Compares the values
     bool equal(MessageName subject)
@@ -153,15 +123,6 @@ public sealed const struct MessageName
     /// Qualifies incoming messages and redirects to the target
     dispatch() => intern system'core_routines'__signature;
 }
-
-//// --- Wrap ---
-//
-//public mixin Wrap
-//{
-//    object[] items;
-//    
-//    dispatch() => system'core_routines'__wrap;
-//}
 
 // --- Extension ---
 

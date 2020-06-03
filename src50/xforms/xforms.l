@@ -30,4 +30,11 @@ public singleton xforms
         
         ^ tape;
     }
+    
+    executePath(string path, owner)
+    {
+        var tape := xformsEngine.buildScriptFile(path).compiled().program;
+        
+        ^ tape(owner);
+    }    
 }

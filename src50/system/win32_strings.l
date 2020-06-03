@@ -5,20 +5,35 @@ public const string newLine
 
 singleton characterController
 {
-//    // !! should be corrected
-//    isUpperCase(char aValue)
-//    [
-//        int aRetVal := system'external'USER32 IsCharUpperW(aValue).
-//        
-//        ^ (aRetVal != 0)
-//    ]
-//    
-//    isLowerCase(char aValue)
-//    [
-//        int aRetVal := system'external'USER32 IsCharLowerW(aValue).
-//        
-//        ^ (aRetVal != 0)
-//    ]
+    isUpperCase(char value)
+    {
+        int   length := 0;
+        short buffer[3];
+
+        charConvertor.save(value, 0, buffer, ref length);
+
+        buffer[length] := 0;
+                
+        short word := buffer[0];
+        int retVal := extern USER32.IsCharUpperW(/*buffer[0]*/word);
+        
+        ^ (retVal != 0)
+    }
+    
+    isLowerCase(char value)
+    {
+        int   length := 0;
+        short buffer[3];
+
+        charConvertor.save(value, 0, buffer, ref length);
+
+        buffer[length] := 0;
+                
+        short word := buffer[0];
+        int retVal := extern USER32.IsCharLowerW(/*buffer[0]*/word);
+        
+        ^ (retVal != 0)
+    }
     
     char toUpperCase(char char)
     {
@@ -108,57 +123,57 @@ public extension caseStringOp : String
     }
 }
 
-//// --- caseLitrealOp ---
-//
-//public extension caseWideOp : WideString
-//{
-//    wide upperCase()
-//    {
-//        wide retVal := emptyWideString;        
-//        int  index := 0;
-//        char current := $0;
-//        char converted := $0;
-//        int  currentLen := 0;
-//
-//        int length := self.Length;
-//                
-//        while (index < length)
-//        {
-//            self.read(index, ref current);
-//            currentLen := current.Length;
-//            
-//            converted := characterController.toUpperCase(current);
-//            
-//            retVal := retVal.add(converted);
-//            
-//            index := index + currentLen
-//        };
-//            
-//        ^ retVal
-//    }
-//
-//    wide lowerCase()
-//    {
-//        wide retVal := emptyWideString;        
-//        int  index := 0;
-//        char current := $0;
-//        char converted := $0;
-//        int  currentLen := 0;
-//        
-//        int length := self.Length;
-//        
-//        while (index < length)
-//        {
-//            self.read(index, ref current);
-//            currentLen := current.Length;
-//            
-//            converted := characterController.toLowerCase(current);
-//            
-//            retVal := retVal.add(converted);
-//            
-//            index := index + currentLen
-//        };
-//            
-//        ^ retVal
-//    }
-//}
+// --- caseLitrealOp ---
+
+public extension caseWideOp : WideString
+{
+    wide upperCase()
+    {
+        wide retVal := emptyWideString;        
+        int  index := 0;
+        char current := $0;
+        char converted := $0;
+        int  currentLen := 0;
+
+        int length := self.Length;
+                
+        while (index < length)
+        {
+            self.read(index, ref current);
+            currentLen := current.Length;
+            
+            converted := characterController.toUpperCase(current);
+            
+            retVal := retVal.add(converted);
+            
+            index := index + currentLen
+        };
+            
+        ^ retVal
+    }
+
+    wide lowerCase()
+    {
+        wide retVal := emptyWideString;        
+        int  index := 0;
+        char current := $0;
+        char converted := $0;
+        int  currentLen := 0;
+        
+        int length := self.Length;
+        
+        while (index < length)
+        {
+            self.read(index, ref current);
+            currentLen := current.Length;
+            
+            converted := characterController.toLowerCase(current);
+            
+            retVal := retVal.add(converted);
+            
+            index := index + currentLen
+        };
+            
+        ^ retVal
+    }
+}

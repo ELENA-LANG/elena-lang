@@ -2148,21 +2148,20 @@ public sealed class Variable : BaseVariable, ref<object>
             ? { system'InvalidOperationException.raise() }
             : { value := value - val }
     }
-    
-//    multiplyBy : val
-//    [
-//        ($nil == $value)
-//            ? [ system'InvalidOperationException new; raise ]
-//            ! [ $value := $value * val ]
-//    ]
-//    
-//    /// Divides into the value
-//    divideInto : val
-//    [
-//        ($nil == $value)
-//            ? [ system'InvalidOperationException new; raise ]
-//            ! [ $value := $value / val ]
-//    ]    
+
+    multiplyBy(val)
+    {
+        (nil == value)
+            ? { system'InvalidOperationException.raise() }
+            : { value := value * val }
+    }
+
+    divideBy(val)
+    {
+        (nil == value)
+            ? { system'InvalidOperationException.raise() }
+            : { value := value / val }
+    }
 }
 
 // --- KeyValue ---
@@ -2388,14 +2387,6 @@ public singleton intConvertor
         
         ^ retVal
     }
-        
-//    /// Converts a literal string into an integer
-//    int convertUnsigned(string s)
-//    {
-//        intern system'core_routines'__intconvertor.convert(s, 10, ref int retVal);
-//        
-//        ^ retVal
-//    }
         
     /// Converts a literal string into an integer
     int convert(string s, int base)

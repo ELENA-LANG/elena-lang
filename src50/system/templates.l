@@ -36,32 +36,17 @@ public interface<T>
     }
 }
 
-//property prop<T, __name>
-//{
-//    T __name;
-//    
-//    get T __name()
-//    {
-//        ^ __name
-//    }    
-//    
-//    set __name(T value)
-//    {
-//        __name := value
-//    }
-//}
-//
-//property rprop<__name>
-//{
-//    __name;
-//    
-//    get __name()
-//    {
-//        ^ __name
-//    }    
-//}
-
 #property rprop<T, __name>
+{
+    field;
+    
+    get()
+    {
+        ^ __name
+    }    
+}
+
+#property rprop<__name>
 {
     field;
     
@@ -114,8 +99,6 @@ public interface<T>
 {
     extern extern_block
 }
-
-// --- if statement ---
 
 // --- if statement ---
 
@@ -213,28 +196,11 @@ public interface<T>
     try_block | on(catch_block);
 }
 
-//public try<try_block,catch_block1,catch_block2>:catch,catch()
-//{
-//    try_block | on(catch_block1,catch_block2);
-//}
-
 // -- try-finally-catch statement ---
 #declare try:finally:catch(try_block,finally_block,catch_block)
 {
     try_block $fnl finally_block | on(catch_block);
 }
-
-//public try<try_block,finally_block, catch_block>:finally,catch()
-//{
-//    try_block $fnl finally_block | on(catch_block);
-//}
-//
-//// -- try-finally-catch-catch statement ---
-//
-//public try<try_block,finally_block,catch_block1,catch_block2>:finally,catch,catch()
-//{
-//    try_block $fnl finally_block | on(catch_block1,catch_block2);
-//}
 
 // -- finally statement ---
 

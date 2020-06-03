@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -5975,6 +5975,8 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 
 void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode callNode)
 {
+   test2(node);
+
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone && current != callNode) {
       SNode objNode = current;
