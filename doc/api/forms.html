@@ -117,13 +117,21 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseButton</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
 </TD>
@@ -297,6 +305,14 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseControl</SPAN></PRE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theParent</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -483,6 +499,23 @@ set&nbsp;</CODE></TD>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>ID</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ID(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Dimension</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Dimension</CODE>
@@ -617,13 +650,21 @@ abstract Class <SPAN CLASS="typeNameLabel">BasePanel</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;forms'IControl&gt;</A></SPAN></CODE>
 </TD>
@@ -631,7 +672,7 @@ abstract Class <SPAN CLASS="typeNameLabel">BasePanel</SPAN></PRE>
 <CODE>theControls</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="forms.html#Frame">Frame</A></SPAN></CODE>
 </TD>
@@ -852,13 +893,21 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinContainer</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;forms'IControl&gt;</A></SPAN></CODE>
 </TD>
@@ -911,6 +960,26 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinContainer</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property accessor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Controls</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -944,6 +1013,15 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinContainer</SPAN></PRE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>close()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>findByID(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
 </CODE>
 </TD>
 </TR>
@@ -1042,6 +1120,14 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinControl</SPAN></PRE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
@@ -1338,13 +1424,21 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinForm</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;forms'IControl&gt;</A></SPAN></CODE>
 </TD>
@@ -1532,13 +1626,21 @@ sealed Class <SPAN CLASS="typeNameLabel">Button</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
 </TD>
@@ -1726,6 +1828,14 @@ sealed Class <SPAN CLASS="typeNameLabel">Edit</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
@@ -1906,6 +2016,14 @@ sealed Class <SPAN CLASS="typeNameLabel">Frame</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
@@ -2049,6 +2167,14 @@ abstract get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Obje
 <CODE>Control</CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+abstract get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>ID</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -2174,6 +2300,14 @@ sealed Class <SPAN CLASS="typeNameLabel">ImageList</SPAN></PRE>
 <CODE>theIndex</CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>ID</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -2245,6 +2379,23 @@ sealed Class <SPAN CLASS="typeNameLabel">ImageList</SPAN></PRE>
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Property accessor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>ID</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ID(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+</CODE>
+</TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -2454,13 +2605,21 @@ sealed Class <SPAN CLASS="typeNameLabel">Imagebox</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Canvas">Canvas</A></SPAN></CODE>
 </TD>
@@ -2468,7 +2627,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Imagebox</SPAN></PRE>
 <CODE>theCanvas</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3,T4&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#3,'$auto'system'Func#3&system'Object,'$auto'system'Func#3&system'Object&system'drawing'Canvas,'$auto'system'Func#3&system'Object&system'drawing'Canvas&system'Object&gt;</A></SPAN></CODE>
 </TD>
@@ -2476,7 +2635,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Imagebox</SPAN></PRE>
 <CODE>onPaint</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HBITMAP">HBITMAP</A></SPAN></CODE>
 </TD>
@@ -2484,7 +2643,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Imagebox</SPAN></PRE>
 <CODE>theImage</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN></CODE>
 </TD>
@@ -2492,7 +2651,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Imagebox</SPAN></PRE>
 <CODE>theImageDC</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
 </TD>
@@ -2652,6 +2811,14 @@ Class <SPAN CLASS="typeNameLabel">Label</SPAN></PRE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
@@ -2833,13 +3000,21 @@ Class <SPAN CLASS="typeNameLabel">Paintbox</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Canvas">Canvas</A></SPAN></CODE>
 </TD>
@@ -2847,7 +3022,7 @@ Class <SPAN CLASS="typeNameLabel">Paintbox</SPAN></PRE>
 <CODE>theCanvas</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3,T4&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#3,'$auto'system'Func#3&system'Object,'$auto'system'Func#3&system'Object&system'drawing'Canvas,'$auto'system'Func#3&system'Object&system'drawing'Canvas&system'Object&gt;</A></SPAN></CODE>
 </TD>
@@ -3062,13 +3237,21 @@ sealed Class <SPAN CLASS="typeNameLabel">Panel</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;forms'IControl&gt;</A></SPAN></CODE>
 </TD>
@@ -3076,7 +3259,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Panel</SPAN></PRE>
 <CODE>theControls</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="forms.html#Frame">Frame</A></SPAN></CODE>
 </TD>
@@ -3273,13 +3456,21 @@ Class <SPAN CLASS="typeNameLabel">RadioButton</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
 </TD>
@@ -3287,7 +3478,7 @@ Class <SPAN CLASS="typeNameLabel">RadioButton</SPAN></PRE>
 <CODE>onClick</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
 </TD>
@@ -3519,13 +3710,21 @@ sealed Class <SPAN CLASS="typeNameLabel">RadioButtonGroup</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;forms'IControl&gt;</A></SPAN></CODE>
 </TD>
@@ -3533,7 +3732,7 @@ sealed Class <SPAN CLASS="typeNameLabel">RadioButtonGroup</SPAN></PRE>
 <CODE>theControls</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="forms.html#Frame">Frame</A></SPAN></CODE>
 </TD>
@@ -3541,7 +3740,7 @@ sealed Class <SPAN CLASS="typeNameLabel">RadioButtonGroup</SPAN></PRE>
 <CODE>theFrame</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
 </TD>
@@ -3549,7 +3748,7 @@ sealed Class <SPAN CLASS="typeNameLabel">RadioButtonGroup</SPAN></PRE>
 <CODE>theSelected</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
 </TD>
@@ -3814,13 +4013,21 @@ Class <SPAN CLASS="typeNameLabel">SDIDialog</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;forms'IControl&gt;</A></SPAN></CODE>
 </TD>
@@ -3984,13 +4191,21 @@ Class <SPAN CLASS="typeNameLabel">SDIForm</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;forms'IControl&gt;</A></SPAN></CODE>
 </TD>

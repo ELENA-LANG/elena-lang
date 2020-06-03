@@ -34,6 +34,8 @@
 ..\..\bin\api2html.exe net
 ..\..\bin\ecv sqlite l
 ..\..\bin\api2html.exe sqlite
+..\..\bin\ecv xforms l
+..\..\bin\api2html.exe xforms
 
 
  
