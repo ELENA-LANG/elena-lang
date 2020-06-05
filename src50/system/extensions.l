@@ -6,14 +6,11 @@ public extension objectOp
     __getClass()
         => intern system'core_routines'__object;
 
-//    __getBaseClass()
-//        => system'core_routines'__object;
-//
-//    __getParentClass()
-//        => system'core_routines'__object;
-//
-//    bool instanceOf(type)
-//        => system'core_routines'__object;
+    __getParentClass()
+        => intern system'core_routines'__object;
+
+    bool instanceOf(type)
+        => intern system'core_routines'__object;
 
     string __getClassName()
     {

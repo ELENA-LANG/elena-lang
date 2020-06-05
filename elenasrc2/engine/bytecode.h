@@ -71,7 +71,7 @@ enum ByteCode
    bcRLoad           = 0x32,
    bcFlag            = 0x33,
 //   bcNLen            = 0x34,
-//   bcParent          = 0x35,
+   bcParent          = 0x35,
    bcClass           = 0x36,
    bcMIndex          = 0x37,
 //   bcCheck           = 0x38,
@@ -113,7 +113,7 @@ enum ByteCode
    bcNShrF           = 0x5F,
 
    bcMul             = 0x60,
-//   bcBRead           = 0x61,
+   bcCheckSI         = 0x61,
 //   bcBReadB          = 0x65,
 
 //   bcBWrite          = 0x69,

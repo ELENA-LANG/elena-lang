@@ -1322,6 +1322,13 @@ inline % 33h
   
 end
 
+// ; parent
+inline % 35h
+
+  mov ebx, [ebx - elPackageOffset]
+
+end
+
 // ; class
 inline % 36h
 
@@ -1739,6 +1746,23 @@ inline %060h
   mov  ecx, __arg1
   imul ecx
   mov  edx, eax
+
+end
+
+// ; checksi
+inline % 061h
+
+  mov    edi, [esp+__arg1]
+  xor    edx, edx
+  mov    esi, [ebx-4]
+labNext:
+  mov    eax, 0
+  cmp    esi, edi
+  mov    esi, [esi - elPackageOffset]
+  setz   dl
+  cmovnz eax, esi
+  and    eax, eax
+  jnz    short labNext
 
 end
 

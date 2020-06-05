@@ -60,6 +60,24 @@ procedure __object."__getClass$system@Object[1]"
 
 end
 
+procedure __object."__getParentClass$system@Object[1]"
+
+  peeksi 1
+  class
+  parent
+  quitn  1
+
+end
+
+procedure __object."instanceOf$system@Object$system@Object[2]"
+
+  peeksi  1
+  checksi 2
+  select  const : false const : true
+  quitn   2
+
+end
+
 procedure __object."raise[1]"
 
   freei 1

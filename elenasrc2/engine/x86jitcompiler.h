@@ -45,11 +45,6 @@ struct x86JITScope
       return helper->resolveMessage(reference, module);
    }
 
-//   //SectionInfo getSection(ref_t reference)
-//   //{
-//   //   return helper->getSection(reference, module);
-//   //}
-
    x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler);
 };
 

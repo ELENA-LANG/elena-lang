@@ -376,6 +376,11 @@ ELENA byte codes (or ecodes)
  
  xmtredirect r,m            - search in message table r the message in ext and provided parameter list; if found jumps to direct address;
 
+ checksi i                  - [sp] is-instance-of acc ? -1 : 0
+ 
+ parent                     - base::Parent >> acc ; returns parent or package depending on the class flag
+ 
+
 
  Jump operations:
  ---------------- 
