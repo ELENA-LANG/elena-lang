@@ -29,93 +29,78 @@ public extension objectOp
     bool equalReference(o)
         => intern system'core_routines'__object;
         
-////    evalSelf(Func1 aFunction)
-////        = aFunction(self).
-////
-//////    evalSelf:aFunction
-//////        = aFunction eval:self.
-////
-////    /// Returns true if the object is nil
-////    bool isNil
-////        = nil == self.
-////        
-//////    /// Returns true if the object is literal or character
-//////    isLiteral
-//////    [
-//////        var o := self literal \ back:$nil.
-//////        if ($nil == o)
-//////        [
-//////            o := self wide \ back:$nil.
-//////            if ($nil == o)
-//////            [
-//////                o := self char \ back:$nil.
-//////                
-//////                if ($nil == o)
-//////                [
-//////                    ^ false
-//////                ]
-//////            ]
-//////        ].
-//////        
-//////        ^ true.
-//////    ]
-//////    
-//////    /// Returns true if the object is integer numereric
-//////    isInteger
-//////    [
-//////        var o := self int \ back:$nil.
-//////        if ($nil == o)
-//////        [
-//////            o := self long \ back:$nil.
-//////            if ($nil == o)
-//////            [
-//////                o := self short \ back:$nil.
-//////                
-//////                if ($nil == o)
-//////                [
-//////                    o := self byte \ back:$nil.
-//////                    
-//////                    if ($nil == o)
-//////                    [
-//////                        ^ false
-//////                    ]
-//////                ]
-//////            ]
-//////        ].
-//////        
-//////        ^ true.
-//////    ]
-//////    
-//////    /// Returns true if the object is numereric
-//////    isNumeric
-//////    [
-//////        var o := self int \ back:$nil.
-//////        if ($nil == o)
-//////        [
-//////            o := self long \ back:$nil.
-//////            if ($nil == o)
-//////            [
-//////                o := self short \ back:$nil.
-//////                
-//////                if ($nil == o)
-//////                [
-//////                    o := self byte \ back:$nil.
-//////                    
-//////                    if ($nil == o)
-//////                    [
-//////                        o := self real \ back:$nil.
-//////                        
-//////                        if ($nil == o)
-//////                        [
-//////                            ^ false
-//////                        ]
-//////                    ]
-//////                ]
-//////            ]
-//////        ].
-//////        
-//////        ^ true.
-//////    ]
+    /// Returns true if the object is nil
+    bool isNil()
+        = nil == self;
+        
+    /// Returns true if the object is literal or character
+    isLiteral()
+    {
+        var o := cast String(self) ?? nil;
+        if (nil == o)
+        {
+            o := cast WideString(self) ?? nil;
+            if (nil == o)
+            {
+                o := cast CharValue(self) ?? nil;
+                
+                if (nil == o)
+                {
+                    ^ false
+                }
+            }
+        };
+        
+        ^ true
+    }
+    
+    /// Returns true if the object is integer numereric
+    isInteger()
+    {
+        var b := self.instanceOf(IntNumber);
+        if (b)
+        {
+            ^ true
+        };
+        
+        b := self.instanceOf(UIntNumber);
+        if (b)
+        {
+            ^ true
+        };
+        
+        b := self.instanceOf(LongNumber);
+        if (b)
+        {
+            ^ true
+        };
+        
+        b := self.instanceOf(ShortNumber);
+        if (b)
+        {
+            ^ true
+        };
+        
+        b := self.instanceOf(ByteNumber);
+        if (b)
+        {
+            ^ true
+        };  
+        
+        ^ false
+     }
+    
+    /// Returns true if the object is numereric
+    isNumeric()
+    {
+        if (self.instanceOf(RealNumber))
+        {
+            ^ true
+        }
+        else {
+            ^ self.isInteger();
+        }
+    }
         
     bool isEmpty()
     {
@@ -153,186 +138,182 @@ public extension objectOp
         ^ newArr
     }
                 
-//    reallocate(int newLength)
-//        => system'core_routines'__array;
-//        
-////    shift(int n)
-////    [
-////        if (n < 0)
-////            [ ^ self shiftLeft(n negative) ];
-////            [ ^ self shiftRight(n) ].
-////    ]
+    shift(int n)
+    {
+        if (n < 0)
+        { 
+            ^ self.shiftLeft(n.Negative) 
+        }
+        else
+        {
+            ^ self.shiftRight(n)
+        }
+    }
 }
 
-//// --- Operations ---
-//
-//// --- byteOp ---
-//
-//public extension byteOp : ByteNumber
-//{
-//    Hashcode
-//    {
-//        // Reads the object hash code into the output parameter
-//        int get()
-//        {
-//            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//
-//    get byte Absolute()
-//    {
-//        byte n := self;
-//        if (n < 0)
-//            { n := n * -1 };
-//                
-//        ^ new ByteNumber(n)
-//    }
-//    
-//    byte mod(operand)
-//    {
-//        var retVal := self / operand * operand;
-//        
-//        ^ byteConvertor.convert(retVal)
-//    }    
-//    
-//    byte power(int y)
-//    {
-//        byte x := self;
-//        byte r := 1;
-//        
-//        for (int i := 0, i < y, i += 1)
-//        {
-//            r := r * x
-//        };
-//        
-//        ^ new ByteNumber(r)
-//    }
-//    
-//    byte sqr()
-//    {
-//        byte retVal := 0;
-//        
-//        retVal := self * self;
-//        
-//        ^ new ByteNumber(retVal)
-//    }
-//
-////    power : aPower
-////        = self~byteOp power(aPower).
-//                
-//    bool isOdd()
-//        = self.mod:2 != 0;
-//        
-//    bool isEven()
-//        = self.mod:2 == 0;
-//        
-//    bool isZero()
-//        = self.equal(0);
-//        
-//    bool isPositive()
-//        = self > 0;
-//        
-//    bool isNegative()
-//        = self < 0;
-//        
-//    bool isNonnegative()
-//        = self <= 0;
-//}
-//
-//// --- shortOp ---
-//
-//public extension shortOp : ShortNumber
-//{
-//    Hashcode
-//    {
-//        // Reads the object hash code into the output parameter
-//        int get()
-//        {
-//            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//    
-//    get short Absolute()
-//    {
-//        short n := self;
-//        if (n < 0)
-//            { n := n * -1 };
-//                            
-//        ^ new ShortNumber(n)
-//    }
-//    
-//    short mod(operand)
-//    {
-//        var retVal := self / operand * operand;
-//        
-//        ^ shortConvertor.convert(retVal)
-//    }
-//    
-//    short power(int y)
-//    {
-//        short x := self;
-//        short r := 1;
-//        
-//        for (/*int*/IntNumber i := 0, i < y, i += 1)
-//        {
-//            r := r * x
-//        };
-//        
-//        ^ new ShortNumber(r)
-//    }
-//    
-//    short sqr()
-//    {
-//        short n := self;
-//        short retVal := 0;
-//        
-//        retVal := n * n;
-//        
-//        ^ new ShortNumber(retVal)
-//    }
-//
-////    power : aPower
-////        = self~shortOp power(aPower).
-//                
-//    bool isOdd()
-//        = self.mod:2 != 0;
-//        
-//    bool isEven()
-//        = self.mod:2 == 0;
-//        
-//    bool isZero()
-//        = self.equal(0);
-//        
-//    bool isPositive()
-//        = self > 0;
-//        
-//    bool isNegative()
-//        = self < 0;
-//        
-//    bool isNonnegative()
-//        = self <= 0;
-//    
-////    byte high
-////    [
-////        short aWord := self.
-////        aWord := aWord && 0FF00h.
-////        aWord := aWord shiftRight(8).
-////        
-////        ^ byteConvertor convert(aWord)
-////    ]
-////        
-////    byte low
-////    [
-////        short aWord := self.
-////        aWord := aWord && 0FFh.
-////        
-////        ^ byteConvertor convert(aWord)
-////    ]
-//}
+// --- Operations ---
+
+// --- byteOp ---
+
+public extension byteOp : ByteNumber
+{
+    int Hashcode
+    {
+        // Reads the object hash code into the output parameter
+        get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+
+    get byte Absolute()
+    {
+        byte n := self;
+        if (n < 0)
+            { n := n * -1 };
+                
+        ^ new ByteNumber(n)
+    }
+    
+    byte mod(operand)
+    {
+        var retVal := self / operand * operand;
+        
+        ^ byteConvertor.convert(retVal)
+    }    
+    
+    byte power(int y)
+    {
+        byte x := self;
+        byte r := 1;
+        
+        for (int i := 0, i < y, i += 1)
+        {
+            r := r * x
+        };
+        
+        ^ new ByteNumber(r)
+    }
+    
+    byte sqr()
+    {
+        byte retVal := 0;
+        
+        retVal := self * self;
+        
+        ^ new ByteNumber(retVal)
+    }
+
+    bool isOdd()
+        = self.mod:2 != 0;
+        
+    bool isEven()
+        = self.mod:2 == 0;
+        
+    bool isZero()
+        = self.equal(0);
+        
+    bool isPositive()
+        = self > 0;
+        
+    bool isNegative()
+        = self < 0;
+        
+    bool isNonnegative()
+        = self <= 0;
+}
+
+// --- shortOp ---
+
+public extension shortOp : ShortNumber
+{
+    int Hashcode
+    {
+        // Reads the object hash code into the output parameter
+        get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+    
+    get short Absolute()
+    {
+        short n := self;
+        if (n < 0)
+            { n := n * -1 };
+                            
+        ^ new ShortNumber(n)
+    }
+    
+    short mod(operand)
+    {
+        var retVal := self / operand * operand;
+        
+        ^ shortConvertor.convert(retVal)
+    }
+    
+    short power(int y)
+    {
+        short x := self;
+        short r := 1;
+        
+        for (/*int*/IntNumber i := 0, i < y, i += 1)
+        {
+            r := r * x
+        };
+        
+        ^ new ShortNumber(r)
+    }
+    
+    short sqr()
+    {
+        short n := self;
+        short retVal := 0;
+        
+        retVal := n * n;
+        
+        ^ new ShortNumber(retVal)
+    }
+
+    bool isOdd()
+        = self.mod:2 != 0;
+        
+    bool isEven()
+        = self.mod:2 == 0;
+        
+    bool isZero()
+        = self.equal(0);
+        
+    bool isPositive()
+        = self > 0;
+        
+    bool isNegative()
+        = self < 0;
+        
+    bool isNonnegative()
+        = self <= 0;
+    
+    get byte High()
+    {
+        short w := self;
+        w := w && 0FF00h;
+        w := w.shiftRight(8);
+        
+        ^ byteConvertor.convert(w)
+    }
+        
+    get byte Low()
+    {
+        short w := self;
+        w := w && 0FFh;
+        
+        ^ byteConvertor.convert(w)
+    }
+}
 
 // --- intOp ---
 

@@ -408,7 +408,7 @@ public sealed const struct ByteNumber : IntBaseNumber
         
         ^ retVal
     }
-        
+
     /// Returns the literal presentation
     string toPrintable() = stringConvertor.convert(self);
         
@@ -712,6 +712,14 @@ public sealed const struct ShortNumber : IntBaseNumber
         intern system'core_routines'__short.readInvertedTo(self, ref short retVal);
         
         ^ retVal
+    }
+    
+    get short Negative()
+    {
+        short r := 0;
+        r -= self;
+        
+        ^ r  
     }
 
     /// Returns the literal presentation
@@ -1036,9 +1044,13 @@ public sealed const struct IntNumber : IntBaseNumber
         ^ retVal
     }
         
-    /// Negates the value
-    int Negative
-        = 0 - theValue;
+    get int Negative()
+    {
+        int r := 0;
+        r -= self;
+        
+        ^ r  
+    }
         
     /// Returns true if all the mask bits are set
     bool allMask(int operand)
@@ -1707,10 +1719,15 @@ public sealed const struct LongNumber : IntBaseNumber
         
         ^ retVal
     }
-        
+
     /// Negates the value
-    Negative
-        = 0l - theValue;
+    get long Negative()
+    {
+        long r := 0l;
+        r -= self;
+        
+        ^ r  
+    }
 }
 
 // --- realNumber ---
