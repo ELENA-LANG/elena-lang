@@ -1,12 +1,23 @@
 <div align="center">
+<p>
+    <img src="https://user-images.githubusercontent.com/5677187/84074668-31633400-a9d3-11ea-9fd6-9282ab80b537.jpg">
+</p>
+<h1>ELENA Programming Language</h1>
+
+[elena-lang.github.io](https://elena-lang.github.io/) |
+[Docs](https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual) |
+[Changelog](https://github.com/ELENA-LANG/elena-lang/tree/master) |
+[Contributing](https://github.com/ELENA-LANG/elena-lang/blob/master/CONTRIBUTING.md)
+
+</div>
+
+<div align="center">
     
 [![Build status](https://ci.appveyor.com/api/projects/status/qc5dvs5lueubivuo?svg=true)](https://ci.appveyor.com/project/arakov/elena-lang)
 [![Sponsor](https://img.shields.io/badge/patreon-donate-green.svg)](https://www.patreon.com/elena_lang)
 [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/arakov)](https://github.com/sponsors/arakov)
 
 </div>
-
-# ELENA Programming Language
 
 ELENA is a general-purpose, object-oriented language with late binding. It features message dispatching, mixins and a script engine.
 This is the GitHub repository of ELENA source code including compiler, IDE, ELENA libraries and samples.
