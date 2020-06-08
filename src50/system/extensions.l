@@ -427,44 +427,37 @@ public extension intOp : IntNumber
     bool isNonnegative()
         = self <= 0;
 
-////    high
-////    [
-////        int aWord := self.
-////        aWord := aWord && 0FFFF0000h.
-////        aWord := aWord >> 16.
-////        
-////        ^ shortnConvertor convert(aWord)
-////    ]
-////
-////    low
-////    [
-////        int aWord := self.
-////        aWord := aWord && 0FFFFh.
-////        
-////        ^ shortConvertor convert(aWord)
-////    ]
-////    
-////    shift : n
-////    [
-////        if (n < 0)
-////            [ ^ self shiftLeft(T<int>(n) negative) ];
-////            [ ^ self shiftRight(T<int>(n)) ].
-////    ]            
+    get short High()
+    {
+        int w := self;
+        w := w && 0FFFF0000h;
+        w := w.shiftRight(16);
+        
+        ^ shortConvertor.convert(w)
+    }
+
+    get short Low()
+    {
+        int w := self;
+        w := w && 0FFFFh;
+        
+        ^ shortConvertor.convert(w)
+    }
 }
 
-//public extension uintOp : UIntNumber
-//{
-//    Hashcode
-//    {
-//        // Reads the object hash code into the output parameter
-//        int get()
-//        {
-//            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//}
+public extension uintOp : UIntNumber
+{
+    int Hashcode
+    {
+        // Reads the object hash code into the output parameter
+        get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+}
     
 // --- longOp ---
 
