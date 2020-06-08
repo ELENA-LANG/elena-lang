@@ -6,7 +6,7 @@
 
 [elena-lang.github.io](https://elena-lang.github.io/) |
 [Docs](https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual) |
-[Changelog](https://github.com/ELENA-LANG/elena-lang/tree/master) |
+[Changelog](https://github.com/ELENA-LANG/elena-lang/blob/master/CHANGELOG.md) |
 [Contributing](https://github.com/ELENA-LANG/elena-lang/blob/master/CONTRIBUTING.md)
 
 </div>
