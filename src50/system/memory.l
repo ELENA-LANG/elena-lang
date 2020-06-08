@@ -33,10 +33,6 @@ public sealed Array<T> : Indexable<T>
         }
     };
 
-////    cast T<Indexable> = Indexable::{ /*embeddable dispatch => self.*/T<Indexer> indexer => self. }.
-//    
-////    cast Enumerable<T> = new Enumerable<T>:{ embeddable dispatch => self; };
-
     Enumerable cast() = new Enumerable{ Enumerator enumerator() => self; };
 
     Indexer<T> indexer() = new BaseIndexer<T>
@@ -126,13 +122,6 @@ public sealed Array<T> : Indexable<T>
         ^ retVal
     }
                               
-//    setAt(object n, object object)
-//        <= setAt(T<int>(n), T<template_subj>(object)).
-//                  
-//    /// Returns the item at the specified index
-//    template_subj getAt : aParam
-//        <= getAt(T<int>(aParam)).
-
     T[] clone()
     {
         int len := self.Length;
@@ -266,15 +255,6 @@ public sealed Matrix<T>
         }
     }    
     
-//    /// Reads the matrix lengths to the output parameter
-////    readLengths(ref<int> Rows, ref<int> Columns)
-////    [
-////        Rows value := theRows.
-////        Columns value := theColumns.
-////    ]
-////
-////    int rvprop length  :: readLengthTo.    
-
     int Length
     {
         get()
@@ -321,11 +301,6 @@ public sealed Matrix<T>
         self.read(i, j, ref retVal);
         ^ retVal
     }
-
-//    setAt(i, j, v)
-//    [
-//        self setAt(T<int>(i), T<int>(j), T<template_subj>(v)).    
-//    ]
 
     /// Returns a row
     at(i) = new
@@ -421,11 +396,6 @@ public sealed class BitArray
         ^ (bits && bit_mask) != 0
     }
 
-//    setAt:index:value
-//    [
-//        $self setAt int:index bool:value.
-//    ]
-    
     setAt(int index, bool value)
     {
         int arr_index := index / 32;
@@ -470,23 +440,12 @@ public sealed class BitArray32
         theValue := value
     }
     
-//    constructor new:value
-//        <= new int:value.
-    
     int Length = 32;
     
     write(int value)
     {
         theValue := value
     }
-//    
-//    write : value
-//    [
-//        value cast:%write to:$self.
-//    ]
-    
-//    getAt:index
-//        = $self getAt int:index.
     
     bool at(int index)
     {
@@ -496,11 +455,6 @@ public sealed class BitArray32
         
         ^ (theValue && bit_mask) != 0
     }
-    
-//    setAt:index:value
-//    [
-//        $self setAt int:index bool:value.
-//    ]
     
     setAt(int index, bool value)
     {
@@ -629,39 +583,6 @@ public sealed class IntMatrix
             self.setAt(i,j,v)
         }
     };
-    
-//    enumerator = Enumerator::
-//    {
-//        int i := -1.
-//        
-//        bool next
-//        [
-//            i += 1.
-//            if (i >= theRows)
-//            [
-//                ^ false
-//            ].
-//            
-//            ^ true
-//        ]
-//        
-//        get = BaseEnumerator<int>::
-//        {
-//            @theIndex := -1.
-//            @theLength := theColumns.
-//        
-//            reset [ theIndex value := -1 ]
-//            
-//            enumerable = self.
-//        
-//            int get
-//                = self[i][theIndex value].
-//        }.
-//        
-//        reset [ i := -1 ]
-//        
-//        enumerable = self.
-//    }.
 }
 
 // --- RealMatrix ---
@@ -680,9 +601,6 @@ public sealed class RealMatrix
         theArray := new real[](columns * rows)
     }
         
-////    constructor new(object Rows, object Columns)
-////        <= new(T<int>(Columns), T<int>(Rows)).
-
     /// Reads the matrix lengths to the output parameter
     readLengthsTo(ref int rows, ref int columns)
     {
@@ -690,29 +608,29 @@ public sealed class RealMatrix
         columns := theColumns
     }
 
-//    Length
-//    {
-//        int get()
-//        {
-//            ^ theRows
-//        }
-//    }    
-//
-//    Columns
-//    {
-//        int get()
-//        {
-//            ^ theColumns
-//        }
-//    }
-//
-//    Rows
-//    {
-//        int get()
-//        {
-//            ^ theRows
-//        }
-//    }
+    int Length
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }    
+
+    int Columns
+    {
+        get()
+        {
+            ^ theColumns
+        }
+    }
+
+    int Rows
+    {
+        get()
+        {
+            ^ theRows
+        }
+    }
 
     /// Writes a real value at the specified position
     setAt(int i, int j, real v)
@@ -738,34 +656,33 @@ public sealed class RealMatrix
         ^ retVal
     }
 
-//    /// Returns a row
-//    at(int i) = new Indexable<real>::
-//    {
-//        Length = theColumns;
-//        
-//        Indexer<real> indexer() = new BaseIndexer<real>::
-//        {
-//            this theIndex := 0;
-//            
-//            this theLength := self.Columns;
-//            
-//            real get()
-//                = self.at(i,theIndex);
-//                
-//            set(real o)
-//            {
-//                self.setAt(i,theIndex,o);
-//            }                        
-//        }; 
-//        
-//        real at(int j)
-//            = self.at(i,j);
-//        
-//        setAt(int j, real v)
-//        {
-//            self.setAt(i,j,v)
-//        }
-//    };
+    at(int i) = new Indexable<real>
+    {
+        Length = theColumns;
+        
+        Indexer<real> indexer() = new BaseIndexer<real>
+        {
+            this theIndex := 0;
+            
+            this theLength := self.Columns;
+            
+            real get()
+                = self.at(i,theIndex);
+                
+            set(real o)
+            {
+                self.setAt(i,theIndex,o);
+            }                        
+        }; 
+        
+        real at(int j)
+            = self.at(i,j);
+        
+        setAt(int j, real v)
+        {
+            self.setAt(i,j,v)
+        }
+    };
 }
 
 // --- String ---
@@ -923,22 +840,6 @@ public sealed const struct String : BaseValue
     /// Concatinates the values
     string add(string s)
         => intern system'core_routines'__literal;
-
-//    /// Concatinates the values
-//    string add(char ch)
-//    {
-//        int len := self.Length;
-//        int ch_len := ch.Length;
-//        
-//        int new_len := len + ch_len;
-//        auto retVal := String.allocate(new_len);
-//        
-//        intern system'core_routines'__literal.copy(self, retVal);
-//        intern system'core_routines'__literal.insert(retVal, len, ch);
-//        intern system'core_routines'__literal.insert(retVal, new_len, $0);
-//        
-//        ^ retVal
-//    }
 
     // Reads the character at the specified index and saves into an output parameter
     read(int index, ref char ch)
@@ -1178,20 +1079,6 @@ public sealed const struct WideString : BaseValue
     /// Concatinates the values
     wide add(wide s)
         => intern system'core_routines'__wide;
-//    {
-//        int len1 := self.Length;
-//        int len2 := s.Length;
-//        
-//        int newlen := len1 + len2;
-//        
-//        auto r := WideString.allocate(newlen);
-//        
-//        intern system'core_routines'__wide.concat(r, self, 0, len1);
-//        
-//        intern system'core_routines'__wide.concat(r, s, len1, len2);
-//        
-//        ^ r
-//    }
 
     /// Concatinates the values
     wide add(char ch)
@@ -1204,10 +1091,6 @@ public sealed const struct WideString : BaseValue
     // Reads the character at the specified index and saves into an output parameter
     read(int n, ref char ch)
         => intern system'core_routines'__wide;
-
-//    // Reads the short integer at the specified index and saves into an output parameter
-//    read(int index, ref short value)
-//        => system'core_routines'__wide;
 
     /// Saves the index of the first occurence of the specified substring into an output parameter.
     ///
@@ -1315,17 +1198,17 @@ public sealed class Variant
         value := object
     }
     
-////    /// Tries to convert the value to a byte number
-////    cast T<byte>
-////        = byteConvertor convert:theValue.
-////
-////    /// Tries to convert the value to a short integer number
-////    cast T<short>
-////        = shortConvertor convert:theValue.
-////
-////    /// Tries to convert the value to a character
-////    cast T<char>
-////        = charConvertor convert:theValue.
+    /// Tries to convert the value to a byte number
+    byte cast()
+        = byteConvertor.convert(value);
+
+    /// Tries to convert the value to a short integer number
+    short cast()
+        = shortConvertor.convert(value);
+
+    /// Tries to convert the value to a character
+    char cast()
+        = charConvertor.convert(value);
 
     /// Tries to convert the literal value to the integer number
     int cast()
@@ -1347,37 +1230,8 @@ public sealed class Variant
     wide cast()
         = wideConvertor.convert(value);
 
-////    T<literal> literal => theValue.
-////
-////    /// Converts the parameter into a literal string
-////    set value(int aValue)
-////    [
-////        theValue := aValue.
-////    ]    
-////
-////    /// Converts the parameter into a literal string
-////    set value(short aValue)
-////    [
-////        theValue := aValue.
-////    ]    
-////
-////    /// Converts the parameter into a literal string
-////    set value(byte aValue)
-////    [
-////        theValue := aValue.
-////    ]    
-////
-////    /// Converts the parameter into a literal string
-////    set value(long aValue)
-////    [
-////        theValue := aValue.
-////    ]    
-////
-////    /// Converts the parameter into a literal string
-////    set value(real aValue)
-////    [
-////        theValue := aValue.
-////    ]    
+    string toPrintable()
+        => value;
 
     private castValueTo(target)
         = new{
@@ -1416,26 +1270,26 @@ public sealed class Variant
         ^ target
     }
 
-//////    add : aTarget
-//////        = aTarget add($self $castValueTo:aTarget).
-//////
-//////    subtract : aTarget
-//////        = $self $castValueTo:aTarget; subtract:aTarget.
-//////
-//////    multiply : aTarget
-//////        = $self $castValueTo:aTarget; multiply:aTarget.
-//////
-//////    divide : aTarget
-//////        = $self $castValueTo:aTarget; divide:aTarget.
-//////
-//////    bool equal : aTarget
-//////        = $self $castValueTo:aTarget; equal:aTarget.
+    add(p)
+        = p.add(self.castValueTo(p));
+
+    subtract(p)
+        = self.castValueTo(p).subtract(p);
+
+    multiply(p)
+        = self.castValueTo(p).multiply(p);
+
+    divide(p)
+        = self.castValueTo(p).divide(p);
+
+    bool equal(p)
+        = self.castValueTo(p).equal(p);
 }
 
 // --- Array ---
 
 /// An array
-public sealed Array : Indexable//, Array<object>
+public sealed Array : Indexable
 {
     __string object[] theArray;
     
@@ -1443,18 +1297,10 @@ public sealed Array : Indexable//, Array<object>
     constructor MinValue
         = new object[](0);
     
-//    /// Creates the array with the specified length
-//    constructor new : aLength
-//        <= new(T<int>(aLength)).
-    
     /// Creates the array with the specified length
     constructor allocate(int len)
         = new object[](len);
 
-//    /// Creates a copy of the provided array
-//    constructor copy(Array array)
-//        <= (0, array.Length, array);
-    
     /// Creates a copy of the provided sub array
     constructor copy(int index, int length, Array array)
         <= allocate(length)
@@ -1462,12 +1308,6 @@ public sealed Array : Indexable//, Array<object>
         intern system'core_routines'__array.copy(self, index, length, array)
     }
         
-//    constructor single(object singleItem)
-//        <= new(1);
-//    [
-//        self setAt(0, singleItem).
-//    ]
-
     /// Concatinates the arrays    
     add(Array a)
     {
@@ -1980,10 +1820,6 @@ class StringEnumerator : Enumerator<char>
     ref<int> theDiff;
     char     theChar;
     
-//    /// Creates an enumerator
-//    constructor new : anObject
-//        <= new(T<literal>(anObject)).
-    
     /// Creates an enumerator
     constructor(string s)
     {
@@ -2041,10 +1877,6 @@ class StringIndexer : Indexer<char>
     string   theLiteral;
     ref<int> theIndex;
     
-//    /// Creates an indexer
-//    constructor new : anObject
-//        <= new(T<literal>(anObject)).
-//    
     /// Creates an indexer
     constructor(string s)
     {
@@ -2122,10 +1954,6 @@ class WideStringEnumerator : Enumerator<char>
     ref<int>  theDiff;
     ref<char> theChar;
     
-//    /// Creates an enumerator
-//    constructor new : anObject
-//        <= new(T<wide>(anObject)).
-//    
     /// Creates an enumerator
     constructor(wide s)
     {
@@ -2185,10 +2013,6 @@ class WideStringIndexer : Indexer<char>
 {
     wide     theLiteral;
     ref<int> theIndex;
-    
-//    /// Creates an indexer
-//    constructor new : anObject
-//        <= new(T<wide>(anObject)).
     
     /// Creates an indexer
     constructor(wide s)
@@ -2259,10 +2083,6 @@ public class ArrayIndexer : Indexer
     Array    _array;
     ref<int> _index;
 
-//    /// Returns the parameter indexer
-//    constructor new : anArray
-//        <= new(T<Array>(anArray)).
-    
     /// Returns the parameter indexer
     constructor(Array arr)
     {

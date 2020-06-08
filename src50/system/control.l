@@ -745,62 +745,6 @@ public abstract BaseIndexer<T> : Indexer<T>
     Indexer cast() = new Indexer { embeddable dispatch() => self; };
 }
 
-////// --- BaseMatrixIndexer ---
-////
-////public abstract BaseMatrixIndexer :: Indexer2D
-////{
-////    int theIndex1.
-////    int theIndex2.
-////    int theLength1.
-////    int theLength2.
-////    
-////    /// Returns false if the index out of range
-////    bool available = (theIndex1 <= theLength1) && (theIndex2 <= theLength2).
-////    
-////    /// Reads the current i-index into an output parameter
-////    readIndex1To(ref<int> retVal)
-////    [
-////        retVal value := theIndex1.
-////    ]    
-////    
-////    /// Reads the current j-index into an output parameter
-////    readIndex2To(ref<int> retVal)
-////    [
-////        retVal value := theIndex2.
-////    ]
-////    
-////    /// Sets the i-index by specified value
-////    writeIndex1(int anIndex)
-////    [ 
-////        theIndex1 := anIndex.
-////    ] 
-////    
-////    /// Sets the i-index by specified value
-////    writeIndex2(int anIndex)
-////    [
-////        theIndex2 := anIndex.
-////    ] 
-////
-////    /// Reads the length to the output parameter    
-////    readSizeTo(ref<int> n, ref<int> m)
-////    [
-////        n value := theLength1.
-////        m value := theLength2.
-////    ]
-////
-////    /// Reads the length to the output parameter    
-////    readColumnsTo(ref<int> retVal)
-////    [
-////        retVal value := theLength2.
-////    ]
-////
-////    /// Reads the length to the output parameter    
-////    readRowsTo(ref<int> retVal)
-////    [
-////        retVal value := theLength1.
-////    ]    
-////}
-
 // --- Range --
 
 class IntRangeEnumerator : Enumerator<int>
@@ -858,21 +802,6 @@ public sealed class Range : Enumerable<int>
     constructor for(int start, int end)
         <= new(start, end - start);
     
-//    constructor from(int start) till(int end)
-//        <= (start, end);
-    
-//    constructor from(IntNumber start) till(IntNumber end)
-//    [
-//        theStart := start.
-//        theEnd := end.
-//    ]
-//    
-//    constructor from(IntNumber start) to(IntNumber end)
-//    [
-//        theStart := start.
-//        theEnd := end + 1.
-//    ]
-//    
     int Length
     {
         get()
