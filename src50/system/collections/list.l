@@ -8,26 +8,6 @@ namespace collections
         ref<int> theLength;
         ref<int> theCapacity;
     
-    //    constructor(Array list)
-    //    [
-    //        int len := list length.
-    //        int size := len / 32.
-    //        size := size + 1.
-    //        size := size * 32.
-    //        
-    //        theLength := len.
-    //        theCapacity := size.
-    //        theArray := V<type>(size).
-    //        
-    //        int i := 0.
-    //        while(i < len)
-    //        [
-    //            theArray[i] := list[i].
-    //            
-    //            i := i + 1.
-    //        ].
-    //    ]
-    
         constructor(T[] a)
         {
             int len := a.Length;
@@ -68,6 +48,24 @@ namespace collections
             theArray := new T[](16);
         }
         
+        constructor load(T[] a, int index, int len)
+        {
+            int size := len / 32;
+            size := size + 1;
+            size := size * 32;
+            
+            theLength := len;
+            theCapacity := size;
+            theArray := new T[](size);
+            
+            for(int i := 0, i < len, i += 1)
+            {
+                int j := i + index;
+                
+                theArray[i] := a[j]
+            }
+        }
+            
         int Length
         {
             get()
@@ -101,10 +99,6 @@ namespace collections
             }
         }
         
-    //    /// Returns the object at the specified position
-    //    type getAt : anIndex
-    //        = self getAt(T<int>(anIndex)).
-    
         /// Returns the object at the specified position
         T at(int index)
         {
@@ -126,10 +120,6 @@ namespace collections
             
             theArray[index] := object
         }
-    
-    //    /// Returns the object at the specified position
-    //    setAt(object anIndex, object anObject)
-    //        = self setAt(T<int>(anIndex), T<type>(anObject)).
     
         /// Appends a new object to the end of the list
         append(T object)
@@ -218,21 +208,6 @@ namespace collections
             }
         };
             
-    //    cast T<Array>
-    //    [
-    //        int len := T<int>(theLength).
-    //        auto copy := Array new(len).
-    //        int i := 0.
-    //        while (i < len)
-    //        [
-    //            copy[i] := theArray[i].
-    //            
-    //            i += 1.
-    //        ].
-    //        
-    //        ^ copy.
-    //    ]
-    
         get T[] Value()
         {
             int len := cast int(theLength);
@@ -246,8 +221,8 @@ namespace collections
             ^ copy
         }
     
-    //    clone
-    //        = List<type>(theArray, T<int>(theLength)).
+        clone()
+            = class List<T>.load(theArray, 0, theLength.Value);
     }
     
     // --- ListItem ---

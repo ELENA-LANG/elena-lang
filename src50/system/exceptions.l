@@ -216,11 +216,11 @@ public class CriticalException : Exception
         <= new("Critical exception");
 }
 
-//// --- NilReferenceException ---
-//
-//public class NilReferenceException : CriticalException
-//{
-//    /// Creates the exception
-//    constructor new()
-//        <= new("Critical exception : an operation with nil");
-//}
+// --- NilReferenceException ---
+
+public class NilReferenceException : CriticalException
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception : an operation with nil");
+}

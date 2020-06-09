@@ -4,7 +4,7 @@ public interface IConsoleReader
 {
     abstract string readLine() {}
     
-//    abstract wide readWideLine() {}
+    abstract wide readWideLine() {}
     
     abstract read(ref char retVal) {}
     
@@ -89,9 +89,9 @@ sealed class Console
     string readLine()
         = reader.readLine();
 
-//    /// Reads the next line of characters from the standard input stream.
-//    wide readWideLine()
-//        = theReader.readWideLine();
+    /// Reads the next line of characters from the standard input stream.
+    wide readWideLine()
+        = reader.readWideLine();
 
     /// Reads the next character from the input stream
     char readChar()
@@ -103,15 +103,6 @@ sealed class Console
 
     get bool KeyAvailable()
         => reader;
-
-//    /// Reads the next key code from the input stream
-////    readKey
-////    [
-////        int key := 0.
-////        theReader read(&key).
-////        
-////        ^ key
-////    ]
 }
 
 /// A standard console
