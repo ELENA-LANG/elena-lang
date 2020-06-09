@@ -53,9 +53,6 @@ namespace text
         string toPrintable()
             = self.Value;
     
-    ////    cast T<wide>
-    ////        = WideLiteralValue new(0, T<int>(theLength), theBuffer).
-
         writeLine()
         {
             self.write(forward newLine)
@@ -103,19 +100,19 @@ namespace text
             }
         }
     
-    ////    write(wide aLiteral)
-    ////    [
-    ////        int aLength := aLiteral length.
-    ////        
-    ////        ifnot (0 == aLength)
-    ////        [
-    ////            self reserve(aLength).
-    ////            
-    ////            aLiteral save(T<int>(theLength), theBuffer, &aLength).
-    ////            
-    ////            theLength append(aLength).
-    ////        ].
-    ////    ]
+        write(wide s)
+        {
+            int length := s.Length;
+            
+            ifnot (0 == length)
+            {
+                self.reserve(length);
+                
+                s.save(theLength.Value, theBuffer, ref length);
+                
+                theLength.append(length)
+            }
+        }
     
         write(char ch)
         {

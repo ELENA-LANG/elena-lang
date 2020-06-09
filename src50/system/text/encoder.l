@@ -186,13 +186,13 @@ namespace text
         convert(int index, ref int length, char[] array, byte[] output, ref int outputLength)
             => intern system'core_routines'__utf8encoder;
         
-//        convert(int index, ref int length, string s, byte[] output, ref int outputLength)
-//        {
-//            int l := aLength value.
-//            s.saveToByteArray(index, output, l).
-//    
-//            aLength readValueTo(anOutputLength).
-//        }
+        convert(int index, ref int length, string s, byte[] output, ref int outputLength)
+        {
+            int l := length;
+            s.saveToByteArray(index, output, l);
+    
+            outputLength := length;
+        }
         
         string toString(int index, int length, byte[] array)
             = UTF8Encoding.toString(index, length, array);
@@ -236,8 +236,8 @@ namespace text
     {
         Encoder encoder = UTF16Encoder;
         
-//        charCount(wide aLiteral, ref<int> aRetVal)
-//            => intern system'core_routines'__utf16encoder.
+        charCount(wide s, ref int retVal)
+            => intern system'core_routines'__utf16encoder;
             
         convert(int index, int size, short[] array, char[] output, ref int outputLength)
             => intern system'core_routines'__utf16encoder;

@@ -3240,6 +3240,21 @@ labErr:
   
 end
 
+procedure __utf16encoder."charCount$system@WideString$@system@ref#1&system@IntNumber[3]"
+
+  peeksi   2
+  len
+  dec      1
+  pushd
+  pusha
+  callextr api : strcharlen
+  freei    2
+  peeksi   3
+  save
+  quitn 3
+
+end
+
 procedure __real."exp$system@RealNumber$@system@ref#1&system@RealNumber[2]"
 
   pushsi 1

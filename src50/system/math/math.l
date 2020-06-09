@@ -4,11 +4,6 @@ namespace math
     
     singleton mathController
     {
-    ////    absolute value:n
-    ////    [
-    ////        system'NotSupportedException new; raise
-    ////    ]
-        
         absolute(byte n)
             = n.Absolute;
             
@@ -27,171 +22,140 @@ namespace math
         absolute(n)
             <= absolute(n.Value);
             
-//        mod(byte n, object m)
-//            = n~byteOp mod:m.
-//            
-//        mod(short n, object m)
-//            = n~shortOp mod:m.
+        mod(byte n, object m)
+            = n.mod:m;
+            
+        mod(short n, object m)
+            = n.mod:m;
             
         mod(int n, object m)
             = n.mod:m;
-    //        = mixin intOp(n).mod:m;
             
-    //    mod(long n, object m)
-    //        = n~longOp mod:m.
+        mod(long n, object m)
+            = n.mod:m;
     
         mod(n, m)
             <= mod(n.Value, m);
                     
-    //    isOdd value:n
-    //    [
-    //        system'NotSupportedException new; raise
-    //    ]
-        
-    //    bool isOdd(byte n)
-    //        = n.isOdd();
-    //        
-    //    bool isOdd(short n)
-    //        = n.isOdd();
-    //        
-    //    bool isOdd(int n)
-    //        = n.isOdd();
-    //        
-    //    bool isOdd(long n)
-    //        = n.isOdd();
-    //
-    //    bool isOdd(n)
-    //        <= isOdd(n.Value);
+        bool isOdd(byte n)
+            = n.isOdd();
+            
+        bool isOdd(short n)
+            = n.isOdd();
+            
+        bool isOdd(int n)
+            = n.isOdd();
+            
+        bool isOdd(long n)
+            = n.isOdd();
+    
+        bool isOdd(n)
+            <= isOdd(n.Value);
                             
-    //    isEven value:n
-    //    [
-    //        system'NotSupportedException new; raise
-    //    ]
-        
-    //    bool isEven(byte n)
-    //        = n.isEven();
-    //        
-    //    bool isEven(short n)
-    //        = n.isEven();
-    //        
-    //    bool isEven(int n)
-    //        = n.isEven();
-    //        
-    //    bool isEven(long n)
-    //        = n.isEven();
-    //
-    //    bool isEven(n)
-    //        <= isEven(n.Value);
-    //                
-    ////    isZero value:n
-    ////    [
-    ////        system'NotSupportedException new; raise
-    ////    ]
-    //    
-    //    bool isZero(byte n)
-    //        = n.isZero();
-    //        
-    //    bool isZero(short n)
-    //        = n.isZero();
-    //        
-    //    bool isZero(int n)
-    //        = n.isZero();
-    //        
-    //    bool isZero(long n)
-    //        = n.isZero();
-    //        
-    //    bool isZero(real n)
-    //        = n.isZero();
-    //        
-    //    bool isZero(n)
-    //        <= isZero(n.Value);
-    //        
-    ////    isPositive value:n
-    ////    [
-    ////        system'NotSupportedException new; raise
-    ////    ]
-    //    
-    //    bool isPositive(byte n)
-    //        = n.isPositive();
-    //        
-    //    bool isPositive(short n)
-    //        = n.isPositive();
-    //        
-    //    bool isPositive(int n)
-    //        = n.isPositive();
-    //        
-    //    bool isPositive(long n)
-    //        = n.isPositive();
-    //        
-    //    bool isPositive(real n)
-    //        = n.isPositive();
-    //        
-    //    bool isPositive(n)
-    //        <= isPositive(n.Value);
-    //        
-    ////    isNegative value:n
-    ////    [
-    ////        system'NotSupportedException new; raise
-    ////    ]
-    //    
-    //    bool isNegative(byte n)
-    //        = n.isNegative();
-    //        
-    //    bool isNegative(short n)
-    //        = n.isNegative();
-    //        
-    //    bool isNegative(int n)
-    //        = n.isNegative();
-    //        
-    //    bool isNegative(long n)
-    //        = n.isNegative();
-    //        
-    //    bool isNegative(real n)
-    //        = n.isNegative();
-    //
-    //    bool isNegative(n)
-    //        <= isNegative(n.Value);
-    //                
-    //////    isNonnegative value:n
-    //////    [
-    //////        system'NotSupportedException new; raise
-    //////    ]
-    //    
-    //    bool isNonnegative(byte n)
-    //        = n.isNonnegative();
-    //        
-    //    bool isNonnegative(short n)
-    //        = n.isNonnegative();
-    //        
-    //    bool isNonnegative(int n)
-    //        = n.isNonnegative();
-    //        
-    //    bool isNonnegative(long n)
-    //        = n.isNonnegative();
-    //        
-    //    bool isNonnegative(real n)
-    //        = n.isNonnegative();
-    //
-    //    bool isNonnegative(n)
-    //        <= isNonnegative(n.Value);
-    //                
-    //    real power(real n, int m)
-    //        = mixin realOp(n).power(m);
-    //        
-    //    real power(real n, real m)
-    //        = mixin realOp(n).power(m);        
-    //        
-//        power(byte n, int m)
-//            = mixin byteOp(n).power(m);       
-//            
-//        power(short n, int m)
-//            = mixin shortOp(n).power(m);        
-//            
-//        power(int n, int m)
-//            = mixin intOp(n).power(m);      
-//            
-//        power(long n, int m)
-//            = mixin longOp(n).power(m);
+        bool isEven(byte n)
+            = n.isEven();
+            
+        bool isEven(short n)
+            = n.isEven();
+            
+        bool isEven(int n)
+            = n.isEven();
+            
+        bool isEven(long n)
+            = n.isEven();
+    
+        bool isEven(n)
+            <= isEven(n.Value);
+                
+        bool isZero(byte n)
+            = n.isZero();
+            
+        bool isZero(short n)
+            = n.isZero();
+            
+        bool isZero(int n)
+            = n.isZero();
+            
+        bool isZero(long n)
+            = n.isZero();
+            
+        bool isZero(real n)
+            = n.isZero();
+            
+        bool isZero(n)
+            <= isZero(n.Value);
+            
+        bool isPositive(byte n)
+            = n.isPositive();
+            
+        bool isPositive(short n)
+            = n.isPositive();
+            
+        bool isPositive(int n)
+            = n.isPositive();
+            
+        bool isPositive(long n)
+            = n.isPositive();
+            
+        bool isPositive(real n)
+            = n.isPositive();
+            
+        bool isPositive(n)
+            <= isPositive(n.Value);
+            
+        bool isNegative(byte n)
+            = n.isNegative();
+            
+        bool isNegative(short n)
+            = n.isNegative();
+            
+        bool isNegative(int n)
+            = n.isNegative();
+            
+        bool isNegative(long n)
+            = n.isNegative();
+            
+        bool isNegative(real n)
+            = n.isNegative();
+    
+        bool isNegative(n)
+            <= isNegative(n.Value);
+                    
+        bool isNonnegative(byte n)
+            = n.isNonnegative();
+            
+        bool isNonnegative(short n)
+            = n.isNonnegative();
+            
+        bool isNonnegative(int n)
+            = n.isNonnegative();
+            
+        bool isNonnegative(long n)
+            = n.isNonnegative();
+            
+        bool isNonnegative(real n)
+            = n.isNonnegative();
+    
+        bool isNonnegative(n)
+            <= isNonnegative(n.Value);
+                    
+        real power(real n, int m)
+            = n.power(m);
+            
+        real power(real n, real m)
+            = n.power(m);        
+            
+        power(byte n, int m)
+            = n.power(m);       
+            
+        power(short n, int m)
+            = n.power(m);        
+            
+        power(int n, int m)
+            = n.power(m);      
+            
+        power(long n, int m)
+            = n.power(m);
             
         power(object n, object m)
             <= power(n.Value, m);
@@ -219,29 +183,29 @@ namespace math
     
     public extension mathOp
     {
-    //    Absolute
-    //        = mathController.absolute:self;
+        Absolute
+            = mathController.absolute:self;
     
         mod(n)
             = mathController.mod(self, n);
     
-    //    bool isOdd()
-    //        = mathController.isOdd(self);
-    //
-    //    bool isEven()
-    //        = mathController.isEven(self);
-    //
-    //    bool isZero()
-    //        = mathController.isZero(self);
-    //
-    //    bool isPositive()
-    //        = mathController.isPositive(self);
-    //
-    //    bool isNegative()
-    //        = mathController.isNegative(self);
-    //
-    //    bool isNonnegative()
-    //        = mathController.isNonnegative(self);
+        bool isOdd()
+            = mathController.isOdd(self);
+    
+        bool isEven()
+            = mathController.isEven(self);
+    
+        bool isZero()
+            = mathController.isZero(self);
+    
+        bool isPositive()
+            = mathController.isPositive(self);
+    
+        bool isNegative()
+            = mathController.isNegative(self);
+    
+        bool isNonnegative()
+            = mathController.isNonnegative(self);
 
         real floor()
         {

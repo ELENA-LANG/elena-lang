@@ -75,11 +75,6 @@ namespace calendar
             intern system'core_routines'__timest.empty(self);
         }
     
-    //    constructor new(SystemTime aTime)
-    //    [
-    //        self write(aTime).
-    //    ]
-    
         int Year
         {
             get()

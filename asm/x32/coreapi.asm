@@ -4564,6 +4564,36 @@ labEnd:
    
 end
 
+procedure coreapi'wstrcharlen
+
+  mov  eax, [esp+4]
+  mov  ecx, [esp+8]                                         
+  push eax
+
+labNext:
+  mov  edx, dword ptr [eax]
+  and  edx, 0FFFFh
+  cmp  edx, 0D800h
+  jl   short lab1
+  
+  add  ebx, 1
+  add  eax, 4
+  sub  ecx, 2
+  jnz  short labNext
+  pop  eax
+  ret
+
+lab1:
+  add  ebx, 1
+  add  eax, 2
+  sub  ecx, 1
+  jnz  short labNext
+  mov  edx, ebx
+  pop  eax
+  ret
+
+end
+
 // ; strcharlen(s,len)
 procedure coreapi'strcharlen
 

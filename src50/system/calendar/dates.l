@@ -22,11 +22,6 @@ namespace calendar
             theValue := val
         }
     
-    //    constructor new(SystemTime aValue)
-    //    [
-    //        theValue := aValue.
-    //    ]
-        
         constructor new(int hours, int minutes, int seconds)
         {
             long value := 0l;        
@@ -68,8 +63,6 @@ namespace calendar
     
             theValue := value
         }
-    
-    //    cast T<SystemTime> = theValue.
     
         SystemTime SystemTime
         {
@@ -204,11 +197,6 @@ namespace calendar
             theValue := val
         }
         
-    //    constructor new(SystemTime aValue)
-    //    [
-    //        theValue := aValue.
-    //    ]
-      
         constructor new(int year, int month, int day, int hour, int minute, int second)
         {
             TimeStruct systemTime := new TimeStruct();
