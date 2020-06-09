@@ -463,26 +463,26 @@ public extension uintOp : UIntNumber
 
 public extension longOp : LongNumber
 {
-//    Hashcode
-//    {
-//        // Reads the object hash code into the output parameter
-//        int get()
-//        {
-//            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
-//            
-//            ^ retVal
-//        }
-//    }
-//    
-//    get long Absolute()
-//    {
-//        long n := self;
-//
-//        if (n < 0l)
-//            { n := n * -1l };
-//                
-//        ^ new LongNumber(n)
-//    }
+    int Hashcode
+    {
+        // Reads the object hash code into the output parameter
+        get()
+        {
+            intern system'core_routines'__int.readHashCodeTo(self, ref int retVal);
+            
+            ^ retVal
+        }
+    }
+    
+    get long Absolute()
+    {
+        long n := self;
+
+        if (n < 0l)
+            { n := n * -1l };
+                
+        ^ new LongNumber(n)
+    }
     
     long mod(n)
     {
@@ -508,35 +508,32 @@ public extension longOp : LongNumber
         ^ new LongNumber(r)
     }
     
-////    long power(int y)
-////    [
-////        long x := self.
-////        long r := 1.
-////        
-////        int i := 0.
-////        while (i < y)
-////        [
-////            r := r * x.
-////            
-////            i += 1.
-////        ].
-////        
-////        ^ LongNumber new(r)
-////    ]
-//    
-//    long sqr()
-//    {
-//        long n := self;        
-//        long retVal := 0l;
-//        
-//        retVal := n * n;
-//        
-//        ^ new LongNumber(retVal)
-//    }
-//
-////    power : aPower
-////        = self~longOp power(T<long>(aPower)).
-                
+    long power(int y)
+    {
+        long x := self;
+        long r := 1;
+        
+        int i := 0;
+        while (i < y)
+        {
+            r := r * x;
+            
+            i += 1;
+        };
+        
+        ^ new LongNumber(r)
+    }
+    
+    long sqr()
+    {
+        long n := self;        
+        long retVal := 0l;
+        
+        retVal := n * n;
+        
+        ^ new LongNumber(retVal)
+    }
+
     bool isOdd()
         = self.mod:2l != 0;
         
@@ -555,22 +552,22 @@ public extension longOp : LongNumber
     bool isNonnegative()
         = self <= 0l;
 
-////    int high
-////    [
-////        long aWord := self.
-////        aWord := aWord && -4294967296l.
-////        aWord := aWord >> 32.
-////        
-////        ^ intConvertor convert(aWord)
-////    ]
-////
-////    int low
-////    [
-////        long aWord := self.
-////        aWord := aWord && 4294967295l.
-////        
-////        ^ intConvertor convert(aWord)
-////    ]
+    get int High()
+    {
+        long w := self;
+        w := w && -4294967296l;
+        w := w.shiftRight(32);
+        
+        ^ intConvertor.convert(w)
+    }
+
+    get int Low()
+    {
+        long w := self;
+        w := w && 4294967295l;
+        
+        ^ intConvertor.convert(w)
+    }
 }
 
 // --- realOp ---
@@ -674,9 +671,6 @@ public extension realOp : RealNumber
         ^ x
     }
 
-//    power : aPower
-//        = self~realOp power(T<int>(aPower)).
-
     real sqr()
     {
         real n := self;        
@@ -695,25 +689,25 @@ public extension realOp : RealNumber
         ^ retVal
     }
     
-////    real round(int precision)
-////    [
-////        real a := self.
-////        bool neg := false.
-////        if(self isNegative)
-////        [
-////            a := a * -1.0r.
-////            neg := true.
-////        ].
-////           
-////        int b := 10 power:precision.
-////        real r := a * b + 0.5r.
-////        
-////        int c := intConvertor convert(r rounded).
-////    
-////        a := c realDiv:b.
-////    
-////        ^neg iif(a * -1.0r, a). 
-////    ]
+    real round(int precision)
+    {
+        real a := self;
+        bool neg := false;
+        if(self.isNegative())
+        {
+            a := a * -1.0r;
+            neg := true;
+        };
+           
+        int b := 10.power(precision);
+        real r := a * b + 0.5r;
+        
+        int c := intConvertor.convert(r.Rounded);
+    
+        a := c.realDiv(b);
+    
+        ^ neg ? (a * -1.0r) : a
+    }
     
     real truncate(int precision)
     {
@@ -867,35 +861,32 @@ public extension intArrayOp : Array<int>
     write(int index, int length, int[] array)
         => intern system'core_routines'__intarray;
 
-//    exchange(int anIndex1, int anIndex2)
-//    [
-//        int n1 := 0.
-//        int n2 := 0.
-//
-//        self read(anIndex1, &n1).
-//        self read(anIndex2, &n2).
-//        
-//        self write(anIndex1, n2).
-//        self write(anIndex2, n1).
-//    ]
-//
-//    populate(Func<int,int> f)
-//    [
-//        int anIndex := 0.
-//        int aLength := self length.
-//        
-//        while (anIndex < aLength)
-//        [            
-//            self write(anIndex, f(anIndex)).
-//            
-//            anIndex := anIndex + 1
-//        ].
-//        
-//        ^ self
-//    ]
-//    
-//    populate(Func1 f)
-//        = self~intArrayOp populate(:n)<int,int>[ ^f(n) ].    
+    exchange(int i1, int i2)
+    {
+        int n1 := self[i1];
+        int n2 := self[i2];
+
+        self[i1] := n2;
+        self[i2] := n1;
+    }
+
+    populate(Func<int,int> f)
+    {
+        int i := 0;
+        int l := self.Length;
+        
+        while (i < l)
+        {
+            self[i] := f(i);
+            
+            i := i + 1
+        };
+        
+        ^ self
+    }
+    
+    populate(Func1 f)
+        = self.populate:(int n){ ^cast int(f(n)) };
 }
 
 // --- arrayOp ---
@@ -919,197 +910,44 @@ public extension weakArrayOp
     }
 }
 
-////public extension<Array> arrayOp
-////{
-//////    exchange : anIndex1 : anIndex2
-//////        = self~arrayOp exchange int:anIndex1 int:anIndex2.
-////        
-////    exchange(int anIndex1, int anIndex2)
-////    [
-////        var aTemp := self getAt(anIndex1).
-////        
-////        self setAt(anIndex1, self getAt(anIndex2)).
-////        self setAt(anIndex2, aTemp).
-////    ]
-////    
-////    indexOf(int anIndex, object anObject, ref<int> aRetVal)
-////    [
-////        aRetVal value := -1.
-////        
-////        int aLength := self length.
-////        
-////        int i := anIndex.
-////        while(i < aLength)
-////        [
-////            var anArrayItem := self getAt(i).
-////            
-////            if (anObject == anArrayItem)
-////                [ aRetVal value := i ].
-////            
-////            i := i + 1
-////        ]
-////    ]        
-////        
-////    int indexOf(int anIndex, object anObject)
-////    [
-////        int aRetVal := 0.
-////        
-////        self~arrayOp indexOf(anIndex, anObject, &aRetVal).
-////        
-////        ^ aRetVal
-////    ]
-////    
-////    int indexOf : anObject
-////        = self~arrayOp indexOf(0, anObject).
-////        
-////////    safeSeek : aValue
-////////    [
-////////        int aLength := self length.
-////////        
-////////        int i := 0.
-////////        while (i < aLength)
-////////        [
-////////            var anArrayItem := self getAt int:i.
-////////            
-////////            if (aValue safeEqual:anArrayItem)
-////////                [ ^ anArrayItem ].
-////////            
-////////            i := i + 1
-////////        ].
-////////        
-////////        ^ $nil
-////////    ]
-//////        
-//////    deepClone
-//////    [
-//////        int aLength := self length.
-//////        
-//////        array aCopy := Array new int:aLength.
-//////                
-//////        int anIndex := 0.
-//////        while(anIndex < aLength)
-//////        [
-//////            aCopy setAt int:anIndex object:(self getAt int:anIndex; clone).
-//////            
-//////            anIndex := anIndex + 1.
-//////        ].
-//////        
-//////        ^ self.
-//////    ]
-////    
-////    populate(Func<int,object> anIndexFunc)
-////    [
-////        int anIndex := 0.
-////        int aLength := self length.
-////        
-////        while(anIndex < aLength)
-////        [            
-////            self setAt(anIndex, anIndexFunc(anIndex)).
-////            
-////            anIndex := anIndex + 1.
-////        ].
-////        
-////        ^ self
-////    ]
-////    
-////    populate(Func1 f)
-////        = self~arrayOp populate(:n)<int,object>[ ^f(T<int>(n)) ].
-////
-//////    multi populate : anAction
-//////        = self~arrayOp populate(:n)<int>[ ^anAction eval:n ].    
-////    
-////    sort(Func2 aCompareFunc)
-////    [
-////        int i := 0.
-////        int j := 0.
-////        int aLength := self length.
-////        var aCurrent := nil.
-////        var aNext := nil.
-////        
-////        while(i < aLength)
-////        [
-////            aCurrent := self getAt(i).
-////            
-////            j := i + 1.
-////            while (j < aLength)
-////            [
-////                aNext := self getAt(j).
-////                ifnot(aCompareFunc(aCurrent,aNext))
-////                    [                        
-////                        self setAt(i, aNext).
-////                        self setAt(j, aCurrent).
-////                        
-////                        aCurrent := aNext
-////                    ].
-////                    
-////                j := j + 1
-////            ].
-////            
-////            i := i + 1
-////        ].
-////        
-////        ^ self
-////    ]
-////    
-////    ascendant
-////        = (self clone)~arrayOp sort(:aFormer:aLater)(aFormer < aLater).
-////    
-////    bool isEmpty
-////    [
-////        int aLength := self length.
-////        
-////        ^ aLength == 0.
-////    ]
-////    
-////    T<Array> Subarray : aLength at:anIndex
-////        = self~arrayOp Subarray(anIndex, aLength).
-////    
-////    T<Array> Subarray(int anIndex, int aLength)
-////    [
-////        auto it := T<Indexer>(self).
-////        
-////        ^ Array new(aLength); populate(:i)<int>(it writeIndex(anIndex + i); get).
-////    ]
-////}
-//
-//public extension arrayOp<T> : Array<T>
-//{
-//    T[] Subarray(int index, int length)
-//    {
-//        ^ new Array<T>(self, index, length)
-//    }
-//}
-//
-////// --- intmatrixOp ---
-////
-////public extension<IntMatrix> intMatrixOp
-////{
-////    populate(Func<int,int,int> fn)
-////    [
-////        int n := 0.
-////        int m := 0.
-////        self readLengthsTo(&n, &m).
-////        
-////        int i := 0.
-////        int j := 0.
-////        while (i < n)
-////        [
-////            j := 0.
-////            while (j < m)
-////            [
-////                int v := fn(i, j).
-////                
-////                self write(i, j, v).
-////                
-////                j := j + 1
-////            ].
-////            
-////            i := i + 1
-////        ].
-////        
-////        ^ self
-////    ]
-////}
+public extension arrayOp<T> : Array<T>
+{
+    T[] Subarray(int index, int length)
+    {
+        ^ new Array<T>(self, index, length)
+    }
+}
+
+// --- intmatrixOp ---
+
+public extension intMatrixOp : IntMatrix
+{
+    populate(Func<int,int,int> fn)
+    {
+        int n := 0;
+        int m := 0;
+        self.readLengthsTo(ref n, ref m);
+        
+        int i := 0;
+        int j := 0;
+        while (i < n)
+        {
+            j := 0;
+            while (j < m)
+            {
+                int v := fn(i, j);
+                
+                self.write(i, j, v);
+                
+                j := j + 1
+            };
+            
+            i := i + 1
+        };
+        
+        ^ self
+    }
+}
 
 // --- literalOp ---
 
@@ -1128,9 +966,6 @@ public extension stringOp : String
         }    
     }
 
-//    indexOf : anObject
-//        = self indexOf:anObject at:0.
-//
     int indexOf(string s)
         = self.indexOf(0, s);
 
@@ -1273,17 +1108,22 @@ public extension stringOp : String
         ^ n != -1
     }
 
-////    replaceFirst literal:aReplacee literal:aReplacer
-////    [
-////        int aReplaceeLen := aReplacee length.
-////        int anIndex := 0.
-////        
-////        self indexOf int:0 literal:aReplacee vint:anIndex.
-////        
-////        if (anIndex != -1)
-////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex literal:aReplacee ];
-////            [ ^ self ].
-////    ]    
+    string replaceFirst(string replacee, string replacer)
+    {
+        int replaceeLen := replacee.Length;
+        int i := 0;
+        
+        self.indexOf(0, replacee, ref i);
+        
+        if (i != -1)
+        { 
+            ^ self.delete(i, replaceeLen).insert(i, replacee)
+        }
+        else
+        {
+            ^ self
+        }    
+    }    
     
     string replace(replacee, replacer)
         = stringOp.replace(self, cast string(replacee), cast string(replacer));
@@ -1330,26 +1170,23 @@ public extension stringOp : String
 
 public extension wideOp : WideString
 {
-//    Hashcode
-//    {
-//        int get()
-//        {
-//            int len := self.Length;
-//        
-//            int h := extern elenart.core_utf16hashcode(self, len);
-//        
-//            ^ h
-//        }
-//    }
-//    
-////    indexOf : anObject
-////        = self indexOf:anObject at:0.
-//        
-//    indexOf(wide s)
-//        = self.indexOf(0, s);
-//
-//    indexOf(char ch)
-//        = self.indexOf(0, ch);
+    int Hashcode
+    {
+        get()
+        {
+            int len := self.Length;
+        
+            int h := extern elenart.core_utf16hashcode(self, len);
+        
+            ^ h
+        }
+    }
+    
+    indexOf(wide s)
+        = self.indexOf(0, s);
+
+    indexOf(char ch)
+        = self.indexOf(0, ch);
                 
     wide Substring(index)
         = self.Substring(cast int(index));
@@ -1417,66 +1254,71 @@ public extension wideOp : WideString
     wide trim()
         = self.trimLeft($32).trimRight($32);
     
-//    wide padLeft(char ch, int length)
-//    {
-//        int currentLength := self.Length;
-//        
-//        if (currentLength < length)
-//            { ^ WideString.fill(length - currentLength, ch).add(self) };
-//            
-//        ^ self
-//    }
-//    
-//    wide padRight(char ch, int length)
-//    {
-//        int currentLength := self.Length;
-//
-//        if (currentLength < length)
-//            { ^ self.add(WideString.fill(length - currentLength, ch)) };
-//            
-//        ^ self
-//    }
-//
-//    bool startingWith(wide s)
-//    {
-//        int n := 0;
-//        self.indexOf(0, s, ref n);
-//        
-//        ^ 0 == n
-//    }
-//    
-//    bool endingWith(wide s)
-//    {
-//        int l1 := self.Length;
-//        int l2 := s.Length;
-//        int n := 0;
-//        self.indexOf(l1 - l2, s, ref n);
-//        
-//        ^ n != -1
-//    }
-//    
-//    bool containing(wide s)
-//    {
-//        int l1 := self.Length;
-//        int l2 := s.Length;
-//        int n := 0;
-//        
-//        self.indexOf(0, s, ref n);
-//        
-//        ^ n != -1
-//    }
-//    
-////    replaceFirst wide:aReplacee wide:aReplacer
-////    [
-////        int aReplaceeLen := aReplacee length.
-////        int anIndex := 0.
-////        
-////        self indexOf int:0 wide:aReplacee vint:anIndex.
-////        
-////        if (anIndex != -1)
-////            [ ^ self delete int:anIndex int:aReplaceeLen; insert int:anIndex wide:aReplacee ];
-////            [ ^ self ].
-////    ]
+    wide padLeft(char ch, int length)
+    {
+        int currentLength := self.Length;
+        
+        if (currentLength < length)
+            { ^ WideString.fill(length - currentLength, ch).add(self) };
+            
+        ^ self
+    }
+    
+    wide padRight(char ch, int length)
+    {
+        int currentLength := self.Length;
+
+        if (currentLength < length)
+            { ^ self.add(WideString.fill(length - currentLength, ch)) };
+            
+        ^ self
+    }
+
+    bool startingWith(wide s)
+    {
+        int n := 0;
+        self.indexOf(0, s, ref n);
+        
+        ^ 0 == n
+    }
+    
+    bool endingWith(wide s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+        int n := 0;
+        self.indexOf(l1 - l2, s, ref n);
+        
+        ^ n != -1
+    }
+    
+    bool containing(wide s)
+    {
+        int l1 := self.Length;
+        int l2 := s.Length;
+        int n := 0;
+        
+        self.indexOf(0, s, ref n);
+        
+        ^ n != -1
+    }
+    
+    wide replaceFirst(wide replacee, wide replacer)
+    {
+        int replaceeLen := replacee.Length;
+        int i := 0;
+        
+        self.indexOf(0, replacee, ref i);
+        
+        if (i != -1)
+        { 
+            ^ self.delete(i, replaceeLen).insert(i, replacee)
+        }
+        else
+        {
+            ^ self
+        }    
+    }    
         
     replace(wide replacee, wide replacer)
     {
@@ -1518,55 +1360,6 @@ public extension wideOp : WideString
 
 public extension stringWeakOp
 {
-//    Substring(index)
-//        = self.Substring(index, self.Length - index);
-//            
-////    Substring(object anIndex, object aLength)
-////        = self Substring:aLength at:anIndex.
-//    
-//    trimLeft(char ch)
-//        = stringOpDispatcher.trimLeft(self, ch);
-//
-//    trimRight(char ch)
-//        = stringOpDispatcher.trimRight(self, ch);
-//
-//    trim(char ch)
-//        = stringOpDispatcher.trim(self, ch);
-//    
-//    trimLeft()
-//        = stringOpDispatcher.trimLeft(self, $32);
-//
-//    trimRight()
-//        = stringOpDispatcher.trimRight(self, $32);
-//
-//    trim()
-//        = stringOpDispatcher.trim(self, $32);
-//
-//    padLeft(padSymbol, len)
-//        = stringOpDispatcher.padLeft(self, padSymbol, len);
-//        
-//    padRight(padSymbol, len)
-//        = stringOpDispatcher.padRight(self, padSymbol, len);
-//
-//    startingWith(s)
-//        = stringOpDispatcher.startingWith(self, s);
-//
-//    endingWith(s)
-//        = stringOpDispatcher.endingWith(self, s);
-//
-//    containing(s)
-//        = stringOpDispatcher.containing(self, s);
-//
-//////    replaceFirst literal:aReplacee literal:aReplacer
-//////    [
-//////        var dispatcher := self cast:%eval to:stringOpDispatcher.
-//////        
-//////        ^ self~dispatcher replaceFirst literal:aReplacee literal:aReplacer
-//////    ]
-//    
-//    replace(replacee, replacer)
-//        = stringOpDispatcher.replace(self, replacee, replacer);
-    
     fillString(s, int counter)
     {
         for (int i := 0, i < counter, i += 1)
@@ -1672,29 +1465,29 @@ public extension charOp : CharValue
         ^ (ch >= 30h) && (ch <= 39h)
     }
     
-//    bool isNewLine()
-//    {
-//        ^ self == $10
-//    }
-//    
-//    bool isLetter()
-//    {
-//        int ch := intConvertor.convert(self);
-//        
-//        if (ch >= 41h && ch <= 5Ah)
-//            { ^ true };
-//        
-//        if (ch >= 61h && ch <= 7Ah)
-//            { ^ true };
-//        
-//        if (ch >= 3ACh && ch <= 3CEh)
-//            { ^ true };
-//            
-//        if (ch >= 400h && ch <= 42Fh)
-//            { ^ true };
-//            
-//        ^ false
-//    }
+    bool isNewLine()
+    {
+        ^ self == $10
+    }
+    
+    bool isLetter()
+    {
+        int ch := intConvertor.convert(self);
+        
+        if (ch >= 41h && ch <= 5Ah)
+            { ^ true };
+        
+        if (ch >= 61h && ch <= 7Ah)
+            { ^ true };
+        
+        if (ch >= 3ACh && ch <= 3CEh)
+            { ^ true };
+            
+        if (ch >= 400h && ch <= 42Fh)
+            { ^ true };
+            
+        ^ false
+    }
     
     bool isLToken()
     {
@@ -1720,10 +1513,6 @@ public extension charOp : CharValue
 
 public extension byteArrayHelper : Array<byte>
 {
-//    /// Reads a byte value at the specified position and saves it into an output variable
-//    read(int index, ref byte retVal)
-//        => system'core_routines'__bytearray;
-
     /// Reads a short integer value at the specified position and saves it into an output variable
     read(int index, ref short retVal)
         => intern system'core_routines'__bytearray;
@@ -1801,66 +1590,3 @@ public extension charArrayHelper : Array<char>
     write(int index, int length, char[] array)
         => intern system'core_routines'__chararray;
 }
-
-////public singleton byteArrayHelper
-////{
-//////    read(ByteArray array, int offset, ref<short> retVal)
-//////    [
-//////        array read(offset, retVal)
-//////    ]
-//////    
-//////    read(ByteArray array, int offset, ref<int> retVal)
-//////    [
-//////        array read(offset, retVal)
-//////    ]
-//////    
-//////    read(ByteArray array, int offset, ref<long> retVal)
-//////    [
-//////        array read(offset, retVal)
-//////    ]
-//////    
-//////    read(ByteArray array, int offset, ref<real> retVal)
-//////    [
-//////        array read(offset, retVal)
-//////    ]
-//////    
-//////    read(ByteArray array, int offset, ref<char> retVal)
-//////    [
-//////        array read(offset, retVal)
-//////    ]
-//////    
-//////    write(ByteArray array, int offset, short retVal)
-//////    [
-//////        array write(offset, retVal)
-//////    ]
-//////    
-//////    write(ByteArray array, int offset, int retVal)
-//////    [
-//////        array write(offset, retVal)
-//////    ]
-//////    
-//////    write(ByteArray array, int offset, long retVal)
-//////    [
-//////        array write(offset, retVal).
-//////    ]
-//////    
-//////    write(ByteArray array, int offset, real retVal)
-//////    [
-//////        array write(offset, retVal)
-//////    ]
-//////    
-//////    write(ByteArray array, int offset, char retVal)
-//////    [
-//////        array write(offset, retVal)
-//////    ]
-//////    
-////}
-////// --- intArrayHelper ---
-//////
-//////singleton intArrayHelper
-//////{
-//////    stacksafe fill intarray:array int:offset int:length int:val
-//////    [
-//////        array fill int:offset int:length int:val.
-//////    ]
-//////}

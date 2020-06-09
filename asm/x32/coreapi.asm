@@ -4455,6 +4455,81 @@ labSkip2:
 
 end
 
+// core_utf16hashcode(s,len)
+procedure coreapi'core_utf16hashcode
+
+  mov  eax, [esp+4]
+  mov  ecx, [esp+8]
+
+  mov  edi, 15051505h
+  mov  esi, edi
+
+labLoop:
+  cmp  ecx, 4
+  jb   short labSkip
+
+  mov  ebx, edi
+  shl  ebx, 5
+  mov  edx, edi
+  add  ebx, edi
+  shr  edx, 27
+  add  ebx, edx
+  mov  edx, [eax]
+  xor  ebx, edx
+  mov  edi, ebx
+
+  mov  ebx, esi
+  shl  ebx, 5
+  mov  edx, esi
+  add  ebx, esi
+  shr  edx, 27
+  add  ebx, edx
+  mov  edx, [eax+4]
+  xor  ebx, edx                    
+  mov  esi, ebx
+
+  add  eax, 8
+  sub  ecx, 4
+  jmp  short labLoop
+
+  add  ecx, 4
+  and  ecx, 7
+
+labSkip:  
+  cmp  ecx, 2
+  jb   short labSkip2
+
+  mov  ebx, edi
+  shl  ebx, 5
+  mov  edx, edi
+  add  ebx, edi
+  shr  edx, 27
+  add  ebx, edx
+  mov  edx, [eax]
+  xor  ebx, edx
+  mov  edi, ebx
+  add  eax, 4
+  sub  ecx, 2
+
+labSkip2:
+  mov  ecx, [eax]
+
+  mov  ebx, esi
+  shl  ebx, 5
+  mov  edx, esi
+  add  ebx, esi
+  shr  edx, 27
+  add  ebx, edx
+  xor  ebx, ecx
+  mov  esi, ebx
+
+  mov  ebx, esi
+  imul ebx, 1566083941
+  add  ebx, edi
+  ret
+
+end
+
 // ; read_vmt (int,class,len,dump) = len
 procedure coreapi'core_readvmt
 
