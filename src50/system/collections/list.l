@@ -275,10 +275,6 @@ namespace collections
             theList := list
         }
     
-    //    /// Creates a list enumerator
-    //    constructor new : anObject
-    //        <= new(T<List>(anObject)).
-    
         /// Returns the current object
         get() = theCurrent.get();
         
@@ -306,81 +302,59 @@ namespace collections
         enumerable() = theList;
     }
     
-    //// --- ListIndexer ---
-    //
-    ///// A list indexer
-    //class ListIndexer :: Indexer
-    //{
-    //    T<List>     theList.
-    //    T<ListItem> theCurrent.
-    //    ref<int>    theIndex.
-    //    
-    //    /// Creates a list indexer
-    //    constructor new(List aList)
-    //    [
-    //        theList := aList.
-    //        theCurrent := aList topItem.
-    //        theIndex := 0.
-    //    ]
-    //
-    //    /// Creates a list indexer
-    //    constructor new : anObject
-    //        <= new(T<List>(anObject)).
-    //    
-    //    /// Returns false if the index out of range
-    //    bool available = nil != theCurrent.
-    //
-    //    /// Returns the current member
-    //    get = theCurrent get.
-    //    
-    //    /// Sets the current member
-    //    set : anObject 
-    //    [
-    //        theCurrent set:anObject.
-    //    ]
-    //    
-    //    /// Reads the current index into an output parameter
-    //    readIndexTo(ref<int> anIndex)
-    //    [
-    //        theIndex readValueTo(anIndex).
-    //    ]
-    //    
-    //    /// Sets the index by specified value
-    //    writeIndex(int anIndex)
-    //    [
-    //        int i := theIndex.
-    //        
-    //        if(anIndex < i)
-    //        [
-    //            theCurrent := theList topItem.
-    //            i := 0.
-    //        ].
-    //        
-    //        while (i < anIndex) 
-    //        [
-    //            if (nil == theCurrent)
-    //                [ OutOfRangeException new; raise. ].
-    //            
-    //            theCurrent := theCurrent nextItem.            
-    //            i := i + 1
-    //        ].
-    //        
-    //        theIndex value := i.
-    //    ]
-    //    
-    //    appendIndex(int anIndex)
-    //    [
-    //        int i := theIndex.
-    //        i := i + anIndex.
-    //        
-    //        self writeIndex(i).
-    //    ]
-    //    
-    //    readLengthTo(ref<int> retVal)
-    //    [
-    //        theList readLengthTo(retVal).
-    //    ]
-    //}
+    // --- ListIndexer ---
+    
+    /// A list indexer
+    class ListIndexer : Indexer
+    {
+        List     theList;
+        ListItem theCurrent;
+        ref<int> theIndex;
+        
+        /// Creates a list indexer
+        constructor(List list)
+        {
+            theList := list;
+            theCurrent := list.TopItem;
+            theIndex := 0;
+        }
+    
+        /// Returns false if the index out of range
+        get bool Available() = nil != theCurrent;
+   
+        /// Returns the current member
+        get() = theCurrent.get();
+        
+        /// Sets the current member
+        set(o)
+        {
+            theCurrent.set(o)
+        }
+        
+        /// Reads the current index into an output parameter
+        get int Index()
+        {
+            ^ theIndex.Value
+        }
+        
+        set int Index(int n)
+        {
+            theIndex.Value := n
+        }
+        
+        appendIndex(int offs)
+        {
+            int i := theIndex.Value;
+            i := i + offs;
+            
+            self.Index := i
+        }
+        
+        get int Length()
+        {
+            ^ theList.Length
+        }
+    }
     
     // --- List ---
     
@@ -397,25 +371,19 @@ namespace collections
             theCount := 0
         }
     
-    //    constructor new(Array l)
-    //    [
-    //        theCount := 0.
-    //        
-    //        auto it := l enumerator.
-    //        while (it next)
-    //        [
-    //            self append(it get)
-    //        ].
-    //    ]
+        constructor(Array l)
+        {
+            theCount := 0;
+            
+            auto it := l.enumerator();
+            while (it.next())
+            {
+                self.append(it.get())
+            }
+        }
     
         /// Returns the top item
         internal ListItem TopItem = theTop;
-    
-    //    /// Returns the top object
-    //    first = theTop get.
-    //
-    //    /// Returns the last object
-    //    last = theLast get.    
     
         append(object)
         {
@@ -434,14 +402,14 @@ namespace collections
             }
         }
     
-    //    insert : anObject
-    //    [
-    //        theCount append(1).
-    //        
-    //        auto aNewItem := ListItem new:anObject.
-    //        aNewItem setNextItem(theTop).
-    //        theTop := aNewItem.
-    //    ]
+        insert(object)
+        {
+            theCount.append(1);
+            
+            auto newItem := ListItem.new(object);
+            newItem.NextItem := theTop;
+            theTop := newItem
+        }
         
         /// Returns the list item at the specified position
         internal ListItem getItemAt(int index)
@@ -469,23 +437,20 @@ namespace collections
         setAt(int index, object object)
             = self.getItemAt(index).set(object);
     
-    //    insert : anObject at:anIndex
-    //        <= insert(anIndex, anObject).
-    //
-    //    /// Inserts a new object to the specified position
-    //    insert(int anIndex, object anObject)
-    //    [
-    //        if (anIndex == 0)
-    //            [ self insert:anObject ];
-    //            [
-    //                T<ListItem> aNew := ListItem new:anObject.        
-    //                T<ListItem> aPrevious := self getItemAt(anIndex - 1).
-    //                T<ListItem> aNext := aPrevious nextItem.
-    //                
-    //                aPrevious setNextItem(aNew).
-    //                aNew setNextItem(aNext)
-    //            ]
-    //    ]
+        /// Inserts a new object to the specified position
+        insert(int index, object object)
+        {
+            if (index == 0)
+            { 
+                self.insert(object)
+            }
+            else {
+                auto newItem := ListItem.new(object);
+                auto prevItem := self.getItemAt(index);
+                newItem.NextItem := prevItem.NextItem;
+                prevItem.NextItem := newItem;
+            }
+        }
     
         /// Removes an object at the specified position
         remove(int index)
@@ -527,36 +492,36 @@ namespace collections
             }
         }
         
-    //    /// Clears the list
-    //    clear 
-    //    [
-    //        theCount value := 0.
-    //        
-    //        theTop := nil.
-    //        theLast := nil.
-    //    ]
+        /// Clears the list
+        clear() 
+        {
+            theCount.Value := 0;
+            
+            theTop := nil;
+            theLast := nil;
+        }
     
         /// Returns the list enumerator
         Enumerator enumerator() = new ListEnumerator(self);
     
-    //    /// Returns the list indexer
-    //    T<Indexer> indexer = ListIndexer new(self).
-    //    
-    //    /// Clones the list
-    //    T<List> clone 
-    //    [
-    //        auto aList := List new.
-    //        
-    //        T<ListItem> anItem := theTop.        
-    //        while (nil != anItem)
-    //        [
-    //            aList append(anItem get).
-    //            
-    //            anItem := anItem nextItem
-    //        ].
-    //        
-    //        ^ aList
-    //    ]
+        /// Returns the list indexer
+        Indexer indexer() = new ListIndexer(self);
+    
+        /// Clones the list
+        List clone() 
+        {
+            auto list := new List();
+            
+            ListItem item := theTop;        
+            while (nil != item)
+            {
+                list.append(item.get());
+                
+                item := item.NextItem
+            };
+            
+            ^ list
+        }
     }
 
     // --- ArrayList ---
@@ -692,31 +657,24 @@ namespace collections
             }
         }
                     
-//    //    /// Inserts a new object to the specified position
-//    //    insert(int anIndex, object anObject)
-//    //    [
-//    //        if (anIndex >= theLength)
-//    //            [ OutOfRangeException new; raise ].
-//    //        
-//    //        self expand.
-//    //        
-//    //        int i := theLength.
-//    //        while (i > anIndex)
-//    //        [
-//    //            theArray setAt(i, theArray getAt(i - 1)).
-//    //            
-//    //            i := i - 1
-//    //        ].
-//    //        
-//    //        theArray setAt(anIndex, anObject)
-//    //    ]    
-//    //    
-//    //    /// Inserts a new object to the beginning of the list
-//    //    insert : anObject
-//    //        <= insert(0, anObject).
-//    //
-//    //    insert : anObject at:anIndex
-//    //        <= insert(T<int>(anIndex), anObject).
+        /// Inserts a new object to the specified position
+        insert(int index, object object)
+        {
+            if (index >= theLength)
+                { OutOfRangeException.raise() };
+            
+            self.expand();
+            
+            int i := theLength;
+            while (i > index)
+            {
+                theArray[i] := theArray[i - 1];
+                
+                i := i - 1
+            };
+            
+            theArray[i] := object
+        }    
             
         /// Removes an object at the specified position
         remove(int index)
@@ -739,35 +697,19 @@ namespace collections
         removeAt(n)
             <= remove(cast int(n));
         
-    //    readCapacityTo(ref<int>{ aCapacity)
-    //    [
-    //        aCapacity value := theCapacity.
-    //    ]
-        
         /// Clears the list
         clear()
         {
             theLength.Value := 0
         }
         
-//        trim(int pos)
-//        {
-//            if (pos > (cast int(theLength)))
-//                { OutOfRangeException.raise() };
-//            
-//            theLength.Value := pos
-//        }
-//        
-//    //    /// Returns the top object
-//    //    first = theArray getAt(0).
-//    //
-//    //    /// Returns the last object
-//    //    last
-//    //    [
-//    //        int len := theLength.
-//    //        
-//    //        ^ theArray getAt(len - 1)
-//    //    ]
+        trim(int pos)
+        {
+            if (pos > (cast int(theLength)))
+                { OutOfRangeException.raise() };
+            
+            theLength.Value := pos
+        }
         
         /// Returns the list enumerator
         Enumerator enumerator() = new ArrayListEnumerator(self);
@@ -800,10 +742,6 @@ namespace collections
             theList := list;
             theIndex := -1;
         }
-    
-    //    /// Creates a list enumerator
-    //    constructor new : anObject
-    //        <= new(T<ArrayList>(anObject)).
     
         /// Returns the current object
         get() = theList.at(cast int(theIndex));
@@ -842,10 +780,6 @@ namespace collections
             theIndex := 0
         }
     
-    //    /// Creates a list indexer
-    //    constructor new : anObject
-    //        <= new array_list:anObject.
-        
         /// Returns false if the index out of range
         get bool Available()
         {
@@ -985,14 +919,6 @@ namespace collections
             self.getItem(hashCode, key).Value := object
         }
         
-    //    /// Sets a dictionary item with the specified key
-    //    setAt(object key, object object)
-    //    {
-    //        int hashCode := object.HashCode;
-    //        
-    //        self.getItem(hashCode, key).Value := object
-    //    }
-            
         private getItem(int code, object key)
         {
             int hashCode := code && theHashMask;
@@ -1045,13 +971,6 @@ namespace collections
             ^ newItem
         }    
             
-    //    getAt : aKey
-    //    [
-    //        int aHashCode := aKey hash_code.
-    //        
-    //        ^ self getItem(aHashCode, aKey); value.
-    //    ]
-                
         at(int key)
         {
             int hashCode := key.Hashcode;
@@ -1094,72 +1013,64 @@ namespace collections
             ^ self.getItem(hashCode, key).Value
         }
     
-    //    bool containsKey(object aKey)
-    //    [
-    //        int aHashCode := aKey hash_code.
-    //        
-    //        aHashCode := aHashCode && theHashMask.
-    //        
-    //        var aHashItem := theHashTable getAt(aHashCode).
-    //        if (nil == aHashItem)
-    //        [
-    //            aHashItem := IntArray new(5).
-    //            
-    //            aHashItem write(0, 1).
-    //            
-    //            theHashTable setAt(aHashCode, aHashItem)
-    //        ].
-    //        
-    //        auto aBacket := T<IntArray>(aHashItem).
-    //        int  aLength := 0.
-    //        aBacket read(0, &aLength).
-    //        
-    //        int i := 1.
-    //        while (i < aLength)
-    //        [
-    //            int anItemIndex := 0.
-    //            aBacket read(i, &anItemIndex).
-    //            
-    //            var anItem := theList getAt(anItemIndex).
-    //            
-    //            if(aKey equal(anItem key))
-    //                [ ^ true ].
-    //            
-    //            i := i + 1
-    //        ].        
-    //        
-    //        ^ false
-    //    ]
+        bool containsKey(object key)
+        {
+            int hashCode := key.Hashcode;
+            
+            hashCode := hashCode && theHashMask;
+            
+            var hashItem := theHashTable.at(hashCode);
+            if (nil == hashItem)
+            {
+                hashItem := new int[](5);
+                
+                hashItem[0] := 1;
+                
+                theHashTable.setAt(hashCode, hashItem)
+             };
+
+            int[] backet := /*cast int[](*/hashItem/*)*/;
+            int  length := backet[0];
+            
+            for (int i := 1, i < length, i += 1)
+            {
+                int itemIndex := backet[i];
+                
+                var item := theList.at(itemIndex);
+                
+                if(key.safeEqual(item.Key))
+                    { ^ true }
+            };
+            
+            ^ false
+        }
     
         /// Returns a dictionary enumerator
         Enumerator enumerator() => theList;
         
-    //    cast T<ArrayList>
-    //        = theList clone.
-    
         ArrayList Values = theList.clone();
     
-    //    /// Clones a dictionary
-    //    clone 
-    //    [
-    //        var aList := Dictionary new.
-    //
-    //        T<Enumerator> it := theList enumerator.
-    //        while (it next)
-    //        [
-    //            var anItem := it get.
-    //            
-    //            aList[anItem key] := anItem value.
-    //        ].
-    //        
-    //        ^ aList.
-    //    ]
-    //    
-    //    clear
-    //    [
-    //        theHashTable := Array new(theHashTable length).
-    //        theList clear.
-    //    ]
+        /// Clones a dictionary
+        clone()
+        {
+            var list := Dictionary.new();
+    
+            Enumerator it := theList.enumerator();
+            while (it.next())
+            {
+                var item := it.get();
+                
+                list[item.Key] := item.Value
+            };
+            
+            ^ list
+        }
+    
+        clear()
+        {
+            theHashTable := Array.allocate(theHashTable.Length);
+            theList.clear()
+        }
     }
 
 }
