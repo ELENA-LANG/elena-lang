@@ -281,22 +281,22 @@ namespace collections
             theTale.Value := 0
         }
         
-    //    shift : offset
-    //    [
-    //        int i := theTop.
-    //        int n := theTale - 1.
-    //        
-    //        var topItem := theList getAt(i).
-    //        
-    //        while (i < n)
-    //        [
-    //            theList setAt(i, theList getAt(i + 1)).
-    //            
-    //            i := i + 1
-    //        ].
-    //        
-    //        theList setAt(i, topItem)
-    //    ]
+        shift(offset)
+        {
+            int i := theTop;
+            int n := theTale - 1;
+            
+            var topItem := theList.at(i);
+            
+            while (i < n)
+            {
+                theList.setAt(i, theList.at(i + 1));
+                                
+                i := i + 1
+            };
+            
+            theList.setAt(i, topItem)
+        }
     }
     
     // --- Queue Template ---

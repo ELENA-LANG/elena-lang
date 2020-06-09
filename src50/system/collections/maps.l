@@ -8,16 +8,12 @@ namespace collections
         List<Tuple<TKey, TValue>> theList;
         int[][]                   theHashTable; 
         
-    //    value_type     theDefault.
-    
         private init(int capacity, int hashLength)
         {
             theHashMask := hashLength;
             
             theHashTable := new int[][](hashLength);
             theList := new List<Tuple<TKey, TValue>>(capacity);
-            
-    //        theDefault := aDefault.
         }
 
         constructor()
@@ -116,21 +112,21 @@ namespace collections
         }
     
     
-    //    /// Clones a dictionary
-    //    clone 
-    //    [
-    //        var aList := Dictionary new.
-    //
-    //        enumerator it := theList enumerator.
-    //        while (it next)
-    //        [
-    //            var anItem := it get.
-    //            
-    //            aList[anItem key] := anItem value.
-    //        ].
-    //        
-    //        ^ aList.
-    //    ]
+        /// Clones a dictionary
+        clone() 
+        {
+            auto list := new Dictionary();
+    
+            enumerator it := theList.enumerator();
+            while (it.next())
+            {
+                var item := it.get();
+                
+                list[item.Key] := item.Value;
+            };
+            
+            ^ list
+        }
         
         clear()
         {
