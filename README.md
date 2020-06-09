@@ -19,19 +19,24 @@
 
 </div>
 
-ELENA is a general-purpose, object-oriented language with late binding. It features message dispatching, mixins and a script engine.
-This is the GitHub repository of ELENA source code including compiler, IDE, ELENA libraries and samples.
+ELENA is a general-purpose language with late binding. It is multi-paradigm, combining features of functional and object-oriented programming. It supports both strong and weak types, run-time conversions, boxing and unboxing primitive types, direct usage of external libraries. Rich set of tools are provided to deal with message dispatching : multi-methods, message qualifying, generic message handlers. Multiple-inheritance can be simulated using mixins and type interfaces. Built-in script engine allows to incorporate custom defined scripts into your applications. Both stand-alone applications and Virtual machine clients are supported.
 
-## Resources
-- **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
-- **ELENA API 5.0** <https://elena-lang.github.io/api/index.html>
-- **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
-- **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
-- **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
-- **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
-- **Source code:** <https://github.com/ELENA-LANG/elena-lang>
-- **Twitter:** <https://twitter.com/elena_language>
-- **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
+### Features
+
+  - Free and open source (MIT licensed)
+  - Complete source code
+  - Unicode support (utf-8)
+  - GUI IDE & Debugger
+  - Optional types
+  - Multiple dispatching / multi-methods
+  - Returning Multiple Values
+  - Support of variadic methods
+  - Support of yieldable methods
+  - Closures
+  - Mixins
+  - Type interfaces / conversions
+  - Class / code templates
+  - Script Engine
 
 ## Currently Supported Platforms
 
@@ -121,3 +126,14 @@ for more information read the file LICENSE.
 ## Questions?
 
 Feel free to ask any question :  elenaprolang@gmail.com.
+
+## Resources
+- **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
+- **ELENA API 5.0** <https://elena-lang.github.io/api/index.html>
+- **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
+- **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
+- **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
+- **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
+- **Source code:** <https://github.com/ELENA-LANG/elena-lang>
+- **Twitter:** <https://twitter.com/elena_language>
+- **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
