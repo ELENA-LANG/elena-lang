@@ -243,16 +243,16 @@ namespace text
             }
         }
     
-    //    insert(int anIndex, int aLength, CharArray anArray)
-    //    [
-    //        self reserve(aLength).
-    //        
-    //        theBuffer move(anIndex, T<int>(theLength), aLength).
-    //        
-    //        theBuffer write(anIndex, aLength, anArray).
-    //        
-    //        theLength append(aLength).
-    //    ]
+        insert(int index, int length, char[] array)
+        {
+            self.reserve(length);
+            
+            theBuffer.move(index, theLength.Value, length);
+            
+            theBuffer.write(index, length, array);
+            
+            theLength.append(length)
+        }
 
         insert(int index, string s)
         {
@@ -267,52 +267,49 @@ namespace text
             
             theLength.append(length)
         }
-    //
-    ////    insert(int anIndex, wide aLiteral)
-    ////    [
-    ////        int aLength := 0.
-    ////        UTF16Encoding charCount(aLiteral, &aLength).
-    ////
-    ////        self reserve(aLength).
-    ////        
-    ////        theBuffer move(anIndex, T<int>(theLength), aLength).
-    ////        
-    ////        aLiteral save(anIndex, theBuffer, &aLength).
-    ////        
-    ////        theLength append(aLength).
-    ////    ]
-    ////    
-    ////    insert(int anIndex, char aChar)
-    ////    [
-    ////        self reserve(1).
-    ////        
-    ////        theBuffer move(anIndex, T<int>(theLength), 1).
-    ////        
-    ////        theBuffer write(anIndex, aChar).
-    ////        
-    ////        theLength append(1).
-    ////    ]
-    ////
-    ////    insert : anObject at:anIndex
-    ////        <= insert(T<int>(anIndex), anObject).
-    ////
-    ////    indexOf(int aPosition, char aValue, ref<int> aRetVal)
-    ////    [
-    ////        int  anIndex := 0.
-    ////        char aCurrent := $0.
-    ////        
-    ////        while (anIndex < T<int>(theLength))
-    ////        [
-    ////            theBuffer read(anIndex, &aCurrent).
-    ////            
-    ////            if (aCurrent == aValue)
-    ////                [ aRetVal value := anIndex. ^self ].
-    ////                
-    ////            anIndex += 1
-    ////        ].
-    ////        
-    ////        aRetVal value := -1
-    ////    ]
+
+        insert(int index, wide s)
+        {
+            int length := 0;
+            UTF16Encoding.charCount(s, ref length);
+    
+            self.reserve(length);
+            
+            theBuffer.move(index, cast int(theLength), length);
+            
+            s.save(index, theBuffer, ref length);
+            
+            theLength.append(length)
+        }
+        
+        insert(int index, char ch)
+        {
+            self.reserve(1);
+            
+            theBuffer.move(index, cast int(theLength), 1);
+            
+            theBuffer.write(index, ch);
+            
+            theLength.append(1)
+        }
+
+        indexOf(int position, char value, ref int retVal)
+        {
+            int  index := 0;
+            char current := $0;
+            
+            while (index < theLength.Value)
+            {
+                theBuffer.read(index, ref current);
+                
+                if (current == value)
+                    { retVal := index; ^self };
+                    
+                index += 1
+            };
+            
+            retVal := -1
+        }
     
         indexOf(int pos, string s, ref int retVal)
         {
@@ -370,73 +367,85 @@ namespace text
             retVal := -1
         }
 
-    ////    indexOf(int aPosition, wide aLiteral, ref<int> aRetVal)
-    ////    [
-    ////        int  aLiteralLength := 0.
-    ////        int  anIndex := 0.
-    ////        int  aFirstCharLen := 0.
-    ////        char aCurrent := $0.
-    ////        char aFirstChar := $0.
-    ////        char aNextChar := $0.
-    ////        
-    ////        aLiteral readLengthTo(&aLiteralLength).
-    ////        
-    ////        aLiteral read(0, &aFirstChar).
-    ////        aFirstChar readWideLengthTo(&aFirstCharLen).
-    ////        
-    ////        while (anIndex < theLength)
-    ////        [
-    ////            theBuffer read(anIndex, &aCurrent).
-    ////            
-    ////            if (aCurrent == aFirstChar)
-    ////            [ 
-    ////                int j := aFirstCharLen.
-    ////                int chLen := 0.
-    ////                while (j < aLiteralLength)
-    ////                [
-    ////                    theBuffer read(anIndex + j, &aCurrent).
-    ////                    aLiteral read(j, &aNextChar).
-    ////                    
-    ////                    if (aNextChar == aCurrent)
-    ////                        [ aNextChar readWideLengthTo(&chLen) ];
-    ////                        [ j := aLiteralLength. chLen := 1 ].
-    ////                    
-    ////                    j := j + chLen
-    ////                ].
-    ////                
-    ////                if (j > aLiteralLength)
-    ////                    [ aRetVal value := anIndex. ^ self ]
-    ////            ].
-    ////                
-    ////            anIndex := anIndex + 1
-    ////        ].
-    ////        
-    ////        aRetVal value := -1
-    ////    ]
-    ////
-    ////    indexOf(int aPosition, char aValue)
-    ////    [
-    ////        int aRetVal := 0.
-    ////        self indexOf(aPosition, aValue, &aRetVal).
-    ////        
-    ////        ^ IntNumber new(aRetVal)
-    ////    ]
-    ////    
-    ////    indexOf(int aPosition, literal aValue)
-    ////    [
-    ////        int aRetVal := 0.
-    ////        self indexOf(aPosition, aValue, &aRetVal).
-    ////        
-    ////        ^ IntNumber new(aRetVal)
-    ////    ]
-    ////    
-    ////    indexOf(int aPosition, wide aValue)
-    ////    [
-    ////        int aRetVal := 0.
-    ////        self indexOf(aPosition, aValue, &aRetVal).
-    ////        
-    ////        ^ IntNumber new(aRetVal)
-    ////    ]
+        indexOf(int pos, wide s, ref int retVal)
+        {
+            int  strLen := 0;
+            int  index := 0;
+            int  firstChLen := 0;
+            char current := $0;
+            char firstCh := $0;
+            char nextCh := $0;
+            
+            strLen := s.Length;
+            
+            s.read(0, ref firstCh);
+            firstChLen := firstCh.Length;
+            
+            int maxIndex := theLength;
+            maxIndex := maxIndex - strLen;
+            
+            while (index <= maxIndex)
+            {
+                current := theBuffer[index];
+                
+                if (current == firstCh)
+                {
+                    int j := firstChLen;
+                    int chLen := 0;
+                    while (j < strLen)
+                    {
+                        current := theBuffer[index + j];
+                        s.read(j, ref nextCh);
+                        
+                        if (nextCh == current)
+                        { 
+                            chLen := nextCh.Length
+                        }
+                        else
+                        { 
+                            j := strLen; 
+                            chLen := 1 
+                        };
+                        
+                        j := j + chLen
+                    };
+                    
+                    if (j == strLen)
+                    { 
+                        retVal := index; 
+                        ^ self 
+                    }
+                };
+                    
+                index += 1
+            };
+            
+            retVal := -1
+        }
+
+        int indexOf(int position, char value)
+        {
+            int retVal := 0;
+            self.indexOf(position, value, ref retVal);
+            
+            ^ retVal
+        }
+        
+        int indexOf(int position, string value)
+        {
+            int retVal := 0;
+            self.indexOf(position, value, ref retVal);
+            
+            ^ retVal
+        }
+        
+        int indexOf(int position, wide value)
+        {
+            int retVal := 0;
+            self.indexOf(position, value, ref retVal);
+            
+            ^ retVal
+        }
 
         string Substring(int index, int length)
         {
@@ -446,13 +455,13 @@ namespace text
             ^ String.copy(index, length, theBuffer)
         }
     
-    ////    wide WideSubstring(int anIndex, int aLength)
-    ////    [
-    ////        if (aLength == 0)
-    ////            [ ^ emptyWideLiteral ].
-    ////            
-    ////        ^ WideLiteralValue new(anIndex, aLength, theBuffer)
-    ////    ]
+        wide WideSubstring(int index, int length)
+        {
+            if (length == 0)
+                { ^ emptyWideString };
+                
+            ^ WideString.copy(index, length, theBuffer)
+        }
 
         delete(int index, int length)
         {
@@ -466,10 +475,10 @@ namespace text
             theLength.reduce(length)
         }
     
-    //    trim(int n)
-    //    {
-    //        theLength.reduce(n)
-    //    }
+        trim(int n)
+        {
+            theLength.reduce(n)
+        }
     }
 
 }
