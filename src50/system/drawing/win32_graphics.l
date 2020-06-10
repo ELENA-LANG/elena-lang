@@ -130,9 +130,6 @@ public sealed struct Canvas
         theHDC := 0
     }
  
-//    setCaret:p
-//        <= setCaret coord:(p coord).
-        
     setCaret(int x, int y)
     {
         theHDC.moveTo(x, y)
@@ -152,9 +149,6 @@ public sealed struct Canvas
         theHDC.lineTo(x, y)
     }
  
-//    lineCaretTo:p
-//        <= lineCaretTo coord:(p coord).
-        
     lineCaretTo(Point p)
     {
         int x := p.X;

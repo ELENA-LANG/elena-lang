@@ -121,19 +121,19 @@ public mixin ClosureTape
         }
     }
         
-//    constructor new (List<DynamicClosure> list, int index, int length)        
-//        <= new(length);
-//    [
-//        int i := index.
-//        int c := 0.
-//        while (c < length)
-//        [
-//            theList[c] := list[i].
-//
-//            c += 1.
-//            i += 1.
-//        ]
-//    ]
+    constructor load(List<DynamicClosure> list, int index, int length)        
+        <= allocate(length)
+    {
+        int i := index;
+        int c := 0;
+        while (c < length)
+        {
+            theList[c] := list[i];
+
+            c += 1;
+            i += 1
+        }
+    }
         
     constructor load(List<object> list, int index, int length)        
         <= allocate(length)
@@ -160,32 +160,6 @@ public mixin ClosureClass
     
     internal constructor allocate(int n)
         = new object[](n);
-    
-//    constructor new(Array list)
-//        <= newInternal(list length);
-//    [
-//        int i := 0.
-//        int n := list length.
-//        
-//        while (i < n)
-//        [
-//            self setField(i, list getAt(i)).
-//            
-//            i := i + 1
-//        ]
-//    ]    
-//    
-//    constructor new(ArrayList list, int index, int length)
-//        <= newInternal(length);
-//    [
-//        int i := 0.
-//        while(i < length)
-//        [
-//            self setField(i,list getAt(index + i)).
-//            
-//            i := i + 1
-//        ]
-//    ]
     
     constructor new(params object[] args)
         <= allocate(args.Length)

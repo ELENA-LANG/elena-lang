@@ -150,6 +150,17 @@ labFalse:
 
 end
 
+procedure __object."readLength$system@Object$@system@ref#1&system@IntNumber[2]"
+
+  peeksi 1
+  count
+  peeksi 2
+  save
+  quitn 2
+
+end
+
+
 procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1
@@ -3570,6 +3581,23 @@ labSkip:
 
 end
 
+procedure __jumpif_closure."params##invoke$system@Object[0]"
+
+  pusha
+
+  peeksi  2
+  ifr     labSkip const : false
+
+  peeksi 0 
+  naddf  -2
+
+labSkip:
+  freei   1
+  peeksi  2
+  quitn   2
+
+end
+
 procedure __free_closure."params##invoke$system@Object[0]"
 
   load
@@ -3665,6 +3693,87 @@ labDefault:
   pushr    mssgconst : "new[3]"
   throw
 
+end
+
+procedure __group."#dispatch[1]"
+
+  open     5
+  reserve  2
+
+  savef   -3
+  xsavef  -2 0
+
+  pusha
+
+  hook     labNotFound
+
+  // ; define the message length
+  loadfi  -3
+  and      ARG_MASK
+  ifn      labSkip 0
+  
+// ; copy message
+labNextParam:
+  movf    -5
+  get
+  pusha
+  dec      1
+  elsen    labNextParam 0
+
+  peekfi   1
+
+labNext:
+  loadfi  -2
+  ifcount  labEnd
+
+  get
+  inc      1
+  savefi  -2
+
+  loadfi  -3
+  callvi   0
+
+labReturn:
+  unhook
+  loadfi  -3
+  restore  4
+  close
+
+  mquit
+  
+labNotFound:  
+  loadsi   9
+  address  labReturn
+  else     labContinueError
+
+  restore  1
+  close
+  close
+  freei    1
+  loadfi   1
+  jump     labNext
+
+labContinueError:
+  unhook
+  loadfi  -3
+  throw
+                         
+labEnd:
+  unhook
+
+  open     4
+  reserve  2
+  savesi   3
+  pushs   -3
+  pusha
+  movr     class : system'Message
+  pushr    class : system'MethodNotFoundException
+  storesi  5
+  peeksi   0
+  pushr    mssgconst : "new[3]"
+
+  throw
+        
 end
 
 procedure __closureclass."#dispatch[1]"

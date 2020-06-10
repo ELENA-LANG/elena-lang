@@ -102,11 +102,6 @@ public sealed const struct HDC
         theHandle := handle
     }
 
-//    stacksafe constructor new hdc:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-
     embeddable constructor newCompatible(HDC dc)
     {
         int newDC := extern GDI32.CreateCompatibleDC(dc);
@@ -175,11 +170,6 @@ public sealed const struct HBITMAP
 {
     embeddable __raw theHandle[4];
 
-//    stacksafe constructor new hbitmap:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-
     embeddable constructor create(HDC dc, int width, int height)
     {
         int h := extern GDI32.CreateCompatibleBitmap(dc, width, height);
@@ -227,11 +217,6 @@ public sealed const struct HPEN
     bool IsEmpty()
         = 0 == theHandle;
                         
-//    stacksafe constructor new hpen:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-    
     embeddable constructor create(int style, int width, int color)
     {
         int h := extern GDI32.CreatePen(style, width, color);
@@ -259,11 +244,6 @@ public sealed const struct HBRUSH
         theHandle := handle
     }
 
-//    constructor new hbrush:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
-    
     constructor createSolid(int color)
     {
         int h := extern GDI32.CreateSolidBrush(color);

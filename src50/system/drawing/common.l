@@ -39,19 +39,6 @@ public sealed struct Point// :: BaseNumber
     
     Point clone() = new Point(theX, theY);
     
-//    stacksafe write int:anX int:anY
-//    [
-//        theX := anX.
-//        theY := anY
-//    ]
-//    
-//    
-//    stacksafe read vint:anX vint:anY
-//    [
-//        anX int := theX.
-//        anY int := theY
-//    ]
-    
     bool equal(Point p)
     {
         int x := p.X;
@@ -110,12 +97,6 @@ public sealed struct Dimension //:: BaseValue
         theHeight := height
     }
     
-//    stacksafe constructor new int:aWidth int:aHeight
-//    [
-//        theWidth := aWidth.
-//        theHeight := aHeight.
-//    ]
-//    
     int Width
     {
         get() = theWidth;
@@ -135,24 +116,6 @@ public sealed struct Dimension //:: BaseValue
             theHeight := v
         }
     }
-//    
-//    stacksafe read vint:aWidth vint:aHeight
-//    [
-//        aWidth int := theWidth.
-//        aHeight int := theHeight
-//    ]
-//    
-//    clone = Dimension new int:theWidth int:theHeight.
-//    
-//    bool equal dimension:aDimension
-//    [
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        aDimension read vint:aWidth vint:aHeight.
-//        
-//        ^ (theWidth == aWidth) and:(theHeight == aHeight)
-//    ]
 }
 
 // --- Region ---
@@ -172,22 +135,6 @@ public sealed struct Region //: BaseValue
         theHeight := 0;
     }
     
-//    constructor new x:anX y:anY width:aWidth height:aHeight
-//    [
-//        theX := anX int.
-//        theY := anY int.
-//        theWidth := aWidth int.
-//        theHeight := aHeight int.
-//    ]
-//    
-//    stacksafe constructor new int:anX int:anY int:aWidth int:aHeight
-//    [
-//        theX := anX.
-//        theY := anY.
-//        theWidth := aWidth.
-//        theHeight := aHeight.
-//    ]
-
     int X
     {
         get()
@@ -240,8 +187,6 @@ public sealed struct Region //: BaseValue
         }
     }
 
-//    clone = Region new int:theX int:theY int:theWidth int:theHeight.
-    
     set(int x, int y, int width, int height)
     {
         theX := x;
@@ -257,52 +202,6 @@ public sealed struct Region //: BaseValue
         width := theWidth;
         height := theHeight;
     }
-        
-//    stacksafe readXTo vint:anX
-//    [
-//        anX int := theX.
-//    ]
-//        
-//    stacksafe readYTo vint:anY
-//    [
-//        anY int := theY.
-//    ]
-//        
-//    stacksafe readWidthTo vint:aWidth
-//    [
-//        aWidth int := theWidth.
-//    ]
-//        
-//    stacksafe readHeightTo vint:aHeight
-//    [
-//        aHeight int := theHeight.
-//    ]
-//        
-//    stacksafe writeX int:aValue
-//    [
-//        theX := aValue.
-//    ]
-//    
-//    stacksafe writeY int:aValue
-//    [
-//        theY := aValue.
-//    ]
-//    
-//    stacksafe writeWidth int:aValue
-//    [
-//        theWidth := aValue.
-//    ]
-//    
-//    stacksafe writeHeight int:aValue
-//    [
-//        theHeight := aValue.
-//    ]
-//    
-//    stacksafe writeLocation int:anX int:anY
-//    [
-//        theX := anX.
-//        theY := anY.
-//    ]
     
     writeDimension(int width, int height)
     {
@@ -310,33 +209,12 @@ public sealed struct Region //: BaseValue
         theHeight := height
     }
     
-//    stacksafe readLocationTo vint:anX vint:anY
-//    [
-//        anX int := theX.
-//        anY int := theY.
-//    ]
-    
     readDimensionTo(ref int width, ref int height)
     {
         width := theWidth;
         height := theHeight;
     }
     
-//    point
-//        = Point new int:theX int:theY.
-    
     Dimension Dimension
         = new Dimension(theWidth, theHeight);
-    
-//    bool equal region:aRegion
-//    [
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        int anX := 0.
-//        int anY := 0.
-//        
-//        aRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        ^ (theWidth == aWidth) && (theHeight == aHeight) && (theX == anX) && (theY == anY)
-//    ]
 }

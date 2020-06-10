@@ -1,5 +1,3 @@
-//import system'collections.
-
 // --- Struct ---
 
 public mixin Struct
@@ -63,18 +61,6 @@ public mixin Struct
     {
         items[index] := o
     }
-
-//    constructor new(ArrayList list, int index, int length)
-//        <= new(length);
-//    [
-//        int i := 0.
-//        while(i < length)
-//        [
-//            self setField(i, list getAt(index + i)).
-//            
-//            i := i + 1
-//        ]
-//    ]
     
     dispatch() => intern system'core_routines'__struct;
 }
@@ -90,11 +76,6 @@ public class DynamicStruct
         theStruct := Struct.allocate(0)
     }
     
-//    constructor new : aStruct
-//    [
-//        theStruct := T<Struct>(aStruct).
-//    ]
-
     set generic(o)
     {
         MessageName subj := __received.MessageName;

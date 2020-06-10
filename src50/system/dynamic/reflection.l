@@ -8,7 +8,14 @@ public extension classROp
         => intern system'core_routines'__object;
         
     getField(int index)
-        => system'core_routines'__object;
+        => intern system'core_routines'__object;
+        
+    get int __FieldCount()
+    {
+        intern system'core_routines'__object.readLength(self, int retVal);
+        
+        ^ retVal
+    }
         
     bool respondTo(Message m)
         => intern system'core_routines'__object;

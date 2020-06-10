@@ -130,18 +130,18 @@ public struct GoToClosure : DynamicClosure
         => intern system'core_routines'__jump_closure;
 }
 
-//public struct JumpIfClosure :: DynamicClosure
-//{
-//    int index.
-//    
-//    constructor new(int index)
-//    [
-//        @index := index.
-//    ]
-//    
-//    generic closure(V<object> args)
-//        => system'core_routines'__jumpif_closure.    
-//}
+public struct JumpIfClosure : DynamicClosure
+{
+    int index;
+    
+    constructor new(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__jumpif_closure;
+}
 
 // --- JumpIfNotClosure ---
 
