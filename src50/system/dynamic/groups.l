@@ -1,38 +1,20 @@
-//// --- Group ---
-//
-//public mixin Group
-//{
-//    object[] items;
-//    
-//    internal constructor allocate(int len)
-//        = new object[](len);
-//        
-//    constructor load(params object[] objects)
-//        <= allocate(objects.Length)
-//    {
-//        self.setFields(params objects)
-//    }
-//    
-//    dispatch() => system'core_routines'__group;
-//}
-//
-//////// --- Cast ---
-//////
-//////mixin Cast
-//////{
-//////    object<> $item.
-//////    
-//////    stacksafe constructor $new int:aLength
-//////        = object<>(aLength).
-//////        
-//////    constructor new args:objects
-//////        <= $new int(objects length);
-//////    [
-//////        $self setFields args:objects.
-//////    ]
-//////    
-//////    dispatch => system'core_routines'__castover.
-//////}
+// --- Group ---
+
+public mixin Group
+{
+    object[] items;
+    
+    internal constructor allocate(int len)
+        = new object[](len);
+        
+    constructor load(params object[] objects)
+        <= allocate(objects.Length)
+    {
+        self.setFields(params objects)
+    }
+    
+//    dispatch() => intern system'core_routines'__group;
+}
 
 // --- extensions ---
 
@@ -88,52 +70,4 @@ public extension dynamicOp
 //                    [ ^ Group new(self,object) ]
 //            ].
 //    ]        
-//        
-////    castWith:object
-////    [
-////        if ($nil == object)
-////            [ ^ self ].
-////        
-////        if(self class_ref == Cast)
-////            [ 
-////                int length := self fieldCount.
-////            
-////                var retVal := Cast $new int(length + 1).
-////                                
-////                int i := 0.
-////                
-////                while (i < length)
-////                [
-////                    retVal setField int:i object(self getField int:i).
-////                    
-////                    i := i + 1
-////                ].
-////                
-////                retVal setField int:length object:object.
-////                
-////                ^ retVal
-////            ];
-////            [ 
-////                if(object class_ref == Cast)
-////                    [
-////                        int length := object fieldCount.
-////                    
-////                        var retVal := Cast $new int:(length + 1).
-////                                        
-////                        int i := 0.
-////                        
-////                        while (i < length)
-////                        [
-////                            retVal setField int(i + 1) object(self getField int:i).
-////                            
-////                            i := i + 1
-////                        ].
-////                        
-////                        retVal setField int:0 object:object.
-////                        
-////                        ^ retVal
-////                    ];
-////                    [ ^ Cast new args:(self,object) ]
-////            ].
-////    ]        
 }

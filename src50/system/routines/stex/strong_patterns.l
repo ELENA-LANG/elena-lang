@@ -11,11 +11,6 @@ public StrongSumming<T> : Func<T,object>
         result := defValue
     }
 
-//    constructor()
-//    {
-//        result := T.Default
-//    }
-
     run(Enumerator<T> e)
     {
         super.run(e);
@@ -87,52 +82,52 @@ public StrongSelector<T1, T2> : Enumerator<T2>
     Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
 
-////// --- StrongJoinEnumerator ---
-////
-////public StrongJoinEnumerator<type1, type2, type3> :: Enumerator<type3>
-////{
-////    Enumerator<type1> _left.
-////    Enumerator<type2> _right.
-////
-////    Func<type1,type2,bool>  _filter.
-////    Func<type1,type2,type3> _selector.
-////    
-////    constructor(Func<type1,type2,bool> filter_f, Func<type1,type2,type3> select_f, Enumerator<type1> left_e, Enumerator<type2> right_e)
-////    [
-////        _left := left_e.
-////        _right := right_e.
-////        
-////        _filter := filter_f.
-////        _selector := select_f.
-////    ]
-////    
-////    reset
-////    [
-////        _left reset.
-////        _right reset.
-////    ]
-////    
-////    bool next
-////    [
-////        while(_left next)
-////        [
-////            _right reset.
-////            
-////            while (_right next)
-////            [
-////                if(_filter(_left get, _right get)) 
-////                [
-////                    ^ true.
-////                ]
-////            ]
-////        ].
-////        
-////        ^ false.
-////    ]
-////    
-////    type3 get = _selector(_left get, _right get).
-////    
-////    enumerable => _left.    
-////    
-////    cast T<Enumerator> = Enumerator::{ embeddable dispatch => self. }.
-////}
+// --- StrongJoinEnumerator ---
+
+public StrongJoinEnumerator<T1, T2, T3> : Enumerator<T3>
+{
+    Enumerator<T1> left;
+    Enumerator<T2> right;
+
+    Func<T1,T2,bool> filter;
+    Func<T1,T2,T3>   selector;
+    
+    constructor(Func<T1,T2,bool> filter_f, Func<T1,T2,T3> select_f, Enumerator<T1> left_e, Enumerator<T2> right_e)
+    {
+        left := left_e;
+        right := right_e;
+        
+        filter := filter_f;
+        selector := select_f
+    }
+    
+    reset()
+    {
+        left.reset();
+        right.reset()
+    }
+    
+    bool next()
+    {
+        while(left.next())
+        {
+            right.reset();
+            
+            while (right.next())
+            {
+                if(filter(left.get(), right.get())) 
+                {
+                    ^ true
+                }
+            }
+        };
+        
+        ^ false
+    }
+    
+    T3 get() = selector(left.get(), right.get());
+    
+    enumerable() => left;    
+    
+    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+}

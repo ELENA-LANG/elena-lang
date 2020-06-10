@@ -306,35 +306,7 @@ namespace io
             
             retVal := system'text'UTF16Encoding.toChar(charCode)
         }
-    
-    ////    read(ref<int> aKey)
-    ////    [
-    ////        T<byte,20> aDump.
-    ////        int        aNumberRead := 0.
-    ////        short      anEventType := 0.
-    ////        int        aKeyDown := 0.
-    ////        
-    ////        bool found := false.
-    ////        until (found)
-    ////        [
-    ////            extern()
-    ////            [
-    ////                system'external'KERNEL32 ReadConsoleInputW(theHandle, T<ByteArray>(aDump), 1, &aNumberRead).
-    ////            ].
-    ////
-    ////            byteArrayHelper read(T<ByteArray>(aDump), 0, &anEventType).
-    ////            if (anEventType == 1)
-    ////                [  
-    ////                    byteArrayHelper read(T<ByteArray>(aDump), 4, &aKeyDown).
-    ////                    
-    ////                    found := aKeyDown == 1
-    ////                ];
-    ////                [ found := false ]
-    ////        ].
-    ////                    
-    ////        byteArrayHelper read(T<ByteArray>(aDump), 8, aKey)
-    ////    ]
-    
+        
         get bool KeyAvailable()
         {
             byte  dump[20];
@@ -412,22 +384,6 @@ namespace io
     
         string readLine()
             = self.readWideLine();
-    
-    ////    int
-    ////    [
-    ////        int aRetVal := 0.
-    ////        $self read vint:aRetVal.
-    ////        
-    ////        ^ IntNumber new int:aRetVal
-    ////    ]
-    ////            
-    ////    char
-    ////    [
-    ////        char aRetVal := $0.
-    ////        $self read vchar:aRetVal.
-    ////        
-    ////        ^ CharValue new char:aRetVal
-    ////    ]
     
         close()
         {

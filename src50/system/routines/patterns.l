@@ -114,11 +114,11 @@ public class Filter : Enumerator
         theEnumerator := enumerator
     }
     
-//    constructor new(ExtensionMessage anExtension, Enumerator anEnumerator)
-//    [
-//        theFilter := (:x)[ ^ x~anExtension eval ].
-//        theEnumerator := anEnumerator.
-//    ]
+    constructor new(ExtensionMessage extension, Enumerator enumerator)
+    {
+        theFilter := (x => extension(x));
+        theEnumerator := enumerator
+    }
     
     get() = theEnumerator.get();
     
@@ -138,309 +138,313 @@ public class Filter : Enumerator
     enumerable() => theEnumerator;
 }
 
-//// --- PatternFilter2 ---
-//
-//public class PatternFilter2 :: Enumerator
-//{
-//    T<Func2>      theFilter.
-//    T<Enumerator> theEnumerator.
-//    object        thePrevious.
-//    
-//    constructor new(Func2 aFilter, Enumerator anEnumerator)
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    bool next
-//    [
-//        if (nil == thePrevious)
-//        [
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//        
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false
-//    ]
-//    
-//    reset
-//    [
-//        theEnumerator reset.
-//        thePrevious := nil.
-//    ]
-//    
-//    enumerable => theEnumerator.
-//}
-//
-//// --- PatternFilter3 ---
-//
-//public class PatternFilter3 :: Enumerator
-//{
-//    T<Func3>      theFilter.
-//    T<Enumerator> theEnumerator.
-//    object        thePrevious.
-//    object        theBeforePrev.
-//    
-//    constructor new(Func3 aFilter, Enumerator anEnumerator)
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    reset
-//    [
-//        theEnumerator reset.
-//        thePrevious := nil.
-//    ]
-//    
-//    bool next
-//    [
-//        if (nil == thePrevious)
-//        [
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get
-//        ].
-//                
-//        while (theEnumerator next)
-//        [
-//            if(theFilter(theBeforePrev,thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false
-//    ]
-//    
-//    enumerable => theEnumerator.
-//}
-//
-//// --- PatternFilter4 ---
-//
-//public class PatternFilter4 :: Enumerator
-//{
-//    T<Func4>      theFilter.
-//    T<Enumerator> theEnumerator.
-//    object        thePrevious.
-//    object        theBeforePrev.
-//    object        theBefore2Prev.
-//    
-//    constructor new(Func4 aFilter, Enumerator anEnumerator)
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    reset
-//    [
-//        theEnumerator reset.
-//        thePrevious := nil.
-//    ]
-//    
-//    bool next
-//    [
-//        if(nil == thePrevious)
-//        [
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore2Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//                
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            theBefore2Prev := theBeforePrev.
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false.
-//    ]
-//    
-//    enumerable => theEnumerator.
-//}
-//
-//// --- PatternFilter5 ---
-//
-//public class PatternFilter5 :: Enumerator
-//{
-//    T<Func5>      theFilter.
-//    T<Enumerator> theEnumerator.
-//    object        thePrevious.
-//    object        theBeforePrev.
-//    object        theBefore2Prev.
-//    object        theBefore3Prev.
-//    
-//    constructor new(Func5 aFilter, Enumerator anEnumerator)
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    reset
-//    [
-//        theEnumerator reset.
-//        thePrevious := nil.
-//    ]
-//    
-//    bool next
-//    [
-//        if (nil == thePrevious)
-//        [
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore3Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore2Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            ifnot (theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get.
-//        ].
-//                
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            theBefore3Prev := theBefore2Prev.
-//            theBefore2Prev := theBeforePrev.
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false
-//    ]
-//    
-//    enumerable => theEnumerator.
-//}
-//
-//// --- PatternFilter6 ---
-//
-//public class PatternFilter6 :: Enumerator
-//{
-//    T<Func6>      theFilter.
-//    T<Enumerator> theEnumerator.
-//    object        thePrevious.
-//    object        theBeforePrev.
-//    object        theBefore2Prev.
-//    object        theBefore3Prev.
-//    object        theBefore4Prev.
-//    
-//    constructor new(Func6 aFilter, Enumerator anEnumerator)
-//    [
-//        theFilter := aFilter.
-//        theEnumerator := anEnumerator.
-//    ]
-//    
-//    get = theEnumerator get.
-//    
-//    reset
-//    [
-//        theEnumerator reset.
-//        thePrevious := nil.
-//    ]
-//    
-//    bool next
-//    [
-//        if (nil == thePrevious)
-//        [
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore4Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore3Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBefore2Prev := theEnumerator get.
-//            
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            theBeforePrev := theEnumerator get.
-//    
-//            ifnot(theEnumerator next)
-//                [ ^ false ].
-//            
-//            thePrevious := theEnumerator get
-//        ].
-//                                
-//        while (theEnumerator next)
-//        [
-//            if (theFilter(theBefore4Prev,theBefore3Prev,theBefore2Prev,theBeforePrev,thePrevious,theEnumerator get))
-//                [ ^ true ].
-//            
-//            theBefore4Prev := theBefore3Prev.
-//            theBefore3Prev := theBefore2Prev.
-//            theBefore2Prev := theBeforePrev.
-//            theBeforePrev := thePrevious.
-//            thePrevious := theEnumerator get
-//        ].
-//        
-//        ^ false
-//    ]
-//    
-//    enumerable => theEnumerator.
-//}
+// --- PatternFilter2 ---
+
+public class PatternFilter2 : Enumerator
+{
+    Func2      filter;
+    Enumerator enumerator;
+    object     previous;
+    
+    constructor new(Func2 filter, Enumerator enumerator)
+    {
+        this filter := filter;
+        this enumerator := enumerator;
+    }
+    
+    get() = enumerator.get();
+    
+    bool next()
+    {
+        if (nil == previous)
+        {
+            ifnot (enumerator.next())
+                { ^ false };
+            
+            previous := enumerator.get();
+        };
+        
+        while (enumerator.next())
+        {
+            if (filter(previous,enumerator.get()))
+                { ^ true };
+            
+            previous := enumerator.get()
+        };
+        
+        ^ false
+    }
+    
+    reset()
+    {
+        enumerator.reset();
+        previous := nil;
+    }
+    
+    enumerable() => enumerator;
+}
+
+// --- PatternFilter3 ---
+
+public class PatternFilter3 : Enumerator
+{
+    Func3      filter;
+    Enumerator enumerator;
+    object     previous;
+    object     beforePrev;
+    
+    constructor new(Func3 filter, Enumerator enumerator)
+    {
+        this filter := filter;
+        this enumerator := enumerator;
+        previous := nil;
+    }
+    
+    get() = enumerator.get();
+    
+    reset()
+    {
+        enumerator.reset();
+        previous := nil
+    }
+    
+    bool next()
+    {
+        if (nil == previous)
+        {
+            ifnot (enumerator.next())
+                { ^ false };
+            
+            beforePrev := enumerator.get();
+    
+            ifnot (enumerator.next())
+                { ^ false };
+            
+            previous := enumerator.get()
+        };
+                
+        while (enumerator.next())
+        {
+            if(filter(beforePrev,previous,enumerator.get()))
+                { ^ true };
+            
+            beforePrev := previous;
+            previous := enumerator.get()
+        };
+        
+        ^ false
+    }
+    
+    enumerable() => enumerator;
+}
+
+// --- PatternFilter4 ---
+
+public class PatternFilter4 : Enumerator
+{
+    Func4       filter;
+    Enumerator  enumerator;
+    object      previous;
+    object      beforePrev;
+    object      before2Prev;
+    
+    constructor new(Func4 filter, Enumerator enumerator)
+    {
+        this filter := filter;
+        this enumerator := enumerator;
+        previous := nil;
+    }
+    
+    get() = enumerator.get();
+    
+    reset()
+    {
+        enumerator.reset();
+        previous := nil
+    }
+    
+    bool next()
+    {
+        if(nil == previous)
+        {
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            before2Prev := enumerator.get();
+            
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            beforePrev := enumerator.get();
+    
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            previous := enumerator.get()
+        };
+                
+        while (enumerator.next())
+        {
+            if (filter(before2Prev,beforePrev,previous,enumerator.get()))
+                { ^ true };
+            
+            before2Prev := beforePrev;
+            beforePrev := previous;
+            previous := enumerator.get()
+        };
+        
+        ^ false
+    }
+    
+    enumerable() => enumerator;
+}
+
+// --- PatternFilter5 ---
+
+public class PatternFilter5 : Enumerator
+{
+    Func5      filter;
+    Enumerator enumerator;
+    object     previous;
+    object     beforePrev;
+    object     before2Prev;
+    object     before3Prev;
+    
+    constructor new(Func5 filter, Enumerator enumerator)
+    {
+        this filter := filter;
+        this enumerator := enumerator;
+        previous := nil;
+    }
+    
+    get() = enumerator.get();
+    
+    reset()
+    {
+        enumerator.reset();
+        previous := nil
+    }
+    
+    bool next()
+    {
+        if (nil == previous)
+        {
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            before3Prev := enumerator.get();
+            
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            before2Prev := enumerator.get();
+            
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            beforePrev := enumerator.get();
+    
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            previous := enumerator.get();
+        };
+                
+        while (enumerator.next())
+        {
+            if (filter(before3Prev,before2Prev,beforePrev,previous,enumerator.get()))
+                { ^ true };
+            
+            before3Prev := before2Prev;
+            before2Prev := beforePrev;
+            beforePrev := previous;
+            previous := enumerator.get()
+        };
+        
+        ^ false
+    }
+    
+    enumerable() => enumerator();
+}
+
+// --- PatternFilter6 ---
+
+public class PatternFilter6 : Enumerator
+{
+    Func6      filter;
+    Enumerator enumerator;
+    object     previous;
+    object     beforePrev;
+    object     before2Prev;
+    object     before3Prev;
+    object     before4Prev;
+    
+    constructor new(Func6 filter, Enumerator enumerator)
+    {
+        this filter := filter;
+        this enumerator := enumerator;
+        previous := nil;
+    }
+    
+    get() = enumerator.get();
+    
+    reset()
+    {
+        enumerator.reset();
+        previous := nil
+    }
+    
+    bool next()
+    {
+        if (nil == previous)
+        {
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            before4Prev := enumerator.get();
+            
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            before3Prev := enumerator.get();
+            
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            before2Prev := enumerator.get();
+            
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            beforePrev := enumerator.get();
+    
+            ifnot(enumerator.next())
+                { ^ false };
+            
+            previous := enumerator.get();
+        };
+                                
+        while (enumerator.next())
+        {
+            if (filter(before4Prev,before3Prev,before2Prev,beforePrev,previous,enumerator.get()))
+                { ^ true };
+            
+            before4Prev := before3Prev;
+            before3Prev := before2Prev;
+            before2Prev := beforePrev;
+            beforePrev := previous;
+            previous := enumerator.get()
+        };
+        
+        ^ false
+    }
+    
+    enumerable() => enumerator;
+}
 
 // --- Selecting ---
 
-class Selector : Enumerator
+public class Selector : Enumerator
 {
     Func1      theSelector;
     Enumerator theEnumerator;
@@ -469,48 +473,47 @@ class Selector : Enumerator
     enumerable() => theEnumerator;
 }
 
-//// --- Repeater ---
-//
-//public class Repeater :: Enumerator
-//{
-//    int      theMin.
-//    int      theMax.
-//    int      theCurrent.
-//    T<Func1> theFunc.
-//
-//    constructor new(int minValue, int maxValue, Func1 aRepetition)
-//    [
-//        theFunc := aRepetition.
-//        theMin := minValue.
-//        theMax := maxValue.
-//        theCurrent := theMin - 1.
-//    ]
-//    
-//    constructor new(int minValue, int maxValue, ExtensionMessage anExtension)
-//    [
-//        theFunc := (:x)[ ^ x~anExtension eval ].
-//        theMin := minValue.
-//        theMax := maxValue.
-//        theCurrent := theMin - 1.
-//    ]
-//
-//
-//    get = theFunc(theCurrent).
-//    
-//    reset
-//    [
-//        theCurrent := theMin - 1.
-//    ]
-//    
-//    bool next
-//    [
-//        theCurrent := theCurrent + 1.
-//        
-//        ^ (theCurrent < theMax).
-//    ]
-//    
-//    enumerable = Range from:theMin to:theMax.
-//}
+// --- Repeater ---
+
+public class Repeater : Enumerator
+{
+    int      min;
+    int      max;
+    int      current;
+    Func1    func;
+
+    constructor new(int minValue, int maxValue, Func1 repetition)
+    {
+        func := repetition;
+        min := minValue;
+        max := maxValue;
+        current := min - 1
+    }
+    
+    constructor new(int minValue, int maxValue, ExtensionMessage extension)
+    {
+        func := (x => extension(x));
+        min := minValue;
+        max := maxValue;
+        current := min - 1;
+    }
+
+    get() = func(current);
+    
+    reset()
+    {
+        current := min - 1
+    }
+    
+    bool next()
+    {
+        current := current + 1;
+        
+        ^ (current < max)
+    }
+    
+    enumerable() = Range.for(min, max);
+}
 
 // --- ZipEnumerator ---
 
@@ -529,8 +532,8 @@ public class ZipEnumerator : Enumerator
         theEnumerator2 := enum2;
     }
     
-//    constructor new(ExtensionMessage ext, Enumerator enum1, Enumerator enum2)
-//        <= new((:n:m)(n~ext eval:m), enum1, enum2).
+    constructor new(ExtensionMessage ext, Enumerator enum1, Enumerator enum2)
+        <= new((n,m => ext(n,m)), enum1, enum2);
     
     get() = theZipper(theEnumerator1.get(), theEnumerator2.get());
     
@@ -571,8 +574,8 @@ public class RangeEnumerator : Enumerator
     constructor new(start, end, step)
         <= new(new Variable(), start, end, step);
 
-//    constructor from:aStart to:anEnd
-//        <= for:(Variable new) from:aStart to:anEnd by:1.
+    constructor new(start, end)
+        <= new(new Variable(), start, end, 1);
         
     reset() 
     {
@@ -603,58 +606,60 @@ public class RangeEnumerator : Enumerator
     enumerable() = theVariable;
 }
 
-//// --- IntervalEnumerator ---
-//
-//public class IntervalEnumerator :: Enumerator
-//{
-//    object theVariable.
-//    object theStart.
-//    object theEnd.
-//    object theStep.
-//    
-//    bool   theForward.
-//    
-//    constructor for:aVariable from:aStart till:anEnd by:aStep
-//    [
-//        theVariable := aVariable.
-//        theStart := aStart.
-//        theEnd := anEnd.
-//        theStep := aStep.
-//        
-//        theForward := (aStart < anEnd).
-//        
-//        self reset.
-//    ]
-//
-//    constructor from:aStart till:anEnd by:aStep
-//        <= for:(Variable new) from:aStart till:anEnd by:aStep.
-//
-//    constructor from:aStart till:anEnd
-//        <= for:(Variable new) from:aStart till:anEnd by:1.
-//        
-//    reset 
-//    [
-//        theVariable value := theStart.
-//
-//        if(theForward)
-//            [ theVariable reduce:theStep ];
-//            [ theVariable append:theStep ]
-//    ]    
-//    
-//    get = theVariable value.
-//    
-//    bool next
-//    [
-//        if(theForward )
-//            [ theVariable append:theStep. ^ (theVariable < theEnd) ].
-//        
-//        theVariable reduce:theStep. 
-//        
-//        ^ (theVariable > theEnd)
-//    ]
-//    
-//    enumerable = theVariable.
-//}
+// --- IntervalEnumerator ---
+
+public class IntervalEnumerator : Enumerator
+{
+    object variable;
+    object start;
+    object end;
+    object step;
+    
+    bool   forward;
+    
+    constructor new(variable, start, end, step)
+    {
+        this variable := variable;
+        this start := start;
+        this end := end;
+        this step := step;
+        
+        forward := (start < end);
+        
+        self.reset()
+    }
+
+    constructor new(start, end, step)
+        <= new(new Variable(), start, end, step);
+
+    constructor new(start, end)
+        <= new(new Variable(), start, end, 1);
+        
+    reset() 
+    {
+        variable.Value := start;
+
+        if(forward) 
+        {
+            variable.reduce(step)
+        }
+        else variable.append(step)
+    }    
+    
+    get() = variable.Value;
+    
+    bool next()
+    {
+        if(forward )
+            { variable.append(step); ^ (variable < end) };
+        
+        variable.reduce(step); 
+        
+        ^ (variable > end)
+    }
+    
+    enumerable() = variable;
+}
 
 // --- GroupingEnumerator ---
 
@@ -674,8 +679,8 @@ public class GroupingEnumerator : Enumerator
         self.reset()
     }
     
-//    constructor new(ExtensionMessage fn, Enumerator enumerator)
-//        <= new((:x)(x~fn eval), enumerator).
+    constructor new(ExtensionMessage fn, Enumerator enumerator)
+        <= new((x => fn(x)), enumerator);
     
     reset()
     {
@@ -733,8 +738,8 @@ public class OrderingEnumerator : Enumerator
         self.reset()
     }
     
-//    constructor new(ExtensionMessage fn, Enumerator enumerator)
-//        <= new((:x:y)(x~fn eval:y), enumerator).
+    constructor new(ExtensionMessage fn, Enumerator enumerator)
+        <= new((x,y => fn(x, y)), enumerator);
     
     reset()
     {
@@ -804,53 +809,53 @@ public class Accumulating : BasePattern
     function(param) { theResult.Value := theOperation(theResult.Value, param) }
 }
 
-//// --- JoinEnumerator ---
-//
-//public class JoinEnumerator :: Enumerator
-//{
-//    T<Enumerator> _left.
-//    T<Enumerator> _right.
-//
-//    T<Func2> _filter.
-//    T<Func2> _selector.
-//
-//    constructor new(Func2 filter_f, Func2 select_f, Enumerator left_e, Enumerator right_e)
-//    [
-//        _left := left_e.
-//        _right := right_e.
-//        
-//        _filter := filter_f.
-//        _selector := select_f.
-//    ]
-//    
-//    reset
-//    [
-//        _left reset.
-//        _right reset.
-//    ]
-//    
-//    bool next
-//    [
-//        while(_left next)
-//        [
-//            _right reset.
-//            
-//            while (_right next)
-//            [
-//                if(_filter(_left get, _right get)) 
-//                [
-//                    ^ true.
-//                ]
-//            ]
-//        ].
-//        
-//        ^ false.
-//    ]
-//    
-//    get = _selector(_left get, _right get).
-//    
-//    enumerable => _left.
-//}
+// --- JoinEnumerator ---
+
+public class JoinEnumerator : Enumerator
+{
+    Enumerator left;
+    Enumerator right;
+
+    Func2      filter;
+    Func2      selector;
+
+    constructor new(Func2 filter_f, Func2 select_f, Enumerator left_e, Enumerator right_e)
+    {
+        left := left_e;
+        right := right_e;
+        
+        filter := filter_f;
+        selector := select_f;
+    }
+    
+    reset()
+    {
+        left.reset();
+        right.reset()
+    }
+    
+    bool next()
+    {
+        while(left.next())
+        {
+            right.reset();
+            
+            while (right.next())
+            {
+                if(filter(left.get(), right.get())) 
+                {
+                    ^ true
+                }
+            }
+        };
+        
+        ^ false
+    }
+    
+    get() = selector(left.get(), right.get());
+    
+    enumerable() => left;
+}
 
 // --- patternOp ---
 
@@ -861,10 +866,4 @@ public extension patternOp
 
     last(int counter)
         = TopFilter.new(counter, self.Length - counter, cast Enumerator(self.enumerator()));
-
-//    orderBy:orderFunc
-//        = OrderingEnumerator new(orderFunc, T<Enumerator>(self enumerator)).
-//
-////    filter pattern:patternFun
-////        = Filter new(patternFun, T<Enumerator>(self enumerator)).
 }

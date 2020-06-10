@@ -111,6 +111,29 @@ labErr:
   
 end
 
+procedure __object."getField$system@Object$system@IntNumber[2]"
+
+  peeksi  1
+  flag
+  and     elStructure
+  elsen   labErr 0
+  len
+  peeksi  2
+  notless labErr
+  lessn   labErr 0
+  load
+  peeksi  1
+  get
+  quitn   2
+
+labErr:
+  open 1
+  pushr class : system'OutOfRangeException
+  pushr mssgconst : "new[1]"
+  throw
+  
+end
+
 procedure __object."respondTo$system@Object$system@Message[2]"
 
   peeksi   2 // ; get message
@@ -3247,7 +3270,7 @@ procedure __utf16encoder."charCount$system@WideString$@system@ref#1&system@IntNu
   dec      1
   pushd
   pusha
-  callextr api : strcharlen
+  callextr api : wstrcharlen
   freei    2
   peeksi   3
   save

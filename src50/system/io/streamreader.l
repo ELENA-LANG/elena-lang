@@ -184,42 +184,47 @@ namespace io
             ^ line
         }
         
-    //    wide readWideLine
-    //    [
-    //        wide aLine := emptyWideLiteral.
-    //        wide nl := T<wide>(theNewLineConstant).
-    //        int  nl_len := 0.
-    //        nl readLengthTo(&nl_len).
-    //        
-    //        int aLength := -1.
-    //        while (aLength == -1)
-    //        [
-    //            theOutput indexOf(0, nl, &aLength).
-    //            
-    //            if(aLength == -1)
-    //                [
-    //                    T<char,64> aBuffer.
-    //                    int        aBufferLength := 64.
-    //                     
-    //                    self read(T<CharArray>(aBuffer), &aBufferLength).
-    //                    if(aBufferLength == 0)
-    //                        [ aLength := -2 ];  // !! to indicate the eof
-    //                        [ theOutput write(T<CharArray>(aBuffer), aBufferLength) ]
-    //                ]
-    //        ].
-    //        
-    //        if(aLength < 0) 
-    //            [
-    //                aLine := T<wide>(theOutput).
-    //                theOutput clear
-    //            ];
-    //            [ 
-    //                aLine := theOutput WideSubstring(0, aLength).
-    //                theOutput delete(0, aLength + nl_len)
-    //            ].            
-    //
-    //        ^ aLine
-    //    ]
+        wide readWideLine()
+        {
+            wide line := emptyWideString;
+            wide nl := cast wide(theNewLineConstant);
+            int  nl_len := nl.Length;
+            
+            int len := -1;
+            while (len == -1)
+            {
+                theOutput.indexOf(0, nl, ref len);
+                
+                if(len == -1)
+                {
+                    char buffer[64];
+                    int  bufferLen := 64;
+
+                    self.read(buffer, ref bufferLen);
+                    if(bufferLen == 0)
+                    { 
+                        len := -2 // !! to indicate the eof 
+                    }
+                    else
+                    {
+                        theOutput.write(buffer, bufferLen)
+                    }                                          
+                }
+            };
+
+            if(len < 0) 
+            {
+                line := cast wide(theOutput);
+                theOutput.clear();
+            }
+            else
+            {
+                line := theOutput.WideSubstring(0, len);
+                theOutput.delete(0, len + nl_len)
+            };
+    
+            ^ line
+        }
     }
 
 }

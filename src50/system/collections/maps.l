@@ -115,9 +115,9 @@ namespace collections
         /// Clones a dictionary
         clone() 
         {
-            auto list := new Dictionary();
+            auto list := new Map<TKey, TValue>();
     
-            enumerator it := theList.enumerator();
+            auto it := theList.enumerator();
             while (it.next())
             {
                 var item := it.get();

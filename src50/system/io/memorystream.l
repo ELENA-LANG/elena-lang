@@ -168,11 +168,10 @@ namespace io
             thePosition := 0
         }
         
-    //    stacksafe constructor new int:anIndex int:aLength bytearray:anArray
-    //        <= new;
-    //    [
-    //        $self $write(anArray, anIndex, aLength).
-    //    ]
+        constructor load(int index, int length, byte[] array)
+        {
+            self.write(array, index, length)
+        }
         
         write(byte[] dump, int length)
         {

@@ -1,33 +1,14 @@
 import system'collections;
 
-////#symbol $classControl =
-////{
-////    #method(stacksafe) readLength : anObject &vint:aLength        
-////        => system'core_routines'arrptr_getLen.        
-////}.
-
 // --- classOp ---
 
 public extension classROp
 {
-//    int fieldCount
-//    [
-//        int aLength := 0.
-//        system'core_routines'__object readLength(self, &aLength).
-//        
-//        ^ aLength
-//    ]     
-//
-//    readFieldCountTo(ref<int> retVal)
-//    [
-//        system'core_routines'__object readLength(self, retVal)
-//    ]
-
     setField(int index, object object)
         => intern system'core_routines'__object;
         
-//    getField(int anIndex)
-//        => system'core_routines'__object.
+    getField(int index)
+        => system'core_routines'__object;
         
     bool respondTo(Message m)
         => intern system'core_routines'__object;
@@ -92,32 +73,3 @@ public extension classROp
         ^ self
     }
 }
-
-////// --- manifestOp ---
-////
-////extension manifestOp
-////{
-////    packageNamespace
-////        => system'core_routines'__object.
-////        
-////    packageName
-////        => system'core_routines'__object.
-////        
-////    packageVersion
-////        => system'core_routines'__object.
-////        
-////    packageAuthor
-////        => system'core_routines'__object.
-////}
-////
-//////// --- subjectOp ---
-//////
-//////#class(extension:subject) subjectROp
-//////{
-//////    #method(stacksafe) $equalSubject : anObject
-//////        => system'core_routines'subject_equal.
-//////    
-//////    /// obsolete
-//////    #method name
-//////        = self literal.
-//////}

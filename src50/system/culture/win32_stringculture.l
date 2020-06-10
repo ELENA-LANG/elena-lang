@@ -165,13 +165,4 @@ namespace culture
             ^ retVal
         }
     }
-    //
-    //public extension weakStringCultureOp
-    //{
-    //    toUpper(Locale locale)
-    //        = stringCultureDispatcher.upperCase(self, locale);
-    //    
-    //    toLower(Locale locale)
-    //        = stringCultureDispatcher.lowerCase(self, locale);
-    //}
 }

@@ -19,9 +19,7 @@ namespace io
     
         wide cast() = thePath;
     
-    //    T<literal> rprop path :: thePath.
-    
-        string Printable = thePath;
+        string toPrintable() = thePath;
         
         TextReader textreader() = fileControl.newReader(thePath);
         

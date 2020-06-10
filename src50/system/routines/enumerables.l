@@ -5,8 +5,8 @@ import system'collections;
 public ifOrdered
     = (f,l => f < l);
 
-////public symbol ifDecrescent
-////    = (:aFormer:aLater) [ ^aFormer > aLater ].
+public ifDecrescent
+    = (f,l => f > l);
 
 // --- literalSplitOp ---
 
@@ -65,73 +65,73 @@ public extension stringListOp : String
     }
 }
 
-//// --- wideListOp ---
-//
-//public extension<wide> wideListOp
-//{
-//    T<Array> split
-//        <= split($32).
-//    
-//    T<Array> split(char aChar)
-//    [
-//        T<ArrayList> aList := ArrayList new.
-//        int          aStart := 0.
-//        int          anIndex := 0.
-//        int          aCharLen := aChar length.
-//
-//        int          aLiteralLen := self length.
-//                
-//        while (anIndex >= 0)
-//        [
-//            self indexOf(aStart, aChar, &anIndex).
-//            if (-1 != anIndex)
-//            [
-//                aList append(self Substring(aStart, anIndex - aStart)).
-//                aStart := anIndex + aCharLen
-//            ];
-//            [
-//                aList append(self Substring(aStart, aLiteralLen - aStart))
-//            ]
-//        ].
-//        
-//        ^ aList
-//    ]
-//    
-//    T<Array> split(wide aValue)
-//    [
-//        T<ArrayList> aList := ArrayList new.
-//        int          aStart := 0.
-//        int          anIndex := 0.
-//        int          aLiteralLen := self length.
-//        int          aValueLen := aValue length.
-//        
-//        while (anIndex >= 0)
-//        [
-//            self indexOf(aStart, aValue, &anIndex).
-//            if (-1 != anIndex)
-//            [
-//                aList append(self Substring(aStart, anIndex - aStart)).
-//                aStart := anIndex + aValueLen
-//            ];
-//            [
-//                aList append(self Substring(aStart, aLiteralLen - aStart))
-//            ]
-//        ].
-//        
-//        ^ aList.
-//    ]
-//}
+// --- wideListOp ---
 
-//// --- enumeratorOp ---
-//
-////public extension enumeratorOp : Enumerator
-////{
-//////    forEach(Func1 aFunction)
-//////        = aFunction run(self).
-//////
-//////    selectBy:aSelector
-//////        = Selector new(aSelector, self).
-////}
+public extension wideListOp : WideString
+{
+    Array split()
+        = self.splitBy($32);
+
+    Array splitBy(char ch)
+    {
+        ArrayList list := new ArrayList();
+        int       start := 0;
+        int       index := 0;
+        int       chLen := ch.Length;
+        
+        while (index >= 0)
+        {
+            self.indexOf(start, ch, ref index);
+            if (-1 != index)
+            {
+                list.append(self.Substring(start,index - start));
+                start := index + chLen
+            }
+            else
+            {
+                list.append(self.Substring(start))
+            }
+        };
+        
+        ^ list
+    }
+        
+    Array splitBy(wide value)
+    {
+        ArrayList list := new ArrayList();
+        int       start := 0;
+        int       index := 0;
+        int       valueLen := value.Length;
+        int       literalLen := self.Length;
+        
+        while (index >= 0)
+        {
+            self.indexOf(start, value, ref index);
+            if (-1 != index)
+            {
+                list.append(self.Substring(start, index - start));
+                start := index + valueLen
+            }
+            else
+            {
+                list.append(self.Substring(start, literalLen - start))
+            }
+        };
+        
+        ^ list
+    }
+}
+
+// --- enumeratorOp ---
+
+public extension enumeratorOp : Enumerator
+{
+    forEach(Func1 f)
+        = f.run(self);
+
+    selectBy(selector)
+        = Selector.new(selector, self);
+}
 
 // --- enumerableOp ---
 
@@ -140,8 +140,8 @@ public extension enumerableOp
     forEach(Func1 f)
         = f.run(cast Enumerator(self.enumerator()));
 
-//    forEach(ExtensionMessage anExtMessage)
-//        = self~enumerableOp forEach(:n)(n~anExtMessage eval).
+    forEach(ExtensionMessage extMessage)
+        = self.forEach:(n => extMessage(n));
         
     forEach(fn)
         = self.forEach:(n){ fn(n) };
@@ -149,47 +149,29 @@ public extension enumerableOp
     selectBy(selector)
         = Selector.new(selector, cast Enumerator(self.enumerator()));
 
-////    forEachPair(object object, ext_mssg anExtMessage)
-////        = self~enumerableOp forEachPair(object, (:o:n)(o~anExtMessage eval:n)).
-//    
-//    forEachPair(object object, Func2 f)
-//      = f.run(object, cast Enumerator(self.enumerator()));
-//    
-////    multi forEachPair:object:fn
-////        = self~enumerableOp forEachPair(object, (:o:n)[ fn(o,n) ]).
-//
-////    runFor(object param) eachPair(Func2 f)
-////        = f run(param, T<Enumerator>(self enumerator)).
-////
-//////    runFor(object aParam) eachPair(ExtensionMessage anExtMessage)
-//////        = self~enumerableOp runFor:aParam eachPair(:n:m)(n~anExtMessage eval:m).
-//////
-//////    multi runFor:aParam eachPair:aFunction
-//////        = self~enumerableOp runFor:aParam eachPair(:n:m)(aFunction(n,m)).
+    forEachPair(object object, ExtensionMessage extMessage)
+        = self.forEachPair(object, (o,n => extMessage(o,n)));
+    
+    forEachPair(object object, Func2 f)
+      = f.run(object, cast Enumerator(self.enumerator()));
+    
+    forEachPair(object,f)
+        = self.forEachPair(object, (o,n){ f(o,n) });
 
     seekEach(Func1 f)
         = f.retrieve(cast Enumerator(self.enumerator()));
 
-////    seekEach(ExtensionMessage anExtMessage)
-////        = self~enumerableOp seekEach(:n)(n~anExtMessage eval).
-////        
-////    seekEach value:v
-////        = (:x)(v equal:x) retrieve enumerator:(self enumerator).        
-////        
-////    multi seekEach:fn
-////        = self~enumerableOp seekEach(:n)[ fn(n) ].
+    seekEach(ExtensionMessage extMessage)
+        = self.seekEach:(n => extMessage(n));
+        
+    seekEach(fn)
+        = self.seekEach:(n => fn(n));
 
     seekEach(object param, Func2 f)
         = f.retrieve(param, cast Enumerator(self.enumerator()));
 
-//    seekFor(Object param) eachPair(ExtensionMessage ext)
-//        = self~enumerableOp seekFor:param eachPair(:n:m)( n~ext eval(m) ).
-//
-////    multi seekFor:param eachPair:fn
-////        = self~enumerableOp seekFor:param eachPair(:n:m)( fn(n,m) ).
-//
-////    safeSeek : aValue
-////        = (:x)[ ^aValue safeEqual:x ] retrieve enumerator:(self enumerator).
+    safeSeek(val)
+        = (x => val.safeEqual(x)).retrieve(cast Enumerator(self.enumerator()));
 
     seekFor(val)
         = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
@@ -197,28 +179,25 @@ public extension enumerableOp
     bool ifExists(val)
         = nil != self.seekFor(val);
 
-//////    equal enumerable:list
-//////    [
-//////        ifnot (self length == list length)
-//////            [ ^ false ].
-//////            
-//////        enumerator it1 := self enumerator.
-//////        enumerator it2 := list enumerator.
-//////        
-//////        while (it1 next)
-//////        [
-//////            it2 next.
-//////            
-//////            ifnot (it1 get; equal(it2 get))
-//////                [ ^ false ]
-//////        ].
-//////        
-//////        ^ true
-//////    ]
-////             
-////    sequenceEqual:list
-////        = self~enumerableOp equal enumerable:list.
-                                                  
+    equal(Enumerable list)
+    {
+        ifnot (self.Length == list.Length)
+            { ^ false };
+            
+        Enumerator it1 := self.enumerator();
+        Enumerator it2 := list.enumerator();
+        
+        while (it1.next())
+        {
+            it2.next();
+            
+            ifnot (it1.get().equal(it2.get()))
+                { ^ false }
+        };
+        
+        ^ true
+    }
+             
     get FirstMember()
     {
         auto en := cast Enumerator(self.enumerator());
@@ -312,8 +291,8 @@ public extension enumerableOp
         ^ true
     }
     
-//    allMatchedBy(ExtensionMessage extMessage)
-//        = self~enumerableOp allMatchedBy(:n)(n~extMessage eval).
+    allMatchedBy(ExtensionMessage extMessage)
+        = self.allMatchedBy:(n => extMessage(n));
 
     summarize(var)
     {
@@ -328,35 +307,29 @@ public extension enumerableOp
     filterBy(Func1 selector)
         = Filter.new(selector, cast Enumerator(self.enumerator()));
         
-//    filterBy(Func2 aSelector)
-////        = PatternFilter2 new(aSelector, T<Enumerator>(self enumerator)).
-////        
-////    filterBy(Func3 aSelector)
-////        = PatternFilter3 new(aSelector, T<Enumerator>(self enumerator)).
-////        
-////    filterBy(Func4 aSelector)
-////        = PatternFilter4 new(aSelector, T<Enumerator>(self enumerator)).
-////        
-////    filterBy(Func5 aSelector)
-////        = PatternFilter5 new(aSelector, T<Enumerator>(self enumerator)).
-////        
-////    filterBy(Func6 aSelector)
-////        = PatternFilter6 new(aSelector, T<Enumerator>(self enumerator)).
+    filterBy(Func2 selector)
+        = PatternFilter2.new(selector, cast Enumerator(self.enumerator()));
+        
+    filterBy(Func3 selector)
+        = PatternFilter3.new(selector, cast Enumerator(self.enumerator()));
+        
+    filterBy(Func4 selector)
+        = PatternFilter4.new(selector, cast Enumerator(self.enumerator()));
+        
+    filterBy(Func5 selector)
+        = PatternFilter5.new(selector, cast Enumerator(self.enumerator()));
+        
+    filterBy(Func6 selector)
+        = PatternFilter6.new(selector, cast Enumerator(self.enumerator()));
         
     repeatTill(n)
         = RangeEnumerator.new(self, n - 1, 1);
 
-//    repeatTo:n
-//        = RangeEnumerator from:self to:n by:1.
+    repeatTo(n)
+        = RangeEnumerator.new(self,n, 1);
 
     top(counter)
         = TopFilter.new(cast int(counter), cast Enumerator(self.enumerator()));
-        
-//    till:max repeat:aRepeater
-//        = Repeater new(self, max, aRepeater).
-//        
-//    to:max repeat:aRepeater
-//        = Repeater new(self, max + 1, aRepeater).
         
     accumulate(variable, operation)
     {
@@ -365,9 +338,6 @@ public extension enumerableOp
         ^ variable.Value
     }
     
-////    accumulateWith:operation 
-////        = self~enumerableOp accumulate(Variable new) with:operation.        
-        
     zipBy(enumerable, zipper)
         = ZipEnumerator.new(zipper, cast Enumerator(self.enumerator()), cast Enumerator(enumerable.enumerator()));
 
@@ -380,8 +350,8 @@ public extension enumerableOp
     groupBy(groupFunc)
         = GroupingEnumerator.new(groupFunc, cast Enumerator(self.enumerator()));
         
-//    join(object list) on(Func2 filter_f) selectBy(Func2 select_f)
-//        = JoinEnumerator new(filter_f, select_f, T<Enumerator>(self enumerator), T<Enumerator>(list enumerator)).        
+    joinBy(object list, Func2 filter_f, Func2 select_f)
+        = JoinEnumerator.new(filter_f, select_f, cast Enumerator(self.enumerator()), cast Enumerator(list.enumerator()));        
 }
 
 // --- indexableOp ---
@@ -421,9 +391,6 @@ public extension indexableOp<T>
 
 public extension indexableOp
 {
-//////    exchange : anIndex1 : anIndex2
-//////        = self~indexableOp exchange int:anIndex1 int:anIndex2.
-        
     exchange(int i1, int i2)
     {
         Indexer indexer := self.indexer();
@@ -441,9 +408,6 @@ public extension indexableOp
         indexer.set:o2
     }
     
-//    forEvery(Func1 fn)
-//        = self~indexableOp forEvery(:n)<int>(fn(n)).
-    
     int indexOfElement(element)
     {
         Indexer it := self.indexer();
@@ -459,24 +423,24 @@ public extension indexableOp
         ^ -1
     }
     
-//////    #method deepClone
-//////    [
-//////        #var aCopy := self clone.
-//////        
-//////        #var(indexer)aIndexer := aCopy indexer.
-//////        
-//////        #loop (aIndexer available)?
-//////        [
-//////            aIndexer set:(aIndexer get clone).
-//////            
-//////            aIndexer append &index:1.
-//////        ].
-//////        
-//////        ^ aCopy.
-//////    ]
-//        
-////    populate(ExtensionMessage ext_mssg)
-////        = self~indexableOp populate(:n)<int>[ ^n~ext_mssg get ].
+    deepClone()
+    {
+        var copy := self.clone();
+        
+        Indexer indexer := copy.indexer();
+        
+        while(indexer.Available)
+        {
+            indexer.set(indexer.get().clone());
+            
+            indexer.appendIndex(1)
+        };
+        
+        ^ copy
+    }
+        
+    populate(ExtensionMessage ext_mssg)
+        = self.populate:(n => ext_mssg(n));
 
     populate(Func1 f)
     {
@@ -519,28 +483,21 @@ public extension indexableOp
 
     sort(Func2 compareFunc)
     {
-        var a := new IndexerSortingAgent(self);
-        
-        QuickSorting.sort(/*new IndexerSortingAgent(self)*/a, compareFunc);
+        QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
     }
     
     ascendant()
-//        = self.clone().sort(ifOrdered);
-    {
-        var copy := self.clone();
-        
-        ^ copy.sort(ifOrdered)
-    }
+        = self.clone().sort(ifOrdered);
 
     isAscendant()
         = self.isSorted(ifOrdered);
 
-//    Subarray(int index, int length)
-//    {
-//        auto it := cast Indexer(self.indexer());
-//        
-//        ^ Array.allocate(length).populate:(int i){ it.Index := index + i; ^ it.get()}
-//    }
+    Subarray(int index, int length)
+    {
+        auto it := cast Indexer(self.indexer());
+        
+        ^ Array.allocate(length).populate:(int i){ it.Index := index + i; ^ it.get()}
+    }
     
     sequenceEqual(array)
     {
