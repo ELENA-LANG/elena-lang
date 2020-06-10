@@ -15,7 +15,6 @@ public sealed const struct HInstance
         
         theHandle := h
     }
-//        <= new &int:(system'external'KERNEL32 GetModuleHandleW &int:0).
 }
 
 // --- HINSTANCE ---
@@ -33,18 +32,6 @@ public sealed struct MSG
     int    theTime;
     int    theX;
     int    theY;    
-    
-//    embeddable constructor new    
-//    [
-//        theMessage := 0.
-//    ]
-//    
-//    int rvprop message :: readMessageTo.
-//    
-//    stacksafe readMessageTo vint:aMessage
-//    [
-//        aMessage int := theMessage.
-//    ]
 }
 
 // --- CREATESTRUCT ---
@@ -64,10 +51,6 @@ public sealed struct CREATESTRUCT
     int       theClassPtr;
     int       theExStyle;
     
-//    stacksafe implicit int:n
-//    [
-//    ]
-    
     int CreateParam
     {
         get()
@@ -78,40 +61,42 @@ public sealed struct CREATESTRUCT
     
 }
 
-//// --- HMENU ---
-//
-//sealed const struct HMENU
-//{
-//    __dword<4> theHandle.
-//    
-//    constructor new
-//    [
-//        int h := system'external'USER32 CreateMenu.
-//        
-//        theHandle := h.
-//    ]
-//
-//    constructor newPopup
-//    [
-//        int h := system'external'USER32 CreatePopupMenu.
-//        
-//        theHandle := h.
-//    ]
-//
-//    stacksafe append int:Flags int:anID wide:aCaption
-//    [
-//        system'external'USER32 AppendMenuW int:theHandle int:Flags int:anID wide:aCaption.
-//        
-//        int err := system'external'KERNEL32 GetLastError.
-//    ]
-//            
-//    stacksafe append int:Flags handle:aParent wide:aCaption
-//    [
-//        system'external'USER32 AppendMenuW int:theHandle int:(Flags || MF_POPUP) int:aParent wide:aCaption.
-//    ]
-//            
-//    stacksafe free
-//    [
-//        system'external'USER32 DestroyMenu int:theHandle.
-//    ]
-//}
+// --- HMENU ---
+
+sealed const struct HMENU
+{
+    embeddable __raw theHandle[4];
+    
+    constructor new()
+    {
+        int h := extern USER32.CreateMenu();
+        
+        theHandle := h
+    }
+
+    constructor newPopup()
+    {
+        int h := extern USER32.CreatePopupMenu();
+        
+        theHandle := h
+    }
+
+    append(int flags, id, wide caption)
+    {
+        extern USER32.AppendMenuW(theHandle, flags, id, caption);
+        
+        //int err := extern KERNEL32.GetLastError();
+    }
+            
+    append(int flags, handle parent, wide caption)
+    {
+        int f := flags || MF_POPUP;
+        
+        extern USER32.AppendMenuW(theHandle, /*flags || MF_POPUP*/f, parent, caption);
+    }
+            
+    free()
+    {
+        extern USER32.DestroyMenu(theHandle)
+    }
+}

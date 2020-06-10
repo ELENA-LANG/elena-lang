@@ -7,6 +7,7 @@ In development:
     * GC : mov GC to C code : #77
     * optimization : idle method, pi
     * elenart : get rid of inline assembly
+    * support operation inside external call - see HMENU.append
 
   [project]
     * issues : #370, close all open issues for 5.0
