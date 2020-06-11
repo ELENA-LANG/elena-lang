@@ -7,7 +7,8 @@ In development:
     * GC : mov GC to C code : #77
     * optimization : idle method, pi
     * elenart : get rid of inline assembly
-    * support operation inside external call - see HMENU.append
+    * external ops: operation inside external call - see HMENU.append; long, real ret value
+
 
   [project]
     * issues : #370, close all open issues for 5.0
@@ -85,7 +86,6 @@ Pipeline:
                 * closure unboxing: field addr
                 * check why system'dynamic'expressions'SymbolInfo#class cannot resolve DynamicSingleton
                   in dynamic mode
-                * external code : long, real ret value
                 * closures: presaved arguments
                 * closures: race conditions
                 * closures: returning a value

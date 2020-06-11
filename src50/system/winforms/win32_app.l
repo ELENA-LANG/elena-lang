@@ -1,12 +1,6 @@
-//// --- BaseApplication ---
-//
-//class BaseApplication
-//{
-//}
-
 // --- SDIApplication ---
 
-public class SDIApplication //:: BaseApplication
+public class SDIApplication
 {
     object theMainWindow;
     
@@ -44,33 +38,34 @@ public class SDIApplication //:: BaseApplication
         }
     }
 
-//    run hwnd:handle
-//    [
-//        win_msg msg := MSG new.
-//        int     proceeded := 0.
-//        int     result := 0.
-//        hwnd    handleCopy := handle.
-//
-//        extern()
-//        [
-//            while (handleCopy isVisible)
-//            [
-//                result := system'external'USER32 PeekMessageW win_msg:msg int:0 int:0 int:0 int:1.
-//                if (result != 0)
-//                [
-//                    proceeded := system'external'USER32 IsDialogMessageW int:handleCopy win_msg:msg.
-//                    if(proceeded == 0)
-//                        [
-//                            system'external'USER32 TranslateMessage win_msg:msg.
-//                            system'external'USER32 DispatchMessageW win_msg:msg.
-//                        ]
-//                ];
-//                [
-//                    system'external'USER32 WaitMessage
-//                ].
-//            ].
-//        ].
-//    ]
+    run(WindowHandle handle)
+    {
+        MSG          msg := new MSG();
+        int          proceeded := 0;
+        int          result := 0;
+        WindowHandle handleCopy := cast WindowHandle(theMainWindow);
+
+        extern()
+        {
+            while (handleCopy.isVisible())
+            {
+                result := extern USER32.PeekMessageW(msg, 0, 0, 0, 1);
+                if (result != 0)
+                {
+                    proceeded := extern USER32.IsDialogMessageW(handleCopy, msg);
+                    if (proceeded == 0)
+                    {
+                        extern USER32.TranslateMessage(msg);
+                        extern USER32.DispatchMessageW(msg)
+                    }
+                }
+                else 
+                {
+                    extern USER32.WaitMessage()
+                }
+            }
+        }
+    }
             
     stop()
     {

@@ -4,7 +4,7 @@ import system'drawing;
 public const wide StaticClass = "Static"w;
 public const wide EditClass   = "Edit"w;
 public const wide ButtonClass = "Button"w;
-//const wide ComboboxClass = "Combobox"w.
+public const wide ComboboxClass = "Combobox"w;
 
 // --- WindowHandle ---
 
@@ -20,11 +20,6 @@ public sealed const struct WindowHandle
     get constructor Default()
     {
     }
-
-//    stacksafe constructor new hwnd:aHandle
-//    [
-//        theHandle := aHandle.
-//    ]
 
     constructor(int dwExStyle, wide className, wide windowName, int style, int x, int y, int width, int height, WindowHandle parent, HInstance instance, object param)
     {
@@ -122,10 +117,10 @@ public sealed const struct WindowHandle
         }
     }
 
-//    sendMessage int:aMessage int:aWParam wide:aLParam
-//    [
-//        system'external'USER32 SendMessageW int:theHandle int:aMessage int:aWParam wide:aLParam
-//    ]
+    sendMessage(int message, int wParam, wide lParam)
+    {
+        extern USER32.SendMessageW(theHandle, message, wParam, lParam)
+    }
             
     refresh()
     {
@@ -143,11 +138,11 @@ public sealed const struct WindowHandle
         extern USER32.SetWindowPos(theHandle, 0, x, y, cx, cy, flags)
     }
 
-//    stacksafe getClientRect win_rect:aStruct
-//    [
-//        system'external'USER32 GetClientRect int:theHandle win_rect:aStruct
-//    ]
-//  
+    getClientRect(RECT struct)
+    {
+        extern USER32.GetClientRect(theHandle, struct)
+    }
+  
     get HDC HDC()
     {
         HDC dc := extern USER32.GetDC(theHandle);
@@ -155,10 +150,10 @@ public sealed const struct WindowHandle
         ^ dc
     }
 
-//    stacksafe set hmenu:aMenuHandle
-//    [
-//        system'external'USER32 SetMenu int:theHandle int:aMenuHandle
-//    ]
+    setMenu(HMENU menuHandle)
+    {
+        extern USER32.SetMenu(theHandle, menuHandle)
+    }
             
     free()
     {

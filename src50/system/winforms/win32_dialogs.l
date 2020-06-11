@@ -128,31 +128,36 @@ class BaseFileDialog
     }
 }
 
-//// --- OpenFileDialog ---
-//
-//sealed class OpenFileDialog :: BaseFileDialog
-//{
-//    constructor new hwnd:aParent array:Filters int:aFilterIndex int:aMaxFile wide:aCaption
-//        <= new hwnd:aParent array:Filters int:aFilterIndex int:aMaxFile wide:aCaption 
-//            int:(OFN_PATHMUSTEXIST || OFN_EXPLORER || OFN_LONGNAMES || DS_CENTER || OFN_HIDEREADONLY).
-//    
-//    select
-//    [
-//        byte<76> aStruct.
-//        
-//        $self $prepare bytearray:aStruct.
-//        // NOTE: !! it should be any object creation between two lines
-//        int aRetVal := system'external'Comdlg32 GetOpenFileNameW bytearray:aStruct.
-//        
-//        if (aRetVal == 0)
-//            [ ^ nil ];
-//            [
-//                int aLength := system'external'KERNEL32 lstrlenW shortarray:theFileName.
-//                
-//                ^ WideLiteralValue $new int:0 int:aLength shortarray:theFileName
-//            ]
-//    ]
-//}
+// --- OpenFileDialog ---
+
+public sealed class OpenFileDialog : BaseFileDialog
+{
+    constructor create(WindowHandle parent, wide[] filters, int filterIndex, int maxFile, wide caption)
+        <= create(parent, filters, filterIndex, maxFile, caption, 
+                    OFN_PATHMUSTEXIST || OFN_EXPLORER || OFN_LONGNAMES || DS_CENTER || OFN_HIDEREADONLY);
+    
+    select()
+    {
+        byte struct[76];
+        
+        self.prepare(struct);
+        // NOTE: !! it should be any object creation between two lines
+        int retVal := extern Comdlg32.GetOpenFileNameW(struct);
+
+        if (retVal == 0)
+        { 
+            ^ nil 
+        }
+        else
+        {
+            int length := extern KERNEL32.lstrlenW(theFileName);
+            
+            var s := UTF16Encoding.toWide(0, length, theFileName); 
+            
+            ^ s
+        }                
+    }
+}
 
 // --- SaveFileDialog ---
 

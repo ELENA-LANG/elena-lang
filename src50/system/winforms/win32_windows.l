@@ -34,15 +34,15 @@ public closed class WindowCallback
         retVal := 0
     }
     
-//    stacksafe onchange hwnd:aControl vint:aResult
-//    [
-//        aResult int := 0.
-//    ]
-//    
-//    stacksafe onmenu int:aCode vint:aResult
-//    [
-//        aResult int := 0.
-//    ]
+    onchange(WindowHandle hwnd, ref int retVal)
+    {
+        retVal := 0
+    }
+    
+    onmenu(int code, ref int retVal)
+    {
+        retVal := 0
+    }
     
     onsize(WindowHandle hwnd, int width, int height, ref int result)
     {
@@ -111,19 +111,19 @@ public closed class WindowCallback
     
     wm_command(WindowHandle hwnd, int message, int wParam, WindowHandle control, ref int retVal)
     {
-//        if (0 == aControl)
-//            [ $self onmenu int:wParam vint:aRetVal. ^ $self ].
+        if (0 == control)
+            { self.onmenu(wParam, ref retVal); ^ self };
 
         int command := wParam $shr 16;
 
         if (command == BN_CLICKED)
             { self.onclick(control, ref retVal); ^ self };
 
-//        if (aCommand == EN_CHANGE)
-//            [ $self onchange hwnd:aControl vint:aRetVal. ^ $self ].
-//
-//        if (aCommand == CBN_SELCHANGE)
-//            [ $self onchange hwnd:aControl vint:aRetVal. ^ $self ]
+        if (command == EN_CHANGE)
+            { self.onchange(control, ref retVal); ^ self };
+
+        if (command == CBN_SELCHANGE)
+            { self.onchange(control, ref retVal); ^ self };
     }
 
     eval(WindowHandle hwnd, int message, WindowHandle control, int lParam, ref int retVal)
@@ -147,13 +147,6 @@ public closed class WindowCallback
         
         retVal := result
     }
-
-//    eval handle:anHWND int:aMessage int:aWParam int:aLParam vint:aRetVal
-//    [
-//        int result := system'external'USER32 DefWindowProcW handle:anHWND int:aMessage int:aWParam int:aLParam.
-//        
-//        aRetVal int := result
-//    ]
 }
 
 // --- SDIWindowCallback ---
@@ -180,46 +173,34 @@ public class SDIWindowCallback : WindowCallback
             
             ^ self
         };
-        
-//        $super eval hwnd:anHWND int:aMessage vint:aRetVal.
     }
-
-////    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
-////    [
-////        $super eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal.
-////    ]
 }
 
-//// --- ChildWindowCallback ---
-//
-//class ChildWindowCallback :: WindowCallback
-//{
-//    eval hwnd:anHWND int:aMessage vint:aRetVal
-//    [
-//        if (aMessage == WM_CLOSE)
-//            [
-//                anHWND free.
-//                
-//                aRetVal int := 0.
-//                
-//                ^ $self
-//            ].
-//        
-//        if (aMessage == WM_DESTROY)
-//            [
-//                $self ondestroy hwnd:anHWND vint:aRetVal.
-//                
-//                ^ $self
-//            ].
-//        
-//        $super eval hwnd:anHWND int:aMessage vint:aRetVal.
-//    ]
-//
-////    #method eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal
-////    [
-////        $super eval &handle:anHWND &int:aMessage &int:aWParam &int:aLParam &vint:aRetVal.
-////    ]
-//}
+// --- ChildWindowCallback ---
+
+public class ChildWindowCallback : WindowCallback
+{
+    eval(WindowHandle hwnd, int message, ref int retVal)
+    {
+        if (message == WM_CLOSE)
+        {
+            hwnd.free();
+            
+            retVal := 0;
+            
+            ^ self
+        };
+
+        if (message == WM_DESTROY)
+        {
+            self.ondestroy(hwnd, ref retVal);
+            
+            ^ self
+        };
+        
+        super.eval(hwnd, message, retVal)
+    }
+}
 
 // --- SDIWindowClass ---
 
