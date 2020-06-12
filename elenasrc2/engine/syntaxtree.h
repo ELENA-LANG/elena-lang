@@ -150,6 +150,7 @@ enum LexicalType
    lxByRefAssigning           = 0x058122,
    lxSaving                   = 0x058123,
    lxCondCopying              = 0x058124,
+   lxFloatSaving              = 0x058125,
    lxReturning                = 0x059130,
    lxImplicitJump             = 0x058140,
    lxBranching                = 0x058150,   // branch expression      
@@ -264,6 +265,7 @@ enum LexicalType
    lxRetEmbeddableAttr        = 0x000F27,
    lxElementType              = 0x000F28, // arg - reference
    lxSubjectRef               = 0x000F29, // arg - reference
+   lxLongMode                 = 0x000F2A,
 };
 
 // --- SyntaxTree ---

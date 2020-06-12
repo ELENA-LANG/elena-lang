@@ -27,7 +27,7 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rround", "equal", OPCODE_UNKNOWN,
 
    "nequal", "nless", OPCODE_UNKNOWN, "lequal", "lless", "rset", "rsave", "save",
-   "load", "rsaven", "rsavel", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rint",
+   "load", "rsaven", "rsavel", "lsave", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rint",
 
    "addf", "subf", "nxorf", "norf", "nandf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "xsave", "div", "xwrite", "copyto", "nshlf", "nshrf",
@@ -51,7 +51,7 @@ const char* _fnOpcodes[256] =
    "loadsi", "savef", "pushsi", "savesi", "savefi", "pushf", "pushs", "reserve",
 
    "seti", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", "naddf", "nmulf", OPCODE_UNKNOWN,
-   "nsubf", "ndivf", "loadi", "savei", "storer", OPCODE_UNKNOWN, "clonef", "xload",
+   "nsubf", "ndivf", "loadi", "savei", "storer", "lcallextr", "clonef", "xload",
 
    "freei", "alloci", "xcreate", "movv", "shl", "and", "inc", "or",
    "coalescer", "shr", "xor", OPCODE_UNKNOWN, "xsaveai", "copyai", "move", "moveto",

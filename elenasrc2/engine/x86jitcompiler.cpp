@@ -70,7 +70,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 148;
+const int gcCommandNumber = 150;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -102,7 +102,7 @@ const int gcCommands[gcCommandNumber] =
    bcMul, bcXOr, bcPeek, bcSwap, bcXCreate,
    bcIfHeap, bcEqualFI, bcLoadF, bcRSaveL, bcRAbs,
    bcCallI, bcIfCount, bcSub, bcSwapD, bcXSet,
-   bcMIndex, bcParent, bcCheckSI,
+   bcMIndex, bcParent, bcCheckSI, bcLSave, bcLCallExtR,
 };
 
 const int gcCommandExNumber = 54;
@@ -141,7 +141,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop,
 
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
-   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
+   &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
 
    &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &loadNOp, &loadNOp, &loadNOpX, &loadN4OpX, &loadFPOp, &loadFPOp,
@@ -165,7 +165,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadIndexOp, &loadFPOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadFPOp, &loadIndexOp,
 
    &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop,
-   &loadFPOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileNop, &loadFPOp, &loadNOp,
+   &loadFPOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadFunction, &loadFPOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &loadROp, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
    &loadROp, &compileDShiftN, &loadNOp, &compileNop, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,

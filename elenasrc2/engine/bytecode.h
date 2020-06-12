@@ -92,11 +92,10 @@ enum ByteCode
    bcLoad            = 0x48,
    bcRSaveN          = 0x49,
    bcRSaveL          = 0x4A,
-//   bcNOr             = 0x4B,
+   bcLSave           = 0x4B,
 //   bcNXor            = 0x4C,
 //   bcNShiftL         = 0x4D,
 //   bcNNot            = 0x4E,
-//   bcNCreate         = 0x4F,
    bcRInt            = 0x4F,
 
    bcAddF            = 0x50,
@@ -208,7 +207,7 @@ enum ByteCode
    bcLoadI           = 0xCA,
    bcSaveI           = 0xCB,
    bcStoreR          = 0xCC,
-//   bcALoadAI         = 0xCD,
+   bcLCallExtR       = 0xCD,
    bcCloneF          = 0xCE,
    bcXLoad           = 0xCF,
 
@@ -460,6 +459,7 @@ public:
          //case bcBCopyR:
          case bcCallRM:
          case bcCallExtR:
+         case bcLCallExtR:
          case bcSelect:
          case bcJumpRM:
          case bcVCallRM:

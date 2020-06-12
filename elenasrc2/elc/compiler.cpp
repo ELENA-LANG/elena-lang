@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -4139,7 +4139,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 
    if (exprVal.kind == okExternal && operationType == lxCopying) {
       noBoxing = true;
-      operationType = lxSaving;
+      operationType = exprVal.param == -1 ? lxFloatSaving : lxSaving;
    }
 
    node.set(operationType, operand);
@@ -5975,8 +5975,6 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
 
 void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode callNode)
 {
-   test2(node);
-
    SNode current = node.firstChild(lxObjectMask);
    while (current != lxNone && current != callNode) {
       SNode objNode = current;
@@ -6066,14 +6064,13 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope, ref_t e
    exprNode.set(lxSeqExpression, 0);
    SNode callNode = exprNode.appendNode(lxVirtualReference);
 
-////   if (!rootMode)
-////      scope.writer->appendNode(lxTarget, -1);
-
    // To tell apart coreapi calls, the name convention is used
    if (apiCall) {
       callNode.set(lxCoreAPICall, reference);
    }
    else callNode.set(stdCall ? lxStdExternalCall : lxExternalCall, reference);
+
+   LexicalType opType = callNode.type;
 
    // HOTFIX : remove the dll identifier
    targetNode = lxIdle;
@@ -6086,30 +6083,24 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope, ref_t e
       retVal.reference = expectedRef;
       callNode.appendNode(lxSize, 4);
    }
-   //   /*if (expectedRef == scope.moduleScope->realReference || expectedRef == V_REAL64) {
-   //      retVal = assignResult(writer, scope, true, V_REAL64);
-   //   }
-   //   else if (expectedRef == V_INT64) {
-   //      retVal = assignResult(writer, scope, false, expectedRef);
-   //   }
+   else if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_REAL64, expectedRef)) {
+      retVal.reference = expectedRef;
+      retVal.param = -1;         // ot indicate Float mode
+      callNode.appendNode(lxSize, 8);
+      //      retVal = assignResult(writer, scope, true, V_REAL64);
+      }
+   else if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_INT64, expectedRef)) {
+      retVal.reference = expectedRef;
+      callNode.appendNode(lxSize, 8);
+      callNode.findChild(opType).appendNode(lxLongMode);
+      //      retVal = assignResult(writer, scope, false, expectedRef);
+      }
    else {
       retVal.reference = V_DWORD;
       callNode.appendNode(lxSize, 4);
    }
 
    callNode.appendNode(lxType, retVal.reference);
-
-//   writer.closeNode();
-
-   //if (!EAttrs::test(mode, HINT_ROOT)) {
-   //   /*if (expectedRef == scope.moduleScope->realReference || expectedRef == V_REAL64) {
-   //      retVal = assignResult(writer, scope, true, V_REAL64);
-   //   }
-   //   else if (expectedRef == V_INT64) {
-   //      retVal = assignResult(writer, scope, false, expectedRef);
-   //   }
-   //   else */retVal = assignResult(node, scope, false, V_INT32);
-   //}
 
    return retVal;
 }

@@ -1510,6 +1510,14 @@ inline % 4Ah
 
 end
                
+// ; lsave
+inline % 4Bh
+
+  mov  [ebx], edx
+  mov  [ebx+4], edi
+
+end
+               
 // ; rint
 inline % 4Fh
 
@@ -2499,6 +2507,15 @@ end
 inline % 0CBh
 
   mov  [ebx + __arg1], edx
+
+end
+
+// ; lcallextr
+inline % 0CDh
+
+  call extern __arg1
+  mov  edi, edx
+  mov  edx, eax
 
 end
 

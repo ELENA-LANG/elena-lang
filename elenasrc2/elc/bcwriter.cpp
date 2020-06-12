@@ -18,14 +18,14 @@ constexpr auto STACKOP_MODE      = 0x0001;
 constexpr auto BOOL_ARG_EXPR     = 0x0002;
 constexpr auto NOBREAKPOINTS     = 0x0004;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 inline bool isSubOperation(SNode node)
 {
@@ -820,6 +820,12 @@ void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference/*
 {
    // callextr ref
    tape.write(bcCallExtR, functionReference | mskImportRef/*, paramCount*/);
+}
+
+void ByteCodeWriter :: callLongExternal(CommandTape& tape, ref_t functionReference)
+{
+   // callextr ref
+   tape.write(bcLCallExtR, functionReference | mskImportRef);
 }
 
 void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference/*, int paramCount*/)
@@ -3066,46 +3072,28 @@ int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
 
 void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowScope& scope)
 {
-//   SNode bpNode = node.findChild(lxBreakpoint);
-//   if (bpNode != lxNone) {
-//      translateBreakpoint(tape, bpNode, false);
-//
-//      declareBlock(tape);
-//   }
-
    bool apiCall = (node == lxCoreAPICall);
    bool cleaned = (node == lxStdExternalCall);
-
-   // compile argument list
-   //ExternalScope externalScope;
-  // declareExternalBlock(tape);
-
-//   generateExternalArguments(tape, node, externalScope);
 
    // save function parameters
    int paramCount = saveExternalParameters(tape, node, scope);
 
    // call the function
    if (apiCall) {
-//      // if it is an API call
-//      // simply release parameters from the stack
-//      // without setting stack pointer directly - due to optimization
+      // if it is an API call
+      // simply release parameters from the stack
+      // without setting stack pointer directly - due to optimization
       callCore(tape, node.argument/*, externalScope.frameSize*/);
-
-//      endExternalBlock(tape, true);
-//
+   }
+   else if (node.existChild(lxLongMode)) {
+      callLongExternal(tape, node.argument);
    }
    else {
       callExternal(tape, node.argument/*, externalScope.frameSize*/);
-
-  //    endExternalBlock(tape);
    }
 
    if (!cleaned)
       releaseStack(tape, paramCount);
-
-//   if (bpNode != lxNone)
-//      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
 }
 
 /*ref_t*/void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode/*, int paramCount, int presavedCount*/)
@@ -3771,9 +3759,23 @@ void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::N
       saveToLocal(tape, 4, dstObj.argument);
    }
    else if (dstObj == lxLocalAddress) {
-      // !! never used???
-      loadObject(tape, source, scope); // NOTE : it should load the index
-      saveToLocalAddress(tape, 4, dstObj.argument);
+      // HOTFIX : to correctly retrieve the result size
+      if (srcObj == lxSeqExpression)
+         srcObj = srcObj.findSubNodeMask(lxObjectMask);
+
+      if (srcObj.compare(lxExternalCall, lxStdExternalCall, lxCoreAPICall)) {
+         // NOTE : it should be the external operation
+         loadObject(tape, source, scope);
+
+         if (node.argument == 8) {
+            // HOTFIX : to support external op returning long
+            tape.write(bcMovF, dstObj.argument);
+            tape.write(node == lxFloatSaving ? bcRSave : bcLSave);
+            scope.clear();
+         }
+         else saveToLocalAddress(tape, node.argument, dstObj.argument);
+      }
+      else throw InternalError("not yet implemente"); // !! temporal
    }
    else if (dstObj == lxFieldExpression) {
       saveIndexToFieldExpression(tape, dstObj, srcObj, scope);
@@ -4375,6 +4377,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          generateCopyingExpression(tape, node, scope);
          break;
       case lxSaving:
+      case lxFloatSaving:
          generateSavingExpression(tape, node, scope);
          break;
       case lxIndexSaving:

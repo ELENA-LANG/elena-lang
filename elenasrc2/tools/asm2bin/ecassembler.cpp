@@ -525,6 +525,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             compileRCommand(opcode, token, writer, binary);
             break;
          case bcCallExtR:
+         case bcLCallExtR:
             compileExtCommand(opcode, token, writer, binary);
             break;
          case bcCallVI:

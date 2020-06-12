@@ -10,6 +10,7 @@ ELENA byte codes (or ecodes)
    acc    - accumulator      (ebx)
 
    index  - data accumulator (edx)
+   eindex - data accumulator extension (edi)
 
 
  Register operations:
@@ -42,6 +43,8 @@ ELENA byte codes (or ecodes)
 
  loadverb                   - index.verb >> index
  
+ lsave  i                   - long[acc] <= long index ; should directly follow lcallextr
+
  movm m                     - m => index
 
  movn n                     - n => index
@@ -310,6 +313,9 @@ ELENA byte codes (or ecodes)
  
  callr r                    - calls the procedure;
                               acc contains the result
+
+ lcallextr r                - calls the external procedure ; index+eindex contains the result
+ 
  
 
  Misc operations:
