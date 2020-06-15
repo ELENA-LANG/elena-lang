@@ -12,7 +12,7 @@ public extension classROp
         
     get int __FieldCount()
     {
-        intern system'core_routines'__object.readLength(self, int retVal);
+        intern system'core_routines'__object.readLength(self, ref int retVal);
         
         ^ retVal
     }

@@ -7,7 +7,7 @@ In development:
     * GC : mov GC to C code : #77
     * optimization : idle method, pi
     * elenart : get rid of inline assembly
-    * external ops: operation inside external call - see HMENU.append; long, real ret value
+    * external ops: operation inside external call - see HMENU.append
 
 
   [project]
@@ -27,18 +27,14 @@ In development:
     * upndown
     * nodepad
 
-  [language]
-    * new feature : implicit constructor with variadic argument list should auto generate the implemeation for every
-                      possible argument list (see system'dynamic'expressions);
-                    __nowarning - modifier to surpress warnings for the expression (e.g in extension module);
-                    catch several exceptions - could we simplify the code?
-                    break / continue
+  [!language]
+    * !new feature : Method result multi-dispatching #494 
 
   [API]
     * uncomment code
     * usability : dynamic loading : give the symbol / message in the InvalidArgument exception
 
-  [!research]
+  [research]
     * !xforms : XAML xforms script
 
   [IDE]
@@ -199,12 +195,9 @@ Pipeline:
                 * step over last statement (without terminator)
                 * watch message / subject info
                 * sealed static methods : multimethods
-		* close issue 
                 * uncomment validateUnresolved
-                * remove all commented code
                 * error by viewing translit sample
                 * port Linux IDE
-                * template extensions
                 * missing algorithms (template extensions)
                 * missing system'routines'stex
                 * compile elenart64.dll

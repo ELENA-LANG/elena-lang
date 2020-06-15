@@ -1181,7 +1181,8 @@ private:
 
    void compileActionMethod(SNode member, MethodScope& scope);
    void compileExpressionMethod(SNode member, MethodScope& scope, bool lazyMode);
-   void compileDispatcher(SNode node, MethodScope& scope, bool withGenericMethods = false, bool withOpenArgGenerics = false);
+   void compileDispatcher(SNode node, MethodScope& scope, LexicalType methodType, 
+      bool withGenericMethods = false, bool withOpenArgGenerics = false);
 
    void beginMethod(SNode node, MethodScope& scope);
    void endMethod(SNode node, MethodScope& scope);

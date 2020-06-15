@@ -34,8 +34,8 @@ import system'text;
 
 singleton stringExConvertor
 {
-////    literal convert(RealMatrix a)
-////        = realmatrixExConvertor toLiteral(a).
+    string convert(RealMatrix a)
+        = realmatrixExConvertor.toString(a);
 
     string convert(IntMatrix a)
         = intmatrixExConvertor.toString(a);
@@ -88,73 +88,79 @@ singleton stringExConvertor
         = stringConvertor.convert(o);
 }
 
-////class wideExConvertor =
-////{
-////    wide convert(Indexer it)
-////    [
-////        auto anOutput := TextBuilder new.
-////        while (it available)
-////        [
-////            anOutput write(it get; toWide).
-////            anOutput write:",".
-////            
-////            it appendIndex:1
-////        ].
+singleton wideExConvertor
+{
+    wide convert(RealMatrix a)
+        = realmatrixExConvertor.toWide(a);
+
+    wide convert(IntMatrix a)
+        = intmatrixExConvertor.toWide(a);
+        
+//    wide convert(Indexer it)
+//    [
+//        auto anOutput := TextBuilder new.
+//        while (it available)
+//        [
+//            anOutput write(it get; toWide).
+//            anOutput write:",".
+//            
+//            it appendIndex:1
+//        ].
+//        
+//        int aLength := anOutput length.
+//        if (0 < aLength)
+//            [ anOutput setLength(-1 + aLength) ].
+//        
+//        ^ anOutput
+//    ]
+//
+//    wide convert(Enumerator en)
+//    [
+//        auto anOutput := TextBuilder new.
+//
+//        en forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ]).
+//        
+//        int aLength := anOutput length.
+//
+//        if (0 < aLength)
+//            [ anOutput setLength(-1 + aLength) ].
+//        
+//        ^ anOutput
+//    ]
 ////        
-////        int aLength := anOutput length.
-////        if (0 < aLength)
-////            [ anOutput setLength(-1 + aLength) ].
+////    wide convert datetime:aValue = aValue literal; wide.
 ////        
-////        ^ anOutput
-////    ]
+////    wide convert timestamp:aValue = aValue literal; wide.
+////                
+//////                intmatrix : m
+//////                    = intmatrixExConvertor toLiteral intmatrix:m.
 ////
-////    wide convert(Enumerator en)
-////    [
-////        auto anOutput := TextBuilder new.
-////
-////        en forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ]).
-////        
-////        int aLength := anOutput length.
-////
-////        if (0 < aLength)
-////            [ anOutput setLength(-1 + aLength) ].
-////        
-////        ^ anOutput
-////    ]
-//////        
-//////    wide convert datetime:aValue = aValue literal; wide.
-//////        
-//////    wide convert timestamp:aValue = aValue literal; wide.
-//////                
-////////                intmatrix : m
-////////                    = intmatrixExConvertor toLiteral intmatrix:m.
+//    wide convert(Enumerable o)
+//        <= convert(o enumerator).
+//
+//    wide convert(Indexable o)
+//        <= convert(o indexer).
+//
+//    wide convert:o
+//        = wideConvertor convert:o.
+}
+
+//////class wideExConvertor =
+//////{
+//////    convert enumerable:aList
+//////    [
+//////        textbuffer anOutput := TextBuilder new.
 //////
-////    wide convert(Enumerable o)
-////        <= convert(o enumerator).
-////
-////    wide convert(Indexable o)
-////        <= convert(o indexer).
-////
-////    wide convert:o
-////        = wideConvertor convert:o.
-////}.
-////
-////////class wideExConvertor =
-////////{
-////////    convert enumerable:aList
-////////    [
-////////        textbuffer anOutput := TextBuilder new.
-////////
-////////        aList run:anOutput eachPair: (:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ].
-////////        
-////////        int aLength := anOutput length.
-////////
-////////        if (0 < aLength)
-////////            [ anOutput setLength int:(-1 + aLength) ].
-////////        
-////////        ^ anOutput wide
-////////    ]
-////////}.
+//////        aList run:anOutput eachPair: (:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ].
+//////        
+//////        int aLength := anOutput length.
+//////
+//////        if (0 < aLength)
+//////            [ anOutput setLength int:(-1 + aLength) ].
+//////        
+//////        ^ anOutput wide
+//////    ]
+//////}.
 
 public singleton byteArrayExConvertor
 {
@@ -165,54 +171,45 @@ public singleton byteArrayExConvertor
         = UTF16Encoder.toByteArray(0, s.Length, s);
 }
 
-////public singleton intarrayConvertorEx
-////{
-////    T<IntArray> convert(Enumerator<int> e)
-////    [
-////        List<int> list := List<int>().
-////
-////        while (e next)
-////        [
-////            list append(e get)
-////        ].
-////
-////        ^ IntArray new(list indexer).
-////    ]
-////    
-////    T<IntArray> convert(Enumerator e)
-////    [
-////        List<int> list := List<int>().
-////
-////        while (e next)
-////        [
-////            list append(e get)
-////        ].
-////
-////        ^ IntArray new(list indexer).        
-////    ]
-////    
-////    T<IntArray> convert(o)
-////        <= convert(o enumerator).
-////    
-//////    convert enumerable:aList
-//////    [
-//////        array_list alist := ArrayList new.
-//////
-//////        aList run each: (:anItem)[ alist append:anItem ].
-//////        
-//////        ^ IntArray new int:(alist length); set every: (&int:i)[ alist getAt int:i; toInt ]
-//////    ]
-////}
+public singleton intArrayExConvertor
+{
+    int[] convert(Enumerator<int> e)
+    {
+        List<int> list := new List<int>();
+
+        while (e.next())
+        {
+            list.append(e.get())
+        };
+
+        ^ list.Value
+    }
+    
+    int[] convert(Enumerator e)
+    {
+        List<int> list := new List<int>();
+
+        while (e.next())
+        {
+            list.append(e.get())
+        };
+
+        ^ list.Value
+    }
+    
+    int[] convert(o)
+        <= convert(o.enumerator());
+}
 
 public singleton intmatrixExConvertor
 {
-//    convert(Array a)
-//    [
-//        int n := a length.
-//        int m := a[0] length.
-//        
-//        ^ IntMatrix new(n, m); populate(:i:j)<int,int,int>( a getAt(i); toArray; getAt(j); toInt ).
-//    ]
+    convert(Array a)
+    {
+        int n := a.Length;
+        int m := a[0].length;
+        
+        ^ IntMatrix.allocate(n, m).populate:(int i, int j => a.at(i).at(j).toInt() )
+    }
     
     toString(IntMatrix matrix)
     {
@@ -240,51 +237,66 @@ public singleton intmatrixExConvertor
     }
 }
 
-////public singleton realmatrixExConvertor
-////{
-////    convert(Array a)
-////    [
-////        int n := a length.
-////        int m := a[0] length.
-////        
-////        ^ RealMatrix new(n, m); populate(:i:j)<int,int,real>( a getAt(i); toArray; getAt(j); toReal ).
-////    ]
-////    
-////    toLiteral(RealMatrix matrix)
-////    [
-////        auto anOutput := TextBuilder new.
-////        
-////        int i := 0.
-////        int j := 0.
-////        int n := 0.
-////        int m := 0.
-////        int l := 0.
-////        
-////        matrix readLengthsTo(&n, &m).
-////        
-////        while (i < n)
-////        [
-////            j := 0.
-////            while (j < m)
-////            [
-////                real r := 0.0r.
-////                matrix read(i, j, &r).
-////                
-////                anOutput write:r; write:",".
-////                
-////                j := j + 1
-////            ].
-////            anOutput readLengthTo(&l).            
-////            anOutput setLength(l - 1).
-////            
-////            anOutput write:forwards'newLine.
-////            
-////            i := i + 1
-////        ].
-////        
-////        ^ anOutput literal
-////    ]
-////}
+public singleton realmatrixExConvertor
+{
+    convert(Array a)
+    {
+        int n := a.Length;
+        int m := a[0].length;
+        
+        ^ RealMatrix.allocate(n, m).populate:(int i, int j => a.at(i).at(j).toReal() )
+    }
+    
+    string toString(RealMatrix matrix)
+    {
+        auto output := new TextBuilder();
+        
+        int l := 0;
+        matrix.readLengthsTo(ref int n, ref int m);
+        
+        for (int i := 0, i < n, i += 1)
+        {
+            for (int j := 0, j < m, j += 1)
+            {
+                matrix.read(i, j, ref int r);
+                
+                output.write:r.write:","
+            };
+            l := output.Length;
+            l -= 1;
+            output.Length := l;
+            
+            output.write(forward newLine)
+        };
+        
+        ^ output.Value
+    }
+    
+    wide toWide(RealMatrix matrix)
+    {
+        auto output := new TextBuilder();
+        
+        int l := 0;
+        matrix.readLengthsTo(ref int n, ref int m);
+        
+        for (int i := 0, i < n, i += 1)
+        {
+            for (int j := 0, j < m, j += 1)
+            {
+                matrix.read(i, j, ref int r);
+                
+                output.write:r.write:","
+            };
+            l := output.Length;
+            l -= 1;
+            output.Length := l;
+            
+            output.write(forward newLine)
+        };
+        
+        ^ output.Value
+    }
+}
 
 // --- arrayConvertorEx ---
 
@@ -356,8 +368,8 @@ public extension convertorOp
     Array toArray()
         = arrayConvertorEx.convert(self);
 
-////    T<IntArray> toIntArray
-////        = intarrayConvertorEx convert:self.
+    int[] toIntArray()
+        = intArrayExConvertor.convert:self;
     
     byte[] toByteArray()
         = byteArrayExConvertor.convert:self;
@@ -373,21 +385,21 @@ public extension convertorOp
         
 ////    T<CharArray> toCharArray
 ////        = charArrayExConvertor convert:self.
-////    
-////    T<wide> toWide
-////        = wideExConvertor convert:self.
-////
+    
+    wide toWide()
+        = wideExConvertor.convert(self);
+
 ////    toWide(int radix)
 ////        = wideConvertor convert(self, radix).
-//            
-//    byte toByte()
-//        = byteConvertor.convert(self);
-//
-//    short toShort()
-//        = shortConvertor.convert(self);
-//
-//    uint toUInt()
-//        = uintConvertor.convert(self);
+            
+    byte toByte()
+        = byteConvertor.convert(self);
+
+    short toShort()
+        = shortConvertor.convert(self);
+
+    uint toUInt()
+        = uintConvertor.convert(self);
         
     int toInt()
         = intConvertor.convert(self);

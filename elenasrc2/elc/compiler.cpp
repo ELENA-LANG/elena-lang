@@ -6591,9 +6591,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
    }
 }
 
-void Compiler :: compileDispatcher(SNode node, MethodScope& scope, bool withGenericMethods, bool withOpenArgGenerics)
+void Compiler :: compileDispatcher(SNode node, MethodScope& scope, LexicalType methodType, 
+   bool withGenericMethods, bool withOpenArgGenerics)
 {
-   node.set(lxClassMethod, scope.message);
+   node.set(methodType, scope.message);
 
    SNode dispatchNode = node.findChild(lxDispatchCode);
 
@@ -7735,6 +7736,7 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
             // if it is a dispatch handler
             if (methodScope.message == scope.moduleScope->dispatch_message) {
                compileDispatcher(current, methodScope,
+                  lxClassMethod,
                   test(scope.info.header.flags, elWithGenerics),
                   test(scope.info.header.flags, elWithVariadics));
             }
@@ -7790,6 +7792,7 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
       scope.info.header.flags |= elWithCustomDispatcher;
 
       compileDispatcher(methodNode, methodScope,
+         lxClassMethod,
          test(scope.info.header.flags, elWithGenerics),
          test(scope.info.header.flags, elWithVariadics));
 
@@ -7800,19 +7803,6 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
 
 void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassScope& classScope)
 {
-//   bool staticFieldsCopied = false;
-
-   //// add virtual constructor
-   //if (classClassScope.info.methods.exist(classScope.moduleScope->newobject_message, true)) {
-   //   MethodScope methodScope(&classScope);
-   //   methodScope.message = classScope.moduleScope->newobject_message;
-
-   //   //if (test(classScope.info.header.flags, elDynamicRole)) {
-   //   //   compileDynamicDefaultConstructor(writer, methodScope);
-   //   //}
-   //   /*else */compileDefaultConstructor(node, methodScope);
-   //}
-
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current) {
@@ -7829,13 +7819,6 @@ void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassS
          }
          case lxStaticMethod:
          {
-//            if (!staticFieldsCopied) {
-//               // HOTFIX : inherit static fields
-//               classClassScope.copyStaticFields(classScope.info.statics, classScope.info.staticValues);
-//
-//               staticFieldsCopied = true;
-//            }
-
             MethodScope methodScope(&classClassScope);
             methodScope.message = current.argument;
 
@@ -7862,9 +7845,12 @@ void Compiler :: compileClassVMT(SNode node, ClassScope& classClassScope, ClassS
 
       classClassScope.include(methodScope.message);
 
-      SNode methodNode = node.appendNode(lxClassMethod, methodScope.message);
+      SNode methodNode = node.appendNode(lxStaticMethod, methodScope.message);
+      
+      classClassScope.info.header.flags |= elWithCustomDispatcher;
 
       compileDispatcher(methodNode, methodScope,
+         lxStaticMethod,
          test(classClassScope.info.header.flags, elWithGenerics),
          test(classClassScope.info.header.flags, elWithVariadics));
 

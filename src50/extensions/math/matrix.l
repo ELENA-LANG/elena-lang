@@ -16,7 +16,7 @@ namespace math
         {
             self.readLengthsTo(ref int n, ref int m);
             
-            auto r := new RealMatrix(n, m);
+            auto r := RealMatrix.allocate(n, m);
             for(int i := 0, i < n, i += 1)
             {
                 for(int j := 0, j < m, j += 1)
@@ -54,7 +54,7 @@ namespace math
             ifnot(m == j)
                 { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
                 
-            auto r := new RealMatrix(n, m);
+            auto r := RealMatrix.allocate(n, m);
             for(int i := 0, i < n, i += 1)
             {
                 for(int j := 0, j < m, j += 1)
@@ -80,7 +80,7 @@ namespace math
             ifnot(m == j)
                 { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
                 
-            auto r := new RealMatrix(n, m);
+            auto r := RealMatrix.allocate(n, m);
             for(int i := 0, i < n, i += 1)
             {
                 for(int j := 0, j < m, j += 1)
@@ -103,7 +103,7 @@ namespace math
             ifnot(j == m)
                 { MatrixException.new:"Invalid argument".raise() };
     
-            auto r := new RealMatrix(n, p);
+            auto r := RealMatrix.allocate(n, p);
             for(int i := 0, i < n, i += 1)
             {
                 for(int j := 0, j < p, j += 1)

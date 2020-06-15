@@ -17,13 +17,13 @@ class Matrix
     }
     
     constructor create(n, name)
-        <= new (new RealMatrix(n,n).populate:(int i,int j)
+        <= new (RealMatrix.allocate(n,n).populate:(int i,int j)
             { 
                 ^ console.print("Enter ",name,"[",i,",",j,"]=").readLine().toReal()
             });
     
     constructor newIdentityOf(n)
-        <= new(new RealMatrix(n,n).populate:(int i, int j =>
+        <= new(RealMatrix.allocate(n,n).populate:(int i, int j =>
             cast RealNumber((i == j) ? 1.0r : 0.0r )));
     
     add(matrix)

@@ -593,7 +593,7 @@ public sealed class RealMatrix
     int    theRows;
     int    theColumns;
     
-    constructor(int rows, int columns)
+    constructor allocate(int rows, int columns)
     {
         theRows := rows;
         theColumns := columns;

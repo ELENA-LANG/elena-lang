@@ -19,3 +19,4 @@
   - #491 : The message target is corrupt when a variadic argument is used in sub call 
   - #381 : const static property
   - #162 : compiler redux - embedded constructor call 
+  - #505 : constructor with variadic argument list 
