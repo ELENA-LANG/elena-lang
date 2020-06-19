@@ -32,6 +32,7 @@
 #define __loop      80002005h
 #define preloaded   80002006h
 #define lazy        80002009h
+#define multiret    8000200Ah
 
 /// scope:
 #define class       80001001h
@@ -80,11 +81,6 @@
 #define subjconst   80000807h
 #define __symbol    80000808h
 #define inlinearg   80000809h
-
-////__extmssg       = #21.
-////__tape_mixin    = #8209.
-////dynamic         = #30.
-////stackunsafe     = #16403.
 
 /// Provides classes that describe the basic functionality
 
