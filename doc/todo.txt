@@ -28,7 +28,7 @@ In development:
     * nodepad
 
   [!language]
-    * !new feature : Method result multi-dispatching #494 
+    * !new feature 
 
   [API]
     * uncomment code
@@ -100,7 +100,6 @@ Pipeline:
                 * rosetta code : AmicablePairs using yieldable method
                 * do we need ENDFRAME?
                 * loadfi vs loadf, savefi vs savef
-                * multi-return methods : dynamic objects
                 * declaring several variables in a row?
 
                 * mixin variadic function cannot be used directly??
