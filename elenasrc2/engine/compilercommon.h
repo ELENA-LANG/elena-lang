@@ -54,6 +54,7 @@ constexpr auto V_WEAKOP          = 0x80002004u;
 constexpr auto V_LOOP            = 0x80002005u;
 constexpr auto V_PRELOADED       = 0x80002006u;
 constexpr auto V_LAZY            = 0x80002009u;
+constexpr auto V_MULTIRETVAL     = 0x8000200Au;
 
 /// scope:
 constexpr auto V_CLASS           = 0x80001001u;
@@ -165,6 +166,7 @@ enum MethodHint
    tpYieldable    = 0x1000000,
    tpConstant     = 0x2000000,
    tpProtected    = 0x4000000,
+   tpMultiRetVal  = 0x8000000,
 };
 
 // --- _Project ---
@@ -631,6 +633,7 @@ public:
       bool  withCustomDispatcher;
       bool  stackSafe;
       bool  embeddable;
+      bool  withEmbeddableRet;
 //      bool  function;
 //      bool  dynamicRequired;
       ref_t outputReference;
@@ -646,6 +649,7 @@ public:
          protectedRef = 0;
          withCustomDispatcher = false;
          stackSafe = false;
+         withEmbeddableRet = false;
 //         function = false;
 //         dynamicRequired = false;
       }

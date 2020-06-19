@@ -319,24 +319,8 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
          result.withCustomDispatcher = true;
 
       int hint = checkMethod(info, message, result, resolveProtected);
-//      //if (hint == tpUnknown && test(info.header.flags, elWithArgGenerics)) {
-//      //   hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT), result);
-//      //   if (hint != tpUnknown) {
-//      //      result.withOpenArgDispatcher = true;
-//      //   }
-//      //   else {
-//      //      hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 1), result);
-//      //      if (hint != tpUnknown) {
-//      //         result.withOpenArg1Dispatcher = true;
-//      //      }
-//      //      else {
-//      //         hint = checkMethod(info, overwriteParamCount(message, OPEN_ARG_COUNT + 2), result);
-//      //         if (hint != tpUnknown) {
-//      //            result.withOpenArg2Dispatcher = true;
-//      //         }
-//      //      }
-//      //   }
-//      //}
+
+      result.withEmbeddableRet = info.methodHints.get(Attribute(message, maEmbeddableRet)) != 0; 
 
       return hint;
    }
@@ -1832,6 +1816,9 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          return true;
       case V_CONST:
          attrValue = tpConstant;
+         return true;
+      case V_MULTIRETVAL:
+         attrValue = tpMultiRetVal | tpEmbeddable;
          return true;
       case 0:
          return true;

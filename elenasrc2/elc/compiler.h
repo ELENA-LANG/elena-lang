@@ -1105,7 +1105,7 @@ private:
 
    ObjectInfo compileMessage(SNode node, ExprScope& scope, ref_t exptectedRef, ObjectInfo target, EAttr mode);
    ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode, 
-      int stackSafeAttr, bool& embeddable);
+      int stackSafeAttr, bool& embeddableRet);
 ////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 
    SNode injectAttributeIdentidier(SNode current, Scope& scope);
