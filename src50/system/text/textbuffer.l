@@ -50,12 +50,14 @@ namespace text
         string Value
             = String.copy(0, theLength.Value, theBuffer);
     
+        get multiret Value(ref wide r)
+        {
+            r := WideString.copy(0, theLength.Value, theBuffer);
+        }
+    
         wide cast()
             = WideString.copy(0, theLength.Value, theBuffer);
             
-//        wide Value
-//            = WideString.copy(0, theLength.Value, theBuffer);
-    
         string toPrintable()
             = self.Value;
     
