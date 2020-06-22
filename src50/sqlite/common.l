@@ -210,23 +210,23 @@ public sealed class DBCommand
         
                     ^ cast string(columnTextPtr)
                 }
-//            SQLITE_FLOAT
-//                {
-//                    real val := extern sqlite3.sqlite3_column_double(theCommandHandle, index);
-//                    
-//                    ^ val
-//                }
-//            SQLITE_BLOB
-//                [
-//                    dirty_ptr blob := system'external'sqlite3 sqlite3_column_blob(theCommandHandle, anIndex).
-//                    int len := system'external'sqlite3 sqlite3_column_bytes(theCommandHandle, anIndex).
-//                    
-//                    T<ByteArray> arr := ByteArray new(len).
-//        
-//                    blob read(arr, len).
-//        
-//                    ^ arr
-//                ];
+            SQLITE_FLOAT
+                {
+                    real val := extern sqlite3.sqlite3_column_double(theCommandHandle, index);
+                    
+                    ^ val
+                }
+            SQLITE_BLOB
+                {
+                    dirty_ptr blob := extern sqlite3.sqlite3_column_blob(theCommandHandle, index);
+                    int len := extern sqlite3.sqlite3_column_bytes(theCommandHandle, index);
+                    
+                    byte[] arr := new byte[](len);
+        
+                    blob.read(arr, len);
+        
+                    ^ arr
+                }
             SQLITE_NULL
                 {
                     ^ nil

@@ -48,14 +48,22 @@ class FileDialog
     }
 }
 
-////// --- OpenFileDialog ---
-////
-////#class OpenFileDialog
-////{
-////    #method run°
-////    [
-////    ]    
-////}
+// --- OpenFileDialog ---
+
+public sealed class OpenFileDialog : FileDialog
+{
+    constructor new(parent)
+        <= new(parent);
+    
+    bool run()
+    {
+        var dialog := new system'winforms'OpenFileDialog(theParent, theFilters, 0, 255, theTitle);
+   
+        theSelectedPath := dialog.select();
+        
+        ^ (nil != theSelectedPath)
+    }    
+}
 
 // --- SaveFileDialog ---
 
@@ -78,42 +86,42 @@ public sealed class SaveFileDialog : FileDialog
 
 public singleton messageDialog
 {
-//    open parent:aParent caption:aCaption information:aText
-//    [
-//        messageBox open hwnd:(aParent hwnd) literal:aCaption literal:aText int:MB_ICONINFORMATION.
-//    ]
-//    
-//    open caption:aCaption information:aText
-//    [
-//        messageBox open literal:aCaption literal:aText int:MB_ICONINFORMATION.
-//    ]
-//    
-//    open parent:aParent caption:aCaption exclamation:aText
-//    [
-//        messageBox open hwnd:(aParent hwnd) literal:aCaption literal:aText int:MB_ICONEXCLAMATION.
-//    ]    
-//    
-//    open caption:aCaption exclamation:aText
-//    [
-//        messageBox open literal:aCaption literal:aText int:MB_ICONEXCLAMATION.
-//    ]    
-//    
-//    open parent:aParent caption:aCaption warning:aText
-//    [
-//        messageBox open hwnd:(aParent hwnd) literal:aCaption literal:aText int:MB_ICONWARNING
-//    ]    
-//    
-//    open caption:aCaption warning:aText
-//    [
-//        messageBox open literal:aCaption literal:aText int:MB_ICONWARNING.
-//    ]    
-//    
-//    open parent:aParent caption:aCaption question:aText
-//    [
-//        var result := messageBox open hwnd:(aParent hwnd) literal:aCaption literal:aText int:(MB_ICONQUESTION || MB_YESNO).
-//        
-//        ^ result == IDYES
-//    ]
+    showInformation(parent, caption, text)
+    {
+        messageBox.open(cast WindowHandle(parent), cast string(caption), cast string(text), MB_ICONINFORMATION)
+    }
+    
+    showInformation(caption, text)
+    {
+        messageBox.open(cast string(caption), cast string(text), MB_ICONINFORMATION)
+    }
+    
+    showExclamation(parent, caption, text)
+    {
+        messageBox.open(cast WindowHandle(parent), cast string(caption), cast string(text), MB_ICONEXCLAMATION)
+    }
+    
+    showExclamation(caption, text)
+    {
+        messageBox.open(cast string(caption), cast string(text), MB_ICONEXCLAMATION)
+    }
+    
+    showWarning(parent, caption, text)
+    {
+        messageBox.open(cast WindowHandle(parent), cast string(caption), cast string(text), MB_ICONWARNING)
+    }
+    
+    showWarning(caption, text)
+    {
+        messageBox.open(cast string(caption), cast string(text), MB_ICONWARNING)
+    }
+    
+    showQuestion(parent, caption, text)
+    {
+        var result := messageBox.open(cast WindowHandle(parent), cast string(caption), cast string(text), MB_ICONQUESTION || MB_YESNO);
+        
+        ^ result == IDYES
+    }
     
     showQuestion(string caption, string text)
     {

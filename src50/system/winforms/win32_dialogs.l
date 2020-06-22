@@ -132,7 +132,7 @@ class BaseFileDialog
 
 public sealed class OpenFileDialog : BaseFileDialog
 {
-    constructor create(WindowHandle parent, wide[] filters, int filterIndex, int maxFile, wide caption)
+    constructor(WindowHandle parent, wide[] filters, int filterIndex, int maxFile, wide caption)
         <= create(parent, filters, filterIndex, maxFile, caption, 
                     OFN_PATHMUSTEXIST || OFN_EXPLORER || OFN_LONGNAMES || DS_CENTER || OFN_HIDEREADONLY);
     

@@ -1,4 +1,3 @@
-//import system'drawing.
 import system'winforms;
 
 // --- BaseForm ---
@@ -157,88 +156,85 @@ public class SDIDialog : SDIForm
     }
 }
 
-//// --- Child ---
-//
-//class ChildWindowListener :: ChildWindowCallback
-//{
-//    form theOwner.
-//    
-//    constructor new form:anOwner
-//    [
-//        theOwner := anOwner.
-//    ]
-//    
-//    onsize hwnd:aControl int:width int:height vint:aResult
-//    [
-//        theOwner $resize int:width int:height.
-//        
-//        aResult int := 0
-//    ]
-//    
-//    onclick hwnd:aHandle vint:aResult
-//    [
-//        var aControl := theOwner retrieve hwnd:aHandle.
-//        if($nil != aControl)
-//            [ aControl click ].
-//        
-//        $super onclick hwnd:aHandle vint:aResult.
-//    ]
-//    
-//    onchange hwnd:aHandle vint:aResult
-//    [
-//        var aControl := theOwner retrieve hwnd:aHandle.
-//        if($nil != aControl)
-//            [ aControl change ].
-//        
-//        $super onchange hwnd:aHandle vint:aResult
-//    ]
-//}
-//
-//limited class ChildForm :: BaseWinForm
-//{
-//    constructor new parent:aParent
-//        <= new;
-//    [
-//        theParent := aParent
-//    ]
-//    
-//    form = $self.
-//    
-//    run
-//    [
-//        $self open.
-//        theParent set enabled:false.
-//        
-//        'program run hwnd:theHandle.
-//        
-//        theParent set enabled:true
-//    ]    
-//
-//    close 
-//    [
-//        $self set visible:false.
-//        
-//        $super close
-//    ]
-//            
-//    $createHandle
-//    [
-//        int Styles := WS_POPUPWINDOW || WS_DLGFRAME.
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:(WS_EX_DLGMODALFRAME || WS_EX_CONTROLPARENT)
-//                        wide:SDIWindowClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:(theParent hwnd)
-//                        hinstance:CurrentInstance 
-//                        object:(ChildWindowListener new form:$self).
-//    ]
-//}
+// --- Child ---
+
+class ChildWindowListener : ChildWindowCallback
+{
+    ChildForm theOwner;
+    
+    constructor(ChildForm owner)
+    {
+        theOwner := owner
+    }
+    
+    onsize(WindowHandle hwnd, int width, int height, ref int result)
+    {
+        theOwner.resize(hwnd, width, height);
+        
+        result := 0
+    }
+    
+    onclick(WindowHandle handle, ref int result)
+    {
+        auto control := theOwner.retrieve(handle);
+        if(nil != control)
+            { control.click() };
+        
+        super.onclick(handle, ref result)
+    }
+    
+    onchange(WindowHandle hwnd, ref int retVal)
+    {
+        auto control := theOwner.retrieve(handle);
+        if(nil != control)
+            { control.click() };
+        
+        super.onchange(handle, ref retVal)
+    }
+}
+
+public closed class ChildForm : BaseWinForm
+{
+    constructor new(parent)
+        <= new()
+    {
+        theParent := parent
+    }
+    
+    run()
+    {
+        self.open();
+        theParent.Enabled := false;
+        
+        forward program.run(theHandle);
+        
+        theParent.Enabled := true
+    }    
+
+    close()
+    {
+        self.Visible := false;
+        
+        super.close()
+    }
+
+    internal createHandle()
+    {
+        int styles := WS_POPUPWINDOW || WS_DLGFRAME;
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                            WS_EX_DLGMODALFRAME || WS_EX_CONTROLPARENT,
+                            SDIWindowClass,
+                            theCaption,
+                            styles,
+                            x, y, width, height,
+                            cast WindowHandle(theParent),
+                            CurrentInstance,
+                            new ChildWindowListener(self));
+    }
+
+}
