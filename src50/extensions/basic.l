@@ -16,15 +16,6 @@ public sealed class Integer : BaseVariable, ref<int>
     constructor new()
     {
     }
-    
-////    constructor new : n
-////        <= new(T<int>(n)).
-//        
-////    append : n
-////        <= append(T<int>(n)).
-////
-////    reduce : n
-////        <= reduce(T<int>(n)).
         
     append(int n)
     {
@@ -60,9 +51,6 @@ public sealed class Real : BaseVariable, ref<real>
     constructor new()
     {
     }
-        
-//    constructor new : n
-//        <= new(T<real>(n)).
         
     append(real n)
     {
@@ -101,9 +89,6 @@ public sealed class LongInteger : BaseVariable, ref<long>
         value := n
     }
     
-//    constructor new : n
-//        <= new(T<long>(n)).
-        
     append(n)
         <= append(cast long(n));
 

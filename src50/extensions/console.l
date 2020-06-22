@@ -15,27 +15,6 @@ public extension outputOp
             self.write(obj.toString())
         }
     }
-//    
-//////    generic printWide(object<> list)
-//////    [
-//////        int len := list length.
-//////        int i := 0.
-//////        while (i < len)
-//////        [
-//////            object obj := list[i].
-//////            
-//////            self write(obj~convertorOp toWide).
-//////            
-//////            i := i + 1
-//////        ].
-//////        
-//////        ^ self
-//////    ]
-////
-////    printLine
-////    [
-////        self writeLine.
-////    ]
             
     printLine(params object[] list)
     {
@@ -49,6 +28,30 @@ public extension outputOp
         
         self.writeLine();
     }    
+    
+    printWide(params object[] list)
+    {
+        int len := list.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            object obj := list[i];
+            
+            self.write(obj.toWide())
+        }
+    }
+    
+    printWideLine(params object[] list)
+    {
+        int len := list.Length;
+        for(int i := 0, i < len, i := i + 1)
+        {
+            object obj := list[i];
+            
+            self.write(obj.toWide())
+        };
+        
+        self.writeLine();
+    }
 }
 
 public extension outputFormatterOp

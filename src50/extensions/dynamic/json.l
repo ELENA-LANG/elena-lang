@@ -41,78 +41,42 @@ class JsonException : Exception
 
 extension jsonSerializer : TextBuilder
 {
-//    $serialize byte:n
-//    [
-//        self write(n literal).
-//    ]
-//
-//    $serialize short:n
-//    [
-//        self write(n literal).
-//    ]
-//
-//    $serialize long:n
-//    [
-//        self write(n literal).
-//    ]
-//
-//    $serialize real:n
-//    [
-//        self write(n literal).
-//    ]
-//
-//    $serialize bool:b
-//    [
-//        self write(b literal).
-//    ]
-//
-//    $serialize char:b
-//    [
-//        self write:"'"; write(b literal); write:"'".
-//    ]
-//
-//    $serialize wide:s
-//    [
-//        self write:""""; write(s literal); write:"""".
-//    ]
+    serialize(Enumerator en)
+    {
+        self.write:"[";
 
-//    serialize(Enumerator en)
-//    [
-//        self write:"[".
-//
-//        en runFor:self eachPair(:output:object)
-//        [
-//            output~jsonSerializer jsonSerialize:object.
-//            
-//            output write:",".
-//        ].
-//        
-//        int outputLen := self length.
-//        if(outputLen > 1)
-//            [ self setLength(outputLen - 1) ].
-//        
-//        self write:"]".
-//    ]    
+        en.forEachPair(self,(output,object) {
+            output.jsonSerialize(object);
+            
+            output.write:","
+        });
+        
+        int outputLen := self.Length;
+        if(outputLen > 1)
+            { self.setLength(outputLen - 1) };
+        
+        self.write:"]";
+    }    
     
-//    $serialize indexer:it
-//    [
-//        self write:"[".
-//        
-//        while (it available)
-//        [
-//            self~jsonSerializer jsonSerialize(it get).
-//            self write:",".
-//            
-//            it append index:1
-//        ].
-//        
-//        int outputLen := self length.
-//        if(outputLen > 1)
-//            [ self setLength int(outputLen - 1) ].
-//        
-//        self write:"]".
-//    ]    
-//    
+    serialize(Indexer it)
+    {
+        self.write:"[";
+        
+        while (it.Available)
+        {
+            self.jsonSerialize(it.get());
+            self.write:",";
+            
+            it.appendIndex:1
+        };
+        
+        int outputLen := self.Length;
+        if(outputLen > 1)
+            { self.setLength(outputLen - 1) };
+        
+        self.write:"]"
+    }    
+    
 //    $serialize tape_structure:struct
 //    [
 //        self write:"{".
@@ -143,14 +107,49 @@ extension jsonSerializer : TextBuilder
     {
         self.write(n.toPrintable())
     }
-    
+
+    serialize(byte n)
+    {
+        self.write(n.toPrintable())
+    }
+
+    serialize(short n)
+    {
+        self.write(n.toPrintable())
+    }
+
+    serialize(long n)
+    {
+        self.write(n.toPrintable())
+    }
+
+    serialize(real n)
+    {
+        self.write(n.toPrintable())
+    }
+        
     serialize(String s)
     {
         self.write:"""";
         self.write(s);
         self.write:""""
     }
-    
+
+    serialize(bool b)
+    {
+        self.write(b.toPrintable())
+    }
+
+    serialize(char b)
+    {
+        self.write:"'".write(b.toPrintable()).write:"'"
+    }
+
+    serialize(wide s)
+    {
+        self.write:"""".write(cast string(s)).write:""""
+    }
+        
     serialize(DTO object)
     {
         self.write:"{";
@@ -187,11 +186,11 @@ extension jsonSerializer : TextBuilder
         self.write:"}"
     }    
 
-//    serialize(Array array)
-//    [
-//        self~jsonSerializer serialize(T<Enumerator>(array)).
-//    ]
-//
+    serialize(Array array)
+    {
+        self.serialize(array.enumerator())
+    }
+
 ////    $serialize(BaseEnumerator o)
 ////    [
 ////        self~jsonSerializer $serialize enumerator:o.
@@ -297,19 +296,6 @@ singleton helper
         }
     }
     
-//    deserializeStruct &object:object &enumerator:e
-//        <= deserializeStruct &object:object &literal:($helper $readNext &enumerator:e literal) &enumerator:e.
-//        
-//    deserializeStruct &object:object &literal:token &enumerator:e
-//    [
-//        char ch := #0.
-//        token read &int:0 &vchar:ch.
-//
-//        (ch == #123)
-//            ? [ ^ $helper deserializeStruct:object &enumerator:e. ]
-//            ! [ JsonException new raise. ].
-//    ]
-    
     string readNext(Enumerator<string> e)
     {
         ifnot(e.next())
@@ -354,7 +340,4 @@ public extension jsonOp
         
     fromJson()
         = helper.deserializeObject(new TokenEnumerator(self, new ExpressionStatemachine()));
-
-////    readJson : object
-////        = $helper deserializeStruct &object:object &enumerator:(TokenEnumerator new &literal:(self literal) &token_dfa:(ExpressionStatemachine new)).
 }        

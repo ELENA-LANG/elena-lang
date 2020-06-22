@@ -1,5 +1,4 @@
 import system'routines;
-//import extensions.
 
 // --- Strategy ---
 
@@ -165,22 +164,6 @@ public abstract class BaseRowEnumerator : Enumerator
     int          theLength;  
     BaseStrategy theStrategy;
 
-//    generic constructor new(V<object> Arguments)
-//    [
-//        theLength := Arguments length.
-//        theIndexers := Array new(theLength).
-//        
-//        int i := 0.
-//        while (i < theLength)
-//        [
-//            theIndexers setAt(i, Arguments[i] indexer).
-//            
-//            i := i + 1
-//        ].
-//        
-//        self reset.
-//    ]
-    
     bool next()
     {
         theStrategy := theStrategy.eval(theIndexers, theLength);

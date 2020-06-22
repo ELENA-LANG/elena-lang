@@ -1,5 +1,3 @@
-////import extensions.
-
 namespace text
 {
     // --- StringBookmark ---
@@ -247,7 +245,7 @@ namespace text
             }
         }
     
-    //    cast T<wide> = theValue.
+        wide cast() = theValue;
     
         dispatch() => theValue;
     }

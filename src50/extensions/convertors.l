@@ -3,34 +3,33 @@ import system'collections;
 import system'routines;
 import system'calendar;
 import system'text;
-////import system'dynamic.
 
-////// --- convertors ---
-////
-////singleton charArrayExConvertor
-////{
-////    T<CharArray> convert(literal s)
-////    [
-////        int len := 0.
-////        UTF8Encoding charCount(s, &len).
-////        
-////        auto retVal := CharArray new(len).
-////        s save(0, retVal, &len).
-////        
-////        ^ retVal.
-////    ]
-////    
-////    T<CharArray> convert(wide s)
-////    [
-////        int len := 0.
-////        UTF16Encoding charCount(s, &len).
-////        
-////        auto retVal := CharArray new(len).
-////        s save(0, retVal, &len).
-////        
-////        ^ retVal.
-////    ]
-////} 
+// --- convertors ---
+
+singleton charArrayExConvertor
+{
+    char[] convert(string s)
+    {
+        int len := 0;
+        UTF8Encoding.charCount(s, ref len);
+        
+        auto retVal := new char[](len);
+        s.save(0, retVal, ref len);
+        
+        ^ retVal
+    }
+    
+    char[] convert(wide s)
+    {
+        int len := 0;
+        UTF16Encoding.charCount(s, ref len);
+        
+        auto retVal := new char[](len);
+        s.save(0, retVal, ref len);
+        
+        ^ retVal
+    }
+} 
 
 singleton stringExConvertor
 {
@@ -74,9 +73,9 @@ singleton stringExConvertor
         ^ output
     }
 
-//    literal convert datetime:aValue = aValue literal.
-//        
-//    literal convert timestamp:aValue = aValue literal.
+    string convert(Date val) = val.toPrintable();
+        
+    string convert(Timespan val) = val.toPrintable();
 
     string convert(Enumerable o)
         <= convert(o.enumerator());
@@ -96,71 +95,53 @@ singleton wideExConvertor
     wide convert(IntMatrix a)
         = intmatrixExConvertor.toWide(a);
         
-//    wide convert(Indexer it)
-//    [
-//        auto anOutput := TextBuilder new.
-//        while (it available)
-//        [
-//            anOutput write(it get; toWide).
-//            anOutput write:",".
-//            
-//            it appendIndex:1
-//        ].
-//        
-//        int aLength := anOutput length.
-//        if (0 < aLength)
-//            [ anOutput setLength(-1 + aLength) ].
-//        
-//        ^ anOutput
-//    ]
-//
-//    wide convert(Enumerator en)
-//    [
-//        auto anOutput := TextBuilder new.
-//
-//        en forEachPair(anOutput,(:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ]).
-//        
-//        int aLength := anOutput length.
-//
-//        if (0 < aLength)
-//            [ anOutput setLength(-1 + aLength) ].
-//        
-//        ^ anOutput
-//    ]
-////        
-////    wide convert datetime:aValue = aValue literal; wide.
-////        
-////    wide convert timestamp:aValue = aValue literal; wide.
-////                
-//////                intmatrix : m
-//////                    = intmatrixExConvertor toLiteral intmatrix:m.
-////
-//    wide convert(Enumerable o)
-//        <= convert(o enumerator).
-//
-//    wide convert(Indexable o)
-//        <= convert(o indexer).
-//
-//    wide convert:o
-//        = wideConvertor convert:o.
-}
+    wide convert(Indexer it)
+    {
+        auto output := new TextBuilder();
+        while (it.Available)
+        {
+            output.write(it.get().toWide());
+            output.write:","w;
+            
+            it.appendIndex(1)
+        };
+        
+        int length := output.Length;
+        if (0 < length)
+            { output.Length := -1 + length };
+        
+        ^ output
+    }
+    
+    wide convert(Enumerator en)
+    {
+        auto output := new TextBuilder();
+        while(en.next())
+        {
+            output.write(en.get().toWide());
+            output.write:","w;
+        };
 
-//////class wideExConvertor =
-//////{
-//////    convert enumerable:aList
-//////    [
-//////        textbuffer anOutput := TextBuilder new.
-//////
-//////        aList run:anOutput eachPair: (:aParam:anItem)[ aParam write:(anItem~convertorOp toWide); write:"," ].
-//////        
-//////        int aLength := anOutput length.
-//////
-//////        if (0 < aLength)
-//////            [ anOutput setLength int:(-1 + aLength) ].
-//////        
-//////        ^ anOutput wide
-//////    ]
-//////}.
+        int length := output.Length;
+        if (0 < length)
+            { output.Length := -1 + length };
+        
+        ^ output
+    }
+        
+    wide convert(Date val) = val.toPrintable();
+        
+    wide convert(Timespan val) = val.toPrintable();
+    
+    wide convert(Enumerable o)
+        <= convert(o.enumerator());
+
+    wide convert(Indexable o)
+        <= convert(o.indexer());
+
+    wide convert(o)
+        = wideConvertor.convert(o);
+}
 
 public singleton byteArrayExConvertor
 {
@@ -211,7 +192,7 @@ public singleton intmatrixExConvertor
         ^ IntMatrix.allocate(n, m).populate:(int i, int j => a.at(i).at(j).toInt() )
     }
     
-    toString(IntMatrix matrix)
+    string toString(IntMatrix matrix)
     {
         auto output := new TextBuilder();
         
@@ -234,6 +215,33 @@ public singleton intmatrixExConvertor
         };
         
         ^ output.Value
+    }
+    
+    wide toWide(IntMatrix matrix)
+    {
+        auto output := new TextBuilder();
+        
+        int l := 0;
+        matrix.readLengthsTo(ref int n, ref int m);
+        
+        for (int i := 0, i < n, i += 1)
+        {
+            for (int j := 0, j < m, j += 1)
+            {
+                matrix.read(i, j, ref int r);
+                
+                output.write:r.write:","
+            };
+            l := output.Length;
+            l -= 1;
+            output.Length := l;
+            
+            output.write(forward newLine)
+        };
+        
+        wide ret := output.Value;
+        
+        ^ ret
     }
 }
 
@@ -338,27 +346,24 @@ public singleton arrayConvertorEx
         ^ retVal
     }
 
-//    T<Array> convert(Indexer it)
-//    [
-//        T<ArrayList> aRetVal := ArrayList new.
-//        while (it available)
-//        [
-//            aRetVal append(it get).
-//            
-//            it appendIndex(1)
-//        ].
-//
-//        ^ T<Array>(aRetVal)
-//    ]
-//
-////    convert(Enumerable v)
-////        <= convert(v enumerator).
-//        
-//    T<Array> convert(Indexable v)
-//        <= convert(v indexer).
+    Array convert(Indexer it)
+    {
+        ArrayList retVal := new ArrayList();
+        while (it.Available)
+        {
+            retVal.append(it.get());
+            
+            it.appendIndex(1)
+        };
+
+        ^ retVal
+    }
+
+    Array convert(Enumerable v)
+        <= convert(v.enumerator());
         
-//    convert void:val
-//        = Array min.                        
+    Array convert(Indexable v)
+        <= convert(v.indexer());
 }
 
 // --- convertorOp ---
@@ -374,8 +379,8 @@ public extension convertorOp
     byte[] toByteArray()
         = byteArrayExConvertor.convert:self;
     
-////    T<IntMatrix> toIntMatrix
-////        = intmatrixExConvertor convert:self.
+    IntMatrix toIntMatrix()
+        = intmatrixExConvertor.convert:self;
     
     string toString()
         = stringExConvertor.convert(self);
@@ -383,14 +388,14 @@ public extension convertorOp
     string toString(int radix)
         = stringConvertor.convert(self, radix);
         
-////    T<CharArray> toCharArray
-////        = charArrayExConvertor convert:self.
+    char[] toCharArray()
+        = charArrayExConvertor.convert:self;
     
     wide toWide()
         = wideExConvertor.convert(self);
 
-////    toWide(int radix)
-////        = wideConvertor convert(self, radix).
+    toWide(int radix)
+        = wideConvertor.convert(self, radix);
             
     byte toByte()
         = byteConvertor.convert(self);
