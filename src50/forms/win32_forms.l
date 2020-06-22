@@ -5,7 +5,7 @@ import system'winforms;
 
 public abstract class BaseWinForm : BaseWinContainer
 {
-//    func1 theOpenEvent.
+    event Func1    onOpen;
     
     protected constructor new()
         <= new()
@@ -19,37 +19,30 @@ public abstract class BaseWinForm : BaseWinContainer
         theControls.append(control)
     }
     
-//    controls = theControls.
-//
-//    set onOpen:aFunction
-//    [
-//        theOpenEvent := aFunction func1.
-//    ]        
-    
     open()
     {
         super.open();
         
-//        if($nil != theOpenEvent)
-//            [ theOpenEvent eval:self ]
+        if(nil != onOpen)
+            { onOpen(self) }
     }
     
-//    set visible : aValue
-//    [
-//        $super set visible:aValue.
-//        
-//        if($nil == theHandle)
-//        [
-//            $self open.
-//        ].
-//    ]
-//    
-//    close
-//    [
-//        $super close.
-//        
-//        theHandle free
-//    ]
+    set bool Visible(bool value)
+    {
+        super.Visible := value;
+        
+        if(nil == theHandle)
+        {
+            self.open()
+        };
+    }
+    
+    close()
+    {
+        super.close();
+        
+        theHandle.free()
+    }
 }
 
 // --- SDI ---
@@ -78,44 +71,42 @@ class SDIWindowListener : SDIWindowCallback
         
         super.onclick(handle, ref result)
     }
+
+    onchange(WindowHandle handle, ref int result)
+    {
+        auto control := theOwner.retrieve(handle);
+        if(nil != control)
+            { control.change() };
+        
+        super.onchange(handle, ref result)
+    }
     
-//    onchange hwnd:aHandle vint:aResult
-//    [
-//        var aControl := theOwner retrieve hwnd:aHandle.
-//        if($nil != aControl)
-//            [ aControl change ].
-//        
-//        $super onchange hwnd:aHandle vint:aResult
-//    ]
-//    
-//    onmenu int:aCode vint:aResult    
-//    [
-//        var anItem := theOwner retrieveMenu int:aCode.
-//        if($nil != anItem)
-//            [ anItem click ].
-//        
-//        $super onmenu int:aCode vint:aResult
-//    ]    
+    onmenu(int code, ref int retVal)
+    {
+        var item := theOwner.retrieveMenu(code);
+        if(nil != item)
+            { item.click() };
+        
+        super.onmenu(code, ref retVal)
+    }
 }
 
 public closed class SDIForm : BaseWinForm
 {
-//    object theMenu.
+    object theMenu;
     
     constructor new()
         <= new()
     {
     }
     
-//    sdiform = $self.
-//    
-//    set menu:aMenu
-//    [
-//        theMenu := aMenu.
-//    ]
-//    
-//    stacksafe retrieveMenu int:anID
-//        => theMenu.
+    set Menu(menu)
+    {
+        theMenu := menu
+    }
+    
+    retrieveMenu(int id)
+        => theMenu;
     
     internal createHandle()
     {

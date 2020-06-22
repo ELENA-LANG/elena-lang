@@ -26,6 +26,8 @@ In development:
     * timer
     * upndown
     * nodepad
+    * refactoring : classROp.setField should be either internal or not available at all (because
+                    it is not possible to enforce types)
 
   [!language]
     * !new feature 

@@ -1,16 +1,5 @@
 import system'drawing;
 
-//// --- Events ---
-//
-//type index_changed = IndexChangedAction.
-//
-//limited closure class IndexChangedAction
-//{
-//    stacksafe closure(object sender, int index)
-//    [
-//    ]
-//}
-
 // --- BaseControl ---
 
 public abstract class BaseControl
@@ -90,18 +79,6 @@ public abstract class BaseControl
         }
     }
 
-//    append caption : aValue
-//    [    
-//        $self set caption:($self caption + aValue).
-//    ]
-//    
-//    caption = theCaption.
-//    
-//    stacksafe setLocation int:x int:y
-//    [
-//        theRegion writeLocation int:x int:y.
-//    ]
-    
     int X
     {
         get()
@@ -204,12 +181,4 @@ public abstract class BaseControl
     }
 
     Dimension Dimension = theRegion.Dimension;
-
-
-////    #method is &tabstop = theTabStop.
-////    
-////    #method set &tabstop:aValue
-////    [
-////        theTabStop := aValue bool.
-////    ]
 }

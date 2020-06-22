@@ -1,7 +1,5 @@
 import system'text;
-//import extensions;
 import system'dynamic;
-//import system'collections;
 
 // --- IOException ---
 

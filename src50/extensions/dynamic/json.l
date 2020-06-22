@@ -13,32 +13,6 @@ class JsonException : Exception
         <= new("Json Deserializer error");
 }
 
-////class jsonDispatcher =
-////{
-////    eval:output &array:array
-////    [
-////        output::jsonSerializer jsonSerialize &enumerable:array.
-////    ]
-////    
-////    eval:output &enumerable:list
-////    [
-////        output::jsonSerializer jsonSerialize &enumerable:list.
-////    ]
-////    
-////    eval:output &dto:object
-////    [
-////        output::jsonSerializer jsonSerialize &dto:object.
-////    ]
-////    
-////    eval:output &struct:object
-////    [
-////        output::jsonSerializer jsonSerialize &struct:object.
-////    ]
-////    
-////    ! output : object
-////        = output writeLiteral:"""":(object literal):"""".
-////}.
-
 extension jsonSerializer : TextBuilder
 {
     serialize(Enumerator en)
@@ -77,31 +51,31 @@ extension jsonSerializer : TextBuilder
         self.write:"]"
     }    
     
-//    $serialize tape_structure:struct
-//    [
-//        self write:"{".
-//
-//        int i := 0.
-//        int len := struct fieldCount.
-//        while (i < len)
-//        [
-//            (0 == i) 
-//                ! [ self write:"," ].
-//            
-//            var prop := struct getField int:i.
-//            self write:"""".
-//            self write:(prop literal).
-//            self write:""":".
-//            
-//            var member := struct getField(i + 1).
-//            
-//            self~jsonSerializer jsonSerialize:member.
-//            
-//            i := i + 2.
-//        ].
-//                                
-//        self write:"}"
-//    ]
+    serialize(Struct struct)
+    {
+        self.write:"{";
+
+        int i := 0;
+        int len := struct.__FieldCount;
+        while (i < len)
+        {
+            ifnot(0 == i) 
+                { self.write:"," };
+            
+            var prop := struct.getField(i);
+            self.write:"""";
+            self.write:(prop.toPrintable());
+            self.write:""":";
+            
+            var member := struct.getField(i + 1);
+            
+            self.serialize(member);
+            
+            i := i + 2
+        };
+                                
+        self.write:"}"
+    }
 
     serialize(int n)
     {
@@ -190,32 +164,6 @@ extension jsonSerializer : TextBuilder
     {
         self.serialize(array.enumerator())
     }
-
-////    $serialize(BaseEnumerator o)
-////    [
-////        self~jsonSerializer $serialize enumerator:o.
-////    ]
-////
-////    $serialize(BaseIndexer o)
-////    [
-////        self~jsonSerializer $serialize indexer:o.
-////    ]
-//        
-////    eval:output &dto:object
-////    [
-////        output::jsonSerializer jsonSerialize &dto:object.
-////    ]
-//
-//    jsonSerialize : object
-//    [
-//        if(nil != object)
-//        [
-//            self~jsonSerializer serialize(object).
-//        ];
-//        [ self write:"null" ].
-//
-//        ^ self
-//    ]
 }
 
 singleton helper

@@ -13,44 +13,16 @@ public interface IControl
     
     abstract IControl retrieve(WindowHandle handle) {}
     
-//    stacksafe readDimensionTo vint:aWidth vint:aHeight []
-//    
-//    stacksafe readLocationTo vint:x vint:y []
-    
     abstract setRegion(int x, int y, int width, int height) {}
     
     abstract open() {}
 
     abstract click() {}
 
-//    change []
+    abstract change() {}
         
     abstract close() {}
 }
-
-//public IControlOf<T>
-//{
-//    control = IControl::
-//    {
-//        control_object = $self.
-//        
-//        open [ $self open ]
-//    
-//        change [ $self change ]
-//    
-//        close [ $self close ]
-//    
-//        retrieve hwnd:aHandle = $self retrieve hwnd:aHandle.
-//    
-//        setDimension int:aWidth int:aHeight [ $self setDimension int:aWidth int:aHeight ]
-//    
-//        setLocation int:aWidth int:aHeight [ $self setLocation int:aWidth int:aHeight. ]
-//    
-//        readDimensionTo vint:aWidth vint:aHeight [ $self readDimensionTo vint:aWidth vint:aHeight ]
-//    
-//        readLocationTo vint:aWidth vint:aHeight [ $self readLocationTo vint:aWidth vint:aHeight ]
-//    }.
-//}
 
 // --- BaseWindowControl ---
 
@@ -86,7 +58,7 @@ public abstract class BaseWinControl : BaseControl
 
     click() {}
     
-//    change []
+    change() {}
     
     close()
     {
@@ -164,12 +136,6 @@ public abstract class BaseWinControl : BaseControl
             self.Caption := cast string(v)
         }
     }
-                                                                                                                                                                                                                                                                                        
-
-//    append caption : aValue
-//    [    
-//        $self set caption($self caption + aValue wide)
-//    ]
 
     get string Caption()
     {
@@ -204,48 +170,18 @@ public abstract class BaseWinControl : BaseControl
     }  
 }    
 
-//// --- ControlCollection ---
-//
-//sealed class ControlCollection :: BaseControlCollection
-//{
-//    object theParent.
-//    
-//    constructor new : aParent
-//        <= new;
-//    [
-//        theParent := aParent
-//    ]
-//    
-//    append : aControl
-//    [
-//        $super append:(aControl control).
-//        
-//        aControl $set parent:theParent.
-//        
-//        if(theParent opened)
-//        [
-//            aControl open
-//        ]
-//    ]
-//}
-
 // --- BaseWinContainer ---
 
 public abstract class BaseWinContainer : BaseWinControl
 {
     List<IControl> theControls;
-//    func1    theResize.
+    event Func1    onResize;
     
     protected constructor new()
         <= new()
     {
         theControls := new List<IControl>();
     }
-
-//    set onResize:anAction
-//    [
-//        theResize := anAction func1.
-//    ]
 
     IControl retrieve(WindowHandle handle)
     {
@@ -286,8 +222,8 @@ public abstract class BaseWinContainer : BaseWinControl
     {
         super.resize(hwnd, width, height);
 
-//        ifnot($nil == theResize)
-//            [ theResize eval:$self ]
+        if(nil != onResize)
+            { onResize(self) }
     }
     
     IControl findByID(string id)
@@ -373,67 +309,58 @@ public closed class Label : BaseWinControl, interface<IControl>
     }
 }
 
-//// --- Label ---
-//
-//class StaticLabel :: Label
-//{
-//    constructor new
-//        <= new;
-//    [
-//    ]
-//    
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//        if(0 == aParent)
-//            [ InvalidOperationException new:"The parent window is closed"; raise ].
-//        
-//        int Styles := WS_CHILD || SS_SIMPLE.
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:0
-//                        wide:StaticClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:$nil
-//    ]
-//}
+// --- Label ---
+
+public class StaticLabel : Label
+{
+    constructor new()
+        <= new()
+    {
+    }
+    
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+        if(parent == 0)
+            { InvalidOperationException.new("The parent window is closed").raise() };
+        
+        int styles := WS_CHILD || SS_SIMPLE;
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        0,
+                        StaticClass, 
+                        theCaption, 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        nil)
+                        
+    }
+}
 
 // --- BaseEdit ---
 
 abstract class BaseEdit : BaseWinControl
 {
-//    func1 theChanged.
-//    
+    event Func1    onChange;
+    
     protected constructor new()
         <= new()
     {
     }
-    
-//    set onChange:aFunction
-//    [
-//        theChanged := aFunction func1.
-//    ]
-//    
-//    wide = $self caption.
-//          
-//    literal = $self caption.
           
     string Value = self.Caption;
     
-//    append : aValue
-//    [
-//        $self set caption:($self caption + aValue wide).
-//    ]
-//    
-
+    get multiret Value(ref wide retVal)
+    {
+        retVal := self.Caption
+    }
+    
     set Value(string value)
     {
         self.Caption := cast WideString(value);
@@ -450,12 +377,6 @@ abstract class BaseEdit : BaseWinControl
             
         retVal := styles
     }
-    
-//    change 
-//    [
-//        if($nil != theChanged)
-//            [ theChanged eval:$self ]
-//    ]
 }
 
 // --- Edit ---
@@ -489,40 +410,36 @@ public sealed class Edit : BaseEdit, interface<IControl>
     }
 }
 
-//// --- Memo ---
-//
-//sealed class Memo :: BaseEdit, icontrolof<memo>
-//{
-//    constructor new
-//        <= new;
-//    [
-//        theTabStop := true
-//    ]
-// 
-//    wide = $self caption.
-//          
-//    literal = $self caption.
-//    
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//        
-//        int Styles := WS_CHILD || WS_BORDER || ES_MULTILINE || ES_WANTRETURN || ES_AUTOHSCROLL || ES_AUTOVSCROLL || WS_VSCROLL || WS_HSCROLL.
-//        $self $updateStyles vint:Styles.
-//        
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:WS_EX_CLIENTEDGE
-//                        wide:EditClass wide:(theCaption wide) int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:$nil.
-//    ]
-//}
+// --- Memo ---
+
+public sealed class Memo : BaseEdit, interface<IControl>
+{
+    constructor new()
+        <= new()
+    {
+        theTabStop := true
+    }
+    
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+        
+        int styles := WS_CHILD || WS_BORDER || ES_MULTILINE || ES_WANTRETURN || ES_AUTOHSCROLL || ES_AUTOVSCROLL || WS_VSCROLL || WS_HSCROLL;
+        self.updateStyles(ref styles);
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        WS_EX_CLIENTEDGE,
+                        EditClass, 
+                        theCaption, 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        nil)                        
+    }
+}
 
 // --- BaseButton ---
 
@@ -533,7 +450,7 @@ public abstract class BaseButton : BaseWinControl
     protected constructor new()
         <= new()
     {
-//        theTabStop := true.
+        theTabStop := true
     }
     
     internal updateStyles(ref int retVal)
@@ -542,8 +459,8 @@ public abstract class BaseButton : BaseWinControl
         
         if(theVisible)
             { styles := styles || WS_VISIBLE };
-//        if(theTabStop)
-//            [ Styles := Styles || WS_TABSTOP ].
+        if(theTabStop)
+            { styles := styles || WS_TABSTOP };
             
         retVal := styles
     }
@@ -650,131 +567,131 @@ public closed class RadioButton : BaseButton, interface<IControl>
     }
 }
 
-//// --- BaseList ---
-//
-//class BaseList :: BaseWinControl
-//{
-//    array_list theList.
-//    
-//    index_changed event onIndexChanged :: theChangeAction.
-//    
-//    constructor new
-//        <= new;
-//    [
-//        theList := ArrayList new
-//    ]
-//    
-//    items =
-//    {
-//        append : anObject as:aCaption
-//        [
-//            theList append:(KeyValue new key:aCaption value:anObject).
-//            
-//            self $appendItem wide:(aCaption wide)
-//        ]
-//    }.
-//    
-//    stacksafe $updateStyles vint:aRetVal
-//    [
-//        int Styles := aRetVal.
-//        
-//        if(theVisible)
-//            [ Styles := Styles || WS_VISIBLE ].
-//        if(theTabStop)
-//            [ Styles := Styles || WS_TABSTOP ].
-//            
-//        aRetVal int := Styles.
-//    ]
-//}
-//
-//// --- Combobox ---
-//
-//sealed class Combobox :: BaseList, icontrolof<combobox>
-//{
-//    constructor new
-//        <= new;
-//    [
-//    ]
-//    
-//    int vprop selected_index :: readSelectedIndexTo, setSelectedIndex.
-//    
-//    stacksafe readSelectedIndexTo vint:retVal
-//    [
-//        int index := system'external'USER32 SendMessageW int:theHandle int:CB_GETCURSEL int:0 int:0.
-//        
-//        retVal int := index
-//    ]
-//    
-//    stacksafe setSelectedIndex int:index
-//    [
-//        system'external'USER32 SendMessageW int:theHandle int:CB_SETCURSEL int:index int:0.
-//        
-//        $self change
-//    ]
-//    
-//    selected 
-//    [
-//        int index := $self selected_index.
-//            
-//        ^ theList getAt int:index.
-//    ]
-//    
-//    change 
-//    [
-//        if($nil != theChangeAction)
-//        [
-//            int index := $self selected_index.
-//            
-//            theChangeAction onIndexChange:$self int:index.
-//        ].
-//    ]
-//    
-//    $appendItem wide:aCaption
-//    [
-//        if($nil == theHandle)
-//            [ ^ $self ].
-//        
-//        theHandle sendMessage int:CB_ADDSTRING int:0 wide:aCaption.
-//    ]
-//    
-//    $loadStrings
-//    [
-//        int aLength := theList length.
-//        
-//        int i := 0.
-//        while(i < aLength)
-//        [
-//            var aKeyValue := theList getAt int:i.
-//            
-//            theHandle sendMessage int:CB_ADDSTRING int:0 wide:(aKeyValue key).
-//            
-//            i := i + 1
-//        ]
-//    ]
-//    
-//    $createHandle
-//    [
-//        hwnd aParent := theParent hwnd.
-//        
-//        int Styles := 0.
-//        Styles := (WS_CHILD || CBS_DROPDOWNLIST).
-//        $self $updateStyles vint:Styles.
-//                
-//        int anX := 0.
-//        int anY := 0.
-//        int aWidth := 0.
-//        int aHeight := 0.
-//        
-//        theRegion read vint:anX vint:anY vint:aWidth vint:aHeight.
-//        
-//        theHandle := WindowHandle new int:0
-//                        wide:ComboboxClass wide:emptyWideLiteralValue int:Styles
-//                        int:anX int:anY int:aWidth int:aHeight 
-//                        hwnd:aParent hinstance:CurrentInstance object:$nil.
-//                        
-//        $self $loadStrings
-//    ]
-//}
+// --- BaseList ---
+
+public abstract class BaseList : BaseWinControl
+{
+    ArrayList theList;
+    
+    event Func<object,int,object> onIndexChanged;
+    
+    protected constructor new()
+        <= new()
+    {
+        theList := new ArrayList()
+    }
+    
+    Items = new
+    {
+        append(object, caption)
+        {
+            theList.append(KeyValue.new(caption, object));
+            
+            self.appendItem(cast wide(caption))
+        }
+    };
+    
+    internal updateStyles(ref int retVal)
+    {
+        int styles := retVal;
+        
+        if(theVisible)
+            { styles := styles || WS_VISIBLE };
+        if(theTabStop)
+            { styles := styles || WS_TABSTOP };
+            
+        retVal := styles
+    }
+}
+
+// --- Combobox ---
+
+public sealed class Combobox : BaseList, interface<IControl>
+{
+    constructor new()
+        <= new()
+    {
+    }
+
+    int SelectedIndex
+    {
+        get()
+        {
+            int index := extern USER32.SendMessageW(theHandle, CB_GETCURSEL, 0, 0);
+            
+            ^ index
+        }
+        
+        set(int value)
+        {
+            extern USER32.SendMessageW(theHandle, CB_SETCURSEL, value, 0);
+            
+            self.change()
+        }
+    }
+    
+    get Selected()
+    {
+        int index := self.SelectedIndex;
+            
+        ^ theList[index]
+    }
+    
+    change() 
+    {
+        if(onIndexChanged != nil)
+        {
+            int index := self.SelectedIndex;
+            
+            onIndexChanged(self, index)
+        }
+    }
+    
+    appendItem(wide caption)
+    {
+        if(nil == theHandle)
+            { ^ self };
+        
+        theHandle.sendMessage(CB_ADDSTRING, 0, caption)
+    }
+    
+    internal loadStrings()
+    {
+        int len := theList.Length;
+        
+        int i := 0;
+        while(i < len)
+        {
+            var kv := theList[i];
+            
+            theHandle.sendMessage(CB_ADDSTRING, 0, kv.Key);
+            
+            i := i + 1
+        }
+    }
+    
+    internal createHandle()
+    {
+        WindowHandle parent := theParent;
+        
+        int styles := WS_CHILD || CBS_DROPDOWNLIST;
+        self.updateStyles(ref styles);
+        
+        theRegion.read(ref int x, ref int y, ref int width, ref int height);
+        
+        theHandle := new WindowHandle(
+                        0,
+                        ComboboxClass, 
+                        emptyWideString, 
+                        styles,
+                        x, y, width, height,
+                        parent, 
+                        CurrentInstance,
+                        nil);
+                        
+        self.loadStrings()
+    }
+}
 
 // --- Paintbox ---
 
@@ -809,11 +726,6 @@ class PaintboxListener : WindowCallback
     }
 }
 
-//limited closure class PaintAction
-//{
-//    closure(object sender, canvas canvas) []
-//}
-
 public closed class Paintbox : BaseWinControl, interface<IControl>
 {
     Canvas  theCanvas;
@@ -846,15 +758,6 @@ public closed class Paintbox : BaseWinControl, interface<IControl>
 
         struct.end(theHandle)
     }
- 
-//    stacksafe $resize hwnd:aControl int:aWidth int:aHeight
-//    [
-//    ]
-// 
-//    $resize int:aWidth int:aHeight
-//    [
-//        $self $resize hwnd:theHandle int:aWidth int:aHeight.
-//    ]
  
     internal createHandle()
     {
@@ -1042,23 +945,23 @@ class PanelListener : WindowCallback
         result := 0
     }
     
-//    onclick hwnd:aHandle vint:aResult
-//    [
-//        var aControl := theOwner retrieve hwnd:aHandle.
-//        if($nil != aControl)
-//            [ aControl click ].
-//        
-//        $super onclick hwnd:aHandle vint:aResult.
-//    ]
-//    
-//    onchange hwnd:aHandle vint:aResult
-//    [
-//        var aControl := theOwner retrieve hwnd:aHandle.
-//        if($nil != aControl)
-//            [ aControl change ].
-//        
-//        $super onchange hwnd:aHandle vint:aResult.
-//    ]
+    onclick(WindowHandle hwnd, ref int result)
+    {
+        var control := theOwner.retrieve(hwnd);
+        if(nil != control)
+            { control.click() };
+        
+        super.onclick(hwnd, ref result);
+    }
+    
+    onchange(WindowHandle hwnd, ref int result)
+    {
+        var control := theOwner.retrieve(hwnd);
+        if(nil != control)
+            { control.change() };
+        
+        super.onchange(hwnd, ref result);
+    }
 }
 
 public sealed class Panel : BasePanel, interface<IControl>
@@ -1243,10 +1146,10 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
                         x, y, width, height,
                         parent,
                         CurrentInstance,
-                        new RadioButtonGroupListener(self))
+                        new RadioButtonGroupListener(self));
                                                 
-//        if((theSelected != -1)and:($nil != theIndexChanged))
-//            [ theIndexChanged eval:$self ]
+        if(theSelected != -1 && nil != onIndexChanged)
+            { onIndexChanged(self) }
     }
 }
 
@@ -1275,9 +1178,6 @@ public sealed class ImageList : Object, interface<IControl>
 
      prop string ID;
          
-//    assign : aControl
-//       <= assign paintbox:(aControl paintbox).
- 
     assign(Paintbox paintbox)
     {
         paintbox.onPaint := (object sender, Canvas canvas)
@@ -1339,146 +1239,3 @@ public sealed class ImageList : Object, interface<IControl>
         }
     }    
 }
-
-//// --- DockingBox ---
-//
-//sealed class DockingBox
-//{
-//    object  theParent.
-//    control theLeft.
-//    control theRight.
-//    control theTop.
-//    control theBottom.
-//    control theClient.
-//
-//    constructor new
-//    [
-//    ]
-// 
-//    assign client:aControl
-//    [
-//        theClient := aControl control.
-//    ]
-//
-//    assign left:aControl
-//    [
-//        theLeft := aControl control.
-//    ]
-//
-//    assign right:aControl
-//    [
-//        theRight := aControl control.
-//    ]
-//
-//    assign top:aControl
-//    [
-//        theTop := aControl control.
-//    ]
-//
-//    assign bottom:aControl
-//    [
-//        theBottom := aControl control.
-//    ]
-//   
-//    control = IControl::
-//    {
-//        control_object = $self.
-// 
-//        open [ $self open ]
-//          
-//        close [ $self close ]
-//          
-//        retrieve hwnd:aHandle = $nil.
-//    }.
-// 
-//    $set parent:aParent
-//    [
-//        theParent := aParent.
-//        
-//        theParent set onResize: (:control)
-//        [
-//            self refresh
-//        ].
-//    ]
-//
-//    open
-//    [
-//        $self refresh.
-//    ]
-//     
-//    close
-//    [
-//    ]        
-//              
-//    refresh
-//    [
-//        int tmp := 0.
-//        
-//        dimension theSize := theParent dimension.
-//
-//        int height := 0.
-//        int width := 0.
-//        int x := 0.
-//        int y := 0.
-//        int aTotalWidth := 0.
-//        int aTotalHeight := 0.
-//        theSize read vint:aTotalWidth vint:aTotalHeight.
-//
-//        // Bottom
-//        if($nil != theBottom)
-//        [
-//            theBottom readDimensionTo vint:tmp vint:height.
-//            theBottom setDimension int:aTotalWidth int:height.
-//            
-//            aTotalHeight := aTotalHeight - height
-//        ].
-//        
-//        // Top
-//        if($nil != theTop)
-//        [
-//            
-//            theTop readDimensionTo vint:tmp vint:height.
-//            theTop setDimension int:aTotalWidth int:height.
-//            
-//            aTotalHeight := aTotalHeight - height.
-//            
-//            y := height
-//        ].
-//        
-//        // Left
-//        if($nil != theLeft)
-//        [
-//            theLeft readDimensionTo vint:width vint:tmp.
-//            theLeft setDimension int:width int:aTotalHeight.
-//            
-//            aTotalWidth := aTotalWidth - width.
-//            
-//            x := width
-//        ].
-//        
-//        // Right
-//        if($nil != theRight)
-//        [
-//            theRight readDimensionTo vint:width vint:tmp.
-//            theRight setDimension int:width int:aTotalHeight.
-//            
-//            aTotalWidth := aTotalWidth - width
-//        ].
-//
-//        // Client
-//        if($nil != theClient)
-//        [
-//            theClient setDimension int:aTotalWidth int:aTotalHeight.
-//            theClient setLocation int:x int:y.            
-//        ].
-//        
-//        x := x + aTotalWidth.
-//        y := y + aTotalHeight.
-//
-//        if($nil != theRight)        
-//            [ theRight setLocation int:x int:height ].
-//            
-//        if($nil != theBottom)
-//            [ theBottom setLocation int:0 int:y ].
-//    ]    
-//}

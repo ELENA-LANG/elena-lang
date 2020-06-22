@@ -1,5 +1,4 @@
 import system'collections;
-////import system'routines.
 import system'net;
 import system'threading;
 import system'text;
@@ -236,11 +235,6 @@ public sealed class TcpServer
         
         self.sendToAll(buffer, 4)
     }
-    
-//    stacksafe send int:index bytearray:buffer int:length    
-//    [
-//        theClients getAt int:index; tcp_remoteclient; write bytearray:buffer int:length.
-//    ]
     
     close()
     {
