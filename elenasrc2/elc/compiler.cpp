@@ -1563,26 +1563,6 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
          }
       }
 
-      //// inherit static field values
-      //auto staticValue_it = scope.info.staticValues.start();
-      //while (!staticValue_it.Eof()) {
-      //   if (staticValue_it.key() < MAX_ATTR_INDEX) {
-      //      // NOTE : the built-in attributes will be set later
-      //      ref_t ref = *staticValue_it;
-      //      if (ref != mskStatRef) {
-      //         int mask = ref & mskAnyRef;
-      //         IdentifierString name(module->resolveReference(scope.reference));
-      //         name.append(STATICFIELD_POSTFIX);
-
-      //         ref_t newRef = scope.moduleScope->mapAnonymous(name.c_str());
-
-      //         *staticValue_it = newRef | mask;
-      //      }
-      //   }
-
-      //   staticValue_it++;
-      //}
-
       // meta attributes are not directly inherited
       scope.info.mattributes.clear();
 
@@ -8665,6 +8645,21 @@ inline bool isDeclaredProtected(ClassInfo& info, ref_t publicMessage, ref_t& pro
    return false;
 }
 
+void Compiler :: generateParamNameInfo(ClassScope& scope, SNode node, ref_t message)
+{
+   SNode current = node.findChild(lxMethodParameter);
+   while (current != lxNone) {
+      if (current == lxMethodParameter) {
+         ident_t terminal = current.findChild(lxNameAttr).firstChild(lxTerminalMask).identifier();
+
+         Attribute key(caParamName, message);
+         scope.info.mattributes.add(key, saveMetaInfo(*scope.moduleScope, terminal));
+
+      }
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed,
    bool allowTypeAttribute)
 {
@@ -8678,6 +8673,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    }
 
    generateMethodAttributes(scope, current, message, allowTypeAttribute);
+   generateParamNameInfo(scope, current, message);
 
    int methodHints = scope.info.methodHints.get(ClassInfo::Attribute(message, maHint));
    if (isOpenArg(message)) {

@@ -15,12 +15,12 @@ In development:
     * release 5.0
 
   [documentation]
+    * api doc : generate param names, fix errors
     * reddit : migrate all posts to ELENA 5.0  (using / finally statements in ELENA)
     * tutorials : migrate all tutorials
     * api : use manifest info for module description
 
   [samples/api]
-    * fix 
     * !chat
     * rosetta code samples: Sockets, Zhang-Suen thinning algorithm
     * timer
@@ -33,7 +33,6 @@ In development:
     * !new feature 
 
   [API]
-    * uncomment code
     * usability : dynamic loading : give the symbol / message in the InvalidArgument exception
 
   [research]
@@ -59,7 +58,6 @@ Pipeline:
                 * debugger : sub code - do not show the variable from noncurrent sub codes
                 * system'dynamic'expressions: do we need TempVariableBlock? it cannot be translated into the normal code
                 * system'dynamic'expressions: review tape generation, test cases
-                * api : description
                 * api : extension - ignore the target argument
                 * api : templates
                 * api : extension template
@@ -199,8 +197,6 @@ Pipeline:
                 * uncomment validateUnresolved
                 * error by viewing translit sample
                 * port Linux IDE
-                * missing algorithms (template extensions)
-                * missing system'routines'stex
                 * compile elenart64.dll
 
                 * fix bug with inserting unicode character

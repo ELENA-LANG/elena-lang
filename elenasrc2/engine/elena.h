@@ -546,7 +546,10 @@ enum ClassAttribute : int
    caSerializable       = 0x002,
    // if the symbol can be loaded dynamically
    caSymbolSerializable = 0x003,
-   caInfo               = 0x004
+   // a description
+   caInfo               = 0x004,
+   // parameter name
+   caParamName          = 0x005, 
 };
 
 struct ClassInfo

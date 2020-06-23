@@ -1223,7 +1223,8 @@ private:
       bool isConst, bool isArray);
    
    void generateClassFlags(ClassScope& scope, SNode node);
-   void generateMethodAttributes(ClassScope& scope, SyntaxTree::Node node, ref_t message, bool allowTypeAttribute);
+   void generateParamNameInfo(ClassScope& scope, SNode node, ref_t message);
+   void generateMethodAttributes(ClassScope& scope, SNode node, ref_t message, bool allowTypeAttribute);
 
    void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, 
       bool allowTypeAttribute);

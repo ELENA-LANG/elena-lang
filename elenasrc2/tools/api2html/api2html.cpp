@@ -44,6 +44,7 @@ struct ApiMethodInfo
    IdentifierString       shortdescr;
 
    List<IdentifierString> params;
+   List<IdentifierString> paramNames;
 
    ApiMethodInfo()
    {
@@ -524,6 +525,7 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
 
    bool first = true;
    auto it = info->params.start();
+   auto name_it = info->paramNames.start();
    while (!it.Eof()) {
       if (!first) {
          writer.writeLiteral(", ");
@@ -531,6 +533,11 @@ void writeSecondColumn(TextFileWriter& writer, ApiMethodInfo* info)
       else first = false;
 
       writeType(writer, (*it).c_str());
+      if (!name_it.Eof()) {
+         writer.writeLiteral(" ");
+         writer.writeLiteral(*name_it);
+         name_it++;
+      }
 
       it++;
    }
@@ -1405,6 +1412,21 @@ void parseField(ApiClassInfo* info, ident_t line, ident_t rootNs)
 
 }
 
+void readParamNames(ApiMethodInfo* methodInfo, ident_t line, int& descr_index)
+{
+   IdentifierString name;
+
+   int param_index = line.find(descr_index, '|', NOTFOUND_POS);
+   while (param_index != NOTFOUND_POS) {
+      name.copy(line.c_str() + descr_index, param_index - descr_index);
+
+      methodInfo->paramNames.add(name.c_str());
+
+      descr_index = param_index + 1;
+      param_index = line.find(descr_index, '|', NOTFOUND_POS);
+   }
+}
+
 void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiClassInfo* info, ident_t rootNs,
    bool& isAbstract, bool& isClosed, bool& isSealed, bool& isStateless, bool& isRole)
 {
@@ -1418,10 +1440,14 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
          }
          else {
             ApiMethodInfo* methodInfo = new ApiMethodInfo();
-            int descr_index = ident_t(line).find(";;");
-            if (descr_index != NOTFOUND_POS) {
-               methodInfo->shortdescr.copy(line.c_str() + descr_index + 2);
-               line.truncate(descr_index);
+            int info_index = ident_t(line).find(";;");
+            if (info_index != NOTFOUND_POS) {
+               int descr_index = info_index + 2;
+
+               readParamNames(methodInfo, line.c_str(), descr_index);
+
+               methodInfo->shortdescr.copy(line.c_str() + descr_index);
+               line.truncate(info_index);
             }
 
             parseMethod(methodInfo, line.c_str() + 8, false, false, info->templateBased, rootNs);

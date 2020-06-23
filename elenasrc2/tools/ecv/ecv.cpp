@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   74
+#define REVISION_VERSION   75
 
 using namespace _ELENA_;
 
@@ -1218,6 +1218,19 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          temp.append(typeName);
       }
 
+      temp.append(";;");
+      for (auto param_it = info.mattributes.getIt(ClassInfo::Attribute(caParamName, entry.message));
+         !param_it.Eof(); param_it = info.mattributes.getNextIt(ClassInfo::Attribute(caParamName, entry.message), param_it))
+      {
+         ReferenceNs sectionName("'", METAINFO_SECTION);
+         _Memory* section = module->mapSection(module->mapReference(sectionName, true) | mskMetaRDataRef, true);
+
+         ident_t paramName = (const char*)section->get(*param_it);
+
+         temp.append(paramName);
+         temp.append('|');
+      }
+
       ref_t val = info.mattributes.get(ClassInfo::Attribute(caInfo, entry.message));
       if (val) {
          ReferenceNs sectionName("'", METAINFO_SECTION);
@@ -1225,9 +1238,10 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
 
          ident_t desc = (const char*)section->get(val);
 
-         temp.append(";;");
          temp.append(desc);
       }
+      if (temp.ident().endsWith(";;"))
+         temp.truncate(temp.Length() - 2);
 
       prefix.copy("@method ");
       if (isAbstract)
@@ -1482,6 +1496,7 @@ int main(int argc, char* argv[])
    _Module* module = NULL;
 
    // if direct path is provieded
+   bool pathMode = false;
    if (moduleName[0]=='-' && moduleName[1]=='p' || moduleName.find('.') != NOTFOUND_POS) {
       if (moduleName[0] == '-')
          moduleName += 2;
@@ -1493,6 +1508,7 @@ int main(int argc, char* argv[])
       IdentifierString name(fileName);
       loader.setNamespace(name, path.c_str());
       module = loader.loadModule(name, result, false);
+      pathMode = true;
    }
    else module = loader.loadModule(moduleName, result, false);
 
@@ -1511,6 +1527,9 @@ int main(int argc, char* argv[])
       _noPaging = true;
 
       Path path(moduleName);
+      if (pathMode)
+         path.changeExtension("out");
+
       setOutputMode(path.c_str());
 
       printAPI(module, 0, true);
