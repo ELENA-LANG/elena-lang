@@ -3,7 +3,7 @@ In development:
 ------         
 
   [compiler]
-    * !linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
+    * linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * GC : mov GC to C code : #77
     * optimization : idle method, pi
     * elenart : get rid of inline assembly
@@ -14,14 +14,14 @@ In development:
     * issues : #370, close all open issues for 5.0
     * release 5.0
 
-  [documentation]
-    * api doc : generate param names, fix errors
+  [!documentation]
+    * !api doc : conversion - cast(), protected constructors, fine tunings, descriptions, field descriptions, param descriptions
     * reddit : migrate all posts to ELENA 5.0  (using / finally statements in ELENA)
     * tutorials : migrate all tutorials
     * api : use manifest info for module description
 
   [samples/api]
-    * !chat
+    * chat
     * rosetta code samples: Sockets, Zhang-Suen thinning algorithm
     * timer
     * upndown
@@ -29,14 +29,14 @@ In development:
     * refactoring : classROp.setField should be either internal or not available at all (because
                     it is not possible to enforce types)
 
-  [!language]
-    * !new feature 
+  [language]
+    * new feature 
 
   [API]
     * usability : dynamic loading : give the symbol / message in the InvalidArgument exception
 
   [research]
-    * !xforms : XAML xforms script
+    * xforms : XAML xforms script
 
   [IDE]
     * debugger : step over fine tuning

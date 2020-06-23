@@ -86,7 +86,7 @@ sealed Class <SPAN CLASS="typeNameLabel">AssigningClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#AssigningClosure">AssigningClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -116,7 +116,7 @@ sealed Class <SPAN CLASS="typeNameLabel">AssigningClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -181,7 +181,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureClass</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureClass">ClosureClass</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -190,7 +190,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureClass</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureClass">ClosureClass</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'Object&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'Object&gt;</A></SPAN> list, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -199,7 +199,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureClass</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureClass">ClosureClass</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>create(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1,T2,T3&gt;">List&lt;'$auto'system'collections'Tuple'$auto'system'collections'Tuple#2,'$auto'system'collections'Tuple#2&system'Message,'$auto'system'collections'Tuple#2&system'Message&system'dynamic'ClosureTape&gt;</A></SPAN>)
+<CODE>create(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1,T2,T3&gt;">List&lt;'$auto'system'collections'Tuple'$auto'system'collections'Tuple#2,'$auto'system'collections'Tuple#2&system'Message,'$auto'system'collections'Tuple#2&system'Message&system'dynamic'ClosureTape&gt;</A></SPAN> methods)
 </CODE>
 </TD>
 </TR>
@@ -297,7 +297,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure[]</A></SPAN>)
+<CODE><i>constructor</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -306,7 +306,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1)
 </CODE>
 </TD>
 </TR>
@@ -315,7 +315,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2)
 </CODE>
 </TD>
 </TR>
@@ -324,7 +324,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3)
 </CODE>
 </TD>
 </TR>
@@ -333,7 +333,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4)
 </CODE>
 </TD>
 </TR>
@@ -342,7 +342,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5)
 </CODE>
 </TD>
 </TR>
@@ -351,7 +351,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6)
 </CODE>
 </TD>
 </TR>
@@ -360,7 +360,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7)
 </CODE>
 </TD>
 </TR>
@@ -369,7 +369,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8)
 </CODE>
 </TD>
 </TR>
@@ -378,7 +378,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9)
 </CODE>
 </TD>
 </TR>
@@ -387,7 +387,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10)
 </CODE>
 </TD>
 </TR>
@@ -396,7 +396,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11)
 </CODE>
 </TD>
 </TR>
@@ -405,7 +405,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg12)
 </CODE>
 </TD>
 </TR>
@@ -414,7 +414,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg13)
 </CODE>
 </TD>
 </TR>
@@ -423,7 +423,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg14)
 </CODE>
 </TD>
 </TR>
@@ -432,7 +432,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg15)
 </CODE>
 </TD>
 </TR>
@@ -441,7 +441,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg16)
 </CODE>
 </TD>
 </TR>
@@ -450,7 +450,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg16, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg17)
 </CODE>
 </TD>
 </TR>
@@ -459,7 +459,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg16, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg17, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg18)
 </CODE>
 </TD>
 </TR>
@@ -468,7 +468,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg16, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg17, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg18, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg19)
 </CODE>
 </TD>
 </TR>
@@ -477,7 +477,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg1, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg2, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg3, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg4, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg5, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg6, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg7, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg8, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg9, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg10, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg11, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg12, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg13, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg14, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg15, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg16, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg17, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg18, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg19, <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A></SPAN> arg20)
 </CODE>
 </TD>
 </TR>
@@ -486,7 +486,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure[]</A></SPAN>)
+<CODE>load(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">DynamicClosure[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -495,7 +495,7 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A></SPAN> list)
 </CODE>
 </TD>
 </TR>
@@ -504,7 +504,16 @@ Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'Object&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'dynamic'DynamicClosure&gt;</A></SPAN> list, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ClosureTape">ClosureTape</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'Object&gt;</A></SPAN> list, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -612,7 +621,7 @@ Class <SPAN CLASS="typeNameLabel">ConstantClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ConstantClosure">ConstantClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> constant)
 </CODE>
 </TD>
 </TR>
@@ -642,7 +651,7 @@ Class <SPAN CLASS="typeNameLabel">ConstantClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -708,7 +717,7 @@ Interface <SPAN CLASS="typeNameLabel">DynamicClosure</SPAN></PRE>
 <CODE>
 abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -763,7 +772,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">DynamicMessageClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -870,7 +879,7 @@ Class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></PRE>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>generic</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE><i>generic</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
 </TD>
 </TR>
@@ -891,7 +900,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>containsProperty(<SPAN CLASS="memberNameLink"><A HREF="system.html#MessageName">MessageName</A></SPAN>)
+<CODE>containsProperty(<SPAN CLASS="memberNameLink"><A HREF="system.html#MessageName">MessageName</A></SPAN> subj)
 </CODE>
 </TD>
 </TR>
@@ -966,7 +975,7 @@ sealed Class <SPAN CLASS="typeNameLabel">FunctionClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#FunctionClosure">FunctionClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
 </TD>
 </TR>
@@ -975,7 +984,7 @@ sealed Class <SPAN CLASS="typeNameLabel">FunctionClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#FunctionClosure">FunctionClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
 </TD>
 </TR>
@@ -984,7 +993,7 @@ sealed Class <SPAN CLASS="typeNameLabel">FunctionClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#FunctionClosure">FunctionClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> message)
 </CODE>
 </TD>
 </TR>
@@ -1014,7 +1023,7 @@ sealed Class <SPAN CLASS="typeNameLabel">FunctionClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -1089,7 +1098,7 @@ sealed Class <SPAN CLASS="typeNameLabel">GoToClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#GoToClosure">GoToClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -1119,7 +1128,219 @@ sealed Class <SPAN CLASS="typeNameLabel">GoToClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="Group">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'dynamic'</DIV>
+<H2 title="Group" class="title">Group</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+Class <SPAN CLASS="typeNameLabel">Group</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>items</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Group">Group</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> objects)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Group">Group</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>protected constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Group">Group</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Group">Group</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="JumpIfClosure">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'dynamic'</DIV>
+<H2 title="JumpIfClosure" class="title">JumpIfClosure</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicClosure">system'dynamic'DynamicClosure</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'dynamic'JumpIfClosure</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">JumpIfClosure</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>index</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#JumpIfClosure">JumpIfClosure</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#JumpIfClosure">JumpIfClosure</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>protected constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -1194,7 +1415,7 @@ sealed Class <SPAN CLASS="typeNameLabel">JumpIfNotClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#JumpIfNotClosure">JumpIfNotClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -1224,7 +1445,7 @@ sealed Class <SPAN CLASS="typeNameLabel">JumpIfNotClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -1279,7 +1500,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">JumpToEnd</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -1354,7 +1575,7 @@ sealed Class <SPAN CLASS="typeNameLabel">LocalClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#LocalClosure">LocalClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -1384,7 +1605,7 @@ sealed Class <SPAN CLASS="typeNameLabel">LocalClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -1459,7 +1680,7 @@ sealed Class <SPAN CLASS="typeNameLabel">MessageClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#MessageClosure">MessageClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
 </TD>
 </TR>
@@ -1468,7 +1689,7 @@ sealed Class <SPAN CLASS="typeNameLabel">MessageClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#MessageClosure">MessageClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
 </TD>
 </TR>
@@ -1477,7 +1698,7 @@ sealed Class <SPAN CLASS="typeNameLabel">MessageClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#MessageClosure">MessageClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> message)
 </CODE>
 </TD>
 </TR>
@@ -1507,7 +1728,7 @@ sealed Class <SPAN CLASS="typeNameLabel">MessageClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -1582,7 +1803,7 @@ sealed Class <SPAN CLASS="typeNameLabel">ReleaseClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ReleaseClosure">ReleaseClosure</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> counter)
 </CODE>
 </TD>
 </TR>
@@ -1612,7 +1833,7 @@ sealed Class <SPAN CLASS="typeNameLabel">ReleaseClosure</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE><i>invoke</i>(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -1657,7 +1878,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">StreamTapeInterpreter</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>build(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>build(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
 </TD>
 </TR>
@@ -1722,7 +1943,7 @@ Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -1731,7 +1952,7 @@ Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> list)
 </CODE>
 </TD>
 </TR>
@@ -1740,7 +1961,7 @@ Class <SPAN CLASS="typeNameLabel">Struct</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN> list)
 </CODE>
 </TD>
 </TR>
@@ -1862,7 +2083,25 @@ system'</DIV>
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setField(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>setField(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>getField(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+extension static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>__FieldCount()
 </CODE>
 </TD>
 </TR>
@@ -1871,7 +2110,7 @@ extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>respondTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN>)
+<CODE>respondTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> m)
 </CODE>
 </TD>
 </TR>
@@ -1880,7 +2119,7 @@ extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">Boo
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Message&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>__getMessages(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>__getMessages()
 </CODE>
 </TD>
 </TR>
@@ -1889,7 +2128,7 @@ extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'MessageName&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>__getProperties(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>__getProperties()
 </CODE>
 </TD>
 </TR>
@@ -1898,7 +2137,7 @@ extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setFields(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE>setFields(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> objects)
 </CODE>
 </TD>
 </TR>
@@ -1907,7 +2146,16 @@ extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>mixInto(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>mixInto(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> role)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>groupWith(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>

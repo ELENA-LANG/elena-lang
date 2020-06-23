@@ -564,6 +564,7 @@ void writeSecondPropColumn(TextFileWriter& writer, ApiMethodInfo* info)
 
       bool first = true;
       auto it = info->params.start();
+      auto name_it = info->paramNames.start();
       while (!it.Eof()) {
          if (!first) {
             writer.writeLiteral(", ");
@@ -571,6 +572,11 @@ void writeSecondPropColumn(TextFileWriter& writer, ApiMethodInfo* info)
          else first = false;
 
          writeType(writer, (*it).c_str());
+         if (!name_it.Eof()) {
+            writer.writeLiteral(" ");
+            writer.writeLiteral(*name_it);
+            name_it++;
+         }
 
          it++;
       }
@@ -1264,24 +1270,30 @@ void readType(IdentifierString& type, ident_t line, ident_t rootNs, bool templat
    validateTemplateType(type, templateBased);
 }
 
-void parseName(ApiMethodInfo* info, bool templateBased, ident_t rootNs)
+void parseName(ApiMethodInfo* info, bool extensionOne, bool templateBased, ident_t rootNs)
 {
+   bool skipOne = extensionOne;
+
    int sign_index = info->name.ident().find("<");
    if (sign_index != NOTFOUND_POS) {
       IdentifierString param;
       IdentifierString type;
       for (int i = sign_index + 1; i < info->name.Length(); i++) {
          if (info->name[i] == ',' || info->name[i] == '>') {
-            readType(type, param.c_str(), rootNs, templateBased);
-
-            if (info->withVargs && info->name[i] == '>') {
-               type.append("[]");
-
-               type.insert("params ", 0);
+            if (skipOne) {
+               skipOne = false;
             }
+            else {
+               readType(type, param.c_str(), rootNs, templateBased);
 
-            info->params.add(type.c_str());
+               if (info->withVargs && info->name[i] == '>') {
+                  type.append("[]");
 
+                  type.insert("params ", 0);
+               }
+
+               info->params.add(type.c_str());
+            }
             param.clear();
             type.clear();
          }
@@ -1290,7 +1302,6 @@ void parseName(ApiMethodInfo* info, bool templateBased, ident_t rootNs)
 
       info->name.truncate(sign_index);
    }
-
 }
 
 void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool extensionOne, bool templateBased, ident_t rootNs)
@@ -1337,7 +1348,7 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
       info->name.truncate(end - 1);
    }
 
-   parseName(info, templateBased, rootNs);
+   parseName(info, extensionOne, templateBased, rootNs);
 
    if (info->params.Count() < paramCount) {
       // if weak message
@@ -1502,6 +1513,15 @@ void readClassClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader,
          }
          else {
             ApiMethodInfo* methodInfo = new ApiMethodInfo();
+            int info_index = ident_t(line).find(";;");
+            if (info_index != NOTFOUND_POS) {
+               int descr_index = info_index + 2;
+
+               readParamNames(methodInfo, line.c_str(), descr_index);
+
+               methodInfo->shortdescr.copy(line.c_str() + descr_index);
+               line.truncate(info_index);
+            }
 
             parseMethod(methodInfo, line.c_str() + 8, true, false, info->templateBased, rootNs);
 
@@ -1530,6 +1550,15 @@ void readExtensions(String<char, LINE_LEN>& line, TextFileReader& reader, ApiCla
          }
          else {
             ApiMethodInfo* methodInfo = new ApiMethodInfo();
+            int info_index = ident_t(line).find(";;");
+            if (info_index != NOTFOUND_POS) {
+               int descr_index = info_index + 2;
+
+               readParamNames(methodInfo, line.c_str(), descr_index);
+
+               methodInfo->shortdescr.copy(line.c_str() + descr_index);
+               line.truncate(info_index);
+            }
 
             parseMethod(methodInfo, line.c_str() + 8, true, true, info->templateBased, rootNs);
 

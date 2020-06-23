@@ -117,7 +117,7 @@ sealed Class <SPAN CLASS="typeNameLabel">ArrayList</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
 </TD>
 </TR>
@@ -135,7 +135,7 @@ sealed Class <SPAN CLASS="typeNameLabel">ArrayList</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> a)
 </CODE>
 </TD>
 </TR>
@@ -214,7 +214,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPA
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -223,7 +223,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPA
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
 </TD>
 </TR>
@@ -241,7 +241,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPA
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
 </CODE>
 </TD>
 </TR>
@@ -250,7 +250,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPA
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendRange(<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexable">Indexable</A></SPAN>)
+<CODE>appendRange(<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexable">Indexable</A></SPAN> indexable)
 </CODE>
 </TD>
 </TR>
@@ -259,7 +259,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPA
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -268,16 +268,34 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPA
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>removeAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>removeAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> n)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>clear()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
 </CODE>
 </TD>
 </TR>
@@ -393,7 +411,7 @@ Class <SPAN CLASS="typeNameLabel">ArrayListIndexer</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayListIndexer">ArrayListIndexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN> list)
 </CODE>
 </TD>
 </TR>
@@ -439,7 +457,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -477,7 +495,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>set(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>set(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
 </TD>
 </TR>
@@ -486,7 +504,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -594,7 +612,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Dictionary</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Dictionary">Dictionary</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> default)
 </CODE>
 </TD>
 </TR>
@@ -603,7 +621,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Dictionary</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Dictionary">Dictionary</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> default)
 </CODE>
 </TD>
 </TR>
@@ -612,7 +630,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Dictionary</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Dictionary">Dictionary</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> hashLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> default)
 </CODE>
 </TD>
 </TR>
@@ -683,7 +701,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -692,7 +710,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -701,7 +719,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -710,7 +728,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -719,7 +737,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -728,7 +746,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -737,7 +755,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&getItem(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>#static&getItem(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> code, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key)
 </CODE>
 </TD>
 </TR>
@@ -746,7 +764,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> key)
 </CODE>
 </TD>
 </TR>
@@ -755,7 +773,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> key)
 </CODE>
 </TD>
 </TR>
@@ -764,7 +782,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> key)
 </CODE>
 </TD>
 </TR>
@@ -773,7 +791,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> key)
 </CODE>
 </TD>
 </TR>
@@ -782,7 +800,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> key)
 </CODE>
 </TD>
 </TR>
@@ -791,16 +809,43 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> key)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>containsKey(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clone()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clear()
 </CODE>
 </TD>
 </TR>
@@ -901,6 +946,15 @@ sealed Class <SPAN CLASS="typeNameLabel">List</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List">List</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> l)
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -959,7 +1013,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -968,7 +1022,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -977,7 +1031,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -986,7 +1040,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -995,16 +1049,61 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>removeAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>removeAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clear()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List">List</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clone()
 </CODE>
 </TD>
 </TR>
@@ -1181,7 +1280,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -1209,6 +1308,15 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>clear()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>shift(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> offset)
 </CODE>
 </TD>
 </TR>
@@ -1395,7 +1503,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -1519,7 +1627,7 @@ Class <SPAN CLASS="typeNameLabel">StackEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#StackEnumerator">StackEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Stack">Stack</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Stack">Stack</A></SPAN> stack)
 </CODE>
 </TD>
 </TR>

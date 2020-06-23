@@ -118,7 +118,7 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>buildTape(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN>)
+<CODE>buildTape(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN> tape)
 </CODE>
 </TD>
 </TR>
@@ -127,7 +127,7 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>buildScriptFile(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>buildScriptFile(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> encoding, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> autoDetect)
 </CODE>
 </TD>
 </TR>
@@ -136,7 +136,7 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>buildScriptFile(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>buildScriptFile(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
 </TR>
@@ -145,25 +145,7 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>buildScript(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>loadScriptFileAsText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>evaluateScriptAsText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>buildScript(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> script)
 </CODE>
 </TD>
 </TR>
@@ -172,7 +154,7 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>loadPathAsText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>loadScriptFileAsText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> encoding, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> autoDetect)
 </CODE>
 </TD>
 </TR>
@@ -181,7 +163,25 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>loadScriptAsText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>evaluateScriptAsText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> script)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>loadPathAsText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>loadScriptAsText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> script)
 </CODE>
 </TD>
 </TR>
@@ -190,7 +190,7 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>loadScript(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>loadScript(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> script)
 </CODE>
 </TD>
 </TR>
@@ -199,7 +199,7 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>loadScriptFile(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>loadScriptFile(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> encoding, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> autoDetect)
 </CODE>
 </TD>
 </TR>
@@ -208,7 +208,7 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>loadPath(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>loadPath(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
 </TR>
@@ -290,7 +290,7 @@ Class <SPAN CLASS="typeNameLabel">ScriptEngineException</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-scripting.html#ScriptEngineException">ScriptEngineException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> l)
 </CODE>
 </TD>
 </TR>
@@ -377,7 +377,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">jscript</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>eval(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>eval(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> script)
 </CODE>
 </TD>
 </TR>
@@ -386,7 +386,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">jscript</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>evalPath(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>evalPath(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
 </TR>
@@ -395,7 +395,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">jscript</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
 </TR>
@@ -440,7 +440,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">lscript</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>eval(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>eval(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> script)
 </CODE>
 </TD>
 </TR>
@@ -449,7 +449,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">lscript</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>evalPath(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>evalPath(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
 </TR>
@@ -458,7 +458,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">lscript</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
 </TR>
@@ -467,7 +467,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">lscript</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>interpret(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>interpret(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> script)
 </CODE>
 </TD>
 </TR>

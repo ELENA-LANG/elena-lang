@@ -540,12 +540,14 @@ enum MethodAttribute
 
 enum ClassAttribute : int
 {
+   caRefefernceMask     = 0x100,
+
    caNone               = 0x000,
-   caInitializer        = 0x001,
+   caInitializer        = 0x101,
    // if the class can be loaded dynamically
-   caSerializable       = 0x002,
+   caSerializable       = 0x102,
    // if the symbol can be loaded dynamically
-   caSymbolSerializable = 0x003,
+   caSymbolSerializable = 0x103,
    // a description
    caInfo               = 0x004,
    // parameter name

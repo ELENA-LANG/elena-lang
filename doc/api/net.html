@@ -141,7 +141,7 @@ sealed Class <SPAN CLASS="typeNameLabel">TcpClient</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpClient">TcpClient</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size)
 </CODE>
 </TD>
 </TR>
@@ -192,7 +192,7 @@ sealed Class <SPAN CLASS="typeNameLabel">TcpClient</SPAN></PRE>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>onConnect(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpClient,net'TcpClient&system'Object&gt;</A></SPAN>)
+<CODE>onConnect(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpClient,net'TcpClient&system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -201,7 +201,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>onReceived(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;net'TcpClient,net'TcpClient&'$auto'system'Arraynet'TcpClient&'$auto'system'Array#1,net'TcpClient&'$auto'system'Array#1&system'ByteNumber,net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A></SPAN>)
+<CODE>onReceived(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;net'TcpClient,net'TcpClient&'$auto'system'Arraynet'TcpClient&'$auto'system'Array#1,net'TcpClient&'$auto'system'Array#1&system'ByteNumber,net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,net'TcpClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -210,7 +210,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>onError(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;net'TcpClient,net'TcpClient&system'Exception,net'TcpClient&system'Exception&system'Object&gt;</A></SPAN>)
+<CODE>onError(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;net'TcpClient,net'TcpClient&system'Exception,net'TcpClient&system'Exception&system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -219,7 +219,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Blocking(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+<CODE>Blocking(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -228,7 +228,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Nodelay(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+<CODE>Nodelay(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -249,7 +249,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>connect(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>connect(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> address, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> port)
 </CODE>
 </TD>
 </TR>
@@ -276,7 +276,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&onError(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#SocketException">SocketException</A></SPAN>)
+<CODE>#static&onError(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#SocketException">SocketException</A></SPAN> e)
 </CODE>
 </TD>
 </TR>
@@ -294,7 +294,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -303,7 +303,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -312,7 +312,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -412,7 +412,7 @@ Class <SPAN CLASS="typeNameLabel">TcpClientException</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpClientException">TcpClientException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -527,7 +527,7 @@ sealed Class <SPAN CLASS="typeNameLabel">TcpRemoteClient</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN>)
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#Socket">Socket</A></SPAN> socket)
 </CODE>
 </TD>
 </TR>
@@ -586,7 +586,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Parameter(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>Parameter(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -607,7 +607,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN> recv)
 </CODE>
 </TD>
 </TR>
@@ -616,7 +616,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -754,7 +754,7 @@ sealed Class <SPAN CLASS="typeNameLabel">TcpServer</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> port)
 </CODE>
 </TD>
 </TR>
@@ -763,7 +763,7 @@ sealed Class <SPAN CLASS="typeNameLabel">TcpServer</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> bufferSize)
 </CODE>
 </TD>
 </TR>
@@ -814,7 +814,7 @@ sealed Class <SPAN CLASS="typeNameLabel">TcpServer</SPAN></PRE>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>OnConnect(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'Object&gt;</A></SPAN>)
+<CODE>OnConnect(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -823,7 +823,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>OnLeave(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'Object&gt;</A></SPAN>)
+<CODE>OnLeave(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -832,7 +832,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>OnReceived(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&'$auto'system'Arraynet'TcpRemoteClient&'$auto'system'Array#1,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A></SPAN>)
+<CODE>OnReceived(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3,T4,T5&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&'$auto'system'Arraynet'TcpRemoteClient&'$auto'system'Array#1,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber,net'TcpRemoteClient&'$auto'system'Array#1&system'ByteNumber&system'IntNumber&system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -841,7 +841,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>OnError(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'net'SocketException,net'TcpRemoteClient&system'net'SocketException&system'Object&gt;</A></SPAN>)
+<CODE>OnError(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;net'TcpRemoteClient,net'TcpRemoteClient&system'net'SocketException,net'TcpRemoteClient&system'net'SocketException&system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -858,7 +858,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable&lt;T1&gt;"
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Blocking(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+<CODE>Blocking(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -888,7 +888,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&closeClient(<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&closeClient(<SPAN CLASS="memberNameLink"><A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></SPAN> client, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -897,7 +897,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&handleError(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#SocketException">SocketException</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&handleError(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#SocketException">SocketException</A></SPAN> e, <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpRemoteClient">TcpRemoteClient</A></SPAN> client, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -933,7 +933,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>sendToAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>sendToAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'ByteNumber&gt;</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -942,7 +942,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>sendToAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>sendToAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -951,7 +951,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net.html#TcpServer">TcpServer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>sendToAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>sendToAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>

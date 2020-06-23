@@ -198,7 +198,7 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseButton</SPAN></PRE>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>onClick(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN>)
+<CODE>onClick(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -382,7 +382,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Visible(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+<CODE>Visible(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -399,7 +399,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Enabled(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+<CODE>Enabled(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -424,7 +424,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></S
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -441,7 +441,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>X(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>X(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -458,7 +458,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Y(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Y(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -475,7 +475,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -492,7 +492,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -509,7 +509,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></S
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>ID(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>ID(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -538,9 +538,224 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Di
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="BaseList">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+forms'</DIV>
+<H2 title="BaseList" class="title">BaseList</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">forms'BaseControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseWinControl">forms'BaseWinControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+forms'BaseList</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract Class <SPAN CLASS="typeNameLabel">BaseList</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theVisible</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theEnabled</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Region">Region</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theRegion</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theTabStop</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theCaption</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theParent</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theHandle</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theList</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3,T4&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#3,'$auto'system'Func#3&system'Object,'$auto'system'Func#3&system'Object&system'IntNumber,'$auto'system'Func#3&system'Object&system'IntNumber&system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onIndexChanged</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseList">BaseList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>forms@BaseList$$new()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseList">BaseList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseList">BaseList</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property accessor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onIndexChanged(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object&system'IntNumber,system'Object&system'IntNumber&system'Object&gt;</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Items</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
 </TR>
 </TABLE>
 </LI>
@@ -674,6 +889,14 @@ abstract Class <SPAN CLASS="typeNameLabel">BasePanel</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onResize</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="forms.html#Frame">Frame</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
@@ -739,7 +962,7 @@ abstract Class <SPAN CLASS="typeNameLabel">BasePanel</SPAN></PRE>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -748,7 +971,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> h)
 </CODE>
 </TD>
 </TR>
@@ -757,7 +980,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> caption)
 </CODE>
 </TD>
 </TR>
@@ -766,7 +989,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> caption)
 </CODE>
 </TD>
 </TR>
@@ -787,7 +1010,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -915,6 +1138,14 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinContainer</SPAN></PRE>
 <CODE>theControls</CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onResize</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -972,6 +1203,15 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinContainer</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+set&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onResize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Controls</CODE>
@@ -994,7 +1234,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN>)
+<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -1021,7 +1261,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>findByID(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>findByID(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> id)
 </CODE>
 </TD>
 </TR>
@@ -1211,7 +1451,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Visible(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+<CODE>Visible(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -1220,7 +1460,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Enabled(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+<CODE>Enabled(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -1229,7 +1469,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -1238,7 +1478,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -1267,7 +1507,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN>)
+<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -1285,7 +1525,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>change()
 </CODE>
 </TD>
 </TR>
@@ -1294,7 +1534,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>open()
+<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -1303,11 +1543,20 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>open()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
@@ -1446,6 +1695,22 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinForm</SPAN></PRE>
 <CODE>theControls</CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onResize</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onOpen</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1491,6 +1756,36 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinForm</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property accessor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onOpen(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Visible(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -1505,7 +1800,7 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinForm</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN>)
+<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> control)
 </CODE>
 </TD>
 </TR>
@@ -1515,6 +1810,15 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseWinForm</SPAN></PRE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>open()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -1728,6 +2032,504 @@ sealed Class <SPAN CLASS="typeNameLabel">Button</SPAN></PRE>
 </DIV>
 <HR>
 </DIV>
+<A NAME="ChildForm">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+forms'</DIV>
+<H2 title="ChildForm" class="title">ChildForm</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">forms'BaseControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseWinControl">forms'BaseWinControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseWinContainer">forms'BaseWinContainer</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseWinForm">forms'BaseWinForm</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+forms'ChildForm</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+Class <SPAN CLASS="typeNameLabel">ChildForm</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theVisible</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theEnabled</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Region">Region</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theRegion</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theTabStop</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theCaption</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theParent</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theHandle</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;forms'IControl&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theControls</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onResize</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onOpen</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#ChildForm">ChildForm</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> parent)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#ChildForm">ChildForm</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>protected constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#ChildForm">ChildForm</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="forms.html#ChildForm">ChildForm</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>run()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="Combobox">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+forms'</DIV>
+<H2 title="Combobox" class="title">Combobox</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">forms'BaseControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseWinControl">forms'BaseWinControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseList">forms'BaseList</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+forms'Combobox</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">Combobox</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theVisible</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theEnabled</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Region">Region</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theRegion</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theTabStop</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theCaption</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theParent</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theHandle</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theList</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1,T2,T3,T4&gt;">EventHandler&lt;'$auto'system'Func'$auto'system'Func#3,'$auto'system'Func#3&system'Object,'$auto'system'Func#3&system'Object&system'IntNumber,'$auto'system'Func#3&system'Object&system'IntNumber&system'Object&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onIndexChanged</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#Combobox">Combobox</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#Combobox">Combobox</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>protected constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#Combobox">Combobox</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="forms.html#Combobox">Combobox</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property accessor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>SelectedIndex</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+set&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>SelectedIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Selected</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>change()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>appendItem(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> caption)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
 <A NAME="Edit">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -1840,6 +2642,14 @@ sealed Class <SPAN CLASS="typeNameLabel">Edit</SPAN></PRE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theHandle</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onChange</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2192,7 +3002,7 @@ abstract get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">Stri
 <CODE>
 abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN>)
+<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -2201,7 +3011,7 @@ abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IContr
 <CODE>
 abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -2224,6 +3034,15 @@ abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object<
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>change()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
@@ -2393,7 +3212,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></S
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>ID(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>ID(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -2410,7 +3229,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>SelectedIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>SelectedIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -2439,7 +3258,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -2448,7 +3267,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="forms.html#Paintbox">Paintbox</A></SPAN>)
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="forms.html#Paintbox">Paintbox</A></SPAN> paintbox)
 </CODE>
 </TD>
 </TR>
@@ -2457,7 +3276,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN>)
+<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -2475,7 +3294,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendImage(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>appendImage(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
 </TR>
@@ -2906,6 +3725,358 @@ Class <SPAN CLASS="typeNameLabel">Label</SPAN></PRE>
 </DIV>
 <HR>
 </DIV>
+<A NAME="Memo">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+forms'</DIV>
+<H2 title="Memo" class="title">Memo</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">forms'BaseControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseWinControl">forms'BaseWinControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms-$private.html#BaseEdit">forms'$private'BaseEdit</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+forms'Memo</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">Memo</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theVisible</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theEnabled</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Region">Region</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theRegion</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theTabStop</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theCaption</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theParent</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theHandle</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onChange</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#Memo">Memo</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#Memo">Memo</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>protected constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#Memo">Memo</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="forms.html#Memo">Memo</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="OpenFileDialog">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+forms'</DIV>
+<H2 title="OpenFileDialog" class="title">OpenFileDialog</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms-$private.html#FileDialog">forms'$private'FileDialog</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+forms'OpenFileDialog</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+sealed Class <SPAN CLASS="typeNameLabel">OpenFileDialog</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theParent</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theTitle</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'WideString&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theFilters</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theSelectedPath</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#OpenFileDialog">OpenFileDialog</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> parent)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#OpenFileDialog">OpenFileDialog</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>protected constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== COVERSION SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#OpenFileDialog">OpenFileDialog</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="forms.html#OpenFileDialog">OpenFileDialog</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>run()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
 <A NAME="Paintbox">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -3107,7 +4278,7 @@ Class <SPAN CLASS="typeNameLabel">Paintbox</SPAN></PRE>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>onPaint(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object&system'drawing'Canvas,system'Object&system'drawing'Canvas&system'Object&gt;</A></SPAN>)
+<CODE>onPaint(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object&system'drawing'Canvas,system'Object&system'drawing'Canvas&system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -3261,6 +4432,14 @@ sealed Class <SPAN CLASS="typeNameLabel">Panel</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onResize</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="forms.html#Frame">Frame</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
@@ -3344,7 +4523,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Panel</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN>)
+<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> control)
 </CODE>
 </TD>
 </TR>
@@ -3512,7 +4691,7 @@ Class <SPAN CLASS="typeNameLabel">RadioButton</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="forms.html#RadioButton">RadioButton</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> caption)
 </CODE>
 </TD>
 </TR>
@@ -3580,7 +4759,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Checked(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN>)
+<CODE>Checked(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -3734,13 +4913,21 @@ sealed Class <SPAN CLASS="typeNameLabel">RadioButtonGroup</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onResize</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="forms.html#Frame">Frame</A></SPAN></CODE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theFrame</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE>
 </TD>
@@ -3748,7 +4935,7 @@ sealed Class <SPAN CLASS="typeNameLabel">RadioButtonGroup</SPAN></PRE>
 <CODE>theSelected</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
 </TD>
@@ -3833,7 +5020,7 @@ sealed Class <SPAN CLASS="typeNameLabel">RadioButtonGroup</SPAN></PRE>
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>onIndexChanged(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN>)
+<CODE>onIndexChanged(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -3850,7 +5037,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>SelectedIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>SelectedIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -3871,7 +5058,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&setChecked(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>#static&setChecked(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -3880,7 +5067,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendItem(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>appendItem(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -3889,7 +5076,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -4033,6 +5220,30 @@ Class <SPAN CLASS="typeNameLabel">SDIDialog</SPAN></PRE>
 </TD>
 <TD CLASS="colLast">
 <CODE>theControls</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onResize</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onOpen</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theMenu</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -4213,6 +5424,30 @@ Class <SPAN CLASS="typeNameLabel">SDIForm</SPAN></PRE>
 <CODE>theControls</CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onResize</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#EventHandler&lt;T1&gt;">EventHandler&lt;system'Func1&gt;</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>onOpen</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theMenu</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -4267,6 +5502,27 @@ Class <SPAN CLASS="typeNameLabel">SDIForm</SPAN></PRE>
 </TABLE>
 </LI>
 </UL>
+<!-- =========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property accessor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+set&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Menu(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> menu)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
 <!-- ========== METHOD SUMMARY =========== -->
 <UL CLASS="blockList">
 <LI CLASS="blockList">
@@ -4275,6 +5531,15 @@ Class <SPAN CLASS="typeNameLabel">SDIForm</SPAN></PRE>
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>retrieveMenu(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> id)
+</CODE>
+</TD>
 </TR>
 </TABLE>
 </LI>
@@ -4371,7 +5636,7 @@ sealed Class <SPAN CLASS="typeNameLabel">SaveFileDialog</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="forms.html#SaveFileDialog">SaveFileDialog</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> parent)
 </CODE>
 </TD>
 </TR>
@@ -4434,6 +5699,170 @@ sealed Class <SPAN CLASS="typeNameLabel">SaveFileDialog</SPAN></PRE>
 </DIV>
 <HR>
 </DIV>
+<A NAME="StaticLabel">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+forms'</DIV>
+<H2 title="StaticLabel" class="title">StaticLabel</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">forms'BaseControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseWinControl">forms'BaseWinControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#Label">forms'Label</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+forms'StaticLabel</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+Class <SPAN CLASS="typeNameLabel">StaticLabel</SPAN></PRE>
+<BR>
+</DIV>
+<DIV CLASS="summary">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theVisible</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theEnabled</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Region">Region</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theRegion</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theTabStop</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theCaption</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theParent</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>id</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE><SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN></CODE>
+</TD>
+<TD CLASS="colLast">
+<CODE>theHandle</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#StaticLabel">StaticLabel</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#StaticLabel">StaticLabel</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>protected constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+</TABLE>
+</LI>
+</UL>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
 <A NAME="messageDialog">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -4467,7 +5896,70 @@ sealed Singleton <SPAN CLASS="typeNameLabel">messageDialog</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>showQuestion(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>showInformation(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> text)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>showInformation(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> text)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>showExclamation(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> text)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>showExclamation(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> text)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>showWarning(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> text)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>showWarning(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> text)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>showQuestion(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> text)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>showQuestion(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> text)
 </CODE>
 </TD>
 </TR>

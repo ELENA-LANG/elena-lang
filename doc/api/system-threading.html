@@ -76,7 +76,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Thread</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN>)
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -218,7 +218,7 @@ sealed Class <SPAN CLASS="typeNameLabel">ThreadHandle</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadHandle">ThreadHandle</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -287,7 +287,7 @@ sealed Class <SPAN CLASS="typeNameLabel">ThreadHandle</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>join(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>join(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> timeOut)
 </CODE>
 </TD>
 </TR>
@@ -341,7 +341,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">threadControl</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> interval)
 </CODE>
 </TD>
 </TR>
@@ -418,7 +418,7 @@ system'</DIV>
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>enterCriticalSection(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>enterCriticalSection()
 </CODE>
 </TD>
 </TR>
@@ -427,7 +427,7 @@ extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>leaveCriticalSection(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>leaveCriticalSection()
 </CODE>
 </TD>
 </TR>

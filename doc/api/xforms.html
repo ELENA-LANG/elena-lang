@@ -84,7 +84,7 @@ Class <SPAN CLASS="typeNameLabel">PropVariant</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="xforms.html#PropVariant">PropVariant</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> owner, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -198,7 +198,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">xforms</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> script)
 </CODE>
 </TD>
 </TR>
@@ -207,7 +207,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">xforms</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>execute(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>execute(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> script, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> owner)
 </CODE>
 </TD>
 </TR>
@@ -216,7 +216,16 @@ sealed Singleton <SPAN CLASS="typeNameLabel">xforms</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>loadPath(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>loadPath(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>executePath(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> owner)
 </CODE>
 </TD>
 </TR>

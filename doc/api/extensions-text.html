@@ -131,7 +131,7 @@ Class <SPAN CLASS="typeNameLabel">ExpressionStatemachine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
 </TD>
 </TR>
@@ -236,7 +236,7 @@ Class <SPAN CLASS="typeNameLabel">SimpleStatemachine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
 </TD>
 </TR>
@@ -311,7 +311,7 @@ Interface <SPAN CLASS="typeNameLabel">Statemachine</SPAN></PRE>
 <CODE>
 abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
 </TD>
 </TR>
@@ -410,7 +410,7 @@ Class <SPAN CLASS="typeNameLabel">StringBookmark</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-text.html#StringBookmark">StringBookmark</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> text)
 </CODE>
 </TD>
 </TR>
@@ -515,7 +515,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -524,7 +524,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -533,7 +533,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -542,7 +542,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -551,7 +551,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -560,25 +560,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>find(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>find(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -587,7 +569,25 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>find(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+<CODE>find(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>find(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>find(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -605,7 +605,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -614,7 +614,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -623,7 +623,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -632,7 +632,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -641,7 +641,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -650,7 +650,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
 </TD>
 </TR>
@@ -659,7 +659,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -668,7 +668,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></S
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+<CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -768,7 +768,7 @@ sealed Class <SPAN CLASS="typeNameLabel">StringWriter</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-text.html#StringWriter">StringWriter</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -777,7 +777,7 @@ sealed Class <SPAN CLASS="typeNameLabel">StringWriter</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-text.html#StringWriter">StringWriter</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> count)
 </CODE>
 </TD>
 </TR>
@@ -803,6 +803,15 @@ sealed Class <SPAN CLASS="typeNameLabel">StringWriter</SPAN></PRE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-text.html#StringWriter">StringWriter</A></SPAN></CODE></TD>
@@ -836,7 +845,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></S
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -857,7 +866,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -866,7 +875,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
 </TD>
 </TR>
@@ -875,7 +884,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeLine(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>writeLine(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -893,7 +902,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -902,7 +911,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
 </TD>
 </TR>
@@ -911,7 +920,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -920,7 +929,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>replace(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>replace(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s2)
 </CODE>
 </TD>
 </TR>
@@ -929,7 +938,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>replace(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>replace(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> s2)
 </CODE>
 </TD>
 </TR>
@@ -1055,7 +1064,7 @@ Class <SPAN CLASS="typeNameLabel">TokenEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-text.html#TokenEnumerator">TokenEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="extensions-text.html#Statemachine">Statemachine</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="extensions-text.html#Statemachine">Statemachine</A></SPAN> dfa)
 </CODE>
 </TD>
 </TR>
@@ -1064,7 +1073,7 @@ Class <SPAN CLASS="typeNameLabel">TokenEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-text.html#TokenEnumerator">TokenEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -1245,7 +1254,7 @@ Class <SPAN CLASS="typeNameLabel">TokenStatemachine</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN>)
+<CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
 </TD>
 </TR>

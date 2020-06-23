@@ -145,7 +145,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date"
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -154,7 +154,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date"
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> year, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> month, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> day, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> hour, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> minute, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> second)
 </CODE>
 </TD>
 </TR>
@@ -163,7 +163,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date"
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> year, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> month, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> day)
 </CODE>
 </TD>
 </TR>
@@ -307,7 +307,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN>)
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN> date)
 </CODE>
 </TD>
 </TR>
@@ -316,7 +316,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN>)
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN> date)
 </CODE>
 </TD>
 </TR>
@@ -325,7 +325,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN>)
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN> dt)
 </CODE>
 </TD>
 </TR>
@@ -334,7 +334,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN> timeSpan)
 </CODE>
 </TD>
 </TR>
@@ -343,7 +343,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN> timeSpan)
 </CODE>
 </TD>
 </TR>
@@ -352,7 +352,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>addYears(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>addYears(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -361,7 +361,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>addMonths(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>addMonths(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -370,7 +370,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>addDays(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>addDays(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -379,7 +379,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>addHours(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>addHours(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -388,7 +388,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>addMinutes(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>addMinutes(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -397,7 +397,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>addSeconds(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>addSeconds(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -516,7 +516,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Syste
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -525,7 +525,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Syste
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -605,7 +605,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumbe
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN> operand)
 </CODE>
 </TD>
 </TR>
@@ -614,7 +614,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumbe
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN> operand)
 </CODE>
 </TD>
 </TR>
@@ -623,7 +623,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumbe
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN> operand)
 </CODE>
 </TD>
 </TR>
@@ -632,7 +632,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumbe
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN> operand)
 </CODE>
 </TD>
 </TR>
@@ -822,7 +822,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Year(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Year(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -839,7 +839,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Month(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Month(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -864,7 +864,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Day(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Day(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -881,7 +881,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Hour(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Hour(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -898,7 +898,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Minute(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Minute(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -915,7 +915,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Second(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Second(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -932,7 +932,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Millisecond(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Millisecond(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -953,7 +953,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN> time)
 </CODE>
 </TD>
 </TR>
@@ -971,7 +971,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A></SPAN>)
+<CODE>readTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -980,7 +980,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&init(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+<CODE>#static&init(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN> fileTime)
 </CODE>
 </TD>
 </TR>
@@ -989,7 +989,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&dateToWide(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&dateToWide(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
 </CODE>
 </TD>
 </TR>
@@ -998,7 +998,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&timeToWide(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&timeToWide(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
 </CODE>
 </TD>
 </TR>
@@ -1134,7 +1134,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">By
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#SystemTime">SystemTime</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -1143,7 +1143,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">By
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> hours, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> minutes, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> seconds)
 </CODE>
 </TD>
 </TR>
@@ -1152,7 +1152,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">By
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> days, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> hours, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> minutes, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> seconds)
 </CODE>
 </TD>
 </TR>
@@ -1254,7 +1254,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumbe
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN> span)
 </CODE>
 </TD>
 </TR>
@@ -1263,7 +1263,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumbe
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN> span)
 </CODE>
 </TD>
 </TR>
@@ -1272,7 +1272,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumbe
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN>)
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Date">Date</A></SPAN> date)
 </CODE>
 </TD>
 </TR>
@@ -1281,7 +1281,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumbe
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN> span)
 </CODE>
 </TD>
 </TR>
@@ -1290,7 +1290,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumbe
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN>)
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-calendar.html#Timespan">Timespan</A></SPAN> span)
 </CODE>
 </TD>
 </TR>
@@ -1363,7 +1363,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">systemTimeFactory</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readUtcNow(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A></SPAN>)
+<CODE>readUtcNow(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
@@ -1372,7 +1372,7 @@ sealed Singleton <SPAN CLASS="typeNameLabel">systemTimeFactory</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readNow(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A></SPAN>)
+<CODE>readNow(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'calendar'SystemTime&gt;</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>

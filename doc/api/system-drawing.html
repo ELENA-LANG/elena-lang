@@ -84,7 +84,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Brush</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Brush">Brush</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> color)
 </CODE>
 </TD>
 </TR>
@@ -278,7 +278,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>open(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN>)
+<CODE>open(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -287,7 +287,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>set(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Pen">Pen</A></SPAN>)
+<CODE>set(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Pen">Pen</A></SPAN> pen)
 </CODE>
 </TD>
 </TR>
@@ -296,7 +296,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>set(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Brush">Brush</A></SPAN>)
+<CODE>set(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Brush">Brush</A></SPAN> brush)
 </CODE>
 </TD>
 </TR>
@@ -314,7 +314,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setCaret(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>setCaret(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
 </TD>
 </TR>
@@ -323,7 +323,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setCaret(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN>)
+<CODE>setCaret(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN> p)
 </CODE>
 </TD>
 </TR>
@@ -332,7 +332,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>lineCaretTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>lineCaretTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
 </TD>
 </TR>
@@ -341,7 +341,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>lineCaretTo(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN>)
+<CODE>lineCaretTo(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN> p)
 </CODE>
 </TD>
 </TR>
@@ -350,7 +350,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeText(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>writeText(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
 </TD>
 </TR>
@@ -359,7 +359,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>writeText(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
 </TD>
 </TR>
@@ -368,7 +368,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Canvas</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Image">Image</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Image">Image</A></SPAN> image, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -509,7 +509,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -526,7 +526,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -556,7 +556,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -681,7 +681,7 @@ sealed Class <SPAN CLASS="typeNameLabel">HBITMAP</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&create(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&create(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN> dc, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -690,7 +690,7 @@ sealed Class <SPAN CLASS="typeNameLabel">HBITMAP</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&load(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&load(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -699,7 +699,7 @@ sealed Class <SPAN CLASS="typeNameLabel">HBITMAP</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>select(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN>)
+<CODE>select(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -793,7 +793,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HBRUSH
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HBRUSH">HBRUSH</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>createSolid(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>createSolid(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> color)
 </CODE>
 </TD>
 </TR>
@@ -853,7 +853,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HBRUSH
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -1007,7 +1007,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -1016,7 +1016,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&newCompatible(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN>)
+<CODE>#static&newCompatible(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN> dc)
 </CODE>
 </TD>
 </TR>
@@ -1025,7 +1025,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setTextColor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>setTextColor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> color)
 </CODE>
 </TD>
 </TR>
@@ -1034,7 +1034,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setBkColor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>setBkColor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> color)
 </CODE>
 </TD>
 </TR>
@@ -1043,7 +1043,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>select(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HBITMAP">HBITMAP</A></SPAN>)
+<CODE>select(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HBITMAP">HBITMAP</A></SPAN> bitmapHandle)
 </CODE>
 </TD>
 </TR>
@@ -1052,7 +1052,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>select(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HPEN">HPEN</A></SPAN>)
+<CODE>select(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HPEN">HPEN</A></SPAN> penHandle)
 </CODE>
 </TD>
 </TR>
@@ -1061,7 +1061,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>select(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HBRUSH">HBRUSH</A></SPAN>)
+<CODE>select(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HBRUSH">HBRUSH</A></SPAN> brushHandle)
 </CODE>
 </TD>
 </TR>
@@ -1070,7 +1070,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destX, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destY, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height, <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN> dc, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> sourX, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> sourY, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
 </CODE>
 </TD>
 </TR>
@@ -1079,7 +1079,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>moveTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>moveTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
 </TD>
 </TR>
@@ -1088,7 +1088,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>lineTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>lineTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
 </TD>
 </TR>
@@ -1097,7 +1097,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">H
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>drawText(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>drawText(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> text, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
 </TD>
 </TR>
@@ -1251,7 +1251,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HPEN">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -1269,7 +1269,7 @@ static get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HPEN">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&create(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&create(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> style, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> color)
 </CODE>
 </TD>
 </TR>
@@ -1367,7 +1367,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Image</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Image">Image</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Dimension</A></SPAN>)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Dimension</A></SPAN> size)
 </CODE>
 </TD>
 </TR>
@@ -1427,7 +1427,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Image</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>open(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN>)
+<CODE>open(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#HDC">HDC</A></SPAN> parentDC)
 </CODE>
 </TD>
 </TR>
@@ -1509,7 +1509,7 @@ sealed Class <SPAN CLASS="typeNameLabel">Pen</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Pen">Pen</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> color, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width)
 </CODE>
 </TD>
 </TR>
@@ -1712,7 +1712,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>X(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>X(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -1729,7 +1729,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Y(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Y(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -1759,7 +1759,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>#static&#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
 </TD>
 </TR>
@@ -1777,7 +1777,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN>)
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN> p)
 </CODE>
 </TD>
 </TR>
@@ -1786,7 +1786,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN>)
+<CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN> p)
 </CODE>
 </TD>
 </TR>
@@ -1795,7 +1795,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN>)
+<CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN> p)
 </CODE>
 </TD>
 </TR>
@@ -1804,7 +1804,7 @@ set&nbsp;</CODE></TD>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN>)
+<CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Point">Point</A></SPAN> p)
 </CODE>
 </TD>
 </TR>
@@ -1952,7 +1952,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Left(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Left(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -1969,7 +1969,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Top(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Top(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -1986,7 +1986,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Right(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Right(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -2003,7 +2003,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Bottom(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Bottom(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -2179,7 +2179,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>X(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>X(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -2196,7 +2196,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Y(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Y(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -2213,7 +2213,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -2230,7 +2230,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <CODE>
 set&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -2268,7 +2268,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Di
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>set(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>set(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -2277,7 +2277,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Di
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+<CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -2286,7 +2286,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Di
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeDimension(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>writeDimension(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -2295,7 +2295,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Di
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readDimensionTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN>)
+<CODE>readDimensionTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN> height)
 </CODE>
 </TD>
 </TR>

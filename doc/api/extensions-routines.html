@@ -209,7 +209,7 @@ Class <SPAN CLASS="typeNameLabel">Combinator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Combinator">Combinator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arguments)
 </CODE>
 </TD>
 </TR>
@@ -218,7 +218,7 @@ Class <SPAN CLASS="typeNameLabel">Combinator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#Combinator">Combinator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> subLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> set)
 </CODE>
 </TD>
 </TR>
@@ -330,7 +330,7 @@ Class <SPAN CLASS="typeNameLabel">CompoundEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#CompoundEnumerator">CompoundEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> args)
 </CODE>
 </TD>
 </TR>
@@ -523,7 +523,7 @@ Class <SPAN CLASS="typeNameLabel">ParallelEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ParallelEnumerator">ParallelEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN> arguments)
 </CODE>
 </TD>
 </TR>
@@ -532,7 +532,7 @@ Class <SPAN CLASS="typeNameLabel">ParallelEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ParallelEnumerator">ParallelEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> a)
 </CODE>
 </TD>
 </TR>
@@ -635,11 +635,38 @@ Class <SPAN CLASS="typeNameLabel">ReaderEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> source)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN> stream, <SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN> encoder)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN> encoder)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
@@ -783,7 +810,7 @@ Class <SPAN CLASS="typeNameLabel">SequentialEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SequentialEnumerator">SequentialEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN> arguments)
 </CODE>
 </TD>
 </TR>
@@ -792,7 +819,7 @@ Class <SPAN CLASS="typeNameLabel">SequentialEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SequentialEnumerator">SequentialEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN>)
+<CODE>new(<I>params</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object[]</A></SPAN> arguments)
 </CODE>
 </TD>
 </TR>
@@ -887,7 +914,7 @@ Class <SPAN CLASS="typeNameLabel">SingleEnumerable</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SingleEnumerable">SingleEnumerable</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -1028,7 +1055,7 @@ system'io'</DIV>
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>forEachLine(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#File">File</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>forEachLine(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -1073,7 +1100,7 @@ system'</DIV>
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>asComparator(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN>)
+<CODE>asComparator()
 </CODE>
 </TD>
 </TR>
@@ -1118,7 +1145,7 @@ system'</DIV>
 <CODE>
 extension &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>forEachWord(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN>)
+<CODE>forEachWord(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
 </CODE>
 </TD>
 </TR>

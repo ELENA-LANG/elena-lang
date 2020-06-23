@@ -84,7 +84,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBCommand</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBCommand">DBCommand</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBConnection">DBConnection</A></SPAN>, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBConnection">DBConnection</A></SPAN> connection, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> text)
 </CODE>
 </TD>
 </TR>
@@ -144,7 +144,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBCommand</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>#static&prepare(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>#static&prepare(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> text)
 </CODE>
 </TD>
 </TR>
@@ -198,7 +198,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBCommand</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -306,7 +306,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBConnection</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBConnection">DBConnection</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#File">File</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#File">File</A></SPAN> p)
 </CODE>
 </TD>
 </TR>
@@ -315,7 +315,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBConnection</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBConnection">DBConnection</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
 </TR>
@@ -402,7 +402,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBConnection</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>doSql(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN>)
+<CODE>doSql(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> query)
 </CODE>
 </TD>
 </TR>
@@ -411,7 +411,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBConnection</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>executeNonQuery(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>executeNonQuery(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> sqlText)
 </CODE>
 </TD>
 </TR>
@@ -420,7 +420,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBConnection</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>executeQuery(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>executeQuery(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> sqlText)
 </CODE>
 </TD>
 </TR>
@@ -522,7 +522,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBEnumerator</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBEnumerator">DBEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBReader">DBReader</A></SPAN>)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBReader">DBReader</A></SPAN> reader)
 </CODE>
 </TD>
 </TR>
@@ -691,7 +691,7 @@ Class <SPAN CLASS="typeNameLabel">DBException</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBException">DBException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
 </TD>
 </TR>
@@ -824,7 +824,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBReader</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBReader">DBReader</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBCommand">DBCommand</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBCommand">DBCommand</A></SPAN> command)
 </CODE>
 </TD>
 </TR>
@@ -893,7 +893,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBReader</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -902,7 +902,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBReader</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> fieldName)
 </CODE>
 </TD>
 </TR>
@@ -1044,7 +1044,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBRow</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -1053,7 +1053,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBRow</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN>)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> fieldName)
 </CODE>
 </TD>
 </TR>
@@ -1126,7 +1126,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBTable</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="sqlite.html#DBTable">DBTable</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'String&gt;</A></SPAN>)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'String&gt;</A></SPAN> names)
 </CODE>
 </TD>
 </TR>
@@ -1177,7 +1177,7 @@ sealed Class <SPAN CLASS="typeNameLabel">DBTable</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendRow(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN>)
+<CODE>appendRow(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">Array&lt;system'Object&gt;</A></SPAN> row)
 </CODE>
 </TD>
 </TR>

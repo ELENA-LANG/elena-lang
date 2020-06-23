@@ -136,8 +136,9 @@ void ModuleScope :: importClassInfo(ClassInfo& copy, ClassInfo& target, _Module*
             key.value2 = importMessage(exporter, key.value2, module);
 
          ref_t val = *attribute_it;
-         if (val != INVALID_REF)
+         if (test(key.value1, caRefefernceMask) && val != INVALID_REF) {
             val = importReference(exporter, (val & ~mskAnyRef), module) | (val & mskAnyRef);
+         }
 
          target.mattributes.add(key, val);
          
