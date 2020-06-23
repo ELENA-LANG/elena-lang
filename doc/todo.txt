@@ -15,7 +15,13 @@ In development:
     * release 5.0
 
   [!documentation]
-    * !api doc : conversion - cast(), protected constructors, fine tunings, descriptions, field descriptions, param descriptions
+    * !api doc : protected methods / explicit constructors; 
+                 functions;
+                 display all templates
+                 show correctly: variadic argument, byref, array; 
+                 descriptions, field descriptions;
+                 fine tunings; 
+                 param descriptions
     * reddit : migrate all posts to ELENA 5.0  (using / finally statements in ELENA)
     * tutorials : migrate all tutorials
     * api : use manifest info for module description

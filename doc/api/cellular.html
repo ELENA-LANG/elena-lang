@@ -118,9 +118,9 @@ sealed Class <SPAN CLASS="typeNameLabel">IntMatrixSpace</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="cellular.html#IntMatrixSpace">IntMatrixSpace</A></SPAN></CODE></TD>
+<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="cellular.html#IntMatrixSpace">IntMatrixSpace</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>protected constructor</i>()
+<CODE><i>constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -139,7 +139,7 @@ sealed Class <SPAN CLASS="typeNameLabel">IntMatrixSpace</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Rows</CODE>
 </TD>
@@ -147,7 +147,7 @@ get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber<
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Columns</CODE>
 </TD>
@@ -269,9 +269,9 @@ Class <SPAN CLASS="typeNameLabel">LoadedSet</SPAN></PRE>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="cellular.html#LoadedSet">LoadedSet</A></SPAN></CODE></TD>
+<i>protected </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="cellular.html#LoadedSet">LoadedSet</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>protected constructor</i>()
+<CODE><i>constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -337,7 +337,7 @@ Interface <SPAN CLASS="typeNameLabel">RuleSet</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">RuleSet</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">RuleSet</A></SPAN>)
+<CODE><i>cast</i>()
 </CODE>
 </TD>
 </TR>
@@ -356,7 +356,7 @@ Interface <SPAN CLASS="typeNameLabel">RuleSet</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>proceed(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN> newState)
 </CODE>
@@ -403,7 +403,7 @@ Interface <SPAN CLASS="typeNameLabel">Space</SPAN></PRE>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>cast</i>(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#Space">Space</A></SPAN>)
+<CODE><i>cast</i>()
 </CODE>
 </TD>
 </TR>
@@ -422,7 +422,7 @@ Interface <SPAN CLASS="typeNameLabel">Space</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>abstract get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Rows</CODE>
 </TD>
@@ -430,7 +430,7 @@ abstract get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">I
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>abstract get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Columns</CODE>
 </TD>
@@ -459,7 +459,7 @@ abstract get&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">I
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>update(<SPAN CLASS="memberNameLink"><A HREF="cellular.html#RuleSet">RuleSet</A></SPAN> rs)
 </CODE>
@@ -468,7 +468,7 @@ abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object<
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-abstract &nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>read(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j, <SPAN CLASS="memberNameLink"><A HREF="system.html#ref&lt;T1&gt;">ref&lt;system'IntNumber&gt;</A></SPAN> retVal)
 </CODE>

@@ -37,6 +37,7 @@ struct ApiMethodInfo
 {
    bool prop, special, convertor, isAbstract, isInternal;
    bool isMultidispatcher, withVargs;
+   bool protectedOne;
 
    IdentifierString       prefix;
    IdentifierString       name;
@@ -51,6 +52,7 @@ struct ApiMethodInfo
       special = prop = convertor = false;
       isAbstract = isMultidispatcher = false;
       withVargs = isInternal = false;
+      protectedOne = false;
    }
 };
 
@@ -505,7 +507,9 @@ void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
    writer.writeLiteralNewLine("<TD CLASS=\"colFirst\">");
    writer.writeLiteralNewLine("<CODE>");
    if (info->prefix.Length() != 0) {
+      writer.writeLiteral("<i>");
       writer.writeLiteral(info->prefix.ident());
+      writer.writeLiteral("</i>");
       writer.writeLiteral("&nbsp;");
    }
    if (info->retType.Length() != 0) {
@@ -1365,12 +1369,16 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
       info->name.copy("<i>constructor</i>");
    }
    else if (info->name.compare("#constructor2")) {
-      info->name.copy("<i>protected constructor</i>");
+      info->protectedOne = true;
+      info->name.copy("<i>constructor</i>");
    }
    else if (info->name.compare("#cast")) {
       info->special = true;
       info->convertor = true;
       info->name.copy("<i>cast</i>");
+
+      // HOTFIX : conversion should not contain arguments
+      info->params.clear();
    }
    else if (info->name.compare("#generic")) {
       info->name.copy("<i>generic</i>");
@@ -1384,6 +1392,9 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
 
    if (info->isInternal)
       info->special = true;
+
+   if (info->protectedOne)
+      info->prefix.append("protected ");
 
    if (extensionOne)
       info->prefix.append("extension ");
