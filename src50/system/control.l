@@ -513,7 +513,7 @@ public interface Func8
 public interface Func<T1,T2,T3,T4,T5,T6,T7,T8, TResult>
 {
     /// Executes the action
-    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8) {}
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8) {}
 
     Func8 cast()
         = (a,b,c,d,e,f,g,h => self(a,b,c,d,e,f,g,h));
@@ -552,7 +552,7 @@ public interface Func9
 public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9, TResult>
 {
     /// Executes the action
-    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9) {}
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9) {}
     
     Func9 cast()
         = (a,b,c,d,e,f,g,h,i => self(a,b,c,d,e,f,g,h,i));
@@ -589,10 +589,10 @@ public interface Func10
     }
 }
 
-public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10, TRresult>
+public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10, TResult>
 {
     /// Executes the action
-    abstract TRresult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8,
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8,
                             T9 param9, T10 param10) {}
     
     Func10 cast()
@@ -634,7 +634,7 @@ public interface Func11
 public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,TResult>
 {
     /// Executes the action
-    abstract TResult closure(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8,
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8,
                             T9 param9, T10 param10, T11 param11) {}
 
     Func11 cast()

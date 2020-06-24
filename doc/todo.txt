@@ -15,10 +15,9 @@ In development:
     * release 5.0
 
   [!documentation]
-    * !api doc : functions;
-                 display all templates
+    * !api doc : descriptions;
                  show correctly: variadic argument, byref, array; 
-                 descriptions, field descriptions;
+                 field descriptions;
                  fine tunings; 
                  param descriptions
     * reddit : migrate all posts to ELENA 5.0  (using / finally statements in ELENA)

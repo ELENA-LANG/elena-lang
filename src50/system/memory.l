@@ -297,8 +297,7 @@ public sealed Matrix<T>
 
     T at(int i, int j)
     {
-        T retVal := T.MinValue;
-        self.read(i, j, ref retVal);
+        self.read(i, j, ref T retVal);
         ^ retVal
     }
 
@@ -2420,51 +2419,51 @@ class BitArray32Enumerator : Enumerator<bool>
     Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
 
-//// template test cases
-//T1 { static Default = nil; }
-//T2;
-//T3;
-//T4;
-//T5;
-//T6;
-//T7;
-//T8;
-//T9;
-//T10;
-//T11;
-//T12;
-//
-//template_test()
-//{
-//    ref<T1> o1;
-//    Enumerator<T1> o2;
-//    Enumerable<T1> o3;
-//    Indexer<T1> o4;
-//    Indexable<T1> o5;
-//    BaseEnumerator<T1> o6;
-//    BaseIndexer<T1> o7;
-//    Array<T1> o8;
-//    VariadicArray<T1> o9;
-//    Matrix<T1> o10;
-//    Func<T1,T2> f;
-//    Func<T1,T2,T3> f2;
-//    Func<T1,T2,T3,T4> f3;
-//    Func<T1,T2,T3,T4,T5> f4;
-//    Func<T1,T2,T3,T4,T5,T6> f5;
-//    Func<T1,T2,T3,T4,T5,T6,T7> f6;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8> f7;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9> f8;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> f9;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11> f10;
-//    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12> f11;
-//    
-//    collections'List<T1> o11;
-//    collections'Stack<T1> o12;
-//    collections'Queue<T1> o13;
-//    collections'Tuple<T1> o14;
-//    collections'Tuple<T1,T2> o15;
-//    collections'Tuple<T1,T2,T3> o16;
-//    collections'Tuple<T1,T2,T3,T4> o17;
-//    collections'Tuple<T1,T2,T3,T4,T5> o18;
-//    collections'Tuple<T1,T2,T3,T4,T5,T6> o19;    
-//}
+// template test cases
+T1 { static Default = nil; }
+T2;
+T3;
+T4;
+T5;
+T6;
+T7;
+T8;
+T9;
+T10;
+T11;
+T12;
+
+template_test()
+{
+    ref<T1> o1;
+    Enumerator<T1> o2;
+    Enumerable<T1> o3;
+    Indexer<T1> o4;
+    Indexable<T1> o5;
+    BaseEnumerator<T1> o6;
+    BaseIndexer<T1> o7;
+    Array<T1> o8;
+    VariadicArray<T1> o9;
+    Matrix<T1> o10;
+    Func<T1,T2> f;
+    Func<T1,T2,T3> f2;
+    Func<T1,T2,T3,T4> f3;
+    Func<T1,T2,T3,T4,T5> f4;
+    Func<T1,T2,T3,T4,T5,T6> f5;
+    Func<T1,T2,T3,T4,T5,T6,T7> f6;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8> f7;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9> f8;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10> f9;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11> f10;
+    Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12> f11;
+    
+    collections'List<T1> o11;
+    collections'Stack<T1> o12;
+    collections'Queue<T1> o13;
+    collections'Tuple<T1> o14;
+    collections'Tuple<T1,T2> o15;
+    collections'Tuple<T1,T2,T3> o16;
+    collections'Tuple<T1,T2,T3,T4> o17;
+    collections'Tuple<T1,T2,T3,T4,T5> o18;
+    collections'Tuple<T1,T2,T3,T4,T5,T6> o19;    
+}

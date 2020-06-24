@@ -16,14 +16,14 @@ namespace collections
         at(int index)
         {
             index =>
-                0 { ^ field1 }
+                0 { ^ Item1 }
                 : { OutOfRangeException.raise() }
         }
     
         setAt(int index, object object)
         {
             index =>
-                0 { field1 := object }
+                0 { Item1 := object }
                 : { OutOfRangeException.raise() }
         }
     
