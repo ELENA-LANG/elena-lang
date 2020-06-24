@@ -14,6 +14,8 @@
 #define TITLE "ELENA Standard Library 5.0: Module "
 #define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>5.0"
 
+#define REVISION_VERSION   1
+
 //#define OPERATORS "+-*/=<>?!"
 
 using namespace _ELENA_;
@@ -38,6 +40,7 @@ struct ApiMethodInfo
    bool prop, special, convertor, isAbstract, isInternal;
    bool isMultidispatcher, withVargs;
    bool protectedOne;
+   bool privateOne;
 
    IdentifierString       prefix;
    IdentifierString       name;
@@ -52,7 +55,7 @@ struct ApiMethodInfo
       special = prop = convertor = false;
       isAbstract = isMultidispatcher = false;
       withVargs = isInternal = false;
-      protectedOne = false;
+      privateOne = protectedOne = false;
    }
 };
 
@@ -1315,6 +1318,8 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    info->isAbstract = messageLine.find("@abstract") != NOTFOUND_POS;
    info->isMultidispatcher = messageLine.find("@multidispatcher") != NOTFOUND_POS;
    info->isInternal = messageLine.find("@internal") != NOTFOUND_POS;
+   info->protectedOne = messageLine.find("@protected") != NOTFOUND_POS;
+   info->privateOne = messageLine.find("@private") != NOTFOUND_POS;
 
    pos_t retPos = messageLine.find(" of ");
    if (retPos != NOTFOUND_POS) {
@@ -1350,6 +1355,13 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
          paramCount--;
 
       info->name.truncate(end - 1);
+   }
+
+   if (info->protectedOne) {
+      int p_index = info->name.ident().find("$$");
+      if (p_index != NOTFOUND_POS) {
+         info->name.cut(0, p_index + 2);
+      }
    }
 
    parseName(info, extensionOne, templateBased, rootNs);
@@ -1393,7 +1405,9 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
    if (info->isInternal)
       info->special = true;
 
-   if (info->protectedOne)
+   if (info->privateOne)
+      info->prefix.append("private ");
+   else if (info->protectedOne)
       info->prefix.append("protected ");
 
    if (extensionOne)
@@ -1751,7 +1765,7 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line Html Documentation generator (C)2006-20 by Alexei Rakov\n");
+   printf("ELENA command line Html Documentation generator %d.%d.%d (C)2006-20 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
 
    if (argc != 2) {
       printf("api2html <file>\n");

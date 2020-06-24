@@ -15,8 +15,7 @@ In development:
     * release 5.0
 
   [!documentation]
-    * !api doc : protected methods / explicit constructors; 
-                 functions;
+    * !api doc : functions;
                  display all templates
                  show correctly: variadic argument, byref, array; 
                  descriptions, field descriptions;

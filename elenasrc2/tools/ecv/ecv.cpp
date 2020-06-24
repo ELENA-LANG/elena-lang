@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   75
+#define REVISION_VERSION   76
 
 using namespace _ELENA_;
 
@@ -1204,12 +1204,19 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       bool isMultidispatcher = test(hints, tpMultimethod);
       bool isInternal = test(hints, tpInternal);
       bool isPrivate = (hints & tpMask) == tpPrivate;
+      bool isProteced = test(hints, tpProtected);
       bool isFunction = test(entry.message, FUNCTION_MESSAGE);
 
       // print the method name
       temp.copy(className);
       temp.append('.');
       printMessage(temp, module, entry.message);
+
+      if (isPrivate) {
+         int p_index = temp.ident().find("#static&");
+         if (p_index != NOTFOUND_POS)
+            temp.cut(p_index, getlength("#static&"));
+      }
 
       ref_t retType = info.methodHints.get(ClassInfo::Attribute(entry.message, maReference));
       if (retType) {
@@ -1244,6 +1251,8 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          temp.truncate(temp.Length() - 2);
 
       prefix.copy("@method ");
+      if (isProteced)
+         prefix.append("@protected ");
       if (isAbstract)
          prefix.append("@abstract ");
       if (isMultidispatcher)
@@ -1461,7 +1470,7 @@ void getAppPath(_ELENA_::Path& appPath)
 // === Main Program ===
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2019 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
+   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2020 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
 
    if (argc<2) {
       printf("ecv <module name> | ecv -p<module path>");
