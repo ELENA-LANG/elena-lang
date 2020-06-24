@@ -14,7 +14,7 @@
 #define TITLE "ELENA Standard Library 5.0: Module "
 #define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>5.0"
 
-#define REVISION_VERSION   1
+#define REVISION_VERSION   2
 
 //#define OPERATORS "+-*/=<>?!"
 
@@ -1234,6 +1234,7 @@ void parseTemplateType(IdentifierString& line, int index)
          else {
             line.append(temp.c_str() + last + 1, i - last - 1);
             line.append(',');
+            last = i;
          }
       }
    }
