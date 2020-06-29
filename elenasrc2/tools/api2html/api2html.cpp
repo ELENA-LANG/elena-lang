@@ -14,7 +14,10 @@
 #define TITLE "ELENA Standard Library 5.0: Module "
 #define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>5.0"
 
-#define REVISION_VERSION   2
+constexpr auto ByRefPrefix = "'$auto'system@ref#1&";
+constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
+
+#define REVISION_VERSION   3
 
 //#define OPERATORS "+-*/=<>?!"
 
@@ -380,9 +383,18 @@ inline void repeatStr(TextFileWriter& writer, const char* s, int count)
 
 void writeType(TextFileWriter& writer, ident_t type, bool fullReference = false)
 {
+   bool arrayMode = false;
    if (type.startsWith("params ")) {
       writer.writeLiteral("<I>params</I>&nbsp;");
       type = type.c_str() + 7;
+   }
+   else if(type.startsWith("ref ")) {
+      writer.writeLiteral("<I>ref</I>&nbsp;");
+      type = type.c_str() + 4;
+   }
+   else if (type.startsWith("arrayof ")) {
+      type = type.c_str() + 8;
+      arrayMode = true;
    }
 
    writer.writeLiteral("<SPAN CLASS=\"memberNameLink\">");
@@ -418,6 +430,10 @@ void writeType(TextFileWriter& writer, ident_t type, bool fullReference = false)
       writer.writeLiteral("</A>");
    }
    else writer.writeLiteral(type.c_str());
+
+   if (arrayMode)
+      writer.writeLiteral("<I>[]</I>");
+
    writer.writeLiteral("</SPAN>");
 }
 
@@ -1210,7 +1226,7 @@ void parseTemplateName(IdentifierString& line)
    line.append("&gt;");
 }
 
-void parseTemplateType(IdentifierString& line, int index)
+void parseTemplateType(IdentifierString& line, int index, bool argMode)
 {
    IdentifierString temp(line);
 
@@ -1218,6 +1234,24 @@ void parseTemplateType(IdentifierString& line, int index)
 
    int last = index;
    bool first = true;
+   bool noCurlybrackets = false;
+   if (argMode && temp.ident().startsWith(ByRefPrefix)) {
+      // HOTFIX : recognize byref argument
+
+      temp.cut(0, getlength(ByRefPrefix));
+
+      line.append("ref ");
+      noCurlybrackets = true;
+   }
+   else if (argMode && temp.ident().startsWith(ArrayPrefix)) {
+      // HOTFIX : recognize byref argument
+
+      temp.cut(0, getlength(ArrayPrefix));
+
+      line.append("arrayof ");
+      noCurlybrackets = true;
+   }
+
    for (int i = index; i < temp.Length(); i++) {
       if (temp[i] == '@') {
          temp[i] = '\'';
@@ -1239,11 +1273,16 @@ void parseTemplateType(IdentifierString& line, int index)
       }
    }
 
-   line.append(temp.c_str() + last + 1);
-   line.append("&gt;");
+   if (noCurlybrackets) {
+      line.append(temp.c_str());
+   }
+   else {
+      line.append(temp.c_str() + last + 1);
+      line.append("&gt;");
+   }
 }
 
-void validateTemplateType(IdentifierString& type, bool templateBased)
+void validateTemplateType(IdentifierString& type, bool templateBased, bool argMode)
 {
    if (templateBased) {
       if (isTemplateBased(type)) {
@@ -1260,11 +1299,11 @@ void validateTemplateType(IdentifierString& type, bool templateBased)
    else if (isTemplateWeakReference(type.c_str())) {
       NamespaceName ns(type);
 
-      parseTemplateType(type, ns.Length());
+      parseTemplateType(type, ns.Length(), argMode);
    }
 }
 
-void readType(IdentifierString& type, ident_t line, ident_t rootNs, bool templateBased)
+void readType(IdentifierString& type, ident_t line, ident_t rootNs, bool templateBased, bool argMode)
 {
    if (isTemplateWeakReference(line.c_str())) {
       type.copy(line);
@@ -1275,7 +1314,7 @@ void readType(IdentifierString& type, ident_t line, ident_t rootNs, bool templat
    }
    else type.copy(line);
 
-   validateTemplateType(type, templateBased);
+   validateTemplateType(type, templateBased, argMode);
 }
 
 void parseName(ApiMethodInfo* info, bool extensionOne, bool templateBased, ident_t rootNs)
@@ -1292,7 +1331,7 @@ void parseName(ApiMethodInfo* info, bool extensionOne, bool templateBased, ident
                skipOne = false;
             }
             else {
-               readType(type, param.c_str(), rootNs, templateBased);
+               readType(type, param.c_str(), rootNs, templateBased, true);
 
                if (info->withVargs && info->name[i] == '>') {
                   type.append("[]");
@@ -1324,7 +1363,7 @@ void parseMethod(ApiMethodInfo* info, ident_t messageLine, bool staticOne, bool 
 
    pos_t retPos = messageLine.find(" of ");
    if (retPos != NOTFOUND_POS) {
-      readType(info->retType, messageLine.c_str() + retPos + 4, rootNs, templateBased);
+      readType(info->retType, messageLine.c_str() + retPos + 4, rootNs, templateBased, false);
    }
    else {
       info->retType.copy("system'Object");
@@ -1438,7 +1477,7 @@ void parseField(ApiClassInfo* info, ident_t line, ident_t rootNs)
    if (retPos != NOTFOUND_POS) {
       fieldInfo->name.copy(line, retPos);
 
-      readType(fieldInfo->type, line.c_str() + retPos + 4, rootNs, info->templateBased);
+      readType(fieldInfo->type, line.c_str() + retPos + 4, rootNs, info->templateBased, false);
    }
    else {
       fieldInfo->type.copy("system'Object");
@@ -1512,7 +1551,7 @@ void readClassMembers(String<char, LINE_LEN>& line, TextFileReader& reader, ApiC
       }
       else if (ident_t(line).startsWith("@parent ")) {
          IdentifierString type;
-         readType(type, line + 8, rootNs, info->templateBased);
+         readType(type, line + 8, rootNs, info->templateBased, false);
 
          info->parents.add(type.c_str());
       }
@@ -1707,7 +1746,7 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
       }
 
       IdentifierString targetFullName;
-      readType(targetFullName, targetName.c_str(), rootNs, false);
+      readType(targetFullName, targetName.c_str(), rootNs, false, false);
 
       //if (isWeakReference(targetName.c_str())) {
       //   targetFullName.copy(rootNs);
@@ -1736,7 +1775,7 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
 
       pos_t retPos = ident_t(line).find(" of ");
       if (retPos != NOTFOUND_POS) {
-         readType(info->type, line.c_str() + retPos + 4, rootNs, false);
+         readType(info->type, line.c_str() + retPos + 4, rootNs, false, false);
 
          line.truncate(retPos);
       }

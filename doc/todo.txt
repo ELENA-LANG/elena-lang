@@ -16,7 +16,6 @@ In development:
 
   [!documentation]
     * !api doc : descriptions;
-                 show correctly: variadic argument, byref, array; 
                  field descriptions;
                  fine tunings; 
                  param descriptions
