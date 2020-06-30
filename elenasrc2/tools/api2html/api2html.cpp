@@ -17,7 +17,7 @@
 constexpr auto ByRefPrefix = "'$auto'system@ref#1&";
 constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
 
-#define REVISION_VERSION   3
+#define REVISION_VERSION   4
 
 //#define OPERATORS "+-*/=<>?!"
 
@@ -608,6 +608,11 @@ void writeSecondPropColumn(TextFileWriter& writer, ApiMethodInfo* info)
    }
 
    writer.writeLiteralNewLine("</CODE>");
+   if (info->shortdescr.Length() > 0) {
+      writer.writeLiteralNewLine("<div class=\"block\">");
+      writer.writeLiteral(info->shortdescr);
+      writer.writeLiteralNewLine("</div>");
+   }
    writer.writeLiteralNewLine("</TD>");
 }
 

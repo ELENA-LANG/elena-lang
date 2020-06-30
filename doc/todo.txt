@@ -15,7 +15,9 @@ In development:
     * release 5.0
 
   [documentation]
-    * api doc : field descriptions;
+    * api doc :  static method descriptions;
+                 field descriptions;
+                 dispatch methods;
                  template based extensions; 
                  api descriptions;
                  param descriptions

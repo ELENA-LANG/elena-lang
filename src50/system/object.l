@@ -15,6 +15,7 @@ public class Object
     [info:"Returns true if the specified object is equal to the current object; otherwise, false. By default compares the object references."]
     bool equal(o) => intern system'core_routines'__object;
        
+    [info:"Returns true if the specified object is not equal to the current object; otherwise, false. By default it inverts the result of equal[2]."]
     bool notequal(o) = self.equal(o).Inverted;
     
     // virtual method declarations : forcing the output type                            
@@ -23,64 +24,66 @@ public class Object
     predefined bool notless(o) {}
     predefined bool notgreater(o) {}
                 
+    [info:"Returns the string representation. By default it returns the class name."]
     string toPrintable() = /*self.__getClassName()*/__className;
                 
-    /// Implements a message dispatching in VMT
+    [info:"Implements a message dispatching in VMT"]
     dispatch() => intern system'core_routines'__object;
 }
 
-//[info:"a common boolean value"]
+[info:"a common boolean value"]
 public interface BoolValue
 {
     private constructor() {}
     
-    /// return the default value
+    [info:"return the default value"]
     static bool MinValue
         = BoolValue.false;
 
+    [info:"returns true value."]
     const static true = BoolValue
     {
-        /// Executes the action
+        [info:"executes trueAction."]
         if(trueAction) = trueAction();
     
-        /// Executes then-action
+        [info:"executes trueAction."]
         if(trueAction,falseAction) = trueAction();
     
-        /// Always returns nil.
+        [info:"always returns nil."]
         ifnot(trueAction) = nil;
     
+        [info:"always returns trueVal."]
         iif(object trueVal, object falseVal) = trueVal;
         
-        /// Executes logical OR operation
-        ///
-        /// Always return true
+        [info:"executes logical OR operation<br/>Always return true"]
         bool or(expr) = this self;
     
-        /// Executes logical AND operation
+        [info:"executes logical AND operation."]
         bool and(expr) = expr;
     
-        /// Executes logical XOR operation
+        [info:"executes logical XOR operation."]
         bool xor(expr)
         {
             cast bool(expr) ? { ^ BoolValue.false };
         }
     
-        /// Determines whether the specified object is equal to the current object boolean value.
+        [info:"determines whether the specified object is equal to the current object boolean value."]
         bool equal(expr) = expr;
     
-        /// Determines whether the specified object is equal to the current object boolean value.
+        [info:"determines whether the specified object is equal to the current object boolean value."]
         bool equal(bool b) = b;
     
-        /// Always returns false.
+        [info:"always returns false."]
         bool Inverted = BoolValue.false;
     
-        /// Returns literal representation.
+        [info:"returns literal representation."]
         string toPrintable() = "true";
     
-        /// Returns itself.
+        [info:"Returns itself."]
         bool clone() = this self;        
     };
                         
+    [info:"returns false value."]
     const static false = BoolValue
     {
         /// Always returns nil

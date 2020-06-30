@@ -3829,8 +3829,18 @@ void Compiler :: compileMetaConstantAssigning(ObjectInfo, SNode node, ClassScope
          key = Attribute(caInfo, targetNode.argument);
       }
 
-      scope.info.mattributes.add(key, saveMetaInfo(*scope.moduleScope, info));
-      scope.save();
+      if (targetNode == lxStaticMethod) {
+         // HOTFIX : recognize class class meta info
+         ClassScope classClassScope(&scope, scope.info.header.classRef, scope.visibility);
+         scope.moduleScope->loadClassInfo(classClassScope.info, scope.module->resolveReference(classClassScope.reference), false);
+
+         classClassScope.info.mattributes.add(key, saveMetaInfo(*scope.moduleScope, info));
+         classClassScope.save();
+      }
+      else {
+         scope.info.mattributes.add(key, saveMetaInfo(*scope.moduleScope, info));
+         scope.save();
+      }
    }
    else scope.raiseError(errIllegalOperation, node);
 }
@@ -7719,6 +7729,10 @@ void Compiler :: compileVMT(SNode node, ClassScope& scope, bool exclusiveMode, b
       switch(current) {
          case lxStaticFieldInit:
             compileCompileTimeAssigning(current, scope);
+            if (exclusiveMode) {
+               // HOTFIX : comment out to prevent duplicate compilation for nested classes
+               current = lxIdle;
+            }
             break;
          case lxClassMethod:
          {
