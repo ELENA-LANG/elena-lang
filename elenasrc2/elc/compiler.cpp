@@ -3781,7 +3781,7 @@ void Compiler :: inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, 
 
 inline SNode findBookmarkOwner(SNode node, ref_t bookmark)
 {
-   while (!node.compare(lxClass, lxNone))
+   while (!node.compare(lxClass, lxNestedClass, lxNone))
       node = node.parentNode();
 
    SNode current = node.firstChild();
