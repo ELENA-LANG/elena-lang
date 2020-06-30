@@ -174,14 +174,6 @@ enum MethodHint
 class _ProjectManager
 {
 public:
-////   virtual ident_t Namespace() const = 0;
-////
-////   virtual int getDefaultEncoding() = 0; // !! obsolete!?
-////   virtual int getTabSize() = 0; // !! obsolete!?
-////
-////   //   virtual bool HasWarnings() const = 0;     // !! obsolete
-////   //   virtual bool WarnOnWeakUnresolved() const = 0;
-
    virtual ident_t getManinfestName() = 0;
    virtual ident_t getManinfestVersion() = 0;
    virtual ident_t getManinfestAuthor() = 0;
@@ -686,7 +678,7 @@ public:
 //   virtual bool isDeclared(_ModuleScope& scope, ref_t reference) = 0;
 
    // check if the classes is compatible
-   virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef) = 0;
+   virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils) = 0;
 
    virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
    virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole) = 0;

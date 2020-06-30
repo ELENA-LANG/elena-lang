@@ -20,3 +20,4 @@
   - #381 : const static property
   - #162 : compiler redux - embedded constructor call 
   - #505 : constructor with variadic argument list 
+  - #498 : Compile-time dispatching nil argument 

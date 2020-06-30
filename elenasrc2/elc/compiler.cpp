@@ -2864,7 +2864,7 @@ ObjectInfo Compiler :: compileIsNilOperator(SNode current, ExprScope& scope, Obj
    ref_t loperandRef = resolveObjectReference(scope, loperand, false);
    ref_t roperandRef = resolveObjectReference(scope, roperand, false);
 
-   ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef) ? loperandRef : 0;
+   ref_t resultRef = _logic->isCompatible(*scope.moduleScope, loperandRef, roperandRef, false) ? loperandRef : 0;
 
    return ObjectInfo(okObject, 0, resultRef);
 }
@@ -3331,7 +3331,7 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
    bool noUnboxing = EAttrs::test(mode, HINT_NOUNBOXING);
    ref_t sourceRef = resolveObjectReference(scope, source, false);
    int stackSafeAttrs = 0;
-   if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef)) {
+   if (!_logic->isCompatible(*scope.moduleScope, targetRef, sourceRef, false)) {
       if ((source.kind == okIntConstant || source.kind == okUIntConstant)
          && targetRef == scope.moduleScope->intReference && !EAttrs::test(mode, HINT_DYNAMIC_OBJECT))
       {
@@ -3357,7 +3357,7 @@ ObjectInfo Compiler :: convertObject(SNode& node, ExprScope& scope, ref_t target
          return source;
       }
       else if (source.kind == okExternal &&
-         _logic->isCompatible(*scope.moduleScope, sourceRef, targetRef))
+         _logic->isCompatible(*scope.moduleScope, sourceRef, targetRef, true))
       {
          // HOTFIX : allow to pass the result of external operation directly
          return source;
@@ -3901,7 +3901,7 @@ void Compiler :: compileClassConstantAssigning(ObjectInfo target, SNode node, Cl
       sourceRef = resolvePrimitiveReference(scope, sourceRef, source.element, false);
 
    if (compileSymbolConstant(/*node, */constantScope, source, accumulatorMode, target.reference)
-      && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef))
+      && _logic->isCompatible(*scope.moduleScope, targetRef, sourceRef, false))
    {
    }
    else scope.raiseError(errInvalidOperation, node);
@@ -6014,7 +6014,9 @@ void Compiler :: compileExternalArguments(SNode node, ExprScope& scope, SNode ca
             objNode = objNode.findSubNodeMask(lxObjectMask);
          }
          if (objNode.type != lxSymbolReference && (!test(objNode.type, lxOpScopeMask) || objNode == lxFieldExpression)) {
-            if (_logic->isCompatible(*scope.moduleScope, V_DWORD, typeRef) && !_logic->isVariable(*scope.moduleScope, typeRef)) {
+            if (_logic->isCompatible(*scope.moduleScope, V_DWORD, typeRef, true) 
+               && !_logic->isVariable(*scope.moduleScope, typeRef)) 
+            {
                // if it is a integer variable
                SyntaxTree::copyNode(objNode, callNode
                   .appendNode(lxExtIntArg)
@@ -6094,17 +6096,17 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope, ref_t e
 
    callNode.injectAndReplaceNode(lxBoxableExpression);
 
-   if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_DWORD, expectedRef)) {
+   if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_DWORD, expectedRef, true)) {
       retVal.reference = expectedRef;
       callNode.appendNode(lxSize, 4);
    }
-   else if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_REAL64, expectedRef)) {
+   else if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_REAL64, expectedRef, true)) {
       retVal.reference = expectedRef;
       retVal.param = -1;         // ot indicate Float mode
       callNode.appendNode(lxSize, 8);
       //      retVal = assignResult(writer, scope, true, V_REAL64);
       }
-   else if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_INT64, expectedRef)) {
+   else if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_INT64, expectedRef, true)) {
       retVal.reference = expectedRef;
       callNode.appendNode(lxSize, 8);
       callNode.findChild(opType).appendNode(lxLongMode);
@@ -6751,7 +6753,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
       ref_t targetRef = methodScope->getReturningRef(false);
 
       int stackSafeAttrs = 0;
-      bool directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, exprScope.moduleScope->superReference);
+      bool directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, exprScope.moduleScope->superReference, false);
       if (isSingleStatement(node)) {
          if (!directOp) {
             // try to find out if direct dispatch is possible
@@ -6759,7 +6761,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
 
             _CompilerLogic::ChechMethodInfo methodInfo;
             if (_logic->checkMethod(*exprScope.moduleScope, sourceRef, methodScope->message, methodInfo, false) != tpUnknown) {
-               directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, methodInfo.outputReference);
+               directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, methodInfo.outputReference, false);
             }
          }
       }

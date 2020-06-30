@@ -373,7 +373,9 @@ int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, r
                return info.operationType;
             }
          }
-         else if (isCompatible(scope, info.loperand, loperand) && isCompatible(scope, info.roperand, roperand)) {
+         else if (isCompatible(scope, info.loperand, loperand, false) 
+            && isCompatible(scope, info.roperand, roperand, false)) 
+         {
             result = info.result;
 
             return info.operationType;
@@ -486,7 +488,7 @@ bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId
    if (!loperand)
       return false;
 
-   if (!isCompatible(scope, scope.branchingInfo.reference, loperand)) {
+   if (!isCompatible(scope, scope.branchingInfo.reference, loperand, true)) {
       return false;
    }
 
@@ -497,7 +499,7 @@ bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId
 
 int CompilerLogic :: resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand)
 {
-   if (isCompatible(scope, V_INT32, roperand)) {
+   if (isCompatible(scope, V_INT32, roperand, true)) {
       ClassInfo info;
       if (defineClassInfo(scope, info, loperand, true)) {
          return test(info.header.flags, elDynamicRole) ? lxNewArrOp : 0;
@@ -519,12 +521,12 @@ inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
    }
 }
 
-bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef)
+bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils)
 {
    if ((!targetRef || targetRef == scope.superReference) && !isPrimitiveRef(sourceRef))
       return true;
 
-   if (sourceRef == V_NIL)
+   if (!ignoreNils && sourceRef == V_NIL)
       return true;
 
    if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
@@ -539,7 +541,7 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
          // if it is a structure wrapper
          if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
             ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-            if (isCompatible(scope, targetRef, inner.value1))
+            if (isCompatible(scope, targetRef, inner.value1, ignoreNils))
                return true;
          }
 
@@ -1022,7 +1024,7 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
                if (outputRef == 0) {
                   scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
                }
-               else if (!isCompatible(scope, outputRefMulti, outputRef)) {
+               else if (!isCompatible(scope, outputRefMulti, outputRef, true)) {
                   scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
                }
             }            
@@ -1034,7 +1036,7 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
 
 bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
 {
-   return isCompatible(scope, scope.branchingInfo.reference, reference);
+   return isCompatible(scope, scope.branchingInfo.reference, reference, true);
 }
 
 void CompilerLogic :: injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operator_id, 
@@ -1120,7 +1122,7 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetSig
 
    for (size_t i = 0; i < sourceLen; i++) {
       ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
-      if (!isCompatible(scope, targetSign, sourceSignatures[i]))
+      if (!isCompatible(scope, targetSign, sourceSignatures[i], true))
          return false;
    }
 
@@ -1142,7 +1144,7 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* target
    for (size_t i = 0; i < sourceLen; i++) {
       ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
 
-      if (!isCompatible(scope, importReference(targetModule, targetSign, scope.module), sourceSignatures[i]))
+      if (!isCompatible(scope, importReference(targetModule, targetSign, scope.module), sourceSignatures[i], true))
          return false;
    }
 
@@ -1289,13 +1291,13 @@ bool CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node
       bool compatible = false;
       if (test(info.header.flags, elStructureWrapper)) {
          if (isPrimitiveRef(sourceRef)) {
-            compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef);
+            compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef, true);
          }
          // HOTFIX : the size should be taken into account as well (e.g. byte and int both V_INT32)
-         else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef) 
+         else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef, true) 
             && info.size == defineStructSize(*scope.moduleScope, sourceRef, 0u);
       }
-      else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef);
+      else compatible = isCompatible(*scope.moduleScope, inner.value1, sourceRef, true);
 
       if (compatible) {
          compiler.injectBoxingExpr(node, !isReadonly(info) && !noUnboxing,
@@ -1310,7 +1312,7 @@ bool CompilerLogic :: injectImplicitConversion(_CompileScope& scope, SNode& node
    if (isPrimitiveArrayRef(sourceRef) && test(info.header.flags, elDynamicRole)) {
 //      ref_t boxingArg = isEmbeddable(scope, elementRef) ? - 1 : 0;
 
-      if (isCompatible(*scope.moduleScope, info.fieldTypes.get(-1).value2, elementRef)) {
+      if (isCompatible(*scope.moduleScope, info.fieldTypes.get(-1).value2, elementRef, true)) {
          int size = info.size;
          // if we boxing fixed-sized array field into an array
          if (size < 0 && fixedSize > 0)
@@ -2069,7 +2071,7 @@ ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRe
       return 0;
 
    if (isEmbeddable(info) && structOne) {
-      if (isCompatible(scope, V_INT32, elementRef)) {
+      if (isCompatible(scope, V_INT32, elementRef, true)) {
          switch (info.size) {
             case 4:
                return V_INT32ARRAY;
@@ -2634,7 +2636,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
          }
          else {
             ref_t argRef = scope.mapFullReference(argType.ident(), true);
-            matched = isCompatible(scope, argRef, signatures[signIndex]);
+            matched = isCompatible(scope, argRef, signatures[signIndex], true);
          }
 
          i = end + 1;

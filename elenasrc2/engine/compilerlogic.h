@@ -105,12 +105,7 @@ public:
 //      return defineClassInfo(scope, info, reference, true);
 //   }
 
-   virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef);
-//////   virtual bool isPrimitiveArray(ref_t reference);
-////   virtual bool isPrimitiveRef(ref_t reference)
-////   {
-////      return (int)reference < 0;
-////   }
+   virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils);
 //   virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element);
 //   virtual bool isWrapper(ClassInfo& info)
 //   {

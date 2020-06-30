@@ -10,14 +10,14 @@ In development:
     * external ops: operation inside external call - see HMENU.append
 
 
-  [project]
-    * issues : #370, close all open issues for 5.0
+  [!project]
+    * !issues : close all open issues for 5.0; #370; regression tests for all closed issues 
     * release 5.0
 
-  [!documentation]
-    * !api doc : descriptions;
-                 field descriptions;
-                 fine tunings; 
+  [documentation]
+    * api doc : field descriptions;
+                 template based extensions; 
+                 api descriptions;
                  param descriptions
     * reddit : migrate all posts to ELENA 5.0  (using / finally statements in ELENA)
     * tutorials : migrate all tutorials
@@ -61,9 +61,6 @@ Pipeline:
                 * debugger : sub code - do not show the variable from noncurrent sub codes
                 * system'dynamic'expressions: do we need TempVariableBlock? it cannot be translated into the normal code
                 * system'dynamic'expressions: review tape generation, test cases
-                * api : extension - ignore the target argument
-                * api : templates
-                * api : extension template
 
                 * migrating MG
                 * get rid of EXPAND_HEAP, NEW_HEAP
