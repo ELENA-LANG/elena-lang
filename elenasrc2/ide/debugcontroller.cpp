@@ -542,7 +542,7 @@ bool DebugController :: loadSymbolDebugInfo(ident_t reference, StreamReader&  ad
             }
             else level--;
          }
-         else if (info.symbol == dsField || (info.symbol & ~dsTypeMask) == dsLocal)
+         else if (info.symbol == dsField || (info.symbol & ~dsTypeMask) == dsLocal || info.symbol == dsFieldInfo)
          {
             // replace field name reference with the name
             stringReader.seek(info.addresses.symbol.nameRef);
@@ -963,6 +963,16 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
          else if (size == 1) {
             watch->write(this, 0, fieldName, (int)_debugger.Context()->readByte(address));
          }
+         else if (info[index + 1].symbol == dsFieldInfo) {
+            ref_t classPtr = _classNames.get((const char*)unmapDebugPTR32(info[index + 1].addresses.source.nameRef));
+            if (classPtr != 0) {
+               readObject(watch, address,
+                  (const char*)unmapDebugPTR32(info[index + 1].addresses.source.nameRef),
+                  fieldName);
+
+               watch->append(this, fieldName, address, classPtr);
+            }
+         }
 
          address += size;
       }
@@ -993,6 +1003,8 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
       }
 
       index++;
+      if (info[index].symbol == dsFieldInfo)
+         index++;
    }
 }
 

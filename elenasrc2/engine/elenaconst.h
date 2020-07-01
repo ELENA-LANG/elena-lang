@@ -218,6 +218,8 @@ namespace _ELENA_
       dsStructInfo              = 0x0F05,
       dsLocalPtr                = 0x1005,
 
+      dsFieldInfo               = 0x0F04,
+
       dsDebugMask               = 0x00F0,
       dsTypeMask                = 0x1F00,
 //      dsDebugTypeMask           = 0x1FFF,

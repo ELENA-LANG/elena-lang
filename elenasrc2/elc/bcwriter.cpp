@@ -1163,7 +1163,8 @@ inline int getNextOffset(ClassInfo::FieldMap::Iterator it)
    return it.Eof() ? -1 : *it;
 }
 
-void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings)
+void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings,
+   _Module* module)
 {
    bool structure = test(info.header.flags, elStructureRole);
    int remainingSize = info.size;
@@ -1172,6 +1173,7 @@ void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer
    while (!it.Eof()) {
       if (!emptystr(it.key())) {
          DebugLineInfo symbolInfo(dsField, 0, 0, 0);
+         ref_t typeRef = 0;
 
          symbolInfo.addresses.field.nameRef = debugStrings->Position();
          if (structure) {
@@ -1182,11 +1184,32 @@ void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer
             else symbolInfo.addresses.field.size = nextOffset - *it;
 
             remainingSize -= symbolInfo.addresses.field.size;
+
+            typeRef = info.fieldTypes.get(*it).value1;
          }
 
          debugStrings->writeLiteral(it.key());
 
          writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
+
+         if (typeRef > 0) {
+            DebugLineInfo typeInfo;
+            typeInfo.symbol = dsFieldInfo;
+            typeInfo.addresses.source.nameRef = debugStrings->Position();
+
+            ident_t className = module->resolveReference(typeRef);
+            if (isTemplateWeakReference(className) || !isWeakReference(className)) {
+               // HOTFIX : save weak template-based class name directly
+               debugStrings->writeLiteral(className);
+            }
+            else {
+               IdentifierString fullName(module->Name(), className);
+
+               debugStrings->writeLiteral(fullName.c_str());
+            }
+
+            writer->write((char*)&typeInfo, sizeof(DebugLineInfo));
+         }
       }
       it++;
    }
@@ -1341,7 +1364,7 @@ void ByteCodeWriter :: writeClass(ref_t reference, ByteCodeIterator& it, _Module
 
      // save class debug info
       writeClassDebugInfo(compilerScope.debugModule, &debugWriter, &debugStringWriter, compilerScope.module->resolveReference(reference & ~mskAnyRef), info.header.flags);
-      writeFieldDebugInfo(info, &debugWriter, &debugStringWriter);
+      writeFieldDebugInfo(info, &debugWriter, &debugStringWriter, compilerScope.module);
 
       writeVMT(classPosition, it, scope);
 
