@@ -1192,7 +1192,7 @@ void ByteCodeWriter :: writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer
 
          writer->write((void*)&symbolInfo, sizeof(DebugLineInfo));
 
-         if (typeRef > 0) {
+         if (typeRef && !isPrimitiveRef(typeRef)) {
             DebugLineInfo typeInfo;
             typeInfo.symbol = dsFieldInfo;
             typeInfo.addresses.source.nameRef = debugStrings->Position();

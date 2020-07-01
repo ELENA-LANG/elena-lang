@@ -11,7 +11,7 @@ In development:
 
 
   [!project]
-    * !issues : #370; close all open issues for 5.0; regression tests for all closed issues 
+    * !issues : #488;#370; close all open issues for 5.0; regression tests for all closed issues 
     * migrate linux
     * release 5.0
 
