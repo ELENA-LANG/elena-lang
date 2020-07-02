@@ -5050,7 +5050,13 @@ ObjectInfo Compiler :: compileOperation(SNode& node, ExprScope& scope, ObjectInf
             EAttrs subMode(mode, HINT_LOOP);
 
             objectInfo = compileMessage(current, scope, expectedRef, objectInfo, subMode);
-            current.parentNode().injectAndReplaceNode(lxLooping);
+
+            SNode parentNode = current.parentNode().parentNode();
+            if (parentNode == lxSeqExpression) {
+               // HOTFIX : to correctly unbox the arguments for every loop cycle
+               parentNode.injectAndReplaceNode(lxLooping);
+            }
+            else current.parentNode().injectAndReplaceNode(lxLooping);
          }
          else if (propMode) {
             objectInfo = compilePropAssigning(current, scope, objectInfo);
