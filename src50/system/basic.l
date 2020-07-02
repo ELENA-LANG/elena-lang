@@ -1,36 +1,44 @@
-// base variable mixin
+[info:"variable base class"]
 public abstract class BaseVariable
 {
-    // should be overridden
+    [info:"returns the variable value;<br/>should be overridden"]
     get abstract Value() {}
     
+    [info:"set the variable value;<br/>should be overridden"]
     set abstract Value(o) {}
 }
 
+[info:"a variable template"]
 public sealed ref<T> : BaseVariable
 {
     embeddable T value;
     
+    [info:"initializes a variable"]
     constructor(T val)
     {
         value := val
     }
     
+    [info:"returns the variable value"]
     T cast() = value;
     
+    [info:"returns the variable value"]
     get T Value()
     {
          ^ value
     }
     
+    [info:"set the variable value"]
     set Value(T val)
     {
         value := val
     }
 
+    [info:"Returns true if o is equal to the variable value; otherwise, false"]
     bool equal(o)
         => value;
 
+    [info:"Returns the value string representation"]
     string toPrintable()
         => value;
         
@@ -41,29 +49,33 @@ public sealed ref<T> : BaseVariable
 
 // --- BaseValue ---
 
-/// A base value
+[info:"a base value"]
 public abstract class BaseValue
 {
+    [info:"Returns true if a value of var is equal to the object value; otherwise, false"]
     bool equal(BaseVariable var)
         <= equal(var.Value);
     
+    [info:"Returns true if the object value is less than a value of var; otherwise, false"]
     bool less(BaseVariable var)
-        <= equal(var.Value);
+        <= less(var.Value);
     
-    /// Compares the values
+    [info:"Returns true if the object value is less than o; otherwise, false;<br/>should be overridden"]
     abstract bool less(o) {}
 
-    /// Compares the values
+    [info:"Returns true if the object value is greater than o; otherwise, false;<br/>by default sends less[2] to o with the object as an argument"]
     bool greater(o) = o.less(self);
 
+    [info:"Returns true if the object value is not less than o; otherwise, false;<br/>by default inverts the result of less[2] operation"]
     bool notless(o) = self.less(o).Inverted;
 
+    [info:"Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation"]
     bool notgreater(o) = self.greater(o).Inverted;
 }
 
 // --- BaseNumber ---
 
-/// A base numeric value
+[info:"a base numeric value"]
 public abstract class BaseNumber : BaseValue
 {
     add(BaseVariable var)

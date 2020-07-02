@@ -935,7 +935,7 @@ system'BaseNumber</LI>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract Class <SPAN CLASS="typeNameLabel">BaseNumber</SPAN></PRE>
+a base numeric value</PRE>
 <BR>
 </DIV>
 <DIV CLASS="summary">
@@ -1094,7 +1094,7 @@ system'BaseValue</LI>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract Class <SPAN CLASS="typeNameLabel">BaseValue</SPAN></PRE>
+a base value</PRE>
 <BR>
 </DIV>
 <DIV CLASS="summary">
@@ -1137,6 +1137,8 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseValue</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> var)
 </CODE>
+<div class="block">
+Returns true if a value of var is equal to the object value; otherwise, false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1146,6 +1148,8 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseValue</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> var)
 </CODE>
+<div class="block">
+Returns true if the object value is less than a value of var; otherwise, false</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1155,6 +1159,8 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseValue</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+Returns true if the object value is less than o; otherwise, false;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1164,6 +1170,8 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseValue</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>greater(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+Returns true if the object value is greater than o; otherwise, false;<br/>by default sends less[2] to o with the object as an argument</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1173,6 +1181,8 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseValue</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>notless(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+Returns true if the object value is not less than o; otherwise, false;<br/>by default inverts the result of less[2] operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1182,6 +1192,8 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseValue</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>notgreater(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation</div>
 </TD>
 </TR>
 </TABLE>
@@ -1215,7 +1227,7 @@ system'BaseVariable</LI>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract Class <SPAN CLASS="typeNameLabel">BaseVariable</SPAN></PRE>
+variable base class</PRE>
 <BR>
 </DIV>
 <DIV CLASS="summary">
@@ -1257,6 +1269,8 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseVariable</SPAN></PRE>
 <i>abstract get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value</CODE>
+<div class="block">
+returns the variable value;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1266,6 +1280,8 @@ abstract Class <SPAN CLASS="typeNameLabel">BaseVariable</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>Value(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+set the variable value;<br/>should be overridden</div>
 </TD>
 </TR>
 </TABLE>
@@ -20171,7 +20187,7 @@ system'ref&lt;T1&gt;</LI>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Template <SPAN CLASS="typeNameLabel">ref&lt;T1&gt;</SPAN></PRE>
+a variable template</PRE>
 <BR>
 </DIV>
 <DIV CLASS="summary">
@@ -20243,6 +20259,8 @@ sealed Template <SPAN CLASS="typeNameLabel">ref&lt;T1&gt;</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
+<div class="block">
+returns the variable value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20272,6 +20290,8 @@ sealed Template <SPAN CLASS="typeNameLabel">ref&lt;T1&gt;</SPAN></PRE>
 <i>get</i>&nbsp;<SPAN CLASS="memberNameLink">T1</SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value</CODE>
+<div class="block">
+returns the variable value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20281,6 +20301,8 @@ sealed Template <SPAN CLASS="typeNameLabel">ref&lt;T1&gt;</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>Value(<SPAN CLASS="memberNameLink">T1</SPAN> val)
 </CODE>
+<div class="block">
+set the variable value</div>
 </TD>
 </TR>
 </TABLE>
@@ -20302,6 +20324,8 @@ sealed Template <SPAN CLASS="typeNameLabel">ref&lt;T1&gt;</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+Returns true if o is equal to the variable value; otherwise, false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20311,6 +20335,8 @@ sealed Template <SPAN CLASS="typeNameLabel">ref&lt;T1&gt;</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>toPrintable()
 </CODE>
+<div class="block">
+Returns the value string representation</div>
 </TD>
 </TR>
 </TABLE>

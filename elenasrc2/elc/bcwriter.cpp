@@ -3838,8 +3838,23 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
       if (target == lxFieldExpression) {
          generateObject(tape, source, scope, STACKOP_MODE);
 
-         SNode fieldNode = loadFieldExpression(tape, target, scope, false);
-         saveObject(tape, fieldNode);
+         if (node == lxCondAssigning) {
+            tape.newLabel();
+            // equalfi node.argument
+            // ifn labNext 1
+
+            tape.write(bcEqualFI, node.argument, bpFrame);
+            tape.write(bcIfN, baCurrentLabel, 1);
+
+            SNode fieldNode = loadFieldExpression(tape, target, scope, false);
+            saveObject(tape, fieldNode);
+
+            tape.setLabel();
+         }
+         else {
+            SNode fieldNode = loadFieldExpression(tape, target, scope, false);
+            saveObject(tape, fieldNode);
+         }
 
          releaseStack(tape);
       }
@@ -3847,7 +3862,20 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
    }
    else {
       loadObject(tape, source, scope);
-      saveObject(tape, target);
+
+      if (node == lxCondAssigning) {
+         tape.newLabel();
+         // equalfi node.argument
+         // ifn labNext 1
+
+         tape.write(bcEqualFI, node.argument, bpFrame);
+         tape.write(bcIfN, baCurrentLabel, 1);
+
+         saveObject(tape, target);
+
+         tape.setLabel();
+      }
+      else saveObject(tape, target);
    }
 }
 
@@ -4393,6 +4421,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          generateByRefAssigningExpression(tape, node, scope);
          break;
       case lxAssigning:
+      case lxCondAssigning:
          generateAssigningExpression(tape, node, scope);
          break;
       case lxCopying:

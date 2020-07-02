@@ -3212,6 +3212,7 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
    node.set(operation, argument);
 
    analizeOperands(node, scope, stackSafeAttr, false);
+   scope.originals.clear();
 
    return retVal;
 }
@@ -4501,12 +4502,20 @@ ObjectInfo Compiler :: compileClosure(SNode node, ExprScope& ownerScope, InlineC
                node = member.parentNode();
             }
 
-            injectMemberPreserving(member, ownerScope, lxTempLocal, tempLocal, info, (*outer_it).reference);
-         }
+            // HOTFIX : save original to prevent double unboxing
+            int oriTempLocal = info.kind == okLocal ? ownerScope.originals.get(info.param) : 0;
+            bool hasToBeSaved = oriTempLocal == -1;
 
-//         writer.newNode((*outer_it).preserved ? lxOuterMember : lxMember, (*outer_it).reference);
-//         writeTerminal(writer, node, ownerScope, info, EAttr::eaNone);
-//         writer.closeNode();
+            injectMemberPreserving(member, ownerScope, lxTempLocal, tempLocal, info, (*outer_it).reference, oriTempLocal);
+
+            if (hasToBeSaved) {
+               ownerScope.originals.erase(info.param);
+               ownerScope.originals.add(info.param, oriTempLocal);
+            }
+            else if (!oriTempLocal && info.kind == okLocal) {
+               ownerScope.originals.add(info.param, -1);
+            }
+         }
 
          outer_it++;
       }
@@ -9665,7 +9674,7 @@ inline SNode injectRootSeqExpression(SNode& parent)
 }
 
 void Compiler :: injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal, ObjectInfo member, 
-   int memberIndex)
+   int memberIndex, int& oriTempLocal)
 {
    SNode parent = node;
    SNode current;
@@ -9710,7 +9719,19 @@ void Compiler :: injectMemberPreserving(SNode node, ExprScope& scope, LexicalTyp
       }
    }
    else if (member.kind == okLocal) {
+      if (oriTempLocal == -1) {
+         // HOTFIX : presave the original value
+         oriTempLocal = scope.newTempLocal();
+         SNode oriAssignNode = current.insertNode(lxAssigning);
+         oriAssignNode.appendNode(lxTempLocal, oriTempLocal);
+         oriAssignNode.appendNode(lxLocal, member.param);
+      }
+
       SNode assignNode = current.appendNode(lxAssigning);
+      if (oriTempLocal) {
+         assignNode.set(lxCondAssigning, oriTempLocal);
+      }
+
       assignNode.appendNode(lxLocal, member.param);
 
       SNode fieldExpr = assignNode.appendNode(lxFieldExpression);

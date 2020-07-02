@@ -213,33 +213,33 @@ private:
    // - Scope -
    struct Scope : _CompileScope
    {
-         enum class ScopeLevel
-         {
-            slNamespace,
-            slClass,
-            slSymbol,
-            slMethod,
-            slCode,
-            slExpression,
-            slYieldCode,
-            slOwnerClass,
-         };
+      enum class ScopeLevel
+      {
+         slNamespace,
+         slClass,
+         slSymbol,
+         slMethod,
+         slCode,
+         slExpression,
+         slYieldCode,
+         slOwnerClass,
+      };
    
-         _Module*      module;
-         Scope*        parent;
+      _Module*      module;
+      Scope*        parent;
 
-         virtual void raiseError(const char* message)
-         {
-            moduleScope->project->raiseError(message);
-         }
-         virtual void raiseError(const char* message, SNode terminal)
-         {
-            parent->raiseError(message, terminal);
-         }
-         virtual void raiseWarning(int level, const char* message, SNode terminal)
-         {
-            parent->raiseWarning(level, message, terminal);
-         }
+      virtual void raiseError(const char* message)
+      {
+         moduleScope->project->raiseError(message);
+      }
+      virtual void raiseError(const char* message, SNode terminal)
+      {
+         parent->raiseError(message, terminal);
+      }
+      virtual void raiseWarning(int level, const char* message, SNode terminal)
+      {
+         parent->raiseWarning(level, message, terminal);
+      }
 //         virtual void raiseWarning(int level, const char* message, ident_t identifier)
 //         {
 //            parent->raiseWarning(level, message, identifier);
@@ -249,59 +249,59 @@ private:
 //            parent->raiseWarning(level, message);
 //         }
 
-         virtual pos_t saveSourcePath(ByteCodeWriter& writer)
-         {
-            return parent->saveSourcePath(writer);
-         }
-         virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path)
-         {
-            return parent->saveSourcePath(writer, path);
-         }
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer)
+      {
+         return parent->saveSourcePath(writer);
+      }
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path)
+      {
+         return parent->saveSourcePath(writer, path);
+      }
 
-         virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
-         {
-            if (parent) {
-               return parent->resolveAutoType(info, reference, element);
-            }
-            else return false;
+      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
+      {
+         if (parent) {
+            return parent->resolveAutoType(info, reference, element);
          }
-         virtual bool resolveAutoOutput(ref_t reference)
-         {
-            if (parent) {
-               return parent->resolveAutoOutput(reference);
-            }
-            else return false;
+         else return false;
+      }
+      virtual bool resolveAutoOutput(ref_t reference)
+      {
+         if (parent) {
+            return parent->resolveAutoOutput(reference);
          }
+         else return false;
+      }
 
-         virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
-         {
-            if (parent) {
-               return parent->mapTerminal(identifier, referenceOne, mode);
-            }
-            else return ObjectInfo();
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
+      {
+         if (parent) {
+            return parent->mapTerminal(identifier, referenceOne, mode);
          }
+         else return ObjectInfo();
+      }
    
-         virtual Scope* getScope(ScopeLevel level)
-         {
-            if (parent) {
-               return parent->getScope(level);
-            }
-            else return NULL;
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (parent) {
+            return parent->getScope(level);
          }
+         else return NULL;
+      }
    
-         Scope(_ModuleScope* moduleScope)
-         {
-            this->moduleScope = moduleScope;
-            this->parent = NULL;
-            this->module = moduleScope->module;
-         }
-         Scope(Scope* parent)
-         {
-            this->moduleScope = parent->moduleScope;
-            this->ns = parent->ns;
-            this->parent = parent;
-            this->module = parent->module;
-         }
+      Scope(_ModuleScope* moduleScope)
+      {
+         this->moduleScope = moduleScope;
+         this->parent = NULL;
+         this->module = moduleScope->module;
+      }
+      Scope(Scope* parent)
+      {
+         this->moduleScope = parent->moduleScope;
+         this->ns = parent->ns;
+         this->parent = parent;
+         this->module = parent->module;
+      }
    };
 
    // - NamespaceScope -
@@ -798,6 +798,7 @@ private:
       int  tempAllocated2;
 
       Map<ClassInfo::Attribute, int> tempLocals;
+      Map<int, int> originals;
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -1265,7 +1266,7 @@ private:
       int tempLocal, bool localBoxingMode, bool condBoxing);
 
    void injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal, 
-      ObjectInfo member, int memberIndex);
+      ObjectInfo member, int memberIndex, int& oriTempLocal);
    void injectIndexBoxing(SNode node, SNode objNode, ExprScope& scope);
    void analizeCodePatterns(SNode node, NamespaceScope& scope);
    void analizeMethod(SNode node, NamespaceScope& scope);

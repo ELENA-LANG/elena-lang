@@ -151,6 +151,7 @@ enum LexicalType
    lxSaving                   = 0x058123,
    lxCondCopying              = 0x058124,
    lxFloatSaving              = 0x058125,
+   lxCondAssigning            = 0x058126,
    lxReturning                = 0x059130,
    lxImplicitJump             = 0x058140,
    lxBranching                = 0x058150,   // branch expression      
