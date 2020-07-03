@@ -11114,8 +11114,10 @@ void Compiler :: injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode
       scope.loadClassInfo(targetInfo, callTarget.argument);
       if (targetInfo.methods.exist(scope.init_message)) {
          // inject inline initializer call
-         SNode initNode = callTargetNode.appendNode(lxDirectCalling, scope.init_message);
-         initNode.appendNode(lxCallTarget, callTarget.argument);
+         callTargetNode.injectAndReplaceNode(lxDirectCalling, scope.init_message);
+         callTargetNode.appendNode(lxCallTarget, callTarget.argument);
+
+         callTargetNode = callTargetNode.firstChild(lxObjectMask);
       }
    }
    //else {
