@@ -1034,6 +1034,8 @@ a base numeric value</PRE>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+adds the value;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1043,6 +1045,8 @@ a base numeric value</PRE>
 <TD CLASS="colLast">
 <CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+subtracts the value;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1052,6 +1056,8 @@ a base numeric value</PRE>
 <TD CLASS="colLast">
 <CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+multiplies by the value;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1061,6 +1067,8 @@ a base numeric value</PRE>
 <TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+divides by the value;<br/>should be overridden</div>
 </TD>
 </TR>
 </TABLE>
@@ -2327,7 +2335,7 @@ system'ByteNumber</LI>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
+an unsigned 8 bit integer</PRE>
 <BR>
 </DIV>
 <DIV CLASS="summary">
@@ -2368,6 +2376,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <i>static get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>MinValue</CODE>
+<div class="block">
+returns the minimal value (0)</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2376,6 +2386,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <i>static get</i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>MaxValue</CODE>
+<div class="block">
+returns the maxial value (255)</div>
 </TD>
 </TR>
 </TABLE>
@@ -2436,6 +2448,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
+<div class="block">
+returns the value as a short integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2445,6 +2459,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
+<div class="block">
+returns the value as an integer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2454,6 +2470,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
+<div class="block">
+returns the value as an integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2463,6 +2481,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
+<div class="block">
+returns the value as a long integer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2472,6 +2492,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()
 </CODE>
+<div class="block">
+returns the value as a real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2549,6 +2571,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+compares the value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2558,6 +2582,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+compares the value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2594,6 +2620,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+compares the value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2603,6 +2631,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+compares the value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2612,6 +2642,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+compares the value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2621,6 +2653,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+compares the value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2702,6 +2736,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the sum</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2711,6 +2747,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the difference</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2720,6 +2758,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the product</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2729,6 +2769,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2738,6 +2780,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the sum</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2747,6 +2791,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the difference</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2756,6 +2802,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the product</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2765,6 +2813,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2774,6 +2824,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the sum</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2783,6 +2835,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the difference</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2792,6 +2846,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the product</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2801,6 +2857,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2810,6 +2868,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the sum</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2819,6 +2879,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>subtract(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the difference</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2828,6 +2890,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>multiply(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the product</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2837,6 +2901,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>divide(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2900,6 +2966,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>and(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of bitwise AND operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2909,6 +2977,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>or(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of bitwise OR operation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2918,6 +2988,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>xor(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of bitwise XOR operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2927,6 +2999,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>and(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of bitwise AND operation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2936,6 +3010,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>or(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of bitwise OR operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2945,6 +3021,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>xor(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of bitwise XOR operation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2954,6 +3032,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>and(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of bitwise AND operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2963,6 +3043,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>or(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of bitwise OR operation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2972,6 +3054,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>xor(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of bitwise XOR operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2999,6 +3083,8 @@ sealed Class <SPAN CLASS="typeNameLabel">ByteNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>toPrintable()
 </CODE>
+<div class="block">
+returns the literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -6838,7 +6924,7 @@ system'IntBaseNumber</LI>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract Class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN></PRE>
+a base integer value</PRE>
 <BR>
 </DIV>
 <DIV CLASS="summary">
@@ -6908,6 +6994,8 @@ abstract Class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>and(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+executes bitwise AND operation;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -6917,6 +7005,8 @@ abstract Class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>or(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+executes bitwise OR operation;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -6926,6 +7016,8 @@ abstract Class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>xor(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+executes bitwise XOR operation;<br/>should be overridden</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -6935,6 +7027,8 @@ abstract Class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>allMask(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> operand)
 </CODE>
+<div class="block">
+returns true if all the mask bits are set</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -6944,6 +7038,8 @@ abstract Class <SPAN CLASS="typeNameLabel">IntBaseNumber</SPAN></PRE>
 <TD CLASS="colLast">
 <CODE>anyMask(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> operand)
 </CODE>
+<div class="block">
+returns true if any of the mask bits are set</div>
 </TD>
 </TR>
 </TABLE>
@@ -14591,13 +14687,22 @@ sealed Class <SPAN CLASS="typeNameLabel">UIntNumber</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>H#constructor(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
@@ -20409,6 +20514,15 @@ sealed Singleton <SPAN CLASS="typeNameLabel">uintConvertor</SPAN></PRE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
 </TD>
 </TR>
