@@ -1,3 +1,8 @@
+Literal constants
+  - custom defined numeric literals
+  - unsigned hexadecimal number
+
+
 Declarations
   Namespaces
     * nested namespaces (import is declared for the namespace)

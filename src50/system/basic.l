@@ -1109,6 +1109,11 @@ public sealed const struct UIntNumber : IntBaseNumber
         theValue := uintConvertor.convert(s)
     }
     
+    cast H(string s)
+    {
+        theValue := uintConvertor.convert(s, 16)
+    }
+    
     constructor(uint n)
     {
         theValue := n
@@ -2513,6 +2518,14 @@ public singleton uintConvertor
     uint convert(string s)
     {
         intern system'core_routines'__intconvertor.convertUnsigned(s, 10, ref int retVal);
+        
+        ^ retVal
+    }    
+    
+    /// Converts a literal string into an unsgined integer
+    uint convert(string s, int radix)
+    {
+        intern system'core_routines'__intconvertor.convertUnsigned(s, radix, ref int retVal);
         
         ^ retVal
     }    

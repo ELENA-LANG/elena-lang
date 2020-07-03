@@ -119,7 +119,10 @@ TerminalInfo getTerminalInfo(ParserTable& table, LineInfo info)
          terminal.symbol = lxLong;
          break;
 	   case dfaHexInteger:
-         terminal.symbol = lxHexInteger;
+         if (terminal.value[getlength(terminal.value) - 1] == 'h') {
+            terminal.symbol = lxHexInteger;
+         }
+         else terminal.symbol = lxExplicitConst;
          break;
 	   case dfaReal:
          terminal.symbol = lxReal;

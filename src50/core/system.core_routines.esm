@@ -2261,17 +2261,19 @@ end
 procedure __uintconvertor."convert$system@LongNumber$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1
-  loadi 1
-  elsen labErr 0  
+  loadi  1
+  ifn    labNext 0
+  elsen  labErr  0FFFFFFFFh  
 
+labNext:
   load
   peeksi 2
   save
-  quitn 2  
+  quitn  2  
 
 labErr:
-  pushr class : system'OutOfRangeException
-  pushr mssgconst : "new[1]"
+  pushr  class : system'OutOfRangeException
+  pushr  mssgconst : "new[1]"
   throw    
 
 end
