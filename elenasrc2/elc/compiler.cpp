@@ -2372,21 +2372,26 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
    SNode retExprNode = objectNode.firstChild(lxObjectMask);
 
    // save context
-   SNode exprNode = objectNode.insertNode(lxExpression);
-   SNode copyNode = exprNode.appendNode(lxCopying, codeScope->reserved2);
-   SNode fieldNode = copyNode.appendNode(lxFieldExpression);
-   fieldNode.appendNode(lxSelfLocal, 1);
-   fieldNode.appendNode(lxField, index);
-   fieldNode.appendNode(lxField, 1);
-   copyNode.appendNode(lxLocalAddress, -2);
+   if (codeScope->reserved2 > 0) {
+      SNode exprNode = objectNode.insertNode(lxExpression);
+      SNode copyNode = exprNode.appendNode(lxCopying, codeScope->reserved2);
+      SNode fieldNode = copyNode.appendNode(lxFieldExpression);
+      fieldNode.appendNode(lxSelfLocal, 1);
+      fieldNode.appendNode(lxField, index);
+      fieldNode.appendNode(lxField, 1);
+      copyNode.appendNode(lxLocalAddress, -2);
+   }
 
    // save locals
-   SNode expr2Node = objectNode.insertNode(lxExpression);
-   SNode copy2Node = expr2Node.appendNode(lxCopying, codeScope->reserved1 - methodScope->preallocated);
-   SNode field2Node = copy2Node.appendNode(lxFieldExpression);
-   field2Node.appendNode(lxSelfLocal, 1);
-   field2Node.appendNode(lxField, index2);
-   copy2Node.appendNode(lxLocalAddress, methodScope->preallocated);
+   int localsSize = codeScope->allocated1 - methodScope->preallocated;
+   if (localsSize) {
+      SNode expr2Node = objectNode.insertNode(lxExpression);
+      SNode copy2Node = expr2Node.appendNode(lxCopying, localsSize);
+      SNode field2Node = copy2Node.appendNode(lxFieldExpression);
+      field2Node.appendNode(lxSelfLocal, 1);
+      field2Node.appendNode(lxField, index2);
+      copy2Node.appendNode(lxLocalAddress, methodScope->preallocated);
+   }
 
    // HOTFIX : reset yield locals field on yield return to mark mg->yg reference
    SNode expr3Node = objectNode.insertNode(lxAssigning);

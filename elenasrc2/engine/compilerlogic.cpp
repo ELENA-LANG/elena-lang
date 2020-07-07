@@ -817,7 +817,7 @@ void CompilerLogic :: injectVirtualFields(_ModuleScope&, SNode node, ref_t, Clas
          if (current == lxClassMethod && SyntaxTree::existChild(current, lxAttribute, tpYieldable)) {
 
             // NOTE : field initialization MUST be declared after the yield method declaration
-            info.methodHints.add(ClassInfo::Attribute(current.argument, maYieldContext), ++index);
+            info.methodHints.add(ClassInfo::Attribute(current.argument, maYieldContext), index);
             compiler.injectVirtualField(node, lxYieldContext, current.argument, index);
 
             info.methodHints.add(ClassInfo::Attribute(current.argument, maYieldLocals), ++index);

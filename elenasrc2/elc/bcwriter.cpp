@@ -3611,7 +3611,7 @@ inline bool isAligned(int size)
 void ByteCodeWriter :: saveFieldExpression(CommandTape& tape, SNode dstObj, SNode source, int size, FlowScope& scope)
 {
    SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
-   if (fieldNode == lxFieldAddress) {
+   if (fieldNode.compare(lxFieldAddress, lxField)) {
       generateObject(tape, source, scope, STACKOP_MODE | NOBREAKPOINTS);
       loadFieldExpression(tape, dstObj, scope, false);
       copyToFieldAddress(tape, size, fieldNode.argument);
