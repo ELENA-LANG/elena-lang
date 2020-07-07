@@ -2374,11 +2374,11 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
    // save context
    if (codeScope->reserved2 > 0) {
       SNode exprNode = objectNode.insertNode(lxExpression);
-      SNode copyNode = exprNode.appendNode(lxCopying, codeScope->reserved2);
+      SNode copyNode = exprNode.appendNode(lxCopying, codeScope->reserved2 << 2);
       SNode fieldNode = copyNode.appendNode(lxFieldExpression);
       fieldNode.appendNode(lxSelfLocal, 1);
       fieldNode.appendNode(lxField, index);
-      fieldNode.appendNode(lxField, 1);
+      fieldNode.appendNode(lxFieldAddress, 4);
       copyNode.appendNode(lxLocalAddress, -2);
    }
 
@@ -2386,21 +2386,21 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
    int localsSize = codeScope->allocated1 - methodScope->preallocated;
    if (localsSize) {
       SNode expr2Node = objectNode.insertNode(lxExpression);
-      SNode copy2Node = expr2Node.appendNode(lxCopying, localsSize);
+      SNode copy2Node = expr2Node.appendNode(lxCopying, localsSize << 2);
       SNode field2Node = copy2Node.appendNode(lxFieldExpression);
       field2Node.appendNode(lxSelfLocal, 1);
       field2Node.appendNode(lxField, index2);
       copy2Node.appendNode(lxLocalAddress, methodScope->preallocated);
-   }
 
-   // HOTFIX : reset yield locals field on yield return to mark mg->yg reference
-   SNode expr3Node = objectNode.insertNode(lxAssigning);
-   SNode src3 = expr3Node.appendNode(lxFieldExpression);
-   src3.appendNode(lxSelfLocal, 1);
-   src3.appendNode(lxField, index2);
-   SNode dst3 = expr3Node.appendNode(lxFieldExpression);
-   dst3.appendNode(lxSelfLocal, 1);
-   dst3.appendNode(lxField, index2);
+      // HOTFIX : reset yield locals field on yield return to mark mg->yg reference
+      SNode expr3Node = objectNode.insertNode(lxAssigning);
+      SNode src3 = expr3Node.appendNode(lxFieldExpression);
+      src3.appendNode(lxSelfLocal, 1);
+      src3.appendNode(lxField, index2);
+      SNode dst3 = expr3Node.appendNode(lxFieldExpression);
+      dst3.appendNode(lxSelfLocal, 1);
+      dst3.appendNode(lxField, index2);
+   }
 
    ObjectInfo retVal;
    if (codeScope->withEmbeddableRet()) {
@@ -2419,6 +2419,8 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
    else {
       //writer.appendNode(lxBreakpoint, dsStep);
       retVal = compileExpression(retExprNode, scope, 0, objectMode);
+
+      analizeOperands(retExprNode, scope, 0, true);
 
       retExprNode.injectAndReplaceNode(lxYieldReturning, index);
    }
@@ -3294,6 +3296,7 @@ void Compiler :: analizeOperand(SNode& current, ExprScope& scope, bool boxingMod
          current.set(lxExpression, 0);
          break;
       case lxExpression:
+      case lxYieldReturning:
       {
          SNode opNode = current.firstChild(lxObjectMask);
          analizeOperand(opNode, scope, boxingMode, withoutLocalBoxing, inPlace);
@@ -4145,18 +4148,18 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
    else if (sourceNode == lxYieldContext) {
       int size = scope.getAttribute(sourceNode.argument, maYieldContextLength);
 
-      sourceNode.set(lxCreatingStruct, size);
+      sourceNode.set(lxCreatingStruct, size << 2);
 
       node.set(lxAssigning, 0);
    }
    else if (sourceNode == lxYieldLocals) {
-      int size = scope.getAttribute(sourceNode.argument, maYieldLocalLength);
-      if (size != 0) {
-         sourceNode.set(lxCreatingClass, size);
+      int len = scope.getAttribute(sourceNode.argument, maYieldLocalLength);
+      if (len != 0) {
+         sourceNode.set(lxCreatingClass, len);
 
          node.set(lxAssigning, 0);
       }
-      else node = lxIdle;
+      else operationType = lxIdle;
    }
    else exprVal = compileExpression(sourceNode, scope, targetRef, assignMode);
 
@@ -7404,18 +7407,20 @@ void Compiler :: compileYieldDispatch(SNode node, MethodScope& scope)
    contextExpr.appendNode(lxField, index);
 
    // load context
-   SNode exprNode = node.insertNode(lxExpression);
-   SNode copyNode = exprNode.appendNode(lxCopying, size2);
-   copyNode.appendNode(lxLocalAddress, -2);
-   SNode fieldNode = copyNode.appendNode(lxFieldExpression);
-   fieldNode.appendNode(lxSelfLocal, 1);
-   fieldNode.appendNode(lxField, index);
-   fieldNode.appendNode(lxField, 1);
+   if (size2 != 0) {
+      SNode exprNode = node.insertNode(lxExpression);
+      SNode copyNode = exprNode.appendNode(lxCopying, size2 << 2);
+      copyNode.appendNode(lxLocalAddress, -2);
+      SNode fieldNode = copyNode.appendNode(lxFieldExpression);
+      fieldNode.appendNode(lxSelfLocal, 1);
+      fieldNode.appendNode(lxField, index);
+      fieldNode.appendNode(lxFieldAddress, 1);
+   }
 
    // load locals
    if (size1 != 0) {
       SNode expr2Node = node.insertNode(lxExpression);
-      SNode copy2Node = expr2Node.appendNode(lxCopying, size1);
+      SNode copy2Node = expr2Node.appendNode(lxCopying, size1 << 2);
       copy2Node.appendNode(lxLocalAddress, scope.preallocated + size1);
       SNode field2Node = copy2Node.appendNode(lxFieldExpression);
       field2Node.appendNode(lxSelfLocal, 1);
@@ -7457,7 +7462,7 @@ void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
    endMethod(node, scope);
 
    scope.addAttribute(maYieldContextLength, scope.reserved2 + 1);
-   scope.addAttribute(maYieldLocalLength, scope.reserved1);
+   scope.addAttribute(maYieldLocalLength, scope.reserved1 - scope.preallocated);
 }
 
 void Compiler :: compileAbstractMethod(SNode node, MethodScope& scope)

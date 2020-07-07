@@ -548,7 +548,7 @@ void ByteCodeWriter :: newStructure(CommandTape& tape, int size, ref_t reference
       // newn size, vmt
       tape.write(bcNewN, reference | mskVMTRef, size);
    }
-   else tape.write(bcNew, 0, size);
+   else tape.write(bcNewN, 0, size);
 }
 
 void ByteCodeWriter :: newObject(CommandTape& tape, int fieldCount, ref_t reference)
@@ -3614,7 +3614,10 @@ void ByteCodeWriter :: saveFieldExpression(CommandTape& tape, SNode dstObj, SNod
    if (fieldNode.compare(lxFieldAddress, lxField)) {
       generateObject(tape, source, scope, STACKOP_MODE | NOBREAKPOINTS);
       loadFieldExpression(tape, dstObj, scope, false);
-      copyToFieldAddress(tape, size, fieldNode.argument);
+      if (fieldNode == lxField) {
+         copyToFieldAddress(tape, size, fieldNode.argument << 2);
+      }
+      else copyToFieldAddress(tape, size, fieldNode.argument);
       releaseStack(tape);
    }
    else if (fieldNode.compare(lxSelfLocal, lxTempLocal)) {
