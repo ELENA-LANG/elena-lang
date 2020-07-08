@@ -2389,6 +2389,8 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
    objectNode.injectAndReplaceNode(lxSeqExpression);
    SNode retExprNode = objectNode.firstChild(lxObjectMask);
 
+   YieldScope* yieldScope = (YieldScope*)scope.getScope(Scope::ScopeLevel::slYieldScope);
+
    // save context
    if (codeScope->reserved2 > 0) {
       SNode exprNode = objectNode.insertNode(lxExpression);
@@ -2410,8 +2412,7 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
       field2Node.appendNode(lxField, index2);
       SNode localNode = copy2Node.appendNode(lxLocalAddress, methodScope->preallocated/* + localsSize*//* - 1*/);
 
-      YieldScope* methodScope = (YieldScope*)scope.getScope(Scope::ScopeLevel::slYieldScope);
-      methodScope->yieldLocals.add(localNode);
+      yieldScope->yieldLocals.add(localNode);
 
       // HOTFIX : reset yield locals field on yield return to mark mg->yg reference
       SNode expr3Node = objectNode.insertNode(lxAssigning);
@@ -7435,7 +7436,7 @@ void Compiler :: compileYieldDispatch(SNode node, MethodScope& scope)
       SNode fieldNode = copyNode.appendNode(lxFieldExpression);
       fieldNode.appendNode(lxSelfLocal, 1);
       fieldNode.appendNode(lxField, index);
-      fieldNode.appendNode(lxFieldAddress, 1);
+      fieldNode.appendNode(lxFieldAddress, 4);
    }
 
    // load locals
