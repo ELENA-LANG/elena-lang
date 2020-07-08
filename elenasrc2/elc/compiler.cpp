@@ -768,6 +768,13 @@ ObjectInfo Compiler::MethodScope :: mapTerminal(ident_t terminal, bool reference
    return Scope::mapTerminal(terminal, referenceOne, mode | scopeMode);
 }
 
+// --- Compiler::YieldMethodScope ---
+
+Compiler::YieldScope :: YieldScope(MethodScope* parent)
+   : Scope(parent)
+{
+}
+
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope :: CodeScope(SourceScope* parent)
@@ -786,6 +793,17 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
    this->allocated2 = this->reserved2 = 0;
    this->genericMethod = parent->generic;
 //   this->yieldMethod = parent->yieldMethod;
+}
+
+Compiler::CodeScope :: CodeScope(YieldScope* parent)
+   : Scope(parent), locals(Parameter(0))
+{
+   MethodScope* methodScope = (MethodScope*)parent->getScope(ScopeLevel::slMethod);
+
+   this->allocated1 = this->reserved1 = 0;
+   this->allocated2 = this->reserved2 = 0;
+   this->genericMethod = methodScope->generic;
+   //   this->yieldMethod = parent->yieldMethod;
 }
 
 Compiler::CodeScope :: CodeScope(CodeScope* parent)
@@ -2390,7 +2408,10 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
       SNode field2Node = copy2Node.appendNode(lxFieldExpression);
       field2Node.appendNode(lxSelfLocal, 1);
       field2Node.appendNode(lxField, index2);
-      copy2Node.appendNode(lxLocalAddress, methodScope->preallocated);
+      SNode localNode = copy2Node.appendNode(lxLocalAddress, methodScope->preallocated/* + localsSize*//* - 1*/);
+
+      YieldScope* methodScope = (YieldScope*)scope.getScope(Scope::ScopeLevel::slYieldScope);
+      methodScope->yieldLocals.add(localNode);
 
       // HOTFIX : reset yield locals field on yield return to mark mg->yg reference
       SNode expr3Node = objectNode.insertNode(lxAssigning);
@@ -7434,7 +7455,8 @@ void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
 
    scope.preallocated = 0;
 
-   CodeScope codeScope(&scope);
+   YieldScope yieldScope(&scope);
+   CodeScope codeScope(&yieldScope);
 
    SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
    if (body == lxCode) {
@@ -7463,6 +7485,18 @@ void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
 
    scope.addAttribute(maYieldContextLength, scope.reserved2 + 1);
    scope.addAttribute(maYieldLocalLength, scope.reserved1 - scope.preallocated);
+
+   // HOTFIX : set correct context & locals offsets
+   //codeScope->allocated1 - methodScope->preallocated
+   for (auto it = yieldScope.yieldLocals.start(); !it.Eof(); it++) {
+      SNode localNode = *it;
+      localNode.setArgument((*it).argument + scope.reserved1 - scope.preallocated);
+      
+      SNode copyNode = localNode.parentNode();
+      if (copyNode == lxCopying) {
+         copyNode.setArgument((scope.reserved1 - scope.preallocated) << 2);
+      }
+   }
 }
 
 void Compiler :: compileAbstractMethod(SNode node, MethodScope& scope)

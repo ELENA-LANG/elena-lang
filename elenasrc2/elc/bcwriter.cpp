@@ -3615,7 +3615,9 @@ void ByteCodeWriter :: saveFieldExpression(CommandTape& tape, SNode dstObj, SNod
       generateObject(tape, source, scope, STACKOP_MODE | NOBREAKPOINTS);
       loadFieldExpression(tape, dstObj, scope, false);
       if (fieldNode == lxField) {
-         copyToFieldAddress(tape, size, fieldNode.argument << 2);
+         loadObject(tape, fieldNode, scope);
+
+         copyToFieldAddress(tape, size, 0);
       }
       else copyToFieldAddress(tape, size, fieldNode.argument);
       releaseStack(tape);

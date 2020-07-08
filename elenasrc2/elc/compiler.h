@@ -220,8 +220,8 @@ private:
          slSymbol,
          slMethod,
          slCode,
+         slYieldScope,
          slExpression,
-         slYieldCode,
          slOwnerClass,
       };
    
@@ -673,6 +673,21 @@ private:
       MethodScope(ClassScope* parent);
    };
 
+   struct YieldScope : public Scope
+   {
+      List<SNode> yieldLocals;
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slYieldScope) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
+      YieldScope(MethodScope* parent);
+   };
+
    // - CodeScope -
    struct CodeScope : public Scope
    {
@@ -786,6 +801,7 @@ private:
       CodeScope(SourceScope* parent);
       CodeScope(MethodScope* parent);
       CodeScope(CodeScope* parent);
+      CodeScope(YieldScope* parent);
    };
 
    struct ExprScope : public Scope
