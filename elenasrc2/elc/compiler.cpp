@@ -8783,7 +8783,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          if (scope.info.methods.exist(message | STATIC_MESSAGE))
             scope.raiseError(errDuplicatedMethod, current);
       }
-      else if (!privateOne && !testany(methodHints, tpInternal | tpProtected)) {
+      if (!privateOne && !testany(methodHints, tpInternal | tpProtected)) {
          if (checkNonpublicDuplicates(scope.info, message))
             scope.raiseError(errDuplicatedMethod, current);
       }
