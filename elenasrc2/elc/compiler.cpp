@@ -2400,6 +2400,8 @@ ObjectInfo Compiler :: compileYieldExpression(SNode objectNode, ExprScope& scope
       fieldNode.appendNode(lxField, index);
       fieldNode.appendNode(lxFieldAddress, 4);
       copyNode.appendNode(lxLocalAddress, -2);
+
+      yieldScope->yieldContext.add(copyNode);
    }
 
    // save locals
@@ -7467,20 +7469,7 @@ void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
 
    codeScope.syncStack(&scope);
 
-//   // COMPILER MAGIC : struct variables should be synchronized with the context field
-//   int index = scope.getAttribute(maYieldContext);
-//   int index2 = scope.getAttribute(maYieldLocals);
-//
-//   // injecting the virtual field sizes
-//   SyntaxWriter methodWriter(writer);
-//   methodWriter.seekUp(lxClassMethod);
-//   methodWriter.CurrentNode().insertNode(lxSetTapeArgument, scope.reserved).appendNode(lxTapeArgument, index);
-//   methodWriter.CurrentNode().insertNode(lxSetTapeArgument, codeScope.level - preallocated).appendNode(lxTapeArgument, index2);
-
-//   if (scope.yieldMethod) {
-//      scope.setAttribute(maYieldPreallocated, preallocated);
    compileYieldDispatch(body, scope);
-//   }
 
    endMethod(node, scope);
 
@@ -7488,7 +7477,7 @@ void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
    scope.addAttribute(maYieldLocalLength, scope.reserved1 - scope.preallocated);
 
    // HOTFIX : set correct context & locals offsets
-   //codeScope->allocated1 - methodScope->preallocated
+   //codeScope->reserved2 << 2
    for (auto it = yieldScope.yieldLocals.start(); !it.Eof(); it++) {
       SNode localNode = *it;
       localNode.setArgument((*it).argument + scope.reserved1 - scope.preallocated);
@@ -7496,6 +7485,13 @@ void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
       SNode copyNode = localNode.parentNode();
       if (copyNode == lxCopying) {
          copyNode.setArgument((scope.reserved1 - scope.preallocated) << 2);
+      }
+   }
+   for (auto it = yieldScope.yieldContext.start(); !it.Eof(); it++) {
+      SNode copyNode = *it;
+
+      if (copyNode == lxCopying) {
+         copyNode.setArgument(scope.reserved2 << 2);
       }
    }
 }

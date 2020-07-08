@@ -676,6 +676,7 @@ private:
    struct YieldScope : public Scope
    {
       List<SNode> yieldLocals;
+      List<SNode> yieldContext;
 
       virtual Scope* getScope(ScopeLevel level)
       {

@@ -642,21 +642,21 @@ void _ELENA_::loadIndexN4OpX(int opcode, x86JITScope& scope)
    scope.tape->seek(pos);
 
    switch (arg2) {
-   case 1:
-      loadIndexN4OpX(opcode, scope, 0x100);
-      break;
-   case 2:
-      loadIndexN4OpX(opcode, scope, 0x200);
-      break;
-   case 4:
-      loadIndexN4OpX(opcode, scope, 0x300);
-      break;
-   case 8:
-      loadIndexN4OpX(opcode, scope, 0x400);
-      break;
-   default:
-      loadIndexNOp(opcode, scope);
-      break;
+      case 1:
+         loadIndexN4OpX(opcode, scope, 0x100);
+         break;
+      case 2:
+         loadIndexN4OpX(opcode, scope, 0x200);
+         break;
+      case 3:
+         loadIndexN4OpX(opcode, scope, 0x300);
+         break;
+      case 4:
+         loadIndexN4OpX(opcode, scope, 0x400);
+         break;
+      default:
+         loadIndexNOp(opcode, scope);
+         break;
    }
 }
 
