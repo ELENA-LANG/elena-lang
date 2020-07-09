@@ -1,0 +1,9 @@
+[project]
+executable=collatz
+namespace=collatz
+template=console
+debuginfo=-1
+warn:unresolved=0
+
+[files]
+collatz.l

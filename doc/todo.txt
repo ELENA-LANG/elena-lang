@@ -11,7 +11,7 @@ In development:
 
 
   [!project]
-    * linux : migrate 
+    * linux : migrate (#319) 
     * chat
     * release 5.0
 

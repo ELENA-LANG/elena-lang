@@ -1,0 +1,16 @@
+<configuration>
+    <project>
+        <executable>pi2.exe</executable>
+        <arguments>10</arguments>
+        <output></output>
+        <options></options>
+        <namespace>pi2</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>pi2.l</include>
+        </module>
+    </files>
+</configuration>
