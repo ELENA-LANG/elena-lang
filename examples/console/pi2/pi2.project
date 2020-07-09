@@ -1,6 +1,6 @@
 <configuration>
     <project>
-        <executable>pi2.exe</executable>
+        <executable>pi2</executable>
         <arguments>10</arguments>
         <output></output>
         <options></options>

@@ -1,10 +1,16 @@
-﻿[project]
-executable=pi
-namespace=pi
-template=console
-debuginfo=-1
-warn:unresolved=0
-
-[files]
-pi.l
-
+﻿<configuration>
+    <project>
+        <executable>pi</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>pi</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>pi.l</include>
+        </module>
+    </files>
+</configuration>

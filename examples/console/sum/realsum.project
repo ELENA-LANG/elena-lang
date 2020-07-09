@@ -1,15 +1,20 @@
-﻿[project]
-executable=realsum
-namespace=sum
-template=console
-debuginfo=-1
-warn:unresolved=0
-
-[files]
-sum.l
-
-[forwards]
-'program=sum'Program
-'prompt=sum'RealSamplePrompt
-'number=system'Real
-
+﻿<configuration>
+    <project>
+        <executable>realsum</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>sum</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>sum.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="prompt">sum'RealSamplePrompt</forward>
+        <forward key="number">extensions'Real</forward>
+    </forwards>
+</configuration>

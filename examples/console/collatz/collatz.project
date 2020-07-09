@@ -1,9 +1,16 @@
-[project]
-executable=collatz
-namespace=collatz
-template=console
-debuginfo=-1
-warn:unresolved=0
-
-[files]
-collatz.l
+<configuration>
+    <project>
+        <executable>collatz</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>collatz</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>collatz.l</include>
+        </module>
+    </files>
+</configuration>

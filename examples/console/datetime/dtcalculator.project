@@ -1,16 +1,20 @@
-﻿[project]
-projecttype=1
-package=date
-executable=dtcalculator
-namespace=datetime
-template=console
-debuginfo=-1
-warn:unresolved=0
-
-[files]
-control.l
-
-[forwards]
-'program=extensions'programLoop
-'program'control=datetime'control
-
+﻿<configuration>
+    <project>
+        <executable>dtcalculator</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>datetime</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>control.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="program">extensions'programLoop</forward>
+        <forward key="program'control">datetime'control</forward>
+    </forwards>
+</configuration>

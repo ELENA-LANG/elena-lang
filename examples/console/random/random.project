@@ -1,6 +1,6 @@
 <configuration>
     <project>
-        <executable>random.exe</executable>
+        <executable>random</executable>
         <arguments></arguments>
         <output></output>
         <options></options>
