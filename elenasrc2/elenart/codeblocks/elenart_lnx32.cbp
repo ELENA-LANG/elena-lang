@@ -12,7 +12,7 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option host_application="/home/alex/elena-lang/tests/linux/test" />
-				<Option run_host_application_in_terminal="0" />
+				<Option run_host_application_in_terminal="1" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>

@@ -119,7 +119,7 @@ bool ELENARTMachine :: loadDebugSection()
 
          return false;
       }
-      
+
       size_t len = reader.getDWord();
       MemoryWriter writer(&_debugSection);
       writer.read(&reader, len);
@@ -175,7 +175,7 @@ int ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxL
    MemoryReader reader(&_debugSection);
 
    // skip a debugger entry pointer
-   reader.getDWord();               
+   reader.getDWord();
 
    // set the root namespace
    _loader.setNamespace(reader.getLiteral(DEFAULT_STR));
@@ -194,7 +194,7 @@ int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t le
    size_t ns_len = length;
    if (!ident_t(ns).copyTo(buffer, ns_len))
       return 0;
-  
+
    length -= ns_len;
    if (!ident_t(name).copyTo(buffer + ns_len, length))
       return 0;
@@ -202,10 +202,16 @@ int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t le
    return length + ns_len;
 }
 
+//inline void printInfo(char ch)
+//{
+//   putchar(ch);
+//   fflush(stdout);
+//}
+
 int ELENARTMachine :: loadSubjectName(size_t subjectRef, char* buffer, size_t length)
 {
    ImageSection messageSection;
-   messageSection.init(_messageSection, 0x10000); // !! dummy size
+   messageSection.init(_messageSection, 0x1000000); // !! dummy size
 
    ref_t actionPtr = messageSection[subjectRef * 8];
    if (actionPtr == 0) {

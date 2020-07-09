@@ -31,6 +31,12 @@ void getSelfPath(Path& rootPath)
    /* handle error condition */
 }
 
+//inline void printInfo(int n)
+//{
+//   printf("%x\n", n);
+//   fflush(stdout);
+//}
+
 void init()
 {
    // get EXE path
@@ -42,7 +48,7 @@ void init()
    void* messageSection = nullptr;
    void* mattributeSection = nullptr;
    ELENARTMachine::ImageSection section;
-   section.init((void*)IMAGE_BASE, 0x1000);
+   section.init((void*)IMAGE_BASE, 0x1000000);
 
    size_t ptr = 0;
    MemoryReader reader(&section);
@@ -51,14 +57,19 @@ void init()
 
    mattributeSection = (void*)ptr;
 
-   reader.seek(ptr);
+   reader.seek(ptr - IMAGE_BASE);
    size_t maSectionSize = reader.getDWord();
 
-   reader.seek(ptr + maSectionSize + 4);
+   if(reader.seek(ptr - IMAGE_BASE + maSectionSize + 4)) {
+      messageSection = (void*)(IMAGE_BASE + reader.Position());
 
-   messageSection = (void*)ptr;
+      //printInfo((int)mattributeSection);
+      //printInfo((int)messageSection);
+      //printInfo((int)maSectionSize);
 
-   _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
+      _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
+   }
+   //else printInfo(0);
 }
 
 void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)
