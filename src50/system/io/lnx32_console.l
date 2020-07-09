@@ -64,6 +64,17 @@ namespace io
             self.write(newLine);
         }
 
+        writeLine(wide s)
+        {
+            self.write(s);
+            self.write(newLine);
+        }
+
+        writeLine()
+        {
+            self.write(newLine);
+        }
+
 //        #method clear
 //        [
 //        ]

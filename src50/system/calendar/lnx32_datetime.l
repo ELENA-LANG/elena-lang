@@ -77,7 +77,7 @@ namespace calendar
                 
                 l := l * 10000000l;
 
-                l2 := longConvertor.convert(tv_usec);                
+                long l2 := longConvertor.convert(tv_usec);
                 l2 := l2 * 10l;
                 
                 l := l + l2;
@@ -241,7 +241,7 @@ namespace calendar
         {
             get()
             {
-                int val := theSecond;
+                int val := tm_sec;
                 
                 ^ val
             }
@@ -275,7 +275,7 @@ namespace calendar
         readTo(ref SystemTime retVal)
         {
             // HOTFIX
-            tm_isdst := -1,
+            tm_isdst := -1;
             
             int tm_sec := extern libc.mktime(self);
             SystemTime tm := SystemTime.new(tm_sec, tm_usec);
@@ -306,11 +306,11 @@ namespace calendar
         string toShortDate()
         {
             int year := self.Year;
-            int mongth := self.Month;
+            int month := self.Month;
             
             ^ tm_mday.toPrintable().padLeft($48, 2) 
-                  + "." + monthtoPrintable().padLeft($48, 2)
-                  + "." + yeartoPrintable().padLeft($48, 2)
+                  + "." + month.toPrintable().padLeft($48, 2)
+                  + "." + year.toPrintable().padLeft($48, 2)
         }
     
         string toShortTime()
