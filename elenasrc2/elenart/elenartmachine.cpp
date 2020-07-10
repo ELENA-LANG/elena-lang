@@ -20,7 +20,6 @@ using namespace _ELENA_;
 void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)
 {
    // setting up system
-   __routineProvider.Prepare();
    __routineProvider.InitSTA((SystemEnv*)env, frameHeader);
 
    _Entry entry;
@@ -36,7 +35,6 @@ void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
 void ELENARTMachine :: startMTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)
 {
    // setting up system
-   __routineProvider.Prepare();
    __routineProvider.InitMTA((SystemEnv*)env, frameHeader);
 
    _Entry entry;
@@ -268,7 +266,7 @@ void* ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
 void* ELENARTMachine :: loadSubject(ident_t name)
 {
    ImageSection messageSection;
-   messageSection.init(_messageSection, 0x10000); // !! dummy size
+   messageSection.init(_messageSection, 0x1000000); // !! dummy size
    MemoryReader reader(&messageSection);
 
    for (ref_t subjectRef = 1; true; subjectRef++) {

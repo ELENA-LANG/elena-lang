@@ -134,7 +134,6 @@ public:
    static void InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler);
    static void InitTLSEntry(pos_t threadIndex, pos_t index, ProgramHeader* frameHeader, pos_t* threadTable);
 
-   static void Prepare();
    static void Init(SystemEnv* env);
 
    static void InitSTA(SystemEnv* env, ProgramHeader* frameHeader);

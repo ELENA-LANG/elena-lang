@@ -19,6 +19,8 @@
 
 extern "C"
 {
+   DLL_PUBLIC void PrepareEM(void* args);
+
    DLL_PUBLIC void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);
 
    DLL_PUBLIC void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);
@@ -62,6 +64,11 @@ extern "C"
    DLL_PUBLIC void* LoadSymbolByString(void* systemEnv, void* referenceName);
 
    DLL_PUBLIC void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length);
+
+   // == Linux specific routines ==
+   DLL_PUBLIC int l_core_getargc();
+
+   DLL_PUBLIC int l_core_getarg(int index, char* buffer, int length);
 }
 
 #endif // ELENART_H_INCLUDED

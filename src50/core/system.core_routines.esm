@@ -5559,6 +5559,10 @@ end
 
 symbol vm_sta_start
 
+  pushs    -1
+  callextr extern : PrepareEM
+  freei    1
+
   open     1
   reserve  sizeof ProgramHeader
 
@@ -5582,6 +5586,10 @@ end
 
 symbol mta_start
 
+  pushs    -1
+  callextr extern : PrepareEM
+  freei    1
+
   open    1
   reserve sizeof ProgramHeader
 
@@ -5604,6 +5612,10 @@ end
 
 symbol sta_start
 
+  pushs    -1
+  callextr extern : PrepareEM
+  freei    1
+
   open    1
   reserve sizeof ProgramHeader
 
@@ -5615,6 +5627,7 @@ symbol sta_start
   alloci   1
   loadenv
   savesi   0
+  movf     -1
   callextr extern : InitializeSTA
   freei    4
 

@@ -13,6 +13,11 @@ using namespace _ELENA_;
 static ELENARTMachine* _Instance = NULL;
 static void*           _SystemEnv = NULL;
 
+EXTERN_DLL_EXPORT void PrepareEM(void* args)
+{
+
+}
+
 EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,
    ProgramHeader* header)
 {

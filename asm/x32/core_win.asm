@@ -14,15 +14,7 @@ define LOAD_CALLSTACK       10024h
 define BREAK                10026h
 define EXPAND_HEAP          10028h
 
-define CORE_OS_TABLE        20009h
-
 define GC_HEAP_ATTRIBUTE    00Dh
-
-structure % CORE_OS_TABLE
-
-  dd 0 // ; dummy
-
-end
 
 // ; in - eax - heap, ebx - size
 // ; out - eax - heap

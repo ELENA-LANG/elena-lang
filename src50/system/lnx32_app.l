@@ -4,41 +4,38 @@ singleton CommandLineFactory
 {
     string load()
     {
-/*        byte buf[256];
+        byte buf[256];
         int len := 0;
-        int argc := extern core_getargc;
+        int argc := extern elenart.l_core_getargc;
 
         var args := Array.allocate(argc);
         for (int i := 0, i < argc, i := i + 1) {
-            len := extern core_getarg(i+1, buf, 255);
+            len := extern elenart.l_core_getarg(i+1, buf, 255);
             
             args[i] := String.fromByteArray(0, len, buf)
         };
 
-        ^ args*/
+        ^ args
     }
 }
-
-//#symbol commandLine 
-//    = $CommandLineFactory new.
 
 public commandLineArguments = 
     CommandLineFactory.load();
 
-//// --- startUp ---
-//
-//class StartUpEvents
-//{
-//    event Func OnStop;
-//    
-//    internal stopping()
-//    {
-//        ifnot (nil == OnStop)
-//            { OnStop() }
-//    }
-//}
-//
-//public static startUpEvents = new StartUpEvents();
+// --- startUp ---
+
+class StartUpEvents
+{
+    event Func OnStop;
+    
+    internal stopping()
+    {
+        ifnot (nil == OnStop)
+            { OnStop() }
+    }
+}
+
+public static startUpEvents = new StartUpEvents();
 
 entry()
 {
@@ -48,10 +45,10 @@ entry()
     {
         forward program()
     }
-//    finally
-//    {
-//       startUpEvents.stopping()
-//    }
+    finally
+    {
+       startUpEvents.stopping()
+    }
     catch::
     {
         function(AbortException e)

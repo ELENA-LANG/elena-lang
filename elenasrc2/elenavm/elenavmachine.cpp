@@ -1117,7 +1117,6 @@ ELENAVMMachine :: ELENAVMMachine(path_t rootPath)
 void ELENAVMMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* sehTable, void* tape)
 {
    // setting up system
-   __routineProvider.Prepare();
    __routineProvider.InitSTA((SystemEnv*)env, frameHeader);
 
    if (tape != nullptr) {

@@ -19,6 +19,7 @@ using namespace _ELENA_;
 
 static ELENARTMachine* _Instance = NULL;
 static void* _SystemEnv = NULL;
+static void* _Args = NULL;
 
 void getSelfPath(Path& rootPath)
 {
@@ -70,6 +71,42 @@ void init()
       _Instance->init(messageSection, mattributeSection, CONFIG_PATH);
    }
    //else printInfo(0);
+}
+
+// == Linux specific routines ==
+
+int l_core_getargc()
+{
+   int* ptr = __Args;
+
+   return *ptr;
+}
+
+const int l_core_getarg(int index, char* buffer, int length)
+{
+   if (index <= 0)
+      return 0;
+
+   const char** args = __Args;
+
+   for (int i = 0; i < length; i++) {
+      char tmp = args[index][i];
+
+      buffer[i] = tmp;
+
+      if (!tmp) {
+         return i;
+      }
+   }
+
+   return length;
+}
+
+// == ELENA run-time routines ==
+
+void PrepareEM(void* args)
+{
+   _Args = args;
 }
 
 void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, ProgramHeader* header)

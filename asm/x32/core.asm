@@ -15,7 +15,6 @@ define CORE_GC_TABLE        20002h
 define CORE_STATICROOT      20005h
 define CORE_TLS_INDEX       20007h
 define THREAD_TABLE         20008h
-define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
 define CORE_ET_TABLE        2000Bh
 define SYSTEM_ENV           2000Ch

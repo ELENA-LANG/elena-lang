@@ -33,7 +33,6 @@ constexpr int CORE_GC_TABLE      = 0x20002;
 constexpr int CORE_STATICROOT    = 0x20005;
 constexpr int CORE_TLS_INDEX     = 0x20007;
 constexpr int CORE_THREADTABLE   = 0x20008;
-constexpr int CORE_OS_TABLE      = 0x20009;
 constexpr int CORE_MESSAGE_TABLE = 0x2000A;
 constexpr int CORE_EH_TABLE      = 0x2000B;
 constexpr int SYSTEM_ENV         = 0x2000C;
@@ -41,10 +40,10 @@ constexpr int VOID               = 0x2000D;
 constexpr int VOIDPTR            = 0x2000E;
 
 // preloaded gc routines
-const int coreVariableNumber = 3;
+const int coreVariableNumber = 2;
 const int coreVariables[coreVariableNumber] =
 {
-   CORE_GC_TABLE, CORE_OS_TABLE, CORE_EH_TABLE
+   CORE_GC_TABLE, CORE_EH_TABLE
 };
 
 const int coreStaticNumber = 2;
