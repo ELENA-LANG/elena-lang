@@ -12,11 +12,6 @@
 
 using namespace _ELENA_;
 
-void SystemRoutineProvider::Prepare()
-{
-
-}
-
 void SystemRoutineProvider::InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler)
 {
    //pos_t previousHeader = 0;

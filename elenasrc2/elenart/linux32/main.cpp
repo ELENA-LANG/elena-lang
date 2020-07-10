@@ -77,17 +77,17 @@ void init()
 
 int l_core_getargc()
 {
-   int* ptr = __Args;
+   int* ptr = (int*)_Args;
 
    return *ptr;
 }
 
-const int l_core_getarg(int index, char* buffer, int length)
+int l_core_getarg(int index, char* buffer, int length)
 {
    if (index <= 0)
       return 0;
 
-   const char** args = __Args;
+   const char** args = (const char**)_Args;
 
    for (int i = 0; i < length; i++) {
       char tmp = args[index][i];
@@ -104,6 +104,8 @@ const int l_core_getarg(int index, char* buffer, int length)
 
 // == ELENA run-time routines ==
 
+
+/// Is used to initialize command argument list reference
 void PrepareEM(void* args)
 {
    _Args = args;

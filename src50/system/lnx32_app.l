@@ -2,7 +2,7 @@
 
 singleton CommandLineFactory
 {
-    string load()
+    load()
     {
         byte buf[256];
         int len := 0;
@@ -10,7 +10,8 @@ singleton CommandLineFactory
 
         var args := Array.allocate(argc);
         for (int i := 0, i < argc, i := i + 1) {
-            len := extern elenart.l_core_getarg(i+1, buf, 255);
+            int n := i + 1;
+            len := extern elenart.l_core_getarg(n, buf, 255);
             
             args[i] := String.fromByteArray(0, len, buf)
         };
@@ -19,7 +20,7 @@ singleton CommandLineFactory
     }
 }
 
-public commandLineArguments = 
+public commandLineArguments =
     CommandLineFactory.load();
 
 // --- startUp ---

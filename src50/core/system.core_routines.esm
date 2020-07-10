@@ -5559,7 +5559,7 @@ end
 
 symbol vm_sta_start
 
-  pushs    -1
+  pushs    0
   callextr extern : PrepareEM
   freei    1
 
@@ -5586,7 +5586,7 @@ end
 
 symbol mta_start
 
-  pushs    -1
+  pushs    0
   callextr extern : PrepareEM
   freei    1
 
@@ -5612,7 +5612,7 @@ end
 
 symbol sta_start
 
-  pushs    -1
+  pushs    0
   callextr extern : PrepareEM
   freei    1
 

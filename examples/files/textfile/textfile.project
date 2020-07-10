@@ -1,15 +1,16 @@
-﻿[project]
-executable=textfile
-arguments=sample.txt
-namespace=textfile
-template=console
-debuginfo=-1
-warn:unresolved=0
-
-[files]
-viewer.l
-
-[forwards]
-'program=textfile'program
-'program'output=system'console
-
+﻿<configuration>
+    <project>
+        <executable>textfile</executable>
+        <arguments>sample.txt</arguments>
+        <output></output>
+        <options></options>
+        <namespace>textfile</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>viewer.l</include>
+        </module>
+    </files>
+</configuration>
