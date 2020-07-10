@@ -2,6 +2,7 @@
   <project>
     <template>console</template>
     <executable>test</executable> 
+    <debuginfo>-1</debuginfo>
   </project>
   <files>
      <module>

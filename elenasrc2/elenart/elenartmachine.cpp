@@ -200,18 +200,13 @@ int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t le
    return length + ns_len;
 }
 
-//inline void printInfo(char ch)
-//{
-//   putchar(ch);
-//   fflush(stdout);
-//}
-
 int ELENARTMachine :: loadSubjectName(size_t subjectRef, char* buffer, size_t length)
 {
    ImageSection messageSection;
    messageSection.init(_messageSection, 0x1000000); // !! dummy size
 
    ref_t actionPtr = messageSection[subjectRef * 8];
+
    if (actionPtr == 0) {
       size_t used = length;
       pos_t namePtr = messageSection[subjectRef * 8 + 4];
@@ -263,6 +258,12 @@ void* ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
    return manager.loadMetaAttribute(reader, name, category, len);
 }
 
+//inline void printInfo(char n)
+//{
+//   putchar(n);
+//   fflush(stdout);
+//}
+
 void* ELENARTMachine :: loadSubject(ident_t name)
 {
    ImageSection messageSection;
@@ -279,6 +280,7 @@ void* ELENARTMachine :: loadSubject(ident_t name)
 
          IdentifierString messageName;
          reader.readString(messageName);
+
          if (messageName.compare(name)) {
             return (void*)subjectRef;
          }

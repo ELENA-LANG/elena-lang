@@ -59,7 +59,7 @@ void init()
    mattributeSection = (void*)ptr;
 
    reader.seek(ptr - IMAGE_BASE);
-   size_t maSectionSize = reader.getDWord();
+   size_t maSectionSize =  align(reader.getDWord(), 4);
 
    if(reader.seek(ptr - IMAGE_BASE + maSectionSize + 4)) {
       messageSection = (void*)(IMAGE_BASE + reader.Position());

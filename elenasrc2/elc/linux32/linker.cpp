@@ -71,7 +71,6 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
          return ((ImageBaseMap*)map)->import + address + disp;
       }
       case mskMetaRef:
-         // HOTFIX : mskDebugRef is used for the message table reference
          switch (key) {
             case mskMessageTableRef:
                return ((ImageBaseMap*)map)->mdata + ((ImageBaseMap*)map)->base;
@@ -338,26 +337,33 @@ void Linker32 :: fixImage(ImageInfo& info)
   // fix up text reallocate
    text->fixupReferences(&info.map, reallocate);
 
+  // fix up rdata section
+   rdata->fixupReferences(&info.map, reallocate);
+
    // fix up mdata section
    mdata->fixupReferences(&info.map, reallocate);
 
    // fix up adata section
    adata->fixupReferences(&info.map, reallocate);
 
-  // fix up rdata section
-   rdata->fixupReferences(&info.map, reallocate);
-
-  // fix up import section
-   import->fixupReferences(&info.map, reallocateImport);
+  // fix up bss section
+   bss->fixupReferences(&info.map, reallocate);
 
   // fix up stat section
    stat->fixupReferences(&info.map, reallocate);
 
-  // fix up bss section
-   bss->fixupReferences(&info.map, reallocate);
-
 //  // fix up tls section
 //   tls->fixupReferences(&info.map, reallocate);
+
+  // fix up import section
+   import->fixupReferences(&info.map, reallocateImport);
+
+  // fix up debug info if enabled
+   if (info.withDebugInfo) {
+      Section* debug = info.image->getDebugSection();
+
+      debug->fixupReferences(&info.map, reallocate);
+   }
 }
 
 void Linker32 :: writeSection(FileWriter* file, Section* section, int alignment)

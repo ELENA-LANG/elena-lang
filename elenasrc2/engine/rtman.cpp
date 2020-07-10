@@ -12,6 +12,12 @@
 
 using namespace _ELENA_;
 
+//inline void printInfo2(char ch)
+//{
+//   putchar(ch);
+//   fflush(stdout);
+//}
+
 // --- RTManager ---
 
 void RTManager :: readCallStack(StreamReader& stack, size_t startPosition, size_t currentAddress, StreamWriter& output)
@@ -138,6 +144,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _Libr
       size_t current = 0;
       while (size > 0) {
          current = reader.getDWord();
+
          if (retAddress == current || (previous != 0 && previous < retAddress && current >= retAddress)) {
             found = true;
 
