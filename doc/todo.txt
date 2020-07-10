@@ -11,7 +11,7 @@ In development:
 
 
   [!project]
-    * linux : migrate (#319) : goods 
+    * linux : migrate (#319) : textdb, callstack 
     * chat
     * release 5.0
 

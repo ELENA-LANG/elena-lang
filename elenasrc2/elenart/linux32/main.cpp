@@ -104,7 +104,6 @@ int l_core_getarg(int index, char* buffer, int length)
 
 // == ELENA run-time routines ==
 
-
 /// Is used to initialize command argument list reference
 void PrepareEM(void* args)
 {
