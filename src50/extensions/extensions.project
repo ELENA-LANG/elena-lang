@@ -33,5 +33,10 @@
             <include>routines/combinations.l</include>
             <include>routines/compound.l</include>
         </module>
+        <module name="scripting">
+            <include>scripting/interpreter.l</include>
+            <include>scripting/jscript.l</include>
+            <include>scripting/lscript.l</include>
+        </module>
     </files>
 </configuration>
