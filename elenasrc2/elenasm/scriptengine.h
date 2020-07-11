@@ -17,11 +17,11 @@ typedef _ELENA_TOOL_::TextSourceReader  SourceReader;
 typedef String<char, 0x100> TempString;
 
 // --- EParseError ---
-   
+
 struct EParseError
 {
    int column, row;
-   
+
    EParseError(int column, int row)
    {
       this->column = column;
@@ -222,7 +222,7 @@ public:
 
       if (info.state == _ELENA_TOOL_::dfaQuote && token != NULL) {
          QuoteTemplate<TempString> quote(info.line);
-      
+
          //!!HOTFIX: what if the literal will be longer than 0x100?
          size_t length = quote.Length();
          Convertor::copy(token, quote.ident(), length, length);
@@ -342,12 +342,12 @@ public:
       _coordinates.add(_log.Length(), coord);
    }
 
-   void* getBody() 
-   { 
+   void* getBody()
+   {
       write((char)0);
 
-      return _log.get(0); 
-   } 
+      return _log.get(0);
+   }
 
    CoordMap* getCoordinateMap()
    {
@@ -361,7 +361,7 @@ public:
       _log.trim(0);
    }
 
-   ScriptLog::ScriptLog()
+   ScriptLog()
       : _coordinates(0)
    {
 

@@ -25,7 +25,7 @@ extern "C"
 
    DLL_PUBLIC void* InterpretFile(const char* pathStr, int encoding, bool autoDetect);
 
-   DLL_PUBLIC void void* InterpretScopeFile(int scope_id, const char* pathStr, int encoding, bool autoDetect);
+   DLL_PUBLIC void* InterpretScopeFile(int scope_id, const char* pathStr, int encoding, bool autoDetect);
 
    DLL_PUBLIC void Release(void* tape);
 

@@ -12,6 +12,13 @@
 #include "treeparser.h"
 #include "transformer.h"
 
+#ifdef _WIN32
+#else
+
+#define _MAX_PATH 256 // !! temporal
+
+#endif // _WIN32
+
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
