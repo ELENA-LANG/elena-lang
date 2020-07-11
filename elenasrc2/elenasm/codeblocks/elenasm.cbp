@@ -18,9 +18,6 @@
 					<Add option="-g" />
 					<Add option="-DBUILD_DLL" />
 				</Compiler>
-				<Linker>
-					<Add library="user32" />
-				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="../../../bin/elenasm" prefix_auto="1" extension_auto="1" />
@@ -36,7 +33,6 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="user32" />
 				</Linker>
 			</Target>
 		</Build>
@@ -45,13 +41,10 @@
 			<Add option="-D_LINUX32" />
 			<Add directory="../../common" />
 			<Add directory="../../engine" />
-			<Add directory="../../engine/win32" />
 			<Add directory=".." />
-			<Add directory="../win32" />
 		</Compiler>
 		<Linker>
 			<Add option="-static-libgcc -static-libstdc++" />
-			<Add library="../../../bin/libelenavm.a" />
 		</Linker>
 		<Unit filename="../../common/altstrings.cpp" />
 		<Unit filename="../../common/altstrings.h" />
@@ -74,11 +67,15 @@
 		<Unit filename="../cfparser.h" />
 		<Unit filename="../inlineparser.cpp" />
 		<Unit filename="../inlineparser.h" />
-		<Unit filename="../scriptparser.cpp" />
-		<Unit filename="../scriptparser.h" />
+		<Unit filename="../linux32/elenasm.h" />
+		<Unit filename="../linux32/main.cpp" />
+		<Unit filename="../scriptengine.h" />
 		<Unit filename="../session.cpp" />
 		<Unit filename="../session.h" />
-		<Unit filename="../win32/dllmain.cpp" />
+		<Unit filename="../transformer.cpp" />
+		<Unit filename="../transformer.h" />
+		<Unit filename="../treeparser.cpp" />
+		<Unit filename="../treeparser.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

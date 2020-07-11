@@ -11,6 +11,8 @@ mkdir -p ./temp/elenart/linux32
 mkdir -p ./temp/tools/asm2bin
 mkdir -p ./temp/tools/sg
 mkdir -p ./temp/tools/og
+mkdir -p ./temp/elenasm
+mkdir -p ./temp/elenasm/linux32
 
 g++ -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX32 -g -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/elc -I./elenasrc2/elc/linux32 -c ./elenasrc2/common/altstrings.cpp -o ./temp/common/altstrings.o
 g++ -march=pentium2 -Wall -std=c++11 -m32 -Wno-conversion-null -Wno-switch -D_LINUX32 -g -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/elc -I./elenasrc2/elc/linux32 -c ./elenasrc2/common/config.cpp -o ./temp/common/config.o
@@ -111,12 +113,12 @@ fi
 
 g++ -march=pentium2 -D_LINUX32 -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/elenasm/linux32 -c ./elenasrc2/elenasm/cfparser.cpp -o ./temp/elenasm/cfparser.o
 g++ -march=pentium2 -D_LINUX32 -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/elenasm/linux32 -c ./elenasrc2/elenasm/inlineparser.cpp -o ./temp/elenasm/inlineparser.o
-g++ -march=pentium2 -D_LINUX32 -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/elenasm/linux32 -c ./elenasrc2/elenasm/linux32/main.cpp -o ./temp/elenasm/linux32/main.o
+g++ -march=pentium2 -D_LINUX32 -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/elenasm/linux32 -I./elenasrc2/elenasm -c ./elenasrc2/elenasm/linux32/main.cpp -o ./temp/elenasm/linux32/main.o
 g++ -march=pentium2 -D_LINUX32 -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/elenasm/linux32 -c ./elenasrc2/elenasm/session.cpp -o ./temp/elenasm/session.o
 g++ -march=pentium2 -D_LINUX32 -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/elenasm/linux32 -c ./elenasrc2/elenasm/transformer.cpp -o ./temp/elenasm/transformer.o
 g++ -march=pentium2 -D_LINUX32 -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/elenasm/linux32 -c ./elenasrc2/elenasm/treeparser.cpp -o ./temp/elenasm/treeparser.o
 
-g++ -shared  ./temp/common/altstrings.o ./temp/common/dump.o ./temp/common/files.o ./temp/engine/bytecode.o ./temp/engine/parsertable.o ./temp/engine/textsource.o ./temp/elenasm/cfparser.o ./temp/elenasm/inlineparser.o ./temp/elenasm/linux32/main.o ./temp/elenasm/session.o ./temp/elenasm/transformer.o ./temp/elenasm/treeparser.o  -o ./bin/bin/libelenasm.so -static-libgcc -static-libstdc++ -m32  
+g++ -shared  ./temp/common/altstrings.o ./temp/common/dump.o ./temp/common/files.o ./temp/engine/bytecode.o ./temp/engine/parsertable.o ./temp/engine/textsource.o ./temp/elenasm/cfparser.o ./temp/elenasm/inlineparser.o ./temp/elenasm/linux32/main.o ./temp/elenasm/session.o ./temp/elenasm/transformer.o ./temp/elenasm/treeparser.o  -o ./bin/libelenasm.so -static-libgcc -static-libstdc++ -m32
 ret=$?
 if [ $ret -eq 0 ]
 then
