@@ -1,0 +1,17 @@
+<configuration>
+    <project>
+        <executable>vmconsole.exe</executable>
+        <arguments>fibonacci.js</arguments>
+        <output></output>
+        <options></options>
+        <namespace>vmconsole</namespace>
+        <template>vm_console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+    <forwards></forwards>
+</configuration>

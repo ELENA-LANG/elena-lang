@@ -1,0 +1,23 @@
+<configuration>
+    <project>
+        <executable>calc.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>calc</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+        <classsymbolload>-1</classsymbolload>
+    </project>
+    <files>
+        <module>
+            <include>control.l</include>
+            <include>parser.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="program">extensions'programLoop</forward>
+        <forward key="program'control">calc'control</forward>
+        <forward key="rules">calc'dynamicRules</forward>
+    </forwards>
+</configuration>

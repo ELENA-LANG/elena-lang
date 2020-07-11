@@ -1,0 +1,29 @@
+<configuration>
+    <project>
+        <namespace>calc</namespace>
+        <template>console</template>
+        <executable>calc_static.exe</executable>
+        <debuginfo>-1</debuginfo>
+        <classsymbolload>-1</classsymbolload>
+    </project>
+    <targets>
+        <target name="eson" type="2">
+            <option>[[ #grammar tree ]]</option>
+            <option>~\scripts\lscript.es</option>
+        </target>
+    </targets>
+    <files>
+        <module name="rules" target="eson">
+            <include>calc.es</include>
+        </module>
+        <module>
+            <include>parser.l</include>
+            <include>control.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="program">extensions'programLoop</forward>
+        <forward key="rules">calc'staticRules</forward>
+        <forward key="program'control">calc'control</forward>
+    </forwards>
+</configuration>

@@ -1,0 +1,29 @@
+<configuration>
+    <project>
+        <namespace>fibonacci</namespace>
+        <template>console</template>
+        <executable>fibonacci.exe</executable>
+        <debuginfo>-1</debuginfo>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+    </project>
+    <targets>
+        <target name="grammar" type="2">
+            <option>[[ #grammar tree ]]</option>
+            <option>~\scripts\jscript.es</option>
+        </target>
+    </targets>
+    <files>
+        <module name="stat" target="grammar">
+            <include>fibonacci.js</include>
+        </module>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="program">fibonacci'stat_program</forward>
+        <forward key="jsprogram">fibonacci'stat'program</forward>
+    </forwards>
+</configuration>
