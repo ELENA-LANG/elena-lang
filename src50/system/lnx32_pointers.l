@@ -134,24 +134,24 @@ public sealed const struct UnsafePointer
 //        ^ s
 //    }
     
-//    saveTo(byte[] target, int offs)
-//    {
-//        intern system'core_routines'__dptr.readVal(self, ref int val);
-//        
-//        target.write(offs, val)
-//    }
-//    
-//    savePtrTo(byte[] target, int offs)
-//    {
-//        intern system'core_routines'__dptr.read(self, ref int val);
-//        
-//        target.write(offs, val)
-//    }
-//
-//    copyTo(byte[] target, int len)
-//    {
-//        intern system'core_routines'__dptr.copyTo(self, target, len);
-//    }
+    saveTo(byte[] target, int offs)
+    {
+        intern system'core_routines'__dptr.readVal(self, ref int val);
+        
+        target.write(offs, val)
+    }
+    
+    savePtrTo(byte[] target, int offs)
+    {
+        intern system'core_routines'__dptr.read(self, ref int val);
+        
+        target.write(offs, val)
+    }
+
+    copyTo(byte[] target, int len)
+    {
+        intern system'core_routines'__dptr.copyTo(self, target, len);
+    }
             
     bool isEmpty()
         = thePointer == 0;
