@@ -6,6 +6,7 @@ echo compiling data files
 cp /usr/lib/elena/core/x32/*.bin /usr/lib/elena/core/x32/
 
 cp ../bin/libelenart.so /usr/lib/elena/
+cp ../bin/libelenavm.so /usr/lib/elena/
 cp ../bin/libelenasm.so /usr/lib/elena/
 cp ../bin/elena-lc /usr/bin/
 
@@ -133,6 +134,7 @@ mkdir -p ./$RELEASE/usr/lib/elena/lib50/
 cp /usr/lib/elena/core/x32/*.bin ./$RELEASE/usr/lib/elena/core/x32/
 cp ../bin/elena-lc ./$RELEASE/usr/bin/
 cp ../bin/libelenart.so ./$RELEASE/usr/lib/elena/
+cp ../bin/libelenavm.so ./$RELEASE/usr/lib/elena/
 cp ../bin/libelenasm.so ./$RELEASE/usr/lib/elena/
 cp ../bin/*.config ./$RELEASE/etc/elena/
 cp ../bin/templates/*.config ./$RELEASE/etc/elena/templates
