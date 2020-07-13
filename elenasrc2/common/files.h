@@ -246,6 +246,11 @@ public:
       copySubPath(path_t(path));
    }
 
+   void copy(const char* path, size_t path_len)
+   {
+      _path.copy(path, path_len);
+   }
+
 #endif
 
    static bool checkExtension(path_t path)

@@ -7,6 +7,9 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "x86process.h"
+#include <sys/mman.h>
+#include <unistd.h>
+#include <dlfcn.h>
 
 using namespace _ELENA_;
 
@@ -29,7 +32,7 @@ x86Process :: x86Process(size_t size, int address, bool writeAccess, bool execut
    _allocated = _used = 0;
    _size = size;
 
-   _code = mmap(address, size, getProtectedMode(writeAccess, executeAccess),
+   _code = mmap((void*)address, size, getProtectedMode(writeAccess, executeAccess),
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
    if (allocated != 0)
@@ -38,7 +41,7 @@ x86Process :: x86Process(size_t size, int address, bool writeAccess, bool execut
 
 x86Process :: ~x86Process()
 {
-   munmap(_code, size);
+   munmap(_code, _size);
 }
 
 int x86Process :: getProtectedMode(bool writeAccess, bool executeAccess)
@@ -83,7 +86,7 @@ bool x86Process :: write(pos_t position, const void* s, pos_t length)
       _used = newSize;
    }
 
-   memcpy((LPVOID)((size_t)_code + position), s, length);
+   memcpy((void*)((size_t)_code + position), s, length);
 
    return true;
 }
@@ -100,7 +103,7 @@ bool x86Process :: writeBytes(pos_t position, char value, pos_t length)
       _used = newSize;
    }
 
-   memset((LPVOID)((size_t)_code + position), value, length);
+   memset((void*)((size_t)_code + position), value, length);
 
    return true;
 }
@@ -110,16 +113,16 @@ void x86Process :: insert(pos_t position, const void* s, pos_t length)
    if (_allocated - _used < length)
       allocate(length);
 
-   memmove((LPVOID)((size_t)_code + position + length), (LPVOID)((size_t)_code + position), _used - position - length);
-   memcpy((LPVOID)((size_t)_code + position), s, length);
-   
+   memmove((void*)((size_t)_code + position + length), (void*)((size_t)_code + position), _used - position - length);
+   memcpy((void*)((size_t)_code + position), s, length);
+
    _used += length;
 }
 
 bool x86Process :: read(pos_t position, void* s, pos_t length)
 {
    if (position < _used && _used >= position + length) {
-      memcpy(s, (LPVOID)((size_t)_code + position), length);
+      memcpy(s, (void*)((size_t)_code + position), length);
 
       return true;
    }
@@ -141,6 +144,6 @@ bool x86Process :: exportFunction(path_t rootPath, size_t position, path_t dllNa
    ref_t address = (ref_t)dlsym(handle, funName);
    if (address == 0)
       return false;
-   
+
    return write(position, &address, 4);
 }

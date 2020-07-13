@@ -9,12 +9,6 @@
 #include "x86elenavmachine.h"
 #include "x86jitcompiler.h"
 
-#include <fcntl.h>
-#include <io.h>
-
-#include <iostream>
-#include <fstream>
-
 //static const WORD MAX_CONSOLE_LINES = 500;
 
 using namespace _ELENA_;
@@ -143,7 +137,7 @@ bool x86Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
    // put debug size and entry point place holders
    MemoryWriter debugWriter(&_debugProcess);
    debugWriter.writeBytes(0, 8);
-   
+
    // save default namespace
    debugWriter.writeLiteral(_loader.getNamespace());
 
@@ -160,16 +154,16 @@ bool x86Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
 
 void x86Instance :: createConsole()
 {
-   // HOTFIX : create a console only for GUI application 
-   if (test(_config.platform, mtGUI)) {
-      //CONSOLE_SCREEN_BUFFER_INFO coninfo;
-      //FILE *fp;
-
-      // allocate a console for this app
-      AllocConsole();
-      AttachConsole(GetCurrentProcessId());
-      freopen("CON", "w", stdout);
-   }
+//   // HOTFIX : create a console only for GUI application
+//   if (test(_config.platform, mtGUI)) {
+//      //CONSOLE_SCREEN_BUFFER_INFO coninfo;
+//      //FILE *fp;
+//
+//      // allocate a console for this app
+//      AllocConsole();
+//      AttachConsole(GetCurrentProcessId());
+//      freopen("CON", "w", stdout);
+//   }
 }
 
 // --- x86ELENAVMMachine ---
