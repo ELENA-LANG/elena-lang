@@ -21,7 +21,8 @@ extern "C"
 {
    DLL_PUBLIC void PrepareEM(void* args);
 
-   DLL_PUBLIC void InitializeVMSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);
+   DLL_PUBLIC void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape, 
+                                   ProgramHeader* header);
 
    //DLL_PUBLIC void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint, _ELENA_::ProgramHeader* header);
 
