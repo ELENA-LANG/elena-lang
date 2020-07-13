@@ -57,6 +57,8 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
    if(_entryPoint == LOADER_NOTLOADED)
       throw JITUnresolvedException(ReferenceInfo(SYSTEM_ENTRY));
 
+   linker.fixImage(project->resolveForward(SUPER_FORWARD));
+
   // fix up static table size
    compiler->setStaticRootCounter(this, linker.getStaticCount(), true);
 

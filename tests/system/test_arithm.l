@@ -1118,3 +1118,56 @@ public stackSafeExtensions()
     
     console.writeLine("done")
 }
+A;
+
+class NilDispatcher
+{
+    int value := 0;
+    
+    testMe(int arg, A a)
+    {
+        value := arg + 1
+    }
+    
+    testMe(int arg, object a)
+    {
+        value := arg
+    }
+    
+    validate(int arg)
+    {
+        Assert.ifTrue(value == arg);
+        
+        value := 0
+    }
+}
+
+nilDispatcherTest()
+{
+    console.write("nilDispatcherTest..");
+    
+    auto d := new NilDispatcher();
+    var d2 := d;
+    A a := nil;
+    var b := nil;
+    
+    d.testMe(1, a) \ back:nil;
+    d.validate(2);
+    
+    d.testMe(1, b) \ back:nil;
+    d.validate(1);
+    
+    d.testMe(1, nil) \ back:nil;
+    d.validate(1);
+
+    d2.testMe(1, a) \ back:nil;
+    d2.validate(1);
+    
+    d2.testMe(1, b) \ back:nil;
+    d2.validate(1);
+    
+    d2.testMe(1, nil) \ back:nil;
+    d2.validate(1);
+
+    console.writeLine("done")
+}

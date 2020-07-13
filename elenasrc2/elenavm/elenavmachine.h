@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x0005;
+constexpr auto ELENAVM_REVISION = 0x0006;
 
 // --- ELENAVM common constants ---
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2020 by Alex Rakov";
@@ -189,6 +189,7 @@ protected:
    size_t         _ConvertedMTSize; // used to trace the message table change
    size_t         _ConvertedMATSize; // used to trace the meta attribute table change
 
+   IdentifierString _superClass;
    IdentifierString _literalClass;
    IdentifierString _wideLiteralClass;
    IdentifierString _characterClass;

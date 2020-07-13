@@ -2313,6 +2313,22 @@ void* x86JITCompiler :: getPreloadedReference(ref_t reference)
    return (void*)_preloaded.get(reference);
 }
 
+void x86JITCompiler :: setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode)
+{
+   if (virtualMode) {
+      size_t offset = ((size_t)_preloaded.get(VOID) & ~mskAnyRef);
+
+      _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
+
+      rdata->addReference((ref_t)ptr, offset);
+   }
+   else {
+      size_t offset = (size_t)_preloaded.get(VOID);
+      *(int*)offset = (int)ptr;
+      offset += 0;
+   }
+}
+
 void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumber)
 {
    // get target image & resolve virtual address

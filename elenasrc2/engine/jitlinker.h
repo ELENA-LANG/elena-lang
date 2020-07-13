@@ -135,6 +135,7 @@ class JITLinker : _JITLoaderListener
    void createNativeClassDebugInfo(ReferenceInfo referenceInfo, void* vaddress, size_t& sizePtr);
    void endNativeDebugInfo(size_t sizePtr);
 
+   void* getVMTAddress(void* vaddress);
    void* getVMTAddress(_Module* module, ref_t reference, References& references);
    void* getVMTReference(_Module* module, ref_t reference, References& references);
    int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
@@ -180,6 +181,7 @@ class JITLinker : _JITLoaderListener
 
 public:
    void prepareCompiler();
+   void fixImage(ident_t superClass);
 
    void* resolve(ReferenceInfo referenceInfo, int mask, bool silentMode);
    void* resolve(ident_t reference, int mask, bool silentMode);

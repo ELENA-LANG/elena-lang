@@ -428,6 +428,19 @@ void* JITLinker :: getVMTReference(_Module* module, ref_t reference, References&
    else return NULL;
 }
 
+void* JITLinker :: getVMTAddress(void* vaddress)
+{
+   void* vmtPtr;
+   if (_virtualMode) {
+      _Memory* image = _loader->getTargetSection(mskVMTRef);
+
+      vmtPtr = image->get((ref_t)vaddress & ~mskAnyRef);
+   }
+   else vmtPtr = vaddress;
+
+   return vmtPtr;
+}
+
 int JITLinker :: getVMTMethodAddress(void* vaddress, int messageID)
 {
    void* entries;
@@ -1475,4 +1488,13 @@ void JITLinker :: prepareCompiler()
 
    // fix not loaded references
    fixReferences(references, _loader->getTargetSection((ref_t)mskCodeRef));
+}
+
+void JITLinker :: fixImage(ident_t superClass)
+{
+   // HOTFIX : setting a reference to the super class class in VOID
+   void* superPtr = resolve(superClass, mskVMTRef, true);
+   //void* ptr = _compiler->findClassPtr(superPtr);
+
+   _compiler->setVoidParent(_loader, superPtr, _virtualMode);
 }

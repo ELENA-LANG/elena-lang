@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class implementation.
 //
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -16,6 +16,7 @@ using namespace _ELENA_;
 
 // --- ELENA Class constants ---
 const int elVMTCountOffset32      = 0x000C;           // a VMT size offset
+const int elVMTClassOffset32      = 0x0010;           // a VMT class offset
 const int elVMTCountOffset64      = 0x0018;           // a VMTX size offset
 
 inline void insertVMTEntry(VMTEntry* entries, int count, int index)
@@ -177,6 +178,12 @@ void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
    // object body
    writer->write(binary->get(0), length);
    writer->align(4, 0);
+}
+
+void* JITCompiler32 :: findClassPtr(void* refVMT)
+{
+   int classRef = *(int*)((int)refVMT - elVMTClassOffset32);
+   return (void*)classRef;
 }
 
 size_t JITCompiler32 :: findFlags(void* refVMT)

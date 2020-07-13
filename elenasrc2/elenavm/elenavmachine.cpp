@@ -577,6 +577,7 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
 
    //TODO: clear message table?
 
+   _superClass.copy(_config.forwards.get(SUPER_FORWARD));
    _literalClass.copy(_config.forwards.get(STR_FORWARD));
    _wideLiteralClass.copy(_config.forwards.get(WIDESTR_FORWARD));
    _characterClass.copy(_config.forwards.get(CHAR_FORWARD));
@@ -602,6 +603,8 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
 
    // HOTFIX : literal constant is refered in the object, so it should be preloaded
    _linker->resolve(_literalClass, mskVMTRef, true);
+
+   _linker->fixImage(_superClass.ident());
 
    // HOTFIX : resolve message table
    resolveMessageTable();

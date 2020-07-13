@@ -118,9 +118,9 @@ end
 rstructure %VOID
 
   dd 0
+  dd 0  // ; a reference to the super class class
   dd 0
-  dd 0
-  dd 0
+  dd 0  
   dd 0
 
 end
