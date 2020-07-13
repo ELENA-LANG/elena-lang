@@ -526,8 +526,12 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
    if ((!targetRef || targetRef == scope.superReference) && !isPrimitiveRef(sourceRef))
       return true;
 
-   if (!ignoreNils && sourceRef == V_NIL)
-      return true;
+   if (sourceRef == V_NIL) {
+      // nil is compatible with a super class for the message dispatching
+      // and with all types for all other cases
+      if (!ignoreNils || targetRef == scope.superReference)
+         return true;
+   }
 
    if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
       return true;
