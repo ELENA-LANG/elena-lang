@@ -1,0 +1,20 @@
+<configuration>
+    <project>
+        <executable>intsum.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>sum</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>sum.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="prompt">sum'IntSamplePrompt</forward>
+        <forward key="number">extensions'Integer</forward>
+    </forwards>
+</configuration>

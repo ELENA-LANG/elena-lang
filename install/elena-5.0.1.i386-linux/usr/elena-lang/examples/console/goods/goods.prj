@@ -1,0 +1,16 @@
+<configuration>
+    <project>        
+        <executable>goods.exe</executable>
+        <arguments>list.txt</arguments>
+        <output></output>
+        <options></options>
+        <namespace>goods</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>main.l</include>
+        </module>
+    </files>
+</configuration>

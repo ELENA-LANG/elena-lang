@@ -1,0 +1,86 @@
+# depslib dependency file v1.0
+1558014950 source:/home/alex/elena-lang/elenasrc2/common/config.cpp
+	"config.h"
+
+1558014950 /home/alex/elena-lang/elenasrc2/common/config.h
+	"common.h"
+	"xmlreader.h"
+
+1572613706 /home/alex/elena-lang/elenasrc2/common/common.h
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<wchar.h>
+	<climits>
+	"tools.h"
+	"altstrings.h"
+	"streams.h"
+	"dump.h"
+	"lists.h"
+	"files.h"
+
+1558014950 /home/alex/elena-lang/elenasrc2/common/tools.h
+	<ctype.h>
+
+1584352132 /home/alex/elena-lang/elenasrc2/common/altstrings.h
+
+1558620371 /home/alex/elena-lang/elenasrc2/common/streams.h
+
+1558014950 /home/alex/elena-lang/elenasrc2/common/dump.h
+
+1578303170 /home/alex/elena-lang/elenasrc2/common/lists.h
+
+1578303846 /home/alex/elena-lang/elenasrc2/common/files.h
+
+1558014950 /home/alex/elena-lang/elenasrc2/common/xmlreader.h
+	"common.h"
+
+1558014950 source:/home/alex/elena-lang/elenasrc2/common/dump.cpp
+	"common.h"
+	"dump.h"
+
+1578300732 source:/home/alex/elena-lang/elenasrc2/common/files.cpp
+	"common.h"
+	"files.h"
+	<windows.h>
+	<direct.h>
+	<io.h>
+	<unistd.h>
+	<sys/stat.h>
+
+1558014950 source:/home/alex/elena-lang/elenasrc2/common/xmlreader.cpp
+	"xmlreader.h"
+
+1558014950 source:/home/alex/elena-lang/elenasrc2/engine/parsertable.cpp
+	"elena.h"
+	"parsertable.h"
+
+1584352132 /home/alex/elena-lang/elenasrc2/engine/elena.h
+	"common.h"
+	"elenaconst.h"
+	"section.h"
+
+1584352132 /home/alex/elena-lang/elenasrc2/engine/elenaconst.h
+
+1558620521 /home/alex/elena-lang/elenasrc2/engine/section.h
+
+1578300732 /home/alex/elena-lang/elenasrc2/engine/parsertable.h
+
+1558014950 source:/home/alex/elena-lang/elenasrc2/engine/textsource.cpp
+	"elena.h"
+	"textsource.h"
+
+1558014950 /home/alex/elena-lang/elenasrc2/engine/textsource.h
+	"textparser.h"
+
+1558619716 /home/alex/elena-lang/elenasrc2/engine/textparser.h
+
+1578300732 source:/home/alex/elena-lang/elenasrc2/tools/sg/sg.cpp
+	"sg.h"
+
+1558014951 /home/alex/elena-lang/elenasrc2/tools/sg/linux32/sg.h
+	"elena.h"
+	"textsource.h"
+	"parsertable.h"
+	<stdarg.h>
+

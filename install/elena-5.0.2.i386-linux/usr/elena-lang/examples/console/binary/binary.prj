@@ -1,0 +1,16 @@
+<configuration>
+    <project>
+        <executable>binary.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>binary</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>binary.l</include>
+        </module>
+    </files>
+</configuration>

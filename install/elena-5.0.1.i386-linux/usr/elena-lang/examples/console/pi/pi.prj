@@ -1,0 +1,16 @@
+<configuration>
+    <project>
+        <executable>pi.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>pi</namespace>
+        <template>console</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>pi.l</include>
+        </module>
+    </files>
+</configuration>

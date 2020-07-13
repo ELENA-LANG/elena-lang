@@ -1,0 +1,139 @@
+# depslib dependency file v1.0
+1584352132 source:/home/alex/elena-lang/elenasrc2/common/altstrings.cpp
+	"common.h"
+	"altstrings.h"
+	<math.h>
+
+1572613706 /home/alex/elena-lang/elenasrc2/common/common.h
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	<wchar.h>
+	<climits>
+	"tools.h"
+	"altstrings.h"
+	"streams.h"
+	"dump.h"
+	"lists.h"
+	"files.h"
+
+1558014950 /home/alex/elena-lang/elenasrc2/common/tools.h
+	<ctype.h>
+
+1584352132 /home/alex/elena-lang/elenasrc2/common/altstrings.h
+
+1558620371 /home/alex/elena-lang/elenasrc2/common/streams.h
+
+1558014950 /home/alex/elena-lang/elenasrc2/common/dump.h
+
+1578303170 /home/alex/elena-lang/elenasrc2/common/lists.h
+
+1578303846 /home/alex/elena-lang/elenasrc2/common/files.h
+
+1558014950 source:/home/alex/elena-lang/elenasrc2/common/dump.cpp
+	"common.h"
+	"dump.h"
+
+1578300732 source:/home/alex/elena-lang/elenasrc2/common/files.cpp
+	"common.h"
+	"files.h"
+	<windows.h>
+	<direct.h>
+	<io.h>
+	<unistd.h>
+	<sys/stat.h>
+
+1594236580 source:/home/alex/elena-lang/elenasrc2/engine/bytecode.cpp
+	"elena.h"
+	"bytecode.h"
+
+1594236580 /home/alex/elena-lang/elenasrc2/engine/elena.h
+	"common.h"
+	"elenaconst.h"
+	"section.h"
+
+1594236580 /home/alex/elena-lang/elenasrc2/engine/elenaconst.h
+
+1558620521 /home/alex/elena-lang/elenasrc2/engine/section.h
+
+1594236580 /home/alex/elena-lang/elenasrc2/engine/bytecode.h
+
+1558014950 source:/home/alex/elena-lang/elenasrc2/engine/parsertable.cpp
+	"elena.h"
+	"parsertable.h"
+
+1578300732 /home/alex/elena-lang/elenasrc2/engine/parsertable.h
+
+1558014950 source:/home/alex/elena-lang/elenasrc2/engine/textsource.cpp
+	"elena.h"
+	"textsource.h"
+
+1558014950 /home/alex/elena-lang/elenasrc2/engine/textsource.h
+	"textparser.h"
+
+1558619716 /home/alex/elena-lang/elenasrc2/engine/textparser.h
+
+1588740885 source:/home/alex/elena-lang/elenasrc2/elenasm/cfparser.cpp
+	"elena.h"
+	"cfparser.h"
+
+1588740885 /home/alex/elena-lang/elenasrc2/elenasm/cfparser.h
+	"scriptengine.h"
+
+1594459328 /home/alex/elena-lang/elenasrc2/elenasm/scriptengine.h
+	"elena.h"
+	"textsource.h"
+
+1578300732 source:/home/alex/elena-lang/elenasrc2/elenasm/inlineparser.cpp
+	"elena.h"
+	"inlineparser.h"
+	"bytecode.h"
+
+1558014950 /home/alex/elena-lang/elenasrc2/elenasm/inlineparser.h
+	"scriptengine.h"
+
+1594459070 source:/home/alex/elena-lang/elenasrc2/elenasm/linux32/main.cpp
+	"elena.h"
+	"elenasm.h"
+	"session.h"
+	<unistd.h>
+
+1594459385 /home/alex/elena-lang/elenasrc2/elenasm/linux32/elenasm.h
+	"elenamachine.h"
+
+1594367260 /home/alex/elena-lang/elenasrc2/engine/elenamachine.h
+
+1572608096 /home/alex/elena-lang/elenasrc2/elenasm/session.h
+	"scriptengine.h"
+
+1594459724 source:/home/alex/elena-lang/elenasrc2/elenasm/session.cpp
+	"elena.h"
+	"session.h"
+	"cfparser.h"
+	"inlineparser.h"
+	"treeparser.h"
+	"transformer.h"
+
+1558014950 /home/alex/elena-lang/elenasrc2/elenasm/treeparser.h
+	"scriptengine.h"
+	"syntaxtree.h"
+
+1594236580 /home/alex/elena-lang/elenasrc2/engine/syntaxtree.h
+
+1572608096 /home/alex/elena-lang/elenasrc2/elenasm/transformer.h
+	"scriptengine.h"
+
+1588740885 source:/home/alex/elena-lang/elenasrc2/elenasm/transformer.cpp
+	"elena.h"
+	"transformer.h"
+
+1594236580 source:/home/alex/elena-lang/elenasrc2/elenasm/treeparser.cpp
+	"elena.h"
+	"treeparser.h"
+	"bytecode.h"
+	"compilercommon.h"
+
+1594236580 /home/alex/elena-lang/elenasrc2/engine/compilercommon.h
+	"syntaxtree.h"
+	"bytecode.h"
+

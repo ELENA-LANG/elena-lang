@@ -1,7 +1,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
+#include "elenavm.h"
 #include "x86elenavmachine.h"
-////#include "evmscope.h"
 
 using namespace _ELENA_;
 
