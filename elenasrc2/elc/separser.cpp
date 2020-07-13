@@ -69,8 +69,6 @@ bool ScriptParser :: setOption(ident_t option, ident_t projectPath)
 
 void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
 {
-   // !! temporal
-#ifdef _WIN32
    IdentifierString s(filePath);
 
    void* tape = _InterpretFile(s, _encoding, false);
@@ -101,5 +99,4 @@ void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
 
       _Release(tape);
    }
-#endif
 }
