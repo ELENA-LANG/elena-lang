@@ -19,9 +19,6 @@
 					<Add option="-g" />
 					<Add option="-DBUILD_DLL" />
 				</Compiler>
-				<Linker>
-					<Add library="user32" />
-				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="../../../bin/elenavm" prefix_auto="1" extension_auto="1" />
@@ -37,7 +34,6 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add library="user32" />
 				</Linker>
 			</Target>
 		</Build>
@@ -56,7 +52,8 @@
 			<Add directory=".." />
 		</Compiler>
 		<Linker>
-			<Add option="-static-libgcc -static-libstdc++" />
+			<Add option="-m32" />
+			<Add option="-fvisibility=hidden" />
 		</Linker>
 		<Unit filename="../../common/altstrings.cpp" />
 		<Unit filename="../../common/altstrings.h" />
