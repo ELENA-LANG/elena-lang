@@ -1,4 +1,0 @@
-{ ? "Enter the first number" : system'Integer }
-{ ? "Enter the second number" : system'Integer }
-? "The result is "
-? { @1 + @2 }
