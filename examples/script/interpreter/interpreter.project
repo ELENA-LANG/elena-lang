@@ -1,6 +1,6 @@
 <configuration>
     <project>
-        <executable>interpreter.exe</executable>
+        <executable>interpreter</executable>
         <arguments>sample1.txt</arguments>
         <output></output>
         <options></options>
