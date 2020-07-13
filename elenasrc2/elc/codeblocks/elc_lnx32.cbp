@@ -12,7 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
-				<Option parameters="/home/alex/elena-lang/tests/linux/linux.project" />
+				<Option parameters="/home/alex/elena-lang/examples/script/calculator/calc_static.project" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -45,7 +45,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-m32" />
-			<Add option="-static-libgcc -static-libstdc++" />
+			<Add option="-static-libgcc -static-libstdc++ -ldl" />
 		</Linker>
 		<Unit filename="../../common/altstrings.cpp" />
 		<Unit filename="../../common/altstrings.h" />

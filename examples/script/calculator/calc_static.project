@@ -2,14 +2,14 @@
     <project>
         <namespace>calc</namespace>
         <template>console</template>
-        <executable>calc_static.exe</executable>
+        <executable>calc_static</executable>
         <debuginfo>-1</debuginfo>
         <classsymbolload>-1</classsymbolload>
     </project>
     <targets>
         <target name="eson" type="2">
             <option>[[ #grammar tree ]]</option>
-            <option>~\scripts\lscript.es</option>
+            <option>~/scripts/lscript.es</option>
         </target>
     </targets>
     <files>

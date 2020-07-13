@@ -60,6 +60,8 @@
 		<Unit filename="../../engine/bytecode.h" />
 		<Unit filename="../../engine/parsertable.cpp" />
 		<Unit filename="../../engine/parsertable.h" />
+		<Unit filename="../../engine/syntaxtree.cpp" />
+		<Unit filename="../../engine/syntaxtree.h" />
 		<Unit filename="../../engine/textparser.h" />
 		<Unit filename="../../engine/textsource.cpp" />
 		<Unit filename="../../engine/textsource.h" />

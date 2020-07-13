@@ -12,17 +12,32 @@
 
 using namespace _ELENA_;
 
+#ifdef _WIN32
+
+#define SCRIPTENGINE_LIB Path("elenasm.dll").str()
+
+#else
+
+#define SCRIPTENGINE_LIB "/usr/lib/elena/libelenasm.so"
+
+#endif
+
 ScriptParser :: ScriptParser()
-   : _library(Path("elenasm.dll").str())
+   : _library(SCRIPTENGINE_LIB)
 {
    _encoding = feUTF8;
 
-   // !! temporal
 #ifdef _WIN32
    _InterpretScript = (void*(__cdecl*)(const char*))_library.loadFunction("InterpretScript");
    _InterpretFile = (void*(__cdecl*)(const char*,int,bool))_library.loadFunction("InterpretFile");
    _Release = (void(__cdecl*)(void*))_library.loadFunction("Release");
    _GetStatus = (int(__cdecl*)(char*,int))_library.loadFunction("GetStatus");
+#else
+   *(void **)(&_InterpretScript) = _library.loadFunction("InterpretScript");
+   *(void **)(&_InterpretFile) = _library.loadFunction("InterpretFile");
+   *(void **)(&_Release) = _library.loadFunction("Release");
+   *(void **)(&_GetStatus) = _library.loadFunction("GetStatus");
+
 #endif
 }
 
@@ -33,7 +48,7 @@ bool ScriptParser :: setOption(ident_t option, ident_t projectPath)
          // if it is a standart grammar
          _InterpretFile(option, _encoding, false);
       }
-      else {         
+      else {
          if (!emptystr(projectPath)) {
             IdentifierString grammarPath(projectPath);
 
