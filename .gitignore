@@ -3,6 +3,7 @@
 *.exe
 *.nl
 *.dnl
+*.dn
 *.o
 *.obj
 *.so
