@@ -35,6 +35,7 @@
             <include>dynamic\derserializer.l</include>
         </module>
         <module name="scripting">
+            <include>scripting\win32_scripts.l</include>
             <include>scripting\interpreter.l</include>
             <include>scripting\jscript.l</include>
             <include>scripting\lscript.l</include>

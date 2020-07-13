@@ -1,8 +1,3 @@
-static ScriptEngine jscriptEngine
-    = new ScriptEngine()
-            .loadPath("~\scripts\grammar.es")
-            .loadPath("~\scripts\jscript.es");
-
 public singleton jscript
 {
     eval(string script)
