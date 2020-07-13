@@ -92,6 +92,8 @@
 		<Unit filename="../../engine/x86helper.h" />
 		<Unit filename="../../engine/x86jitcompiler.cpp" />
 		<Unit filename="../../engine/x86jitcompiler.h" />
+		<Unit filename="../elenavmachine.cpp" />
+		<Unit filename="../elenavmachine.h" />
 		<Unit filename="../linux32/dllmain.cpp" />
 		<Unit filename="../linux32/elenavm.h" />
 		<Unit filename="../linux32/x86elenavmachine.cpp" />

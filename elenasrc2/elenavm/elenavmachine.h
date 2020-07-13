@@ -15,7 +15,17 @@
 constexpr auto ELENAVM_REVISION = 0x0006;
 
 // --- ELENAVM common constants ---
+#ifdef _WIN32
 constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2020 by Alex Rakov";
+constexpr auto ELENAVM_INITIALIZING = L"Initializing...";
+constexpr auto ELENAVM_DEBUGINFO = L"Debug mode...";
+constexpr auto ELENAVM_DONEINFO = L"Done...";
+#else
+constexpr auto ELENAVM_GREETING = "ELENA VM %d.%d.%d (C)2005-2020 by Alex Rakov";
+constexpr auto ELENAVM_INITIALIZING = "Initializing...";
+constexpr auto ELENAVM_DEBUGINFO = "Debug mode...";
+constexpr auto ELENAVM_DONEINFO = "Done...";
+#endif
 
 namespace _ELENA_
 {
@@ -249,7 +259,11 @@ protected:
 
    //void* findDebugEntryPoint(ByteArray& tape);
 
+#ifdef _WIN32
    void printInfo(const wchar_t* s, ...);
+#else
+   void printInfo(const char* s, ...);
+#endif
 
    virtual void resumeVM() = 0;
    virtual void stopVM() = 0;
@@ -307,8 +321,8 @@ public:
       if (info.module != NULL) {
          if (isWeakReference(info.referenceName)) {
             _status.append(info.module->Name());
-         }         
-      }     
+         }
+      }
       _status.append(emptystr(info.referenceName) ? "(null)" : info.referenceName);
    }
 
@@ -400,7 +414,7 @@ public:
          setStatus("Invalid subject");
 
          return 0;
-      }         
+      }
 
       return _linker->parseMessage(subjectName, true);
    }

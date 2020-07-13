@@ -255,6 +255,7 @@ size_t Instance :: getLinkerConstant(int id)
    }
 }
 
+#ifdef _WIN32
 void Instance :: printInfo(const wchar_t* msg, ...)
 {
    va_list argptr;
@@ -266,6 +267,21 @@ void Instance :: printInfo(const wchar_t* msg, ...)
 
    fflush(stdout);
 }
+#else
+
+void Instance :: printInfo(const char* msg, ...)
+{
+   va_list argptr;
+   va_start(argptr, msg);
+
+   vprintf(msg, argptr);
+   va_end(argptr);
+   printf("\n");
+
+   fflush(stdout);
+}
+
+#endif
 
 ident_t Instance :: resolveTemplateWeakReference(ident_t referenceName)
 {
@@ -569,7 +585,7 @@ void Instance :: resolveMetaAttributeTable()
 bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
 {
    printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION);
-   printInfo(L"Initializing...");
+   printInfo(ELENAVM_INITIALIZING);
 
    clearReferences();
    clearMessageTable();
@@ -590,7 +606,7 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
 
    // init debug section
    if (_debugMode) {
-      printInfo(L"Debug mode...");
+      printInfo(ELENAVM_DEBUGINFO);
    }
 
    _compiler->setTLSKey((void*)*env->TLSIndex);
@@ -620,7 +636,7 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
    env->Table->gc_roots = (pos_t)getTargetSection(mskStatRef)->get(0);
    env->Table->gc_rootcount = (_linker->getStaticCount() << 2);
 
-   printInfo(L"Done...");
+   printInfo(ELENAVM_DONEINFO);
 
    return true;
 }
@@ -656,7 +672,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
          case ARG_TAPE_MESSAGE_ID:
             extra_param = loadSymbol(arg, mskVMTRef);
             break;
-         case CALL_TAPE_MESSAGE_ID: 
+         case CALL_TAPE_MESSAGE_ID:
             //callr
             //pusha
             ecodes.writeByte(bcCallR);
@@ -780,7 +796,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
 
       //      // ; assign content
       //      // bcopya
-      //      
+      //
       //      ecodes.writeByte(bcBCopyA);
 
       //      if (level > 5) {
@@ -972,7 +988,7 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
    if (initTape.Length() > 0) {
       ecodes[0] = ecodes[0] + initTape.Length();
       ecodes.insert(4, initTape.get(0), initTape.Length());
-   }      
+   }
 
    // compile byte code
    MemoryReader reader(&ecodes);
@@ -997,7 +1013,7 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
    // raise an exception to warn debugger
    if (_debugMode) {
       raiseBreakpoint();
-   }      
+   }
 
    _Entry entry;
    entry.address = env->Invoker;
@@ -1010,7 +1026,7 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
 
    if (retVal == 0)
       setStatus("Broken");
-      
+
    return retVal;
 }
 
@@ -1030,7 +1046,7 @@ void* Instance :: parseMessage(ident_t message)
    size_t start = 0;
    bool funtionMode = false;
    if (message.startsWith(INVOKE_MESSAGE)) {
-      // HOTFIX : recognize invoke message 
+      // HOTFIX : recognize invoke message
       start = getlength(INVOKE_MESSAGE);
       if (message[start] != '[')
          return nullptr;

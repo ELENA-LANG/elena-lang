@@ -14,7 +14,7 @@ namespace _ELENA_
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION           5                 // ELENA Engine version
    #define ENGINE_MINOR_VERSION           0
-   
+
    constexpr auto LINE_LEN                = 0x1000;         // the maximal source line length
    constexpr auto IDENTIFIER_LEN          = 0x0300;         // the maximal identifier length
 
@@ -269,6 +269,7 @@ namespace _ELENA_
 //      ptWin32GUIX        = 0x11001,
 //      ptVMWin32GUI       = 0x01101,
       ptLinux32Console   = 0x00002,
+      ptVMLinux32Console = 0x00102,
    };
 
 //  // --- ELENA Debug Mode ---
@@ -420,7 +421,7 @@ namespace _ELENA_
    constexpr auto REDUCE_OPERATOR         = "-=";
    constexpr auto INCREASE_OPERATOR       = "*=";
    constexpr auto SEPARATE_OPERATOR       = "/=";
-   constexpr auto SHIFTL_OPERATOR         = "$shl"; 
+   constexpr auto SHIFTL_OPERATOR         = "$shl";
    constexpr auto SHIFTR_OPERATOR         = "$shr";
    constexpr auto LEN_OPERATOR            = "$sizeof";
    constexpr auto ISNIL_OPERATOR          = "??";

@@ -22,6 +22,10 @@
 
 class ImageHelper : public _ELENA_::ExecutableImage::_Helper
 {
+   //_ELENA_::Linker* _linker;
+   bool             _consoleMode;
+
+public:
    virtual void beforeLoad(_ELENA_::_JITCompiler* compiler, _ELENA_::ExecutableImage& image)
    {
       _ELENA_::Project* project = image.getProject();
@@ -37,35 +41,25 @@ class ImageHelper : public _ELENA_::ExecutableImage::_Helper
       // thread table contains TLS reference
       compiler->allocateThreadTable(loader, project->IntSetting(_ELENA_::opThreadMax));
 
-      //if (_vmMode) {
-      //   _ELENA_::MemoryDump tape;
-      //   createTape(tape, project, _consoleMode);
+      if (_vmMode) {
+         _ELENA_::MemoryDump tape;
+         createTape(tape, project, _consoleMode);
 
-      //   compiler->allocateVMTape(loader, tape.get(0), tape.Length());
-      //}
+         compiler->allocateVMTape(loader, tape.get(0), tape.Length());
+      }
    }
 
    virtual void afterLoad(_ELENA_::ExecutableImage& image)
    {
-//      _ELENA_::Project* project = image.getProject();
-//
-//      _ELENA_::Section* debug = image.getDebugSection();
-
-      // fix up debug section if required
-//      if (debug->Length() > 8) {
-//         debug->writeDWord(0, debug->Length());
-//         debug->addReference(image.getDebugEntryPoint(), 4);
-
-//         // HOTFIX : should be removed (see DebugController)
-//         _ELENA_::MemoryWriter debugWriter(debug);
-//         debugWriter.writeDWord(0);
-//      }
-//      else debug->clear();
    }
 
 public:
-   ImageHelper()
+   ImageHelper(/*_ELENA_::Linker* linker, */bool consoleMode, bool vmMode = false)
    {
+      //this->_linker = linker;
+      //this->tls_directory = 0;
+      this->_vmMode = vmMode;
+      this->_consoleMode = consoleMode;
    }
 };
 
@@ -274,7 +268,7 @@ int main(int argc, char* argv[])
          print(ELC_LINKING);
 
          _ELENA_::I386Linker32 linker;
-         ImageHelper helper;
+         ImageHelper helper(true);
          _ELENA_::ExecutableImage image(true, &project, project.createJITCompiler(), helper);
          linker.run(project, image/*, -1*/);
 
@@ -292,20 +286,17 @@ int main(int argc, char* argv[])
 //
 //         print(ELC_SUCCESSFUL_LINKING);
 //      }
-//      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptVMWin32Console) {
-//         print(ELC_LINKING);
-//
-//         if (_ELENA_::emptystr(project.StrSetting(_ELENA_::opVMPath)))
-//            project.raiseError(ELC_WRN_MISSING_VMPATH);
-//
-//         _ELENA_::VirtualMachineClientImage image(
-//            &project, project.createJITCompiler(), project.StrSetting(_ELENA_::opAppPath));
-//
-//         _ELENA_::Linker linker;
-//         linker.run(project, image, -1);
-//
-//         print(ELC_SUCCESSFUL_LINKING);
-//      }
+      else if (project.IntSetting(_ELENA_::opPlatform) == _ELENA_::ptVMLinux32Console) {
+         print(ELC_LINKING);
+
+         _ELENA_::I386Linker32 linker;
+         ImageHelper helper(/*&linker, */true, true);
+         _ELENA_::ExecutableImage image(false, &project, project.createJITCompiler(), helper);
+
+         linker.run(project, image/*, -1*/);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
       else if (platform == _ELENA_::ptLibrary) {
          // no linking for the library
       }
