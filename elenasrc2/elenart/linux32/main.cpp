@@ -164,12 +164,12 @@ int StartThread(void* systemEnv, void* exceptionHandler, void* entryPoint, int i
 
 void OpenFrame(void* systemEnv, void* frameHeader)
 {
-//   SystemRoutineProvider::OpenFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+   SystemRoutineProvider::OpenFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
 }
 
 void CloseFrame(void* systemEnv, void* frameHeader)
 {
-//   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
+   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
 }
 
 void* GCCollect(void* roots, size_t size)
