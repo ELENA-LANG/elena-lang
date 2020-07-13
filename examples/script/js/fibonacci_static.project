@@ -2,7 +2,7 @@
     <project>
         <namespace>fibonacci</namespace>
         <template>console</template>
-        <executable>fibonacci</executable>
+        <executable>fibonacci.exe</executable>
         <debuginfo>-1</debuginfo>
         <arguments></arguments>
         <output></output>
@@ -11,7 +11,7 @@
     <targets>
         <target name="grammar" type="2">
             <option>[[ #grammar tree ]]</option>
-            <option>~/scripts/jscript.es</option>
+            <option>~\scripts\jscript.es</option>
         </target>
     </targets>
     <files>

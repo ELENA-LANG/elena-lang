@@ -1,6 +1,6 @@
 <configuration>
     <project>
-        <executable>calc</executable>
+        <executable>calc.exe</executable>
         <arguments></arguments>
         <output></output>
         <options></options>
