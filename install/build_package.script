@@ -18,6 +18,7 @@ mkdir -p /etc/elena/templates/
 mkdir -p /etc/elena/scripts/
 
 cp ../bin/elc.config /etc/elena/
+cp ../bin/elenavm.config /etc/elena/
 cp ../bin/templates/*.config /etc/elena/templates/
 cp ../bin/scripts/*.es /etc/elena/scripts/
 
