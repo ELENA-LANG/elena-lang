@@ -130,7 +130,7 @@ else
   exit 1
 fi
 
-g++ -march=pentium2 -Wall -m32 -fexceptions -fvisibility=hidden -fvisibility-inlines-hidden -Wno-switch -D_LINUX32 -DMINGW -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/engine2/linux32 -I./elenasrc2/elenavm -c ./elenasrc2/elenavm/linux32/main.cpp -o ./temp/elenavm/linux32/main.o
+g++ -march=pentium2 -Wall -m32 -fexceptions -fvisibility=hidden -fvisibility-inlines-hidden -Wno-switch -D_LINUX32 -DMINGW -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/elenavm/linux32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/engine2/linux32 -I./elenasrc2/elenavm -c ./elenasrc2/elenavm/linux32/main.cpp -o ./temp/elenavm/linux32/main.o
 g++ -march=pentium2 -Wall -m32 -fexceptions -fvisibility=hidden -fvisibility-inlines-hidden -Wno-switch -D_LINUX32 -DMINGW -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/engine/linux32 -I./elenasrc2/elenavm -c ./elenasrc2/elenavm/linux32/x86process.cpp -o ./temp/elenavm/linux32/x86process.o
 g++ -march=pentium2 -Wall -m32 -fexceptions -fvisibility=hidden -fvisibility-inlines-hidden -Wno-switch -D_LINUX32 -DMINGW -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/engine/linux32 -I./elenasrc2/elenavm -c ./elenasrc2/elenavm/linux32/x86elenavmachine.cpp -o ./temp/elenavm/linux32/x86elenavmachine.o
 g++ -march=pentium2 -Wall -m32 -fexceptions -fvisibility=hidden -fvisibility-inlines-hidden -Wno-switch -D_LINUX32 -DMINGW -Wall -g -DBUILD_DLL -std=c++14 -m32 -I./elenasrc2/common -I./elenasrc2/engine -I./elenasrc2/engine/linux32 -I./elenasrc2/elenavm -c ./elenasrc2/elenavm/elenavmachine.cpp -o ./temp/elenavm/elenavmachine.o
