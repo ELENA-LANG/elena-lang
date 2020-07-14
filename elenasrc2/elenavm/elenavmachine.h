@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x0006;
+constexpr auto ELENAVM_REVISION = 0x0007;
 
 // --- ELENAVM common constants ---
 #ifdef _WIN32
@@ -300,6 +300,12 @@ public:
 
 #ifdef _WIN32
    void printInfo(const wchar_t* s, ...);
+   void printInfo(const char* s)
+   {
+      WideString str(s);
+
+      printInfo(str.c_str());
+   }
 #else
    void printInfo(const char* s, ...);
 #endif
