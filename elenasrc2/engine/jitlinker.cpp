@@ -152,7 +152,7 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* va
 // --- JITLinker ---
 
 ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_t weakActionRef, ref_t signature)
-{   
+{
    if (signature == 0u && weakActionRef != 0u)
       return weakActionRef;
 
@@ -200,7 +200,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
       if (isWeakReference(referenceName)) {
          if (isTemplateWeakReference(referenceName)) {
             ReferenceInfo refInfo = _loader->retrieveReference(module, signatures[i], mskVMTRef);
-   
+
             signatureName.append(refInfo.referenceName);
          }
          else {
@@ -219,7 +219,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
    SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true);
 
    ref_t resolvedSignature = info.module->mapAction(signatureName.c_str(), 0u, true);
-   if (resolvedSignature == 0) {      
+   if (resolvedSignature == 0) {
       MemoryWriter writer(info.section);
       resolvedSignature = writer.Position();
 
@@ -321,12 +321,12 @@ int JITLinker :: resolveVMTMethodAddress(_Module* module, ref_t reference, int m
    void* refVAddress = resolve(_loader->retrieveReference(module, reference, mskVMTRef), mskVMTRef, false);
 
    int address = _staticMethods.get(MethodInfo(refVAddress, messageID));
-   if (address == -1) {      
+   if (address == -1) {
       address = getVMTMethodAddress(refVAddress, messageID);
 
       _staticMethods.add(MethodInfo(refVAddress, messageID), address);
    }
-   
+
    return address;
 }
 
@@ -636,7 +636,7 @@ void* JITLinker :: resolvePackage(_Module* module)
    return resolve(ReferenceInfo(module, packageInfo.c_str()), mskConstArray, false);
 }
 
-void JITLinker :: resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader& vmtReader, MemoryReader& attrReader, 
+void JITLinker :: resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader& vmtReader, MemoryReader& attrReader,
    _Memory* vmtImage, ref_t position)
 {
    // fix VMT Static table
@@ -736,10 +736,10 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       size -= sizeof(ClassHeader);
       while (size > 0) {
          vmtReader.read((void*)&entry, sizeof(VMTEntry));
-   
+
          codeReader.seek(entry.address);
          methodPosition = loadMethod(refHelper, codeReader, codeWriter);
-         
+
          // NOTE : statically linked message is not added to VMT
          if (test(entry.message, STATIC_MESSAGE)) {
             _staticMethods.add(MethodInfo(vaddress, refHelper.resolveMessage(entry.message)), methodPosition);
@@ -754,7 +754,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       if (count != header.count)
          throw InternalError("VMT structure is corrupt");
 
-      // load class class  
+      // load class class
       void* classClassVAddress = getVMTAddress(sectionInfo.module, header.classRef, references);
       void* parentVAddress = NULL;
       if (header.parentRef != 0)
@@ -776,7 +776,7 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
 void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask)
 {
    SectionInfo tableInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
-   
+
    MemoryWriter writer(tableInfo.section);
 
    IdentifierString fullName;
@@ -838,7 +838,7 @@ void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int ma
    return vaddress;
 }
 
-void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress, 
+void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image, size_t position, void* &vmtVAddress,
    bool constArrayMode, References* messageReferences)
 {
    // resolve section references
@@ -1053,7 +1053,7 @@ void* JITLinker :: resolveMessageTable(ReferenceInfo referenceInfo, int mask)
    writer.read(&reader, sectionInfo.section->Length());
    writer.writeDWord(0);
    writer.writeDWord(0);
-   
+
    ref_t bodyPtr = writer.Position();
 
    // load table content into target image
@@ -1280,7 +1280,7 @@ void JITLinker :: createNativeClassDebugInfo(ReferenceInfo referenceInfo, void* 
    }
    else writer.writeLiteral(referenceInfo.referenceName);
 
-   sizePtr = writer.Position();   
+   sizePtr = writer.Position();
    writer.writeDWord(0); // size place holder
 
    // save VMT address

@@ -18,10 +18,10 @@ using namespace _ELENA_;
 x86Instance :: x86Instance(ELENAVMMachine* machine)
    : Instance(machine),
      _debugProcess(0x200000, true, false),
-     _codeProcess(0x500000, false, true),
-     _dataProcess(0x500000, false, false),
-     _messageProcess(0x10000, false, false),
-     _mattributeProcess(0x10000, false, false),
+     _codeProcess(0x500000, /*false*/true, true),
+     _dataProcess(0x500000, /*false*/true, false),
+     _messageProcess(0x10000, /*false*/true, false),
+     _mattributeProcess(0x10000, /*false*/true, false),
      _bssProcess(0x1000, true, false),
      _statProcess(0x10000, true, false, 0x100)  // !! temporal
 {

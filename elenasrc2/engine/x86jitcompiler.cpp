@@ -1782,7 +1782,7 @@ void _ELENA_ :: compileAllocI(int opcode, x86JITScope& scope)
 void _ELENA_::compileASaveR(int, x86JITScope& scope)
 {
    // mov [ref], ebx
-   
+
    scope.code->writeWord(0x1D89);
    scope.writeReference(*scope.code, scope.argument, 0);
 }
@@ -1925,7 +1925,7 @@ void _ELENA_::compileElseN(int, x86JITScope& scope)
 
    // cmp edx, n
    // jnz lab
-   
+
    scope.code->writeWord(0xFA81);
    scope.code->writeDWord(scope.argument);
    compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
@@ -2178,11 +2178,12 @@ inline void loadCoreData(_ReferenceHelper& helper, x86JITScope& dataScope, ref_t
    loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
 }
 
-inline void loadRoutines(int functionNumber, const int* functions, x86JITScope& scope, 
+inline void loadRoutines(int functionNumber, const int* functions, x86JITScope& scope,
    IntFixedMap<void*>& preloaded)
 {
    for (int i = 0; i < functionNumber; i++) {
       if (!preloaded.exist(functions[i])) {
+
          preloaded.add(functions[i], scope.helper->getVAddress(*scope.code, mskCodeRef));
 
          // due to optimization section must be ROModule::ROSection instance
@@ -2338,7 +2339,7 @@ void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumb
    dataWriter.writeDWord(0);
    int position = dataWriter.Position();
    if (maxThreadNumber > 0) {
-      // reserve space for the thread table      
+      // reserve space for the thread table
       allocateArray(dataWriter, maxThreadNumber);
    }
 

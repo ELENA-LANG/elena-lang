@@ -27,6 +27,16 @@ using namespace _ELENA_;
 #define SYSTEM_PLATFORM             "configuration/system/platform"
 #define LIBRARY_PATH                "configuration/project/libpath"
 
+#ifdef _WIN32
+
+#define CONFIG_PATH "elenavm.cfg"
+
+#else
+
+#define CONFIG_PATH "/etc/elena/elenavm.config"
+
+#endif // _WIN32
+
 // --- InstanceConfig ---
 
 void InstanceConfig :: loadForwardList(XmlConfigFile& config)
@@ -1128,7 +1138,7 @@ bool ELENAVMMachine::Config :: load(path_t path, Templates* templates)
 ELENAVMMachine :: ELENAVMMachine(path_t rootPath)
    : templates(NULL, freestr), _rootPath(rootPath)
 {
-   Path configPath(rootPath, "elenavm.cfg");
+   Path configPath(rootPath, CONFIG_PATH);
 
    config.load(configPath.c_str(), &templates);
 }

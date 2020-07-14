@@ -10,6 +10,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <dlfcn.h>
+#include <errno.h>
 
 using namespace _ELENA_;
 
@@ -22,6 +23,19 @@ x86Process :: x86Process(size_t size, bool writeAccess, bool executeAccess, size
 
    _code = mmap(NULL, size, getProtectedMode(writeAccess, executeAccess),
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+   if (_code == (void*)INVALID_REF) {
+/*      IdentifierString s;
+      s.appendInt(errno);
+
+      ident_t pstr = s;
+      for(int i = 0; i < getlength(s); i++)
+         putchar(pstr[i]);
+
+      fflush(stdout);
+*/
+      ::exit(errno);
+   }
 
    if (allocated != 0)
       allocate(allocated);
@@ -46,20 +60,31 @@ x86Process :: ~x86Process()
 
 int x86Process :: getProtectedMode(bool writeAccess, bool executeAccess)
 {
-   int mode = PROT_READ;
-   if (executeAccess) {
+   int mode = /*PROT_READ*/PROT_READ | PROT_WRITE | PROT_EXEC;
+/*   if (executeAccess) {
       mode |= PROT_EXEC;
    }
    else if (writeAccess) {
       mode |= PROT_WRITE;
    }
-
+*/
    return mode;
 }
 
 void x86Process :: protect(bool writeAccess, bool executeAccess)
 {
-   ::mprotect(_code, _size, getProtectedMode(writeAccess, executeAccess));
+//   /*int retVal = */::mprotect(_code, _size, getProtectedMode(writeAccess, executeAccess));
+   /*if (retVal == -1) {
+      IdentifierString s;
+      s.appendInt(errno);
+
+      ident_t pstr = s;
+      for(int i = 0; i < getlength(s); i++)
+         putchar(pstr[i]);
+
+      fflush(stdout);
+   }*/
+
 }
 
 bool x86Process :: allocate(size_t size)

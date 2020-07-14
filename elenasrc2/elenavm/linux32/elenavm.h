@@ -40,7 +40,7 @@ extern "C"
 
    DLL_PUBLIC int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
 
-   DLL_PUBLIC int LoadAddressInfo(size_t retPoint, char* lineInfo, int length);
+   DLL_PUBLIC int LoadAddressInfo(void* retPoint, char* buffer, size_t maxLength);
 
    DLL_PUBLIC int LoadClassName(void* object, char* buffer, int length);
 

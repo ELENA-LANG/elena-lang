@@ -83,7 +83,7 @@
 
 1594615480 /home/alex/elena-lang/elenasrc2/engine/jitcompiler.h
 
-1594615480 source:/home/alex/elena-lang/elenasrc2/engine/jitlinker.cpp
+1594746146 source:/home/alex/elena-lang/elenasrc2/engine/jitlinker.cpp
 	"elena.h"
 	"jitlinker.h"
 
@@ -126,7 +126,7 @@
 
 1558014950 /home/alex/elena-lang/elenasrc2/engine/x86helper.h
 
-1594615480 source:/home/alex/elena-lang/elenasrc2/engine/x86jitcompiler.cpp
+1594742749 source:/home/alex/elena-lang/elenasrc2/engine/x86jitcompiler.cpp
 	"elena.h"
 	"x86jitcompiler.h"
 	"bytecode.h"
@@ -144,7 +144,7 @@
 	"elenavmachine.h"
 	"x86process.h"
 
-1594615480 /home/alex/elena-lang/elenasrc2/elenavm/elenavmachine.h
+1594651995 /home/alex/elena-lang/elenasrc2/elenavm/elenavmachine.h
 	"loader.h"
 	"config.h"
 	"libman.h"
@@ -153,8 +153,41 @@
 1594646314 /home/alex/elena-lang/elenasrc2/elenavm/linux32/x86process.h
 	"elena.h"
 
-1594647700 source:/home/alex/elena-lang/elenasrc2/elenavm/linux32/x86elenavmachine.cpp
+1594746232 source:/home/alex/elena-lang/elenasrc2/elenavm/linux32/x86elenavmachine.cpp
 	"elena.h"
 	"x86elenavmachine.h"
 	"x86jitcompiler.h"
+
+1594367287 source:/home/alex/elena-lang/elenasrc2/engine/linux32/linx32routines.cpp
+	"elena.h"
+	"elenamachine.h"
+	<sys/mman.h>
+	<errno.h>
+
+1588740885 source:/home/alex/elena-lang/elenasrc2/engine/x86/x86routines.cpp
+	"elena.h"
+	"elenamachine.h"
+
+1594746027 source:/home/alex/elena-lang/elenasrc2/elenavm/linux32/main.cpp
+	"elena.h"
+	"elenavm.h"
+	"x86elenavmachine.h"
+
+1594746036 /home/alex/elena-lang/elenasrc2/elenavm/linux32/elenavm.h
+	"elenamachine.h"
+
+1594742672 source:/home/alex/elena-lang/elenasrc2/elenavm/linux32/x86process.cpp
+	"elena.h"
+	"x86process.h"
+	<sys/mman.h>
+	<unistd.h>
+	<dlfcn.h>
+	<errno.h>
+
+1594746199 source:/home/alex/elena-lang/elenasrc2/elenavm/elenavmachine.cpp
+	"elena.h"
+	"elenavmachine.h"
+	"bytecode.h"
+	"rtman.h"
+	<stdarg.h>
 
