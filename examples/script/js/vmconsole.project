@@ -1,6 +1,6 @@
 <configuration>
     <project>
-        <executable>vmconsole.exe</executable>
+        <executable>vmconsole</executable>
         <arguments>fibonacci.js</arguments>
         <output></output>
         <options></options>
