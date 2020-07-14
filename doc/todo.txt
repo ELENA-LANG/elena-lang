@@ -12,7 +12,6 @@ In development:
 
   [!project]
     * chat
-    * release 5.0
 
   [documentation]
     * api doc :  static method descriptions;
