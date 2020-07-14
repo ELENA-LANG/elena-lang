@@ -48,7 +48,7 @@ extern "C"
 
    DLL_PUBLIC void* InterpretTape(void* tape);
 
-   DLL_PUBLIC void* GetVMLastError(void* retVal);
+   DLL_PUBLIC const char* GetVMLastError();
 
    DLL_PUBLIC int LoadSubjectName(void* subject, char* lineInfo, int length);
 

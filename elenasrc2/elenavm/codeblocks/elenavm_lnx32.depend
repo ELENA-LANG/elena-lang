@@ -144,7 +144,7 @@
 	"elenavmachine.h"
 	"x86process.h"
 
-1594651995 /home/alex/elena-lang/elenasrc2/elenavm/elenavmachine.h
+1594751505 /home/alex/elena-lang/elenasrc2/elenavm/elenavmachine.h
 	"loader.h"
 	"config.h"
 	"libman.h"
@@ -173,10 +173,10 @@
 	"elenavm.h"
 	"x86elenavmachine.h"
 
-1594746036 /home/alex/elena-lang/elenasrc2/elenavm/linux32/elenavm.h
+1594751620 /home/alex/elena-lang/elenasrc2/elenavm/linux32/elenavm.h
 	"elenamachine.h"
 
-1594742672 source:/home/alex/elena-lang/elenasrc2/elenavm/linux32/x86process.cpp
+1594751055 source:/home/alex/elena-lang/elenasrc2/elenavm/linux32/x86process.cpp
 	"elena.h"
 	"x86process.h"
 	<sys/mman.h>
@@ -184,7 +184,7 @@
 	<dlfcn.h>
 	<errno.h>
 
-1594746199 source:/home/alex/elena-lang/elenasrc2/elenavm/elenavmachine.cpp
+1594751413 source:/home/alex/elena-lang/elenasrc2/elenavm/elenavmachine.cpp
 	"elena.h"
 	"elenavmachine.h"
 	"bytecode.h"

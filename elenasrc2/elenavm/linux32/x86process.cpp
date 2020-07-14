@@ -60,7 +60,11 @@ x86Process :: ~x86Process()
 
 int x86Process :: getProtectedMode(bool writeAccess, bool executeAccess)
 {
-   int mode = /*PROT_READ*/PROT_READ | PROT_WRITE | PROT_EXEC;
+   int mode = 0;
+   if (executeAccess) {
+      mode = PROT_READ | PROT_WRITE | PROT_EXEC;
+   }
+   else mode = PROT_READ | PROT_WRITE;
 /*   if (executeAccess) {
       mode |= PROT_EXEC;
    }

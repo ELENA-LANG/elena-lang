@@ -259,12 +259,6 @@ protected:
 
    //void* findDebugEntryPoint(ByteArray& tape);
 
-#ifdef _WIN32
-   void printInfo(const wchar_t* s, ...);
-#else
-   void printInfo(const char* s, ...);
-#endif
-
    virtual void resumeVM() = 0;
    virtual void stopVM() = 0;
 
@@ -303,6 +297,12 @@ protected:
 
 public:
    ident_t getStatus() { return emptystr(_status) ? NULL : (const char*)_status; }
+
+#ifdef _WIN32
+   void printInfo(const wchar_t* s, ...);
+#else
+   void printInfo(const char* s, ...);
+#endif
 
    void setStatus(ident_t s)
    {

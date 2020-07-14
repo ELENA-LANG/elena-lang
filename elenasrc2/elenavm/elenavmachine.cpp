@@ -1149,11 +1149,30 @@ void ELENAVMMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
    __routineProvider.InitSTA((SystemEnv*)env, frameHeader);
 
    if (tape != nullptr) {
-      // if it is a stand alone application
-      _instance->interprete(env, sehTable, tape, true);
+      int retVal = 0;
+      try {
+         // if it is a stand alone application
+         _instance->interprete(env, sehTable, tape, true);
+      }
+      catch (JITUnresolvedException& e)
+      {
+         retVal = -1;
+         _instance->setStatus("Cannot load ", e.referenceInfo);
+
+         _instance->printInfo(_instance->getStatus());
+      }
+      catch(InternalError& e)
+      {
+         retVal = -1;
+         _instance->setStatus(e.message);
+      }
+      catch (EAbortException&)
+      {
+         retVal = -1;
+      }
 
       // winding down system
-      Exit(0);
+      Exit(retVal);
    }
    // if it is part of the terminal - do nothing
 }
