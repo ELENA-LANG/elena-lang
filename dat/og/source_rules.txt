@@ -7,6 +7,7 @@ copying,    seqexpression, call,        ret_embeddable = 7;
 copying,    seqexpression, copying | intop = 6;
 copying,    seqexpression, copying | longop = 6;
 copying,    seqexpression, copying | realop = 6;
+copying,    seqexpression, copying | realintop = 6;
 copying,    seqexpression, directcall,  ret_embeddable = 7;
 copying,    seqexpression, sdirectcall, ret_embeddable = 7;
 copying,    sdirectcall,   embeddable = 2;
