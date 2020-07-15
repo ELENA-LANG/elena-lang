@@ -135,12 +135,16 @@ enum ByteCode
 //   bcLNot            = 0x7C,
    bcLShrF           = 0x7D,
 
+   bcRAddNF          = 0x80, 
+   bcRSubNF          = 0x81,
+   bcRMulNF          = 0x82,
    bcREqual          = 0x83,
    bcRLess           = 0x84,
    bcRAddF           = 0x85,
    bcRSubF           = 0x86,
    bcRMulF           = 0x87,
    bcRDivF           = 0x88,
+   bcRDivNF          = 0x89,
    bcRIntF           = 0x8E,
 
    bcDec             = 0x90,

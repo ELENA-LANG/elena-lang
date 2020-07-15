@@ -181,10 +181,10 @@ struct TokenInfo
             return negative ? -integer : integer;
          }
          else raiseErr("Invalid number (%d)\n");
-
-         return 0;
       }
-	}
+
+      return 0; // dummy return
+   }
 
    int readLongInteger(Map<ident_t, ref64_t>& constants)
    {

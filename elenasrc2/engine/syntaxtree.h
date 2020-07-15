@@ -189,6 +189,7 @@ enum LexicalType
    lxRealOp                   = 0x0581B5,   // arg - operation id
    lxRealBoolOp               = 0x0581B6,   // arg - operation id
    lxNilOp                    = 0x0581B7,   // arg - operation id
+   lxRealIntOp                = 0x0581B8,   // arg - operation id
    lxField                    = 0x0181C0,   // arg - offset
    lxFieldAddress             = 0x0181C1,   // arg - offset
    lxStaticField              = 0x0181C2,   // arg - reference   // - lxClassStaticField

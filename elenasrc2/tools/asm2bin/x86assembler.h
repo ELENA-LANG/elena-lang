@@ -207,9 +207,13 @@ protected:
    void compileFISTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFIADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFISUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFXCH(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFSTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFBSTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);

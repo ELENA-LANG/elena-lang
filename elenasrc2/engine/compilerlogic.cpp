@@ -188,6 +188,11 @@ CompilerLogic :: CompilerLogic()
    operators.add(OperatorInfo(MUL_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
    operators.add(OperatorInfo(DIV_OPERATOR_ID, V_REAL64, V_REAL64, lxRealOp, V_REAL64));
 
+   operators.add(OperatorInfo(ADD_OPERATOR_ID, V_REAL64, V_INT32, lxRealIntOp, V_REAL64));
+   operators.add(OperatorInfo(SUB_OPERATOR_ID, V_REAL64, V_INT32, lxRealIntOp, V_REAL64));
+   operators.add(OperatorInfo(MUL_OPERATOR_ID, V_REAL64, V_INT32, lxRealIntOp, V_REAL64));
+   operators.add(OperatorInfo(DIV_OPERATOR_ID, V_REAL64, V_INT32, lxRealIntOp, V_REAL64));
+
    operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_REAL64, V_REAL64, lxRealBoolOp, V_FLAG));
    operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_REAL64, V_REAL64, lxRealBoolOp, V_FLAG));
    operators.add(OperatorInfo(LESS_OPERATOR_ID, V_REAL64, V_REAL64, lxRealBoolOp, V_FLAG));

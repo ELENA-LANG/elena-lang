@@ -38,8 +38,8 @@ const char* _fnOpcodes[256] =
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "laddf", "lsubf", "lmulf", "ldivf",
    "landf", "lorf", "lxorf", "lshlf", OPCODE_UNKNOWN, "lshrf", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "requal", "rless", "raddf", "rsubf", "rmulf",
-   "rdivf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rintf", OPCODE_UNKNOWN,
+   "raddnf", "rsubnf", "rmulnf", "requal", "rless", "raddf", "rsubf", "rmulf",
+   "rdivf", "rdivnf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rintf", OPCODE_UNKNOWN,
 
    "dec", "geti", "restore", "peekr", "peekfi", "peeksi", "ifheap", "xseti",
    "open", "quitn", "create", "fillr", "movf", "movs", "movr", "movm",

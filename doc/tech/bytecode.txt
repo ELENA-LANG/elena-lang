@@ -207,13 +207,21 @@ ELENA byte codes (or ecodes)
 
  nxorf                      - dword[fp+i] << dword[fp+i] ~~ dword[acc]
 
- raddf i                    - real[fp+i] << real[fp+i] + real[acc]
+ raddf i                    - real[acc] << real[fp+i] + real[acc]
 
- rdivf i                    - real[fp+i] << real[fp+i] / real[acc]
+ raddnf i                   - real[fp+i] << real[fp+i] + int[acc]
 
- rmulf i                    - real[fp+i] << real[fp+i] * real[acc]
+ rdivf i                    - real[acc] << real[acc] / real[fp+i]
+
+ rdivnf i                   - real[fp+i] << real[fp+i] / int[acc] 
+
+ rmulf i                    - real[acc] << real[acc] * real[fp+i] 
+
+ rmulnf i                   - real[fp+i] << real[fp+i] * real[acc]
 
  rsubf i                    - real[fp+i] << real[fp+i] - real[acc] 
+
+ rsubnf i                   - real[fp+i] << real[fp+i] - int[acc]
 
  rexp                       - real[sp] << exp(real[acc]) 
 

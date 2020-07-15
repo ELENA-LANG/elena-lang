@@ -2802,6 +2802,21 @@ void x86Assembler :: compileFSUB(TokenInfo& token, ProcedureInfo& info, MemoryWr
 	else token.raiseErr("Invalid command (%d)");
 }
 
+void x86Assembler :: compileFISUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	token.read();
+	if (token.check("dword")) {
+		Operand sour = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
+
+		if (test(sour.type, x86Helper::otM32)) {
+			code->writeByte(0xDA);
+			x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), sour);
+		}
+		else token.raiseErr("Invalid command (%d)");
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
 void x86Assembler :: compileFADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
@@ -2834,6 +2849,21 @@ void x86Assembler :: compileFADD(TokenInfo& token, ProcedureInfo& info, MemoryWr
 
 		code->writeByte(0xDC);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 0), operand);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler::compileFIADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	token.read();
+	if (token.check("dword")) {
+		Operand sour = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
+
+		if (test(sour.type, x86Helper::otM32)) {
+			code->writeByte(0xDA);
+			x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 0), sour);
+		}
+		else token.raiseErr("Invalid command (%d)");
 	}
 	else token.raiseErr("Invalid command (%d)");
 }
@@ -2874,6 +2904,21 @@ void x86Assembler :: compileFMUL(TokenInfo& token, ProcedureInfo& info, MemoryWr
 	else token.raiseErr("Invalid command (%d)");
 }
 
+void x86Assembler :: compileFIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	token.read();
+	if (token.check("dword")) {
+		Operand sour = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
+
+		if (test(sour.type, x86Helper::otM32)) {
+			code->writeByte(0xDA);
+			x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 1), sour);
+		}
+		else token.raiseErr("Invalid command (%d)");
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
 void x86Assembler :: compileFDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
 	token.read();
@@ -2906,6 +2951,21 @@ void x86Assembler :: compileFDIV(TokenInfo& token, ProcedureInfo& info, MemoryWr
 
 		code->writeByte(0xDC);
 		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 6), operand);
+	}
+	else token.raiseErr("Invalid command (%d)");
+}
+
+void x86Assembler :: compileFIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	token.read();
+	if (token.check("dword")) {
+		Operand sour = readPtrOperand(token, info, "Invalid operand (%d)\n", x86Helper::otM32);
+
+		if (test(sour.type, x86Helper::otM32)) {
+			code->writeByte(0xDA);
+			x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 6), sour);
+		}
+		else token.raiseErr("Invalid command (%d)");
 	}
 	else token.raiseErr("Invalid command (%d)");
 }
@@ -3618,9 +3678,17 @@ bool x86Assembler :: compileCommandF(TokenInfo& token, ProcedureInfo& info, Memo
 		compileFADD(token, info, &writer);
       return true;
 	}
+	else if (token.check("fiadd")) {
+		compileFIADD(token, info, &writer);
+		return true;
+	}
 	else if (token.check("fsub")) {
 		compileFSUB(token, info, &writer);
       return true;
+	}
+	else if (token.check("fisub")) {
+		compileFISUB(token, info, &writer);
+		return true;
 	}
 	else if (token.check("fcomip")) {
 		compileFCOMIP(token, info, &writer);
@@ -3638,9 +3706,17 @@ bool x86Assembler :: compileCommandF(TokenInfo& token, ProcedureInfo& info, Memo
 		compileFMUL(token, info, &writer);
       return true;
 	}
+	else if (token.check("fimul")) {
+		compileFIMUL(token, info, &writer);
+		return true;
+	}
 	else if (token.check("fdiv")) {
 		compileFDIV(token, info, &writer);
       return true;
+	}
+	else if (token.check("fidiv")) {
+		compileFIDIV(token, info, &writer);
+		return true;
 	}
 	else if (token.check("faddp")) {
 		compileFADDP(token, info, &writer);

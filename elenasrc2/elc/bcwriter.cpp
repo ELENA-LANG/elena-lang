@@ -1933,6 +1933,31 @@ void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id, int l
    }
 }
 
+void ByteCodeWriter :: doRealIntOperation(CommandTape& tape, int operator_id, int localOffset)
+{
+   switch (operator_id) {
+   case ADD_OPERATOR_ID:
+      // raddnf i
+      tape.write(bcRAddNF, localOffset);
+      break;
+   case SUB_OPERATOR_ID:
+      // rsubnf i
+      tape.write(bcRSubNF, localOffset);
+      break;
+   case MUL_OPERATOR_ID:
+      // rmulnf i
+      tape.write(bcRMulNF, localOffset);
+      break;
+   case DIV_OPERATOR_ID:
+      // rdivnf i
+      tape.write(bcRDivNF, localOffset);
+      break;
+   default:
+      throw InternalError("not yet implemente"); // !! temporal
+      break;
+   }
+}
+
 void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, int argument)
 {
    switch (operator_id) {
@@ -2906,6 +2931,9 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       }
       else if (node == lxRealOp) {
          doRealOperation(tape, node.argument, largObj.argument);
+      }
+      else if (node == lxRealIntOp) {
+         doRealIntOperation(tape, node.argument, largObj.argument);
       }
    }
 
@@ -4508,6 +4536,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
       case lxIntOp:
       case lxLongOp:
       case lxRealOp:
+      case lxRealIntOp:
          generateOperation(tape, node, scope, mode & ~STACKOP_MODE);
          break;
       case lxIntBoolOp:

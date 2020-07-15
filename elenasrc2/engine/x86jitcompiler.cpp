@@ -69,7 +69,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 150;
+const int gcCommandNumber = 154;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -102,6 +102,7 @@ const int gcCommands[gcCommandNumber] =
    bcIfHeap, bcEqualFI, bcLoadF, bcRSaveL, bcRAbs,
    bcCallI, bcIfCount, bcSub, bcSwapD, bcXSet,
    bcMIndex, bcParent, bcCheckSI, bcLSave, bcLCallExtR,
+   bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF
 };
 
 const int gcCommandExNumber = 54;
@@ -151,8 +152,8 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp,
    &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &loadFPOp, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp,
-   &loadFPOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &compileNop,
+   &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp,
+   &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &compileNop,
 
    &compileDec, &loadIndexOp, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadIndexOp,
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,

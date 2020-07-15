@@ -2073,8 +2073,37 @@ lEnd2:
 
 end
 
-// ; requal
+// ; raddnf
+inline % 80h
 
+  lea   edi, [ebp+__arg1]
+  fild  dword ptr [ebx]
+  fadd  qword ptr [edi] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; rsubnf
+inline % 81h
+
+  lea   edi, [ebp+__arg1]
+  fld   qword ptr [edi]
+  fisub dword ptr [ebx] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; rmulnf
+inline % 82h
+
+  lea   edi, [ebp+__arg1]
+  fld   qword ptr [edi]
+  fimul dword ptr [ebx] 
+  fstp  qword ptr [edi]
+
+end
+
+// ; requal
 inline % 83h
 
   mov    edi, [esp]
@@ -2137,6 +2166,16 @@ inline % 88h
   fld  qword ptr [edi]
   fdiv qword ptr [ebx] 
   fstp qword ptr [edi]
+
+end
+
+// ; rdivnf
+inline % 89h
+                                                   
+  lea   edi, [ebp+__arg1]
+  fld   qword ptr [edi]
+  fidiv dword ptr [ebx] 
+  fstp  qword ptr [edi]
 
 end
 
