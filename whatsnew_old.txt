@@ -1,8 +1,58 @@
 ﻿
                                 ELENA Language 
 
-                                Version 3.x (obsolete)
+                                Version 3.x
  
+***************************************************************
+                             What's New in 4.1.1
+***************************************************************
+
+[ELENA]
+[!] several critical bug fixes!
+[+] #481 : New expression attribute - inlinearg
+[*] the operations with reference arguments are improved
+[-] #200 : unboxing explicit local allocated extension
+[-] #64 : Stand alone executable - Script engine 
+
+***************************************************************
+                             What's New in 4.0.5, point release 
+***************************************************************
+
+[ELENA]
+[-] fixing critical bug in external routine call
+[-] #284, +283 : duplicate output nested fields
+
+***************************************************************
+                             What's New in 4.0.3, release 
+***************************************************************
+
+[ELENA]
+[-] #461 : Resolving strong-typed message with variadic argument list
+[-] #455 : ref<> template 
+[-] #451 : Embeddable implicit constructors
+
+[LIB]
+[-] fixing critical bug in float-based arithmetic
+
+[Misc]
+[+] adding ELENA LIB unit tests
+
+***************************************************************
+                             What's New in 4.0.1, second beta    
+***************************************************************
+
+[ELENA]
+[!] several critical bug fixes
+[!] the syntax deeply refactored and streamlined
+[*] #355 : Multimethods : nil
+[+] new operators : .\ and .?
+
+[LIB]
+[*] forms library (re)implemented
+
+[Misc]
+[*] ELENA 4.x Specification (see doc\lang\spec.txt)
+[*] (re)implementing script engine
 ***************************************************************
                              What's New in 3.4.0
 ***************************************************************
