@@ -158,6 +158,8 @@ ELENA byte codes (or ecodes)
 
  readtof i, n               - copy acc[index] >> fp+i, n*4-bytes
  
+ xrsavef i,n                - real[fp:i] <= n
+                                                                                                               
  xsaveai i,n                - acc[i] <= n
                                                                                                                
  xsavef i,n                 - fp:i <= n

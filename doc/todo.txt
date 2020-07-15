@@ -3,12 +3,12 @@ In development:
 ------         
 
   [development]
-    * pi optimization : real {+|-|*|/} int-const (#86)
     * [ warn if the objecct cannot be converted into another one ]
     * chat
     * graph
     * GC to C
     * web server
+    * pi optimization : assigning int-const to real (#86)
 
   [documentation]
     * docs

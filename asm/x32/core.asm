@@ -3736,6 +3736,17 @@ inline % 04E7h
 
 end
 
+// ; xrsavef (__arg1 - index, __arg2 - n)
+inline % 0EDh
+
+  push  __arg2
+  fild  dword ptr [esp]
+  lea   edi, [ebp+__arg1]
+  fstp  qword ptr [edi]
+  lea   esp, [esp+4]
+
+end
+
 // ; xaddf (__arg1 - index, __arg2 - n)
 inline % 0EEh
 

@@ -282,6 +282,7 @@ class ByteCodeWriter
    void doLongBoolOperation(CommandTape& tape, int operator_id);
    void doRealOperation(CommandTape& tape, int operator_id, int localOffset);
    void doRealIntOperation(CommandTape& tape, int operator_id, int localOffset);
+   void doRealIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue);
    void doRealBoolOperation(CommandTape& tape, int operator_id);
    //   void doIntOperation(CommandTape& tape, int operator_id);
 //   void doIntOperation(CommandTape& tape, int operator_id, int immArg);

@@ -57,7 +57,7 @@ const char* _fnOpcodes[256] =
    "coalescer", "shr", "xor", OPCODE_UNKNOWN, "xsaveai", "copyai", "move", "moveto",
 
    "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
-   "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", OPCODE_UNKNOWN, "xaddf", "xsavef",
+   "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", "xrsavef", "xaddf", "xsavef",
 
    "new", "newn", "fillri", "xselectr", "vcallrm", "jumprm", "select", "lessn",
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", OPCODE_UNKNOWN,

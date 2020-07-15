@@ -1863,6 +1863,19 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
    }
 }
 
+void ByteCodeWriter :: doRealIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue)
+{
+   switch (operator_id) {
+      case SET_OPERATOR_ID:
+         // xrsavef i, v
+         tape.write(bcXRSaveF, localOffset, immValue);
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+         break;
+   }
+}
+
 void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id, int localOffset)
 {
    switch (operator_id) {
@@ -2919,6 +2932,11 @@ void ByteCodeWriter :: generateOperation(CommandTape& tape, SyntaxTree::Node nod
       }
 
       doIntOperation(tape, node.argument, largObj.argument, rargVal);
+   }
+   else if (rargImm && node.type == lxRealIntOp && node.argument == SET_OPERATOR_ID) {
+      int rargVal = rargObj.findChild(lxIntValue).argument;
+
+      doRealIntOperation(tape, node.argument, largObj.argument, rargVal);
    }
    else {
       generateObject(tape, rarg, scope);

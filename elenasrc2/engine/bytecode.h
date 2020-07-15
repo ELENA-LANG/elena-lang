@@ -245,7 +245,7 @@ enum ByteCode
    bcGreaterN        = 0xEA,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
    bcNotGreaterN     = 0xEB,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
    bcNotLessN        = 0xEC,   // note that for code simplicity reverse order is used for jump parameters (jump label, arg)
-//   bcSubFI           = 0xED,
+   bcXRSaveF         = 0xED,
    bcXAddF           = 0xEE,
    bcXSaveF          = 0xEF,
 
