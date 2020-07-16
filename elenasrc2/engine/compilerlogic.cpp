@@ -547,6 +547,14 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
          if (!defineClassInfo(scope, info, sourceRef))
             return false;
 
+         if (test(info.header.flags, elTemplatebased) && !isPrimitiveRef(targetRef)) {
+            // HOTFIX : resolve weak reference before checking compability
+            targetRef = scope.resolveWeakTemplateReferenceID(targetRef);
+            if (targetRef == sourceRef) {
+               return true;
+            }
+         }
+
          // if it is a structure wrapper
          if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
             ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
@@ -1674,6 +1682,9 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
          return true;
       case V_LIMITED:
          attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
+         return true;
+      case V_TEMPLATEBASED:
+         attrValue = elTemplatebased;
          return true;
       case V_CLOSED:
          attrValue = elClosed;

@@ -2460,6 +2460,7 @@ bool TemplateGenerator :: generateTemplate(SyntaxWriter& writer, TemplateScope& 
          ident_t fullName = scope.moduleScope->resolveFullName(scope.reference);
 
          writer.newNode(lxClass, -1);
+         writer.appendNode(lxAttribute, V_TEMPLATEBASED);
          writer.newNode(lxNameAttr, scope.moduleScope->mapFullReference(fullName, true));
          //      writer.appendNode(lxReference, fullName);
          writer.closeNode();

@@ -75,7 +75,9 @@ public sealed Array<T> : Indexable<T>
         }
         else
         {
-            system'InvalidArgumentException.raise()
+            system'InvalidArgumentException.raise();
+            
+            ^ nil // !! never reached
         }
     }
 
@@ -1238,7 +1240,7 @@ public sealed class Variant
                 = o.toPrintable();
             
             castTo(BaseVariable v)
-                <= castValueTo(v.Value);
+                = self.castValueTo(v.Value);
             
             castTo(int val)
                 = cast int(self);

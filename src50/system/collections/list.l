@@ -645,7 +645,6 @@ namespace collections
         {
             if (nil != indexable)
             {
-                int len := indexable.Length;
                 Indexer it := indexable.indexer();
                 
                 while (it.Available)

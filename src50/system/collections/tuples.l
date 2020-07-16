@@ -146,7 +146,7 @@ namespace collections
     {
         prop T1 Item1;
         prop T2 Item2;
-        prop T4 Item3;
+        prop T3 Item3;
         prop T4 Item4;
         
         constructor(T1 o1, T2 o2, T3 o3, T4 o4)

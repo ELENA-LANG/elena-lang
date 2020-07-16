@@ -116,8 +116,8 @@ namespace _ELENA_
    #define errEmptyTarget           "linker: error 212: Target is not specified\n"
    #define errInvalidTargetOption   "linker: error 213: Invalid target option '%s'\n"
 
-////  // --- Compiler internal error messages ---
-//////   #define errReferenceOverflow     "error 301: The section reference overflow\n"
+//  // --- Compiler internal error messages ---
+////   #define errReferenceOverflow     "error 301: The section reference overflow\n"
 
   // --- Compiler warnings ---
 //   #define wrnUnresovableLink       "%s(%d:%d): warning 401: Link %s is unresolvable\n"
@@ -142,10 +142,12 @@ namespace _ELENA_
    #define wrnDuplicateAttribute    "%s(%d:%d): warning 424: '%s': duplicate attribute\n"
    #define wrnDuplicateInclude      "%s(%d:%d): warning 425: '%s': duplicate inclusion\n"
    #define wrnExplicitExtension     "%s(%d:%d): warning 426: an extension '%s' should not be used directly\n"
-   constexpr auto wrnInvalidModule  = "Invalid or unknown module %s\n";
+   constexpr auto wrnUnknownConversion    = "%s(%d:%d): warning 427: a conversion constructor is not found for '%s'\n";
+   constexpr auto wrnUnknownEOPConversion = "%s(%d:%d): warning 428: a conversion constructor is not found for self\n";
+   constexpr auto wrnInvalidModule        = "Invalid or unknown module %s\n";
 
-   constexpr auto infoAbstractMetod = "abstract method %s";
-   constexpr auto infoNewMethod     = "new method %s";
+   constexpr auto infoAbstractMetod       = "abstract method %s";
+   constexpr auto infoNewMethod           = "new method %s";
 
 ////   #define wrnDuplicateInfo         "Duplicate extension - "
 

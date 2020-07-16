@@ -697,8 +697,8 @@ private:
       // scope local variables
       LocalMap     locals;
       bool         genericMethod;
-//      bool         yieldMethod;
-//
+      bool         withRetStatement;
+
       int reserved1, allocated1; // managed scope stack allocation
       int reserved2, allocated2; // unmanaged scope stack allocation
 
@@ -865,6 +865,14 @@ private:
       {
          ObjectInfo info = mapTerminal(local, false, EAttr::eaNone);
          return info.kind == okLocal || info.kind == okLocalAddress;
+      }
+
+      void setCodeRetStatementFlag(bool retStatement)
+      {
+         if (retStatement) {
+            CodeScope* codeScope = (CodeScope*)getScope(Scope::ScopeLevel::slCode);
+            codeScope->withRetStatement = true;
+         }
       }
 
       ObjectInfo mapGlobal(ident_t identifier);
@@ -1155,7 +1163,7 @@ private:
    ObjectInfo compileRetExpression(SNode node, CodeScope& scope, EAttr mode);
    void compileEmbeddableRetExpression(SNode node, ExprScope& scope);
 
-   ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode);
+   ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode, bool& withRetStatement);
 
    bool recognizeCompileTimeAssigning(SNode node, ClassScope& scope);
    void compileCompileTimeAssigning(SNode node, ClassScope& scope);

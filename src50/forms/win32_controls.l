@@ -581,6 +581,8 @@ public abstract class BaseList : BaseWinControl
         theList := new ArrayList()
     }
     
+    abstract appendItem(wide caption) {}
+    
     Items = new
     {
         append(object, caption)

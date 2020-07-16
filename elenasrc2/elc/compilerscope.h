@@ -51,6 +51,8 @@ struct ModuleScope : _ModuleScope
    virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared);
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility);
 
+   virtual ref_t resolveWeakTemplateReferenceID(ref_t reference);
+
    virtual _Memory* mapSection(ref_t reference, bool existing)
    {
       ref_t mask = reference & mskAnyRef;

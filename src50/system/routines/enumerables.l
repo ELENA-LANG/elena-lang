@@ -181,19 +181,20 @@ public extension enumerableOp
 
     equal(Enumerable list)
     {
-        ifnot (self.Length == list.Length)
-            { ^ false };
-            
         Enumerator it1 := self.enumerator();
         Enumerator it2 := list.enumerator();
         
         while (it1.next())
         {
-            it2.next();
+            ifnot(it2.next())
+                { ^ false };
             
             ifnot (it1.get().equal(it2.get()))
                 { ^ false }
         };
+        
+        if(it2.next())
+            { ^ false };
         
         ^ true
     }

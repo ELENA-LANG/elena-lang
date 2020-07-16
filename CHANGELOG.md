@@ -1,3 +1,11 @@
+## upcoming ELENA 6.0
+*12.06.2021*
+
+- ELENA
+- ELC
+  - a warning shown when an object cannot be converted into another one
+  - a warning shown when an object does not handle a message (for strong-typed ones)
+
 ## ELENA 5.0
 *14.07.2020*
 

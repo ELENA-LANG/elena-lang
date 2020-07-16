@@ -204,6 +204,20 @@ ref_t ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_
    return moduleRef;
 }
 
+ref_t ModuleScope :: resolveWeakTemplateReferenceID(ref_t reference)
+{
+   ident_t vmtName = module->resolveReference(reference);
+   if (isTemplateWeakReference(vmtName)) {
+      ident_t resolvedName = resolveWeakTemplateReference(vmtName + TEMPLATE_PREFIX_NS_LEN);
+
+      if (NamespaceName::compare(resolvedName, module->Name())) {
+         return module->mapReference(resolvedName + getlength(module->Name()));
+      }
+      else return module->mapReference(resolvedName);
+   }
+   else return reference;
+}
+
 ref_t ModuleScope :: loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly)
 {
    _Module* argModule = NULL;

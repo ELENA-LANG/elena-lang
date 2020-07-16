@@ -90,6 +90,7 @@ constexpr auto V_YIELD           = 0x80001020u;
 constexpr auto V_NAMESPACE       = 0x80001021u;
 constexpr auto V_META            = 0x80001022u;
 constexpr auto V_PREVIOUS        = 0x80001023u;
+constexpr auto V_TEMPLATEBASED   = 0x80001024u;
 
 /// primitive type attributes
 constexpr auto V_STRING          = 0x80000801u;
@@ -300,6 +301,8 @@ struct _ModuleScope
    virtual ref_t resolveImportedIdentifier(ident_t identifier, IdentifierList* importedNs) = 0;
    virtual ident_t resolveFullName(ref_t reference) = 0;
    virtual ident_t resolveFullName(ident_t referenceName) = 0;
+
+   virtual ref_t resolveWeakTemplateReferenceID(ref_t reference) = 0;
 
    void raiseError(const char* message, ident_t sourcePath, SNode node)
    {
@@ -521,6 +524,7 @@ public:
       eaCallOp             = 0x00800000000,
       eaRefExpr            = 0x01000000000,
       eaPreviousScope      = 0x02000000000,
+      eaConversionOp       = 0x04000000000,
 
       eaScopeMask          = 0x0300041400A,
       eaObjectMask         = 0x008A821B2F4,

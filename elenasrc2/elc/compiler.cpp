@@ -68,6 +68,7 @@ constexpr auto HINT_INLINEARGMODE   = EAttr::eaInlineArg;  // indicates that the
 constexpr auto HINT_CONSTEXPR       = EAttr::eaConstExpr;
 constexpr auto HINT_CALLOP          = EAttr::eaCallOp;
 constexpr auto HINT_REFEXPR         = EAttr::eaRefExpr;
+constexpr auto HINT_CONVERSIONOP    = EAttr::eaConversionOp;
 
 // scope modes
 constexpr auto INITIALIZER_SCOPE    = EAttr::eaInitializerScope;   // indicates the constructor or initializer method
@@ -696,15 +697,15 @@ Compiler::MethodScope :: MethodScope(ClassScope* parent)
 ObjectInfo Compiler::MethodScope :: mapSelf()
 {
    if (extensionMode) {
-      //COMPILER MAGIC : if it is an extension ; replace $self with self
+      //COMPILER MAGIC : if it is an extension ; replace self with this self
       ClassScope* extensionScope = (ClassScope*)getScope(ScopeLevel::slClass);
 
       return ObjectInfo(okLocal, (ref_t)-1, extensionScope->extensionClassRef, 0, extensionScope->stackSafe ? -1 : 0);
    }
    else if (classStacksafe) {
-      return ObjectInfo(okSelfParam, 1, getClassRef(), 0, (ref_t)-1);
+      return ObjectInfo(okSelfParam, 1, getClassRef(false), 0, (ref_t)-1);
    }
-   else return ObjectInfo(okSelfParam, 1, getClassRef());
+   else return ObjectInfo(okSelfParam, 1, getClassRef(false));
 }
 
 ObjectInfo Compiler::MethodScope :: mapGroup()
@@ -782,8 +783,7 @@ Compiler::CodeScope :: CodeScope(SourceScope* parent)
 {
    this->allocated1 = this->reserved1 = 0;
    this->allocated2 = this->reserved2 = 0;
-   this->genericMethod = false;
-//   this->yieldMethod = false;
+   this->withRetStatement = this->genericMethod = false;
 }
 
 Compiler::CodeScope :: CodeScope(MethodScope* parent)
@@ -792,7 +792,7 @@ Compiler::CodeScope :: CodeScope(MethodScope* parent)
    this->allocated1 = this->reserved1 = 0;
    this->allocated2 = this->reserved2 = 0;
    this->genericMethod = parent->generic;
-//   this->yieldMethod = parent->yieldMethod;
+   this->withRetStatement = false;
 }
 
 Compiler::CodeScope :: CodeScope(YieldScope* parent)
@@ -803,7 +803,7 @@ Compiler::CodeScope :: CodeScope(YieldScope* parent)
    this->allocated1 = this->reserved1 = 0;
    this->allocated2 = this->reserved2 = 0;
    this->genericMethod = methodScope->generic;
-   //   this->yieldMethod = parent->yieldMethod;
+   this->withRetStatement = false;
 }
 
 Compiler::CodeScope :: CodeScope(CodeScope* parent)
@@ -814,7 +814,7 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->allocated2 = parent->allocated2;
    this->reserved2 = parent->reserved2;
    this->genericMethod = parent->genericMethod;
-//   this->yieldMethod = parent->yieldMethod;
+   this->withRetStatement = false;
 }
 
 //ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
@@ -2005,7 +2005,9 @@ void Compiler :: compileSwitch(SNode node, ExprScope& scope)
    }
 
    if (current == lxElse) {
-      compileSubCode(current, scope, false);
+      bool withRetStatement = false;
+      compileSubCode(current, scope, false, withRetStatement);
+      //scope.setCodeRetStatementFlag(ifRetStatement && elseRetStatement);
 
       //CodeScope subScope(&scope);
       //SNode thenCode = current.findSubNode(lxCode);
@@ -2697,7 +2699,8 @@ void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifRef
       }
       else node.set(lxElse, ifReference);
 
-      compileSubCode(thenCode, scope, true);
+      bool dummy = false;
+      compileSubCode(thenCode, scope, true, dummy);
    }
    else {
       SNode thenCode = node.findSubNode(lxCode);
@@ -2709,7 +2712,8 @@ void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifRef
       }
       else node.set(lxIf, ifReference);
 
-      compileSubCode(thenCode, scope, true);
+      bool ifRetStatement = false;
+      compileSubCode(thenCode, scope, true, ifRetStatement);
 
       // HOTFIX : switch mode - ignore else
       if (!switchMode) {
@@ -2727,7 +2731,9 @@ void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifRef
                //HOTFIX : inline branching operator
                elseCode = node;
 
-            compileSubCode(elseCode, scope, true);
+            bool elseRetStatement = false;
+            compileSubCode(elseCode, scope, true, elseRetStatement);
+            scope.setCodeRetStatementFlag(ifRetStatement && elseRetStatement);
          }
       }
    }
@@ -3189,11 +3195,20 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
       if (EAttrs::test(mode, HINT_SILENT)) {
          // do nothing in silent mode
       }
-      else if (result.found && !result.withCustomDispatcher && callType == tpUnknown && result.directResolved) {
-//         if (EAttrs::test(mode, HINT_ASSIGNING_EXPR)) {
-//            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxExpression).findChild(lxMessage));
-//         }
-         /*else */if (node.findChild(lxMessage).firstChild(lxTerminalMask) == lxNone) {
+      else if (result.found && !result.withCustomDispatcher && callType == tpUnknown) {
+         if (target.reference == scope.moduleScope->superReference || !target.reference) {
+            // ignore warning for super class / type-less one
+         }
+         else if (EAttrs::test(mode, HINT_CONVERSIONOP)) {
+            SNode terminal = node.firstChild(lxObjectMask).firstChild(lxTerminalMask);
+            if (terminal != lxNone) {
+               scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownConversion, node);
+            }
+            else if (node.parentNode() == lxNewFrame){
+               scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownEOPConversion, node.parentNode().findChild(lxEOP));
+            }
+         }
+         else if (node.findChild(lxMessage).firstChild(lxTerminalMask) == lxNone) {
             scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage));
@@ -3430,7 +3445,7 @@ ObjectInfo Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetR
             node.injectAndReplaceNode(lxExpression);
 
          bool dummy;
-         compileMessage(node, scope, source, encodeMessage(actionRef, 1, 0), HINT_NODEBUGINFO | HINT_SILENT, 0, dummy);
+         compileMessage(node, scope, source, encodeMessage(actionRef, 1, 0), HINT_NODEBUGINFO | HINT_CONVERSIONOP, 0, dummy);
 
          return ObjectInfo(okObject, 0, targetRef);
       }
@@ -5366,6 +5381,8 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr, true);
 
+
+
    return retVal;
 }
 
@@ -5838,13 +5855,17 @@ ObjectInfo Compiler :: mapObject(SNode node, ExprScope& scope, EAttr exprMode)
          case lxCode:
             current = lxCodeExpression;
          case lxCodeExpression:
+         {
             if (EAttrs::test(exprMode, HINT_EXTERNALOP)) {
                current.injectAndReplaceNode(lxExternFrame);
 
                current = current.firstChild(lxObjectMask);
             }
-            result = compileSubCode(current, scope, false);
+            bool withRetStatement = false;
+            result = compileSubCode(current, scope, false, withRetStatement);
+            scope.setCodeRetStatementFlag(withRetStatement);
             break;
+         }
          case lxType:
             if (mode.testAndExclude(HINT_MESSAGEREF)) {
                // HOTFIX : if it is an extension message
@@ -5947,7 +5968,7 @@ ObjectInfo Compiler :: compileExpression(SNode& node, ExprScope& scope, ObjectIn
    return retVal;
 }
 
-ObjectInfo Compiler :: compileSubCode(SNode codeNode, ExprScope& scope, bool branchingMode)
+ObjectInfo Compiler :: compileSubCode(SNode codeNode, ExprScope& scope, bool branchingMode, bool& withRetStatement)
 {
    CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
 
@@ -5964,6 +5985,8 @@ ObjectInfo Compiler :: compileSubCode(SNode codeNode, ExprScope& scope, bool bra
 
    // preserve the allocated space
    subScope.syncStack(codeScope);
+
+   withRetStatement = subScope.withRetStatement;
 
    return ObjectInfo(okObject);
 }
@@ -6015,13 +6038,17 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
                recognizeTerminal(objNode, retVal, exprScope, HINT_NODEBUGINFO | HINT_NOBOXING);
             }
             else retVal = compileRetExpression(current, scope, HINT_ROOT/* | HINT_RETEXPR*/);
+
+            scope.withRetStatement = true;
             break;
          }
          case lxCode:
          {
             // compile sub code
             ExprScope exprScope(&scope);
-            compileSubCode(current, exprScope, false);
+            bool withRetStatement = false;
+            compileSubCode(current, exprScope, false, withRetStatement);
+            exprScope.setCodeRetStatementFlag(withRetStatement);
 
             break;
          }
@@ -6159,7 +6186,7 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope, ref_t e
    }
    else if (expectedRef != 0 && _logic->isCompatible(*scope.moduleScope, V_REAL64, expectedRef, true)) {
       retVal.reference = expectedRef;
-      retVal.param = -1;         // ot indicate Float mode
+      retVal.param = (ref_t)-1;         // ot indicate Float mode
       callNode.appendNode(lxSize, 8);
       //      retVal = assignResult(writer, scope, true, V_REAL64);
       }
@@ -7359,7 +7386,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
    ObjectInfo retVal = compileCode(body, codeScope);
 
    // if the method returns itself
-   if (retVal.kind == okUnknown) {
+   if (retVal.kind == okUnknown && !codeScope.withRetStatement) {
       if (test(scope.hints, tpSetAccessor)) {
          retVal = scope.mapParameter(*scope.parameters.start(), EAttr::eaNone);
       }
@@ -9514,7 +9541,7 @@ void Compiler :: compileSymbolImplementation(SNode node, SymbolScope& scope)
 
    if (scope.info.exprRef == 0) {
       ref_t ref = resolveObjectReference(scope, retVal, true);
-      if (ref != 0) {
+      if (ref != 0 && scope.info.type != SymbolExpressionInfo::Type::Normal) {
          // HOTFIX : if the result of the operation is qualified - it should be saved as symbol type
          scope.info.exprRef = ref;
       }

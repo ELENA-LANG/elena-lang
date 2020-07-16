@@ -101,7 +101,7 @@ public sealed class TcpClient
     {
         onError.?(self, e);
         
-        int  err := e.error_code;
+        int  err := e.ErrorCode;
         if(err == WSAECONNRESET)
             { self.closeInternal() }
     }

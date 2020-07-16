@@ -2255,7 +2255,7 @@ public class DTO
 public singleton byteConvertor
 {
     byte convert(BaseVariable v)
-        <= convert(v.value);
+        <= convert(v.Value);
                         
     /// Returns the parameter        
     byte convert(byte n)
@@ -2679,9 +2679,9 @@ public singleton realConvertor
         : { 
             int number := n;
             intern system'core_routines'__realconvertor.convert(number, ref retVal);
+        };
         
-            ^ retVal
-        }
+        ^ retVal
     }
 
     /// Converts a long integer into a real number

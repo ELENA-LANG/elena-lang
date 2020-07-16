@@ -1431,7 +1431,7 @@ void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
    }
 }
 
-void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
+void _ELENA_::compileCreateN(int, x86JITScope& scope)
 {
    // HOT FIX : reverse the argument order
    ref_t vmtRef = scope.argument;
