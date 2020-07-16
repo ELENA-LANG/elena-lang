@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    * [ warn if the object cannot be converted into another one ]
     * dispatching a method return
     * [ compilation speed ]
     * chat

@@ -59,7 +59,7 @@ copy %~dp0\..\bin\scripts\*.es %~dp0\output\bin\scripts\
 
 copy %~dp0\..\doc\license %~dp0\output\doc\
 copy %~dp0\..\doc\contributors %~dp0\output\doc\
-copy %~dp0\..\doc\readme.txt %~dp0\output\
+copy %~dp0\..\readme.md %~dp0\output\
 
 md %~dp0\output\src50\system
 xcopy %~dp0\..\src50\system\*.l %~dp0\output\src50\system /s

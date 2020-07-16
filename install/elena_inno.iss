@@ -17,7 +17,7 @@ DefaultDirName={pf}\ELENA
 DefaultGroupName=ELENA Programming Language
 AllowNoIcons=yes
 LicenseFile=..\doc\license
-InfoAfterFile=..\whatsnew.txt
+InfoAfterFile=..\CHANGELOG.md
 OutputBaseFilename=elena-setup
 Compression=lzma
 SolidCompression=yes
@@ -32,16 +32,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "..\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\dat\*"; DestDir: "{app}\dat"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\elenasrc2\*"; DestDir: "{app}\elenasrc2"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\examples\*"; DestDir: "{app}\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\lib50\*"; DestDir: "{app}\lib50"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\src50\*"; DestDir: "{app}\src50"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "output\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "output\doc\*"; DestDir: "{app}\doc"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "output\examples\*"; DestDir: "{app}\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "output\lib50\*"; DestDir: "{app}\lib50"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\doc\license"; DestDir: "{app}";
 Source: "..\readme.md"; DestDir: "{app}"; Flags: isreadme
-Source: "..\whatsnew.txt"; DestDir: "{app}";
+Source: "..\CHANGELOG.md"; DestDir: "{app}";
 Source: "..\rebuild_lib.bat"; DestDir: "{app}";
 Source: "..\rebuild_examples.bat"; DestDir: "{app}";
 Source: "redist\VC_redist.x86.exe"; DestDir: "{app}"; Flags: deleteafterinstall
