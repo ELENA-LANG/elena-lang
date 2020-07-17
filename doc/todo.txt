@@ -3,6 +3,9 @@ In development:
 ------         
 
   [development]
+    * fix lib50
+    * [elt]
+    * [API Docs : Func1 has one argument which is not shown]
     * dispatching a method return
     * [ compilation speed ]
     * chat
@@ -65,7 +68,6 @@ Pipeline:
                 * String / WideString - add<'Char>
                 * Amicable pairs using yield method
                 * implement some roseta code samples
-                * elt
                 * upndown
                 * support module description from manifest
                 * support field / static field meta description
@@ -311,7 +313,6 @@ Pipeline:
                  * cache resolved built-in tampletes
                  * optimizate operations with byref dynamic variable (no need for boxing / unboxing) - should be locally
                    boxed
-                 * elt - exception handlers
                  * support mta_gui, vm_mta_console
                  * the following code does not work - theOwner.resize(int width, int height)  (see forms'SDIWindowListener.onsize)
                  * interface - can the wrapper class be saved to use it several times?
@@ -323,4 +324,4 @@ Pipeline:
                  * mta system : check the situation when too many threads (> MAX_THREAD)
                  * nested code : read only outer field
                  * clousers passed as parameters should be stack-allocated
-
+                 * elt - exception handlers

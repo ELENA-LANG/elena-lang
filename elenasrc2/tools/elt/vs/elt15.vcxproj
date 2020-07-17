@@ -122,7 +122,7 @@
     <ClInclude Include="..\..\..\common\streams.h" />
     <ClInclude Include="..\..\..\common\tools.h" />
     <ClInclude Include="..\..\..\engine\elenasm.h" />
-    <ClInclude Include="..\..\..\engine\elenavm.h" />
+    <ClInclude Include="..\elenavm.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

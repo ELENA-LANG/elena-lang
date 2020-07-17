@@ -127,36 +127,11 @@ public class SDIApplication
 //    ]
 //}
 
-public static program = new SDIApplication();
-//static xprogram = SDIXApplication new.
 
-entry()
+public onGUIStart()
 {
-    intern system'core_routines'__exception.register();
-    
-    try
-    {
-        forward program()
-    }
-    finally
-    {
-       startUpEvents.stopping()
-    }
-    catch::
-    {
-        function(AbortException e)
-        {
-        }
-           
-        function(Exception e)
-        {
-            messageBox.open("ELENA", e.Message, MB_ICONEXCLAMATION);
-            
-            //extern elenart.Exit(-1);
-        }        
-    }    
+    startUpEvents.OnError := (e){ messageBox.open("ELENA", e.Message, MB_ICONEXCLAMATION); }
 }
 
-public symbol startUp
-    = entry();
+public static program = new SDIApplication();
     

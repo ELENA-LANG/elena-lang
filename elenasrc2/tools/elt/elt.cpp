@@ -7,22 +7,23 @@
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include <stdarg.h>
+#include "elenamachine.h"
 #include "elenasm.h"
 #include "elenavm.h"
-#include "elenamachine.h"
 
 using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   6
+#define ELT_BUILD_NUMBER   7
  
 // global variables
-int       _encoding = feAnsi;
-pos_t     _tlsIndex = 0;
-GCTable   _table = { 0 };
-SystemEnv _env = { 0 };
-int       _sehTable = 0;
+ProgramHeader  _header;
+int            _encoding = feAnsi;
+pos_t          _tlsIndex = 0;
+GCTable        _table = { 0 };
+SystemEnv      _env = { 0 };
+int            _sehTable = 0;
 
 void print(const char* str, ...)
 {
@@ -170,7 +171,7 @@ void runSession()
 
 int main(int argc, char* argv[])
 {
-   print("ELENA command line VM terminal %d.%d.%d (C)2011-2019 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
+   print("ELENA command line VM terminal %d.%d.%d (C)2011-2020 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
    _env.MaxThread = 1;
    _env.Table = &_table;
@@ -178,11 +179,11 @@ int main(int argc, char* argv[])
    _env.GCMGSize = 0x54000;
    _env.GCYGSize = 0x15000;
 
-   InitializeVMSTA(&_sehTable, &_env, nullptr, nullptr, nullptr);
+   InitializeVMSTA(&_sehTable, &_env, nullptr, nullptr, nullptr, &_header);
 
    loadScript("~\\elt.es");
-   loadScript("~\\scripts\\assembly.es");
-   loadScript("~\\scripts\\escript.es");
+   loadScript("~\\scripts\\grammar.es");
+   loadScript("~\\scripts\\lscript.es");
 
    // load script passed via command line arguments
    if (argc > 1) {

@@ -26,6 +26,7 @@
        <include>exceptions.l</include>
        <include>events.l</include>
        <include>console.l</include>
+       <include>app.l</include>
        <include>lnx32_app.l</include>
        <include>collections/list.l</include>
        <include>collections/queues.l</include>
