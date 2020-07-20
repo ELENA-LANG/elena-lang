@@ -59,8 +59,9 @@
                                    expr_operation
 <=     ) =>;
 
+  #define expr_symbol     ::= 
 <=
-       system'dynamic'expressions'DynamicSingleton (
+       system'dynamic'expressions'DynamicExpressionSymbol (
 =>
                                    object
 <=     ) =>;

@@ -3,15 +3,18 @@ In development:
 ------         
 
   [development]
-    * fix lib50
+    * [fix switch]
     * [elt]
     * [API Docs : Func1 has one argument which is not shown]
     * dispatching a method return
     * [ compilation speed ]
     * chat
     * graph
+    * source to expression tree
+    * expression tree to source
     * GC to C
     * web server
+    * make compatible with ELENA 3.1, convert to and from ELENA 3.1
     * pi optimization : assigning int-const to real (#86)
 
   [documentation]
@@ -60,8 +63,6 @@ Pipeline:
                 * migrating MG
                 * get rid of EXPAND_HEAP, NEW_HEAP
                 * graph - use script to define the function (+tutorial)
-                * source to expression tree
-                * expression tree to source
                 * info : abstract class cannot have public constructors
 
                 * sqlite : support float / blob

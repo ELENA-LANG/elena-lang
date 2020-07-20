@@ -1972,6 +1972,11 @@ void Compiler :: compileSwitch(SNode node, ExprScope& scope)
       targetNode.insertNode(lxLocal, localOffs);
    }
 
+   // HOTFIX : the argument should not be type-less
+   //          to use the branching over sending IF message
+   if (!loperand.reference)
+      loperand.reference = scope.moduleScope->superReference;
+
    SNode current = node.findChild(lxOption, lxElse);
    while (current == lxOption) {
       SNode optionNode = current.injectNode(lxExpression);

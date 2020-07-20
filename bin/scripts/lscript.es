@@ -2,7 +2,18 @@
    #grammar cf
 
    #define start          ::= <= root ( public_namespace ( => member+ $eof <= )) =>;
+   #define start          ::= <= root ( public_namespace ( => main_program $eof <= )) =>;
    #define start          ::= $eof;
+
+   #define main_program   ::=
+<=
+      symbol (  
+         nameattr ( identifier = program )
+=>
+                              expression
+<=
+     )
+=>;
 
    #define member         ::= symbol;
 
