@@ -1,5 +1,4 @@
 [[
-   #grammar build
    #grammar cf
 
    #define start          ::= "root" "(" namespace ")" $eof;            

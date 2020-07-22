@@ -5,6 +5,7 @@ preloaded used = new object[]{ SDIDialog, PropVariant, Label, Button, Edit };
 
 static ScriptEngine xformsEngine
     = new ScriptEngine()
+            .loadScript("[[ #grammar build ]]")
             .loadPath("~\scripts\grammar.es")
             .loadPath("~\scripts\xforms.es");
 

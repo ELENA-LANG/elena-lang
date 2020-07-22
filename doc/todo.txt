@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    * [fix switch]
     * [elt]
     * [API Docs : Func1 has one argument which is not shown]
     * dispatching a method return
