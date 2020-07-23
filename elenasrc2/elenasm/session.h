@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2018, by Alexei Rakov
+//                                              (C)2011-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef sessionH
@@ -20,7 +20,7 @@ class Session
 
    enum ParserType
    {
-      ptInline    = 0x01,
+      ptVMBuild   = 0x01,
       ptTree      = 0x02,
       ptCF        = 0x10,
       ptTransform = 0x20,

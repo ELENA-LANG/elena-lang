@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    * [elt]
+    * elt - #323
     * [API Docs : Func1 has one argument which is not shown]
     * dispatching a method return
     * [ compilation speed ]
@@ -11,6 +11,7 @@ In development:
     * graph
     * source to expression tree
     * expression tree to source
+    * [service release]
     * GC to C
     * web server
     * make compatible with ELENA 3.1, convert to and from ELENA 3.1

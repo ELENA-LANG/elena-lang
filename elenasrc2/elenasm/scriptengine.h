@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2019 by Alexei Rakov
+//                                              (C)2011-2020 by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef scriptEngineH
@@ -136,6 +136,11 @@ struct ScriptBookmark
    int   state;
    int   row;
    int   column;
+
+   bool compare(ScriptBookmark& bm)
+   {
+      return offset == bm.offset;
+   }
 
    ScriptBookmark()
    {

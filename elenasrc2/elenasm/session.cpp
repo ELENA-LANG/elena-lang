@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                               (C)2011-2019 by Alexei Rakov
+//                                               (C)2011-2020 by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -57,7 +57,7 @@ _Parser* Session :: newParser(int id, ParserType type)
 
    switch (type)
    {
-      case _ELENA_::Session::ptInline:
+      case _ELENA_::Session::ptVMBuild:
          newOne = new VMTapeParser();
          break;
       case _ELENA_::Session::ptCF:
@@ -168,8 +168,8 @@ void Session :: parseMetaScript(int id, MemoryDump& tape, _ScriptReader& reader)
             if (reader.compare("cf")) {
                parser = newParser(id, Session::ptCF);
             }
-            else if (reader.compare("inline")) {
-               parser = newParser(id, Session::ptInline);
+            else if (reader.compare("vmbuild")) {
+               parser = newParser(id, Session::ptVMBuild);
             }
             else if (reader.compare("transform")) {
                parser = newParser(id, Session::ptTransform);

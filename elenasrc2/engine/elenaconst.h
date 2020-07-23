@@ -98,11 +98,10 @@ namespace _ELENA_
    constexpr auto PUSHM_TAPE_MESSAGE_ID   = 0x05E9;             // push message reference
    constexpr auto PUSHG_TAPE_MESSAGE_ID   = 0x05EA;             // push the subject reference
    constexpr auto POP_TAPE_MESSAGE_ID     = 0x01EB;             // free the stack content
- //  constexpr auto SEND_TAPE_MESSAGE_ID    = 0x05EC;             // send the message
-//   constexpr auto REVERSE_TAPE_MESSAGE_ID = 0x01ED;             // reverse the stack
+   constexpr auto SEND_TAPE_MESSAGE_ID    = 0x05EC;             // send the message
    constexpr auto PUSHE_TAPE_MESSAGE_ID   = 0x05EE;             // push message reference
 
-   //constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create a dynamic object
+   constexpr auto NEW_TAPE_MESSAGE_ID     = 0x01F0;             // create an object
 
    constexpr auto VA_ALIGNMENT            = 0x08;
    constexpr auto VA_ALIGNMENT_POWER      = 0x03;

@@ -664,7 +664,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
 
    // resolve tape
    size_t command = reader.getDWord();
-   void*  extra_param;
+   void*  extra_param = nullptr;
    while (command != terminator) {
       ident_t arg = NULL;
       size_t param = reader.getDWord();
@@ -748,100 +748,38 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             ecodes.writeByte(bcFreeI);
             ecodes.writeDWord(param);
             break;
-         //case REVERSE_TAPE_MESSAGE_ID:
-         //   if (param == 2) {
-         //      // popa
-         //      // aswapsi 0
-         //      // pusha
-         //      ecodes.writeByte(bcPopA);
-         //      ecodes.writeByte(bcASwapSI);
-         //      ecodes.writeDWord(0);
-         //      ecodes.writeByte(bcPushA);
-         //   }
-         //   else {
-         //      int length = param >> 1;
-         //      param--;
+         case SEND_TAPE_MESSAGE_ID:
+            //copym message
+            //aloadsi 0
+            //acallvi 0
+            //pusha
 
-         //      // popa
-         //      // aswapsi 0
-         //      // pusha
-         //      ecodes.writeByte(bcPopA);
-         //      ecodes.writeByte(bcASwapSI);
-         //      ecodes.writeDWord(param - 1);
-         //      ecodes.writeByte(bcPushA);
+            ecodes.writeByte(bcMovM);
+            ecodes.writeDWord(_linker->parseMessage(arg, false));
+            ecodes.writeByte(bcPeekSI);
+            ecodes.writeDWord(0);
+            ecodes.writeByte(bcCallVI);
+            ecodes.writeDWord(0);
+            ecodes.writeByte(bcPushA);
 
-         //      for (int i = 1 ; i < length ; i++) {
-         //         // aloadsi i
-         //         // aswapsi n - 1 - i
-         //         ecodes.writeByte(bcALoadSI);
-         //         ecodes.writeDWord(i);
-         //         ecodes.writeByte(bcASwapSI);
-         //         ecodes.writeDWord(param - i);
-         //      }
-         //   }
-         //   break;
-         //case SEND_TAPE_MESSAGE_ID:
-         //   //copym message
-         //   //aloadsi 0
-         //   //acallvi 0
-         //   //pusha
+            break;
+         case NEW_TAPE_MESSAGE_ID:
+         {
+            ecodes.writeByte(bcPushR);
+            helper.writeTape(ecodes, extra_param, /*mskVMTRef*/mskRDataRef);
 
-         //   ecodes.writeByte(bcCopyM);
-         //   ecodes.writeDWord(_linker->parseMessage(arg, false));
-         //   ecodes.writeByte(bcALoadSI);
-         //   ecodes.writeDWord(0);
-         //   ecodes.writeByte(bcACallVI);
-         //   ecodes.writeDWord(0);
-         //   ecodes.writeByte(bcPushA);
+            IdentifierString message;
+            message.append('0' + (param + 1));
+            message.append(CONSTRUCTOR_MESSAGE);
 
-         //   break;
-      //   case NEW_TAPE_MESSAGE_ID:
-      //   {
-      //      int level = param;
-
-      //      // new n, vmt
-      //      ecodes.writeByte(bcNew);
-      //      helper.writeTape(ecodes, extra_param, /*mskVMTRef*/mskRDataRef);
-      //      ecodes.writeDWord(param);
-
-      //      // ; assign content
-      //      // bcopya
-      //
-      //      ecodes.writeByte(bcBCopyA);
-
-      //      if (level > 5) {
-      //         // dcopy level
-      //         // labNext
-      //         // dec
-      //         // popa
-      //         // xset
-      //         // greatern 0,labNext
-      //         ecodes.writeByte(bcDCopy);
-      //         ecodes.writeDWord(level);
-      //         ecodes.writeByte(bcNop);
-      //         ecodes.writeByte(bcDec);
-      //         ecodes.writeByte(bcPopA);
-      //         ecodes.writeByte(bcXSet);
-      //         ecodes.writeByte(bcGreaterN);
-      //         ecodes.writeDWord(0);
-      //         ecodes.writeDWord(-13);
-      //      }
-      //      else {
-      //         // ; repeat param-time
-      //         // popa
-      //         // axsavebi i
-      //         while (level > 0) {
-      //            ecodes.writeByte(bcPopA);
-      //            ecodes.writeByte(bcAXSaveBI);
-      //            level--;
-      //            ecodes.writeDWord(level);
-      //         }
-      //      }
-
-      //      // pushb
-      //      ecodes.writeByte(bcPushB);
-      //      break;
-      //   }
+            ecodes.writeByte(bcMovM);
+            ecodes.writeDWord(_linker->parseMessage(message.c_str(), false));
+            ecodes.writeByte(bcPeekSI);
+            ecodes.writeDWord(0);
+            ecodes.writeByte(bcCallVI);
+            ecodes.writeDWord(0);
+            ecodes.writeByte(bcPushA);
+         }
       }
       command = reader.getDWord();
    }
