@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   8
+#define ELT_BUILD_NUMBER   9
  
 // global variables
 ProgramHeader  _header;
@@ -24,6 +24,28 @@ pos_t          _tlsIndex = 0;
 GCTable        _table = { 0 };
 SystemEnv      _env = { 0 };
 int            _sehTable = 0;
+
+IdentifierString prefix;
+IdentifierString postfix;
+
+void loadTemplate(path_t path)
+{
+   char buff[512];
+
+   TextFileReader reader(path, feUTF8, false);
+
+   if (reader.isOpened()) {
+      IdentifierString content;
+      reader.readAll(content, buff);
+
+      int index = content.ident().find("$1");
+      if (index != NOTFOUND_POS) {
+         prefix.copy(content.ident(), index);
+         postfix.copy(content.c_str() + index + 2);
+      }
+      else prefix.copy(content.ident());
+   }
+}
 
 void print(const char* str, ...)
 {
@@ -126,11 +148,9 @@ bool executeCommand(const char* line)
 
 void executeCommandLine(const char* line)
 {
-   IdentifierString command(line);
-   for(int i = 0; i < getlength(command) ; i++) {
-      if (command[i] == '^')
-         command[i] = '\"';
-   }
+   IdentifierString command(prefix);
+   command.append(line);
+   command.append(postfix);
 
    executeScript(command);
 }
@@ -159,7 +179,7 @@ void runSession()
                print("Invalid command, use -h to get the list of the commands\n");
          }
          else if (!emptystr(line) && line[getlength(line) - 1]!=','){
-            executeScript(line);
+            executeCommandLine(line);
          }
       }
       catch(...) {
@@ -173,6 +193,9 @@ int main(int argc, char* argv[])
 {
    print("ELENA command line VM terminal %d.%d.%d (C)2011-2020 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_BUILD_NUMBER);
 
+   Path commandPath("command.es");
+   loadTemplate(commandPath.c_str());
+
    _env.MaxThread = 1;
    _env.Table = &_table;
    _env.TLSIndex = &_tlsIndex;
@@ -183,7 +206,7 @@ int main(int argc, char* argv[])
 
    loadScript("~\\elt.es");
    loadScript("~\\scripts\\grammar.es");
-   loadScript("~\\scripts\\lscript.es");
+   loadScript("~\\scripts\\tscript.es");
 
    // load script passed via command line arguments
    if (argc > 1) {

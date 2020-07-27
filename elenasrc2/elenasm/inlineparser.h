@@ -25,8 +25,8 @@ class VMTapeParser : public _Parser
 //   bool writeObject(TapeWriter& writer, int state, ident_t token);
 //   bool writeArgument(TapeWriter& writer, int state, ident_t token);
 //   bool writeArray(TapeWriter& writer, int state, ident_t token);
-//   bool parseMessage(ident_t message, IdentifierString& reference);
-//   bool writeMessage(TapeWriter& writer, ident_t message, int command);
+   bool parseMessage(ident_t message, IdentifierString& reference);
+   bool writeMessage(TapeWriter& writer, ident_t message, int command);
 //   bool writeExtension(TapeWriter& writer, ident_t message, int command);
    //void skipArgumentList(_ScriptReader& reader);
    //void writeArgumentList(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);

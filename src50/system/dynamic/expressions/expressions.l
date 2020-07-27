@@ -1591,6 +1591,7 @@ namespace expressions
         } 
     }
     
+    [info:"a dynamic namespace, containing list of symbols"]
     public class SymbolCollection
     {
         SymbolInfo[] symbols;
@@ -1632,6 +1633,15 @@ namespace expressions
             };
             
             ^ set
+        }
+        
+        [info:"Exectutes the program entry point"]
+        eval()
+        {
+            var tape := self.compiled();
+            
+            var program := tape.program;
+            ^ program();
         }
     }
 }

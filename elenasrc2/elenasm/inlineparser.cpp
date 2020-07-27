@@ -87,45 +87,45 @@ VMTapeParser :: VMTapeParser()
 //   //}
 //   //else return false;
 //}
-//
-//bool VMTapeParser :: parseMessage(ident_t message, IdentifierString& reference)
-//{
-//   int paramCounter = 0;
-//   size_t length = getlength(message);
-//   length = message.find('[');
-//   if (length != NOTFOUND_POS) {
-//      reference.copy(message + length + 1);
-//      if (reference[reference.Length() - 1] == ']') {
-//         reference.truncate(reference.Length() - 1);
-//         //if (emptystr(reference)) {
-//         //   paramCounter = OPEN_ARG_COUNT;
-//         //}
-//         /*else */paramCounter = reference.ident().toInt();
-//
-//      }
-//      else return false;
-//   }
-//   else return false;
-//
-//   reference.clear();
-//   reference.append('0' + (char)paramCounter);
-//   reference.append(message, length);
-//
-//   return true;
-//}
-//
-//bool VMTapeParser:: writeMessage(TapeWriter& writer, ident_t message, int command)
-//{
-//   IdentifierString reference;
-//
-//   if (parseMessage(message, reference)) {
-//      writer.writeCommand(command, reference);
-//
-//      return true;
-//   }
-//   else return false;
-//}
-//
+
+bool VMTapeParser :: parseMessage(ident_t message, IdentifierString& reference)
+{
+   int paramCounter = 0;
+   size_t length = getlength(message);
+   length = message.find('[');
+   if (length != NOTFOUND_POS) {
+      reference.copy(message + length + 1);
+      if (reference[reference.Length() - 1] == ']') {
+         reference.truncate(reference.Length() - 1);
+         //if (emptystr(reference)) {
+         //   paramCounter = OPEN_ARG_COUNT;
+         //}
+         /*else */paramCounter = reference.ident().toInt();
+
+      }
+      else return false;
+   }
+   else return false;
+
+   reference.clear();
+   reference.append('0' + (char)paramCounter);
+   reference.append(message, length);
+
+   return true;
+}
+
+bool VMTapeParser:: writeMessage(TapeWriter& writer, ident_t message, int command)
+{
+   IdentifierString reference;
+
+   if (parseMessage(message, reference)) {
+      writer.writeCommand(command, reference);
+
+      return true;
+   }
+   else return false;
+}
+
 //bool VMTapeParser :: writeExtension(TapeWriter& writer, ident_t message, int command)
 //{
 //   IdentifierString reference;
@@ -145,6 +145,11 @@ void VMTapeParser :: parseInlineStatement(_ScriptReader& reader, ScriptBookmark&
 {
    if (reader.compare("#start")) {
       writer.writeCommand(START_VM_MESSAGE_ID);
+   }
+   else if (reader.compare("^")) {
+      bm = reader.read();
+
+      writeMessage(writer, reader.lookup(bm), SEND_TAPE_MESSAGE_ID);
    }
    else throw EParseError(bm.column, bm.row);
 }
