@@ -36,20 +36,31 @@
 =>;
 
    #define statement      ::= expression;
+
    #define expression     ::= 
 <=
         expression (
 =>
-                              object
+                              object operation?
 <=
         )
 =>;
 
    #define object         ::= integer;
+   #define object         ::= literal;
+   #define object         ::= reference;
+
+   #define operation      ::= "." message m_args;
+
+   #define m_args         ::= "(" ")";
+   #define m_args         ::= "(" expression { "," expression }* ")";
 
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
 
+   #define message        ::= <= message = $identifier =>;
    #define integer        ::= <= integer = $numeric =>;
+   #define literal        ::= <= literal = "$literal" =>;
+   #define reference      ::= <= reference = $reference =>;
 
    #define public_prefix  ::= "public";
 ]]

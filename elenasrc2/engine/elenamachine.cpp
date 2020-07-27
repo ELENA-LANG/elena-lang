@@ -10,6 +10,54 @@
 
 using namespace _ELENA_;
 
+bool SystemRoutineProvider :: parseMessageLiteral(ident_t message, IdentifierString& messageName, 
+   int& paramCount, ref_t& flags)
+{
+   paramCount = -1;
+
+   size_t subject = 0;
+   size_t param = 0;
+   for (size_t i = 0; i < getlength(message); i++) {
+      if (message[i] == '[') {
+         if (message[getlength(message) - 1] == ']') {
+            messageName.copy(message + i + 1, getlength(message) - i - 2);
+            paramCount = messageName.ident().toInt();
+            if (paramCount > ARG_COUNT)
+               return false;
+         }
+         else return false;
+
+         param = i;
+      }
+      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
+      }
+      else if (message[i] == ']' && i == (getlength(message) - 1)) {
+      }
+      else if (message[i] == '#') {
+      }
+      else return false;
+   }
+
+   if (param != 0) {
+      messageName.copy(message + subject, param - subject);
+   }
+   else if (paramCount != -1) {
+      // if it is a function invoker
+      messageName.copy(INVOKE_MESSAGE);
+
+      flags |= FUNCTION_MESSAGE;
+   }
+   else messageName.copy(message + subject);
+
+   if (messageName.ident().startsWith("prop#")) {
+      flags |= PROPERTY_MESSAGE;
+
+      messageName.cut(0, getlength("prop#"));
+   }
+
+   return true;
+}
+
 void SystemRoutineProvider :: OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader)
 {
    frameHeader->previousFrame = env->Table->gc_stack_frame;

@@ -293,52 +293,15 @@ void* ELENARTMachine :: loadSubject(ident_t name)
 void* ELENARTMachine :: loadMessage(ident_t message)
 {
    IdentifierString messageName;
-   size_t subject = 0;
-   size_t param = 0;
    int paramCount = -1;
-   for (size_t i = 0; i < getlength(message); i++) {
-      if (message[i] == '[') {
-         if (message[getlength(message) - 1] == ']') {
-            messageName.copy(message + i + 1, getlength(message) - i - 2);
-            paramCount = messageName.ident().toInt();
-            if (paramCount > ARG_COUNT)
-               return nullptr;
-         }
-         else return nullptr;
-
-         param = i;
-      }
-      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-      }
-      else if (message[i] == ']' && i == (getlength(message) - 1)) {
-      }
-      else if (message[i] == '#') {
-      }
-      else return nullptr;
-   }
-
    ref_t flags = 0;
 
-   if (param != 0) {
-      messageName.copy(message + subject, param - subject);
+   if (SystemRoutineProvider::parseMessageLiteral(message, messageName, paramCount, flags)) {
+      ref_t actionRef = (ref_t)loadSubject(messageName.ident());
+      if (!actionRef)
+         return nullptr;
+
+      return (void*)(encodeMessage(actionRef, paramCount, flags));
    }
-   else if (paramCount != -1) {
-      // if it is a function invoker
-      messageName.copy(INVOKE_MESSAGE);
-
-      flags |= FUNCTION_MESSAGE;
-   }
-   else messageName.copy(message + subject);
-
-   if (messageName.ident().startsWith("prop#")) {
-      flags |= PROPERTY_MESSAGE;
-
-      messageName.cut(0, getlength("prop#"));
-   }
-
-   ref_t actionRef = (ref_t)loadSubject(messageName.ident());
-   if (!actionRef)
-      return nullptr;
-
-   return (void*)(encodeMessage(actionRef, paramCount, flags));
+   else return nullptr;
 }

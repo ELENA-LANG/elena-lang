@@ -994,61 +994,18 @@ bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
 
 void* Instance :: parseMessage(ident_t message)
 {
-   size_t start = 0;
-   bool funtionMode = false;
-   if (message.startsWith(INVOKE_MESSAGE)) {
-      // HOTFIX : recognize invoke message
-      start = getlength(INVOKE_MESSAGE);
-      if (message[start] != '[')
-         return nullptr;
-
-      funtionMode = true;
-   }
-   else if (message.startsWith(CONSTRUCTOR_MESSAGE)) {
-      // HOTFIX : recognize constructor message
-      start = 1;
-   }
-
    IdentifierString messageName;
-   size_t subject = 0;
-   size_t param = 0;
    int paramCount = -1;
-   for (size_t i = start; i < getlength(message); i++) {
-      if (message[i] == '[') {
-         if (message[getlength(message) - 1] == ']') {
-            messageName.copy(message + i + 1, getlength(message) - i - 2);
-            paramCount = messageName.ident().toInt();
-            if (paramCount > ARG_COUNT)
-               return nullptr;
-         }
-         else return nullptr;
-
-         param = i;
-      }
-      else if (message[i] >= 65 || (message[i] >= 48 && message[i] <= 57)) {
-      }
-      else if (message[i] == ']' && i == (getlength(message) - 1)) {
-      }
-      else return nullptr;
-   }
-
    ref_t flags = 0;
 
-   if (funtionMode) {
-      messageName.copy(INVOKE_MESSAGE);
+   if (SystemRoutineProvider::parseMessageLiteral(message, messageName, paramCount, flags)) {
+      ref_t actionRef = getSubjectRef(messageName.ident());
+      if (!actionRef)
+         return nullptr;
 
-      flags |= FUNCTION_MESSAGE;
+      return (void*)(encodeMessage(actionRef, paramCount, flags));
    }
-   else if (param != 0) {
-      messageName.copy(message + subject, param - subject);
-   }
-   else messageName.copy(message + subject);
-
-   ref_t actionRef = getSubjectRef(messageName.ident());
-   if (!actionRef)
-      return nullptr;
-
-   return (void*)(encodeMessage(actionRef, paramCount, flags));
+   else return nullptr;
 }
 
 // --- ELENAMachine::Config ---

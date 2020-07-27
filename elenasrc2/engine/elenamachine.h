@@ -152,6 +152,8 @@ public:
 
    static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
 
+   static bool parseMessageLiteral(ident_t message, IdentifierString& messageName, int& paramCount, ref_t& flags);
+
 } __routineProvider;
 
 } // _ELENA_

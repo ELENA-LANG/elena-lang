@@ -233,15 +233,18 @@ void VMTapeParser :: parseBuildScriptStatement(_ScriptReader& reader, ScriptBook
 
 bool VMTapeParser :: parseBuildScript(TapeWriter& writer, _ScriptReader& reader)
 {
+   bool idle = true;
+
    ScriptBookmark bm = reader.read();
    Stack<ScriptBookmark> callStack(ScriptBookmark::Default());
    while (!reader.Eof()) {
+      idle = false;
+
       parseBuildScriptStatement(reader, bm, callStack);
 
       bm = reader.read();
    }
 
-   bool idle = callStack.Count() > 0;
    while (callStack.Count() > 0) {
       bm = callStack.pop();
 
@@ -264,9 +267,9 @@ void VMTapeParser :: parse(_ScriptReader& reader, MemoryDump* output)
    TapeWriter writer(output);
 
    if (parseBuildScript(writer, reader)) {
-//      if (_postfix.Length() != 0) {
-//         parsePostfix(writer);
-//      }
+      if (_postfix.Length() != 0) {
+         parseInline(_postfix.c_str(), writer);
+      }
    }
    writer.writeEndCommand();
 }
