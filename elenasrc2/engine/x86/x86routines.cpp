@@ -161,41 +161,6 @@ void SystemRoutineProvider :: ExitThread(SystemEnv* env, pos_t exitCode, bool wi
    CloseThreadHandle(entry, withExit, exitCode);
 }
 
-int SystemRoutineProvider :: Execute(void* address, FrameHeader* framePtr)
-{
-#ifdef _WIN32
-   int retVal = 0;
-   int prevFrame = framePtr->previousFrame;
-   int resrv = framePtr->reserved;
-
-   __asm {
-      mov  eax, address
-
-      push esi
-      push edi
-      mov  esi, prevFrame
-      mov  edi, resrv
-      push ecx
-      push ebx
-      push ebp
-      push esi
-      push edi
-      mov  ebp, esp
-      call eax
-      add  esp, 8
-      pop  ebp
-      pop  ebx
-      pop  ecx
-      pop  edi
-      pop  esi
-
-      mov  retVal, eax
-   }
-
-   return retVal;
-#endif
-}
-
 constexpr int elObjectOffset = 0x0008;
 
 struct ObjectPage

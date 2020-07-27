@@ -1,0 +1,1 @@
+public program() { $1 }

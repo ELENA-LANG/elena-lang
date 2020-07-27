@@ -53,6 +53,8 @@ copy %~dp0\..\bin\winstub.ex_ %~dp0\output\bin
 copy %~dp0\..\bin\elc.cfg %~dp0\output\bin
 copy %~dp0\..\bin\elenavm.cfg %~dp0\output\bin
 copy %~dp0\..\bin\elenart.cfg %~dp0\output\bin
+copy %~dp0\..\bin\elt.es %~dp0\output\bin
+copy %~dp0\..\bin\command.es %~dp0\output\bin
 
 copy %~dp0\..\bin\templates\*.cfg %~dp0\output\bin\templates\
 copy %~dp0\..\bin\scripts\*.es %~dp0\output\bin\scripts\

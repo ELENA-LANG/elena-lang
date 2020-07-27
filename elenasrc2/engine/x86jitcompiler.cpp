@@ -2315,6 +2315,11 @@ void* x86JITCompiler :: getPreloadedReference(ref_t reference)
    return (void*)_preloaded.get(reference);
 }
 
+void* x86JITCompiler :: getInvoker()
+{
+   return (void*)_preloaded.get(INVOKER);
+}
+
 void x86JITCompiler :: setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode)
 {
    if (virtualMode) {

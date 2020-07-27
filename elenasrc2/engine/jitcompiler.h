@@ -102,6 +102,8 @@ public:
    virtual void setGCTable(void* ptr) = 0;
    virtual void setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode) = 0;
 
+   virtual void* getInvoker() = 0;
+
    virtual void generateProgramStart(MemoryDump& tape) = 0;
    virtual void generateSymbolCall(MemoryDump& tape, void* address) = 0;
    virtual void generateProgramEnd(MemoryDump& tape) = 0;

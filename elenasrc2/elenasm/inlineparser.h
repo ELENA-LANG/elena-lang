@@ -37,7 +37,7 @@ class VMTapeParser : public _Parser
                                     TapeWriter& writer);
 
    void parseBuildScriptArgumentList(_ScriptReader& reader, Stack<ScriptBookmark>& callStack);
-   void parseBuildScriptStatement(_ScriptReader& reader, Stack<ScriptBookmark>& callStack);
+   void parseBuildScriptStatement(_ScriptReader& reader, ScriptBookmark& bm, Stack<ScriptBookmark>& callStack);
 
    void parseInlineStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 

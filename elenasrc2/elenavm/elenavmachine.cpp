@@ -968,7 +968,10 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
 
    int retVal = 0;
    if (!standAlone) {
-      retVal = __routineProvider.ExecuteInFrame(env, entry);
+      // HOTFIX : load invoker
+      entry.address = _compiler->getInvoker();
+
+      retVal = __routineProvider.ExecuteInFrame(env, entry, vaddress);
    }
    else retVal = entry.evaluate2(0, vaddress);
 

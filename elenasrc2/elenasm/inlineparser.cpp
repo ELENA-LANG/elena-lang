@@ -12,7 +12,7 @@
 using namespace _ELENA_;
 using namespace _ELENA_TOOL_;
 
-//typedef Stack<ScriptBookmark> ScriptStack;
+typedef Stack<ScriptBookmark> ScriptStack;
 
 // --- VMTapeParser ---
 
@@ -20,17 +20,6 @@ VMTapeParser :: VMTapeParser()
 {
 }
 
-////int VMTapeParser:: mapVerb(ident_t literal)
-////{
-////   //if (_verbs.Count() == 0) {
-////   //   ByteCodeCompiler::loadVerbs(_verbs);
-////   //}
-////
-////   //return _verbs.get(literal);
-////
-////   return 0; // !! temporal
-////}
-//
 //void VMTapeParser :: writeSubject(TapeWriter& writer, ident_t message)
 //{
 //   IdentifierString reference;
@@ -170,80 +159,6 @@ inline void readToken(_ScriptReader& reader, ident_t expectedToken)
       throw EParseError(bm.column, bm.row);
 }
 
-//void VMTapeParser :: writeArgumentList(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer)
-//{
-//   if (bm.state == dfaFullIdentifier) {
-//
-//   }
-//
-//}
-//
-//int VMTapeParser :: parseArgumentList(_ScriptReader& reader, TapeWriter& writer)
-//{
-//   ScriptBookmark bm;
-//   Stack<ScriptBookmark> callStack;
-//
-//   bm = reader.read();
-//   while (reader.compare(")")) {
-//      callStack.push(bm);
-//      if (bm.state == dfaFullIdentifier)
-//         skipArgumentList(reader);
-//
-//      bm = reader.read();
-//   }
-//
-//   int counter = callStack.Count();
-//   while (callStack.Count() > 0) {
-//      bm = callStack.pop();
-//      if (bm.state == dfaFullIdentifier) {
-//         writeArgumentList(reader, bm, writer);
-//
-//
-//      }
-//      else throw EParseError(bm.column, bm.row);
-//   }
-//
-//   return counter;
-//}
-
-//void VMTapeParser:: parseBuildScriptStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer)
-//{
-//   if (bm.state == dfaFullIdentifier) {
-//      readToken(reader, "(");
-//
-//      int counter = parseArgumentList(reader, writer);
-//
-//   }
-//   else throw EParseError(bm.column, bm.row);
-//
-////   if (reader.compare("*")) {
-////      bm = reader.read();
-////
-////      writeArgument(writer, bm.state, reader.lookup(bm));
-////   }
-////   else if (reader.compare("=")) {
-////      bm = reader.read();
-////
-////      writeArray(writer, bm.state, reader.lookup(bm));
-////   }
-////   else if (reader.compare("^")) {
-////      bm = reader.read();
-////
-////      //writeMessage(writer, reader.lookup(bm), SEND_TAPE_MESSAGE_ID);
-////
-////      throw InternalError("Not yet implemened"); // !! temporal
-////   }
-////   else if (reader.compare("%")) {
-////      bm = reader.read();
-////      ident_t message = reader.lookup(bm);
-////      if (message.find('.') != NOTFOUND_POS) {
-////         writeExtension(writer, reader.lookup(bm), PUSHE_TAPE_MESSAGE_ID);
-////      }
-////      else writeMessage(writer, reader.lookup(bm), PUSHM_TAPE_MESSAGE_ID);
-////   }
-////   else writeObject(writer, bm.state, reader.lookup(bm));
-//}
-
 void VMTapeParser :: parseInlineScript(TapeWriter& writer, _ScriptReader& reader)
 {
    ScriptBookmark bm = reader.read();
@@ -255,7 +170,7 @@ void VMTapeParser :: parseInlineScript(TapeWriter& writer, _ScriptReader& reader
 }
 
 int VMTapeParser :: writeBuildScriptArgumentList(_ScriptReader& reader, ScriptBookmark terminator, 
-   Stack<ScriptBookmark>& callStack, TapeWriter& writer)
+   ScriptStack& callStack, TapeWriter& writer)
 {
    int counter = 0;
    ScriptBookmark bm = callStack.pop();
@@ -267,11 +182,11 @@ int VMTapeParser :: writeBuildScriptArgumentList(_ScriptReader& reader, ScriptBo
       bm = callStack.pop();
    }
 
-   return 0;
+   return counter;
 }
 
-void VMTapeParser :: writeBuildScriptStatement(_ScriptReader& reader, ScriptBookmark bm, Stack
-   <ScriptBookmark>& callStack, TapeWriter& writer)
+void VMTapeParser :: writeBuildScriptStatement(_ScriptReader& reader, ScriptBookmark bm, ScriptStack& callStack, 
+   TapeWriter& writer)
 {
    if (bm.state == dfaFullIdentifier) {
       int counter = writeBuildScriptArgumentList(reader, bm, callStack, writer);
@@ -284,21 +199,20 @@ void VMTapeParser :: writeBuildScriptStatement(_ScriptReader& reader, ScriptBook
    }
 }
 
-void VMTapeParser :: parseBuildScriptArgumentList(_ScriptReader& reader, Stack<ScriptBookmark>& callStack)
+void VMTapeParser :: parseBuildScriptArgumentList(_ScriptReader& reader, ScriptStack& callStack)
 {
    readToken(reader, "(");
 
    ScriptBookmark bm = reader.read();
-   while (reader.compare(")")) {
-      parseBuildScriptStatement(reader, callStack);
+   while (!reader.compare(")")) {
+      parseBuildScriptStatement(reader, bm, callStack);
    
       bm = reader.read();
    }
 }
 
-void VMTapeParser :: parseBuildScriptArgumentList(_ScriptReader& reader, Stack<ScriptBookmark>& callStack)
+void VMTapeParser :: parseBuildScriptStatement(_ScriptReader& reader, ScriptBookmark& bm, ScriptStack& callStack)
 {
-   ScriptBookmark bm = reader.read();
    if (bm.state == dfaFullIdentifier) {
       callStack.push(bm);
 
@@ -315,16 +229,16 @@ void VMTapeParser :: parseBuildScriptArgumentList(_ScriptReader& reader, Stack<S
 bool VMTapeParser :: parseBuildScript(TapeWriter& writer, _ScriptReader& reader)
 {
    ScriptBookmark bm = reader.read();
-   Stack<ScriptBookmark> callStack;
+   Stack<ScriptBookmark> callStack(ScriptBookmark::Default());
    while (!reader.Eof()) {
-      parseBuildScriptArgumentList(reader, callStack);
+      parseBuildScriptStatement(reader, bm, callStack);
 
       bm = reader.read();
    }
 
    bool idle = callStack.Count() > 0;
    while (callStack.Count() > 0) {
-      ScriptBookmark bm = callStack.pop();
+      bm = callStack.pop();
 
       writeBuildScriptStatement(reader, bm, callStack, writer);
    }

@@ -142,6 +142,13 @@ struct ScriptBookmark
       return offset == bm.offset;
    }
 
+   static ScriptBookmark Default()
+   {
+      ScriptBookmark def;
+
+      return def;
+   }
+
    ScriptBookmark()
    {
       offset = 0;

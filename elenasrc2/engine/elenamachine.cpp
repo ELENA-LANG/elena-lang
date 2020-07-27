@@ -39,18 +39,14 @@ void SystemRoutineProvider :: InitMTA(SystemEnv* env, ProgramHeader* frameHeader
    env->ThreadTable[-1] = env->MaxThread;
 }
 
-int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry)
+int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry, void* address)
 {
    FrameHeader frameHeader;
-   if (env->MaxThread <= 1) {
-      OpenSTAFrame(env, &frameHeader);
-   }
+   OpenFrame(env, &frameHeader);
 
-   int retVal = Execute(entry.address, &frameHeader);
+   int retVal = entry.evaluate2((pos_t)&frameHeader, address);
 
-   if (env->MaxThread <= 1) {
-      CloseSTAFrame(env, &frameHeader);
-   }
+   CloseFrame(env, &frameHeader);
 
    return retVal;
 }

@@ -16,6 +16,8 @@ In development:
     * web server
     * make compatible with ELENA 3.1, convert to and from ELENA 3.1
     * pi optimization : assigning int-const to real (#86)
+    * [clear todos]
+    * [resolve open issues]
 
   [documentation]
     * docs

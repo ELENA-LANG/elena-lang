@@ -139,8 +139,7 @@ public:
    static void InitSTA(SystemEnv* env, ProgramHeader* frameHeader);
    static void InitMTA(SystemEnv* env, ProgramHeader* frameHeader);
 
-   static int Execute(void* address, FrameHeader* framePtr);
-   static int ExecuteInFrame(SystemEnv* env, _Entry& entry);
+   static int ExecuteInFrame(SystemEnv* env, _Entry& entry, void* address);
 
    static bool NewThread(SystemEnv* env, ProgramHeader* frameHeader);
 
