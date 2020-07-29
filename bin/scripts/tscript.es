@@ -49,6 +49,7 @@
    #define object         ::= integer;
    #define object         ::= literal;
    #define object         ::= reference;
+   #define object         ::= identifier;
 
    #define operation      ::= "." message m_args;
 
@@ -58,6 +59,7 @@
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
 
    #define message        ::= <= message = $identifier =>;
+   #define identifier     ::= <= identifier = $identifier =>;
    #define integer        ::= <= integer = $numeric =>;
    #define literal        ::= <= literal = "$literal" =>;
    #define reference      ::= <= reference = $reference =>;

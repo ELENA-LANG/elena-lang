@@ -3,6 +3,10 @@ namespace expressions
     import system'collections;
     import system'routines;
 
+    const int mode_non = 0;
+    const int mode_lcl = 1;
+    const int mode_asn = 3;
+
     preloaded used = new object[]{Expression,DynamicSingleton,DynamicExpressionSymbol,SymbolCollection};
     
     public class ScopeVariable
@@ -26,7 +30,7 @@ namespace expressions
         
         get abstract ExpressionScope Previous() {}
         
-        abstract Expression resolve(ScopeVariable variable, ref int index) {}
+        abstract DynamicClosure resolve(ScopeVariable variable, int mode) {}
         
         abstract declare(ScopeVariable variable) {}
     }
@@ -37,7 +41,7 @@ namespace expressions
         
         ExpressionScope Previous = nil;
         
-        Expression resolve(ScopeVariable variable, ref int index) 
+        DynamicClosure resolve(ScopeVariable variable, int mode) 
         {
             ^ nil
         }
@@ -439,21 +443,33 @@ namespace expressions
                 
                 int ScopeLevel = scope.ScopeLevel + variables.Length;
                 
-                Expression resolve(ScopeVariable variable, ref int index)
+                DynamicClosure resolve(ScopeVariable variable, int mode)
                 {
-                    int len := variables.Length;
-                    for(int i := 0, i < len, i+=1) {
-                        if (variables[i] == variable)
-                        {
-                            int parentLevel := scope.ScopeLevel;
-                            
-                            index := parentLevel + i + 1;
-                            
-                            ^ self
+                    int mode_mask := mode && mode_lcl;
+                    
+                    if (mode == 0 || mode_mask == mode_lcl)
+                    {
+                        int len := variables.Length;
+                        for(int i := 0, i < len, i+=1) {
+                            if (variables[i] == variable)
+                            {
+                                int parentLevel := scope.ScopeLevel;
+                                
+                                int index := parentLevel + i + 1;
+                                
+                                if (mode == mode_asn) 
+                                {
+                                    ^ new AssigningClosure(index)
+                                }
+                                else 
+                                {
+                                    ^ new LocalClosure(index)
+                                };                                
+                            }
                         }
                     };
                     
-                    ^ scope.resolve(variable, ref index)
+                    ^ scope.resolve(variable, mode)
                 }
         
                 declare(ScopeVariable variable)
@@ -961,8 +977,8 @@ namespace expressions
 
     public class DeclarationExpression : Expression
     {
-        ScopeVariable variable;
-        LocalClosure  local;
+        ScopeVariable  variable;
+        DynamicClosure local;
         
         constructor(ScopeVariable variable)
         {
@@ -973,9 +989,7 @@ namespace expressions
         {
             scope.declare(variable);
             
-            scope.resolve(variable, ref int index);
-            
-            local := new LocalClosure(index);
+            local := scope.resolve(variable, mode_lcl);
         }
         
         saveTo(List<DynamicClosure> list)
@@ -986,9 +1000,9 @@ namespace expressions
 
     public class AssigningExpression : Expression
     {
-        ScopeVariable    variable;
-        Expression       expression;  
-        AssigningClosure assigning;
+        ScopeVariable  variable;
+        Expression     expression;  
+        DynamicClosure assigning;
         
         constructor(ScopeVariable variable, Expression expression)
         {
@@ -998,9 +1012,7 @@ namespace expressions
 
         prepare(ExpressionScope scope)
         {
-            scope.resolve(variable, ref int index);
-            
-            assigning := new AssigningClosure(index);
+            assigning := scope.resolve(variable, mode_asn);
             
             expression.prepare(scope)
         }
@@ -1043,8 +1055,8 @@ namespace expressions
 
     public class VariableExpression : Expression
     {
-        ScopeVariable variable;
-        LocalClosure  local;
+        ScopeVariable  variable;
+        DynamicClosure local;
         
         constructor(ScopeVariable variable)
         {
@@ -1053,9 +1065,7 @@ namespace expressions
 
         prepare(ExpressionScope scope)
         {
-            scope.resolve(variable, ref int index);
-            
-            local := new LocalClosure(index)
+            local := scope.resolve(variable, mode_lcl);
         }
                 
         saveTo(List<DynamicClosure> list)
@@ -1073,9 +1083,7 @@ namespace expressions
 
         prepare(ExpressionScope scope)
         {            
-            scope.Previous.resolve(variable, ref int index);
-            
-            local := new LocalClosure(index)
+            local := scope.Previous.resolve(variable, mode_lcl)
         }
     }
 
@@ -1142,19 +1150,31 @@ namespace expressions
                 
                 ExpressionScope Previous = scope;
                 
-                Expression resolve(ScopeVariable variable, ref int index)
+                DynamicClosure resolve(ScopeVariable variable, int mode)
                 {
-                    int len := variables.Length;
-                    for(int i := 0, i < len, i+=1) {
-                        if (variables[i] == variable)
-                        {
-                            index := parentLevel + i + 1;
-                            
-                            ^ self
+                    int mode_mask := mode && mode_lcl;
+                    
+                    if (mode == 0 || mode_mask == mode_lcl)
+                    {
+                        int len := variables.Length;
+                        for(int i := 0, i < len, i+=1) {
+                            if (variables[i] == variable)
+                            {
+                                int index := parentLevel + i + 1;
+                                
+                                if (mode == mode_asn) 
+                                {
+                                    ^ new AssigningClosure(index)
+                                }
+                                else 
+                                {
+                                    ^ new LocalClosure(index)
+                                };                                
+                            }
                         }
                     };
                     
-                    ^ scope.resolve(variable, ref index)
+                    ^ scope.resolve(variable, mode)
                 }
         
                 declare(ScopeVariable variable)
@@ -1336,19 +1356,31 @@ namespace expressions
                 
                 ExpressionScope Previous = scope;
                 
-                Expression resolve(ScopeVariable variable, ref int index)
+                DynamicClosure resolve(ScopeVariable variable, int mode)
                 {
-                    int len := parameters.Length;
-                    for(int i := 0, i < len, i+=1) {
-                        if (parameters[i] == variable)
-                        {
-                            index := i + 1;
-                            
-                            ^ self
+                    int mode_mask := mode && mode_lcl;
+                    
+                    if (mode == 0 || mode_mask == mode_lcl)
+                    {
+                        int len := parameters.Length;
+                        for(int i := 0, i < len, i+=1) {
+                            if (parameters[i] == variable)
+                            {
+                                int index := i + 1;
+                                
+                                if (mode == mode_asn) 
+                                {
+                                    NotSupportedException.raise()
+                                }
+                                else 
+                                {
+                                    ^ new LocalClosure(index)
+                                };                                
+                            }
                         }
                     };
                     
-                    ^ scope.resolve(variable, ref index)
+                    ^ scope.resolve(variable, mode)
                 }
         
                 declare(ScopeVariable variable)
@@ -1440,19 +1472,31 @@ namespace expressions
                 
                 ExpressionScope Previous = scope;
                 
-                Expression resolve(ScopeVariable variable, ref int index)
+                DynamicClosure resolve(ScopeVariable variable, int mode)
                 {
-                    int len := parameters.Length;
-                    for(int i := 0, i < len, i+=1) {
-                        if (parameters[i] == variable)
-                        {
-                            index := i + 1;
-                            
-                            ^ self
+                    int mode_mask := mode && mode_lcl;
+                    
+                    if (mode == 0 || mode_mask == mode_lcl)
+                    {
+                        int len := parameters.Length;
+                        for(int i := 0, i < len, i+=1) {
+                            if (parameters[i] == variable)
+                            {
+                                int index := i + 1;
+                                
+                                if (mode == mode_asn) 
+                                {
+                                    NotSupportedException.raise()
+                                }
+                                else 
+                                {
+                                    ^ new LocalClosure(index)
+                                };                                
+                            }
                         }
                     };
                     
-                    ^ scope.resolve(variable, ref index)
+                    ^ scope.resolve(variable, mode)
                 }
         
                 declare(ScopeVariable variable)
