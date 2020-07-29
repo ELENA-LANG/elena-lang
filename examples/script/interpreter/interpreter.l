@@ -161,7 +161,7 @@ class TapeAssembler
                     Expression.Method(
                        "eval",
                        new ScopeVariable("tape"),                   
-                       Expression.CodeBlock(theTape.Value))).compiled();           
+                       Expression.CodeBlock(theTape.Value))).compiled(IdleExpressionScope);           
                    
         ^(tape){ program.eval(tape) }
     }
