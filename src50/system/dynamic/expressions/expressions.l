@@ -7,7 +7,7 @@ namespace expressions
     const int mode_lcl = 1;
     const int mode_asn = 3;
 
-    preloaded used = new object[]{Expression,DynamicSingleton,DynamicExpressionSymbol,SymbolCollection};
+    preloaded used = new object[]{Expression,DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,DynamicImport};
     
     public class ScopeVariable
     {
@@ -122,6 +122,9 @@ namespace expressions
               
         static Expression Variable(ScopeVariable variable)
             = new VariableExpression(variable);
+              
+        static Expression Identifier(ScopeVariable variable)
+            = new IdentifierExpression(variable);
               
         static Expression Variable(string variable)
             = new VariableExpression(new ScopeVariable(variable));
@@ -1681,7 +1684,7 @@ namespace expressions
     public class SymbolCollection
     {
         SymbolInfo[]    symbols;
-        ScopeVariable[] imports;
+        ScopeVariable[] imports := new ScopeVariable[] { new ScopeVariable("system") };
 
         constructor(SymbolInfo symbol1)
             <= load(symbol1);
@@ -1700,7 +1703,7 @@ namespace expressions
                                 
         constructor load(params SymbolInfo[] symbols)
         {
-            this symbols := symbols;                
+            this symbols := symbols;        
         }
  
         compiled()

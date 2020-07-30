@@ -4,7 +4,17 @@
    #define start          ::= <= root ( public_namespace ( => member+ $eof <= )) =>;
    #define start          ::= $eof;
 
+   #define member         ::= import;
    #define member         ::= function;
+
+   #define import         ::= 
+<=
+    import (
+=>
+                             "import" identifier ";"
+<=
+    )
+=>;
 
    #define function       ::= 
 <=

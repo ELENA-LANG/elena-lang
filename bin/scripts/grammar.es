@@ -19,6 +19,19 @@
 <= ) =>;
 
    #define member         ::=
+<=
+   system'dynamic'expressions'SymbolInfo (
+     system'dynamic'expressions'DynamicImport (
+       system'dynamic'expressions'ScopeVariable (
+=>
+                                     "import" "(" "identifier" "=" ident_quote ")"
+<=
+       )
+     )
+   )
+=>;
+
+   #define member         ::=
 <= 
      system'dynamic'expressions'SymbolInfo ( 
 =>
@@ -248,7 +261,7 @@
 
   #define object          ::=
 <=
-                    system'dynamic'expressions'VariableExpression ( 
+                    system'dynamic'expressions'IdentifierExpression ( 
                        system'dynamic'expressions'ScopeVariable (
 =>
                            "identifier" "=" ident_quote
