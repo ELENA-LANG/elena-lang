@@ -10,7 +10,26 @@ public sealed const struct Symbol
     {
         intern system'core_routines'__symbol.load(self, name)
     }
+    
+    constructor(dirty_ptr ptr)
+    {
+        intern system'core_routines'__dptr.copyTo(ptr, self)
+    }
+    
+    static Symbol tryLoad(string ns, string name)
+    {
+        intern system'core_routines'__symbol.tryLoad(ref dirty_ptr ptr, ns, name);
         
+        ifnot (ptr.isEmpty())
+        {
+            ^ ptr
+        }
+        else
+        {
+            ^ nil
+        }
+    }    
+                
     /// Redirects incoming messages to the symbol
     dispatch() => intern system'core_routines'__symbol;
 }

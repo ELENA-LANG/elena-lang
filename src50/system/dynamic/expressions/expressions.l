@@ -1053,6 +1053,27 @@ namespace expressions
         }
     }
 
+    public class IdentifierExpression : Expression
+    {
+        ScopeVariable  name;
+        DynamicClosure identifier;
+        
+        constructor(ScopeVariable name)
+        {
+            this name := name
+        }
+
+        prepare(ExpressionScope scope)
+        {
+            identifier := scope.resolve(name, mode_non);
+        }
+                
+        saveTo(List<DynamicClosure> list, ExpressionScope scope)
+        {
+            list.append(identifier);
+        }
+    }
+
     public class VariableExpression : Expression
     {
         ScopeVariable  variable;
@@ -1539,6 +1560,23 @@ namespace expressions
         abstract compiled(ExpressionScope scope) {}
     }
  
+    public class DynamicImport : DynamicSymbol
+    {
+        ScopeVariable  import;
+        
+        constructor(ScopeVariable import)
+        {
+            this import := import;
+        }
+        
+        compiled(ExpressionScope scope)
+        {
+            scope.declare(import);
+            
+            ^ nil
+        }
+    }
+
     public class DynamicExpressionSymbol : DynamicSymbol
     {
         Expression expr;
@@ -1633,12 +1671,17 @@ namespace expressions
             Name := name;
             Symbol := symbol
         } 
+        constructor(DynamicSymbol symbol)
+        {
+            Symbol := symbol
+        } 
     }
     
     [info:"a dynamic namespace, containing list of symbols"]
     public class SymbolCollection
     {
-        SymbolInfo[] symbols;
+        SymbolInfo[]    symbols;
+        ScopeVariable[] imports;
 
         constructor(SymbolInfo symbol1)
             <= load(symbol1);
@@ -1671,12 +1714,18 @@ namespace expressions
             for (int i := 0, i < len, i+=1) {
                 auto info := symbols[i];
                 
-                MessageName name := new MessageName(info.Name);
-                Message prop := name.setPropertyMessage(); 
-    
-                var tape := info.Symbol.compiled(scope);
-     
-                prop(set, tape);
+                var symbolName := info.Name;
+                if (symbolName == nil) {
+                    info.Symbol.compiled(scope);
+                }
+                else {
+                    MessageName name := new MessageName(symbolName);
+                    Message prop := name.setPropertyMessage(); 
+        
+                    var tape := info.Symbol.compiled(scope);
+         
+                    prop(set, tape);
+                }                
             };
             
             ^ set
@@ -1685,7 +1734,51 @@ namespace expressions
         [info:"Exectutes the program entry point"]
         eval()
         {
-            var tape := self.compiled(IdleExpressionScope);
+            var tape := self.compiled(new ExpressionScope
+            {
+                get int ScopeLevel() 
+                {
+                    NotSupportedException.raise();
+                    
+                    ^ nil // !! to supress warning
+                }
+                
+                declare(ScopeVariable variable) 
+                {
+                    var subarr := new ScopeVariable[] { variable };
+                    
+                    if (imports == nil)
+                    {
+                        imports := subarr
+                    }
+                    else
+                    {
+                        imports := imports + subarr
+                    }
+                }
+                
+                ExpressionScope Previous
+                    = nil;
+                
+                DynamicClosure resolve(ScopeVariable variable, int mode) 
+                {
+                    var refName := variable.Name;
+                    
+                    if (mode == 0 && imports != nil)
+                    {
+                        int len := imports.Length;
+                        for(int i := 0, i < len, i+=1) {
+                            var symbol := Symbol.tryLoad(imports[i].Name, refName);
+                            if (symbol != nil)
+                            {
+                                ^ ConstantClosure.load(symbol)
+                            }
+                        }
+                    };
+                    
+                    ^ nil
+               }                
+            });
             
             var program := tape.program;
             ^ program();

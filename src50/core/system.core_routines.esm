@@ -2673,6 +2673,16 @@ procedure __dptr."copyTo$system@UnsafePointer$@system@Array#1&system@ByteNumber$
 
 end
 
+procedure __dptr."copyTo$system@UnsafePointer$system@Symbol[2]"
+
+  peeksi 1
+  load
+  peeksi 2
+  save
+  quitn 2
+
+end
+
 procedure __message."getWeakMessage$system@Message$@system@ref#1&system@Message[2]"
 
   peeksi 1
@@ -2927,6 +2937,23 @@ labErr:
   pushr   class : system'SymbolLoaderException
   pushr   mssgconst : "new[2]"
   throw
+
+end
+
+procedure __symbol."tryLoad$@system@ref#1&system@UnsafePointer$system@String$system@String[3]"
+
+  peeksi   3
+  pusha
+  peeksi   3
+  pusha
+  loadenv
+  pushd
+  callextr extern : LoadSymbolByString2
+  freei    3
+  peeksi   1
+  save
+
+  quitn 3
 
 end
 

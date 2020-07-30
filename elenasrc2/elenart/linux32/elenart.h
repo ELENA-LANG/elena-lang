@@ -63,6 +63,8 @@ extern "C"
 
    DLL_PUBLIC void* LoadSymbolByString(void* systemEnv, void* referenceName);
 
+   DLL_PUBLIC void* LoadSymbolByString2(void* systemEnv, void* ns, void* referenceName);
+
    DLL_PUBLIC void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length);
 
    // == Linux specific routines ==

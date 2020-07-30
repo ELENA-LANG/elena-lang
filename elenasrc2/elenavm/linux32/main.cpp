@@ -391,6 +391,13 @@ void* LoadSymbolByString(void* systemEnv, void* referenceName)
    }
 }
 
+void* LoadSymbolByString2(void* systemEnv, void* ns, void* referenceName)
+{
+   ReferenceNs str((const char*)ns, (const char*)referenceName);
+
+   return LoadSymbolByString(systemEnv, (void*)str.c_str());
+}
+
 void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
 {
    if (length < 0x100) {
