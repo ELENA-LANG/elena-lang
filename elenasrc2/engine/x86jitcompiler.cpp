@@ -69,7 +69,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 155;
+const int gcCommandNumber = 156;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -102,7 +102,8 @@ const int gcCommands[gcCommandNumber] =
    bcIfHeap, bcEqualFI, bcLoadF, bcRSaveL, bcRAbs,
    bcCallI, bcIfCount, bcSub, bcSwapD, bcXSet,
    bcMIndex, bcParent, bcCheckSI, bcLSave, bcLCallExtR,
-   bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF, bcXRSaveF
+   bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF, bcXRSaveF,
+   bcXRedirect
 };
 
 const int gcCommandExNumber = 54;
@@ -146,7 +147,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &loadNOp, &loadNOp, &loadNOpX, &loadN4OpX, &loadFPOp, &loadFPOp,
 
-   &loadNOp, &loadIndexOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadNOp, &loadIndexOp, &compileXRedirect, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp,
@@ -1991,6 +1992,19 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
             break;
       }
    }
+}
+
+void _ELENA_::compileXRedirect(int op, x86JITScope& scope)
+{
+   int startArg = 1;
+   if (test(scope.extra_arg, FUNCTION_MESSAGE)) {
+      startArg = 0;
+   }
+
+      // ; lea  eax, [esp + offs]
+   x86Helper::leaRM32disp(scope.code, x86Helper::otEAX, x86Helper::otESP, startArg << 2);
+
+   loadIndexOp(op, scope);
 }
 
 void _ELENA_::compileMovV(int, x86JITScope& scope)

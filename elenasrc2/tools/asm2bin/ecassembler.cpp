@@ -602,6 +602,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcSetI:
          case bcXSetI:
          case bcCheckSI:
+         case bcXRedirect:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:

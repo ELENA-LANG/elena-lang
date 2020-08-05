@@ -113,6 +113,7 @@ enum ByteCode
 
    bcMul             = 0x60,
    bcCheckSI         = 0x61,
+   bcXRedirect       = 0x62,
 //   bcBReadB          = 0x65,
 
 //   bcBWrite          = 0x69,

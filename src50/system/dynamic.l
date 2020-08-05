@@ -87,16 +87,16 @@ public sealed const struct Message
 
 // --- ExtensionMessage ---
 
-/// An extended message constant
+[info:"An extended message constant"]
 public sealed const struct ExtensionMessage
 {
     embeddable __mssg theValue[8];
     
-    /// Compares the values
+    [info:"Compares the values"]
     bool equal(ExtensionMessage ext_mssg)
         = theValue == ext_mssg;
 
-    /// Dequalifies incoming messages if they are equal to its value and redirects to the target
+    [info:"Dequalifies incoming messages if they are equal to its value and redirects to the target"]
     dispatch() => intern system'core_routines'__extmessage;
 }
 

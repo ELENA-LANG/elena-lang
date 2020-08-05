@@ -1773,6 +1773,76 @@ labNext:
 
 end
 
+// ; xredirect 
+inline % 062h
+
+  lea  ebx, [ebx + __arg1]
+  push ebx
+  push edx 
+
+  mov  esi, [ebx]   // ; get next overload list
+  test esi, esi
+  jz   labEnd
+
+labNextList:
+  xor  edx, edx
+  mov  ebx, [esi] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  edi, rdata : % CORE_MESSAGE_TABLE
+  mov  ecx, [esp]
+  mov  ebx, [edi + ebx * 8 + 4]
+  and  ecx, ARG_MASK
+  lea  ebx, [edi + ebx - 4]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  pop  eax
+  pop  esi
+  mov  ecx, edx
+  mov  esi, [esi]
+  mov  ebx, [esp]
+  mov  edx, [esi + ecx * 8]
+  jmp  [esi + ecx * 8 + 4]
+
+labMatching:
+  mov  edi, [eax + ecx * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - 4]
+  mov  esi, [ebx + ecx * 4]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  esi, [esp+4]
+  add  edx, 1
+  mov  esi, [esi]
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+  add  [esp+4], 4
+  mov  esi, [esp+4]
+  test esi, esi
+  jnz  labNextList
+
+labEnd:
+  pop  edx
+  pop  ebx
+
+end
+
 // ; laddf
 inline % 74h
 

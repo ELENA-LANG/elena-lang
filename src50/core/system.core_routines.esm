@@ -2903,6 +2903,58 @@ labDefault:
   
 end
 
+procedure __extdispatcher."#dispatch[1]"
+
+  pushd
+
+  // check if it is invoke
+  and        SPECIAL_MESSAGE
+  ifn        labDefault 0 
+
+  load
+  storev
+
+  elsed      labDefault
+
+  popd
+  xredirect  1
+  jump       labDefault2
+
+labDefault:
+  popd
+
+labDefault2:
+  bsredirect 
+
+  open     4
+  reserve  2
+  savesi   3
+  pushs   -3
+  pusha
+  movr     class : system'Message
+  pushr    class : system'MethodNotFoundException
+  storesi  5
+  peeksi   0
+  pushr    mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __extdispatcher."init$mytest@ExtensionDispatcher[1]"
+
+  peeksi 1
+  movn   0
+  savei  2
+  movm   mssgconst : "whoAmI[1]"
+  savei  0
+  pushr  constarray : "mytest'whoAmI$inline1"
+  popd
+  savei  1
+
+  quitn  1
+
+end
+
 procedure __symbol."#dispatch[1]"
 
   open     3
