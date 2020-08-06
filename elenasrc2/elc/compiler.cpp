@@ -1201,6 +1201,7 @@ Compiler :: Compiler(_CompilerLogic* logic)
 {
    _optFlag = 0;
    _autoSystemImport = false;
+   _dynamicDispatching = true; // !! temporal
 
    this->_logic = logic;
 
@@ -8654,18 +8655,6 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    }
 }
 
-//void Compiler :: saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne)
-//{
-//   nsScope.saveExtension(message, extensionClassRef, reference, internalOne);
-//   //if (isOpenArg(message)/* && _logic->isMethodGeneric(scope.info, message)*/) {
-//   //   // if it is an extension with open argument list generic handler
-//   //   // creates the references for all possible number of parameters
-//   //   for (int i = 1; i < OPEN_ARG_COUNT; i++) {
-//   //      nsScope.saveExtension(overwriteParamCount(message, i), extensionClassRef, reference, internalOne);
-//   //   }
-//   //}
-//}
-
 void Compiler :: saveExtension(ClassScope& scope, ref_t message, bool internalOne)
 {
    ref_t extensionMessage = 0;
@@ -9677,6 +9666,13 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t generi
 
    classScope.info.methodHints.exclude(Attribute(genericMessageRef | FUNCTION_MESSAGE, maOverloadlist));
    classScope.info.methodHints.add(Attribute(genericMessageRef | FUNCTION_MESSAGE, maOverloadlist), dispatchListRef);
+
+
+
+   // !! temporal
+   classScope.info.mattributes.add(Attribute(caExtOverloadlist, genericMessageRef), dispatchListRef);
+
+
 
    generateMethodDeclaration(classNode.findChild(lxClassMethod), classScope, false, false, false);
    //generateMethodDeclarations(classNode, classScope, false, lxClassMethod, true);

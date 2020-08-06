@@ -305,3 +305,21 @@ void* ELENARTMachine :: loadMessage(ident_t message)
    }
    else return nullptr;
 }
+
+ref_t ELENARTMachine :: loadDispatcherOverloadlist(ident_t referenceName)
+{
+   return (ref_t)loadMetaAttribute(referenceName, caExtOverloadlist);
+}
+
+int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, ref_t message, void* output)
+{
+   int len = 0;
+
+   ref_t listRef = loadDispatcherOverloadlist("mytest'whoAmI[1]");
+   if (listRef) {
+      ((int*)output)[len] = listRef;
+      len++;
+   }
+
+   return len;
+}

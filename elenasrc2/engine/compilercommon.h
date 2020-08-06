@@ -447,8 +447,6 @@ public:
       bool& repeatMode, ExtensionMap* outerExtensionList) = 0;
    virtual void compileModule(SyntaxTree& syntaxTree, _ModuleScope& scope, 
       ident_t greeting, ExtensionMap* outerExtensionList) = 0;
-
-////   virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader) = 0;
 };
 
 // --- _CompilerLogic ---

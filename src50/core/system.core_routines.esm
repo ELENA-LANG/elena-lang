@@ -2942,16 +2942,26 @@ end
 
 procedure __extdispatcher."init$mytest@ExtensionDispatcher[1]"
 
-  peeksi 1
-  movn   0
-  savei  2
-  movm   mssgconst : "whoAmI[1]"
-  savei  0
-  pushr  constarray : "mytest'whoAmI$inline1"
-  popd
-  savei  1
+  peeksi   1
+  movn     0
+  savei    2
+  movm     mssgconst : "whoAmI[1]"
+  savei    0
 
-  quitn  1
+  pusha
+  popd
+  inc      4
+  pushd
+  pushn    0
+  pushn    0
+  callextr extern : LoadExtensionDispatcher
+  freei    3
+
+//  pushr    constarray : "mytest'whoAmI$inline1"
+//  popd
+//  savei    1
+
+  quitn    1
 
 end
 

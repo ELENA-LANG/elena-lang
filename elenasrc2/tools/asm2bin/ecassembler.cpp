@@ -614,6 +614,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcOr:
          case bcInc:
          case bcXWrite:
+         case bcXLoad:
             compileNCommand(opcode, token, writer);
             break;
          case bcMovM:

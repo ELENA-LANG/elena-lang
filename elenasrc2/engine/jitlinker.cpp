@@ -773,29 +773,61 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
    return vaddress;
 }
 
-void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask)
+void JITLinker :: generateMetaAttribute(int category, ident_t fullName, void* address)
 {
    SectionInfo tableInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
 
    MemoryWriter writer(tableInfo.section);
 
-   IdentifierString fullName;
-   if (referenceInfo.isRelative()) {
-      fullName.copy(referenceInfo.module->Name());
-      fullName.append(referenceInfo.referenceName);
-   }
-   else fullName.copy(referenceInfo.referenceName);
-
    writer.writeDWord(category);
-   writer.writeDWord(fullName.Length() + 9);
-   writer.writeLiteral(fullName.ident());
-
-   void* address = resolve(referenceInfo, mask, false);
+   writer.writeDWord(getlength(fullName) + 9);
+   writer.writeLiteral(fullName);
 
    if (!_virtualMode) {
       writer.writeDWord((size_t)address);
    }
    else writer.writeRef((ref_t)address, 0);
+}
+
+void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask)
+{
+   IdentifierString fullName;
+   if (referenceInfo.isRelative()) {
+      fullName.copy(referenceInfo.module->Name());
+      fullName.append('\'');
+      fullName.append(referenceInfo.referenceName);
+   }
+   else fullName.copy(referenceInfo.referenceName);
+
+   void* address = resolve(referenceInfo, mask, false);
+
+   generateMetaAttribute(category, fullName.ident(), address);
+}
+
+void JITLinker :: generateOverloadListMetaAttribute(_Module* module, ref_t message, ref_t listRef)
+{
+   ref_t actionRef, flags;
+   int argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   // write the overload list name
+   ref_t signature;
+   ident_t actionName = module->resolveAction(actionRef, signature);
+
+   IdentifierString fullName;
+   fullName.copy(module->Name());
+   fullName.append('\'');
+   fullName.append(actionName);
+   fullName.append('[');
+   fullName.appendInt(argCount);
+   fullName.append(']');
+
+   ident_t referenceName = module->resolveReference(listRef & ~mskAnyRef);
+
+   // resolve extension overloadlist
+   void* address = resolve(ReferenceInfo(module, referenceName), mskConstArray, false);
+
+   generateMetaAttribute(caExtOverloadlist, fullName.ident(), address);
 }
 
 void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes)
@@ -812,6 +844,9 @@ void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::Cate
             break;
          case caSerializable:
             generateMetaAttribute(attr.value1, referenceInfo, mskVMTRef);
+            break;
+         case caExtOverloadlist:
+            generateOverloadListMetaAttribute(referenceInfo.module, attr.value2, *it);
             break;
          default:
             break;

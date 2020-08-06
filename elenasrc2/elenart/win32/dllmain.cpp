@@ -200,6 +200,18 @@ EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, 
    }
 }
 
+/// <summary>
+/// Fills the passed dispatch list with references to extension message overload list
+/// </summary>
+/// <param name="moduleList">List of imported modules separated by semicolon</param>
+/// <param name="message">Extension message</param>
+/// <param name="output">Dispatch list</param>
+/// <returns></returns>
+EXTERN_DLL_EXPORT int LoadExtensionDispatcher(const char* moduleList, void* message, void* output)
+{
+   return _Instance->loadExtensionDispatcher(moduleList, (ref_t)message, output);
+}
+
 EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
 {
    return _Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);

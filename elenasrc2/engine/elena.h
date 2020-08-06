@@ -551,7 +551,9 @@ enum ClassAttribute : int
    // a description
    caInfo               = 0x004,
    // parameter name
-   caParamName          = 0x005, 
+   caParamName          = 0x005,
+   // extension message overload list
+   caExtOverloadlist    = 0x106,
 };
 
 struct ClassInfo

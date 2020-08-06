@@ -951,6 +951,7 @@ private:
    // optimization rules
    int               _optFlag;
    bool              _autoSystemImport;
+   bool              _dynamicDispatching;
    TransformTape     _rules;
    SyntaxTrie        _sourceRules;
 
@@ -1411,8 +1412,6 @@ public:
    //virtual void registerExtensionTemplate(SyntaxTree& tree, _ModuleScope& scope, ident_t ns, ref_t extensionRef);
    virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
       ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList);
-
-////   //virtual ref_t readEnumListMember(_CompilerScope& scope, _Module* extModule, MemoryReader& reader);
 
    Compiler(_CompilerLogic* logic);
 };

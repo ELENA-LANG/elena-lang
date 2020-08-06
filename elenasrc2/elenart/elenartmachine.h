@@ -115,6 +115,8 @@ private:
 
    bool loadDebugSection();
 
+   ref_t loadDispatcherOverloadlist(ident_t referenceName);
+
 public:
    // frameHeader contains initialized frame fields
    void startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry);
@@ -135,6 +137,8 @@ public:
    void* loadMetaAttribute(ident_t name, int category);
    void* loadSubject(ident_t name);
    void* loadMessage(ident_t name);
+   
+   int loadExtensionDispatcher(const char* moduleList, ref_t message, void* output);
 
    void init(void* messageTable, void* mattributeTable, path_t configPath);
 

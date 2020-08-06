@@ -3,7 +3,8 @@ In development:
 ------         
 
   [development]
-    * elt - #323
+    * elt - #323; implement LoadExtensionDispatcher for Win32 RT / Win32 VM / Linux32 RT / Linux32 VM, support _dynamicDispatching
+            option 
     * [API Docs : Func1 has one argument which is not shown]
     * multi-value return - #508
     * [Brace expansion]
