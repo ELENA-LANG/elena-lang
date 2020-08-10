@@ -928,7 +928,7 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
    }
 }
 
-void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
+void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask, bool silentMode)
 {
    References messageReferences(RefInfo(0, nullptr));
 
@@ -1004,7 +1004,10 @@ void* JITLinker :: resolveConstant(ReferenceInfo referenceInfo, int mask)
    }
    else if (mask == mskConstArray) {
       // resolve constant value
-      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, false);
+      SectionInfo sectionInfo = _loader->getSectionInfo(referenceInfo, mskRDataRef, silentMode);
+      if (!sectionInfo.section)
+         return nullptr;
+
       _compiler->compileCollection(&writer, sectionInfo.section);
 
       vmtVAddress = NULL; // !! to support dump array
@@ -1461,10 +1464,10 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
          case mskInt32Ref:
          case mskRealRef:
          case mskInt64Ref:
-            vaddress = resolveConstant(referenceInfo, mask);
+            vaddress = resolveConstant(referenceInfo, mask, silentMode);
             break;
          case mskConstArray:
-            vaddress = resolveConstant(referenceInfo, mask);
+            vaddress = resolveConstant(referenceInfo, mask, silentMode);
             break;
          case mskStatSymbolRef:
             vaddress = resolveStaticVariable(referenceInfo, mskStatRef);

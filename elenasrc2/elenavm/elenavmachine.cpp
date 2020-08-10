@@ -196,7 +196,7 @@ Instance :: Instance(ELENAVMMachine* machine)
 
    _initialized = false;
    _debugMode = false;
-   _withExtDispatchers = false;
+   _withExtDispatchers = /*false*/true;
 
 //   _traceMode = traceMode;
 
@@ -570,10 +570,18 @@ int Instance :: loadMessageName(ref_t message, char* buffer, size_t maxLength)
 
 ref_t Instance :: loadDispatcherOverloadlist(ident_t referenceName)
 {
-   // resolve extension overloadlist
-   void* address = _linker->resolve(referenceName, mskConstArray, true);
+   return (ref_t)loadMetaAttribute(referenceName, caExtOverloadlist);
+}
 
-   return (ref_t)address;
+void* Instance :: loadMetaAttribute(ident_t name, int category)
+{
+   MemoryReader reader(_mattributeTable);
+
+   size_t len = /*reader.getDWord()*/_ConvertedMATSize;
+
+   RTManager manager;
+
+   return manager.loadMetaAttribute(reader, name, category, len);
 }
 
 int Instance :: loadExtensionDispatcher(const char* moduleList, ref_t message, void* output)

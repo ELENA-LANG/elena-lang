@@ -167,7 +167,7 @@ class JITLinker : _JITLoaderListener
    void* resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
    void* createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references);
    void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo);
-   void* resolveConstant(ReferenceInfo referenceInfo, int mask);
+   void* resolveConstant(ReferenceInfo referenceInfo, int mask, bool silentMode);
    void* resolveStaticVariable(ReferenceInfo referenceInfo, int mask);
 //   void* resolveAnonymousStaticVariable();
    void* resolveMessageTable(ReferenceInfo referenceInfo, int mask);

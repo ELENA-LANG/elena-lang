@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x000C;
+constexpr auto ELENAVM_REVISION = 0x000E;
 
 // --- ELENAVM common constants ---
 #ifdef _WIN32
@@ -296,6 +296,7 @@ protected:
       return ref;
    }
 
+   void* loadMetaAttribute(ident_t name, int category);
    ref_t loadDispatcherOverloadlist(ident_t referenceName);
 
 public:
