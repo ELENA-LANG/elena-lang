@@ -68,6 +68,8 @@ extern "C"
 
    DLL_PUBLIC void* LoadSymbolByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length);
 
+   DLL_PUBLIC int LoadExtensionDispatcher(const char* moduleList, void* message, void* output);
+
    // == Linux specific routines ==
    DLL_PUBLIC int l_core_getargc();
 

@@ -313,12 +313,31 @@ ref_t ELENARTMachine :: loadDispatcherOverloadlist(ident_t referenceName)
 
 int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, ref_t message, void* output)
 {
+   // load message name
+   char messageName[IDENTIFIER_LEN];
+   int mssgLen = loadMessageName(message, messageName, IDENTIFIER_LEN);
+   messageName[mssgLen] = 0;
+
    int len = 0;
 
-   ref_t listRef = loadDispatcherOverloadlist("mytest'whoAmI[1]");
-   if (listRef) {
-      ((int*)output)[len] = listRef;
-      len++;
+   // search message dispatcher
+   IdentifierString messageRef;
+   int listLen = getlength(moduleList);
+   int i = 0;
+   while (i < listLen) {
+      ident_t ns = moduleList + i;
+
+      messageRef.copy(ns);
+      messageRef.append('\'');
+      messageRef.append(messageName);
+
+      ref_t listRef = loadDispatcherOverloadlist(messageRef.c_str());
+      if (listRef) {
+         ((int*)output)[len] = listRef;
+         len++;
+      }
+
+      i += getlength(ns) + 1;
    }
 
    return len;

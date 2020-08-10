@@ -123,7 +123,7 @@ void* x86Instance :: loadDebugSection()
    return _debugProcess.get(0);
 }
 
-bool x86Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
+bool x86Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode, bool withExtDispatchers)
 {
    // !! make sure all threads are stopped
 
@@ -147,9 +147,9 @@ bool x86Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
 
    // create new compiler & linker (in debug mode we do not use embedded symbols)
    _compiler = new _ELENA_::x86JITCompiler(debugMode);
-   _linker = new JITLinker(this, _compiler, false, _codeProcess.get(0)/*, _config.maxThread*/);
+   _linker = new JITLinker(this, _compiler, false, _codeProcess.get(0)/*, _config.maxThread*/, withExtDispatchers);
 
-   return Instance::restart(env, sehTable, debugMode);
+   return Instance::restart(env, sehTable, debugMode, withExtDispatchers);
 }
 
 void x86Instance :: createConsole()

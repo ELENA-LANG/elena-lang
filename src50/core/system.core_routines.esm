@@ -2940,28 +2940,31 @@ labDefault2:
 
 end
 
-procedure __extdispatcher."init$mytest@ExtensionDispatcher[1]"
+procedure __extdispatcher."load$@system@Array#1&system@UnsafePointer$system@Message$@system@Array#1&system@ByteNumber$@system@ref#1&system@IntNumber[4]"
 
   peeksi   1
-  movn     0
-  savei    2
-  movm     mssgconst : "whoAmI[1]"
-  savei    0
 
+  pusha
   pusha
   popd
   inc      4
   pushd
-  pushn    0
-  pushn    0
+
+  peeksi   4
+  load
+  peeksi   3
+  savei    0
+  pushd
+
+  peeksi   6
+  pusha 
   callextr extern : LoadExtensionDispatcher
-  freei    3
+  freei    4
+  peeksi   4
+  inc      1
+  save
 
-//  pushr    constarray : "mytest'whoAmI$inline1"
-//  popd
-//  savei    1
-
-  quitn    1
+  quitn    3
 
 end
 

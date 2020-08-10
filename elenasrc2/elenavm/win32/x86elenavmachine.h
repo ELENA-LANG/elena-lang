@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2019, by Alexei Rakov
+//                                              (C)2009-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef x86elenavmachineH
@@ -31,7 +31,7 @@ protected:
    virtual _Memory* getMessageSection();
    virtual _Memory* getMetaAttributeSection();
 
-   virtual bool restart(SystemEnv* env, void* sehTable, bool debugMode);
+   virtual bool restart(SystemEnv* env, void* sehTable, bool debugMode, bool withExtDispatchers);
 
    virtual void resumeVM();
    virtual void stopVM();

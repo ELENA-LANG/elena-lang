@@ -244,6 +244,11 @@ void* LoadClassByString(void* systemEnv, void* referenceName)
    return _Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
 }
 
+int LoadExtensionDispatcher(const char* moduleList, void* message, void* output)
+{
+   return _Instance->loadExtensionDispatcher(moduleList, (ref_t)message, output);
+}
+
 void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
 {
    if (length < 0x100) {

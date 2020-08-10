@@ -223,6 +223,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    //loadBoolOption(config, opWarnOnSignature);
    loadBoolOption(config, opDebugMode);
    loadBoolOption(config, opClassSymbolAutoLoad);
+   loadBoolOption(config, opExtDispatchers);
    loadOption(config, opTemplate);
 
    // load compiler settings

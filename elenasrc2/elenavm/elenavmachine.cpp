@@ -196,6 +196,7 @@ Instance :: Instance(ELENAVMMachine* machine)
 
    _initialized = false;
    _debugMode = false;
+   _withExtDispatchers = false;
 
 //   _traceMode = traceMode;
 
@@ -534,6 +535,79 @@ void* Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
    return _linker->resolve(reference, mask, silentMode);
 }
 
+int Instance :: loadMessageName(ref_t message, char* buffer, size_t maxLength)
+{
+   ref_t action, flags;
+   int count;
+   decodeMessage(message, action, count, flags);
+
+   size_t used = 0;
+   ident_t subjectName = getSubject(action);
+   size_t length = getlength(subjectName);
+   if (length > 0) {
+      if (maxLength >= (int)(length + used)) {
+         Convertor::copy(buffer + used, subjectName, length, length);
+
+         used += length;
+      }
+      else buffer[used] = 0;
+   }
+
+   if (count > 0) {
+      size_t dummy = 10;
+      String<char, 10>temp;
+      temp.appendInt(count);
+
+      buffer[used++] = '[';
+      Convertor::copy(buffer + used, temp, getlength(temp), dummy);
+      used += dummy;
+      buffer[used++] = ']';
+   }
+   buffer[used] = 0;
+
+   return used;
+}
+
+ref_t Instance :: loadDispatcherOverloadlist(ident_t referenceName)
+{
+   // resolve extension overloadlist
+   void* address = _linker->resolve(referenceName, mskConstArray, true);
+
+   return (ref_t)address;
+}
+
+int Instance :: loadExtensionDispatcher(const char* moduleList, ref_t message, void* output)
+{
+   // load message name
+   char messageName[IDENTIFIER_LEN];
+   int mssgLen = loadMessageName(message, messageName, IDENTIFIER_LEN);
+   messageName[mssgLen] = 0;
+
+   int len = 0;
+
+   // search message dispatcher
+   IdentifierString messageRef;
+   int listLen = getlength(moduleList);
+   int i = 0;
+   while (i < listLen) {
+      ident_t ns = moduleList + i;
+
+      messageRef.copy(ns);
+      messageRef.append('\'');
+      messageRef.append(messageName);
+
+      ref_t listRef = loadDispatcherOverloadlist(messageRef.c_str());
+      if (listRef) {
+         ((int*)output)[len] = listRef;
+         len++;
+      }
+
+      i += getlength(ns) + 1;
+   }
+
+   return len;
+}
+
 bool Instance :: initLoader(InstanceConfig& config)
 {
    // load paths
@@ -592,10 +666,12 @@ void Instance :: resolveMetaAttributeTable()
    }
 }
 
-bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode)
+bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode, bool withExtDispatchers)
 {
    printInfo(ELENAVM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELENAVM_REVISION);
    printInfo(ELENAVM_INITIALIZING);
+
+   _withExtDispatchers = withExtDispatchers;
 
    clearReferences();
    clearMessageTable();
@@ -769,7 +845,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             helper.writeTape(ecodes, extra_param, /*mskVMTRef*/mskRDataRef);
 
             IdentifierString message;
-            message.append('0' + (param + 1));
+            message.append('0' + (char)(param + 1));
             message.append(CONSTRUCTOR_MESSAGE);
 
             ecodes.writeByte(bcMovM);
@@ -863,6 +939,9 @@ void Instance :: configurate(SystemEnv* env, void* sehTable, MemoryReader& reade
       }
 
       switch (command) {
+         case EXT_DISPATCHER_ON:
+            _withExtDispatchers = true;
+            break;
          case USE_VM_MESSAGE_ID:
             if (emptystr(_loader.getNamespace())) {
                setPackagePath(arg);
@@ -884,7 +963,7 @@ void Instance :: configurate(SystemEnv* env, void* sehTable, MemoryReader& reade
          case START_VM_MESSAGE_ID:
             createConsole();
 
-            if(!restart(env, sehTable, _debugMode))
+            if(!restart(env, sehTable, _debugMode, _withExtDispatchers))
                throw EAbortException();
 
             break;

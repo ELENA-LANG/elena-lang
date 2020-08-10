@@ -453,6 +453,15 @@ void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size
    }
 }
 
+int LoadExtensionDispatcher(const char* moduleList, void* message, void* output)
+{
+   Instance* instance = _Machine->getInstance();
+   if (instance == NULL)
+      return 0;
+
+   return instance->loadExtensionDispatcher(moduleList, (ref_t)message, output);
+}
+
 int EvaluateTape(void* systemEnv, void* sehTable, void* tape)
 {
    Instance* instance = _Machine->getInstance();

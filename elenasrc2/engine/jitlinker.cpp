@@ -1364,6 +1364,13 @@ void JITLinker :: onModuleLoad(_Module* module)
    ref_t initRef = module->mapReference(initSymbol, true);
    if (initRef)
       _initializers.add(ModuleReference(module, initRef));
+
+   if (_withExtDispatchers) {
+      IdentifierString extInitSymbol("'", EXT_INITIALIZER_SECTION);
+      ref_t extInitRef = module->mapReference(extInitSymbol, true);
+      if (extInitRef)
+         _initializers.add(ModuleReference(module, extInitRef));
+   }
 }
 
 void JITLinker :: generateInitTape(MemoryDump& tape)

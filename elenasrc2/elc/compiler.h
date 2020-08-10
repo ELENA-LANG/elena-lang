@@ -414,7 +414,7 @@ private:
 //      }
 
       NamespaceScope(_ModuleScope* moduleScope, ExtensionMap* outerExtensionList);
-      NamespaceScope(NamespaceScope* parent/*, ident_t path, IdentifierList* imported*//*, bool withFullInfo*/);
+      NamespaceScope(NamespaceScope* parent);
    };
 
    // - SourceScope -
@@ -997,8 +997,6 @@ private:
       return retVal;
    }
 
-   ////   bool verifyGenericArgParamCount(ClassScope& scope, int expectedParamCount);
-
    bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
 
    ObjectInfo mapClassSymbol(Scope& scope, int classRef);
@@ -1057,7 +1055,6 @@ private:
 //   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
    void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool ignoreType);
    void declareClassAttributes(SNode node, ClassScope& scope, bool visibilityOnly);
-////   void declareLocalAttributes(SNode hints, CodeScope& scope, ObjectInfo& variable, int& size);
    void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
    void declareVMT(SNode member, ClassScope& scope, bool& withConstructors, bool& withDefaultConstructor);
 
@@ -1073,11 +1070,6 @@ private:
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
                                      bool withExtension, int& stackSafeAttr);
-////   ref_t resolveMessageAtCompileTime(ObjectInfo& target, CodeScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef)
-////   {
-////      int dummy;
-////      return resolveMessageAtCompileTime(target, scope, generalMessageRef, implicitSignatureRef, false, dummy);
-////   }
    ref_t mapMessage(SNode node, ExprScope& scope, bool variadicOne, bool extensionCall);
    ref_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags, 
       IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
@@ -1113,8 +1105,6 @@ private:
       int fixedSize, ref_t targetRef);
 
    ObjectInfo compileTypeSymbol(SNode node, ExprScope& scope, EAttr mode);
-//   ObjectInfo compileTerminal(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
-//   ObjectInfo compileObject(SyntaxWriter& writer, SNode objectNode, CodeScope& scope, ref_t targetRef, EAttr mode);
 
    ObjectInfo compileOperator(SNode& node, ExprScope& scope, int operator_id, int paramCount, ObjectInfo loperand, 
       ObjectInfo roperand, ObjectInfo roperand2, EAttr mode);
@@ -1204,8 +1194,6 @@ private:
    ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
    bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
 
-//////   void declareSingletonClass(SNode node, ClassScope& scope);
-
    void compileActionMethod(SNode member, MethodScope& scope);
    void compileExpressionMethod(SNode member, MethodScope& scope, bool lazyMode);
    void compileDispatcher(SNode node, MethodScope& scope, LexicalType methodType, 
@@ -1233,6 +1221,8 @@ private:
 
    ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
    void compilePreloadedCode(SymbolScope& scope);
+   void compilePreloadedExtensionCode(ClassScope& scope);
+
 //   void compilePreloadedCode(_ModuleScope& scope, SNode node);
    void compileSymbolCode(ClassScope& scope);
 
@@ -1243,6 +1233,7 @@ private:
    void compileClassVMT(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileForward(SNode ns, NamespaceScope& scope);
 
+   void compileModuleExtensionDispatcher(NamespaceScope& scope);
    ref_t compileExtensionDispatcher(NamespaceScope& scope, ref_t genericMessageRef);
 
    void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
@@ -1257,7 +1248,6 @@ private:
       bool allowTypeAttribute);
    void generateMethodDeclarations(SNode node, ClassScope& scope, bool closed, LexicalType methodType, 
       bool allowTypeAttribute);
-////   // classClassType == None for generating a class, classClassType == Normal | Embeddable for a class class
    void generateClassDeclaration(SNode node, ClassScope& scope, bool nestedDeclarationMode = false);
 
    void generateClassImplementation(SNode node, ClassScope& scope);
@@ -1270,8 +1260,6 @@ private:
    void compileSymbolImplementation(SNode node, SymbolScope& scope);
    bool compileSymbolConstant(/*SNode node, */SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);
    void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
-//   //void compileMetaCategory(SNode node, NamespaceScope& scope);
-//
 //////   bool validate(_ProjectManager& project, _Module* module, int reference);
 
    ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef, ref_t elementRef = 0);
@@ -1311,10 +1299,6 @@ private:
 
    bool compileDeclarations(SNode node, NamespaceScope& scope, bool forced, bool& repeatMode);
    void compileImplementations(SNode node, NamespaceScope& scope);
-
-////   void generateSyntaxTree(SyntaxWriter& writer, SNode node, ModuleScope& scope, SyntaxTree& autogenerated);
-
-//   //void generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument);
 
    void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
 //   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
@@ -1395,16 +1379,12 @@ public:
    void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, 
       ref_t resendMessage, bool privateOne);
 //   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType);
-////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);
    virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex);
-////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef);
-////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne);
    virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,
       int opArg, ref_t reference);
-////   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef);
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef);

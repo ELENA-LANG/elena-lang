@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x000B;
+constexpr auto ELENAVM_REVISION = 0x000C;
 
 // --- ELENAVM common constants ---
 #ifdef _WIN32
@@ -185,6 +185,7 @@ protected:
       }
    };
 
+   bool            _withExtDispatchers;
    bool            _debugMode;
 //   int             _platform;
 //
@@ -248,7 +249,7 @@ protected:
 
    bool loadTemplate(ident_t name);
 
-   virtual bool restart(SystemEnv* env, void* sehTable, bool debugMode);
+   virtual bool restart(SystemEnv* env, void* sehTable, bool debugMode, bool withExtDispatchers);
 
    void translate(MemoryReader& reader, ImageReferenceHelper& helper, MemoryDump& dump, int terminator);
    void configurate(SystemEnv* env, void* sehTable, MemoryReader& reader, int terminator);
@@ -294,6 +295,8 @@ protected:
 
       return ref;
    }
+
+   ref_t loadDispatcherOverloadlist(ident_t referenceName);
 
 public:
    ident_t getStatus() { return emptystr(_status) ? NULL : (const char*)_status; }
@@ -414,6 +417,8 @@ public:
       return loadReference(systemEnv, referenceName, mskSymbolRef, silentMode);
    }
 
+   int loadMessageName(ref_t messageRef, char* buffer, size_t length);
+
    virtual ref_t getSubjectRef(ident_t subjectName)
    {
       if (subjectName.find('$') != -1) {
@@ -454,14 +459,12 @@ public:
 //   bool init();
 
    void* loadSymbol(ident_t reference, int mask, bool silentMode = false);
-//   //size_t loadMessage(ident_t reference);
 
    int interprete(SystemEnv* env, void* sehTable, void* tape, bool standAlone);
 
    bool loadAddressInfo(void* address, char* buffer, size_t& maxLength);
 
-//   //bool loadSubjectInfo(size_t subjectId, ident_c* buffer, size_t& maxLength);
-//   //bool loadMessageInfo(size_t messageId, ident_c* buffer, size_t& maxLength);
+   int loadExtensionDispatcher(const char* moduleList, ref_t message, void* output);
 
    virtual void addListener(_JITLoaderListener* listener)
    {

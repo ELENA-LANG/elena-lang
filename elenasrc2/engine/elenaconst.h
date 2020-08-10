@@ -84,6 +84,7 @@ namespace _ELENA_
    constexpr auto USE_VM_MESSAGE_ID       = 0x06F3;             // set current package
    constexpr auto LOAD_VM_MESSAGE_ID      = 0x06F4;             // load template
    constexpr auto OPEN_VM_CONSOLE         = 0x02F5;             // open console
+   constexpr auto EXT_DISPATCHER_ON       = 0x02F6;             // turn on with-ext-dispatcher-mode
 
    // ---- ELENAVM interpreter commands ---
    constexpr auto CALL_TAPE_MESSAGE_ID    = 0x05E0;             // call symbol
@@ -461,6 +462,7 @@ namespace _ELENA_
    constexpr auto ATTRIBUTE_SECTION          = "#attributes";
    constexpr auto EXTENSION_SECTION          = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
+   constexpr auto EXT_INITIALIZER_SECTION    = "#ext_initializer";
    constexpr auto PACKAGE_SECTION            = "#package";
    constexpr auto IMPORTS_SECTION            = "#import";
    constexpr auto NAMESPACES_SECTION         = "#namespaces";

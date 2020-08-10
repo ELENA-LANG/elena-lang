@@ -123,6 +123,7 @@ class JITLinker : _JITLoaderListener
    bool              _virtualMode;
    bool              _withDebugInfo;
    bool              _classSymbolAutoLoadMode;
+   bool              _withExtDispatchers;
    void*             _codeBase;
    int               _statLength;
    MethodMap         _staticMethods;
@@ -211,7 +212,7 @@ public:
 
    virtual void onModuleLoad(_Module* module);
 
-   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool autoLoadMode = false)
+   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool withExtDispatchers, bool autoLoadMode = false)
       : _staticMethods(-1)
    {
       _loader = loader;
@@ -221,6 +222,7 @@ public:
       _codeBase = codeBase;
       _statLength = 0;
       _classSymbolAutoLoadMode = autoLoadMode;
+      _withExtDispatchers = withExtDispatchers;
 
       loader->addListener(this);
 //      _uniqueID = 0;

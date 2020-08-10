@@ -8068,6 +8068,19 @@ void Compiler :: compileSymbolCode(ClassScope& scope)
    compileSymbolAttribtes(*scope.moduleScope, scope.reference, publicAttr);
 }
 
+void Compiler :: compilePreloadedExtensionCode(ClassScope& scope)
+{
+   _Module* module = scope.moduleScope->module;
+
+   IdentifierString sectionName("'", EXT_INITIALIZER_SECTION);
+
+   CommandTape tape;
+   _writer.generateInitializer(tape, module->mapReference(sectionName), lxClassSymbol, scope.reference);
+
+   // create byte code sections
+   _writer.saveTape(tape, *scope.moduleScope);
+}
+
 void Compiler :: compilePreloadedCode(SymbolScope& scope)
 {
    _Module* module = scope.moduleScope->module;
@@ -9620,6 +9633,76 @@ ref_t targetResolver(void* param, ref_t mssg)
    return ((Map<ref_t, ref_t>*)param)->get(mssg);
 }
 
+void Compiler :: compileModuleExtensionDispatcher(NamespaceScope& scope)
+{
+   List<ref_t> genericMethods;
+   ClassInfo::CategoryInfoMap methods(0);
+   Map<ref_t, ref_t> taregts;
+
+   auto it = scope.extensions.start();
+   while (!it.Eof()) {
+      auto extInfo = *it;
+      ref_t genericMessageRef = it.key();
+
+      ident_t refName = scope.module->resolveReference(extInfo.value1);
+      if (isWeakReference(refName)) {
+         if (NamespaceName::compare(refName, scope.ns)) {
+            // if the extension is declared in the module namespace
+            // add it to the list to be generated
+
+            if (retrieveIndex(genericMethods.start(), genericMessageRef) == -1)
+               genericMethods.add(genericMessageRef);
+
+            methods.add(Attribute(extInfo.value2, maMultimethod), genericMessageRef | FUNCTION_MESSAGE);
+            taregts.add(extInfo.value2, extInfo.value1);
+         }
+      }
+
+      it++;
+   }
+
+   if (genericMethods.Count() > 0) {
+      // if there are extension methods in the namespace
+      ref_t extRef = scope.moduleScope->mapAnonymous();
+      ClassScope classScope(&scope, extRef, Visibility::Private);
+      classScope.extensionDispatcher = true;
+
+      // declare the extension
+      SyntaxTree classTree;
+      SyntaxWriter writer(classTree);
+
+      // build the class tree
+      writer.newNode(lxRoot);
+      writer.newNode(lxClass, extRef);
+      writer.closeNode();
+      writer.closeNode();
+
+      SNode classNode = classTree.readRoot().firstChild();
+      compileParentDeclaration(classNode, classScope, scope.moduleScope->superReference);
+      classScope.info.header.flags |= (elExtension | elSealed);
+      classScope.info.header.classRef = classScope.reference;
+      classScope.extensionClassRef = scope.moduleScope->superReference;
+      classScope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classScope.extensionClassRef, 0));
+
+      for (auto g_it = genericMethods.start(); !g_it.Eof(); g_it++) {
+         ref_t genericMessageRef = *g_it;
+
+         ref_t dispatchListRef = _logic->generateOverloadList(*scope.moduleScope, *this, genericMessageRef | FUNCTION_MESSAGE, 
+            methods, (void*)&taregts, targetResolver, elSealed);
+
+         classScope.info.mattributes.add(Attribute(caExtOverloadlist, genericMessageRef), dispatchListRef);
+      }
+
+      classScope.save();
+
+      // compile the extension
+      compileVMT(classNode, classScope);
+      generateClassImplementation(classNode, classScope);
+
+      compilePreloadedExtensionCode(classScope);
+   }
+}
+
 ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t genericMessageRef)
 {
    ref_t extRef = scope.moduleScope->mapAnonymous();
@@ -9666,13 +9749,6 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t generi
 
    classScope.info.methodHints.exclude(Attribute(genericMessageRef | FUNCTION_MESSAGE, maOverloadlist));
    classScope.info.methodHints.add(Attribute(genericMessageRef | FUNCTION_MESSAGE, maOverloadlist), dispatchListRef);
-
-
-
-   // !! temporal
-   classScope.info.mattributes.add(Attribute(caExtOverloadlist, genericMessageRef), dispatchListRef);
-
-
 
    generateMethodDeclaration(classNode.findChild(lxClassMethod), classScope, false, false, false);
    //generateMethodDeclarations(classNode, classScope, false, lxClassMethod, true);
@@ -10559,8 +10635,6 @@ void Compiler :: declareTemplate(SNode node, NamespaceScope& scope)
 
 void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
 {
-   //SyntaxTree expressionTree; // expression tree is reused
-
    // second pass - implementation
    while (current != lxNone) {
       switch (current) {
@@ -10610,11 +10684,12 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
             compileImplementations(node, namespaceScope);
             break;
          }
-//         //case lxMeta:
-//         //   compileMetaCategory(current, scope);
-//         //   break;
       }
       current = current.nextNode();
+   }
+
+   if (!scope.outerExtensionList) {
+      compileModuleExtensionDispatcher(scope);
    }
 }
 
@@ -10990,60 +11065,6 @@ void Compiler :: injectVirtualField(SNode classNode, LexicalType sourceType, ref
    assignNode.appendNode(sourceType, sourceArg);
 }
 
-////void Compiler :: injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef)
-////{
-////   // injecting auto-generated static sealed constant field, (argument=INVALID_REF)
-////   SNode fieldNode = classNode.appendNode(lxClassField, INVALID_REF);
-////   fieldNode.appendNode(lxAttribute, V_STATIC);
-////   fieldNode.appendNode(lxAttribute, V_SEALED);
-////   fieldNode.appendNode(lxAttribute, V_CONST);
-////
-////   fieldNode.appendNode(lxIdentifier, fieldName);
-////   if (fieldRef) {
-////      ident_t referenceName = scope.module->resolveReference(fieldRef);
-////      if (isWeakReference(referenceName)) {
-////         IdentifierString fullName(scope.module->Name(), referenceName);
-////
-////         fieldNode.appendNode(lxClassRefAttr, fullName.c_str());
-////      }
-////      else fieldNode.appendNode(lxClassRefAttr, referenceName);
-////   }
-////}
-////
-////void Compiler :: generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef)
-////{
-////   _Memory* section = scope.module->mapSection(enumRef | mskRDataRef, true);
-////   if (!section) {
-////      // if the member list is not available - create and assign to the static field
-////      section = scope.module->mapSection(enumRef | mskRDataRef, false);
-////
-////      SyntaxTree expressionTree;
-////      SyntaxWriter writer(expressionTree);
-////
-////      writer.newNode(lxExpression);
-////      writer.newNode(lxAssigning);
-////      writer.appendNode(lxStaticField, enumRef);
-////      writer.appendNode(lxConstantList, enumRef | mskConstArray);
-////      writer.closeNode();
-////      writer.closeNode();
-////
-////      section->addReference(scope.arrayReference | mskVMTRef, (pos_t)-4);
-////
-////      compilePreloadedCode(scope, expressionTree.readRoot());
-////   }
-////
-////   MemoryWriter metaWriter(section);
-////
-////   metaWriter.writeRef(memberRef | mskConstantRef, 0);
-////}
-////
-//////void Compiler :: generateListMember(_CompilerScope& scope, ref_t listRef, LexicalType type, ref_t argument)
-//////{
-//////   MemoryWriter writer(scope.module->mapSection(listRef | mskRDataRef, false));
-//////
-//////   _writer.generateConstantMember(writer, type, argument);
-//////}
-
 void Compiler :: generateOverloadListMember(_ModuleScope& scope, ref_t listRef, ref_t messageRef)
 {
    MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
@@ -11324,15 +11345,6 @@ void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, re
    exprNode.appendNode(lxAttribute, V_NODEBUGINFO);
    exprNode.appendNode(lxIdentifier, variable);
 }
-
-//void Compiler :: injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message)
-//{
-//   writer.appendNode(lxCallTarget, targetRef);
-//
-//   writer.insert(lxDirectCalling, message);
-//   writer.closeNode();
-//
-//}
 
 void Compiler :: injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t, bool protectedOne)
 {

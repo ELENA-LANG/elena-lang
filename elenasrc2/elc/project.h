@@ -42,6 +42,7 @@ enum ProjectSetting
    opThreadMax             = 0x0013,
    opClassSymbolAutoLoad   = 0x0015,
    //opTapeEntry             = 0x0016,
+   opExtDispatchers        = 0x0017,
 
    // linker options
    opImageBase             = 0x0020,

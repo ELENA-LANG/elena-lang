@@ -41,6 +41,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
    //resolveExternal()
 
    JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef,
+      project->BoolSetting(opExtDispatchers),
       project->BoolSetting(opClassSymbolAutoLoad));
 
   // save root namespace

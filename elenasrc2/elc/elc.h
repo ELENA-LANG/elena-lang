@@ -68,6 +68,7 @@ constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
 // --- ELC config settings ---
 #define ELC_DEBUGINFO               "configuration/project/debuginfo"
 #define ELC_CLASSSYMBOLLOAD         "configuration/project/classsymbolload"
+constexpr auto ELC_EXTDISPATCHER  = "configuration/project/extdispatcher";
 #define ELC_TARGET                  "configuration/project/executable"
 #define ELC_MG_SIZE                 "configuration/linker/mgsize"
 #define ELC_HEAP_COMMIT             "configuration/linker/heapcommit"
@@ -200,6 +201,8 @@ class Project : public _ELENA_::Project
             return config.getSetting(ELC_DEBUGINFO);
          case _ELENA_::opClassSymbolAutoLoad:
             return config.getSetting(ELC_CLASSSYMBOLLOAD);
+         case _ELENA_::opExtDispatchers:
+            return config.getSetting(ELC_EXTDISPATCHER);
          case _ELENA_::opThreadMax:
             return config.getSetting(ELC_SYSTEM_THREADMAX);
          case _ELENA_::opL0:
@@ -220,36 +223,6 @@ class Project : public _ELENA_::Project
             return NULL;
       }
    }
-
-   //void retrieveSubNs(_ELENA_::ident_t rootNs, _ELENA_::ident_t moduleNs, _ELENA_::ident_t filePath, _ELENA_::IdentifierString& retVal)
-   //{
-   //   if (!moduleNs.compare(rootNs)) {
-   //      moduleNs = moduleNs + _ELENA_::getlength(rootNs) + 1;
-   //   }
-   //   else moduleNs = NULL;
-
-   //   size_t ns_index = filePath.find(PATH_SEPARATOR);
-   //   while (!moduleNs.empty() && ns_index != NOTFOUND_POS) {
-   //      if (filePath.compare(moduleNs, 0, ns_index) && (moduleNs[ns_index] == 0 || moduleNs[ns_index] == '\'')) {
-   //         filePath += (ns_index + 1);
-   //         moduleNs += (ns_index + 1);
-
-   //         ns_index = filePath.find(PATH_SEPARATOR);
-   //      }
-   //      else break;
-   //   }
-
-   //   size_t index = filePath.find(PATH_SEPARATOR);
-   //   while (index != NOTFOUND_POS) {
-   //      if (retVal.Length() != 0) {
-   //         retVal.append('\'');
-   //      }
-   //      retVal.append(filePath, index);
-
-   //      filePath += (index + 1);
-   //      index = filePath.find(PATH_SEPARATOR);
-   //   }
-   //}
 
    void buildSyntaxTree(_ELENA_::Parser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope& scope, _ELENA_::SyntaxTree& derivationTree)
    {
