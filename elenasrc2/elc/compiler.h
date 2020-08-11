@@ -320,6 +320,8 @@ private:
       ExtensionMap      extensions;
       ExtensionTmplMap  extensionTemplates;
 
+      ExtensionMap      declaredExtensions;
+
       // COMPILER MAGIC : used for extension template compilation
       ExtensionMap*     outerExtensionList;
 

@@ -185,7 +185,8 @@ inline bool isConstantArguments(SNode node)
 
 Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ExtensionMap* outerExtensionList)
    : Scope(moduleScope), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr),
-   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF), extensionTemplates(NULL, freestr)
+   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF), extensionTemplates(NULL, freestr), 
+   declaredExtensions(Pair<ref_t, ref_t>(0, 0))
 {
    // by default - private visibility
    defaultVisibility = Visibility::Private;
@@ -201,7 +202,8 @@ Compiler::NamespaceScope :: NamespaceScope(_ModuleScope* moduleScope, ExtensionM
 
 Compiler::NamespaceScope :: NamespaceScope(NamespaceScope* parent)
    : Scope(parent), constantHints(INVALID_REF), extensions(Pair<ref_t, ref_t>(0, 0)), importedNs(NULL, freestr),
-   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF), extensionTemplates(NULL, freestr)
+   extensionDispatchers(INVALID_REF), extensionTargets(INVALID_REF), extensionTemplates(NULL, freestr),
+   declaredExtensions(Pair<ref_t, ref_t>(0, 0))
 {
    outerExtensionList = parent->outerExtensionList;
 
@@ -522,6 +524,8 @@ void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t extRef, ref_
       /*else */metaWriter.writeDWord(extRef);
       metaWriter.writeDWord(message);
       metaWriter.writeDWord(strongMessage);
+
+      declaredExtensions.add(message, extInfo);
    }
 
    extensions.add(message, extInfo);
@@ -9639,7 +9643,7 @@ void Compiler :: compileModuleExtensionDispatcher(NamespaceScope& scope)
    ClassInfo::CategoryInfoMap methods(0);
    Map<ref_t, ref_t> taregts;
 
-   auto it = scope.extensions.start();
+   auto it = scope.declaredExtensions.start();
    while (!it.Eof()) {
       auto extInfo = *it;
       ref_t genericMessageRef = it.key();
@@ -10687,10 +10691,6 @@ void Compiler :: compileImplementations(SNode current, NamespaceScope& scope)
       }
       current = current.nextNode();
    }
-
-   if (!scope.outerExtensionList) {
-      compileModuleExtensionDispatcher(scope);
-   }
 }
 
 bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool forced, bool& repeatMode)
@@ -10755,6 +10755,12 @@ bool Compiler :: compileDeclarations(SNode current, NamespaceScope& scope, bool 
             break;
       }
       current = current.nextNode();
+   }
+
+   if (scope.declaredExtensions.Count() > 0) {
+      compileModuleExtensionDispatcher(scope);
+
+      scope.declaredExtensions.clear();
    }
 
    return declared;

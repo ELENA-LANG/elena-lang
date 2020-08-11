@@ -1996,15 +1996,16 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
 
 void _ELENA_::compileXRedirect(int op, x86JITScope& scope)
 {
-   int startArg = 1;
-   if (test(scope.extra_arg, FUNCTION_MESSAGE)) {
-      startArg = 0;
-   }
+   // should be always used for a function message
+   int startArg = 0;
 
       // ; lea  eax, [esp + offs]
    x86Helper::leaRM32disp(scope.code, x86Helper::otEAX, x86Helper::otESP, startArg << 2);
 
-   loadIndexOp(op, scope);
+   // HOTFIX : to adjust the command for loadMTOp
+   scope.extra_arg = scope.argument << 2;
+
+   loadMTOp(op, scope);
 }
 
 void _ELENA_::compileMovV(int, x86JITScope& scope)

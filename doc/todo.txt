@@ -4,7 +4,7 @@ In development:
 
   [development]
     * elt - #323; 
-            optimize performance (too slow) - is there douplicates? 
+            remove extra generic message in the list, do we needit at all?
     * [API Docs : Func1 has one argument which is not shown]
     * multi-value return - #508
     * [ compilation speed ]

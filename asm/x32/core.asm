@@ -1776,7 +1776,7 @@ end
 // ; xredirect 
 inline % 062h
 
-  lea  ebx, [ebx + __arg1]
+  lea  ebx, [ebx + __arg2] // ; NOTE use __arg2 due to current implementation
   push ebx
   push edx 
 
@@ -1795,6 +1795,7 @@ labNextOverloadlist:
   mov  ebx, [edi + ebx * 8 + 4]
   and  ecx, ARG_MASK
   lea  ebx, [edi + ebx - 4]
+  inc  ecx 
 
 labNextParam:
   sub  ecx, 1
