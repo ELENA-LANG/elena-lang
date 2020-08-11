@@ -1835,7 +1835,8 @@ labNextBaseClass:
   jnz  labNextOverloadlist
   add  [esp+4], 4
   mov  esi, [esp+4]
-  test esi, esi
+  mov  edx, [esi]
+  test edx, edx
   jnz  labNextList
 
 labEnd:

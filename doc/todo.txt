@@ -4,7 +4,9 @@ In development:
 
   [development]
     * elt - #323; 
-            remove extra generic message in the list, do we needit at all?
+            remove extra generic message in the list, do we needit at all;
+            all console samples;
+            support templates
     * [API Docs : Func1 has one argument which is not shown]
     * multi-value return - #508
     * [ compilation speed ]

@@ -2924,6 +2924,7 @@ labDefault:
   popd
 
 labDefault2:
+  peeksi     1
   bsredirect 
 
   open     4
