@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   80
+#define REVISION_VERSION   81
 
 using namespace _ELENA_;
 
@@ -584,6 +584,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcNotGreater:
       case bcCheckSI:
       case bcXRedirect:
+      case bcXVRedirect:
 ////      case bcAddress:
          printCommand(command, opcode);
          printLabel(command, position + argument + 5, labels);
@@ -700,7 +701,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcXMTRedirect:
          printCommand(command, opcode);
          printReference(command, module, argument);
-         command.append(" message : \"");
+         command.append(" mssgconst : \"");
          printMessage(command, module, argument2);
          command.append("\"");
          break;

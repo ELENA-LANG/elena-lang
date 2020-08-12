@@ -127,6 +127,13 @@ public sealed const struct MessageName
         ^ message        
     }
 
+    get Message VariadicMessage()
+    {
+        intern system'core_routines'__signature.varidadic(self, ref Message message);
+        
+        ^ message        
+    }
+
     /// Compares the values
     bool equal(MessageName subject)
         = theValue == subject;

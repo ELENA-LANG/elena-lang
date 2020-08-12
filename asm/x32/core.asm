@@ -1845,6 +1845,96 @@ labEnd:
 
 end
 
+// ; xvredirect
+inline % 063h
+
+  lea  ebx, [ebx + __arg2] // ; NOTE use __arg2 due to current implementation
+  push ebx
+  push edx 
+
+  mov  esi, [ebx]   // ; get next overload list
+  test esi, esi
+  jz   labEnd
+
+labNextList:
+  xor  edx, edx
+  mov  ebx, eax
+  xor  ecx, ecx
+
+labCountParam:
+  lea  ebx, [ebx+4]
+  cmp  [ebx], -1
+  lea  ecx, [ecx+1]
+  jnz  short labCountParam
+
+  push ecx
+  mov  ebx, [esi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  edi, rdata : % CORE_MESSAGE_TABLE
+  shr  ebx, ACTION_ORDER
+  mov  ecx, [esp]              // ; param count
+  mov  ebx, [edi + ebx * 8 + 4]
+  lea  ebx, [edi + ebx - 4]
+
+labNextParam:
+  // ; check if signature contains the next class ptr
+  lea  esi, [ebx + 4]
+  cmp [esi], 0
+  cmovnz ebx, esi
+
+  sub  ecx, 1
+  jnz  short labMatching
+
+  lea  esp, [esp + 4]
+  pop  eax
+  pop  esi
+  mov  ecx, edx
+  mov  esi, [esi]
+  mov  ebx, [esp]
+  mov  edx, [esi + ecx * 8]
+  jmp  [esi + ecx * 8 + 4]
+
+labMatching:
+  mov  esi, [esp]
+  sub  esi, ecx
+  mov  edi, [eax + esi * 4]
+
+  //; check nil
+  mov   esi, rdata : %VOIDPTR + 4
+  test  edi, edi
+  cmovz edi, esi
+
+  mov  edi, [edi - 4]
+  mov  esi, [ebx]
+
+labNextBaseClass:
+  cmp  esi, edi
+  jz   labNextParam
+  mov  edi, [edi - elPackageOffset]
+  and  edi, edi
+  jnz  short labNextBaseClass
+
+  mov  esi, [esp+8]
+  add  edx, 1
+  mov  esi, [esi]
+  mov  ebx, [esi + edx * 8] // ; message from overload list
+  and  ebx, ebx
+  jnz  labNextOverloadlist
+
+  add  [esp+8], 4
+  mov  esi, [esp+8]
+  mov  edx, [esi]
+  test edx, edx
+  jnz  labNextList
+
+labEnd:
+  lea  esp, [esp + 4]
+  pop  edx
+  pop  ebx
+
+end
+
 // ; laddf
 inline % 74h
 

@@ -537,11 +537,20 @@ void* Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
 
 int Instance :: loadMessageName(ref_t message, char* buffer, size_t maxLength)
 {
+   int prefixLen = 0;
    ref_t action, flags;
    int count;
    decodeMessage(message, action, count, flags);
+   if (test(flags, VARIADIC_MESSAGE)) {
+      size_t len = 7;
+      Convertor::copy(buffer, "params#", 7, len);
 
-   size_t used = 0;
+      prefixLen += len;
+      buffer += len;
+      maxLength -= len;
+   }
+
+   int used = 0;
    ident_t subjectName = getSubject(action);
    size_t length = getlength(subjectName);
    if (length > 0) {
@@ -565,7 +574,7 @@ int Instance :: loadMessageName(ref_t message, char* buffer, size_t maxLength)
    }
    buffer[used] = 0;
 
-   return used;
+   return used + prefixLen;
 }
 
 ref_t Instance :: loadDispatcherOverloadlist(ident_t referenceName)

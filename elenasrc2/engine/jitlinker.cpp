@@ -817,6 +817,11 @@ void JITLinker :: generateOverloadListMetaAttribute(_Module* module, ref_t messa
    IdentifierString fullName;
    fullName.copy(module->Name());
    fullName.append('\'');
+
+   if (test(flags, VARIADIC_MESSAGE)) {
+      fullName.append("params#");
+   }
+
    fullName.append(actionName);
    fullName.append('[');
    fullName.appendInt(argCount);

@@ -226,9 +226,18 @@ int ELENARTMachine :: loadSubjectName(size_t subjectRef, char* buffer, size_t le
 
 int ELENARTMachine :: loadMessageName(size_t messageRef, char* buffer, size_t length)
 {
+   int prefixLen = 0;
    int paramCount = 0;
    ref_t actionRef, flags;
    decodeMessage(messageRef, actionRef, paramCount, flags);
+   if (test(flags, VARIADIC_MESSAGE)) {
+      size_t len = 7;
+      Convertor::copy(buffer, "params#", 7, len);
+
+      buffer += len;
+      length -= len;
+      prefixLen += len;
+   }
 
    int used = loadSubjectName(actionRef, buffer, length);
    if (used > 0) {
@@ -242,7 +251,7 @@ int ELENARTMachine :: loadMessageName(size_t messageRef, char* buffer, size_t le
       buffer[used++] = ']';
    }
 
-   return used;
+   return prefixLen + used;
 }
 
 void* ELENARTMachine :: loadMetaAttribute(ident_t name, int category)

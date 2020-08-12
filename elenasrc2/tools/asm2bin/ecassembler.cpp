@@ -603,6 +603,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcXSetI:
          case bcCheckSI:
          case bcXRedirect:
+         case bcXVRedirect:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:
