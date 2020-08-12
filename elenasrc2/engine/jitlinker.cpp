@@ -794,7 +794,6 @@ void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceIn
    IdentifierString fullName;
    if (referenceInfo.isRelative()) {
       fullName.copy(referenceInfo.module->Name());
-      fullName.append('\'');
       fullName.append(referenceInfo.referenceName);
    }
    else fullName.copy(referenceInfo.referenceName);
