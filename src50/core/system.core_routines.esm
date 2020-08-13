@@ -3812,7 +3812,7 @@ labNext:
   inc 1
   savef   -2
 
-  vcallrm system'dynamic'DynamicClosure mssgconst : "params##invoke<system'Object>[0]"
+  vcallrm system'dynamic'TapeFunction mssgconst : "params##invoke<system'Object>[0]"
   pusha
   peekfi  1
   jump    labNext

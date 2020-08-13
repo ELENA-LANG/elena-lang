@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 5.0: Module system'dynamic
+ELENA Standard Library 5.1: Module system'dynamic
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ Module
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.0
+ELENA&nbsp;Standard&nbsp;Library<br>5.1
 </STRONG>
 </DIV>
 </DIV>
@@ -44,56 +44,38 @@ Class Summary
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#AssigningClosure">AssigningClosure</A>
+<A HREF="system-dynamic.html#AssigningFunction">AssigningFunction</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-sealed Class <SPAN CLASS="typeNameLabel">AssigningClosure</SPAN></DIV>
+sealed Class <SPAN CLASS="typeNameLabel">AssigningFunction</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#ClosureClass">ClosureClass</A>
+<A HREF="system-dynamic.html#ConstantFunction">ConstantFunction</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-Class <SPAN CLASS="typeNameLabel">ClosureClass</SPAN></DIV>
+Class <SPAN CLASS="typeNameLabel">ConstantFunction</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#ClosureTape">ClosureTape</A>
+<A HREF="system-dynamic.html#DynamicClass">DynamicClass</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-Class <SPAN CLASS="typeNameLabel">ClosureTape</SPAN></DIV>
+Class <SPAN CLASS="typeNameLabel">DynamicClass</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#ConstantClosure">ConstantClosure</A>
+<A HREF="system-dynamic.html#DynamicMessageFunction">DynamicMessageFunction</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-Class <SPAN CLASS="typeNameLabel">ConstantClosure</SPAN></DIV>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<A HREF="system-dynamic.html#DynamicClosure">DynamicClosure</A>
-</TD>
-<TD CLASS="colLast">
-<DIV CLASS="block">
-Interface <SPAN CLASS="typeNameLabel">DynamicClosure</SPAN></DIV>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<A HREF="system-dynamic.html#DynamicMessageClosure">DynamicMessageClosure</A>
-</TD>
-<TD CLASS="colLast">
-<DIV CLASS="block">
-sealed Singleton <SPAN CLASS="typeNameLabel">DynamicMessageClosure</SPAN></DIV>
+sealed Singleton <SPAN CLASS="typeNameLabel">DynamicMessageFunction</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -107,20 +89,38 @@ Class <SPAN CLASS="typeNameLabel">DynamicStruct</SPAN></DIV>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#FunctionClosure">FunctionClosure</A>
+<A HREF="system-dynamic.html#DynamicTape">DynamicTape</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-sealed Class <SPAN CLASS="typeNameLabel">FunctionClosure</SPAN></DIV>
+Class <SPAN CLASS="typeNameLabel">DynamicTape</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#GoToClosure">GoToClosure</A>
+<A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-sealed Class <SPAN CLASS="typeNameLabel">GoToClosure</SPAN></DIV>
+sealed Class <SPAN CLASS="typeNameLabel">ExtensionDispatcher</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-dynamic.html#FuncFunction">FuncFunction</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">FuncFunction</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-dynamic.html#GoToFunction">GoToFunction</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">GoToFunction</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -134,20 +134,20 @@ Class <SPAN CLASS="typeNameLabel">Group</SPAN></DIV>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#JumpIfClosure">JumpIfClosure</A>
+<A HREF="system-dynamic.html#JumpIfFunction">JumpIfFunction</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-sealed Class <SPAN CLASS="typeNameLabel">JumpIfClosure</SPAN></DIV>
+sealed Class <SPAN CLASS="typeNameLabel">JumpIfFunction</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#JumpIfNotClosure">JumpIfNotClosure</A>
+<A HREF="system-dynamic.html#JumpIfNotFunction">JumpIfNotFunction</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-sealed Class <SPAN CLASS="typeNameLabel">JumpIfNotClosure</SPAN></DIV>
+sealed Class <SPAN CLASS="typeNameLabel">JumpIfNotFunction</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -161,29 +161,29 @@ sealed Singleton <SPAN CLASS="typeNameLabel">JumpToEnd</SPAN></DIV>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#LocalClosure">LocalClosure</A>
+<A HREF="system-dynamic.html#LocalFunction">LocalFunction</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-sealed Class <SPAN CLASS="typeNameLabel">LocalClosure</SPAN></DIV>
+sealed Class <SPAN CLASS="typeNameLabel">LocalFunction</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#MessageClosure">MessageClosure</A>
+<A HREF="system-dynamic.html#MessageFunction">MessageFunction</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-sealed Class <SPAN CLASS="typeNameLabel">MessageClosure</SPAN></DIV>
+sealed Class <SPAN CLASS="typeNameLabel">MessageFunction</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system-dynamic.html#ReleaseClosure">ReleaseClosure</A>
+<A HREF="system-dynamic.html#ReleaseFunction">ReleaseFunction</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-sealed Class <SPAN CLASS="typeNameLabel">ReleaseClosure</SPAN></DIV>
+sealed Class <SPAN CLASS="typeNameLabel">ReleaseFunction</SPAN></DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -204,6 +204,24 @@ sealed Singleton <SPAN CLASS="typeNameLabel">StreamTapeInterpreter</SPAN></DIV>
 Class <SPAN CLASS="typeNameLabel">Struct</SPAN></DIV>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-dynamic.html#TapeFunction">TapeFunction</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Interface <SPAN CLASS="typeNameLabel">TapeFunction</SPAN></DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+sealed Class <SPAN CLASS="typeNameLabel">VariadicExtensionDispatcher</SPAN></DIV>
+</TD>
+</TR>
 </TABLE>
 </LI>
 <LI CLASS="blockList">
@@ -216,6 +234,15 @@ Symbol Summary
 <TH CLASS="colLast" scope="col">Description</TH>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A HREF="system-dynamic.html##ext_initializer">#ext_initializer</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+#ext_initializer</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <A HREF="system-dynamic.html##initializer">#initializer</A>
 </TD>
@@ -259,7 +286,7 @@ Module
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>5.0
+ELENA&nbsp;Standard&nbsp;Library<br>5.1
 </STRONG>
 </DIV>
 </DIV>

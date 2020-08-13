@@ -11,13 +11,13 @@
 #include <windows.h>
 #include "elena.h"
 
-#define TITLE "ELENA Standard Library 5.0: Module "
-#define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>5.0"
+#define TITLE "ELENA Standard Library 5.1: Module "
+#define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>5.1"
 
 constexpr auto ByRefPrefix = "'$auto'system@ref#1&";
 constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
 
-#define REVISION_VERSION   4
+#define REVISION_VERSION   5
 
 //#define OPERATORS "+-*/=<>?!"
 

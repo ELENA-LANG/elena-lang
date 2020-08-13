@@ -8,14 +8,15 @@ In development:
             all console samples;
             support templates
     * [API Docs : Func1 has one argument which is not shown]
+    * compiled code to expression tree
+    * expression tree to source
+    * source to expression tree
     * multi-value return - #508
     * [ compilation speed ]
     * dispatching a method return
     * [Brace expansion]
     * chat
     * graph
-    * source to expression tree
-    * expression tree to source
     * [service release]
     * GC to C
     * web server

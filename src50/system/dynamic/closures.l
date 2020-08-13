@@ -1,21 +1,21 @@
-// --- DynamicClosure ---
+// --- TapeFunction ---
 
-public interface DynamicClosure
+public interface TapeFunction
 {
     abstract mixin function(params object[] args) {}
 }
 
-// --- DynamicMessageClosure ---
+// --- DynamicMessageFunction ---
 
-public singleton DynamicMessageClosure : DynamicClosure
+public singleton DynamicMessageFunction : TapeFunction
 {
     mixin function(params object[] args)
         => intern system'core_routines'__dynamicmssg_closure;
 }
 
-// --- MessageClosure ---
+// --- MessageFunction ---
 
-public struct MessageClosure : DynamicClosure
+public struct MessageFunction : TapeFunction
 {
     embeddable Message theMessage;
     
@@ -34,9 +34,9 @@ public struct MessageClosure : DynamicClosure
         => intern system'core_routines'__mssg_closure;
 }
 
-// --- FunctionClosure ---
+// --- FuncFunction ---
 
-public struct FunctionClosure : DynamicClosure
+public struct FuncFunction : TapeFunction
 {
     embeddable Message theMessage;
     
@@ -55,9 +55,9 @@ public struct FunctionClosure : DynamicClosure
         => intern system'core_routines'__fun_closure;
 }
 
-// --- ConstantClosure --- 
+// --- ConstantFunction --- 
 
-public class ConstantClosure : DynamicClosure
+public class ConstantFunction : TapeFunction
 {
     object constant;
     
@@ -70,9 +70,9 @@ public class ConstantClosure : DynamicClosure
         = constant;
 }
 
-// --- AssigningClosure ---
+// --- AssigningFunction ---
 
-public struct AssigningClosure : DynamicClosure
+public struct AssigningFunction : TapeFunction
 {
     embeddable int index;
     
@@ -85,9 +85,9 @@ public struct AssigningClosure : DynamicClosure
         => intern system'core_routines'__assign_closure;    
 }
 
-// --- LocalClosure ---
+// --- LocalFunction ---
 
-public struct LocalClosure : DynamicClosure
+public struct LocalFunction : TapeFunction
 {
     embeddable int index;
     
@@ -100,9 +100,9 @@ public struct LocalClosure : DynamicClosure
         => intern system'core_routines'__local_closure;    
 }
 
-// --- ReleaseClosure ---
+// --- ReleaseFunction ---
 
-public struct ReleaseClosure : DynamicClosure
+public struct ReleaseFunction : TapeFunction
 {
     embeddable int counter;
     
@@ -111,13 +111,18 @@ public struct ReleaseClosure : DynamicClosure
         this counter := counter
     }
     
+    constructor()
+    {
+        this counter := 1
+    }
+    
     mixin function(params object[] args)
         => intern system'core_routines'__free_closure;    
 }
 
-// --- GoToClosure ---
+// --- GoToFunction ---
 
-public struct GoToClosure : DynamicClosure
+public struct GoToFunction : TapeFunction
 {
     int index;
     
@@ -130,7 +135,7 @@ public struct GoToClosure : DynamicClosure
         => intern system'core_routines'__jump_closure;
 }
 
-public struct JumpIfClosure : DynamicClosure
+public struct JumpIfFunction : TapeFunction
 {
     int index;
     
@@ -143,9 +148,9 @@ public struct JumpIfClosure : DynamicClosure
         => intern system'core_routines'__jumpif_closure;
 }
 
-// --- JumpIfNotClosure ---
+// --- JumpIfNotFunction ---
 
-public struct JumpIfNotClosure : DynamicClosure
+public struct JumpIfNotFunction : TapeFunction
 {
     int index;
     
@@ -158,7 +163,7 @@ public struct JumpIfNotClosure : DynamicClosure
         => intern system'core_routines'__jumpifnot_closure;
 }
 
-public singleton JumpToEnd : DynamicClosure
+public singleton JumpToEnd : TapeFunction
 {
     mixin function(params object[] args)
         => intern system'core_routines'__exit_closure;

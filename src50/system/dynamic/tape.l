@@ -1,115 +1,115 @@
 import system'collections;
 import system'io;
 
-// --- ClosureTape ---
+// --- DynamicTape ---
 
-public mixin ClosureTape
+public mixin DynamicTape
 {
-    __string DynamicClosure[] theList;
+    __string TapeFunction[] theList;
     
     internal constructor allocate(int len)
-        = new DynamicClosure[](len);
+        = new TapeFunction[](len);
 
-    constructor(params DynamicClosure[] args)
+    constructor(params TapeFunction[] args)
         <= load(params args);
             
-    constructor(DynamicClosure arg1)
+    constructor(TapeFunction arg1)
         <= load(arg1);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2)
+    constructor(TapeFunction arg1, TapeFunction arg2)
         <= load(arg1,arg2);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3)
         <= load(arg1,arg2,arg3);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4)
         <= load(arg1,arg2,arg3,arg4);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5)
         <= load(arg1,arg2,arg3,arg4,arg5);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11, DynamicClosure arg12)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11, TapeFunction arg12)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11, TapeFunction arg12, TapeFunction arg13)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11, TapeFunction arg12, TapeFunction arg13, TapeFunction arg14)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11, TapeFunction arg12, TapeFunction arg13, TapeFunction arg14, TapeFunction arg15)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
-                DynamicClosure arg16)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11, TapeFunction arg12, TapeFunction arg13, TapeFunction arg14, TapeFunction arg15,
+                TapeFunction arg16)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
-                DynamicClosure arg16, DynamicClosure arg17)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11, TapeFunction arg12, TapeFunction arg13, TapeFunction arg14, TapeFunction arg15,
+                TapeFunction arg16, TapeFunction arg17)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
-                DynamicClosure arg16, DynamicClosure arg17, DynamicClosure arg18)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11, TapeFunction arg12, TapeFunction arg13, TapeFunction arg14, TapeFunction arg15,
+                TapeFunction arg16, TapeFunction arg17, TapeFunction arg18)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
-                DynamicClosure arg16, DynamicClosure arg17, DynamicClosure arg18, DynamicClosure arg19)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11, TapeFunction arg12, TapeFunction arg13, TapeFunction arg14, TapeFunction arg15,
+                TapeFunction arg16, TapeFunction arg17, TapeFunction arg18, TapeFunction arg19)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19);            
             
-    constructor(DynamicClosure arg1, DynamicClosure arg2, DynamicClosure arg3, DynamicClosure arg4, DynamicClosure arg5,
-                DynamicClosure arg6,DynamicClosure arg7,DynamicClosure arg8,DynamicClosure arg9,DynamicClosure arg10,
-                DynamicClosure arg11, DynamicClosure arg12, DynamicClosure arg13, DynamicClosure arg14, DynamicClosure arg15,
-                DynamicClosure arg16, DynamicClosure arg17, DynamicClosure arg18, DynamicClosure arg19, DynamicClosure arg20)
+    constructor(TapeFunction arg1, TapeFunction arg2, TapeFunction arg3, TapeFunction arg4, TapeFunction arg5,
+                TapeFunction arg6,TapeFunction arg7,TapeFunction arg8,TapeFunction arg9,TapeFunction arg10,
+                TapeFunction arg11, TapeFunction arg12, TapeFunction arg13, TapeFunction arg14, TapeFunction arg15,
+                TapeFunction arg16, TapeFunction arg17, TapeFunction arg18, TapeFunction arg19, TapeFunction arg20)
         <= load(arg1,arg2,arg3,arg4,arg5,arg6,arg6,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16,arg17,arg18,arg19,arg20);            
             
-    constructor load(params DynamicClosure[] args)
+    constructor load(params TapeFunction[] args)
         <= allocate(args.Length)
     {
         self.setFields(params args)
     }
 
-    constructor load(List<DynamicClosure> list)        
+    constructor load(List<TapeFunction> list)        
         <= allocate(list.Length)
     {
         int i := list.Length;
@@ -121,7 +121,7 @@ public mixin ClosureTape
         }
     }
         
-    constructor load(List<DynamicClosure> list, int index, int length)        
+    constructor load(List<TapeFunction> list, int index, int length)        
         <= allocate(length)
     {
         int i := index;
@@ -154,7 +154,7 @@ public mixin ClosureTape
 
 // --- Class ---
 
-public mixin ClosureClass
+public mixin DynamicClass
 {
     __string object[] items;
     
@@ -182,7 +182,7 @@ public mixin ClosureClass
         }
     }
     
-    constructor create(List<Tuple<Message,ClosureTape>> methods)
+    constructor create(List<Tuple<Message,DynamicTape>> methods)
         <= allocate(methods.Length * 2)
     {
         int length := methods.Length;
