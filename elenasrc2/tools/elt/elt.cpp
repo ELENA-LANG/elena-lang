@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   10
+#define ELT_BUILD_NUMBER   11
  
 // global variables
 ProgramHeader  _header;
