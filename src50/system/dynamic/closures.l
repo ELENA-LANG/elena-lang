@@ -169,3 +169,35 @@ public singleton JumpToEnd : TapeFunction
         => intern system'core_routines'__exit_closure;
 }
 
+// --- ExtensionMessageFunction ---
+
+public class ExtensionMessageFunction : TapeFunction
+{
+    ExtensionDispatcher dispatcher;
+    Message             message;
+    
+    constructor load(ExtensionDispatcher dispatcher, Message message)
+    {
+        this dispatcher := dispatcher;
+        this message := message
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__ext_closure;    
+}
+ 
+public class VariadicExtensionMessageFunction : TapeFunction
+{
+    VariadicExtensionDispatcher dispatcher;
+    Message                     message;
+    
+    constructor load(VariadicExtensionDispatcher dispatcher, Message message)
+    {
+        this dispatcher := dispatcher;
+        this message := message
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__ext_closure;    
+}
+ 

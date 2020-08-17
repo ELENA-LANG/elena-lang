@@ -110,8 +110,14 @@ public const struct ExtensionDispatcher
                 InvalidArgumentException.raise()
             }
         };
+        tmp[tmpIndex] := 0;
         
         intern system'core_routines'__extdispatcher.load(output, message, tmp, ref int len);
+        if (len == 1)
+        {
+            ^ nil
+        };
+        
         output[len] := 0;
         len += 1; 
         
@@ -158,8 +164,14 @@ public const struct VariadicExtensionDispatcher
                 InvalidArgumentException.raise()
             }
         };
+        tmp[tmpIndex] := 0;
         
-        intern system'core_routines'__extdispatcher.load(output, message, tmp, ref int len);
+        intern system'core_routines'__extdispatcher.load(output, message, tmp, ref int len);        
+        if (len == 1)
+        {
+            ^ nil
+        };
+        
         output[len] := 0;
         len += 1; 
         

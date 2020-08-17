@@ -333,7 +333,7 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, ref_t mess
    IdentifierString messageRef;
    int listLen = getlength(moduleList);
    int i = 0;
-   while (i < listLen) {
+   while (moduleList[i]) {
       ident_t ns = moduleList + i;
 
       messageRef.copy(ns);

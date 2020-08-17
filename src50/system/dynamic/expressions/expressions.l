@@ -32,6 +32,8 @@ namespace expressions
         
         abstract TapeFunction resolve(ScopeVariable variable, int mode) {}
         
+        abstract TapeFunction resolveExtension(Message message) {}
+        
         abstract declare(ScopeVariable variable) {}
     }
 
@@ -45,7 +47,10 @@ namespace expressions
         {
             ^ nil
         }
-        
+    
+        TapeFunction resolveExtension(Message message)
+            = nil;
+                
         declare(ScopeVariable variable)
         {
             ^ nil
@@ -86,7 +91,13 @@ namespace expressions
            
         static Expression MessageCall(Message message, Expression t)
             = MessageCallExpression.new(message,t);
-            
+
+        static Expression ExtensionOrMessageCall(Message message, Expression t, params Expression[] arguments)
+            = ExtensionOrMessageCallExpression.new(message,t,params arguments);
+           
+        static Expression ExtensionOrMessageCall(Message message, Expression t)
+            = ExtensionOrMessageCallExpression.new(message,t);
+                        
         static Expression DynamicMessageCall(Expression t, params Expression[] arguments)
             = DynamicMessageCallExpression.new(t,params arguments);
            
@@ -446,6 +457,9 @@ namespace expressions
                 
                 int ScopeLevel = scope.ScopeLevel + variables.Length;
                 
+                TapeFunction resolveExtension(Message message)
+                    => scope;
+                
                 TapeFunction resolve(ScopeVariable variable, int mode)
                 {
                     int mode_mask := mode && mode_lcl;
@@ -654,6 +668,107 @@ namespace expressions
             _target.saveTo(list, scope);
             
             list.append(MessageFunction.load(_message))
+        }
+    }
+
+    public class ExtensionOrMessageCallExpression : Expression
+    {
+        Message      _message;
+        Expression   _target;
+        Expression[] _arguments;
+        
+        constructor new(Message message, Expression t, params Expression[] arguments)
+        {
+            _message := message;
+            _target := t;
+            _arguments := arguments;
+        }
+        
+        constructor new(Message message, Expression t)
+        {
+            _message := message;
+            _target := t;
+            _arguments := new Expression[](0);
+        }
+        
+        constructor(Expression t, string message)
+            <= new(new Message(message + "[1]"), t);
+        
+        constructor(Expression t, string message, Expression p1)
+            <= new(new Message(message + "[2]"), t, p1);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2)
+            <= new(new Message(message + "[3]"), t, p1, p2);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3)
+            <= new(new Message(message + "[4]"), t, p1, p2, p3);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4)
+            <= new(new Message(message + "[5]"), t, p1, p2, p3, p4);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5)
+            <= new(new Message(message + "[6]"), t, p1, p2, p3, p4, p5);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6)
+            <= new(new Message(message + "[7]"), t, p1, p2, p3, p4, p5, p6);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7)
+            <= new(new Message(message + "[8]"), t, p1, p2, p3, p4, p5, p6, p7);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8)
+            <= new(new Message(message + "[9]"), t, p1, p2, p3, p4, p5, p6, p7, p8);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9)
+            <= new(new Message(message + "[10]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10)
+            <= new(new Message(message + "[11]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11)
+            <= new(new Message(message + "[12]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+        
+        constructor(Expression t, string message, Expression p1, Expression p2, Expression p3, Expression p4, 
+                    Expression p5, Expression p6, Expression p7, Expression p8, Expression p9, Expression p10, 
+                    Expression p11, Expression p12)
+            <= new(new Message(message + "[13]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
+        
+        prepare(ExpressionScope scope)
+        {
+            _target.prepare(scope);
+            
+            int len := _arguments.Length;
+            for(int i := 0, i < len, i+=1) {
+                _arguments[i].prepare(scope);
+            }
+        }
+        
+        saveTo(List<TapeFunction> list, ExpressionScope scope)
+        {
+            int len := _arguments.Length;
+            int i := len;
+            while(i > 0)
+            {
+                i -= 1;
+                
+                _arguments[i].saveTo(list, scope);
+            };
+            
+            _target.saveTo(list, scope);
+            
+            auto messageExpr := scope.resolveExtension(_message);
+            if (messageExpr == nil) {
+                messageExpr := MessageFunction.load(_message)
+            };             
+            
+            list.append(messageExpr)
         }
     }
 
@@ -1174,6 +1289,9 @@ namespace expressions
                 
                 ExpressionScope Previous = scope;
                 
+                TapeFunction resolveExtension(Message message)
+                    => scope;
+                
                 TapeFunction resolve(ScopeVariable variable, int mode)
                 {
                     int mode_mask := mode && mode_lcl;
@@ -1380,6 +1498,9 @@ namespace expressions
                 
                 ExpressionScope Previous = scope;
                 
+                TapeFunction resolveExtension(Message message)
+                    => scope;
+                
                 TapeFunction resolve(ScopeVariable variable, int mode)
                 {
                     int mode_mask := mode && mode_lcl;
@@ -1495,6 +1616,9 @@ namespace expressions
                 int ScopeLevel = parameters.Length;
                 
                 ExpressionScope Previous = scope;
+                
+                TapeFunction resolveExtension(Message message)
+                    => scope;
                 
                 TapeFunction resolve(ScopeVariable variable, int mode)
                 {
@@ -1683,8 +1807,8 @@ namespace expressions
     [info:"a dynamic namespace, containing list of symbols"]
     public class SymbolCollection
     {
-        SymbolInfo[]    symbols;
-        ScopeVariable[] imports := new ScopeVariable[] { new ScopeVariable("system") };
+        SymbolInfo[] symbols;
+        string[]     imports := new string[] { "system" };
 
         constructor(SymbolInfo symbol1)
             <= load(symbol1);
@@ -1748,7 +1872,7 @@ namespace expressions
                 
                 declare(ScopeVariable variable) 
                 {
-                    var subarr := new ScopeVariable[] { variable };
+                    auto subarr := new string[] { variable.Name };
                     
                     if (imports == nil)
                     {
@@ -1763,6 +1887,25 @@ namespace expressions
                 ExpressionScope Previous
                     = nil;
                 
+                TapeFunction resolveExtension(Message message)
+                {
+                    auto varMessage := message.MessageName.VariadicMessage;
+                    
+                    var op := ExtensionDispatcher.load(message, imports);
+                    if (op != nil)
+                    {
+                        ^ ExtensionMessageFunction.load(op, message)
+                    }
+                    else {
+                        var op2 := VariadicExtensionDispatcher.load(varMessage, imports);
+                        if (op2 != nil) {
+                            ^ VariadicExtensionMessageFunction.load(op2, varMessage)
+                        }
+                    };
+                    
+                    ^ nil
+                }
+                
                 TapeFunction resolve(ScopeVariable variable, int mode) 
                 {
                     var refName := variable.Name;
@@ -1771,7 +1914,7 @@ namespace expressions
                     {
                         int len := imports.Length;
                         for(int i := 0, i < len, i+=1) {
-                            var symbol := Symbol.tryLoad(imports[i].Name, refName);
+                            var symbol := Symbol.tryLoad(imports[i], refName);
                             if (symbol != nil)
                             {
                                 ^ ConstantFunction.load(symbol)

@@ -3653,6 +3653,17 @@ procedure __mssg_closure."params##invoke$system@Object[0]"
 
 end
 
+procedure __ext_closure."params##invoke$system@Object[0]"
+
+  pusha
+  geti    1
+  load
+  popa
+  geti    0
+  jumpvi  0
+
+end
+
 procedure __fun_closure."params##invoke$system@Object[0]"
 
   popd
