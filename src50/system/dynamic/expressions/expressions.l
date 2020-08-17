@@ -1899,7 +1899,7 @@ namespace expressions
                     else {
                         var op2 := VariadicExtensionDispatcher.load(varMessage, imports);
                         if (op2 != nil) {
-                            ^ VariadicExtensionMessageFunction.load(op2, varMessage)
+                            ^ VariadicExtensionMessageFunction.load(op2, message)
                         }
                     };
                     

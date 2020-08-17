@@ -40,12 +40,29 @@
 <=
      code (
 =>
-                              "{" statement "}"
+                              "{" statement* last_statement? "}"
 <=
      )
 =>;
 
-   #define statement      ::= expression;
+   #define statement      ::= "var" decl_variable ";";
+   #define statement      ::= expression ";";
+   #define last_statement ::= expression;
+
+   #define decl_variable  ::= 
+<=
+        expression 
+        (
+=>
+                              a_new_variable ":=" expression
+<=
+        )
+=>;
+
+   #define a_new_variable ::= new_variable
+<=
+           assign = 0
+=>;
 
    #define expression     ::= 
 <=
@@ -67,6 +84,8 @@
    #define m_args         ::= "(" expression { "," expression }* ")";
 
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
+
+   #define new_variable   ::= <= variable_identifier = $identifier =>; 
 
    #define message        ::= <= message = $identifier =>;
    #define identifier     ::= <= identifier = $identifier =>;

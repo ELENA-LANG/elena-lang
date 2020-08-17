@@ -3710,7 +3710,7 @@ labSearch:
   movs   1
   pushsi 1
   xset
-  freei  1
+  popa
 
   quitn 1
 
