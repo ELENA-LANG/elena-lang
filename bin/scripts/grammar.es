@@ -212,7 +212,7 @@
 
   #define expr_operation  ::=
 <=
-               system'dynamic'expressions'MessageCallExpression (
+               system'dynamic'expressions'ExtensionOrMessageCallExpression (
 =>
                                  object message expression*
 <=
