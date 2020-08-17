@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x000F;
+constexpr auto ELENAVM_REVISION = 0x0010;
 
 // --- ELENAVM common constants ---
 #ifdef _WIN32
@@ -463,9 +463,11 @@ public:
 
    int interprete(SystemEnv* env, void* sehTable, void* tape, bool standAlone);
 
+   void onNewInitializers(SystemEnv* env);
+
    bool loadAddressInfo(void* address, char* buffer, size_t& maxLength);
 
-   int loadExtensionDispatcher(const char* moduleList, ref_t message, void* output);
+   int loadExtensionDispatcher(SystemEnv* env, const char* moduleList, ref_t message, void* output);
 
    virtual void addListener(_JITLoaderListener* listener)
    {

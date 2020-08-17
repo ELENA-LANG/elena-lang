@@ -9,8 +9,9 @@
 
 using namespace _ELENA_;
 
-static x86ELENAVMMachine* _Machine = NULL;
+static x86ELENAVMMachine* _Machine = nullptr;
 static Path rootPath;
+static void* _SystemEnv = nullptr;
 
 // --- getAppPath ---
 
@@ -35,6 +36,8 @@ EXTERN_DLL_EXPORT void PrepareEM(void* args)
 EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* exceptionHandler, void* criticalHandler, void* vmTape, 
    ProgramHeader* header)
 {
+   _SystemEnv = systemEnv;
+
    header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
 
    // initialize the critical exception handler
@@ -425,7 +428,7 @@ EXTERN_DLL_EXPORT int LoadExtensionDispatcher(const char* moduleList, void* mess
    if (instance == NULL)
       return 0;
 
-   return instance->loadExtensionDispatcher(moduleList, (ref_t)message, output);
+   return instance->loadExtensionDispatcher((SystemEnv*)_SystemEnv, moduleList, (ref_t)message, output);
 }
 
 // --- initmachine ---

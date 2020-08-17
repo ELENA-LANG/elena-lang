@@ -1347,7 +1347,7 @@ void* JITLinker :: resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReade
    MemoryWriter writer(image);
    void* vaddress = calculateVAddress(&writer, mskCodeRef);
 
-   if (_withDebugInfo && !emptystr(reference)) {
+   if (param && _withDebugInfo && !emptystr(reference)) {
       // it it is a debug mode a special debug record is created containing link to tape
       size_t sizePtr = 0;
       createNativeDebugInfo(reference, param, sizePtr);

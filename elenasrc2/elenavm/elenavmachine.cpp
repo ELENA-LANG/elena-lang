@@ -593,7 +593,7 @@ void* Instance :: loadMetaAttribute(ident_t name, int category)
    return manager.loadMetaAttribute(reader, name, category, len);
 }
 
-int Instance :: loadExtensionDispatcher(const char* moduleList, ref_t message, void* output)
+int Instance :: loadExtensionDispatcher(SystemEnv* env, const char* moduleList, ref_t message, void* output)
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
@@ -606,8 +606,18 @@ int Instance :: loadExtensionDispatcher(const char* moduleList, ref_t message, v
    IdentifierString messageRef;
    int listLen = getlength(moduleList);
    int i = 0;
-   while (i < listLen) {
+   while (moduleList[i]) {
       ident_t ns = moduleList + i;
+
+      // HOT-FIX : load a module attributes in VM
+      messageRef.copy(ns);
+      messageRef.append('\'');
+      messageRef.append(NAMESPACE_REF);
+      LoadResult result;
+      ref_t dummy = 0;
+      resolveModule(messageRef, result, dummy);
+      if (_linker->withNewInitializers())
+         onNewInitializers(env);
 
       messageRef.copy(ns);
       messageRef.append('\'');
@@ -993,6 +1003,45 @@ void Instance :: configurate(SystemEnv* env, void* sehTable, MemoryReader& reade
       command = reader.getDWord();
    }
    reader.seek(pos);
+}
+
+void Instance :: onNewInitializers(SystemEnv* env)
+{
+   stopVM();
+
+   // create byte code tape
+   MemoryDump           ecodes;
+   ImageReferenceHelper helper(this);
+
+   ecodes.writeDWord(0, 0);
+
+   // generate module initializers
+   MemoryDump  initTape(0);
+   _linker->generateInitTape(initTape);
+   if (initTape.Length() > 0) {
+      ecodes[0] = ecodes[0] + initTape.Length();
+      ecodes.insert(4, initTape.get(0), initTape.Length());
+   }
+
+   // compile byte code
+   MemoryReader reader(&ecodes);
+
+   void* vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, nullptr);
+
+   // update debug section size if available
+   if (_debugMode) {
+      _Memory* debugSection = getTargetDebugSection();
+
+      (*debugSection)[0] = debugSection->Length();
+
+      //// add subject list to the debug section
+      //_ELENA_::MemoryWriter debugWriter(debugSection);
+      //saveActionNames(&debugWriter);
+   }
+
+   onNewCode(env);
+
+   resumeVM();
 }
 
 int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool standAlone)

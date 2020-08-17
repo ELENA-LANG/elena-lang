@@ -195,6 +195,11 @@ public:
 
 //   //void loadModuleInfo(_Module* module);
 
+   bool withNewInitializers() const
+   {
+      return _initializers.Count() > 0;
+   }
+
    void generateInitTape(MemoryDump& tape);
 
 //   bool getDebugMode() const { return _withDebugInfo; }
