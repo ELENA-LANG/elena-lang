@@ -5,6 +5,7 @@
 - ELC
   - a warning shown when an object cannot be converted into another one
   - a warning shown when an object does not handle a message (for strong-typed ones)
+  - #511 : Infinite extension **populate** call
 - TOOLS
    - #323 : Run ELENA code without build
 
