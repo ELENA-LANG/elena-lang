@@ -181,6 +181,15 @@
 
   #define assigning       ::= "assign" "=" "0"  expression;
                                              
+  #define operation        ::= 
+<=
+               system'dynamic'expressions'AssigningExpression (
+=>
+                                "identifier" "=" ident_quote assigning
+<=
+               )
+=>;
+
   #define operation       ::=
 <=
                system'dynamic'expressions'NestedExpression (

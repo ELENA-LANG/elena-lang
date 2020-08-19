@@ -1128,6 +1128,12 @@ namespace expressions
             this expression := expression
         }
 
+        constructor(string variable, Expression expression)
+        {
+            this variable := new ScopeVariable(variable);
+            this expression := expression
+        }
+
         prepare(ExpressionScope scope)
         {
             assigning := scope.resolve(variable, mode_asn);

@@ -79,7 +79,7 @@
 <=
         expression (
 =>
-                              object assigning
+                              object ":=" assigning
 <=
         )
 =>;

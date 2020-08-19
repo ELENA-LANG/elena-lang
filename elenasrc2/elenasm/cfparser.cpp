@@ -285,6 +285,21 @@ void CFParser :: defineIdleGrammarRule(ref_t ruleId)
    addRule(ruleId, rule);
 }
 
+size_t CFParser :: defineChomskiGrammarRule(ref_t parentRuleId, size_t nonterminal, size_t terminal)
+{
+   size_t ruleId = autonameRule(parentRuleId);
+
+   // define C -> AB
+   Rule recRule;
+   recRule.nonterminal = nonterminal;
+   recRule.terminal = terminal;
+   recRule.type = rtChomski;
+   defineApplyRule(recRule, 0);
+   addRule(ruleId, recRule);
+
+   return ruleId;
+}
+
 size_t CFParser :: defineStarGrammarRule(ref_t parentRuleId, size_t nonterminal)
 {
    size_t ruleId = autonameRule(parentRuleId);
@@ -386,10 +401,10 @@ size_t CFParser :: defineGrammarBrackets(_ScriptReader& reader, ScriptBookmark& 
          rule = Rule();
          rule.type = rtNormal;
          applyMode = 0;
+
+         bm = reader.read();
       }
       else defineGrammarRuleMember(reader, bm, rule, ruleId, applyMode);
-
-      bm = reader.read();
    }
 
    defineApplyRule(rule, applyMode);
@@ -593,9 +608,9 @@ void CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& 
       }
       else {
          if (rule.type == rtChomski) {
-            rule.terminal = defineGrammarRuleMember(reader, bm, ruleId, rule.terminal);
+            rule.terminal = defineChomskiGrammarRule(ruleId, rule.terminal, bracketRuleId);
          }
-         else rule.nonterminal = defineGrammarRuleMember(reader, bm, ruleId, rule.nonterminal);
+         else rule.nonterminal = defineChomskiGrammarRule(ruleId, rule.nonterminal, bracketRuleId);
       }
 
       defineGrammarRuleMemberPostfix(reader, bm, rule, ruleId);

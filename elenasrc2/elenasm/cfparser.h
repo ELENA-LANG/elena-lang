@@ -129,6 +129,7 @@ protected:
    void saveScript(_ScriptReader& reader, Rule& rule, int& mode);
    void defineIdleGrammarRule(ref_t ruleId);
    size_t defineOptionalGrammarRule(ref_t ruleId, size_t nonterminal);
+   size_t defineChomskiGrammarRule(ref_t ruleId, size_t nonterminal, size_t nonterminal2);
    size_t defineStarGrammarRule(ref_t ruleId, size_t nonterminal);
    size_t definePlusGrammarRule(ref_t ruleId, size_t nonterminal);
    size_t defineGrammarBrackets(_ScriptReader& reader, ScriptBookmark& bm, ref_t ruleId);
