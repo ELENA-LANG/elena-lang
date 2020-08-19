@@ -40,14 +40,16 @@
 <=
      code (
 =>
-                              "{" statement* last_statement? "}"
+                              "{" statement* l_statement? "}"
 <=
      )
 =>;
 
-   #define statement      ::= "var" decl_variable ";";
-   #define statement      ::= expression ";";
-   #define last_statement ::= expression;
+   #define l_statement    ::= expression;
+   #define l_statement    ::= "var" decl_variable;
+   #define l_statement    ::= a_expression ;
+
+   #define statement      ::= l_statement ";";
 
    #define decl_variable  ::= 
 <=
@@ -73,12 +75,38 @@
         )
 =>;
 
+   #define a_expression     ::= 
+<=
+        expression (
+=>
+                              object assigning
+<=
+        )
+=>;
+
+   #define assigning         ::=
+<=
+           assign = 0
+=>
+                              expression;
+
+   #define l3_expression     ::= 
+<=
+        expression (
+=>
+                              object
+<=
+        )
+=>;
+
    #define object         ::= integer;
    #define object         ::= literal;
    #define object         ::= reference;
    #define object         ::= identifier;
 
    #define operation      ::= "." message m_args;
+   #define operation      ::= <= operator = "+" => "+" l3_expression;
+   #define operation      ::= <= operator = "-" => "-" l3_expression;
 
    #define m_args         ::= "(" ")";
    #define m_args         ::= "(" expression { "," expression }* ")";

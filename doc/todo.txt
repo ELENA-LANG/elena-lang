@@ -3,10 +3,15 @@ In development:
 ------         
 
   [development]
+    * #511, remove extra generic message in the list, do we needit at all;
+
     * elt - #323; 
-            remove extra generic message in the list, do we needit at all;
+
             all console samples;
-            support templates
+            support templates;
+            support exception handling;
+            duplicate variable;
+            unreferenced variable;
     * [API Docs : Func1 has one argument which is not shown]
     * compiled code to expression tree
     * expression tree to source

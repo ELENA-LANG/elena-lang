@@ -1,9 +1,19 @@
+Q:Would you highlight the difference with other languages?
+A:What language? There are hunders of languages out there and dozens of them are quite popular. But there is a special site for
+this - Roseta code. You may compare around two hundred tasks impelemented in ELENA with any language you may think of - 
+http://rosettacode.org/wiki/Category:Elena 
+
+Q: With the opportunity to create a new language, why did you make it so C like?
+Q:a bloody uggly langauge. as far as i am concenrend it C based or f*** of! 
+A: So it is damn if you do and damn if you don't. So it is totally subjective. Move on 
+
 Q: what are its advantages and disadvantages
 A: 
 I'm a wrong person to speak about advantages and disadvantages but I could name few:
-Con: the compiler could be considered as a semi-industrial (it is quite advanced in comparison to amateur compilers but still a lot of efforts should be put in it to achieve good code performance) ,
-         lack of documentation, very small (practically non-existing) userbase, small codebase 
-Pro: mixins, message dispatching, multimethods, integrated into the compiler script engine, a debugger, full Unicode support (including keywords / attributes), templates (classes / operators / 
+Con: the compiler could be considered as a semi-industrial (it is quite advanced in comparison to amateur compilers but still 
+     a lot of efforts should be put in it to achieve good code performance), very small (practically non-existing) userbase, 
+     small codebase 
+Pro: mixins, message dispatching, multimethods, integrated into the compiler script engine, a debugger, full Unicode support (including keywords / attributes), templates (classes / operators)
 
 Q: History of language 
 A: I started it back in 1999. During these periods i tried a number of different approaches, you may take a short look at the syntax history - https://www.reddit.com/r/elena_lang/comments/8hm4ig/elena_evolution_from_0xx_to_340/

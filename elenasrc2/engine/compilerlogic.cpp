@@ -541,6 +541,10 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
    if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
       return true;
 
+   // !! temporal for the debugging
+   ClassInfo tmp;
+   defineClassInfo(scope, tmp, targetRef);
+
    while (sourceRef != 0) {
       if (targetRef != sourceRef) {
          ClassInfo info;
@@ -550,6 +554,7 @@ bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t s
          if (test(info.header.flags, elTemplatebased) && !isPrimitiveRef(targetRef)) {
             // HOTFIX : resolve weak reference before checking compability
             targetRef = scope.resolveWeakTemplateReferenceID(targetRef);
+            info.header.parentRef = scope.resolveWeakTemplateReferenceID(info.header.parentRef);
             if (targetRef == sourceRef) {
                return true;
             }
@@ -2564,7 +2569,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
    size_t argumentLen = 0;
    ref_t parameters[ARG_COUNT] = { 0 };
    ref_t signatures[ARG_COUNT];
-   scope.module->resolveSignature(implicitSignatureRef, signatures);
+   size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
 
    // matching pattern with the provided signature
    size_t i = pattern.find('.') + 2;

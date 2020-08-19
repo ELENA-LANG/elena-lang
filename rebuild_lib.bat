@@ -90,6 +90,9 @@ rem bin\elc src50\system\system_64.prj
 
 bin\elc tests\system\system_test.prj
 tests\system\system_test.exe
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO TestError
+@echo on
 
 @echo off 
 echo === Done ===
@@ -107,6 +110,12 @@ goto:eof
 
 :CompilerError
 echo ELC returns error %ERRORLEVEL%
+@echo off
+goto:eof
+@echo on
+
+:TestError
+echo System tests fail %ERRORLEVEL%
 @echo off
 goto:eof
 @echo on

@@ -2618,15 +2618,17 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
 
    NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
 
-   // auto generate extension template
-   for (auto it = nsScope->extensionTemplates.getIt(messageRef); !it.Eof(); it = nsScope->extensionTemplates.nextIt(messageRef, it)) {
-      ref_t resolvedTemplateExtension = _logic->resolveExtensionTemplate(*scope.moduleScope, *this, *it,
-         implicitSignatureRef, nsScope->ns, nsScope->outerExtensionList ? nsScope->outerExtensionList : &nsScope->extensions);
-      if (resolvedTemplateExtension) {
-         //ref_t strongMessage = encodeMessage()
+   if (implicitSignatureRef) {
+      // auto generate extension template for strong-typed signature
+      for (auto it = nsScope->extensionTemplates.getIt(messageRef); !it.Eof(); it = nsScope->extensionTemplates.nextIt(messageRef, it)) {
+         ref_t resolvedTemplateExtension = _logic->resolveExtensionTemplate(*scope.moduleScope, *this, *it,
+            implicitSignatureRef, nsScope->ns, nsScope->outerExtensionList ? nsScope->outerExtensionList : &nsScope->extensions);
+         if (resolvedTemplateExtension) {
+            //ref_t strongMessage = encodeMessage()
 
-         //nsScope->extensions.add(messageRef, Pair<ref_t, ref_t>(resolvedTemplateExtension, strongMessage));
+            //nsScope->extensions.add(messageRef, Pair<ref_t, ref_t>(resolvedTemplateExtension, strongMessage));
 
+         }
       }
    }
 
@@ -2635,29 +2637,30 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
    bool found = !it.Eof();
    if (found) {
       // generate an extension signature
-      ref_t signaturues[ARG_COUNT];
-      ref_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signaturues);
+      ref_t signatures[ARG_COUNT];
+      ref_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
       for (size_t i = signatureLen; i > 0; i--)
-         signaturues[i] = signaturues[i - 1];
-      signaturues[0] = objectRef;
+         signatures[i] = signatures[i - 1];
+      signatures[0] = objectRef;
       signatureLen++;
 
       int argCount = getArgCount(messageRef);
       while (signatureLen < (ref_t)argCount) {
-         signaturues[signatureLen] = scope.moduleScope->superReference;
+         signatures[signatureLen] = scope.moduleScope->superReference;
          signatureLen++;
       }
 
-      /*ref_t full_sign = */scope.module->mapSignature(signaturues, signatureLen, false);
+      /*ref_t full_sign = */scope.module->mapSignature(signatures, signatureLen, false);
       ref_t resolvedMessage = 0;
       ref_t resolvedExtRef = 0;
       int resolvedStackSafeAttr = 0;
+      int counter = 0;
       while (!it.Eof()) {
          auto extInfo = *it;
          ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
          int extStackAttr = 0;
          if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2,
-            signaturues, signatureLen, extStackAttr))
+            signatures, signatureLen, extStackAttr))
          {
             if (!resolvedMessage) {
                resolvedMessage = extInfo.value2;
@@ -2669,16 +2672,22 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
                break;
             }
          }
+         counter++;
 
          it = nsScope->extensions.nextIt(messageRef, it);
       }
 
       if (resolvedMessage) {
-         // if we are lucky - use the resolved one
-         messageRef = resolvedMessage;
-         stackSafeAttr = resolvedStackSafeAttr;
+         if (counter > 1 && implicitSignatureRef == 0) {
+            // HOTFIX : does not resolve an ambigous extension for a weak message
+         }
+         else {
+            // if we are lucky - use the resolved one
+            messageRef = resolvedMessage;
+            stackSafeAttr = resolvedStackSafeAttr;
 
-         return resolvedExtRef;
+            return resolvedExtRef;
+         }
       }
 
       // bad luck - we have to generate run-time extension dispatcher
@@ -8851,7 +8860,9 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          scope.raiseError(errIllegalPrivate, current);
 
       if (test(scope.info.header.flags, elExtension) && !privateOne && !scope.extensionDispatcher) {
-         saveExtension(scope, message, scope.visibility != Visibility::Public);
+         // HOTFIX : ignore auto generated multi-methods
+         if (!current.existChild(lxAutoMultimethod))
+            saveExtension(scope, message, scope.visibility != Visibility::Public);
       }
 
       if (!closed && test(methodHints, tpEmbeddable)

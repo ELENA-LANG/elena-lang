@@ -1171,3 +1171,29 @@ nilDispatcherTest()
 
     console.writeLine("done")
 }
+
+public extension etOp
+{
+    testExtension(obj)
+    {
+        Assert.ifTrue(false)
+    }
+}
+      
+public extension etOp<T> 
+{
+    testExtension(A obj)
+    {
+        Assert.ifTrue(true)
+    }
+}
+      
+templateExtensionTest()
+{
+    console.write("templateExtensionTest..");
+    
+    auto a := new A();
+    Assert.testExtension(a);
+    
+    console.writeLine("done")    
+}  

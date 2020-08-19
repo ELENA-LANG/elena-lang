@@ -56,6 +56,7 @@ public program()
     stackSafeExtensions();
 
     nilDispatcherTest();
+    templateExtensionTest();
 
     console.writeLine:"--- Passed ---"
 }
