@@ -202,21 +202,27 @@ void VMTapeParser :: writeBuildScriptStatement(_ScriptReader& reader, ScriptBook
    else if (bm.state == dfaQuote) {
       writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.lookup(bm));
    }
+   else if (reader.lookup(bm).compare(",")) {
+      bm = callStack.pop();
+
+      writeBuildScriptStatement(reader, bm, callStack, writer);
+   }
 }
 
 void VMTapeParser :: parseBuildScriptArgumentList(_ScriptReader& reader, ScriptStack& callStack)
 {
+   int exprBookmark = callStack.Count();
    readToken(reader, "(");
 
    ScriptBookmark bm = reader.read();
    while (!reader.compare(")")) {
-      parseBuildScriptStatement(reader, bm, callStack);
+      parseBuildScriptStatement(reader, bm, callStack, exprBookmark);
    
       bm = reader.read();
    }
 }
 
-void VMTapeParser :: parseBuildScriptStatement(_ScriptReader& reader, ScriptBookmark& bm, ScriptStack& callStack)
+void VMTapeParser :: parseBuildScriptStatement(_ScriptReader& reader, ScriptBookmark& bm, ScriptStack& callStack, int exprBookmark)
 {
    if (bm.state == dfaFullIdentifier) {
       callStack.push(bm);
@@ -226,6 +232,13 @@ void VMTapeParser :: parseBuildScriptStatement(_ScriptReader& reader, ScriptBook
       callStack.push(bm);
    }
    else if (bm.state == dfaQuote) {
+      callStack.push(bm);
+   }
+   else if (reader.lookup(bm).compare(",")) {
+      auto expr_it = callStack.get(callStack.Count() - exprBookmark);
+      ScriptBookmark expr_bm = *expr_it;
+      callStack.insert(expr_it, expr_bm);
+      callStack.push(expr_bm);
       callStack.push(bm);
    }
    else throw EParseError(bm.column, bm.row);
@@ -240,7 +253,7 @@ bool VMTapeParser :: parseBuildScript(TapeWriter& writer, _ScriptReader& reader)
    while (!reader.Eof()) {
       idle = false;
 
-      parseBuildScriptStatement(reader, bm, callStack);
+      parseBuildScriptStatement(reader, bm, callStack, 0);
 
       bm = reader.read();
    }

@@ -16,20 +16,10 @@ namespace _ELENA_
 
 class VMTapeParser : public _Parser
 {
-//   //MessageMap _verbs;
    TempString _postfix;
-//
-//   //int mapVerb(ident_t literal);
-//
-//   void writeSubject(TapeWriter& writer, ident_t message);
-//   bool writeObject(TapeWriter& writer, int state, ident_t token);
-//   bool writeArgument(TapeWriter& writer, int state, ident_t token);
-//   bool writeArray(TapeWriter& writer, int state, ident_t token);
+
    bool parseMessage(ident_t message, IdentifierString& reference);
    bool writeMessage(TapeWriter& writer, ident_t message, int command);
-//   bool writeExtension(TapeWriter& writer, ident_t message, int command);
-   //void skipArgumentList(_ScriptReader& reader);
-   //void writeArgumentList(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 
    int writeBuildScriptArgumentList(_ScriptReader& reader, ScriptBookmark terminator, Stack<ScriptBookmark>& callStack, 
                                     TapeWriter& writer);
@@ -37,7 +27,7 @@ class VMTapeParser : public _Parser
                                     TapeWriter& writer);
 
    void parseBuildScriptArgumentList(_ScriptReader& reader, Stack<ScriptBookmark>& callStack);
-   void parseBuildScriptStatement(_ScriptReader& reader, ScriptBookmark& bm, Stack<ScriptBookmark>& callStack);
+   void parseBuildScriptStatement(_ScriptReader& reader, ScriptBookmark& bm, Stack<ScriptBookmark>& callStack, int exprBookmark);
 
    void parseInlineStatement(_ScriptReader& reader, ScriptBookmark& bm, TapeWriter& writer);
 

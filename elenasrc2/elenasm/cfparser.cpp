@@ -411,6 +411,25 @@ size_t CFParser :: defineGrammarBrackets(_ScriptReader& reader, ScriptBookmark& 
 
    addRule(ruleId, rule);
 
+   bm = reader.read();
+   if (bm.state == dfaQuote) {
+   }
+   else if (reader.compare("+")) {
+      ruleId = definePlusGrammarRule(parentRuleId, ruleId);
+
+      bm = reader.read();
+   }
+   else if (reader.compare("?")) {
+      ruleId = defineOptionalGrammarRule(parentRuleId, ruleId);
+
+      bm = reader.read();
+   }
+   else if (reader.compare("*")) {
+      ruleId = defineStarGrammarRule(parentRuleId, ruleId);
+
+      bm = reader.read();
+   }
+
    return ruleId;
 }
 
@@ -612,8 +631,6 @@ void CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark& 
          }
          else rule.nonterminal = defineChomskiGrammarRule(ruleId, rule.nonterminal, bracketRuleId);
       }
-
-      defineGrammarRuleMemberPostfix(reader, bm, rule, ruleId);
    }
    else if (bm.state == dfaPrivate) {
       if (rule.terminal) {

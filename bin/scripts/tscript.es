@@ -45,11 +45,11 @@
      )
 =>;
 
+   #define statement      ::= l_statement ";";
+
    #define l_statement    ::= expression;
    #define l_statement    ::= "var" decl_variable;
    #define l_statement    ::= a_expression ;
-
-   #define statement      ::= l_statement ";";
 
    #define decl_variable  ::= 
 <=
@@ -64,15 +64,6 @@
    #define a_new_variable ::= new_variable
 <=
            assign = 0
-=>;
-
-   #define expression     ::= 
-<=
-        expression (
-=>
-                              object operation?
-<=
-        )
 =>;
 
    #define a_expression     ::= 
@@ -90,23 +81,53 @@
 =>
                               expression;
 
-   #define l3_expression     ::= 
+
+   #define expression     ::= l4_expression;
+
+   #define l4_expression  ::= 
 <=
         expression (
 =>
-                              object
+                           l3_expression { l4_operation l4_operations* }?
 <=
         )
 =>;
+
+   #define l3_expression  ::= 
+<=
+        expression (
+=>
+                           l2_expression { l3_operation l3_operations* }?
+<=
+        )
+=>;
+
+   #define l2_expression  ::= object;
+
+   #define l2_expression  ::= 
+<=
+        expression (
+=>
+                           object { l2_operation l2_operations* }?
+<=
+        )
+=>;
+
+   #define l2_operation   ::= "." message m_args;
+   #define l2_operations  ::= <= , => l2_operation;
+
+   #define l3_operation   ::= <= operator = "*" => "*" l2_expression;
+   #define l3_operation   ::= <= operator = "/" => "/" l2_expression;
+   #define l3_operations  ::= <= , => l3_operation;
+
+   #define l4_operation   ::= <= operator = "+" => "+" l3_expression;
+   #define l4_operation   ::= <= operator = "-" => "-" l3_expression;
+   #define l4_operations  ::= <= , => l4_operation;
 
    #define object         ::= integer;
    #define object         ::= literal;
    #define object         ::= reference;
    #define object         ::= identifier;
-
-   #define operation      ::= "." message m_args;
-   #define operation      ::= <= operator = "+" => "+" l3_expression;
-   #define operation      ::= <= operator = "-" => "-" l3_expression;
 
    #define m_args         ::= "(" ")";
    #define m_args         ::= "(" expression { "," expression }* ")";

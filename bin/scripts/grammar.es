@@ -223,10 +223,12 @@
 <=
                system'dynamic'expressions'ExtensionOrMessageCallExpression (
 =>
-                                 object message expression*
+                                 object message expression* next_call*
 <=
                )
 =>; 
+
+  #define next_call       ::= <= , => "," message expression*;
 
   #define expr_operation  ::=
 <=
