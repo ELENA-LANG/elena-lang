@@ -10813,7 +10813,12 @@ void Compiler :: declareNamespace(SNode& current, NamespaceScope& scope, bool ig
       }
       else if (current == lxImport && !ignoreImports) {
          bool duplicateInclusion = false;
-         if (scope.moduleScope->includeNamespace(scope.importedNs, current.identifier(), duplicateInclusion)) {
+
+         ident_t name = current.identifier();
+         if (emptystr(name))
+            name = current.firstChild(lxTerminalMask).identifier();
+
+         if (scope.moduleScope->includeNamespace(scope.importedNs, name, duplicateInclusion)) {
             //if (duplicateExtensions)
             //   scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateExtension, ns);
          }

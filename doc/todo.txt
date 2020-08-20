@@ -6,11 +6,6 @@ In development:
     * #511, remove extra generic message in the list, do we needit at all;
 
     * elt - #323; 
-            parserexpression tutorials
-            interpeter
-            calc
-            js
-
             hello world  - rt, vm, compile-time 
             several operations in a row - rt, vm, compile-time
             review performance
