@@ -202,7 +202,7 @@ void VMTapeParser :: writeBuildScriptStatement(_ScriptReader& reader, ScriptBook
    else if (bm.state == dfaQuote) {
       writer.writeCommand(PUSHS_TAPE_MESSAGE_ID, reader.lookup(bm));
    }
-   else if (reader.lookup(bm).compare(",")) {
+   else if (reader.lookup(bm).compare(";")) {
       bm = callStack.pop();
 
       writeBuildScriptStatement(reader, bm, callStack, writer);
@@ -234,7 +234,7 @@ void VMTapeParser :: parseBuildScriptStatement(_ScriptReader& reader, ScriptBook
    else if (bm.state == dfaQuote) {
       callStack.push(bm);
    }
-   else if (reader.lookup(bm).compare(",")) {
+   else if (reader.lookup(bm).compare(";")) {
       auto expr_it = callStack.get(callStack.Count() - exprBookmark);
       ScriptBookmark expr_bm = *expr_it;
       callStack.insert(expr_it, expr_bm);

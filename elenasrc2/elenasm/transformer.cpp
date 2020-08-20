@@ -282,7 +282,7 @@ void Builder :: parse(_ScriptReader& reader, MemoryDump* output)
          bookmarks.push(stack.Count());
          level++;
       }
-      else if (reader.compare(",")) {
+      else if (reader.compare(";")) {
          auto expr_it = stack.get(stack.Count() - bookmarks.peek());
          ScriptBookmark expr_bm = *expr_it;
 

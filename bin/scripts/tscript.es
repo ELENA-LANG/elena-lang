@@ -82,22 +82,33 @@
                               expression;
 
 
-   #define expression     ::= l4_expression;
+   #define expression     ::= 
+<=
+        expression (
+=>
+                              l4_expression
+<=
+        )
+=>;
+
+   #define l4_expression  ::= l3_expression;
 
    #define l4_expression  ::= 
 <=
         expression (
 =>
-                           l3_expression { l4_operation l4_operations* }?
+                           l3_expression l4_operation l4_operations*
 <=
         )
 =>;
+
+   #define l3_expression  ::= l2_expression;
 
    #define l3_expression  ::= 
 <=
         expression (
 =>
-                           l2_expression { l3_operation l3_operations* }?
+                           l2_expression l3_operation l3_operations*
 <=
         )
 =>;
@@ -108,13 +119,13 @@
 <=
         expression (
 =>
-                           object { l2_operation l2_operations* }?
+                           object l2_operation l2_operations*
 <=
         )
 =>;
 
    #define l2_operation   ::= "." message m_args;
-   #define l2_operations  ::= <= , => l2_operation;
+   #define l2_operations  ::= <= ; => l2_operation;
 
    #define l3_operation   ::= <= operator = "*" => "*" l2_expression;
    #define l3_operation   ::= <= operator = "/" => "/" l2_expression;

@@ -26,7 +26,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
    tokens.add("script_method", lxClassMethod);
    tokens.add("script_function", lxClassMethod);
    tokens.add("method", lxClassMethod);
-//   tokens.add("action", lxClassMethod);
+   tokens.add("function", lxClassMethod);
    tokens.add("get_method", lxClassMethod);
    tokens.add("message", lxMessage);
    tokens.add("code", lxCode);
@@ -49,6 +49,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
    tokens.add("operator", lxOperator);
    tokens.add("nameattr", lxNameAttr);
    tokens.add("property_parameter", lxPropertyParam);
+   tokens.add("import", lxImport);
 
    if (fullMode) {
 //      tokens.add("argarrop", lxArgArrOp);

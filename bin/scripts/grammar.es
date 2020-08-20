@@ -228,7 +228,7 @@
                )
 =>; 
 
-  #define next_call       ::= <= , => "," message expression*;
+  #define next_call       ::= <= ; => ";" message expression*;
 
   #define expr_operation  ::=
 <=

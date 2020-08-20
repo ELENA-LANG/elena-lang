@@ -825,7 +825,7 @@ inline void readTailItemAndInsert(MemoryReader& reader, MemoryWriter& writer, CF
 
 void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer)
 {
-   ident_t keyName = retrieveKey(_names.start(), item.ruleId, DEFAULT_STR);
+   //ident_t keyName = retrieveKey(_names.start(), item.ruleId, DEFAULT_STR);
 
    size_t key = createKey(item.ruleId, 1);
    Rule rule = _table.get(key);

@@ -21,7 +21,7 @@ TreeScriptParser :: TreeScriptParser()
 
    _attributes.add("singleton", V_SINGLETON);
    _attributes.add("preloaded_symbol", V_PRELOADED);
-   _attributes.add("action", V_FUNCTION);
+   _attributes.add("function", V_FUNCTION);
    _attributes.add("get_method", V_GETACCESSOR);
    _attributes.add("script_method", V_SCRIPTSELFMODE);
    _attributes.add("public_namespace", V_PUBLIC);
@@ -37,7 +37,7 @@ void TreeScriptParser :: parseScope(_ScriptReader& reader, ScriptBookmark& bm, S
    bm = reader.read();
    while (!reader.Eof() && !reader.compare(")")) {
       if (reader.compare(";")) {
-         writer.closeNode();
+         writer.closeNode();  
          writer.inject(type);
       }
       else parseStatement(reader, bm, writer);
