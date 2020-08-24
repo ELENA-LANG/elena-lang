@@ -3695,6 +3695,20 @@ labSearch:
 
 end
 
+procedure __saving_closure."params##invoke$system@Object[0]"
+
+  pushsi 1
+
+  load
+  movs   2
+  xset
+  freei  1
+  peeksi 2 
+
+  quitn  2
+
+end
+
 procedure __assign_closure."params##invoke$system@Object[0]"
 
   pusha

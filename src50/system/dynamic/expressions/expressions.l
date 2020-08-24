@@ -196,7 +196,64 @@ namespace expressions
     
         static Expression Nested(DynamicSingleton expr)
             = new NestedExpression(expr);          
-                               
+        
+        
+        /*internal */static saveMessageCallTo(List<TapeFunction> list, ExpressionScope scope, Expression target, 
+                                            Expression[] arguments, TapeFunction operation)
+        {
+            int len := arguments.Length;
+            
+            bool simpleMode := true;
+            if (target.IsOperation && len > 0) 
+            {
+                simpleMode := false;
+            }
+            else {
+                for (int i := 0, i < len, i += 1) {
+                    if (arguments[i].IsOperation)
+                        simpleMode := false;
+                }
+            };
+            
+            if (simpleMode) {
+                int i := len;
+                while(i > 0)
+                {
+                    i -= 1;
+                    
+                    arguments[i].saveTo(list, scope);
+                };
+                
+                target.saveTo(list, scope);
+                
+                list.append(operation)
+            }
+            else {
+                var nilConst := new ConstantExpression(nilValue);
+                nilConst.saveTo(list, scope);
+                for (int i := 0, i < len, i += 1) {
+                    nilConst.saveTo(list, scope)
+                };
+                
+                int saveIndex := 1;
+                
+                target.saveTo(list, scope);                
+                list.append(new SavingFunction(saveIndex));
+                
+                for (int i := 0, i < len, i += 1) {
+                    saveIndex += 1;
+                    var f := new SavingFunction(saveIndex);
+                    
+                    arguments[i].saveTo(list, scope);
+                    list.append(f);
+                };
+                
+                list.append(operation)
+            }                                                
+        }
+        
+        get abstract bool IsOperation() {}
+                                                                             
         abstract prepare(ExpressionScope scope) {}
                                         
         abstract saveTo(List<TapeFunction> list, ExpressionScope scope) {}
@@ -321,6 +378,8 @@ namespace expressions
         {
             this statements := statements
         }
+        
+        bool IsOperation = true;
         
         prepare(ExpressionScope scope)
         {
@@ -447,6 +506,8 @@ namespace expressions
                     Expression p17, Expression p18, Expression p19, Expression p20)
             <= new(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20);
         
+        bool IsOperation = true;
+        
         prepare(ExpressionScope scope)
         {
             variables := new List<ScopeVariable>();
@@ -532,6 +593,8 @@ namespace expressions
             this object := o
         }
         
+        bool IsOperation = false;
+        
         eval()
             = object;
         
@@ -561,6 +624,8 @@ namespace expressions
         {
             symbol := new Symbol(s)
         }
+        
+        bool IsOperation = false;
         
         eval()
             = symbol;
@@ -644,6 +709,8 @@ namespace expressions
                     Expression p11, Expression p12)
             <= new(new Message(message + "[13]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
         
+        bool IsOperation = true;
+        
         prepare(ExpressionScope scope)
         {
             _target.prepare(scope);
@@ -656,18 +723,7 @@ namespace expressions
         
         saveTo(List<TapeFunction> list, ExpressionScope scope)
         {
-            int len := _arguments.Length;
-            int i := len;
-            while(i > 0)
-            {
-                i -= 1;
-                
-                _arguments[i].saveTo(list, scope);
-            };
-            
-            _target.saveTo(list, scope);
-            
-            list.append(MessageFunction.load(_message))
+            Expression.saveMessageCallTo(list, scope, _target, _arguments, MessageFunction.load(_message))                                                            
         }
     }
 
@@ -740,6 +796,8 @@ namespace expressions
                     Expression p11, Expression p12)
             <= new(new Message(message + "[13]"), t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
         
+        bool IsOperation = true;
+        
         prepare(ExpressionScope scope)
         {
             _target.prepare(scope);
@@ -752,23 +810,12 @@ namespace expressions
         
         saveTo(List<TapeFunction> list, ExpressionScope scope)
         {
-            int len := _arguments.Length;
-            int i := len;
-            while(i > 0)
-            {
-                i -= 1;
-                
-                _arguments[i].saveTo(list, scope);
-            };
-            
-            _target.saveTo(list, scope);
-            
-            auto messageExpr := scope.resolveExtension(_message);
+            TapeFunction messageExpr := scope.resolveExtension(_message);
             if (messageExpr == nil) {
                 messageExpr := MessageFunction.load(_message)
             };             
             
-            list.append(messageExpr)
+            Expression.saveMessageCallTo(list, scope, _target, _arguments, messageExpr)
         }
     }
 
@@ -844,6 +891,8 @@ namespace expressions
                     Expression p11, Expression p12)
             <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
 
+        bool IsOperation = true;
+        
         prepare(ExpressionScope scope)
         {
             _target.prepare(scope);
@@ -856,18 +905,7 @@ namespace expressions
                 
         saveTo(List<TapeFunction> list, ExpressionScope scope)
         {
-            int len := _arguments.Length;
-            int i := len;
-            while(i > 0)
-            {
-                i -= 1;
-                
-                _arguments[i].saveTo(list, scope);
-            };
-            
-            _target.saveTo(list, scope);
-            
-            list.append(FuncFunction.load(_message))
+            Expression.saveMessageCallTo(list, scope, _target, _arguments, FuncFunction.load(_message))
         }
     }
 
@@ -934,6 +972,8 @@ namespace expressions
                     Expression p11, Expression p12)
             <= new(t, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12);
 
+        bool IsOperation = true;
+
         prepare(ExpressionScope scope)
         {
             int len := _arguments.Length;
@@ -944,16 +984,7 @@ namespace expressions
                 
         saveTo(List<TapeFunction> list, ExpressionScope scope)
         {
-            int len := _arguments.Length;
-            int i := len;
-            while(i > 0)
-            {
-                i -= 1;
-                
-                _arguments[i].saveTo(list, scope);
-            };
-            
-            list.append(DynamicMessageFunction)
+            Expression.saveMessageCallTo(list, scope, _arguments, DynamicMessageFunction)
         }
     }
 
@@ -970,7 +1001,9 @@ namespace expressions
             _name := name;
             _target := t
         }
-        
+                
+        bool IsOperation = true;
+
         prepare(ExpressionScope scope)
         {
             _target.prepare(scope);
@@ -1006,6 +1039,8 @@ namespace expressions
             _target := t
         }
         
+        bool IsOperation = true;
+        
         prepare(ExpressionScope scope)
         {
             _target.prepare(scope);
@@ -1036,6 +1071,8 @@ namespace expressions
             _target := t;
             _value := v
         }
+        
+        bool IsOperation = true;
         
         prepare(ExpressionScope scope)
         {
@@ -1076,6 +1113,8 @@ namespace expressions
             _value := v
         }
         
+        bool IsOperation = true;
+        
         prepare(ExpressionScope scope)
         {
             _property.prepare(scope);
@@ -1103,6 +1142,8 @@ namespace expressions
             this variable := variable;
         }
         
+        bool IsOperation = true;
+
         prepare(ExpressionScope scope)
         {
             scope.declare(variable);
@@ -1133,6 +1174,8 @@ namespace expressions
             this variable := new ScopeVariable(variable);
             this expression := expression
         }
+
+        bool IsOperation = false;
 
         prepare(ExpressionScope scope)
         {
@@ -1187,6 +1230,8 @@ namespace expressions
             this name := name
         }
 
+        bool IsOperation = false;
+
         prepare(ExpressionScope scope)
         {
             identifier := scope.resolve(name, mode_non);
@@ -1207,6 +1252,8 @@ namespace expressions
         {
             this variable := variable
         }
+
+        bool IsOperation = false;
 
         prepare(ExpressionScope scope)
         {
@@ -1360,6 +1407,8 @@ namespace expressions
             this expr := expr
         }
         
+        bool IsOperation = true;
+
         prepare(ExpressionScope scope)
         {
             expr.prepare(scope);
@@ -1389,6 +1438,8 @@ namespace expressions
             body.prepare(scope);
         }
                 
+        bool IsOperation = true;
+
         saveTo(List<TapeFunction> list, ExpressionScope scope)
         {
             condition.saveTo(list, scope);
@@ -1421,6 +1472,8 @@ namespace expressions
             condition.prepare(scope);
             body.prepare(scope);
         }
+                
+        bool IsOperation = true;
                 
         saveTo(List<TapeFunction> list, ExpressionScope scope)
         {
@@ -1491,6 +1544,8 @@ namespace expressions
             this body := body;
         }        
      
+        bool IsOperation = true;
+
         saveTo(List<Tuple<Message,DynamicTape>> list, ExpressionScope scope)
         {
             list.append(new Tuple<Message,DynamicTape>(message, self.compiled(scope)));
@@ -1615,6 +1670,8 @@ namespace expressions
             this body := body;
         }        
      
+        bool IsOperation = true;
+     
         prepare(ExpressionScope scope)
         {
             auto closureScope := new ExpressionScope
@@ -1676,6 +1733,8 @@ namespace expressions
             this singleton := singleton;
         }
         
+        bool IsOperation = true;
+
         prepare(ExpressionScope scope)
         {
         }

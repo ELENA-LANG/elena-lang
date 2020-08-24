@@ -3,13 +3,13 @@ In development:
 ------         
 
   [development]
-    * #511, remove extra generic message in the list, do we needit at all;
+    * elt - #323;
+            sum compile-time : debug
+            sum vm - why Integer is not resolved?
 
-    * elt - #323; 
-            hello world  - rt, vm, compile-time 
-            several operations in a row - rt, vm, compile-time
-            review performance
             all console samples;
+            support ELENA 3.x syntax
+            review performance
             support templates;
             support exception handling;
             duplicate variable;

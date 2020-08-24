@@ -100,6 +100,21 @@ public struct LocalFunction : TapeFunction
         => intern system'core_routines'__local_closure;    
 }
 
+// --- SavingFunction ---
+
+public struct SavingFunction : TapeFunction
+{
+    embeddable int index;
+    
+    constructor(int index)
+    {
+        this index := index
+    }
+    
+    mixin function(params object[] args)
+        => intern system'core_routines'__saving_closure;    
+}
+
 // --- ReleaseFunction ---
 
 public struct ReleaseFunction : TapeFunction
