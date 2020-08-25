@@ -322,6 +322,18 @@
                        "#constructor"
 =>;
       
+  #define new_expr          ::=
+<=
+                       system'dynamic'expressions'ConstantExpression ( 
+                          system'ClassReference ( 
+=>
+                               "new_identifier" "=" ident_quote "message" "=" "0"
+<=
+                          )
+                       )
+                       "#constructor"
+=>;
+      
   #define object          ::=
 <=
                     system'dynamic'expressions'MessageCallExpression ( 

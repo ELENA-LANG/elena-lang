@@ -29,6 +29,7 @@ TreeScriptParser :: TreeScriptParser()
    _attributes.add("script_function", V_FUNCTION);
    _attributes.add("variable_identifier", V_VARIABLE);
    _attributes.add("new_reference", V_NEWOP);
+   _attributes.add("new_identifier", V_NEWOP);
    _attributes.add("prev_identifier", V_PREVIOUS);
 }
 

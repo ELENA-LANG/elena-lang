@@ -4,10 +4,9 @@ In development:
 
   [development]
     * elt - #323;
-            sum compile-time : debug
-            sum vm - why Integer is not resolved?
-
             all console samples;
+
+            sum compile-time : debug
             support ELENA 3.x syntax
             review performance
             support templates;

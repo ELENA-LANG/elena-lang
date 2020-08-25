@@ -81,6 +81,14 @@
 =>
                               expression;
 
+   #define s_expression     ::= 
+<=
+        expression (
+=>
+                              s_object
+<=
+        )
+=>;
 
    #define expression     ::= 
 <=
@@ -113,16 +121,30 @@
         )
 =>;
 
-   #define l2_expression  ::= object;
+   #define l2_expression  ::= l1_expression;
 
    #define l2_expression  ::= 
 <=
         expression (
 =>
-                           object l2_operation l2_operations*
+                           l1_expression l2_operation l2_operations*
 <=
         )
 =>;
+
+   #define l1_expression  ::= object;
+
+   #define l2_expression  ::= 
+<=
+        expression (
+=>
+                           object l1_operation l1_operations*
+<=
+        )
+=>;
+
+   #define l1_operation   ::= <= message = 0 => function_args;
+   #define l2_operations  ::= <= ; message = 0 => function_args;
 
    #define l2_operation   ::= "." message m_args;
    #define l2_operations  ::= <= ; => l2_operation;
@@ -135,17 +157,25 @@
    #define l4_operation   ::= <= operator = "-" => "-" l3_expression;
    #define l4_operations  ::= <= , => l4_operation;
 
-   #define object         ::= integer;
-   #define object         ::= literal;
-   #define object         ::= reference;
-   #define object         ::= identifier;
+   #define object         ::= s_object;
+   #define object         ::= "new" new_identifier;
+
+   #define s_object       ::= integer;
+   #define s_object       ::= literal;
+   #define s_object       ::= reference;
+   #define s_object       ::= identifier;
+
+   #define function_args  ::= "(" ")";
+   #define function_args  ::= "(" expression { "," expression }* ")";
 
    #define m_args         ::= "(" ")";
    #define m_args         ::= "(" expression { "," expression }* ")";
+   #define m_args         ::= ":" s_expression;
 
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
 
    #define new_variable   ::= <= variable_identifier = $identifier =>; 
+   #define new_identifier ::= <= new_identifier = $identifier =>;
 
    #define message        ::= <= message = $identifier =>;
    #define identifier     ::= <= identifier = $identifier =>;
