@@ -203,7 +203,7 @@ EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
       return 0;
 
    try {
-      ref_t subj_id = instance->getSubjectRef((const char*)subjectName);
+      ref_t subj_id = instance->getSubjectRef((SystemEnv*)_SystemEnv, (const char*)subjectName);
 
       return (void*)subj_id;
    }
@@ -259,7 +259,7 @@ EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
       return 0;
 
    try {
-      return (void*)(instance->getMessageRef((const char*)messageName));
+      return (void*)(instance->getMessageRef((SystemEnv*)_SystemEnv, (const char*)messageName));
    }
    catch (JITUnresolvedException& e)
    {

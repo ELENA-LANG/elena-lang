@@ -12,6 +12,8 @@
 
 using namespace _ELENA_;
 
+constexpr ref_t SIGNATURE_MASK = 0x80000000;
+
 // --- resolveReference resolveMessage
 
 inline void resolveReference(_Memory* image, size_t position, ref_t vaddress, size_t mask, bool virtualMode)
@@ -218,7 +220,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
 
    SectionInfo info = _loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true);
 
-   ref_t resolvedSignature = info.module->mapAction(signatureName.c_str(), 0u, true);
+   ref_t resolvedSignature = info.module->mapAction(signatureName.c_str(), 0u, true) & ~SIGNATURE_MASK;
    if (resolvedSignature == 0) {
       MemoryWriter writer(info.section);
       resolvedSignature = writer.Position();
@@ -255,7 +257,8 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
          writer.writeDWord(0);
       }
 
-      info.module->mapPredefinedAction(signatureName.c_str(), resolvedSignature, 0u);
+      // HOTFIX : adding a mask to tell apart a message name from a signature in meta module
+      info.module->mapPredefinedAction(signatureName.c_str(), resolvedSignature | SIGNATURE_MASK, 0u);
    }
 
    return resolvedSignature;

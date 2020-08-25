@@ -4,6 +4,9 @@
 //                                              (C)2009-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
+// !! temporal
+#define NO_BREAKPOINT 1
+
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "x86elenavmachine.h"
@@ -117,7 +120,9 @@ ref_t x86Instance :: resolveExternal(ident_t external)
 
 void x86Instance :: raiseBreakpoint()
 {
-#ifdef MINGW
+#ifdef NO_BREAKPOINT
+
+#elif MINGW
    asm("int3");
 #else
    __debugbreak();

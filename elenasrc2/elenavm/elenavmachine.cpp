@@ -1137,14 +1137,14 @@ bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
    return maxLength > 0;
 }
 
-void* Instance :: parseMessage(ident_t message)
+void* Instance :: parseMessage(SystemEnv* systemEnv, ident_t message)
 {
    IdentifierString messageName;
    int paramCount = -1;
    ref_t flags = 0;
 
    if (SystemRoutineProvider::parseMessageLiteral(message, messageName, paramCount, flags)) {
-      ref_t actionRef = getSubjectRef(messageName.ident());
+      ref_t actionRef = getSubjectRef(systemEnv, messageName.ident());
       if (!actionRef)
          return nullptr;
 

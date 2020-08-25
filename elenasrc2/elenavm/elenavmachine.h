@@ -12,7 +12,7 @@
 #include "libman.h"
 #include "elenamachine.h"
 
-constexpr auto ELENAVM_REVISION = 0x0010;
+constexpr auto ELENAVM_REVISION = 0x0011;
 
 // --- ELENAVM common constants ---
 #ifdef _WIN32
@@ -263,7 +263,7 @@ protected:
    virtual void resumeVM() = 0;
    virtual void stopVM() = 0;
 
-   void* parseMessage(ident_t message);
+   void* parseMessage(SystemEnv* systemEnv, ident_t message);
 
 //   void saveActionNames(MemoryWriter* writer)
 //   {
@@ -291,7 +291,9 @@ protected:
       }
       else ref = loadSymbol(referenceName, mask, silentMode);
 
-      onNewCode(systemEnv);
+      /*if (_linker->withNewInitializers())
+         onNewInitializers(systemEnv);
+      else*/onNewCode(systemEnv);
 
       return ref;
    }
@@ -420,7 +422,7 @@ public:
 
    int loadMessageName(ref_t messageRef, char* buffer, size_t length);
 
-   virtual ref_t getSubjectRef(ident_t subjectName)
+   virtual ref_t getSubjectRef(SystemEnv* systemEnv, ident_t subjectName)
    {
       if (subjectName.find('$') != -1) {
          setStatus("Invalid subject");
@@ -428,10 +430,20 @@ public:
          return 0;
       }
 
-      return _linker->parseMessage(subjectName, true);
+      ref_t subjRef = _linker->parseMessage(subjectName, true);
+
+      if (_messageTable->Length() > _ConvertedMTSize) {
+         stopVM();
+
+         onNewCode(systemEnv);
+
+         resumeVM();
+      }
+
+      return subjRef;
    }
 
-   virtual ref_t getMessageRef(ident_t messageName)
+   virtual ref_t getMessageRef(SystemEnv* systemEnv, ident_t messageName)
    {
       if (messageName.find('$') != -1) {
          setStatus("Invalid subject");
@@ -439,7 +451,7 @@ public:
          return 0;
       }
 
-      return (ref_t)parseMessage(messageName);
+      return (ref_t)parseMessage(systemEnv, messageName);
    }
 
    virtual bool initSymbolReference(void* object, ident_t referenceName)
