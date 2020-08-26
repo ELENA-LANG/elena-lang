@@ -324,12 +324,10 @@
       
   #define new_expr          ::=
 <=
-                       system'dynamic'expressions'ConstantExpression ( 
-                          system'ClassReference ( 
+                       system'dynamic'expressions'ClassIdentifierExpression ( 
 =>
                                "new_identifier" "=" ident_quote "message" "=" "0"
 <=
-                          )
                        )
                        "#constructor"
 =>;

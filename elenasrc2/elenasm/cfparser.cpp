@@ -20,6 +20,7 @@ using namespace _ELENA_TOOL_;
 #define EOL_KEYWORD           "$eol"
 #define ANYCHR_KEYWORD        "$chr" // > 32
 #define CURRENT_KEYWORD       "$current"
+#define CHARACTER_KEYWORD     "$character"
 
 #define REFERENCE_MODE        1
 #define IDENTIFIER_MODE       2
@@ -31,6 +32,7 @@ using namespace _ELENA_TOOL_;
 #define LETTER_MODE           8
 #define MULTI_MODE            9
 #define EXCLUDE_MODE          10
+#define CHARACTER_MODE        11
 
 const char* dfaSymbolic[4] =
 {
@@ -87,6 +89,20 @@ bool normalReferenceApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader
 bool normalIdentifierApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader&, CFParser*)
 {
    return (bm.state == dfaIdentifier);
+}
+
+bool normalCharacterApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader& reader, CFParser*)
+{
+   if (bm.state == dfaPrivate) {
+      ident_t value = reader.lookup(bm);
+      for (int i = 0; i < getlength(value); i++) {
+         if (value[i] < '0' && value[i] > '9')
+            return false;
+      }
+
+      return true;
+   }
+   else return false;
 }
 
 bool normalLiteralApplyRule(CFParser::Rule&, ScriptBookmark& bm, _ScriptReader&, CFParser*)
@@ -235,6 +251,9 @@ void CFParser :: defineApplyRule(Rule& rule, int mode)
                break;
             case IDENTIFIER_MODE:
                rule.apply = normalIdentifierApplyRule;
+               break;
+            case CHARACTER_MODE:
+               rule.apply = normalCharacterApplyRule;
                break;
             case IDLE_MODE:
                rule.apply = nonterminalApplyRule;
@@ -509,6 +528,12 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
             rule.saveTo = saveReference;
 
             mode = IDENTIFIER_MODE;
+         }
+         else if (reader.compare(CHARACTER_KEYWORD)) {
+            rule.terminal = (size_t)-1;
+            rule.saveTo = saveLiteralContent;
+
+            mode = CHARACTER_MODE;
          }
          else if (reader.compare(LITERAL_KEYWORD)) {
             rule.terminal = (size_t)-1;

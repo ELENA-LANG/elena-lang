@@ -3,9 +3,10 @@ namespace expressions
     import system'collections;
     import system'routines;
 
-    const int mode_non = 0;
-    const int mode_lcl = 1;
-    const int mode_asn = 3;
+    const int mode_non   = 0;
+    const int mode_lcl   = 1;
+    const int mode_asn   = 3;
+    const int mode_class = 4;
 
     preloaded used = new object[]{Expression,DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,DynamicImport};
     
@@ -76,6 +77,9 @@ namespace expressions
             
         static Expression ClassReference(string s)
             = new ConstantExpression(new ClassReference(s));
+            
+        static Expression ClassIdentifier(string s)
+            = new ClassIdentifierExpression(s);
             
         static Expression New(Expression t)
             = new MessageCallExpression(t, "#constructor");
@@ -198,7 +202,7 @@ namespace expressions
             = new NestedExpression(expr);          
         
         
-        /*internal */static saveMessageCallTo(List<TapeFunction> list, ExpressionScope scope, Expression target, 
+        internal static saveMessageCallTo(List<TapeFunction> list, ExpressionScope scope, Expression target, 
                                             Expression[] arguments, TapeFunction operation)
         {
             int len := arguments.Length;
@@ -613,6 +617,29 @@ namespace expressions
         constructor(o)
         {
             this object := intConvertor.convert(o)
+        }
+    }
+    
+    public class ClassIdentifierExpression : Expression
+    {
+        ScopeVariable name;
+        TapeFunction  classIdentifier;
+                
+        constructor(string name)
+        {
+            this name := new ScopeVariable(name);
+        }
+        
+        bool IsOperation = false;
+        
+        prepare(ExpressionScope scope)
+        {
+            classIdentifier := scope.resolve(name, mode_class);
+        }
+        
+        saveTo(List<TapeFunction> list, ExpressionScope scope)
+        {
+            list.append(classIdentifier);
         }
     }
 
@@ -1975,7 +2002,7 @@ namespace expressions
                 {
                     var refName := variable.Name;
                     
-                    if (mode == 0 && imports != nil)
+                    if ((mode == 0 || mode == mode_class) && imports != nil)
                     {
                         int len := imports.Length;
                         for(int i := 0, i < len, i+=1) {

@@ -2924,9 +2924,10 @@ procedure __extdispatcher."#dispatch[1]"
 
   pushd
 
-  // check if it is invoke
-  and        SPECIAL_MESSAGE
-  ifn        labDefault 0 
+// ; temporally commented out to allow call from interpreter tape
+//  // check if it is invoke
+//  and        SPECIAL_MESSAGE
+//  ifn        labDefault 0 
 
   load
   storev
@@ -3775,8 +3776,9 @@ end
 procedure __free_closure."params##invoke$system@Object[0]"
 
   load
-  movs  -1
+  movs    1
   get
+  inc     1
 
   mquit
 

@@ -40,16 +40,18 @@
 <=
      code (
 =>
-                              "{" statement* l_statement? "}"
+                              "{" statement next_statement
 <=
      )
 =>;
 
-   #define statement      ::= l_statement ";";
+   #define next_statement ::= ";" statement next_statement;
+   #define next_statement ::= ";" "}";
+   #define next_statement ::= "}";
 
-   #define l_statement    ::= expression;
-   #define l_statement    ::= "var" decl_variable;
-   #define l_statement    ::= a_expression ;
+   #define statement      ::= expression;
+   #define statement      ::= "var" decl_variable;
+   #define statement      ::= a_expression ;
 
    #define decl_variable  ::= 
 <=
@@ -147,6 +149,8 @@
    #define l2_operations  ::= <= ; message = 0 => function_args;
 
    #define l2_operation   ::= "." message m_args;
+   #define l2_operation   ::= "." property;
+
    #define l2_operations  ::= <= ; => l2_operation;
 
    #define l3_operation   ::= <= operator = "*" => "*" l2_expression;
@@ -164,6 +168,8 @@
    #define s_object       ::= literal;
    #define s_object       ::= reference;
    #define s_object       ::= identifier;
+   #define s_object       ::= character;
+   #define s_object       ::= "(" expression ")";
 
    #define function_args  ::= "(" ")";
    #define function_args  ::= "(" expression { "," expression }* ")";
@@ -177,11 +183,13 @@
    #define new_variable   ::= <= variable_identifier = $identifier =>; 
    #define new_identifier ::= <= new_identifier = $identifier =>;
 
+   #define property       ::= <= message = $identifier property_parameter = 0 =>;
    #define message        ::= <= message = $identifier =>;
    #define identifier     ::= <= identifier = $identifier =>;
    #define integer        ::= <= integer = $numeric =>;
    #define literal        ::= <= literal = "$literal" =>;
    #define reference      ::= <= reference = $reference =>;
+   #define character      ::= <= character = $character =>;
 
    #define public_prefix  ::= "public";
 ]]

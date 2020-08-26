@@ -36,6 +36,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
    tokens.add("preloaded_symbol", lxSymbol);
    tokens.add("literal", lxLiteral);
    tokens.add("identifier", lxIdentifier);
+   tokens.add("character", lxCharacter);
    tokens.add("variable_identifier", lxIdentifier);
    tokens.add("new_identifier", lxIdentifier);
    tokens.add("prev_identifier", lxIdentifier);
@@ -677,46 +678,6 @@ void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destinatio
    }
 }
 
-//void SyntaxTree :: copyNodeSafe(Node source, Node destination, bool inclusingNode)
-//{
-//   MemoryDump dump;
-//   saveNode(source, &dump, inclusingNode);
-//   loadNode(destination, &dump);
-//}
-//
-////bool SyntaxTree :: matchPattern(Node node, int mask, int counter, ...)
-////{
-////   va_list argptr;
-////   va_start(argptr, counter);
-////
-////   Node member = node.firstChild();
-////   if (member == lxNone)
-////      return false;
-////
-////   for (int i = 0; i < counter; i++) {
-////      // get the next pattern
-////      NodePattern pattern = va_arg(argptr, NodePattern);
-////
-////      // find the next tree node
-////      while (!test(member.type, mask)) {
-////         member = member.nextNode();
-////         if (member == lxNone) {
-////            va_end(argptr);
-////            return false;
-////         }
-////      }
-////
-////      if (!pattern.match(member)) {
-////         va_end(argptr);
-////         return false;
-////      }
-////      else member = member.nextNode();
-////   }
-////
-////   va_end(argptr);
-////   return true;
-////}
-
 SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
 {
    va_list argptr;
@@ -781,42 +742,3 @@ SyntaxTree::Node SyntaxTree :: findTerminalInfo(SyntaxTree::Node node)
 
    return current;
 }
-
-////bool SyntaxTree :: apply(SyntaxTree::Node node, Trie<SyntaxTree::NodePattern>& trie)
-////{
-////   bool applied = false;
-////   //Node current(&trie);
-////   //while (!it.Eof()) {
-////   //   // skip meta commands (except labels)
-////   //   if (matchable(it)) {
-////   //      // make first step
-////   //      if (makeStep(current, *it, 0)) {
-////   //         int previousArg = (*it).argument;
-////   //         it++;
-////
-////   //         ByteCodeIterator word_it = it;
-////   //         while (!word_it.Eof() && (!matchable(word_it) || makeStep(current, *word_it, previousArg))) {
-////   //            if (matchable(word_it))
-////   //               previousArg = (*word_it).argument;
-////
-////   //            // check if the end node is reached
-////   //            if (current.Value().code == bcMatch) {
-////   //               it = word_it;
-////
-////   //               transform(--word_it, current.FirstNode());
-////
-////   //               applied = true;
-////   //               current = Node(&trie);
-////
-////   //               break;
-////   //            }
-////   //            else word_it++;
-////   //         }
-////   //      }
-////   //      else it++;
-////   //   }
-////   //   else it++;
-////   //}
-////
-////   return applied;
-////}
