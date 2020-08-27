@@ -593,6 +593,15 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          writer.writeChar((char)0);
          setScriptPtr(bm, rule, prefixMode);
       }
+      else if (bm.state == dfaQuote && reader.compare(CHARACTER_KEYWORD)) {
+         rule.terminal = (size_t)-1;
+         rule.saveTo = saveLiteral;
+
+         mode = CHARACTER_MODE;
+
+         writer.writeChar((char)0);
+         setScriptPtr(bm, rule, prefixMode);
+      }
       else {
    //      if (prefixMode && rule.saveTo != 0) {
    //         throw EParseError(bm.column, bm.row);

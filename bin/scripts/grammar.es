@@ -303,6 +303,15 @@
       
   #define object          ::=
 <=
+                    system'dynamic'expressions'CharConstantExpression ( 
+=>
+                           "character" "=" char_quote
+<=
+                    )
+=>;
+      
+  #define object          ::=
+<=
                     system'dynamic'expressions'SymbolExpression ( 
 =>
                            "reference" "=" ref_quote
@@ -364,5 +373,6 @@
   #define ident_quote  ::= <= "$identifier" =>;
   #define ref_quote    ::= <= "$reference" =>;
   #define int_quote    ::= <= "$numeric" =>;
+  #define char_quote   ::= <= "$character" =>;
   #define quote        ::= <= "$literal" =>;
 ]]

@@ -8,7 +8,7 @@ In development:
 
             all console samples;
 
-            review performance - (number of predictions - duplicates );
+            review performance - (number of predictions - do we need to ignore duplicates? );
             sum compile-time : debug
             support ELENA 3.x syntax
             support templates;

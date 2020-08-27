@@ -72,6 +72,9 @@ namespace expressions
         static Expression IntConstant(string value)
             = new IntConstantExpression(value);
             
+        static Expression CharConstant(string value)
+            = new CharConstantExpression(value);
+            
         static Expression Symbol(string s)
             = new SymbolExpression(s);
             
@@ -617,6 +620,16 @@ namespace expressions
         constructor(o)
         {
             this object := intConvertor.convert(o)
+        }
+    }
+    
+    public class CharConstantExpression : ConstantExpression
+    {
+        constructor(string o)
+        {
+            var n := intConvertor.convert(o.Substring(1));
+            
+            this object := charConvertor.convert(n)
         }
     }
     
