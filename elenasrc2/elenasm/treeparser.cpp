@@ -75,7 +75,14 @@ void TreeScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& b
 
          bm = reader.read();
 
-         writer.newNode((LexicalType)type, reader.lookup(bm));
+         if ((LexicalType)type == lxCharacter) {
+            // HOTFIX : to support character
+            QuoteTemplate<IdentifierString> quote(reader.lookup(bm));
+
+            writer.newNode((LexicalType)type, quote.ident());
+
+         }
+         else writer.newNode((LexicalType)type, reader.lookup(bm));
 
          writer.appendNode(lxRow, bm.row);
          writer.appendNode(lxCol, bm.column);

@@ -850,7 +850,7 @@ inline void readTailItemAndInsert(MemoryReader& reader, MemoryWriter& writer, CF
 
 void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer)
 {
-   //ident_t keyName = retrieveKey(_names.start(), item.ruleId, DEFAULT_STR);
+   ident_t keyName = retrieveKey(_names.start(), item.ruleId, DEFAULT_STR);
 
    size_t key = createKey(item.ruleId, 1);
    Rule rule = _table.get(key);
@@ -889,6 +889,20 @@ int CFParser :: buildDerivationTree(_ScriptReader& reader, size_t startRuleId, M
 
    ScriptBookmark bm;
    while (predictions.Count() > 0) {
+      //auto p_it = predictions.start();
+      //while (!p_it.Eof()) {
+      //   auto r = *p_it;
+
+      //   ident_t rName = retrieveKey(_names.start(), r.ruleId, DEFAULT_STR);
+      //   if (getlength(rName) != 0) {
+      //      printf("%s\n", rName.c_str());
+      //   }
+      //   else printf("?\n");
+
+      //   p_it++;
+      //}
+      //printf("\n");
+
       predictions.push(DerivationItem(0));
 
       DerivationItem current = predictions.pop();

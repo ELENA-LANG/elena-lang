@@ -4,13 +4,13 @@ In development:
 
   [development]
     * elt - #323;
-            support character
+            support character - correctly recognize;
 
             all console samples;
 
+            review performance - (number of predictions - duplicates );
             sum compile-time : debug
             support ELENA 3.x syntax
-            review performance - (number of predictions)
             support templates;
             support exception handling;
             duplicate variable;
