@@ -863,6 +863,10 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
 
    size_t key = createKey(item.ruleId, 1);
    Rule rule = _table.get(key);
+
+   if (rule.type == rtNone)
+      rule.type = rtNone;
+
    while (rule.type != rtNone) {
       if (rule.apply(rule, bm, reader, this)) {
          int offset = writeDerivationItem(writer, key, terminalOffset, item.trace);

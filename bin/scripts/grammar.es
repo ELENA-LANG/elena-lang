@@ -68,7 +68,7 @@
 <=
        system'dynamic'expressions'DynamicExpressionSymbol (
 =>
-                                   expr_operation
+                                   operation
 <=     ) =>;
 
   #define expr_symbol     ::= 
@@ -153,7 +153,7 @@
              )
 =>;
 
-  #define statement       ::= expression; 
+  #define statement       ::= "expression" "(" expression ")"; 
   #define statement       ::= ret_expression; 
   #define statement       ::= nested_body; 
 
@@ -166,116 +166,114 @@
                )
 =>;
 
-  #define expression      ::= "expression" "(" operation ")";
-  #define expression      ::= "expression" "(" object ")";
-  #define expression      ::= "expression" "(" variable ")";
+  #define expression      ::= operation;
+  #define expression      ::= object;
 
-  #define variable        ::= 
-<=
-               system'dynamic'expressions'DeclaringAndAssigningExpression (
-=>
-                                "variable_identifier" "=" ident_quote assigning
-<=
-               )
-=>;
+  #define operation       ::= message_call;
+  #define operation       ::= function_call;
+  #define operation       ::= get_property;
+  #define operation       ::= set_property;
+  #define operation       ::= variable;
+  #define operation       ::= assign;
+  #define operation       ::= operator_call;
+  #define operation       ::= if_operator;
+  #define operation       ::= new_call;
 
-  #define assigning       ::= "assign" "=" "0"  expression;
-                                             
-  #define operation        ::= 
-<=
-               system'dynamic'expressions'AssigningExpression (
-=>
-                                "identifier" "=" ident_quote assigning
-<=
-               )
-=>;
-
-  #define operation       ::=
-<=
-               system'dynamic'expressions'NestedExpression (
-=>
-                                 nested_symbol
-<=
-               )
-=>;
-
-  #define operation       ::= expr_operation;
-
-  #define expr_operation  ::=
-<=
-               system'dynamic'expressions'GetPropertyExpression (
-=>
-                                 object message "property_parameter" "=" "0"
-<=
-               )
-=>; 
-
-  #define expr_operation  ::=
-<=
-               system'dynamic'expressions'SetPropertyExpression (
-=>
-                                "expression" "(" object message "property_parameter" "=" "0" ")" "assign" "=" "0"  object
-<=
-               )
-=>; 
-
-  #define expr_operation  ::=
+  #define message_call    ::= 
 <=
                system'dynamic'expressions'ExtensionOrMessageCallExpression (
 =>
-                                 object message expression* next_call*
+                              argument message argument* next_message*
 <=
                )
 =>; 
 
-  #define next_call       ::= <= ; => ";" message expression*;
+  #define next_message    ::= <= ; => ";" message argument*;
 
-  #define expr_operation  ::=
+  #define function_call   ::=
 <=
                system'dynamic'expressions'FunctionCallExpression (
 =>
-                                 object idle_mssg expression*
+                              argument idle_mssg argument*
 <=
                )
 =>; 
 
-  #define operation       ::=
+  #define operator_call   ::=
 <=
                system'dynamic'expressions'MessageCallExpression (
 =>
-                                 object "operator" "=" operator object
+                              argument "operator" "=" operator argument
 <=
                )
 =>; 
 
-  #define operation       ::=
+  #define if_operator     ::=
 <=
                system'dynamic'expressions'IfExpression (
 =>
-                                 object "operator" "=" "?" body_expr
+                                 argument "operator" "=" "?" body_expr
 <=
                )
 =>; 
 
   #define body_expr       ::= "expression" "(" body ")";
 
-  #define operator        ::= <= "add" => "+";
-  #define operator        ::= <= "subtract" => "-";
-  #define operator        ::= <= "multiply" => "*";
-  #define operator        ::= <= "divide" => "/";
-  #define operator        ::= <= "notgreater" => "<=";
-  #define operator        ::= <= "equal" => "==";
-  #define operator        ::= <= "less" => "<";
-  #define operator        ::= <= "greater" => ">";
+  #define get_property    ::= 
+<=
+               system'dynamic'expressions'GetPropertyExpression (
+=>                               
+                              argument message "property_parameter" "=" "0"
+<=
+               )
+=>; 
 
-  #define object          ::= expression;
+  #define set_property    ::=
+<=
+               system'dynamic'expressions'SetPropertyExpression (
+=>
+                              "expression" "(" argument message "property_parameter" "=" "0" ")" "assign" "=" "0"  argument
+<=
+               )
+=>; 
+
+  #define variable        ::= 
+<=
+               system'dynamic'expressions'DeclaringAndAssigningExpression (
+=>
+                              "variable_identifier" "=" ident_quote assigning
+<=
+               )
+=>;
+
+  #define assign          ::=
+<=
+               system'dynamic'expressions'AssigningExpression (
+=>
+                              "identifier" "=" ident_quote assigning
+<=
+               )
+=>;
+
+  #define assigning       ::= "assign" "=" "0" argument;
+
+  #define new_call        ::=
+<=
+                    system'dynamic'expressions'MessageCallExpression ( 
+=>
+                               new_object argument*
+<=
+                    )
+=>;
+      
+  #define argument        ::= object;
 
   #define object          ::=
 <=
                     system'dynamic'expressions'IdentifierExpression ( 
                        system'dynamic'expressions'ScopeVariable (
 =>
-                           "identifier" "=" ident_quote
+                              "identifier" "=" ident_quote
 <=
                        )
                     )
@@ -286,7 +284,7 @@
                     system'dynamic'expressions'PreviousVariableExpression ( 
                        system'dynamic'expressions'ScopeVariable (
 =>
-                           "prev_identifier" "=" ident_quote
+                              "prev_identifier" "=" ident_quote
 <=
                        )
                     )
@@ -296,7 +294,7 @@
 <=
                     system'dynamic'expressions'IntConstantExpression ( 
 =>
-                           "integer" "=" int_quote
+                              "integer" "=" int_quote
 <=
                     )
 =>;
@@ -305,7 +303,7 @@
 <=
                     system'dynamic'expressions'CharConstantExpression ( 
 =>
-                           "character" "=" char_quote
+                              "character" "=" char_quote
 <=
                     )
 =>;
@@ -314,51 +312,64 @@
 <=
                     system'dynamic'expressions'SymbolExpression ( 
 =>
-                           "reference" "=" ref_quote
+                              "reference" "=" ref_quote
 <=
                     )
 =>;
 
-  #define new_expr          ::=
+  #define object          ::=
+<=
+                    system'dynamic'expressions'ConstantExpression ( 
+=>
+                              "literal" "=" quote
+<=
+                    )
+=>;                            
+
+  #define object          ::=
+<=
+               system'dynamic'expressions'NestedExpression (
+=>
+                              nested_symbol
+<=
+               )
+=>;
+
+  #define object          ::= "expression" "(" expression ")";
+
+  #define new_object      ::=
 <=
                        system'dynamic'expressions'ConstantExpression ( 
                           system'ClassReference ( 
 =>
-                               "new_reference" "=" ref_quote "message" "=" "0"
+                              "new_identifier" "=" ident_quote "message" "=" "0"
 <=
                           )
                        )
                        "#constructor"
 =>;
-      
-  #define new_expr          ::=
+
+  #define new_object      ::=
 <=
-                       system'dynamic'expressions'ClassIdentifierExpression ( 
+                       system'dynamic'expressions'ConstantExpression ( 
+                          system'ClassReference ( 
 =>
-                               "new_identifier" "=" ident_quote "message" "=" "0"
+                              "new_reference" "=" ref_quote "message" "=" "0"
 <=
+                          )
                        )
                        "#constructor"
 =>;
-      
-  #define object          ::=
-<=
-                    system'dynamic'expressions'MessageCallExpression ( 
-=>
-                               new_expr object*
-<=
-                    )
-=>;
-      
-  #define object          ::=
-<=
-                    system'dynamic'expressions'ConstantExpression ( 
-=>
-                           "literal" "=" quote
-<=
-                    )
-=>;
-      
+
+  #define operator        ::= <= "add" => "+";
+  #define operator        ::= <= "subtract" => "-";
+  #define operator        ::= <= "multiply" => "*";
+  #define operator        ::= <= "divide" => "/";
+  #define operator        ::= <= "notgreater" => "<=";
+  #define operator        ::= <= "equal" => "==";
+  #define operator        ::= <= "less" => "<";
+  #define operator        ::= <= "greater" => ">";
+
   #define idle_mssg       ::= "message" "(" ")";
 
   #define s_name          ::= "nameattr" "(" identifier ")" ;
