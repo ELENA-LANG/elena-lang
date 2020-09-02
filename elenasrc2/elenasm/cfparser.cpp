@@ -42,6 +42,8 @@ const char* dfaSymbolic[4] =
         "*********dd**d******************************************************************************************************************"
 };
 
+constexpr auto WITHFORWARD_MASK = 0x80000000;
+
 // --- CFParser ---
 
 inline size_t createKey(size_t id, int index)
@@ -225,7 +227,7 @@ bool CFParser :: compareTokenWithAny(_ScriptReader& reader, ScriptBookmark& bm, 
    return false;
 }
 
-void CFParser :: defineApplyRule(Rule& rule, int mode)
+void CFParser :: defineApplyRule(Rule& rule, int mode, bool forwardMode, bool bookmarkMode)
 {
 //   bool dsaRule = (rule.postfixPtr != 0) || (rule.prefixPtr != 0);
 
@@ -281,8 +283,12 @@ void CFParser :: defineApplyRule(Rule& rule, int mode)
    }
    else if (rule.type == rtChomski) {
       rule.apply = nonterminalApplyRule;
-   }      
+   }
 
+   if (forwardMode)
+      rule.type = (RuleType)(rule.type | rtWithForward);
+   if (bookmarkMode)
+      rule.type = (RuleType)(rule.type | rtWithBookmark);
 }
 
 void CFParser :: addRule(int ruleId, Rule& rule)
@@ -300,7 +306,7 @@ void CFParser :: defineIdleGrammarRule(ref_t ruleId)
    rule.nonterminal = (size_t)-1;
    rule.terminal = (size_t)-1;
    rule.type = rtNormal;
-   defineApplyRule(rule, IDLE_MODE);
+   defineApplyRule(rule, IDLE_MODE, false, false);
    addRule(ruleId, rule);
 }
 
@@ -313,7 +319,7 @@ size_t CFParser :: defineChomskiGrammarRule(ref_t parentRuleId, size_t nontermin
    recRule.nonterminal = nonterminal;
    recRule.terminal = terminal;
    recRule.type = rtChomski;
-   defineApplyRule(recRule, 0);
+   defineApplyRule(recRule, 0, false, false);
    addRule(ruleId, recRule);
 
    return ruleId;
@@ -328,7 +334,7 @@ size_t CFParser :: defineStarGrammarRule(ref_t parentRuleId, size_t nonterminal)
    recRule.nonterminal = nonterminal;
    recRule.terminal = ruleId;
    recRule.type = rtChomski;
-   defineApplyRule(recRule, 0);
+   defineApplyRule(recRule, 0, false, false);
    addRule(ruleId, recRule);
 
    // define B -> eps
@@ -346,7 +352,7 @@ size_t CFParser :: defineOptionalGrammarRule(ref_t parentRuleId, size_t nontermi
    recRule.nonterminal = nonterminal;
    recRule.terminal = 0;
    recRule.type = rtNormal;
-   defineApplyRule(recRule, 0);
+   defineApplyRule(recRule, 0, false, false);
    addRule(ruleId, recRule);
 
    // define B -> eps
@@ -364,7 +370,7 @@ size_t CFParser :: definePlusGrammarRule(ref_t parentRuleId, size_t nonterminal)
    rule.nonterminal = nonterminal;
    rule.terminal = defineStarGrammarRule(ruleId, nonterminal);
    rule.type = rtChomski;
-   defineApplyRule(rule, 0);
+   defineApplyRule(rule, 0, false, false);
    addRule(ruleId, rule);
 
    return ruleId;
@@ -414,7 +420,7 @@ size_t CFParser :: defineGrammarBrackets(_ScriptReader& reader, ScriptBookmark& 
    bm = reader.read();
    while (!reader.compare("}")) {
       if (reader.compare("|")) {
-         defineApplyRule(rule, applyMode);
+         defineApplyRule(rule, applyMode, false, false);
          addRule(ruleId, rule);
 
          rule = Rule();
@@ -426,7 +432,7 @@ size_t CFParser :: defineGrammarBrackets(_ScriptReader& reader, ScriptBookmark& 
       else defineGrammarRuleMember(reader, bm, rule, ruleId, applyMode);
    }
 
-   defineApplyRule(rule, applyMode);
+   defineApplyRule(rule, applyMode, false, false);
 
    addRule(ruleId, rule);
 
@@ -458,7 +464,7 @@ void CFParser :: defineGrammarRuleMemberPostfix(_ScriptReader& reader, ScriptBoo
    if (bm.state == dfaQuote) {
    }
    else if (reader.compare("*") || reader.compare("+") || reader.compare("?")) {
-      if (rule.terminal != 0 && rule.type == rtChomski) {
+      if (rule.terminal != 0 && (rule.type % rtTypeMask) == rtChomski) {
          if (reader.compare("+")) {
             rule.terminal = definePlusGrammarRule(ruleId, rule.terminal);
          }
@@ -494,14 +500,14 @@ size_t CFParser :: defineGrammarRuleMember(_ScriptReader& reader, ScriptBookmark
 
    int applyMode = 0;
    defineGrammarRuleMember(reader, bm, rule, ruleId, applyMode);
-   defineApplyRule(rule, applyMode);
+   defineApplyRule(rule, applyMode, false, false);
 
    addRule(ruleId, rule);
 
    return ruleId;
 }
 
-void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
+void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode, bool forwardMode)
 {
    bool prefixMode = false;
    if (rule.terminal == 0 && rule.nonterminal == 0) {
@@ -514,8 +520,11 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
    ScriptBookmark bm = reader.read();
    while (!reader.compare("=>") || bm.state == dfaQuote) {
       if (bm.state == dfaPrivate) {
+         if (forwardMode)
+            throw EParseError(bm.column, bm.row);
+
          if (rule.saveTo != NULL || (!prefixMode && !reader.compare(CURRENT_KEYWORD)))
-               throw EParseError(bm.column, bm.row);
+            throw EParseError(bm.column, bm.row);
 
          if (reader.compare(REFERENCE_KEYWORD)) {
             rule.terminal = (size_t)-1;
@@ -558,6 +567,9 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
    //      prefixMode = false;
       }
       else if (bm.state == dfaQuote && reader.compare(REFERENCE_KEYWORD)) {
+         if (forwardMode)
+            throw EParseError(bm.column, bm.row);
+
          rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
@@ -567,6 +579,9 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          setScriptPtr(bm, rule, prefixMode);
       }
       else if (bm.state == dfaQuote && reader.compare(IDENTIFIER_KEYWORD)) {
+         if (forwardMode)
+            throw EParseError(bm.column, bm.row);
+
          rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
@@ -576,6 +591,9 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          setScriptPtr(bm, rule, prefixMode);
       }
       else if (bm.state == dfaQuote && reader.compare(LITERAL_KEYWORD)) {
+         if (forwardMode)
+            throw EParseError(bm.column, bm.row);
+
          rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
@@ -585,6 +603,9 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          setScriptPtr(bm, rule, prefixMode);
       }
       else if (bm.state == dfaQuote && reader.compare(NUMERIC_KEYWORD)) {
+         if (forwardMode)
+            throw EParseError(bm.column, bm.row);
+
          rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
@@ -594,6 +615,9 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          setScriptPtr(bm, rule, prefixMode);
       }
       else if (bm.state == dfaQuote && reader.compare(CHARACTER_KEYWORD)) {
+         if (forwardMode)
+            throw EParseError(bm.column, bm.row);
+
          rule.terminal = (size_t)-1;
          rule.saveTo = saveLiteral;
 
@@ -603,10 +627,6 @@ void CFParser :: saveScript(_ScriptReader& reader, Rule& rule, int& mode)
          setScriptPtr(bm, rule, prefixMode);
       }
       else {
-   //      if (prefixMode && rule.saveTo != 0) {
-   //         throw EParseError(bm.column, bm.row);
-   //      }
-
          ident_t token = reader.lookup(bm);
 
          if (bm.state == dfaQuote) {
@@ -743,10 +763,31 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
 
    rule.type = rtNormal;
    int applyMode = 0;
+   bool forwardMode = false;
+   bool bookmarkMode = false;
 
    while (!reader.compare(";") || bm.state == dfaQuote) {
       if (bm.state != dfaQuote && reader.compare("<=")) {
-         saveScript(reader, rule, applyMode);
+         saveScript(reader, rule, applyMode, forwardMode);
+
+         bm = reader.read();
+      }
+      else if (bm.state != dfaQuote && reader.compare("^")) {
+         bm = reader.read();
+         if (bm.state != dfaQuote && reader.compare("<=")) {
+            forwardMode = true;
+
+            saveScript(reader, rule, applyMode, forwardMode);
+
+            bm = reader.read();
+         }
+         else throw EParseError(bm.column, bm.row);
+      }
+      else if (bm.state != dfaQuote && reader.compare("$")) {
+         if (!rule.prefix1Ptr) {
+            bookmarkMode = true;
+         }
+         else throw EParseError(bm.column, bm.row);
 
          bm = reader.read();
       }
@@ -755,7 +796,7 @@ void CFParser :: defineGrammarRule(_ScriptReader& reader, ScriptBookmark& bm, Ru
 
 ////   rule.postfixPtr = defineDSARule(token, reader);
 
-   defineApplyRule(rule, applyMode);
+   defineApplyRule(rule, applyMode, forwardMode, bookmarkMode);
 }
 
 bool CFParser :: parseGrammarRule(_ScriptReader& reader)
@@ -796,8 +837,11 @@ bool CFParser :: parseGrammarMode(_ScriptReader& reader)
    return true;
 }
 
-inline int writeDerivationItem(MemoryWriter& writer, int key, int terminal, int trace)
+inline int writeDerivationItem(MemoryWriter& writer, int key, int terminal, int trace, bool forwardMode)
 {
+   if (forwardMode)
+      key |= WITHFORWARD_MASK;
+
    int offset = writer.Position();
    writer.writeDWord(key);
    writer.writeDWord(terminal);
@@ -821,7 +865,7 @@ inline void readTailItemAndPush(MemoryReader& reader, MemoryWriter& writer, CFPa
    pos_t next = reader.getDWord();
 
    while (nonterminal == 0) {
-      offset = writeDerivationItem(writer, 0, 0, offset);
+      offset = writeDerivationItem(writer, 0, 0, offset, false);
       if (next != -1) {
          reader.seek(next);
          nonterminal = reader.getDWord();
@@ -842,7 +886,7 @@ inline void readTailItemAndInsert(MemoryReader& reader, MemoryWriter& writer, CF
    pos_t next = reader.getDWord();
 
    while (nonterminal == 0) {
-      offset = writeDerivationItem(writer, 0, 0, offset);
+      offset = writeDerivationItem(writer, 0, 0, offset, false);
       if (next != (pos_t)-1) {
          reader.seek(next);
          nonterminal = reader.getDWord();
@@ -864,21 +908,20 @@ void CFParser :: predict(DerivationQueue& queue, DerivationItem item, _ScriptRea
    size_t key = createKey(item.ruleId, 1);
    Rule rule = _table.get(key);
 
-   if (rule.type == rtNone)
-      rule.type = rtNone;
-
    while (rule.type != rtNone) {
+      int ruleType = rule.type & rtTypeMask;
+
       if (rule.apply(rule, bm, reader, this)) {
-         int offset = writeDerivationItem(writer, key, terminalOffset, item.trace);
+         int offset = writeDerivationItem(writer, key, terminalOffset, item.trace, testany(rule.type, rtWithForward | rtWithBookmark));
          int next = writeTrailItem(writer, 0, item.next);
 
-         if (rule.type == rtEps) {
+         if (ruleType == rtEps) {
             MemoryReader nextReader(&_body, (pos_t)next);
             readTailItemAndInsert(nextReader, writer, queue, offset);
          }
-         else if (rule.type != rtNormal) {
+         else if (ruleType != rtNormal) {
             // if it is a chomksi form
-            if (rule.type == rtChomski) {
+            if (ruleType == rtChomski) {
                next = writeTrailItem(writer, rule.terminal, next);
             }
 
@@ -945,28 +988,85 @@ int CFParser :: buildDerivationTree(_ScriptReader& reader, size_t startRuleId, M
 
 constexpr auto POSTFIXSAVE_MODE = 0x80000000;
 
+inline void clearPreviousForwards(Stack<Pair<int, int>>& forwards, int level)
+{
+   auto f = forwards.pop();
+   while (f.value1 || f.value2 != level)
+      f = forwards.pop();
+}
+
+void CFParser :: insertForwards(Stack<Pair<int, int>>& forwards, int level, ScriptLog& log)
+{
+   int minLevel = INT_MAX;
+
+   auto it = forwards.start();
+   while (!it.Eof()) {
+      auto f = *it;
+      if (f.value2 <= level)
+         break;
+
+      if (!f.value1) {
+         if (minLevel == INT_MAX)
+            minLevel = f.value2;
+      }
+      else if (f.value2 < minLevel) {
+         log.write(getBodyText(f.value1));
+      }
+
+      it++;
+   }
+}
+
 void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptLog& log)
 {
    if (offset == 0)
       return;
 
+   Stack<Pair<int, int>> forwards(Pair<int,int>(0,-1));
+
    MemoryReader reader(&_body, (pos_t)offset);
    Stack<TraceItem> stack(TraceItem(0));
    TraceItem item;
    reader.read(&item, sizeof(TraceItem));
+   int level = 0;
    while (true) {
+      if (!item.ruleKey) {
+         level++;
+      }
+      else level--;
+
+      // if forward declaration
+      if (test(item.ruleKey, WITHFORWARD_MASK)) {
+         int key = (item.ruleKey & ~WITHFORWARD_MASK) >> 8;
+         //ident_t keyName = retrieveKey(_names.start(), key, DEFAULT_STR);
+
+         Rule rule = _table.get(item.ruleKey & ~WITHFORWARD_MASK);
+         if (test(rule.type, rtWithBookmark)) {
+            forwards.push(Pair<int, int>(0, level));
+         }
+         else if (test(rule.type, rtWithForward)) {
+            forwards.push(Pair<int,int>(rule.prefix1Ptr, level));
+         }
+      }
       stack.push(item);
+
       if (item.previous == 0)
          break;
+
+      //    save into forwards
 
       reader.seek((pos_t)item.previous);
       reader.read(&item, sizeof(TraceItem));
    }
 
+   // NOTE: reset level to -1 to match the backward calculated levels 
+   level = -1;
    Stack<size_t> postfixes;
    while (stack.Count() > 0) {
       item = stack.pop();
       if (item.ruleKey == 0) {
+         level--;
+
          size_t ptr = postfixes.pop();
          if (ptr) {
             if (test(ptr, POSTFIXSAVE_MODE)) {
@@ -985,23 +1085,41 @@ void CFParser :: generateOutput(int offset, _ScriptReader& scriptReader, ScriptL
          }            
       }
       else {
-         ident_t keyName = retrieveKey(_names.start(), item.ruleKey >> 8, DEFAULT_STR);
+         level++;
 
-         Rule rule = _table.get(item.ruleKey);
+         //for (int i = 0; i < level; i++)
+         //   printf(" ");
+
+         //ident_t keyName = retrieveKey(_names.start(), (item.ruleKey & ~WITHFORWARD_MASK) >> 8, DEFAULT_STR);
+         //printf("%s\n", keyName.c_str());
+
+         Rule rule = _table.get(item.ruleKey & ~WITHFORWARD_MASK);
+
+         if (test(rule.type, rtWithBookmark)) {
+            clearPreviousForwards(forwards, level);
+
+            insertForwards(forwards, level, log);
+         }
+
          if (rule.prefix1Ptr != 0) {
-            log.write(getBodyText(rule.prefix1Ptr));
+            size_t lineLen = 0;
+            if (!test(rule.type, rtWithForward))
+               lineLen += log.write(getBodyText(rule.prefix1Ptr));
 
             if (rule.saveTo != NULL)
                rule.saveTo(scriptReader, this, item.terminal, log);
 
             // HOTFIX: to prevent too long line
-            log.write('\n');
+            if (lineLen > 0) {
+               log.write('\n');
+            }            
 
             log.write(getBodyText(rule.postfix1Ptr));
          }
 
          if (rule.postfix2Ptr) {
             postfixes.push(rule.postfix2Ptr);
+
             postfixes.push(item.terminal);
             postfixes.push((int)rule.saveTo);
             postfixes.push(rule.prefix2Ptr | POSTFIXSAVE_MODE);

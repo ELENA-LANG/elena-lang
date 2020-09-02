@@ -3,12 +3,14 @@ In development:
 ------         
 
   [development]
+    * script engine : 
+        number of predictions - too high;
+
     * elt - #323;
             support character - correctly recognize;
 
             all console samples;
 
-            review performance - (number of predictions - do we need to ignore duplicates? );
             sum compile-time : debug
             support ELENA 3.x syntax
             support templates;
@@ -313,3 +315,5 @@ Pipeline:
                  * mta system : check the situation when too many threads (> MAX_THREAD)
                  * nested code : read only outer field
                  * elt - exception handlers
+                 * script engine : do not allow left recursing (e.g. A -> AB )
+                 * replace S -> AB / S -> AC with S -> A{B | C}, using forwards to resolve prediction log

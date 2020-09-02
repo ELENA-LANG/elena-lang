@@ -297,7 +297,7 @@ public:
       writer.writeChar(ch);
    }
 
-   void write(ident_t token)
+   size_t write(ident_t token)
    {
       size_t length = getlength(token);
       if (length > 0) {
@@ -305,6 +305,8 @@ public:
 
          writer.writeLiteral(token, length);
       }
+
+      return length;
    }
 
    static void writeQuote(MemoryWriter& writer, ident_t token)

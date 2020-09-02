@@ -21,11 +21,15 @@ public:
 
    enum RuleType
    {
-      rtNone = 0,
-      rtNormal,
-      rtChomski,
-      rtNonterminal,
-      rtEps,
+      rtTypeMask      = 0x0F,
+
+      rtNone          = 0x00,
+      rtNormal        = 0x01,
+      rtChomski       = 0x02,
+      rtNonterminal   = 0x03,
+      rtEps           = 0x04,
+      rtWithForward   = 0x10,
+      rtWithBookmark  = 0x20,
    };
    
    typedef void (*SaveToSign)(_ScriptReader& scriptReader, CFParser* parser, ref_t ptr, ScriptLog& log);
@@ -118,7 +122,7 @@ protected:
 
    size_t autonameRule(size_t parentRuleId);
 
-   void defineApplyRule(Rule& rule, int terminalType);
+   void defineApplyRule(Rule& rule, int terminalType, bool forwardMode, bool bookmarkMode);
 
    size_t writeBodyText(ident_t text);
    size_t writeRegExprBodyText(_ScriptReader& reader, int& mode);
@@ -126,7 +130,7 @@ protected:
 
    void addRule(int id, Rule& rule);
 
-   void saveScript(_ScriptReader& reader, Rule& rule, int& mode);
+   void saveScript(_ScriptReader& reader, Rule& rule, int& mode, bool forwardMode);
    void defineIdleGrammarRule(ref_t ruleId);
    size_t defineOptionalGrammarRule(ref_t ruleId, size_t nonterminal);
    size_t defineChomskiGrammarRule(ref_t ruleId, size_t nonterminal, size_t nonterminal2);
@@ -142,6 +146,8 @@ protected:
    void predict(DerivationQueue& queue, DerivationItem item, _ScriptReader& reader, ScriptBookmark& bm, int terminalOffset, MemoryWriter& writer);
    int buildDerivationTree(_ScriptReader& reader, size_t startRuleId, MemoryWriter& writer);
    void generateOutput(int offset, _ScriptReader& reader, ScriptLog& log);
+
+   void insertForwards(Stack<Pair<int, int>>& forwards, int level, ScriptLog& log);
 
 public:
    void readScriptBookmark(size_t ptr, ScriptBookmark& bm);

@@ -92,113 +92,50 @@
         )
 =>;
 
-   #define expression     ::= 
-<=
-        expression (
-=>
-                              l4_expression
-<=
-        )
-=>;
+   #define expression     ::= l4_expression;
 
-   #define expression     ::= 
-<=
-        expression (
-=>
-                              l3_expression
-<=
-        )
-=>;
+   #define l4_expression  ::= $ l3_expression l4_operations;
 
-   #define expression     ::= 
-<=
-        expression (
-=>
-                              l2_expression
-<=
-        )
-=>;
+   #define l3_expression  ::= $ l2_expression l3_operations;
 
-   #define expression     ::= 
-<=
-        expression (
-=>
-                              l1_expression
-<=
-        )
-=>;
+   #define l2_expression  ::= $ l1_expression l2_operations;
 
-   #define expression     ::= 
-<=
-        expression (
-=>
-                              object
-<=
-        )
-=>;
+   #define l1_expression  ::= <= expression ( => object l1_operations <= ) =>;
 
-   #define l4_arg         ::= l3_expression;
-   #define l4_arg         ::= l2_expression;
-   #define l4_arg         ::= l1_expression;
-   #define l4_arg         ::= object;
+   #define l4_operations  ::= ^ <= expression ( => l4_operation next_l4_op <= ) =>;
+   #define l4_operations  ::= $eps;
 
-   #define l3_arg         ::= l2_expression;
-   #define l3_arg         ::= l1_expression;
-   #define l3_arg         ::= object;
+   #define l4_operation   ::= <= operator = "+" => "+" l3_expression;
+   #define l4_operation   ::= <= operator = "-" => "-" l3_expression;
 
-   #define l2_arg         ::= l1_expression;
-   #define l2_arg         ::= object;
+   #define next_l4_op     ::= <= ; => l4_operation next_l4_op;
+   #define next_l4_op     ::= $eps;
 
-   #define l4_expression  ::= 
-<=
-        expression (
-=>
-                           l4_arg l4_operation l4_operations*
-<=
-        )
-=>;
+   #define l3_operations  ::= ^ <= expression ( => l3_operation next_l3_op <= ) =>;
+   #define l3_operations  ::= $eps;
 
-   #define l3_expression  ::= 
-<=
-        expression (
-=>
-                           l3_arg l3_operation l3_operations*
-<=
-        )
-=>;
+   #define l3_operation   ::= <= operator = "*" => "*" l2_expression;
+   #define l3_operation   ::= <= operator = "/" => "/" l2_expression;
 
-   #define l2_expression  ::= 
-<=
-        expression (
-=>
-                           l2_arg l2_operation l2_operations*
-<=
-        )
-=>;
+   #define next_l3_op     ::= <= ; => l3_operation next_l3_op;
+   #define next_l3_op     ::= $eps;
 
-   #define l1_expression  ::= 
-<=
-        expression (
-=>
-                           object l1_operation l1_operations*
-<=
-        )
-=>;
-
-   #define l1_operation   ::= <= message = 0 => function_args;
-   #define l1_operations  ::= <= ; message = 0 => function_args;
+   #define l2_operations  ::= ^ <= expression ( => l2_operation next_l2_op <= ) =>;
+   #define l2_operations  ::= $eps;
 
    #define l2_operation   ::= "." message m_args;
    #define l2_operation   ::= "." property;
-   #define l2_operations  ::= <= ; => l2_operation;
 
-   #define l3_operation   ::= <= operator = "*" => "*" l3_arg;
-   #define l3_operation   ::= <= operator = "/" => "/" l3_arg;
-   #define l3_operations  ::= <= , => l3_operation;
+   #define next_l2_op     ::= <= ; => l2_operation next_l2_op;
+   #define next_l2_op     ::= $eps;
 
-   #define l4_operation   ::= <= operator = "+" => "+" l4_arg;
-   #define l4_operation   ::= <= operator = "-" => "-" l4_arg;
-   #define l4_operations  ::= <= , => l4_operation;
+   #define l1_operations  ::= l1_operation next_l1_op;
+   #define l1_operations  ::= $eps;
+
+   #define l1_operation   ::= <= message = 0 => function_args;
+
+   #define next_l1_op     ::= <= ; => l1_operation next_l1_op;
+   #define next_l1_op     ::= $eps;
 
    #define object         ::= s_object;
    #define object         ::= "new" new_identifier;
