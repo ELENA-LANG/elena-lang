@@ -153,7 +153,8 @@
              )
 =>;
 
-  #define statement       ::= "expression" "(" expression ")"; 
+  #define statement       ::= expression; 
+  #define statement       ::= "expression" "(" variable ")"; 
   #define statement       ::= ret_expression; 
   #define statement       ::= nested_body; 
 
@@ -166,76 +167,82 @@
                )
 =>;
 
-  #define expression      ::= operation;
+  #define expression      ::= $ "expression" "(" object operation ")";
+  #define expression      ::= "expression" "(" new_call ")";
   #define expression      ::= object;
 
   #define operation       ::= message_call;
   #define operation       ::= function_call;
   #define operation       ::= get_property;
   #define operation       ::= set_property;
-  #define operation       ::= variable;
-  #define operation       ::= assign;
   #define operation       ::= operator_call;
+  #define operation       ::= assign_op;
   #define operation       ::= if_operator;
-  #define operation       ::= new_call;
 
-  #define message_call    ::= 
-<=
+  #define message_call    ::= ^
+<= 
                system'dynamic'expressions'ExtensionOrMessageCallExpression (
-=>
-                              argument message argument* next_message*
+=> 
+                              message expression* next_message* 
 <=
                )
 =>; 
 
   #define next_message    ::= <= ; => ";" message argument*;
 
-  #define function_call   ::=
+  #define function_call   ::= ^
 <=
                system'dynamic'expressions'FunctionCallExpression (
 =>
-                              argument idle_mssg argument*
+                              idle_mssg expression*
 <=
                )
 =>; 
 
-  #define operator_call   ::=
-<=
-               system'dynamic'expressions'MessageCallExpression (
-=>
-                              argument "operator" "=" operator argument
-<=
-               )
-=>; 
-
-  #define if_operator     ::=
-<=
-               system'dynamic'expressions'IfExpression (
-=>
-                                 argument "operator" "=" "?" body_expr
-<=
-               )
-=>; 
-
-  #define body_expr       ::= "expression" "(" body ")";
-
-  #define get_property    ::= 
+  #define get_property    ::= ^
 <=
                system'dynamic'expressions'GetPropertyExpression (
 =>                               
-                              argument message "property_parameter" "=" "0"
+                              message "property_parameter" "=" "0"
 <=
                )
 =>; 
 
-  #define set_property    ::=
+  #define set_property    ::= ^
 <=
                system'dynamic'expressions'SetPropertyExpression (
 =>
-                              "expression" "(" argument message "property_parameter" "=" "0" ")" "assign" "=" "0"  argument
+                              "expression" "(" argument message "property_parameter" "=" "0" ")" "assign" "=" "0" expression
 <=
                )
 =>; 
+
+  #define operator_call   ::= ^
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              "operator" "=" operator expression
+<=
+               )
+=>; 
+
+  #define if_operator     ::= ^  
+<=
+               system'dynamic'expressions'IfExpression (
+=>
+                                 "operator" "=" "?" body_expr
+<=
+               )
+=>; 
+
+  #define assign_op       ::= ^
+<=
+               system'dynamic'expressions'AssigningExpression (
+=>
+                              assigning
+<=
+               )
+=>;
 
   #define variable        ::= 
 <=
@@ -246,27 +253,18 @@
                )
 =>;
 
-  #define assign          ::=
-<=
-               system'dynamic'expressions'AssigningExpression (
-=>
-                              "identifier" "=" ident_quote assigning
-<=
-               )
-=>;
-
-  #define assigning       ::= "assign" "=" "0" argument;
+  #define assigning       ::= "assign" "=" "0" expression;
 
   #define new_call        ::=
 <=
                     system'dynamic'expressions'MessageCallExpression ( 
 =>
-                               new_object argument*
+                               new_object expression*
 <=
                     )
 =>;
       
-  #define argument        ::= object;
+  #define body_expr       ::= "expression" "(" body ")";
 
   #define object          ::=
 <=
