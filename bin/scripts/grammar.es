@@ -364,6 +364,7 @@
   #define operator        ::= <= "divide" => "/";
   #define operator        ::= <= "notgreater" => "<=";
   #define operator        ::= <= "equal" => "==";
+  #define operator        ::= <= "notequal" => "!=";
   #define operator        ::= <= "less" => "<";
   #define operator        ::= <= "greater" => ">";
 

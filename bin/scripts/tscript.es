@@ -16,6 +16,15 @@
     )
 =>;
 
+   #define import         ::= 
+<=
+    import (
+=>
+                             "import" reference ";"
+<=
+    )
+=>;
+
    #define function       ::= 
 <=
    singleton (
@@ -52,6 +61,32 @@
    #define statement      ::= expression;
    #define statement      ::= "var" decl_variable;
    #define statement      ::= a_expression ;
+   #define statement      ::= branching ;
+
+   #define branching      ::= 
+<= 
+             expression
+             (
+=>
+
+                              "if" "(" expression ")" if_code_brackets
+<=
+             )
+=>;
+
+   #define if_code_brackets ::= <= operator = "?" => code_brackets;
+
+   #define code_brackets ::= 
+<=
+
+                 expression (
+                    code (
+=>
+                                "{" statement next_statement
+<=
+                    )
+                 )
+=>;
 
    #define decl_variable  ::= 
 <=
@@ -92,7 +127,9 @@
         )
 =>;
 
-   #define expression     ::= l4_expression;
+   #define expression     ::= l5_expression;
+
+   #define l5_expression  ::= $ l4_expression l5_operations;
 
    #define l4_expression  ::= $ l3_expression l4_operations;
 
@@ -101,6 +138,12 @@
    #define l2_expression  ::= $ l1_expression l2_operations;
 
    #define l1_expression  ::= <= expression ( => object l1_operations <= ) =>;
+
+   #define l5_operations  ::= ^ <= expression ( => l5_operation <= ) =>;
+   #define l5_operations  ::= $eps;
+
+   #define l5_operation   ::= <= operator = "==" => "==" l4_expression;
+   #define l5_operation   ::= <= operator = "!=" => "!=" l4_expression;
 
    #define l4_operations  ::= ^ <= expression ( => l4_operation next_l4_op <= ) =>;
    #define l4_operations  ::= $eps;
