@@ -990,6 +990,9 @@ constexpr auto POSTFIXSAVE_MODE = 0x80000000;
 
 inline void clearPreviousForwards(Stack<Pair<int, int>>& forwards, int level)
 {
+   //if (forwards.peek().value2 < level)
+   //   return;
+
    auto f = forwards.pop();
    while (f.value1 || f.value2 != level)
       f = forwards.pop();
@@ -1006,10 +1009,10 @@ void CFParser :: insertForwards(Stack<Pair<int, int>>& forwards, int level, Scri
          break;
 
       if (!f.value1) {
-         if (minLevel == INT_MAX)
+         if (minLevel > f.value2)
             minLevel = f.value2;
       }
-      else if (f.value2 < minLevel) {
+      else if (f.value2 <= minLevel) {
          log.write(getBodyText(f.value1));
       }
 

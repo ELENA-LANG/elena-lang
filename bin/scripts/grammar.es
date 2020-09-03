@@ -153,10 +153,12 @@
              )
 =>;
 
-  #define statement       ::= expression; 
-  #define statement       ::= "expression" "(" variable ")"; 
+  #define statement       ::= "expression" "(" root_expr ")"; 
   #define statement       ::= ret_expression; 
   #define statement       ::= nested_body; 
+
+  #define root_expr       ::= variable;
+  #define root_expr       ::= expression;
 
   #define ret_expression  ::= 
 <=
@@ -167,9 +169,8 @@
                )
 =>;
 
-  #define expression      ::= $ "expression" "(" object operation ")";
-  #define expression      ::= "expression" "(" new_call ")";
-  #define expression      ::= object;
+  #define expression      ::= $ object operation?;
+  #define expression      ::= new_call;
 
   #define operation       ::= message_call;
   #define operation       ::= function_call;
@@ -188,7 +189,7 @@
                )
 =>; 
 
-  #define next_message    ::= <= ; => ";" message argument*;
+  #define next_message    ::= <= ; => ";" message expression*;
 
   #define function_call   ::= ^
 <=
@@ -212,7 +213,7 @@
 <=
                system'dynamic'expressions'SetPropertyExpression (
 =>
-                              "expression" "(" argument message "property_parameter" "=" "0" ")" "assign" "=" "0" expression
+                              "expression" "(" object message "property_parameter" "=" "0" ")" "assign" "=" "0" expression
 <=
                )
 =>; 
@@ -337,12 +338,10 @@
 
   #define new_object      ::=
 <=
-                       system'dynamic'expressions'ConstantExpression ( 
-                          system'ClassReference ( 
+                       system'dynamic'expressions'ClassIdentifierExpression ( 
 =>
                               "new_identifier" "=" ident_quote "message" "=" "0"
 <=
-                          )
                        )
                        "#constructor"
 =>;

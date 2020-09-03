@@ -3,18 +3,10 @@ In development:
 ------         
 
   [development]
-    * script engine : 
-        number of predictions - too high;
-
     * elt - #323;
-            support character - correctly recognize;
-
             all console samples;
-
             sum compile-time : debug
             support ELENA 3.x syntax
-            support templates;
-            support exception handling;
             duplicate variable;
             unreferenced variable;
     * [API Docs : Func1 has one argument which is not shown]
@@ -317,3 +309,5 @@ Pipeline:
                  * elt - exception handlers
                  * script engine : do not allow left recursing (e.g. A -> AB )
                  * replace S -> AB / S -> AC with S -> A{B | C}, using forwards to resolve prediction log
+                 * advanced script : templates,closures,exception handling
+
