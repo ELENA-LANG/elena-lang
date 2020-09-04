@@ -62,6 +62,7 @@
    #define statement      ::= "var" decl_variable;
    #define statement      ::= a_expression ;
    #define statement      ::= branching ;
+   #define statement      ::= looping ;
 
    #define branching      ::= 
 <= 
@@ -69,10 +70,25 @@
              (
 =>
 
-                              "if" "(" expression ")" if_code_brackets
+                              "if" "(" expression ")" if_code_brackets else_code_brackets?
 <=
              )
 =>;
+
+   #define looping      ::= 
+<= 
+             loop_expression
+             (
+                expression (
+=>
+
+                              "while" "(" expression ")" if_code_brackets
+<=
+                )
+             )
+=>;
+
+   #define else_code_brackets ::= "else" code_brackets;
 
    #define if_code_brackets ::= <= operator = "?" => code_brackets;
 
@@ -144,6 +160,10 @@
 
    #define l5_operation   ::= <= operator = "==" => "==" l4_expression;
    #define l5_operation   ::= <= operator = "!=" => "!=" l4_expression;
+   #define l5_operation   ::= <= operator = "<" => "<" l4_expression;
+   #define l5_operation   ::= <= operator = ">" => ">" l4_expression;
+   #define l5_operation   ::= <= operator = "<=" => "<=" l4_expression;
+   #define l5_operation   ::= <= operator = ">=" => ">=" l4_expression;
 
    #define l4_operations  ::= ^ <= expression ( => l4_operation next_l4_op <= ) =>;
    #define l4_operations  ::= $eps;

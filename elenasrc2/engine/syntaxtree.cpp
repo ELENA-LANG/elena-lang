@@ -52,6 +52,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
    tokens.add("nameattr", lxNameAttr);
    tokens.add("property_parameter", lxPropertyParam);
    tokens.add("import", lxImport);
+   tokens.add("loop_expression", lxExpression);
 
    if (fullMode) {
 //      tokens.add("argarrop", lxArgArrOp);

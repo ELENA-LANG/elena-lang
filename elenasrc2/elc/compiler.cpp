@@ -5400,8 +5400,6 @@ ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t
    int stackSafeAttr = EAttrs::test(mode, HINT_DYNAMIC_OBJECT) ? 0 : 1;
    analizeOperands(node, exprScope, stackSafeAttr, true);
 
-
-
    return retVal;
 }
 

@@ -32,6 +32,19 @@
 =>;
 
    #define member         ::=
+<=
+   system'dynamic'expressions'SymbolInfo (
+     system'dynamic'expressions'DynamicImport (
+       system'dynamic'expressions'ScopeVariable (
+=>
+                                     "import" "(" "reference" "=" ref_quote ")"
+<=
+       )
+     )
+   )
+=>;
+
+   #define member         ::=
 <= 
      system'dynamic'expressions'SymbolInfo ( 
 =>
@@ -156,6 +169,7 @@
   #define statement       ::= "expression" "(" root_expr ")"; 
   #define statement       ::= ret_expression; 
   #define statement       ::= nested_body; 
+  #define statement       ::= looping; 
 
   #define root_expr       ::= variable;
   #define root_expr       ::= expression;
@@ -171,13 +185,15 @@
 
   #define expression      ::= $ object operation?;
   #define expression      ::= new_call;
+  #define expression      ::= assign_expr;
+
+  #define loop_expr       ::= object "operator" "=" "?" body_expr;
 
   #define operation       ::= message_call;
   #define operation       ::= function_call;
   #define operation       ::= get_property;
   #define operation       ::= set_property;
   #define operation       ::= operator_call;
-  #define operation       ::= assign_op;
   #define operation       ::= if_operator;
 
   #define message_call    ::= ^
@@ -231,16 +247,35 @@
 <=
                system'dynamic'expressions'IfExpression (
 =>
-                                 "operator" "=" "?" body_expr
+                                 "operator" "=" "?" body_expr body_expr?
 <=
                )
 =>; 
 
-  #define assign_op       ::= ^
+  #define assign_expr     ::=
 <=
                system'dynamic'expressions'AssigningExpression (
 =>
-                              assigning
+                              var_name assigning
+<=
+               )
+=>;
+
+  #define var_name          ::=
+<=
+                       system'dynamic'expressions'ScopeVariable (
+=>
+                              "identifier" "=" ident_quote
+<=
+                       )
+=>;
+      
+
+  #define looping         ::= 
+<=
+               system'dynamic'expressions'LoopExpression (
+=>
+                              "loop_expression" "(" "expression" "(" loop_expr ")" ")" 
 <=
                )
 =>;

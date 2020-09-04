@@ -162,6 +162,9 @@ namespace expressions
         static Expression If(Expression cond, Expression body)
             = new IfExpression(cond, body);
               
+        static Expression If(Expression cond, Expression body, Expression elseBody)
+            = new IfExpression(cond, body, elseBody);
+              
         static Expression Loop(Expression cond, Expression body)
             = new LoopExpression(cond, body);
             
@@ -1465,6 +1468,7 @@ namespace expressions
     {
         Expression condition;
         Expression body;
+        Expression elseBody;
         
         constructor(Expression condition, Expression body)
         {
@@ -1472,10 +1476,18 @@ namespace expressions
             this body := body;
         }
 
+        constructor(Expression condition, Expression body, Expression elseBody)
+        {
+            this condition := condition;
+            this body := body;
+            this elseBody := elseBody;
+        }
+
         prepare(ExpressionScope scope)
         {
             condition.prepare(scope);
-            body.prepare(scope);
+            body.prepare(scope);            
+            elseBody.?prepare(scope);
         }
                 
         bool IsOperation = true;
@@ -1486,13 +1498,29 @@ namespace expressions
             int bookmark := list.Length;
             list.append(cast TapeFunction(nilValue));
             body.saveTo(list, scope);
-            
-            //int offs := list.Length - bookmark - 1;
-            int offs := list.Length - bookmark;
-            offs := offs - 1;
-            
-            list[bookmark] := new JumpIfNotFunction(offs);
-            list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
+            if (elseBody != nil) {
+                int bookmark2 := list.Length;
+                list.append(cast TapeFunction(nilValue));
+                
+                //int offs := list.Length - bookmark - 1;
+                int offs := list.Length - bookmark;
+                offs := offs - 1;
+                list[bookmark] := new JumpIfNotFunction(offs);
+                
+                elseBody.saveTo(list, scope);
+                
+                offs := list.Length - bookmark2;
+                offs := offs - 1;                
+                list[bookmark2] := new GoToFunction(offs);
+            }
+            else {
+                //int offs := list.Length - bookmark - 1;
+                int offs := list.Length - bookmark;
+                offs := offs - 1;
+                
+                list[bookmark] := new JumpIfNotFunction(offs);
+                list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
+            }            
         }
     }
 
