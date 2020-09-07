@@ -3228,7 +3228,7 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
             }
          }
          else if (node.findChild(lxMessage).firstChild(lxTerminalMask) == lxNone) {
-            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node);
+            scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownFunction, node);
          }
          else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, node.findChild(lxMessage));
       }

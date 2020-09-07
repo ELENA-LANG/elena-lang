@@ -121,15 +121,11 @@ namespace _ELENA_
 
   // --- Compiler warnings ---
 //   #define wrnUnresovableLink       "%s(%d:%d): warning 401: Link %s is unresolvable\n"
-   #define wrnUnknownHint           "%s(%d:%d): warning 404: Unknown attribute '%s'\n"
-   #define wrnInvalidHint           "%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n"
-   #define wrnUnknownMessage        "%s(%d:%d): warning 407: Message '%s' does not belong to the object\n"
-////   #define wrnObsoleteMessage       "%s(%d:%d): warning 408: Message '%s' is obsolete"
-////   #define wrnObsoleteConstruction  "%s(%d:%d): warning 409: Construction near '%s' is obsolete"
-////   #define wrnProhibitedSubjectName "%s(%d:%d): warning 410: Subject name '%s' coincides with a message verb"
-////   #define wrnUnknownSignature      "%s(%d:%d): warning 411: Unknown signature '%s'"
-////   #define wrnObsolete              "%s(%d:%d): warning 412: Obsolete language construction near '%s'"
-   #define wrnUnknownModule         "%s(%d:%d): warning 413: Unknown module '%s'\n"
+   constexpr auto wrnUnknownHint          = "%s(%d:%d): warning 404: Unknown attribute '%s'\n";
+   constexpr auto wrnInvalidHint          = "%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n";
+   constexpr auto wrnUnknownMessage       = "%s(%d:%d): warning 407: Message '%s' does not handled by the object\n";
+   constexpr auto wrnUnknownFunction      = "%s(%d:%d): warning 407: Function message does not handled by the object\n";
+   constexpr auto wrnUnknownModule        = "%s(%d:%d): warning 413: Unknown module '%s'\n";
 ////   #define wrnOuterAssignment       "%s(%d:%d): warning 414: Outer assignment; the change will not be seen outside the nested code\n"
 ////   #define wrnTypeMismatch          "%s(%d:%d): warning 415: Type mismatch, direct typecast is invoked\n"
 ////   #define wrnBoxingCheck           "%s(%d:%d): warning 417: The object may be boxed\n"
