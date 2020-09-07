@@ -25,6 +25,7 @@ using namespace _ELENA_;
 ScriptParser :: ScriptParser()
    : _library(SCRIPTENGINE_LIB)
 {
+   _status[0] = 0;
    _encoding = feUTF8;
 
 #ifdef _WIN32

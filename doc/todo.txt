@@ -4,11 +4,14 @@ In development:
 
   [development]
     * elt - #323;
-            all console samples;
-            sum compile-time : debug
+            support functions
+            support closures
+            script based source : debug, correct error displaying
             support ELENA 3.x syntax
             duplicate variable;
             unreferenced variable;
+    * [pipeline]
+    * create a new class in run-time with fields
     * [API Docs : Func1 has one argument which is not shown]
     * compiled code to expression tree
     * expression tree to source

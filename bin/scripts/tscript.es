@@ -43,7 +43,13 @@
      )
 =>;
 
-   #define f_args         ::= "(" ")";
+   #define f_args         ::= "(" parameters;
+
+   #define parameters     ::= parameter next_parameter;
+   #define parameters     ::= ")";
+
+   #define next_parameter ::= "," parameter next_parameter;
+   #define next_parameter ::= ")";
 
    #define body           ::= 
 <=
@@ -63,6 +69,9 @@
    #define statement      ::= a_expression ;
    #define statement      ::= branching ;
    #define statement      ::= looping ;
+   #define statement      ::= ret_expr;
+
+   #define ret_expr       ::= <= returning ( => "^" expression <= ) =>;
 
    #define branching      ::= 
 <= 
@@ -223,6 +232,8 @@
    #define next_m_arg     ::= ")";
 
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
+
+   #define parameter      ::= <= parameter ( nameattr ( identifier = $identifier )) =>;
 
    #define new_variable   ::= <= variable_identifier = $identifier =>; 
    #define new_identifier ::= <= new_identifier = $identifier =>;

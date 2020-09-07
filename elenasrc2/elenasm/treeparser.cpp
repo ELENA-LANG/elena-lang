@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2011-2019, by Alexei Rakov
+//                                              (C)2011-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -82,6 +82,9 @@ void TreeScriptParser :: parseStatement(_ScriptReader& reader, ScriptBookmark& b
 
             writer.newNode((LexicalType)type, quote.ident());
 
+         }
+         else if (bm.state == dfaInteger && reader.compare("0")) {
+            writer.newNode((LexicalType)type);
          }
          else writer.newNode((LexicalType)type, reader.lookup(bm));
 
