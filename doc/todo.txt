@@ -3,20 +3,25 @@ In development:
 ------         
 
   [development]
+    * [ rosetta code : AmicablePairs using yieldable method
+         - fix an issue with fields; 
+         - BaseYieldEnumerator - to allow using yieldable method;
+         - use strong typed functions
+    ]
     * elt - #323;
             support closures
             script based source : debug, correct error displaying
             support ELENA 3.x syntax
             duplicate variable;
             unreferenced variable;
-    * [pipeline]
+    * [ compilation speed - Amicable pairs - yield one ]
     * create a new class in run-time with fields
     * [API Docs : Func1 has one argument which is not shown]
     * compiled code to expression tree
+    * [pipeline]
     * expression tree to source
     * source to expression tree
     * multi-value return - #508
-    * [ compilation speed ]
     * dispatching a method return
     * [Brace expansion]
     * chat
@@ -39,9 +44,10 @@ In development:
 ------                                                           
 Pipeline:
 ------   
+    * 
+
     * linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * GC : mov GC to C code : #77
-    * elenart : get rid of inline assembly
     * external ops: operation inside external call - see HMENU.append
     * chat
     * rosetta code samples: Sockets, Zhang-Suen thinning algorithm
@@ -67,19 +73,15 @@ Pipeline:
                   the opcode can be optimized as well - get rid of duplicate acc loading code) - see duplicateTest
                 * redux : closure tape generation (reusing local variables for nested scopes)
                 * debugger : sub code - do not show the variable from noncurrent sub codes
-                * system'dynamic'expressions: do we need TempVariableBlock? it cannot be translated into the normal code
                 * system'dynamic'expressions: review tape generation, test cases
 
                 * migrating MG
                 * get rid of EXPAND_HEAP, NEW_HEAP
-                * graph - use script to define the function (+tutorial)
-                * info : abstract class cannot have public constructors
 
                 * sqlite : support float / blob
                 * String / WideString - add<'Char>
                 * Amicable pairs using yield method
                 * implement some roseta code samples
-                * upndown
                 * support module description from manifest
                 * support field / static field meta description
                 * closure unboxing: field addr
@@ -92,11 +94,8 @@ Pipeline:
                 * ifheap - is not correctly recognize data allocated classes
                 * if bug structure is allocated - it will be marked as root - will it work?
                 * warn if the method is not found for sealed / limited classes (including conversions)
-                * duck_typing_in_elena_programming_language
                 * tutorials
                 * migrate tutorials from reddit
-                * duck typing tutorial
-                * rosetta code : AmicablePairs using yieldable method
                 * do we need ENDFRAME?
                 * loadfi vs loadf, savefi vs savef
                 * declaring several variables in a row?

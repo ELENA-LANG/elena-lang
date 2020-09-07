@@ -200,7 +200,7 @@ inline void orSize(size_t objptr, int mask)
    getObjectPage(objptr)->size |= mask;
 }
 
-inline void CopyObectData(size_t bytesToCopy, void* dst, void* src)
+inline void CopyObjectData(size_t bytesToCopy, void* dst, void* src)
 {
    bytesToCopy += 3;
    bytesToCopy &= 0xFFFFC;
@@ -270,7 +270,7 @@ inline void CollectYG(GCRoot* root, size_t start, size_t end, ObjectPage*& shado
                CollectYG(&current, start, end, shadowHeap);
             }
             else if (current.size != 0x800000) {
-               CopyObectData(current.size, (void*)new_ptr, current.stackPtr);
+               CopyObjectData(current.size, (void*)new_ptr, current.stackPtr);
             }
          }
          else {

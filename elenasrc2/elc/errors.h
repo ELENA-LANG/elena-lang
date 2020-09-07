@@ -94,7 +94,7 @@ namespace _ELENA_
    constexpr auto errInvalidConstAttr           = "%s(%d:%d): error 174: A method '%s' cannot be compiled as a constant one\n";
    constexpr auto errInvalidBoxing              = "%s(%d:%d): error 175: An expression at '%s' cannot be boxed\n";
    constexpr auto errIllegalStaticMethod        = "%s(%d:%d): error 176: Static method cannot be declared\n";
-
+   constexpr auto errIllegalConstructorAbstract = "%s(%d:%d): error 177: An abstract class cannot have a public constructor\n";
 
    constexpr auto errUnknownBaseClass           = "internal error 500: Base class doesn't exist\n";
    constexpr auto errNotDefinedBaseClass        = "internal error 501: Base class doesn't defined\n";

@@ -8241,7 +8241,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& withConstructor
                && !test(methodScope.hints, tpProtected)) 
             {
                // abstract class cannot have nonpublic constructors
-               scope.raiseError(errIllegalMethod, current);
+               scope.raiseError(errIllegalConstructorAbstract, current);
             }
             else current = lxConstructor;
 
