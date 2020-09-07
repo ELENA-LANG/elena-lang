@@ -1,10 +1,10 @@
 public singleton lscript
 {
     eval(string script)
-        = lscriptEngine.buildScript(script).compiled();
+        = lscriptEngine.buildScript(script).compile();
             
     evalPath(string path)
-        = lscriptEngine.buildScriptFile(path).compiled();
+        = lscriptEngine.buildScriptFile(path).compile();
         
     load(string path)
         = lscriptEngine.loadPath(path);

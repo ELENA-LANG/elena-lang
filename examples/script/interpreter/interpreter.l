@@ -155,13 +155,13 @@ class TapeAssembler
             ));
     }
     
-    compiled()
+    compile()
     {
         var program := DynamicSingleton.new(
                     Expression.Method(
                        "eval",
                        new ScopeVariable("tape"),                   
-                       Expression.CodeBlock(theTape.Value))).compiled(IdleExpressionScope);           
+                       Expression.CodeBlock(theTape.Value))).compile(nil, IdleExpressionScope);           
                    
         ^(tape){ program.eval(tape) }
     }
@@ -221,7 +221,7 @@ class TapeCGenerator
         theOutput.printLine:"--*p;"
     }
     
-    compiled()
+    compile()
     {
         theOutput.insert(0,"void execute(char* p) {");
         theOutput.printLine:"}";
@@ -293,7 +293,7 @@ public solution1()
              );
 
     var bf_tape := Array.allocate(1024).populate:(n => $0);
-    var o := c.compiled();
+    var o := c.compile();
 
     o.eval(bf_tape)
 }    
@@ -301,7 +301,7 @@ public solution1()
 public solution2()
 {
     var bfProgram := new TapeAssembler()
-        .input().open().output().input().close().compiled();
+        .input().open().output().input().close().compile();
                     
     var bfTape := Array.allocate(1024).populate:(n => $0);
     
@@ -314,7 +314,7 @@ public solution3()
         .loadPath("asmrules.es")
         .buildScript(">,[.,]");
 
-    var bfProgram := TapeAssembler.load(bfAssemblyProgram).compiled();
+    var bfProgram := TapeAssembler.load(bfAssemblyProgram).compile();
 
     var bfTape := Array.allocate(1024).populate:(n => $0);
 
@@ -330,7 +330,7 @@ public solution4()
         .loadPath("asmrules.es")
         .buildScriptFile(program_arguments[1]);
 
-    var bfProgram := TapeAssembler.load(bfAssemblyProgram).compiled();
+    var bfProgram := TapeAssembler.load(bfAssemblyProgram).compile();
 
     var bfTape := Array.allocate(1024).populate:(n => $0);
 
@@ -346,7 +346,7 @@ public solution5()
         .loadPath("asmrules.es")
         .buildScriptFile(program_arguments[1]);
 
-    var bfProgram := TapeCGenerator.load(bfAssemblyProgram).compiled();
+    var bfProgram := TapeCGenerator.load(bfAssemblyProgram).compile();
 
     console.writeLine(bfProgram)
 }

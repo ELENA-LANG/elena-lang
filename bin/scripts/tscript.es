@@ -204,7 +204,7 @@
    #define l1_operations  ::= l1_operation next_l1_op;
    #define l1_operations  ::= $eps;
 
-   #define l1_operation   ::= <= message = 0 => function_args;
+   #define l1_operation   ::= <= message ( ) => function_args;
 
    #define next_l1_op     ::= <= ; => l1_operation next_l1_op;
    #define next_l1_op     ::= $eps;

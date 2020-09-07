@@ -102,6 +102,7 @@ public abstract class BaseNumber : BaseValue
     [info:"divides by the value;<br/>should be overridden"]
     abstract divide(o) {}
     
+    [info:"returns the negative value of a number"]
     Negative
         = 0 - self;
 }
@@ -403,11 +404,13 @@ public sealed const struct ByteNumber : IntBaseNumber
     long xor(long n)
         = new LongNumber(self).xor(n);
 
+    [info:"shifts an integer value to the left by a specified number of bits"]
     byte shiftLeft(int val)
     {
         ^ theValue $shl val;
     }
 
+    [info:"shifts an integer value to the right by a specified number of bits"]
     byte shiftRight(int val)
     {
         ^ theValue $shr val;

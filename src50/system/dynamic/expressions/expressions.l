@@ -276,10 +276,10 @@ namespace expressions
         // temporal generic solution
         eval()
         {
-            ^ (self.compiled(IdleExpressionScope))();
+            ^ (self.compile(IdleExpressionScope))();
         }
             
-        DynamicTape compiled(ExpressionScope scope)
+        DynamicTape compile(ExpressionScope scope)
         {
             List<TapeFunction> list := new List<TapeFunction>(8);
             
@@ -1616,7 +1616,7 @@ namespace expressions
 
         saveTo(List<Tuple<Message,DynamicTape>> list, ExpressionScope scope)
         {
-            list.append(new Tuple<Message,DynamicTape>(message, self.compiled(scope)));
+            list.append(new Tuple<Message,DynamicTape>(message, self.compile(scope)));
         }
 
         prepare(ExpressionScope scope)
@@ -1700,6 +1700,24 @@ namespace expressions
         {
             this parameters := new ScopeVariable[]{ param1, new ScopeVariable("self") };
             this message := new Message("[1]");
+            
+            this body := body;
+        }
+        
+        constructor(ScopeVariable param1, ScopeVariable param2, Expression body)
+        //    <= (new Message("[0]"), body);   // !! temporally commented out
+        {
+            this parameters := new ScopeVariable[]{ param1, param2, new ScopeVariable("self") };
+            this message := new Message("[2]");
+            
+            this body := body;
+        }
+        
+        constructor(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
+        //    <= (new Message("[0]"), body);   // !! temporally commented out
+        {
+            this parameters := new ScopeVariable[]{ param1, param2,param3, new ScopeVariable("self") };
+            this message := new Message("[3]");
             
             this body := body;
         }
@@ -1809,7 +1827,7 @@ namespace expressions
         
         saveTo(List<TapeFunction> list, ExpressionScope scope)
         {
-            var tape := singleton.compiled(scope);
+            var tape := singleton.compile(nil, scope);
             
             list.append(ConstantFunction.load(tape));
         }      
@@ -1817,7 +1835,7 @@ namespace expressions
 
     public abstract DynamicSymbol
     {
-        abstract compiled(ExpressionScope scope) {}
+        abstract compile(module, ExpressionScope scope) {}
     }
  
     public class DynamicImport : DynamicSymbol
@@ -1829,7 +1847,7 @@ namespace expressions
             this import := import;
         }
         
-        compiled(ExpressionScope scope)
+        compile(module, ExpressionScope scope)
         {
             scope.declare(import);
             
@@ -1846,9 +1864,9 @@ namespace expressions
             this expr := expr
         }
         
-        compiled(ExpressionScope scope)
+        compile(module, ExpressionScope scope)
         {
-            ^ expr.compiled(scope)
+            ^ expr.compile(scope)
         }        
     }
           
@@ -1912,7 +1930,7 @@ namespace expressions
             this methods := methods;                
         }
         
-        compiled(ExpressionScope scope)
+        compile(module, ExpressionScope scope)
         {
             auto list := new List<Tuple<Message,DynamicTape>>();
             methods.forEach:(m){m.saveTo(list, scope)};
@@ -1963,26 +1981,24 @@ namespace expressions
             this symbols := symbols;        
         }
  
-        compiled()
-            <= compiled(IdleExpressionScope);
+        compile()
+            <= compile(new DynamicStruct(), IdleExpressionScope);
  
-        compiled(ExpressionScope scope)
+        compile(set, ExpressionScope scope)
         {
-            auto set := new DynamicStruct();
-            
             int len := symbols.Length;
             for (int i := 0, i < len, i+=1) {
                 auto info := symbols[i];
                 
                 var symbolName := info.Name;
                 if (symbolName == nil) {
-                    info.Symbol.compiled(scope);
+                    info.Symbol.compile(nil, scope);
                 }
                 else {
                     MessageName name := new MessageName(symbolName);
                     Message prop := name.setPropertyMessage(); 
         
-                    var tape := info.Symbol.compiled(scope);
+                    var tape := info.Symbol.compile(set, scope);
          
                     prop(set, tape);
                 }                
@@ -1994,7 +2010,9 @@ namespace expressions
         [info:"Exectutes the program entry point"]
         eval()
         {
-            var tape := self.compiled(new ExpressionScope
+            var set := new DynamicStruct();
+            
+            var tape := self.compile(set, new ExpressionScope
             {
                 get int ScopeLevel() 
                 {
@@ -2043,15 +2061,26 @@ namespace expressions
                 {
                     var refName := variable.Name;
                     
-                    if ((mode == 0 || mode == mode_class) && imports != nil)
+                    if (mode == 0 || mode == mode_class)
                     {
-                        int len := imports.Length;
-                        for(int i := 0, i < len, i+=1) {
-                            var symbol := Symbol.tryLoad(imports[i], refName);
-                            if (symbol != nil)
-                            {
-                                ^ ConstantFunction.load(symbol)
+                        // look for external references
+                        if(imports != nil) {
+                            int len := imports.Length;
+                            for(int i := 0, i < len, i+=1) {
+                                var symbol := Symbol.tryLoad(imports[i], refName);
+                                if (symbol != nil)
+                                {
+                                    ^ ConstantFunction.load(symbol)
+                                }
                             }
+                        };
+                        
+                        var prop := new MessageName(refName).getPropertyMessage();
+                        
+                        var symbol := prop(set);
+                        if (symbol != nil)
+                        {
+                            ^ ConstantFunction.load(symbol);
                         }
                     };
                     

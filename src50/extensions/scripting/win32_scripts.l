@@ -10,3 +10,8 @@ static ScriptEngine lscriptEngine
             .loadPath("~\scripts\grammar.es")
             .loadPath("~\scripts\lscript.es");
 
+static ScriptEngine tscriptEngine
+    = new ScriptEngine()
+            .loadScript("[[ #grammar build ]]")
+            .loadPath("~\scripts\grammar.es")
+            .loadPath("~\scripts\tscript.es");

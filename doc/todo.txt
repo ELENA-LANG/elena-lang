@@ -4,7 +4,6 @@ In development:
 
   [development]
     * elt - #323;
-            support functions
             support closures
             script based source : debug, correct error displaying
             support ELENA 3.x syntax

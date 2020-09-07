@@ -13,28 +13,28 @@ public singleton xforms
 {
     load(string script)
     {
-        var tape := xformsEngine.buildScript(script).compiled().program;
+        var tape := xformsEngine.buildScript(script).compile().program;
         
         ^ tape;
     }
     
     execute(string script, owner)
     {
-        var tape := xformsEngine.buildScript(script).compiled().program;
+        var tape := xformsEngine.buildScript(script).compile().program;
         
         ^ tape(owner);
     }
     
     loadPath(string path)
     {
-        var tape := xformsEngine.buildScriptFile(path).compiled().program;
+        var tape := xformsEngine.buildScriptFile(path).compile().program;
         
         ^ tape;
     }
     
     executePath(string path, owner)
     {
-        var tape := xformsEngine.buildScriptFile(path).compiled().program;
+        var tape := xformsEngine.buildScriptFile(path).compile().program;
         
         ^ tape(owner);
     }    
