@@ -3,17 +3,12 @@ In development:
 ------         
 
   [development]
-    * [ rosetta code : AmicablePairs using yieldable method
-         - fix an issue with fields; 
-         - BaseYieldEnumerator - to allow using yieldable method;
-         - use strong typed functions
-    ]
     * elt - #323;
             script based source : debug, correct error displaying
             support ELENA 3.x syntax
             duplicate variable;
             unreferenced variable;
-    * [ compilation speed - Amicable pairs - yield one ]
+    * [ compilation speed - Amicable pairs variants ]
     * create a new class in run-time with fields
     * [API Docs : Func1 has one argument which is not shown]
     * compiled code to expression tree
