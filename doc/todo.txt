@@ -9,7 +9,6 @@ In development:
          - use strong typed functions
     ]
     * elt - #323;
-            support closures
             script based source : debug, correct error displaying
             support ELENA 3.x syntax
             duplicate variable;

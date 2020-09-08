@@ -828,11 +828,29 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
    }
 }
 
+inline int countFields(SNode node)
+{
+   int counter = 0;
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassField) {
+         counter++;
+      }
+
+      current = current.nextNode();
+   }
+
+   return counter;
+}
+
 void CompilerLogic :: injectVirtualFields(_ModuleScope&, SNode node, ref_t, ClassInfo& info, _Compiler& compiler)
 {
    // generate yield fields
    if (test(info.header.flags, elWithYieldable)) {
       int index = info.fields.Count();
+
+      // HOTFIX : take into account newly declared fields as well
+      index += countFields(node);
 
       SNode current = node.firstChild();
       while (current != lxNone) {
