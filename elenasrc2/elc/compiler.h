@@ -1218,7 +1218,7 @@ private:
 
    void compileSpecialMethodCall(SNode& node, ClassScope& classScope, ref_t message);
 
-   void compileDefConvConstructor(SNode node, MethodScope& scope, bool isDefault);
+   void compileDefConvConstructor(SNode node, MethodScope& scope);
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
 
    ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);

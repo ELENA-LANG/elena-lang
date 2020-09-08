@@ -7092,7 +7092,7 @@ void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& sco
       else {
          MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
 
-         compileDefConvConstructor(node.parentNode(), *methodScope, isDefault);
+         compileDefConvConstructor(node.parentNode(), *methodScope);
       }
 
       node.set(lxImplicitJump, redirect.argument);
@@ -7606,7 +7606,7 @@ void Compiler :: compileInitializer(SNode node, MethodScope& scope)
    endMethod(methodNode, scope);
 }
 
-void Compiler :: compileDefConvConstructor(SNode node, MethodScope& scope, bool isDefault)
+void Compiler :: compileDefConvConstructor(SNode node, MethodScope& scope)
 {
    ClassScope* classScope = (ClassScope*)scope.getScope(Scope::ScopeLevel::slClass);
 
@@ -7627,8 +7627,7 @@ void Compiler :: compileDefConvConstructor(SNode node, MethodScope& scope, bool 
    }
 
    // call field initilizers if available for default constructor
-   if (isDefault)
-      compileSpecialMethodCall(exprNode, *classScope, scope.moduleScope->init_message);
+   compileSpecialMethodCall(exprNode, *classScope, scope.moduleScope->init_message);
 }
 
 bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, ref_t message, bool& isProtectedDefConst)
@@ -7713,7 +7712,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    else if (isDefConvConstructor && !test(classFlags, elDynamicRole)) {
       // if it is a default / conversion (unnamed) constructor
       // it should create the object
-      compileDefConvConstructor(node, scope, scope.message == defConstrMssg);
+      compileDefConvConstructor(node, scope);
    }
    // if no redirect statement - call the default constructor
    else if (!test(classFlags, elDynamicRole) && classClassScope.info.methods.exist(defConstrMssg)) {
