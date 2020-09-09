@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   13
+#define ELT_BUILD_NUMBER   14
  
 // global variables
 ProgramHeader  _header;
@@ -159,8 +159,6 @@ void executeCommandLine(const char* line)
    command.append(postfix);
 
    executeScript(command);
-
-   body.clear();
 }
 
 void runSession()
