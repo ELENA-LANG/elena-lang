@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   11
+#define ELT_BUILD_NUMBER   12
  
 // global variables
 ProgramHeader  _header;
@@ -218,7 +218,7 @@ int main(int argc, char* argv[])
 
             executeCommand(argv[i]);
          }
-         else executeCommandLine(argv[i]);
+         else executeScript(argv[i]);
       }
    }
 
