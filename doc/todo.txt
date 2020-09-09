@@ -4,10 +4,10 @@ In development:
 
   [development]
     * elt - #323;
-            script based source : debug, correct error displaying
-            support ELENA 3.x syntax
-            duplicate variable;
-            unreferenced variable;
+            script based source : correct error displaying;
+            support ELENA 3.x syntax;
+            elt integration in ELIDE
+    * Lexi project
     * [ compilation speed - Amicable pairs variants ]
     * create a new class in run-time with fields
     * [API Docs : Func1 has one argument which is not shown]

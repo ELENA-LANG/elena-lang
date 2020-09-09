@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x018A
+#define ELC_REVISION_NUMBER         0x018B
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -288,7 +288,8 @@ class Project : public _ELENA_::Project
             fullPath.combine(filePath);
 
             parser.parse(fullPath.c_str(), derivationTree);
-            derivationTree.readRoot().firstChild().appendNode(_ELENA_::lxSourcePath, filePath);
+            // NOTE : source path node should be the first one due to current implementation
+            derivationTree.readRoot().firstChild().insertNode(_ELENA_::lxSourcePath, filePath);
          }
          catch (_ELENA_::LineTooLong& e)
          {

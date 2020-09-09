@@ -3165,50 +3165,26 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowS
       releaseStack(tape, paramCount);
 }
 
-/*ref_t*/void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode/*, int paramCount, int presavedCount*/)
+void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 {
-//   SNode bpNode = callNode.findChild(lxBreakpoint);
-//   if (bpNode != lxNone) {
-//      translateBreakpoint(tape, bpNode, false);
-//
-//      declareBlock(tape);
-//   }
-
    // copym message
    ref_t message = callNode.argument;
-//   SNode msg = callNode.findChild(lxOvreriddenMessage);
-//   if (msg != lxNone)
-//      message = msg.argument;
 
    tape.write(bcMovM, message);
 
-//   bool invokeMode = test(message, SPECIAL_MESSAGE);
-
    SNode target = callNode.findChild(lxCallTarget);
    if (callNode == lxDirectCalling) {
-      callResolvedMethod(tape, target.argument, callNode.argument/*, invokeMode*/);
+      callResolvedMethod(tape, target.argument, callNode.argument);
    }
    else if (callNode == lxSDirectCalling) {
-      callVMTResolvedMethod(tape, target.argument, callNode.argument/*, invokeMode*/);
+      callVMTResolvedMethod(tape, target.argument, callNode.argument);
    }
-//   else if (invokeMode) {
-//      // pop
-//      // acallvi offs
-//      tape.write(bcPop);
-//      tape.write(bcACallVI, 0);
-//      tape.write(bcFreeStack, getParamCount(callNode.argument));
-//   }
    else {
       int vmtOffset = callNode == lxCalling_1 ? 1 : 0;
 
       // callvi vmtOffset
       tape.write(bcCallVI, vmtOffset);
    }
-
-//   if (bpNode != lxNone)
-//      declareBreakpoint(tape, 0, 0, 0, dsVirtualEnd);
-
-   //return message;
 }
 
 void ByteCodeWriter :: generateInternalCall(CommandTape& tape, SNode node, FlowScope& scope)
@@ -4777,9 +4753,6 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxExternFrame:
 //            generateExternFrame(tape, current);
 //            break;
-////         case lxReleasing:
-////            releaseObject(tape, current.argument);
-////            break;
          case lxBinarySelf:
             declareSelfStructInfo(tape, SELF_VAR, current.argument,
                current.findChild(lxClassName).identifier());
@@ -4791,7 +4764,6 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
          case lxIntVariable:
          case lxLongVariable:
          case lxReal64Variable:
-//////         case lxMessageVariable:
          case lxParamsVariable:
          case lxBytesVariable:
          case lxShortsVariable:
