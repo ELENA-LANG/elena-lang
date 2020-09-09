@@ -377,7 +377,7 @@
 <=
                        system'dynamic'expressions'ClassIdentifierExpression ( 
 =>
-                              "new_identifier" "=" ident_quote "message" "=" "0"
+                              "new_identifier" "=" ident_quote idle_mssg
 <=
                        )
                        "#constructor"
@@ -388,7 +388,7 @@
                        system'dynamic'expressions'ConstantExpression ( 
                           system'ClassReference ( 
 =>
-                              "new_reference" "=" ref_quote "message" "=" "0"
+                              "new_reference" "=" ref_quote idle_mssg
 <=
                           )
                        )
@@ -406,6 +406,7 @@
   #define operator        ::= <= "greater" => ">";
 
   #define idle_mssg       ::= "message" "(" ")";
+  #define idle_mssg       ::= "message" "=" "0";
 
   #define s_name          ::= "nameattr" "(" identifier ")" ;
   #define m_name          ::= "nameattr" "(" identifier ")" ;

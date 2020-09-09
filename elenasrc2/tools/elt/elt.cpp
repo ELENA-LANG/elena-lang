@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   14
+#define ELT_BUILD_NUMBER   15
  
 // global variables
 ProgramHeader  _header;
@@ -136,6 +136,9 @@ bool executeCommand(const char* line, bool& running)
    }
    else if(line[1] == 'l') {
       loadScript(line + 2);
+   }
+   else if (line[1] == 'c') {
+      body.clear();
    }
    else return false;
 
