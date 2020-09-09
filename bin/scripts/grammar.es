@@ -238,10 +238,12 @@
 <=
                system'dynamic'expressions'MessageCallExpression (
 =>
-                              "operator" "=" operator expression
+                              "operator" "=" operator expression next_operation*
 <=
                )
 =>; 
+
+  #define next_operation  ::= <= ; => ";" "operator" "=" operator expression;
 
   #define if_operator     ::= ^  
 <=

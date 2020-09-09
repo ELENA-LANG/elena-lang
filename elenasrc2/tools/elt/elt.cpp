@@ -15,7 +15,7 @@ using namespace _ELENA_;
 
 #define MAX_LINE           256
 #define MAX_SCRIPT         4096
-#define ELT_BUILD_NUMBER   12
+#define ELT_BUILD_NUMBER   13
  
 // global variables
 ProgramHeader  _header;
@@ -27,6 +27,8 @@ int            _sehTable = 0;
 
 IdentifierString prefix;
 IdentifierString postfix;
+
+DynamicString<char> body;
 
 void loadTemplate(path_t path)
 {
@@ -148,11 +150,17 @@ bool executeCommand(const char* line)
 
 void executeCommandLine(const char* line)
 {
-   IdentifierString command(prefix);
+   DynamicString<char> command;
+
+   command.append(body.str());
+   command.append('\n');
+   command.append(prefix);
    command.append(line);
    command.append(postfix);
 
    executeScript(command);
+
+   body.clear();
 }
 
 void runSession()
@@ -178,9 +186,12 @@ void runSession()
             if(!executeCommand(line, running))
                print("Invalid command, use -h to get the list of the commands\n");
          }
-         else if (!emptystr(line) && line[getlength(line) - 1]!=','){
-            executeCommandLine(line);
+         else if (!emptystr(line) && line[getlength(line) - 1]==';') {
+            line[getlength(line) - 1] = 0;
+
+            body.append(line.c_str());
          }
+         else executeCommandLine(line);
       }
       catch(...) {
          print("Invalid operation");

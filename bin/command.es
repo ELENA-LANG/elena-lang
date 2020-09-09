@@ -1,1 +1,1 @@
-public program() { $1 }
+public program() { system'console.writeLine($1) }

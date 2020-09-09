@@ -3,6 +3,7 @@ In development:
 ------         
 
   [development]
+    * [rosetta code - Interactive programming]
     * Lexi project
     * [ compilation speed - Amicable pairs variants ]
     * create a new class in run-time with fields

@@ -1707,7 +1707,7 @@ namespace expressions
         constructor(ScopeVariable param1, ScopeVariable param2, Expression body)
         //    <= (new Message("[0]"), body);   // !! temporally commented out
         {
-            this parameters := new ScopeVariable[]{ param1, param2, new ScopeVariable("self") };
+            this parameters := new ScopeVariable[]{ param2, param1, new ScopeVariable("self") };
             this message := new Message("[2]");
             
             this body := body;
@@ -1716,8 +1716,37 @@ namespace expressions
         constructor(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, Expression body)
         //    <= (new Message("[0]"), body);   // !! temporally commented out
         {
-            this parameters := new ScopeVariable[]{ param1, param2,param3, new ScopeVariable("self") };
+            this parameters := new ScopeVariable[]{ param3, param2,param1, new ScopeVariable("self") };
             this message := new Message("[3]");
+            
+            this body := body;
+        }
+        
+        constructor(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, ScopeVariable param4, Expression body)
+        //    <= (new Message("[0]"), body);   // !! temporally commented out
+        {
+            this parameters := new ScopeVariable[]{ param4,param3,param2,param1, new ScopeVariable("self") };
+            this message := new Message("[4]");
+            
+            this body := body;
+        }
+        
+        constructor(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, ScopeVariable param4, 
+                        ScopeVariable param5, Expression body)
+        //    <= (new Message("[0]"), body);   // !! temporally commented out
+        {
+            this parameters := new ScopeVariable[]{ param5,param4,param3,param2,param1, new ScopeVariable("self") };
+            this message := new Message("[5]");
+            
+            this body := body;
+        }
+        
+        constructor(ScopeVariable param1, ScopeVariable param2, ScopeVariable param3, ScopeVariable param4, 
+                        ScopeVariable param5, ScopeVariable param6, Expression body)
+        //    <= (new Message("[0]"), body);   // !! temporally commented out
+        {
+            this parameters := new ScopeVariable[]{ param6,param5,param4,param3,param2,param1, new ScopeVariable("self") };
+            this message := new Message("[6]");
             
             this body := body;
         }

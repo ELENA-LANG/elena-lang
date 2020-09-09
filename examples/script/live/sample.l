@@ -1,8 +1,6 @@
-import extensions;
-
-f(x,y){ ^ x * y }
+f(s1,s2,sep){ ^ s1+sep+sep+s2; }
 
 public program()
 {
-   console.printLine(f(2,3))
+   system'console.writeLine(f("Rosetta", "Code", ":"))
 }
