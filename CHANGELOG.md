@@ -1,5 +1,5 @@
 ## upcoming ELENA 6.0
-*12.06.2021*
+*12.06.2022*
 
 - ELENA
   - binary incompatible due to module structure change

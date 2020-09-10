@@ -3,8 +3,10 @@ In development:
 ------         
 
   [development]
-    * [rosetta code - Interactive programming]
-    * Lexi project
+    * Lexi project (remove nodepad)
+    * #515 : Resolving an interface in run-time 
+        - proxy redirect class
+        - generate proxy redirect class if the target class is not sealed or closed
     * [ compilation speed - Amicable pairs variants ]
     * create a new class in run-time with fields
     * [API Docs : Func1 has one argument which is not shown]
@@ -36,7 +38,7 @@ In development:
 ------                                                           
 Pipeline:
 ------   
-    * 
+    * migrate tutorials from reddit
 
     * linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * GC : mov GC to C code : #77
@@ -45,7 +47,6 @@ Pipeline:
     * rosetta code samples: Sockets, Zhang-Suen thinning algorithm
     * timer
     * upndown
-    * nodepad
     * refactoring : classROp.setField should be either internal or not available at all (because
                     it is not possible to enforce types)
 
@@ -65,15 +66,12 @@ Pipeline:
                   the opcode can be optimized as well - get rid of duplicate acc loading code) - see duplicateTest
                 * redux : closure tape generation (reusing local variables for nested scopes)
                 * debugger : sub code - do not show the variable from noncurrent sub codes
-                * system'dynamic'expressions: review tape generation, test cases
 
                 * migrating MG
                 * get rid of EXPAND_HEAP, NEW_HEAP
 
                 * sqlite : support float / blob
                 * String / WideString - add<'Char>
-                * Amicable pairs using yield method
-                * implement some roseta code samples
                 * support module description from manifest
                 * support field / static field meta description
                 * closure unboxing: field addr
@@ -85,14 +83,10 @@ Pipeline:
                 * extension message - can be applied only to the generic extension?
                 * ifheap - is not correctly recognize data allocated classes
                 * if bug structure is allocated - it will be marked as root - will it work?
-                * warn if the method is not found for sealed / limited classes (including conversions)
-                * tutorials
-                * migrate tutorials from reddit
                 * do we need ENDFRAME?
                 * loadfi vs loadf, savefi vs savef
                 * declaring several variables in a row?
 
-                * mixin variadic function cannot be used directly??
                 * function closures : strong one - should be resolved directly if possible
                 * stack allocated variables : assigning nil, default constructor call, ...
                 * stack allocation should not be cleared
@@ -120,17 +114,13 @@ Pipeline:
                 * private extension method should be possible to use for internal work
                 * it should be possible to extend attributes / template statements from anoter libraries
                 * abstract class cannot be sealed
-                * (re)implement manifest
                 * do-while - if the second agrument is code brackets?
                 * static fields should be accessaible from strong typed extensions
                 * yield can be used only for yieldable method
                 * yieldable method can be declared only for normal class
                 * CharValue.new = $0 -> should create a new class
                 * test : branching external implementation : returning a value from closure 
-                * i += j
                 * use stosd over stos
-                * double assigning : operation with struct field : var s := x + /*y*/1; (where x is a word field)
-                * double assigning : int n := 2; var o := n + 1 / var o := n
                 * field boxing : e.g x + x - should not be boxed twice
                 * field boxing : double assigning
                 * boxing an array, assinging to the local variable - get rid of double assigning
@@ -230,7 +220,6 @@ Pipeline:
                  * optimize gc - mg -> yg 
                  * optimize intOp.Absolute method
                  * variadic closure : correctly free argument list - using the code to free until the zero is encounter
-                 * gui : check default error handler
                  * bool_expr ? 1 : 0 - the expression result should be strong-typed
                  * support 2.2 syntax (without r postfix)
                  * optimize compiler : more efficient hash table, caching the results
@@ -299,7 +288,7 @@ Pipeline:
  
                  * mta system : check the situation when too many threads (> MAX_THREAD)
                  * nested code : read only outer field
-                 * elt - exception handlers
+                 * elt - exception handler
                  * script engine : do not allow left recursing (e.g. A -> AB )
                  * replace S -> AB / S -> AC with S -> A{B | C}, using forwards to resolve prediction log
                  * advanced script : templates,closures,exception handling

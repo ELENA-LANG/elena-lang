@@ -380,8 +380,10 @@ class IDEController : public _Controller
 
    virtual void doGotoSource()
    {
-      _debugController.showCurrentModule();
-      _view->showFrame();
+      if (_debugController.isStarted()) {
+         _debugController.showCurrentModule();
+         _view->showFrame();
+      }
    }
 
    virtual void selectProjectFile(int index);

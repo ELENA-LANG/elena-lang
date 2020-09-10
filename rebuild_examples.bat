@@ -128,8 +128,6 @@ bin\elc examples\gui\c_a_g\c_area_gui.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-rem bin\elc examples\gui\notepad\notepad.prj
-
 bin\elc examples\gui\helloworld\xforms_hellowindow.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
