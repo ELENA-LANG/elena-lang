@@ -8,6 +8,7 @@
   - a warning shown when an object does not handle a message (for strong-typed ones)
   - #511 : Infinite extension **populate** call
   - #514 : Incorrect warning message for unhandled function message 
+  - #516 : Dispatch handle : dispatching to an expression 
 - TOOLS
    - #323 : Run ELENA code without build
 

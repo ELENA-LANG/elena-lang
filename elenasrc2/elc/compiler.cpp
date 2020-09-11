@@ -6727,7 +6727,7 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, LexicalType m
          }
 
          dispatchNode = dispatchNode.firstChild();
-      }
+      }      
 
       compileDispatchExpression(dispatchNode, target, exprScope);
    }
@@ -6855,7 +6855,8 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
 
       int stackSafeAttrs = 0;
       bool directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, exprScope.moduleScope->superReference, false);
-      if (isSingleStatement(node)) {
+      bool simpleOp = isSingleStatement(node);
+      if (simpleOp) {
          if (!directOp) {
             // try to find out if direct dispatch is possible
             ref_t sourceRef = resolveObjectReference(exprScope, target, false, false);
@@ -6881,16 +6882,18 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
             case okReadOnlyField:
             case okOuterSelf:
             case okOuter:
-            {
-               node.set(op, methodScope->message);
-               if (target.kind != okConstantSymbol) {
-                  SNode fieldExpr = node.findChild(lxFieldExpression);
-                  if (fieldExpr != lxNone) {
-                     fieldExpr.set(lxField, target.param);
+               if (simpleOp)
+               {
+                  // HOTFIX : use direct dispatching only for object expression
+                  node.set(op, methodScope->message);
+                  if (target.kind != okConstantSymbol) {
+                     SNode fieldExpr = node.findChild(lxFieldExpression);
+                     if (fieldExpr != lxNone) {
+                        fieldExpr.set(lxField, target.param);
+                     }
                   }
+                  break;
                }
-               break;
-            }
             default:
             {
                node.set(op, methodScope->message);

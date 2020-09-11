@@ -3,7 +3,12 @@ In development:
 ------         
 
   [development]
-    * Lexi project (remove nodepad)
+    * Lexi project
+        - ide - newly files are not correctly displayed after adding
+        - ide - click on view does not change document
+        - fix debugger
+        - implement
+
     * #515 : Resolving an interface in run-time 
         - proxy redirect class
         - generate proxy redirect class if the target class is not sealed or closed
