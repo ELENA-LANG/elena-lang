@@ -523,6 +523,8 @@ void IDEController :: doSetProjectSettings()
 {
    _view->configProject(&_project);
 
+   _project.refresh();
+
    Settings::onNewProjectTemplate(_model, &_project);
 }
 
@@ -546,6 +548,8 @@ void IDEController :: doSetDebuggerSettings()
 void IDEController :: doSetProjectForwards()
 {
    _view->configurateForwards(&_project);
+
+   _project.refresh();
 }
 
 bool IDEController :: findText(SearchOption& option)
