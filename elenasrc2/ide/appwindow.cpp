@@ -446,6 +446,8 @@ void IDEController :: renameFileAs(int index, _ELENA_::path_t newPath, _ELENA_::
    if (included) {
       _project.excludeSource(oldPath);
       _project.includeSource(newPath);
+
+      nameProjectDocument(index, newPath);
    }
    _view->activateFrame();
 }
@@ -840,9 +842,33 @@ bool IDEController :: doSave(bool saveAsMode)
       if (!doSave(_view->getCurrentDocumentIndex(), saveAsMode))
          return false;
    }
+
+   if (_model->isProjectChanged()) {
+      _view->reloadProjectView(&_project);
+   }
    onChange();
 
    return true;
+}
+
+void IDEController :: nameProjectDocument(int index, _ELENA_::path_t path)
+{
+   _ELENA_::ReferenceNs module;
+   _ELENA_::Path modulePath(path);
+   _project.retrieveName(modulePath, module);
+
+   _ELENA_::String<text_c, 80> caption;
+   size_t len = strlen(module);
+   if (len > 50)
+      len = 50;
+
+   _ELENA_::Convertor::copy(caption, module, len, len);
+   caption[len] = 0;
+
+   caption.append(':');
+   caption.append(path + path.findLast(PATH_SEPARATOR) + 1);
+
+   _view->renameDocument(index, caption);
 }
 
 bool IDEController :: doSave(int docIndex, bool saveAsMode)
@@ -864,6 +890,8 @@ bool IDEController :: doSave(int docIndex, bool saveAsMode)
          if (_view->confirm(QUESTION_INCLUDE_FILE1, newPath, QUESTION_INCLUDE_FILE2)) {
             markDocumentAsIncluded(docIndex);
             _project.includeSource(newPath.c_str());
+
+            nameProjectDocument(docIndex, newPath.c_str());
 
             if (doc == _model->currentDoc) {
                onDocIncluded();
@@ -2226,6 +2254,7 @@ void IDEController::ProjectManager :: retrieveName(_ELENA_::Path& path, _ELENA_:
    _ELENA_::Path fullPath;
    fullPath.copySubPath(path.c_str());
    Paths::resolveRelativePath(fullPath, root);
+   fullPath.lower();
 
    if (!_ELENA_::emptystr(root) && fullPath.str().compare(root, rootLength)) {
       name.copy(getPackage());

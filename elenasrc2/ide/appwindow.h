@@ -391,6 +391,8 @@ class IDEController : public _Controller
    bool loadModule(text_t ns, text_t source);
    bool loadTemporalModule(text_t name, int param);
 
+   void nameProjectDocument(int index, _ELENA_::path_t path);
+
 public:
    void start(_View* view, _DebugListener* listener, Model* model);
 
