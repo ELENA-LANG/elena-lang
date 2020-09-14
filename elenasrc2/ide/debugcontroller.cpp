@@ -673,6 +673,12 @@ void DebugController :: toggleBreakpoint(Breakpoint& breakpoint, bool adding)
    }
 }
 
+inline void trimLastNs(IdentifierString& s)
+{
+   size_t index = s.ident().findLast('\'', 0);
+   s.truncate(index);
+}
+
 _Module* DebugController :: resolveModule(ident_t ns)
 {
    // check if the module is already loaded
@@ -680,9 +686,17 @@ _Module* DebugController :: resolveModule(ident_t ns)
    while (!it.Eof()) {
       if (NamespaceName::isIncluded((*it)->Name(), ns)) {
          IdentifierString virtualRef(ns + getlength((*it)->Name()), "'");
-         virtualRef.append(NAMESPACE_REF);
-         if ((*it)->mapReference(virtualRef, true))
-            return *it;
+         while (virtualRef.Length() > 0) {
+            virtualRef.append(NAMESPACE_REF);
+            if ((*it)->mapReference(virtualRef, true))
+               return *it;
+
+            // trim the proper name
+            trimLastNs(virtualRef);
+            // trim the last sub namespace
+            trimLastNs(virtualRef);
+            virtualRef.append('\'');
+         }
       }
       it++;
    }
