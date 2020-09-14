@@ -180,6 +180,9 @@
   <ItemGroup>
     <ResourceCompile Include="elc.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\lexi\src\lexi.prj" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

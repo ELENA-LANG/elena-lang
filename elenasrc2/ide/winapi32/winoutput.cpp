@@ -30,6 +30,8 @@ Output :: Output(Control* owner, bool readOnly, const wchar_t* name)
    _editProc = (WNDPROC)SetWindowLongPtr(_handle, GWLP_WNDPROC, (LONG_PTR)_Proc);
    ::SetWindowLongPtr(_handle, GWLP_USERDATA, (LONG_PTR)this);
 
+   //SendMessage(_handle, EM_SETLIMITTEXT, (WPARAM)256000, 0);
+
    _redirector = new WindowRedirector(this, readOnly, 50);
 
    clear();

@@ -687,6 +687,8 @@ void JITLinker :: resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader&
 
 void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references)
 {
+   IdentifierString className(referenceInfo.referenceName);
+
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
       return LOADER_NOTLOADED;
 
@@ -767,7 +769,9 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       _compiler->fixVMT(vmtWriter, (pos_t)classClassVAddress, (pos_t)parentVAddress, count, _virtualMode);
 
       if (!test(header.flags, elVirtualVMT)) {
+         // HOTFIX : to presave the string name
          referenceInfo.module = sectionInfo.module;
+         referenceInfo.referenceName = className.c_str();
 
          resolveStaticValues(referenceInfo, vmtReader, attrReader, vmtImage, position);
       }
