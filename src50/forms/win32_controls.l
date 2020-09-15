@@ -1178,7 +1178,9 @@ public sealed class ImageList : Object, interface<IControl>
         theSize.Height := height
     }
 
-     prop string ID;
+    get Control() = self;
+
+    prop string ID;
          
     assign(Paintbox paintbox)
     {
@@ -1232,6 +1234,8 @@ public sealed class ImageList : Object, interface<IControl>
             theImages[i].open(parentDC)
         }
     }
+    
+    change() {}
     
     close()
     {
