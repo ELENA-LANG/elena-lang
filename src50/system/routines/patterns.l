@@ -364,7 +364,7 @@ public class PatternFilter5 : Enumerator
         ^ false
     }
     
-    enumerable() => enumerator();
+    enumerable() => enumerator;
 }
 
 // --- PatternFilter6 ---

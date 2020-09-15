@@ -606,6 +606,11 @@ bool CompilerLogic :: isVariable(ClassInfo& info)
    return test(info.header.flags, elWrapper) && !test(info.header.flags, elReadOnlyRole);
 }
 
+bool CompilerLogic :: isSealedOrClosed(ClassInfo& info)
+{
+   return test(info.header.flags, elSealed | elClosed);
+}
+
 bool CompilerLogic :: isArray(_ModuleScope& scope, ref_t classReference)
 {
    ClassInfo info;
@@ -1008,7 +1013,7 @@ bool CompilerLogic :: isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node
    return false;
 }
 
-void CompilerLogic :: injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef)
+void CompilerLogic :: injectInterfaceDispatch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef)
 {
    SNode current = node.firstChild();
    SNode dispatchMethodNode;
@@ -1023,6 +1028,9 @@ void CompilerLogic :: injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& co
       }
       current = current.nextNode();
    }
+
+   if (!isSingleStatement(dispatchNode))
+      scope.raiseError(errInvalidSyntax, findSourceRef(node), dispatchNode);
 
    ClassInfo info;
    scope.loadClassInfo(info, parentRef);

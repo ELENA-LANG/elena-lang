@@ -355,11 +355,21 @@ private:
       }
       virtual void raiseError(const char* message, SNode terminal)
       {
-         moduleScope->raiseError(message, sourcePath, terminal);
+         ident_t path = sourcePath;
+         if (terminal.existChild(lxSourcePath)) {
+            path = terminal.findChild(lxSourcePath).identifier();
+         }
+
+         moduleScope->raiseError(message, path, terminal);
       }
       virtual void raiseWarning(int level, const char* message, SNode terminal)
       {
-         moduleScope->raiseWarning(level, message, sourcePath, terminal);
+         ident_t path = sourcePath;
+         if (terminal.existChild(lxSourcePath)) {
+            path = terminal.findChild(lxSourcePath).identifier();
+         }
+
+         moduleScope->raiseWarning(level, message, path, terminal);
       }
 ////      virtual void raiseWarning(int level, const char* message)
 ////      {
@@ -1180,6 +1190,8 @@ private:
 
    ObjectInfo compileExternalCall(SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode);
    ObjectInfo compileInternalCall(SNode node, ExprScope& scope, ref_t message, ref_t signature, ObjectInfo info);
+
+   void warnOnUnresolvedDispatch(SNode node, Scope& scope, ref_t message, bool errorMode);
 
    void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, 
       bool& withFrame);

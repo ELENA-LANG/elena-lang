@@ -103,6 +103,7 @@ enum LexicalType
    lxReal                     = 0x00201B,
    lxExplicitConst            = 0x00201C,
 
+   lxTemplateSource           = 0x00201E,
    lxVirtualReference         = 0x00201F,
 
    // expression nodes

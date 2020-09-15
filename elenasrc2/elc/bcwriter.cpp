@@ -4368,10 +4368,10 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
       if (!genericResending)
          tape.write(bcMovM, node.argument);
 
-//      if (target.argument != 0) {
-//         resendResolvedMethod(tape, target.argument, node.argument);
-//      }
-      /*else */resend(tape);
+      if (target.argument != 0) {
+         resendResolvedMethod(tape, target.argument, node.argument);
+      }
+      else resend(tape);
    }
 }
 

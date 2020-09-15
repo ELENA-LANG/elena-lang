@@ -163,6 +163,15 @@ public:
    virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node);
    virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference);
 
+   virtual bool isSealedOrClosed(ClassInfo& info);
+   virtual bool isSealedOrClosed(_ModuleScope& scope, ref_t reference)
+   {
+      ClassInfo info;
+      defineClassInfo(scope, info, reference, true);
+
+      return isSealedOrClosed(info);
+   }
+
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
    virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
@@ -180,7 +189,7 @@ public:
       ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags);
    virtual void injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
 
-   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
+   virtual void injectInterfaceDispatch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
 
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
    virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);

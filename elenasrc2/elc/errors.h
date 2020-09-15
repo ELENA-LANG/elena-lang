@@ -95,6 +95,8 @@ namespace _ELENA_
    constexpr auto errInvalidBoxing              = "%s(%d:%d): error 175: An expression at '%s' cannot be boxed\n";
    constexpr auto errIllegalStaticMethod        = "%s(%d:%d): error 176: Static method cannot be declared\n";
    constexpr auto errIllegalConstructorAbstract = "%s(%d:%d): error 177: An abstract class cannot have a public constructor\n";
+   constexpr auto errUnresolvedDispatch         = "%s(%d:%d): error 178: a target does not handle dispatched message\n";
+   constexpr auto errUnresolvedInterface        = "%s(%d:%d): error 179: a class does not contain an interface implementation\n";
 
    constexpr auto errUnknownBaseClass           = "internal error 500: Base class doesn't exist\n";
    constexpr auto errNotDefinedBaseClass        = "internal error 501: Base class doesn't defined\n";
@@ -131,15 +133,17 @@ namespace _ELENA_
 ////   #define wrnBoxingCheck           "%s(%d:%d): warning 417: The object may be boxed\n"
 ////   #define wrnDuplicateExtension    "%s(%d:%d): warning 418: '%s': duplicate extension\n"
 //////   #define wrnUnboxinging           "%s(%d:%d): warning 419: '%s' will be unboxed\n"
-   #define wrnTypeInherited         "%s(%d:%d): warning 420: Type attribute is inherited\n"
-   #define wrnAmbiguousIdentifier   "%s(%d:%d): warning 421: Identifier '%s' is ambiguous"
+   constexpr auto wrnTypeInherited        = "%s(%d:%d): warning 420: Type attribute is inherited\n";
+   constexpr auto wrnAmbiguousIdentifier  ="%s(%d:%d): warning 421: Identifier '%s' is ambiguous";
 ////   #define wrnAmbiguousMessageName  "%s(%d:%d): warning 422: Message name '%s' is ambiguous"
 ////   #define wrnAmbiguousVariable     "%s(%d:%d): warning 423: Variable '%s' is ambiguous"
-   #define wrnDuplicateAttribute    "%s(%d:%d): warning 424: '%s': duplicate attribute\n"
-   #define wrnDuplicateInclude      "%s(%d:%d): warning 425: '%s': duplicate inclusion\n"
-   #define wrnExplicitExtension     "%s(%d:%d): warning 426: an extension '%s' should not be used directly\n"
+   constexpr auto wrnDuplicateAttribute   ="%s(%d:%d): warning 424: '%s': duplicate attribute\n";
+   constexpr auto wrnDuplicateInclude     ="%s(%d:%d): warning 425: '%s': duplicate inclusion\n";
+   constexpr auto wrnExplicitExtension    ="%s(%d:%d): warning 426: an extension '%s' should not be used directly\n";
    constexpr auto wrnUnknownConversion    = "%s(%d:%d): warning 427: a conversion constructor is not found for '%s'\n";
    constexpr auto wrnUnknownEOPConversion = "%s(%d:%d): warning 428: a conversion constructor is not found for self\n";
+   constexpr auto wrnUnresolvedDispatch   = "%s(%d:%d): warning 429: a target does not handle dispatched message\n";
+   constexpr auto wrnUnresolvedInterface  = "%s(%d:%d): warning 430: a class does not contain an interface implementation\n";
    constexpr auto wrnInvalidModule        = "Invalid or unknown module %s\n";
 
    constexpr auto infoAbstractMetod       = "abstract method %s";

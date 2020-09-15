@@ -4,6 +4,7 @@ In development:
 
   [development]
     * Lexi project
+        - warn if the class does not implement an interface
         - ide - click on view does not change document
         - implement
 

@@ -9,6 +9,7 @@
   - #511 : Infinite extension **populate** call
   - #514 : Incorrect warning message for unhandled function message 
   - #516 : Dispatch handle : dispatching to an expression 
+  - #517 : Interface dispatcher : Check if all abstract methods are implemented 
 - IDE
   - several usability bugs fixed
 - TOOLS

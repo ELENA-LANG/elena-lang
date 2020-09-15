@@ -2541,7 +2541,9 @@ ref_t TemplateGenerator :: declareTemplate(SyntaxWriter&, _ModuleScope& scope, r
    templateScope.sourcePath = "compiling template...";
 
    for (auto it = parameters.start(); !it.Eof(); it++) {
-      templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
+      // HOTFIX : ignore template source parameter
+      if ((*it) != lxTemplateSource)
+         templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
    }
 
    templateScope.generateClassName();
@@ -2555,7 +2557,9 @@ ref_t TemplateGenerator :: generateTemplate(SyntaxWriter& writer, _ModuleScope& 
    templateScope.sourcePath = "compiling template...";
 
    for (auto it = parameters.start(); !it.Eof(); it++) {
-      templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
+      // HOTFIX : ignore template source parameter
+      if ((*it) != lxTemplateSource)
+         templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
    }
 
    // NOTE : for the import mode, no need to declare a new class
@@ -2571,7 +2575,9 @@ void TemplateGenerator :: generateTemplateCode(SyntaxWriter& writer, _ModuleScop
    templateScope.type = TemplateScope::Type::ttCodeTemplate;
 
    for (auto it = parameters.start(); !it.Eof(); it++) {
-      templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
+      // HOTFIX : ignore template source parameter
+      if ((*it) != lxTemplateSource)
+         templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
    }
 
    generateTemplate(writer, templateScope, false, false, 0);
@@ -2584,7 +2590,9 @@ void TemplateGenerator :: generateTemplateProperty(SyntaxWriter& writer, _Module
    templateScope.type = inlineMode ? TemplateScope::Type::ttInlineTemplate : TemplateScope::Type::ttPropertyTemplate;
 
    for (auto it = parameters.start(); !it.Eof(); it++) {
-      templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
+      // HOTFIX : ignore template source parameter
+      if ((*it) != lxTemplateSource)
+         templateScope.parameterValues.add(templateScope.parameterValues.Count() + 1, *it);
    }
 
    generateTemplate(writer, templateScope, false, false, bookmark);

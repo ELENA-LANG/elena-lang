@@ -591,6 +591,27 @@ void ModuleScope :: importClassTemplate(SyntaxWriter& output, ref_t reference, L
    transformer.importClass(output, templateTree.readRoot());
 }
 
+inline void copyTemplateSourceInfo(SyntaxWriter& writer, List<SNode>& parameters)
+{
+   for (auto it = parameters.start(); !it.Eof(); it++) {
+      SNode node = *it;
+
+      if (node == lxTemplateSource) {
+         writer.newNode(lxTemplateSource);
+
+         SyntaxTree::copyNode(writer, lxRow, node);
+         SyntaxTree::copyNode(writer, lxCol, node);
+         SyntaxTree::copyNode(writer, lxLength, node);
+
+         SNode sourceNode = node.findChild(lxSourcePath);
+         if (sourceNode != lxNone)
+            writer.appendNode(lxSourcePath, sourceNode.identifier());
+
+         writer.closeNode();
+      }
+   }
+}
+
 void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t reference, List<SNode>& parameters, 
    int bookmark, bool inlineMode)
 {
@@ -599,6 +620,9 @@ void ModuleScope :: generateTemplateProperty(SyntaxWriter& output, ref_t referen
    TemplateGenerator transformer(templateTree);
    SyntaxWriter writer(templateTree);
    writer.newNode(lxRoot);
+
+   copyTemplateSourceInfo(writer, parameters);
+
    transformer.generateTemplateProperty(writer, *this, reference, parameters, bookmark, inlineMode);
    writer.closeNode();
 
@@ -613,6 +637,9 @@ ref_t ModuleScope :: generateTemplate(ref_t reference, List<SNode>& parameters, 
    TemplateGenerator transformer(templateTree);
    SyntaxWriter writer(templateTree);
    writer.newNode(lxRoot);
+   
+   copyTemplateSourceInfo(writer, parameters);
+
    writer.newNode(lxNamespace, ns ? ns : "");
 
    ref_t generatedReference = 0;

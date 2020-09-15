@@ -311,8 +311,8 @@ struct _ModuleScope
       int col = terminal.findChild(lxCol).argument;
       int row = terminal.findChild(lxRow).argument;
       ident_t identifier = terminal.identifier();
-      if (emptystr(identifier))
-         identifier = terminal.identifier();
+      //if (emptystr(identifier))
+      //   identifier = terminal.identifier();
 
       project->raiseError(message, sourcePath, row, col, identifier);
    }
@@ -686,6 +686,7 @@ public:
    virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole) = 0;
    virtual bool doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
    virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;
+   virtual bool isSealedOrClosed(_ModuleScope& scope, ref_t targetRef) = 0;
 
 //   virtual bool isWrapper(ClassInfo& info) = 0;
 //   virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element) = 0;
@@ -726,7 +727,7 @@ public:
       ref_t elementRef, bool noUnboxing, int& stackSafeAttr, int fixedArraySize) = 0;
 //   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, int paramCount, int& stackSafeAttr, bool ignoreMultimethod) = 0;
    virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
-   virtual void injectInterfaceDisaptch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
+   virtual void injectInterfaceDispatch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
    virtual bool injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef) = 0;
 
    // auto generate class flags
