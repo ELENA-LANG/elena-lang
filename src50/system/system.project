@@ -8,7 +8,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>5.1.3</version>
+     <version>5.1.4</version>
      <author>Alex Rakov</author>
   </manifest>
   <files>

@@ -4,7 +4,9 @@ In development:
 
   [development]
     * Lexi project
-        - ide - click on view does not change document
+        - ide : after including a new file; when the file is clicked in Project view a duplicate tab is opened.
+        - ide : correct caption : lixi'ui'win32 : winimpl.l => lexi:ui/win32/winimpl.l
+        - ide : click on view does not change document
         - implement
 
     * #515 : Resolving an interface in run-time 

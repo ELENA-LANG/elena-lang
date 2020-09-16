@@ -143,6 +143,24 @@ namespace collections
             }        
         }
     
+        insert(int index, T object)
+        {
+            theLength.append(1);
+            
+            self.expand();
+            
+            int len := theLength.Value;
+            for (int i := len, i > index, i -= 1)
+            {
+                theArray[i] := theArray[i - 1]
+            };
+            
+            theArray[index] := object
+        }
+        
+        insert(T object)
+            <= insert(0, object);
+    
         /// Removes an object at the specified position
         remove(int index)
         {
