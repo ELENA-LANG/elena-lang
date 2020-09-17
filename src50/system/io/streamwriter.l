@@ -89,13 +89,13 @@ namespace io
         string      theNewLineConstant;
         int         theNewLineLength;
     
-        get abstract Stream Stream() {}
+        get abstract Stream Stream();
     
-        get abstract Encoder Encoder() {}
+        get abstract Encoder Encoder();
     
-        abstract close() {}
+        abstract close();
         
-        abstract write(char[] array, int length) {}
+        abstract write(char[] array, int length);
         
         writeLine(line)
         {

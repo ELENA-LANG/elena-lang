@@ -7,21 +7,21 @@ import system'winforms;
 
 public interface IControl
 {
-    get abstract object Control() {}
+    get abstract object Control();
     
-    get abstract string ID() {}
+    get abstract string ID();
     
-    abstract IControl retrieve(WindowHandle handle) {}
+    abstract IControl retrieve(WindowHandle handle);
     
-    abstract setRegion(int x, int y, int width, int height) {}
+    abstract setRegion(int x, int y, int width, int height);
     
-    abstract open() {}
+    abstract open();
 
-    abstract click() {}
+    abstract click();
 
-    abstract change() {}
+    abstract change();
         
-    abstract close() {}
+    abstract close();
 }
 
 // --- BaseWindowControl ---
@@ -48,7 +48,7 @@ public abstract class BaseWinControl : BaseControl
         ^ nil 
     }
 
-    internal abstract createHandle() {}            
+    internal abstract createHandle();
 
     internal onCreate()
     {
@@ -581,7 +581,7 @@ public abstract class BaseList : BaseWinControl
         theList := new ArrayList()
     }
     
-    abstract appendItem(wide caption) {}
+    abstract appendItem(wide caption);
     
     Items = new
     {

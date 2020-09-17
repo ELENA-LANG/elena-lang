@@ -7495,7 +7495,7 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
 
    CodeScope codeScope(&scope);
 
-   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression, lxNoBody);
    // check if it is a resend
    if (body == lxResendExpression) {
       compileResendExpression(body, codeScope, scope.multiMethod);
@@ -7504,6 +7504,9 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
    // check if it is a dispatch
    else if (body == lxDispatchCode) {
       compileDispatchExpression(body, codeScope);
+   }
+   else if (body == lxNoBody) {
+      scope.raiseError(errNoBodyMethod, body);
    }
    else compileMethodCode(node, body, scope, codeScope);
 
@@ -7557,7 +7560,7 @@ void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
    YieldScope yieldScope(&scope);
    CodeScope codeScope(&yieldScope);
 
-   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression);
+   SNode body = node.findChild(lxCode, lxReturning, lxDispatchCode, lxResendExpression, lxNoBody);
    if (body == lxCode) {
       compileMethodCode(node, body, scope, codeScope);
    }
@@ -7594,11 +7597,16 @@ void Compiler :: compileYieldableMethod(SNode node, MethodScope& scope)
 
 void Compiler :: compileAbstractMethod(SNode node, MethodScope& scope)
 {
-   SNode body = node.findChild(lxCode);
+   SNode body = node.findChild(lxCode, lxNoBody);
    // abstract method should have an empty body
-   if (body != lxNone) {
-      if (body.firstChild() != lxEOP)
-         scope.raiseError(errAbstractMethodCode, node);
+   if (body == lxNoBody) {
+      // NOTE : abstract method should not have a body
+   }
+   else if (body != lxNone) {
+      if (body.firstChild() == lxEOP) {
+         scope.raiseWarning(WARNING_LEVEL_2, wrnAbstractMethodBody, body);
+      }
+      else scope.raiseError(errAbstractMethodCode, node);
    }
    else scope.raiseError(errAbstractMethodCode, node);
 
@@ -7737,7 +7745,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    int classFlags = codeScope.getClassFlags();
    scope.preallocated = 0;
 
-   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode);
+   SNode bodyNode = node.findChild(lxResendExpression, lxCode, lxReturning, lxDispatchCode, lxNoBody);
    if (bodyNode == lxDispatchCode) {
       compileConstructorDispatchExpression(bodyNode, codeScope, scope.message == defConstrMssg);
 

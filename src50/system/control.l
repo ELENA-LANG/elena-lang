@@ -6,16 +6,16 @@
 public interface Enumerator
 {
     /// Returns the current object
-    abstract get() {}
+    abstract get();
     
     /// Goes to the next enumeration member and returns true if it is not the last member
-    abstract bool next() {}
+    abstract bool next();
     
     /// Resets the enumerator
-    abstract reset() {}
+    abstract reset();
     
     /// returns the enumerator owner
-    abstract enumerable() {}
+    abstract enumerable();
     
     Enumerator enumerator() = self;
 }
@@ -24,29 +24,29 @@ public interface Enumerator
 
 public interface Enumerator<T>
 {
-    abstract bool next() {}
+    abstract bool next();
     
-    abstract T get() {}
+    abstract T get();
     
     /// Resets the enumerator
-    abstract reset() {}
+    abstract reset();
     
     /// returns the enumerator owner
-    abstract enumerable() {}
+    abstract enumerable();
 
-    abstract Enumerator cast() {}
+    abstract Enumerator cast();
     
     Enumerator<T> enumerator() = self;
 }
 
 public abstract Enumerable
 {
-    abstract Enumerator enumerator() {}
+    abstract Enumerator enumerator();
 }
 
 public abstract Enumerable<T>
 {
-    abstract Enumerator<T> enumerator() {}
+    abstract Enumerator<T> enumerator();
 }
 
 // --- Indexer ---
@@ -55,69 +55,69 @@ public abstract Enumerable<T>
 public interface Indexer
 {
     /// Returns false if the index out of range
-    get abstract bool Available() {}
+    get abstract bool Available();
 
     /// Returns the current member
-    abstract get() {}
+    abstract get();
     
     /// Sets the current member
-    abstract set(object) {}
+    abstract set(object);
     
     abstract int Index
     {
         /// Reads the current index
-        get() {}
+        get();
         
         /// Sets the index by specified value
-        set(int retVal) {}
+        set(int retVal);
     }
 
-    abstract appendIndex(int anIndex) {}
+    abstract appendIndex(int anIndex);
    
     abstract int Length
     {
-        get() {}
+        get();
     }
 }
 
 public interface Indexer<T>
 {
     /// Returns false if the index out of range
-    get abstract bool Available() {}
+    get abstract bool Available();
 
     /// Returns the current member
-    abstract T get() {}
+    abstract T get();
     
     /// Sets the current member
-    abstract set(T object) {}
+    abstract set(T object);
 
     abstract int Index
     {
         /// Reads the current index
-        get() {}
+        get();
         
         /// Sets the index by specified value
-        set(int retVal) {}
+        set(int retVal);
     }
 
-    abstract appendIndex(int anIndex) {}
+    abstract appendIndex(int anIndex);
                                 
     abstract int Length
     {
-        get() {}
+        get();
     }
     
-    abstract Indexer cast() {}
+    abstract Indexer cast();
 }
 
 public abstract Indexable
 {
-   abstract Indexer indexer() {}
+   abstract Indexer indexer();
 }
 
 public abstract Indexable<T>
 {
-   abstract Indexer<T> indexer() {}
+   abstract Indexer<T> indexer();
 }
 
 // --- MatrixIndexer ---
@@ -126,46 +126,46 @@ public abstract Indexable<T>
 public interface Indexer2D
 {
     /// Returns false if the index out of range
-    get abstract bool Available() {}
+    get abstract bool Available();
 
     /// Returns the current member
-    abstract get() {}
+    abstract get();
     
     /// Sets the current member
-    abstract set(object) {}
+    abstract set(object);
     
     abstract int Index1
     {
         /// Reads the current index
-        get() {}
+        get();
         
         /// Sets the index by specified value
-        set(int retVal) {}
+        set(int retVal);
     }
     
     abstract int Index2
     {
         /// Reads the current index
-        get() {}
+        get();
         
         /// Sets the index by specified value
-        set(int retVal) {}
+        set(int retVal);
     }
     
     /// Increaments the index by specified value
-    abstract appendIndex1(int offs) {}
+    abstract appendIndex1(int offs);
     
     /// Increaments the index by specified value
-    abstract appendIndex2(int offs) {}
+    abstract appendIndex2(int offs);
 
     abstract int Length1
     {
-        get() {}
+        get();
     }
 
     abstract int Length2
     {
-        get() {}
+        get();
     }
 }
 
@@ -175,7 +175,7 @@ public interface Indexer2D
 public interface Func
 {
     /// Executes the action
-    abstract function() {}
+    abstract function();
     
     /// Executes the action while the condition is true
     sealed doWhile(b)
@@ -203,7 +203,7 @@ public interface Func
 public interface Func1
 {
     /// Executes the action
-    abstract function(param) {}
+    abstract function(param);
     
     /// Executes the function for every enumeration item
     run(Enumerator en)
@@ -233,7 +233,7 @@ public interface Func1
 public interface Func<T, TResult>
 {
     /// Executes the action
-    abstract TResult function(T param) {}
+    abstract TResult function(T param);
     
     Func1 cast()
         = (x => self(x));
@@ -251,7 +251,7 @@ public interface Func<T, TResult>
 public interface Func2
 {
     /// Executes the action
-    abstract function(param1, param2) {}
+    abstract function(param1, param2);
     
     /// Executes the function for parameters and every enumeration item
     sealed run(object param, Enumerator enumerator)
@@ -280,7 +280,7 @@ public interface Func2
 public interface Func<T1,T2,TResult>
 {
     /// Executes the action
-    abstract TResult function(T1 param1, T2 param2) {}
+    abstract TResult function(T1 param1, T2 param2);
     
     Func2 cast()
         = (x,y => self(x,y));
@@ -290,7 +290,7 @@ public interface Func<T1,T2,TResult>
 public interface Func3
 {
     /// Executes the function
-    abstract function(param1, param2, param3) {}
+    abstract function(param1, param2, param3);
     
     /// Executes the function for parameters and every enumeration item
     sealed run(object p1, object p2, Enumerator e)
@@ -319,7 +319,7 @@ public interface Func3
 public interface Func<T1,T2,T3,TResult>
 {
     /// Executes the action
-    abstract TResult function(T1 param1, T2 param2, T3 param3) {}
+    abstract TResult function(T1 param1, T2 param2, T3 param3);
     
     Func3 cast()
         = (x,y,z => self(x,y,z));
@@ -329,7 +329,7 @@ public interface Func<T1,T2,T3,TResult>
 public interface Func4
 {
     /// Executes the function
-    abstract function(param1, param2, param3, param4) {}
+    abstract function(param1, param2, param3, param4);
     
     /// Executes the function for parameters and every enumeration item
     sealed run(object p1, object p2, object p3, Enumerator e)
@@ -358,7 +358,7 @@ public interface Func4
 public interface Func<T1,T2,T3,T4,TResult>
 {
     /// Executes the action
-    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4) {}
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4);
     
     Func4 cast()
         = (a,b,c,d => self(a,b,c,d));
@@ -368,7 +368,7 @@ public interface Func<T1,T2,T3,T4,TResult>
 public interface Func5
 {
     /// Executes the function
-    abstract function(param1, param2, param3, param4, param5) {}
+    abstract function(param1, param2, param3, param4, param5);
 
     /// Executes the function for parameters and every enumeration item
     sealed run(object p1, object p2, object p3, object p4, Enumerator e)
@@ -397,7 +397,7 @@ public interface Func5
 public interface Func<T1,T2,T3,T4,T5,TResult>
 {
     /// Executes the action
-    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5) {}
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5);
 
     Func5 cast()
         = (a,b,c,d,e => self(a,b,c,d,e));
@@ -407,7 +407,7 @@ public interface Func<T1,T2,T3,T4,T5,TResult>
 public interface Func6
 {
     /// Executes the function
-    abstract function(param1, param2, param3, param4, param5, param6) {}
+    abstract function(param1, param2, param3, param4, param5, param6);
 
     /// Executes the function for parameters and every enumeration item
     sealed run(object p1, object p2, object p3, object p4, object p5, Enumerator e)
@@ -436,7 +436,7 @@ public interface Func6
 public interface Func<T1,T2,T3,T4,T5,T6,TResult>
 {
     /// Executes the action
-    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6) {}
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6);
 
     Func6 cast()
         = (a,b,c,d,e,f => self(a,b,c,d,e,f));
@@ -445,7 +445,7 @@ public interface Func<T1,T2,T3,T4,T5,T6,TResult>
 public interface Func7
 {
     /// Executes the function
-    abstract function(param1, param2, param3, param4, param5, param6, param7) {}
+    abstract function(param1, param2, param3, param4, param5, param6, param7);
 
     /// Executes the function for parameters and every enumeration item
     sealed run(object p1, object p2, object p3, object p4, object p5, object p6, Enumerator e)
@@ -474,7 +474,7 @@ public interface Func7
 public interface Func<T1,T2,T3,T4,T5,T6,T7, TResult>
 {
     /// Executes the action
-    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7) {}
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7);
 
     Func7 cast()
         = (a,b,c,d,e,f,g => self(a,b,c,d,e,f,g));
@@ -484,7 +484,7 @@ public interface Func<T1,T2,T3,T4,T5,T6,T7, TResult>
 public interface Func8
 {
     /// Executes the function
-    abstract function(param1, param2, param3, param4, param5, param6, param7, param8) {}
+    abstract function(param1, param2, param3, param4, param5, param6, param7, param8);
 
     /// Executes the function for parameters and every enumeration item
     sealed run(object p1, object p2, object p3, object p4, object p5, object p6, object p7, Enumerator e)
@@ -513,7 +513,7 @@ public interface Func8
 public interface Func<T1,T2,T3,T4,T5,T6,T7,T8, TResult>
 {
     /// Executes the action
-    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8) {}
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8);
 
     Func8 cast()
         = (a,b,c,d,e,f,g,h => self(a,b,c,d,e,f,g,h));
@@ -523,7 +523,7 @@ public interface Func<T1,T2,T3,T4,T5,T6,T7,T8, TResult>
 public interface Func9
 {
     /// Executes the function
-    abstract function(param1, param2, param3, param4, param5, param6, param7, param8, param9) {}
+    abstract function(param1, param2, param3, param4, param5, param6, param7, param8, param9);
 
     /// Executes the function for parameters and every enumeration item
     sealed run(object p1, object p2, object p3, object p4, object p5, object p6, object p7, object p8, Enumerator e)
@@ -552,7 +552,7 @@ public interface Func9
 public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9, TResult>
 {
     /// Executes the action
-    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9) {}
+    abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8, T9 param9);
     
     Func9 cast()
         = (a,b,c,d,e,f,g,h,i => self(a,b,c,d,e,f,g,h,i));
@@ -562,7 +562,7 @@ public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9, TResult>
 public interface Func10
 {
     /// Executes the function
-    abstract function(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10) {}
+    abstract function(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10);
 
     /// Executes the function for parameters and every enumeration item
     sealed run(object p1, object p2, object p3, object p4, object p5, object p6, object p7, object p8, object p9, Enumerator e)
@@ -593,7 +593,7 @@ public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10, TResult>
 {
     /// Executes the action
     abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8,
-                            T9 param9, T10 param10) {}
+                            T9 param9, T10 param10);
     
     Func10 cast()
         = (a,b,c,d,e,f,g,h,i,j => self(a,b,c,d,e,f,g,h,i,j));
@@ -603,7 +603,7 @@ public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10, TResult>
 public interface Func11
 {
     /// Executes the function
-    abstract function(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11) {}
+    abstract function(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11);
 
     /// Executes the function for parameters and every enumeration item
     sealed run(object p1, object p2, object p3, object p4, object p5, object p6, object p7, object p8, 
@@ -635,7 +635,7 @@ public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,TResult>
 {
     /// Executes the action
     abstract TResult function(T1 param1, T2 param2, T3 param3, T4 param4, T5 param5, T6 param6, T7 param7, T8 param8,
-                            T9 param9, T10 param10, T11 param11) {}
+                            T9 param9, T10 param10, T11 param11);
 
     Func11 cast()
         = (a,b,c,d,e,f,g,h,i,j,k => self(a,b,c,d,e,f,g,h,i,j,k));
@@ -645,7 +645,7 @@ public interface Func<T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,TResult>
 
 public abstract BaseLazyExpression
 {
-    abstract function() {}
+    abstract function();
     
     dispatch() => intern system'core_routines'__lazyexpression;
 }

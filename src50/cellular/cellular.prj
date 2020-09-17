@@ -10,7 +10,7 @@
     </project>
     <manifest>
       <name>ELENA Cellular Library</name>
-      <version>5.0.1</version>
+      <version>5.2.0</version>
       <author>Alex Rakov</author>
     </manifest>
     <files>

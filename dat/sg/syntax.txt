@@ -60,6 +60,7 @@ __define DBLCOLON_EXPRESSION   364603
 __define RET_EXPRESSION	       364848
 __define RESEND                364912  
 __define SWITCHING	       365136
+__define NO_BODY               365232  
 
 __define eof            	 8208
 __define identifier 	 	 8209
@@ -183,10 +184,14 @@ METHOD_BODY ->
 	| = RET_EXPRESSION DECLARATION_END
 	| => DISPATCH DECLARATION_END
 	| <= RESEND RESEND_DECLARATION
+	| NO_BODY
 
 RESEND_DECLARATION ->
 	DECLARATION_END
 	| BLOCK
+
+NO_BODY ->
+	DECLARATION_END
 
 DISPATCH ->
 	EXPRESSION

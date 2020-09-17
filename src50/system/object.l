@@ -135,34 +135,34 @@ public interface BoolValue
     };
                         
     [info:"determines whether the specified object is equal to the current object boolean value;<br/>has to be implemented"]
-    abstract bool equal(bool f) {}
+    abstract bool equal(bool f);
 
     [info:"executes trueAction if the value is true;<br/>has to be implemented"]
-    abstract if(trueAction) {}
+    abstract if(trueAction);
 
     [info:"executes trueAction if the value is true or falseAction otherwise;<br/>has to be implemented"]
-    abstract if(trueAction,falseAction) {}
+    abstract if(trueAction,falseAction);
 
     [info:"executes action if the value is false;<br/>has to be implemented"]
-    abstract ifnot(action) {}
+    abstract ifnot(action);
 
     [info:"returns trueVal if the value is true or falseVal otherwise;<br/>has to be implemented"]
-    abstract iif(object trueVal, object falseVal) {}
+    abstract iif(object trueVal, object falseVal);
 
     [info:"executes logical OR operation<;br/>has to be implemented"]
-    abstract bool or(expr) {}
+    abstract bool or(expr);
 
     [info:"executes logical AND operation;<br/>has to be implemented"]
-    abstract bool and(expr) {}
+    abstract bool and(expr);
 
     [info:"executes logical XOR operation;<br/>has to be implemented"]
-    abstract bool xor(expr) {}
+    abstract bool xor(expr);
 
     [info:"inverts the value;<br/>has to be implemented"]
-    get abstract bool Inverted() {}
+    get abstract bool Inverted();
 
     [info:"clones the value;<br/>has to be implemented"]
-    abstract bool clone() {}
+    abstract bool clone();
 }
 
 public const true = BoolValue.true;

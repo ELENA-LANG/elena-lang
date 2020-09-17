@@ -4,11 +4,11 @@ import system'routines;
 
 interface BaseStrategy
 {
-    abstract at(Indexer[] indexers, int length) {}
+    abstract at(Indexer[] indexers, int length);
     
-    abstract BaseStrategy eval(Indexer[] indexers, int length) {}
+    abstract BaseStrategy eval(Indexer[] indexers, int length);
     
-    get abstract bool Result() {}
+    get abstract bool Result();
 }
 
 // --- Combination strategies ---

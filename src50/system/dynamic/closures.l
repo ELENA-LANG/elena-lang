@@ -2,7 +2,7 @@
 
 public interface TapeFunction
 {
-    abstract mixin function(params object[] args) {}
+    abstract mixin function(params object[] args);
 }
 
 // --- DynamicMessageFunction ---

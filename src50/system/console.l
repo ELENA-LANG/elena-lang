@@ -2,13 +2,13 @@
 
 public interface IConsoleReader
 {
-    abstract string readLine() {}
+    abstract string readLine();
     
-    abstract wide readWideLine() {}
+    abstract wide readWideLine();
     
-    abstract read(ref char retVal) {}
+    abstract read(ref char retVal);
     
-    get abstract bool KeyAvailable() {}
+    get abstract bool KeyAvailable();
 }
 
 // --- Console ---

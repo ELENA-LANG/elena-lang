@@ -7,9 +7,9 @@ namespace text
     
     public interface Encoder
     {
-        abstract convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength) {} 
+        abstract convert(int index, ref int length, byte[] byteArray, char[] output, ref int outputLength);
     
-        abstract convert(int index, ref int length, char[] charArray, byte[] output, ref int outputLength) {}
+        abstract convert(int index, ref int length, char[] charArray, byte[] output, ref int outputLength);
         
         convert(int index, ref int length, string s, byte[] output, ref int outputLength)
         {

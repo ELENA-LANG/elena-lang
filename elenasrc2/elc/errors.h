@@ -97,6 +97,7 @@ namespace _ELENA_
    constexpr auto errIllegalConstructorAbstract = "%s(%d:%d): error 177: An abstract class cannot have a public constructor\n";
    constexpr auto errUnresolvedDispatch         = "%s(%d:%d): error 178: a target does not handle dispatched message\n";
    constexpr auto errUnresolvedInterface        = "%s(%d:%d): error 179: a class does not contain an interface implementation\n";
+   constexpr auto errNoBodyMethod               = "%s(%d:%d): error 180: only abstract method can have no body\n";
 
    constexpr auto errUnknownBaseClass           = "internal error 500: Base class doesn't exist\n";
    constexpr auto errNotDefinedBaseClass        = "internal error 501: Base class doesn't defined\n";
@@ -144,6 +145,7 @@ namespace _ELENA_
    constexpr auto wrnUnknownEOPConversion = "%s(%d:%d): warning 428: a conversion constructor is not found for self\n";
    constexpr auto wrnUnresolvedDispatch   = "%s(%d:%d): warning 429: a target does not handle dispatched message\n";
    constexpr auto wrnUnresolvedInterface  = "%s(%d:%d): warning 430: a class does not contain an interface implementation\n";
+   constexpr auto wrnAbstractMethodBody   = "%s(%d:%d): warning 431: an abstract method should have no body\n";
    constexpr auto wrnInvalidModule        = "Invalid or unknown module %s\n";
 
    constexpr auto infoAbstractMetod       = "abstract method %s";

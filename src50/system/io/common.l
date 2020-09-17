@@ -9,16 +9,16 @@ namespace io
     {
         abstract int Length
         {
-            get() {}
+            get();
             
-            set(int retVal) {}
+            set(int retVal);
         }
         
         abstract int Index
         {
-            get() {}
+            get();
             
-            set(int retVal) {}
+            set(int retVal);
         }
     
         appendIndex(int offs)
@@ -39,11 +39,11 @@ namespace io
             self.Index := newIndex
         }
             
-        abstract read(byte[] dump, ref int length) {}
+        abstract read(byte[] dump, ref int length);
         
-        abstract write(byte[] dump, int length) {}
+        abstract write(byte[] dump, int length);
         
-        abstract close() {}
+        abstract close();
     }
 
 }

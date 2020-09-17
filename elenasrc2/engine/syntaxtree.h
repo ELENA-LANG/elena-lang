@@ -225,6 +225,7 @@ enum LexicalType
    lxCondBoxing               = 0x058290,
    lxIndexSaving              = 0x0582A0,
    lxIndexLoading             = 0x0582A1,
+   lxNoBody                   = 0x0592B0,
 
    // attributes
    lxAttribute                = 0x000F00,

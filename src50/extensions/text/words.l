@@ -6,9 +6,9 @@ namespace text
     
     public interface Statemachine
     {
-        abstract bool proceed(char ch) {}
+        abstract bool proceed(char ch);
         
-        abstract bool isWhitespace() {}
+        abstract bool isWhitespace();
     }
     
     public class SimpleStatemachine : Statemachine

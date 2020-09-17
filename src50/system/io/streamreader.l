@@ -134,15 +134,15 @@ namespace io
         string      theNewLineConstant;
         int         theNewLineLength;
     
-        abstract read(char[] array, ref int actualLength) {}
+        abstract read(char[] array, ref int actualLength);
     
-        get abstract Stream Stream() {}
+        get abstract Stream Stream();
     
-        get abstract Encoder Encoder() {}
+        get abstract Encoder Encoder();
     
-        abstract close() {}
+        abstract close();
         
-        get abstract bool Available() {}
+        get abstract bool Available();
                 
         string readLine()
         {

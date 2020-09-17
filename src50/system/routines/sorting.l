@@ -2,12 +2,12 @@ public interface SortingAgent
 {
     abstract int Length
     {
-        get() {}
+        get();
     }    
     
-    abstract at(int index) {}
+    abstract at(int index);
     
-    abstract exchange(int i, int j) {}
+    abstract exchange(int i, int j);
 }
 
 public sealed ArraySortingAgent : SortingAgent

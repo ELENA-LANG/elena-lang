@@ -4,7 +4,7 @@ import extensions;
 
 public interface RuleSet
 {
-    abstract proceed(Space s, int i, int j, ref int newState) {}
+    abstract proceed(Space s, int i, int j, ref int newState);
 }
 
 public singleton randomSet : RuleSet

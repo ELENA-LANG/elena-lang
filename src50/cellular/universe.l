@@ -21,18 +21,18 @@ public interface Space
     abstract int Rows
     {
         /// Returns the space actual number of rows
-        get() {}
+        get();
     }
     
     abstract int Columns
     {
         /// Returns the space actual number of columns
-        get() {}
+        get();
     }
     
-    abstract update(RuleSet rs) {}
+    abstract update(RuleSet rs);
     
-    abstract read(int i, int j, ref int retVal) {}
+    abstract read(int i, int j, ref int retVal);
 
     embeddable int at(int i, int j)
     {

@@ -27,15 +27,15 @@ namespace expressions
     
     public interface ExpressionScope
     {
-        get abstract int ScopeLevel() {}
+        get abstract int ScopeLevel();
         
-        get abstract ExpressionScope Previous() {}
+        get abstract ExpressionScope Previous();
         
-        abstract TapeFunction resolve(ScopeVariable variable, int mode) {}
+        abstract TapeFunction resolve(ScopeVariable variable, int mode);
         
-        abstract TapeFunction resolveExtension(Message message) {}
+        abstract TapeFunction resolveExtension(Message message);
         
-        abstract declare(ScopeVariable variable) {}
+        abstract declare(ScopeVariable variable);
     }
 
     public singleton IdleExpressionScope : ExpressionScope
@@ -262,11 +262,11 @@ namespace expressions
             }                                                
         }
         
-        get abstract bool IsOperation() {}
+        get abstract bool IsOperation();
                                                                              
-        abstract prepare(ExpressionScope scope) {}
+        abstract prepare(ExpressionScope scope);
                                         
-        abstract saveTo(List<TapeFunction> list, ExpressionScope scope) {}
+        abstract saveTo(List<TapeFunction> list, ExpressionScope scope);
     
         saveTo(List<Tuple<Message,DynamicTape>> list, ExpressionScope scope)
         {
@@ -1864,7 +1864,7 @@ namespace expressions
 
     public abstract DynamicSymbol
     {
-        abstract compile(module, ExpressionScope scope) {}
+        abstract compile(module, ExpressionScope scope);
     }
  
     public class DynamicImport : DynamicSymbol

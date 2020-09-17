@@ -2,10 +2,10 @@
 public abstract class BaseVariable
 {
     [info:"returns the variable value;<br/>should be overridden"]
-    get abstract Value() {}
+    get abstract Value();
     
     [info:"set the variable value;<br/>should be overridden"]
-    set abstract Value(o) {}
+    set abstract Value(o);
 }
 
 [info:"a variable template"]
@@ -61,7 +61,7 @@ public abstract class BaseValue
         <= less(var.Value);
     
     [info:"Returns true if the object value is less than o; otherwise, false;<br/>should be overridden"]
-    abstract bool less(o) {}
+    abstract bool less(o);
 
     [info:"Returns true if the object value is greater than o; otherwise, false;<br/>by default sends less[2] to o with the object as an argument"]
     bool greater(o) = o.less(self);
@@ -91,16 +91,16 @@ public abstract class BaseNumber : BaseValue
         <= divide(var.Value);
     
     [info:"adds the value;<br/>should be overridden"]
-    abstract add(o) {}
+    abstract add(o);
 
     [info:"subtracts the value;<br/>should be overridden"]
-    abstract subtract(o) {}
+    abstract subtract(o);
 
     [info:"multiplies by the value;<br/>should be overridden"]
-    abstract multiply(o) {}
+    abstract multiply(o);
 
     [info:"divides by the value;<br/>should be overridden"]
-    abstract divide(o) {}
+    abstract divide(o);
     
     [info:"returns the negative value of a number"]
     Negative
@@ -122,13 +122,13 @@ public abstract class IntBaseNumber : BaseNumber
         <= xor(var.Value);
     
     [info:"executes bitwise AND operation;<br/>should be overridden"]
-    abstract and(o) {}
+    abstract and(o);
 
     [info:"executes bitwise OR operation;<br/>should be overridden"]
-    abstract or(o) {}
+    abstract or(o);
     
     [info:"executes bitwise XOR operation;<br/>should be overridden"]
-    abstract xor(o) {}
+    abstract xor(o);
     
     [info:"returns true if all the mask bits are set"]
     bool allMask(operand)
