@@ -947,19 +947,11 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 }
 
 void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
-   List<ref_t>& implicitMultimethods, LexicalType methodType)
+   List<ref_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info)
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-      //ref_t message = *it;
-
-      /*if (methodType == lxConstructor && getParamCount(message) == 1 
-         && getAction(message) == getAction(scope.constructor_message)) 
-      {
-         // HOTFIX : implicit multi-method should be compiled differently
-         compiler.injectVirtualMultimethodConversion(scope, node, *it, methodType);
-      }
-      else */compiler.injectVirtualMultimethod(scope, node, *it, methodType);
+      compiler.injectVirtualMultimethod(scope, node, *it, methodType, info);
    }
 }
 

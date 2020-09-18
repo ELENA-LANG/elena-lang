@@ -11,6 +11,7 @@
   - #514 : Incorrect warning message for unhandled function message 
   - #516 : Dispatch handle : dispatching to an expression 
   - #517 : Interface dispatcher : Check if all abstract methods are implemented 
+  - #520 : Parent multi-method default handler is not invoked by its children 
 - IDE
   - several usability bugs fixed
 - TOOLS

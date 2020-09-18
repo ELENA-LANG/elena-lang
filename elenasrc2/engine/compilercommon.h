@@ -120,11 +120,6 @@ constexpr auto V_INT16ARRAY      = 0x8000000Cu;
 constexpr auto V_INT8ARRAY       = 0x8000000Du;
 constexpr auto V_OBJECT          = 0x8000000Eu;
 constexpr auto V_UNBOXEDARGS     = 0x8000000Fu;
-//constexpr auto V_CLASSNAME       = 0x80000010u;
-
-////#define V_PARAMETER      (ref_t)-02
-//constexpr auto V_STRCONSTANT     = 0x80000010u; // used for explicit constant operations
-////#define V_TAPEGROUP      (ref_t)-8209
 
 enum class Visibility
 {
@@ -204,9 +199,6 @@ public:
 
    virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall) = 0;
 };
-
-//// class forward declaration
-//class _Compiler;
 
 // --- _ModuleScope ---
 
@@ -413,14 +405,12 @@ public:
    virtual void injectBoxingExpr(SNode& node, bool variable, int size, ref_t targetClassRef, bool arrayMode = false) = 0;
    virtual void injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef,
       int stacksafeAttr, bool embeddableAttr) = 0;
-//////   virtual void injectFieldExpression(SyntaxWriter& writer) = 0;
 
 //   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
    virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
    virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef) = 0;
-   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
-//   virtual void injectVirtualMultimethodConversion(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
-////   virtual void injectVirtualArgDispatcher(_CompilerScope& scope, SNode classNode, ref_t message, LexicalType methodType) = 0;
+   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, 
+      ClassInfo& info) = 0;
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef) = 0;
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument) = 0;
 ////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
@@ -430,10 +420,8 @@ public:
 
    virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 
-////   virtual void injectVirtualStaticConstField(_CompilerScope& scope, SNode classNode, ident_t fieldName, ref_t fieldRef) = 0;
    virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex) = 0;
 
-////   virtual void generateListMember(_CompilerScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
    virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
    virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
@@ -526,20 +514,6 @@ public:
 
       eaScopeMask          = 0x0300041400A,
       eaObjectMask         = 0x008A821B2F4,
-
-//      eaWrap               = 0x00000001000,
-//      eaDirect             = 0x00000004000,
-//      eaYield              = 0x00000040000,
-//eaAutoSize           = 0x00002000000,
-//
-//      eaAssigningExpr      = 0x00000100000,
-//      eaCallExpr           = 0x00000400000,
-//      eaRetExpr            = 0x00004000000,
-//      eaClosure            = 0x00080000000,
-//      eaSubCodeClosure     = 0x00800000000,
-//      eaRefExpr            = 0x20000000000,
-//
-//      eaClosureMask        = 0x01C00008000,
    };
 
    struct ExpressionAttributes
@@ -719,7 +693,7 @@ public:
    virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, ref_t message,
       ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags) = 0;
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
-      List<ref_t>& implicitMultimethods, LexicalType methodType) = 0;
+      List<ref_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info) = 0;
    virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods) = 0;
    virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
       ref_t elementRef, int tempLocal) = 0;
