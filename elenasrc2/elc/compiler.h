@@ -1392,7 +1392,7 @@ public:
       LexicalType methodType, ClassInfo& info);
    void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, 
       ref_t resendMessage, bool privateOne, ref_t callTargetRef);
-   virtual void injectVirtualStrongTypedMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType,
+   bool injectVirtualStrongTypedMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType,
       ref_t resendMessage, bool privateOne);
    virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
    virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);
