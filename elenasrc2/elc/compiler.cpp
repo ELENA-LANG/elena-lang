@@ -6840,6 +6840,10 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 
 void Compiler :: warnOnUnresolvedDispatch(SNode node, Scope& scope, ref_t message, bool errorMode)
 {
+   // ingore dispatch message
+   if (message == scope.moduleScope->dispatch_message)
+      return;
+
    scope.moduleScope->printMessageInfo(infoAbstractMetod, message);
 
    SNode terminal = node.firstChild(lxTerminalMask);

@@ -5,9 +5,9 @@ In development:
   [development]
     * Lexi project
         - fix test
-        - test conversion routines
-        - test extension  (rosette code)
-        - test template extension (rosette code)
+        - fix elt : evaluating sampleX.es
+        - fix samples : helloworlds
+        - fix samples 
 
         - typecasting MainWindow to Window - see draw
         - in-place initialization is not invoked in a child class
@@ -26,6 +26,7 @@ In development:
     * [ compilation speed - Amicable pairs variants ]
     * create a new class in run-time with fields
     * [API Docs : Func1 has one argument which is not shown]
+    * tscript : support property assignment
     * compiled code to expression tree
     * [pipeline]
     * expression tree to source

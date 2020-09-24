@@ -20,7 +20,7 @@ public singleton messageBox
     
     int open(string caption, string message, int flags)
     {
-        WindowHandle handle := cast WindowHandle(forward program.MainWindow);
+        WindowHandle handle := cast WindowHandle(forward program.MainWindow) \ back:nil;
         
         if (nil == handle)
             { handle := new WindowHandle() };
