@@ -2589,6 +2589,7 @@ procedure __exception."on[2]"
   pusha
   peekfi -3
   movm   mssgconst : "#invoke[1]"
+
   callvi 0
 
 labReturn:
@@ -2600,9 +2601,9 @@ labReturn:
 
 labNotFound:
 
-  movs    9
-  address labReturn
-  else    labContinueError
+  // ; movs    9
+  // ; address labReturn
+  // ; else    labContinueError
 
   restore 1
 
