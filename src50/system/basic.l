@@ -1995,23 +1995,23 @@ public sealed const struct CharValue : BaseValue
 {
     embeddable __raw theValue[4];
 
-    /// Returns the minimal possible character value (0)
+    [info:"Returns the minimal possible character value (0)"]
     static char MinValue
         = $0;
 
-    /// Returns the maximal possible character value (010FFFFh)
+    [info:"Returns the maximal possible character value (010FFFFh)"]
     static char MaxValue
         = $010FFFFh;
 
-    /// Creates the object with a default value (0)
+    [info:"Creates the object with a default value (0)"]
     constructor()
         = /*$0*/0;
 
-    /// Creates the object with specified value
+    [info:"Creates the object with specified value"]
     constructor(char value)
         = value;
 
-    /// Creates the object with specified numeric value
+    [info:"Creates the object with specified numeric value"]
     constructor load(int n)
         = charConvertor.convert(n);
 
@@ -2084,19 +2084,19 @@ public sealed const struct CharValue : BaseValue
     bool less(wide val)
         = val < (cast wide(self));
 
-    /// Clones the value
+    [info:"Clones the value"]
     char clone() = new CharValue(self);
 
-    /// Returns the literal value
+    [info:"Returns the literal value"]
     string toPrintable() = stringConvertor.convert(self);
 
-    /// Returns the literal value
+    [info:"Returns the literal value"]
     string cast() = stringConvertor.convert(self);
     
-    /// Returns the wide literal value
+    [info:"Returns the wide literal value"]
     wide cast() = wideConvertor.convert(self);
 
-    /// Retuns the number of bytes to represent the symbol        
+    [info:"Retuns the number of bytes to represent the symbol in UTF-8"]
     get int Length()
     {
         intern system'core_routines'__char.readLengthTo(self, ref int retVal);
@@ -2104,7 +2104,7 @@ public sealed const struct CharValue : BaseValue
         ^ retVal
     }
     
-    /// Reads the number of bytes to represent the symbol
+    [info:"Reads the number of bytes to represent the symbol in UTF-16"]
     get int WideLength()
     {
         int length := self.Length;
@@ -2118,10 +2118,10 @@ public sealed const struct CharValue : BaseValue
 
 // --- nil constant ---
 
-/// A nil value
+[info:"A nil value"]
 public singleton nilValue
 {
-    /// Returns true if the specified object is nil.
+    [info:"Returns true if the specified object is nil."]
     bool equal(object)
     {
         (nil == object)
@@ -2133,9 +2133,7 @@ public singleton nilValue
         ^ false
     }
     
-    /// Returns nil
-    ///
-    /// Any typecasting message will be handled and nil value returned
+    [info:"Returns nil<br/>Any typecasting message will be handled and nil value returned"]
     generic() = nil;
 }
 
@@ -2145,7 +2143,7 @@ public class BaseExtender
 {
     object theObject;
     
-    /// Returns true if the specified object is equal to the current object; otherwise, false.
+    [info:"Returns true if the specified object is equal to the current object; otherwise, false."]
     bool equal(object)
         => theObject;
 
@@ -2155,17 +2153,15 @@ public class BaseExtender
     dispatch() => theObject;
 }
 
-/// A generic variable. 
-///
-/// Extends an assigned value
+[info:"A generic variable.<br/>Extends an assigned value"]
 public sealed class Variable : BaseVariable, ref<object>
 {
-    /// Creates the empty variable
+    [info:"Creates the empty variable"]
     constructor()
     {
     }        
         
-    /// Creates the variable
+    [info:"Creates the variable"]
     constructor(value)
     {
         this value := value
@@ -2202,25 +2198,23 @@ public sealed class Variable : BaseVariable, ref<object>
 
 // --- KeyValue ---
 
-/// A key - object pair
-///
-/// Extends the object with a key property
+[info:"A key - object pair<br/>Extends the object with a key property"]
 public sealed class KeyValue
 {
     object theKey;
     object theObject;
     
-    /// Creates a new objext
+    [info:"Creates a new object"]
     constructor new(key, object)
     {
         theKey := key;
         theObject := object
     }
     
-    /// Returns the key
+    [info:"Returns the key"]
     Key = theKey;
     
-    /// Returns the key
+    [info:"Returns the key"]
     Value = theObject;
 
     set Value(object)
@@ -2234,7 +2228,7 @@ public sealed class KeyValue
     string toPrintable()
         => theObject;
                                                                                       
-    /// Redirects the incoming messages to the object
+    [info:"Redirects the incoming messages to the object"]
     dispatch() => theObject;
 }
 

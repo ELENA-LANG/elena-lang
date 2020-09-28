@@ -4,6 +4,7 @@
 - ELENA
   - binary incompatible due to module structure change
   - #519 : abstract methods should not have a body
+  - #521 : Auto generating multi-method default handler with type casting
 - ELC
   - a warning shown when an object cannot be converted into another one
   - a warning shown when an object does not handle a message (for strong-typed ones)

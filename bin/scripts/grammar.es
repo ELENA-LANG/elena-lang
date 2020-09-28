@@ -173,6 +173,7 @@
 
   #define root_expr       ::= variable;
   #define root_expr       ::= expression;
+  #define root_expr       ::= prop_assign_expr;
 
   #define ret_expression  ::= 
 <=
@@ -185,14 +186,13 @@
 
   #define expression      ::= $ object operation?;
   #define expression      ::= new_call;
-  #define expression      ::= assign_expr;
+  #define expression      ::= var_assign_expr;
 
   #define loop_expr       ::= object "operator" "=" "?" body_expr;
 
   #define operation       ::= message_call;
   #define operation       ::= function_call;
   #define operation       ::= get_property;
-  #define operation       ::= set_property;
   #define operation       ::= operator_call;
   #define operation       ::= if_operator;
 
@@ -225,15 +225,6 @@
                )
 =>; 
 
-  #define set_property    ::= ^
-<=
-               system'dynamic'expressions'SetPropertyExpression (
-=>
-                              "expression" "(" object message "property_parameter" "=" "0" ")" "assign" "=" "0" expression
-<=
-               )
-=>; 
-
   #define operator_call   ::= ^
 <=
                system'dynamic'expressions'MessageCallExpression (
@@ -254,7 +245,16 @@
                )
 =>; 
 
-  #define assign_expr     ::=
+  #define prop_assign_expr::= ^
+<=
+               system'dynamic'expressions'SetPropertyExpression (
+=>                               
+                                 "expression" "(" object message "property_parameter" "=" "0" ")" assigning
+<=
+               )
+=>;
+
+  #define var_assign_expr ::=
 <=
                system'dynamic'expressions'AssigningExpression (
 =>

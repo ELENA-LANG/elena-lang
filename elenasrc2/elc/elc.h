@@ -3,7 +3,7 @@
 //
 //      This file contains the common constants of the command-line
 //      compiler and a ELC project class
-//                                              (C)2005-2020, by Alexei Rakov
+//                                             (C)2005-2020, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elcH
@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0190
+#define ELC_REVISION_NUMBER         0x0194
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -36,11 +36,10 @@ constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
 #endif
 
 // --- ELC command-line parameters ---
-//#define ELC_PRM_CONFIG              'c'
 #define ELC_PRM_DEBUGINFO           'd'
 #define ELC_PRM_OUTPUT_PATH         'o'
 #define ELC_PRM_LIB_PATH            'p'
-//#define ELC_PRM_TARGET              't'
+#define ELC_PRM_TEMPLATE            't'
 #define ELC_PRM_WARNING             'w'
 #define ELC_W_WEAKUNRESOLVED        "wwun"
 #define ELC_W_LEVEL1                "w1"
@@ -475,11 +474,37 @@ public:
       loadConfig(config, configPath);
    }
 
-   void setOption(_ELENA_::path_t value)
+   void loadDefaultConfig(_ELENA_::ident_t defaultName)
+   {
+      auto it = _settings.getIt(_ELENA_::opTemplates);
+      if (!it.Eof()) {
+         projectName.copy(defaultName);
+
+         _ELENA_::Path templatePath(*it);
+
+         loadConfig(templatePath.c_str());
+
+         _settings.add(_ELENA_::opTarget, defaultName.clone());
+      }
+   }
+
+   void setOption(_ELENA_::path_t value, bool& withoutProject)
    {
       _ELENA_::IdentifierString valueName(value);
 
       switch ((char)value[0]) {
+         case ELC_PRM_TEMPLATE:
+         {
+            _ELENA_::ident_t templateFile = _settings.get(_ELENA_::opTemplates, valueName.c_str() + 1, DEFAULT_STR);
+            if (!_ELENA_::emptystr(templateFile)) {
+               _ELENA_::Path templatePath(templateFile);
+
+               loadConfig(templatePath.c_str(), false, false);
+               withoutProject = false;
+            }
+            else raiseError(ELC_ERR_INVALID_TEMPLATE, valueName.c_str() + 1);
+            break;
+         }
          case ELC_PRM_LIB_PATH:
             _settings.add(_ELENA_::opLibPath, valueName.clone(1));
             break;
