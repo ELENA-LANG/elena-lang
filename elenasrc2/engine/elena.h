@@ -210,6 +210,13 @@ public:
       return ((ident_t)_string).clone(index);
    }
 
+   void copyWideStr(const wide_c* value)
+   {
+      size_t length = IDENTIFIER_LEN;
+      ((wide_t)value).copyTo(_string, getlength(value), length);
+      _string[length] = 0;
+   }
+
    IdentifierString()
    {
    }

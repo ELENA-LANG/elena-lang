@@ -4,10 +4,15 @@ In development:
 
   [development]
     * Lexi project
-        - fix test
+        - multi-method dispatch - if there is only one argument -> do not create frame, just replace the old argument with new one
+
+        - exception handler error : do not generate a typecasting in closure vs. ignore return address - continue with the same error
+
+        - fix exceptionTest
         - fix elt : evaluating sampleX.es
         - fix samples : helloworlds
         - fix samples 
+        - unresolved abstract method - the warning is not shown (see system.prj)
 
         - typecasting MainWindow to Window - see draw
         - in-place initialization is not invoked in a child class
@@ -177,7 +182,6 @@ Pipeline:
                 * move all description to meta info using descr inline template
                 * ide message : display internal error
                 * ref argument should be a variable
-                * compile single file project
                 * warn an operation with not initialized variable: var a.test();
                 * warn if the extension method is called from itself (short-cutting)
                 * (re)implement internal String.read<int,ref<byte>>

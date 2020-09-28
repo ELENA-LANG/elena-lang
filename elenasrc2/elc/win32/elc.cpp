@@ -292,14 +292,29 @@ int main()
       project.loadConfig(configPath.c_str(), true, false);
 
       // Initializing..
+      bool withoutProject = true;
+      _ELENA_::IdentifierString defaultName;
+
       for (int i = 1 ; i < argc ; i++) {
          if (argv[i][0]=='-') {
-            project.setOption(argv[i] + 1);
+            project.setOption(argv[i] + 1, withoutProject);
          }
          else if (_ELENA_::Path::checkExtension(argv[i], "prj")) {
+            withoutProject = false;
             project.loadProject(argv[i]);
          }
-         else project.addSource(argv[i]);
+         else {
+            if (defaultName.Length() == 0) {
+               _ELENA_::FileName fileName(argv[i]);
+
+               defaultName.copyWideStr(fileName.c_str());
+            }
+            project.addSource(argv[i]);
+         }
+      }
+
+      if (withoutProject) {
+         project.loadDefaultConfig(defaultName.c_str());
       }
 
       project.initLoader();
