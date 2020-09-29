@@ -7018,17 +7018,8 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    _ModuleScope* moduleScope = codeScope.moduleScope;
    MethodScope* methodScope = (MethodScope*)codeScope.getScope(Scope::ScopeLevel::slMethod);
 
-   ref_t messageRef = 0;
-//   bool implicitConstructor = false;
    SNode messageNode = expr.findChild(lxMessage);
-//   if (messageNode.firstChild(lxTerminalMask) == lxNone) {
-//      // HOTFIX : support implicit constructors
-//      messageRef = encodeMessage(scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
-//         SyntaxTree::countNodeMask(messageNode, lxObjectMask), /*STATIC_MESSAGE*/0);
-//
-//      implicitConstructor = true;
-//   }
-   /*else */messageRef = mapMessage(messageNode, resendScope, false, false);
+   ref_t messageRef = mapMessage(messageNode, resendScope, false, false);
 
    ref_t classRef = classClassScope.reference;
    bool found = false;
@@ -7766,6 +7757,10 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
       else {
          if (isDefConvConstructor && getArgCount(scope.message) <= 1)
             scope.raiseError(errInvalidOperation, node);
+
+         if (scope.multiMethod) {
+            compileMultidispatch(bodyNode.parentNode(), codeScope, classClassScope);
+         }
 
          compileConstructorResendExpression(bodyNode, codeScope, classClassScope, withFrame);
 

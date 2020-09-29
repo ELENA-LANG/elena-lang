@@ -4,11 +4,9 @@ In development:
 
   [development]
     * Lexi project
-        - debugger : breakpoints / goto into system'dynamic'extensions classes
-        - debugger : fine-tuning stepOver - stepInto
-    * debugger : step over fine tuning
+        - debugger : step over fine tuning if (false) {} else {}
+        - debugger : fine-tuning stepOver - stepInto 
 
-        - fix dynamic code evaluating : extension methods
         - fix elt : evaluating sampleX.es
         - fix samples : helloworlds
         - fix samples 
