@@ -685,7 +685,8 @@ _Module* DebugController :: resolveModule(ident_t ns)
    auto it = _modules.start();
    while (!it.Eof()) {
       if (NamespaceName::isIncluded((*it)->Name(), ns)) {
-         IdentifierString virtualRef(ns + getlength((*it)->Name()), "'");
+         IdentifierString virtualRef(ns + getlength((*it)->Name()));
+         virtualRef.append('\'');
          while (virtualRef.Length() > 0) {
             virtualRef.append(NAMESPACE_REF);
             if ((*it)->mapReference(virtualRef, true))
@@ -695,7 +696,6 @@ _Module* DebugController :: resolveModule(ident_t ns)
             trimLastNs(virtualRef);
             // trim the last sub namespace
             trimLastNs(virtualRef);
-            virtualRef.append('\'');
          }
       }
       it++;

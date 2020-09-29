@@ -4,11 +4,11 @@ In development:
 
   [development]
     * Lexi project
-        - multi-method dispatch - if there is only one argument -> do not create frame, just replace the old argument with new one
+        - debugger : breakpoints / goto into system'dynamic'extensions classes
+        - debugger : fine-tuning stepOver - stepInto
+    * debugger : step over fine tuning
 
-        - exception handler error : do not generate a typecasting in closure vs. ignore return address - continue with the same error
-
-        - fix exceptionTest
+        - fix dynamic code evaluating : extension methods
         - fix elt : evaluating sampleX.es
         - fix samples : helloworlds
         - fix samples 
@@ -21,7 +21,7 @@ In development:
         - ide : correct caption : lixi'ui'win32 : winimpl.l => lexi:ui/win32/winimpl.l
         - ide : click on view does not change document
         - implement
-
+    * [ exception in exception - currently this exception is simply ignored ]
     * #523 : in compile time when there is only single variant of multi-method, and there
           are conversion rountines for the arguments - the arguments should be automatically typecasted to
           expected types;
@@ -80,7 +80,6 @@ Pipeline:
                  param descriptions
     * api : use manifest info for module description
     * usability : dynamic loading : give the symbol / message in the InvalidArgument exception
-    * debugger : step over fine tuning
 
                 * resend property (see forms Caption / Heigth and so on properties)
                 * duplicate boxing optimization : do not unbox presaved variable into temporal variable if it is not used
