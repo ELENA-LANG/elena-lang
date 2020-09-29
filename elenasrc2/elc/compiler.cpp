@@ -1578,7 +1578,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
             (*it) = false;
             it++;
 
-            if (test(message, STATIC_MESSAGE)) {
+            if (test(message, STATIC_MESSAGE) && message != scope.moduleScope->init_message) {
                scope.info.methods.exclude(message);
                scope.info.methodHints.exclude(Attribute(message, maHint));
                scope.info.methodHints.exclude(Attribute(message, maReference));
