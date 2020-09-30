@@ -296,7 +296,10 @@ ObjectInfo Compiler::NamespaceScope :: mapTerminal(ident_t identifier, bool refe
    if (parent == NULL) {
       // outer most ns
       if (referenceOne) {
-         return mapGlobal(identifier);
+         if (isWeakReference(identifier)) {
+            return mapWeakReference(identifier, false);
+         }
+         else return mapGlobal(identifier);
       }
       else if (identifier.compare(NIL_VAR)) {
          return ObjectInfo(okNil);

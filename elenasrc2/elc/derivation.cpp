@@ -2245,24 +2245,8 @@ void TemplateGenerator :: copyTreeNode(SyntaxWriter& writer, SNode current, Temp
       }
       else if (scope.type == TemplateScope::ttPropertyTemplate 
          || scope.type == TemplateScope::ttClassTemplate || scope.type == TemplateScope::ttInlineTemplate) {
-//         SNode sizeNode = current.findChild(lxDimensionAttr);
          SNode nodeToInject = scope.parameterValues.get(current.argument);
-         //bool oldMode = scope.importMode;
-         //scope.importMode = true;
-
-//         if (sizeNode == lxDimensionAttr) {
-//            // HOTFIX : if it is a node with the size postfix
-//            if (nodeToInject.strArgument != -1) {
-//               writer.newNode(nodeToInject.type, nodeToInject.identifier());
-//            }
-//            else writer.newNode(nodeToInject.type, nodeToInject.argument);
-//
-//            copyChildren(writer, nodeToInject, scope);
-//            writer.appendNode(sizeNode.type, sizeNode.argument);
-//
-//            writer.closeNode();
-//         }
-         /*else */copyExpressionTree(writer, nodeToInject, scope);
+         copyExpressionTree(writer, nodeToInject, scope);
 
 //         scope.importMode = oldMode;
       }

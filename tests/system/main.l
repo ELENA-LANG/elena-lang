@@ -44,8 +44,8 @@ public program()
 ////    jsonTest eval.
 ////    subExpressionTest eval.
 
-//    nestedFieldsTest();
-//    shortCircuitBooleanOperation();
+    nestedFieldsTest();
+    shortCircuitBooleanOperation();
 //    variadicTest();
 ////    proberTest().
     nestedTest();

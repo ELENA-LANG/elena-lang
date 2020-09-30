@@ -4,7 +4,7 @@ In development:
 
   [development]
     * Lexi project
-        - in-place initialization is not invoked in a child class
+        - creating template based class - template argument is not recognized
 
         - debugger : step over fine tuning if (false) {} else {}
         - debugger : fine-tuning stepOver - stepInto 
@@ -13,7 +13,6 @@ In development:
 
         - typecasting MainWindow to Window - see draw
 
-        - creating template based class - template argument is not recognized
         - ide : after including a new file; when the file is clicked in Project view a duplicate tab is opened.
         - ide : correct caption : lixi'ui'win32 : winimpl.l => lexi:ui/win32/winimpl.l
         - ide : click on view does not change document
