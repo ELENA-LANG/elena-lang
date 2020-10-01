@@ -4,14 +4,10 @@ In development:
 
   [development]
     * Lexi project
-        - creating template based class - template argument is not recognized
-
         - debugger : step over fine tuning if (false) {} else {}
         - debugger : fine-tuning stepOver - stepInto 
 
         - unresolved abstract method - the warning is not shown (see system.prj)
-
-        - typecasting MainWindow to Window - see draw
 
         - ide : after including a new file; when the file is clicked in Project view a duplicate tab is opened.
         - ide : correct caption : lixi'ui'win32 : winimpl.l => lexi:ui/win32/winimpl.l
