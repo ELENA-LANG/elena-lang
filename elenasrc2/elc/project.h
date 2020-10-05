@@ -143,7 +143,7 @@ public:
 
    virtual ident_t resolveExternalAlias(ident_t alias, bool& stdCall);
 
-   virtual void addSource(path_t path) = 0;
+   virtual void addSource(path_t path, ident_t ns) = 0;
    virtual void addModule(_ConfigFile::Node moduleNode) = 0;
    virtual void addTarget(_ConfigFile::Node moduleNode) = 0;
 

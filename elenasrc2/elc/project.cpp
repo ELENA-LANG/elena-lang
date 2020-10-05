@@ -20,18 +20,18 @@ inline ident_t getLoadError(LoadResult result)
 {
    switch(result)
    {
-      case lrDuplicate:
+      case LoadResult::lrDuplicate:
          return errDuplicatedModule;
-      case lrNotFound:
+      case LoadResult::lrNotFound:
          return errUnknownModule;
-      case lrWrongStructure:
+      case LoadResult::lrWrongStructure:
          return errInvalidModule;
-      case lrWrongVersion:
+      case LoadResult::lrWrongVersion:
          return errInvalidModuleVersion;
-      case lrCannotCreate:
+      case LoadResult::lrCannotCreate:
          return errCannotCreate;
       default:
-         return NULL;
+         return nullptr;
    }
 }
 
@@ -151,7 +151,7 @@ void Project :: loadForwardCategory(_ConfigFile& config)
          if (emptystr(key))
             key = it.key();
 
-         _settings.add(opForwards, key, (*it).Content().clone());
+         addForward(key, (*it).Content());
       }
    }
 }
@@ -195,7 +195,7 @@ void Project :: loadSourceCategory(_ConfigFile& config)
             // add path if provided
             Path filePath(it.key());
 
-            addSource(filePath.c_str());
+            addSource(filePath.c_str(), Namespace());
          }
          else addModule(*it);
       }

@@ -304,12 +304,13 @@ int main()
             project.loadProject(argv[i]);
          }
          else {
+            _ELENA_::FileName fileName(argv[i]);
             if (defaultName.Length() == 0) {
-               _ELENA_::FileName fileName(argv[i]);
-
                defaultName.copyWideStr(fileName.c_str());
+
+               project.addSource(argv[i], defaultName.c_str());
             }
-            project.addSource(argv[i]);
+            else project.addSource(argv[i], fileName.c_str());
          }
       }
 

@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0197
+#define ELC_REVISION_NUMBER         0x0198
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -37,6 +37,7 @@ constexpr auto SOURCERULES_FILE     = "/usr/share/elena/source_rules.dat";
 
 // --- ELC command-line parameters ---
 #define ELC_PRM_DEBUGINFO           'd'
+#define ELC_PRM_FORWARD             'f'
 #define ELC_PRM_OUTPUT_PATH         'o'
 #define ELC_PRM_LIB_PATH            'p'
 #define ELC_PRM_TEMPLATE            't'
@@ -110,7 +111,7 @@ constexpr auto ELC_EXTDISPATCHER  = "configuration/project/extdispatcher";
 #define ELC_UNSUCCESSFUL            "Compiled with errors\n"
 #define ELC_SUCCESSFUL_LINKING      "Successfully linked\n"
 #define ELC_UNKNOWN_PLATFORM        "Unsupported platform\n"
-#define ELC_HELP_INFO               "elc {-key} <project file>\n\nkeys: -d<path>   - generates the debug info file\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -s<symbol> - resolves the entry forward symbol\n      -wun       - turns on unresolved reference warnings\n      -wX        - turns on warnings with level X=1,2,4\n      -wX-       - turns off warnings with level X=1,2,4\n      -wo-       - turns off optimization\n"
+#define ELC_HELP_INFO               "elc {-key} <project file>\n\nkeys: -d<path>   - generates the debug info file\n      -f<f>=<r>  - resolves the forward f as a reference r\n      -o<path>   - sets the output path\n      -p<path>   - inlcudes the path to the library\n      -t<path>   - sets the target executable file name\n      -s<symbol> - resolves the entry forward symbol\n      -wun       - turns on unresolved reference warnings\n      -wX        - turns on warnings with level X=1,2,4\n      -wX-       - turns off warnings with level X=1,2,4\n      -wo-       - turns off optimization\n"
 
 #define ELC_WIN32CONSOLE            "STA Win32 Console"
 #define ELC_WIN64CONSOLE            "STA Win64 Console"
@@ -124,9 +125,10 @@ constexpr auto ELC_EXTDISPATCHER  = "configuration/project/extdispatcher";
 #define ELC_UNKNOWN                 "unknown"
 
 // --- ELC error messages ---
-#define ELC_ERR_INVALID_OPTION	   "elc: error 401: Invalid command line parameter '%s'\n"
-#define ELC_ERR_INVALID_PATH        "elc: error 402: Invalid or none-existing file '%s'\n"
-#define ELC_ERR_INVALID_TEMPLATE    "elc: error 404: Invalid or none-existing template '%s'\n"
+constexpr auto ELC_ERR_INVALID_OPTION     = "elc: error 401: Invalid command line parameter '%s'\n";
+constexpr auto ELC_ERR_INVALID_PATH       = "elc: error 402: Invalid or none-existing file '%s'\n";
+constexpr auto ELC_ERR_INVALID_TEMPLATE   = "elc: error 404: Invalid or none-existing template '%s'\n";
+constexpr auto ELC_ERR_INVALID_FORWARD    = "elc: error 404: Invalid forward '%s'\n";
 
 namespace _ELC_
 {
@@ -334,10 +336,17 @@ public:
    virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
    virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
 
-   virtual void addSource(_ELENA_::path_t path)
+   virtual void addSource(_ELENA_::path_t path, _ELENA_::path_t wideNs)
+   {
+      _ELENA_::IdentifierString ns;
+      ns.copyWideStr(wideNs);
+
+      addSource(path, ns.c_str());
+   }
+   virtual void addSource(_ELENA_::path_t path, _ELENA_::ident_t ns)
    {
       _ELENA_::Path modulePath;
-      _ELENA_::ReferenceNs name(Namespace());
+      _ELENA_::ReferenceNs name(ns);
 
       // build module namespace
       modulePath.copySubPath(path);
@@ -485,6 +494,8 @@ public:
          loadConfig(templatePath.c_str());
 
          _settings.add(_ELENA_::opTarget, defaultName.clone());
+
+         _settings.add(_ELENA_::opNamespace, defaultName.clone());
       }
    }
 
@@ -503,6 +514,18 @@ public:
                withoutProject = false;
             }
             else raiseError(ELC_ERR_INVALID_TEMPLATE, valueName.c_str() + 1);
+            break;
+         }
+         case ELC_PRM_FORWARD:
+         {
+            size_t sep = valueName.ident().find('=', -1);
+            if (sep != NOTFOUND_POS) {
+               _ELENA_::ident_t reference = valueName.c_str() + sep + 1;
+               _ELENA_::IdentifierString forward(valueName.ident() + 1, sep - 1);
+
+               addForward(forward.c_str(), reference.c_str());
+            }
+            else raiseError(ELC_ERR_INVALID_FORWARD, valueName.c_str() + 1);
             break;
          }
          case ELC_PRM_LIB_PATH:
