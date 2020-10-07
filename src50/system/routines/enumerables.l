@@ -140,6 +140,9 @@ public extension enumerableOp
     forEach(Func1 f)
         = f.run(cast Enumerator(self.enumerator()));
 
+    forEach(Func2 f)
+        = self.forEach:(t => f(t.Item1,t.Item2));
+
     forEach(ExtensionMessage extMessage)
         = self.forEach:(n => extMessage(n));
         
