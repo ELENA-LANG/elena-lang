@@ -122,7 +122,7 @@ namespace collections
             {
                 var item := it.get();
                 
-                list[item.Key] := item.Value;
+                list[item.Item1] := item.Item2;
             };
             
             ^ list
@@ -136,11 +136,11 @@ namespace collections
         
         bool containsKey(TKey key)
         {
-            int index := key.Hashcode;
+            int code := key.Hashcode.Absolute;
     
-            index := index.mod(theHashMask);
+            code := code.mod(theHashMask);
             
-            auto backet := theHashTable[index];
+            auto backet := theHashTable[code];
             if (nil == backet)
             {
                 ^ false
