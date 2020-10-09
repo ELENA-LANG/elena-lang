@@ -3,6 +3,7 @@ In development:
 ------         
 
   [development]
+    [move intern system'core_routines'__exception.register() into sta_start / mta_start?]
     * Lexi project
         - debugger : step over fine tuning if (false) {} else {}
         - debugger : fine-tuning stepOver - stepInto 
