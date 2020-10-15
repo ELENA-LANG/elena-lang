@@ -420,6 +420,15 @@ public:
          return current;
       }
 
+      Node firstSubNodeMask()
+      {
+         Node current = firstChild();
+         if (current == lxExpression) {
+            return current.firstSubNodeMask();
+         }
+         else return current;
+      }
+
       Node findSubNodeMask(LexicalType mask)
       {
          Node current = firstChild(mask);

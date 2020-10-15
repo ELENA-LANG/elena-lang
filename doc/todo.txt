@@ -3,7 +3,15 @@ In development:
 ------         
 
   [development]
-    [move intern system'core_routines'__exception.register() into sta_start / mta_start?]
+   [ 
+      - fix goods
+      - test all sample
+      - fix sqllite sample
+      dispatching to expression - douplicate typecasting
+      dispatching to variable / field / constant
+      #526
+      => operator should work with expression as well - s.toInt() => ...
+                   toInt is ignored]
     * Lexi project
         - debugger : step over fine tuning if (false) {} else {}
         - debugger : fine-tuning stepOver - stepInto 
@@ -18,6 +26,7 @@ In development:
     * #523 : in compile time when there is only single variant of multi-method, and there
           are conversion rountines for the arguments - the arguments should be automatically typecasted to
           expected types;
+    [move intern system'core_routines'__exception.register() into sta_start / mta_start?]
     * #515 : Resolving an interface in run-time 
         - proxy redirect class
         - generate proxy redirect class if the target class is not sealed or closed
@@ -267,16 +276,12 @@ Pipeline:
                  * check CharValue.WideLength
                  * review String / WideString, get rid of internal methods - use them directly
 
-                 * => operator should work with expression as well - s.toInt() => ...
-                   toInt is ignored
                  * review elenasm - simplify the coordination info, probably it should be encoded into the log itself,
                    so no need to fill the list (what about the string in calc sample)
 
                  * (re)implement tape debugger
 
                  * simplify operations with ref variable - if (0 == (cast int(theTop))) { ... }
-                 * the following code - var arr := cast Array(o) ?? nil; - probably we have to skip the second typecasting, so it will
-                   work
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
                  * allow to work with ref<int> directly

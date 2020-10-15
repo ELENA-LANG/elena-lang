@@ -314,7 +314,7 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
    ChechMethodInfo& result, bool resolveProtected)
 {
    ClassInfo info;
-   result.found = defineClassInfo(scope, info, reference);
+   result.found = reference && defineClassInfo(scope, info, reference);
 
    if (result.found) {
       if (testany(info.header.flags, elClosed | elClassClass))
@@ -1014,7 +1014,7 @@ void CompilerLogic :: injectInterfaceDispatch(_ModuleScope& scope, _Compiler& co
       if (current == lxClassMethod && current.existChild(lxDispatchCode)) {
          if (isEmbeddableDispatcher(scope, current)) {
             dispatchMethodNode = current;
-            dispatchNode = current.findChild(lxDispatchCode).firstChild();
+            dispatchNode = current.findChild(lxDispatchCode).firstSubNodeMask();
          }
 
       }

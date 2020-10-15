@@ -320,12 +320,12 @@ ident_t Project :: resolveForward(ident_t forward)
 
 bool Project :: addForward(ident_t forward, ident_t reference)
 {
-   if (emptystr(resolveForward(forward))) {
+//   if (emptystr(resolveForward(forward))) {
       _settings.add(opForwards, forward, reference.clone());
 
       return true;
-   }
-   else return false;
+//   }
+//   else return false;
 }
 
 _Module* Project :: resolveWeakModule(ident_t weakReferenceName, ref_t& reference, bool silentMode)

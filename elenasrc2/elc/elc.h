@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x0198
+#define ELC_REVISION_NUMBER         0x0199
 
 // --- ELC default file names ---
 #ifdef _WIN32
@@ -518,7 +518,7 @@ public:
          }
          case ELC_PRM_FORWARD:
          {
-            size_t sep = valueName.ident().find('=', -1);
+            size_t sep = valueName.ident().find('=', NOTFOUND_POS);
             if (sep != NOTFOUND_POS) {
                _ELENA_::ident_t reference = valueName.c_str() + sep + 1;
                _ELENA_::IdentifierString forward(valueName.ident() + 1, sep - 1);

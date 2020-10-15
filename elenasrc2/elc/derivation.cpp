@@ -1305,6 +1305,11 @@ void DerivationWriter :: generateMethodTree(SyntaxWriter& writer, SNode node, Sc
       SNode bodyNode = node.findChild(lxCode, lxDispatchCode, lxReturning, lxResendExpression, lxNoBody);
       if (bodyNode.compare(lxReturning, lxDispatchCode)) {
          writer.newNode(bodyNode.type);
+         generateExpressionTree(writer, bodyNode.firstChild(), derivationScope);
+         writer.closeNode();
+      }
+      else if (bodyNode == lxReturning) {
+         writer.newNode(bodyNode.type);
          generateExpressionTree(writer, bodyNode.firstChild(), derivationScope, EXPRESSION_IMPLICIT_MODE);
          writer.closeNode();
       }
