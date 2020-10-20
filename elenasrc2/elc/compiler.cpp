@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -6729,6 +6729,8 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, LexicalType m
       }      
 
       compileDispatchExpression(dispatchNode, target, exprScope);
+
+      test2(node);
    }
    else {
       dispatchNode = node.appendNode(lxDispatching);
@@ -6835,10 +6837,14 @@ void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope, bool la
 
 void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 {
-   ExprScope exprScope(&scope);
-   ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
+   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
+   if (methodScope->message == methodScope->moduleScope->dispatch_message) {
+      ExprScope exprScope(&scope);
+      ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
 
-   compileDispatchExpression(node, target, exprScope);
+      compileDispatchExpression(node, target, exprScope);
+   }
+   else compileDispatchExpression2(node, scope);
 }
 
 void Compiler :: warnOnUnresolvedDispatch(SNode node, Scope& scope, ref_t message, bool errorMode)
@@ -6993,6 +6999,116 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
          }
       }
    }
+}
+
+void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope)
+{
+   ExprScope exprScope(&scope);
+   ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
+
+   if (target.kind == okInternal) {
+      importCode(node, exprScope, target.param, exprScope.getMessageID());
+   }
+   else {
+      MethodScope* methodScope = (MethodScope*)exprScope.getScope(Scope::ScopeLevel::slMethod);
+
+      // try to implement light-weight resend operation
+      ref_t targetRef = methodScope->getReturningRef(false);
+      ref_t sourceRef = resolveObjectReference(exprScope, target, false, false);
+
+      int stackSafeAttrs = 0;
+      bool directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, exprScope.moduleScope->superReference, false);
+      //bool simpleOp = isSingleStatement(node);
+      int dispatcHint = tpUnknown;
+      //if (simpleOp) {
+      //   _CompilerLogic::ChechMethodInfo methodInfo;
+      //   dispatcHint = _logic->checkMethod(*exprScope.moduleScope, sourceRef, methodScope->message, methodInfo, false);
+      //   if (methodInfo.found && dispatcHint == tpUnknown) {
+      //      // warn if the dispatch target is not found
+      //      warnOnUnresolvedDispatch(node, exprScope, methodScope->message, _logic->isSealedOrClosed(*exprScope.moduleScope, sourceRef));
+      //   }
+      //   if (!directOp) {
+      //      // try to find out if direct dispatch is possible
+      //      if (dispatcHint != tpUnknown) {
+      //         directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, methodInfo.outputReference, false);
+      //      }
+      //   }
+      //}
+
+      LexicalType op = lxResending;
+      if (methodScope->message == methodScope->moduleScope->dispatch_message) {
+         // HOTFIX : if it is a generic message resending
+         op = lxGenericResending;
+      }
+
+      //// check if direct dispatch can be done
+      //if (directOp) {
+      //   // we are lucky and can dispatch the message directly
+      //   switch (target.kind) {
+      //   case okConstantSymbol:
+      //   case okField:
+      //   case okReadOnlyField:
+      //   case okOuterSelf:
+      //   case okOuter:
+      //      if (simpleOp)
+      //      {
+      //         // HOTFIX : use direct dispatching only for object expression
+      //         node.set(op, methodScope->message);
+      //         if (target.kind != okConstantSymbol) {
+      //            SNode fieldExpr = node.findChild(lxFieldExpression);
+      //            if (fieldExpr != lxNone) {
+      //               fieldExpr.set(lxField, target.param);
+      //            }
+      //         }
+      //         if (op == lxResending && dispatcHint == tpSealed && sourceRef)
+      //            node.appendNode(lxCallTarget, sourceRef);
+
+      //         break;
+      //      }
+      //   default:
+      //   {
+      //      node.set(op, methodScope->message);
+      //      SNode frameNode = node.injectNode(lxNewFrame);
+      //      SNode exprNode = frameNode.injectNode(lxExpression);
+      //      exprScope.tempAllocated1++;
+
+      //      int preserved = exprScope.tempAllocated1;
+      //      target = compileExpression(exprNode, exprScope, target, 0, EAttr::eaNone);
+      //      analizeOperands(exprNode, exprScope, 0, false);
+      //      // HOTFIX : allocate temporal variables
+      //      if (exprScope.tempAllocated1 != preserved)
+      //         frameNode.appendNode(lxReserved, exprScope.tempAllocated1 - preserved);
+
+      //      break;
+      //   }
+      //   }
+      //}
+      //else {
+         EAttr mode = EAttr::eaNone;
+
+         // bad luck - we have to dispatch and type cast the result
+         node.set(lxNewFrame, 0);
+
+         node.injectNode(lxExpression);
+         SNode exprNode = node.firstChild(lxObjectMask);
+
+         for (auto it = methodScope->parameters.start(); !it.Eof(); it++) {
+            ObjectInfo param = methodScope->mapParameter(*it, EAttr::eaNone);
+
+            SNode refNode = exprNode.appendNode(lxVirtualReference);
+            setParamTerminal(refNode, exprScope, param, mode, lxLocal);
+         }
+
+         bool dummy = false;
+         ObjectInfo retVal = compileMessage(exprNode, exprScope, target, methodScope->message, mode | HINT_NODEBUGINFO,
+            stackSafeAttrs, dummy);
+
+         retVal = convertObject(exprNode, exprScope, targetRef, retVal, mode);
+         if (retVal.kind == okUnknown) {
+            exprScope.raiseError(errInvalidOperation, node);
+         }
+      }
+   //}
 }
 
 inline ref_t resolveProtectedMessage(ClassInfo& info, ref_t protectedMessage)
@@ -7504,6 +7620,8 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
    // check if it is a dispatch
    else if (body == lxDispatchCode) {
       compileDispatchExpression(body, codeScope);
+
+      test2(node);
    }
    else if (body == lxNoBody) {
       scope.raiseError(errNoBodyMethod, body);

@@ -3,10 +3,32 @@ In development:
 ------         
 
   [development]
-   [ 
+   [
+      - dispatch opt : expr - by default - new frame, copy args, call method, add dispatch flag
+
+      - generic dispatch  : expr
+      - generic dispatch : internal expr
+
+      - dispatch opt no args : field / symbol (if not generic one) / constant / symbol const - if the result compatible
+      - dispatch opt with args : field / symbol (if not generic one) / constant / symbol const - if the result compatible 
+      - generic dispatch  : field / symbol (if not generic one) / constant / symbol const - if the result compatible 
+
+
+      - redesign ByteCodeWriter :: generateResendingExpression - simplify
+
+
+
+      - method : dispatching to object / expression / import
+      - constructor : dispatching to object / expression / import
+      
+
+      dispatching to strong field - dispatch directly
+
+ 
       - fix goods
       - test all sample
       - fix sqllite sample
+      - fix elt helloworld
       dispatching to expression - douplicate typecasting
       dispatching to variable / field / constant
       #526

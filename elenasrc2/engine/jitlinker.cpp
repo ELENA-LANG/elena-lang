@@ -687,8 +687,6 @@ void JITLinker :: resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader&
 
 void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references)
 {
-   IdentifierString className(referenceInfo.referenceName);
-
    if (sectionInfo.codeSection == NULL || sectionInfo.vmtSection == NULL)
       return LOADER_NOTLOADED;
 
@@ -771,7 +769,6 @@ void* JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, int mas
       if (!test(header.flags, elVirtualVMT)) {
          // HOTFIX : to presave the string name
          referenceInfo.module = sectionInfo.module;
-         referenceInfo.referenceName = className.c_str();
 
          resolveStaticValues(referenceInfo, vmtReader, attrReader, vmtImage, position);
       }
@@ -869,6 +866,10 @@ void JITLinker :: createAttributes(ReferenceInfo& referenceInfo, ClassInfo::Cate
 
 void* JITLinker :: resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo)
 {
+   // HOTFIX : caching a reference name, the original string could be corrupted
+   IdentifierString className(referenceInfo.referenceName);
+   referenceInfo.referenceName = className.c_str();
+   
    References      references(RefInfo(0, NULL));
 
    // create VMT
@@ -1444,6 +1445,8 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
 {
    void* vaddress = _loader->resolveReference(referenceInfo, mask);
    if (vaddress==LOADER_NOTLOADED) {
+      //printf("%s - %x\n", referenceInfo.referenceName.c_str(), mask);
+
       switch (mask) {
          case mskSymbolRef:
 //         case mskClassRef:
