@@ -1198,7 +1198,7 @@ private:
    void compileConstructorDispatchExpression(SNode node, CodeScope& scope, bool isDefault);
    void compileResendExpression(SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
    void compileDispatchExpression(SNode node, CodeScope& scope);
-   void compileDispatchExpression2(SNode node, CodeScope& scope);
+   void compileDispatchExpression2(SNode node, CodeScope& scope, bool withGenericMethods);
    void compileDispatchExpression(SNode node, ObjectInfo target, ExprScope& scope);
    void compileMultidispatch(SNode node, CodeScope& scope, ClassScope& classScope);
 

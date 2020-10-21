@@ -6717,18 +6717,21 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, LexicalType m
 
    if (dispatchNode != lxNone) {
       CodeScope codeScope(&scope);
-      ExprScope exprScope(&codeScope);
-      ObjectInfo target = mapObject(dispatchNode, exprScope, EAttr::eaNone);
-      if (target.kind != okInternal) {
-         dispatchNode.injectAndReplaceNode(lxDispatching);
-         if (withGenericMethods) {
-            dispatchNode.setArgument(encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
-         }
 
-         dispatchNode = dispatchNode.firstChild();
-      }      
+      compileDispatchExpression2(dispatchNode, codeScope, withGenericMethods);
 
-      compileDispatchExpression(dispatchNode, target, exprScope);
+      //ExprScope exprScope(&codeScope);
+      //ObjectInfo target = mapObject(dispatchNode, exprScope, EAttr::eaNone);
+      //if (target.kind != okInternal) {
+      //   dispatchNode.injectAndReplaceNode(lxDispatching);
+      //   if (withGenericMethods) {
+      //      dispatchNode.setArgument(encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
+      //   }
+
+      //   dispatchNode = dispatchNode.firstChild();
+      //}      
+
+      //compileDispatchExpression(dispatchNode, target, exprScope);
 
       test2(node);
    }
@@ -6844,7 +6847,7 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
 
       compileDispatchExpression(node, target, exprScope);
    }
-   else compileDispatchExpression2(node, scope);
+   else compileDispatchExpression2(node, scope, false);
 }
 
 void Compiler :: warnOnUnresolvedDispatch(SNode node, Scope& scope, ref_t message, bool errorMode)
@@ -7001,7 +7004,7 @@ void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprSc
    }
 }
 
-void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope)
+void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool withGenericMethods)
 {
    ExprScope exprScope(&scope);
    ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
@@ -7034,12 +7037,6 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope)
       //      }
       //   }
       //}
-
-      LexicalType op = lxResending;
-      if (methodScope->message == methodScope->moduleScope->dispatch_message) {
-         // HOTFIX : if it is a generic message resending
-         op = lxGenericResending;
-      }
 
       //// check if direct dispatch can be done
       //if (directOp) {
@@ -7083,7 +7080,33 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope)
       //   }
       //   }
       //}
-      //else {
+      //LexicalType op = lxResending;
+      if (methodScope->message == methodScope->moduleScope->dispatch_message) {
+         // HOTFIX : if it is a generic message resending
+         //op = lxGenericResending;
+
+         node.injectAndReplaceNode(lxDispatching);
+         if (withGenericMethods) {
+            node.setArgument(encodeMessage(scope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
+         }
+
+         node = node.firstChild();
+         node.set(lxGenericResending, methodScope->message);
+
+         //node.set(op, methodScope->message);
+         SNode frameNode = node.injectNode(lxNewFrame);
+         SNode exprNode = frameNode.injectNode(lxExpression);
+         exprScope.tempAllocated1++;
+
+         int preserved = exprScope.tempAllocated1;
+         target = compileExpression(exprNode, exprScope, target, 0, EAttr::eaNone);
+         analizeOperands(exprNode, exprScope, 0, false);
+         // HOTFIX : allocate temporal variables
+         if (exprScope.tempAllocated1 != preserved)
+            frameNode.appendNode(lxReserved, exprScope.tempAllocated1 - preserved);
+      }
+
+      else {
          EAttr mode = EAttr::eaNone;
 
          // bad luck - we have to dispatch and type cast the result
@@ -7108,7 +7131,7 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope)
             exprScope.raiseError(errInvalidOperation, node);
          }
       }
-   //}
+   }
 }
 
 inline ref_t resolveProtectedMessage(ClassInfo& info, ref_t protectedMessage)
