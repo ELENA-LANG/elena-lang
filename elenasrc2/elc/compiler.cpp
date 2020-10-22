@@ -7013,6 +7013,9 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool w
       importCode(node, exprScope, target.param, exprScope.getMessageID());
    }
    else {
+      // append a flag to be used for optimization routine
+      node.parentNode().appendNode(lxDispatchMode);
+
       MethodScope* methodScope = (MethodScope*)exprScope.getScope(Scope::ScopeLevel::slMethod);
 
       // try to implement light-weight resend operation
@@ -7105,11 +7108,9 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool w
          if (exprScope.tempAllocated1 != preserved)
             frameNode.appendNode(lxReserved, exprScope.tempAllocated1 - preserved);
       }
-
       else {
          EAttr mode = EAttr::eaNone;
 
-         // bad luck - we have to dispatch and type cast the result
          node.set(lxNewFrame, 0);
 
          node.injectNode(lxExpression);
@@ -10566,6 +10567,47 @@ bool Compiler :: optimizeCallDoubleAssigning(_ModuleScope&, SNode& node)
    return false;
 }
 
+inline void commentArgs(SNode opNode)
+{
+   SNode argNode = opNode.firstChild(lxObjectMask);
+   argNode = argNode.nextNode(lxObjectMask);
+   while (argNode != lxNone) {
+      argNode = lxIdle;
+      argNode = argNode.nextNode(lxObjectMask);
+   }
+}
+
+bool Compiler :: optimizeDispatchingExpr(_ModuleScope&, SNode& node)
+{
+   bool valid = false;
+   SNode opNode;
+   if (node == lxSelfLocal) {
+      node = lxIdle;
+      valid = true;
+   }
+
+   if (valid) {
+      // comment out a frame, replace operation with resend
+      SNode current = node.parentNode();
+      while (current != lxNone) {
+         switch (current.type) {
+            case lxCalling_0:
+            case lxDirectCalling:
+            case lxSDirectCalling:
+               commentArgs(current);
+               current = lxResending;
+               break;
+            case lxNewFrame:
+               current = lxExpression;
+               return true;
+         }
+         current = current.parentNode();
+      }
+   }
+
+   return valid;
+}
+
 bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId)
 {
    switch (patternId) {
@@ -10583,6 +10625,8 @@ bool Compiler :: optimizeTriePattern(_ModuleScope& scope, SNode& node, int patte
          return optimizeOpDoubleAssigning(scope, node);
       case 7:
          return optimizeCallDoubleAssigning(scope, node);
+      case 8:
+         return optimizeDispatchingExpr(scope, node);
       default:
          break;
    }

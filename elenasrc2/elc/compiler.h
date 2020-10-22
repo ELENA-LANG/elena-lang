@@ -1331,26 +1331,10 @@ private:
    bool optimizeEmbeddable(_ModuleScope& scope, SNode& node/*, bool argMode*/);
    bool optimizeEmbeddableCall(_ModuleScope& scope, SNode& node);
    bool optimizeCallDoubleAssigning(_ModuleScope& scope, SNode& node);
-   //   bool optimizeAssigningBoxing(_ModuleScope& scope, SNode& node);
-//   void optimizeBoxing(_ModuleScope& scope, SNode& node);
    bool optimizeConstantAssigning(_ModuleScope& scope, SNode& node);
-//   bool optimizeStacksafeCall(_ModuleScope& scope, SNode& node);
-//   bool optimizeStacksafeOp(_ModuleScope& scope, SNode& node);
-//   bool optimizeBoxingBoxing(_ModuleScope& scope, SNode& node);
-//   bool optimizeAssigningOp(_ModuleScope& scope, SNode& node);
    bool optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node);
-   //bool optimizeDirectRealOp(_ModuleScope& scope, SNode& node);
-   //bool optimizeDirectIntOp(_ModuleScope& scope, SNode& node);
    bool optimizeBranching(_ModuleScope& scope, SNode& node);
-//   bool optimizeConstants(_ModuleScope& scope, SNode& node);
-//   bool optimizeArgBoxing(_ModuleScope& scope, SNode& node);
-//   bool optimizeArgOp(_ModuleScope& scope, SNode& node);
-//   bool optimizeByRefAssigning(_ModuleScope& scope, SNode& node);
-//   bool optimizeDuplicateboxing(_ModuleScope& scope, SNode& node);
-//   bool optimizeUnboxing(_ModuleScope& scope, SNode& node);
-//   bool optimizeNestedExpression(_ModuleScope& scope, SNode& node);
-//   bool optimizeNewArrBoxing(_ModuleScope& scope, SNode& node);
-//   bool optimizeAssigningTargetBoxing(_ModuleScope& scope, SNode& node);
+   bool optimizeDispatchingExpr(_ModuleScope& scope, SNode& node);
 
    int saveMetaInfo(_ModuleScope& scope, ident_t info);
 

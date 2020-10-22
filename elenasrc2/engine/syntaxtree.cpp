@@ -67,6 +67,9 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
 //      tokens.add("localaddress", lxLocalAddress);
       tokens.add("sdirectcall", lxSDirectCalling);
 //      tokens.add("unboxing", lxUnboxing);
+      tokens.add("newframe", lxNewFrame);
+      tokens.add("field_expr", lxFieldExpression);
+      tokens.add("self_local", lxSelfLocal);
 
       tokens.add("constint", lxConstantInt);
       tokens.add("constreal", lxConstantReal);
@@ -104,6 +107,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("constattr", lxConstAttr);
       tokens.add("seqexpression", lxSeqExpression);
       tokens.add("ret_embeddable", lxRetEmbeddableAttr);
+      tokens.add("dispatch_mode", lxDispatchMode);
    }
 }
 

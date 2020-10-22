@@ -270,6 +270,7 @@ enum LexicalType
    lxElementType              = 0x000F28, // arg - reference
    lxSubjectRef               = 0x000F29, // arg - reference
    lxLongMode                 = 0x000F2A,
+   lxDispatchMode             = 0x000F2B,
 };
 
 // --- SyntaxTree ---

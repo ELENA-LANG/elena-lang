@@ -4,16 +4,20 @@ In development:
 
   [development]
    [
+      - dispatch opt no args : field / symbol (if not generic one) / constant / symbol const - if the result compatible
+      - dispatch opt : expr - by default - new frame, copy args, call method, add dispatch flag
+
+
+
+	
       - generic dispatch  : expr
       - method dispatch : expr
 
       - clean up the code
 
-      - dispatch opt : expr - by default - new frame, copy args, call method, add dispatch flag
 
       - generic dispatch : internal expr
 
-      - dispatch opt no args : field / symbol (if not generic one) / constant / symbol const - if the result compatible
       - dispatch opt with args : field / symbol (if not generic one) / constant / symbol const - if the result compatible 
       - generic dispatch  : field / symbol (if not generic one) / constant / symbol const - if the result compatible 
 

@@ -16,3 +16,8 @@ directcall, constattr = 1;
 directcall, embeddable = 3;
 
 looping,    intboolop,     constint = 4;
+
+newframe | dispatch_mode, call, field_expr, self_local = 8;
+newframe | dispatch_mode, directcall, field_expr, self_local = 8;
+newframe | dispatch_mode, sdirectcall, field_expr, self_local = 8;
+
