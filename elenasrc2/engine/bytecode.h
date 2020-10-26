@@ -229,6 +229,7 @@ enum ByteCode
    bcShr             = 0xD9,
    bcXOr             = 0xDA,
 
+   bcVJumpRM         = 0xDB,
    bcXSaveAI         = 0xDC,
    bcCopyAI          = 0xDD,
    bcMove            = 0xDE,
@@ -309,7 +310,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x4F
-#define MAX_DOUBLE_ECODE 0xDB
+#define MAX_DOUBLE_ECODE 0xDA
 
 enum PseudoArg
 {
@@ -468,6 +469,7 @@ public:
          case bcLCallExtR:
          case bcSelect:
          case bcJumpRM:
+         case bcVJumpRM:
          case bcVCallRM:
          //case bcBLoadR:
          case bcCreate:

@@ -2794,6 +2794,16 @@ inline % 0DAh
 
 end
 
+// ; vjumprm
+inline % 0DBh
+
+  mov  ecx, __arg1
+  mov  eax, [ebx - 4]
+  jmp  [eax + ecx * 8 + 4]
+
+end
+
+
 // ; xsaveai (__arg1 - index, __arg2 - n)
 inline % 0DCh
 

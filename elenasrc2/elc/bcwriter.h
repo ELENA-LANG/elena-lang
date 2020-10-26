@@ -214,7 +214,7 @@ class ByteCodeWriter
    void unboxMessage(CommandTape& tape);
    void changeMessageCounter(CommandTape& tape, int paramCount, int flags);
    void resend(CommandTape& tape);
-   void resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message);
+   void resendDirectResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool sealedMode);
    void callExternal(CommandTape& tape, ref_t functionReference/*, int paramCount*/);
    void callLongExternal(CommandTape& tape, ref_t functionReference);
    void callCore(CommandTape& tape, ref_t functionReference/*, int paramCount*/);

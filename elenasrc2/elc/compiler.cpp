@@ -6838,17 +6838,17 @@ void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope, bool la
    endMethod(node, scope);
 }
 
-void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
-{
-   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
-   if (methodScope->message == methodScope->moduleScope->dispatch_message) {
-      ExprScope exprScope(&scope);
-      ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
-
-      compileDispatchExpression(node, target, exprScope);
-   }
-   else compileDispatchExpression2(node, scope, false);
-}
+//void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope)
+//{
+//   MethodScope* methodScope = (MethodScope*)scope.getScope(Scope::ScopeLevel::slMethod);
+//   if (methodScope->message == methodScope->moduleScope->dispatch_message) {
+//      ExprScope exprScope(&scope);
+//      ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
+//
+//      compileDispatchExpression(node, target, exprScope);
+//   }
+//   else compileDispatchExpression2(node, scope, false);
+//}
 
 void Compiler :: warnOnUnresolvedDispatch(SNode node, Scope& scope, ref_t message, bool errorMode)
 {
@@ -6897,112 +6897,112 @@ void Compiler :: warnOnUnresolvedDispatch(SNode node, Scope& scope, ref_t messag
    }
 }
 
-void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprScope& exprScope)
-{
-   if (target.kind == okInternal) {
-      importCode(node, exprScope, target.param, exprScope.getMessageID());
-   }
-   else {
-      MethodScope* methodScope = (MethodScope*)exprScope.getScope(Scope::ScopeLevel::slMethod);
-
-      // try to implement light-weight resend operation
-      ref_t targetRef = methodScope->getReturningRef(false);
-      ref_t sourceRef = resolveObjectReference(exprScope, target, false, false);
-
-      int stackSafeAttrs = 0;
-      bool directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, exprScope.moduleScope->superReference, false);
-      bool simpleOp = isSingleStatement(node);
-      int dispatcHint = tpUnknown;
-      if (simpleOp) {
-         _CompilerLogic::ChechMethodInfo methodInfo;
-         dispatcHint = _logic->checkMethod(*exprScope.moduleScope, sourceRef, methodScope->message, methodInfo, false);
-         if (methodInfo.found && dispatcHint == tpUnknown) {
-            // warn if the dispatch target is not found
-            warnOnUnresolvedDispatch(node, exprScope, methodScope->message, _logic->isSealedOrClosed(*exprScope.moduleScope, sourceRef));
-         }
-         if (!directOp) {
-            // try to find out if direct dispatch is possible
-            if (dispatcHint != tpUnknown) {
-               directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, methodInfo.outputReference, false);
-            }
-         }
-      }
-
-      LexicalType op = lxResending;
-      if (methodScope->message == methodScope->moduleScope->dispatch_message) {
-         // HOTFIX : if it is a generic message resending
-         op = lxGenericResending;
-      }
-
-      // check if direct dispatch can be done
-      if (directOp) {
-         // we are lucky and can dispatch the message directly
-         switch (target.kind) {
-            case okConstantSymbol:
-            case okField:
-            case okReadOnlyField:
-            case okOuterSelf:
-            case okOuter:
-               if (simpleOp)
-               {
-                  // HOTFIX : use direct dispatching only for object expression
-                  node.set(op, methodScope->message);
-                  if (target.kind != okConstantSymbol) {
-                     SNode fieldExpr = node.findChild(lxFieldExpression);
-                     if (fieldExpr != lxNone) {
-                        fieldExpr.set(lxField, target.param);
-                     }
-                  }
-                  if (op == lxResending && dispatcHint == tpSealed && sourceRef)
-                     node.appendNode(lxCallTarget, sourceRef);
-
-                  break;
-               }
-            default:
-            {
-               node.set(op, methodScope->message);
-               SNode frameNode = node.injectNode(lxNewFrame);
-               SNode exprNode = frameNode.injectNode(lxExpression);
-               exprScope.tempAllocated1++;
-
-               int preserved = exprScope.tempAllocated1;
-               target = compileExpression(exprNode, exprScope, target, 0, EAttr::eaNone);
-               analizeOperands(exprNode, exprScope, 0, false);
-               // HOTFIX : allocate temporal variables
-               if (exprScope.tempAllocated1 != preserved)
-                  frameNode.appendNode(lxReserved, exprScope.tempAllocated1 - preserved);
-
-               break;
-            }
-         }
-      }
-      else {
-         EAttr mode = EAttr::eaNone;
-
-         // bad luck - we have to dispatch and type cast the result
-         node.set(lxNewFrame, 0);
-
-         node.injectNode(lxExpression);
-         SNode exprNode = node.firstChild(lxObjectMask);
-
-         for (auto it = methodScope->parameters.start(); !it.Eof(); it++) {
-            ObjectInfo param = methodScope->mapParameter(*it, EAttr::eaNone);
-
-            SNode refNode = exprNode.appendNode(lxVirtualReference);
-            setParamTerminal(refNode, exprScope, param, mode, lxLocal);
-         }
-
-         bool dummy = false;
-         ObjectInfo retVal = compileMessage(exprNode, exprScope, target, methodScope->message, mode | HINT_NODEBUGINFO,
-            stackSafeAttrs, dummy);
-
-         retVal = convertObject(exprNode, exprScope, targetRef, retVal, mode);
-         if (retVal.kind == okUnknown) {
-            exprScope.raiseError(errInvalidOperation, node);
-         }
-      }
-   }
-}
+//void Compiler :: compileDispatchExpression(SNode node, ObjectInfo target, ExprScope& exprScope)
+//{
+//   if (target.kind == okInternal) {
+//      importCode(node, exprScope, target.param, exprScope.getMessageID());
+//   }
+//   else {
+//      MethodScope* methodScope = (MethodScope*)exprScope.getScope(Scope::ScopeLevel::slMethod);
+//
+//      // try to implement light-weight resend operation
+//      ref_t targetRef = methodScope->getReturningRef(false);
+//      ref_t sourceRef = resolveObjectReference(exprScope, target, false, false);
+//
+//      int stackSafeAttrs = 0;
+//      bool directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, exprScope.moduleScope->superReference, false);
+//      bool simpleOp = isSingleStatement(node);
+//      int dispatcHint = tpUnknown;
+//      if (simpleOp) {
+//         _CompilerLogic::ChechMethodInfo methodInfo;
+//         dispatcHint = _logic->checkMethod(*exprScope.moduleScope, sourceRef, methodScope->message, methodInfo, false);
+//         if (methodInfo.found && dispatcHint == tpUnknown) {
+//            // warn if the dispatch target is not found
+//            warnOnUnresolvedDispatch(node, exprScope, methodScope->message, _logic->isSealedOrClosed(*exprScope.moduleScope, sourceRef));
+//         }
+//         if (!directOp) {
+//            // try to find out if direct dispatch is possible
+//            if (dispatcHint != tpUnknown) {
+//               directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, methodInfo.outputReference, false);
+//            }
+//         }
+//      }
+//
+//      LexicalType op = lxResending;
+//      if (methodScope->message == methodScope->moduleScope->dispatch_message) {
+//         // HOTFIX : if it is a generic message resending
+//         op = lxGenericResending;
+//      }
+//
+//      // check if direct dispatch can be done
+//      if (directOp) {
+//         // we are lucky and can dispatch the message directly
+//         switch (target.kind) {
+//            case okConstantSymbol:
+//            case okField:
+//            case okReadOnlyField:
+//            case okOuterSelf:
+//            case okOuter:
+//               if (simpleOp)
+//               {
+//                  // HOTFIX : use direct dispatching only for object expression
+//                  node.set(op, methodScope->message);
+//                  if (target.kind != okConstantSymbol) {
+//                     SNode fieldExpr = node.findChild(lxFieldExpression);
+//                     if (fieldExpr != lxNone) {
+//                        fieldExpr.set(lxField, target.param);
+//                     }
+//                  }
+//                  if (op == lxResending && dispatcHint == tpSealed && sourceRef)
+//                     node.appendNode(lxCallTarget, sourceRef);
+//
+//                  break;
+//               }
+//            default:
+//            {
+//               node.set(op, methodScope->message);
+//               SNode frameNode = node.injectNode(lxNewFrame);
+//               SNode exprNode = frameNode.injectNode(lxExpression);
+//               exprScope.tempAllocated1++;
+//
+//               int preserved = exprScope.tempAllocated1;
+//               target = compileExpression(exprNode, exprScope, target, 0, EAttr::eaNone);
+//               analizeOperands(exprNode, exprScope, 0, false);
+//               // HOTFIX : allocate temporal variables
+//               if (exprScope.tempAllocated1 != preserved)
+//                  frameNode.appendNode(lxReserved, exprScope.tempAllocated1 - preserved);
+//
+//               break;
+//            }
+//         }
+//      }
+//      else {
+//         EAttr mode = EAttr::eaNone;
+//
+//         // bad luck - we have to dispatch and type cast the result
+//         node.set(lxNewFrame, 0);
+//
+//         node.injectNode(lxExpression);
+//         SNode exprNode = node.firstChild(lxObjectMask);
+//
+//         for (auto it = methodScope->parameters.start(); !it.Eof(); it++) {
+//            ObjectInfo param = methodScope->mapParameter(*it, EAttr::eaNone);
+//
+//            SNode refNode = exprNode.appendNode(lxVirtualReference);
+//            setParamTerminal(refNode, exprScope, param, mode, lxLocal);
+//         }
+//
+//         bool dummy = false;
+//         ObjectInfo retVal = compileMessage(exprNode, exprScope, target, methodScope->message, mode | HINT_NODEBUGINFO,
+//            stackSafeAttrs, dummy);
+//
+//         retVal = convertObject(exprNode, exprScope, targetRef, retVal, mode);
+//         if (retVal.kind == okUnknown) {
+//            exprScope.raiseError(errInvalidOperation, node);
+//         }
+//      }
+//   }
+//}
 
 void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool withGenericMethods)
 {
@@ -7013,9 +7013,6 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool w
       importCode(node, exprScope, target.param, exprScope.getMessageID());
    }
    else {
-      // append a flag to be used for optimization routine
-      node.parentNode().appendNode(lxDispatchMode);
-
       MethodScope* methodScope = (MethodScope*)exprScope.getScope(Scope::ScopeLevel::slMethod);
 
       // try to implement light-weight resend operation
@@ -7109,13 +7106,14 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool w
             frameNode.appendNode(lxReserved, exprScope.tempAllocated1 - preserved);
       }
       else {
-         EAttr mode = EAttr::eaNone;
-
+         // append a flag to be used for optimization routine
+         node.parentNode().appendNode(lxDispatchMode);
          node.set(lxNewFrame, 0);
-
          node.injectNode(lxExpression);
+
          SNode exprNode = node.firstChild(lxObjectMask);
 
+         EAttr mode = EAttr::eaNone;
          for (auto it = methodScope->parameters.start(); !it.Eof(); it++) {
             ObjectInfo param = methodScope->mapParameter(*it, EAttr::eaNone);
 
@@ -7322,14 +7320,10 @@ void Compiler :: compileMultidispatch(SNode node, CodeScope& scope, ClassScope& 
       //      }
       //      else {
       if (classScope.extensionDispatcher) {
-         node.set(lxResending, node.argument & ~FUNCTION_MESSAGE);
+         node.set(lxDirectResending, node.argument & ~FUNCTION_MESSAGE);
          node.appendNode(lxCurrent, 1);
       }
-      else node.set(lxResending, node.argument);
-      //         writer.newNode(lxDispatching, node.argument);
-      //         SyntaxTree::copyNode(writer, lxTarget, node);
-      //         writer.closeNode();
-      //      }
+      else node.set(lxDirectResending, node.argument);
    }
    else node.insertNode(op, overloadRef);
 }
@@ -7643,7 +7637,7 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
    }
    // check if it is a dispatch
    else if (body == lxDispatchCode) {
-      compileDispatchExpression(body, codeScope);
+      compileDispatchExpression2(body, codeScope, false);
 
       test2(node);
    }
@@ -10577,6 +10571,21 @@ inline void commentArgs(SNode opNode)
    }
 }
 
+inline void replaceCallToResend(SNode& node)
+{
+   switch (node.type) {
+      case lxCalling_0:
+         node = lxResending;
+         break;
+      case lxDirectCalling:
+         node = lxDirectResending;
+         break;
+      case lxSDirectCalling:
+         node = lxSDirectResending;
+         break;
+   }
+}
+
 bool Compiler :: optimizeDispatchingExpr(_ModuleScope&, SNode& node)
 {
    bool valid = false;
@@ -10595,7 +10604,7 @@ bool Compiler :: optimizeDispatchingExpr(_ModuleScope&, SNode& node)
             case lxDirectCalling:
             case lxSDirectCalling:
                commentArgs(current);
-               current = lxResending;
+               replaceCallToResend(current);
                break;
             case lxNewFrame:
                current = lxExpression;
@@ -10697,7 +10706,7 @@ void Compiler :: analizeMethod(SNode node, NamespaceScope& scope)
 {
    SNode current = node.firstChild();
    while (current != lxNone) {
-      if (current == lxNewFrame) {
+      if (current.compare(lxNewFrame, lxDispatching)) {
          analizeCodePatterns(current, scope);
       }
       current = current.nextNode();

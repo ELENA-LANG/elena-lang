@@ -390,6 +390,8 @@ ELENA byte codes (or ecodes)
 
  vcallrm r, m               - directly resolve message mapping for the specified class
  
+ vjumprm r, m               - jumps directly to the message mapping by JIT by r and m
+ 
  xmtredirect r,m            - search in message table r the message in index and provided parameter list; if found jumps to direct address;
 
  xredirect i                - index - message, acc[i], acc[i+1], ... - list of overload list, null terminated;

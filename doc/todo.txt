@@ -3,35 +3,43 @@ In development:
 ------         
 
   [development]
-   [
-      - dispatch opt no args : field / symbol (if not generic one) / constant / symbol const - if the result compatible
-      - dispatch opt : expr - by default - new frame, copy args, call method, add dispatch flag
+[
+      - jumprm / vjumprm
+
+      - multi dispatch : direct / semidirect / indirect resend
+      - new opcode : jump to semi resolved
+      - multi-method resending - use directresend
+      - dispatch : use direct if sealed, semidirect if closed, otherwise normal one
 
 
 
-	
-      - generic dispatch  : expr
-      - method dispatch : expr
+      - multi-method : normal, closed, sealed
+      - multi-method : extension
+
+
+      - resend : direct / semidirect / indirect
 
       - clean up the code
 
+
+
+      - dispatch opt no args : field / symbol (if not generic one) / constant / symbol const - if the result compatible
+      - dispatch opt : expr - by default - new frame, copy args, call method, add dispatch flag
+	
+      - generic dispatch  : expr
+      - method dispatch : expr
 
       - generic dispatch : internal expr
 
       - dispatch opt with args : field / symbol (if not generic one) / constant / symbol const - if the result compatible 
       - generic dispatch  : field / symbol (if not generic one) / constant / symbol const - if the result compatible 
 
-
       - redesign ByteCodeWriter :: generateResendingExpression - simplify
-
-
 
       - method : dispatching to object / expression / import
       - constructor : dispatching to object / expression / import
-      
 
       dispatching to strong field - dispatch directly
-
  
       - fix goods
       - test all sample
@@ -39,19 +47,19 @@ In development:
       - fix elt helloworld
       dispatching to expression - douplicate typecasting
       dispatching to variable / field / constant
-      #526
-      => operator should work with expression as well - s.toInt() => ...
-                   toInt is ignored]
-    * Lexi project
-        - debugger : step over fine tuning if (false) {} else {}
-        - debugger : fine-tuning stepOver - stepInto 
-
-        - unresolved abstract method - the warning is not shown (see system.prj)
-
-        - ide : after including a new file; when the file is clicked in Project view a duplicate tab is opened.
-        - ide : correct caption : lixi'ui'win32 : winimpl.l => lexi:ui/win32/winimpl.l
-        - ide : click on view does not change document
-        - implement
+      #526 : => operator should work with expression as well - s.toInt() => ... toInt is ignored
+]
+    * Lexi project:
+        - load simple text and display it
+        - add border / scroller
+        - add control
+        - load TeX
+    * [ debugger : step over fine tuning if (false) {} else {} ]
+    * [ debugger : fine-tuning stepOver - stepInto ] 
+    * [ unresolved abstract method - the warning is not shown (see system.prj) ]
+    * [ ide : after including a new file; when the file is clicked in Project view a duplicate tab is opened. ]
+    * [ ide : correct caption : lixi'ui'win32 : winimpl.l => lexi:ui/win32/winimpl.l ]
+    * [ ide : click on view does not change document ]
     * [ exception in exception - currently this exception is simply ignored ]
     * #523 : in compile time when there is only single variant of multi-method, and there
           are conversion rountines for the arguments - the arguments should be automatically typecasted to

@@ -70,6 +70,7 @@ void _ELENA_::loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode)
       tokens.add("newframe", lxNewFrame);
       tokens.add("field_expr", lxFieldExpression);
       tokens.add("self_local", lxSelfLocal);
+      tokens.add("generic_resend", lxGenericResending);
 
       tokens.add("constint", lxConstantInt);
       tokens.add("constreal", lxConstantReal);

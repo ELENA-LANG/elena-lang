@@ -69,7 +69,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 157;
+const int gcCommandNumber = 158;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -103,7 +103,7 @@ const int gcCommands[gcCommandNumber] =
    bcCallI, bcIfCount, bcSub, bcSwapD, bcXSet,
    bcMIndex, bcParent, bcCheckSI, bcLSave, bcLCallExtR,
    bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF, bcXRSaveF,
-   bcXRedirect, bcXVRedirect
+   bcXRedirect, bcXVRedirect, bcVJumpRM,
 };
 
 const int gcCommandExNumber = 54;
@@ -169,12 +169,12 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFPOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadFunction, &loadFPOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &loadROp, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
-   &loadROp, &compileDShiftN, &loadNOp, &compileNop, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,
+   &loadROp, &compileDShiftN, &loadNOp, &compileInvokeVMTOffset, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,
 
    &loadFPN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexN4OpX, &loadFPN4OpX, &loadFPN4OpX, &loadFPN4OpX, &loadFPN4OpX,
    &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFPNOp, &loadFPNOp, &loadFPNOp,
 
-   &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, & compileInvokeVMT, &compileSelectR, &compileLessN,
+   &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileNop, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop,
 };
 

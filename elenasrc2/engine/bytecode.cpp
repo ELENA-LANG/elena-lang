@@ -54,7 +54,7 @@ const char* _fnOpcodes[256] =
    "nsubf", "ndivf", "loadi", "savei", "storer", "lcallextr", "clonef", "xload",
 
    "freei", "alloci", "xcreate", "movv", "shl", "and", "inc", "or",
-   "coalescer", "shr", "xor", OPCODE_UNKNOWN, "xsaveai", "copyai", "move", "moveto",
+   "coalescer", "shr", "xor", "vjumprm", "xsaveai", "copyai", "move", "moveto",
 
    "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
    "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", "xrsavef", "xaddf", "xsavef",
@@ -353,6 +353,7 @@ inline bool removeIdleJump(ByteCodeIterator it)
          //case bcNext:
          case bcIfHeap:
          case bcJumpRM:
+         case bcVJumpRM:
          case bcJumpI:
             *it = bcNop;
             return true;
@@ -411,6 +412,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             case bcQuitN:
             case bcJumpVI:
             case bcJumpRM:
+            case bcVJumpRM:
             case bcJumpI:
                blocks.add(index + 1, 0);
                break;

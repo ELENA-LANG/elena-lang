@@ -2,7 +2,7 @@
 *12.06.2022*
 
 - ELENA
-  - binary incompatible due to module structure change
+  - binary incompatible due to module structure change / new opcodes
   - #519 : abstract methods should not have a body
   - #521 : Auto generating multi-method default handler with type casting
 - ELC

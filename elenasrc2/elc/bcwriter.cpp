@@ -721,11 +721,11 @@ void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
 //   tape.write(bcFreeStack, 1 + paramCount);
 //}
 
-void ByteCodeWriter :: resendResolvedMethod(CommandTape& tape, ref_t reference, ref_t message)
+void ByteCodeWriter :: resendDirectResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool sealedMode)
 {
    // jumprm r, m
 
-   tape.write(bcJumpRM, reference | mskVMTMethodAddress, message);
+   tape.write(sealedMode ? bcJumpRM : bcVJumpRM, reference | mskVMTMethodAddress, message);
 }
 
 void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode, bool withValidattion*/)
@@ -4332,7 +4332,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
          tape.write(bcPushD);
          setSubject(tape, message.argument);
 
-         resendResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument);
+         resendDirectResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument, true);
       }
    }
    else {
@@ -4368,8 +4368,8 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
       if (!genericResending)
          tape.write(bcMovM, node.argument);
 
-      if (target.argument != 0) {
-         resendResolvedMethod(tape, target.argument, node.argument);
+      if (target.argument != 0 && (node.type == lxDirectResending || node.type == lxSDirectResending)) {
+         resendDirectResolvedMethod(tape, target.argument, node.argument, node.type == lxDirectResending);
       }
       else resend(tape);
    }
@@ -4472,7 +4472,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      //   callInitMethod(tape, node.findChild(lxTarget).argument, node.argument, false);
 //      //   break;
       case lxImplicitJump:
-         resendResolvedMethod(tape, node.findChild(lxCallTarget).argument, node.argument);
+         resendDirectResolvedMethod(tape, node.findChild(lxCallTarget).argument, node.argument, true);
          break;
       case lxTrying:
          generateTrying(tape, node, scope);
@@ -4550,6 +4550,8 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          generateNewArrOperation(tape, node, scope);
          break;
       case lxResending:
+      case lxDirectResending:
+      case lxSDirectResending:
       case lxGenericResending:
          generateResendingExpression(tape, node, scope);
          break;
