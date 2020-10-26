@@ -19,11 +19,11 @@
 
 </div>
 
-ELENA is a general-purpose language with late binding. It is multi-paradigm, combining features of functional and object-oriented programming. It supports both strong and weak types, run-time conversions, boxing and unboxing primitive types, direct usage of external libraries. Rich set of tools are provided to deal with message dispatching : multi-methods, message qualifying, generic message handlers. Multiple-inheritance can be simulated using mixins and type interfaces. Built-in script engine allows to incorporate custom defined scripts into your applications. Both stand-alone applications and Virtual machine clients are supported.
+ELENA is a general-purpose language with late binding. It is multi-paradigm, combining features of functional and object-oriented programming. It supports both strong and weak types, run-time conversions, boxing and unboxing primitive types, direct usage of external libraries. A rich set of tools is provided to deal with message dispatching : multi-methods, message qualifying, generic message handlers. Multiple-inheritance can be simulated using mixins and type interfaces. The built-in script engine allows incorporating custom-defined scripts into your applications. Both stand-alone applications and Virtual machine clients are supported.
 
 ### Features
 
-  - Free and open source (MIT licensed)
+  - Free and open-source (MIT licensed)
   - Complete source code
   - Unicode support (utf-8)
   - GUI IDE & Debugger
@@ -89,7 +89,7 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 
 ### 2. Implement "up for grab" issues
 
-[Good first issue](https://github.com/ELENA-LANG/elena-lang/labels/good%20first%20issue) is good starting point for a first-time contributors.
+[Good first issue](https://github.com/ELENA-LANG/elena-lang/labels/good%20first%20issue) is a good starting point for a first-time contributors.
 
 ### 3. Rosetta code
 
@@ -125,7 +125,7 @@ for more information read the file LICENSE.
 
 ## Questions?
 
-Feel free to ask any question :  elenaprolang@gmail.com.
+Feel free to ask any question:  elenaprolang@gmail.com.
 
 ## Resources
 - **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
