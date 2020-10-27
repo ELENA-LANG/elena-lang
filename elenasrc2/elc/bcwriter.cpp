@@ -724,8 +724,10 @@ void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
 void ByteCodeWriter :: resendDirectResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool sealedMode)
 {
    // jumprm r, m
-
-   tape.write(sealedMode ? bcJumpRM : bcVJumpRM, reference | mskVMTMethodAddress, message);
+   if (sealedMode) {
+      tape.write(bcJumpRM, reference | mskVMTMethodAddress, message);
+   }
+   else tape.write(bcVJumpRM, reference | mskVMTEntryOffset, message);
 }
 
 void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode, bool withValidattion*/)

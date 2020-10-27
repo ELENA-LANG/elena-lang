@@ -499,6 +499,7 @@ public:
    static bool IsM2Code(ByteCode code)
    {
       switch (code) {
+         case bcVJumpRM:
          case bcVCallRM:
          case bcCallRM:
          //case bcIfM:

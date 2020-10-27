@@ -4,6 +4,13 @@ In development:
 
   [development]
 [
+      - interface dispatcher should use direct resend for sealed / closed owner
+      - wrong warning message
+
+      - an extra typecast for default multi-method (for strong resolved)
+      - optimize default multi-method, do we need frame?
+      - an array of int - no need to fill, one by one?
+
       - jumprm / vjumprm
 
       - multi dispatch : direct / semidirect / indirect resend
