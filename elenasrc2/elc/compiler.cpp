@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-void test2(SNode node)
-{
-   SNode current = node.firstChild();
-   while (current != lxNone) {
-      test2(current);
-      current = current.nextNode();
-   }
-}
+//void test2(SNode node)
+//{
+//   SNode current = node.firstChild();
+//   while (current != lxNone) {
+//      test2(current);
+//      current = current.nextNode();
+//   }
+//}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -3202,6 +3202,10 @@ ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo 
       }
    }
    else {
+      // if the message is not supported - clear stack safe
+      if (callType == tpUnknown)
+         stackSafeAttr = 0;
+
       // if the sealed / closed class found and the message is not supported - warn the programmer and raise an exception
       if (EAttrs::test(mode, HINT_SILENT)) {
          // do nothing in silent mode
@@ -6718,22 +6722,7 @@ void Compiler :: compileDispatcher(SNode node, MethodScope& scope, LexicalType m
    if (dispatchNode != lxNone) {
       CodeScope codeScope(&scope);
 
-      compileDispatchExpression2(dispatchNode, codeScope, withGenericMethods);
-
-      //ExprScope exprScope(&codeScope);
-      //ObjectInfo target = mapObject(dispatchNode, exprScope, EAttr::eaNone);
-      //if (target.kind != okInternal) {
-      //   dispatchNode.injectAndReplaceNode(lxDispatching);
-      //   if (withGenericMethods) {
-      //      dispatchNode.setArgument(encodeMessage(codeScope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
-      //   }
-
-      //   dispatchNode = dispatchNode.firstChild();
-      //}      
-
-      //compileDispatchExpression(dispatchNode, target, exprScope);
-
-      test2(node);
+      compileDispatchExpression(dispatchNode, codeScope, withGenericMethods);
    }
    else {
       dispatchNode = node.appendNode(lxDispatching);
@@ -7004,7 +6993,7 @@ void Compiler :: warnOnUnresolvedDispatch(SNode node, Scope& scope, ref_t messag
 //   }
 //}
 
-void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool withGenericMethods)
+void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope, bool withGenericMethods)
 {
    ExprScope exprScope(&scope);
    ObjectInfo target = mapObject(node, exprScope, EAttr::eaNone);
@@ -7017,74 +7006,9 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool w
 
       // try to implement light-weight resend operation
       ref_t targetRef = methodScope->getReturningRef(false);
-      ref_t sourceRef = resolveObjectReference(exprScope, target, false, false);
-
       int stackSafeAttrs = 0;
-      bool directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, exprScope.moduleScope->superReference, false);
-      //bool simpleOp = isSingleStatement(node);
-      int dispatcHint = tpUnknown;
-      //if (simpleOp) {
-      //   _CompilerLogic::ChechMethodInfo methodInfo;
-      //   dispatcHint = _logic->checkMethod(*exprScope.moduleScope, sourceRef, methodScope->message, methodInfo, false);
-      //   if (methodInfo.found && dispatcHint == tpUnknown) {
-      //      // warn if the dispatch target is not found
-      //      warnOnUnresolvedDispatch(node, exprScope, methodScope->message, _logic->isSealedOrClosed(*exprScope.moduleScope, sourceRef));
-      //   }
-      //   if (!directOp) {
-      //      // try to find out if direct dispatch is possible
-      //      if (dispatcHint != tpUnknown) {
-      //         directOp = _logic->isCompatible(*exprScope.moduleScope, targetRef, methodInfo.outputReference, false);
-      //      }
-      //   }
-      //}
-
-      //// check if direct dispatch can be done
-      //if (directOp) {
-      //   // we are lucky and can dispatch the message directly
-      //   switch (target.kind) {
-      //   case okConstantSymbol:
-      //   case okField:
-      //   case okReadOnlyField:
-      //   case okOuterSelf:
-      //   case okOuter:
-      //      if (simpleOp)
-      //      {
-      //         // HOTFIX : use direct dispatching only for object expression
-      //         node.set(op, methodScope->message);
-      //         if (target.kind != okConstantSymbol) {
-      //            SNode fieldExpr = node.findChild(lxFieldExpression);
-      //            if (fieldExpr != lxNone) {
-      //               fieldExpr.set(lxField, target.param);
-      //            }
-      //         }
-      //         if (op == lxResending && dispatcHint == tpSealed && sourceRef)
-      //            node.appendNode(lxCallTarget, sourceRef);
-
-      //         break;
-      //      }
-      //   default:
-      //   {
-      //      node.set(op, methodScope->message);
-      //      SNode frameNode = node.injectNode(lxNewFrame);
-      //      SNode exprNode = frameNode.injectNode(lxExpression);
-      //      exprScope.tempAllocated1++;
-
-      //      int preserved = exprScope.tempAllocated1;
-      //      target = compileExpression(exprNode, exprScope, target, 0, EAttr::eaNone);
-      //      analizeOperands(exprNode, exprScope, 0, false);
-      //      // HOTFIX : allocate temporal variables
-      //      if (exprScope.tempAllocated1 != preserved)
-      //         frameNode.appendNode(lxReserved, exprScope.tempAllocated1 - preserved);
-
-      //      break;
-      //   }
-      //   }
-      //}
-      //LexicalType op = lxResending;
       if (methodScope->message == methodScope->moduleScope->dispatch_message) {
          // HOTFIX : if it is a generic message resending
-         //op = lxGenericResending;
-
          node.injectAndReplaceNode(lxDispatching);
          if (withGenericMethods) {
             node.setArgument(encodeMessage(scope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false), 0, 0));
@@ -7093,7 +7017,6 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool w
          node = node.firstChild();
          node.set(lxGenericResending, methodScope->message);
 
-         //node.set(op, methodScope->message);
          SNode frameNode = node.injectNode(lxNewFrame);
          SNode exprNode = frameNode.injectNode(lxExpression);
          exprScope.tempAllocated1++;
@@ -7109,6 +7032,13 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool w
          // append a flag to be used for optimization routine
          node.parentNode().appendNode(lxDispatchMode);
          node.set(lxNewFrame, 0);
+
+         // new stack frame
+         // stack already contains current self reference
+         // the original message should be restored if it is a generic method
+         scope.allocated1++;
+         exprScope.tempAllocated1++;
+
          node.injectNode(lxExpression);
 
          SNode exprNode = node.firstChild(lxObjectMask);
@@ -7120,6 +7050,8 @@ void Compiler :: compileDispatchExpression2(SNode node, CodeScope& scope, bool w
             SNode refNode = exprNode.appendNode(lxVirtualReference);
             setParamTerminal(refNode, exprScope, param, mode, lxLocal);
          }
+
+         stackSafeAttrs = _logic->defineStackSafeAttrs(*scope.moduleScope, methodScope->message);
 
          bool dummy = false;
          ObjectInfo retVal = compileMessage(exprNode, exprScope, target, methodScope->message, mode | HINT_NODEBUGINFO,
@@ -7637,9 +7569,7 @@ void Compiler :: compileMethod(SNode node, MethodScope& scope)
    }
    // check if it is a dispatch
    else if (body == lxDispatchCode) {
-      compileDispatchExpression2(body, codeScope, false);
-
-      test2(node);
+      compileDispatchExpression(body, codeScope, false);
    }
    else if (body == lxNoBody) {
       scope.raiseError(errNoBodyMethod, body);

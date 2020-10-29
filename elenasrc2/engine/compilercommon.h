@@ -623,6 +623,8 @@ public:
       }
    };
 
+   virtual int defineStackSafeAttrs(_ModuleScope& scope, ref_t message) = 0;
+
    virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, 
       ChechMethodInfo& result, bool resolveProtected) = 0;
    virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result, 

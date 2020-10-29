@@ -72,6 +72,8 @@ class CompilerLogic : public _CompilerLogic
    bool isBoolean(_ModuleScope& scope, ref_t reference);
 
 public:
+   virtual int defineStackSafeAttrs(_ModuleScope& scope, ref_t message);
+
    virtual bool isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage);
 
    virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage,

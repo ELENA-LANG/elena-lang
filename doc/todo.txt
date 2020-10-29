@@ -4,54 +4,9 @@ In development:
 
   [development]
 [
-      - interface dispatcher should use direct resend for sealed / closed owner
-      - wrong warning message
+      - fix twentyfour
+      - fix helloworld_dynamic.exe 
 
-      - an extra typecast for default multi-method (for strong resolved)
-      - optimize default multi-method, do we need frame?
-      - an array of int - no need to fill, one by one?
-
-      - jumprm / vjumprm
-
-      - multi dispatch : direct / semidirect / indirect resend
-      - new opcode : jump to semi resolved
-      - multi-method resending - use directresend
-      - dispatch : use direct if sealed, semidirect if closed, otherwise normal one
-
-
-
-      - multi-method : normal, closed, sealed
-      - multi-method : extension
-
-
-      - resend : direct / semidirect / indirect
-
-      - clean up the code
-
-
-
-      - dispatch opt no args : field / symbol (if not generic one) / constant / symbol const - if the result compatible
-      - dispatch opt : expr - by default - new frame, copy args, call method, add dispatch flag
-	
-      - generic dispatch  : expr
-      - method dispatch : expr
-
-      - generic dispatch : internal expr
-
-      - dispatch opt with args : field / symbol (if not generic one) / constant / symbol const - if the result compatible 
-      - generic dispatch  : field / symbol (if not generic one) / constant / symbol const - if the result compatible 
-
-      - redesign ByteCodeWriter :: generateResendingExpression - simplify
-
-      - method : dispatching to object / expression / import
-      - constructor : dispatching to object / expression / import
-
-      dispatching to strong field - dispatch directly
- 
-      - fix goods
-      - test all sample
-      - fix sqllite sample
-      - fix elt helloworld
       dispatching to expression - douplicate typecasting
       dispatching to variable / field / constant
       #526 : => operator should work with expression as well - s.toInt() => ... toInt is ignored
@@ -61,6 +16,7 @@ In development:
         - add border / scroller
         - add control
         - load TeX
+    * [ optimization s.Length ]
     * [ debugger : step over fine tuning if (false) {} else {} ]
     * [ debugger : fine-tuning stepOver - stepInto ] 
     * [ unresolved abstract method - the warning is not shown (see system.prj) ]
@@ -355,4 +311,5 @@ Pipeline:
                  * script engine : do not allow left recursing (e.g. A -> AB )
                  * replace S -> AB / S -> AC with S -> A{B | C}, using forwards to resolve prediction log
                  * advanced script : templates,closures,exception handling
-
+                 * an array of int - no need to fill, one by one?
+                 * optimize default multi-method, do we need frame?

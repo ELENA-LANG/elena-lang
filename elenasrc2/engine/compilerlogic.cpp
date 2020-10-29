@@ -1191,6 +1191,15 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* target
    return true;
 }
 
+int CompilerLogic :: defineStackSafeAttrs(_ModuleScope& scope, ref_t message)
+{
+   ref_t signRef = getSignature(scope, message);
+   int stackSafeAttr = 0;
+   setSignatureStacksafe(scope, signRef, stackSafeAttr);
+
+   return stackSafeAttr;
+}
+
 bool CompilerLogic :: isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage, 
    ref_t* sourceSignatures, size_t len, int& stackSafeAttr)
 {
@@ -2587,7 +2596,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
    size_t argumentLen = 0;
    ref_t parameters[ARG_COUNT] = { 0 };
    ref_t signatures[ARG_COUNT];
-   size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
+   /*size_t signatureLen = */scope.module->resolveSignature(implicitSignatureRef, signatures);
 
    // matching pattern with the provided signature
    size_t i = pattern.find('.') + 2;
