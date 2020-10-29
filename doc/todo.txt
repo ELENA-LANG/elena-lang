@@ -4,11 +4,10 @@ In development:
 
   [development]
 [
+      - generic handler + dispatch
       - fix twentyfour
       - fix helloworld_dynamic.exe 
 
-      dispatching to expression - douplicate typecasting
-      dispatching to variable / field / constant
       #526 : => operator should work with expression as well - s.toInt() => ... toInt is ignored
 ]
     * Lexi project:
