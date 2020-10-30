@@ -4,8 +4,6 @@ In development:
 
   [development]
 [
-      - generic handler + dispatch
-      - fix twentyfour
       - fix helloworld_dynamic.exe 
 
       #526 : => operator should work with expression as well - s.toInt() => ... toInt is ignored
@@ -312,3 +310,4 @@ Pipeline:
                  * advanced script : templates,closures,exception handling
                  * an array of int - no need to fill, one by one?
                  * optimize default multi-method, do we need frame?
+                 * warn if the extension method overrides the target method - it will not be called?

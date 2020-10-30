@@ -182,7 +182,7 @@ public extension enumerableOp
     bool ifExists(val)
         = nil != self.seekFor(val);
 
-    equal(Enumerable list)
+    bool sequenceEqual(Enumerable list)
     {
         Enumerator it1 := self.enumerator();
         Enumerator it2 := list.enumerator();
@@ -503,7 +503,7 @@ public extension indexableOp
         ^ Array.allocate(length).populate:(int i){ it.Index := index + i; ^ it.get()}
     }
     
-    sequenceEqual(array)
+    bool sequenceEqual(array)
     {
         if (self.Length != array.Length)
             { ^ false };

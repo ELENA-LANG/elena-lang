@@ -2008,6 +2008,10 @@ void Compiler :: compileSwitch(SNode node, ExprScope& scope)
          loperand = compileExpression(localNode, scope, 0, EAttr::eaNone);
       }
 
+      // HOTFIX : the switch target should be typecasted (to prevent comparision operation from being )
+      if (!loperand.reference)
+         loperand.reference = scope.moduleScope->superReference;
+
       ObjectInfo roperand = mapTerminal(exprNode.lastChild(), scope, EAttr::eaNone);
       ObjectInfo operationInfo = compileOperator(exprNode, scope, operator_id, 2, loperand, roperand, ObjectInfo(), EAttr::eaNone);
 

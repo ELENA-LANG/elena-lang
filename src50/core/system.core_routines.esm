@@ -3125,6 +3125,7 @@ procedure __struct."#dispatch[1]"
 
   count
   pushd
+  ifn      labEnd 0
 
 labNext:  
   dec      2
