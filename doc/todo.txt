@@ -3,16 +3,12 @@ In development:
 ------         
 
   [development]
-[
-      - fix helloworld_dynamic.exe 
-
-      #526 : => operator should work with expression as well - s.toInt() => ... toInt is ignored
-]
     * Lexi project:
         - load simple text and display it
         - add border / scroller
         - add control
         - load TeX
+    * [ fix helloworld_dynamic.exe ]
     * [ optimization s.Length ]
     * [ debugger : step over fine tuning if (false) {} else {} ]
     * [ debugger : fine-tuning stepOver - stepInto ] 

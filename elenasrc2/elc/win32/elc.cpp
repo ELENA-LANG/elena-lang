@@ -269,6 +269,14 @@ const char* showPlatform(int platform)
    else return ELC_UNKNOWN;
 }
 
+inline void loadDefaultProjectIfRequired(_ELC_::Project& project, _ELENA_::IdentifierString& defaultName, bool& withoutProject)
+{
+   if (withoutProject) {
+      project.loadDefaultConfig(defaultName.c_str());
+      withoutProject = false;
+   }
+}
+
 int main()
 {
    int argc;
@@ -288,7 +296,6 @@ int main()
 
       // Initializing..
       _ELENA_::Path configPath(project.appPath.c_str(), DEFAULT_CONFIG);
-
       project.loadConfig(configPath.c_str(), true, false);
 
       // Initializing..
@@ -297,6 +304,7 @@ int main()
 
       for (int i = 1 ; i < argc ; i++) {
          if (argv[i][0]=='-') {
+            loadDefaultProjectIfRequired(project, defaultName, withoutProject);
             project.setOption(argv[i] + 1, withoutProject);
          }
          else if (_ELENA_::Path::checkExtension(argv[i], "prj")) {
@@ -314,9 +322,7 @@ int main()
          }
       }
 
-      if (withoutProject) {
-         project.loadDefaultConfig(defaultName.c_str());
-      }
+      loadDefaultProjectIfRequired(project, defaultName, withoutProject);
 
       project.initLoader();
 
