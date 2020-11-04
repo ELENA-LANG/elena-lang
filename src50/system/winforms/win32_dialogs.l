@@ -9,6 +9,9 @@ const int DS_CENTER         = 0800h;
 
 // --- messageBox ---
 
+WindowHandle defaultHandle
+    = new WindowHandle();
+
 public singleton messageBox
 {
     int open(WindowHandle parent, wide caption, wide message, int flags)
@@ -20,11 +23,8 @@ public singleton messageBox
     
     int open(string caption, string message, int flags)
     {
-        WindowHandle handle := cast WindowHandle(forward program.MainWindow) /*\ back:*/ ?? nil;
+        WindowHandle handle := cast WindowHandle(forward program.MainWindow) /*\ back:*/ ?? defaultHandle;
         
-        if (nil == handle)
-            { handle := new WindowHandle() };
-                
         ^ messageBox.open(handle, cast wide(caption), cast wide(message), flags)
     }
 }

@@ -3,12 +3,15 @@ In development:
 ------         
 
   [development]
+    * [live sample]
+    * [ setting a property in dynamic ]
+    * [ fix helloworld_dynamic.exe ]
+
     * Lexi project:
         - load simple text and display it
         - add border / scroller
         - add control
         - load TeX
-    * [ fix helloworld_dynamic.exe ]
     * [ optimization s.Length ]
     * [ debugger : step over fine tuning if (false) {} else {} ]
     * [ debugger : fine-tuning stepOver - stepInto ] 

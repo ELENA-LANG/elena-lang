@@ -1,11 +1,11 @@
 <configuration>
     <project>
         <executable>live.exe</executable>
-        <arguments></arguments>
+        <arguments>sample5.l</arguments>
         <output></output>
         <options></options>
         <namespace>live</namespace>
-        <template>console</template>
+        <template>vm_console</template>
         <debuginfo>-1</debuginfo>
     </project>
     <files>

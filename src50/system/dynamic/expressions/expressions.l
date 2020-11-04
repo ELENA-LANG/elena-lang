@@ -2011,37 +2011,10 @@ namespace expressions
         }
  
         compile()
-            <= compile(new DynamicStruct(), IdleExpressionScope);
+            <= compile(new DynamicStruct());
  
-        compile(set, ExpressionScope scope)
-        {
-            int len := symbols.Length;
-            for (int i := 0, i < len, i+=1) {
-                auto info := symbols[i];
-                
-                var symbolName := info.Name;
-                if (symbolName == nil) {
-                    info.Symbol.compile(nil, scope);
-                }
-                else {
-                    MessageName name := new MessageName(symbolName);
-                    Message prop := name.setPropertyMessage(); 
-        
-                    var tape := info.Symbol.compile(set, scope);
-         
-                    prop(set, tape);
-                }                
-            };
-            
-            ^ set
-        }
-        
-        [info:"Exectutes the program entry point"]
-        eval()
-        {
-            var set := new DynamicStruct();
-            
-            var tape := self.compile(set, new ExpressionScope
+        compile(set)
+            <= compile(set, new ExpressionScope
             {
                 get int ScopeLevel() 
                 {
@@ -2116,6 +2089,36 @@ namespace expressions
                     ^ nil
                }                
             });
+ 
+        compile(set, ExpressionScope scope)
+        {
+            int len := symbols.Length;
+            for (int i := 0, i < len, i+=1) {
+                auto info := symbols[i];
+                
+                var symbolName := info.Name;
+                if (symbolName == nil) {
+                    info.Symbol.compile(nil, scope);
+                }
+                else {
+                    MessageName name := new MessageName(symbolName);
+                    Message prop := name.setPropertyMessage(); 
+        
+                    var tape := info.Symbol.compile(set, scope);
+         
+                    prop(set, tape);
+                }                
+            };
+            
+            ^ set
+        }
+        
+        [info:"Exectutes the program entry point"]
+        eval()
+        {
+            var set := new DynamicStruct();
+            
+            var tape := self.compile(set);
             
             var program := tape.program;
             ^ program();

@@ -706,33 +706,27 @@ bool Debugger :: findSignature(StreamReader& reader, char* signature)
 
 bool Debugger :: initDebugInfo(bool standAlone, StreamReader& reader, size_t& debugInfoPtr)
 {
-   //size_t rdata = 0;
-   //PEHelper::seekSection(reader, ".rdata", rdata);
+   size_t rdata = 0;
+   PEHelper::seekSection(reader, ".rdata", rdata);
 
-   //if (standAlone) {
-   //   // if it is a standalone
-   //   reader.seek((pos_t)baseAddress);
+   if (standAlone) {
+      // is not supported for a standalone - dn file should be used 
+      return false;
+   }
+   else {
+      // read SystemEnv
+      SystemEnv env;
+      Context()->readDump(Context()->readDWord(rdata), (char*)&env, sizeof(SystemEnv));
 
-   //   _ELENA_::PEHelper::seekSection(reader, ".debug", debugInfoPtr);
+      // read Table
+      GCTable table;
+      Context()->readDump((size_t)env.Table, (char*)&table, sizeof(GCTable));
 
-   //   return true;
-   //}
-   //else {
-   //   // read SystemEnv
-   //   SystemEnv env;
-   //   Context()->readDump(Context()->readDWord(rdata), (char*)&env, sizeof(SystemEnv));
+      if (table.dbg_ptr != 0) {
+         debugInfoPtr = table.dbg_ptr;
 
-   //   // read Table
-   //   GCTable table;
-   //   Context()->readDump((size_t)env.Table, (char*)&table, sizeof(GCTable));
-
-   //   if (table.dbg_ptr != 0) {
-   //      debugInfoPtr = table.dbg_ptr;
-
-   //      return true;
-   //   }
-   //   else return false;
-   //}
-
-   return false; // !! temporal
+         return true;
+      }
+      else return false;
+   }
 }

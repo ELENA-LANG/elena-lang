@@ -18,7 +18,7 @@
     </targets>
     <files>
         <module target="grammar">
-            <include>sample.l</include>
+            <include>sample5.l</include>
         </module>
     </files>
 </configuration>

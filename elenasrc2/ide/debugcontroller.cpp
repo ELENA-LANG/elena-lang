@@ -692,13 +692,13 @@ _Module* DebugController :: resolveModule(ident_t ns)
             if ((*it)->mapReference(virtualRef, true))
                return *it;
 
-            // trim the proper name
+            /*// trim the proper name
             trimLastNs(virtualRef);
             // trim the last sub namespace or stop the search
             if (virtualRef.Length() > 0) {
                trimLastNs(virtualRef);
             }
-            else break;
+            else*/ break;
          }
       }
       it++;
