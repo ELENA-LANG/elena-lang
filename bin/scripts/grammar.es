@@ -245,7 +245,7 @@
                )
 =>; 
 
-  #define prop_assign_expr::= ^
+  #define prop_assign_expr::=
 <=
                system'dynamic'expressions'SetPropertyExpression (
 =>                               

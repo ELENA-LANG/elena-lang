@@ -132,10 +132,14 @@
 <=
         expression (
 =>
-                              object ":=" assigning
+                             a_target ":=" assigning
 <=
         )
 =>;
+
+   #define a_target          ::= $ object a_prop*;
+
+   #define a_prop            ::= ^ <= expression ( => "." property <= ) =>; 
 
    #define assigning         ::=
 <=

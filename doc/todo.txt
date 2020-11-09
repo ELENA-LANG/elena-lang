@@ -3,10 +3,6 @@ In development:
 ------         
 
   [development]
-    * [live sample]
-    * [ setting a property in dynamic ]
-    * [ fix helloworld_dynamic.exe ]
-
     * Lexi project:
         - load simple text and display it
         - add border / scroller

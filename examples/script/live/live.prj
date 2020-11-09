@@ -1,7 +1,7 @@
 <configuration>
     <project>
         <executable>live.exe</executable>
-        <arguments>sample5.l</arguments>
+        <arguments>sample0.l</arguments>
         <output></output>
         <options></options>
         <namespace>live</namespace>
