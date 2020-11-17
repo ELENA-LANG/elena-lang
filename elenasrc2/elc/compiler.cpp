@@ -11605,6 +11605,8 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
       privateOne = true;
    }
 
+   info.methodHints.exclude(Attribute(message & ~STATIC_MESSAGE, maSingleMultiDisp));
+
    // !! temporally do not support variadic arguments
    // try to resolve an argument list in run-time if it is only a single dispatch and argument list is not weak
    if (!isSingleDispatch(info, message, resendMessage) || test(message, VARIADIC_MESSAGE) 
@@ -11638,9 +11640,16 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
       injectVirtualMultimethod(scope, classNode, message, methodType, resendMessage, privateOne, callTargetRef);
    }
    else {
-      // mark the message as a signle multi-method dispatcher
-      info.methodHints.exclude(Attribute(message & ~STATIC_MESSAGE, maSingleMultiDisp));
-      info.methodHints.add(Attribute(message & ~STATIC_MESSAGE, maSingleMultiDisp), resendMessage);
+      // mark the message as a signle multi-method dispatcher if the class is sealed / closed
+      bool sealed = test(info.header.flags, elClosed);
+      if (!sealed) {
+         int hints = info.methodHints.get(Attribute(message & ~STATIC_MESSAGE, maHint));
+         sealed = testany(hints, tpSealed | tpClosed);
+      }
+
+      // NOTE : only sealed / closed method can have maSingleMultiDisp attribute
+      if (sealed)
+         info.methodHints.add(Attribute(message & ~STATIC_MESSAGE, maSingleMultiDisp), resendMessage);
    }
 }
 
