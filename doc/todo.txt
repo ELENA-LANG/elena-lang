@@ -4,21 +4,6 @@ In development:
 
   [development]
     * c_a_g
-    * elt sample1.l
-
-    * what we need : retireve single multimethod if exists ; get signature ; pass it to compileMessageParameters ;
-      typecast arguments ; the problem - variadicOne (can be set later), inlineArg (do not typecast the target???)
-
-    * test inline arg + compile-type dispatching ofa multi-method
-    * test variadic arg + compile-type dispatching ofa multi-method
-
-    * [#523 : Typecast the argument list to the expected ones and call it directly if there is only 
-       a single strong-typed method]
-       - normal class / closure
-       - try to resolve the single message - if exists try to typecast to it, 
-
-       - retrieve single method (no custom dispatcher / auto dispatcher!); 
-         typecast the argument list;
 
     * Lexi project:
         - load simple text and display it
