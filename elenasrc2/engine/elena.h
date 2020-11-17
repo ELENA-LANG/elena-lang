@@ -542,6 +542,7 @@ enum MethodAttribute
    maYieldContextLength = 0x011,
    maYieldLocalLength   = 0x012,
    maStaticInherited    = 0x213,
+   maSingleMultiDisp    = 0x414, // indicates that the multi-method has single dispatch target
    //   maYieldPreallocated  = 0x011,
 };
 

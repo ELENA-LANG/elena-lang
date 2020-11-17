@@ -63,7 +63,6 @@ class CompilerLogic : public _CompilerLogic
    void setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr);
    void setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
 
-////   bool loadBranchingInfo(_CompilerScope& scope, ref_t reference);
    bool injectImplicitConstructor(_ModuleScope& scope, SNode& node, _Compiler& compiler, ClassInfo& info, ref_t targetRef,
       /*ref_t elementRef, */ref_t* signatures, size_t paramCount, int& stackSafeAttr);
 
@@ -93,6 +92,8 @@ public:
    virtual int defineStructSize(ClassInfo& info, bool& variable);
 
 //   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info);
+
+   virtual ref_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, ref_t message);
 
    virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
    virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);

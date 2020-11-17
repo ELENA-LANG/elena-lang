@@ -2537,13 +2537,12 @@ ObjectInfo Compiler :: compileSubjectReference(SNode terminal, ExprScope& scope,
    return retVal;
 }
 
-ref_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool variadicOne, bool extensionCall)
+ref_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool extensionCall)
 {
-   ref_t actionFlags = variadicOne ? VARIADIC_MESSAGE : 0;
+   ref_t actionFlags = 0;
    if (extensionCall)
       actionFlags |= FUNCTION_MESSAGE;
 
-//   IdentifierString signature;
    IdentifierString messageStr;
 
    SNode current = node;
@@ -2573,10 +2572,6 @@ ref_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool variadicOne, boo
       else if (test(current.type, lxObjectMask)) {
          argCount++;
       }
-//      else if (current == lxMessage) {
-//         messageStr.append(':');
-//         messageStr.append(current.firstChild(lxTerminalMask).identifier());
-//      }
       else break;
 
       current = current.nextNode();
@@ -3518,7 +3513,7 @@ ref_t Compiler :: resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, 
    }
 }
 
-ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr mode, bool& variadicOne, bool& inlineArg)
+ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr mode, ref_t expectedSignRef, bool& variadicOne, bool& inlineArg)
 {
    // HOTFIX : save the previous call node and set the new one : used for closure unboxing
    SNode prevCallNode = scope.callNode;
@@ -3535,15 +3530,16 @@ ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr 
    SNode current = node;
 
    // compile the message argument list
-   ref_t signatures[ARG_COUNT];
+   ref_t signatures[ARG_COUNT] = {0};
+   if (expectedSignRef)
+      scope.module->resolveSignature(expectedSignRef, signatures);
+
    ref_t signatureLen = 0;
    while (/*current != lxMessage && */current != lxNone) {
       if (test(current.type, lxObjectMask)) {
-//         if (externalMode)
-//            writer.newNode(lxExtArgument);
-
          // try to recognize the message signature
-		   ObjectInfo paramInfo = compileExpression(current, scope, 0, paramMode);
+         // NOTE : signatures[signatureLen] contains expected parameter type if expectedSignRef is provided
+		   ObjectInfo paramInfo = compileExpression(current, scope, signatures[signatureLen], paramMode);
 
          ref_t argRef = resolveObjectReference(scope, paramInfo, false);
          if (signatureLen >= ARG_COUNT) {
@@ -3706,15 +3702,21 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
 
 ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expectedRef, ObjectInfo target, EAttr mode)
 {
+   ref_t expectedSignRef = 0; // contains the expected message signature if it there is only single method overloading
+   ref_t messageRef = 0;
    EAttr paramsMode = EAttr::eaNone;
-   if (target.kind == okExternal) {
-      paramsMode = paramsMode | HINT_EXTERNALOP;
+   if (target.kind != okExternal) {
+      messageRef = mapMessage(node, scope, target.kind == okExtension);
+      ref_t resolvedMessage = _logic->resolveSingleMultiDisp(*scope.moduleScope, resolveObjectReference(scope, target, false), messageRef);
+
+      scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
    }
+   else paramsMode = paramsMode | HINT_EXTERNALOP;
 
    ObjectInfo retVal;
    bool variadicOne = false;
    bool inlineArg = false;
-   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, variadicOne, inlineArg);
+   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, expectedSignRef, variadicOne, inlineArg);
 
    //   bool externalMode = false;
    if (target.kind == okExternal) {
@@ -3723,7 +3725,9 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
       retVal = compileExternalCall(node, scope, expectedRef, extMode);
    }
    else {
-      ref_t messageRef = mapMessage(node, scope, variadicOne, target.kind == okExtension);
+      if (variadicOne)
+         // HOTFIX : set variadic flag if required
+         messageRef |= VARIADIC_MESSAGE;
 
       if (target.kind == okInternal) {
          retVal = compileInternalCall(node.parentNode(), scope, messageRef, implicitSignatureRef, target);
@@ -4229,7 +4233,7 @@ ObjectInfo Compiler :: compilePropAssigning(SNode node, ExprScope& scope, Object
    ObjectInfo retVal;
 
    // tranfer the message into the property set one
-   ref_t messageRef = mapMessage(node, scope, false, false);
+   ref_t messageRef = mapMessage(node, scope, false);
    ref_t actionRef, flags;
    int argCount;
    decodeMessage(messageRef, actionRef, argCount, flags);
@@ -5047,7 +5051,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
    bool variadicOne = false;
    bool inlineArg = false;
    int paramCount = SyntaxTree::countNodeMask(node, lxObjectMask);
-   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, variadicOne, inlineArg);
+   ref_t implicitSignatureRef = compileMessageParameters(node, scope, paramsMode, 0, variadicOne, inlineArg);
    if (inlineArg)
       scope.raiseError(errInvalidOperation, node);
 
@@ -7096,7 +7100,7 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    MethodScope* methodScope = (MethodScope*)codeScope.getScope(Scope::ScopeLevel::slMethod);
 
    SNode messageNode = expr.findChild(lxMessage);
-   ref_t messageRef = mapMessage(messageNode, resendScope, false, false);
+   ref_t messageRef = mapMessage(messageNode, resendScope, false);
 
    ref_t classRef = classClassScope.reference;
    bool found = false;
@@ -7125,7 +7129,7 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    bool variadicOne = false;
    bool inlineArg = false;
    SNode argNode = expr.findChild(lxMessage).nextNode();
-   ref_t implicitSignatureRef = compileMessageParameters(argNode, resendScope, EAttr::eaNone,
+   ref_t implicitSignatureRef = compileMessageParameters(argNode, resendScope, EAttr::eaNone, 0,
       variadicOne, inlineArg);
 
    // HOTFIX : (re)initialize expr node in case the parent node was modified (due to unboxing)
@@ -8366,7 +8370,7 @@ void Compiler :: declareVMT(SNode node, ClassScope& scope, bool& withConstructor
                methodScope.extensionMode = true;
 
             // NOTE : an extension message must be strong-resolved
-            declareArgumentList(current, methodScope, methodScope.extensionMode | test(scope.info.header.flags, elNestedClass), true);
+            declareArgumentList(current, methodScope, methodScope.extensionMode || test(scope.info.header.flags, elNestedClass), true);
             current.setArgument(methodScope.message);
          }
          else methodScope.message = current.argument;
@@ -9194,10 +9198,6 @@ void Compiler :: generateClassDeclaration(SNode node, ClassScope& scope, bool ne
    else {
       // HOTFIX : flags / fields should be compiled only for the class itself
       generateClassFlags(scope, node);
-
-////      if (test(scope.info.header.flags, elExtension)) {
-////         scope.extensionClassRef = scope.info.fieldTypes.get(-1).value1;
-////      }
 
       // inject virtual fields
       _logic->injectVirtualFields(*scope.moduleScope, node, scope.reference, scope.info, *this);
@@ -11636,6 +11636,11 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
       }
 
       injectVirtualMultimethod(scope, classNode, message, methodType, resendMessage, privateOne, callTargetRef);
+   }
+   else {
+      // mark the message as a signle multi-method dispatcher
+      info.methodHints.exclude(Attribute(message & ~STATIC_MESSAGE, maSingleMultiDisp));
+      info.methodHints.add(Attribute(message & ~STATIC_MESSAGE, maSingleMultiDisp), resendMessage);
    }
 }
 

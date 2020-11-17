@@ -332,6 +332,18 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
    else return tpUnknown;
 }
 
+ref_t CompilerLogic :: resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, ref_t message)
+{
+   if (!reference)
+      return 0;
+
+   ClassInfo info;
+   if (defineClassInfo(scope, info, reference)) {
+      return info.methodHints.get(Attribute(message, maSingleMultiDisp));
+   }
+   else return 0;
+}
+
 int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
 {
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result, false);
@@ -420,73 +432,6 @@ int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, r
 //
 //   return 0;
 //}
-//
-////bool CompilerLogic :: loadBranchingInfo(_CompilerScope& scope, ref_t reference)
-////{
-////   if (scope.branchingInfo.trueRef == reference || scope.branchingInfo.falseRef == reference)
-////      return true;
-////
-////   ClassInfo info;
-////   scope.loadClassInfo(info, reference);
-////
-////   if ((info.header.flags & elDebugMask) == elEnumList) {
-////      _Module* extModule = NULL;
-////      _Memory* listSection = NULL;
-////
-////      while (true) {
-////         ref_t listRef = info.statics.get(ENUM_VAR).value1;
-////
-////         ref_t extRef = 0;
-////         extModule = scope.loadReferenceModule(listRef, extRef);
-////         listSection = extModule ? extModule->mapSection(extRef | mskRDataRef, true) : NULL;
-////
-////         if (listSection == NULL && info.header.parentRef != 0) {
-////            reference = info.header.parentRef;
-////
-////            scope.loadClassInfo(info, reference);
-////         }
-////         else break;
-////      }
-////
-////      if (listSection) {
-////         ref_t trueRef = 0;
-////         ref_t falseRef = 0;
-////
-////         // read enum list member and find true / false values
-////         _ELENA_::RelocationMap::Iterator it(listSection->getReferences());
-////         ref_t currentMask = 0;
-////         ref_t memberRef = 0;
-////         while (!it.Eof()) {
-////            currentMask = it.key() & mskAnyRef;
-////            if (currentMask == mskConstantRef) {
-////               memberRef = importReference(extModule, it.key() & ~mskAnyRef, scope.module);
-////
-////               ClassInfo memberInfo;
-////               scope.loadClassInfo(memberInfo, memberRef);
-////               int attribute = checkMethod(memberInfo, encodeMessage(IF_MESSAGE_ID, 1));
-////               if (attribute == (tpIfBranch | tpSealed)) {
-////                  trueRef = memberRef;
-////               }
-////               else if (attribute == (tpIfNotBranch | tpSealed)) {
-////                  falseRef = memberRef;
-////               }
-////            }
-////
-////            it++;
-////         }
-////
-////         if (trueRef && falseRef) {
-////            scope.branchingInfo.reference = reference;
-////            scope.branchingInfo.trueRef = trueRef;
-////            scope.branchingInfo.falseRef = falseRef;
-////
-////            return true;
-////         }
-////      }
-////   }
-////
-////   return false;
-////}
 
 bool CompilerLogic :: resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference)
 {
@@ -1584,25 +1529,6 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
       info.header.flags |= elSealed;
    }
 
-////   // verify if the class may be a wrapper
-////   if (isWrappable(info.header.flags) && info.fields.Count() == 1 &&
-////      test(info.methodHints.get(Attribute(encodeAction(DISPATCH_MESSAGE_ID), maHint)), tpEmbeddable))
-////   {
-////      if (test(info.header.flags, elStructureRole)) {
-////         ClassInfo::FieldInfo field = *info.fieldTypes.start();
-////
-////         ClassInfo fieldInfo;
-////         if (defineClassInfo(scope, fieldInfo, field.value1, true) && isEmbeddable(fieldInfo)) {
-////            // wrapper around embeddable object should be marked as embeddable wrapper
-////            info.header.flags |= elEmbeddableWrapper;
-////
-////            if ((info.header.flags & elDebugMask) == 0)
-////               info.header.flags |= fieldInfo.header.flags & elDebugMask;
-////         }
-////      }
-////      else info.header.flags |= elWrapper;
-////   }
-
    if (test(info.header.flags, elDynamicRole | elStructureRole)) {
       if (classRef == scope.literalReference) {
          // recognize string constant
@@ -1724,12 +1650,6 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
       case V_STRUCT:
          attrValue = elStructureRole;
          return true;
-////      case V_ENUMLIST:
-////         attrValue = elAbstract | elEnumList | elClosed;
-////         return true;
-//////      case V_DYNAMIC:
-//////         attrValue = elDynamicRole;
-//////         return true;
       case V_CONST:
          attrValue = elReadOnlyRole;
          return true;
@@ -1840,9 +1760,6 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
       case V_STATIC:
          attrValue = tpStatic;
          return true;
-////      case V_SET:
-////         attrValue = tpAccessor;
-////         return true;
       case V_ABSTRACT:
          attrValue = tpAbstract;
          return true;
@@ -1853,9 +1770,6 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
          attrValue = tpDispatcher;
          explicitMode = true;
          return true;
-////      case V_STACKUNSAFE:
-////         attrValue = tpDynamic;
-////         return true;
       case V_GETACCESSOR:
          attrValue = tpGetAccessor;
          return true;
@@ -2045,25 +1959,6 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
    }   
    else return attrValue == 0;
 }
-
-//////bool CompilerLogic :: validateWarningAttribute(int& attrValue)
-//////{
-//////   switch ((size_t)attrValue)
-//////   {
-//////      case V_WARNING1:
-
-//////         attrValue = WARNING_MASK_0;
-//////         return true;
-//////      case V_WARNING2:
-//////         attrValue = WARNING_MASK_1;
-//////         return true;
-//////      case V_WARNING3:
-//////         attrValue = WARNING_MASK_2;
-//////         return true;
-//////      default:
-//////         return false;
-//////   }
-//////}
 
 void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 {
@@ -2309,25 +2204,6 @@ bool CompilerLogic :: optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compi
    return false;
 }
 
-//////void CompilerLogic :: injectVariableAssigning(SyntaxWriter& writer, _CompilerScope& scope, _Compiler& compiler, ref_t& targetRef, ref_t& type, int& operand, bool paramMode)
-//////{
-//////   ClassInfo info;
-//////   defineClassInfo(scope, info, targetRef);
-//////
-//////   operand = defineStructSize(info, false);
-//////   
-//////   if (paramMode) {
-//////      if (operand == 0) {
-//////         //HOTFIX : allowing to assign a reference variable
-//////         // replace the parameter with the field expression
-//////         compiler.injectFieldExpression(writer);
-//////      }
-//////
-//////      type = info.fieldTypes.get(0).value2;
-//////      targetRef = info.fieldTypes.get(0).value1;
-//////   }
-//////}
-
 bool CompilerLogic :: optimizeEmbeddable(SNode node, _ModuleScope& scope)
 {
    // check if it is a virtual call
@@ -2421,19 +2297,6 @@ bool CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode node)
    }
    return false;
 }
-
-//////inline void readFirstSignature(ident_t signature, size_t& start, size_t& end, IdentifierString& temp)
-//////{
-//////   start = signature.find('$') + 1;
-//////   end = signature.find(start, '$', getlength(signature));
-//////   temp.copy(signature.c_str() + start, end - start);
-//////}
-//////
-//////inline void readNextSignature(ident_t signature, size_t& start, size_t& end, IdentifierString& temp)
-//////{
-//////   end = signature.find(start, '$', getlength(signature));
-//////   temp.copy(signature.c_str() + start, end - start);
-//////}
 
 inline ref_t resolveNonpublic(ClassInfo& info, _Module* module, ref_t publicMessage, ref_t& visibility)
 {

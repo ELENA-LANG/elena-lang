@@ -14,6 +14,7 @@
   - #517 : Interface dispatcher : Check if all abstract methods are implemented 
   - #520 : Parent multi-method default handler is not invoked by its children 
   - #526 : dispatch operator should work with expression as well 
+  - #523 : Typecast the argument list to the expected ones and call it directly if there is only a single strong-typed method
 - IDE
   - several usability bugs fixed
 - TOOLS

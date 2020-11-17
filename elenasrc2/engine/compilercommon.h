@@ -731,6 +731,8 @@ public:
 
 //   virtual bool isDefaultConstructorEnabled(ClassInfo& info) = 0;
 
+   virtual ref_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, ref_t message) = 0;
+
    virtual ref_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
       ref_t message, ref_t expectedRef) = 0 ;
 

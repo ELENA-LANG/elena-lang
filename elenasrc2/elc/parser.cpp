@@ -31,9 +31,9 @@ SyntaxError :: SyntaxError(int column, int row, ident_t token, const char* error
    this->token = token;
 }
 
-inline const char* getError(int symbol)
+inline const char* getError(int/* symbol*/)
 {
-   switch(symbol) {
+   //switch(symbol) {
    //   case nsDeclarationEndExpected:
    //   case nsStatementEndExpected:
    //   case nsDirectiveEndExpected:
@@ -47,9 +47,9 @@ inline const char* getError(int symbol)
    //   //   return errObjectExpected;
    //   //case nsErrMessageExpected:
    //   //   return errMessageExpected;
-      default:
+   //   default:
          return errInvalidSyntax;
-   }
+   //}
 }
 
 LexicalType getLexicalType(int symbol)

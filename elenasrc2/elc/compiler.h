@@ -1082,7 +1082,7 @@ private:
    ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
    ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
                                      bool withExtension, int& stackSafeAttr);
-   ref_t mapMessage(SNode node, ExprScope& scope, bool variadicOne, bool extensionCall);
+   ref_t mapMessage(SNode node, ExprScope& scope, bool extensionCall);
    ref_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags, 
       IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
       bool withoutWeakMessages, bool noSignature);
@@ -1130,7 +1130,8 @@ private:
    ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo info);
    ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo param1, ObjectInfo param2);
 
-   ref_t compileMessageParameters(SNode& node, ExprScope& scope, EAttr mode, bool& variadicOne, bool& inlineArg);
+   ref_t compileMessageParameters(SNode& node, ExprScope& scope, EAttr mode, ref_t expectedSignRef, 
+      bool& variadicOne, bool& inlineArg);
 
    ObjectInfo compileMessage(SNode node, ExprScope& scope, ref_t exptectedRef, ObjectInfo target, EAttr mode);
    ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode, 
