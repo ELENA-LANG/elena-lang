@@ -9,7 +9,7 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "amd64jitcompiler.h"
-//#include "bytecode.h"
+#include "bytecode.h"
 
 //#pragma warning(disable : 4100)
 
@@ -65,94 +65,67 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 ///*   OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, */EXIT, //CALC_SIZE, GET_COUNT,
 ///*   THREAD_WAIT, EXITTHREAD, NEW_EVENT*/
 //};
-//
-//// preloaded gc commands
-//const int gcCommandNumber = /*138*/14;
-//const int gcCommands[gcCommandNumber] =
-//{
-//   bcALoadSI, /*bcACallVI, */bcOpen, //bcBCopyA, bcPackage,
-//   bcALoadFI, /*bcASaveSI, bcASaveFI, */bcClose, //bcMIndex,
-////   bcNewN, bcNew, bcASwapSI, bcXIndexRM, bcESwap,
-//   bcALoadBI, /*bcPushAI, bcCallExtR, bcPushF, bcBSRedirect,*/
-////   bcHook, bcThrow, bcUnhook, bcClass, bcACallVD,
-////   bcDLoadSI, bcDSaveSI, bcDLoadFI, bcDSaveFI, bcELoadSI,
-///*   bcEQuit, bcAJumpVI, bcASaveBI, */bcXCallRM, //bcESaveSI,
-////   bcGet, bcSet, bcXSet, bcACallI, bcBReadB,
-//   bcRestore, //bcLen, bcIfHeap, bcFlag, bcNCreate,
-///*   bcBLoadFI, */bcReserve, /*bcAXSaveBI, */bcBLoadSI, //bcBWriteB,
-///*   bcNEqual, bcNLess, */bcNCopy, bcNAdd, //bcBSwapSI,
-////   bcNSub, bcNMul, bcNDiv, bcNLoadE, bcDivN,
-///*   bcWLen, */bcNSave, bcNLoad, //bcWCreate, bcCopy,
-////   bcBCreate, bcBWrite, bcBLen, bcBReadW, bcXLen,
-////   bcBRead, bcBSwap, bcDSwapSI, bcESwapSI, bcSNop,
-////   bcNAnd, bcNOr, bcNXor, bcTryLock, bcFreeLock,
-////   bcLCopy, bcLEqual, bcLLess, bcLAdd,
-////   bcLSub, bcLMul, bcLDiv, bcLAnd, bcLOr,
-////   bcLXor, bcNShift, bcNNot, bcLShift,
-////   bcLNot, bcRCopy, bcRSave, bcREqual, bcBSaveSI,
-////   bcRLess, bcRAdd, bcRSub, bcRMul, bcRDiv,
-////   bcCreate, bcExclude, bcDCopyR, bcInclude,
-////   bcSelectR, bcNext, bcXSelectR, bcCount,
-///*   bcRAbs, bcRExp, bcRInt, */bcValidate//,
-////   bcRLn, bcRRound, bcRSin, bcRCos, bcRArcTan,
-////   bcAddress, bcBWriteW, bcRLoad, bcXJumpRM, bcNLen,
-////   bcNRead, bcNWrite, bcNLoadI, bcNSaveI, bcELoadFI,
-////   bcESaveFI, bcWRead, bcWWrite, bcNWriteI,
-////   bcNCopyB, bcLCopyB, bcCopyB, bcNReadI
-//};
-//
-//// command table
-//void(*commands[0x100])(int opcode, AMD64JITScope& scope) =
-//{
-//   &compileNop, &compileBreakpoint, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compilePushA, &compileNop, &compileACopyB, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteLOp,
-//   &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileDCopy, &compileNop, &loadIndexOpX, &compileNop, &loadFPOpX, &loadIndexOpX, &compileNop, &compileNop,
-//   &compileOpen, &compileQuitN, &compileNop, &compileBCopyF, &compileACopyF, &compileNop, &compileACopyR, &compileMCopy,
-//
-//   &compileNop, &compileNop, &compileNop, &compileCallR, &compileNop, &loadFunction, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOpX,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &loadIndexOpX, &compileNop, &compileNop, &compileNop, &compileNop, &loadIndexOpX, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileDAddN, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-//   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileInvokeVMT, &compileNop,
-//};
-//
+
+// preloaded gc commands
+const int gcCommandNumber = /*138*/2;
+const int gcCommands[gcCommandNumber] =
+{
+   bcCallExtR, 
+   bcPushS,
+};
+
+// command table
+void(*commands[0x100])(int opcode, I64JITScope& scope) =
+{
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFunction, &compileNop, &compileNop,
+   & compileNop,& compileNop,& compileNop,& compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &compileNop,
+
+   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+
+   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+};
+
 ////// --- x86JITCompiler commands ---
 ////
 ////inline void compileJump(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
@@ -270,20 +243,20 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 //   }
 //   writer->seekEOF();
 //}
-//
-//inline void _ELENA_::writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code)
-//{
-//   // references should be already preloaded
-//   /*if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
-//      scope.helper->writeReference(*scope.code,
-//         scope.compiler->_preloaded.get(reference & ~mskAnyRef), true, *(int*)(code + offset));
-//
-//      scope.lh.addFixableJump(offset + position, (*scope.code->Memory())[offset + position]);
-//   }
-//   else */scope.helper->writeReference(*scope.code,
-//      scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
-//}
-//
+
+inline void _ELENA_::writeCoreReference(I64JITScope& scope, ref_t reference, int position, int offset, char* code)
+{
+   // references should be already preloaded
+   /*if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
+      scope.helper->writeReference(*scope.code,
+         scope.compiler->_preloaded.get(reference & ~mskAnyRef), true, *(int*)(code + offset));
+
+      scope.lh.addFixableJump(offset + position, (*scope.code->Memory())[offset + position]);
+   }
+   else */scope.helper->writeReference(*scope.code,
+      scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
+}
+
 ////void _ELENA_::loadOneByteOp(int opcode, x86JITScope& scope)
 ////{
 ////   MemoryWriter* writer = scope.code;
@@ -459,7 +432,35 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 //////   }
 //////   scope.code->seekEOF();
 //////}
-//
+
+
+void _ELENA_::loadFPOp(int opcode, I64JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(-(scope.argument << 2));
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 //void _ELENA_::loadFPOpX(int opcode, AMD64JITScope& scope)
 //{
 //   char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -486,52 +487,52 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 //   }
 //   scope.code->seekEOF();
 //}
-//
-//void _ELENA_::loadFunction(int opcode, AMD64JITScope& scope)
-//{
-//   // if it is internal native call
-//   switch (scope.argument & mskAnyRef) {
-//      case mskNativeCodeRef:
-//      case mskPreloadCodeRef:
-//         compileCallR(opcode, scope);
-//         return;
-//   }
-//
-////   MemoryWriter* writer = scope.code;
-////
-////   char*  code = (char*)scope.compiler->_inlines[opcode];
-////   size_t position = scope.code->Position();
-////   size_t length = *(size_t*)(code - 4);
-////
-////   // simply copy correspondent inline code
-////   writer->write(code, length);
-////
-////   // resolve section references
-////   int count = *(int*)(code + length);
-////   int* relocation = (int*)(code + length + 4);
-////   int key, offset;
-////   while (count > 0) {
-////      key = relocation[0];
-////      offset = relocation[1];
-////
-////      // locate relocation position
-////      writer->seek(position + relocation[1]);
-////
-////      // !! temporal, more optimal way should be used
-////      if (relocation[0] == -1) {
-////         scope.writeReference(*writer, scope.argument, *(int*)(code + offset));
-////      }
-////      //else if ((key & mskTypeMask) == mskPreloaded) {
-////      //   scope.compiler->writePreloadedReference(scope, key, position, offset, code);
-////      //}
-////      else scope.writeReference(*writer, key, *(int*)(code + offset));
-////
-////      relocation += 2;
-////      count--;
-////   }
-////   scope.code->seekEOF();
-//}
-//
+
+void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
+{
+   // if it is internal native call
+   switch (scope.argument & mskAnyRef) {
+      case mskNativeCodeRef:
+      case mskPreloadCodeRef:
+         compileCallR(opcode, scope);
+         return;
+   }
+
+   MemoryWriter* writer = scope.code;
+
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   int key, offset;
+   while (count > 0) {
+      key = relocation[0];
+      offset = relocation[1];
+
+      // locate relocation position
+      writer->seek(position + relocation[1]);
+
+      // !! temporal, more optimal way should be used
+      if (relocation[0] == -1) {
+         scope.writeReference(*writer, scope.argument, *(int*)(code + offset));
+      }
+      //else if ((key & mskTypeMask) == mskPreloaded) {
+      //   scope.compiler->writePreloadedReference(scope, key, position, offset, code);
+      //}
+      else scope.writeReference(*writer, key, *(int*)(code + offset));
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 //////void _ELENA_::loadCode(int opcode, x86JITScope& scope)
 //////{
 //////   // if it is a symbol reference
@@ -574,18 +575,18 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 //////      scope.code->seekEOF();
 //////   }
 //////}
-//
-//void _ELENA_::compileNop(int, AMD64JITScope& scope)
-//{
-////   // nop command is used to indicate possible label
-////   // fix the label if it exists
-////   if (scope.lh.checkLabel(scope.tape->Position() - 1)) {
-////      scope.lh.fixLabel(scope.tape->Position() - 1);
-////   }
-////   // or add the label
-////   else scope.lh.setLabel(scope.tape->Position() - 1);
-//}
-//
+
+void _ELENA_::compileNop(int, I64JITScope& scope)
+{
+//   // nop command is used to indicate possible label
+//   // fix the label if it exists
+//   if (scope.lh.checkLabel(scope.tape->Position() - 1)) {
+//      scope.lh.fixLabel(scope.tape->Position() - 1);
+//   }
+//   // or add the label
+//   else scope.lh.setLabel(scope.tape->Position() - 1);
+}
+
 //void _ELENA_::compileBreakpoint(int, AMD64JITScope& scope)
 //{
 //   if (scope.withDebugInfo)
@@ -1034,14 +1035,14 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 ////   // push ebx
 ////   scope.code->writeByte(0x53);
 ////}
-//
-//void _ELENA_::compileCallR(int, AMD64JITScope& scope)
-//{
-//   // call symbol
-//   scope.code->writeByte(0xE8);
-//   scope.writeReference(*scope.code, scope.argument | mskRelCodeRef, 0);
-//}
-//
+
+void _ELENA_::compileCallR(int, I64JITScope& scope)
+{
+   // call symbol
+   scope.code->writeByte(0xE8);
+   scope.writeReference(*scope.code, scope.argument | mskRelCodeRef, 0);
+}
+
 ////void _ELENA_::compileJumpN(int, x86JITScope& scope)
 ////{
 ////   // jmp [eax+i]
@@ -1341,35 +1342,35 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 ////   // or ebx, ecx
 ////   scope.code->writeWord(0xD90B);
 ////}
-//
-//// --- AMD64JITScope ---
-//
-//AMD64JITScope :: AMD64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, AMD64JITCompiler* compiler)
-////   : lh(code)
-//{
-//   this->tape = tape;
-//   this->code = code;
-//   this->helper = helper;
-//   this->compiler = compiler;
-//   this->withDebugInfo = compiler->isWithDebugInfo();
-//   //this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
-//   this->module = NULL;
-//}
-//
-//void AMD64JITScope::writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
-//{
-//   // HOTFIX : mskLockVariable used to fool trylock opcode, adding virtual offset
-//   if ((reference & mskAnyRef) == mskLockVariable) {
-//      disp += compiler->getObjectHeaderSize();
-//   }
-//
-//   helper->writeReference(writer, reference, disp, module);
-//}
-//
-//void AMD64JITScope :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp)
-//{
-//   helper->writeXReference(writer, reference, disp, module);
-//}
+
+// --- AMD64JITScope ---
+
+I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, I64JITCompiler* compiler)
+//   : lh(code)
+{
+   this->tape = tape;
+   this->code = code;
+   this->helper = helper;
+   this->compiler = compiler;
+   this->withDebugInfo = compiler->isWithDebugInfo();
+   //this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
+   this->module = nullptr;
+}
+
+void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
+{
+   // HOTFIX : mskLockVariable used to fool trylock opcode, adding virtual offset
+   if ((reference & mskAnyRef) == mskLockVariable) {
+      disp += compiler->getObjectHeaderSize();
+   }
+
+   helper->writeReference(writer, reference, disp, module);
+}
+
+void I64JITScope :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp)
+{
+   helper->writeXReference(writer, reference, disp, module);
+}
 
 // --- I64JITCompiler ---
 
@@ -1467,13 +1468,13 @@ void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    //   }
    //}
 
-   //// preload vm commands
-   //for (int i = 0; i < gcCommandNumber; i++) {
-   //   SectionInfo info = helper.getCoreSection(gcCommands[i]);
+   // preload vm commands
+   for (int i = 0; i < gcCommandNumber; i++) {
+      SectionInfo info = helper.getCoreSection(gcCommands[i]);
 
-   //   // due to optimization section must be ROModule::ROSection instance
-   //   _inlines[gcCommands[i]] = (char*)info.section->get(0);
-   //}
+      // due to optimization section must be ROModule::ROSection instance
+      _inlines[gcCommands[i]] = (char*)info.section->get(0);
+   }
 }
 
 void I64JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode)
@@ -1529,35 +1530,35 @@ int I64JITCompiler:: allocateTLSVariable(_JITLoader* loader)
    return 0;
 }
 
-//inline void compileTape(MemoryReader& tapeReader, size_t endPos, AMD64JITScope& scope)
-//{
-//   unsigned char code = 0;
-//   while (tapeReader.Position() < endPos) {
-//      // read bytecode + arguments
-//      code = tapeReader.getByte();
-//      // preload an argument if a command requires it
-//      if (code > MAX_SINGLE_ECODE) {
-//         scope.argument = tapeReader.getDWord();
-//      }
-//      commands[code](code, scope);
-//   }
-//}
+inline void compileTape(MemoryReader& tapeReader, size_t endPos, I64JITScope& scope)
+{
+   unsigned char code = 0;
+   while (tapeReader.Position() < endPos) {
+      // read bytecode + arguments
+      code = tapeReader.getByte();
+      // preload an argument if a command requires it
+      if (code > MAX_SINGLE_ECODE) {
+         scope.argument = tapeReader.getDWord();
+      }
+      commands[code](code, scope);
+   }
+}
 
 void I64JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
 {
-   //AMD64JITScope scope(&tapeReader, &codeWriter, &helper, this);
+   I64JITScope scope(&tapeReader, &codeWriter, &helper, this);
 
-   //size_t codeSize = tapeReader.getDWord();
-   //size_t endPos = tapeReader.Position() + codeSize;
+   size_t codeSize = tapeReader.getDWord();
+   size_t endPos = tapeReader.Position() + codeSize;
 
-   //compileTape(tapeReader, endPos, scope);
+   compileTape(tapeReader, endPos, scope);
 
-   //// ; copy the parameter to the accumulator to simulate embedded symbol
-   //// ; exit the procedure
-   //// ret
-   //codeWriter.writeByte(0xC3);
+   // ; copy the parameter to the accumulator to simulate embedded symbol
+   // ; exit the procedure
+   // ret
+   codeWriter.writeByte(0xC3);
 
-   //alignCode(&codeWriter, 0x08, true);
+   alignCode(&codeWriter, 0x08, true);
 }
 
 void I64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)

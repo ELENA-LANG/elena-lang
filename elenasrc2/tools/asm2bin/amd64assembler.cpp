@@ -279,7 +279,7 @@ bool AMD64Assembler :: setOffset(Operand& operand, Operand disp)
       //else if (test(operand.type, AMD64Helper::otM8)) {
       //   operand.type = (OperandType)(operand.type | AMD64Helper::otM8disp8);
       //}
-      /*else */operand.type = (OperandType)(operand.type | AMD64Helper::otM32disp8);
+      /*else */operand.type = (OperandType)(operand.type | AMD64Helper::otM64disp8);
 
       return true;
    }
@@ -500,16 +500,16 @@ AMD64Assembler::Operand AMD64Assembler:: compileOperand(TokenInfo& token, Proced
    Operand	    operand;
 
    token.read();
-//	if (token.check("[")) {
-//		token.read();
-//      operand = readDispOperand(token, info, "Invalid expression (%d)", x86Helper::otM32);
-//
-//	   if(!token.check("]")) {
-//          token.raiseErr("']' expected (%d)\n");
-//	   }
-//	   else token.read();
-//	}
-	/*else */if (token.check("dword")) {
+	if (token.check("[")) {
+		token.read();
+      operand = readDispOperand(token, info, "Invalid expression (%d)", AMD64Helper::otM64);
+
+	   if(!token.check("]")) {
+          token.raiseErr("']' expected (%d)\n");
+	   }
+	   else token.read();
+	}
+	else if (token.check("dword")) {
       token.read("ptr", "'ptr' expected (%d)\n");
 
       operand = readPtrOperand(token, info, err, AMD64Helper::otM32);
@@ -608,6 +608,11 @@ void AMD64Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryW
       code->writeByte(0x48);
       code->writeByte(0x8B);
       AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else if (test(sour.type, AMD64Helper::otM64) && test(dest.type, AMD64Helper::otR64)) {
+      code->writeByte(0x48);
+      code->writeByte(0x89);
+      AMD64Helper::writeModRM(code, dest, sour);
    }
    else if (test(sour.type, AMD64Helper::otR32) && (test(dest.type, AMD64Helper::otR32)||test(dest.type, AMD64Helper::otM32))) {
       code->writeByte(0x8B);
@@ -1290,22 +1295,23 @@ void AMD64Assembler :: compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryW
 //	}
 //	else token.raiseErr("Invalid command (%d)");
 //}
-//
-//void x86Assembler :: compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{
-//	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
-//
-//	checkComma(token);
-//
-//	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
-//
-//	if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otM32)) {
-//		code->writeByte(0x8D);
-//		x86Helper::writeModRM(code, sour, dest);
-//	}
-//	else token.raiseErr("Invalid command (%d)");
-//}
-//
+
+void AMD64Assembler :: compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+
+   checkComma(token);
+
+   Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+   if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otM64)) {
+      code->writeByte(0x48);
+	   code->writeByte(0x8D);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else token.raiseErr("Invalid command (%d)");
+}
+
 //void x86Assembler :: compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
 //	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
@@ -2572,9 +2578,9 @@ void AMD64Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, Memory
    /*else */if (token.check("extern")) {
       code->writeWord(0x15FF);
       token.read();
-//      if (token.check(ARGUMENT1)) {
-//         code->writeRef(-1, 0);
-//      }
+      if (token.check(ARGUMENT1)) {
+         code->writeRef(-1, 0);
+      }
 //      else if (token.check(ARGUMENT2)) {
 //         code->writeRef(-2, 0);
 //      }
@@ -2588,7 +2594,7 @@ void AMD64Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, Memory
 //
 //	      code->writeRef(ref, 0);
 //      }
-      /*else */if (token.check("'dlls'", 6)) {
+      else if (token.check("'dlls'", 6)) {
          ReferenceNs function(DLL_NAMESPACE, token.value + 6);
 
 	      token.read(".", "dot expected (%d)\n");
@@ -3830,12 +3836,13 @@ bool AMD64Assembler :: compileCommandC(/*PrefixInfo& prefix, */TokenInfo& token,
 //{
 //   return false;
 //}
-//bool x86Assembler :: compileCommandL(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper)
-//{
-//	if (token.check("lea")) {
-//		compileLEA(token, info, &writer);
-//      return true;
-//	}
+
+bool AMD64Assembler :: compileCommandL(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer/*, x86JumpHelper& helper*/)
+{
+	if (token.check("lea")) {
+		compileLEA(token, info, &writer);
+      return true;
+	}
 //	else if (token.check("loop")) {
 //		compileLOOP(token, info, &writer, helper);
 //      return true;
@@ -3859,8 +3866,9 @@ bool AMD64Assembler :: compileCommandC(/*PrefixInfo& prefix, */TokenInfo& token,
 //
 //      return true;
 //   }
-//   else return false;
-//}
+   else return false;
+}
+
 bool AMD64Assembler :: compileCommandM(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
    if (token.check("mov")) {
@@ -4259,9 +4267,9 @@ bool AMD64Assembler :: compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, 
 //   else if (token.value[0]=='k') {
 //      recognized = compileCommandK(token);
 //   }
-//   else if (token.value[0]=='l') {
-//      recognized = compileCommandL(prefix, token, info, writer, helper);
-//   }
+   else if (token.value[0]=='l') {
+      recognized = compileCommandL(token, info, writer/*, helper*/);
+   }
    else if (token.value[0]=='m') {
       recognized = compileCommandM(token, info, writer);
    }

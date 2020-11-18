@@ -45,9 +45,17 @@ bin\asm2binx asm\x32\core_win.asm bin\x32
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
-rem bin\asm2binx -amd64 asm\amd64\core.asm bin\amd64
+bin\asm2binx -amd64 asm\amd64\core.asm bin\amd64
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
+
 rem bin\asm2binx -amd64 asm\amd64\core_win.asm bin\amd64
-rem bin\asm2binx -amd64 asm\amd64\coreapi.asm bin\amd64
+
+bin\asm2binx -amd64 asm\amd64\coreapi.asm bin\amd64
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
 
 bin\elc src50\system\system.prj
 @echo off 

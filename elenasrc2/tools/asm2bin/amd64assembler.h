@@ -82,7 +82,7 @@ protected:
  //  void compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileORPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
- //  void compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileSUBPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
  //  void compileSUBSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
@@ -235,7 +235,7 @@ protected:
  //  bool compileCommandI(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandJ(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper);
  //  bool compileCommandK(TokenInfo& token);
- //  bool compileCommandL(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper);
+   bool compileCommandL(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer/*, x86JumpHelper& helper*/);
    bool compileCommandM(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandN(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandO(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);

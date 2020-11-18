@@ -853,14 +853,14 @@ inline mssg_t overwriteAction(mssg_t message, ref_t newAction)
    return encodeMessage(newAction, argCount, flags);
 }
 
-//inline void decodeMessage64(ref64_t message, ref_t& actionRef, int& paramCount)
-//{
-//   actionRef = (ref_t)(message >> 16);
-//
-//   actionRef &= ACTION_MASK;
-//
-//   paramCount = message & PARAMX_MASK;
-//}
+inline void decodeMessage64(mssg64_t message, ref_t& actionRef, int& argCount, ref_t& flags)
+{
+   actionRef = (ref_t)(message >> 16);
+
+   argCount = message & ARGX_MASK;
+
+   flags = message & MESSAGE_FLAG_MASK;
+}
 
 inline int getArgCount(mssg_t message)
 {
@@ -889,14 +889,14 @@ inline mssg64_t toMessage64(mssg_t message)
    return encodeMessage64(actionRef, argCount, flags);
 }
 
-//inline ref_t fromMessage64(ref64_t message)
-//{
-//   int   paramCount;
-//   ref_t actionRef;
-//   decodeMessage64(message, actionRef, paramCount);
-//
-//   return encodeMessage(actionRef, paramCount);
-//}
+inline ref_t fromMessage64(mssg64_t message)
+{
+   int   argCount;
+   ref_t actionRef, flags;
+   decodeMessage64(message, actionRef, argCount, flags);
+
+   return encodeMessage(actionRef, argCount, flags);
+}
 
 inline bool IsExprOperator(int operator_id)
 {

@@ -115,24 +115,24 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
    else _references->add(position, RefInfo(reference, module));
 }
 
-//void JITLinker::ReferenceHelper :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
-//{
-//   ref_t mask = reference & mskAnyRef;
-//
-//   if (!module)
-//      module = _module;
-//
-//   ref_t position = writer.Position();
-//   writer.writeQWord(disp);
-//
-//   // vmt entry offset / address should be resolved later
-//   if (mask == mskVMTXMethodAddress || mask == mskVMTXEntryOffset) {
-//      _references->add(position, RefInfo(reference, module));
-//      return;
-//   }
-//   // currently only mskVMTXMethodAddress and mskVMTXEntryOffset supported
-//   else throw InternalError("64bit references are not supported");
-//}
+void JITLinker::ReferenceHelper :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
+{
+   ref_t mask = reference & mskAnyRef;
+
+   if (!module)
+      module = _module;
+
+   ref_t position = writer.Position();
+   writer.writeQWord(disp);
+
+   // vmt entry offset / address should be resolved later
+   if (mask == mskVMTXMethodAddress || mask == mskVMTXEntryOffset) {
+      _references->add(position, RefInfo(reference, module));
+      return;
+   }
+   // currently only mskVMTXMethodAddress and mskVMTXEntryOffset supported
+   else throw InternalError("64bit references are not supported");
+}
 
 void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp)
 {
@@ -369,22 +369,22 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
 
          (*image)[offset] = getVMTMethodIndex(refVAddress, messageID);
       }
-      //// if it is a vmtx method address
-      ////else if (currentMask == mskVMTXMethodAddress) {
-      ////   resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
+      // if it is a vmtx method address
+      else if (currentMask == mskVMTXMethodAddress) {
+         resolve(_loader->retrieveReference(current.module, currentRef, mskVMTRef), mskVMTRef, false);
 
-      ////   // message id should be replaced with an appropriate method address
-      ////   size_t offset = it.key();
-      ////   ref64_t messageID = (*image)[offset + 4];
-      ////   messageID <<= 32;
-      ////   messageID |= (*image)[offset];
+         // message id should be replaced with an appropriate method address
+         size_t offset = it.key();
+         mssg64_t messageID = (*image)[offset + 4];
+         messageID <<= 32;
+         messageID |= (*image)[offset];
 
-      ////   (*image)[offset] = resolveVMTMethodAddress(current.module, currentRef, fromMessage64(messageID));
-      ////   if (_virtualMode) {
-      ////      image->addReference(mskRelCodeRef, offset);
-      ////   }
-      ////   else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
-      ////}
+         (*image)[offset] = resolveVMTMethodAddress(current.module, currentRef, fromMessage64(messageID));
+         if (_virtualMode) {
+            image->addReference(mskRelCodeRef, offset);
+         }
+         else (*image)[offset] -= (((size_t)image->get(0)) + offset + 4);
+      }
       // otherwise
       else {
          void* refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, currentMask), currentMask, false);

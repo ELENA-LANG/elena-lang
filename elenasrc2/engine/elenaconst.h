@@ -30,8 +30,7 @@ namespace _ELENA_
    constexpr auto STATIC_MESSAGE          = 0x100u;
    constexpr auto ARG_MASK                = 0x01Fu;
    constexpr auto ARG_COUNT               = 0x01Eu;
-
-//   #define PARAMX_MASK             0x000000000000FFFFu
+   constexpr auto ARGX_MASK               = 0x000000000000001Fu;
 
    constexpr auto INVALID_REF             = 0xFFFFFFFFu;
 
@@ -154,8 +153,8 @@ namespace _ELENA_
       mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
       mskSyntaxTreeRef       = 0x46000000u,   // template, declared in subject namespace
       mskAttributeRef        = 0x47000000u,
-      //mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
-      //mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
+      mskVMTXMethodAddress   = 0x49000000u,   // VMTX method address, where the reference offset (64bit) is a message id, reference values is VMT
+      mskVMTXEntryOffset     = 0x4A000000u,   // the message offset in VMTX, where the reference offset (64bit) is a message id, reference values is VMTX
 
       mskConstantRef         = 0x01000000u,   // reference to constant
       mskLiteralRef          = 0x02000000u,   // reference to constant literal

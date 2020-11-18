@@ -14,28 +14,28 @@
 namespace _ELENA_
 {
 
-//class AMD64JITCompiler;
-//
-//// --- AMD64JITScope ---
-//
-//struct AMD64JITScope
-//{
-//   _Module*          module;
-//   AMD64JITCompiler* compiler;
-//   MemoryWriter*     code;
-//   _ReferenceHelper* helper;
-//   MemoryReader*     tape;
-//   //x86LabelHelper    lh;
-//
-//   bool              withDebugInfo;
+class I64JITCompiler;
+
+// --- I64JITScope ---
+
+struct I64JITScope
+{
+   _Module*          module;
+   I64JITCompiler*   compiler;
+   MemoryWriter*     code;
+   _ReferenceHelper* helper;
+   MemoryReader*     tape;
+   //x86LabelHelper    lh;
+
+   bool              withDebugInfo;
 //   //int               objectSize;
-//
-//   // byte code command argument
-//   int            argument;
-//
-//   void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
-//   void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp);
-//
+
+   // byte code command argument
+   int            argument;
+
+   void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
+   void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp);
+
 //   ref64_t resolveMessage(ref_t reference)
 //   {
 //      ref_t message32 = helper->resolveMessage(reference, module);
@@ -47,9 +47,9 @@ namespace _ELENA_
 //   //{
 //   //   return helper->getSection(reference, module);
 //   //}
-//
-//   AMD64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, AMD64JITCompiler* compiler);
-//};
+
+   I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, I64JITCompiler* compiler);
+};
 
 // --- I64JITCompiler ---
 
@@ -58,17 +58,18 @@ class I64JITCompiler : public JITCompiler64
 protected:
    bool _debugMode;
 
-//   // commands
-//   friend void writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code);
+   // commands
+   friend void writeCoreReference(I64JITScope& scope, ref_t reference, int position, int offset, char* code);
 //   friend void loadCoreOp(AMD64JITScope& scope, char* code);
 //   friend void loadOneByteLOp(int opcode, AMD64JITScope& scope); 
 //   friend void loadIndexOpX(int opcode, AMD64JITScope& scope);
-//   friend void loadFPOpX(int opcode, AMD64JITScope& scope);
-//
-//   friend void compileNop(int opcode, AMD64JITScope& scope);
+   friend void loadFPOp(int opcode, I64JITScope& scope);
+   friend void loadFPOpX(int opcode, I64JITScope& scope);
+
+   friend void compileNop(int opcode, I64JITScope& scope);
 //   friend void compileACopyR(int opcode, AMD64JITScope& scope);
-//   friend void loadFunction(int opcode, AMD64JITScope& scope);
-//   friend void compileCallR(int opcode, AMD64JITScope& scope);
+   friend void loadFunction(int opcode, I64JITScope& scope);
+   friend void compileCallR(int opcode, I64JITScope& scope);
 //   friend void compilePushA(int opcode, AMD64JITScope& scope);
 //   friend void compileMCopy(int opcode, AMD64JITScope& scope);
 //   friend void compileInvokeVMT(int opcode, AMD64JITScope& scope);
@@ -81,9 +82,9 @@ protected:
 //   friend void compileDAddN(int opcode, AMD64JITScope& scope);
 //   friend void compileBreakpoint(int opcode, AMD64JITScope& scope);
 //   friend void compileInvokeVMTOffset(int opcode, AMD64JITScope& scope);
-//
-//   // preloaded command set
-//   void* _inlines[0x100];
+
+   // preloaded command set
+   void* _inlines[0x100];
 
    // preloaded references
    IntFixedMap<void*> _preloaded;
@@ -129,12 +130,12 @@ public:
 //void loadCoreOp(AMD64JITScope& scope, char* code);
 //void loadOneByteLOp(int opcode, AMD64JITScope& scope);
 //void loadIndexOpX(int opcode, AMD64JITScope& scope);
-//void loadFPOpX(int opcode, AMD64JITScope& scope);
-//
-//void compileNop(int opcode, AMD64JITScope& scope);
+//void loadFPOpX(int opcode, I64JITScope& scope);
+
+void compileNop(int opcode, I64JITScope& scope);
 //void compileACopyR(int opcode, AMD64JITScope& scope);
-//void loadFunction(int opcode, AMD64JITScope& scope);
-//void compileCallR(int opcode, AMD64JITScope& scope);
+void loadFunction(int opcode, I64JITScope& scope);
+void compileCallR(int opcode, I64JITScope& scope);
 //void compilePushA(int opcode, AMD64JITScope& scope);
 //void compileMCopy(int opcode, AMD64JITScope& scope);
 //void compileInvokeVMT(int opcode, AMD64JITScope& scope);
