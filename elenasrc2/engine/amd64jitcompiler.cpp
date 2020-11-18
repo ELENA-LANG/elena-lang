@@ -1,23 +1,23 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA JIT-X linker class.
-////		Supported platforms: I64
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "amd64jitcompiler.h"
+//		This file contains ELENA JIT-X linker class.
+//		Supported platforms: I64
+//                                              (C)2005-2020, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "amd64jitcompiler.h"
 //#include "bytecode.h"
-//
+
 //#pragma warning(disable : 4100)
-//
-//using namespace _ELENA_;
-//
-//// --- ELENA Object constants ---
+
+using namespace _ELENA_;
+
+// --- ELENA Object constants ---
 ////const int gcPageSize = 0x0010;           // a heap page size constant
-//const int elObjectOffset = 0x0010;           // object header / offset constant
+constexpr int elObjectOffset = 0x0010;           // object header / offset constant
 //// --- ELENA CORE built-in routines
 ////#define GC_ALLOC             0x10001
 ////#define HOOK                 0x10010
@@ -1370,32 +1370,32 @@
 //{
 //   helper->writeXReference(writer, reference, disp, module);
 //}
-//
-//// --- AMD64JITCompiler ---
-//
-//AMD64JITCompiler :: AMD64JITCompiler(bool debugMode)
-//{
-//   _debugMode = debugMode;
-//}
-//
-//size_t AMD64JITCompiler :: getObjectHeaderSize() const
-//{
-//   return elObjectOffset;
-//}
-//
-//bool AMD64JITCompiler :: isWithDebugInfo() const
-//{
-//   // in the current implementation, debug info (i.e. debug section)
-//   // is always generated (to be used by RTManager)
-//   return true;
-//}
-//
-//void AMD64JITCompiler :: alignCode(MemoryWriter* writer, int alignment, bool code)
-//{
-//   writer->align(alignment, code ? 0x90 : 0x00);
-//}
-//
-//void AMD64JITCompiler :: writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code)
+
+// --- I64JITCompiler ---
+
+I64JITCompiler :: I64JITCompiler(bool debugMode)
+{
+   _debugMode = debugMode;
+}
+
+size_t I64JITCompiler:: getObjectHeaderSize() const
+{
+   return elObjectOffset;
+}
+
+bool I64JITCompiler:: isWithDebugInfo() const
+{
+   // in the current implementation, debug info (i.e. debug section)
+   // is always generated (to be used by RTManager)
+   return true;
+}
+
+void I64JITCompiler:: alignCode(MemoryWriter* writer, int alignment, bool code)
+{
+   writer->align(alignment, code ? 0x90 : 0x00);
+}
+
+//void I64JITCompiler :: writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code)
 //{
 //   if (!_preloaded.exist(reference& ~mskAnyRef)) {
 //      MemoryWriter writer(scope.code->Memory());
@@ -1412,123 +1412,123 @@
 //   }
 //   _ELENA_::writeCoreReference(scope, reference, position, offset, code);
 //}
-//
-//void AMD64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
-//{
-//   // preload core data
-//   _Memory* data = loader->getTargetSection((ref_t)mskDataRef);
-//   _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
-//   _Memory* sdata = loader->getTargetSection((ref_t)mskStatRef);
-//   _Memory* code = loader->getTargetSection((ref_t)mskCodeRef);
-//
-//   MemoryWriter dataWriter(data);
-//   MemoryWriter rdataWriter(rdata);
-//   MemoryWriter sdataWriter(sdata);
-//   MemoryWriter codeWriter(code);
-//
-//   AMD64JITScope dataScope(NULL, &dataWriter, &helper, this);
-//   for (int i = 0; i < coreVariableNumber; i++) {
-//      if (!_preloaded.exist(coreVariables[i])) {
-//         _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
-//
-//         // due to optimization section must be ROModule::ROSection instance
-//         SectionInfo info = helper.getCoreSection(coreVariables[i]);
-//         dataScope.module = info.module;
-//
-//         loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
-//      }
-//   }
-//
-//   // GC SIZE Table
-//   _preloaded.add(CORE_GC_SIZE, helper.getVAddress(rdataWriter, mskRDataRef));
-//   rdataWriter.writeQWord(helper.getLinkerConstant(lnGCMGSize));
-//   rdataWriter.writeQWord(helper.getLinkerConstant(lnGCYGSize));
-//   rdataWriter.writeQWord(helper.getLinkerConstant(lnThreadCount));
-//
-//   // load GC static root
-//   _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
-//
-//   // STAT COUNT
-//   _preloaded.add(CORE_STAT_COUNT, helper.getVAddress(rdataWriter, mskRDataRef));
-//   rdataWriter.writeQWord(0);
-//
-//   dataWriter.writeQWord(helper.getLinkerConstant(lnVMAPI_Instance));
-//
-//   AMD64JITScope scope(NULL, &codeWriter, &helper, this);
-//   for (int i = 0; i < coreFunctionNumber; i++) {
-//      if (!_preloaded.exist(coreFunctions[i])) {
-//         _preloaded.add(coreFunctions[i], helper.getVAddress(codeWriter, mskCodeRef));
-//
-//         // due to optimization section must be ROModule::ROSection instance
-//         SectionInfo info = helper.getCoreSection(coreFunctions[i]);
-//         scope.module = info.module;
-//
-//         loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
-//      }
-//   }
-//
-//   // preload vm commands
-//   for (int i = 0; i < gcCommandNumber; i++) {
-//      SectionInfo info = helper.getCoreSection(gcCommands[i]);
-//
-//      // due to optimization section must be ROModule::ROSection instance
-//      _inlines[gcCommands[i]] = (char*)info.section->get(0);
-//   }
-//}
-//
-//void AMD64JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode)
-//{
-//   //if (virtualMode) {
-//   //   _Memory* data = loader->getTargetSection(mskRDataRef);
-//
-//   //   size_t offset = ((size_t)_preloaded.get(CORE_STAT_COUNT) & ~mskAnyRef);
-//   //   (*data)[offset] = (counter << 2);
-//   //}
-//   //else {
-//   //   size_t offset = (size_t)_preloaded.get(CORE_STAT_COUNT);
-//   //   *(int*)offset = (counter << 2);
-//   //}
-//}
-//
-//void* AMD64JITCompiler :: getPreloadedReference(ref_t reference)
-//{
-//   return (void*)_preloaded.get(reference);
-//}
-//
-//void AMD64JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumber)
-//{
-//   //// get target image & resolve virtual address
-//   //MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
-//
-//   //// size place holder
-//   //dataWriter.writeDWord(0);
-//
-//   //// reserve space for the thread table
-//   //int position = dataWriter.Position();
-//   //allocateArray(dataWriter, maxThreadNumber);
-//
-//   //// map thread table
-//   //loader->mapReference(GC_THREADTABLE, (void*)(position | mskDataRef), (ref_t)mskDataRef);
-//   //_preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
-//}
-//
-//int AMD64JITCompiler :: allocateTLSVariable(_JITLoader* loader)
-//{
-//   //MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
-//
-//   //// reserve space for TLS index
-//   //int position = dataWriter.Position();
-//   //allocateVariable(dataWriter);
-//
-//   //// map TLS index
-//   //loader->mapReference(TLS_KEY, (void*)(position | mskDataRef), (ref_t)mskDataRef);
-//   //_preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
-//
-//   //return position;
-//
-//   return 0;
-//}
-//
+
+void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
+{
+   //// preload core data
+   //_Memory* data = loader->getTargetSection((ref_t)mskDataRef);
+   //_Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
+   //_Memory* sdata = loader->getTargetSection((ref_t)mskStatRef);
+   //_Memory* code = loader->getTargetSection((ref_t)mskCodeRef);
+
+   //MemoryWriter dataWriter(data);
+   //MemoryWriter rdataWriter(rdata);
+   //MemoryWriter sdataWriter(sdata);
+   //MemoryWriter codeWriter(code);
+
+   //AMD64JITScope dataScope(NULL, &dataWriter, &helper, this);
+   //for (int i = 0; i < coreVariableNumber; i++) {
+   //   if (!_preloaded.exist(coreVariables[i])) {
+   //      _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
+
+   //      // due to optimization section must be ROModule::ROSection instance
+   //      SectionInfo info = helper.getCoreSection(coreVariables[i]);
+   //      dataScope.module = info.module;
+
+   //      loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
+   //   }
+   //}
+
+   //// GC SIZE Table
+   //_preloaded.add(CORE_GC_SIZE, helper.getVAddress(rdataWriter, mskRDataRef));
+   //rdataWriter.writeQWord(helper.getLinkerConstant(lnGCMGSize));
+   //rdataWriter.writeQWord(helper.getLinkerConstant(lnGCYGSize));
+   //rdataWriter.writeQWord(helper.getLinkerConstant(lnThreadCount));
+
+   //// load GC static root
+   //_preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
+
+   //// STAT COUNT
+   //_preloaded.add(CORE_STAT_COUNT, helper.getVAddress(rdataWriter, mskRDataRef));
+   //rdataWriter.writeQWord(0);
+
+   //dataWriter.writeQWord(helper.getLinkerConstant(lnVMAPI_Instance));
+
+   //AMD64JITScope scope(NULL, &codeWriter, &helper, this);
+   //for (int i = 0; i < coreFunctionNumber; i++) {
+   //   if (!_preloaded.exist(coreFunctions[i])) {
+   //      _preloaded.add(coreFunctions[i], helper.getVAddress(codeWriter, mskCodeRef));
+
+   //      // due to optimization section must be ROModule::ROSection instance
+   //      SectionInfo info = helper.getCoreSection(coreFunctions[i]);
+   //      scope.module = info.module;
+
+   //      loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
+   //   }
+   //}
+
+   //// preload vm commands
+   //for (int i = 0; i < gcCommandNumber; i++) {
+   //   SectionInfo info = helper.getCoreSection(gcCommands[i]);
+
+   //   // due to optimization section must be ROModule::ROSection instance
+   //   _inlines[gcCommands[i]] = (char*)info.section->get(0);
+   //}
+}
+
+void I64JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode)
+{
+   //if (virtualMode) {
+   //   _Memory* data = loader->getTargetSection(mskRDataRef);
+
+   //   size_t offset = ((size_t)_preloaded.get(CORE_STAT_COUNT) & ~mskAnyRef);
+   //   (*data)[offset] = (counter << 2);
+   //}
+   //else {
+   //   size_t offset = (size_t)_preloaded.get(CORE_STAT_COUNT);
+   //   *(int*)offset = (counter << 2);
+   //}
+}
+
+void* I64JITCompiler :: getPreloadedReference(ref_t reference)
+{
+   return (void*)_preloaded.get(reference);
+}
+
+void I64JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumber)
+{
+   //// get target image & resolve virtual address
+   //MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
+
+   //// size place holder
+   //dataWriter.writeDWord(0);
+
+   //// reserve space for the thread table
+   //int position = dataWriter.Position();
+   //allocateArray(dataWriter, maxThreadNumber);
+
+   //// map thread table
+   //loader->mapReference(GC_THREADTABLE, (void*)(position | mskDataRef), (ref_t)mskDataRef);
+   //_preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
+}
+
+int I64JITCompiler:: allocateTLSVariable(_JITLoader* loader)
+{
+   //MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
+
+   //// reserve space for TLS index
+   //int position = dataWriter.Position();
+   //allocateVariable(dataWriter);
+
+   //// map TLS index
+   //loader->mapReference(TLS_KEY, (void*)(position | mskDataRef), (ref_t)mskDataRef);
+   //_preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
+
+   //return position;
+
+   return 0;
+}
+
 //inline void compileTape(MemoryReader& tapeReader, size_t endPos, AMD64JITScope& scope)
 //{
 //   unsigned char code = 0;
@@ -1542,37 +1542,37 @@
 //      commands[code](code, scope);
 //   }
 //}
-//
-//void AMD64JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
-//{
-//   AMD64JITScope scope(&tapeReader, &codeWriter, &helper, this);
-//
-//   size_t codeSize = tapeReader.getDWord();
-//   size_t endPos = tapeReader.Position() + codeSize;
-//
-//   compileTape(tapeReader, endPos, scope);
-//
-//   // ; copy the parameter to the accumulator to simulate embedded symbol
-//   // ; exit the procedure
-//   // ret
-//   codeWriter.writeByte(0xC3);
-//
-//   alignCode(&codeWriter, 0x08, true);
-//}
-//
-//void AMD64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
-//{
-//   AMD64JITScope scope(&tapeReader, &codeWriter, &helper, this);
-//
-//   size_t codeSize = tapeReader.getDWord();
-//   size_t endPos = tapeReader.Position() + codeSize;
-//
-//   compileTape(tapeReader, endPos, scope);
-//
-//   alignCode(&codeWriter, 0x08, true);
-//}
-//
-//void AMD64JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section)
+
+void I64JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
+{
+   //AMD64JITScope scope(&tapeReader, &codeWriter, &helper, this);
+
+   //size_t codeSize = tapeReader.getDWord();
+   //size_t endPos = tapeReader.Position() + codeSize;
+
+   //compileTape(tapeReader, endPos, scope);
+
+   //// ; copy the parameter to the accumulator to simulate embedded symbol
+   //// ; exit the procedure
+   //// ret
+   //codeWriter.writeByte(0xC3);
+
+   //alignCode(&codeWriter, 0x08, true);
+}
+
+void I64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
+{
+   //AMD64JITScope scope(&tapeReader, &codeWriter, &helper, this);
+
+   //size_t codeSize = tapeReader.getDWord();
+   //size_t endPos = tapeReader.Position() + codeSize;
+
+   //compileTape(tapeReader, endPos, scope);
+
+   //alignCode(&codeWriter, 0x08, true);
+}
+
+//void I64JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section)
 //{
 //   //size_t position = writer.Position();
 //
@@ -1592,58 +1592,69 @@
 //   //}
 //   //writer.seekEOF();
 //}
-//
-//void AMD64JITCompiler :: generateProgramStart(MemoryDump& tape)
-//{
-//   JITCompiler64::generateProgramStart(tape);
-//
-//   MemoryWriter ecodes(&tape);
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(INIT | mskPreloadCodeRef);
-//
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
-//}
-//
-//void AMD64JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeByte(bcCallR);
-//   ecodes.writeDWord((size_t)address | mskCodeRef);
-//}
-//
-//void AMD64JITCompiler :: generateProgramEnd(MemoryDump& tape)
-//{
-//   MemoryWriter ecodes(&tape);
-//
-//   ecodes.writeByte(bcCallExtR);
-//   ecodes.writeDWord(mskPreloadCodeRef | EXIT);
-//
-//   JITCompiler64::generateProgramEnd(tape);
-//}
-//
-//int AMD64JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t length)
-//{
-//   return -1; // !! temporal
-//}
-//
-//void AMD64JITCompiler :: setTLSKey(void* ptr)
-//{
-//   // !! temporal
-//}
-//
-//void AMD64JITCompiler :: setThreadTable(void* ptr)
-//{
-//   // !! temporal
-//}
-//
-//void AMD64JITCompiler :: setEHTable(void* ptr)
-//{
-//   // !! temporal
-//}
-//
-//void AMD64JITCompiler :: setGCTable(void* ptr)
-//{
-//   // !! temporal
-//}
+
+void I64JITCompiler :: generateProgramStart(MemoryDump& tape)
+{
+   //JITCompiler64::generateProgramStart(tape);
+
+   //MemoryWriter ecodes(&tape);
+   //ecodes.writeByte(bcCallExtR);
+   //ecodes.writeDWord(INIT | mskPreloadCodeRef);
+
+   //ecodes.writeByte(bcCallExtR);
+   //ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
+}
+
+void I64JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
+{
+   //MemoryWriter ecodes(&tape);
+
+   //ecodes.writeByte(bcCallR);
+   //ecodes.writeDWord((size_t)address | mskCodeRef);
+}
+
+void I64JITCompiler :: generateProgramEnd(MemoryDump& tape)
+{
+   //MemoryWriter ecodes(&tape);
+
+   //ecodes.writeByte(bcCallExtR);
+   //ecodes.writeDWord(mskPreloadCodeRef | EXIT);
+
+   //JITCompiler64::generateProgramEnd(tape);
+}
+
+int I64JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t length)
+{
+   return -1; // !! temporal
+}
+
+void I64JITCompiler :: setTLSKey(void* ptr)
+{
+   // !! temporal
+}
+
+void I64JITCompiler :: setThreadTable(void* ptr)
+{
+   // !! temporal
+}
+
+void I64JITCompiler :: setEHTable(void* ptr)
+{
+   // !! temporal
+}
+
+void I64JITCompiler :: setGCTable(void* ptr)
+{
+   // !! temporal
+}
+
+void I64JITCompiler :: setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode)
+{
+   // !! temporal
+}
+
+void* I64JITCompiler :: getInvoker()
+{
+   // !! temporal
+   return nullptr;
+}

@@ -6,7 +6,7 @@ In development:
     * #523 : only if no explicit default multi-dispatcher
 
     * retiring core #77
-    * #206
+    * #206 - 64-bit architecture
     * #280
     * #443
 

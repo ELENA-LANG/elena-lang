@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of the class implementing
 //      ELENA Engine Module class
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef moduleH
@@ -17,18 +17,18 @@ namespace _ELENA_
 class _BaseModule  : public _Module
 {
 protected:
-   typedef Cache<ref_t, ident_t, 20> ResolveMap;
+   typedef Cache<ref_t, ident_t, 20> ResolvedMap;
    typedef Cache<ref_t, ref64_t, 20> ResolvedAMap;
 
-   ReferenceMap _references;
-   ReferenceMap _actionNames;
-   ActionMap    _actions;
+   ReferenceMap  _references;
+   ReferenceMap  _actionNames;
+   ActionMap     _actions;
 
-   ReferenceMap _constants;
+   ReferenceMap  _constants;
 
-   ResolveMap   _resolvedReferences;
-   ResolveMap   _resolvedActionNames;
-   ResolvedAMap _resolvedActions;
+   ResolvedMap   _resolvedReferences;
+   ResolvedMap   _resolvedActionNames;
+   ResolvedAMap  _resolvedActions;
 
    ref_t retrieveSignature(ref_t* references, size_t length, bool existing);
 

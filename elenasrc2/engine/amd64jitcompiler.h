@@ -1,19 +1,19 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler Engine
-////
-////		This file contains ELENA JIT-X linker class.
-////		Supported platforms: I64
-////                                              (C)2005-2018, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
-//#ifndef amd64jitcompilerH
-//#define amd64jitcompilerH 1
-//
-//#include "jitcompiler.h"
-//
-//namespace _ELENA_
-//{
-//
+//		This file contains ELENA JIT-X linker class.
+//		Supported platforms: I64
+//                                              (C)2005-2020, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#ifndef amd64jitcompilerH
+#define amd64jitcompilerH 1
+
+#include "jitcompiler.h"
+
+namespace _ELENA_
+{
+
 //class AMD64JITCompiler;
 //
 //// --- AMD64JITScope ---
@@ -50,14 +50,14 @@
 //
 //   AMD64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, AMD64JITCompiler* compiler);
 //};
-//
-//// --- AMD64JITCompiler ---
-//
-//class AMD64JITCompiler : public JITCompiler64
-//{
-//protected:
-//   bool _debugMode;
-//
+
+// --- I64JITCompiler ---
+
+class I64JITCompiler : public JITCompiler64
+{
+protected:
+   bool _debugMode;
+
 //   // commands
 //   friend void writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code);
 //   friend void loadCoreOp(AMD64JITScope& scope, char* code);
@@ -84,44 +84,47 @@
 //
 //   // preloaded command set
 //   void* _inlines[0x100];
-//
-//   // preloaded references
-//   IntFixedMap<void*> _preloaded;
-//
+
+   // preloaded references
+   IntFixedMap<void*> _preloaded;
+
 //   void writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code);
-//
-//public:
-//   virtual bool isWithDebugInfo() const;
-//   virtual size_t getObjectHeaderSize() const;
-//
-//   virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
-//
-//   virtual void* getPreloadedReference(ref_t reference);
-//
-//   virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader);
-//
-//   virtual int allocateTLSVariable(_JITLoader* loader);
-//   virtual void allocateThreadTable(_JITLoader* loader, int length);
-//   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length);
-//
-//   virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
-//   virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
-//
+
+public:
+   virtual bool isWithDebugInfo() const;
+   virtual size_t getObjectHeaderSize() const;
+
+   virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
+
+   virtual void* getPreloadedReference(ref_t reference);
+
+   virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader);
+
+   virtual int allocateTLSVariable(_JITLoader* loader);
+   virtual void allocateThreadTable(_JITLoader* loader, int length);
+   virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length);
+
+   virtual void compileSymbol(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
+   virtual void compileProcedure(_ReferenceHelper& helper, MemoryReader& reader, MemoryWriter& codeWriter);
+
 //   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
-//
-//   virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
-//   virtual void setTLSKey(void* ptr);
-//   virtual void setThreadTable(void* ptr);
-//   virtual void setEHTable(void* ptr);
-//   virtual void setGCTable(void* ptr);
-//
-//   virtual void generateProgramStart(MemoryDump& tape);
-//   virtual void generateSymbolCall(MemoryDump& tape, void* address);
-//   virtual void generateProgramEnd(MemoryDump& tape);
-//
-//   AMD64JITCompiler(bool debugMode);
-//};
-//
+
+   virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
+   virtual void setTLSKey(void* ptr);
+   virtual void setThreadTable(void* ptr);
+   virtual void setEHTable(void* ptr);
+   virtual void setGCTable(void* ptr);
+   virtual void setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode);
+
+   virtual void* getInvoker();
+
+   virtual void generateProgramStart(MemoryDump& tape);
+   virtual void generateSymbolCall(MemoryDump& tape, void* address);
+   virtual void generateProgramEnd(MemoryDump& tape);
+
+   I64JITCompiler(bool debugMode);
+};
+
 //// --- compiler friend functions---
 //void loadCoreOp(AMD64JITScope& scope, char* code);
 //void loadOneByteLOp(int opcode, AMD64JITScope& scope);
@@ -144,7 +147,7 @@
 //void compileACopyF(int opcode, AMD64JITScope& scope);
 //void compileDAddN(int opcode, AMD64JITScope& scope);
 //void compileBreakpoint(int opcode, AMD64JITScope& scope);
-//
-//} // _ELENA_
-//
-//#endif // amd64jitcompilerH
+
+} // _ELENA_
+
+#endif // amd64jitcompilerH

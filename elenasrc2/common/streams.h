@@ -972,6 +972,15 @@ public:
       }
       else return false;
    }
+   bool writeRef64(ref_t reference, pos64_t value)
+   {
+      if (_memory->addReference(reference, _position)) {
+         writeQWord(value);
+
+         return true;
+      }
+      else return false;
+   }
 
    MemoryWriter(_Memory* memory)
    {

@@ -140,8 +140,8 @@ class JITLinker : _JITLoaderListener
    void* getVMTAddress(_Module* module, ref_t reference, References& references);
    void* getVMTReference(_Module* module, ref_t reference, References& references);
    int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
-   int getVMTMethodAddress(void* vaddress, int messageID);   
-   int getVMTMethodIndex(void* vaddress, int messageID);
+   int getVMTMethodAddress(void* vaddress, mssg_t messageID);   
+   int getVMTMethodIndex(void* vaddress, mssg_t messageID);
    size_t getVMTFlags(void* vaddress);
 
    void generateMetaAttribute(int category, ident_t fullName, void* address);
@@ -156,7 +156,7 @@ class JITLinker : _JITLoaderListener
 
    ref_t mapAction(SectionInfo& messageTable, ident_t action, ref_t weakActionRef, ref_t signature);
    ref_t resolveWeakAction(SectionInfo& messageTable, ident_t action);
-   ref_t resolveMessage(_Module* module, ref_t reference, References* references);
+   ref_t resolveMessage(_Module* module, mssg_t reference, References* references);
    ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne, References* references);
 
    void createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes);
@@ -172,7 +172,8 @@ class JITLinker : _JITLoaderListener
 //   void* resolveAnonymousStaticVariable();
    void* resolveMessageTable(ReferenceInfo referenceInfo, int mask);
    void* resolveMetaAttributeTable(ReferenceInfo referenceInfo, int mask);
-   void* resolveMessage(ReferenceInfo referenceInfo, ident_t vmt, bool actionOnlyMode);
+   void* resolveMessage(ReferenceInfo referenceInfo, ident_t vmt);
+   void* resolveAction(ReferenceInfo referenceInfo, ident_t vmt);
    void* resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt);
 //////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
@@ -212,7 +213,8 @@ public:
    void* calculateVAddress(MemoryWriter* writer, int mask, int alignment);
    void* calculateVAddress(MemoryWriter* writer, int mask);
 
-   ref_t parseMessage(ident_t reference, bool actionOnlyMode);
+   mssg_t parseMessage(ident_t reference);
+   ref_t parseAction(ident_t reference);
    ident_t retrieveResolvedAction(ref_t reference);
 
    virtual void onModuleLoad(_Module* module);

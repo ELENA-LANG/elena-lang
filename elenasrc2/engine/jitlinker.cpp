@@ -444,7 +444,7 @@ void* JITLinker :: getVMTAddress(void* vaddress)
    return vmtPtr;
 }
 
-int JITLinker :: getVMTMethodAddress(void* vaddress, int messageID)
+int JITLinker :: getVMTMethodAddress(void* vaddress, mssg_t messageID)
 {
    void* entries;
    if (_virtualMode) {
@@ -457,7 +457,7 @@ int JITLinker :: getVMTMethodAddress(void* vaddress, int messageID)
    return _compiler->findMethodAddress(entries, messageID, _compiler->findLength(entries));
 }
 
-int JITLinker :: getVMTMethodIndex(void* vaddress, int messageID)
+int JITLinker :: getVMTMethodIndex(void* vaddress, mssg_t messageID)
 {
    void* entries;
    if (_virtualMode) {
@@ -921,10 +921,10 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
          }
       }
       else if (constArrayMode && currentMask == mskMessage) {
-         (*image)[*it + position] = parseMessage(sectionInfo.module->resolveReference(currentRef), false);
+         (*image)[*it + position] = parseMessage(sectionInfo.module->resolveReference(currentRef));
       }
       else if (constArrayMode && currentMask == mskMessageName) {
-         (*image)[*it + position] = parseMessage(sectionInfo.module->resolveReference(currentRef), true);
+         (*image)[*it + position] = parseAction(sectionInfo.module->resolveReference(currentRef));
       }
       else {
          void* refVAddress = resolve(_loader->retrieveReference(sectionInfo.module, currentRef, currentMask), currentMask, false);
@@ -1166,32 +1166,34 @@ void* JITLinker :: resolveMetaAttributeTable(ReferenceInfo, int mask)
    return nullptr; // !! should be resolved only once
 }
 
-ref_t JITLinker :: parseMessage(ident_t reference, bool actionOnlyMode)
+mssg_t JITLinker :: parseMessage(ident_t reference)
 {
    SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
 
-   if (actionOnlyMode) {
-      ref_t resolvedAction = messageTable.module->mapAction(reference, 0, true);
-      if (!resolvedAction) {
-         resolvedAction = resolveWeakAction(messageTable, reference);
-      }
+   ref_t flags = 0;
+   int paramCount = reference[0] - '0';
 
-      return resolvedAction;
+   // signature and custom verb should be imported
+   ident_t actionName = reference + 1;
+
+   ref_t resolvedAction = messageTable.module->mapAction(actionName, 0, true);
+   if (!resolvedAction) {
+      resolvedAction = resolveWeakAction(messageTable, actionName);
    }
-   else {
-      ref_t flags = 0;
-      int paramCount = reference[0] - '0';
 
-      // signature and custom verb should be imported
-      ident_t actionName = reference + 1;
+   return encodeMessage(resolvedAction, paramCount, flags);
+}
 
-      ref_t resolvedAction = messageTable.module->mapAction(actionName, 0, true);
-      if (!resolvedAction) {
-         resolvedAction = resolveWeakAction(messageTable, actionName);
-      }
+ref_t JITLinker :: parseAction(ident_t reference)
+{
+   SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
 
-      return encodeMessage(resolvedAction, paramCount, flags);
+   ref_t resolvedAction = messageTable.module->mapAction(reference, 0, true);
+   if (!resolvedAction) {
+      resolvedAction = resolveWeakAction(messageTable, reference);
    }
+
+   return resolvedAction;
 }
 
 void* JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt)
@@ -1199,7 +1201,7 @@ void* JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t 
    int dotPos = referenceInfo.referenceName.find('.');
 
    IdentifierString extensionName(referenceInfo.referenceName, dotPos);
-   ref_t messageID = parseMessage(referenceInfo.referenceName + dotPos + 1, false);
+   mssg_t messageID = parseMessage(referenceInfo.referenceName + dotPos + 1);
 
    // HOTFIX : extension message should be a function one
    messageID |= FUNCTION_MESSAGE;
@@ -1219,9 +1221,9 @@ void* JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t 
    _loader->mapReference(referenceInfo, vaddress, mskMessage);
 
    if (_virtualMode) {
-      _compiler->compileInt64(&writer, messageID, mskCodeRef, entryOffset);
+      _compiler->compileMssgExtension(&writer, messageID, mskCodeRef, entryOffset);
    }
-   else _compiler->compileInt64(&writer, messageID, entryOffset);
+   else _compiler->compileMssgExtension(&writer, messageID, entryOffset);
 
    // get constant VMT reference
    void* vmtVAddress = resolve(vmt, mskVMTRef, false);
@@ -1232,7 +1234,7 @@ void* JITLinker :: resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t 
    return vaddress;
 }
 
-void* JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt, bool actionOnlyMode)
+void* JITLinker :: resolveAction(ReferenceInfo referenceInfo, ident_t vmt)
 {
    // get target image & resolve virtual address
    _Memory* image = _loader->getTargetSection(mskRDataRef);
@@ -1245,7 +1247,31 @@ void* JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt, bool
 
    _loader->mapReference(referenceInfo, vaddress, mskMessage);
 
-   _compiler->compileInt32(&writer, parseMessage(referenceInfo.referenceName, actionOnlyMode));
+   _compiler->compileAction(&writer, parseAction(referenceInfo.referenceName));
+
+   // get constant VMT reference
+   void* vmtVAddress = resolve(vmt, mskVMTRef, false);
+
+   // fix object VMT reference
+   resolveReference(image, vmtPosition, (ref_t)vmtVAddress, mskVMTRef, _virtualMode);
+
+   return vaddress;
+}
+
+void* JITLinker :: resolveMessage(ReferenceInfo referenceInfo, ident_t vmt)
+{
+   // get target image & resolve virtual address
+   _Memory* image = _loader->getTargetSection(mskRDataRef);
+   MemoryWriter writer(image);
+
+   // allocate object header
+   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
+
+   void* vaddress = calculateVAddress(&writer, mskRDataRef);
+
+   _loader->mapReference(referenceInfo, vaddress, mskMessage);
+
+   _compiler->compileMessage(&writer, parseMessage(referenceInfo.referenceName));
 
    // get constant VMT reference
    void* vmtVAddress = resolve(vmt, mskVMTRef, false);
@@ -1487,10 +1513,10 @@ void* JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMod
             vaddress = resolveStaticVariable(referenceInfo, mskStatRef);
             break;
          case mskMessage:
-            vaddress = resolveMessage(referenceInfo, _loader->getMessageClass(), false);
+            vaddress = resolveMessage(referenceInfo, _loader->getMessageClass());
             break;
          case mskMessageName:
-            vaddress = resolveMessage(referenceInfo, _loader->getMessageNameClass(), true);
+            vaddress = resolveAction(referenceInfo, _loader->getMessageNameClass());
             break;
          case mskExtMessage:
             vaddress = resolveExtensionMessage(referenceInfo, _loader->getExtMessageClass());

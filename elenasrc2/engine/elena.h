@@ -494,17 +494,17 @@ public:
 
 struct VMTEntry
 {
-   ref_t message;
-   pos_t address;
+   mssg_t message;
+   pos_t  address;
 };
 
-//// --- VMTXEntry ---
-//
-//struct VMTXEntry
-//{
-//   ref64_t message;
-//   ref64_t address;
-//};
+// --- VMTXEntry ---
+
+struct VMTXEntry
+{
+   mssg64_t message;
+   ref64_t  address;
+};
 
 // --- ClassHeader ---
 
@@ -770,6 +770,7 @@ typedef List<char*>            IdentifierList;
 // --- Reference mapping types ---
 ////typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
 typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
+typedef Memory32HashTable<ident_t, mssg_t, mapReferenceKey, 29> MReferenceMap;
 //typedef Memory32HashTable<ref_t, ref_t, __mapKey, 64>           AddressMap;
 typedef Map<ref_t, ref_t>                                       SubjectMap;
 //typedef List<ref_t>                                             SubjectList;
@@ -805,27 +806,27 @@ inline bool isForwardReference(ident_t referenceName)
    return referenceName.startsWith(FORWARD_PREFIX_NS);
 }
 
-inline ref_t encodeMessage(ref_t actionRef, int argCount, ref_t flags)
+inline mssg_t encodeMessage(ref_t actionRef, int argCount, ref_t flags)
 {
    return flags | ((actionRef << ACTION_ORDER) + argCount);
 }
 
-//inline ref64_t encodeMessage64(ref_t actionRef, int paramCount, ref_t flags)
-//{
-//   ref64_t message = actionRef;
-//   message <<= ACTION_ORDER;
-//
-//   message += paramCount;
-//
-//   return message | flags;
-//}
+inline mssg64_t encodeMessage64(ref_t actionRef, int argCount, ref_t flags)
+{
+   mssg64_t message = actionRef;
+   message <<= ACTION_ORDER;
 
-inline ref_t encodeAction(ref_t actionId)
+   message += argCount;
+
+   return message | flags;
+}
+
+inline mssg_t encodeAction(ref_t actionId)
 {
    return encodeMessage(actionId, 0, 0);
 }
 
-inline void decodeMessage(ref_t message, ref_t& actionRef, int& argCount, ref_t& flags)
+inline void decodeMessage(mssg_t message, ref_t& actionRef, int& argCount, ref_t& flags)
 {
    actionRef = (message >> ACTION_ORDER);
 
@@ -834,7 +835,7 @@ inline void decodeMessage(ref_t message, ref_t& actionRef, int& argCount, ref_t&
    flags = message & MESSAGE_FLAG_MASK;
 }
 
-inline ref_t overwriteArgCount(ref_t message, int argCount)
+inline mssg_t overwriteArgCount(mssg_t message, int argCount)
 {
    int dummy;
    ref_t actionRef, flags;
@@ -843,7 +844,7 @@ inline ref_t overwriteArgCount(ref_t message, int argCount)
    return encodeMessage(actionRef, argCount, flags);
 }
 
-inline ref_t overwriteAction(ref_t message, ref_t newAction)
+inline mssg_t overwriteAction(mssg_t message, ref_t newAction)
 {
    int argCount;
    ref_t actionRef, flags;
@@ -861,7 +862,7 @@ inline ref_t overwriteAction(ref_t message, ref_t newAction)
 //   paramCount = message & PARAMX_MASK;
 //}
 
-inline int getArgCount(ref_t message)
+inline int getArgCount(mssg_t message)
 {
    int   argCount;
    ref_t action, flags;
@@ -870,7 +871,7 @@ inline int getArgCount(ref_t message)
    return argCount;
 }
 
-inline ref_t getAction(ref_t message)
+inline ref_t getAction(mssg_t message)
 {
    int   argCount;
    ref_t action, flags;
@@ -879,15 +880,15 @@ inline ref_t getAction(ref_t message)
    return action;
 }
 
-//inline ref64_t toMessage64(ref_t message)
-//{
-//   int   paramCount;
-//   ref_t actionRef;
-//   decodeMessage(message, actionRef, paramCount);
-//
-//   return encodeMessage64(actionRef, paramCount);
-//}
-//
+inline mssg64_t toMessage64(mssg_t message)
+{
+   int   argCount;
+   ref_t actionRef, flags;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   return encodeMessage64(actionRef, argCount, flags);
+}
+
 //inline ref_t fromMessage64(ref64_t message)
 //{
 //   int   paramCount;

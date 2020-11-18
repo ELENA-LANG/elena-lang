@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION           5                 // ELENA Engine version
-   #define ENGINE_MINOR_VERSION           2
+   #define ENGINE_MINOR_VERSION           3
 
    constexpr auto LINE_LEN                = 0x1000;         // the maximal source line length
    constexpr auto IDENTIFIER_LEN          = 0x0300;         // the maximal identifier length
@@ -246,7 +246,7 @@ namespace _ELENA_
       mtPlatformMask     = 0x000FF,
       mtWin32            = 0x00001,
       mtLinux32          = 0x00002,
-//      mtWin64            = 0x00081,
+      mtWin64            = 0x00081,
 
       mtTargetMask       = 0x00F00,
       mtStandalone       = 0x00000,
@@ -316,8 +316,7 @@ namespace _ELENA_
    constexpr int elGroup               = 0x10000000;
    constexpr int elSymbol              = 0x20000000;
    constexpr int elTemplatebased       = 0x40000000;
-
-//   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
+   constexpr int elExtendedVMT         = 0x80000000;   // indicates that the VMT is 64bit one
 
    constexpr int elDebugMask           = 0x001F0000;
    constexpr int elDebugDWORD          = 0x00010000;
