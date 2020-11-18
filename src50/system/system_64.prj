@@ -1,0 +1,32 @@
+﻿<configuration>
+  <project>
+      <template>lib_64</template>
+      <namespace>system</namespace>
+      <debuginfo>-1</debuginfo>
+      <options>-w3</options>
+      <output>..\..\lib50_64</output>
+  </project>
+  <manifest>
+     <name>ELENA Standard Library 64bit</name>
+     <version>5.3.0</version>
+     <author>Alex Rakov</author>
+  </manifest>
+  <files>
+     <module>
+       <include>types.l</include>
+       <include>object.l</include>
+       <include>basic.l</include>
+       <include>templates.l</include>
+       <include>control.l</include>
+       <include>memory.l</include>
+       <include>win64_pointers.l</include>
+       <include>dynamic.l</include>
+       <include>extensions.l</include>
+       <include>exceptions.l</include>
+       <include>collections\list.l</include>
+       <include>collections\queues.l</include>
+       <include>collections\tuples.l</include>
+       <include>collections\maps.l</include>
+     </module>
+  </files>
+</configuration>

@@ -15,6 +15,11 @@ bin\asm2binx src50\core\system.core_routines.esm lib50
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
+bin\asm2binx src50\core\system.core_routines.esm lib50_64
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
+
 bin\asm2binx asm\x32\core.asm bin\x32
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
@@ -86,7 +91,10 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 
 rem bin\elc src50\graphics\graphics.prj
 
-rem bin\elc src50\system\system_64.prj
+bin\elc src50\system\system_64.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
 
 bin\elc tests\system\system_test.prj
 tests\system\system_test.exe
