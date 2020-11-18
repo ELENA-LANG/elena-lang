@@ -43,7 +43,7 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
 - **Windows** 
 - **Linux**
 
-For time being only x86 (32-bit) architecture is supported.
+x86 (32-bit) / I64 (64-bit) architectures are supported.
 
 ## Source Download and Compilation
 
