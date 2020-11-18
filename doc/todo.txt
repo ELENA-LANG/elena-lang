@@ -3,7 +3,12 @@ In development:
 ------         
 
   [development]
-    * c_a_g
+    * #523 : only if no explicit default multi-dispatcher
+
+    * retiring core #77
+    * #206
+    * #280
+    * #443
 
     * Lexi project:
         - load simple text and display it

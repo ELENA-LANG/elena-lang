@@ -977,7 +977,7 @@ public sealed class Panel : BasePanel, interface<IControl>
     {
         self.appendControlInternal(control);
     }
-    appendControl(control)
+    appendControl(ImageList control)
     {
         self.appendControlInternal(control);
     }
