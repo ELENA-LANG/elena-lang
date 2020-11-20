@@ -3,7 +3,9 @@ In development:
 ------         
 
   [development]
-    * #523 : only if no explicit default multi-dispatcher
+    * use pos_t, ref_t and uint_ptr correctly for x32 and x64
+    * use message, extension, symbol correctly for x32 and x64
+    * message and messagename should not be the same
 
     * retiring core #77
     * #206 - 64-bit architecture

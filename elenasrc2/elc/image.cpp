@@ -111,7 +111,7 @@ _Memory* ExecutableImage :: getTargetSection(ref_t mask)
    }
 }
 
-SectionInfo ExecutableImage :: getSectionInfo(ReferenceInfo referenceInfo, size_t mask, bool silentMode)
+SectionInfo ExecutableImage :: getSectionInfo(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
 {
    SectionInfo sectionInfo;
 
@@ -134,7 +134,7 @@ SectionInfo ExecutableImage :: getSectionInfo(ReferenceInfo referenceInfo, size_
    return sectionInfo;
 }
 
-SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, size_t mask)
+SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, ref_t mask)
 {
    SectionInfo sectionInfo;
 
@@ -151,7 +151,7 @@ SectionInfo ExecutableImage :: getCoreSectionInfo(ref_t reference, size_t mask)
    return sectionInfo;
 }
 
-ClassSectionInfo ExecutableImage :: getClassSectionInfo(ReferenceInfo referenceInfo, size_t codeMask, size_t vmtMask, bool silentMode)
+ClassSectionInfo ExecutableImage :: getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode)
 {
    ClassSectionInfo sectionInfo;
 

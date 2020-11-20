@@ -1060,14 +1060,14 @@ struct HistoryWriter
       if (_lastOperation == operation && (_lastPosition + shift) == position) {
          if (freeSpace > length + getEndRecordSize()) {
             _lastLength += length;
-            writer.write_st(line, length);
+            writer.write(line, length);
          }
          else {
             // if it is enough place to end buffer record
             size_t sublength = 0;
             if (freeSpace > getEndRecordSize()) {
                sublength = freeSpace - getEndRecordSize();
-               writer.write_st(line, sublength);
+               writer.write(line, sublength);
             }
 
             writeEndRecord(writer, _lastLength + sublength);
@@ -1090,14 +1090,14 @@ struct HistoryWriter
          if (freeSpace >= length + getStartRecordSize()) {
             _lastLength = length;
             writer.writeSize((operation == TextHistory::opInsert) ? position : position | ERASE_MODE);
-            writer.write_st(line, length);
+            writer.write(line, length);
          }
          else {
             size_t sublength = 0;
             if (freeSpace > getStartRecordSize()) {
                sublength = freeSpace - getStartRecordSize();
                writer.writeSize((operation == TextHistory::opInsert) ? position : position | ERASE_MODE);
-               writer.write_st(line, sublength);
+               writer.write(line, sublength);
 
                writeEndRecord(writer, sublength);
             }
@@ -1216,7 +1216,7 @@ public:
    {
       _offset -= ((length << 1) + 2);
 
-      return (wchar_t*)_buffer->get_st(_offset);
+      return (wchar_t*)_buffer->get(_offset);
    }
 #else
    size_t readLength()

@@ -20,7 +20,7 @@ using namespace _ELENA_;
 
 // --- RTManager ---
 
-void RTManager :: readCallStack(StreamReader& stack, size_t startPosition, size_t currentAddress, StreamWriter& output)
+void RTManager :: readCallStack(StreamReader& stack, uintptr_t startPosition, uintptr_t currentAddress, StreamWriter& output)
 {
    size_t position = startPosition;
    size_t ret = 0;
@@ -40,7 +40,7 @@ void RTManager :: readCallStack(StreamReader& stack, size_t startPosition, size_
    } while (position != 0);
 }
 
-size_t RTManager :: readCallStack(StreamReader& reader, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+size_t RTManager :: readCallStack(StreamReader& reader, uintptr_t framePosition, uintptr_t currentAddress, uintptr_t startLevel, int* buffer, size_t maxLength)
 {
    MemoryDump retPoints;
    MemoryWriter writer(&retPoints);
@@ -70,7 +70,7 @@ size_t RTManager :: readCallStack(StreamReader& reader, size_t framePosition, si
    return index + 1;
 }
 
-size_t RTManager::readClassName(StreamReader& reader, size_t classVAddress, char* buffer, size_t maxLength)
+size_t RTManager::readClassName(StreamReader& reader, uintptr_t classVAddress, char* buffer, size_t maxLength)
 {
    ident_t symbol;
 
@@ -125,7 +125,7 @@ void* RTManager :: loadMetaAttribute(StreamReader& reader, ident_t name, int cat
    return nullptr;
 }
 
-bool RTManager :: readAddressInfo(StreamReader& reader, size_t retAddress, _LibraryManager* manager,
+bool RTManager :: readAddressInfo(StreamReader& reader, uintptr_t retAddress, _LibraryManager* manager,
    ident_t &symbol, ident_t &method, ident_t &path, int& row)
 {
    int index = 0;
@@ -238,7 +238,7 @@ void copy(char* buffer, int value, int& copied)
    copied += length;
 }
 
-size_t RTManager :: readAddressInfo(StreamReader& debug, size_t retAddress, _LibraryManager* manager, char* buffer, size_t maxLength)
+size_t RTManager :: readAddressInfo(StreamReader& debug, uintptr_t retAddress, _LibraryManager* manager, char* buffer, size_t maxLength)
 {
    ident_t symbol = NULL;
    ident_t method = NULL;

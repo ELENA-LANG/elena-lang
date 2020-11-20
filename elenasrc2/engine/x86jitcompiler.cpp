@@ -276,7 +276,7 @@ void _ELENA_::loadCoreOp(x86JITScope& scope, char* code)
    if (code==NULL)
       throw InternalError("Cannot load core command");
 
-   size_t position = writer->Position();
+   pos_t position = writer->Position();
    size_t length = *(size_t*)(code - 4);
 
    writer->write(code, length);
@@ -766,7 +766,7 @@ void _ELENA_::loadOneByteLOp(int opcode, x86JITScope& scope)
 void _ELENA_::loadROp(int opcode, x86JITScope& scope)
 {
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -796,7 +796,7 @@ void _ELENA_::loadROp(int opcode, x86JITScope& scope)
 void _ELENA_::loadMTOp(int opcode, x86JITScope& scope)
 {
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -839,7 +839,7 @@ void _ELENA_::loadMTOpX(int opcode, x86JITScope& scope, int prefix)
       }
    }
 
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -882,7 +882,7 @@ void _ELENA_::loadNOpX(int opcode, x86JITScope& scope, int prefix)
       }
    }
 
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -912,7 +912,7 @@ void _ELENA_::loadNOpX(int opcode, x86JITScope& scope, int prefix)
 void _ELENA_::loadIndexOp(int opcode, x86JITScope& scope)
 {
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -939,7 +939,7 @@ void _ELENA_::loadIndexOp(int opcode, x86JITScope& scope)
 void _ELENA_::loadVMTIndexOp(int opcode, x86JITScope& scope)
 {
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -993,7 +993,7 @@ void _ELENA_::loadVMTIndexOp(int opcode, x86JITScope& scope)
 void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
 {
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -1030,7 +1030,7 @@ void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
    MemoryWriter* writer = scope.code;
 
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -1805,10 +1805,10 @@ void _ELENA_::compileASaveR(int, x86JITScope& scope)
 
 void _ELENA_::compileInvokeVMTOffset(int opcode, x86JITScope& scope)
 {
-   int message = scope.resolveMessage(scope.tape->getDWord());
+   mssg_t message = scope.resolveMessage(scope.tape->getDWord());
 
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -1834,10 +1834,10 @@ void _ELENA_::compileInvokeVMTOffset(int opcode, x86JITScope& scope)
 
 void _ELENA_::compileInvokeVMT(int opcode, x86JITScope& scope)
 {
-   int message = scope.resolveMessage(scope.tape->getDWord());
+   mssg_t message = scope.resolveMessage(scope.tape->getDWord());
 
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
+   pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
    // simply copy correspondent inline code
@@ -2338,7 +2338,7 @@ void* x86JITCompiler :: getInvoker()
 void x86JITCompiler :: setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode)
 {
    if (virtualMode) {
-      size_t offset = ((size_t)_preloaded.get(VOID) & ~mskAnyRef);
+      pos_t offset = ((size_t)_preloaded.get(VOID) & ~mskAnyRef);
 
       _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
 

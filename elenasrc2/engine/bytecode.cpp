@@ -743,10 +743,10 @@ ident_t ByteCodeCompiler :: decode(ByteCode code, char* s)
 }
 
 
-bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Module* module, size_t messageRef)
+bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Module* module, mssg_t messageRef)
 {
    ref_t actionRef, flags;
-   int argCount = 0;
+   size_t argCount = 0;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
    if (test(flags, VARIADIC_MESSAGE)) {

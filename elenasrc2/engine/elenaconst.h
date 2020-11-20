@@ -33,6 +33,7 @@ namespace _ELENA_
    constexpr auto ARGX_MASK               = 0x000000000000001Fu;
 
    constexpr auto INVALID_REF             = 0xFFFFFFFFu;
+   constexpr auto INVALID_PTR             = (uintptr_t)-1;
 
    constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
    constexpr auto SET_OPERATOR_ID         = 0x0007;
@@ -543,7 +544,7 @@ namespace _ELENA_
    // --- miscellaneous routines ---
    inline bool isWeakReference(ident_t referenceName)
    {
-      return (referenceName != NULL && referenceName[0] != 0 && referenceName[0] == '\'');
+      return (referenceName != nullptr && referenceName[0] != 0 && referenceName[0] == '\'');
    }
 
 } // _ELENA_

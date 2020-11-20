@@ -1,20 +1,26 @@
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "elenartmachine.h"
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "elenartmachine.h"
 #include <windows.h>
 //#include "pehelper.h"
 
-//#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
-//
-//#define CONFIG_PATH "elenart.cfg"
-//
-//using namespace _ELENA_;
-//
+#define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
+
+//#define CONFIG_PATH "elenart64.cfg"
+
+using namespace _ELENA_;
+
 //static ELENARTMachine* _Instance = NULL;
 //static void*           _SystemEnv = NULL;
-//
-//EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
-//{
+
+EXTERN_DLL_EXPORT void PrepareEM(void* args)
+{
+
+}
+
+EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,
+   ProgramHeader* header)
+{
 //   ProgramHeader header;
 //   // initialize the exception handler
 //   __asm {
@@ -31,8 +37,8 @@
 //
 //   // start the system
 //   _Instance->startSTA(&header, (SystemEnv*)systemEnv, entryPoint);
-//}
-//
+}
+
 //EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)
 //{
 //   ProgramHeader header;

@@ -29,15 +29,15 @@ protected:
    //// actions
    //ReferenceMap  _actions;         // actions
 
-   void mapReference(ident_t reference, void* vaddress, size_t mask);
-   void* resolveReference(ident_t reference, size_t mask);
+   void mapReference(ident_t reference, void* vaddress, ref_t mask);
+   void* resolveReference(ident_t reference, ref_t mask);
 
 public:
-   virtual void* resolveReference(ReferenceInfo referenceInfo, size_t mask);
+   virtual void* resolveReference(ReferenceInfo referenceInfo, ref_t mask);
 
    virtual ref_t resolveExternal(ident_t external);
 
-   virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, size_t mask);
+   virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask);
    //virtual void mapPredefinedAction(ident_t name, ref_t reference);
 
    void clearReferences()
@@ -58,8 +58,8 @@ public:
 
    _ImageLoader()
       : _codeReferences(INVALID_REF), _dataReferences(INVALID_REF), _symbolReferences(INVALID_REF),
-        _statReferences(INVALID_REF), _constReferences((size_t)-1), _numberReferences((size_t)-1), _characterReferences((size_t)-1),
-        _literalReferences((size_t)-1), _bssReferences(INVALID_REF), _exportReferences(INVALID_REF), _wideReferences((size_t)-1)/*,
+        _statReferences(INVALID_REF), _constReferences(INVALID_REF), _numberReferences(INVALID_REF), _characterReferences(INVALID_REF),
+        _literalReferences(INVALID_REF), _bssReferences(INVALID_REF), _exportReferences(INVALID_REF), _wideReferences(INVALID_REF)/*,
         _actions(0)*/
    {
    }

@@ -19,8 +19,8 @@ namespace _ELENA_
 
 struct ImageBaseMap
 {
-   int base;
-   int code, adata, mdata, rdata, bss, stat, tls, import;
+   pos_t base;
+   pos_t code, adata, mdata, rdata, bss, stat, tls, import;
 
    RelocationFixMap importMapping;
 
@@ -91,7 +91,7 @@ class Linker
    bool createDebugFile(ImageInfo& image, path_t debugFilePath);
 
 public:
-   void prepareTLS(Image& image, int tls_variable, ref_t& tls_directory);
+   void prepareTLS(Image& image, ref_t tls_variable, ref_t& tls_directory);
 
    void run(Project& project, Image& image, ref_t tls_directory);
 

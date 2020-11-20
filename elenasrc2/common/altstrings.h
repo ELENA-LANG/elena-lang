@@ -148,12 +148,12 @@ private:
 public:
    operator const wide_c*() const { return _string; }
 
-   wide_t& operator +=(int offset)
-   {
-      _string += offset;
+   //wide_t& operator +=(int offset)
+   //{
+   //   _string += offset;
 
-      return *this;
-   }
+   //   return *this;
+   //}
 
    wide_t& operator +=(size_t offset)
    {
@@ -199,7 +199,7 @@ public:
 
    wide_t()
    {
-      _string = NULL;
+      _string = nullptr;
    }
    wide_t(const wide_c* s)
    {
@@ -319,15 +319,15 @@ public:
 
    const T* c_str() const { return _string; }
 
-   T& operator[](size_t index)
-   {
-      return *(_string + index);
-   }
-
-   T& operator[](int index)
-   {
-      return *(_string + index);
-   }
+//   T& operator[](size_t index)
+//   {
+//      return *(_string + index);
+//   }
+//
+//   T& operator[](int index)
+//   {
+//      return *(_string + index);
+//   }
 
    void replaceAll(T oldCh, T newCh, size_t index)
    {

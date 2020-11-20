@@ -1357,7 +1357,7 @@ I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->module = nullptr;
 }
 
-void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
+void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, pos_t disp)
 {
    // HOTFIX : mskLockVariable used to fool trylock opcode, adding virtual offset
    if ((reference & mskAnyRef) == mskLockVariable) {
@@ -1367,10 +1367,10 @@ void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, size_t d
    helper->writeReference(writer, reference, disp, module);
 }
 
-void I64JITScope :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp)
-{
-   helper->writeXReference(writer, reference, disp, module);
-}
+//void I64JITScope :: writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp)
+//{
+//   helper->writeXReference(writer, reference, disp, module);
+//}
 
 // --- I64JITCompiler ---
 

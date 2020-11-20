@@ -11,7 +11,7 @@
 using namespace _ELENA_;
 
 bool SystemRoutineProvider :: parseMessageLiteral(ident_t message, IdentifierString& messageName, 
-   int& paramCount, ref_t& flags)
+   size_t& paramCount, ref_t& flags)
 {
    paramCount = -1;
 
@@ -92,7 +92,7 @@ int SystemRoutineProvider :: ExecuteInFrame(SystemEnv* env, _Entry& entry, void*
    FrameHeader frameHeader;
    OpenFrame(env, &frameHeader);
 
-   int retVal = entry.evaluate2((pos_t)&frameHeader, address);
+   int retVal = entry.evaluate2((uintptr_t)&frameHeader, address);
 
    CloseFrame(env, &frameHeader);
 

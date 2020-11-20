@@ -227,7 +227,7 @@ int ELENARTMachine :: loadSubjectName(size_t subjectRef, char* buffer, size_t le
 int ELENARTMachine :: loadMessageName(size_t messageRef, char* buffer, size_t length)
 {
    int prefixLen = 0;
-   int paramCount = 0;
+   size_t paramCount = 0;
    ref_t actionRef, flags;
    decodeMessage(messageRef, actionRef, paramCount, flags);
    if (test(flags, VARIADIC_MESSAGE)) {
@@ -302,7 +302,7 @@ void* ELENARTMachine :: loadSubject(ident_t name)
 void* ELENARTMachine :: loadMessage(ident_t message)
 {
    IdentifierString messageName;
-   int paramCount = -1;
+   size_t paramCount = -1;
    ref_t flags = 0;
 
    if (SystemRoutineProvider::parseMessageLiteral(message, messageName, paramCount, flags)) {
@@ -320,7 +320,7 @@ ref_t ELENARTMachine :: loadDispatcherOverloadlist(ident_t referenceName)
    return (ref_t)loadMetaAttribute(referenceName, caExtOverloadlist);
 }
 
-int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, ref_t message, void* output)
+int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output)
 {
    // load message name
    char messageName[IDENTIFIER_LEN];

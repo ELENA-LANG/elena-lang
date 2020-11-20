@@ -417,17 +417,6 @@ char* StrFactory :: allocate(size_t size, const char* value)
    return s;
 }
 
-//void StringHelper :: insert(char* s, int pos, const char* subs)
-//{
-//   size_t len = getlength(subs);
-//
-//   //s[getlength(s) + len + 1] = 0;
-//   for (int i = getlength(s) ; i >= pos ; i--) {
-//      s[i+len] = s[i];
-//   }
-//   memcpy(s + pos, subs, len);
-//}
-
 void StrHelper :: move(char* s1, const char* s2, size_t length)
 {
    memmove(s1, s2, length);
@@ -911,8 +900,6 @@ wchar_t* Convertor :: longlongToStr(long long n, wchar_t* s, int radix)
 //
 //   return number;
 //}
-
-
 
 size_t findSubStr(const wchar_t* s, wchar_t c, size_t length, size_t defValue)
 {

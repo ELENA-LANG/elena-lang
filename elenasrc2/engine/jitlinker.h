@@ -77,17 +77,17 @@ class JITLinker : _JITLoaderListener
       virtual SectionInfo getSection(ref_t reference, _Module* module);
       virtual SectionInfo getCoreSection(ref_t reference);
 
-      virtual void* getVAddress(MemoryWriter& writer, int mask)
+      virtual void* getVAddress(MemoryWriter& writer, ref_t mask)
       {
          return _owner->calculateVAddress(&writer, mask);
       }
 
-      virtual ref_t resolveMessage(ref_t reference, _Module* module = NULL);
+      virtual mssg_t resolveMessage(mssg_t reference, _Module* module = nullptr);
 
-      virtual void addBreakpoint(size_t position);
+      virtual void addBreakpoint(pos_t position);
 
-      virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
-      virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
+      virtual void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp, _Module* module);
+      virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, pos_t disp);
       virtual void writeMTReference(MemoryWriter& writer)
       {
          if (_owner->_virtualMode) {
@@ -96,26 +96,26 @@ class JITLinker : _JITLoaderListener
          else {
             _Memory* section = _owner->_loader->getTargetSection(mskMessageTableRef);
 
-            writer.writeDWord((ref_t)section->get(0));
+            writer.writePtr((uintptr_t)section->get(0));
          }
       }
 
-      virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
+   //   virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module);
 
       ReferenceHelper(JITLinker* owner, _Module* module, References* references)
       {
          _references = references;
          _owner = owner;
          _module = module;
-         _debug = NULL;
+         _debug = nullptr;
       }
    };
 
-   typedef Pair<void*, int>                  MethodInfo;
-   typedef MemoryMap<MethodInfo, int, false> MethodMap;
+   typedef Pair<void*, mssg_t>                  MethodInfo;
+   typedef MemoryMap<MethodInfo, uintptr_t, false> MethodMap;
 //   typedef Memory32HashTable<ident_t, void*, mapReferenceKey, 29> StrongTypeMap;
 
-   typedef Pair<_Module*, ref_t>             ModuleReference;
+   typedef Pair<_Module*, ref_t>            ModuleReference;
    typedef List<ModuleReference>             ModuleReferences;
 
    _JITLoader*       _loader;
@@ -139,39 +139,39 @@ class JITLinker : _JITLoaderListener
    void* getVMTAddress(void* vaddress);
    void* getVMTAddress(_Module* module, ref_t reference, References& references);
    void* getVMTReference(_Module* module, ref_t reference, References& references);
-   int resolveVMTMethodAddress(_Module* module, ref_t reference, int messageID);
-   int getVMTMethodAddress(void* vaddress, mssg_t messageID);   
-   int getVMTMethodIndex(void* vaddress, mssg_t messageID);
-   size_t getVMTFlags(void* vaddress);
+   uintptr_t resolveVMTMethodAddress(_Module* module, ref_t reference, mssg_t messageID);
+   uintptr_t getVMTMethodAddress(void* vaddress, mssg_t messageID);   
+   pos_t getVMTMethodIndex(void* vaddress, mssg_t messageID);
+   ref_t getVMTFlags(void* vaddress);
 
    void generateMetaAttribute(int category, ident_t fullName, void* address);
    void generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask);
-   void generateOverloadListMetaAttribute(_Module* module, ref_t message, ref_t listRef);
+   void generateOverloadListMetaAttribute(_Module* module, mssg_t message, ref_t listRef);
 
    void fixReferences(References& relocations, _Memory* image);
    void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress, 
       bool constArrayMode, References* messageReferences);
 
-   size_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
+   uintptr_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
 
    ref_t mapAction(SectionInfo& messageTable, ident_t action, ref_t weakActionRef, ref_t signature);
    ref_t resolveWeakAction(SectionInfo& messageTable, ident_t action);
-   ref_t resolveMessage(_Module* module, mssg_t reference, References* references);
+   mssg_t resolveMessage(_Module* module, mssg_t reference, References* references);
    ref_t resolveSignature(_Module* module, ref_t signature, bool variadicOne, References* references);
 
    void createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes);
 
-   void* resolveNativeVariable(ReferenceInfo referenceInfo, int mask);
+   void* resolveNativeVariable(ReferenceInfo referenceInfo, ref_t mask);
 ////   void* resolveConstVariable(ident_t  reference, int mask);
-   void* resolveNativeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
-   void* resolveBytecodeSection(ReferenceInfo referenceInfo, int mask, SectionInfo sectionInfo);
-   void* createBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo, References& references);
-   void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, int mask, ClassSectionInfo sectionInfo);
-   void* resolveConstant(ReferenceInfo referenceInfo, int mask, bool silentMode);
-   void* resolveStaticVariable(ReferenceInfo referenceInfo, int mask);
+   void* resolveNativeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo);
+   void* resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo);
+   void* createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo, References& references);
+   void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo);
+   void* resolveConstant(ReferenceInfo referenceInfo, ref_t mask, bool silentMode);
+   void* resolveStaticVariable(ReferenceInfo referenceInfo, ref_t mask);
 //   void* resolveAnonymousStaticVariable();
-   void* resolveMessageTable(ReferenceInfo referenceInfo, int mask);
-   void* resolveMetaAttributeTable(ReferenceInfo referenceInfo, int mask);
+   void* resolveMessageTable(ReferenceInfo referenceInfo, ref_t mask);
+   void* resolveMetaAttributeTable(ReferenceInfo referenceInfo, ref_t mask);
    void* resolveMessage(ReferenceInfo referenceInfo, ident_t vmt);
    void* resolveAction(ReferenceInfo referenceInfo, ident_t vmt);
    void* resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt);
@@ -181,7 +181,7 @@ class JITLinker : _JITLoaderListener
    void* resolvePackage(_Module* module);
 
    void resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader& vmtReader, MemoryReader& attrReader, 
-      _Memory* vmtImage, ref_t position);
+      _Memory* vmtImage, pos_t position);
 
 public:
    void prepareCompiler();
@@ -207,11 +207,11 @@ public:
 
    size_t getStaticCount() const 
    { 
-      return _loader->getTargetSection((size_t)mskStatRef)->Length() >> 2;
+      return _loader->getTargetSection((ref_t)mskStatRef)->Length() >> 2;
    }
 
-   void* calculateVAddress(MemoryWriter* writer, int mask, int alignment);
-   void* calculateVAddress(MemoryWriter* writer, int mask);
+   void* calculateVAddress(MemoryWriter* writer, ref_t mask, int alignment);
+   void* calculateVAddress(MemoryWriter* writer, ref_t mask);
 
    mssg_t parseMessage(ident_t reference);
    ref_t parseAction(ident_t reference);
@@ -220,7 +220,7 @@ public:
    virtual void onModuleLoad(_Module* module);
 
    JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool withExtDispatchers, bool autoLoadMode = false)
-      : _staticMethods(-1)
+      : _staticMethods(INVALID_PTR)
    {
       _loader = loader;
       _compiler = compiler;

@@ -36,7 +36,7 @@ void SystemRoutineProvider :: Init(SystemEnv* env)
 
    // set the GC root counter
    env->Table->gc_rootcount = env->StatLength;
-   env->Table->gc_roots = (pos_t)env->StatRoots;
+   env->Table->gc_roots = (uintptr_t)env->StatRoots;
 
    // ; allocate memory heap
 //  mov  ecx, 8000000h // ; 10000000h
@@ -52,7 +52,7 @@ void SystemRoutineProvider :: Init(SystemEnv* env)
    //  and  ebx, 0FFFFFF80h     // align to 128
    //  call code : %NEW_HEAP
    //  mov  [data : %CORE_GC_TABLE + gc_start], eax
-   pos_t mg_ptr = NewHeap(0x20000000, align(env->GCMGSize, 128));
+   uintptr_t mg_ptr = NewHeap(0x20000000, align(env->GCMGSize, 128));
    env->Table->gc_start = mg_ptr;
 
    // ; initialize yg
@@ -170,32 +170,32 @@ struct ObjectPage
    int   body[2];
 };
 
-inline pos_t getObjectPtr(size_t pagePtr)
+inline uintptr_t getObjectPtr(uintptr_t pagePtr)
 {
    return pagePtr + elObjectOffset;
 }
 
-inline ObjectPage* getObjectPage(size_t objptr)
+inline ObjectPage* getObjectPage(uintptr_t objptr)
 {
    return (ObjectPage*)(objptr - elObjectOffset);
 }
 
-inline int getSize(size_t objptr)
+inline int getSize(uintptr_t objptr)
 {
    return getObjectPage(objptr)->size;
 }
 
-inline void* getVMTPtr(size_t objptr)
+inline void* getVMTPtr(uintptr_t objptr)
 {
    return getObjectPage(objptr)->vmtPtr;
 }
 
-inline void setVMTPtr(size_t objptr, void* ptr)
+inline void setVMTPtr(uintptr_t objptr, void* ptr)
 {
    getObjectPage(objptr)->vmtPtr = ptr;
 }
 
-inline void orSize(size_t objptr, int mask)
+inline void orSize(uintptr_t objptr, int mask)
 {
    getObjectPage(objptr)->size |= mask;
 }
@@ -825,10 +825,10 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
    }
 
    // ; save gc_yg_current to mark  objects
-   table->gc_yg_current = (pos_t)shadowPtr;
+   table->gc_yg_current = (uintptr_t)shadowPtr;
 
    // ; switch main YG heap with a shadow one
-   pos_t tmp = table->gc_yg_start;
+   uintptr_t tmp = table->gc_yg_start;
    table->gc_yg_start = table->gc_shadow;
    table->gc_shadow = tmp;
    tmp = table->gc_yg_end;
@@ -841,7 +841,7 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
       return nullptr; // !! temporal
    }
    else {
-      pos_t allocated = table->gc_yg_current;
+      uintptr_t allocated = table->gc_yg_current;
 
       table->gc_yg_current += size;
 

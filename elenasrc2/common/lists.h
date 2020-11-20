@@ -33,7 +33,6 @@ template <class T1, class T2> struct Pair
    }
 };
 
-
 // --- template forward declarations ---
 template <class T> class _BList;
 template <class T> class _List;
@@ -480,12 +479,12 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       return (this->key.value1 > key.value1);
    }
 
-   bool operator ==(Pair<void*, int> key) const
+   bool operator ==(Pair<void*, unsigned int> key) const
    {
       return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
    }
 
-   bool operator !=(Pair<void*, int> key) const
+   bool operator !=(Pair<void*, unsigned int> key) const
    {
       return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
    }
@@ -840,7 +839,6 @@ public:
    }
 };
 
-
 // --- Base list template ---
 
 template <class T> class _List
@@ -855,7 +853,7 @@ template <class T> class _List
 public:
    typedef _Iterator<T, Item> Iterator;
 
-   bool Eof() const { return _top==NULL; }
+   bool Eof() const { return _top == nullptr; }
 
    unsigned int Count() const { return _count; }
 
@@ -899,10 +897,10 @@ public:
    void addToTale(T item)
    {
       if (_tale!=NULL) {
-         _tale->next = new Item(item, NULL);
+         _tale->next = new Item(item, nullptr);
          _tale = _tale->next;
       }
-      else _top = _tale = new Item(item, NULL);
+      else _top = _tale = new Item(item, nullptr);
 
       _count++;
    }
@@ -919,7 +917,7 @@ public:
       _count--;
 
       if (tmp==_tale)
-         _tale = NULL;
+         _tale = nullptr;
 
       T item = tmp->item;
       freeobj(tmp);
@@ -929,8 +927,8 @@ public:
 
    void cut(T item)
    {
-      Item* tmp = NULL;
-      Item* previous = NULL;
+      Item* tmp = nullptr;
+      Item* previous = nullptr;
 
       if (_top->item==item)
          tmp = _top;
@@ -949,7 +947,7 @@ public:
 
          if (tmp==_tale)
             _tale = previous;
-         if (previous==NULL) {
+         if (previous== nullptr) {
             _top = _top->next;
          }
          else previous->next = tmp->next;
@@ -1007,12 +1005,12 @@ public:
          delete tmp;
       }
       _count = 0;
-      _top = _tale = NULL;
+      _top = _tale = nullptr;
    }
 
    _List(void(*freeT)(T))
    {
-      _top = _tale = NULL;
+      _top = _tale = nullptr;
       _count = 0;
       _freeT = freeT;
    }
@@ -1274,7 +1272,7 @@ public:
    }
 
    List()
-      : _list(NULL)
+      : _list(nullptr)
    {
    }
    List(T, void(*freeT)(T))
@@ -1363,12 +1361,12 @@ public:
    }
 
    Stack()
-      : _list(NULL)
+      : _list(nullptr)
    {
       this->_defaultItem = NULL;
    }
    Stack(T defaultItem)
-      : _list(NULL)
+      : _list(nullptr)
    {
       _defaultItem = defaultItem;
    }
@@ -1853,26 +1851,26 @@ public:
          delete tmp;
       }
       _count = 0;
-      _top = _tale = NULL;
+      _top = _tale = nullptr;
    }
 
    Map()
    {
-      _top = _tale = NULL;
+      _top = _tale = nullptr;
       _count = 0;
       _defaultItem = 0;
-      _freeT = NULL;
+      _freeT = nullptr;
    }
    Map(T defaultItem)
    {
-      _top = _tale = NULL;
+      _top = _tale = nullptr;
       _count = 0;
       _defaultItem = defaultItem;
-      _freeT = NULL;
+      _freeT = nullptr;
    }
    Map(T defaultItem, void(*freeT)(T))
    {
-      _top = _tale = NULL;
+      _top = _tale = nullptr;
       _count = 0;
       _defaultItem = defaultItem;
       _freeT = freeT;
@@ -2054,12 +2052,12 @@ public:
       return key;
    }
 
-   ref_t storeKey(unsigned int position, Pair<unsigned int, int>)
+   unsigned int storeKey(unsigned int position, Pair<unsigned int, int>)
    {
       return position;
    }
 
-   ref_t storeKey(unsigned int position, Pair<void*, int>)
+   unsigned int storeKey(unsigned int position, Pair<void*, unsigned int>)
    {
       return position;
    }
@@ -2080,7 +2078,7 @@ public:
    {
       Item item(key, value, 0);
 
-      int position = _buffer.Length();
+      unsigned int position = _buffer.Length();
       if (_tale == 0) {
          // save top
          if (position == 0) {

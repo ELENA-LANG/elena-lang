@@ -21,10 +21,10 @@ EXTERN_DLL_EXPORT void PrepareEM(void* args)
 EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,
    ProgramHeader* header)
 {
-   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+   header->root_exception_struct.core_catch_addr = (uintptr_t)exceptionHandler;
 
    // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
+   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (uintptr_t)criticalHandler);
 
    // initialize system env variable
    _SystemEnv = systemEnv;
@@ -36,10 +36,10 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, vo
 EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,
    ProgramHeader* header)
 {
-   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+   header->root_exception_struct.core_catch_addr = (uintptr_t)exceptionHandler;
 
    // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
+   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (uintptr_t)criticalHandler);
 
    // initialize system env variable
    _SystemEnv = systemEnv;
@@ -51,10 +51,10 @@ EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, vo
 EXTERN_DLL_EXPORT int StartThread(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,
    int index, ProgramHeader* header)
 {
-   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+   header->root_exception_struct.core_catch_addr = (uintptr_t)exceptionHandler;
 
    // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
+   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (uintptr_t)criticalHandler);
 
    _Instance->startThread(header, (SystemEnv*)systemEnv, entryPoint, index);
 

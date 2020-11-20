@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of abstract stream reader
 //      and writer classes
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef streamsH
@@ -25,17 +25,28 @@ public:
       return *(int*)get(position);
    }
 
+//#ifdef _WIN64
+//   int& operator[](pos64_t position) const
+//   {
+//      return *(uintptr_t*)getLong(position);
+//   }
+//#endif
+
    virtual pos_t Length() const = 0;
+
+   //virtual pos64_t LongLength() const = 0;
 
    virtual void* get(pos_t position) const = 0;
 
-   virtual void* getLong(pos64_t position) const = 0;
+   //virtual void* getLong(pos64_t position) const = 0;
 
    virtual bool read(pos_t position, void* s, pos_t length) = 0;
 
-   virtual bool readLong(pos64_t position, void* s, pos64_t length) = 0;
+   //virtual bool read(pos64_t position, void* s, pos64_t length) = 0;
 
    virtual bool write(pos_t position, const void* s, pos_t length) = 0;
+
+   //virtual bool write(pos64_t position, const void* s, pos64_t length) = 0;
 
    virtual void insert(pos_t position, const void* s, pos_t length) = 0;
 
@@ -46,26 +57,26 @@ public:
       return false;
    }
 
-   virtual void* getReferences() { return NULL; }
+   virtual void* getReferences() { return nullptr; }
 
    virtual void trim(pos_t position) = 0;
-   virtual void trimLong(pos64_t position) = 0;
+   //virtual void trimLong(pos64_t position) = 0;
 
-#ifdef _WIN64
-
-   void* get_st(size_t position)
-   {
-      return getLong(position);
-   }
-
-#else
-
-   void* get_st(size_t position)
-   {
-      return get(position);
-   }
-
-#endif
+//#ifdef _WIN64
+//
+//   void* get_st(size_t position)
+//   {
+//      return getLong(position);
+//   }
+//
+//#else
+//
+//   void* get_st(size_t position)
+//   {
+//      return get(position);
+//   }
+//
+//#endif
 
    virtual ~_Memory() {}
 };
@@ -79,7 +90,7 @@ public:
    virtual pos_t Position() = 0;
 
    virtual bool seek(pos_t position) = 0;
-   virtual bool seek(pos64_t position) = 0;
+//   virtual bool seek(pos64_t position) = 0;
 
    virtual bool read(void* s, pos_t length) = 0;
 
@@ -176,36 +187,36 @@ public:
    virtual pos_t Position() const = 0;
 
    virtual bool write(const void* s, pos_t length) = 0;
-   virtual bool writeLong(const void* s, pos64_t length) = 0;
-
-#ifdef _WIN64
-
-   bool writeLiteral(const char* s)
-   {
-      return writeLiteral(s, getlength(s) + 1);
-   }
-
-   bool writeLiteral(const char* s, pos64_t length)
-   {
-      return writeLong((void*)s, length);
-   }
-
-   bool writeLiteral(const wide_c* s, pos64_t length)
-   {
-      return writeLong((void*)s, length << 1);
-   }
-
-   bool writeLiteral(const wide_c* s)
-   {
-      return writeLiteral(s, getlength(s) + 1);
-   }
-
-   bool write_st(void* s, pos64_t length)
-   {
-      return writeLong(s, length);
-   }
-
-#else
+//   virtual bool writeLong(const void* s, pos64_t length) = 0;
+//
+//#ifdef _WIN64
+//
+//   bool writeLiteral(const char* s)
+//   {
+//      return writeLiteral(s, getlength(s) + 1);
+//   }
+//
+//   bool writeLiteral(const char* s, pos64_t length)
+//   {
+//      return writeLong((void*)s, length);
+//   }
+//
+//   bool writeLiteral(const wide_c* s, pos64_t length)
+//   {
+//      return writeLong((void*)s, length << 1);
+//   }
+//
+//   bool writeLiteral(const wide_c* s)
+//   {
+//      return writeLiteral(s, getlength(s) + 1);
+//   }
+//
+//   bool write_st(void* s, pos64_t length)
+//   {
+//      return writeLong(s, length);
+//   }
+//
+//#else
 
    bool writeLiteral(const char* s)
    {
@@ -227,12 +238,12 @@ public:
       return writeLiteral(s, getlength(s) + 1);
    }
 
-   bool write_st(void* s, pos_t length)
-   {
-      return write(s, length);
-   }
-
-#endif
+//   bool write_st(void* s, pos_t length)
+//   {
+//      return write(s, length);
+//   }
+//
+//#endif
 
    bool writeChar(char ch)
    {
@@ -350,8 +361,8 @@ public:
    virtual bool writeNewLine() = 0;
    virtual bool write(const wide_c* s, pos_t length) = 0;
    virtual bool write(const char* s, pos_t length) = 0;
-   virtual bool write(const wide_c* s, pos64_t length) = 0;
-   virtual bool write(const char* s, pos64_t length) = 0;
+   //virtual bool write(const wide_c* s, pos64_t length) = 0;
+   //virtual bool write(const char* s, pos64_t length) = 0;
 
    virtual bool writeChar(char ch)
    {
@@ -459,13 +470,13 @@ public:
       return true;
    }
 
-   bool seek(pos64_t position)
-   {
-      if (position < INT_MAX) {
-         return seek((pos_t)position);
-      }
-      else return false;
-   }
+   //bool seek(pos64_t position)
+   //{
+   //   if (position < INT_MAX) {
+   //      return seek((pos_t)position);
+   //   }
+   //   else return false;
+   //}
 
    virtual bool write(const wide_c* s, pos_t length)
    {
@@ -698,13 +709,13 @@ public:
       return true;
    }
 
-   virtual bool seek(pos64_t position)
-   {
-      if (position < INT_MAX) {
-         return seek((pos_t)position);
-      }
-      else return false;
-   }
+   //virtual bool seek(pos64_t position)
+   //{
+   //   if (position < INT_MAX) {
+   //      return seek((pos_t)position);
+   //   }
+   //   else return false;
+   //}
 
    virtual const char* getLiteral(const char*)
    {
@@ -783,13 +794,13 @@ public:
       }
       else return false;
    }
-   virtual bool seek(pos64_t position)
-   {
-      if (position < INT_MAX) {
-         return seek((pos_t)position);
-      }
-      else return false;
-   }
+//   virtual bool seek(pos64_t position)
+//   {
+//      if (position < INT_MAX) {
+//         return seek((pos_t)position);
+//      }
+//      else return false;
+//   }
 
    virtual bool read(void* s, pos_t length)
    {
@@ -801,25 +812,25 @@ public:
       else return false;
    }
 
-//   virtual bool read2(void* s, size_t length)
-//   {
-//      return read(s, length << 1);
-//   }
-//
-////   virtual bool read4(void* s, size_t length)
+////   virtual bool read2(void* s, size_t length)
 ////   {
-////      return read(s, length << 4);
+////      return read(s, length << 1);
 ////   }
-//
-//   virtual bool read(void* s, size_t length, size_t& wasread)
-//   {
-//      if (read(s, length)) {
-//         wasread = length;
-//      }
-//      else wasread = 0;
-//
-//      return (wasread > 0);
-//   }
+////
+//////   virtual bool read4(void* s, size_t length)
+//////   {
+//////      return read(s, length << 4);
+//////   }
+////
+////   virtual bool read(void* s, size_t length, size_t& wasread)
+////   {
+////      if (read(s, length)) {
+////         wasread = length;
+////      }
+////      else wasread = 0;
+////
+////      return (wasread > 0);
+////   }
 
 //   virtual bool read2(void* s, size_t length, size_t& wasread)
 //   {
@@ -859,11 +870,11 @@ public:
       _memory = memory;
       _position = position;
    }
-   MemoryReader(_Memory* memory, pos64_t position)
-   {
-      _memory = memory;
-      seek(position);
-   }
+   //MemoryReader(_Memory* memory, pos64_t position)
+   //{
+   //   _memory = memory;
+   //   seek(position);
+   //}
 };
 
 // --- MemoryWriter ---
@@ -879,7 +890,7 @@ public:
 
    void* Address() const { return _memory->get(_position); }
 
-   virtual bool isOpened() { return (_memory != NULL); }
+   virtual bool isOpened() { return (_memory != nullptr); }
 
    virtual pos_t Position() const { return _position; }
 
@@ -892,12 +903,17 @@ public:
       }
       else return false;
    }
-   virtual bool writeLong(const void* s, pos64_t length)
+//   virtual bool writeLong(const void* s, pos64_t length)
+//   {
+//      if (length < INT_MAX) {
+//         return write(s, (pos_t)length);
+//      }
+//      else return false;
+//   }
+
+   bool writePtr(uintptr_t ptr)
    {
-      if (length < INT_MAX) {
-         return write(s, (pos_t)length);
-      }
-      else return false;
+      return write(&ptr, sizeof(uintptr_t));
    }
 
    bool writeBytes(unsigned char ch, pos_t count)
@@ -972,15 +988,15 @@ public:
       }
       else return false;
    }
-   bool writeRef64(ref_t reference, pos64_t value)
-   {
-      if (_memory->addReference(reference, _position)) {
-         writeQWord(value);
-
-         return true;
-      }
-      else return false;
-   }
+//   bool writeRef64(ref_t reference, pos64_t value)
+//   {
+//      if (_memory->addReference(reference, _position)) {
+//         writeQWord(value);
+//
+//         return true;
+//      }
+//      else return false;
+//   }
 
    MemoryWriter(_Memory* memory)
    {

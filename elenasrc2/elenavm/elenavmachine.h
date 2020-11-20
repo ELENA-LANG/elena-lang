@@ -156,20 +156,20 @@ protected:
       virtual SectionInfo getCoreSection(ref_t reference) { return SectionInfo(); }
       virtual SectionInfo getSection(ref_t reference, _Module* module) { return SectionInfo(); }
 
-      virtual void* getVAddress(MemoryWriter& writer, int mask) { return NULL; }
+      virtual void* getVAddress(MemoryWriter& writer, ref_t mask) { return NULL; }
 
-      virtual ref_t resolveMessage(ref_t reference, _Module* module) { return reference; }
+      virtual mssg_t resolveMessage(mssg_t reference, _Module* module) { return reference; }
 
-      virtual void writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module);
-      virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp);
+      virtual void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp, _Module* module);
+      virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, pos_t disp);
       virtual void writeMTReference(MemoryWriter& writer);
 
-      virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
-      {
-         throw InternalError("Currently not supported");
-      }
+      //virtual void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp, _Module* module)
+      //{
+      //   throw InternalError("Currently not supported");
+      //}
 
-      virtual void addBreakpoint(size_t position);
+      virtual void addBreakpoint(pos_t position);
 
       void writeTape(MemoryWriter& tape, void* vaddress, int mask);
 
@@ -420,7 +420,7 @@ public:
       return loadReference(systemEnv, referenceName, mskSymbolRef, silentMode);
    }
 
-   int loadMessageName(ref_t messageRef, char* buffer, size_t length);
+   int loadMessageName(mssg_t messageRef, char* buffer, size_t length);
 
    virtual ref_t getSubjectRef(SystemEnv* systemEnv, ident_t subjectName)
    {
@@ -430,7 +430,7 @@ public:
          return 0;
       }
 
-      ref_t subjRef = _linker->parseMessage(subjectName, true);
+      ref_t subjRef = _linker->parseAction(subjectName);
 
       if (_messageTable->Length() > _ConvertedMTSize) {
          stopVM();
@@ -443,7 +443,7 @@ public:
       return subjRef;
    }
 
-   virtual ref_t getMessageRef(SystemEnv* systemEnv, ident_t messageName)
+   virtual mssg_t getMessageRef(SystemEnv* systemEnv, ident_t messageName)
    {
       if (messageName.find('$') != -1) {
          setStatus("Invalid subject");
@@ -451,7 +451,7 @@ public:
          return 0;
       }
 
-      return (ref_t)parseMessage(systemEnv, messageName);
+      return (mssg_t)parseMessage(systemEnv, messageName);
    }
 
    virtual bool initSymbolReference(void* object, ident_t referenceName)
@@ -479,7 +479,7 @@ public:
 
    bool loadAddressInfo(void* address, char* buffer, size_t& maxLength);
 
-   int loadExtensionDispatcher(SystemEnv* env, const char* moduleList, ref_t message, void* output);
+   int loadExtensionDispatcher(SystemEnv* env, const char* moduleList, mssg_t message, void* output);
 
    virtual void addListener(_JITLoaderListener* listener)
    {

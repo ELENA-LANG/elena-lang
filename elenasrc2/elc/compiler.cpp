@@ -481,8 +481,8 @@ void Compiler::NamespaceScope :: loadExtensions(ident_t ns)
       MemoryReader metaReader(section);
       while (!metaReader.Eof()) {
          extRef = metaReader.getDWord();
-         ref_t message = metaReader.getDWord();
-         ref_t strongMessage = metaReader.getDWord();
+         mssg_t message = metaReader.getDWord();
+         mssg_t strongMessage = metaReader.getDWord();
 
          if (extModule != module) {
             extRef = importReference(extModule, extRef, module);
@@ -501,7 +501,7 @@ void Compiler::NamespaceScope :: loadExtensions(ident_t ns)
    }
 }
 
-void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t extRef, ref_t strongMessage, bool internalOne)
+void Compiler::NamespaceScope :: saveExtension(mssg_t message, ref_t extRef, ref_t strongMessage, bool internalOne)
 {
 //   if (typeRef == INVALID_REF || typeRef == moduleScope->superReference)
 //      typeRef = 0;
@@ -534,7 +534,7 @@ void Compiler::NamespaceScope :: saveExtension(ref_t message, ref_t extRef, ref_
    extensions.add(message, extInfo);
 }
 
-void Compiler::NamespaceScope :: saveExtensionTemplate(ref_t message, ident_t pattern)
+void Compiler::NamespaceScope :: saveExtensionTemplate(mssg_t message, ident_t pattern)
 {
    IdentifierString sectionName(/*internalOne ? PRIVATE_PREFIX_NS : */"'");
    if (!emptystr(ns)) {
@@ -1215,10 +1215,10 @@ Compiler :: Compiler(_CompilerLogic* logic)
    ByteCodeCompiler::loadOperators(_operators);
 }
 
-void Compiler :: writeMessageInfo(SNode node, _ModuleScope& scope, ref_t messageRef)
+void Compiler :: writeMessageInfo(SNode node, _ModuleScope& scope, mssg_t messageRef)
 {
    ref_t actionRef, flags;
-   int argCount;
+   size_t argCount;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
    IdentifierString name;
@@ -1483,14 +1483,14 @@ inline SNode findIdentifier(SNode current)
    return current;
 }
 
-void Compiler :: importCode(SNode node, Scope& scope, ref_t functionRef, ref_t message)
+void Compiler :: importCode(SNode node, Scope& scope, ref_t functionRef, mssg_t message)
 {
    _ModuleScope* moduleScope = scope.moduleScope;
 
    IdentifierString virtualReference(scope.module->resolveReference(functionRef));
    virtualReference.append('.');
 
-   int argCount;
+   size_t argCount;
    ref_t actionRef, flags;
    decodeMessage(message, actionRef, argCount, flags);
 
@@ -1576,7 +1576,7 @@ Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parent
          // private methods are not inherited
          ClassInfo::MethodMap::Iterator it = scope.info.methods.start();
          while (!it.Eof()) {
-            ref_t message = it.key();
+            mssg_t message = it.key();
 
             (*it) = false;
             it++;
@@ -2537,7 +2537,7 @@ ObjectInfo Compiler :: compileSubjectReference(SNode terminal, ExprScope& scope,
    return retVal;
 }
 
-ref_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool extensionCall)
+mssg_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool extensionCall)
 {
    ref_t actionFlags = 0;
    if (extensionCall)
@@ -2600,7 +2600,7 @@ ref_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool extensionCall)
    return encodeMessage(actionRef, argCount, actionFlags);
 }
 
-ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, int& stackSafeAttr)
+ref_t Compiler :: mapExtension(Scope& scope, mssg_t& messageRef, ref_t implicitSignatureRef, ObjectInfo object, int& stackSafeAttr)
 {
    ref_t objectRef = resolveObjectReference(scope, object, true);
    if (objectRef == 0) {
@@ -2635,14 +2635,14 @@ ref_t Compiler :: mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSi
       signatures[0] = objectRef;
       signatureLen++;
 
-      int argCount = getArgCount(messageRef);
-      while (signatureLen < (ref_t)argCount) {
+      size_t argCount = getArgCount(messageRef);
+      while (signatureLen < argCount) {
          signatures[signatureLen] = scope.moduleScope->superReference;
          signatureLen++;
       }
 
       /*ref_t full_sign = */scope.module->mapSignature(signatures, signatureLen, false);
-      ref_t resolvedMessage = 0;
+      mssg_t resolvedMessage = 0;
       ref_t resolvedExtRef = 0;
       int resolvedStackSafeAttr = 0;
       int counter = 0;
@@ -2749,7 +2749,7 @@ void Compiler :: compileBranchingNodes(SNode node, ExprScope& scope, ref_t ifRef
    }
 }
 
-ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, int argCount)
+ref_t Compiler :: resolveOperatorMessage(Scope& scope, ref_t operator_id, size_t argCount)
 {
    switch (operator_id) {
       case IF_OPERATOR_ID:
@@ -2861,7 +2861,7 @@ void Compiler :: compileBranchingOp(SNode roperandNode, ExprScope& scope, EAttr 
       operator_id = original_id;
 
       // bad luck : we have to create a closure
-      int message = resolveOperatorMessage(scope, operator_id, 2);
+      mssg_t message = resolveOperatorMessage(scope, operator_id, 2);
 
       compileClosure(roperandNode, scope, defineBranchingOperandMode(roperandNode));
       // HOTFIX : comment out the method code 
@@ -3130,7 +3130,7 @@ ObjectInfo Compiler :: compileOperator(SNode& node, ExprScope& scope, ObjectInfo
    }
 }
 
-ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef,
+ObjectInfo Compiler :: compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, mssg_t messageRef,
    EAttr mode, int stackSafeAttr, bool& embeddableRet)
 {
    ObjectInfo retVal(okObject);
@@ -3600,9 +3600,9 @@ ref_t Compiler :: compileMessageParameters(SNode& node, ExprScope& scope, EAttr 
    return 0;
 }
 
-ref_t Compiler :: resolveVariadicMessage(Scope& scope, ref_t message)
+mssg_t Compiler :: resolveVariadicMessage(Scope& scope, mssg_t message)
 {
-   int argCount = 0;
+   size_t argCount = 0;
    ref_t actionRef = 0, flags = 0, dummy = 0;
    decodeMessage(message, actionRef, argCount, flags);
 
@@ -3626,11 +3626,11 @@ bool Compiler :: isSelfCall(ObjectInfo target)
    }
 }
 
-ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
+mssg_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, mssg_t generalMessageRef, ref_t implicitSignatureRef,
    bool withExtension, int& stackSafeAttr)
 {
    int resolvedStackSafeAttr = 0;
-   ref_t resolvedMessageRef = 0;
+   mssg_t resolvedMessageRef = 0;
    ref_t targetRef = resolveObjectReference(scope, target, true);
 
    // try to resolve the message as is
@@ -3682,7 +3682,7 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
       }
 
       // check if the extension handles the variadic message
-      ref_t variadicMessage = resolveVariadicMessage(scope, generalMessageRef);
+      mssg_t variadicMessage = resolveVariadicMessage(scope, generalMessageRef);
 
       resolvedStackSafeAttr = 0;
       extensionRef = mapExtension(scope, variadicMessage, implicitSignatureRef, target, resolvedStackSafeAttr);
@@ -3703,11 +3703,11 @@ ref_t Compiler :: resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& sco
 ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expectedRef, ObjectInfo target, EAttr mode)
 {
    ref_t expectedSignRef = 0; // contains the expected message signature if it there is only single method overloading
-   ref_t messageRef = 0;
+   mssg_t messageRef = 0;
    EAttr paramsMode = EAttr::eaNone;
    if (target.kind != okExternal) {
       messageRef = mapMessage(node, scope, target.kind == okExtension);
-      ref_t resolvedMessage = _logic->resolveSingleMultiDisp(*scope.moduleScope, resolveObjectReference(scope, target, false), messageRef);
+      mssg_t resolvedMessage = _logic->resolveSingleMultiDisp(*scope.moduleScope, resolveObjectReference(scope, target, false), messageRef);
 
       scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
    }
@@ -3753,7 +3753,7 @@ ObjectInfo Compiler :: compileMessage(SNode node, ExprScope& scope, ref_t expect
          retVal = compileMessage(opNode, scope, target, messageRef, mode, stackSafeAttr, withEmbeddableRet);
 
          if (expectedRef && withEmbeddableRet) {
-            ref_t byRefMessageRef = _logic->resolveEmbeddableRetMessage(
+            mssg_t byRefMessageRef = _logic->resolveEmbeddableRetMessage(
                scope, *this, resolveObjectReference(scope, target, true),
                messageRef, expectedRef);
 
@@ -4233,9 +4233,9 @@ ObjectInfo Compiler :: compilePropAssigning(SNode node, ExprScope& scope, Object
    ObjectInfo retVal;
 
    // tranfer the message into the property set one
-   ref_t messageRef = mapMessage(node, scope, false);
+   mssg_t messageRef = mapMessage(node, scope, false);
    ref_t actionRef, flags;
-   int argCount;
+   size_t argCount;
    decodeMessage(messageRef, actionRef, argCount, flags);
    if (argCount == 1 && test(flags, PROPERTY_MESSAGE)) {
       messageRef = encodeMessage(actionRef, 2, flags);
@@ -4305,7 +4305,7 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
    bool inlineExpression = EAttrs::test(mode, HINT_INLINE_EXPR);
    methodScope.functionMode = true;
 
-   ref_t multiMethod = resolveMultimethod(scope, methodScope.message);
+   mssg_t multiMethod = resolveMultimethod(scope, methodScope.message);
 
 //   // HOTFIX : if the closure emulates code brackets
 //   if (EAttrs::test(mode, HINT_SUBCODE_CLOSURE))
@@ -4371,7 +4371,7 @@ void Compiler :: compileAction(SNode& node, ClassScope& scope, SNode argNode, EA
 
    if (multiMethod) {
       // inject a virtual invoke multi-method if required
-      List<ref_t> implicitMultimethods;
+      List<mssg_t> implicitMultimethods;
       implicitMultimethods.add(multiMethod);
 
       _logic->injectVirtualMultimethods(*scope.moduleScope, node, *this, implicitMultimethods, lxClassMethod, scope.info);
@@ -4485,7 +4485,7 @@ void Compiler :: compileNestedVMT(SNode& node, InlineClassScope& scope)
    SyntaxTree::copyNode(attrTerminal, node);
 }
 
-ref_t Compiler :: resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message,
+ref_t Compiler :: resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, mssg_t message,
    bool ignoreSelf)
 {
    if (!classInfo.methods.exist(message, true) || ignoreSelf) {
@@ -5056,7 +5056,7 @@ ObjectInfo Compiler :: compileBoxingExpression(SNode node, ExprScope& scope, Obj
       scope.raiseError(errInvalidOperation, node);
 
    SNode exprNode = node.parentNode();
-   ref_t messageRef = overwriteArgCount(scope.moduleScope->constructor_message, paramCount + 1);
+   mssg_t messageRef = overwriteArgCount(scope.moduleScope->constructor_message, paramCount + 1);
    int stackSafeAttr = 0;
    if (target.reference == V_OBJARRAY && paramCount == 1) {
       // HOTFIX : if it is an array creation
@@ -5784,7 +5784,7 @@ ObjectInfo Compiler :: mapTerminal(SNode terminal, ExprScope& scope, EAttr mode)
       // replace an explicit constant with the appropriate object
       recognizeTerminal(terminal, ObjectInfo(okLiteralConstant, object.param), scope, mode);
 
-      ref_t messageRef = encodeMessage(object.extraparam, 2, 0);
+      mssg_t messageRef = encodeMessage(object.extraparam, 2, 0);
       NamespaceScope* nsScope = (NamespaceScope*)scope.getScope(Scope::ScopeLevel::slNamespace);
       Pair<ref_t, ref_t>  constInfo = nsScope->extensions.get(messageRef);
       if (constInfo.value1 != 0) {
@@ -6234,14 +6234,14 @@ ObjectInfo Compiler :: compileExternalCall(SNode node, ExprScope& scope, ref_t e
    return retVal;
 }
 
-ObjectInfo Compiler :: compileInternalCall(SNode node, ExprScope& scope, ref_t message, ref_t signature, ObjectInfo routine)
+ObjectInfo Compiler :: compileInternalCall(SNode node, ExprScope& scope, mssg_t message, ref_t signature, ObjectInfo routine)
 {
    _ModuleScope* moduleScope = scope.moduleScope;
 
    IdentifierString virtualReference(moduleScope->module->resolveReference(routine.param));
    virtualReference.append('.');
 
-   int argCount;
+   size_t argCount;
    ref_t actionRef, flags;
    ref_t dummy = 0;
    decodeMessage(message, actionRef, argCount, flags);
@@ -6466,7 +6466,7 @@ ref_t Compiler :: mapMethodName(MethodScope& scope, int paramCount, ref_t action
    }
 
    // NOTE : a message target should be included as well for a normal message
-   int argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
+   size_t argCount = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
    argCount += paramCount;
 
    if (actionRef != 0) {
@@ -6519,7 +6519,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
    else unnamedMessage = true;
 
    bool weakSignature = true;
-   int paramCount = 0;
+   size_t paramCount = 0;
    if (scope.extensionMode) {
       // COMPILER MAGIC : for an extension method, self is a parameter
       paramCount++;
@@ -6678,10 +6678,10 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
          }
          else {
             // check if protected method already declared
-            ref_t publicMessage = mapMethodName(scope, paramCount, actionRef, flags, actionStr,
+            mssg_t publicMessage = mapMethodName(scope, paramCount, actionRef, flags, actionStr,
                signature, signatureLen, withoutWeakMessages, noSignature);
 
-            ref_t declaredMssg = scope.getAttribute(publicMessage, maProtected);
+            mssg_t declaredMssg = scope.getAttribute(publicMessage, maProtected);
             if (!declaredMssg) {
                ident_t className = scope.module->resolveReference(scope.getClassRef());
 
@@ -6847,7 +6847,7 @@ void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope, bool la
 //   else compileDispatchExpression2(node, scope, false);
 //}
 
-void Compiler :: warnOnUnresolvedDispatch(SNode node, Scope& scope, ref_t message, bool errorMode)
+void Compiler :: warnOnUnresolvedDispatch(SNode node, Scope& scope, mssg_t message, bool errorMode)
 {
    // ingore dispatch message
    if (message == scope.moduleScope->dispatch_message)
@@ -7073,7 +7073,7 @@ void Compiler :: compileDispatchExpression(SNode node, CodeScope& scope, bool wi
    }
 }
 
-inline ref_t resolveProtectedMessage(ClassInfo& info, ref_t protectedMessage)
+inline mssg_t resolveProtectedMessage(ClassInfo& info, mssg_t protectedMessage)
 {
    for (auto it = info.methodHints.start(); !it.Eof(); it++) {
       if (*it == protectedMessage) {
@@ -7100,7 +7100,7 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    MethodScope* methodScope = (MethodScope*)codeScope.getScope(Scope::ScopeLevel::slMethod);
 
    SNode messageNode = expr.findChild(lxMessage);
-   ref_t messageRef = mapMessage(messageNode, resendScope, false);
+   mssg_t messageRef = mapMessage(messageNode, resendScope, false);
 
    ref_t classRef = classClassScope.reference;
    bool found = false;
@@ -7156,7 +7156,7 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
    }
    // otherwise search in the parent class constructors
    else {
-      ref_t publicRef = resolveProtectedMessage(classClassScope.info, messageRef);
+      mssg_t publicRef = resolveProtectedMessage(classClassScope.info, messageRef);
       // HOTFIX : replace protected message with public one
       if (publicRef)
          messageRef = publicRef;
@@ -7166,7 +7166,7 @@ void Compiler :: compileConstructorResendExpression(SNode node, CodeScope& codeS
       while (parent != 0) {
          moduleScope->loadClassInfo(info, moduleScope->module->resolveReference(parent));
 
-         ref_t protectedConstructor = 0;
+         mssg_t protectedConstructor = 0;
          if (checkMethod(*moduleScope, info.header.classRef, messageRef, protectedConstructor) != tpUnknown) {
             classRef = info.header.classRef;
             found = true;
@@ -7237,7 +7237,7 @@ void Compiler :: compileConstructorDispatchExpression(SNode node, CodeScope& sco
 
 void Compiler :: compileMultidispatch(SNode node, CodeScope& scope, ClassScope& classScope)
 {
-   ref_t message = scope.getMessageID();
+   mssg_t message = scope.getMessageID();
    ref_t overloadRef = classScope.info.methodHints.get(Attribute(message, maOverloadlist));
    if (!overloadRef)
       scope.raiseError(errIllegalOperation, node);
@@ -7764,7 +7764,7 @@ void Compiler :: compileDefConvConstructor(SNode node, MethodScope& scope)
    compileSpecialMethodCall(exprNode, *classScope, scope.moduleScope->init_message);
 }
 
-bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, ref_t message, bool& isProtectedDefConst)
+bool Compiler :: isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst)
 {
    ref_t actionRef = getAction(message);
    if (actionRef == getAction(scope.moduleScope->constructor_message)) {
@@ -7793,7 +7793,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    bool isProtectedDefConst = false;
    bool isDefConvConstructor = isDefaultOrConversionConstructor(scope, scope.message, isProtectedDefConst);
 
-   ref_t defConstrMssg = scope.moduleScope->constructor_message;
+   mssg_t defConstrMssg = scope.moduleScope->constructor_message;
    if (classClassScope.checkAttribute(defConstrMssg, maProtected)) {
       // if protected default constructor is declared - use it
       defConstrMssg = classClassScope.getAttribute(defConstrMssg, maProtected);
@@ -7906,7 +7906,7 @@ void Compiler :: compileConstructor(SNode node, MethodScope& scope, ClassScope& 
    endMethod(node, scope);
 }
 
-void Compiler :: compileSpecialMethodCall(SNode& node, ClassScope& classScope, ref_t message)
+void Compiler :: compileSpecialMethodCall(SNode& node, ClassScope& classScope, mssg_t message)
 {
    if (classScope.info.methods.exist(message)) {
       if (classScope.info.methods.exist(message, true)) {
@@ -8717,7 +8717,7 @@ inline SNode findName(SNode node)
    return node.findChild(lxNameAttr).firstChild(lxTerminalMask);
 }
 
-void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t message, bool allowTypeAttribute)
+void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, mssg_t message, bool allowTypeAttribute)
 {
    ref_t outputRef = scope.info.methodHints.get(Attribute(message, maReference));
    bool hintChanged = false, outputChanged = false;
@@ -8770,7 +8770,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
       // if it is internal / protected message save the visibility attribute
       ref_t signRef = 0;
       ident_t name = scope.module->resolveAction(getAction(message), signRef);
-      ref_t publicMessage = 0;
+      mssg_t publicMessage = 0;
       if (name.compare(CONSTRUCTOR_MESSAGE2)) {
          publicMessage = scope.moduleScope->constructor_message;
       }
@@ -8818,9 +8818,9 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SNode node, ref_t m
    }
 }
 
-void Compiler :: saveExtension(ClassScope& scope, ref_t message, bool internalOne)
+void Compiler :: saveExtension(ClassScope& scope, mssg_t message, bool internalOne)
 {
-   ref_t extensionMessage = 0;
+   mssg_t extensionMessage = 0;
 
    // get generic message
    ref_t signRef = 0;
@@ -8876,7 +8876,7 @@ void Compiler :: predefineMethod(SNode node, ClassScope& classScope, MethodScope
 
 }
 
-inline bool checkNonpublicDuplicates(ClassInfo& info, ref_t publicMessage)
+inline bool checkNonpublicDuplicates(ClassInfo& info, mssg_t publicMessage)
 {
    for (auto it = info.methodHints.start(); !it.Eof(); it++) {
       Attribute key = it.key();
@@ -8887,7 +8887,7 @@ inline bool checkNonpublicDuplicates(ClassInfo& info, ref_t publicMessage)
    return false;
 }
 
-inline bool isDeclaredProtected(ClassInfo& info, ref_t publicMessage, ref_t& protectedMessage)
+inline bool isDeclaredProtected(ClassInfo& info, mssg_t publicMessage, mssg_t& protectedMessage)
 {
    for (auto it = info.methodHints.start(); !it.Eof(); it++) {
       Attribute key = it.key();
@@ -8901,7 +8901,7 @@ inline bool isDeclaredProtected(ClassInfo& info, ref_t publicMessage, ref_t& pro
    return false;
 }
 
-void Compiler :: generateParamNameInfo(ClassScope& scope, SNode node, ref_t message)
+void Compiler :: generateParamNameInfo(ClassScope& scope, SNode node, mssg_t message)
 {
    SNode current = node.findChild(lxMethodParameter);
    while (current != lxNone) {
@@ -8919,7 +8919,7 @@ void Compiler :: generateParamNameInfo(ClassScope& scope, SNode node, ref_t mess
 void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed,
    bool allowTypeAttribute)
 {
-   ref_t message = current.argument;
+   mssg_t message = current.argument;
 
    if (scope.info.methods.exist(message, true) && hideDuplicates) {
       // ignoring autogenerated duplicates
@@ -9029,7 +9029,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
          if (embeddable) {
             ref_t dummy, flags;
-            int argCount;
+            size_t argCount;
             decodeMessage(message, dummy, argCount, flags);
 
             // declare a method with an extra argument - retVal
@@ -9041,7 +9041,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
             if (signLen == (size_t)argCount - 1) {
                // HOTFIX : inject emmeddable returning argument attribute only if the message is strong
                signArgs[signLen++] = resolvePrimitiveReference(scope, V_WRAPPER, outputRef, true);
-               ref_t embeddableMessage = encodeMessage(
+               mssg_t embeddableMessage = encodeMessage(
                   scope.module->mapAction(privateName.c_str(), scope.module->mapSignature(signArgs, signLen, false), false),
                   argCount + 1,
                   flags);
@@ -9057,7 +9057,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
          else if (multiret) {
             ref_t actionRef, flags;
             ref_t signRef = 0;
-            int argCount;
+            size_t argCount;
             decodeMessage(message, actionRef, argCount, flags);
 
             ident_t actionName = scope.module->resolveAction(actionRef, signRef);
@@ -9073,7 +9073,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
                }
                else signRef = 0;
 
-               ref_t targetMessage = encodeMessage(
+               mssg_t targetMessage = encodeMessage(
                   scope.module->mapAction(actionName, signRef, false),
                   argCount,
                   flags);
@@ -9086,9 +9086,9 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
    }
 }
 
-ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
+mssg_t Compiler :: resolveMultimethod(ClassScope& scope, mssg_t messageRef)
 {
-   int argCount = 0;
+   size_t argCount = 0;
    ref_t actionRef = 0, flags = 0, signRef = 0;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
@@ -9111,13 +9111,13 @@ ref_t Compiler :: resolveMultimethod(ClassScope& scope, ref_t messageRef)
       if (test(messageRef, FUNCTION_MESSAGE) && scope.extensionClassRef == 0)
          genericArgCount = 1;
 
-      ref_t genericMessage = encodeMessage(genericActionRef, genericArgCount, flags);
+      mssg_t genericMessage = encodeMessage(genericActionRef, genericArgCount, flags);
 
       return genericMessage;
    }
    else if (signRef) {
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
-      ref_t genericMessage = encodeMessage(genericActionRef, argCount, flags);
+      mssg_t genericMessage = encodeMessage(genericActionRef, argCount, flags);
 
       return genericMessage;
    }
@@ -9130,13 +9130,13 @@ void Compiler :: generateMethodDeclarations(SNode root, ClassScope& scope, bool 
 {
    //bool extensionMode = scope.extensionClassRef != 0;
    bool templateMethods = false;
-   List<ref_t> implicitMultimethods;
+   List<mssg_t> implicitMultimethods;
 
    // first pass - mark all multi-methods
    SNode current = root.firstChild();
    while (current != lxNone) {
       if (current == methodType) {
-         ref_t multiMethod = resolveMultimethod(scope, current.argument);
+         mssg_t multiMethod = resolveMultimethod(scope, current.argument);
          if (multiMethod) {
             //COMPILER MAGIC : if explicit signature is declared - the compiler should contain the virtual multi method
             Attribute attr(current.argument, maMultimethod);
@@ -9776,21 +9776,21 @@ void Compiler :: compileStaticAssigning(ObjectInfo target, SNode node, ClassScop
    scope.save();
 }
 
-ref_t targetResolver(void* param, ref_t mssg)
+ref_t targetResolver(void* param, mssg_t mssg)
 {
    return ((Map<ref_t, ref_t>*)param)->get(mssg);
 }
 
 void Compiler :: compileModuleExtensionDispatcher(NamespaceScope& scope)
 {
-   List<ref_t> genericMethods;
+   List<mssg_t> genericMethods;
    ClassInfo::CategoryInfoMap methods(0);
    Map<ref_t, ref_t> taregts;
 
    auto it = scope.declaredExtensions.start();
    while (!it.Eof()) {
       auto extInfo = *it;
-      ref_t genericMessageRef = it.key();
+      mssg_t genericMessageRef = it.key();
 
       ident_t refName = scope.module->resolveReference(extInfo.value1);
       if (isWeakReference(refName)) {
@@ -9833,7 +9833,7 @@ void Compiler :: compileModuleExtensionDispatcher(NamespaceScope& scope)
       classScope.info.fieldTypes.add(-1, ClassInfo::FieldInfo(classScope.extensionClassRef, 0));
 
       for (auto g_it = genericMethods.start(); !g_it.Eof(); g_it++) {
-         ref_t genericMessageRef = *g_it;
+         mssg_t genericMessageRef = *g_it;
 
          ref_t dispatchListRef = _logic->generateOverloadList(*scope.moduleScope, *this, genericMessageRef | FUNCTION_MESSAGE, 
             methods, (void*)&taregts, targetResolver, elSealed);
@@ -9851,7 +9851,7 @@ void Compiler :: compileModuleExtensionDispatcher(NamespaceScope& scope)
    }
 }
 
-ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t genericMessageRef)
+ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessageRef)
 {
    ref_t extRef = scope.moduleScope->mapAnonymous();
    ClassScope classScope(&scope, extRef, Visibility::Private);
@@ -9859,19 +9859,19 @@ ref_t Compiler :: compileExtensionDispatcher(NamespaceScope& scope, ref_t generi
 
    // create a new overload list
    ClassInfo::CategoryInfoMap methods(0);
-   Map<ref_t, ref_t> taregts;
+   Map<ref_t, ref_t> targets;
    auto it = scope.extensions.getIt(genericMessageRef);
    while (!it.Eof()) {
       auto extInfo = *it;
 
       methods.add(Attribute(extInfo.value2, maMultimethod), genericMessageRef | FUNCTION_MESSAGE);
-      taregts.add(extInfo.value2, extInfo.value1);
+      targets.add(extInfo.value2, extInfo.value1);
 
       it = scope.extensions.nextIt(genericMessageRef, it);
    }
 
    ref_t dispatchListRef = _logic->generateOverloadList(*scope.moduleScope, *this, genericMessageRef | FUNCTION_MESSAGE, methods,
-      (void*)&taregts, targetResolver, elSealed);
+      (void*)&targets, targetResolver, elSealed);
 
    SyntaxTree classTree;
    SyntaxWriter writer(classTree);
@@ -10686,7 +10686,7 @@ void Compiler :: defineEmbeddableAttributes(ClassScope& classScope, SNode method
    }
 
    // Optimization : embeddable constructor call
-   ref_t message = 0;
+   mssg_t message = 0;
    if (_logic->recognizeEmbeddableMessageCall(methodNode, message)) {
       classScope.info.methodHints.add(Attribute(methodNode.argument, maEmbeddableNew), message);
 
@@ -11284,7 +11284,7 @@ void Compiler :: injectVirtualField(SNode classNode, LexicalType sourceType, ref
    assignNode.appendNode(sourceType, sourceArg);
 }
 
-void Compiler :: generateOverloadListMember(_ModuleScope& scope, ref_t listRef, ref_t messageRef)
+void Compiler :: generateOverloadListMember(_ModuleScope& scope, ref_t listRef, mssg_t messageRef)
 {
    MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
    if (metaWriter.Position() == 0) {
@@ -11299,7 +11299,7 @@ void Compiler :: generateOverloadListMember(_ModuleScope& scope, ref_t listRef, 
    }
 }
 
-void Compiler :: generateClosedOverloadListMember(_ModuleScope& scope, ref_t listRef, ref_t messageRef, ref_t classRef)
+void Compiler :: generateClosedOverloadListMember(_ModuleScope& scope, ref_t listRef, mssg_t messageRef, ref_t classRef)
 {
    MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
    if (metaWriter.Position() == 0) {
@@ -11315,7 +11315,7 @@ void Compiler :: generateClosedOverloadListMember(_ModuleScope& scope, ref_t lis
    }
 }
 
-void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t listRef, ref_t messageRef, ref_t classRef)
+void Compiler :: generateSealedOverloadListMember(_ModuleScope& scope, ref_t listRef, mssg_t messageRef, ref_t classRef)
 {
    MemoryWriter metaWriter(scope.module->mapSection(listRef | mskRDataRef, false));
    if (metaWriter.Position() == 0) {
@@ -11355,7 +11355,8 @@ void Compiler :: injectBoxingExpr(SNode& node, bool variable, int size, ref_t ta
 //   writer.closeNode();
 }
 
-void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, ref_t targetClassRef, int, bool embeddableAttr)
+void Compiler :: injectConverting(SNode& node, LexicalType convertOp, int convertArg, LexicalType targetOp, int targetArg, 
+   ref_t targetClassRef, int, bool embeddableAttr)
 {
    if (node == lxExpression) {
    }
@@ -11468,7 +11469,7 @@ SNode Compiler :: injectTempLocal(SNode node, int size, bool boxingMode)
    return tempLocalNode;
 }
 
-void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t embeddedMessageRef)
+void Compiler :: injectEmbeddableConstructor(SNode classNode, mssg_t message, mssg_t embeddedMessageRef)
 {
    SNode methNode = classNode.appendNode(lxConstructor, message);
    methNode.appendNode(lxEmbeddableMssg, embeddedMessageRef);
@@ -11479,7 +11480,7 @@ void Compiler :: injectEmbeddableConstructor(SNode classNode, ref_t message, ref
    codeNode.appendNode(lxRedirect, embeddedMessageRef);
 }
 
-inline SNode newVirtualMultimethod(SNode classNode, ref_t message, LexicalType methodType, bool privateOne)
+inline SNode newVirtualMultimethod(SNode classNode, mssg_t message, LexicalType methodType, bool privateOne)
 {
    SNode methNode = classNode.appendNode(methodType, message);
    methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
@@ -11497,8 +11498,8 @@ inline SNode newVirtualMultimethod(SNode classNode, ref_t message, LexicalType m
    return methNode;
 }
 
-void Compiler :: injectVirtualMultimethod(_ModuleScope&, SNode classNode, ref_t message, LexicalType methodType,
-   ref_t resendMessage, bool privateOne, ref_t callTargetRef)
+void Compiler :: injectVirtualMultimethod(_ModuleScope&, SNode classNode, mssg_t message, LexicalType methodType,
+   mssg_t resendMessage, bool privateOne, ref_t callTargetRef)
 {
    SNode methNode = newVirtualMultimethod(classNode, message, methodType, privateOne);
 
@@ -11507,8 +11508,8 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope&, SNode classNode, ref_t 
       resendNode.appendNode(lxCallTarget, callTargetRef);
 }
 
-bool Compiler :: injectVirtualStrongTypedMultimethod(_ModuleScope& moduleScope, SNode classNode, ref_t message, LexicalType methodType,
-   ref_t resendMessage, bool privateOne)
+bool Compiler :: injectVirtualStrongTypedMultimethod(_ModuleScope& moduleScope, SNode classNode, mssg_t message, 
+   LexicalType methodType, mssg_t resendMessage, bool privateOne)
 {
    ref_t actionRef = getAction(resendMessage);
    ref_t signRef = 0;
@@ -11570,9 +11571,9 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(_ModuleScope& moduleScope, 
    return true;
 }
 
-inline bool isSingleDispatch(ClassInfo& info, ref_t message, ref_t& targetMessage)
+inline bool isSingleDispatch(ClassInfo& info, mssg_t message, mssg_t& targetMessage)
 {
-   ref_t foundMessage = 0;
+   mssg_t foundMessage = 0;
 
    for (auto it = info.methodHints.start(); !it.Eof(); it++) {
       if (it.key().value2 == maMultimethod && *it == message) {
@@ -11591,15 +11592,15 @@ inline bool isSingleDispatch(ClassInfo& info, ref_t message, ref_t& targetMessag
    else return false;
 }
 
-void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, 
+void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message,
    LexicalType methodType, ClassInfo& info)
 {
    bool privateOne = false;
-   ref_t resendMessage = message;
+   mssg_t resendMessage = message;
    ref_t callTargetRef = 0;
 
    ref_t actionRef, flags;
-   int argCount;
+   size_t argCount;
    decodeMessage(message, actionRef, argCount, flags);
    if (test(flags, STATIC_MESSAGE)) {
       privateOne = true;
@@ -11634,7 +11635,7 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
          if (test(message, VARIADIC_MESSAGE)) {
          }
          else {
-            for (int i = firstArg; i < argCount; i++) {
+            for (size_t i = firstArg; i < argCount; i++) {
                signatures[signatureLen++] = scope.superReference;
             }
          }
@@ -11647,7 +11648,7 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
    }
 }
 
-void Compiler :: injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument)
+void Compiler :: injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument)
 {
    SyntaxTree subTree;
    SyntaxWriter subWriter(subTree);
@@ -11664,7 +11665,7 @@ void Compiler :: injectVirtualDispatchMethod(SNode classNode, ref_t message, Lex
    SyntaxTree::copyNode(subTree.readRoot(), classNode);
 }
 
-void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, ref_t message, ident_t variable, ref_t outputRef)
+void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef)
 {
    SNode methNode = classNode.appendNode(lxClassMethod, message);
    methNode.appendNode(lxAutogenerated); // !! HOTFIX : add a template attribute to enable explicit method declaration
@@ -11683,7 +11684,7 @@ void Compiler :: injectVirtualReturningMethod(_ModuleScope&, SNode classNode, re
 
 void Compiler :: injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t, bool protectedOne)
 {
-   ref_t message = protectedOne ? scope.protected_constructor_message : scope.constructor_message;
+   mssg_t message = protectedOne ? scope.protected_constructor_message : scope.constructor_message;
    SNode methNode = classNode.appendNode(lxConstructor, message);
    methNode.appendNode(lxAutogenerated);
    methNode.appendNode(lxAttribute, tpConstructor);
@@ -11702,18 +11703,6 @@ void Compiler :: generateClassSymbol(SyntaxWriter& writer, ClassScope& scope)
    writer.closeNode();
    writer.closeNode();
 }
-
-//////void Compiler :: generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor)
-//////{
-//////   CodeScope codeScope(&scope);
-//////
-//////   writer.newNode(lxSymbol, scope.reference);
-//////   writeTerminal(writer, SNode(), codeScope, ObjectInfo(okConstantClass, scope.reference, scope.info.header.classRef), HINT_NODEBUGINFO);
-//////   writer.newNode(lxImplicitCall, implicitConstructor);
-//////   writer.appendNode(lxTarget, scope.reference);
-//////   writer.closeNode();
-//////   writer.closeNode();
-//////}
 
 void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature)
 {
@@ -11773,7 +11762,7 @@ void Compiler :: registerTemplateSignature(SNode node, NamespaceScope& scope, Id
 void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef)
 {
    IdentifierString messageName;
-   int argCount = 1;
+   size_t argCount = 1;
    ref_t flags = 0;
    IdentifierString signaturePattern;
    ident_t extensionName = scope.module->resolveReference(extensionRef);
@@ -11815,7 +11804,7 @@ void Compiler :: registerExtensionTemplateMethod(SNode node, NamespaceScope& sco
       current = current.nextNode();
    }
 
-   ref_t messageRef = encodeMessage(scope.module->mapAction(messageName.c_str(), 0, false), argCount, flags);
+   mssg_t messageRef = encodeMessage(scope.module->mapAction(messageName.c_str(), 0, false), argCount, flags);
 
    scope.saveExtensionTemplate(messageRef, signaturePattern.ident());
 }

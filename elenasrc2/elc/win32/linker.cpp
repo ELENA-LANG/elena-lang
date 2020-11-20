@@ -756,7 +756,7 @@ void Linker :: run(Project& project, Image& image, ref_t tls_directory)
    }
 }
 
-void Linker :: prepareTLS(Image& image, int tls_variable, ref_t& tls_directory)
+void Linker :: prepareTLS(Image& image, ref_t tls_variable, ref_t& tls_directory)
 {
    TLSEntry entry = {};
 

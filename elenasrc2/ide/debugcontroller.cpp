@@ -157,7 +157,7 @@ DebugLineInfo* DebugController :: seekClassInfo(size_t address, IdentifierString
 
    if (position != 0 && section != NULL) {
       // to resolve class name we need offset in the section rather then the real address
-      ident_t name = module->resolveReference((ref_t)(position - (size_t)section->get_st(0)));
+      ident_t name = module->resolveReference((ref_t)(position - (size_t)section->get(0)));
       if (isWeakReference(name)) {
          className.copy(module->Name());
          className.append(name);

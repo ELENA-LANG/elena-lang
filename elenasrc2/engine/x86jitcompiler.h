@@ -40,7 +40,7 @@ struct x86JITScope
 
    void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
 
-   ref_t resolveMessage(ref_t reference)
+   mssg_t resolveMessage(mssg_t reference)
    {
       return helper->resolveMessage(reference, module);
    }

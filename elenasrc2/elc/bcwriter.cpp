@@ -161,7 +161,7 @@ void ByteCodeWriter :: declareClass(CommandTape& tape, ref_t reference)
 	tape.write(blBegin, bsClass, reference);
 }
 
-void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef)
+void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef)
 {
    // method-begin:
    tape.write(blBegin, bsMethod, message);
@@ -170,7 +170,7 @@ void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, ref_t message, ref_t
       tape.write(bdSourcePath, sourcePathRef);
 }
 
-void ByteCodeWriter :: declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, 
+void ByteCodeWriter :: declareMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef, int reserved, int allocated,
    bool withPresavedMessage, bool withNewFrame)
 {
    // method-begin:
@@ -721,7 +721,7 @@ void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
 //   tape.write(bcFreeStack, 1 + paramCount);
 //}
 
-void ByteCodeWriter :: resendDirectResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool sealedMode)
+void ByteCodeWriter :: resendDirectResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message, bool sealedMode)
 {
    // jumprm r, m
    if (sealedMode) {
@@ -730,7 +730,7 @@ void ByteCodeWriter :: resendDirectResolvedMethod(CommandTape& tape, ref_t refer
    else tape.write(bcVJumpRM, reference | mskVMTEntryOffset, message);
 }
 
-void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode, bool withValidattion*/)
+void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode, bool withValidattion*/)
 {
 //   // validate
 //   // callrm r, m
@@ -763,7 +763,7 @@ void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, re
 //   tape.write(bcFreeStack, getParamCount(message));
 //}
 
-void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode*/)
+void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode*/)
 {
    // vcallrm r, m
 
@@ -1229,7 +1229,7 @@ void ByteCodeWriter :: writeClassDebugInfo(_Module* debugModule, MemoryWriter* d
    IdentifierString bookmark(className);
    debugModule->mapPredefinedReference(bookmark, debug->Position());
 
-   ref_t position = debugStrings->Position();
+   pos_t position = debugStrings->Position();
    if (isWeakReference(className)) {
       IdentifierString fullName(debugModule->Name(), className);
 
@@ -1257,7 +1257,7 @@ void ByteCodeWriter :: writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* 
    IdentifierString bookmark(ns, "'#", symbolName + ns.Length() + 1);
    debugModule->mapPredefinedReference(bookmark, debug->Position());
 
-   ref_t position = debugStrings->Position();
+   pos_t position = debugStrings->Position();
 
    debugStrings->writeLiteral(symbolName);
 
@@ -3170,7 +3170,7 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowS
 void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
 {
    // copym message
-   ref_t message = callNode.argument;
+   mssg_t message = callNode.argument;
 
    tape.write(bcMovM, message);
 
@@ -4813,17 +4813,17 @@ void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool wi
    }
 }
 
-void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
+void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message)
 {
    tape.write(bcMTRedirect, operationList | mskConstArray, message);
 }
 
-void ByteCodeWriter :: doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message)
+void ByteCodeWriter :: doSealedMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message)
 {
    tape.write(bcXMTRedirect, operationList | mskConstArray, message);
 }
 
-void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message)
+void ByteCodeWriter :: generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, mssg_t message)
 {
    if (node.type == lxSealedMultiDispatching) {
       doSealedMultiDispatch(tape, node.argument, message);

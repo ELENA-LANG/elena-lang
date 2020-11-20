@@ -11,9 +11,9 @@
 
 using namespace _ELENA_;
 
-void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler)
+void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, uintptr_t criticalHandler)
 {
-   pos_t previousHeader = 0;
+   uintptr_t previousHeader = 0;
 
    // ; set SEH handler / frame / stack pointers
    __asm {
@@ -42,7 +42,7 @@ TLSEntry* SystemRoutineProvider :: GetTLSEntry(pos_t tlsIndex)
    return entry;
 }
 
-void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, ProgramHeader* frameHeader, pos_t* threadTable)
+void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, ProgramHeader* frameHeader, uintptr_t* threadTable)
 {
    TLSEntry* entry = GetTLSEntry(tlsIndex);
 
@@ -51,10 +51,10 @@ void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, Pr
    entry->tls_et_current = &frameHeader->root_exception_struct;
    entry->tls_threadindex = threadIndex;
 
-   threadTable[threadIndex] = (pos_t)entry;
+   threadTable[threadIndex] = (uintptr_t)entry;
 }
 
-pos_t SystemRoutineProvider :: NewHeap(int totalSize, int committedSize)
+uintptr_t SystemRoutineProvider :: NewHeap(int totalSize, int committedSize)
 {
    // reserve
    void* allocPtr = VirtualAlloc(nullptr, totalSize, MEM_RESERVE, PAGE_READWRITE);
@@ -62,7 +62,7 @@ pos_t SystemRoutineProvider :: NewHeap(int totalSize, int committedSize)
    // allocate
    VirtualAlloc(allocPtr, committedSize, MEM_COMMIT, PAGE_READWRITE);
 
-   return (pos_t)allocPtr;
+   return (uintptr_t)allocPtr;
 }
 
 void SystemRoutineProvider :: Exit(pos_t exitCode)

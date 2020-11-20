@@ -12,15 +12,15 @@ namespace _ELENA_
 
 struct ExceptionStruct
 {
-   pos_t core_catch_addr;
+   uintptr_t core_catch_addr;
    pos_t core_catch_level;
    pos_t core_catch_frame;
 };
 
 struct CriticalStruct
 {
-   pos_t previousStruct;
-   pos_t handler;
+   uintptr_t previousStruct;
+   uintptr_t handler;
 };
 
 // --- _Entry ---
@@ -31,8 +31,8 @@ struct _Entry
       void* address;
       int  (*entry)(void);
       int  (*evaluate)(void*);
-      int  (*evaluate2)(pos_t, void*);
-      int  (*evaluate3)(pos_t, void*, void*);
+      int  (*evaluate2)(uintptr_t, void*);
+      int  (*evaluate3)(uintptr_t, void*, void*);
    };
 
    _Entry()
@@ -45,25 +45,25 @@ struct _Entry
 
 struct GCTable
 {
-   pos_t gc_header;
-   pos_t gc_start;
-   pos_t gc_yg_start;
-   pos_t gc_yg_current;
-   pos_t gc_yg_end;
-   pos_t gc_shadow;
-   pos_t gc_shadow_end;
-   pos_t gc_mg_start;
-   pos_t gc_mg_current;
-   pos_t gc_end;
-   pos_t gc_mg_wbar;
+   uintptr_t gc_header;
+   uintptr_t gc_start;
+   uintptr_t gc_yg_start;
+   uintptr_t gc_yg_current;
+   uintptr_t gc_yg_end;
+   uintptr_t gc_shadow;
+   uintptr_t gc_shadow_end;
+   uintptr_t gc_mg_start;
+   uintptr_t gc_mg_current;
+   uintptr_t gc_end;
+   uintptr_t gc_mg_wbar;
    ExceptionStruct* gc_et_current;     // !! is not used for MTA
-   pos_t gc_stack_frame;               // !! is not used for MTA
+   uintptr_t gc_stack_frame;               // !! is not used for MTA
    pos_t gc_lock;                      // !! is not used for STA
    pos_t gc_signal;                    // !! is not used for STA
    pos_t tt_ptr;                       // !! is not used for STA
    pos_t tt_lock;                      // !! is not used for STA
-   pos_t dbg_ptr;                      // NOTE : used only for VM Client
-   pos_t gc_roots;                     
+   uintptr_t dbg_ptr;                      // NOTE : used only for VM Client
+   uintptr_t gc_roots;
    pos_t gc_rootcount;
 };
 
@@ -72,17 +72,17 @@ struct GCTable
 struct TLSEntry
 {
    ExceptionStruct* tls_et_current;
-   pos_t            tls_stack_frame;           // !! is not used for MTA
+   uintptr_t        tls_stack_frame;           // !! is not used for MTA
    void*            tls_sync_event;
-   pos_t            tls_flags;
-   pos_t            tls_threadindex;
+   pos_t        tls_flags;
+   pos_t        tls_threadindex;
 };
 
 // --- SystemEnv ---
 
 struct SystemEnv
 {
-   pos_t             StatLength;   // NOTE : it is an initial value, should be copied to GCTable
+   uintptr_t         StatLength;   // NOTE : it is an initial value, should be copied to GCTable
    void*             StatRoots;    // NOTE : it is an initial value, should be copied to GCTable
    GCTable*          Table;
    pos_t*            TLSIndex;
@@ -105,8 +105,8 @@ struct ProgramHeader
 
 struct FrameHeader
 {
-   pos_t reserved; // should be zero
-   pos_t previousFrame;
+   uintptr_t reserved; // should be zero
+   uintptr_t previousFrame;
 };
 
 struct GCRoot
@@ -124,14 +124,14 @@ struct GCRoot
 static class SystemRoutineProvider
 {
 public:
-   static pos_t NewHeap(int totalSize, int committedSize);
+   static uintptr_t NewHeap(int totalSize, int committedSize);
    static void CloseThreadHandle(TLSEntry* entry, bool withExit, pos_t exitCode);
    static TLSEntry* GetTLSEntry(pos_t tlsIndex);
 
    static void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader);
    static void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader);
 
-   static void InitCriticalStruct(CriticalStruct* header, pos_t criticalHandler);
+   static void InitCriticalStruct(CriticalStruct* header, uintptr_t criticalHandler);
    static void InitTLSEntry(pos_t threadIndex, pos_t index, ProgramHeader* frameHeader, pos_t* threadTable);
 
    static void Init(SystemEnv* env);
@@ -152,7 +152,7 @@ public:
 
    static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
 
-   static bool parseMessageLiteral(ident_t message, IdentifierString& messageName, int& paramCount, ref_t& flags);
+   static bool parseMessageLiteral(ident_t message, IdentifierString& messageName, size_t& paramCount, ref_t& flags);
 
 } __routineProvider;
 

@@ -147,8 +147,8 @@ class ByteCodeWriter
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
-   void declareIdleMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef);
-   void declareMethod(CommandTape& tape, ref_t message, ref_t sourcePathRef, int reserved, int allocated, 
+   void declareIdleMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef);
+   void declareMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef, int reserved, int allocated,
       bool withPresavedMessage, bool withNewFrame = true);
    //void declareExternalBlock(CommandTape& tape);
    void excludeFrame(CommandTape& tape);
@@ -204,17 +204,17 @@ class ByteCodeWriter
    void setSubject(CommandTape& tape, ref_t subject);
 
 //   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-   void callResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode, bool withValidattion = true*/);
+   void callResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode, bool withValidattion = true*/);
 //   void callInitMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, ref_t message/*, bool invokeMode*/);
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode*/);
 
-   void doMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
-   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, ref_t message);
+   void doMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
+   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
    void doGenericHandler(CommandTape& tape);
    void unboxMessage(CommandTape& tape);
    void changeMessageCounter(CommandTape& tape, int paramCount, int flags);
    void resend(CommandTape& tape);
-   void resendDirectResolvedMethod(CommandTape& tape, ref_t reference, ref_t message, bool sealedMode);
+   void resendDirectResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message, bool sealedMode);
    void callExternal(CommandTape& tape, ref_t functionReference/*, int paramCount*/);
    void callLongExternal(CommandTape& tape, ref_t functionReference);
    void callCore(CommandTape& tape, ref_t functionReference/*, int paramCount*/);
@@ -352,7 +352,7 @@ class ByteCodeWriter
    void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateResending(CommandTape& tape, SyntaxTree::Node node);
-   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, ref_t message);
+   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, mssg_t message);
    void generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateYieldReturn(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateYieldStop(CommandTape& tape, SyntaxTree::Node node);

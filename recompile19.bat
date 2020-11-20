@@ -17,6 +17,10 @@ REM /m:2 is used to build using parallel compilation
 "%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc2\elenasrc2.sln /p:configuration=release /m:2
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
+REM /m:2 is used to build using parallel compilation
+"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc2\elenasrc2_64.sln /p:configuration=release /m:2
+IF NOT %ERRORLEVEL%==0 GOTO CompilerError
+
 ECHO =========== Release Compiled ==================
 
 goto:eof

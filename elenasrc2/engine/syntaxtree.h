@@ -397,7 +397,7 @@ public:
 
       Node firstChild() const
       {
-         if (tree != NULL) {
+         if (tree != nullptr) {
             return tree->read(tree->getChild(position));
          }
          else return Node();
@@ -590,7 +590,7 @@ public:
 
       Node nextNode() const
       {
-         if (tree != NULL) {
+         if (tree != nullptr) {
             return tree->read(tree->getNext(position));
          }
          else return Node();
@@ -944,7 +944,7 @@ public:
          position = argument = 0;
          strArgument = INVALID_REF;
 
-         tree = NULL;
+         tree = nullptr;
       }
    };
 
@@ -1143,12 +1143,12 @@ public:
 private:
    pos_t saveStrArgument(ident_t strArgument);
 
-   pos_t newRoot(LexicalType type, int argument, pos_t strArgumentRef);
-   pos_t appendChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef);  // append a child to the end
-   pos_t insertChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef);  // insert a child at the start 
-   pos_t insertSibling(pos_t position, LexicalType type, int argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
-   pos_t injectChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
-   pos_t injectSibling(pos_t position, LexicalType type, int argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
+   pos_t newRoot(LexicalType type, ref_t argument, pos_t strArgumentRef);
+   pos_t appendChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // append a child to the end
+   pos_t insertChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child at the start 
+   pos_t insertSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
+   pos_t injectChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
+   pos_t injectSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
    void clearSibling(pos_t position);
    void clearChildren(pos_t position);
 
@@ -1356,7 +1356,7 @@ public:
       _strings.clear();
 
       MemoryReader reader(section);
-      int bodyLength = reader.getDWord();
+      pos_t bodyLength = reader.getDWord();
       _body.load(&reader, bodyLength);
 
       int stringLength = reader.getDWord();

@@ -410,8 +410,8 @@ private:
 
       ref_t resolveExtensionTarget(ref_t reference);
 
-      void saveExtension(ref_t message, ref_t extRef, ref_t strongMessage, bool internalOne);
-      void saveExtensionTemplate(ref_t message, ident_t pattern);
+      void saveExtension(mssg_t message, ref_t extRef, mssg_t strongMessage, bool internalOne);
+      void saveExtensionTemplate(mssg_t message, ident_t pattern);
 
       void loadModuleInfo(ident_t name)
       {
@@ -470,34 +470,34 @@ private:
          info.save(&metaWriter);
       }
 
-      bool checkAttribute(ref_t message, int attribute)
+      bool checkAttribute(mssg_t message, int attribute)
       {
          ClassInfo::Attribute attr(message, attribute);
 
          return info.methodHints.exist(attr);
       }
 
-      ref_t getAttribute(ref_t message, int attribute)
+      ref_t getAttribute(mssg_t message, int attribute)
       {
          ClassInfo::Attribute attr(message, attribute);
 
          return info.methodHints.get(attr);
       }
 
-      void addAttribute(ref_t message, int attribute, ref_t value)
+      void addAttribute(mssg_t message, int attribute, ref_t value)
       {
          ClassInfo::Attribute attr(message, attribute);
 
          info.methodHints.exclude(attr);
          info.methodHints.add(attr, value);
       }
-      int getHint(ref_t message)
+      int getHint(mssg_t message)
       {
          ClassInfo::Attribute attr(message, maHint);
 
          return info.methodHints.get(attr);
       }
-      void addHint(ref_t message, int hint)
+      void addHint(mssg_t message, int hint)
       {
          ClassInfo::Attribute attr(message, maHint);
 
@@ -505,7 +505,7 @@ private:
          info.methodHints.exclude(attr);
          info.methodHints.add(attr, hint);
       }
-      void removeHint(ref_t message, int hintToRemove)
+      void removeHint(mssg_t message, int hintToRemove)
       {
          ClassInfo::Attribute attr(message, maHint);
 
@@ -516,7 +516,7 @@ private:
             info.methodHints.add(attr, hints);
       }
 
-      bool include(ref_t message)
+      bool include(mssg_t message)
       {
          // check if the method is inhreited and update vmt size accordingly
          auto it = info.methods.getIt(message);
@@ -568,7 +568,7 @@ private:
    // - MethodScope -
    struct MethodScope : public Scope
    {
-      ref_t        message;
+      mssg_t        message;
       LocalMap     parameters;
       EAttr        scopeMode;
       int          reserved1;             // defines managed frame size
@@ -600,7 +600,7 @@ private:
          return scope->getAttribute(message, attr);
       }
 
-      ref_t getAttribute(ref_t attrMessage, MethodAttribute attr, bool ownerClass = true)
+      ref_t getAttribute(mssg_t attrMessage, MethodAttribute attr, bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
 
@@ -751,7 +751,7 @@ private:
          else return parent->getScope(level);
       }
 
-      ref_t getMessageID()
+      mssg_t getMessageID()
       {
          MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
 
@@ -840,7 +840,7 @@ private:
       int newTempLocal();
       int newTempLocalAddress();
 
-      ref_t getMessageID()
+      mssg_t getMessageID()
       {
          MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
       
@@ -854,7 +854,7 @@ private:
          return scope ? scope->reference : 0;
       }
 
-      ref_t getAttribute(ref_t message, MethodAttribute attr, bool ownerClass = true)
+      ref_t getAttribute(mssg_t message, MethodAttribute attr, bool ownerClass = true)
       {
          ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
 
@@ -978,27 +978,27 @@ private:
    bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
    bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
-   bool isDefaultOrConversionConstructor(Scope& scope, ref_t message, bool& isProtectedDefConst);
+   bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst);
    bool isSelfCall(ObjectInfo info);
 
    bool isMethodEmbeddable(MethodScope& scope, SNode node);
 
    ref_t retrieveImplicitIdentifier(NamespaceScope& scope, ident_t identifier, bool referenceOne, bool innermost);
 
-   void writeMessageInfo(SNode node, _ModuleScope& scope, ref_t messageRef);
+   void writeMessageInfo(SNode node, _ModuleScope& scope, mssg_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
-   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, ref_t message,
+   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, mssg_t message,
       bool ignoreSelf = false);
 
-   int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message)
+   int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message)
    {
       _CompilerLogic::ChechMethodInfo dummy;
 
       return _logic->checkMethod(scope, reference, message, dummy, false);
    }
 
-   int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ref_t& protectedRef)
+   int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, ref_t& protectedRef)
    {
       _CompilerLogic::ChechMethodInfo dummy;
 
@@ -1015,7 +1015,7 @@ private:
 
 //   ref_t resolveTypeAttribute(Scope& scope, SNode node, bool declarationMode);
 
-   ref_t resolveMultimethod(ClassScope& scope, ref_t messageRef);
+   ref_t resolveMultimethod(ClassScope& scope, mssg_t messageRef);
 
    virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode);
 
@@ -1036,11 +1036,11 @@ private:
    ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
    ref_t generateConstant(_CompileScope& scope, ObjectInfo retVal);
 
-   void saveExtension(ClassScope& scope, ref_t message, bool internalOne);
+   void saveExtension(ClassScope& scope, mssg_t message, bool internalOne);
 //   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
-   ref_t mapExtension(Scope& scope, ref_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
+   ref_t mapExtension(Scope& scope, mssg_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
 
-   void importCode(SNode node, Scope& scope, ref_t reference, ref_t message);
+   void importCode(SNode node, Scope& scope, ref_t reference, mssg_t message);
 
    int defineFieldSize(Scope& scope, int offset);
 
@@ -1078,12 +1078,12 @@ private:
 
 //   bool isTemplateParameterDeclared(SNode node, Scope& scope);
 //
-   ref_t resolveVariadicMessage(Scope& scope, ref_t message);
-   ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, int paramCount);
-   ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, ref_t generalMessageRef, ref_t implicitSignatureRef,
+   mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
+   ref_t resolveOperatorMessage(Scope& scope, ref_t operator_id, size_t paramCount);
+   ref_t resolveMessageAtCompileTime(ObjectInfo& target, ExprScope& scope, mssg_t generalMessageRef, ref_t implicitSignatureRef,
                                      bool withExtension, int& stackSafeAttr);
-   ref_t mapMessage(SNode node, ExprScope& scope, bool extensionCall);
-   ref_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags, 
+   mssg_t mapMessage(SNode node, ExprScope& scope, bool extensionCall);
+   mssg_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags,
       IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
       bool withoutWeakMessages, bool noSignature);
 
@@ -1134,7 +1134,7 @@ private:
       bool& variadicOne, bool& inlineArg);
 
    ObjectInfo compileMessage(SNode node, ExprScope& scope, ref_t exptectedRef, ObjectInfo target, EAttr mode);
-   ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, int messageRef, EAttr mode, 
+   ObjectInfo compileMessage(SNode& node, ExprScope& scope, ObjectInfo target, mssg_t messageRef, EAttr mode, 
       int stackSafeAttr, bool& embeddableRet);
 ////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 
@@ -1190,9 +1190,9 @@ private:
    bool allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 
    ObjectInfo compileExternalCall(SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode);
-   ObjectInfo compileInternalCall(SNode node, ExprScope& scope, ref_t message, ref_t signature, ObjectInfo info);
+   ObjectInfo compileInternalCall(SNode node, ExprScope& scope, mssg_t message, ref_t signature, ObjectInfo info);
 
-   void warnOnUnresolvedDispatch(SNode node, Scope& scope, ref_t message, bool errorMode);
+   void warnOnUnresolvedDispatch(SNode node, Scope& scope, mssg_t message, bool errorMode);
 
    void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, 
       bool& withFrame);
@@ -1228,7 +1228,7 @@ private:
 //   void compileYieldEnd(SyntaxWriter& writer, int index);
    void compileYieldableMethod(SNode node, MethodScope& scope);
 
-   void compileSpecialMethodCall(SNode& node, ClassScope& classScope, ref_t message);
+   void compileSpecialMethodCall(SNode& node, ClassScope& classScope, mssg_t message);
 
    void compileDefConvConstructor(SNode node, MethodScope& scope);
    //void compileDynamicDefaultConstructor(SyntaxWriter& writer, MethodScope& scope);
@@ -1248,15 +1248,15 @@ private:
 //   void compileForward(SNode ns, NamespaceScope& scope);
 
    void compileModuleExtensionDispatcher(NamespaceScope& scope);
-   ref_t compileExtensionDispatcher(NamespaceScope& scope, ref_t genericMessageRef);
+   ref_t compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessageRef);
 
    void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
    void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isStatic, 
       bool isConst, bool isArray);
    
    void generateClassFlags(ClassScope& scope, SNode node);
-   void generateParamNameInfo(ClassScope& scope, SNode node, ref_t message);
-   void generateMethodAttributes(ClassScope& scope, SNode node, ref_t message, bool allowTypeAttribute);
+   void generateParamNameInfo(ClassScope& scope, SNode node, mssg_t message);
+   void generateMethodAttributes(ClassScope& scope, SNode node, mssg_t message, bool allowTypeAttribute);
 
    void generateMethodDeclaration(SNode current, ClassScope& scope, bool hideDuplicates, bool closed, 
       bool allowTypeAttribute);
@@ -1371,15 +1371,15 @@ public:
       ref_t targetClassRef, int stacksafeAttr, bool embeddableAttr);
 //   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t actionRef);
    virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/);
-   virtual void injectEmbeddableConstructor(SNode classNode, ref_t message, ref_t privateRef);
-   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, 
+   virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, ref_t privateRef);
+   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message,
       LexicalType methodType, ClassInfo& info);
-   void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType, 
-      ref_t resendMessage, bool privateOne, ref_t callTargetRef);
-   bool injectVirtualStrongTypedMultimethod(_ModuleScope& scope, SNode classNode, ref_t message, LexicalType methodType,
-      ref_t resendMessage, bool privateOne);
-   virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, ref_t message, ident_t variable, ref_t outputRef);
-   virtual void injectVirtualDispatchMethod(SNode classNode, ref_t message, LexicalType type, ident_t argument);
+   void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
+      mssg_t resendMessage, bool privateOne, ref_t callTargetRef);
+   bool injectVirtualStrongTypedMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
+      mssg_t resendMessage, bool privateOne);
+   virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef);
+   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument);
    virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex);
    virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne);
    virtual void injectExprOperation(_CompileScope& scope, SNode& node, int size, int tempLocal, LexicalType op,

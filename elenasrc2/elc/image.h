@@ -67,9 +67,9 @@ public:
 
    virtual _Memory* getTargetSection(ref_t mask);
 
-   virtual SectionInfo getSectionInfo(ReferenceInfo referenceInfo, size_t mask, bool silentMode);
-   virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, size_t codeMask, size_t vmtMask, bool silentMode);
-   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
+   virtual SectionInfo getSectionInfo(ReferenceInfo referenceInfo, ref_t mask, bool silentMode);
+   virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode);
+   virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask);
 
    virtual _Memory* getTargetDebugSection()
    {

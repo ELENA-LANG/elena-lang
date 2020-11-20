@@ -71,15 +71,15 @@ class CompilerLogic : public _CompilerLogic
    bool isBoolean(_ModuleScope& scope, ref_t reference);
 
 public:
-   virtual int defineStackSafeAttrs(_ModuleScope& scope, ref_t message);
+   virtual int defineStackSafeAttrs(_ModuleScope& scope, mssg_t message);
 
-   virtual bool isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage);
+   virtual bool isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage);
 
-   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage,
+   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
       ref_t* sourceSignatures, size_t len, int& stackSafeAttr);
 
-   virtual int checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, ChechMethodInfo& result, bool resolveProtected);
-   virtual int checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result, bool resolveProtected);
+   virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
+   virtual int checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
 
    virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
@@ -93,9 +93,9 @@ public:
 
 //   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info);
 
-   virtual ref_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, ref_t message);
+   virtual mssg_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message);
 
-   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t message, ChechMethodInfo& result);
+   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result);
    virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
    virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand);
@@ -143,17 +143,17 @@ public:
    virtual bool isRole(ClassInfo& info);
    virtual bool isAbstract(ClassInfo& info);
 //   virtual bool isMethodStacksafe(ClassInfo& info, ref_t message);
-   virtual bool isMethodGeneric(ClassInfo& info, ref_t message);
-   virtual bool isMixinMethod(ClassInfo& info, ref_t message);
-   virtual bool isMethodAbstract(ClassInfo& info, ref_t message);
-   virtual bool isMethodYieldable(ClassInfo& info, ref_t message);
+   virtual bool isMethodGeneric(ClassInfo& info, mssg_t message);
+   virtual bool isMixinMethod(ClassInfo& info, mssg_t message);
+   virtual bool isMethodAbstract(ClassInfo& info, mssg_t message);
+   virtual bool isMethodYieldable(ClassInfo& info, mssg_t message);
 //   virtual bool isMethodInternal(ClassInfo& info, ref_t message);
-   virtual bool isMethodPrivate(ClassInfo& info, ref_t message);
-   virtual bool isMultiMethod(ClassInfo& info, ref_t message);
-   virtual bool isMultiMethod(_ModuleScope& scope, ref_t reference, ref_t message);
+   virtual bool isMethodPrivate(ClassInfo& info, mssg_t message);
+   virtual bool isMultiMethod(ClassInfo& info, mssg_t message);
+   virtual bool isMultiMethod(_ModuleScope& scope, ref_t reference, mssg_t message);
 //   virtual bool isFunction(ClassInfo& info, ref_t message);
-   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message);
-   virtual bool isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message);
+   virtual bool isMethodEmbeddable(ClassInfo& info, mssg_t message);
+   virtual bool isMethodEmbeddable(_ModuleScope& scope, ref_t reference, mssg_t message);
 ////   virtual bool isDispatcher(ClassInfo& info, ref_t message);
    virtual bool isReadonly(ClassInfo& info);
    virtual bool isReadonly(_ModuleScope& scope, ref_t reference)
@@ -178,17 +178,17 @@ public:
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
    virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
-      List<ref_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info);
+      List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info);
    virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, 
       ref_t& reference, ref_t elementRef, int tempLocal);
-   virtual bool injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef);
+   virtual bool injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, mssg_t messageRef);
    virtual bool injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
       ref_t elementRef, bool noUnboxing, int& stackSafeAttr, int fixedArraySize);
-   virtual ref_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, size_t signLen, 
+   virtual mssg_t resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, size_t signLen, 
       int& stackSafeAttr, bool ignoreMultimethod);
 
    virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef);
-   virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, ref_t message, 
+   virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, mssg_t message,
       ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags);
    virtual void injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef);
 
@@ -205,7 +205,7 @@ public:
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility);
-   virtual bool validateMessage(_ModuleScope& scope, ref_t message, int hints);
+   virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints);
    virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg);
 
    virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
@@ -216,20 +216,20 @@ public:
 //      return !test(info.header.flags, elDynamicRole);
 //   }
 
-   virtual ref_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
-      ref_t message, ref_t expectedRef);
+   virtual mssg_t resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
+      mssg_t message, ref_t expectedRef);
 
    virtual bool recognizeEmbeddableIdle(SNode node, bool extensionOne);
-   virtual bool recognizeEmbeddableMessageCall(SNode node, ref_t& messageRef);
+   virtual bool recognizeEmbeddableMessageCall(SNode node, mssg_t& messageRef);
 
    virtual bool optimizeEmbeddable(SNode node, _ModuleScope& scope);
 //   virtual bool optimizeReturningStructure(_ModuleScope& scope, _Compiler& compiler, SNode node, bool argMode);
    virtual bool optimizeEmbeddableOp(_ModuleScope& scope, _Compiler& compiler, SNode node);
    virtual bool optimizeBranchingOp(_ModuleScope& scope, SNode node);
 
-   virtual ref_t resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, 
+   virtual mssg_t resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
       int& stackSafeAttr, bool selfCall);
-   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods);
+   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods);
    virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
       ref_t signatureRef, ident_t ns, ExtensionMap* outerExtensionList);
    virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference);

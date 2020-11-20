@@ -149,7 +149,7 @@ void Instance::ImageReferenceHelper :: writeTape(MemoryWriter& tape, void* vaddr
    tape.writeDWord(ref | mask);
 }
 
-void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp, _Module* module)
+void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, ref_t reference, pos_t disp, _Module* module)
 {
    size_t pos = reference & ~mskImageMask;
    if (test(reference, mskRelCodeRef)) {
@@ -160,20 +160,20 @@ void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, ref_
 
 void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp)
 {
-   ref_t address = (ref_t)vaddress;
+   uintptr_t address = (uintptr_t)vaddress;
 
    // calculate relative address
    if (relative)
-      address -= ((ref_t)writer.Address() + 4);
+      address -= ((uintptr_t)writer.Address() + 4);
 
-   writer.writeDWord(address + disp);
+   writer.writePtr(address + disp);
 }
 
 void Instance::ImageReferenceHelper :: writeMTReference(MemoryWriter& writer)
 {
    _Memory* section = _instance->getMessageSection();
 
-   writer.writeDWord((ref_t)section->get(0));
+   writer.writePtr((uintptr_t)section->get(0));
 }
 
 void Instance::ImageReferenceHelper :: addBreakpoint(size_t position)
@@ -406,7 +406,7 @@ _Module* Instance :: resolveWeakModule(ident_t weakReferenceName, ref_t& referen
    else return module;
 }
 
-SectionInfo Instance :: getSectionInfo(ReferenceInfo referenceInfo, size_t mask, bool silentMode)
+SectionInfo Instance :: getSectionInfo(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
 {
    SectionInfo sectionInfo;
    LoadResult result;
@@ -435,7 +435,7 @@ SectionInfo Instance :: getSectionInfo(ReferenceInfo referenceInfo, size_t mask,
    return sectionInfo;
 }
 
-SectionInfo Instance :: getCoreSectionInfo(ref_t reference, size_t mask)
+SectionInfo Instance :: getCoreSectionInfo(ref_t reference, ref_t mask)
 {
    SectionInfo sectionInfo;
 
@@ -450,7 +450,7 @@ SectionInfo Instance :: getCoreSectionInfo(ref_t reference, size_t mask)
    return sectionInfo;
 }
 
-ClassSectionInfo Instance :: getClassSectionInfo(ReferenceInfo referenceInfo, size_t codeMask, size_t vmtMask, bool silentMode)
+ClassSectionInfo Instance :: getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode)
 {
    ClassSectionInfo sectionInfo;
 
@@ -535,11 +535,11 @@ void* Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
    return _linker->resolve(reference, mask, silentMode);
 }
 
-int Instance :: loadMessageName(ref_t message, char* buffer, size_t maxLength)
+int Instance :: loadMessageName(mssg_t message, char* buffer, size_t maxLength)
 {
    int prefixLen = 0;
    ref_t action, flags;
-   int count;
+   size_t count;
    decodeMessage(message, action, count, flags);
    if (test(flags, VARIADIC_MESSAGE)) {
       size_t len = 7;
@@ -593,7 +593,7 @@ void* Instance :: loadMetaAttribute(ident_t name, int category)
    return manager.loadMetaAttribute(reader, name, category, len);
 }
 
-int Instance :: loadExtensionDispatcher(SystemEnv* env, const char* moduleList, ref_t message, void* output)
+int Instance :: loadExtensionDispatcher(SystemEnv* env, const char* moduleList, mssg_t message, void* output)
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
@@ -742,11 +742,11 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode, bool wi
 
    // set debug ptr if requiered
    if (_debugMode) {
-      env->Table->dbg_ptr = (pos_t)loadDebugSection();
+      env->Table->dbg_ptr = (uintptr_t)loadDebugSection();
    }
 
    // HOTFIX : set gc_roots
-   env->Table->gc_roots = (pos_t)getTargetSection(mskStatRef)->get(0);
+   env->Table->gc_roots = (uintptr_t)getTargetSection(mskStatRef)->get(0);
    env->Table->gc_rootcount = (_linker->getStaticCount() << 2);
 
    printInfo(ELENAVM_DONEINFO);
@@ -858,7 +858,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             //pusha
 
             ecodes.writeByte(bcMovM);
-            ecodes.writeDWord(_linker->parseMessage(arg, false));
+            ecodes.writeDWord(_linker->parseMessage(arg));
             ecodes.writeByte(bcPeekSI);
             ecodes.writeDWord(0);
             ecodes.writeByte(bcCallVI);
@@ -876,7 +876,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
             message.append(CONSTRUCTOR_MESSAGE);
 
             ecodes.writeByte(bcMovM);
-            ecodes.writeDWord(_linker->parseMessage(message.c_str(), false));
+            ecodes.writeDWord(_linker->parseMessage(message.c_str()));
             ecodes.writeByte(bcPeekSI);
             ecodes.writeDWord(0);
             ecodes.writeByte(bcCallVI);
@@ -1140,7 +1140,7 @@ bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
 void* Instance :: parseMessage(SystemEnv* systemEnv, ident_t message)
 {
    IdentifierString messageName;
-   int paramCount = -1;
+   size_t paramCount = -1;
    ref_t flags = 0;
 
    if (SystemRoutineProvider::parseMessageLiteral(message, messageName, paramCount, flags)) {

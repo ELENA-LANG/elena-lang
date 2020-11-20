@@ -256,7 +256,7 @@ CompilerLogic :: CompilerLogic()
 
 }
 
-int CompilerLogic :: checkMethod(ClassInfo& info, ref_t message, ChechMethodInfo& result, bool resolveProtected)
+int CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result, bool resolveProtected)
 {
    bool methodFound = info.methods.exist(message);
 
@@ -310,7 +310,7 @@ ref_t CompilerLogic :: resolveArrayElement(_ModuleScope& scope, ref_t reference)
    else return 0;
 }
 
-int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t message, 
+int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, 
    ChechMethodInfo& result, bool resolveProtected)
 {
    ClassInfo info;
@@ -332,7 +332,7 @@ int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, ref_t mes
    else return tpUnknown;
 }
 
-ref_t CompilerLogic :: resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, ref_t message)
+mssg_t CompilerLogic :: resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message)
 {
    if (!reference)
       return 0;
@@ -344,7 +344,7 @@ ref_t CompilerLogic :: resolveSingleMultiDisp(_ModuleScope& scope, ref_t referen
    else return 0;
 }
 
-int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, ref_t messageRef, ChechMethodInfo& result)
+int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t messageRef, ChechMethodInfo& result)
 {
    int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result, false);
    int callType = methodHint & tpMask;
@@ -637,17 +637,17 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
 //}
 
-bool CompilerLogic :: isMethodAbstract(ClassInfo& info, ref_t message)
+bool CompilerLogic :: isMethodAbstract(ClassInfo& info, mssg_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
 }
 
-bool CompilerLogic :: isMethodYieldable(ClassInfo& info, ref_t message)
+bool CompilerLogic :: isMethodYieldable(ClassInfo& info, mssg_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpYieldable);
 }
 
-bool CompilerLogic :: isMethodEmbeddable(ClassInfo& info, ref_t message)
+bool CompilerLogic :: isMethodEmbeddable(ClassInfo& info, mssg_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpEmbeddable);
 }
@@ -657,27 +657,27 @@ bool CompilerLogic :: isMethodEmbeddable(ClassInfo& info, ref_t message)
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpInternal);
 //}
 
-bool CompilerLogic :: isMethodPrivate(ClassInfo& info, ref_t message)
+bool CompilerLogic :: isMethodPrivate(ClassInfo& info, mssg_t message)
 {
    return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpPrivate;
 }
 
-bool CompilerLogic :: isMixinMethod(ClassInfo& info, ref_t message)
+bool CompilerLogic :: isMixinMethod(ClassInfo& info, mssg_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpMixin);
 }
 
-bool CompilerLogic :: isMethodGeneric(ClassInfo& info, ref_t message)
+bool CompilerLogic :: isMethodGeneric(ClassInfo& info, mssg_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
 }
 
-bool CompilerLogic :: isMultiMethod(ClassInfo& info, ref_t message)
+bool CompilerLogic :: isMultiMethod(ClassInfo& info, mssg_t message)
 {
    return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
 }
 
-bool CompilerLogic :: isMultiMethod(_ModuleScope& scope, ref_t reference, ref_t message)
+bool CompilerLogic :: isMultiMethod(_ModuleScope& scope, ref_t reference, mssg_t message)
 {
    ClassInfo info;
    defineClassInfo(scope, info, reference, true);
@@ -695,13 +695,13 @@ bool CompilerLogic :: isMultiMethod(_ModuleScope& scope, ref_t reference, ref_t 
 ////   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpDispatcher;
 ////}
 
-inline ident_t resolveActionName(_Module* module, ref_t message)
+inline ident_t resolveActionName(_Module* module, mssg_t message)
 {
    ref_t signRef = 0;
    return module->resolveAction(getAction(message), signRef);
 }
 
-ref_t CompilerLogic :: generateOverloadList(_ModuleScope& scope, _Compiler& compiler, ref_t message, 
+ref_t CompilerLogic :: generateOverloadList(_ModuleScope& scope, _Compiler& compiler, mssg_t message,
    ClassInfo::CategoryInfoMap& methodHints, void* param, ref_t(*resolve)(void*,ref_t), int flags)
 {
    // create a new overload list
@@ -721,7 +721,7 @@ ref_t CompilerLogic :: generateOverloadList(_ModuleScope& scope, _Compiler& comp
             capcity += 0x10;
          }
 
-         ref_t omsg = h_it.key().value1;
+         mssg_t omsg = h_it.key().value1;
          list[len] = omsg;
          for (size_t i = 0; i < len; i++) {
             if (isSignatureCompatible(scope, omsg, list[i])) {
@@ -762,7 +762,7 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
 {
    for (auto it = info.methods.start(); !it.Eof(); it++) {
       if (*it && isMultiMethod(info, it.key())) {
-         ref_t message = it.key();
+         mssg_t message = it.key();
 
          // create a new overload list
          ref_t listRef = generateOverloadList(scope, compiler, message, info.methodHints, (void*)classRef, 
@@ -854,7 +854,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
       }
 
       if (test(info.header.flags, elStructureRole)) {
-         List<ref_t> generatedConstructors;
+         List<mssg_t> generatedConstructors;
          bool found = 0;
          SNode current = node.firstChild();
          while (current != lxNone) {
@@ -882,7 +882,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 
          if (found) {
             for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
-               ref_t message = *it;
+               mssg_t message = *it;
 
                compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE);
             }
@@ -892,7 +892,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
 }
 
 void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
-   List<ref_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info)
+   List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info)
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
@@ -980,12 +980,12 @@ void CompilerLogic :: injectInterfaceDispatch(_ModuleScope& scope, _Compiler& co
    dispatchMethodNode = lxIdle;
 }
 
-void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<ref_t>& implicitMultimethods)
+void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods)
 {
    // HOTFIX : Make sure the multi-method methods have the same output type as generic one
    bool needVerification = false;
    for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-      ref_t message = *it;
+      mssg_t message = *it;
 
       ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
       if (outputRef != 0) {
@@ -1001,7 +1001,7 @@ void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassI
    SNode current = node.firstChild();
    while (current != lxNone) {
       if (current == lxClassMethod) {
-         ref_t multiMethod = info.methodHints.get(Attribute(current.argument, maMultimethod));
+         mssg_t multiMethod = info.methodHints.get(Attribute(current.argument, maMultimethod));
          if (multiMethod != lxNone) {
             ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethod, maReference));
             if (outputRefMulti != 0) {
@@ -1078,7 +1078,7 @@ bool CompilerLogic :: isReadonly(ClassInfo& info)
    return test(info.header.flags, elReadOnlyRole);
 }
 
-inline ref_t getSignature(_ModuleScope& scope, ref_t message)
+inline ref_t getSignature(_ModuleScope& scope, mssg_t message)
 {
    ref_t actionRef = getAction(message);
    ref_t signRef = 0;
@@ -1087,7 +1087,7 @@ inline ref_t getSignature(_ModuleScope& scope, ref_t message)
    return signRef;
 }
 
-bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetMessage, ref_t sourceMessage)
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage)
 {
    ref_t sourceSignatures[ARG_COUNT];
    size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
@@ -1136,7 +1136,7 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* target
    return true;
 }
 
-int CompilerLogic :: defineStackSafeAttrs(_ModuleScope& scope, ref_t message)
+int CompilerLogic :: defineStackSafeAttrs(_ModuleScope& scope, mssg_t message)
 {
    ref_t signRef = getSignature(scope, message);
    int stackSafeAttr = 0;
@@ -1145,7 +1145,7 @@ int CompilerLogic :: defineStackSafeAttrs(_ModuleScope& scope, ref_t message)
    return stackSafeAttr;
 }
 
-bool CompilerLogic :: isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, ref_t targetMessage, 
+bool CompilerLogic :: isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
    ref_t* sourceSignatures, size_t len, int& stackSafeAttr)
 {
    ref_t targetSignRef = getSignature(scope, targetMessage);
@@ -1193,7 +1193,7 @@ void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* target
    }
 }
 
-bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, ref_t message)
+bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, mssg_t message)
 {
    ClassInfo info;
    if (defineClassInfo(scope, info, reference)) {
@@ -1207,7 +1207,7 @@ bool CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, SNode& node
 {
    ref_t signRef = scope.module->mapSignature(signatures, signLen, false);
 
-   ref_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, signLen, stackSafeAttr, true);
+   mssg_t messageRef = resolveImplicitConstructor(scope, targetRef, signRef, signLen, stackSafeAttr, true);
    if (messageRef) {
       bool embeddableAttr = isMethodEmbeddable(scope, info.header.classRef, messageRef);
 
@@ -1219,7 +1219,7 @@ bool CompilerLogic :: injectImplicitConstructor(_ModuleScope& scope, SNode& node
    else return false;
 }
 
-bool CompilerLogic :: injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, ref_t messageRef)
+bool CompilerLogic :: injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, mssg_t messageRef)
 {
    int stackSafeAttr = 0;
    setSignatureStacksafe(scope, scope.literalReference, stackSafeAttr);
@@ -1238,14 +1238,14 @@ ref_t CompilerLogic :: getClassClassRef(_ModuleScope& scope, ref_t targetRef)
    return info.header.classRef;
 }
 
-ref_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, size_t signLen, int& stackSafeAttr, bool ignoreMultimethod)
+mssg_t CompilerLogic :: resolveImplicitConstructor(_ModuleScope& scope, ref_t targetRef, ref_t signRef, size_t signLen, int& stackSafeAttr, bool ignoreMultimethod)
 {
    ref_t classClassRef = getClassClassRef(scope, targetRef);
    ref_t actionRef = scope.module->mapAction(CONSTRUCTOR_MESSAGE, 0, false);
-   ref_t messageRef = encodeMessage(actionRef, signLen + 1, 0);
+   mssg_t messageRef = encodeMessage(actionRef, signLen + 1, 0);
    if (signRef != 0) {
       // try to resolve implicit multi-method
-      ref_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef, stackSafeAttr, true);
+      mssg_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef, signRef, stackSafeAttr, true);
       if (resolvedMessage)
          return resolvedMessage;
    }
@@ -2078,7 +2078,7 @@ bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOn
    else return false;
 }
 
-bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, ref_t& messageRef)
+bool CompilerLogic :: recognizeEmbeddableMessageCall(SNode methodNode, mssg_t& messageRef)
 {
    SNode attr = methodNode.findChild(lxEmbeddableMssg);
    if (attr != lxNone) {
@@ -2097,8 +2097,8 @@ inline bool isMethodTree(SNode node)
    return (node != lxNone);
 }
 
-ref_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target, 
-   ref_t message, ref_t expectedRef)
+mssg_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compiler& compiler, ref_t target,
+   mssg_t message, ref_t expectedRef)
 {
    ClassInfo info;
    if (!defineClassInfo(*scope.moduleScope, info, target))
@@ -2106,7 +2106,7 @@ ref_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compil
 
    // take the main embeddable method
    Attribute key(message, maEmbeddableRet);
-   ref_t byRefMessageRef = info.methodHints.get(key);
+   mssg_t byRefMessageRef = info.methodHints.get(key);
    if (!byRefMessageRef)
       return 0;
 
@@ -2126,7 +2126,7 @@ ref_t CompilerLogic :: resolveEmbeddableRetMessage(_CompileScope& scope, _Compil
       return 0;
 
    ref_t dummy = 0, actionRef = 0, flags = 0;
-   int argCount = 0;
+   size_t argCount = 0;
    decodeMessage(message, actionRef, argCount, flags);
    ident_t name = scope.moduleScope->module->resolveAction(actionRef, dummy);
 
@@ -2298,7 +2298,7 @@ bool CompilerLogic :: optimizeBranchingOp(_ModuleScope&, SNode node)
    return false;
 }
 
-inline ref_t resolveNonpublic(ClassInfo& info, _Module* module, ref_t publicMessage, ref_t& visibility)
+inline mssg_t resolveNonpublic(ClassInfo& info, _Module* module, mssg_t publicMessage, ref_t& visibility)
 {
    for (auto it = info.methodHints.start(); !it.Eof(); it++) {
       Attribute key = it.key();
@@ -2306,7 +2306,7 @@ inline ref_t resolveNonpublic(ClassInfo& info, _Module* module, ref_t publicMess
          visibility = key.value2;
 
          // get multi method
-         int argCount = 0;
+         size_t argCount = 0;
          ref_t actionRef = 0, flags = 0, signRef = 0;
          decodeMessage(*it, actionRef, argCount, flags);
 
@@ -2315,13 +2315,13 @@ inline ref_t resolveNonpublic(ClassInfo& info, _Module* module, ref_t publicMess
          if (test(flags, VARIADIC_MESSAGE)) {
             // COMPILER MAGIC : for variadic message - use the most general message
             ref_t genericActionRef = module->mapAction(actionStr, 0, false);
-            ref_t genericMessage = encodeMessage(genericActionRef, 2, flags);
+            mssg_t genericMessage = encodeMessage(genericActionRef, 2, flags);
 
             return genericMessage;
          }
          else if (signRef) {
             ref_t genericActionRef = module->mapAction(actionStr, 0, false);
-            ref_t genericMessage = encodeMessage(genericActionRef, argCount, flags);
+            mssg_t genericMessage = encodeMessage(genericActionRef, argCount, flags);
 
             return genericMessage;
          }
@@ -2332,7 +2332,7 @@ inline ref_t resolveNonpublic(ClassInfo& info, _Module* module, ref_t publicMess
    return 0;
 }
 
-ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef, 
+mssg_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, mssg_t multiMessage, ref_t targetRef, ref_t implicitSignatureRef,
    int& stackSafeAttr, bool selfCall)
 {
    if (!targetRef)
@@ -2345,10 +2345,10 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
 
       // check if it is non public message
       ref_t type = 0;
-      ref_t nonPublicMultiMessage = resolveNonpublic(info, scope.module, multiMessage, type);
+      mssg_t nonPublicMultiMessage = resolveNonpublic(info, scope.module, multiMessage, type);
       if (nonPublicMultiMessage != 0) {
          // if it is an internal
-         ref_t resolved = 0;
+         mssg_t resolved = 0;
          if (type == maInternal && scope.isInteralOp(targetRef)) {
             resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
             if (!resolved) {
@@ -2384,10 +2384,10 @@ ref_t CompilerLogic :: resolveMultimethod(_ModuleScope& scope, ref_t multiMessag
 
          MemoryReader reader(section);
          pos_t position = section->Length() - 4;
-         ref_t foundMessage = 0;
+         mssg_t foundMessage = 0;
          while (position != 0) {
             reader.seek(position - 8);
-            ref_t argMessage = reader.getDWord();
+            mssg_t argMessage = reader.getDWord();
             ref_t argSign = 0;
             argModule->resolveAction(getAction(argMessage), argSign);
 
@@ -2567,7 +2567,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(_ModuleScope& scope, _Compiler& 
    return 0;
 }
 
-bool CompilerLogic :: validateMessage(_ModuleScope& scope, ref_t message, int hints)
+bool CompilerLogic :: validateMessage(_ModuleScope& scope, mssg_t message, int hints)
 {
    bool dispatchOne = message == scope.dispatch_message;
    if (testany(hints, tpConstructor | tpStatic)) {

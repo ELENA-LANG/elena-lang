@@ -25,16 +25,16 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
       case mskInt64Ref:
       case mskInt32Ref:
       case mskRealRef:
-         _numberReferences.add(reference, (size_t)vaddress);
+         _numberReferences.add(reference, (ref_t)vaddress);
          break;
       case mskCharRef:
-         _characterReferences.add(reference, (size_t)vaddress);
+         _characterReferences.add(reference, (ref_t)vaddress);
          break;
       case mskLiteralRef:
-         _literalReferences.add(reference, (size_t)vaddress);
+         _literalReferences.add(reference, (ref_t)vaddress);
          break;
       case mskWideLiteralRef:
-         _wideReferences.add(reference, (size_t)vaddress);
+         _wideReferences.add(reference, (ref_t)vaddress);
          break;
       case mskSymbolRelRef:
       case mskSymbolRef:
@@ -46,16 +46,16 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
          switch (imageMask) {
             case mskCodeRef:
             case mskRelCodeRef:
-               _codeReferences.add(reference, (size_t)vaddress);
+               _codeReferences.add(reference, (ref_t)vaddress);
                break;
             case mskRDataRef:
-               _dataReferences.add(reference, (size_t)vaddress);
+               _dataReferences.add(reference, (ref_t)vaddress);
                break;
             case mskStatRef:
-               _statReferences.add(reference, (size_t)vaddress);
+               _statReferences.add(reference, (ref_t)vaddress);
                break;
             case mskDataRef:
-               _bssReferences.add(reference, (size_t)vaddress);
+               _bssReferences.add(reference, (ref_t)vaddress);
                break;
          }
          break;
@@ -63,7 +63,7 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
    }
 }
 
-void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, void* vaddress, size_t mask)
+void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask)
 {
    if (referenceInfo.isRelative()) {
       IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);
@@ -84,7 +84,7 @@ ref_t _ImageLoader :: resolveExternal(ident_t external)
    return reference;
 }
 
-void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
+void* _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
 {
    if (mask != 0) {
       switch (mask) {
@@ -138,7 +138,7 @@ void* _ImageLoader :: resolveReference(ident_t reference, size_t mask)
    else throw InternalError("Unsupported");
 }
 
-void* _ImageLoader :: resolveReference(ReferenceInfo referenceInfo, size_t mask)
+void* _ImageLoader :: resolveReference(ReferenceInfo referenceInfo, ref_t mask)
 {
    if (referenceInfo.isRelative()) {
       IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);

@@ -30,36 +30,36 @@ public:
 
    virtual void* get(pos_t position) const;
 
-   virtual void* getLong(pos64_t position) const
-   {
-      if (position < INT_MAX) {
-         return get((pos_t)position);
-      }
-      else return NULL;
-   }
+   //virtual void* getLong(pos64_t position) const
+   //{
+   //   if (position < INT_MAX) {
+   //      return get((pos_t)position);
+   //   }
+   //   else return nullptr;
+   //}
 
    void reserve(pos_t size);
 
    virtual bool read(pos_t position, void* s, pos_t length);
 
-   virtual bool readLong(pos64_t position, void* s, pos64_t length)
-   {
-      if (position < INT_MAX && length < INT_MAX) {
-         return read((pos_t)position, s, (pos_t)length);
-      }
-      else return false;
-   }
+//   virtual bool readLong(pos64_t position, void* s, pos64_t length)
+//   {
+//      if (position < INT_MAX && length < INT_MAX) {
+//         return read((pos_t)position, s, (pos_t)length);
+//      }
+//      else return false;
+//   }
 
    virtual void load(StreamReader* reader, pos_t length);
 
    virtual bool write(pos_t position, const void* s, pos_t length);
-   bool write(pos_t position, const void* s, pos64_t length)
-   {
-      if (length < INT_MAX) {
-         return write(position, s, (pos_t)length);
-      }
-      else return false;
-   }
+//   bool write(pos_t position, const void* s, pos64_t length)
+//   {
+//      if (length < INT_MAX) {
+//         return write(position, s, (pos_t)length);
+//      }
+//      else return false;
+//   }
 
    virtual bool writeBytes(pos_t position, char value, pos_t length);
 
@@ -100,27 +100,27 @@ public:
    {
       _used = size;
    }
-   virtual void trimLong(pos64_t size)
-   {
-      if (size < INT_MAX) {
-         trim((pos_t)size);
-      }
-   }
-
-   char* extract()
-   {
-      char* buffer = _buffer;
-
-      _buffer = NULL;
-      _used = _total = 0;
-
-      return buffer;
-   }
+//   virtual void trimLong(pos64_t size)
+//   {
+//      if (size < INT_MAX) {
+//         trim((pos_t)size);
+//      }
+//   }
+//
+//   char* extract()
+//   {
+//      char* buffer = _buffer;
+//
+//      _buffer = NULL;
+//      _used = _total = 0;
+//
+//      return buffer;
+//   }
 
    MemoryDump();
    MemoryDump(pos_t capacity);
-   MemoryDump(MemoryDump& copy);
-   virtual ~MemoryDump() { freestr(_buffer); }
+//   MemoryDump(MemoryDump& copy);
+//   virtual ~MemoryDump() { freestr(_buffer); }
 };
 
 // --- ByteArray ---
@@ -135,24 +135,24 @@ public:
 
    virtual void* get(pos_t position) const;
 
-   virtual void* getLong(pos64_t position) const
-   {
-      if (position < INT_MAX)
-      {
-         return get((pos_t)position);
-      }
-      else return NULL;
-   }
+   //virtual void* getLong(pos64_t position) const
+   //{
+   //   if (position < INT_MAX)
+   //   {
+   //      return get((pos_t)position);
+   //   }
+   //   else return NULL;
+   //}
 
    virtual bool read(pos_t position, void* s, pos_t length);
 
-   virtual bool readLong(pos64_t position, void* s, pos64_t length)
-   {
-      if (position < INT_MAX && length < INT_MAX) {
-         return read((pos_t)position, s, (pos_t)length);
-      }
-      else return false;
-   }
+   //virtual bool readLong(pos64_t position, void* s, pos64_t length)
+   //{
+   //   if (position < INT_MAX && length < INT_MAX) {
+   //      return read((pos_t)position, s, (pos_t)length);
+   //   }
+   //   else return false;
+   //}
 
    virtual bool write(pos_t position, const void* s, pos_t length);
 
@@ -165,9 +165,9 @@ public:
    virtual void trim(pos_t)
    {
    }
-   virtual void trimLong(pos64_t)
-   {
-   }
+   //virtual void trimLong(pos64_t)
+   //{
+   //}
 
    ByteArray(void* bytes, pos_t length)
    {

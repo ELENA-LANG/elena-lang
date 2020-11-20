@@ -33,8 +33,8 @@ struct I64JITScope
    // byte code command argument
    int            argument;
 
-   void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
-   void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp);
+   void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp);
+   //void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp);
 
 //   ref64_t resolveMessage(ref_t reference)
 //   {
@@ -126,11 +126,11 @@ public:
    I64JITCompiler(bool debugMode);
 };
 
-//// --- compiler friend functions---
+// --- compiler friend functions---
 //void loadCoreOp(AMD64JITScope& scope, char* code);
 //void loadOneByteLOp(int opcode, AMD64JITScope& scope);
 //void loadIndexOpX(int opcode, AMD64JITScope& scope);
-//void loadFPOpX(int opcode, I64JITScope& scope);
+void loadFPOpX(int opcode, I64JITScope& scope);
 
 void compileNop(int opcode, I64JITScope& scope);
 //void compileACopyR(int opcode, AMD64JITScope& scope);

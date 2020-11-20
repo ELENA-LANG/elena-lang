@@ -399,12 +399,12 @@ inline void save(_Memory& body, pos_t position, LexicalType type, ref_t arg, pos
    }
 }
 
-pos_t SyntaxTree :: newRoot(LexicalType type, int argument, pos_t strArgumentRef)
+pos_t SyntaxTree :: newRoot(LexicalType type, ref_t argument, pos_t strArgumentRef)
 {
    return ::newChild(_body, INVALID_REF, type, argument, strArgumentRef);
 }
 
-pos_t SyntaxTree :: appendChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+pos_t SyntaxTree :: appendChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
 {
    pos_t child = ::newChild(_body, position, type, argument, strArgumentRef);
    
@@ -413,7 +413,7 @@ pos_t SyntaxTree :: appendChild(pos_t position, LexicalType type, int argument, 
    return child;
 }
 
-pos_t SyntaxTree :: insertChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+pos_t SyntaxTree :: insertChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
 {
    pos_t child = ::newChild(_body, position, type, argument, strArgumentRef);
 
@@ -422,7 +422,7 @@ pos_t SyntaxTree :: insertChild(pos_t position, LexicalType type, int argument, 
    return child;
 }
 
-pos_t SyntaxTree :: insertSibling(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+pos_t SyntaxTree :: insertSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
 {
    pos_t parent = ::readParent(_body, position);
    pos_t child = ::newChild(_body, parent, type, argument, strArgumentRef);
@@ -439,7 +439,7 @@ pos_t SyntaxTree :: insertSibling(pos_t position, LexicalType type, int argument
    return child;
 }
 
-pos_t SyntaxTree :: injectChild(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+pos_t SyntaxTree :: injectChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
 {
    pos_t parentNode = getParent(position);
    pos_t child = ::newChild(_body, parentNode, type, argument, strArgumentRef);
@@ -449,7 +449,7 @@ pos_t SyntaxTree :: injectChild(pos_t position, LexicalType type, int argument, 
    return child;
 }
 
-pos_t SyntaxTree :: injectSibling(pos_t position, LexicalType type, int argument, pos_t strArgumentRef)
+pos_t SyntaxTree :: injectSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
 {
    pos_t parentNode = getParent(position);
    pos_t child = ::newChild(_body, parentNode, type, argument, strArgumentRef);

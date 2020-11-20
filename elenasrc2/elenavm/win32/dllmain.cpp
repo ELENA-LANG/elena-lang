@@ -38,11 +38,11 @@ EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* ex
 {
    _SystemEnv = systemEnv;
 
-   header->root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
+   header->root_exception_struct.core_catch_addr = (uintptr_t)exceptionHandler;
 
    // initialize the critical exception handler
    if (criticalHandler != nullptr)
-      __routineProvider.InitCriticalStruct(&header->root_critical_struct, (pos_t)criticalHandler);
+      __routineProvider.InitCriticalStruct(&header->root_critical_struct, (uintptr_t)criticalHandler);
 
    //// initialize system env variable
    //_SystemEnv = systemEnv;
@@ -232,7 +232,7 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* buffer, int maxLength
       return 0;
 
    try {
-      return instance->loadMessageName((ref_t)message, buffer, maxLength);
+      return instance->loadMessageName((mssg_t)message, buffer, maxLength);
    }
    catch (JITUnresolvedException& e)
    {
@@ -428,7 +428,7 @@ EXTERN_DLL_EXPORT int LoadExtensionDispatcher(const char* moduleList, void* mess
    if (instance == NULL)
       return 0;
 
-   return instance->loadExtensionDispatcher((SystemEnv*)_SystemEnv, moduleList, (ref_t)message, output);
+   return instance->loadExtensionDispatcher((SystemEnv*)_SystemEnv, moduleList, (mssg_t)message, output);
 }
 
 // --- initmachine ---

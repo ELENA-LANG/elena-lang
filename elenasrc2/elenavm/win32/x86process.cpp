@@ -23,7 +23,7 @@ x86Process :: x86Process(size_t size, bool writeAccess, bool executeAccess, size
       allocate(allocated);
 }
 
-x86Process :: x86Process(size_t size, int address, bool writeAccess, bool executeAccess, size_t allocated)
+x86Process :: x86Process(size_t size, uintptr_t address, bool writeAccess, bool executeAccess, size_t allocated)
 {
    _allocated = _used = 0;
    _size = size;
@@ -139,7 +139,7 @@ bool x86Process :: exportFunction(path_t rootPath, size_t position, path_t dllNa
    }
 
    String<char, 200> lpFunName(funName);
-   ref_t address = (ref_t)::GetProcAddress(handle, lpFunName);
+   uintptr_t address = (uintptr_t)::GetProcAddress(handle, lpFunName);
    if (address == 0)
       return false;
    

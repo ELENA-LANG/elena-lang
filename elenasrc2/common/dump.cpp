@@ -13,7 +13,7 @@
 using namespace _ELENA_;
 
 // --- Constant definition ---
-#define SECTION_PAGE_SIZE           0x0040            // the section page size, should be aligned to power of two
+constexpr auto SECTION_PAGE_SIZE = 0x0040;            // the section page size, should be aligned to power of two
 
 // --- MemoryDump ---
 
@@ -35,22 +35,22 @@ MemoryDump :: MemoryDump(pos_t capacity)
    _buffer = (capacity > 0) ? (char*)realloc(NULL, capacity) : nullptr;
 }
 
-MemoryDump :: MemoryDump(MemoryDump& copy)
-{
-   _used = copy._used;
-   _total = copy._total;
-
-   //_buffer = (char*)malloc(_total);
-   _buffer = (char*)realloc(NULL, _total);
-   memcpy(_buffer, copy._buffer, _total);
-}
+//MemoryDump :: MemoryDump(MemoryDump& copy)
+//{
+//   _used = copy._used;
+//   _total = copy._total;
+//
+//   //_buffer = (char*)malloc(_total);
+//   _buffer = (char*)realloc(NULL, _total);
+//   memcpy(_buffer, copy._buffer, _total);
+//}
 
 void* MemoryDump :: get(pos_t position) const
 {
    if (position < _used) {
       return _buffer + position;
    }
-   else return NULL;
+   else return nullptr;
 }
 
 void MemoryDump :: reserve(pos_t size)

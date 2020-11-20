@@ -54,12 +54,13 @@ namespace _ELENA_
    typedef unsigned int        unic_c;
 
    typedef unsigned char       uident_c;
-   typedef size_t              ref_t;
+   typedef unsigned int        ref_t;
    typedef unsigned int        pos_t;
    typedef unsigned long long  ref64_t;
    typedef unsigned long long  pos64_t;
-   typedef unsigned int         mssg_t;
+   typedef unsigned int        mssg_t;
    typedef unsigned long long mssg64_t;
+   typedef unsigned long long  pos64_t;
 
    typedef unsigned long long uint64_t;
 
@@ -77,7 +78,7 @@ namespace _ELENA_
 #include "lists.h"
 #include "files.h"
 
-#define DEFAULT_STR (_ELENA_::ident_t)NULL
+#define DEFAULT_STR (_ELENA_::ident_t)nullptr
 
 namespace _ELENA_
 {
@@ -176,7 +177,7 @@ public:
 
 // --- ConstantIdentifier ---
 
-class WideString : public String <wide_c, 0x100>
+class WideString : public String<wide_c, 0x100>
 {
 public:
    WideString()
