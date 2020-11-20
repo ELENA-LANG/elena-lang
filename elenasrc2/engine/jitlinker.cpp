@@ -927,7 +927,7 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
          mssg_t messageID = resolveMessage(sectionInfo.module, (*image)[offset + position], messageReferences);
 
          uintptr_t addr = resolveVMTMethodAddress(sectionInfo.module, currentRef, messageID);
-         image->write(offset, &addr, sizeof(uintptr_t));
+         image->write(offset + position, &addr, sizeof(uintptr_t));
 
          if (_virtualMode) {
             image->addReference(mskCodeRef, offset + position);
