@@ -20,9 +20,7 @@ inline void resolveReference(_Memory* image, pos_t position, uintptr_t vaddress,
 {
    if (!virtualMode) {
       if ((mask & mskImageMask) == mskRelCodeRef) {
-         vaddress -= ((uintptr_t)image->get(0)) - position - 4;
-
-         (*image)[position] = vaddress - ((uintptr_t)image->get(0)) - position - 4;
+         vaddress -= ((uintptr_t)image->get(0)) + position + 4;
       }
       else vaddress += *(uintptr_t*)image->get(position);
 

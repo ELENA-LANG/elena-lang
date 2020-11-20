@@ -226,13 +226,10 @@ public:
 inline void writeCoreReference(x86JITScope& scope, ref_t reference, int position, int offset, char* code);
 void loadCoreOp(x86JITScope& scope, char* code);
 void loadFunction(int opcode, x86JITScope& scope);
-////void loadExtensions(int opcode, x86JITScope& scope);
-////void loadCode(int opcode, x86JITScope& scope);
 void loadOneByteLOp(int opcode, x86JITScope& scope);
 void loadOneByteOp(int opcode, x86JITScope& scope);
 void loadIndexOp(int opcode, x86JITScope& scope);
 void loadVMTIndexOp(int opcode, x86JITScope& scope);
-////void loadVMTMIndexOp(int opcode, x86JITScope& scope);
 void loadNOp(int opcode, x86JITScope& scope);
 void loadNOpX(int opcode, x86JITScope& scope);
 void loadN4OpX(int opcode, x86JITScope& scope);
