@@ -1,13 +1,14 @@
 # depslib dependency file v1.0
-1584352132 source:/home/alex/elena-lang/elenasrc2/common/altstrings.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/common/altstrings.cpp
 	"common.h"
 	"altstrings.h"
 	<math.h>
 
-1572613706 /home/alex/elena-lang/elenasrc2/common/common.h
+1605875009 /home/alex/elena-lang/elenasrc2/common/common.h
 	<stdlib.h>
 	<stdio.h>
 	<string.h>
+	<cstdint>
 	<wchar.h>
 	<climits>
 	"tools.h"
@@ -20,15 +21,15 @@
 1558014950 /home/alex/elena-lang/elenasrc2/common/tools.h
 	<ctype.h>
 
-1584352132 /home/alex/elena-lang/elenasrc2/common/altstrings.h
+1605874726 /home/alex/elena-lang/elenasrc2/common/altstrings.h
 
-1558620371 /home/alex/elena-lang/elenasrc2/common/streams.h
+1605874726 /home/alex/elena-lang/elenasrc2/common/streams.h
 
-1558014950 /home/alex/elena-lang/elenasrc2/common/dump.h
+1605874726 /home/alex/elena-lang/elenasrc2/common/dump.h
 
-1578303170 /home/alex/elena-lang/elenasrc2/common/lists.h
+1605874726 /home/alex/elena-lang/elenasrc2/common/lists.h
 
-1594647865 /home/alex/elena-lang/elenasrc2/common/files.h
+1605874726 /home/alex/elena-lang/elenasrc2/common/files.h
 
 1558014950 source:/home/alex/elena-lang/elenasrc2/common/config.cpp
 	"config.h"
@@ -40,11 +41,11 @@
 1558014950 /home/alex/elena-lang/elenasrc2/common/xmlreader.h
 	"common.h"
 
-1558014950 source:/home/alex/elena-lang/elenasrc2/common/dump.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/common/dump.cpp
 	"common.h"
 	"dump.h"
 
-1578300732 source:/home/alex/elena-lang/elenasrc2/common/files.cpp
+1605875130 source:/home/alex/elena-lang/elenasrc2/common/files.cpp
 	"common.h"
 	"files.h"
 	<windows.h>
@@ -56,49 +57,49 @@
 1558014950 source:/home/alex/elena-lang/elenasrc2/common/xmlreader.cpp
 	"xmlreader.h"
 
-1594236580 source:/home/alex/elena-lang/elenasrc2/engine/bytecode.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/engine/bytecode.cpp
 	"elena.h"
 	"bytecode.h"
 
-1594236580 /home/alex/elena-lang/elenasrc2/engine/elena.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/elena.h
 	"common.h"
 	"elenaconst.h"
 	"section.h"
 
-1594650003 /home/alex/elena-lang/elenasrc2/engine/elenaconst.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/elenaconst.h
 
-1558620521 /home/alex/elena-lang/elenasrc2/engine/section.h
+1605875287 /home/alex/elena-lang/elenasrc2/engine/section.h
 
-1594236580 /home/alex/elena-lang/elenasrc2/engine/bytecode.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/bytecode.h
 
-1594615480 source:/home/alex/elena-lang/elenasrc2/engine/compilerlogic.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/engine/compilerlogic.cpp
 	"elena.h"
 	"compilerlogic.h"
 	"errors.h"
 
-1594236580 /home/alex/elena-lang/elenasrc2/engine/compilerlogic.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/compilerlogic.h
 	"elena.h"
 	"compilercommon.h"
 
-1594236580 /home/alex/elena-lang/elenasrc2/engine/compilercommon.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/compilercommon.h
 	"syntaxtree.h"
 	"bytecode.h"
 
-1594236580 /home/alex/elena-lang/elenasrc2/engine/syntaxtree.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/syntaxtree.h
 
-1588740885 /home/alex/elena-lang/elenasrc2/elc/errors.h
+1605874726 /home/alex/elena-lang/elenasrc2/elc/errors.h
 
-1594615480 source:/home/alex/elena-lang/elenasrc2/engine/jitcompiler.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/engine/jitcompiler.cpp
 	"elena.h"
 	"jitcompiler.h"
 
-1594615480 /home/alex/elena-lang/elenasrc2/engine/jitcompiler.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/jitcompiler.h
 
-1594615480 source:/home/alex/elena-lang/elenasrc2/engine/jitlinker.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/engine/jitlinker.cpp
 	"elena.h"
 	"jitlinker.h"
 
-1594615480 /home/alex/elena-lang/elenasrc2/engine/jitlinker.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/jitlinker.h
 	"jitcompiler.h"
 
 1578300732 source:/home/alex/elena-lang/elenasrc2/engine/libman.cpp
@@ -108,13 +109,13 @@
 
 1558014950 /home/alex/elena-lang/elenasrc2/engine/libman.h
 
-1558014950 /home/alex/elena-lang/elenasrc2/engine/module.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/module.h
 
-1580727266 source:/home/alex/elena-lang/elenasrc2/engine/loader.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/engine/loader.cpp
 	"elena.h"
 	"loader.h"
 
-1572608096 /home/alex/elena-lang/elenasrc2/engine/loader.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/loader.h
 	"jitlinker.h"
 
 1580727266 source:/home/alex/elena-lang/elenasrc2/engine/module.cpp
@@ -131,7 +132,7 @@
 	"elena.h"
 	"section.h"
 
-1594236580 source:/home/alex/elena-lang/elenasrc2/engine/syntaxtree.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/engine/syntaxtree.cpp
 	"elena.h"
 	"syntaxtree.h"
 	<stdarg.h>
@@ -142,39 +143,39 @@
 
 1558014950 /home/alex/elena-lang/elenasrc2/engine/x86helper.h
 
-1594615480 source:/home/alex/elena-lang/elenasrc2/engine/x86jitcompiler.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/engine/x86jitcompiler.cpp
 	"elena.h"
 	"x86jitcompiler.h"
 	"bytecode.h"
 
-1594615480 /home/alex/elena-lang/elenasrc2/engine/x86jitcompiler.h
+1605874726 /home/alex/elena-lang/elenasrc2/engine/x86jitcompiler.h
 	"jitcompiler.h"
 	"x86helper.h"
 
-1594236580 source:/home/alex/elena-lang/elenasrc2/elc/bcwriter.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/elc/bcwriter.cpp
 	"elena.h"
 	"bcwriter.h"
 
-1594236580 /home/alex/elena-lang/elenasrc2/elc/bcwriter.h
+1605874726 /home/alex/elena-lang/elenasrc2/elc/bcwriter.h
 	"bytecode.h"
 	"compilercommon.h"
 
-1594236580 source:/home/alex/elena-lang/elenasrc2/elc/compiler.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/elc/compiler.cpp
 	"elena.h"
 	"compiler.h"
 	"errors.h"
 	<errno.h>
 
-1594236580 /home/alex/elena-lang/elenasrc2/elc/compiler.h
+1605874726 /home/alex/elena-lang/elenasrc2/elc/compiler.h
 	"elena.h"
 	"compilercommon.h"
 	"bcwriter.h"
 
-1594236580 source:/home/alex/elena-lang/elenasrc2/elc/compilerscope.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/elc/compilerscope.cpp
 	"elena.h"
 	"compilerscope.h"
 
-1580727266 /home/alex/elena-lang/elenasrc2/elc/compilerscope.h
+1605874726 /home/alex/elena-lang/elenasrc2/elc/compilerscope.h
 	"compilercommon.h"
 	"derivation.h"
 
@@ -192,22 +193,22 @@
 
 1558619716 /home/alex/elena-lang/elenasrc2/engine/textparser.h
 
-1588740885 source:/home/alex/elena-lang/elenasrc2/elc/derivation.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/elc/derivation.cpp
 	"elena.h"
 	"derivation.h"
 	"errors.h"
 
-1594615480 source:/home/alex/elena-lang/elenasrc2/elc/image.cpp
+1605874726 source:/home/alex/elena-lang/elenasrc2/elc/image.cpp
 	"elena.h"
 	"image.h"
 	"errors.h"
 	"bytecode.h"
 
-1580727266 /home/alex/elena-lang/elenasrc2/elc/image.h
+1605874726 /home/alex/elena-lang/elenasrc2/elc/image.h
 	"loader.h"
 	"project.h"
 
-1588740885 /home/alex/elena-lang/elenasrc2/elc/project.h
+1605874726 /home/alex/elena-lang/elenasrc2/elc/project.h
 	"libman.h"
 	"compilercommon.h"
 	"separser.h"

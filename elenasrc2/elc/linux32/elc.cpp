@@ -232,13 +232,21 @@ int main(int argc, char* argv[])
       for (int i = 1 ; i < argc ; i++) {
          if (argv[i][0]=='-') {
             loadDefaultProjectIfRequired(project, defaultName, withoutProject);
-            project.setOption(argv[i] + 1);
+            project.setOption(argv[i] + 1, withoutProject);
          }
          else if (_ELENA_::Path::checkExtension(argv[i], "project")) {
             withoutProject = false;
             project.loadProject(argv[i]);
          }
-         else project.addSource(argv[i]);
+         else {
+            _ELENA_::FileName fileName(argv[i]);
+            if (defaultName.Length() == 0) {
+               defaultName.copy(fileName.c_str());
+
+               project.addSource(argv[i], defaultName.c_str());
+            }
+            project.addSource(argv[i], fileName.c_str());
+         }
       }
 
       loadDefaultProjectIfRequired(project, defaultName, withoutProject);

@@ -336,6 +336,7 @@ public:
    virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
    virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
 
+#ifdef _WIN32
    virtual void addSource(_ELENA_::path_t path, _ELENA_::path_t wideNs)
    {
       _ELENA_::IdentifierString ns;
@@ -343,6 +344,7 @@ public:
 
       addSource(path, ns.c_str());
    }
+#endif // _WIN32
    virtual void addSource(_ELENA_::path_t path, _ELENA_::ident_t ns)
    {
       _ELENA_::Path modulePath;

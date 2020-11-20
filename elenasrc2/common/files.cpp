@@ -320,11 +320,6 @@ bool Path :: checkExtension(path_t path, path_t extension)
    else return emptystr(extension);
 }
 
-bool Path :: comparePaths(path_t s1, path_t s2, size_t length)
-{
-   return StringHelper::compare(s1, s2, length);
-}
-
 // --- File ---
 
 File::File(path_t path, path_t mode, int encoding, bool withBOM)
