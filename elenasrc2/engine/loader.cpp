@@ -13,7 +13,7 @@ using namespace _ELENA_;
 
 // --- ImageLoader ---
 
-void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask)
+void _ImageLoader :: mapReference(ident_t reference, vaddr_t vaddress, size_t mask)
 {
    switch (mask) {
       case mskConstantRef:
@@ -63,7 +63,7 @@ void _ImageLoader :: mapReference(ident_t reference, void* vaddress, size_t mask
    }
 }
 
-void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask)
+void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, vaddr_t vaddress, ref_t mask)
 {
    if (referenceInfo.isRelative()) {
       IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);
@@ -84,28 +84,28 @@ ref_t _ImageLoader :: resolveExternal(ident_t external)
    return reference;
 }
 
-void* _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
+vaddr_t _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
 {
    if (mask != 0) {
       switch (mask) {
          case mskConstantRef:
          //case mskConstArray:
-            return (void*)_constReferences.get(reference);
+            return _constReferences.get(reference);
          case mskInt64Ref:
          case mskInt32Ref:
          case mskRealRef:
-            return (void*)_numberReferences.get(reference);
+            return _numberReferences.get(reference);
          case mskCharRef:
-            return (void*)_characterReferences.get(reference);
+            return _characterReferences.get(reference);
          case mskLiteralRef:
-            return (void*)_literalReferences.get(reference);
+            return _literalReferences.get(reference);
          case mskWideLiteralRef:
-            return (void*)_wideReferences.get(reference);
+            return _wideReferences.get(reference);
          case mskSymbolRelRef:
          case mskSymbolRef:
-           return (void*)_symbolReferences.get(reference);
+           return _symbolReferences.get(reference);
          case mskImportRef:
-            return (void*)resolveExternal(reference);
+            return resolveExternal(reference);
 //         case mskRelImportRef:
 //            //HOTFIX : relative import ref mask should not be lost
 //            return (void*)(resolveExternal(reference) | mskRelImportRef);
@@ -113,22 +113,22 @@ void* _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
 //            return (void*)_statReferences.get(reference);
          case mskMessageTableRef:
          case mskMetaAttributes:
-            return (void*)INVALID_REF; // !! HOTFIX : should be always resolved
+            return INVALID_REF; // !! HOTFIX : should be always resolved
          default:
          {
             size_t imageMask = mask & mskImageMask;
             switch (imageMask) {
                case mskCodeRef:
                case mskRelCodeRef:
-                  return (void*)_codeReferences.get(reference);
+                  return _codeReferences.get(reference);
                case mskRDataRef:
-                  return (void*)_dataReferences.get(reference);
+                  return _dataReferences.get(reference);
                case mskStatRef:
-                  return (void*)_statReferences.get(reference);
+                  return _statReferences.get(reference);
                case mskDataRef:
-                  return (void*)_bssReferences.get(reference);
+                  return _bssReferences.get(reference);
                default:
-                  return NULL;
+                  return 0;
             }
          }      
       }
@@ -138,7 +138,7 @@ void* _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
    else throw InternalError("Unsupported");
 }
 
-void* _ImageLoader :: resolveReference(ReferenceInfo referenceInfo, ref_t mask)
+vaddr_t _ImageLoader :: resolveReference(ReferenceInfo referenceInfo, ref_t mask)
 {
    if (referenceInfo.isRelative()) {
       IdentifierString fullName(referenceInfo.module->Name(), referenceInfo.referenceName);

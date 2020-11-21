@@ -21,12 +21,12 @@ public:
    virtual SectionInfo getCoreSection(ref_t reference) = 0;
    virtual SectionInfo getSection(ref_t reference, _Module* module = nullptr) = 0;
 
-   virtual void* getVAddress(MemoryWriter& writer, ref_t mask) = 0;
+   virtual vaddr_t getVAddress(MemoryWriter& writer, ref_t mask) = 0;
 
    virtual mssg_t resolveMessage(mssg_t reference, _Module* module = nullptr) = 0;
 
    virtual void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp, _Module* module = NULL) = 0;
-   virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, pos_t disp) = 0;
+   virtual void writeReference(MemoryWriter& writer, vaddr_t vaddress, bool relative, pos_t disp) = 0;
    virtual void writeMTReference(MemoryWriter& writer) = 0;
 
    //// used for 64bit programming, currently only for mskVMTXMethodAddress and mskVMTXEntryOffset
@@ -79,37 +79,39 @@ public:
    virtual void allocateThreadTable(_JITLoader* loader, int length) = 0;
    virtual int allocateVMTape(_JITLoader* loader, void* tape, pos_t length) = 0;
 
-   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
+   virtual pos_t allocateConstant(MemoryWriter& writer, size_t objectOffset) = 0;
    virtual void allocateVMT(MemoryWriter& vmtWriter, ref_t flags, pos_t vmtLength, pos_t staticSize) = 0;
 
-   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
+   virtual pos_t copyParentVMT(void* parentVMT, VMTEntry* entries) = 0;
 
-   virtual uintptr_t findMethodAddress(void* refVMT, mssg_t messageID, size_t vmtLength) = 0;
+   virtual vaddr_t findMethodAddress(void* refVMT, mssg_t messageID, size_t vmtLength) = 0;
    virtual pos_t findMethodIndex(void* refVMT, mssg_t messageID, size_t vmtLength) = 0;
+
    virtual ref_t findFlags(void* refVMT) = 0;
+
    virtual size_t findLength(void* refVMT) = 0;
 //   virtual void* findClassPtr(void* refVMT) = 0;
 
-   virtual void addVMTEntry(mssg_t message, uintptr_t codePosition, VMTEntry* entries, size_t& count) = 0;
+   virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count) = 0;
 
-   virtual void fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t packageParentVAddress, 
-      size_t count, bool virtualMode) = 0;
+   virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t packageParentVAddress,
+      pos_t count, bool virtualMode) = 0;
 
 ////   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
 
-   virtual void* getPreloadedReference(ref_t reference) = 0;
+   virtual vaddr_t getPreloadedReference(ref_t reference) = 0;
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode) = 0;
-   virtual void setTLSKey(void* ptr) = 0;
-   virtual void setThreadTable(void* ptr) = 0;
-   virtual void setEHTable(void* ptr) = 0;
-   virtual void setGCTable(void* ptr) = 0;
-   virtual void setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode) = 0;
+   virtual void setTLSKey(vaddr_t ptr) = 0;
+   virtual void setThreadTable(vaddr_t ptr) = 0;
+   virtual void setEHTable(vaddr_t ptr) = 0;
+   virtual void setGCTable(vaddr_t ptr) = 0;
+   virtual void setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtualMode) = 0;
 
-   virtual void* getInvoker() = 0;
+   virtual vaddr_t getInvoker() = 0;
 
    virtual void generateProgramStart(MemoryDump& tape) = 0;
-   virtual void generateSymbolCall(MemoryDump& tape, void* address) = 0;
+   virtual void generateSymbolCall(MemoryDump& tape, vaddr_t address) = 0;
    virtual void generateProgramEnd(MemoryDump& tape) = 0;
 };
 
@@ -135,19 +137,20 @@ public:
    virtual void allocateArray(MemoryWriter& writer, size_t count);
 
    // return VMT field position
-   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
+   virtual pos_t allocateConstant(MemoryWriter& writer, size_t objectOffset);
 
    virtual ref_t findFlags(void* refVMT);
+
    virtual size_t findLength(void* refVMT);
    virtual uintptr_t findMethodAddress(void* refVMT, mssg_t messageID, size_t vmtLength);
    virtual pos_t findMethodIndex(void* refVMT, mssg_t messageID, size_t vmtLength);
    virtual void* findClassPtr(void* refVMT);
 
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
-   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
-   virtual void addVMTEntry(mssg_t message, size_t codePosition, VMTEntry* entries, size_t& count);
-   virtual void fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t packageParentVAddress, 
-      size_t count, bool virtualMode);
+   virtual pos_t copyParentVMT(void* parentVMT, VMTEntry* entries);
+   virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count);
+   virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t packageParentVAddress, 
+      pos_t count, bool virtualMode);
 
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateProgramEnd(MemoryDump& tape);
@@ -175,7 +178,7 @@ public:
    virtual void allocateArray(MemoryWriter& writer, size_t count);
 
    // return VMT field position
-   virtual int allocateConstant(MemoryWriter& writer, size_t objectOffset);
+   virtual pos_t allocateConstant(MemoryWriter& writer, size_t objectOffset);
 
    virtual ref_t findFlags(void* refVMT);
    virtual size_t findLength(void* refVMT);
@@ -186,11 +189,12 @@ public:
    virtual void* findClassPtr(void* refVMT);
 
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
-   virtual int copyParentVMT(void* parentVMT, VMTEntry* entries);
-   virtual int copyParentVMTX(void* parentVMT, VMTXEntry* entries);
-   virtual void addVMTEntry(mssg_t message, uintptr_t codePosition, VMTEntry* entries, size_t& count);
-   virtual void addVMTXEntry(mssg64_t message, uintptr_t codePosition, VMTXEntry* entries, size_t& entryCount);
-   virtual void fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t packageParentVAddress, size_t count, bool virtualMode);
+   virtual pos_t copyParentVMT(void* parentVMT, VMTEntry* entries);
+   virtual pos_t copyParentVMTX(void* parentVMT, VMTXEntry* entries);
+   virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count);
+   virtual void addVMTXEntry(mssg64_t message, vaddr_t codePosition, VMTXEntry* entries, pos_t& entryCount);
+   virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t packageParentVAddress, pos_t count, 
+      bool virtualMode);
 
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateProgramEnd(MemoryDump& tape);

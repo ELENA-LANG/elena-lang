@@ -19,8 +19,8 @@ namespace _ELENA_
 
 struct ImageBaseMap
 {
-   pos_t base;
-   pos_t code, adata, mdata, rdata, bss, stat, tls, import;
+   vaddr_t base;
+   vaddr_t code, adata, mdata, rdata, bss, stat, tls, import;
 
    RelocationFixMap importMapping;
 
@@ -51,7 +51,7 @@ class Linker
 
       // Linker target image properties
       int  headerSize, imageSize;
-      int  entryPoint;
+      vaddr_t entryPoint;
 
       ImageInfo(Project* project, Image* image)
          : importTable(NULL, freeobj)

@@ -142,9 +142,9 @@ void InstanceConfig :: init(path_t configPath, XmlConfigFile& config)
 
 // --- Instance::ImageReferenceHelper ---
 
-void Instance::ImageReferenceHelper :: writeTape(MemoryWriter& tape, void* vaddress, int mask)
+void Instance::ImageReferenceHelper :: writeTape(MemoryWriter& tape, vaddr_t vaddress, int mask)
 {
-   int ref = (size_t)vaddress - (test(mask, mskRDataRef) ? _statBase : _codeBase);
+   int ref = vaddress - (test(mask, mskRDataRef) ? _statBase : _codeBase);
 
    tape.writeDWord(ref | mask);
 }
@@ -158,15 +158,15 @@ void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, ref_
    else writer.writeDWord((test(reference, mskRDataRef) ? _statBase : _codeBase) + pos + disp);
 }
 
-void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, void* vaddress, bool relative, size_t disp)
+void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, vaddr_t vaddress, bool relative, size_t disp)
 {
-   uintptr_t address = (uintptr_t)vaddress;
+   ref_t address = (ref_t)vaddress;
 
    // calculate relative address
    if (relative)
-      address -= ((uintptr_t)writer.Address() + 4);
+      address -= ((ref_t)writer.Address() + 4);
 
-   writer.writePtr(address + disp);
+   writer.writeDWord(address + disp);
 }
 
 void Instance::ImageReferenceHelper :: writeMTReference(MemoryWriter& writer)
@@ -521,7 +521,7 @@ ident_t Instance :: getSubject(ref_t subjectRef)
    return _linker->retrieveResolvedAction(subjectRef);
 }
 
-void* Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
+vaddr_t Instance :: loadSymbol(ident_t reference, int mask, bool silentMode)
 {
    // reference should not be a forward one
    while (isForwardReference(reference)) {
@@ -722,10 +722,10 @@ bool Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode, bool wi
       printInfo(ELENAVM_DEBUGINFO);
    }
 
-   _compiler->setTLSKey((void*)*env->TLSIndex);
-   _compiler->setThreadTable(env->ThreadTable);
-   _compiler->setEHTable(sehTable);
-   _compiler->setGCTable(env->Table);
+   _compiler->setTLSKey(*env->TLSIndex);
+   _compiler->setThreadTable((vaddr_t)env->ThreadTable);
+   _compiler->setEHTable((vaddr_t)sehTable);
+   _compiler->setGCTable((vaddr_t)env->Table);
 
    // load predefined code
    _linker->prepareCompiler();
@@ -767,7 +767,7 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
 
    // resolve tape
    size_t command = reader.getDWord();
-   void*  extra_param = nullptr;
+   vaddr_t  extra_param = 0;
    while (command != terminator) {
       ident_t arg = NULL;
       size_t param = reader.getDWord();
@@ -1026,7 +1026,7 @@ void Instance :: onNewInitializers(SystemEnv* env)
    // compile byte code
    MemoryReader reader(&ecodes);
 
-   void* vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, nullptr);
+   vaddr_t vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, nullptr);
 
    // update debug section size if available
    if (_debugMode) {
@@ -1086,7 +1086,7 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
    // compile byte code
    MemoryReader reader(&ecodes);
 
-   void* vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, (void*)tape);
+   vaddr_t vaddress = _linker->resolveTemporalByteCode(helper, reader, TAPE_SYMBOL, tape);
 
    // update debug section size if available
    if (_debugMode) {
@@ -1114,11 +1114,11 @@ int Instance :: interprete(SystemEnv* env, void* sehTable, void* tape, bool stan
    int retVal = 0;
    if (!standAlone) {
       // HOTFIX : load invoker
-      entry.address = _compiler->getInvoker();
+      entry.address = (void*)_compiler->getInvoker();
 
-      retVal = __routineProvider.ExecuteInFrame(env, entry, vaddress);
+      retVal = __routineProvider.ExecuteInFrame(env, entry, (void*)vaddress);
    }
-   else retVal = entry.evaluate2(0, vaddress);
+   else retVal = entry.evaluate2(0, (void*)vaddress);
 
    if (retVal == 0)
       setStatus("Broken");

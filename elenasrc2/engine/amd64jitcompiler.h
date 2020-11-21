@@ -87,7 +87,7 @@ protected:
    void* _inlines[0x100];
 
    // preloaded references
-   IntFixedMap<void*> _preloaded;
+   IntFixedMap<vaddr_t> _preloaded;
 
 //   void writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code);
 
@@ -97,7 +97,7 @@ public:
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
 
-   virtual void* getPreloadedReference(ref_t reference);
+   virtual ref_t getPreloadedReference(ref_t reference);
 
    virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader);
 
@@ -111,16 +111,16 @@ public:
 //   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
 
    virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
-   virtual void setTLSKey(void* ptr);
-   virtual void setThreadTable(void* ptr);
-   virtual void setEHTable(void* ptr);
-   virtual void setGCTable(void* ptr);
-   virtual void setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode);
+   virtual void setTLSKey(vaddr_t ptr);
+   virtual void setThreadTable(vaddr_t ptr);
+   virtual void setEHTable(vaddr_t ptr);
+   virtual void setGCTable(vaddr_t ptr);
+   virtual void setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtualMode);
 
-   virtual void* getInvoker();
+   virtual vaddr_t getInvoker();
 
    virtual void generateProgramStart(MemoryDump& tape);
-   virtual void generateSymbolCall(MemoryDump& tape, void* address);
+   virtual void generateSymbolCall(MemoryDump& tape, vaddr_t address);
    virtual void generateProgramEnd(MemoryDump& tape);
 
    I64JITCompiler(bool debugMode);

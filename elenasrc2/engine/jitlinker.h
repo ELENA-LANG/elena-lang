@@ -15,7 +15,7 @@ namespace _ELENA_
 {
 
 // -- Loader basic constant --
-#define LOADER_NOTLOADED (void*)-1
+#define LOADER_NOTLOADED (vaddr_t)-1
 
 // --- JITUnresolvedException ---
 struct JITUnresolvedException
@@ -77,7 +77,7 @@ class JITLinker : _JITLoaderListener
       virtual SectionInfo getSection(ref_t reference, _Module* module);
       virtual SectionInfo getCoreSection(ref_t reference);
 
-      virtual void* getVAddress(MemoryWriter& writer, ref_t mask)
+      virtual vaddr_t getVAddress(MemoryWriter& writer, ref_t mask)
       {
          return _owner->calculateVAddress(&writer, mask);
       }
@@ -87,7 +87,7 @@ class JITLinker : _JITLoaderListener
       virtual void addBreakpoint(pos_t position);
 
       virtual void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp, _Module* module);
-      virtual void writeReference(MemoryWriter& writer, void* vaddress, bool relative, pos_t disp);
+      virtual void writeReference(MemoryWriter& writer, vaddr_t vaddress, bool relative, pos_t disp);
       virtual void writeMTReference(MemoryWriter& writer)
       {
          if (_owner->_virtualMode) {
@@ -111,8 +111,8 @@ class JITLinker : _JITLoaderListener
       }
    };
 
-   typedef Pair<void*, mssg_t>                  MethodInfo;
-   typedef MemoryMap<MethodInfo, uintptr_t, false> MethodMap;
+   typedef Pair<ref_t, mssg_t>                 MethodInfo;
+   typedef MemoryMap<MethodInfo, ref_t, false> MethodMap;
 //   typedef Memory32HashTable<ident_t, void*, mapReferenceKey, 29> StrongTypeMap;
 
    typedef Pair<_Module*, ref_t>            ModuleReference;
@@ -124,32 +124,32 @@ class JITLinker : _JITLoaderListener
    bool              _withDebugInfo;
    bool              _classSymbolAutoLoadMode;
    bool              _withExtDispatchers;
-   void*             _codeBase;
-   int               _statLength;
+   vaddr_t           _codeBase;
+   pos_t             _statLength;
    MethodMap         _staticMethods;
    ModuleReferences  _initializers;
 
 //   int            _uniqueID;           // used for dynamic subject
 
-   void createNativeDebugInfo(ident_t reference, void* param, size_t& sizePtr);
-   void createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, void* address, size_t& sizePtr);
-   void createNativeClassDebugInfo(ReferenceInfo referenceInfo, void* vaddress, size_t& sizePtr);
+   void createNativeDebugInfo(ident_t reference, void* param, pos_t& sizePtr);
+   void createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, vaddr_t address, pos_t& sizePtr);
+   void createNativeClassDebugInfo(ReferenceInfo referenceInfo, vaddr_t vaddress, pos_t& sizePtr);
    void endNativeDebugInfo(size_t sizePtr);
 
-   void* getVMTAddress(void* vaddress);
-   void* getVMTAddress(_Module* module, ref_t reference, References& references);
+   //vaddr_t getVMTAddress(ref_t address);
+   vaddr_t getVMTAddress(_Module* module, ref_t reference, References& references);
    void* getVMTReference(_Module* module, ref_t reference, References& references);
-   uintptr_t resolveVMTMethodAddress(_Module* module, ref_t reference, mssg_t messageID);
-   uintptr_t getVMTMethodAddress(void* vaddress, mssg_t messageID);   
-   pos_t getVMTMethodIndex(void* vaddress, mssg_t messageID);
-   ref_t getVMTFlags(void* vaddress);
+   vaddr_t resolveVMTMethodAddress(_Module* module, ref_t reference, mssg_t messageID);
+   vaddr_t getVMTMethodAddress(ref_t vaddress, mssg_t messageID);
+   pos_t getVMTMethodIndex(ref_t address, mssg_t messageID);
+   ref_t getVMTFlags(vaddr_t vaddress);
 
-   void generateMetaAttribute(int category, ident_t fullName, void* address);
-   void generateMetaAttribute(int category, ReferenceInfo& referenceInfo, int mask);
+   void generateMetaAttribute(int category, ident_t fullName, vaddr_t address);
+   void generateMetaAttribute(int category, ReferenceInfo& referenceInfo, ref_t mask);
    void generateOverloadListMetaAttribute(_Module* module, mssg_t message, ref_t listRef);
 
    void fixReferences(References& relocations, _Memory* image);
-   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, size_t position, void* &vmtVAddress, 
+   void fixSectionReferences(SectionInfo& sectionInfo, _Memory* image, pos_t position, vaddr_t &vmtVAddress, 
       bool constArrayMode, References* messageReferences);
 
    uintptr_t loadMethod(ReferenceHelper& refHelper, MemoryReader& reader, MemoryWriter& writer);
@@ -161,24 +161,24 @@ class JITLinker : _JITLoaderListener
 
    void createAttributes(ReferenceInfo& referenceInfo, ClassInfo::CategoryInfoMap& attributes);
 
-   void* resolveNativeVariable(ReferenceInfo referenceInfo, ref_t mask);
+   vaddr_t resolveNativeVariable(ReferenceInfo referenceInfo, ref_t mask);
 ////   void* resolveConstVariable(ident_t  reference, int mask);
-   void* resolveNativeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo);
-   void* resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo);
-   void* createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo, References& references);
-   void* resolveBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo);
-   void* resolveConstant(ReferenceInfo referenceInfo, ref_t mask, bool silentMode);
-   void* resolveStaticVariable(ReferenceInfo referenceInfo, ref_t mask);
+   vaddr_t resolveNativeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo);
+   vaddr_t resolveBytecodeSection(ReferenceInfo referenceInfo, ref_t mask, SectionInfo sectionInfo);
+   vaddr_t createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo, References& references);
+   vaddr_t resolveBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t mask, ClassSectionInfo sectionInfo);
+   vaddr_t resolveConstant(ReferenceInfo referenceInfo, ref_t mask, bool silentMode);
+   vaddr_t resolveStaticVariable(ReferenceInfo referenceInfo, ref_t mask);
 //   void* resolveAnonymousStaticVariable();
-   void* resolveMessageTable(ReferenceInfo referenceInfo, ref_t mask);
-   void* resolveMetaAttributeTable(ReferenceInfo referenceInfo, ref_t mask);
-   void* resolveMessage(ReferenceInfo referenceInfo, ident_t vmt);
-   void* resolveAction(ReferenceInfo referenceInfo, ident_t vmt);
-   void* resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt);
+   vaddr_t resolveMessageTable(ReferenceInfo referenceInfo, ref_t mask);
+   vaddr_t resolveMetaAttributeTable(ReferenceInfo referenceInfo, ref_t mask);
+   vaddr_t resolveMessage(ReferenceInfo referenceInfo, ident_t vmt);
+   vaddr_t resolveAction(ReferenceInfo referenceInfo, ident_t vmt);
+   vaddr_t resolveExtensionMessage(ReferenceInfo referenceInfo, ident_t vmt);
 //////   void* resolveThreadSafeVariable(const TCHAR*  reference, int mask);
 
-   void* resolveClassName(ReferenceInfo referenceInfo);
-   void* resolvePackage(_Module* module);
+   vaddr_t resolveClassName(ReferenceInfo referenceInfo);
+   vaddr_t resolvePackage(_Module* module);
 
    void resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader& vmtReader, MemoryReader& attrReader, 
       _Memory* vmtImage, pos_t position);
@@ -187,12 +187,12 @@ public:
    void prepareCompiler();
    void fixImage(ident_t superClass);
 
-   void* resolve(ReferenceInfo referenceInfo, int mask, bool silentMode);
-   void* resolve(ident_t reference, int mask, bool silentMode);
+   vaddr_t resolve(ReferenceInfo referenceInfo, int mask, bool silentMode);
+   vaddr_t resolve(ident_t reference, int mask, bool silentMode);
 
-   void* resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
+   vaddr_t resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
 
-   void* resolveEntry(void* programEntry);
+   vaddr_t resolveEntry(vaddr_t programEntry);
 
 //   //void loadModuleInfo(_Module* module);
 
@@ -205,13 +205,13 @@ public:
 
 //   bool getDebugMode() const { return _withDebugInfo; }
 
-   size_t getStaticCount() const 
+   pos_t getStaticCount() const 
    { 
       return _loader->getTargetSection((ref_t)mskStatRef)->Length() >> 2;
    }
 
-   void* calculateVAddress(MemoryWriter* writer, ref_t mask, int alignment);
-   void* calculateVAddress(MemoryWriter* writer, ref_t mask);
+   vaddr_t calculateVAddress(MemoryWriter* writer, ref_t mask, int alignment);
+   vaddr_t calculateVAddress(MemoryWriter* writer, ref_t mask);
 
    mssg_t parseMessage(ident_t reference);
    ref_t parseAction(ident_t reference);
@@ -219,7 +219,7 @@ public:
 
    virtual void onModuleLoad(_Module* module);
 
-   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, void* codeBase, bool withExtDispatchers, bool autoLoadMode = false)
+   JITLinker(_JITLoader* loader, _JITCompiler* compiler, bool virtualMode, vaddr_t codeBase, bool withExtDispatchers, bool autoLoadMode = false)
       : _staticMethods(INVALID_PTR)
    {
       _loader = loader;

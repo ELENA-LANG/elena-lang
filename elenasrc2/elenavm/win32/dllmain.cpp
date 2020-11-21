@@ -286,7 +286,7 @@ EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
       return 0;
 
    try {
-      return instance->getSymbolRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
+      return (void*)instance->getSymbolRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
    }
    catch (JITUnresolvedException& e)
    {
@@ -334,7 +334,7 @@ EXTERN_DLL_EXPORT void* LoadClassByString(void* systemEnv, void* referenceName)
       return 0;
 
    try {
-      return instance->getClassVMTRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
+      return (void*)instance->getClassVMTRef((SystemEnv*)systemEnv, (const char*)referenceName, false);
    }
    catch (JITUnresolvedException& e)
    {

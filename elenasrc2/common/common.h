@@ -24,16 +24,17 @@
 
 namespace _ELENA_
 {
-   typedef wchar_t              path_c;
-   typedef wchar_t              wide_c;
-   typedef unsigned int         unic_c;
+   typedef wchar_t            path_c;
+   typedef wchar_t            wide_c;
+   typedef unsigned int       unic_c;
 
    typedef unsigned char      uident_c;
-   typedef unsigned int          ref_t;
-   typedef unsigned int          pos_t;
-   typedef unsigned long long  ref64_t;
-   typedef unsigned long long  pos64_t;
-   typedef unsigned int         mssg_t;
+   typedef unsigned int       ref_t;
+   typedef unsigned int       pos_t;
+   typedef unsigned int       vaddr_t;
+   typedef unsigned long long ref64_t;
+   typedef unsigned long long pos64_t;
+   typedef unsigned int       mssg_t;
    typedef unsigned long long mssg64_t;
 
    typedef unsigned __int64   uint64_t;
@@ -50,18 +51,19 @@ namespace _ELENA_
 
 namespace _ELENA_
 {
-   typedef char                path_c;
-   typedef unsigned short      wide_c;
-   typedef unsigned int        unic_c;
+   typedef char               path_c;
+   typedef unsigned short     wide_c;
+   typedef unsigned int       unic_c;
 
-   typedef unsigned char       uident_c;
-   typedef unsigned int        ref_t;
-   typedef unsigned int        pos_t;
-   typedef unsigned long long  ref64_t;
-   typedef unsigned long long  pos64_t;
+   typedef unsigned char      uident_c;
+   typedef unsigned int       ref_t;
+   typedef unsigned int       pos_t;
+   typedef unsigned int       vaddr_t;
+   typedef unsigned long long ref64_t;
+   typedef unsigned long long pos64_t;
    typedef unsigned int        mssg_t;
    typedef unsigned long long mssg64_t;
-   typedef unsigned long long  pos64_t;
+   typedef unsigned long long pos64_t;
 
    typedef unsigned long long uint64_t;
 

@@ -1926,7 +1926,7 @@ inline void loadCoreData(_ReferenceHelper& helper, x86JITScope& dataScope, ref_t
 }
 
 inline void loadRoutines(int functionNumber, const int* functions, x86JITScope& scope,
-   IntFixedMap<void*>& preloaded)
+   IntFixedMap<vaddr_t>& preloaded)
 {
    for (int i = 0; i < functionNumber; i++) {
       if (!preloaded.exist(functions[i])) {
@@ -2036,37 +2036,37 @@ void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, 
    }
 }
 
-void x86JITCompiler :: setTLSKey(void* ptr)
+void x86JITCompiler :: setTLSKey(pos_t ptr)
 {
    _preloaded.add(CORE_TLS_INDEX, ptr);
 }
 
-void x86JITCompiler :: setThreadTable(void* ptr)
+void x86JITCompiler :: setThreadTable(vaddr_t ptr)
 {
    _preloaded.add(CORE_THREADTABLE, ptr);
 }
 
-void x86JITCompiler :: setEHTable(void* ptr)
+void x86JITCompiler :: setEHTable(vaddr_t ptr)
 {
    _preloaded.add(CORE_EH_TABLE, ptr);
 }
 
-void x86JITCompiler :: setGCTable(void* ptr)
+void x86JITCompiler :: setGCTable(vaddr_t ptr)
 {
    _preloaded.add(CORE_GC_TABLE, ptr);
 }
 
-void* x86JITCompiler :: getPreloadedReference(ref_t reference)
+vaddr_t x86JITCompiler :: getPreloadedReference(ref_t reference)
 {
-   return (void*)_preloaded.get(reference);
+   return _preloaded.get(reference);
 }
 
-void* x86JITCompiler :: getInvoker()
+vaddr_t x86JITCompiler :: getInvoker()
 {
-   return (void*)_preloaded.get(INVOKER);
+   return _preloaded.get(INVOKER);
 }
 
-void x86JITCompiler :: setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode)
+void x86JITCompiler :: setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtualMode)
 {
    if (virtualMode) {
       pos_t offset = ((size_t)_preloaded.get(VOID) & ~mskAnyRef);
@@ -2096,8 +2096,8 @@ void x86JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumb
    }
 
    // map thread table
-   loader->mapReference(ReferenceInfo(GC_THREADTABLE), (void*)(position | mskDataRef), (ref_t)mskDataRef);
-   _preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
+   loader->mapReference(ReferenceInfo(GC_THREADTABLE), (position | mskDataRef), (ref_t)mskDataRef);
+   _preloaded.add(CORE_THREADTABLE, position | mskDataRef);
 }
 
 int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
@@ -2109,8 +2109,8 @@ int x86JITCompiler :: allocateTLSVariable(_JITLoader* loader)
    allocateVariable(dataWriter);
 
    // map TLS index
-   loader->mapReference(ReferenceInfo(TLS_KEY), (void*)(position | mskDataRef), (ref_t)mskDataRef);
-   _preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
+   loader->mapReference(ReferenceInfo(TLS_KEY), position | mskDataRef, (ref_t)mskDataRef);
+   _preloaded.add(CORE_TLS_INDEX, position | mskDataRef);
 
    return position;
 }
@@ -2125,7 +2125,7 @@ int x86JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t lengt
    dataWriter.write(tape, length);
 
    // map VMTape
-   loader->mapReference(ReferenceInfo(TAPE_KEY), (void*)(position | mskRDataRef), (ref_t)mskRDataRef);
+   loader->mapReference(ReferenceInfo(TAPE_KEY), position | mskRDataRef, (ref_t)mskRDataRef);
 
    return position;
 }
@@ -2174,12 +2174,12 @@ void x86JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& 
    alignCode(&codeWriter, 0x04, true);
 }
 
-void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
+void x86JITCompiler :: generateSymbolCall(MemoryDump& tape, vaddr_t address)
 {
    MemoryWriter ecodes(&tape);
 
    ecodes.writeByte(bcCallR);
-   ecodes.writeDWord((size_t)address | mskCodeRef);
+   ecodes.writeDWord(address | mskCodeRef);
 }
 
 void x86JITCompiler :: generateProgramEnd(MemoryDump& tape)

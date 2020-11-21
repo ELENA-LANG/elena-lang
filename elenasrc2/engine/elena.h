@@ -157,11 +157,11 @@ public:
 
    virtual ReferenceInfo retrieveReference(_Module* module, ref_t reference, ref_t mask) = 0;
 
-   virtual void* resolveReference(ReferenceInfo referenceInfo, ref_t mask) = 0;
+   virtual vaddr_t resolveReference(ReferenceInfo referenceInfo, ref_t mask) = 0;
 
 //   //virtual void mapPredefinedAction(ident_t name, ref_t reference) = 0;
 
-   virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask) = 0;
+   virtual void mapReference(ReferenceInfo referenceInfo, vaddr_t vaddress, ref_t mask) = 0;
 
    virtual void addListener(_JITLoaderListener* listener) = 0;
 
@@ -567,8 +567,8 @@ enum ClassAttribute : int
 struct ClassInfo
 {
    typedef Pair<ref_t, ref_t>                  FieldInfo;       // value1 - reference ; value2 - element
-   typedef Pair<mssg_t, int>                    Attribute;
-   typedef MemoryMap<mssg_t, bool, false>       MethodMap;
+   typedef Pair<mssg_t, int>                   Attribute;
+   typedef MemoryMap<mssg_t, bool, false>      MethodMap;
    typedef MemoryMap<ident_t, int, true>       FieldMap;
    typedef MemoryMap<ident_t, FieldInfo, true> StaticFieldMap;   // class static fields
    typedef MemoryMap<int, FieldInfo>           FieldTypeMap;

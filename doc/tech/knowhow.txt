@@ -158,3 +158,8 @@ quote - if r buffer selected - insert into the beginning of r, if s - to the end
 +=    - increament the scope counter
 -=    - decreament the scope counter
 ==    - insert the scope counter to r or s
+
+
+11) 64 bit support 
+
+- all code and data addresses should be 32bit one

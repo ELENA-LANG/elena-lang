@@ -39,21 +39,21 @@ public:
 
 private:
    Project* _project;
-   void*    _entryPoint;
+   vaddr_t  _entryPoint;
    size_t   _objectHeaderSize;
 
-   ident_t _literal;
-   ident_t _wideLiteral;
-   ident_t _character;
-   ident_t _int;
-   ident_t _long;
-   ident_t _real;
-   ident_t _message;
-   ident_t _ext_message;
-   ident_t _messageName;
+   ident_t  _literal;
+   ident_t  _wideLiteral;
+   ident_t  _character;
+   ident_t  _int;
+   ident_t  _long;
+   ident_t  _real;
+   ident_t  _message;
+   ident_t  _ext_message;
+   ident_t  _messageName;
 
 public:
-   virtual ref_t getEntryPoint()
+   virtual vaddr_t getEntryPoint()
    {
       return (ref_t)_entryPoint & ~mskAnyRef;
    }

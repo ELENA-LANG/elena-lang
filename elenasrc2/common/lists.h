@@ -137,6 +137,36 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
       return (this->key.value1 > key.value1 && this->key.value2 > key.value2);
    }
 
+   bool operator ==(Pair<unsigned int, unsigned int> key) const
+   {
+      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
+   }
+
+   bool operator !=(Pair<unsigned int, unsigned int> key) const
+   {
+      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
+   }
+
+   bool operator <=(Pair<unsigned int, unsigned int> key) const
+   {
+      return (this->key.value1 <= key.value1 && this->key.value2 <= key.value2);
+   }
+
+   bool operator <(Pair<unsigned int, unsigned int> key) const
+   {
+      return (this->key.value1 < key.value1&& this->key.value2 < key.value2);
+   }
+
+   bool operator >=(Pair<unsigned int, unsigned int> key) const
+   {
+      return (this->key.value1 >= key.value1 && this->key.value2 >= key.value2);
+   }
+
+   bool operator >(Pair<unsigned int, unsigned int> key) const
+   {
+      return (this->key.value1 > key.value1 && this->key.value2 > key.value2);
+   }
+
    bool operator ==(unsigned int key) const
    {
       return (this->key == key);
@@ -477,6 +507,11 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
    bool operator >(Pair<unsigned int, int> key) const
    {
       return (this->key.value1 > key.value1);
+   }
+
+   bool operator ==(Pair<unsigned int, unsigned int> key) const
+   {
+      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
    }
 
    bool operator ==(Pair<void*, unsigned int> key) const
@@ -2052,15 +2087,20 @@ public:
       return key;
    }
 
+   unsigned int storeKey(unsigned int position, Pair<unsigned int, unsigned int>)
+   {
+      return position;
+   }
+
    unsigned int storeKey(unsigned int position, Pair<unsigned int, int>)
    {
       return position;
    }
 
-   unsigned int storeKey(unsigned int position, Pair<void*, unsigned int>)
-   {
-      return position;
-   }
+   //unsigned int storeKey(unsigned int position, Pair<void*, unsigned int>)
+   //{
+   //   return position;
+   //}
 
    const char* storeKey(unsigned int position, ident_t key)
    {

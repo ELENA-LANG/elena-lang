@@ -1491,9 +1491,9 @@ void I64JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, 
    //}
 }
 
-void* I64JITCompiler :: getPreloadedReference(ref_t reference)
+ref_t I64JITCompiler :: getPreloadedReference(ref_t reference)
 {
-   return (void*)_preloaded.get(reference);
+   return _preloaded.get(reference);
 }
 
 void I64JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumber)
@@ -1606,7 +1606,7 @@ void I64JITCompiler :: generateProgramStart(MemoryDump& tape)
    //ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
 }
 
-void I64JITCompiler :: generateSymbolCall(MemoryDump& tape, void* address)
+void I64JITCompiler :: generateSymbolCall(MemoryDump& tape, vaddr_t address)
 {
    //MemoryWriter ecodes(&tape);
 
@@ -1629,33 +1629,33 @@ int I64JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t lengt
    return -1; // !! temporal
 }
 
-void I64JITCompiler :: setTLSKey(void* ptr)
+void I64JITCompiler :: setTLSKey(vaddr_t ptr)
 {
    // !! temporal
 }
 
-void I64JITCompiler :: setThreadTable(void* ptr)
+void I64JITCompiler :: setThreadTable(vaddr_t ptr)
 {
    // !! temporal
 }
 
-void I64JITCompiler :: setEHTable(void* ptr)
+void I64JITCompiler :: setEHTable(vaddr_t ptr)
 {
    // !! temporal
 }
 
-void I64JITCompiler :: setGCTable(void* ptr)
+void I64JITCompiler :: setGCTable(vaddr_t ptr)
 {
    // !! temporal
 }
 
-void I64JITCompiler :: setVoidParent(_JITLoader* loader, void* ptr, bool virtualMode)
+void I64JITCompiler :: setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtualMode)
 {
    // !! temporal
 }
 
-void* I64JITCompiler :: getInvoker()
+vaddr_t I64JITCompiler :: getInvoker()
 {
    // !! temporal
-   return nullptr;
+   return 0;
 }

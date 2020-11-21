@@ -40,7 +40,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
 
    //resolveExternal()
 
-   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (void*)mskCodeRef,
+   JITLinker linker(dynamic_cast<_JITLoader*>(this), compiler, true, (ref_t)mskCodeRef,
       project->BoolSetting(opExtDispatchers),
       project->BoolSetting(opClassSymbolAutoLoad));
 

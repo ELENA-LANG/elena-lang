@@ -25,8 +25,8 @@ using namespace _ELENA_;
 
 x86Instance :: x86Instance(ELENAVMMachine* machine)
    : Instance(machine),
+     _codeProcess(0x500000, false, true), 
      _debugProcess(0x200000, true, false),
-     _codeProcess(0x500000, false, true),
      _dataProcess(0x500000, false, false),
      _messageProcess(0x100000, false, false),
      _mattributeProcess(0x100000, false, false),
@@ -157,7 +157,7 @@ bool x86Instance :: restart(SystemEnv* env, void* sehTable, bool debugMode, bool
 
    // create new compiler & linker (in debug mode we do not use embedded symbols)
    _compiler = new _ELENA_::x86JITCompiler(debugMode);
-   _linker = new JITLinker(this, _compiler, false, _codeProcess.get(0)/*, _config.maxThread*/, withExtDispatchers);
+   _linker = new JITLinker(this, _compiler, false, (ref_t)_codeProcess.get(0)/*, _config.maxThread*/, withExtDispatchers);
 
    return Instance::restart(env, sehTable, debugMode, withExtDispatchers);
 }

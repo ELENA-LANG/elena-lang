@@ -213,7 +213,7 @@ void* JITCompiler32 :: findClassPtr(void* refVMT)
 
 ref_t JITCompiler32 :: findFlags(void* refVMT)
 {
-   return *(int*)((uintptr_t)refVMT - 0x08);  // !! explicit constant
+   return *(ref_t*)((uintptr_t)refVMT - 0x08);  // !! explicit constant
 }
 
 size_t JITCompiler32 :: findLength(void* refVMT)
@@ -222,7 +222,7 @@ size_t JITCompiler32 :: findLength(void* refVMT)
    return count;
 }
 
-uintptr_t JITCompiler32 :: findMethodAddress(void* refVMT, mssg_t message, size_t count)
+vaddr_t JITCompiler32 :: findMethodAddress(void* refVMT, mssg_t message, size_t count)
 {
    VMTEntry* entries = (VMTEntry*)refVMT;
 
@@ -252,7 +252,7 @@ pos_t JITCompiler32 :: findMethodIndex(void* refVMT, mssg_t message, size_t coun
    return (i < count) ? i : 0;
 }
 
-int JITCompiler32 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
+pos_t JITCompiler32 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
 {
    writer.writeBytes(0, objectOffset);
 
@@ -304,11 +304,11 @@ void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t 
    vmtWriter.seek(position);
 }
 
-int JITCompiler32 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
+pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
 {
    if (parentVMT != NULL) {
       // get the parent vmt size
-      int count = *(int*)((int)parentVMT - elVMTCountOffset32);
+      pos_t count = *(pos_t*)((uintptr_t)parentVMT - elVMTCountOffset32);
 
       // get the parent entry array
       VMTEntry* parentEntries = (VMTEntry*)parentVMT;
@@ -620,7 +620,7 @@ pos_t JITCompiler64 :: findMethodIndexX(void* refVMT, mssg64_t messageID, size_t
    return (i < count) ? i : 0;
 }
 
-int JITCompiler64 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
+pos_t JITCompiler64 :: allocateConstant(MemoryWriter& writer, size_t objectOffset)
 {
    writer.writeBytes(0, objectOffset);
 
@@ -672,17 +672,17 @@ void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t 
    vmtWriter.seek(position);
 }
 
-int JITCompiler64 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
+pos_t JITCompiler64 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
 {
    //HOTFIX : 64bit compiler supports only VMTX
    return copyParentVMTX(parentVMT, (VMTXEntry*)entries);
 }
 
-int JITCompiler64 :: copyParentVMTX(void* parentVMT, VMTXEntry* entries)
+pos_t JITCompiler64 :: copyParentVMTX(void* parentVMT, VMTXEntry* entries)
 {
    if (parentVMT != NULL) {
       // get the parent vmt size
-      int count = *(int*)((int)parentVMT - elVMTCountOffset64);
+      pos_t count = *(pos_t*)((uintptr_t)parentVMT - elVMTCountOffset64);
 
       // get the parent entry array
       VMTXEntry* parentEntries = (VMTXEntry*)parentVMT;

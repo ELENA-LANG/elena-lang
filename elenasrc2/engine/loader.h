@@ -29,15 +29,15 @@ protected:
    //// actions
    //ReferenceMap  _actions;         // actions
 
-   void mapReference(ident_t reference, void* vaddress, ref_t mask);
-   void* resolveReference(ident_t reference, ref_t mask);
+   void mapReference(ident_t reference, vaddr_t vaddress, ref_t mask);
+   vaddr_t resolveReference(ident_t reference, ref_t mask);
 
 public:
-   virtual void* resolveReference(ReferenceInfo referenceInfo, ref_t mask);
+   virtual vaddr_t resolveReference(ReferenceInfo referenceInfo, ref_t mask);
 
    virtual ref_t resolveExternal(ident_t external);
 
-   virtual void mapReference(ReferenceInfo referenceInfo, void* vaddress, ref_t mask);
+   virtual void mapReference(ReferenceInfo referenceInfo, vaddr_t vaddress, ref_t mask);
    //virtual void mapPredefinedAction(ident_t name, ref_t reference);
 
    void clearReferences()
