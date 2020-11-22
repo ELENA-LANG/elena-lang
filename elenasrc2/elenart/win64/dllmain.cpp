@@ -15,7 +15,8 @@ using namespace _ELENA_;
 
 EXTERN_DLL_EXPORT void PrepareEM(void* args)
 {
-
+   printf("!!");
+   fflush(stdout);
 }
 
 EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,

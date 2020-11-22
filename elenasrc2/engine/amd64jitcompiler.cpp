@@ -520,7 +520,7 @@ void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
 
       // !! temporal, more optimal way should be used
       if (relocation[0] == -1) {
-         scope.writeReference(*writer, scope.argument, *(int*)(code + offset));
+         scope.writeReference(*writer, scope.argument | mskRelImportRef, *(int*)(code + offset));
       }
       //else if ((key & mskTypeMask) == mskPreloaded) {
       //   scope.compiler->writePreloadedReference(scope, key, position, offset, code);

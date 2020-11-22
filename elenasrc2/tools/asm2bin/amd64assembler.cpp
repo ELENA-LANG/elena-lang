@@ -2576,7 +2576,6 @@ void AMD64Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, Memory
 //      code->writeByte(0xD0 + (char)operand.type);
 //   }
    /*else */if (token.check("extern")) {
-      code->writeByte(0x48);
       code->writeWord(0x15FF);
       token.read();
       if (token.check(ARGUMENT1)) {

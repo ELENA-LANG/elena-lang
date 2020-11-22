@@ -106,9 +106,9 @@ vaddr_t _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
            return _symbolReferences.get(reference);
          case mskImportRef:
             return resolveExternal(reference);
-//         case mskRelImportRef:
-//            //HOTFIX : relative import ref mask should not be lost
-//            return (void*)(resolveExternal(reference) | mskRelImportRef);
+         case mskRelImportRef:
+            //HOTFIX : relative import ref mask should not be lost
+            return resolveExternal(reference) | mskRelImportRef;
 //         case mskStatSymbolRef:
 //            return (void*)_statReferences.get(reference);
          case mskMessageTableRef:
