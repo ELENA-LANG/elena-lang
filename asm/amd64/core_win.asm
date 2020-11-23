@@ -12,7 +12,7 @@ end
 
 procedure % EXIT
 
-  mov ecx, 0
+  mov rcx, 0
 
   // ; exit
   sub  rsp, 20h

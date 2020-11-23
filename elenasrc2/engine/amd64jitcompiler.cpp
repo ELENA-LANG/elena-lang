@@ -67,11 +67,11 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 //};
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/2;
+const int gcCommandNumber = /*138*/4;
 const int gcCommands[gcCommandNumber] =
 {
-   bcCallExtR, 
-   bcPushS,
+   bcCallExtR, bcOpen,
+   bcReserve, bcPushS,
 };
 
 // command table
@@ -105,19 +105,19 @@ void(*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
-   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   &compileOpen,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFunction, &compileNop, &compileNop,
    & compileNop,& compileNop,& compileNop,& compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &compileNop,
+   &compilePush, &compileNop, &compilePush, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadIndexOpX,
 
-   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
-   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
 
-   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
-   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   &compilePopN,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -316,15 +316,15 @@ inline void _ELENA_::writeCoreReference(I64JITScope& scope, ref_t reference, int
 ////   }
 ////   scope.code->seekEOF();
 ////}
-//
-//void _ELENA_::loadOneByteLOp(int opcode, AMD64JITScope& scope)
-//{
-//   char* code = (char*)scope.compiler->_inlines[opcode];
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, *(pos_t*)(code - 4));
-//}
-//
+
+void _ELENA_::loadOneByteLOp(int opcode, I64JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+
+   // simply copy correspondent inline code
+   scope.code->write(code, *(pos_t*)(code - 4));
+}
+
 ////void _ELENA_::loadROp(int opcode, x86JITScope& scope)
 ////{
 ////   char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -351,34 +351,34 @@ inline void _ELENA_::writeCoreReference(I64JITScope& scope, ref_t reference, int
 ////   }
 ////   scope.code->seekEOF();
 ////}
-//
-//void _ELENA_::loadIndexOpX(int opcode, AMD64JITScope& scope)
-//{
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0] == -1) {
-//         scope.code->writeDWord(scope.argument << 3);
-//      }
-//      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
-//
+
+void _ELENA_::loadIndexOpX(int opcode, I64JITScope& scope)
+{
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(scope.argument << 3);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 ////void _ELENA_::loadVMTIndexOp(int opcode, x86JITScope& scope)
 ////{
 ////   char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -592,17 +592,17 @@ void _ELENA_::compileNop(int, I64JITScope& scope)
 //   if (scope.withDebugInfo)
 //      scope.helper->addBreakpoint(scope.code->Position());
 //}
-//
-////void _ELENA_::compilePush(int opcode, x86JITScope& scope)
-////{
-////   // push constant | reference
-////   scope.code->writeByte(0x68);
-////   if (opcode == bcPushR && scope.argument != 0) {
-////      scope.writeReference(*scope.code, scope.argument, 0);
-////   }
-////   else scope.code->writeDWord(scope.argument);
-////}
-////
+
+void _ELENA_::compilePush(int opcode, I64JITScope& scope)
+{
+   // push constant | reference
+   scope.code->writeByte(0x68);
+   if (opcode == bcPushR && scope.argument != 0) {
+      scope.writeReference(*scope.code, scope.argument, 0);
+   }
+   else scope.code->writeDWord(scope.argument);
+}
+
 ////void _ELENA_::compilePopE(int, x86JITScope& scope)
 ////{
 ////   // pop ecx
@@ -652,14 +652,14 @@ void _ELENA_::compileNop(int, I64JITScope& scope)
 ////
 ////   loadOneByteOp(opcode, scope);
 ////}
-//
-//void _ELENA_::compileOpen(int opcode, AMD64JITScope& scope)
-//{
-//   loadOneByteLOp(opcode, scope);
-//
-//   //scope.prevFSPOffs += (scope.argument << 2);
-//}
-//
+
+void _ELENA_::compileOpen(int opcode, I64JITScope& scope)
+{
+   loadOneByteLOp(opcode, scope);
+
+   //scope.prevFSPOffs += (scope.argument << 2);
+}
+
 ////void _ELENA_::compileQuit(int, x86JITScope& scope)
 ////{
 ////   scope.code->writeByte(0xC3);
@@ -1342,6 +1342,22 @@ void _ELENA_::compileCallR(int, I64JITScope& scope)
 ////   // or ebx, ecx
 ////   scope.code->writeWord(0xD90B);
 ////}
+
+void _ELENA_::compilePopN(int, I64JITScope& scope)
+{
+   // add esp, arg
+   int arg = scope.argument << 3;
+   if (arg < 0x80) {
+      scope.code->writeByte(0x48);
+      scope.code->writeWord(0xC483);
+      scope.code->writeByte(scope.argument << 3);
+   }
+   else {
+      scope.code->writeByte(0x48);
+      scope.code->writeWord(0xC481);
+      scope.code->writeDWord(scope.argument << 3);
+   }
+}
 
 // --- AMD64JITScope ---
 

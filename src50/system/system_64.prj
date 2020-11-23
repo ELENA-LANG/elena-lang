@@ -23,6 +23,7 @@
        <include>dynamic.l</include>
        <include>extensions.l</include>
        <include>exceptions.l</include>
+       <include>app_temp.l</include>
        <include>collections\list.l</include>
        <include>collections\queues.l</include>
        <include>collections\tuples.l</include>

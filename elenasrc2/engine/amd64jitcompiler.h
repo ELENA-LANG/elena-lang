@@ -61,8 +61,8 @@ protected:
    // commands
    friend void writeCoreReference(I64JITScope& scope, ref_t reference, int position, int offset, char* code);
 //   friend void loadCoreOp(AMD64JITScope& scope, char* code);
-//   friend void loadOneByteLOp(int opcode, AMD64JITScope& scope); 
-//   friend void loadIndexOpX(int opcode, AMD64JITScope& scope);
+   friend void loadOneByteLOp(int opcode, I64JITScope& scope); 
+   friend void loadIndexOpX(int opcode, I64JITScope& scope);
    friend void loadFPOp(int opcode, I64JITScope& scope);
    friend void loadFPOpX(int opcode, I64JITScope& scope);
 
@@ -71,9 +71,10 @@ protected:
    friend void loadFunction(int opcode, I64JITScope& scope);
    friend void compileCallR(int opcode, I64JITScope& scope);
 //   friend void compilePushA(int opcode, AMD64JITScope& scope);
-//   friend void compileMCopy(int opcode, AMD64JITScope& scope);
+   friend void compilePush(int opcode, I64JITScope& scope);
+   //   friend void compileMCopy(int opcode, AMD64JITScope& scope);
 //   friend void compileInvokeVMT(int opcode, AMD64JITScope& scope);
-//   friend void compileOpen(int opcode, AMD64JITScope& scope);
+   friend void compileOpen(int opcode, I64JITScope& scope);
 //   friend void compileQuitN(int opcode, AMD64JITScope& scope);
 //   friend void compileBCopyF(int opcode, AMD64JITScope& scope);
 //   friend void compileDCopy(int opcode, AMD64JITScope& scope);
@@ -82,6 +83,7 @@ protected:
 //   friend void compileDAddN(int opcode, AMD64JITScope& scope);
 //   friend void compileBreakpoint(int opcode, AMD64JITScope& scope);
 //   friend void compileInvokeVMTOffset(int opcode, AMD64JITScope& scope);
+   friend void compilePopN(int opcode, I64JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -128,8 +130,8 @@ public:
 
 // --- compiler friend functions---
 //void loadCoreOp(AMD64JITScope& scope, char* code);
-//void loadOneByteLOp(int opcode, AMD64JITScope& scope);
-//void loadIndexOpX(int opcode, AMD64JITScope& scope);
+void loadOneByteLOp(int opcode, I64JITScope& scope);
+void loadIndexOpX(int opcode, I64JITScope& scope);
 void loadFPOpX(int opcode, I64JITScope& scope);
 
 void compileNop(int opcode, I64JITScope& scope);
@@ -137,10 +139,11 @@ void compileNop(int opcode, I64JITScope& scope);
 void loadFunction(int opcode, I64JITScope& scope);
 void compileCallR(int opcode, I64JITScope& scope);
 //void compilePushA(int opcode, AMD64JITScope& scope);
+void compilePush(int opcode, I64JITScope& scope);
 //void compileMCopy(int opcode, AMD64JITScope& scope);
 //void compileInvokeVMT(int opcode, AMD64JITScope& scope);
 //void compileInvokeVMTOffset(int opcode, AMD64JITScope& scope);
-//void compileOpen(int opcode, AMD64JITScope& scope);
+void compileOpen(int opcode, I64JITScope& scope);
 //void compileQuitN(int opcode, AMD64JITScope& scope);
 //void compileBCopyF(int opcode, AMD64JITScope& scope);
 //void compileDCopy(int opcode, AMD64JITScope& scope);
@@ -148,6 +151,7 @@ void compileCallR(int opcode, I64JITScope& scope);
 //void compileACopyF(int opcode, AMD64JITScope& scope);
 //void compileDAddN(int opcode, AMD64JITScope& scope);
 //void compileBreakpoint(int opcode, AMD64JITScope& scope);
+void compilePopN(int opcode, I64JITScope& scope);
 
 } // _ELENA_
 

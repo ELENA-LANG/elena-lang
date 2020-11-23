@@ -13,7 +13,7 @@
 #include "source.h"
 #include "assembler.h"
 #include "amd64helper.h"
-//#include "x86jumphelper.h"
+#include "amd64jumphelper.h"
 
 namespace _ELENA_
 {
@@ -79,7 +79,7 @@ protected:
  //  void compileANDNPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
  //  void compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileORPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -89,7 +89,7 @@ protected:
  //  void compileSQRTPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
  //  void compileSQRTSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
  //  void compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileUCOMISS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
  //  void compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileSAR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -168,10 +168,10 @@ protected:
 	void compileCALL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code/*, x86JumpHelper& helper*/);
 	//void compileLOOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper);
 
- //  void compileJxx(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int prefix, x86JumpHelper& helper);
-	//void compileJMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper);
+   void compileJxx(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int prefix, AMD64JumpHelper& helper);
+	void compileJMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, AMD64JumpHelper& helper);
 
-	//void fixJump(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper);
+	void fixJump(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, AMD64JumpHelper& helper);
 
  //  void compileFINIT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFLDZ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -233,7 +233,7 @@ protected:
  //  bool compileCommandG(TokenInfo& token);
  //  bool compileCommandH(TokenInfo& token);
  //  bool compileCommandI(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
- //  bool compileCommandJ(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper);
+   bool compileCommandJ(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, AMD64JumpHelper& helper);
  //  bool compileCommandK(TokenInfo& token);
    bool compileCommandL(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer/*, x86JumpHelper& helper*/);
    bool compileCommandM(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
@@ -243,14 +243,15 @@ protected:
  //  bool compileCommandQ(TokenInfo& token);
    bool compileCommandR(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandS(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
- //  bool compileCommandT(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
+   bool compileCommandT(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandU(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandV(TokenInfo& token);
  //  bool compileCommandW(TokenInfo& token);
- //  bool compileCommandX(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
+   bool compileCommandX(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandY(TokenInfo& token);
  //  bool compileCommandZ(TokenInfo& token);
-   bool compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer/*, x86JumpHelper& helper*/);
+   bool compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, 
+		AMD64JumpHelper& helper);
 
    virtual void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned);
    virtual void compileStructure(TokenInfo& token, _Module* binary, int mask);

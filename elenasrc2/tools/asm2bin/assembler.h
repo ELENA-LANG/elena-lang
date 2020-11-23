@@ -186,7 +186,7 @@ struct TokenInfo
       return 0; // dummy return
    }
 
-   int readLongInteger(Map<ident_t, ref64_t>& constants)
+   long long readLongInteger(Map<ident_t, ref64_t>& constants)
    {
       read();
       ref64_t integer;

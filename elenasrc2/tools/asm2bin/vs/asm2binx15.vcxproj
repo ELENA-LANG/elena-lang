@@ -54,7 +54,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..;..\..\..\common;..\..\..\elc;..\..;..\..\..\engine;..\..\..\common\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;..\..\..\common;..\..\..\elc;..\..;..\..\..\engine;..\..\..\common\win32;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -107,6 +107,7 @@
     <ClCompile Include="..\..\..\common\altstrings.cpp" />
     <ClCompile Include="..\..\..\engine\amd64helper.cpp" />
     <ClCompile Include="..\..\..\engine\bytecode.cpp" />
+    <ClCompile Include="..\amd64jumphelper.cpp" />
     <ClCompile Include="..\asm2binx.cpp" />
     <ClCompile Include="..\..\..\common\xmlreader.cpp" />
     <ClCompile Include="..\..\..\common\config.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="..\..\..\common\altstrings.h" />
     <ClInclude Include="..\..\..\engine\amd64helper.h" />
     <ClInclude Include="..\..\..\engine\bytecode.h" />
+    <ClInclude Include="..\amd64jumphelper.h" />
     <ClInclude Include="..\assembler.h" />
     <ClInclude Include="..\..\..\common\common.h" />
     <ClInclude Include="..\..\..\common\xmlreader.h" />

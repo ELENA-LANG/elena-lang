@@ -101,6 +101,27 @@ public:
       }
    };
 
+   enum AMD64JumpType
+   {
+      JUMP_TYPE_JB = 0x02,
+      JUMP_TYPE_JAE = 0x03,
+      JUMP_TYPE_JZ = 0x04,
+      JUMP_TYPE_JE = 0x04,
+      JUMP_TYPE_JNZ = 0x05,
+      JUMP_TYPE_JBE = 0x06,
+      JUMP_TYPE_JA = 0x07,
+      JUMP_TYPE_JS = 0x08,
+      JUMP_TYPE_JNS = 0x09,
+      JUMP_TYPE_JP = 0x0A,
+      JUMP_TYPE_JPO = 0x0B,
+      JUMP_TYPE_JL = 0x0C,
+      JUMP_TYPE_JGE = 0x0D,
+      JUMP_TYPE_JLE = 0x0E,
+      JUMP_TYPE_JG = 0x0F,
+
+      JUMP_TYPE_JMP = 0x00,
+   };
+
    static void writeModRM(MemoryWriter* code, Operand sour, Operand dest)
    {
       int prefix = (dest.type & 0x300) >> 2;
@@ -158,21 +179,115 @@ public:
          if (test(type, otR64)) {
             type = (OperandType)((type & ~otR64) | prefix);
          }
-
       //   if (test(type, otR32)) {
       //      type = (OperandType)((type & ~otR32) | prefix);
       //   }
-      //   else if (type == otDB) {
-      //      if (prefix == otDW) {
-      //         type = (OperandType)((type & ~otDB) | prefix);
-      //      }
-      //      else if (prefix != otDB) {
-      //         type = (OperandType)((type & ~otDB) | otDD | prefix);
-      //      }
-      //   }
-      //   else type = (OperandType)(type | prefix);
+         else if (type == otDB) {
+            if (prefix == otDW) {
+               type = (OperandType)((type & ~otDB) | prefix);
+            }
+            else if (prefix != otDB) {
+               type = (OperandType)((type & ~otDB) | otDD | prefix);
+            }
+         }
+         else type = (OperandType)(type | prefix);
       }
       return type;
+   }
+};
+
+
+class AMD64LabelHelper
+{
+   struct AMD64JumpInfo
+   {
+      pos_t position;
+      int offset;
+
+      AMD64JumpInfo()
+      {
+         position = (pos_t)-1;
+         offset = 0;
+      }
+      AMD64JumpInfo(pos_t position)
+      {
+         this->position = position;
+         this->offset = 0;
+      }
+      AMD64JumpInfo(pos_t position, int offset)
+      {
+         this->position = position;
+         this->offset = offset;
+      }
+   };
+
+   MemoryWriter* code;
+   MemoryMap<int, AMD64JumpInfo> jumps;
+   MemoryMap<int, pos_t>         labels;
+
+public:
+   //void addFixableJump(int position, int offset)
+   //{
+   //   jumps.add(0, x86JumpInfo(position, offset));
+   //}
+
+   bool isShortJump(unsigned char opcode);
+
+   //bool checkLabel(int label)
+   //{
+   //   return labels.exist(label);
+   //}
+
+   void setLabel(int label);
+
+   void writeJxxForward(int label, AMD64Helper::AMD64JumpType prefix);
+   void writeShortJxxForward(int label, AMD64Helper::AMD64JumpType prefix);
+
+   void writeJxxBack(AMD64Helper::AMD64JumpType prefix, int label);
+   void writeNearJxxBack(AMD64Helper::AMD64JumpType prefix, int label);
+   void writeShortJxxBack(AMD64Helper::AMD64JumpType prefix, int label);
+
+   //void writeLoadForward(int label);
+   void writeJmpForward(int label);
+   void writeShortJmpForward(int label);
+
+   //void writeLoadBack(int label);
+   //void writeJmpBack(int label);
+   void writeNearJmpBack(int label);
+   void writeShortJmpBack(int label);
+
+   //void writeLoopForward(int label);
+   //void writeLoopBack(int label);
+
+   //void writeCallForward(int label);
+   //void writeCallBack(int label);
+
+   int fixShortLabel(pos_t labelPos);
+   int fixNearLabel(pos_t labelPos);
+   void fixLabel(int label);
+
+   void shiftLabels(pos_t position, int firstDisplacement, int displacement)
+   {
+      shift(labels.start(), position + 1, displacement);
+
+      MemoryMap<int, AMD64JumpInfo>::Iterator it = jumps.start();
+      while (!it.Eof()) {
+         if ((*it).position == position) {
+            (*it).position += firstDisplacement;
+         }
+         else if ((*it).position > position)
+            (*it).position += displacement;
+
+         it++;
+      }
+   }
+
+   void fixJumps(pos_t position, int size);
+   void convertShortToNear(pos_t position, int offset);
+
+   AMD64LabelHelper(MemoryWriter* code)
+   {
+      this->code = code;
    }
 };
 

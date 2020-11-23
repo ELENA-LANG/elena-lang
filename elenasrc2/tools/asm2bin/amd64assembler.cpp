@@ -179,22 +179,21 @@ AMD64Assembler::Operand AMD64Assembler :: defineOperand(TokenInfo& token, Proced
             operand.type = AMD64Helper::otDD;
          }
       }
-//		else if (token.check("data")) {
-//         token.read(":", err);
-//         token.read();
-//         if (token.check("%")) {
-//            operand.type = x86Helper::otDD;
-//            operand.reference = token.readInteger(constants) | mskPreloadDataRef;
-//            operand.offset = 0x0;
-//         }
-//         else {
-//            IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
-//
-//            operand.type = x86Helper::otDD;
-//            operand.reference = info.binary->mapReference(structRef) | mskNativeDataRef;
-//         }
-//
-//      }
+      else if (token.check("data")) {
+         token.read(":", err);
+         token.read();
+         if (token.check("%")) {
+            operand.type = AMD64Helper::otDD;
+            operand.reference = token.readInteger(constants) | mskPreloadDataRef;
+            operand.offset = 0x0;
+         }
+         else {
+            IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
+
+            operand.type = AMD64Helper::otDD;
+            operand.reference = info.binary->mapReference(structRef) | mskNativeDataRef;
+         }
+      }
 //		else if (token.check("rdata")) {
 //         token.read(":", err);
 //         token.read();
@@ -627,7 +626,13 @@ void AMD64Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryW
 		code->writeByte(0xB8 + (char)sour.type);
       AMD64Helper::writeImm(code, dest);
 	}
-//	else if ((test(sour.type, x86Helper::otR32) || test(sour.type, x86Helper::otM32))
+   else if (test(sour.type, AMD64Helper::otR64) && (dest.type == AMD64Helper::otDD || dest.type == AMD64Helper::otDB)) {
+      dest.type = AMD64Helper::otDD;
+      code->writeByte(0x48);
+      code->writeByte(0xB8 + (char)sour.type);
+      AMD64Helper::writeImm(code, dest);
+   }
+   //	else if ((test(sour.type, x86Helper::otR32) || test(sour.type, x86Helper::otM32))
 //      && (dest.type==x86Helper::otDD || dest.type==x86Helper::otDB))
 //   {
 //		dest.type = x86Helper::otDD;
@@ -968,41 +973,46 @@ void AMD64Assembler :: compileADD(TokenInfo& token, ProcedureInfo& info, MemoryW
 //	}
 //	else token.raiseErr("Invalid command (%d)");
 //}
-//
-//void x86Assembler :: compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{
-//	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
-//
-//	checkComma(token);
-//
-//	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
-//
-//	if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otR32)) {
-//		code->writeByte(0x33);
-//		x86Helper::writeModRM(code, sour, dest);
-//	}
-//	else if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otDB)) {
-//		code->writeByte(0x83);
-//		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 6), sour);
-//		code->writeByte(dest.offset);
-//	}
-//	else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && dest.type==x86Helper::otDD) {
-//		code->writeByte(0x81);
-//		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 6), sour);
-//		x86Helper::writeImm(code, dest);
-//	}
-//	else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && test(dest.type, x86Helper::otR32)) {
-//		code->writeByte(0x31);
-//		x86Helper::writeModRM(code, dest, sour);
-//		x86Helper::writeImm(code, dest);
-//	}
-//	else if (test(sour.type, x86Helper::otR32) && (test(dest.type, x86Helper::otR32) || test(dest.type, x86Helper::otM32))) {
-//		code->writeByte(0x33);
-//		x86Helper::writeModRM(code, sour, dest);
-//	}
-//	else token.raiseErr("Invalid command (%d)");
-//}
-//
+
+void AMD64Assembler :: compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+
+   checkComma(token);
+
+   Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+   //if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otR32)) {
+	  // code->writeByte(0x33);
+	  // x86Helper::writeModRM(code, sour, dest);
+   //}
+   if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otR64)) {
+      code->writeByte(0x48);
+      code->writeByte(0x33);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   //else if (test(sour.type, x86Helper::otR32) && test(dest.type, x86Helper::otDB)) {
+	  // code->writeByte(0x83);
+	  // x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 6), sour);
+	  // code->writeByte(dest.offset);
+   //}
+   //else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && dest.type==x86Helper::otDD) {
+	  // code->writeByte(0x81);
+	  // x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 6), sour);
+	  // x86Helper::writeImm(code, dest);
+   //}
+   //else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && test(dest.type, x86Helper::otR32)) {
+	  // code->writeByte(0x31);
+	  // x86Helper::writeModRM(code, dest, sour);
+	  // x86Helper::writeImm(code, dest);
+   //}
+   //else if (test(sour.type, x86Helper::otR32) && (test(dest.type, x86Helper::otR32) || test(dest.type, x86Helper::otM32))) {
+	  // code->writeByte(0x33);
+	  // x86Helper::writeModRM(code, sour, dest);
+   //}
+   else token.raiseErr("Invalid command (%d)");
+}
+
 //void x86Assembler :: compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
 //	bool overridden = false;
@@ -1079,19 +1089,30 @@ void AMD64Assembler :: compileADD(TokenInfo& token, ProcedureInfo& info, MemoryW
 //	}
 //	else token.raiseErr("Invalid command (%d)");
 //}
-//
-//void x86Assembler :: compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{
-//	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
-//
-//	checkComma(token);
-//
-//	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
-//
+
+void AMD64Assembler :: compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+
+   checkComma(token);
+
+   Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
 //	if (sour.type == x86Helper::otEAX && dest.type == x86Helper::otDD) {
 //		code->writeByte(0xA9);
 //		x86Helper::writeImm(code, dest);
 //	}
+   /*else */if ((test(sour.type, AMD64Helper::otR64)||test(sour.type, AMD64Helper::otM64)) && test(dest.type, AMD64Helper::otR64)) {
+      code->writeByte(0x48);
+      code->writeByte(0x85);
+      AMD64Helper::writeModRM(code, dest, sour);
+   }
+   else if ((test(sour.type, AMD64Helper::otR64)||test(sour.type, AMD64Helper::otM64)) && dest.type== AMD64Helper::otDB) {
+      code->writeByte(0x48);
+      code->writeByte(0xF7);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 0), sour);
+      code->writeDWord(dest.offset);
+   }
 //	else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && test(dest.type, x86Helper::otR32)) {
 //		code->writeByte(0x85);
 //		x86Helper::writeModRM(code, dest, sour);
@@ -1120,9 +1141,9 @@ void AMD64Assembler :: compileADD(TokenInfo& token, ProcedureInfo& info, MemoryW
 //		code->writeByte(0x85);
 //		x86Helper::writeModRM(code, dest, sour);
 //	}
-//	else token.raiseErr("Invalid command (%d)");
-//}
-//
+   else token.raiseErr("Invalid command (%d)");
+}
+
 //void x86Assembler::compileUCOMISS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
 //	// Opcode: 0F 2E /r
@@ -2495,34 +2516,34 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //	}
 //	else token.raiseErr("Invalid command (%d)");
 //}
-//
-//void x86Assembler :: compileJxx(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int prefix, x86JumpHelper& helper)
-//{
-//   token.read();
-//
-//   bool shortJump = false;
-//   if (token.check("short")) {
-//      shortJump = true;
-//      token.read();
-//   }
-//   else if (token.check("short")) {
-//      token.raiseErr("Use short prefix instead");
-//   }
-//
-//   // if jump forward
-//   if (!helper.checkDeclaredLabel(token.value)) {
-//      helper.writeJxxForward(token.value, prefix, shortJump);
-//   }
-//   // if jump backward
-//   else helper.writeJxxBack(token.value, prefix, shortJump);
-//
-//   token.read();
-//}
-//
-//void x86Assembler :: compileJMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper)
-//{
-//   Operand operand = compileOperand(token, info, NULL);
-//
+
+void AMD64Assembler :: compileJxx(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int prefix, AMD64JumpHelper& helper)
+{
+   token.read();
+
+   bool shortJump = false;
+   if (token.check("short")) {
+      shortJump = true;
+      token.read();
+   }
+   else if (token.check("short")) {
+      token.raiseErr("Use short prefix instead");
+   }
+
+   // if jump forward
+   if (!helper.checkDeclaredLabel(token.value)) {
+      helper.writeJxxForward(token.value, prefix, shortJump);
+   }
+   // if jump backward
+   else helper.writeJxxBack(token.value, prefix, shortJump);
+
+   token.read();
+}
+
+void AMD64Assembler :: compileJMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, AMD64JumpHelper& helper)
+{
+   Operand operand = compileOperand(token, info, NULL);
+
 //	if (test(operand.type, x86Helper::otR32)||test(operand.type, x86Helper::otM32)) {
 //      code->writeByte(0xFF);
 //      x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), operand);
@@ -2532,26 +2553,26 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //      code->writeRef(operand.reference, 0);
 //   }
 //   else {
-//	   bool shortJump = false;
-//	   if (token.check("short")) {
-//		   shortJump = true;
-//		   token.read();
-//	   }
-//      else if (token.check("near")) {
-//         token.raiseErr("Use short prefix instead");
-//      }
-//
-//      // if jump forward
-//	   if (!helper.checkDeclaredLabel(token.value)) {
-//         helper.writeJmpForward(token.value, shortJump);
-//	   }
-//      // if jump backward
-//	   else helper.writeJmpBack(token.value, shortJump);
-//
-//      token.read();
+      bool shortJump = false;
+      if (token.check("short")) {
+         shortJump = true;
+         token.read();
+      }
+      else if (token.check("near")) {
+         token.raiseErr("Use short prefix instead");
+      }
+      
+      // if jump forward
+      if (!helper.checkDeclaredLabel(token.value)) {
+         helper.writeJmpForward(token.value, shortJump);
+      }
+      // if jump backward
+      else helper.writeJmpBack(token.value, shortJump);
+      
+      token.read();
 //   }
-//}
-//
+}
+
 //void x86Assembler :: compileLOOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper)
 //{
 //	token.read();
@@ -2605,6 +2626,17 @@ void AMD64Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, Memory
 
 	      code->writeRef(ref, 0);
       }
+      else if (token.check("'rt_dlls")) {
+         ReferenceNs function(DLL_NAMESPACE, RTDLL_FORWARD);
+
+         token.read(".", "dot expected (%d)\n");
+         function.append(".");
+         function.append(token.read());
+
+         int ref = info.binary->mapReference(function) | mskRelImportRef;
+
+         code->writeRef(ref, 0);
+      }
       else token.raiseErr("Invalid call label (%d)\n");
    }
 //	else if (token.check("[")) {
@@ -2654,18 +2686,18 @@ void AMD64Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, Memory
    token.read();
 }
 
-//void x86Assembler :: fixJump(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, x86JumpHelper& helper)
-//{
-//	if (helper.checkDeclaredLabel(token.value)) {
-//		token.raiseErr("Label with such a name already exists (%d)\n");
-//	}
-//
-//	if (!helper.addLabel(token.value))
-//      token.raiseErr("Invalid near jump to this label (%d)\n");
-//
-//	token.read(":", "Invalid command or label (%d)\n");
-//}
-//
+void AMD64Assembler :: fixJump(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, AMD64JumpHelper& helper)
+{
+   if (helper.checkDeclaredLabel(token.value)) {
+      token.raiseErr("Label with such a name already exists (%d)\n");
+   }
+   
+   if (!helper.addLabel(token.value))
+      token.raiseErr("Invalid near jump to this label (%d)\n");
+   
+   token.read(":", "Invalid command or label (%d)\n");
+}
+
 //void x86Assembler :: compileFBLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
 //	Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
@@ -3768,70 +3800,71 @@ bool AMD64Assembler :: compileCommandC(/*PrefixInfo& prefix, */TokenInfo& token,
 //	}
 //   else return false;
 //}
-//bool x86Assembler :: compileCommandJ(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, x86JumpHelper& helper)
-//{
-//	if (token.check("jb")||token.check("jc")) {
-//      compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JB, helper);
-//      return true;
-//	}
-//	else if (token.check("jnb")||token.check("jnc")||token.check("jae")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JAE, helper);
-//      return true;
-//	}
-//	else if (token.check("jz")||token.check("je")) {
-//      compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JZ, helper);
-//      return true;
-//	}
-//	else if (token.check("jnz")) {
-//      compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JNZ, helper);
-//      return true;
-//	}
-//	else if (token.check("jbe") || token.check("jna")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JBE, helper);
-//      return true;
-//	}
-//	else if (token.check("ja")||token.check("jnbe")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JA, helper);
-//      return true;
-//	}
-//	else if (token.check("js")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JS, helper);
-//      return true;
-//	}
-//	else if (token.check("jns")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JNS, helper);
-//      return true;
-//	}
-//	else if (token.check("jpe") || token.check("jp")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JP, helper);
-//      return true;
-//	}
-//	else if (token.check("jpo") || token.check("jnp")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JPO, helper);
-//      return true;
-//	}
-//	else if (token.check("jl")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JL, helper);
-//      return true;
-//	}
-//	else if (token.check("jge")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JGE, helper);
-//      return true;
-//	}
-//	else if (token.check("jle")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JLE, helper);
-//      return true;
-//	}
-//	else if (token.check("jg")) {
-//		compileJxx(token, info, &writer, x86Helper::JUMP_TYPE_JG, helper);
-//      return true;
-//	}
-//	else if (token.check("jmp")) {
-//		compileJMP(token, info, &writer, helper);
-//      return true;
-//	}
-//   else return false;
-//}
+
+bool AMD64Assembler :: compileCommandJ(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, AMD64JumpHelper& helper)
+{
+   if (token.check("jb")||token.check("jc")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JB, helper);
+   return true;
+   }
+   else if (token.check("jnb")||token.check("jnc")||token.check("jae")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JAE, helper);
+   return true;
+   }
+   else if (token.check("jz")||token.check("je")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JZ, helper);
+   return true;
+   }
+   else if (token.check("jnz")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JNZ, helper);
+   return true;
+   }
+   else if (token.check("jbe") || token.check("jna")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JBE, helper);
+   return true;
+   }
+   else if (token.check("ja")||token.check("jnbe")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JA, helper);
+   return true;
+   }
+   else if (token.check("js")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JS, helper);
+   return true;
+   }
+   else if (token.check("jns")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JNS, helper);
+   return true;
+   }
+   else if (token.check("jpe") || token.check("jp")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JP, helper);
+   return true;
+   }
+   else if (token.check("jpo") || token.check("jnp")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JPO, helper);
+   return true;
+   }
+   else if (token.check("jl")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JL, helper);
+   return true;
+   }
+   else if (token.check("jge")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JGE, helper);
+   return true;
+   }
+   else if (token.check("jle")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JLE, helper);
+   return true;
+   }
+   else if (token.check("jg")) {
+      compileJxx(token, info, &writer, AMD64Helper::JUMP_TYPE_JG, helper);
+      return true;
+   }
+   /*else */if (token.check("jmp")) {
+      compileJMP(token, info, &writer, helper);
+      return true;
+   }
+   else return false;
+}
 //bool x86Assembler :: compileCommandK(TokenInfo& token)
 //{
 //   return false;
@@ -4172,14 +4205,14 @@ bool AMD64Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Me
 //	}
    else return false;
 }
-//bool x86Assembler :: compileCommandT(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
-//{
-//	if (token.check("test")) {
-//		compileTEST(token, info, &writer);
-//      return true;
-//	}
-//   else return false;
-//}
+bool AMD64Assembler :: compileCommandT(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
+{
+   if (token.check("test")) {
+      compileTEST(token, info, &writer);
+      return true;
+   }
+   else return false;
+}
 //bool x86Assembler :: compileCommandU(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 //{
 //	if (token.check("ucomiss")) {
@@ -4196,13 +4229,12 @@ bool AMD64Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Me
 //{
 //   return false;
 //}
-//bool x86Assembler :: compileCommandX(PrefixInfo& prefix, TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
-//{
-//	if (token.check("xor")) {
-//		compileXOR(token, info, &writer);
-//      prefix.clear();
-//      return true;
-//	}
+bool AMD64Assembler :: compileCommandX(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
+{
+   if (token.check("xor")) {
+      compileXOR(token, info, &writer);
+      return true;
+   }
 //	else if (token.check("xchg")) {
 //		compileXCHG(token, info, &writer);
 //      prefix.clear();
@@ -4220,8 +4252,9 @@ bool AMD64Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Me
 //		prefix.clear();
 //		return true;
 //	}
-//   else return false;
-//}
+   else return false;
+}
+
 //bool x86Assembler :: compileCommandY(TokenInfo& token)
 //{
 //   return false;
@@ -4231,7 +4264,8 @@ bool AMD64Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Me
 //   return false;
 //}
 
-bool AMD64Assembler :: compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer/*, x86JumpHelper& helper*/)
+bool AMD64Assembler :: compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, 
+   AMD64JumpHelper& helper)
 {
    bool recognized = false;
    if (token.value[0]=='a') {
@@ -4261,9 +4295,9 @@ bool AMD64Assembler :: compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, 
 //   else if (token.value[0]=='i') {
 //      recognized = compileCommandI(token, info, writer);
 //   }
-//   else if (token.value[0]=='j') {
-//      recognized = compileCommandJ(token, info, writer, helper);
-//   }
+   else if (token.value[0]=='j') {
+      recognized = compileCommandJ(token, info, writer, helper);
+   }
 //   else if (token.value[0]=='k') {
 //      recognized = compileCommandK(token);
 //   }
@@ -4291,9 +4325,9 @@ bool AMD64Assembler :: compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, 
    else if (token.value[0]=='s') {
       recognized = compileCommandS(token, info, writer);
    }
-//   else if (token.value[0]=='t') {
-//      recognized = compileCommandT(token, info, writer);
-//   }
+   else if (token.value[0]=='t') {
+      recognized = compileCommandT(token, info, writer);
+   }
 //   else if (token.value[0]=='u') {
 //      recognized = compileCommandU(token, info, writer);
 //   }
@@ -4303,9 +4337,9 @@ bool AMD64Assembler :: compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, 
 //   else if (token.value[0]=='w') {
 //      recognized = compileCommandW(token);
 //   }
-//   else if (token.value[0]=='x') {
-//      recognized = compileCommandX(prefix, token, info, writer);
-//   }
+   else if (token.value[0]=='x') {
+      recognized = compileCommandX(token, info, writer);
+   }
 //   else if (token.value[0]=='y') {
 //      recognized = compileCommandY(token);
 //   }
@@ -4313,20 +4347,20 @@ bool AMD64Assembler :: compileCommand(/*PrefixInfo& prefix, */TokenInfo& token, 
 //      recognized = compileCommandZ(token);
 //   }
    else if (token.value[0] == '#') {
-	   token.read();
-	   token.read();
-	   token.read();
-	   recognized = true;
+      token.read();
+      token.read();
+      token.read();
+      recognized = true;
    }
 
    if (!recognized) {
       if (token.Eof()) {
          token.raiseErr("Invalid end of the file\n");
       }
-		else {
-//			fixJump(token, info, &writer, helper);
-			token.read();
-		}
+      else {
+         fixJump(token, info, &writer, helper);
+         token.read();
+      }
    }
    return recognized;
 }
@@ -4359,12 +4393,12 @@ void AMD64Assembler :: compileProcedure(TokenInfo& token, _Module* binary, bool 
    _Memory* code = binary->mapSection(info.reference, false);
    MemoryWriter writer(code);
 
-   //x86JumpHelper helper(&writer);
+   AMD64JumpHelper helper(&writer);
 
    //PrefixInfo prefix;
 
    while (!token.check("end")) {
-      compileCommand(/*prefix, */token, info, writer/*, helper*/);
+      compileCommand(/*prefix, */token, info, writer, helper);
    }
    if (aligned)
 	   writer.align(8, 0x90);
@@ -4381,7 +4415,7 @@ void AMD64Assembler :: compile(TextReader* source, path_t outputPath)
    do {
 		if (token.check("define")) {
          IdentifierString name(token.read());
-         size_t value = token.readLongInteger(constants);
+         size_t value = token.readInteger(constants);
 
          if (name[0]=='\'')
             constants.erase(name);

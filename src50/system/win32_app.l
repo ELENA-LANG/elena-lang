@@ -12,13 +12,3 @@ singleton CommandLineFactory
 
 public commandLine = 
     CommandLineFactory.load();
-
-// !! temporal
-
-A
-{
-    prop int X;
-}
-
-public static SingleA
-    = new A();
