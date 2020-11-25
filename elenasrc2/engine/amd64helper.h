@@ -136,7 +136,7 @@ public:
          }
          code->writeByte((unsigned char)sib);
       }
-      if (test(dest.type, otM32disp8) || test(dest.type, otM8disp8)) {
+      if (test(dest.type, otM32disp8) || test(dest.type, otM8disp8) || test(dest.type, otM64disp8)) {
          code->writeByte((unsigned char)dest.offset);
       }
       // !! should only otM32 be checked?
@@ -226,17 +226,17 @@ class AMD64LabelHelper
    MemoryMap<int, pos_t>         labels;
 
 public:
-   //void addFixableJump(int position, int offset)
-   //{
-   //   jumps.add(0, x86JumpInfo(position, offset));
-   //}
+   void addFixableJump(pos_t position, int offset)
+   {
+      jumps.add(0, AMD64JumpInfo(position, offset));
+   }
 
    bool isShortJump(unsigned char opcode);
 
-   //bool checkLabel(int label)
-   //{
-   //   return labels.exist(label);
-   //}
+   bool checkLabel(int label)
+   {
+      return labels.exist(label);
+   }
 
    void setLabel(int label);
 

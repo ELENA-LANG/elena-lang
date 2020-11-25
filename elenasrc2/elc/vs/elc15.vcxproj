@@ -110,6 +110,7 @@
     <ClCompile Include="..\..\common\altstrings.cpp" />
     <ClCompile Include="..\..\common\xmlreader.cpp" />
     <ClCompile Include="..\..\common\config.cpp" />
+    <ClCompile Include="..\..\engine\amd64helper.cpp" />
     <ClCompile Include="..\..\engine\bytecode.cpp" />
     <ClCompile Include="..\..\engine\compilerlogic.cpp" />
     <ClCompile Include="..\..\engine\amd64jitcompiler.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="..\..\common\altstrings.h" />
     <ClInclude Include="..\..\common\xmlreader.h" />
     <ClInclude Include="..\..\common\config.h" />
+    <ClInclude Include="..\..\engine\amd64helper.h" />
     <ClInclude Include="..\..\engine\bytecode.h" />
     <ClInclude Include="..\..\engine\compilercommon.h" />
     <ClInclude Include="..\..\engine\compilerlogic.h" />

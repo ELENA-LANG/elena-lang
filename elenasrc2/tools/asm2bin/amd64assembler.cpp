@@ -194,14 +194,22 @@ AMD64Assembler::Operand AMD64Assembler :: defineOperand(TokenInfo& token, Proced
             operand.reference = info.binary->mapReference(structRef) | mskNativeDataRef;
          }
       }
-//		else if (token.check("rdata")) {
-//         token.read(":", err);
-//         token.read();
-//         IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
-//
-//         operand.type = x86Helper::otDD;
-//         operand.reference = info.binary->mapReference(structRef) | mskNativeRDataRef;
-//      }
+      else if (token.check("rdata")) {
+         token.read(":", err);
+         token.read();
+         if (token.check("%")) {
+            operand.type = AMD64Helper::otDD;
+            operand.reference = token.readInteger(constants) | mskPreloadDataRef;
+            operand.offset = 0x0;
+         }
+         else {
+            IdentifierString structRef(token.terminal.line + 1, token.terminal.length - 2);
+
+            operand.type = AMD64Helper::otDD;
+            operand.reference = info.binary->mapReference(structRef) | mskNativeRDataRef;
+         }
+
+      }
 //		else if (token.check("stat")) {
 //         token.read(":", err);
 //         token.read();
@@ -219,22 +227,22 @@ AMD64Assembler::Operand AMD64Assembler :: defineOperand(TokenInfo& token, Proced
 //         operand.reference = info.binary->mapReference(constRef) | mskConstantRef;
 //         operand.offset = 0;
 //      }
-//      else if (token.check("code")) {
-//         token.read(":", err);
-//         token.read();
-//
-//         if (token.check("%")) {
-//            operand.type = x86Helper::otDD;
-//            operand.reference = token.readInteger(constants) | mskPreloadCodeRef;
-//            operand.offset = 0x0;
-//         }
-//         else {
-//            IdentifierString structRef(token.terminal.line + 1, token.terminal.length - 2);
-//
-//            operand.type = x86Helper::otDD;
-//            operand.reference = info.binary->mapReference(structRef) | mskNativeCodeRef;
-//         }
-//      }
+      else if (token.check("code")) {
+         token.read(":", err);
+         token.read();
+
+         if (token.check("%")) {
+            operand.type = AMD64Helper::otDD;
+            operand.reference = token.readInteger(constants) | mskPreloadCodeRef;
+            operand.offset = 0x0;
+         }
+         else {
+            IdentifierString structRef(token.terminal.line + 1, token.terminal.length - 2);
+
+            operand.type = AMD64Helper::otDD;
+            operand.reference = info.binary->mapReference(structRef) | mskNativeCodeRef;
+         }
+      }
       else if (token.check(ARGUMENT1)) {
          operand.type = AMD64Helper::otDD;
          operand.reference = -1;
@@ -762,6 +770,12 @@ void AMD64Assembler :: compileADD(TokenInfo& token, ProcedureInfo& info, MemoryW
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 0), sour);
       AMD64Helper::writeImm(code, dest);
 	}
+   else if ((test(sour.type, AMD64Helper::otR64)||test(sour.type, AMD64Helper::otM64)) && dest.type==AMD64Helper::otDB) {
+      code->writeByte(0x48);
+      code->writeByte(0x83);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR64 + 0), sour);
+      code->writeByte(dest.offset);
+   }
    else token.raiseErr("Invalid command (%d)");
 }
 
@@ -1941,14 +1955,14 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //
 //	token.read();
 //}
-//
-//void x86Assembler :: compileREP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{
-//	code->writeByte(0xF3);
-//
-//	token.read();
-//}
-//
+
+void AMD64Assembler :: compileREP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	code->writeByte(0xF3);
+
+	token.read();
+}
+
 //void x86Assembler :: compileREPZ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
 //	code->writeByte(0xF3);
@@ -2105,14 +2119,14 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
 //   }
 //   else token.raiseErr("Invalid command (%d)");
 //}
-//
-//void x86Assembler :: compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{
-//	code->writeByte(0xAB);
-//
-//	token.read();
-//}
-//
+
+void AMD64Assembler :: compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+	code->writeByte(0xAB);
+
+	token.read();
+}
+
 //void x86Assembler :: compileSTOSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
 //	code->writeByte(0xAA);
@@ -3433,7 +3447,15 @@ void AMD64Assembler:: compileStructure(TokenInfo& token, _Module* binary, int ma
          token.read();
          Operand operand = defineOperand(token, info, "Invalid constant");
          if (operand.type == AMD64Helper::otDD) {
-            operand.type = AMD64Helper::otDQ;
+            if (!operand.reference) {
+               operand.type = AMD64Helper::otDQ;
+               AMD64Helper::writeImm(&writer, operand);
+            }
+            else {
+               AMD64Helper::writeImm(&writer, operand);
+               writer.writeDWord(0);
+            }
+
             AMD64Helper::writeImm(&writer, operand);
          }
          else if (operand.type == AMD64Helper::otDB) {
@@ -4079,10 +4101,10 @@ bool AMD64Assembler :: compileCommandR(TokenInfo& token, ProcedureInfo& info, Me
 //		compileRCL(token, info, &writer);
 //      return true;
 //	}
-//	else if (token.check("rep")) {
-//		compileREP(token, info, &writer);
-//      return true;
-//	}
+   else if (token.check("rep")) {
+	   compileREP(token, info, &writer);
+      return true;
+   }
 //	else if (token.check("repz")) {
 //		compileREPZ(token, info, &writer);
 //      return true;
@@ -4138,10 +4160,10 @@ bool AMD64Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Me
 //		compileSTC(token, info, &writer);
 //      return true;
 //	}
-//	else if (token.check("stosd")) {
-//		compileSTOSD(token, info, &writer);
-//      return true;
-//	}
+   else if (token.check("stosd") || token.check("stos")) {
+	   compileSTOSD(token, info, &writer);
+      return true;
+   }
 //	else if (token.check("stosb")) {
 //		compileSTOSB(token, info, &writer);
 //      return true;
@@ -4440,11 +4462,11 @@ void AMD64Assembler :: compile(TextReader* source, path_t outputPath)
          
          token.read();
       }
-//      else if (token.check("rstructure")) {
-//         compileStructure(token, &binary, mskNativeRDataRef);
-//
-//			token.read();
-//      }
+      else if (token.check("rstructure")) {
+         compileStructure(token, &binary, mskNativeRDataRef);
+
+	      token.read();
+      }
 	  else if (token.value[0] == '#')
 	  {
 		  token.read();

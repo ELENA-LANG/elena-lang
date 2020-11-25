@@ -111,7 +111,7 @@ protected:
 	//void compileLODSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileLODSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileLODSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileSTOSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileMOVSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileMOVAPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
@@ -136,7 +136,7 @@ protected:
 	//void compilePMULHUW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	//void compilePSHUFW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
-	//void compileREP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileREP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileREPZ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileRCPPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	//void compileRCPSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE

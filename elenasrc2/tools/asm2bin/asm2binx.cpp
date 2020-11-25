@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
    _ELENA_::Path source(/*pp.getTempFileName()*/amd64Mode ? argv[2] : argv[1]);
    _ELENA_::TextFileReader reader(source.c_str(), _ELENA_::feUTF8, true);
    if (!reader.isOpened()) {
-      printf("Cannot open the temporal file %s", source.c_str());
+      printf("Cannot open the file %s", source.c_str());
       return -1;
    }
 

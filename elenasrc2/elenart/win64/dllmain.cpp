@@ -13,8 +13,16 @@ using namespace _ELENA_;
 //static ELENARTMachine* _Instance = NULL;
 //static void*           _SystemEnv = NULL;
 
+int test(int x)
+{
+   return x +3
+}
+
 EXTERN_DLL_EXPORT void PrepareEM(void* args)
 {
+   int n = 4;
+   int k = test(n);
+
    printf("!!");
    fflush(stdout);
 }
@@ -84,12 +92,12 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, vo
 //{
 //   SystemRoutineProvider::CloseFrame((SystemEnv*)systemEnv, (FrameHeader*)frameHeader);
 //}
-//
-//EXTERN_DLL_EXPORT void Exit(int exitCode)
-//{
+
+EXTERN_DLL_EXPORT void Exit(int exitCode)
+{
 //   _Instance->Exit(exitCode);
-//}
-//
+}
+
 //EXTERN_DLL_EXPORT void StopThread(int exitCode)
 //{
 //   _Instance->ExitThread((SystemEnv*)_SystemEnv, exitCode);

@@ -18,10 +18,11 @@ using namespace _ELENA_;
 // --- ELENA Object constants ---
 ////const int gcPageSize = 0x0010;           // a heap page size constant
 constexpr int elObjectOffset = 0x0010;           // object header / offset constant
-//// --- ELENA CORE built-in routines
-////#define GC_ALLOC             0x10001
-////#define HOOK                 0x10010
-////#define INIT_RND             0x10012
+
+// --- ELENA CORE built-in routines
+//#define GC_ALLOC             0x10001
+//#define HOOK                 0x10010
+constexpr int INVOKER    = 0x10011;
 //#define INIT                 0x10013
 //#define NEWFRAME             0x10014
 ////#define INIT_ET              0x10015
@@ -42,21 +43,30 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 ////#define NEW_EVENT            0x10101
 //
 ////#define CORE_EXCEPTION_TABLE 0x20001
-////#define CORE_GC_TABLE        0x20002
+constexpr int CORE_GC_TABLE = 0x20002;
 //#define CORE_GC_SIZE         0x20003
 //#define CORE_STAT_COUNT      0x20004
-//#define CORE_STATICROOT      0x20005
-////#define CORE_TLS_INDEX       0x20007
-////#define CORE_THREADTABLE     0x20008
+constexpr int CORE_STATICROOT = 0x20005;
+constexpr int CORE_TLS_INDEX  = 0x20007;
+constexpr int CORE_THREADTABLE = 0x20008;
 //#define CORE_OS_TABLE        0x20009
-//
+constexpr int CORE_MESSAGE_TABLE = 0x2000A;
+constexpr int SYSTEM_ENV = 0x2000C;
+
+// preloaded env routines
+const int envFunctionNumber = 1;
+const int envFunctions[envFunctionNumber] =
+{
+   INVOKER
+};
+
 //// preloaded gc routines
-//const int coreVariableNumber = /*3*/1;
-//const int coreVariables[coreVariableNumber] =
-//{
-//   /*CORE_EXCEPTION_TABLE, CORE_GC_TABLE, */CORE_OS_TABLE
-//};
-//
+const int coreVariableNumber = /*3*/1;
+const int coreVariables[coreVariableNumber] =
+{
+   CORE_GC_TABLE
+};
+
 //// preloaded gc routines
 //const int coreFunctionNumber = /*22*/3;
 //const int coreFunctions[coreFunctionNumber] =
@@ -67,11 +77,12 @@ constexpr int elObjectOffset = 0x0010;           // object header / offset const
 //};
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/4;
+const int gcCommandNumber = /*138*/6;
 const int gcCommands[gcCommandNumber] =
 {
-   bcCallExtR, bcOpen,
+   bcLoadEnv, bcCallExtR, bcOpen,
    bcReserve, bcPushS,
+   bcAllocI,
 };
 
 // command table
@@ -84,7 +95,7 @@ void(*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &loadOneByteOp, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -116,7 +127,7 @@ void(*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
    &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
 
-   &compilePopN,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   &compilePopN, &compileAllocI,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
    &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
@@ -204,92 +215,119 @@ void(*commands[0x100])(int opcode, I64JITScope& scope) =
 ////   // jge   lbEnding
 ////   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JGE);
 ////}
-//
-//void _ELENA_::loadCoreOp(AMD64JITScope& scope, char* code)
-//{
-//   MemoryWriter* writer = scope.code;
-//
-//   if (code == NULL)
-//      throw InternalError("Cannot load core command");
-//
-//   size_t position = writer->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   writer->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   int key, offset;
-//   while (count > 0) {
-//      key = relocation[0];
-//      offset = relocation[1];
-//
-//      // locate relocation position
-//      writer->seek(position + offset);
-//
-//      if ((key & mskTypeMask) == mskPreloaded) {
-//         scope.compiler->writeCoreReference(scope, key, position, offset, code);
-//      }
-//      else {
-//         //if ((key & mskAnyRef) == mskLinkerConstant) {
-//         //   scope.code->writeDWord(scope.helper->getLinkerConstant(key & ~mskAnyRef));
-//         //}
-//         /*else */scope.helper->writeReference(*writer, key, *(int*)(code + offset), scope.module);
-//      }
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   writer->seekEOF();
-//}
+
+void _ELENA_::loadCoreOp(I64JITScope& scope, char* code)
+{
+   MemoryWriter* writer = scope.code;
+
+   if (code == NULL)
+      throw InternalError("Cannot load core command");
+
+   size_t position = writer->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   writer->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   int key, offset;
+   while (count > 0) {
+      key = relocation[0];
+      offset = relocation[1];
+
+      // locate relocation position
+      writer->seek(position + offset);
+
+      if ((key & mskTypeMask) == mskPreloaded) {
+         scope.compiler->writeCoreReference(scope, key, position, offset, code);
+      }
+      else {
+         //if ((key & mskAnyRef) == mskLinkerConstant) {
+         //   scope.code->writeDWord(scope.helper->getLinkerConstant(key & ~mskAnyRef));
+         //}
+         /*else */scope.helper->writeReference(*writer, key, *(int*)(code + offset), scope.module);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   writer->seekEOF();
+}
 
 inline void _ELENA_::writeCoreReference(I64JITScope& scope, ref_t reference, int position, int offset, char* code)
 {
    // references should be already preloaded
-   /*if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
+   if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
       scope.helper->writeReference(*scope.code,
          scope.compiler->_preloaded.get(reference & ~mskAnyRef), true, *(int*)(code + offset));
 
       scope.lh.addFixableJump(offset + position, (*scope.code->Memory())[offset + position]);
    }
-   else */scope.helper->writeReference(*scope.code,
+   else scope.helper->writeReference(*scope.code,
       scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
 }
 
-////void _ELENA_::loadOneByteOp(int opcode, x86JITScope& scope)
-////{
-////   MemoryWriter* writer = scope.code;
-////
-////   char* code = (char*)scope.compiler->_inlines[opcode];
-////   size_t position = writer->Position();
-////   size_t length = *(size_t*)(code - 4);
-////
-////   // simply copy correspondent inline code
-////   writer->write(code, *(int*)(code - 4));
-////
-////   // resolve section references
-////   int count = *(int*)(code + length);
-////   int* relocation = (int*)(code + length + 4);
-////   int key, offset;
-////   while (count > 0) {
-////      key = relocation[0];
-////      offset = relocation[1];
-////
-////      // locate relocation position
-////      writer->seek(position + relocation[1]);
-////
-////      if ((key & mskTypeMask) == mskPreloaded) {
-////         scope.compiler->writeCoreReference(scope, key, position, offset, code);
-////      }
-////      else scope.writeReference(*writer, key, *(int*)(code + offset));
-////
-////      relocation += 2;
-////      count--;
-////   }
-////   scope.code->seekEOF();
-////}
-////
+
+inline void loadCoreData(_ReferenceHelper& helper, I64JITScope& dataScope, ref_t reference)
+{
+   // due to optimization section must be ROModule::ROSection instance
+   SectionInfo info = helper.getCoreSection(reference);
+   dataScope.module = info.module;
+
+   loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
+}
+
+inline void loadRoutines(int functionNumber, const int* functions, I64JITScope& scope,
+   IntFixedMap<vaddr_t>& preloaded)
+{
+   for (int i = 0; i < functionNumber; i++) {
+      if (!preloaded.exist(functions[i])) {
+
+         preloaded.add(functions[i], scope.helper->getVAddress(*scope.code, mskCodeRef));
+
+         // due to optimization section must be ROModule::ROSection instance
+         SectionInfo info = scope.helper->getCoreSection(functions[i]);
+         scope.module = info.module;
+
+         loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
+      }
+   }
+}
+
+void _ELENA_::loadOneByteOp(int opcode, I64JITScope& scope)
+{
+   MemoryWriter* writer = scope.code;
+
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = writer->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   writer->write(code, *(int*)(code - 4));
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   int key, offset;
+   while (count > 0) {
+      key = relocation[0];
+      offset = relocation[1];
+
+      // locate relocation position
+      writer->seek(position + relocation[1]);
+
+      if ((key & mskTypeMask) == mskPreloaded) {
+         scope.compiler->writeCoreReference(scope, key, position, offset, code);
+      }
+      else scope.writeReference(*writer, key, *(int*)(code + offset));
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 ////void _ELENA_::loadNOp(int opcode, x86JITScope& scope)
 ////{
 ////   char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -451,7 +489,7 @@ void _ELENA_::loadFPOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(-(scope.argument << 2));
+         scope.code->writeDWord(-(scope.argument << 3));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -576,15 +614,45 @@ void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
 //////   }
 //////}
 
+void _ELENA_::loadNOp(int opcode, I64JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(scope.argument);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(scope.argument << 3);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 void _ELENA_::compileNop(int, I64JITScope& scope)
 {
-//   // nop command is used to indicate possible label
-//   // fix the label if it exists
-//   if (scope.lh.checkLabel(scope.tape->Position() - 1)) {
-//      scope.lh.fixLabel(scope.tape->Position() - 1);
-//   }
-//   // or add the label
-//   else scope.lh.setLabel(scope.tape->Position() - 1);
+   // nop command is used to indicate possible label
+   // fix the label if it exists
+   if (scope.lh.checkLabel(scope.tape->Position() - 1)) {
+      scope.lh.fixLabel(scope.tape->Position() - 1);
+   }
+   // or add the label
+   else scope.lh.setLabel(scope.tape->Position() - 1);
 }
 
 //void _ELENA_::compileBreakpoint(int, AMD64JITScope& scope)
@@ -1070,17 +1138,6 @@ void _ELENA_::compileCallR(int, I64JITScope& scope)
 //   //scope.code->writeQWord(scope.resolveMessage(scope.argument));
 //}
 //
-////void _ELENA_::compilePopN(int, x86JITScope& scope)
-////{
-////   // add esp, arg
-////   scope.code->writeWord(0xC481);
-////   scope.code->writeDWord(scope.argument << 2);
-////
-////   //// lea esp, [esp + level * 4]
-////   //x86Helper::leaRM32disp(
-////   //   scope.code, x86Helper::otESP, x86Helper::otESP, scope.argument << 2);
-////}
-//
 //void _ELENA_::compileACopyB(int, AMD64JITScope& scope)
 //{
 //   // mov rax, rdi
@@ -1359,10 +1416,28 @@ void _ELENA_::compilePopN(int, I64JITScope& scope)
    }
 }
 
+void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
+{
+   // sub esp, __arg1 * 8
+   int arg = scope.argument << 3;
+   if (arg < 0x80) {
+      scope.code->writeByte(0x48);
+      scope.code->writeWord(0xEC83);
+      scope.code->writeByte(scope.argument << 3);
+   }
+   else {
+      scope.code->writeByte(0x48);
+      scope.code->writeWord(0xEC81);
+      scope.code->writeDWord(scope.argument << 3);
+   }
+
+   loadNOp(opcode, scope);
+}
+
 // --- AMD64JITScope ---
 
 I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, I64JITCompiler* compiler)
-//   : lh(code)
+   : lh(code)
 {
    this->tape = tape;
    this->code = code;
@@ -1412,62 +1487,73 @@ void I64JITCompiler:: alignCode(MemoryWriter* writer, int alignment, bool code)
    writer->align(alignment, code ? 0x90 : 0x00);
 }
 
-//void I64JITCompiler :: writeCoreReference(AMD64JITScope& scope, ref_t reference, int position, int offset, char* code)
-//{
-//   if (!_preloaded.exist(reference& ~mskAnyRef)) {
-//      MemoryWriter writer(scope.code->Memory());
-//
-//      _preloaded.add(reference & ~mskAnyRef, scope.helper->getVAddress(writer, mskCodeRef));
-//
-//      // due to optimization section must be ROModule::ROSection instance
-//      SectionInfo info = scope.helper->getCoreSection(reference & ~mskAnyRef);
-//      // separate scope should be used to prevent overlapping
-//      AMD64JITScope newScope(NULL, &writer, scope.helper, this);
-//      newScope.module = info.module;
-//
-//      loadCoreOp(newScope, info.section ? (char*)info.section->get(0) : NULL);
-//   }
-//   _ELENA_::writeCoreReference(scope, reference, position, offset, code);
-//}
+void I64JITCompiler :: writeCoreReference(I64JITScope& scope, ref_t reference, pos_t position, int offset, char* code)
+{
+   if (!_preloaded.exist(reference& ~mskAnyRef)) {
+      MemoryWriter writer(scope.code->Memory());
+
+      _preloaded.add(reference & ~mskAnyRef, scope.helper->getVAddress(writer, mskCodeRef));
+
+      // due to optimization section must be ROModule::ROSection instance
+      SectionInfo info = scope.helper->getCoreSection(reference & ~mskAnyRef);
+      // separate scope should be used to prevent overlapping
+      I64JITScope newScope(NULL, &writer, scope.helper, this);
+      newScope.module = info.module;
+
+      loadCoreOp(newScope, info.section ? (char*)info.section->get(0) : NULL);
+   }
+   _ELENA_::writeCoreReference(scope, reference, position, offset, code);
+}
 
 void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 {
-   //// preload core data
-   //_Memory* data = loader->getTargetSection((ref_t)mskDataRef);
-   //_Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
-   //_Memory* sdata = loader->getTargetSection((ref_t)mskStatRef);
-   //_Memory* code = loader->getTargetSection((ref_t)mskCodeRef);
+   // preload core data
+   _Memory* data = loader->getTargetSection((ref_t)mskDataRef);
+   _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
+   _Memory* sdata = loader->getTargetSection((ref_t)mskStatRef);
+   _Memory* code = loader->getTargetSection((ref_t)mskCodeRef);
 
-   //MemoryWriter dataWriter(data);
-   //MemoryWriter rdataWriter(rdata);
-   //MemoryWriter sdataWriter(sdata);
-   //MemoryWriter codeWriter(code);
+   MemoryWriter dataWriter(data);
+   MemoryWriter rdataWriter(rdata);
+   MemoryWriter sdataWriter(sdata);
+   MemoryWriter codeWriter(code);
 
-   //AMD64JITScope dataScope(NULL, &dataWriter, &helper, this);
-   //for (int i = 0; i < coreVariableNumber; i++) {
-   //   if (!_preloaded.exist(coreVariables[i])) {
-   //      _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
+   // preloaded variables
+   I64JITScope dataScope(NULL, &dataWriter, &helper, this);
+   for (int i = 0; i < coreVariableNumber; i++) {
+      if (!_preloaded.exist(coreVariables[i])) {
+         _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
 
-   //      // due to optimization section must be ROModule::ROSection instance
-   //      SectionInfo info = helper.getCoreSection(coreVariables[i]);
-   //      dataScope.module = info.module;
+         loadCoreData(helper, dataScope, coreVariables[i]);
+      }
+   }
 
-   //      loadCoreOp(dataScope, info.section ? (char*)info.section->get(0) : NULL);
-   //   }
-   //}
+   // MESSAGE TABLE POINTER
+   _preloaded.add(CORE_MESSAGE_TABLE, helper.getVAddress(rdataWriter, mskRDataRef));
+   rdataWriter.writeDWord(0);
 
-   //// GC SIZE Table
-   //_preloaded.add(CORE_GC_SIZE, helper.getVAddress(rdataWriter, mskRDataRef));
-   //rdataWriter.writeQWord(helper.getLinkerConstant(lnGCMGSize));
-   //rdataWriter.writeQWord(helper.getLinkerConstant(lnGCYGSize));
-   //rdataWriter.writeQWord(helper.getLinkerConstant(lnThreadCount));
-
-   //// load GC static root
-   //_preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
+   // load GC static root
+   _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
 
    //// STAT COUNT
    //_preloaded.add(CORE_STAT_COUNT, helper.getVAddress(rdataWriter, mskRDataRef));
    //rdataWriter.writeQWord(0);
+
+   // HOTFIX : preload invoker
+   I64JITScope scope(NULL, &codeWriter, &helper, this);
+   loadRoutines(envFunctionNumber, envFunctions, scope, _preloaded);
+
+   // SYSTEM_ENV
+   I64JITScope rdataScope(NULL, &rdataWriter, &helper, this);
+   _preloaded.add(SYSTEM_ENV, helper.getVAddress(rdataWriter, mskRDataRef));
+   loadCoreData(helper, rdataScope, SYSTEM_ENV);
+   // NOTE : the table is tailed with GCMGSize,GCYGSize,MaxThread
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
+
+   // resolve reference to SYSTEM_ENV at rdata header
+   rdata->addReference((ref_t)_preloaded.get(SYSTEM_ENV), 0);
 
    //dataWriter.writeQWord(helper.getLinkerConstant(lnVMAPI_Instance));
 
@@ -1514,36 +1600,35 @@ ref_t I64JITCompiler :: getPreloadedReference(ref_t reference)
 
 void I64JITCompiler :: allocateThreadTable(_JITLoader* loader, int maxThreadNumber)
 {
-   //// get target image & resolve virtual address
-   //MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
+   // get target image & resolve virtual address
+   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
 
-   //// size place holder
-   //dataWriter.writeDWord(0);
+   // size place holder
+   dataWriter.writeDWord(0);
+   int position = dataWriter.Position();
+   if (maxThreadNumber > 0) {
+      // reserve space for the thread table
+      allocateArray(dataWriter, maxThreadNumber);
+   }
 
-   //// reserve space for the thread table
-   //int position = dataWriter.Position();
-   //allocateArray(dataWriter, maxThreadNumber);
-
-   //// map thread table
-   //loader->mapReference(GC_THREADTABLE, (void*)(position | mskDataRef), (ref_t)mskDataRef);
-   //_preloaded.add(CORE_THREADTABLE, (void*)(position | mskDataRef));
+   // map thread table
+   loader->mapReference(ReferenceInfo(GC_THREADTABLE), (position | mskDataRef), (ref_t)mskDataRef);
+   _preloaded.add(CORE_THREADTABLE, position | mskDataRef);
 }
 
 int I64JITCompiler:: allocateTLSVariable(_JITLoader* loader)
 {
-   //MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
+   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskDataRef));
 
-   //// reserve space for TLS index
-   //int position = dataWriter.Position();
-   //allocateVariable(dataWriter);
+   // reserve space for TLS index
+   pos_t position = dataWriter.Position();
+   allocateVariable(dataWriter);
 
-   //// map TLS index
-   //loader->mapReference(TLS_KEY, (void*)(position | mskDataRef), (ref_t)mskDataRef);
-   //_preloaded.add(CORE_TLS_INDEX, (void*)(position | mskDataRef));
+   // map TLS index
+   loader->mapReference(ReferenceInfo(TLS_KEY), position | mskDataRef, (ref_t)mskDataRef);
+   _preloaded.add(CORE_TLS_INDEX, position | mskDataRef);
 
-   //return position;
-
-   return 0;
+   return position;
 }
 
 inline void compileTape(MemoryReader& tapeReader, size_t endPos, I64JITScope& scope)

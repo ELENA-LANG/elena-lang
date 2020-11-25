@@ -3,11 +3,9 @@ In development:
 ------         
 
   [development]
-    * use only 32 bit addresses
+    * size, lock - should be 32bit for x64?
+    * reserve should specify absolute size, rather than in index
 
-    * virtual maching : code memory should be 32 bit (using disired address)
-
-    * use pos_t, ref_t and uint_ptr correctly for x32 and x64
     * use message, extension, symbol correctly for x32 and x64
     * message and messagename should not be the same
 

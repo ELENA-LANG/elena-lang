@@ -1,27 +1,34 @@
 // --- Predefined References  --
-define EXIT                 1001Dh
-define PREPARE              10027h
+define INVOKER              10011h
 
-define CORE_OS_TABLE        20009h
+// INVOKER(prevFrame, function, arg)
+procedure % INVOKER
 
-structure % CORE_OS_TABLE
+  // ; save registers
+  mov  rax, [rsp+16]   // ; function
+  push rsi
+  mov  rsi, [rsp+16]   // ; prevFrame
+  push rdi
+  mov  rdi, [rsp+40]  // ; arg
+  push rcx
+  push rbx
+  push rbp
 
-  dq 0 // ; dummy
+  // declare new frame
+  push rsi            // ; FrameHeader.previousFrame
+  push 0              // ; FrameHeader.reserved
+  mov  rbp, rsp       // ; FrameHeader
+  push rdi            // ; arg
 
-end
+  call rax
+  add  rsp, 24        // ; clear FrameHeader+arg
 
-procedure % EXIT
-
-  mov rcx, 0
-
-  // ; exit
-  sub  rsp, 20h
-  call extern 'dlls'KERNEL32.ExitProcess     
-
-end
-
-procedure % PREPARE
-
-  ret    // ; idle
+  // ; restore registers
+  pop  rbp
+  pop  rbx
+  pop  rcx
+  pop  rdi
+  pop  rsi
+  ret
 
 end
