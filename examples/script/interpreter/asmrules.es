@@ -3,6 +3,7 @@
    #grammar cf
 
    #define start      ::= <= system'dynamic'DynamicTape ( => command commands <= ) =>;
+   #define start      ::= <= system'dynamic'DynamicTape ( => comment commands <= ) =>;
    #define start      ::= $eof;
 
    #define commands   ::= command commands;
@@ -21,6 +22,7 @@
    #define comment    ::= " " comments;
    #define comment    ::= "'" comments;
    #define comment    ::= "!" comments;
+   #define comment    ::= "*" comments;
    #define comment    ::= $eol;
 
    #define comments   ::= $chr comments;
