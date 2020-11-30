@@ -3,12 +3,27 @@ In development:
 ------         
 
   [development]
-    * size, lock - should be 32bit for x64?
+    * idle sub esp, 0 -- ???
+
+    * test all samples
+    * check all mtredirect commands (class, parent class)
+    * test parent / flags / class commands
+
+
+    * idle initializer (ignore movr idle commands )
+
+    * reserve / alloc redesign
+    * movs, movf, copyf, copys and so on should use absolute values
+    * int should take 4 byte in stack
+    * size, lock - should be 32bit for x64
+    * stack allocated array - only size field
+
     * reserve should specify absolute size, rather than in index
 
     * use message, extension, symbol correctly for x32 and x64
     * message and messagename should not be the same
 
+    * critical error handler should be moved to C code
     * retiring core #77
     * #206 - 64-bit architecture
     * #280
@@ -20,6 +35,7 @@ In development:
         - add control
         - load TeX
     * [Multisplit]
+    * interface should save resolved methods!!
     * [Loops/Wrong ranges]
     * [Range consolidation]
     * [S-expressions]

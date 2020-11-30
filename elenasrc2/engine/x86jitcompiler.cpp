@@ -10,12 +10,9 @@
 // --------------------------------------------------------------------------
 #include "x86jitcompiler.h"
 #include "bytecode.h"
+#include "core.h"
 
 using namespace _ELENA_;
-
-// --- ELENA Object constants ---
-constexpr int gcPageSize         = 0x0010;           // a heap page size constant
-constexpr int elObjectOffset     = 0x0008;           // object header / offset constant
 
 // --- ELENA CORE built-in routines
 constexpr int GC_ALLOC           = 0x10001;
@@ -1318,7 +1315,7 @@ void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
    int length = scope.argument;
 
    // __arg1 = #gc_page + (length - 1)
-   scope.argument = align(scope.argument + scope.objectSize, gcPageSize);
+   scope.argument = align(scope.argument + scope.objectSize, gcPageSize32);
 
    loadNOp(opcode, scope);
 
@@ -1327,16 +1324,16 @@ void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
    if (length == 0)
       length = 0x800000;
 
-   // mov [ebx-8], length
+   // mov [ebx-elPageSizeOffset], length
    scope.code->writeWord(0x43C7);
-   scope.code->writeByte(0xF8);
+   scope.code->writeByte((unsigned char)-elPageSizeOffset32);
    scope.code->writeDWord(length);
 
    if (vmtRef) {
       // ; set vmt reference
-      // mov [ebx-4], vmt
+      // mov [ebx-elPageVMTOffset], vmt
       scope.code->writeWord(0x43C7);
-      scope.code->writeByte(0xFC);
+      scope.code->writeByte((unsigned char)-elPageVMTOffset32);
       scope.writeReference(*scope.code, vmtRef, 0);
    }
 }
@@ -1350,20 +1347,20 @@ void _ELENA_::compileCreateN(int, x86JITScope& scope)
    int length = scope.argument | 0x800000; // mark object as a binary structure
 
    // __arg1 = #gc_page + (length - 1)
-   scope.argument = align(scope.argument + scope.objectSize, gcPageSize);
+   scope.argument = align(scope.argument + scope.objectSize, gcPageSize32);
 
    loadNOp(bcNew, scope);
 
-   // mov [ebx-8], length
+   // mov [ebx-elPageSizeOffset], length
    scope.code->writeWord(0x43C7);
-   scope.code->writeByte(0xF8);
+   scope.code->writeByte((unsigned char)-elPageSizeOffset32);
    scope.code->writeDWord(length);
 
    if (vmtRef) {
       // ; set vmt reference
-      // mov [ebx-4], vmt
+      // mov [ebx-elPageVMTOffset], vmt
       scope.code->writeWord(0x43C7);
-      scope.code->writeByte(0xFC);
+      scope.code->writeByte((unsigned char)-elPageVMTOffset32);
       scope.writeReference(*scope.code, vmtRef, 0);
    }
 }
@@ -1436,9 +1433,9 @@ void _ELENA_::compileDynamicCreateN(int opcode, x86JITScope& scope)
 
    if (vmtRef) {
       // ; set vmt reference
-      // mov [ebx-4], vmt
+      // mov [ebx-elVMT], vmt
       scope.code->writeWord(0x43C7);
-      scope.code->writeByte(0xFC);
+      scope.code->writeByte((unsigned char)(-elPageVMTOffset32));
       scope.writeReference(*scope.code, vmtRef, 0);
    }
 }
@@ -1883,7 +1880,7 @@ x86JITCompiler :: x86JITCompiler(bool debugMode)
 
 size_t x86JITCompiler :: getObjectHeaderSize() const
 {
-   return elObjectOffset;
+   return elObjectOffset32;
 }
 
 bool x86JITCompiler :: isWithDebugInfo() const

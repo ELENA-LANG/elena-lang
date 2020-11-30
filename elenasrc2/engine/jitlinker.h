@@ -187,8 +187,8 @@ public:
    void prepareCompiler();
    void fixImage(ident_t superClass);
 
-   vaddr_t resolve(ReferenceInfo referenceInfo, int mask, bool silentMode);
-   vaddr_t resolve(ident_t reference, int mask, bool silentMode);
+   vaddr_t resolve(ReferenceInfo referenceInfo, ref_t mask, bool silentMode);
+   vaddr_t resolve(ident_t reference, ref_t mask, bool silentMode);
 
    vaddr_t resolveTemporalByteCode(_ReferenceHelper& helper, MemoryReader& reader, ident_t reference, void* param);
 

@@ -37,8 +37,12 @@ define struct_mask_inv     7FFFFFh
 
 // Object header fields
 define elObjectOffset        0008h
-define elSizeOffset          0008h
-define elVMTOffset           0004h 
+define elSizeOffset          0004h
+define elVMTOffset           0008h 
+
+define elPageSizeOffset     0004h
+define elPageVMTOffset      0000h
+
 define elVMTFlagOffset       0008h
 define elVMTSizeOffset       000Ch
 define elPackageOffset       0010h

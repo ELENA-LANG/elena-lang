@@ -15,12 +15,14 @@ using namespace _ELENA_;
 
 int test(int x)
 {
-   return x +3
+   int k = x + 3;
+   return k;
 }
 
 EXTERN_DLL_EXPORT void PrepareEM(void* args)
 {
    int n = 4;
+   int m = 5;
    int k = test(n);
 
    printf("!!");

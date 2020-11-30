@@ -990,7 +990,7 @@ vaddr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t mask, bo
    MemoryWriter writer(image);
 
    // allocate object header
-   int vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
+   pos_t vmtPosition = _compiler->allocateConstant(writer, _loader->getLinkerConstant(lnObjectSize));
 
    vaddress = calculateVAddress(&writer, mskRDataRef);
 
@@ -1471,7 +1471,7 @@ vaddr_t JITLinker :: resolveEntry(vaddr_t programEntry)
 }
 
 // NOTE: reference should not be a forward one, otherwise there may be code duplication
-vaddr_t JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentMode)
+vaddr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t mask, bool silentMode)
 {
    vaddr_t vaddress = _loader->resolveReference(referenceInfo, mask);
    if (vaddress==LOADER_NOTLOADED) {
@@ -1552,7 +1552,7 @@ vaddr_t JITLinker :: resolve(ReferenceInfo referenceInfo, int mask, bool silentM
    return vaddress;
 }
 
-vaddr_t JITLinker :: resolve(ident_t reference, int mask, bool silentMode)
+vaddr_t JITLinker :: resolve(ident_t reference, ref_t mask, bool silentMode)
 {
    return resolve(ReferenceInfo(reference), mask, silentMode);
 }

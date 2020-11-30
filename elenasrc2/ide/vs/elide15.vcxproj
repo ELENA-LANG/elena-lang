@@ -154,6 +154,7 @@
     <ClInclude Include="..\..\common\dump.h" />
     <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\engine\bytecode.h" />
+    <ClInclude Include="..\..\engine\core.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\rtman.h" />
     <ClInclude Include="..\..\engine\section.h" />

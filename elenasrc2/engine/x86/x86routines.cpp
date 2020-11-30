@@ -165,8 +165,8 @@ constexpr int elObjectOffset = 0x0008;
 
 struct ObjectPage
 {
-   int   size;
    void* vmtPtr;
+   int   size;
    int   body[2];
 };
 

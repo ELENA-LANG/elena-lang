@@ -12,6 +12,8 @@
 #include "win32\pehelper.h"
 #include "elenamachine.h"
 
+#include "core.h"
+
 using namespace _ELENA_;
 
 // --- main thread that is the debugger residing over a debuggee ---
@@ -209,7 +211,7 @@ size_t ThreadContext :: ClassVMT(size_t objectPtr)
    int             dump = -1;
    unsigned long   size = 0;
 
-   ReadProcessMemory(hProcess, (void*)(objectPtr - 4), &dump, 4, &size);
+   ReadProcessMemory(hProcess, (void*)(objectPtr - elPageVMTOffset32), &dump, 4, &size);
 
    return dump;
 }
@@ -219,7 +221,7 @@ size_t ThreadContext :: VMTFlags(size_t vmtPtr)
    int             dump = -1;
    unsigned long   size = 0;
 
-   ReadProcessMemory(hProcess, (void*)(vmtPtr - 8), &dump, 4, &size);
+   ReadProcessMemory(hProcess, (void*)(vmtPtr - elVMTFlagOffset32), &dump, 4, &size);
 
    return dump;
 }

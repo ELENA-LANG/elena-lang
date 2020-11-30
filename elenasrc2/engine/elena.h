@@ -507,14 +507,32 @@ struct VMTXEntry
 };
 
 // --- ClassHeader ---
-
-struct ClassHeader
+/// NOTE : ClassHeader is used for meta data
+struct ClassHeader 
 {
    pos_t  staticSize;      // static table size
    ref_t  classRef;        // class class reference
    pos_t  count;
    ref_t  flags;
    ref_t  parentRef;
+};
+
+// --- VMTHeader ---
+
+struct VMTHeader
+{
+   pos_t packageRef;
+   ref_t flags;
+   ref_t classRef;
+   pos_t count;
+};
+
+struct VMTXHeader
+{
+   pos_t packageRef;
+   ref_t flags;
+   ref_t classRef;
+   pos_t count;
 };
 
 // --- ClassInfo ---

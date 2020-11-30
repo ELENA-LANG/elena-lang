@@ -55,11 +55,16 @@ define struct_mask         800000h
 define struct_mask_inv     7FFFFFh
 
 // Object header fields
+define elSizeOffset          0004h
+define elVMTOffset           0008h 
 define elObjectOffset        0008h
-define elSizeOffset          0008h
-define elVMTOffset           0004h 
-define elVMTFlagOffset       0008h
-define elVMTSizeOffset       000Ch
+
+define elPageSizeOffset     0004h
+define elPageVMTOffset      0000h
+
+// VMT header fields
+define elVMTSizeOffset       0004h
+define elVMTFlagOffset       000Ch
 define elPackageOffset       0010h
 
 define page_align_mask   000FFFF0h
@@ -377,7 +382,7 @@ labMGCollectFrame:
 
   // ; skip the permanent part
 labMGSkipNext:
-  mov  ecx, [esi]
+  mov  ecx, [esi + elPageSizeOffset]
   test ecx, ecx
   jns  short labMGSkipEnd
   add  ecx, page_ceil
@@ -408,7 +413,7 @@ labMGCompactNext:
   jae  short labMGCompactEnd
 
 labMGCompactNext2:
-  mov  ecx, [esi]
+  mov  ecx, [esi + elPageSizeOffset]
   test ecx, ecx
   jns  short labMGCompactNext
   add  ecx, page_ceil
@@ -451,7 +456,7 @@ labYGPromNext:
   cmp  esi, edx
   jae  short labYGPromEnd
 labYGPromNext2:
-  mov  ecx, [esi]
+  mov  ecx, [esi + elPageSizeOffset]
   test ecx, ecx
   jns  short labYGPromNext
   add  ecx, page_ceil
@@ -615,11 +620,11 @@ labYGCheck:
   push ecx
 
   // ; copy object size
-  mov  [ebp], edi
+  mov  [ebp + elPageSizeOffset], edi
 
   // ; copy object vmt
   mov  ecx, [eax - elVMTOffset]
-  mov  [ebp + 04h], ecx
+  mov  [ebp + elPageVMTOffset], ecx
   
   // ; mark as collected
   or   [eax - elSizeOffset], 80000000h
@@ -701,7 +706,7 @@ labYGEnd:
 labYGContinue:
   // ; update reference
   mov  edi, [eax - elVMTOffset]
-  mov  [esi], edi
+  mov  [esi + elPageVMTOffset], edi
   jmp  labYGNext
 
   // ---- start collecting: esi => ebp, [ebx, edx] ; ecx - count ---
@@ -981,7 +986,7 @@ end
 // ; bsredirect
 inline % 0Eh // (ebx - object, edx - message)
 
-  mov  edi, [ebx-4]
+  mov  edi, [ebx - elVMTOffset]
   mov  esi, [edi - elVMTSizeOffset]
   xor  ecx, ecx
 
@@ -1301,7 +1306,7 @@ end
 inline % 31h
 
   mov  edx, 0FFFFFh
-  mov  ecx, [ebx-8]
+  mov  ecx, [ebx-elSizeOffset]
   and  edx, ecx
 
 end
@@ -1316,7 +1321,7 @@ end
 // ; flag
 inline % 33h
 
-  mov  eax, [ebx - 4]
+  mov  eax, [ebx - elVMTOffset]
   mov  edx, [eax - elVMTFlagOffset]
   
 end
@@ -1339,7 +1344,7 @@ end
 inline % 37h
 
   mov  ecx, edx
-  mov  edi, [ebx-4]
+  mov  edi, [ebx - elVMTOffset]
   xor  edx, edx
   mov  esi, [edi - elVMTSizeOffset]
 
@@ -1761,7 +1766,7 @@ inline % 061h
 
   mov    edi, [esp+__arg1]
   xor    edx, edx
-  mov    esi, [ebx-4]
+  mov    esi, [ebx-elVMTOffset]
 labNext:
   mov    eax, 0
   cmp    esi, edi
@@ -1817,7 +1822,7 @@ labMatching:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi - 4]
+  mov  edi, [edi - elVMTOffset]
   mov  esi, [ebx + ecx * 4]
 
 labNextBaseClass:
@@ -1905,7 +1910,7 @@ labMatching:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi - 4]
+  mov  edi, [edi - elVMTOffset]
   mov  esi, [ebx]
 
 labNextBaseClass:
@@ -2449,14 +2454,14 @@ inline % 9Ah
 
   mov   eax, [esp]
   xor   edx, edx
-  mov   [ebx-4], __arg1
+  mov   [ebx-elVMTOffset], __arg1
   mov   ecx, [eax]
   mov   esi, 800000h
   test  ecx, ecx
   cmovz edx, esi
   shl   ecx, 2
   or    ecx, edx
-  mov   [ebx-8], ecx
+  mov   [ebx-elSizeOffset], ecx
 
 end
 
@@ -2473,7 +2478,7 @@ end
 // ; ajumpvi
 inline % 0A1h
 
-  mov  eax, [ebx - 4]
+  mov  eax, [ebx - elVMTOffset]
   jmp  [eax + __arg1]
 
 end
@@ -2481,7 +2486,7 @@ end
 // ; callvi (ecx - offset to VMT entry)
 inline % 0A2h
 
-  mov  eax, [ebx - 4]
+  mov  eax, [ebx - elVMTOffset]
   call [eax + __arg1]
 
 end
@@ -2754,7 +2759,7 @@ inline % 0D2h
 
   mov   eax, [esp]
   mov   edx, 0FFFFFh
-  mov   ecx, [eax-8]
+  mov   ecx, [eax-elSizeOffset]
   and   edx, ecx
   mov   ecx, page_ceil
   add   ecx, edx
@@ -2763,11 +2768,11 @@ inline % 0D2h
   call  code : %GC_ALLOC
 
   mov   eax, [esp]
-  mov   [ebx-4], __arg1
+  mov   [ebx-elVMTOffset], __arg1
   mov   edx, 0FFFFFh
-  mov   ecx, [eax-8]
+  mov   ecx, [eax-elSizeOffset]
   and   edx, ecx
-  mov   [ebx-8], edx
+  mov   [ebx-elSizeOffset], edx
   
 end
 
@@ -2798,7 +2803,7 @@ end
 inline % 0DBh
 
   mov  ecx, __arg1
-  mov  eax, [ebx - 4]
+  mov  eax, [ebx - elVMTOffset]
   jmp  [eax + ecx * 8 + 4]
 
 end
@@ -2989,7 +2994,7 @@ labNextParam:
   mov  esi, __arg1
   pop  ebx
   mov  eax, [esi + edx * 8 + 4]
-  mov  ecx, [ebx - 4]
+  mov  ecx, [ebx - elVMTOffset]
   mov  edx, [esi + edx * 8]
   jmp  [ecx + eax * 8 + 4]
 
@@ -3001,7 +3006,7 @@ labMatching:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi - 4]
+  mov  edi, [edi - elVMTOffset]
   mov  esi, [ebx + ecx * 4]
 
 labNextBaseClass:
@@ -3054,7 +3059,7 @@ labMatching:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi - 4]
+  mov  edi, [edi - elVMTOffset]
   mov  esi, [ebx + ecx * 4]
 
 labNextBaseClass:
@@ -3105,7 +3110,7 @@ labNextBaseClass:
 
   mov  esi, __arg1
   mov  eax, [esi + edx * 8 + 4]
-  mov  ecx, [ebx - 4]
+  mov  ecx, [ebx - elVMTOffset]
   mov  edx, [esi + edx * 8]
   jmp  [ecx + eax * 8 + 4]
 
@@ -3194,7 +3199,7 @@ labMatching:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi-4]
+  mov  edi, [edi-elVMTOffset]
   mov  esi, [ecx]
 
 labNextBaseClass:
@@ -3217,7 +3222,7 @@ labNextBaseClass2:
 
   mov  esi, __arg1
   mov  eax, [esi + edx * 8 + 4]
-  mov  ecx, [ebx - 4]
+  mov  ecx, [ebx - elVMTOffset]
   mov  edx, [esi + edx * 8]
   jmp  [ecx + eax * 8 + 4]
 
@@ -3267,7 +3272,7 @@ labMatching:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi-4]
+  mov  edi, [edi-elVMTOffset]
   mov  esi, [ecx]
 
 labNextBaseClass:
@@ -3281,7 +3286,7 @@ labNextBaseClass:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi-4]
+  mov  edi, [edi-elVMTOffset]
   mov  esi, [ecx + 4]
 
 labNextBaseClass2:
@@ -3354,7 +3359,7 @@ labNextParam:
   lea  esp, [esp + 4]
   pop  ebx
   mov  eax, [esi + edx * 8 + 4]
-  mov  ecx, [ebx - 4]
+  mov  ecx, [ebx - elVMTOffset]
   mov  edx, [esi + edx * 8]
   jmp  [ecx + eax * 8 + 4]
 
@@ -3368,7 +3373,7 @@ labMatching:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi - 4]
+  mov  edi, [edi - elVMTOffset]
   mov  esi, [ebx]
 
 labNextBaseClass:
@@ -3441,7 +3446,7 @@ labMatching:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi - 4]
+  mov  edi, [edi - elVMTOffset]
   mov  esi, [ebx]
 
 labNextBaseClass:
@@ -3538,7 +3543,7 @@ inline % 0E1h
   mov   esi, __arg1
   imul  esi
   or    ecx, eax
-  mov   [ebx-8], ecx
+  mov   [ebx-elSizeOffset], ecx
   
 end
 
@@ -3555,7 +3560,7 @@ inline % 1E1h
   mov   eax, [esp]
   mov   ecx, 800000h
   or    ecx, [eax]
-  mov   [ebx-8], ecx
+  mov   [ebx-elSizeOffset], ecx
   
 end
 
@@ -3576,7 +3581,7 @@ inline % 2E1h
   mov   eax, [eax]
   shl  eax, 1
   or    ecx, eax
-  mov   [ebx-8], ecx
+  mov   [ebx-elSizeOffset], ecx
   
 end
 
@@ -3597,7 +3602,7 @@ inline % 3E1h
   mov   eax, [eax]
   shl  eax, 2
   or    ecx, eax
-  mov   [ebx-8], ecx
+  mov   [ebx-elSizeOffset], ecx
   
 end
 
@@ -3618,7 +3623,7 @@ inline % 4E1h
   mov   eax, [eax]
   shl  eax, 3
   or    ecx, eax
-  mov   [ebx-8], ecx
+  mov   [ebx-elSizeOffset], ecx
   
 end
 
@@ -3963,7 +3968,7 @@ end
 inline % 0F4h
 
   mov  ecx, __arg1
-  mov  eax, [ebx - 4]
+  mov  eax, [ebx - elVMTOffset]
   call [eax + ecx * 8 + 4]
   
 end
