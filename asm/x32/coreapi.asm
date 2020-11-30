@@ -6,8 +6,8 @@ define GET_COUNT         10020h
 
 define CORE_ET_TABLE     2000Bh
 
-define elSizeOffset      0008h
-define elVMTSizeOffset   000Ch
+define elSizeOffset      0004h
+define elVMTSizeOffset   0004h
 
 // ; --- API ---
 
@@ -949,7 +949,7 @@ procedure coreapi'strtoint
   mov  eax, [esp+8]                 // ; radix
   mov  esi, [esp+4]                 // ; get str
   mov  ebx, [eax]
-  mov  ecx, [esi-8]
+  mov  ecx, [esi-elSizeOffset]
   xor  edx, edx                     // ; clear flag
   and  ecx, 0FFFFFh
   cmp  byte ptr [esi], 2Dh
@@ -1003,7 +1003,7 @@ procedure coreapi'strtolong
   mov  ecx, [eax]
 
   push ecx
-  mov  ecx, [esi-8]
+  mov  ecx, [esi-elSizeOffset]
   xor  edx, edx
   and  ecx, 0FFFFFh
 
@@ -1087,7 +1087,7 @@ procedure coreapi'wstrtolong
 
   push ecx
   mov  esi, eax
-  mov  ecx, [esi-8]
+  mov  ecx, [esi-elSizeOffset]
   xor  edx, edx
   and  ecx, 0FFFFFh
 
@@ -1163,7 +1163,7 @@ procedure coreapi'strtouint
   mov  esi, [esp+4]                 // ; get str
 
   mov  ebx, [eax]                   // ; radix
-  mov  ecx, [esi-8]
+  mov  ecx, [esi-elSizeOffset]
   and  ecx, 0FFFFFh
   xor  eax, eax
   lea  ecx, [ecx-1]                 // ; to skip zero
@@ -1202,7 +1202,7 @@ procedure coreapi'wstrtoint
   mov  esi, [esp+4]                 // ; get str
 
   mov  ebx, [eax]                   // ; radix
-  mov  ecx, [esi-8]
+  mov  ecx, [esi-elSizeOffset]
   xor  edx, edx                     // ; clear flag
   and  ecx, 0FFFFFh
   cmp  byte ptr [esi], 2Dh
@@ -3218,8 +3218,8 @@ procedure coreapi'sequal
   mov  edx, [esp+8]                 // ; s1
   mov  esi, [esp+4]                 // ; s2
 
-  mov  ecx, [edx-8]          // s1.length
-  mov  ebx, [esi-8]
+  mov  ecx, [edx-elSizeOffset]          // s1.length
+  mov  ebx, [esi-elSizeOffset]
   and  ecx, 0FFFFFh 
   and  ebx, 0FFFFFh 
   mov  eax, 0
@@ -3245,8 +3245,8 @@ procedure coreapi'wequal
   mov  edx, [esp+8]                 // ; s1
   mov  esi, [esp+4]                 // ; s2
 
-  mov  ecx, [edx-8]          // s1.length
-  mov  ebx, [esi-8]
+  mov  ecx, [edx-elSizeOffset]          // s1.length
+  mov  ebx, [esi-elSizeOffset]
   and  ecx, 0FFFFCh 
   and  ebx, 0FFFFCh 
   mov  eax, 0
@@ -3272,7 +3272,7 @@ procedure coreapi'sless
   mov  esi, [esp+8]                 // ; s1
   mov  edx, [esp+4]                 // ; s2
 
-  mov  ecx, [edx-8]          // s1 length
+  mov  ecx, [edx-elSizeOffset]          // s1 length
   mov  eax, 0
   and  ecx, 0FFFFFh
 Lab2:
@@ -3304,7 +3304,7 @@ procedure coreapi'wless
   mov  esi, [esp+8]                 // ; s1
   mov  edx, [esp+4]                 // ; s2
 
-  mov  ecx, [edx-8]          // s1 length
+  mov  ecx, [edx-elSizeOffset]          // s1 length
   mov  eax, 0
   and  ecx, 0FFFFFh
 Lab2:
@@ -3368,7 +3368,7 @@ procedure coreapi'sadd
   mov  edx, [edx]       // ; dst index
   mov  esi, ecx         // ; src index
   
-  mov  ebx, [eax-8]
+  mov  ebx, [eax-elSizeOffset]
   and  ebx, 0FFFFFh
   add  edx, edi
   sub  ecx, ebx
@@ -3403,7 +3403,7 @@ procedure coreapi'wadd
   mov  edx, ebx         // ; dst index
   mov  esi, ecx         // ; src index
   
-  mov  ebx, [eax-8]
+  mov  ebx, [eax-elSizeOffset]
   and  ebx, 0FFFFFh
 
   add  edx, edi
@@ -3430,7 +3430,7 @@ procedure coreapi'sseek
   mov  esi, [esp+8] // subs
   mov  edx, [eax]
   
-  mov  ebx, [edi-8]   // get total length  
+  mov  ebx, [edi-elSizeOffset]   // get total length  
   and  ebx, 0FFFFFh
   
   sub  ebx, edx
@@ -3442,7 +3442,7 @@ procedure coreapi'sseek
 labNext:
   add  edx, 1
   mov  esi, [esp+8]
-  mov  ecx, [esi-8]
+  mov  ecx, [esi-elSizeOffset]
   sub  ebx, 1
   lea  ecx, [ecx-1]
   jz   short labEnd
@@ -3478,7 +3478,7 @@ procedure coreapi'wseek
   mov  esi, [esp+8] // subs
   mov  edx, [eax]
   
-  mov  ebx, [edi-8]   // get total length  
+  mov  ebx, [edi-elSizeOffset]   // get total length  
   and  ebx, 0FFFFFh
 
   shl  edx, 1
@@ -3491,7 +3491,7 @@ procedure coreapi'wseek
 labNext:
   add  edx, 2
   mov  esi, [esp+8]
-  mov  ecx, [esi-8]
+  mov  ecx, [esi-elSizeOffset]
   sub  ebx, 2
   lea  ecx, [ecx-2]
   jz   short labEnd

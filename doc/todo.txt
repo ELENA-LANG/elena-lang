@@ -3,14 +3,14 @@ In development:
 ------         
 
   [development]
-    * idle sub esp, 0 -- ???
 
     * test all samples
     * check all mtredirect commands (class, parent class)
     * test parent / flags / class commands
-
+    * check core_readvmt
 
     * idle initializer (ignore movr idle commands )
+    * idle sub esp, 0 -- ???
 
     * reserve / alloc redesign
     * movs, movf, copyf, copys and so on should use absolute values

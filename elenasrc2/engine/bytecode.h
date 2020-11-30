@@ -27,14 +27,11 @@ enum ByteCode
    bcPush            = 0x09,
    bcPushA           = 0x0A,
    bcPopA            = 0x0B,
-//   bcACopyB          = 0x0C,
    bcStoreV          = 0x0D,
    bcBSRedirect      = 0x0E,
    bcSetV            = 0x0F,
 
    bcNot             = 0x10,
-//   bcLen             = 0x11,
-//   bcBCopyA          = 0x12,
    bcSub             = 0x13,
    bcSwapD           = 0x14,
    bcClose           = 0x15,
@@ -47,7 +44,6 @@ enum ByteCode
    bcCount           = 0x1C,
    bcUnhook          = 0x1D,
    bcRSin            = 0x1E,
-//   bcCreate          = 0x1F,
 
    bcRCos            = 0x20,
    bcRArcTan         = 0x21,

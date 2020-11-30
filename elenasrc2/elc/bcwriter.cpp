@@ -4642,7 +4642,7 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, FlowSco
 
 void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
 {
-   saveIntConstant(tape, lxLocalAddress, offset + 2, 0x800000 + node.argument);
+   saveIntConstant(tape, lxLocalAddress, offset + 1, 0x800000 + node.argument);
 }
 
 void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node current)

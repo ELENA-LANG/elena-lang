@@ -6287,9 +6287,9 @@ int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reser
 {
    if (bytearray) {
       // plus space for size
-      allocatedSize = ((allocatedSize + 3) >> 2) + 2;
+      allocatedSize = ((allocatedSize + 3) >> 2) + 1;
    }
-   else allocatedSize = (allocatedSize + 3) >> 2;
+   else allocatedSize = (allocatedSize + 3) >> 1;
 
    int retVal = reserved;
    reserved += allocatedSize;
@@ -6299,7 +6299,7 @@ int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reser
 
    // reserve place for byte array header if required
    if (bytearray)
-      retVal -= 2;
+      retVal -= 1;
 
    return retVal;
 }
