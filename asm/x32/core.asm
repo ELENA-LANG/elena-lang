@@ -3033,7 +3033,7 @@ inline % 0E9h
   push ebx
   xor  edx, edx
   mov  ebx, [esi] // ; message from overload list
-
+          	
 labNextOverloadlist:
   shr  ebx, ACTION_ORDER
   mov  edi, rdata : % CORE_MESSAGE_TABLE
@@ -3092,7 +3092,7 @@ inline % 1E8h
   test  eax, eax
   cmovz eax, esi
 
-  mov  eax, [eax - 4]
+  mov  eax, [eax - elVMTOffset]
 
 labNextOverloadlist:
   shr  ecx, ACTION_ORDER
@@ -3142,7 +3142,7 @@ inline % 1E9h
   test  eax, eax
   cmovz eax, esi
 
-  mov  eax, [eax - 4]
+  mov  eax, [eax - elVMTOffset]
 
 labNextOverloadlist:
   shr  ecx, ACTION_ORDER
