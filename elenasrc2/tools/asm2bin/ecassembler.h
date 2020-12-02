@@ -65,6 +65,7 @@ class ECodesAssembler : public Assembler
    void compileMessage(TokenInfo& token, IdentifierString& message, ref_t& signRef, _Module* binary);
    void compileMessageName(TokenInfo& token, IdentifierString& message);
 
+   int compileFArg(TokenInfo& token, _Module* binary, ByteCode& prefix);
    ref_t compileRArg(TokenInfo& token, _Module* binary);
    ref_t compileRMessageArg(TokenInfo& token, _Module* binary);
    ref_t compileMessageArg(TokenInfo& token, _Module* binary);
@@ -76,6 +77,9 @@ class ECodesAssembler : public Assembler
    void compileVCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
    void compileICommand(ByteCode code, TokenInfo& token, MemoryWriter& writer);
+   void compileFCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   void compileFNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
+   //void compileFCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileRRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);
    void compileRMCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary);

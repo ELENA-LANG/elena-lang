@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   82
+#define REVISION_VERSION   83
 
 using namespace _ELENA_;
 
@@ -468,11 +468,25 @@ void printCommand(IdentifierString& command, const char* opcode)
    }
 }
 
+void printFArgument(IdentifierString& command, int argument, int prefix)
+{
+   if (prefix == bcBPFrame) {
+      command.append("frame:");
+   }
+   else command.append("f:");
+   command.appendInt(argument);
+}
+
 bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<int>& labels)
 {
    // read bytecode + arguments
    int position = codeReader.Position();
+   unsigned char prefix = 0;
    unsigned char code = codeReader.getByte();
+   if (code == bcBPFrame) {
+      prefix = code;
+      code = codeReader.getByte();
+   }
 
    // ignore a breakpoint if required
    if (code == bcBreakpoint && _ignoreBreakpoints)
@@ -499,6 +513,11 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
    }
 
    if (_showBytecodes) {
+      if (prefix) {
+         command.appendHex((int)prefix);
+         command.append(' ');
+      }
+
       if (code < 0x10)
          command.append('0');
 
@@ -525,18 +544,8 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 
    switch(code)
    {
-      case bcPushS:
-      case bcPushSI:
-      case bcPeekSI:
-      case bcStoreSI:
-      case bcSaveSI:
-      case bcSaveFI:
       case bcSaveF:
       case bcLoadF:
-      case bcPushFI:
-      case bcPeekFI:
-      case bcStoreFI:
-      case bcLoadFI:
       case bcMovF:
       case bcNAddF:
       case bcNSubF:
@@ -546,9 +555,6 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcNOrF:
       case bcNXorF:
       case bcCloneF:
-//      case bcSCopyF:
-//      case bcBCopyF:
-      case bcMovS:
       case bcPushF:
       case bcLAddF:
       case bcLSubF:
@@ -570,6 +576,20 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcRIntF:
       case bcAddF:
       case bcSubF:
+         printCommand(command, opcode);
+         printFArgument(command, argument, prefix);
+         break;
+      case bcPushS:
+      case bcPushSI:
+      case bcPeekSI:
+      case bcStoreSI:
+      case bcSaveSI:
+      case bcSaveFI:
+      case bcPushFI:
+      case bcPeekFI:
+      case bcStoreFI:
+      case bcLoadFI:
+      case bcMovS:
       case bcEqualFI:
          printCommand(command, opcode);
          command.appendInt(argument);
@@ -585,19 +605,9 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCheckSI:
       case bcXRedirect:
       case bcXVRedirect:
-////      case bcAddress:
          printCommand(command, opcode);
          printLabel(command, position + argument + 5, labels);
          break;
-//      case bcElseM:
-//      case bcIfM:
-//         printCommand(command, opcode);
-//         command.append("message : \"");
-//         printMessage(command, module, argument);
-//         command.append("\"");
-//         command.append(' ');
-//         printLabel(command, position + argument2 + 9, labels);
-//         break;
       case bcElseR:
       case bcIfR:
          printCommand(command, opcode);
@@ -632,7 +642,6 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcFillR:
       case bcCoalesceR:
       case bcXCreate:
-//      case bcBCopyR:
          printCommand(command, opcode);
          printReference(command, module, argument);
          break;
@@ -653,12 +662,9 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcMul:
       case bcAnd:
       case bcOr:
-//      case bcInit:
       case bcLoadI:
       case bcSaveI:
-//      case bcMulN:
       case bcLoadSI:
-//      case bcBLoadAI:
       case bcGetI:
       case bcMovN:
       case bcShl:
@@ -736,7 +742,6 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcXSaveF:
       case bcXRSaveF:
       case bcXAddF:
-//      case bcSubFI:
       case bcCopyFI:
       case bcCopyF:
       case bcCopyToFI:
@@ -1282,7 +1287,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
 
 inline bool isTemplateBased(ident_t reference)
 {
-   for (int i = 0; i < getlength(reference); i++) {
+   for (size_t i = 0; i < getlength(reference); i++) {
       if (reference[i] == '#' && reference[i + 1] >= '0' && reference[i + 1] <= '9')
          return true;
    }

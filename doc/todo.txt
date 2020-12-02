@@ -3,7 +3,9 @@ In development:
 ------         
 
   [development]
-    * modify ecv / asm2binx to support frame frame[offset], f[offset] - for xxF commands , sizeof ProgramHeader
+    * asm2binx support sizeof ProgramHeader : ProgramHeader64
+
+
 
     * test : __object."#dispatch[1], __exception."on[2]"
     * test generic methods

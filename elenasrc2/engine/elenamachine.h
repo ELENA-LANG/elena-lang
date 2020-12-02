@@ -101,6 +101,12 @@ struct ProgramHeader
    CriticalStruct  root_critical_struct;
 };
 
+struct ProgramHeader64
+{
+   ExceptionStruct root_exception_struct;
+   CriticalStruct  root_critical_struct;
+};
+
 // --- FrameHeader ---
 
 struct FrameHeader

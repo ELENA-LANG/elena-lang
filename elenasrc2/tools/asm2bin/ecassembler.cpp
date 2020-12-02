@@ -214,6 +214,23 @@ ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
    return 0; // dummy returning value 
 }
 
+int ECodesAssembler :: compileFArg(TokenInfo& token, _Module* binary, ByteCode& prefix)
+{
+   ident_t word = token.read();
+   if (word.compare("f")) {
+      token.read(":", "Invalid operand (%d)");
+   }
+   else if (word.compare("frame")) {
+      token.read(":", "Invalid operand (%d)");
+      prefix = bcBPFrame;
+   }
+   else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
+
+   int n = token.readSignedInteger(constants);
+
+   return n;
+}
+
 ref_t ECodesAssembler :: compileRArg(TokenInfo& token, _Module* binary)
 {
    ident_t word = token.read();
@@ -309,6 +326,29 @@ void ECodesAssembler :: compileRCommand(ByteCode code, TokenInfo& token, MemoryW
    size_t reference = compileRArg(token, binary);
 
    writeCommand(ByteCommand(code, reference), writer);
+}
+
+void ECodesAssembler::compileFCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+{
+   ByteCode prefix = bcNone;
+   int n = compileFArg(token, binary, prefix);
+
+   if (prefix != bcNone)
+      writeCommand(ByteCommand(prefix), writer);
+
+   writeCommand(ByteCommand(code, n), writer);
+}
+
+void ECodesAssembler::compileFNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+{
+   ByteCode prefix = bcNone;
+   int n1 = compileFArg(token, binary, prefix);
+   int n2 = token.readInteger(constants);
+
+   if (prefix != bcNone)
+      writeCommand(ByteCommand(prefix), writer);
+
+   writeCommand(ByteCommand(code, n1, n2), writer);
 }
 
 void ECodesAssembler :: compileRRCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
@@ -513,75 +553,20 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
 {
    bool recognized = true;
    ByteCode opcode = ByteCodeCompiler::code(token.value);
+
    if (opcode != bcNone) {
       switch (opcode)
       {
-         case bcCallR:
-         case bcMovR:
-         case bcCreate:
-         //case bcBCopyR:
-         case bcXCreate:
-         case bcPushR:
-            compileRCommand(opcode, token, writer, binary);
-            break;
-         case bcCallExtR:
-         case bcLCallExtR:
-            compileExtCommand(opcode, token, writer, binary);
-            break;
-         case bcCallVI:
-         case bcJumpVI:
-         case bcPeekSI:
-         //case bcBLoadSI:
-         //case bcBLoadFI:
-         case bcMovS:
-         case bcMovF:
          case bcNAddF:
          case bcNSubF:
          case bcNMulF:
          case bcNDivF:
          case bcCloneF:
-            //case bcSCopyF:
-         //case bcBCopyS:
-         //case bcBCopyF:
-         //case bcALoadAI:
-         case bcPeekFI:
-         case bcPushAI:
-         case bcOpen:
-         //case bcMulN:
-         case bcLoadFI:
-         case bcLoadSI:
+         case bcMovF:
          case bcSaveF:
-         case bcSaveSI:
-         case bcSaveFI:
-         case bcRestore:
-         case bcReserve:
-         //case bcALoadBI:
-         case bcStoreSI:
-         case bcStoreFI:
-         case bcSaveI:
-         case bcLoadI:
-         //case bcESwapSI:
-         //case bcBSwapSI:
-         //case bcAXSaveBI:
-         //case bcELoadFI:
-         //case bcELoadSI:
-         case bcPushS:
-         case bcPushSI:
-         case bcPushFI:
-            //case bcESaveFI:
          case bcNShlF:
          case bcNShrF:
-         case bcShr:
-         case bcShl:
-         case bcDec:
-         //case bcDSwapSI:
-         case bcJumpI:
-         case bcCallI:
-         //case bcNReadI:
-         //case bcNWriteI:
          case bcPushF:
-         //case bcEOrN:
-         case bcGetI:
          case bcLAddF:
          case bcLSubF:
          case bcLMulF:
@@ -598,6 +583,52 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcRIntF:
          case bcAddF:
          case bcSubF:
+            compileFCommand(opcode, token, writer, binary);
+            break;
+         case bcXAddF:
+         case bcCopyToF:
+         case bcXSaveF:
+         case bcCopyF:
+            compileFNCommand(opcode, token, writer, binary);
+            break;
+         case bcCallR:
+         case bcMovR:
+         case bcCreate:
+         //case bcBCopyR:
+         case bcXCreate:
+         case bcPushR:
+            compileRCommand(opcode, token, writer, binary);
+            break;
+         case bcCallExtR:
+         case bcLCallExtR:
+            compileExtCommand(opcode, token, writer, binary);
+            break;
+         case bcCallVI:
+         case bcJumpVI:
+         case bcPeekSI:
+         case bcMovS:
+         case bcPeekFI:
+         case bcPushAI:
+         case bcOpen:
+         case bcLoadFI:
+         case bcLoadSI:
+         case bcSaveSI:
+         case bcSaveFI:
+         case bcRestore:
+         case bcReserve:
+         case bcStoreSI:
+         case bcStoreFI:
+         case bcSaveI:
+         case bcLoadI:
+         case bcPushS:
+         case bcPushSI:
+         case bcPushFI:
+         case bcShr:
+         case bcShl:
+         case bcDec:
+         case bcJumpI:
+         case bcCallI:
+         case bcGetI:
          case bcPushN:
          case bcSetI:
          case bcXSetI:
@@ -624,24 +655,17 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcMovV:
             compileVCommand(opcode, token, writer, binary);
             break;
-            //case bcIfB:
          case bcElseD:
          case bcIf:
          case bcIfCount:
          case bcElse:
-         //case bcLess:
          case bcNotLess:
          case bcNotGreater:
-            //case bcNext:
          case bcJump:
          case bcHook:
          case bcAddress:
             compileJump(opcode, token, writer, info);
             break;
-         //case bcIfM:
-         //case bcElseM:
-         //   compileMccJump(opcode, token, writer, info, binary);
-         //   break;
          case bcIfN:
          case bcElseN:
          case bcLessN:
@@ -662,12 +686,8 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcXSelectR:
             compileRRCommand(opcode, token, writer, binary);
             break;
-         case bcXSaveF:
-         case bcXAddF:
          case bcCopyFI:
-         case bcCopyF:
          case bcCopyToFI:
-         case bcCopyToF:
          case bcCopyToAI:
          case bcXSaveAI:
             compileNNCommand(opcode, token, writer);

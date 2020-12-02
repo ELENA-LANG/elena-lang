@@ -163,10 +163,10 @@ struct TokenInfo
       if (check("sizeof")) {
          read();
          if (check("ProgramHeader")) {
-            return align(sizeof(ProgramHeader), 4) >> 2;
+            return align(sizeof(ProgramHeader), 4);
          }
-         else if (check("ProgramHeader_2")) {
-            return (align(sizeof(ProgramHeader), 4) >> 2) + 2;
+         else if (check("ProgramHeader64")) {
+            return align(sizeof(ProgramHeader64), 4);
          }
          else raiseErr("Invalid number (%d)\n");
       }
