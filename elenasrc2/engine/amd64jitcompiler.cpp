@@ -77,12 +77,23 @@ const int coreVariables[coreVariableNumber] =
 //};
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/6;
+const int gcCommandNumber = /*138*/35;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcOpen,
    bcReserve, bcPushS,
    bcAllocI,
+   bcRestore,   
+   bcSaveF,
+   bcNShlF, bcNShrF,
+   bcNAndF, bcNOrF, bcNXorF,
+   bcLMulF, bcLDivF, bcLShlF, bcLShrF, bcLAndF,
+   bcLOrF, bcLXorF,
+   bcRAddF, bcRSubF, bcRMulF, bcRDivF,
+   bcRIntF, bcAddF,
+   bcSubF,
+   bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF,
+   bcNAddF, bcNMulF, bcNSubF, bcNDivF,
 };
 
 // command table
@@ -103,29 +114,29 @@ void(*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadFOp, &loadFOp, &loadFOp, &loadFOp, &loadFOp, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFOp, &loadFOp,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &loadFOp, &loadFOp, &loadFOp, &loadFOp,
+   &loadFOp, &loadFOp, &loadFOp, &loadFOp, &compileNop, &loadFOp, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
+   &loadFOp, &loadFOp, &loadFOp, &compileNop, &compileNop, &loadFOp, &loadFOp, &loadFOp,
+   &loadFOp, &loadFOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadFOp, &compileNop,
 
-   & compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   &compileNop, &compileNop, &compileRestore,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
    &compileOpen,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
 
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFunction, &compileNop, &compileNop,
    & compileNop,& compileNop,& compileNop,& compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
    &compilePush, &compileNop, &compilePush, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadIndexOpX,
+   &compileNop, &loadFOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadNOp,
 
-   &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
-   &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
+   &compileNop,& compileNop,& compileNop,& compileNop,& compileNop, &loadFOp, &loadFOp ,& compileNop,
+   &loadFOp, &loadFOp, &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
 
    &compilePopN, &compileAllocI,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
    &compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,& compileNop,
@@ -328,33 +339,6 @@ void _ELENA_::loadOneByteOp(int opcode, I64JITScope& scope)
    scope.code->seekEOF();
 }
 
-////void _ELENA_::loadNOp(int opcode, x86JITScope& scope)
-////{
-////   char*  code = (char*)scope.compiler->_inlines[opcode];
-////   size_t position = scope.code->Position();
-////   size_t length = *(size_t*)(code - 4);
-////
-////   // simply copy correspondent inline code
-////   scope.code->write(code, length);
-////
-////   // resolve section references
-////   int count = *(int*)(code + length);
-////   int* relocation = (int*)(code + length + 4);
-////   while (count > 0) {
-////      // locate relocation position
-////      scope.code->seek(position + relocation[1]);
-////
-////      if (relocation[0] == -1) {
-////         scope.code->writeDWord(scope.argument);
-////      }
-////      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-////
-////      relocation += 2;
-////      count--;
-////   }
-////   scope.code->seekEOF();
-////}
-
 void _ELENA_::loadOneByteLOp(int opcode, I64JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
@@ -471,7 +455,6 @@ void _ELENA_::loadIndexOpX(int opcode, I64JITScope& scope)
 //////   scope.code->seekEOF();
 //////}
 
-
 void _ELENA_::loadFPOp(int opcode, I64JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
@@ -489,7 +472,34 @@ void _ELENA_::loadFPOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(-(scope.argument << 3));
+         scope.code->writeDWord(-(scope.argument << 3) - scope.argOffset);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadFOp(int opcode, I64JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(-scope.argument - scope.argOffset);
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -725,7 +735,11 @@ void _ELENA_::compileOpen(int opcode, I64JITScope& scope)
 {
    loadOneByteLOp(opcode, scope);
 
-   //scope.prevFSPOffs += (scope.argument << 2);
+   // include current frame and FrameHeader if required
+   if (scope.argument) {
+      scope.frameOffset = (scope.argument << 2) + 24;
+   }
+   else scope.frameOffset = 8;
 }
 
 ////void _ELENA_::compileQuit(int, x86JITScope& scope)
@@ -1434,6 +1448,12 @@ void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
    loadNOp(opcode, scope);
 }
 
+void _ELENA_::compileRestore(int op, I64JITScope& scope)
+{
+   scope.argument += 16; // include EIP & EBP 
+   loadNOp(op, scope);
+}
+
 // --- AMD64JITScope ---
 
 I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, I64JITCompiler* compiler)
@@ -1446,6 +1466,8 @@ I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->withDebugInfo = compiler->isWithDebugInfo();
    //this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
    this->module = nullptr;
+   this->frameOffset = 0;
+   this->argOffset = 0;
 }
 
 void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, pos_t disp)
@@ -1635,8 +1657,13 @@ inline void compileTape(MemoryReader& tapeReader, size_t endPos, I64JITScope& sc
 {
    unsigned char code = 0;
    while (tapeReader.Position() < endPos) {
-      // read bytecode + arguments
       code = tapeReader.getByte();
+      if (code == bcBPFrame) {
+         scope.argOffset = scope.frameOffset;
+         code = tapeReader.getByte();
+      }
+      else scope.argOffset = 0;
+
       // preload an argument if a command requires it
       if (code > MAX_SINGLE_ECODE) {
          scope.argument = tapeReader.getDWord();

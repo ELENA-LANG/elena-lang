@@ -49,7 +49,7 @@ ELENA byte codes (or ecodes)
 
  movn n                     - n => index
 
- movf i                     - fp+i => acc
+ movf n                     - fp+n => acc
 
  movr r                     - r => acc
            
@@ -85,9 +85,9 @@ ELENA byte codes (or ecodes)
 
  savei i                    - acc[i] <= index
 
- savef i                    - fp+i <= index
+ savef n                    - fp+n <= index
 
- loadf i                    - fp+i => index
+ loadf n                    - fp+n => index
 
  savesi i                   - [sp+i] <= index
 
@@ -132,9 +132,9 @@ ELENA byte codes (or ecodes)
  -----------------
  clone                      - copy [acc] << [esp], acc.Length bytes ; NOTE : should support a primitive reference array as well
 
- clonef i                   - copy [acc] << fp+i, acc.Length bytes ; NOTE : should support a primitive reference array as well
+ clonef n                   - copy [acc] << fp+n, acc.Length bytes ; NOTE : should support a primitive reference array as well
 
- copyf  i, n                - copy [acc] << fp+i, n*4-bytes
+ copyf  n1, n2              - copy [acc] << fp+n1, n2*4-bytes
 
  copyfi i, n                - copy [acc] << [fp+i], n*4-bytes
 
@@ -144,7 +144,7 @@ ELENA byte codes (or ecodes)
 
  copytoai i, n              - copy [sp] >> acc[i], n*4-bytes
 
- copytof  i, n              - copy [acc] >> fp+i, n*4-bytes
+ copytof  n1, n2            - copy [acc] >> fp+n1, n2*4-bytes
 
  copytofi i, n              - copy [acc] >> [fp+i], n*4-bytes
 
@@ -156,15 +156,15 @@ ELENA byte codes (or ecodes)
 
  read                       - acc[index] >> index
 
- readtof i, n               - copy acc[index] >> fp+i, n*4-bytes
+ readtof n1, n2             - copy acc[index] >> fp+n1, n2*4-bytes
  
- xrsavef i,n                - real[fp:i] <= n
+ xrsavef n1,n2              - real[fp:n1] <= n2
                                                                                                                
  xsaveai i,n                - acc[i] <= n
                                                                                                                
- xsavef i,n                 - fp:i <= n
+ xsavef n1,n2               - fp:n1 <= n2
                                                                                                                
- xaddf i,n                  - fp:i += n
+ xaddf n1,n2                - fp:n1 += n2
                                                                                                                
  xwrite n                   - copy [sp] >> acc[index], n-bytes  
 
@@ -177,53 +177,57 @@ ELENA byte codes (or ecodes)
 
  Arithmeric operations:
  ----------------------
- addf i                     - index += dword[fp+i]
+ addf n                     - index += dword[fp+n]
 
- laddf i                    - qword[fp+i] << qword[fp+i] + qword[acc]
+ laddf n                    - qword[fp+n] << qword[fp+n] + qword[acc]
 
- ldivf i                    - qword[fp+i] << qword[fp+i] / qword[acc]
+ landf n                    - qword[fp+n] << qword[fp+n] && qword[acc]
 
- lmulf i                    - qword[fp+i] << qword[fp+i] * qword[acc]
+ ldivf n                    - qword[fp+n] << qword[fp+n] / qword[acc]
 
- lsubf i                    - qword[fp+i] << qword[fp+i] - qword[acc] 
+ lmulf n                    - qword[fp+n] << qword[fp+n] * qword[acc]
 
- lshlf i                    - qword[fp+i] << qword[fp+i] $shl qword[acc] 
+ lorf n                     - qword[fp+n] << qword[fp+n] || qword[acc]
 
- lshrf i                    - qword[fp+i] << qword[fp+i] $shr qword[acc] 
+ lsubf n                    - qword[fp+n] << qword[fp+n] - qword[acc] 
 
- naddf i                    - dword[fp+i] << dword[fp+i] + dword[acc]
+ lshlf n                    - qword[fp+n] << qword[fp+n] $shl qword[acc] 
 
- nandf                      - dword[fp+i] << dword[fp+i] && dword[acc]
+ lshrf n                    - qword[fp+n] << qword[fp+n] $shr qword[acc] 
+
+ naddf n                    - dword[fp+n] << dword[fp+n] + dword[acc]
+
+ nandf n                    - dword[fp+n] << dword[fp+n] && dword[acc]
  
- ndivf i                    - dword[fp+i] << dword[fp+i] / dword[acc]
+ ndivf n                    - dword[fp+n] << dword[fp+n] / dword[acc]
 
- nmulf i                    - dword[fp+i] << dword[fp+i] * dword[acc]
+ nmulf n                    - dword[fp+n] << dword[fp+n] * dword[acc]
 
- norf                       - dword[fp+i] << dword[fp+i] || dword[acc]
+ norf n                     - dword[fp+n] << dword[fp+n] || dword[acc]
 
- nshlf i                    - dword[fp+i] << dword[fp+i] $shl dword[acc] 
+ nshlf n                    - dword[fp+n] << dword[fp+n] $shl dword[acc] 
 
- nshrf i                    - dword[fp+i] << dword[fp+i] $shr dword[acc] 
+ nshrf n                    - dword[fp+n] << dword[fp+n] $shr dword[acc] 
 
- nsubf i                    - dword[fp+i] << dword[fp+i] - dword[acc] 
+ nsubf n                    - dword[fp+n] << dword[fp+n] - dword[acc] 
 
- nxorf                      - dword[fp+i] << dword[fp+i] ~~ dword[acc]
+ nxorf n                    - dword[fp+n] << dword[fp+n] ~~ dword[acc]
 
- raddf i                    - real[acc] << real[fp+i] + real[acc]
+ raddf n                    - real[acc] << real[fp+n] + real[acc]
 
- raddnf i                   - real[fp+i] << real[fp+i] + int[acc]
+ raddnf n                   - real[fp+n] << real[fp+n] + int[acc]
 
- rdivf i                    - real[acc] << real[acc] / real[fp+i]
+ rdivf n                    - real[acc] << real[acc] / real[fp+n]
 
- rdivnf i                   - real[fp+i] << real[fp+i] / int[acc] 
+ rdivnf n                   - real[fp+n] << real[fp+n] / int[acc] 
 
- rmulf i                    - real[acc] << real[acc] * real[fp+i] 
+ rmulf n                    - real[acc] << real[acc] * real[fp+n] 
 
- rmulnf i                   - real[fp+i] << real[fp+i] * real[acc]
+ rmulnf n                   - real[fp+n] << real[fp+n] * real[acc]
 
- rsubf i                    - real[fp+i] << real[fp+i] - real[acc] 
+ rsubf n                    - real[fp+n] << real[fp+n] - real[acc] 
 
- rsubnf i                   - real[fp+i] << real[fp+i] - int[acc]
+ rsubnf n                   - real[fp+n] << real[fp+n] - int[acc]
 
  rexp                       - real[sp] << exp(real[acc]) 
 
@@ -242,6 +246,8 @@ ELENA byte codes (or ecodes)
  rint                       - real[sp] << int(real[acc]) 
 
  sub                        - index -= int[acc]
+
+ subf n                     - index -= dword[fp+n]
 
  Comparision operations:
  ----------------------- 
@@ -280,7 +286,7 @@ ELENA byte codes (or ecodes)
  
  pushd                      - index => [sp+1] ; sp++                  
 
- pushf i                    - fp+i => [sp+1] ; sp++
+ pushf n                    - fp+n => [sp+1] ; sp++
  
  pushfi i                   - [fp+i] => [sp+1] ; sp++
  
@@ -311,10 +317,10 @@ ELENA byte codes (or ecodes)
  quitn i                    - terminates the procedure;
                               clear the stack parameters
 
- reserve i                  - exclude part of the stack from managed stack frame ;
+ reserve n                  - exclude part of the stack from managed stack frame ;
                               should follow "open" byte code
  
- restore n                  - remove the excluded stack
+ restore n                  - remove the excluded stack plus two previous frame header
 
 
  Call operations:

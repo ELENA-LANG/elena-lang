@@ -32,9 +32,11 @@ struct x86JITScope
 
    bool              withDebugInfo;
    int               objectSize;
+   int               frameOffset;
 
    // byte code command argument
    int            argument;
+   int            argOffset;
    int            extra_arg;
    int            extra_arg2;
 
@@ -69,7 +71,9 @@ protected:
    friend void loadNOp(int opcode, x86JITScope& scope);
    friend void loadNOpX(int opcode, x86JITScope& scope);
    friend void loadN4OpX(int opcode, x86JITScope& scope);
-   friend void loadFPNOp(int opcode, x86JITScope& scope);
+   friend void loadFNOp(int opcode, x86JITScope& scope);
+   friend void loadFN4OpX(int opcode, x86JITScope& scope);
+   friend void loadFN4OpX(int opcode, x86JITScope& scope, int prefix);
    friend void loadFPN4OpX(int opcode, x86JITScope& scope);
    friend void loadFPN4OpX(int opcode, x86JITScope& scope, int prefix);
    friend void loadFPIndexOp(int opcode, x86JITScope& scope);
@@ -82,6 +86,7 @@ protected:
    friend void loadNNOpX(int opcode, x86JITScope& scope);
    friend void loadNNOpX(int opcode, x86JITScope& scope, int prefix);
    friend void loadFPOp(int opcode, x86JITScope& scope);
+   friend void loadFOp(int opcode, x86JITScope& scope);
    friend void loadROp(int opcode, x86JITScope& scope);
    friend void loadMTOp(int opcode, x86JITScope& scope);
    friend void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
@@ -176,6 +181,7 @@ protected:
 //   friend void compileInit(int opcode, x86JITScope& scope);
    friend void compileMTRedirect(int op, x86JITScope& scope);
    friend void compileXRedirect(int op, x86JITScope& scope);
+   friend void compileRestore(int op, x86JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -239,13 +245,16 @@ void loadIndexN4OpX(int opcode, x86JITScope& scope, int prefix);
 void loadNNOp(int opcode, x86JITScope& scope);
 void loadNNOpX(int opcode, x86JITScope& scope);
 void loadNNOpX(int opcode, x86JITScope& scope, int prefix);
-void loadFPNOp(int opcode, x86JITScope& scope);
+void loadFNOp(int opcode, x86JITScope& scope);
+void loadFN4OpX(int opcode, x86JITScope& scope);
+void loadFN4OpX(int opcode, x86JITScope& scope, int prefix); 
 void loadFPN4OpX(int opcode, x86JITScope& scope);
 void loadFPN4OpX(int opcode, x86JITScope& scope, int prefix);
 void loadFPIndexOp(int opcode, x86JITScope& scope);
 void loadFPIndexOpX(int opcode, x86JITScope& scope);
 void loadFPIndexOpX(int opcode, x86JITScope& scope, int prefix);
 void loadFPOp(int opcode, x86JITScope& scope);
+void loadFOp(int opcode, x86JITScope& scope);
 void loadROp(int opcode, x86JITScope& scope);
 void loadMTOp(int opcode, x86JITScope& scope);
 void loadMTOpX(int opcode, x86JITScope& scope, int prefix);
@@ -336,6 +345,7 @@ void compileNot(int opcode, x86JITScope& scope);
 //void compileInit(int opcode, x86JITScope& scope);
 void compileMTRedirect(int op, x86JITScope& scope);
 void compileXRedirect(int op, x86JITScope& scope);
+void compileRestore(int op, x86JITScope& scope);
 
 } // _ELENA_
 

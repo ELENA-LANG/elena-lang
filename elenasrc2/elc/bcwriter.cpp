@@ -189,15 +189,17 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, mssg_t message, ref_t so
    if (withNewFrame) {
       if (reserved > 0) {
          // to include new frame header
-         tape.write(bcOpen, 3 + reserved);
-         tape.write(bcReserve, reserved);
+         tape.write(bcOpen, reserved); 
+         tape.write(bcReserve, reserved << 2);   // NOTE : converting to actual value
       }
-      else tape.write(bcOpen, 1);
+      else tape.write(bcOpen);
 
       tape.write(bcPushA);
 
-      if (withPresavedMessage)
-         tape.write(bcSaveF, -2);
+      if (withPresavedMessage) {
+         tape.write(bcBPFrame);
+         tape.write(bcSaveF, 0);
+      }         
 
       if (allocated > 0) {
          allocateStack(tape, allocated);
@@ -513,15 +515,17 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, 
    //   pusha
    if (reserved > 0) {
       // to include new frame header
-      tape.write(bcOpen, 3 + reserved);
-      tape.write(bcReserve, reserved);
+      tape.write(bcOpen, reserved);
+      tape.write(bcReserve, reserved << 2); // NOTE : converting to actual value
    }
-   else tape.write(bcOpen, 1);
+   else tape.write(bcOpen);
 
    tape.write(bcPushA);
 
-   if (withPresavedMessage)
-      tape.write(bcSaveF, -2);
+   if (withPresavedMessage) {
+      tape.write(bcBPFrame);
+      tape.write(bcSaveF, 0);
+   }
 
    if (allocated > 0) {
       allocateStack(tape, allocated);
@@ -531,7 +535,7 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, 
 void ByteCodeWriter :: closeFrame(CommandTape& tape, int reserved)
 {
    if (reserved > 0) {
-      tape.write(bcRestore, 2 + reserved);
+      tape.write(bcRestore, reserved << 2); // NOTE : converting to actual value
    }
    // close
    tape.write(bcClose);
@@ -803,7 +807,7 @@ void ByteCodeWriter :: unboxMessage(CommandTape& tape)
 
    tape.write(bcMCount);
    tape.write(bcPushN, -1);
-   tape.write(bcMovF, -2);
+   tape.write(bcMovF, -8);
    tape.newLabel();
    tape.setLabel(true);
    tape.write(bcPush);
@@ -964,7 +968,7 @@ void ByteCodeWriter :: exitMethod(CommandTape& tape, int count, int reserved, bo
    tape.setLabel();
    if (withFrame) {
       if (reserved > 0) {
-         tape.write(bcRestore, 2 + reserved);
+         tape.write(bcRestore, reserved << 2); // NOTE : converting to actual value
       }
       tape.write(bcClose);
    }
@@ -1607,31 +1611,16 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcSaveF:
          case bcSaveFI:
          case bcEqualFI:
-         //case bcELoadFI:
-         //case bcESaveFI:
-            (*it).save(scope.code, true);
             //if ((*it).predicate == bpBlock) {
             //   scope.code->writeDWord(stackLevels.peek() + (*it).argument);
             //}
-            /*else */if ((*it).predicate == bpFrame && (*it).argument < 0) {
-               scope.code->writeDWord((*it).argument - frameLevel);
-            }
-            else scope.code->writeDWord((*it).argument);
+            if ((*it).predicate == bpFrame)
+               scope.code->writeByte(bcBPFrame);
 
-            (*it).saveAditional(scope.code);
+            (*it).save(scope.code);
             break;
-         //case bcSCopyF:
-         //   (*it).save(scope.code, true);
-         //   if ((*it).argument == bsBranch) {
-         //      stackLevel = stackLevels.peek();
-         //   }
-         //   else stackLevel = (*it).additional;
-
-         //   scope.code->writeDWord(stackLevel);
-         //   break;
          case bcIfR:
          case bcElseR:
-         //case bcIfB:
          case bcElseD:
          case bcIf:
          case bcIfCount:
@@ -1691,7 +1680,7 @@ void ByteCodeWriter :: saveIntConstant(CommandTape& tape, LexicalType target, in
    if (target == lxLocalAddress) {
       // xsavef arg, value
 
-      tape.write(bcXSaveF, targetArg, value, bpFrame);
+      tape.write(bcXSaveF, targetArg << 2, value, bpFrame);
    }
    else throw InternalError("Not yet implemented");
 
@@ -1748,39 +1737,39 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
    switch (operator_id) {
       case ADD_OPERATOR_ID:
          // naddf i
-         tape.write(bcNAddF, localOffset);
+         tape.write(bcNAddF, localOffset << 2);
          break;
       case SUB_OPERATOR_ID:
          // nsubf i
-         tape.write(bcNSubF, localOffset);
+         tape.write(bcNSubF, localOffset << 2);
          break;
       case MUL_OPERATOR_ID:
          // nmulf i
-         tape.write(bcNMulF, localOffset);
+         tape.write(bcNMulF, localOffset << 2);
          break;
       case DIV_OPERATOR_ID:
          // ndivf i
-         tape.write(bcNDivF, localOffset);
+         tape.write(bcNDivF, localOffset << 2);
          break;
       case SHIFTL_OPERATOR_ID:
          // nshlf i
-         tape.write(bcNShlF, localOffset);
+         tape.write(bcNShlF, localOffset << 2);
          break;
       case SHIFTR_OPERATOR_ID:
          // nshrf i
-         tape.write(bcNShrF, localOffset);
+         tape.write(bcNShrF, localOffset << 2);
          break;
       case AND_OPERATOR_ID:
          // nandf i
-         tape.write(bcNAndF, localOffset);
+         tape.write(bcNAndF, localOffset << 2);
          break;
       case OR_OPERATOR_ID:
          // norf i
-         tape.write(bcNOrF, localOffset);
+         tape.write(bcNOrF, localOffset << 2);
          break;
       case XOR_OPERATOR_ID:
          // nxorf i
-         tape.write(bcNXorF, localOffset);
+         tape.write(bcNXorF, localOffset << 2);
          break;
       default:
          throw InternalError("not yet implemente"); // !! temporal
@@ -1793,15 +1782,15 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
    switch (operator_id) {
       case SET_OPERATOR_ID:
          // xsavef i, v
-         tape.write(bcXSaveF, localOffset, immValue);
+         tape.write(bcXSaveF, localOffset << 2, immValue);
          break;
       case ADD_OPERATOR_ID:
          // xaddf i, v
-         tape.write(bcXAddF, localOffset, immValue);
+         tape.write(bcXAddF, localOffset << 2, immValue);
          break;
       case SUB_OPERATOR_ID:
          // xaddf i, -v
-         tape.write(bcXAddF, localOffset, -immValue);
+         tape.write(bcXAddF, localOffset << 2, -immValue);
          break;
       case MUL_OPERATOR_ID:
          // loadf
@@ -1809,7 +1798,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // savef
          tape.write(bcLoadFI, localOffset);
          tape.write(bcMul, immValue);
-         tape.write(bcSaveF, localOffset);
+         tape.write(bcSaveF, localOffset << 2);
          break;
       case DIV_OPERATOR_ID:
          // loadf
@@ -1817,7 +1806,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // savef
          tape.write(bcLoadFI, localOffset);
          tape.write(bcDiv, immValue);
-         tape.write(bcSaveF, localOffset);
+         tape.write(bcSaveF, localOffset << 2);
          break;
       case SHIFTL_OPERATOR_ID:
          // loadf
@@ -1825,7 +1814,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // savef
          tape.write(bcLoadFI, localOffset);
          tape.write(bcShl, immValue);
-         tape.write(bcSaveF, localOffset);
+         tape.write(bcSaveF, localOffset << 2);
          break;
       case SHIFTR_OPERATOR_ID:
          // loadf
@@ -1833,7 +1822,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // savef
          tape.write(bcLoadFI, localOffset);
          tape.write(bcShr, immValue);
-         tape.write(bcSaveF, localOffset);
+         tape.write(bcSaveF, localOffset << 2);
          break;
       case AND_OPERATOR_ID:
          // loadf
@@ -1841,7 +1830,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // savef
          tape.write(bcLoadFI, localOffset);
          tape.write(bcAnd, immValue);
-         tape.write(bcSaveF, localOffset);
+         tape.write(bcSaveF, localOffset << 2);
          break;
       case OR_OPERATOR_ID:
          // loadf
@@ -1849,7 +1838,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // savef
          tape.write(bcLoadFI, localOffset);
          tape.write(bcOr, immValue);
-         tape.write(bcSaveF, localOffset);
+         tape.write(bcSaveF, localOffset << 2);
          break;
       case XOR_OPERATOR_ID:
          // loadf
@@ -1857,7 +1846,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // savef
          tape.write(bcLoadFI, localOffset);
          tape.write(bcXOr, immValue);
-         tape.write(bcSaveF, localOffset);
+         tape.write(bcSaveF, localOffset << 2);
          break;
       default:
          throw InternalError("not yet implemente"); // !! temporal
@@ -1870,7 +1859,7 @@ void ByteCodeWriter :: doRealIntOperation(CommandTape& tape, int operator_id, in
    switch (operator_id) {
       case SET_OPERATOR_ID:
          // xrsavef i, v
-         tape.write(bcXRSaveF, localOffset, immValue);
+         tape.write(bcXRSaveF, localOffset << 2, immValue);
          break;
       default:
          throw InternalError("not yet implemente"); // !! temporal
@@ -1883,39 +1872,39 @@ void ByteCodeWriter :: doLongOperation(CommandTape& tape, int operator_id, int l
    switch (operator_id) {
       case ADD_OPERATOR_ID:
          // laddf i
-         tape.write(bcLAddF, localOffset);
+         tape.write(bcLAddF, localOffset << 2);
          break;
       case SUB_OPERATOR_ID:
          // lsubf i
-         tape.write(bcLSubF, localOffset);
+         tape.write(bcLSubF, localOffset << 2);
          break;
       case MUL_OPERATOR_ID:
          // lmulf i
-         tape.write(bcLMulF, localOffset);
+         tape.write(bcLMulF, localOffset << 2);
          break;
       case DIV_OPERATOR_ID:
          // ldivf i
-         tape.write(bcLDivF, localOffset);
+         tape.write(bcLDivF, localOffset << 2);
          break;
       case SHIFTL_OPERATOR_ID:
          // lshlf i
-         tape.write(bcLShlF, localOffset);
+         tape.write(bcLShlF, localOffset << 2);
          break;
       case SHIFTR_OPERATOR_ID:
          // lshrf i
-         tape.write(bcLShrF, localOffset);
+         tape.write(bcLShrF, localOffset << 2);
          break;
       case AND_OPERATOR_ID:
          // landf i
-         tape.write(bcLAndF, localOffset);
+         tape.write(bcLAndF, localOffset << 2);
          break;
       case OR_OPERATOR_ID:
          // lorf i
-         tape.write(bcLOrF, localOffset);
+         tape.write(bcLOrF, localOffset << 2);
          break;
       case XOR_OPERATOR_ID:
          // lxorf i
-         tape.write(bcLXorF, localOffset);
+         tape.write(bcLXorF, localOffset << 2);
          break;
       default:
          throw InternalError("not yet implemente"); // !! temporal
@@ -1928,19 +1917,19 @@ void ByteCodeWriter :: doRealOperation(CommandTape& tape, int operator_id, int l
    switch (operator_id) {
       case ADD_OPERATOR_ID:
          // raddf i
-         tape.write(bcRAddF, localOffset);
+         tape.write(bcRAddF, localOffset << 2);
          break;
       case SUB_OPERATOR_ID:
          // rsubf i
-         tape.write(bcRSubF, localOffset);
+         tape.write(bcRSubF, localOffset << 2);
          break;
       case MUL_OPERATOR_ID:
          // rmulf i
-         tape.write(bcRMulF, localOffset);
+         tape.write(bcRMulF, localOffset << 2);
          break;
       case DIV_OPERATOR_ID:
          // rdivf i
-         tape.write(bcRDivF, localOffset);
+         tape.write(bcRDivF, localOffset << 2);
          break;
       default:
          throw InternalError("not yet implemente"); // !! temporal
@@ -1953,19 +1942,19 @@ void ByteCodeWriter :: doRealIntOperation(CommandTape& tape, int operator_id, in
    switch (operator_id) {
    case ADD_OPERATOR_ID:
       // raddnf i
-      tape.write(bcRAddNF, localOffset);
+      tape.write(bcRAddNF, localOffset << 2);
       break;
    case SUB_OPERATOR_ID:
       // rsubnf i
-      tape.write(bcRSubNF, localOffset);
+      tape.write(bcRSubNF, localOffset << 2);
       break;
    case MUL_OPERATOR_ID:
       // rmulnf i
-      tape.write(bcRMulNF, localOffset);
+      tape.write(bcRMulNF, localOffset << 2);
       break;
    case DIV_OPERATOR_ID:
       // rdivnf i
-      tape.write(bcRDivNF, localOffset);
+      tape.write(bcRDivNF, localOffset << 2);
       break;
    default:
       throw InternalError("not yet implemente"); // !! temporal
@@ -2000,7 +1989,7 @@ void ByteCodeWriter :: doArgArrayOperation(CommandTape& tape, int operator_id, i
          tape.write(bcElseR, baCurrentLabel, -1);
          tape.releaseLabel();
          tape.write(bcFreeI, 1);
-         tape.write(bcSaveF, argument);
+         tape.write(bcSaveF, argument << 2);
 
          break;
 //      case SET_REFER_OPERATOR_ID:
@@ -2104,7 +2093,7 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
                // savef target
                tape.write(bcRead);
                tape.write(bcAnd, 0xFF);
-               tape.write(bcSaveF, target);
+               tape.write(bcSaveF, target << 2);
                break;
             case 2:
                // read
@@ -2112,18 +2101,18 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
                // savef target
                tape.write(bcRead);
                tape.write(bcAnd, 0xFFFF);
-               tape.write(bcSaveF, target);
+               tape.write(bcSaveF, target << 2);
                break;
             case 4:
                // read
                // savef target
                tape.write(bcRead);
-               tape.write(bcSaveF, target);
+               tape.write(bcSaveF, target << 2);
                break;
             default:
                // NOTE : operations with the stack should always be aligned for efficiency
                // readtof target itemSize / 4
-               tape.write(bcReadToF, target, align(itemSize, 4) >> 2);
+               tape.write(bcReadToF, target << 2, align(itemSize, 4) >> 2);
                break;
          }
          break;
@@ -2141,7 +2130,7 @@ void ByteCodeWriter :: doBinaryArrayOperation(CommandTape& tape, int operator_id
          // savef
          tape.write(bcLen);
          divIndex(tape, itemSize);
-         tape.write(bcSaveF, target);
+         tape.write(bcSaveF, target << 2);
          break;
    }
 }
@@ -2161,7 +2150,7 @@ void ByteCodeWriter :: doArrayOperation(CommandTape& tape, int operator_id, int 
          // count
          // savef target
          tape.write(bcCount);
-         tape.write(bcSaveF, target);
+         tape.write(bcSaveF, target << 2);
          break;
    }
 }
@@ -2328,7 +2317,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxTempLocal:
 //      case lxBoxableLocal:
          // pushfi index
-         tape.write(bcPushFI, argument, bpFrame);
+         tape.write(bcPushFI, argument << 2, bpFrame);
          break;
       case lxClassRef:
          // class
@@ -2337,11 +2326,11 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          break;
       case lxLocalAddress:
          // pushf n
-         tape.write(bcPushF, argument);
+         tape.write(bcPushF, argument << 2);
          break;
       case lxBlockLocalAddr:
          // pushf n
-         tape.write(bcPushF, argument, bpFrame);
+         tape.write(bcPushF, argument << 2, bpFrame);
          break;
       case lxCurrent:
          // pushsi index
@@ -2520,7 +2509,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
 //         break;
       case lxLocalAddress:
          // acopyf n
-         tape.write(bcMovF, argument);
+         tape.write(bcMovF, argument << 2);
          break;
       case lxClassRef:
          // class
@@ -2528,7 +2517,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          break;
       case lxBlockLocalAddr:
          // acopyf n
-         tape.write(bcMovF, argument, bpFrame);
+         tape.write(bcMovF, argument << 2, bpFrame);
          break;
 //      case lxResultField:
 //         // aloadai
@@ -3552,7 +3541,7 @@ void ByteCodeWriter :: copyFromLocalAddress(CommandTape& tape, int size, int arg
    size = align(size, 4);
 
    // if it is a dword aligned
-   tape.write(bcCopyF, argument, size >> 2);
+   tape.write(bcCopyF, argument << 2, size >> 2);
 }
 
 void ByteCodeWriter :: copyToLocalAddress(CommandTape& tape, int size, int argument)
@@ -3560,14 +3549,14 @@ void ByteCodeWriter :: copyToLocalAddress(CommandTape& tape, int size, int argum
    // stack operations are always 4-byte aligned
    size = align(size, 4);
 
-   tape.write(bcCopyToF, argument, size >> 2);
+   tape.write(bcCopyToF, argument << 2, size >> 2);
 }
 
 void ByteCodeWriter :: saveToLocal(CommandTape& tape, int size, int argument)
 {
    if (size == 4) {
       // savef arg
-      tape.write(bcSaveFI, argument, bpFrame);
+      tape.write(bcSaveFI, argument << 2, bpFrame);
    }
    else throw InternalError("not yet implemente"); // !! temporal
 }
@@ -3588,7 +3577,7 @@ void ByteCodeWriter :: saveToLocalAddress(CommandTape& tape, int size, int argum
    }
 
    // savef arg
-   tape.write(bcSaveF, argument);
+   tape.write(bcSaveF, argument << 2);
 }
 
 void ByteCodeWriter :: loadFieldAddress(CommandTape& tape, int size, int argument)
@@ -3624,7 +3613,7 @@ void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
    size = align(size, 4);
 
    // if it is a dword aligned
-   tape.write(bcCopyToFI, argument, size >> 2, bpFrame);
+   tape.write(bcCopyToFI, argument << 2, size >> 2, bpFrame);
 }
 
 inline bool isAligned(int size)
@@ -3778,7 +3767,7 @@ void ByteCodeWriter :: generateIndexLoadingExpression(CommandTape& tape, SyntaxT
 {
    SNode source = node.findSubNodeMask(lxObjectMask);
    if (source == lxLocalAddress) {
-      tape.write(bcLoadF, source.argument);
+      tape.write(bcLoadF, source.argument << 2);
    }
    else throw InternalError("Not yet implemented"); // !! temporal
 }
@@ -3787,7 +3776,7 @@ void ByteCodeWriter :: generateIndexSavingExpression(CommandTape& tape, SyntaxTr
 {
    SNode target = node.findSubNodeMask(lxObjectMask);
    if (target == lxLocalAddress) {
-      tape.write(bcSaveF, target.argument);
+      tape.write(bcSaveF, target.argument << 2);
    }
    else throw InternalError("Not yet implemented"); // !! temporal
 }
@@ -3821,7 +3810,7 @@ void ByteCodeWriter :: generateSavingExpression(CommandTape& tape, SyntaxTree::N
 
          if (node.argument == 8) {
             // HOTFIX : to support external op returning long
-            tape.write(bcMovF, dstObj.argument);
+            tape.write(bcMovF, dstObj.argument << 2);
             tape.write(node == lxFloatSaving ? bcRSave : bcLSave);
             scope.clear();
          }
@@ -4220,7 +4209,7 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
 
          generateObject(tape, target, scope);
 
-         tape.write(bcCloneF, source.argument, bpFrame);
+         tape.write(bcCloneF, source.argument << 2, bpFrame);
       }
       else if (source.compare(lxLocal, lxTempLocal)) {
          if (source.firstChild() == lxBreakpoint) {
@@ -4317,7 +4306,7 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
       if (isOpenArg(message.argument)) {
          // if it is open argument dispatching
          tape.write(bcPushD);
-         tape.write(bcOpen, 1);
+         tape.write(bcOpen);
          tape.write(bcPushA);
 
          unboxMessage(tape);
@@ -4348,7 +4337,8 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
 
             if (genericResending) {
                // save message
-               tape.write(bcSaveF, -2);
+               tape.write(bcBPFrame);
+               tape.write(bcSaveF);
                
                generateExpression(tape, current, scope);
 

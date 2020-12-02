@@ -1,8 +1,19 @@
-------                                 
+------                                
 In development:
 ------         
 
   [development]
+    * modify ecv / asm2binx to support frame frame[offset], f[offset] - for xxF commands , sizeof ProgramHeader
+
+    * test : __object."#dispatch[1], __exception."on[2]"
+    * test generic methods
+    * test string / wide operations
+
+
+    * reserve / alloc redesign
+    * movs, movf, copyf, copys and so on should use absolute values
+
+    * migrate core changes to corex
 
     * test all samples
     * check all mtredirect commands (class, parent class)
@@ -12,8 +23,6 @@ In development:
     * idle initializer (ignore movr idle commands )
     * idle sub esp, 0 -- ???
 
-    * reserve / alloc redesign
-    * movs, movf, copyf, copys and so on should use absolute values
     * int should take 4 byte in stack
     * size, lock - should be 32bit for x64
     * stack allocated array - only size field
@@ -26,6 +35,8 @@ In development:
     * critical error handler should be moved to C code
     * retiring core #77
     * #206 - 64-bit architecture
+      all negative FI / F indexes should have correction to indicate that EIT,EBP takes 8 bytes (if open arg=1 : -4, if
+      open arg >= 3 : -12)
     * #280
     * #443
 

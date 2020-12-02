@@ -13,7 +13,7 @@ using namespace _ELENA_;
 //static ELENARTMachine* _Instance = NULL;
 //static void*           _SystemEnv = NULL;
 
-int test(int x)
+EXTERN_DLL_EXPORT int test(int x)
 {
    int k = x + 3;
    return k;
@@ -25,8 +25,8 @@ EXTERN_DLL_EXPORT void PrepareEM(void* args)
    int m = 5;
    int k = test(n);
 
-   printf("!!");
-   fflush(stdout);
+   //printf("!!");
+   //fflush(stdout);
 }
 
 EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,

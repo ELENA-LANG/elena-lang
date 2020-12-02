@@ -30,9 +30,11 @@ struct I64JITScope
 
    bool              withDebugInfo;
 //   //int               objectSize;
+   int               frameOffset;
 
    // byte code command argument
    int            argument;
+   int            argOffset;
 
    void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp);
    //void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp);
@@ -67,6 +69,7 @@ protected:
    friend void loadIndexOpX(int opcode, I64JITScope& scope);
    friend void loadNOp(int opcode, I64JITScope& scope);
    friend void loadFPOp(int opcode, I64JITScope& scope);
+   friend void loadFOp(int opcode, I64JITScope& scope);
 
    friend void compileNop(int opcode, I64JITScope& scope);
 //   friend void compileACopyR(int opcode, AMD64JITScope& scope);
@@ -87,6 +90,7 @@ protected:
 //   friend void compileInvokeVMTOffset(int opcode, AMD64JITScope& scope);
    friend void compilePopN(int opcode, I64JITScope& scope);
    friend void compileAllocI(int opcode, I64JITScope& scope);
+   friend void compileRestore(int op, I64JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -137,6 +141,7 @@ void loadOneByteLOp(int opcode, I64JITScope& scope);
 void loadOneByteLOp(int opcode, I64JITScope& scope);
 void loadIndexOpX(int opcode, I64JITScope& scope);
 void loadFPOp(int opcode, I64JITScope& scope); 
+void loadFOp(int opcode, I64JITScope& scope);
 void loadNOp(int opcode, I64JITScope& scope);
 
 void compileNop(int opcode, I64JITScope& scope);
@@ -158,6 +163,7 @@ void compileOpen(int opcode, I64JITScope& scope);
 //void compileBreakpoint(int opcode, AMD64JITScope& scope);
 void compilePopN(int opcode, I64JITScope& scope);
 void compileAllocI(int opcode, I64JITScope& scope);
+void compileRestore(int op, I64JITScope& scope);
 
 } // _ELENA_
 

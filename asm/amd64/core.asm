@@ -56,6 +56,13 @@ inline % 2Ah
 
 end
 
+// ; restore
+inline % 92h
+
+  add  rbp, __arg1
+  
+end
+
 // ; open
 inline % 98h
 

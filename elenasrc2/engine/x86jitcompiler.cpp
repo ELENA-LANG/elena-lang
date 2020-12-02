@@ -141,35 +141,35 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadOneByteLOp, &loadOneByteLOp, &compileNop, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp,
    &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &loadOneByteLOp, &compileNop, &compileNop, &compileNop, &loadOneByteOp,
 
-   &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop,
-   &compileNop, &compileNop, &loadNOp, &loadNOp, &loadNOpX, &loadN4OpX, &loadFPOp, &loadFPOp,
+   &loadFOp, &loadFOp, &loadFOp, &loadFOp, &loadFOp, &compileNop, &compileNop, &compileNop,
+   &compileNop, &compileNop, &loadNOp, &loadNOp, &loadNOpX, &loadN4OpX, &loadFOp, &loadFOp,
 
    &loadNOp, &loadIndexOp, &compileXRedirect, &compileXRedirect, &compileNop, &compileNop, &compileNop, &compileNop,
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 
-   &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp,
-   &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop, &loadFPOp, &compileNop, &compileNop,
+   &compileNop, &compileNop, &compileNop, &compileNop, &loadFOp, &loadFOp, &loadFOp, &loadFOp,
+   &loadFOp, &loadFOp, &loadFOp, &loadFOp, &compileNop, &loadFOp, &compileNop, &compileNop,
 
-   &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp, &loadFPOp,
-   &loadFPOp, &loadFPOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadFPOp, &compileNop,
+   &loadFOp, &loadFOp, &loadFOp, &loadFPOp, &loadFPOp, &loadFOp, &loadFOp, &loadFOp,
+   &loadFOp, &loadFOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadFOp, &compileNop,
 
-   &compileDec, &loadIndexOp, &loadIndexOp, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadIndexOp,
+   &compileDec, &loadIndexOp, &compileRestore, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadIndexOp,
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &loadFunction, &compileHook, &compileHook,
    &loadIndexOp, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileIfE, &compileElseE, &compileIfCount,
 
-   &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFPOp, &compilePushFI, &loadFPOp,
-   &loadIndexOp, &loadFPOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadFPOp, &loadIndexOp,
+   &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
+   &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadFPOp, &loadNOp,
 
-   &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFPOp, &loadFPOp, &compileNop,
-   &loadFPOp, &loadFPOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadFunction, &loadFPOp, &loadNOp,
+   &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
+   &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadFunction, &loadFOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &loadROp, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
    &loadROp, &compileDShiftN, &loadNOp, &compileInvokeVMTOffset, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,
 
-   &loadFPN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexN4OpX, &loadFPN4OpX, &loadFPN4OpX, &loadFPN4OpX, &loadFPN4OpX,
-   &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFPNOp, &loadFPNOp, &loadFPNOp,
+   &loadFN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexN4OpX, &loadFPN4OpX, &loadFN4OpX, &loadFPN4OpX, &loadFN4OpX,
+   &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
    &compileNop, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop,
@@ -378,11 +378,11 @@ void _ELENA_::loadNOp(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
-void _ELENA_::loadFPNOp(int opcode, x86JITScope& scope)
+void _ELENA_::loadFNOp(int opcode, x86JITScope& scope)
 {
    int arg2 = scope.tape->getDWord();
 
-   char*  code = (char*)scope.compiler->_inlines[opcode];
+   char* code = (char*)scope.compiler->_inlines[opcode];
    size_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
@@ -397,7 +397,7 @@ void _ELENA_::loadFPNOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(-(scope.argument << 2));
+         scope.code->writeDWord(-scope.argument - scope.argOffset);
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -446,6 +446,42 @@ void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope, int prefix)
    scope.code->seekEOF();
 }
 
+void _ELENA_::loadFN4OpX(int opcode, x86JITScope& scope, int prefix)
+{
+   int arg2 = scope.tape->getDWord();
+   char* code = nullptr;
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      if (gcCommandExs[i] == opcode + prefix) {
+         code = (char*)scope.compiler->_inlineExs[i];
+         break;
+      }
+   }
+
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(-scope.argument - scope.argOffset);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
 void _ELENA_::loadFPIndexOpX(int opcode, x86JITScope& scope, int prefix)
 {
    char* code = nullptr;
@@ -509,7 +545,7 @@ void _ELENA_::loadFPIndexOpX(int opcode, x86JITScope& scope)
    }
 }
 
-void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope)
+void _ELENA_::loadFN4OpX(int opcode, x86JITScope& scope)
 {
    pos_t pos = scope.tape->Position();
    int arg2 = scope.tape->getDWord();
@@ -517,20 +553,45 @@ void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope)
 
    switch (arg2) {
       case 1:
-         loadFPN4OpX(opcode, scope, 0x100);
+         loadFN4OpX(opcode, scope, 0x100);
          break;
       case 2:
-         loadFPN4OpX(opcode, scope, 0x200);
+         loadFN4OpX(opcode, scope, 0x200);
          break;
       case 3:
-         loadFPN4OpX(opcode, scope, 0x300);
+         loadFN4OpX(opcode, scope, 0x300);
          break;
       case 4:
-         loadFPN4OpX(opcode, scope, 0x400);
+         loadFN4OpX(opcode, scope, 0x400);
          break;
       default:
-         loadFPNOp(opcode, scope);
+         loadFNOp(opcode, scope);
          break;
+   }
+}
+
+void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope)
+{
+   pos_t pos = scope.tape->Position();
+   int arg2 = scope.tape->getDWord();
+   scope.tape->seek(pos);
+
+   switch (arg2) {
+   case 1:
+      loadFPN4OpX(opcode, scope, 0x100);
+      break;
+   case 2:
+      loadFPN4OpX(opcode, scope, 0x200);
+      break;
+   case 3:
+      loadFPN4OpX(opcode, scope, 0x300);
+      break;
+   case 4:
+      loadFN4OpX(opcode, scope, 0x400);
+      break;
+   default:
+      loadFNOp(opcode, scope);
+      break;
    }
 }
 
@@ -977,7 +1038,34 @@ void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0]==-1) {
-         scope.code->writeDWord(-(scope.argument << 2));
+         scope.code->writeDWord(-(scope.argument << 2) - scope.argOffset);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadFOp(int opcode, x86JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   pos_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(-scope.argument - scope.argOffset);
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -1092,7 +1180,11 @@ void _ELENA_::compileOpen(int opcode, x86JITScope& scope)
 {
    loadOneByteLOp(opcode, scope);
 
-   //scope.prevFSPOffs += (scope.argument << 2);
+   // include current frame and FrameHeader if required
+   if (scope.argument) {
+      scope.frameOffset = (scope.argument << 2) + 12;
+   }
+   else scope.frameOffset = 4;
 }
 
 void _ELENA_::compileQuit(int, x86JITScope& scope)
@@ -1523,7 +1615,7 @@ void _ELENA_::compilePushFI(int, x86JITScope& scope)
 
 void _ELENA_:: compilePushF(int, x86JITScope& scope)
 {
-   scope.argument = -(scope.argument << 2);
+   scope.argument = -scope.argument - scope.argOffset;
 
    loadNOp(bcPushF, scope);
 }
@@ -1818,7 +1910,7 @@ void _ELENA_::compileACopyF(int, x86JITScope& scope)
 {
    // lea ebx, [ebp+nn]
    scope.code->writeWord(0x9D8D);
-   scope.code->writeDWord(-(scope.argument << 2));
+   scope.code->writeDWord(-scope.argument - scope.argOffset);
 }
 
 void _ELENA_ :: compileNot(int, x86JITScope& scope)
@@ -1841,6 +1933,12 @@ void _ELENA_ :: compileDShiftN(int op, x86JITScope& scope)
    }
 }
 
+void _ELENA_ :: compileRestore(int op, x86JITScope& scope)
+{
+   scope.argument += 8; // include EIP & EBP 
+   loadNOp(op, scope);
+}
+
 // --- x86JITScope ---
 
 x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, x86JITCompiler* compiler)
@@ -1856,8 +1954,9 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->argument = 0;
    this->extra_arg = 0;
    this->extra_arg2 = 0;
+   this->argOffset = 0;
 
-//   this->prevFSPOffs = 0;
+   this->frameOffset = 0;
 }
 
 void x86JITScope :: writeReference(MemoryWriter& writer, ref_t reference, size_t disp)
@@ -2133,6 +2232,12 @@ inline void compileTape(MemoryReader& tapeReader, size_t endPos, x86JITScope& sc
    while(tapeReader.Position() < endPos) {
       // read bytecode + arguments
       code = tapeReader.getByte();
+      if (code == bcBPFrame) {
+         scope.argOffset = scope.frameOffset;
+         code = tapeReader.getByte();
+      }
+      else scope.argOffset = 0;
+
       // preload an argument if a command requires it
       if (code > MAX_SINGLE_ECODE) {
          scope.argument = tapeReader.getDWord();
