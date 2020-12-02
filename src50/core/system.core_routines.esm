@@ -18,15 +18,15 @@ procedure __object."#dispatch[1]"
 
   open     4
   reserve  16
-  savef    frame[-12]
-  pushf    frame[-12]
+  savef    frame : -12
+  pushf    frame : -12
   pusha
-  xsavef   frame[-8] 0800004h
-  movf     frame[-4]
+  xsavef   frame : -8 0800004h
+  movf     frame : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
-  strosi   0
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -314,31 +314,31 @@ procedure __literal."add$system@String[2]"
   reserve  12
 
   len
-  movf    -8
+  movf     f : -8
   dec      1
   save
-  movf    -12
+  movf     f : -12
   save
-  peekfi  -8
+  peekfi   -8
   len
-  movf    -16
+  movf     f : -16
   save
-  addf    -8
+  addf     f : -8
 
-  pushf    -8
+  pushf    f : -8
   createn  class : system'String 1
   pusha
 
   pushn    0
-  pushf   -12
-  pushs   -1
-  pushfi  -7
+  pushf    f : -12
+  pushs    -1
+  pushfi   -7
   pushsi   4
   callextr api : insert
   freei    5
 
-  pushf    -16
-  pushf    -12
+  pushf    f : -16
+  pushf    f : -12
   pushfi   -8
   pushsi   3
   callextr api : insert
@@ -396,19 +396,19 @@ procedure __literal."insert$system@IntNumber$system@String[3]"
   reserve  12
 
   len
-  movf    -8
+  movf     f : -8
   dec      1
   save
-  peekfi  -9
+  peekfi   -9
   len
-  movf    -12
+  movf     f : -12
   save
-  addf    -8
+  addf     f : -8
   dec      1
-  movf    -12
+  movf     f : -12
   save
 
-  pushf    -8
+  pushf    f : -8
   createn  class : system'String 1
   pusha
 
@@ -422,7 +422,7 @@ procedure __literal."insert$system@IntNumber$system@String[3]"
   freei    5
 
   // ; insert
-  pushf    -16
+  pushf    f : -16
   pushfi   -8
   pushfi   -9
   pushsi   3
@@ -430,13 +430,13 @@ procedure __literal."insert$system@IntNumber$system@String[3]"
   freei    4
 
   // ; copy right side    
-  peekfi  -8
+  peekfi   -8
   load
-  addf    -12
+  addf     f : -12
            
-  pushf   -12
-  pushfi  -8
-  pushfi  -7
+  pushf    f : -12
+  pushfi   -8
+  pushfi   -7
   pushsi   3
   callextr api : sadd
   freei    4
@@ -456,35 +456,35 @@ procedure __literal."delete$system@IntNumber$system@IntNumber[3]"
   reserve  8
 
   len
-  movf    -8
+  movf     f : -8
   save
-  peekfi  -9
+  peekfi   -9
   load
-  subf    -8
-  movf    -12
+  subf     f : -8
+  movf     f : -12
   save
 
-  peekfi  -8
+  peekfi   -8
   load
-  addf    -12
+  addf     f : -12
 
-  pushf    -8
+  pushf    f : -8
   createn  class : system'String 1
   pusha
 
   // ; copy left side               
   pushn    0
-  pushfi  -8
-  pushs   -1
-  pushfi  -7
+  pushfi   8
+  pushs    -1
+  pushfi   -7
   pushsi   4
   callextr api : insert
   freei    5
 
   // ; copy right side    
-  pushfi  -8
-  pushf   -12
-  pushfi  -7
+  pushfi   -8
+  pushf    f : -12
+  pushfi   -7
   pushsi   3
   callextr api : sadd
   freei    4
@@ -654,32 +654,32 @@ procedure __wide."add$system@WideString[2]"
 
   len
   shr      1
-  movf    -8
+  movf     f : -8
   dec      1
   save
-  movf    -12
+  movf     f : -12
   save
-  peekfi  -8
+  peekfi   -8
   len
   shr      1
-  movf    -16
+  movf     f : -16
   save
-  addf    -8
+  addf     f : -8
 
-  pushf    -8
+  pushf    f : -8
   createn  class : system'WideString 2
   pusha
 
   pushn    0
-  pushf   -12
-  pushs   -1
-  pushfi  -7
+  pushf    f : -12
+  pushs    -1
+  pushfi   -7
   pushsi   4
   callextr api : winsert
   freei    5
 
-  pushf    -16
-  pushf    -12
+  pushf    f : -16
+  pushf    f : -12
   pushfi   -8
   pushsi   3
   callextr api : winsert
@@ -738,34 +738,34 @@ procedure __wide."insert$system@IntNumber$system@WideString[3]"
 
   len
   shr      1
-  movf    -8
+  movf     f : -8
   dec      1
   save
-  peekfi  -9
+  peekfi   -9
   len
   shr      1
-  movf    -16
+  movf     f : -16
   save
-  addf    -8
+  addf     f : -8
   dec      1
-  movf    -12
+  movf     f : -12
   save
 
-  pushf    -8
+  pushf    f : -8
   createn  class : system'WideString 2
   pusha
 
   // ; copy left side               
   pushn    0
-  pushfi  -8
-  pushs   -1
-  pushfi  -7
+  pushfi   -8
+  pushs    -1
+  pushfi   -7
   pushsi   4
   callextr api : winsert
   freei    5
 
   // ; insert
-  pushf    -16
+  pushf    f : -16
   pushfi   -8
   pushfi   -9
   pushsi   3
@@ -773,13 +773,13 @@ procedure __wide."insert$system@IntNumber$system@WideString[3]"
   freei    4
 
   // ; copy right side    
-  peekfi  -8
+  peekfi   -8
   load
-  addf    -12
+  addf     f : -12
            
-  pushf   -12
-  pushfi  -8
-  pushfi  -7
+  pushf    f : -12
+  pushfi   -8
+  pushfi   -7
   pushsi   3
   callextr api : wadd
   freei    4
@@ -800,41 +800,41 @@ procedure __wide."delete$system@IntNumber$system@IntNumber[3]"
 
   len
   shr      1
-  movf    -8
+  movf     f : -8
   save
-  peekfi  -9
+  peekfi   -9
   load
-  subf    -8
-  movf    -12
+  subf     f : -8
+  movf     f : -12
   save
 
-  peekfi  -8
+  peekfi   -8
   load
-  addf    -12
+  addf     f : -12
 
-  pushf    -8
+  pushf    f : -8
   createn  class : system'String 1
   pusha
 
   // ; copy left side               
   pushn    0
-  pushfi  -8
-  pushs   -1
-  pushfi  -7
+  pushfi   -8
+  pushs    -1
+  pushfi   -7
   pushsi   4
   callextr api : winsert
   freei    5
 
   // ; copy right side    
-  pushfi  -8
-  pushf   -12
-  pushfi  -7
+  pushfi   -8
+  pushf    f : -12
+  pushfi   -7
   pushsi   3
   callextr api : wadd
   freei    4
 
   popa
-
+           
   restore  8
   close
 
@@ -1747,29 +1747,29 @@ procedure __shortconvertor."convert$system@RealNumber$@system@ref#1&system@Short
   open     1
   reserve  4
 
-  rintf    4
-  movf     4
+  rintf    f : 4
+  movf     f : 4
   rload
   pushn    0
   movs     0
   rsaven
   popd
 
-  restore 4
+  restore  4
   close
   
-  lessn labErr 0FFFF8000h
-  lessn labCopy 08000h
+  lessn    labErr 0FFFF8000h
+  lessn    labCopy 08000h
 
 labErr:  
-  pushr class : system'OutOfRangeException
-  pushr mssgconst : "new[1]"
+  pushr    class : system'OutOfRangeException
+  pushr    mssgconst : "new[1]"
   throw    
 
 labCopy:
-  peeksi 2
+  peeksi   2 
   save
-  quitn 2  
+  quitn    2  
 
 end
 
@@ -1983,29 +1983,29 @@ procedure __byteconvertor."convert$system@RealNumber$@system@ref#1&system@ByteNu
   open     1
   reserve  4
 
-  rintf    4
-  movf     4
+  rintf    f : 4
+  movf     f : 4
   rload
   pushn    0
   movs     0
   rsaven
   popd
 
-  restore 4
+  restore  4
   close
 
-  lessn labErr 0  
-  lessn labCopy 0FFh
+  lessn    labErr 0  
+  lessn    labCopy 0FFh
 
 labErr:  
-  pushr class : system'OutOfRangeException
-  pushr mssgconst : "new[1]"
+  pushr    class : system'OutOfRangeException
+  pushr    mssgconst : "new[1]"
   throw    
 
 labCopy:
-  peeksi 2
+  peeksi   2
   save
-  quitn 2  
+  quitn    2  
 
 end
 
@@ -2742,15 +2742,15 @@ labDefault:
 
   open     4
   reserve  16
-  savef    frame[-12]
-  pushf    frame[-12]
+  savef    frame : -12
+  pushf    frame : -12
   pusha
-  xsavef   frame[-8] 0800004h
-  movf     frame[-4]
+  xsavef   frame : -8 0800004h
+  movf     frame : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
-  strosi   0
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -2809,15 +2809,15 @@ labDefault:
 
   open     4
   reserve  16
-  savef    frame[-12]
-  pushf    frame[-12]
+  savef    frame : -12
+  pushf    frame : -12
   pusha
-  xsavef   frame[-8] 0800004h
-  movf     frame[-4]
+  xsavef   frame : -8 0800004h
+  movf     frame : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
-  strosi   0
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -2918,15 +2918,15 @@ labDefault:
 
   open     4
   reserve  16
-  savef    frame[-12]
-  pushf    frame[-12]
+  savef    frame : -12
+  pushf    frame : -12
   pusha
-  xsavef   frame[-8] 0800004h
-  movf     frame[-4]
+  xsavef   frame : -8 0800004h
+  movf     frame : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
-  strosi   0
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -2960,15 +2960,15 @@ labDefault2:
 
   open     4
   reserve  16
-  savef    frame[-12]
-  pushf    frame[-12]
+  savef    frame : -12
+  pushf    frame : -12
   pusha
-  xsavef   frame[-8] 0800004h
-  movf     frame[-4]
+  xsavef   frame : -8 0800004h
+  movf     frame : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
-  strosi   0
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -2996,7 +2996,7 @@ labBoxing:
   pusha      
   mcount     
   pushn      0FFFFFFFFh
-  movf       -8
+  movf       f : -8
   Lab00:     nop
   push       
   dec        1h
@@ -3607,25 +3607,25 @@ procedure __event."#dispatch[1]"
   open     2
   reserve  8
 
-  savef   -12
-  xsavef  -8 0
+  savef    f : -12
+  xsavef   f : -8 0
 
   geti     0  // ; get the first field !! better to define a special array (like castover group object)
   pusha
 
 labNext:
   count
-  movf    -8
+  movf     f : -8
   if       labEnd
 
   // ; define the message length
-  loadfi  -3
+  loadfi   -3
   and      ARG_MASK
   ifn      labSkip 0
   
 // ; copy message
 labNextParam:
-  movf    -20
+  movf     f : -20
   get
   pusha
   dec      1
@@ -3633,12 +3633,12 @@ labNextParam:
 
 labSkip:
   peekfi   1
-  loadfi  -2
+  loadfi   -2
   get
   inc      1
-  savef   -8
+  savef    f : -8
 
-  loadfi  -3
+  loadfi   -3
   callvi   0
   
   peekfi   1
@@ -3750,7 +3750,7 @@ end
 
 procedure __jump_closure."params##invoke$system@Object[0]"
 
-  naddf  -8
+  naddf   f : -8
   peeksi  1
   quitn   1
 
@@ -3764,7 +3764,7 @@ procedure __jumpifnot_closure."params##invoke$system@Object[0]"
   elser   labSkip const : false
 
   peeksi 0 
-  naddf  -8
+  naddf  f : -8
 
 labSkip:
   freei   1
@@ -3780,8 +3780,8 @@ procedure __jumpif_closure."params##invoke$system@Object[0]"
   peeksi  2
   ifr     labSkip const : false
 
-  peeksi 0 
-  naddf  -8
+  peeksi  0 
+  naddf   f : -8
 
 labSkip:
   freei   1
@@ -3805,7 +3805,7 @@ procedure __exit_closure."params##invoke$system@Object[0]"
 
   peekfi  1
   count
-  savef   -8
+  savef   f : -8
   peeksi  1
   quit
 
@@ -3826,13 +3826,13 @@ procedure __closuretape."#dispatch[1]"
   reserve 8
   pusha
   
-  savef   -12
+  savef   f : -12
   movn    0  
-  savef   -8
+  savef   f : -8
   
   pushn   -1
   
-  movf    -24
+  movf    f : -24
   
 // ; copy message parameters
   loadfi  -3
@@ -3854,7 +3854,7 @@ labNext:
 
   get
   inc 1
-  savef   -8
+  savef   f : -8
 
   vcallrm system'dynamic'TapeFunction mssgconst : "params##invoke<system'Object>[0]"
   pusha
@@ -3874,16 +3874,19 @@ labDefault:
   popd
   bsredirect  
 
-  open     1
-  reserve  4
-  savesi   3
-  pushs   -3
+  open     4
+  reserve  16
+  savef    frame : -12
+  pushf    frame : -12
   pusha
-  movr     class : system'Message
-  pushr    class : system'MethodNotFoundException
-  storesi  5
-  peeksi   0
+  xsavef   frame : -8 0800004h
+  movf     frame : -4
+  pushr    class : system'Message
+  xseti    0
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
+
   throw
 
 end
@@ -3893,21 +3896,21 @@ procedure __group."#dispatch[1]"
   open     2
   reserve  8
 
-  savef   -12
-  xsavef  -8 0
+  savef    f : -12
+  xsavef   f : -8 0
 
   pusha
 
   hook     labNotFound
 
   // ; define the message length
-  loadfi  -3
+  loadfi   -3
   and      ARG_MASK
   ifn      labSkip 0
   
 // ; copy message
 labNextParam:
-  movf    -20
+  movf     f : -20
   get
   pusha
   dec      1
@@ -3916,19 +3919,19 @@ labNextParam:
   peekfi   1
 
 labNext:
-  loadfi  -2
+  loadfi   -2
   ifcount  labEnd
 
   get
   inc      1
-  savefi  -8
+  savefi   -8
 
-  loadfi  -3
+  loadfi   -3
   callvi   0
 
 labReturn:
   unhook
-  loadfi  -3
+  loadfi   -3
   restore  8
   close
 
@@ -3956,15 +3959,15 @@ labEnd:
 
   open     4
   reserve  16
-  savef    frame[-12]
-  pushf    frame[-12]
+  savef    frame : -12
+  pushf    frame : -12
   pusha
-  xsavef   frame[-8] 0800004h
-  movf     frame[-4]
+  xsavef   frame : -8 0800004h
+  movf     frame : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
-  strosi   0
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -4012,15 +4015,15 @@ labEnd:
 
   open     4
   reserve  16
-  savef    frame[-12]
-  pushf    frame[-12]
+  savef    frame : -12
+  pushf    frame : -12
   pusha
-  xsavef   frame[-8] 0800004h
-  movf     frame[-4]
+  xsavef   frame : -8 0800004h
+  movf     frame : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
-  strosi   0
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -4033,52 +4036,52 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
   reserve  28
   pusha    
   // int i := 0;
-  xsavef   -8 0
+  xsavef   f : -8 0
   // byte command := 0;
-  xsavef   -12 0
+  xsavef   f : -12 0
   // int size := 0;
-  xsavef   -16 0
+  xsavef   f : -16 0
   // while (i < len) {
   Lab00:   nop
   snop  
   
-  peekfi     -13 // len
+  peekfi   -13 // len
   pusha      
-  movf       -8  // i
+  movf     f : -8  // i
   nless      
-  select     const : false const : true
-  freei      1h
-  ifr        Lab01 const : false 
+  select   const : false const : true
+  freei    1h
+  ifr      Lab01 const : false 
 
   //command := buffer[i];
-  peekfi     -12 // buffer
-  loadfi     -2
+  peekfi   -12 // buffer
+  loadfi   -2
   read
-  and        0FFh
-  savef      -12
+  and      0FFh
+  savef    f : -12
 
   // i += 1;
-  xaddf      -8 1
+  xaddf    f : -8 1
 
   // size := buffer[i];
-  peekfi     -12
-  loadfi     -2
+  peekfi   -12
+  loadfi   -2
   read
-  savef      -16
+  savef    f : -16
 
   // i += 4;
-  xaddf      -8 4
+  xaddf    f : -8 4
 
   // commands[command](size,buffer,i);
-  loadfi     -3
+  loadfi   -3
   movr       constarray : "system'dynamic'$private'commands#$inline0"
   get
-  callvi     0
+  callvi   0
   pusha
 
   // i += size
-  movf    -4
-  naddf   -8
+  movf     f : -4
+  naddf    f : -8
 
   jump     Lab00
   Lab01:   nop
@@ -4109,19 +4112,28 @@ procedure __invoke0."#dispatch[1]"   // 4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
+  callr intern : system'core_routines'invokerError
+
+end
+
+procedure invokerError
+
+  // ; remove a return point
+  freei  1
+
   // UTF8Encoding.toString(i,size,buffer)
   pushfi -12
-  pushf  -12
-  pushf  -8
+  pushf  f : -4
+  pushf  f : -2    
   movr   const : system'text'UTF8Encoding
   pusha  
   movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
   callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
 
-  open     0  
+  open   0  
   pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
+  pushr  class : system'TypeLoaderException
+  pushr  mssgconst : "new[2]"
   throw
 
 end
@@ -4146,20 +4158,7 @@ procedure __invoke1."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -4
-  pushf  -2    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4183,20 +4182,7 @@ procedure __invoke2."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4220,20 +4206,7 @@ procedure __invoke3."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4257,20 +4230,7 @@ procedure __invoke4."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4294,20 +4254,7 @@ procedure __invoke5."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4331,20 +4278,7 @@ procedure __invoke6."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4368,20 +4302,7 @@ procedure __invoke7."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4405,20 +4326,7 @@ procedure __invoke8."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4442,20 +4350,7 @@ procedure __invoke9."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4479,20 +4374,7 @@ procedure __invoke10."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4516,20 +4398,7 @@ procedure __invoke11."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4553,20 +4422,7 @@ procedure __invoke12."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4590,20 +4446,7 @@ procedure __invoke13."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4627,20 +4470,7 @@ procedure __invoke14."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4664,20 +4494,7 @@ procedure __invoke15."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4701,20 +4518,7 @@ procedure __invoke16."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4738,20 +4542,7 @@ procedure __invoke17."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4775,20 +4566,7 @@ procedure __invoke18."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4812,20 +4590,7 @@ procedure __invoke19."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4849,20 +4614,7 @@ procedure __invoke20."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4886,20 +4638,7 @@ procedure __invoke21."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4923,20 +4662,7 @@ procedure __invoke22."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4960,20 +4686,7 @@ procedure __invoke23."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -4997,20 +4710,7 @@ procedure __invoke24."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -5034,20 +4734,7 @@ procedure __invoke25."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -5071,20 +4758,7 @@ procedure __invoke26."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -5108,20 +4782,7 @@ procedure __invoke27."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -5145,20 +4806,7 @@ procedure __invoke28."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -5182,20 +4830,7 @@ procedure __invoke29."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -5219,20 +4854,7 @@ procedure __invoke30."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -5256,20 +4878,7 @@ procedure __invoke31."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -5293,20 +4902,7 @@ procedure __invokeV1."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
 labNotFound:
 
-  // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
-  pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-
-  open     0  
-  pusha  
-  pushr class : system'TypeLoaderException
-  pushr mssgconst : "new[2]"
-  throw
+  callr intern : system'core_routines'invokerError
 
 end
 
@@ -5314,8 +4910,8 @@ procedure __loadString."#dispatch[1]" // -4 - size, -2 - index, -12 - buffer
 
   // UTF8Encoding.toString(i,size,buffer)
   pushfi -12
-  pushf  -16
-  pushf  -8    
+  pushf  f : -16
+  pushf  f : -8    
   movr   const : system'text'UTF8Encoding
   pusha  
   movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
@@ -5482,11 +5078,11 @@ labCreate:
   pusha
   peekfi   -7
   pusha
-  movf     -24
+  movf     f : -24
   pusha
-  movf     -20
+  movf     f : -20
   pusha
-  movf     -16
+  movf     f : -16
   pusha
 
   peekfi   -7
@@ -5527,8 +5123,8 @@ labDestroy:
   pushn    0
   pushs    0
 
-  pushf    -20
-  pushf    -16
+  pushf    f : -20
+  pushf    f : -16
 
   pusha  
   vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[4]"
@@ -5564,10 +5160,10 @@ labCommand:
   pushn    0
   pushs    0
 
-  pushf    -28
-  pushf    -24
-  pushf    -20
-  pushf    -16
+  pushf    f : -28
+  pushf    f : -24
+  pushf    f : -20
+  pushf    f : -16
 
   pusha  
   vcallrm  system'winforms'WindowCallback mssgconst : "wm_command<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'winforms'WindowHandle,'$auto'system@ref#1&system@IntNumber>[6]"
@@ -5603,10 +5199,10 @@ labCursor:
   pushn    0
   pushs    0  
 
-  pushf    -28
-  pushf    -24
-  pushf    -20
-  pushf    -16
+  pushf    f : -28
+  pushf    f : -24
+  pushf    f : -20
+  pushf    f : -16
 
   pusha  
   vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[6]"
@@ -5642,8 +5238,8 @@ labPaint:
   pushn    0
   pushs    0  
 
-  pushf    -20
-  pushf    -16
+  pushf    f : -20
+  pushf    f : -16
 
   pusha  
   vcallrm  system'winforms'WindowCallback mssgconst : "wm_paint<system'winforms'WindowHandle,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[4]"
@@ -5679,10 +5275,10 @@ labSize:
   pushn    0
   pushs    0  
 
-  pushf    -28
-  pushf    -24
-  pushf    -20
-  pushf    -16
+  pushf    f : -28
+  pushf    f : -24
+  pushf    f : -20
+  pushf    f : -16
 
   pusha  
   vcallrm  system'winforms'WindowCallback mssgconst : "eval<system'winforms'WindowHandle,system'IntNumber,system'IntNumber,system'IntNumber,'$auto'system@ref#1&system@IntNumber>[6]"
@@ -5823,7 +5419,7 @@ symbol sta_start
   alloci   1
   loadenv
   savesi   0
-  movf     -4
+  movf     f : -4
   callextr extern : InitializeSTA
   freei    4
 
