@@ -3,16 +3,12 @@ In development:
 ------         
 
   [development]
-    * mytest.exe 42cd8f  42cf4a
+    * __exception."on[2]"
 
 
-    * test : __object."#dispatch[1], __exception."on[2]"
+    * test : __object."#dispatch[1] 
     * test generic methods
     * test string / wide operations
-
-
-    * reserve / alloc redesign
-    * movs, movf, copyf, copys and so on should use absolute values
 
     * migrate core changes to corex
 
@@ -26,9 +22,6 @@ In development:
 
     * int should take 4 byte in stack
     * size, lock - should be 32bit for x64
-    * stack allocated array - only size field
-
-    * reserve should specify absolute size, rather than in index
 
     * use message, extension, symbol correctly for x32 and x64
     * message and messagename should not be the same

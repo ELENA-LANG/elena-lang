@@ -18,11 +18,11 @@ procedure __object."#dispatch[1]"
 
   open     4
   reserve  16
-  savef    frame : -12
-  pushf    frame : -12
+  savef    f : -12
+  pushf    f : -12
   pusha
-  xsavef   frame : -8 0800004h
-  movf     frame : -4
+  xsavef   f : -8 0800004h
+  movf     f : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
@@ -2742,11 +2742,11 @@ labDefault:
 
   open     4
   reserve  16
-  savef    frame : -12
-  pushf    frame : -12
+  savef    f : -12
+  pushf    f : -12
   pusha
-  xsavef   frame : -8 0800004h
-  movf     frame : -4
+  xsavef   f : -8 0800004h
+  movf     f : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
@@ -2809,11 +2809,11 @@ labDefault:
 
   open     4
   reserve  16
-  savef    frame : -12
-  pushf    frame : -12
+  savef    f : -12
+  pushf    f : -12
   pusha
-  xsavef   frame : -8 0800004h
-  movf     frame : -4
+  xsavef   f : -8 0800004h
+  movf     f : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
@@ -2918,11 +2918,11 @@ labDefault:
 
   open     4
   reserve  16
-  savef    frame : -12
-  pushf    frame : -12
+  savef    f : -12
+  pushf    f : -12
   pusha
-  xsavef   frame : -8 0800004h
-  movf     frame : -4
+  xsavef   f : -8 0800004h
+  movf     f : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
@@ -2960,11 +2960,11 @@ labDefault2:
 
   open     4
   reserve  16
-  savef    frame : -12
-  pushf    frame : -12
+  savef    f : -12
+  pushf    f : -12
   pusha
-  xsavef   frame : -8 0800004h
-  movf     frame : -4
+  xsavef   f : -8 0800004h
+  movf     f : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
@@ -3876,11 +3876,11 @@ labDefault:
 
   open     4
   reserve  16
-  savef    frame : -12
-  pushf    frame : -12
+  savef    f : -12
+  pushf    f : -12
   pusha
-  xsavef   frame : -8 0800004h
-  movf     frame : -4
+  xsavef   f : -8 0800004h
+  movf     f : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
@@ -3959,11 +3959,11 @@ labEnd:
 
   open     4
   reserve  16
-  savef    frame : -12
-  pushf    frame : -12
+  savef    f : -12
+  pushf    f : -12
   pusha
-  xsavef   frame : -8 0800004h
-  movf     frame : -4
+  xsavef   f : -8 0800004h
+  movf     f : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
@@ -4015,11 +4015,11 @@ labEnd:
 
   open     4
   reserve  16
-  savef    frame : -12
-  pushf    frame : -12
+  savef    f : -12
+  pushf    f : -12
   pusha
-  xsavef   frame : -8 0800004h
-  movf     frame : -4
+  xsavef   f : -8 0800004h
+  movf     f : -4
   pushr    class : system'Message
   xseti    0
   movr     class : system'MethodNotFoundException
