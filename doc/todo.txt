@@ -3,8 +3,7 @@ In development:
 ------         
 
   [development]
-    * asm2binx support sizeof ProgramHeader : ProgramHeader64
-
+    * mytest.exe 42cd8f  42cf4a
 
 
     * test : __object."#dispatch[1], __exception."on[2]"

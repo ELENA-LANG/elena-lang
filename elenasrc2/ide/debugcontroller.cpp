@@ -1252,6 +1252,14 @@ void DebugController::readParams(_DebuggerWatch* watch, size_t address, ident_t 
    else watch->write(this, address, name, "<nil>");
 }
 
+inline int getDisp(DebugLineInfo* lineInfo, int index)
+{
+   if (lineInfo[index + 1].symbol == dsFrameOffset) {
+      return lineInfo[index + 1].addresses.offset.disp + 4;
+   }
+   else return 0;
+}
+
 void DebugController :: readAutoContext(_DebuggerWatch* watch)
 {
    if (_debugger.isStarted()) {
@@ -1263,7 +1271,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
       while (lineInfo[index].symbol != dsProcedure) {
          if (lineInfo[index].symbol == dsLocal) {
             // write local variable
-            size_t localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level);
+            size_t localPtr = _debugger.Context()->LocalPtr(lineInfo[index].addresses.local.level, getDisp(lineInfo, index));
             readObject(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsIntLocal) {

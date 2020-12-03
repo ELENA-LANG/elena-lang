@@ -687,11 +687,12 @@ struct DebugLineInfo
    int         col, row, length;
    union
    {
-      struct Source { pos_t nameRef; } source;
+      struct Source { pos_t nameRef;            } source;
       struct Module { pos_t nameRef; int flags; } symbol;
-      struct Step   { pos_t address;         } step;
+      struct Step   { pos_t address;            } step;
       struct Local  { pos_t nameRef; int level; } local;
       struct Field  { pos_t nameRef; int size;  } field;
+      struct Offset { pos_t disp;               } offset;
    } addresses;
 
    DebugLineInfo()

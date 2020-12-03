@@ -217,6 +217,7 @@ namespace _ELENA_
       dsStructPtr               = 0x0E05,
       dsStructInfo              = 0x0F05,
       dsLocalPtr                = 0x1005,
+      dsFrameOffset             = 0x0009,
 
       dsFieldInfo               = 0x0F04,
 

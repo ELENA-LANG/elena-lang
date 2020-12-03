@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Debugger class and its helpers header
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef debuggerH
@@ -106,12 +106,14 @@ public:
    size_t IP() const { return context.Eip; }
    size_t Frame() const { return context.Ebp; }
    size_t Local(int offset) { return context.Ebp - offset * 4; }
+   size_t Local(int offset, int disp) { return context.Ebp - offset * 4 + disp; }
 
    size_t Current(int offset) { return context.Esp + offset * 4; }
    size_t ClassVMT(size_t address);
    size_t VMTFlags(size_t address);
    size_t ObjectPtr(size_t address);
    size_t LocalPtr(int offset) { return ObjectPtr(Local(offset)); }
+   size_t LocalPtr(int offset, int disp) { return ObjectPtr(Local(offset, disp)); }
    size_t CurrentPtr(int offset) { return ObjectPtr(Current(offset)); }
 
    bool readDump(size_t address, char* dump, size_t length);

@@ -1115,10 +1115,6 @@ void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, De
    if (!scope.debug)
       return;
 
-   if (level < 0) {
-      level -= frameLevel;
-   }
-
    DebugLineInfo info;
    info.symbol = symbol;
    info.addresses.local.nameRef = scope.debugStrings->Position();
@@ -1126,6 +1122,14 @@ void ByteCodeWriter :: writeLocal(Scope& scope, ident_t localName, int level, De
 
    scope.debugStrings->writeLiteral(localName);
    scope.debug->write((char*)&info, sizeof(DebugLineInfo));
+
+   if (level < 0) {
+      DebugLineInfo frameInfo;
+      frameInfo.symbol = dsFrameOffset;
+      frameInfo.addresses.offset.disp = frameLevel;
+
+      scope.debug->write((char*)&frameInfo, sizeof(DebugLineInfo));
+   }
 }
 
 void ByteCodeWriter :: writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message)
@@ -2317,7 +2321,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxTempLocal:
 //      case lxBoxableLocal:
          // pushfi index
-         tape.write(bcPushFI, argument << 2, bpFrame);
+         tape.write(bcPushFI, argument, bpFrame);
          break;
       case lxClassRef:
          // class

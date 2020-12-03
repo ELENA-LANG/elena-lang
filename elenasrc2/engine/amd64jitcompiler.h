@@ -70,6 +70,7 @@ protected:
    friend void loadNOp(int opcode, I64JITScope& scope);
    friend void loadFPOp(int opcode, I64JITScope& scope);
    friend void loadFOp(int opcode, I64JITScope& scope);
+   friend void loadFNOp(int opcode, I64JITScope& scope);
 
    friend void compileNop(int opcode, I64JITScope& scope);
 //   friend void compileACopyR(int opcode, AMD64JITScope& scope);
@@ -143,6 +144,7 @@ void loadIndexOpX(int opcode, I64JITScope& scope);
 void loadFPOp(int opcode, I64JITScope& scope); 
 void loadFOp(int opcode, I64JITScope& scope);
 void loadNOp(int opcode, I64JITScope& scope);
+void loadFNOp(int opcode, I64JITScope& scope);
 
 void compileNop(int opcode, I64JITScope& scope);
 //void compileACopyR(int opcode, AMD64JITScope& scope);

@@ -378,6 +378,11 @@ void _ELENA_::loadNOp(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
+inline int getFPOffset(int argument, int argOffset)
+{
+   return -(argument - (argument < 0 ? argOffset : 0));
+}
+
 void _ELENA_::loadFNOp(int opcode, x86JITScope& scope)
 {
    int arg2 = scope.tape->getDWord();
@@ -397,7 +402,7 @@ void _ELENA_::loadFNOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(-scope.argument - scope.argOffset);
+         scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -434,7 +439,7 @@ void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope, int prefix)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(-(scope.argument << 2));
+         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.argOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -471,7 +476,7 @@ void _ELENA_::loadFN4OpX(int opcode, x86JITScope& scope, int prefix)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(-scope.argument - scope.argOffset);
+         scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -508,7 +513,7 @@ void _ELENA_::loadFPIndexOpX(int opcode, x86JITScope& scope, int prefix)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(-(scope.argument << 2));
+         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.argOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2 << 2);
@@ -1038,7 +1043,7 @@ void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0]==-1) {
-         scope.code->writeDWord(-(scope.argument << 2) - scope.argOffset);
+         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.argOffset));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -1065,7 +1070,7 @@ void _ELENA_::loadFOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(-scope.argument - scope.argOffset);
+         scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -1610,12 +1615,12 @@ void _ELENA_::compilePushFI(int, x86JITScope& scope)
 {
    scope.code->writeWord(0xB5FF);
    // push [ebp-level*4]
-   scope.code->writeDWord(-(scope.argument << 2));
+   scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.argOffset));
 }
 
 void _ELENA_:: compilePushF(int, x86JITScope& scope)
 {
-   scope.argument = -scope.argument - scope.argOffset;
+   scope.argument = getFPOffset(scope.argument, scope.argOffset);
 
    loadNOp(bcPushF, scope);
 }
