@@ -1915,7 +1915,7 @@ void _ELENA_::compileACopyF(int, x86JITScope& scope)
 {
    // lea ebx, [ebp+nn]
    scope.code->writeWord(0x9D8D);
-   scope.code->writeDWord(-scope.argument - scope.argOffset);
+   scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
 }
 
 void _ELENA_ :: compileNot(int, x86JITScope& scope)
