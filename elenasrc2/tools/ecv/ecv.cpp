@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   84
+#define REVISION_VERSION   85
 
 using namespace _ELENA_;
 
@@ -477,6 +477,14 @@ void printFArgument(IdentifierString& command, int argument, int prefix)
    command.appendInt(argument);
 }
 
+void printFPArgument(IdentifierString& command, int argument, int prefix)
+{
+   if (prefix == bcBPFrame) {
+      command.append("frame:");
+   }
+   command.appendInt(argument);
+}
+
 bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<int>& labels)
 {
    // read bytecode + arguments
@@ -576,7 +584,6 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcRIntF:
       case bcAddF:
       case bcSubF:
-      case bcXSaveF:
       case bcXRSaveF:
       case bcXAddF:
       case bcCopyF:
@@ -584,20 +591,35 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printCommand(command, opcode);
          printFArgument(command, argument, prefix);
          break;
+      case bcXSaveF:
+         printCommand(command, opcode);
+         printFArgument(command, argument, prefix);
+         command.append(" ");
+         command.appendInt(argument2);
+         break;
       case bcPushS:
       case bcPushSI:
       case bcPeekSI:
       case bcStoreSI:
       case bcSaveSI:
-      case bcSaveFI:
-      case bcPushFI:
-      case bcPeekFI:
-      case bcStoreFI:
-      case bcLoadFI:
       case bcMovS:
-      case bcEqualFI:
          printCommand(command, opcode);
          command.appendInt(argument);
+         break;
+      case bcSaveFI:
+      case bcPushFI:
+      case bcEqualFI:
+      case bcStoreFI:
+      case bcLoadFI:
+      case bcPeekFI:
+         printCommand(command, opcode);
+         printFPArgument(command, argument, prefix);
+         break;
+      case bcCopyToFI:
+         printCommand(command, opcode);
+         printFPArgument(command, argument, prefix);
+         command.append(" ");
+         command.appendInt(argument2);
          break;
       case bcJump:
       case bcHook:
@@ -745,7 +767,6 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          command.appendInt(argument2);
          break;
       case bcCopyFI:
-      case bcCopyToFI:
       case bcCopyToAI:
       case bcXSetFI:
       case bcReadToF:

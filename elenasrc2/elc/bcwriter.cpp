@@ -3617,7 +3617,7 @@ void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
    size = align(size, 4);
 
    // if it is a dword aligned
-   tape.write(bcCopyToFI, argument << 2, size >> 2, bpFrame);
+   tape.write(bcCopyToFI, argument, size >> 2, bpFrame);
 }
 
 inline bool isAligned(int size)
