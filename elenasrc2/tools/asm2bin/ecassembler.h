@@ -65,7 +65,7 @@ class ECodesAssembler : public Assembler
    void compileMessage(TokenInfo& token, IdentifierString& message, ref_t& signRef, _Module* binary);
    void compileMessageName(TokenInfo& token, IdentifierString& message);
 
-   int compileFArg(TokenInfo& token, _Module* binary, ByteCode& prefix);
+   int compileFArg(TokenInfo& token, _Module* binary);
    ref_t compileRArg(TokenInfo& token, _Module* binary);
    ref_t compileRMessageArg(TokenInfo& token, _Module* binary);
    ref_t compileMessageArg(TokenInfo& token, _Module* binary);

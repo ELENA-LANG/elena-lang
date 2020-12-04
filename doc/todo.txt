@@ -3,10 +3,8 @@ In development:
 ------         
 
   [development]
-    * __exception."on[2]"
+    * test - method not found
 
-
-    * test : __object."#dispatch[1] 
     * test generic methods
     * test string / wide operations
 

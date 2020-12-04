@@ -70,7 +70,7 @@ const int gcCommandNumber = 158;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
-   bcReserve, bcPushS, bcStoreSI, bcPeekSI, bcThrow,
+   bcReserve, bcPushSIP, bcStoreSI, bcPeekSI, bcThrow,
    bcCallVI, bcClose, bcNew, bcFillRI, bcCallRM,
    bcPeekFI, bcStoreFI, bcAllocI, bcJumpRM, bcVCallRM,
    bcMTRedirect, bcJumpVI, bcXMTRedirect, bcRestore, bcPushF,
@@ -162,7 +162,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadFPOp, &loadNOp,
 
-   &loadIndexOp, &compileNop, &compileNop, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
+   &loadIndexOp, &compileNop, &compilePushF, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
    &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadFunction, &loadFOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &loadROp, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
@@ -402,7 +402,7 @@ void _ELENA_::loadFNOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument, 8));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -439,7 +439,7 @@ void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope, int prefix)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.argOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.frameOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -476,7 +476,7 @@ void _ELENA_::loadFN4OpX(int opcode, x86JITScope& scope, int prefix)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument, 8));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -513,7 +513,7 @@ void _ELENA_::loadFPIndexOpX(int opcode, x86JITScope& scope, int prefix)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.argOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.frameOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2 << 2);
@@ -1043,7 +1043,7 @@ void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0]==-1) {
-         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.argOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.frameOffset));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -1070,7 +1070,7 @@ void _ELENA_::loadFOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument, 8));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -1615,12 +1615,12 @@ void _ELENA_::compilePushFI(int, x86JITScope& scope)
 {
    scope.code->writeWord(0xB5FF);
    // push [ebp-level*4]
-   scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.argOffset));
+   scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.frameOffset));
 }
 
-void _ELENA_:: compilePushF(int, x86JITScope& scope)
+void _ELENA_:: compilePushF(int op, x86JITScope& scope)
 {
-   scope.argument = getFPOffset(scope.argument, scope.argOffset);
+   scope.argument = getFPOffset(scope.argument, op == bcPushFIP ? scope.frameOffset : 8);
 
    loadNOp(bcPushF, scope);
 }
@@ -1911,11 +1911,11 @@ void _ELENA_::compileMovV(int, x86JITScope& scope)
    scope.code->writeDWord(scope.resolveMessage(encodeAction(scope.argument)));
 }
 
-void _ELENA_::compileACopyF(int, x86JITScope& scope)
+void _ELENA_::compileACopyF(int op, x86JITScope& scope)
 {
    // lea ebx, [ebp+nn]
    scope.code->writeWord(0x9D8D);
-   scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
+   scope.code->writeDWord(getFPOffset(scope.argument, op == bcMovFIP ? scope.frameOffset : 8));
 }
 
 void _ELENA_ :: compileNot(int, x86JITScope& scope)
@@ -1959,7 +1959,6 @@ x86JITScope :: x86JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->argument = 0;
    this->extra_arg = 0;
    this->extra_arg2 = 0;
-   this->argOffset = 0;
 
    this->frameOffset = 0;
 }
@@ -2237,12 +2236,6 @@ inline void compileTape(MemoryReader& tapeReader, size_t endPos, x86JITScope& sc
    while(tapeReader.Position() < endPos) {
       // read bytecode + arguments
       code = tapeReader.getByte();
-      if (code == bcBPFrame) {
-         scope.argOffset = scope.frameOffset;
-         code = tapeReader.getByte();
-      }
-      else scope.argOffset = 0;
-
       // preload an argument if a command requires it
       if (code > MAX_SINGLE_ECODE) {
          scope.argument = tapeReader.getDWord();

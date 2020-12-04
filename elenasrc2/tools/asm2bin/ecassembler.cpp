@@ -214,18 +214,8 @@ ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
    return 0; // dummy returning value 
 }
 
-int ECodesAssembler :: compileFArg(TokenInfo& token, _Module* binary, ByteCode& prefix)
+int ECodesAssembler :: compileFArg(TokenInfo& token, _Module* binary)
 {
-   ident_t word = token.read();
-   if (word.compare("f")) {
-      token.read(":", "Invalid operand (%d)");
-   }
-   else if (word.compare("frame")) {
-      token.read(":", "Invalid operand (%d)");
-      prefix = bcBPFrame;
-   }
-   else throw AssemblerException("Invalid operand (%d)\n", token.terminal.row);
-
    int n = token.readSignedInteger(constants);
 
    return n;
@@ -330,23 +320,15 @@ void ECodesAssembler :: compileRCommand(ByteCode code, TokenInfo& token, MemoryW
 
 void ECodesAssembler::compileFCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
-   ByteCode prefix = bcNone;
-   int n = compileFArg(token, binary, prefix);
-
-   if (prefix != bcNone)
-      writeCommand(ByteCommand(prefix), writer);
+   int n = compileFArg(token, binary);
 
    writeCommand(ByteCommand(code, n), writer);
 }
 
 void ECodesAssembler::compileFNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
-   ByteCode prefix = bcNone;
-   int n1 = compileFArg(token, binary, prefix);
+   int n1 = compileFArg(token, binary);
    int n2 = token.readInteger(constants);
-
-   if (prefix != bcNone)
-      writeCommand(ByteCommand(prefix), writer);
 
    writeCommand(ByteCommand(code, n1, n2), writer);
 }
@@ -606,7 +588,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcCallVI:
          case bcJumpVI:
          case bcPeekSI:
-         case bcMovS:
+         case bcMovSIP:
          case bcPeekFI:
          case bcPushAI:
          case bcOpen:
@@ -620,7 +602,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcStoreFI:
          case bcSaveI:
          case bcLoadI:
-         case bcPushS:
+         case bcPushSIP:
          case bcPushSI:
          case bcPushFI:
          case bcShr:

@@ -36,7 +36,6 @@ struct x86JITScope
 
    // byte code command argument
    int            argument;
-   int            argOffset;
    int            extra_arg;
    int            extra_arg2;
 

@@ -34,7 +34,6 @@ struct I64JITScope
 
    // byte code command argument
    int            argument;
-   int            argOffset;
 
    void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp);
    //void writeXReference(MemoryWriter& writer, ref_t reference, ref64_t disp);

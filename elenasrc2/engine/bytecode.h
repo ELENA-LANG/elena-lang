@@ -27,7 +27,6 @@ enum ByteCode
    bcPush            = 0x09,
    bcPushA           = 0x0A,
    bcPopA            = 0x0B,
-   bcBPFrame         = 0x0C,
    bcStoreV          = 0x0D,
    bcBSRedirect      = 0x0E,
    bcSetV            = 0x0F,
@@ -149,7 +148,7 @@ enum ByteCode
    bcCreate          = 0x9A,
    bcFillR           = 0x9B,
    bcMovF            = 0x9C,
-   bcMovS            = 0x9D,
+   bcMovSIP          = 0x9D,
    bcMovR            = 0x9E,
    bcMovM            = 0x9F,
 
@@ -184,12 +183,12 @@ enum ByteCode
    bcSaveSI          = 0xBB,
    bcSaveFI          = 0xBC,
    bcPushF           = 0xBD,
-   bcPushS           = 0xBE,
+   bcPushSIP         = 0xBE,
    bcReserve         = 0xBF,   // should be used only for unmanaged stack (stack may contains old references, which may break GC)
 
    bcSetI            = 0xC0,
-//   bcNWriteI         = 0xC1,
-//   bcASwapSI         = 0xC2,
+   bcMovFIP          = 0xC1,
+   bcPushFIP         = 0xC2,
    bcStoreSI         = 0xC3,
    bcStoreFI         = 0xC4,
    bcNAddF           = 0xC5,
@@ -286,8 +285,11 @@ enum ByteCode
    bdSourcePath     = 0x8407,
 
    bdIntLocal       = 0x8413,
+   bdIntLocalPtr    = 0x8418,
    bdLongLocal      = 0x8423,
+   bdLongLocalPtr   = 0x8428,
    bdRealLocal      = 0x8433,
+   bdRealLocalPtr   = 0x8438,
    bdParamsLocal    = 0x8443,
    bdByteArrayLocal = 0x8453,
    bdShortArrayLocal= 0x8463,
@@ -308,13 +310,6 @@ enum PseudoArg
    baPrev2Label    = 4, // before previous
 };
 
-enum Predicate
-{
-   bpNone  = 0,
-   bpFrame = 1,
-//   bpBlock = 2
-};
-
 enum TapeStructure
 {
    bsNone        = 0x0,
@@ -331,7 +326,6 @@ struct ByteCommand
    ByteCode  code;
    int       argument;
    int       additional;
-   Predicate predicate;
 
    int Argument() const { return argument; }
 
@@ -342,35 +336,24 @@ struct ByteCommand
       code = bcNop;
       argument = 0;
       additional = 0;
-      predicate = bpNone;
    }
    ByteCommand(ByteCode code)
    {
       this->code = code;
       this->argument = 0;
       this->additional = 0;
-      this->predicate = bpNone;
    }
    ByteCommand(ByteCode code, int argument)
    {
       this->code = code;
       this->argument = argument;
       this->additional = 0;
-      this->predicate = bpNone;
    }
    ByteCommand(ByteCode code, int argument, int additional)
    {
       this->code = code;
       this->argument = argument;
       this->additional = additional;
-      this->predicate = bpNone;
-   }
-   ByteCommand(ByteCode code, int argument, int additional, Predicate predicate)
-   {
-      this->code = code;
-      this->argument = argument;
-      this->additional = additional;
-      this->predicate = predicate;
    }
 
    void save(MemoryWriter* writer, bool commandOnly = false)
@@ -527,10 +510,10 @@ public:
          case bcPushR:
          case bcAllocI:
          case bcPushSI:
-         case bcPushS:
+         case bcPushSIP:
          case bcPushAI:
          case bcPushF:
-         //case bcPushE:
+         case bcPushFIP:
          case bcPushD:
             return true;
          default:
@@ -628,8 +611,6 @@ struct CommandTape
    void write(ByteCode code, int argument, int additional);
    void write(ByteCode code, PseudoArg argument, int additional);
    void write(ByteCode code, TapeStructure argument, int additional);
-   void write(ByteCode code, int argument, int additional, Predicate predicate);
-   void write(ByteCode code, int argument, Predicate predicate);
    void write(ByteCommand command);
    void insert(ByteCodeIterator& it, ByteCommand command);
 

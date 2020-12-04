@@ -4845,3 +4845,14 @@ procedure coreapi'thread_default_handler
   call extern 'rt_dlls.StopThread
 
 end
+
+// tempObject(ptr), eax - vmt, edx - value
+procedure coreapi'tempObject
+
+  mov  eax, [esp+4]
+  mov  [eax-8], ebx
+  mov  [eax], edx
+  mov  [eax-8], 0800004h
+  ret
+
+end

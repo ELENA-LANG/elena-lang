@@ -15,7 +15,7 @@ constexpr auto OPCODE_UNKNOWN = "unknown";
 const char* _fnOpcodes[256] =
 {
    "nop", "breakpoint", "coalesce", "peek", "snop", "pushverb", "loadverb", "throw",
-   "mcount", "push", "pusha", "popa", "bpframe", "storev", "bsredirect", "setv",
+   "mcount", "push", "pusha", "popa", OPCODE_UNKNOWN, "storev", "bsredirect", "setv",
 
    "not", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "sub", "swapd", "close", "rexp", "quit",
    "get", "set", "swap", "mquit", "count", "unhook", "rsin", OPCODE_UNKNOWN,
@@ -42,15 +42,15 @@ const char* _fnOpcodes[256] =
    "rdivf", "rdivnf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rintf", OPCODE_UNKNOWN,
 
    "dec", "geti", "restore", "peekr", "peekfi", "peeksi", "ifheap", "xseti",
-   "open", "quitn", "create", "fillr", "movf", "movs", "movr", "movm",
+   "open", "quitn", "create", "fillr", "movf", "movsip", "movr", "movm",
 
    "jump", "jumpvi", "callvi", "callr", "jumpi", "callextr", "hook", "address",
    "calli", OPCODE_UNKNOWN, "notless", "notgreater", "elsed", "if", "else", "ifcount",
 
    "pushn", "movn", "pushr", "equalfi", "pushai", "loadf", "pushfi", "loadfi",
-   "loadsi", "savef", "pushsi", "savesi", "savefi", "pushf", "pushs", "reserve",
+   "loadsi", "savef", "pushsi", "savesi", "savefi", "pushf", "pushsip", "reserve",
 
-   "seti", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "storesi", "storefi", "naddf", "nmulf", OPCODE_UNKNOWN,
+   "seti", "movfip", "pushfip", "storesi", "storefi", "naddf", "nmulf", OPCODE_UNKNOWN,
    "nsubf", "ndivf", "loadi", "savei", "storer", "lcallextr", "clonef", "xload",
 
    "freei", "alloci", "xcreate", "movv", "shl", "and", "inc", "or",
@@ -156,16 +156,6 @@ void CommandTape :: write(ByteCode code, PseudoArg argument)
 void CommandTape :: write(ByteCode code, PseudoArg argument, int additional)
 {
    write(ByteCommand(code, resolvePseudoArg(argument), additional));
-}
-
-void CommandTape :: write(ByteCode code, int argument, Predicate predicate)
-{
-   write(ByteCommand(code, argument, 0, predicate));
-}
-
-void CommandTape :: write(ByteCode code, int argument, int additional, Predicate predicate)
-{
-   write(ByteCommand(code, argument, additional, predicate));
 }
 
 void CommandTape :: write(ByteCommand command)

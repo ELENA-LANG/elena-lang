@@ -81,7 +81,7 @@ const int gcCommandNumber = /*138*/35;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcOpen,
-   bcReserve, bcPushS,
+   bcReserve, bcPushSIP,
    bcAllocI,
    bcRestore,   
    bcSaveF,
@@ -479,7 +479,7 @@ void _ELENA_::loadFNOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument, 16));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -508,7 +508,7 @@ void _ELENA_::loadFPOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument << 3, scope.argOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument << 3, scope.frameOffset));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -535,7 +535,7 @@ void _ELENA_::loadFOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, scope.argOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument, 16));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -1503,7 +1503,6 @@ I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    //this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
    this->module = nullptr;
    this->frameOffset = 0;
-   this->argOffset = 0;
 }
 
 void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, pos_t disp)
@@ -1694,12 +1693,6 @@ inline void compileTape(MemoryReader& tapeReader, size_t endPos, I64JITScope& sc
    unsigned char code = 0;
    while (tapeReader.Position() < endPos) {
       code = tapeReader.getByte();
-      if (code == bcBPFrame) {
-         scope.argOffset = scope.frameOffset;
-         code = tapeReader.getByte();
-      }
-      else scope.argOffset = 0;
-
       // preload an argument if a command requires it
       if (code > MAX_SINGLE_ECODE) {
          scope.argument = tapeReader.getDWord();

@@ -197,8 +197,7 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, mssg_t message, ref_t so
       tape.write(bcPushA);
 
       if (withPresavedMessage) {
-         tape.write(bcBPFrame);
-         tape.write(bcSaveF, 0);
+         tape.write(bcSaveF, -1);
       }         
 
       if (allocated > 0) {
@@ -249,32 +248,32 @@ void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, in
 
 void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
-   tape.write(bdIntLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+   tape.write(includeFrame ? bdIntLocal : bdIntLocalPtr, writeString(localName), level);
 }
 
 void ByteCodeWriter :: declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
-   tape.write(bdLongLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+   tape.write(includeFrame ? bdLongLocal : bdLongLocalPtr, writeString(localName), level);
 }
 
 void ByteCodeWriter :: declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 {
-   tape.write(bdRealLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+   tape.write(includeFrame ? bdRealLocal : bdRealLocalPtr, writeString(localName), level);
 }
 
-void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+void ByteCodeWriter :: declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level)
 {
-   tape.write(bdByteArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+   tape.write(bdByteArrayLocal, writeString(localName), level);
 }
 
-void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+void ByteCodeWriter :: declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level)
 {
-   tape.write(bdShortArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+   tape.write(bdShortArrayLocal, writeString(localName), level);
 }
 
-void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
+void ByteCodeWriter :: declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level)
 {
-   tape.write(bdIntArrayLocal, writeString(localName), level, includeFrame ? bpFrame : bpNone);
+   tape.write(bdIntArrayLocal, writeString(localName), level);
 }
 
 void ByteCodeWriter :: declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level)
@@ -523,8 +522,7 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, 
    tape.write(bcPushA);
 
    if (withPresavedMessage) {
-      tape.write(bcBPFrame);
-      tape.write(bcSaveF, 0);
+      tape.write(bcSaveF, -1);
    }
 
    if (allocated > 0) {
@@ -1515,53 +1513,32 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bdLocal:
             writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, frameLevel);
             break;
+         case bdIntLocalPtr:
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocalPtr, 0);
+            break;
          case bdIntLocal:
-            if ((*it).predicate == bpFrame) {
-               // if it is a variable containing reference to the primitive value
-               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocal, frameLevel);
-            }
-            // else it is a primitice variable
-            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocalPtr, 0);
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntLocal, frameLevel);
             break;
          case bdLongLocal:
-            if ((*it).predicate == bpFrame) {
-               // if it is a variable containing reference to the primitive value
-               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLongLocal, frameLevel);
-            }
-            // else it is a primitice variable
-            else writeLocal(scope, (const char*)(const char*)_strings.get((*it).Argument()), (*it).additional, dsLongLocalPtr, 0);
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsLongLocal, frameLevel);
+            break;
+         case bdLongLocalPtr:
+            writeLocal(scope, (const char*)(const char*)_strings.get((*it).Argument()), (*it).additional, dsLongLocalPtr, 0);
             break;
          case bdRealLocal:
-            if ((*it).predicate == bpFrame) {
-               // if it is a variable containing reference to the primitive value
-               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocal, frameLevel);
-            }
-            // else it is a primitice variable
-            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocalPtr, 0);
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocal, frameLevel);
+            break;
+         case bdRealLocalPtr:
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsRealLocalPtr, 0);
             break;
          case bdByteArrayLocal:
-            if ((*it).predicate == bpFrame) {
-               // if it is a variable containing reference to the primitive value
-               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocal, frameLevel);
-            }
-            // else it is a primitive variable
-            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocalPtr, 0);
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsByteArrayLocalPtr, 0);
             break;
          case bdShortArrayLocal:
-            if ((*it).predicate == bpFrame) {
-               // if it is a variable containing reference to the primitive value
-               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocal, frameLevel);
-            }
-            // else it is a primitice variable
-            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocalPtr, 0);
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsShortArrayLocalPtr, 0);
             break;
          case bdIntArrayLocal:
-            if ((*it).predicate == bpFrame) {
-               // if it is a variable containing reference to the primitive value
-               writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocal, frameLevel);
-            }
-            // else it is a primitice variable
-            else writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocalPtr, 0);
+            writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsIntArrayLocalPtr, 0);
             break;
          case bdParamsLocal:
             writeLocal(scope, (const char*)_strings.get((*it).Argument()), (*it).additional, dsParamsLocal, frameLevel);
@@ -1591,36 +1568,6 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
          case bcOpen:
             frameLevel = (*it).argument;
             //stackLevel = 0;
-            (*it).save(scope.code);
-            break;
-         case bcPeekFI:
-         case bcPushFI:
-         case bcStoreFI:
-         case bcXSetFI:
-         case bcCopyToFI:
-         case bcCopyFI:
-         case bcPushF:
-         case bcMovF:
-         case bcCloneF:
-         case bcReadToF:
-         //case bcAddF:
-         //case bcSubF:
-         //case bcMulF:
-         //case bcDivF:
-         //case bcCopyToF:
-         //case bcCopyF:
-         //case bcBCopyF:
-         //case bcBLoadFI:
-         case bcLoadFI:
-         case bcSaveF:
-         case bcSaveFI:
-         case bcEqualFI:
-            //if ((*it).predicate == bpBlock) {
-            //   scope.code->writeDWord(stackLevels.peek() + (*it).argument);
-            //}
-            if ((*it).predicate == bpFrame)
-               scope.code->writeByte(bcBPFrame);
-
             (*it).save(scope.code);
             break;
          case bcIfR:
@@ -1684,7 +1631,7 @@ void ByteCodeWriter :: saveIntConstant(CommandTape& tape, LexicalType target, in
    if (target == lxLocalAddress) {
       // xsavef arg, value
 
-      tape.write(bcXSaveF, targetArg << 2, value, bpFrame);
+      tape.write(bcXSaveF, targetArg << 2, value);
    }
    else throw InternalError("Not yet implemented");
 
@@ -2321,7 +2268,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxTempLocal:
 //      case lxBoxableLocal:
          // pushfi index
-         tape.write(bcPushFI, argument, bpFrame);
+         tape.write(bcPushFI, argument);
          break;
       case lxClassRef:
          // class
@@ -2334,7 +2281,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          break;
       case lxBlockLocalAddr:
          // pushf n
-         tape.write(bcPushF, argument << 2, bpFrame);
+         tape.write(bcPushFIP, argument);
          break;
       case lxCurrent:
          // pushsi index
@@ -2453,20 +2400,12 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxLocal:
       case lxSelfLocal:
       case lxTempLocal:
-////      //case lxBoxableLocal:
-         // aloadfi index
-         tape.write(bcPeekFI, argument, bpFrame);
+         tape.write(bcPeekFI, argument);
          break;
       case lxCurrent:
          // peeksi index
          tape.write(bcPeekSI, argument);
          break;
-//////      case lxCurrentField:
-//////         // aloadsi index
-//////         // aloadai 0
-//////         tape.write(bcALoadSI, argument);
-//////         tape.write(bcALoadAI, 0);
-//////         break;
       case lxNil:
          // acopyr 0
          tape.write(bcMovR, argument);
@@ -2521,7 +2460,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          break;
       case lxBlockLocalAddr:
          // acopyf n
-         tape.write(bcMovF, argument << 2, bpFrame);
+         tape.write(bcMovFIP, argument);
          break;
 //      case lxResultField:
 //         // aloadai
@@ -2588,7 +2527,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
       case lxTempLocal:
 //      //case lxBoxableLocal:
          // storefi index
-         tape.write(bcStoreFI, argument, bpFrame);
+         tape.write(bcStoreFI, argument);
          break;
       case lxCurrent:
          // storesi index
@@ -3560,7 +3499,7 @@ void ByteCodeWriter :: saveToLocal(CommandTape& tape, int size, int argument)
 {
    if (size == 4) {
       // savef arg
-      tape.write(bcSaveFI, argument << 2, bpFrame);
+      tape.write(bcSaveFI, argument);
    }
    else throw InternalError("not yet implemente"); // !! temporal
 }
@@ -3617,7 +3556,7 @@ void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
    size = align(size, 4);
 
    // if it is a dword aligned
-   tape.write(bcCopyToFI, argument, size >> 2, bpFrame);
+   tape.write(bcCopyToFI, argument, size >> 2);
 }
 
 inline bool isAligned(int size)
@@ -3700,7 +3639,7 @@ void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dst
          tape.newLabel();
          // equalfi i
          // ifn labNext 1
-         tape.write(bcEqualFI, dstObj.argument, bpFrame);
+         tape.write(bcEqualFI, dstObj.argument);
          tape.write(bcIfN, baCurrentLabel, 1);
          copyToLocal(tape, size, dstObj.argument);
          tape.setLabel();
@@ -3865,7 +3804,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
             // equalfi node.argument
             // ifn labNext 1
 
-            tape.write(bcEqualFI, node.argument, bpFrame);
+            tape.write(bcEqualFI, node.argument);
             tape.write(bcIfN, baCurrentLabel, 1);
 
             SNode fieldNode = loadFieldExpression(tape, target, scope, false);
@@ -3890,7 +3829,7 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
          // equalfi node.argument
          // ifn labNext 1
 
-         tape.write(bcEqualFI, node.argument, bpFrame);
+         tape.write(bcEqualFI, node.argument);
          tape.write(bcIfN, baCurrentLabel, 1);
 
          saveObject(tape, target);
@@ -4213,7 +4152,7 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
 
          generateObject(tape, target, scope);
 
-         tape.write(bcCloneF, source.argument << 2, bpFrame);
+         tape.write(bcCloneF, source.argument << 2);
       }
       else if (source.compare(lxLocal, lxTempLocal)) {
          if (source.firstChild() == lxBreakpoint) {
@@ -4223,7 +4162,7 @@ void ByteCodeWriter :: generateCloningExpression(CommandTape& tape, SyntaxTree::
          generateObject(tape, source, scope, STACKOP_MODE);
          generateObject(tape, target, scope);
 
-         tape.write(bcClone, source.argument, bpFrame);
+         tape.write(bcClone);
          releaseStack(tape);
       }
       else throw InternalError("Not yet implemented"); // !! temporal
@@ -4293,7 +4232,7 @@ void ByteCodeWriter :: generateInitializingExpression(CommandTape& tape, SyntaxT
          if (current == lxMember) {
             SNode memberNode = current.findSubNodeMask(lxObjectMask);
    
-            tape.write(bcXSetFI, memberNode.argument, current.argument, bpFrame);
+            tape.write(bcXSetFI, memberNode.argument, current.argument);
          }
          current = current.nextNode();
       }
@@ -4341,13 +4280,12 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
 
             if (genericResending) {
                // save message
-               tape.write(bcBPFrame);
-               tape.write(bcSaveF);
+               tape.write(bcSaveF, -1);
                
                generateExpression(tape, current, scope);
 
                // restore message
-               tape.write(bcLoadFI, -2);
+               tape.write(bcLoadFI, -1);
             }
             else generateExpression(tape, current, scope);
 
@@ -4678,8 +4616,7 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
 
          generateBinary(tape, current, level);
          declareLocalByteArrayInfo(tape,
-            current.findChild(lxIdentifier).identifier(),
-            level, false);
+            current.findChild(lxIdentifier).identifier(), level);
          break;
       }
       case lxShortsVariable:
@@ -4688,8 +4625,7 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
 
          generateBinary(tape, current, level);
          declareLocalShortArrayInfo(tape,
-            current.findChild(lxIdentifier).identifier(),
-            level, false);
+            current.findChild(lxIdentifier).identifier(), level);
          break;
       }
       case lxIntsVariable:
@@ -4699,8 +4635,7 @@ void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node cur
          generateBinary(tape, current, level);
 
          declareLocalIntArrayInfo(tape,
-            current.findChild(lxIdentifier).identifier(),
-            level, false);
+            current.findChild(lxIdentifier).identifier(), level);
          break;
       }
       case lxBinaryVariable:
@@ -4996,7 +4931,7 @@ void ByteCodeWriter :: generateYieldReturn(CommandTape& tape, SyntaxTree::Node n
 
    tape.newLabel();
    tape.write(bcAddress, baCurrentLabel);
-   tape.write(bcPeekFI, 1, bpFrame);
+   tape.write(bcPeekFI, 1);
    tape.write(bcGetI, node.argument);
    tape.write(bcSave);
 

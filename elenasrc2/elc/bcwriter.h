@@ -174,9 +174,9 @@ class ByteCodeWriter
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level);
    void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ident_t message);

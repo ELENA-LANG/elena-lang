@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   85
+#define REVISION_VERSION   86
 
 using namespace _ELENA_;
 
@@ -468,20 +468,13 @@ void printCommand(IdentifierString& command, const char* opcode)
    }
 }
 
-void printFArgument(IdentifierString& command, int argument, int prefix)
+void printFArgument(IdentifierString& command, int argument)
 {
-   if (prefix == bcBPFrame) {
-      command.append("frame:");
-   }
-   else command.append("f:");
    command.appendInt(argument);
 }
 
-void printFPArgument(IdentifierString& command, int argument, int prefix)
+void printFPArgument(IdentifierString& command, int argument)
 {
-   if (prefix == bcBPFrame) {
-      command.append("frame:");
-   }
    command.appendInt(argument);
 }
 
@@ -489,12 +482,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
 {
    // read bytecode + arguments
    int position = codeReader.Position();
-   unsigned char prefix = 0;
    unsigned char code = codeReader.getByte();
-   if (code == bcBPFrame) {
-      prefix = code;
-      code = codeReader.getByte();
-   }
 
    // ignore a breakpoint if required
    if (code == bcBreakpoint && _ignoreBreakpoints)
@@ -521,11 +509,6 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
    }
 
    if (_showBytecodes) {
-      if (prefix) {
-         command.appendHex((int)prefix);
-         command.append(' ');
-      }
-
       if (code < 0x10)
          command.append('0');
 
@@ -589,20 +572,20 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCopyF:
       case bcCopyToF:
          printCommand(command, opcode);
-         printFArgument(command, argument, prefix);
+         printFArgument(command, argument);
          break;
       case bcXSaveF:
          printCommand(command, opcode);
-         printFArgument(command, argument, prefix);
+         printFArgument(command, argument);
          command.append(" ");
          command.appendInt(argument2);
          break;
-      case bcPushS:
+      case bcPushSIP:
       case bcPushSI:
       case bcPeekSI:
       case bcStoreSI:
       case bcSaveSI:
-      case bcMovS:
+      case bcMovSIP:
          printCommand(command, opcode);
          command.appendInt(argument);
          break;
@@ -613,11 +596,11 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcLoadFI:
       case bcPeekFI:
          printCommand(command, opcode);
-         printFPArgument(command, argument, prefix);
+         printFPArgument(command, argument);
          break;
       case bcCopyToFI:
          printCommand(command, opcode);
-         printFPArgument(command, argument, prefix);
+         printFPArgument(command, argument);
          command.append(" ");
          command.appendInt(argument2);
          break;
