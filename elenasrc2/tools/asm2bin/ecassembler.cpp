@@ -565,6 +565,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcRIntF:
          case bcAddF:
          case bcSubF:
+         case bcLoadF:
             compileFCommand(opcode, token, writer, binary);
             break;
          case bcXAddF:
@@ -617,6 +618,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcCheckSI:
          case bcXRedirect:
          case bcXVRedirect:
+         case bcMovFIP:
             compileICommand(opcode, token, writer);
             break;
          case bcQuitN:

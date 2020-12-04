@@ -160,9 +160,9 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadIndexOp, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileIfE, &compileElseE, &compileIfCount,
 
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
-   &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadFPOp, &loadNOp,
+   &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadSPOp, &loadNOp,
 
-   &loadIndexOp, &compileNop, &compilePushF, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
+   &loadIndexOp, &compileACopyF, &compilePushF, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
    &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadFunction, &loadFOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &loadROp, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
@@ -1055,6 +1055,33 @@ void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
+void _ELENA_::loadSPOp(int opcode, x86JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   pos_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(getFPOffset(scope.argument << 2, 0));
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 void _ELENA_::loadFOp(int opcode, x86JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
@@ -1917,7 +1944,10 @@ void _ELENA_::compileACopyF(int op, x86JITScope& scope)
 {
    // lea ebx, [ebp+nn]
    scope.code->writeWord(0x9D8D);
-   scope.code->writeDWord(getFPOffset(scope.argument, op == bcMovFIP ? scope.frameOffset : FPOffset));
+   if (op == bcMovFIP) {
+      scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.frameOffset));
+   }
+   else scope.code->writeDWord(getFPOffset(scope.argument, FPOffset));
 }
 
 void _ELENA_ :: compileNot(int, x86JITScope& scope)
