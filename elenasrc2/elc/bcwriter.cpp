@@ -1747,7 +1747,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // loadf
          // mul v
          // savef
-         tape.write(bcLoadFI, localOffset);
+         tape.write(bcLoadF, localOffset << 2);
          tape.write(bcMul, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;
@@ -1755,7 +1755,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // loadf
          // div v
          // savef
-         tape.write(bcLoadFI, localOffset);
+         tape.write(bcLoadF, localOffset << 2);
          tape.write(bcDiv, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;
@@ -1763,7 +1763,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // loadf
          // shl v
          // savef
-         tape.write(bcLoadFI, localOffset);
+         tape.write(bcLoadF, localOffset << 2);
          tape.write(bcShl, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;
@@ -1771,7 +1771,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // loadf
          // shr v
          // savef
-         tape.write(bcLoadFI, localOffset);
+         tape.write(bcLoadF, localOffset << 2);
          tape.write(bcShr, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;
@@ -1779,7 +1779,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // loadf
          // and v
          // savef
-         tape.write(bcLoadFI, localOffset);
+         tape.write(bcLoadF, localOffset << 2);
          tape.write(bcAnd, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;
@@ -1787,7 +1787,7 @@ void ByteCodeWriter :: doIntOperation(CommandTape& tape, int operator_id, int lo
          // loadf
          // or v
          // savef
-         tape.write(bcLoadFI, localOffset);
+         tape.write(bcLoadF, localOffset << 2);
          tape.write(bcOr, immValue);
          tape.write(bcSaveF, localOffset << 2);
          break;

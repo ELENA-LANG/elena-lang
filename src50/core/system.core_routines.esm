@@ -2615,7 +2615,7 @@ labNotFound:
   restore 4
 
   close
-  pushsi 4
+  pushsi 10
 
 labContinueError:
 
