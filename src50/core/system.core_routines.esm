@@ -18,10 +18,13 @@ procedure __object."#dispatch[1]"
 
   open     6
   reserve  24
-  movr     class : system'Message
   pushf    -16
-  callextr api : tempObject
-  pushr    class : system'MethodNotFoundException
+  pusha
+  pushf    -16
+  movr     class : system'Message
+  callextr api : tempObject  
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -2737,10 +2740,13 @@ labDefault:
 
   open     6
   reserve  24
-  movr     class : system'Message
   pushf    -16
-  callextr api : tempObject
-  pushr    class : system'MethodNotFoundException
+  pusha
+  pushf    -16
+  movr     class : system'Message
+  callextr api : tempObject  
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -2799,10 +2805,13 @@ labDefault:
 
   open     6
   reserve  24
-  movr     class : system'Message
   pushf    -16
-  callextr api : tempObject
-  pushr    class : system'MethodNotFoundException
+  pusha
+  pushf    -16
+  movr     class : system'Message
+  callextr api : tempObject  
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -2903,10 +2912,13 @@ labDefault:
 
   open     6
   reserve  24
-  movr     class : system'Message
   pushf    -16
-  callextr api : tempObject
-  pushr    class : system'MethodNotFoundException
+  pusha
+  pushf    -16
+  movr     class : system'Message
+  callextr api : tempObject  
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -2940,10 +2952,13 @@ labDefault2:
 
   open     6
   reserve  24
-  movr     class : system'Message
   pushf    -16
-  callextr api : tempObject
-  pushr    class : system'MethodNotFoundException
+  pusha
+  pushf    -16
+  movr     class : system'Message
+  callextr api : tempObject  
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -3155,10 +3170,13 @@ labEnd:
 
   open     6
   reserve  24
-  movr     class : system'Message
   pushf    -16
-  callextr api : tempObject
-  pushr    class : system'MethodNotFoundException
+  pusha
+  pushf    -16
+  movr     class : system'Message
+  callextr api : tempObject  
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -3849,10 +3867,13 @@ labDefault:
 
   open     6
   reserve  24
-  movr     class : system'Message
   pushf    -16
-  callextr api : tempObject
-  pushr    class : system'MethodNotFoundException
+  pusha
+  pushf    -16
+  movr     class : system'Message
+  callextr api : tempObject  
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -3927,10 +3948,13 @@ labEnd:
 
   open     6
   reserve  24
-  movr     class : system'Message
   pushf    -16
-  callextr api : tempObject
-  pushr    class : system'MethodNotFoundException
+  pusha
+  pushf    -16
+  movr     class : system'Message
+  callextr api : tempObject  
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw
@@ -3978,10 +4002,13 @@ labEnd:
 
   open     6
   reserve  24
-  movr     class : system'Message
   pushf    -16
-  callextr api : tempObject
-  pushr    class : system'MethodNotFoundException
+  pusha
+  pushf    -16
+  movr     class : system'Message
+  callextr api : tempObject  
+  movr     class : system'MethodNotFoundException
+  storesi  0
   pushr    mssgconst : "new[3]"
 
   throw

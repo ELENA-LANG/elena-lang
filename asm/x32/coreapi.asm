@@ -4852,7 +4852,7 @@ procedure coreapi'tempObject
   mov  eax, [esp+4]
   mov  [eax-8], ebx
   mov  [eax], edx
-  mov  [eax-8], 0800004h
+  mov  [eax-4], 0800004h
   ret
 
 end

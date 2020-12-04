@@ -175,6 +175,8 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop,
 };
 
+constexpr int FPOffset = 4;
+
 // --- x86JITCompiler commands ---
 
 inline void compileJump(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
@@ -402,7 +404,7 @@ void _ELENA_::loadFNOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, 8));
+         scope.code->writeDWord(getFPOffset(scope.argument, FPOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -476,7 +478,7 @@ void _ELENA_::loadFN4OpX(int opcode, x86JITScope& scope, int prefix)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, 8));
+         scope.code->writeDWord(getFPOffset(scope.argument, FPOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -1070,7 +1072,7 @@ void _ELENA_::loadFOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, 8));
+         scope.code->writeDWord(getFPOffset(scope.argument, FPOffset));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -1620,7 +1622,7 @@ void _ELENA_::compilePushFI(int, x86JITScope& scope)
 
 void _ELENA_:: compilePushF(int op, x86JITScope& scope)
 {
-   scope.argument = getFPOffset(scope.argument, op == bcPushFIP ? scope.frameOffset : 8);
+   scope.argument = getFPOffset(scope.argument, op == bcPushFIP ? scope.frameOffset : FPOffset);
 
    loadNOp(bcPushF, scope);
 }
@@ -1915,7 +1917,7 @@ void _ELENA_::compileACopyF(int op, x86JITScope& scope)
 {
    // lea ebx, [ebp+nn]
    scope.code->writeWord(0x9D8D);
-   scope.code->writeDWord(getFPOffset(scope.argument, op == bcMovFIP ? scope.frameOffset : 8));
+   scope.code->writeDWord(getFPOffset(scope.argument, op == bcMovFIP ? scope.frameOffset : FPOffset));
 }
 
 void _ELENA_ :: compileNot(int, x86JITScope& scope)

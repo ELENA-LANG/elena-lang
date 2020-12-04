@@ -148,6 +148,8 @@ void(*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop, &compileNop,
 };
 
+constexpr int FPOffset = 8;
+
 ////// --- x86JITCompiler commands ---
 ////
 ////inline void compileJump(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
@@ -479,7 +481,7 @@ void _ELENA_::loadFNOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, 16));
+         scope.code->writeDWord(getFPOffset(scope.argument, FPOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -535,7 +537,7 @@ void _ELENA_::loadFOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument, 16));
+         scope.code->writeDWord(getFPOffset(scope.argument, FPOffset));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 

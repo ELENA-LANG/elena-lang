@@ -916,7 +916,7 @@ int Compiler::ExprScope :: newTempLocal()
 
 inline int newLocalAddr(int allocated)
 {
-   return -2 - allocated;
+   return -1 - allocated;
 }
 
 int Compiler::ExprScope :: newTempLocalAddress()
@@ -6289,12 +6289,11 @@ int Compiler :: allocateStructure(bool bytearray, int& allocatedSize, int& reser
       // plus space for size
       allocatedSize = ((allocatedSize + 3) >> 2) + 1;
    }
-   else allocatedSize = (allocatedSize + 3) >> 1;
+   else allocatedSize = (allocatedSize + 3) >> 2;
 
    int retVal = reserved;
    reserved += allocatedSize;
 
-   // the offset should include frame header offset
    retVal = newLocalAddr(retVal);
 
    // reserve place for byte array header if required
