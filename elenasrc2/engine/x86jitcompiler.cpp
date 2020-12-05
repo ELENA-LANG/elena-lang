@@ -1649,7 +1649,10 @@ void _ELENA_::compilePushFI(int, x86JITScope& scope)
 
 void _ELENA_:: compilePushF(int op, x86JITScope& scope)
 {
-   scope.argument = getFPOffset(scope.argument, op == bcPushFIP ? scope.frameOffset : FPOffset);
+   if (op == bcPushFIP) {
+      scope.argument = getFPOffset(scope.argument << 2, scope.frameOffset);
+   }
+   else scope.argument = getFPOffset(scope.argument, FPOffset);
 
    loadNOp(bcPushF, scope);
 }
