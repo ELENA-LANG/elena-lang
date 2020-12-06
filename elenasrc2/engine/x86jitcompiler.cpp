@@ -621,7 +621,7 @@ void _ELENA_::loadFPIndexOp(int opcode, x86JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(-(scope.argument << 2));
+         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.frameOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2 << 2);

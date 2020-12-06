@@ -1388,7 +1388,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
          if (type==elDebugLiteral) {
             char value[DEBUG_MAX_STR_LENGTH + 1];
             int length = 0;
-            getValue(selfPtr - 8, (char*)&length, 4);
+            getValue(selfPtr - 4, (char*)&length, 4);
 
             length &= 0xFFFFF;
 
@@ -1402,7 +1402,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
          else if (type == elDebugWideLiteral) {
             wide_c value[DEBUG_MAX_STR_LENGTH + 1];
             int length = 0;
-            getValue(selfPtr - 8, (char*)&length, 4);
+            getValue(selfPtr - 4, (char*)&length, 4);
 
             length &= 0xFFFFF;
             length >>= 1;
@@ -1443,7 +1443,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
             int length = 0;
 
             // get array size
-            getValue(selfPtr - 8, (char*)&length, 4);
+            getValue(selfPtr - 4, (char*)&length, 4);
             if (length == 0x800000)
                length = 0;
 
