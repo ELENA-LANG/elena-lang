@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    * test - method not found
+    * test : string insert / delete
 
     * test generic methods
     * test string / wide operations
@@ -27,8 +27,6 @@ In development:
     * critical error handler should be moved to C code
     * retiring core #77
     * #206 - 64-bit architecture
-      all negative FI / F indexes should have correction to indicate that EIT,EBP takes 8 bytes (if open arg=1 : -4, if
-      open arg >= 3 : -12)
     * #280
     * #443
 

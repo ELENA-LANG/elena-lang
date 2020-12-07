@@ -1030,7 +1030,7 @@ void _ELENA_::loadVMTIndexOp(int opcode, x86JITScope& scope)
 
 void _ELENA_::loadFPOp(int opcode, x86JITScope& scope)
 {
-   char*  code = (char*)scope.compiler->_inlines[opcode];
+   char* code = (char*)scope.compiler->_inlines[opcode];
    pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 

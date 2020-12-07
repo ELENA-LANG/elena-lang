@@ -179,7 +179,7 @@ ELENA byte codes (or ecodes)
 
  Arithmeric operations:
  ----------------------
- addf n                     - index += dword[fp+n]
+ addf n                     - dword[fp+n] += index
 
  laddf n                    - qword[fp+n] << qword[fp+n] + qword[acc]
 

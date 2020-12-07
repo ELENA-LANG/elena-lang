@@ -26,6 +26,8 @@ public:
       otDW        = 0x00400005,
       otDQ        = 0x02000005,
 
+      otPtr16     = 0x00400000,
+
       otEAX       = 0x00100300,
       otECX       = 0x00100301,
       otEDX       = 0x00100302,
@@ -67,6 +69,8 @@ public:
       otM8disp8   = 0x00210100,
 
       otR16       = 0x00400300,
+      otM16       = 0x00410000,
+      otM16disp8  = 0x00410100,
 
       otR64       = 0x02000300,
       otM64       = 0x02010000,
@@ -122,6 +126,31 @@ public:
       JUMP_TYPE_JMP = 0x00,
    };
 
+   static OperandType getOperandType(OperandType type, OperandType prefix)
+   {
+      if (prefix != otNone) {
+         if (test(type, otR64)) {
+            type = (OperandType)((type & ~otR64) | prefix);
+         }
+         else if (type == otDB) {
+            type = (OperandType)((type & ~otDB) | otDD | prefix);
+         }
+         else type = (OperandType)(type | prefix);
+      }
+      return type;
+   }
+
+   static OperandType getOperandType(OperandType baseType, OperandType prefix, int offset)
+   {
+      OperandType type = getOperandType(baseType, prefix);
+      if (abs(offset) < 0x80) {
+         type = (OperandType)(type | otM64disp8);
+      }
+      else type = (OperandType)(type | otM64disp32);
+
+      return type;
+   }
+
    static void writeModRM(MemoryWriter* code, Operand sour, Operand dest)
    {
       int prefix = (dest.type & 0x300) >> 2;
@@ -154,6 +183,32 @@ public:
       //}
    }
 
+   static OperandType overrideOperand16(OperandType op16)
+   {
+      if (test(op16, otM16)) {
+         op16 = (OperandType)(op16 & ~otM16);
+
+         return (OperandType)(otM32 + op16);
+      }
+      else {
+         op16 = (OperandType)(op16 & ~otR16);
+
+         return (OperandType)(otR32 + op16);
+      }
+   }
+
+   static void leaRM64disp(MemoryWriter* code, OperandType sour, OperandType dest, int destOffs)
+   {
+      Operand sourOp(sour);
+      Operand destOp(getOperandType(dest, otR64, destOffs));
+
+      destOp.offset = destOffs;
+
+      code->writeByte(0x48);
+      code->writeByte(0x8D);
+      writeModRM(code, sourOp, destOp);
+   }
+
    static void writeImm(MemoryWriter* code, Operand sour)
    {
       if (sour.type == otDD) {
@@ -171,6 +226,16 @@ public:
       else if (sour.type == otDW) {
          code->writeWord((unsigned short)sour.offset);
       }
+   }
+
+   static void writeImm(MemoryWriter* code, Operand sour, bool override)
+   {
+      if (override && sour.type == otDD) {
+         sour.type = otDW;
+
+         writeImm(code, sour);
+      }
+      else writeImm(code, sour);
    }
 
    static OperandType addPrefix(OperandType type, OperandType prefix)

@@ -453,47 +453,57 @@ end
 
 procedure __literal."delete$system@IntNumber$system@IntNumber[3]"
 
-  open     2
-  reserve  8
+  open     3
+  reserve  12
 
+  // ; -4 - new size
+  // ; -8 - index
+  // ; -12 - index+len
   len
+  movf     -4  // ; src size
+  save
+
+  peekfi   -2
+  load
+  savef    -8
+
+  peekfi   -3
+  nsubf    -4
+  load
+  savef   -12
   movf     -8
-  save
-  peekfi   -9
   load
-  subf     -8
-  movf     -12
-  save
+  addf    -12
 
-  peekfi   -8
-  load
-  addf     -12
-
-  pushf    -8
+  pushf    -4
   createn  class : system'String 1
   pusha
 
   // ; copy left side               
-  pushn    0
-  pushfi   8
-  pushsip  -1
-  pushfi   -7
-  pushsi   4
+  pushn    0   // index
+
+  pushf    -8  
+  pushsip  -1  
+  pushfi   -1  
+  pusha        
+  // ; insert(dest,sour,index,size)
   callextr api : insert
   freei    5
 
-  // ; copy right side    
-  pushfi   -8
+  // ; copy right side  
+
+  peeksi   0
+  pushf    -8
   pushf    -12
-  pushfi   -7
-  pushsi   3
+  pushfi   -1
+  pusha
+// ; sadd(dest,sour,sindex,dindex)
   callextr api : sadd
   freei    4
 
   popa
 
-  restore  8
-
+  restore  12
   close
 
   quitn 3
@@ -799,47 +809,57 @@ end
 
 procedure __wide."delete$system@IntNumber$system@IntNumber[3]"
 
-  open     2
-  reserve  8
+  open     3
+  reserve  12
 
+  // ; -4 - new size
+  // ; -8 - index
+  // ; -12 - index+len
   len
   shr      1
+  movf     -4  // ; src size
+  save
+
+  peekfi   -2
+  load
+  savef    -8
+
+  peekfi   -3
+  nsubf    -4
+  load
+  savef   -12
   movf     -8
-  save
-  peekfi   -9
   load
-  subf     -8
-  movf     -12
-  save
+  addf    -12
 
-  peekfi   -8
-  load
-  addf     -12
-
-  pushf    -8
-  createn  class : system'String 1
+  pushf    -4
+  createn  class : system'WideString 2
   pusha
 
   // ; copy left side               
-  pushn    0
-  pushfi   -8
-  pushsip  -1
-  pushfi   -7
-  pushsi   4
+  pushn    0   // index
+
+  pushf    -8  
+  pushsip  -1  
+  pushfi   -1  
+  pusha        
+  // ; winsert(dest,sour,index,size)
   callextr api : winsert
   freei    5
 
   // ; copy right side    
-  pushfi   -8
+  peeksi   0
+  pushf    -8
   pushf    -12
-  pushfi   -7
-  pushsi   3
+  pushfi   -1
+  pusha
+  // ; wadd(dest,sour,sindex,dindex)
   callextr api : wadd
   freei    4
 
   popa
            
-  restore  8
+  restore  12
   close
 
   quitn 3

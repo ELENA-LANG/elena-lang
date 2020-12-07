@@ -3,7 +3,7 @@
 //
 //		This header contains I64Assembler declarations
 //
-//                             (C)2005-2017, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2020, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef amd64assemblerH
@@ -55,7 +55,7 @@ protected:
 
  //  void loadDefaultConstants();
 
- //  int readStReg(TokenInfo& token);
+   int readStReg(TokenInfo& token);
    bool setOffset(Operand& operand, Operand disp);
 
    Operand defineRegister(TokenInfo& token);
@@ -78,9 +78,9 @@ protected:
  //  void compileANDPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
  //  void compileANDNPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
- //  void compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileAND(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileXOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileORPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
    void compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -91,9 +91,9 @@ protected:
  //  void compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileTEST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileUCOMISS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
- //  void compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileSHR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileSAR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileSHL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileSHL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileSHLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileSHRD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileROL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -159,8 +159,8 @@ protected:
 	//void compileMINPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	//void compileMINSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 
-	//void compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileDIVPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	//void compileDIVSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
@@ -178,7 +178,7 @@ protected:
 	//void compileFLDL2T(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFLDLG2(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFMULP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFRNDINT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFRNDINT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileF2XM1(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFLD1(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFADDP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -195,21 +195,24 @@ protected:
 
 	//void compileFBLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFCHS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFILD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFILD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFIST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFISTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFISUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFIMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFSUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFXCH(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFSTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFSTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFBSTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFSTSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFSTSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFNSTSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFSTCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFLDCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFSTCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFLDCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFCOMIP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFCOMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFLDPI(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -217,7 +220,7 @@ protected:
  //  void compileFPATAN(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFLDL2E(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFLDLN2(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileFFREE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileFFREE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
  //  void compileCMOVCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
  //  void compileCMPPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
@@ -229,16 +232,16 @@ protected:
    bool compileCommandC(/*PrefixInfo& prefix, */TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer/*, x86JumpHelper& helper*/);
  //  bool compileCommandD(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandE(TokenInfo& token);
- //  bool compileCommandF(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
+   bool compileCommandF(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandG(TokenInfo& token);
  //  bool compileCommandH(TokenInfo& token);
- //  bool compileCommandI(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
+   bool compileCommandI(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandJ(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer, AMD64JumpHelper& helper);
  //  bool compileCommandK(TokenInfo& token);
    bool compileCommandL(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer/*, x86JumpHelper& helper*/);
    bool compileCommandM(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandN(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
- //  bool compileCommandO(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
+   bool compileCommandO(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandP(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandQ(TokenInfo& token);
    bool compileCommandR(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
