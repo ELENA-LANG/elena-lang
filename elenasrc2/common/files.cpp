@@ -10,13 +10,13 @@
 // -------------------------------------------------------
 #include "files.h"
 
-#ifdef _WIN32
+#ifdef _WINDOW
 
 #include <windows.h>
 #include <direct.h>
 #include <io.h>
 
-#else
+#elif _LINUX
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -41,7 +41,7 @@ bool Path::comparePaths(path_t s1, path_t s2, size_t length)
    return true;
 }
 
-#ifdef _WIN32
+#ifdef _WINDOW
 
 inline int checkDir(const wchar_t* name, int mode)
 {
@@ -272,7 +272,7 @@ TextFileWriter :: TextFileWriter(path_t path, int encoding, bool withBOM)
    }
 }
 
-#else
+#elif _LINUX
 
 bool Path :: isRelative(path_t path, size_t length)
 {

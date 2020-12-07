@@ -527,13 +527,15 @@ struct VMTHeader
    pos_t count;
 };
 
+#pragma pack(push, 1)
 struct VMTXHeader
 {
-   pos_t packageRef;
-   ref_t flags;
-   ref_t classRef;
-   pos_t count;
+   pos64_t packageRef;
+   ref_t   flags;
+   pos64_t classRef;
+   pos_t   count;
 };
+#pragma pack(pop)
 
 // --- ClassInfo ---
 

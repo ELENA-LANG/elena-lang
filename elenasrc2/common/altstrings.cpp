@@ -735,7 +735,7 @@ double strToDouble(const char* s)
 //   }
 //}
 
-#ifdef _WIN32
+#ifdef _WINDOW
 
 wchar_t* StrFactory :: clone(const wchar_t* s)
 {
@@ -923,7 +923,7 @@ wchar_t* Convertor :: doubleToStr(double value, int digit, wchar_t* s)
    return s;
 }
 
-#else
+#elif _LINUX
 
 unsigned short* StrFactory :: allocate(size_t size, const unsigned short* value)
 {
@@ -1357,12 +1357,6 @@ unsigned short StrHelper :: lower(unsigned short c)
 //{
 //   memmove(s1, s2, length);
 //}
-//
-//#ifdef _WIN32
-//
-//#else
-//
-//#endif
 
 // --- ident_t ---
 

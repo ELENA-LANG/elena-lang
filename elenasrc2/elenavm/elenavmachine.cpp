@@ -31,7 +31,7 @@ using namespace _ELENA_;
 
 #define CONFIG_PATH "elenavm.cfg"
 
-#else
+#elif _LINUX32
 
 #define CONFIG_PATH "/etc/elena/elenavm.config"
 
@@ -266,7 +266,7 @@ size_t Instance :: getLinkerConstant(int id)
    }
 }
 
-#ifdef _WIN32
+#ifdef _WINDOW
 void Instance :: printInfo(const wchar_t* msg, ...)
 {
    va_list argptr;
@@ -278,7 +278,7 @@ void Instance :: printInfo(const wchar_t* msg, ...)
 
    fflush(stdout);
 }
-#else
+#elif _LINUX
 
 void Instance :: printInfo(const char* msg, ...)
 {

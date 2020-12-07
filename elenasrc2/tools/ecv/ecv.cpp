@@ -17,12 +17,12 @@
 #include "bytecode.h"
 #include "compilercommon.h"
 
-#ifdef _WIN32
+#ifdef _WINDOW
 
 #include "winapi/consolehelper.h"
 #include <windows.h>
 
-#endif // _WIN32
+#endif // _WINDOW
 
 #define PROJECT_SECTION "project"
 #define ROOTPATH_OPTION "libpath"

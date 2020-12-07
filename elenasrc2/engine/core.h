@@ -24,8 +24,8 @@ constexpr int elVMTCountOffset32 = 0x0004;                // a VMT size offset
 constexpr int elVMTClassOffset32 = 0x0010;                // a VMT class offset
 constexpr int elVMTFlagOffset32  = 0x000C;                // a VMT class offset
 
-constexpr int elVMTCountOffset64 = 0x0018;                // a VMTX size offset
-constexpr int elVMTClassOffset64 = 0x0020;                // a VMTX class offset
+constexpr int elVMTCountOffset64 = 0x0004;                // a VMTX size offset
+constexpr int elVMTClassOffset64 = 0x0018;                // a VMTX class offset
 
 } // _ELENA_
 

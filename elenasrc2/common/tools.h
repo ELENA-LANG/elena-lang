@@ -101,7 +101,7 @@ inline static size_t getlength(const unsigned short* s)
    return (s==NULL) ? 0 : wcslen(s);
 }
 
-#elif _WIN32
+#elif _WINDOW
 
 namespace _ELENA_
 {
@@ -129,34 +129,6 @@ inline static size_t getlength(const char* s)
 {
    return (s == NULL) ? 0 : strlen(s);
 }
-
-//inline wchar_t wchlwr(wchar_t ch)
-//{
-//   wchar_t temp[2];
-//   temp[0] = ch;
-//   temp[1] = 0;
-//
-//   wcslwr(temp);
-//
-//   return temp[0];
-//}
-//
-////inline char *strrev(char *str)
-////{
-////      char *p1, *p2;
-////
-////      if (! str || ! *str)
-////            return str;
-////
-////      for (p1 = str, p2 = str + strlen(str) - 1; p2 > p1; ++p1, --p2)
-////      {
-////            *p1 ^= *p2;
-////            *p2 ^= *p1;
-////            *p1 ^= *p2;
-////      }
-////      return str;
-////}
-////#endif
 
 // --- resource freeing routines ---
 

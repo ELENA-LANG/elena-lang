@@ -16,7 +16,7 @@
 #include <string.h>
 #include <cstdint>
 
-#ifdef _WIN32
+#ifdef _WINDOW
 
 #include <wchar.h>
 
@@ -43,7 +43,7 @@ namespace _ELENA_
    enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };
 }
 
-#else
+#elif _LINUX
 
 #include <climits>
 

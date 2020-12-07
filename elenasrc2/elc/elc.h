@@ -21,13 +21,13 @@
 #define ELC_REVISION_NUMBER         0x01B9
 
 // --- ELC default file names ---
-#ifdef _WIN32
+#ifdef _WINDOW
 
 constexpr auto SYNTAX_FILE          = "syntax.dat";
 constexpr auto RULES_FILE           = "rules.dat";
 constexpr auto SOURCERULES_FILE     = "source_rules.dat";
 
-#else
+#elif _LINUX
 
 constexpr auto SYNTAX_FILE          = "/usr/share/elena/syntax.dat";
 constexpr auto RULES_FILE           = "/usr/share/elena/rules.dat";
@@ -336,7 +336,7 @@ public:
    virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path, int row, int column, _ELENA_::ident_t terminal);
    virtual void raiseWarning(int level, _ELENA_::ident_t msg, _ELENA_::ident_t path);
 
-#ifdef _WIN32
+#ifdef _WINDOW
    virtual void addSource(_ELENA_::path_t path, _ELENA_::path_t wideNs)
    {
       _ELENA_::IdentifierString ns;
@@ -344,7 +344,7 @@ public:
 
       addSource(path, ns.c_str());
    }
-#endif // _WIN32
+#endif // _WINDOW
    virtual void addSource(_ELENA_::path_t path, _ELENA_::ident_t ns)
    {
       _ELENA_::Path modulePath;

@@ -12,11 +12,11 @@
 
 using namespace _ELENA_;
 
-#ifdef _WIN32
+#ifdef _WINDOW
 
 #define SCRIPTENGINE_LIB Path("elenasm.dll").str()
 
-#else
+#elif _LINUX
 
 #define SCRIPTENGINE_LIB "/usr/lib/elena/libelenasm.so"
 

@@ -279,7 +279,7 @@ bool IDEController :: openFile(_ELENA_::path_t path)
       return true;
    }
 
-#ifdef _WIN32
+#ifdef _WINDOW
    _GUI_::Text* text = new _GUI_::Text(_GUI_::eolCRLF);
 #else
    _GUI_::Text* text = new _GUI_::Text(_GUI_::eolLF);
@@ -594,7 +594,7 @@ void IDEController :: doCreateFile()
    _ELENA_::String<text_c, 30> name(_T("unnamed"));
    name.appendInt(_model->unnamedIndex++);
 
-#ifdef _WIN32
+#ifdef _WINDOW
    _GUI_::Text* text = new _GUI_::Text(_GUI_::eolCRLF);
 #else
    _GUI_::Text* text = new _GUI_::Text(_GUI_::eolLF);
@@ -610,7 +610,7 @@ void IDEController :: doCreateFile()
 
 void IDEController :: doCreateTempFile(text_t name)
 {
-#ifdef _WIN32
+#ifdef _WINDOW
    _GUI_::Text* text = new _GUI_::Text(_GUI_::eolCRLF);
 #else
    _GUI_::Text* text = new _GUI_::Text(_GUI_::eolLF);
@@ -1937,7 +1937,7 @@ bool IDEController :: loadModule(text_t ns, text_t source)
    else if (_ELENA_::NamespaceName::isIncluded(_project.getPackage(), _ELENA_::IdentifierString(ns))) {
       _ELENA_::Path path(_model->project.path);
       path.combine(source);
-#ifdef _WIN32
+#ifdef _WINDOW
       // HOTFIX : to ignore case for win32
       path.lower();
 #endif
@@ -1948,7 +1948,7 @@ bool IDEController :: loadModule(text_t ns, text_t source)
       _ELENA_::Path path(_model->paths.packageRoot);
       path.combine(ns, text_str(ns).find('\'', _ELENA_::getlength(ns)));
       path.combine(source);
-#ifdef _WIN32
+#ifdef _WINDOW
       // HOTFIX : to ignore case for win32
       path.lower();
 #endif

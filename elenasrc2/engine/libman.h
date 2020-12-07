@@ -57,12 +57,12 @@ public:
       _packagePaths.add(package, NULL);
    }
 
-#ifdef _WIN32
+#ifdef _WINDOW
    void addPackage(ident_t package, path_t path)
    {
       _packagePaths.add(package, IdentifierString::clonePath(path));
    }
-#endif // _WIN32
+#endif // _WINDOW
 
    void addPackage(ident_t package, ident_t path)
    {

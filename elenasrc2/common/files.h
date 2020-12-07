@@ -16,11 +16,11 @@ namespace _ELENA_
 
 // --- path_t ---
 
-#ifdef _WIN32
+#ifdef _WINDOW
 
 typedef wide_t path_t;
 
-#else
+#elif _LINUX
 
 typedef ident_t path_t;
 
@@ -103,7 +103,7 @@ public:
       return getlength(_path) == 0;
    }
 
-#ifdef _WIN32
+#ifdef _WINDOW
    static bool checkExtension(path_t path, const char* extension)
    {
       Path ext(extension);
@@ -215,7 +215,7 @@ public:
       _path.append(s);
    }
 
-#else
+#elif _LINUX
 
    void combine(const char* path, size_t length)
    {
@@ -337,7 +337,7 @@ public:
    {
    }
 
-#ifdef _WIN32
+#ifdef _WINDOW
    Path(path_t rootPath, ident_t subPath)
       : _path(rootPath)
    {
@@ -365,7 +365,7 @@ public:
 
       combine(subPath);
    }
-#else
+#elif _LINUX
    Path(const char* rootPath, const char* subPath)
       : _path(rootPath)
    {
@@ -425,7 +425,7 @@ public:
       copyName(path);
    }
 
-#ifdef _WIN32
+#ifdef _WINDOW
    FileName(const char* pathStr)
       : FileName(pathStr, false)
    {
@@ -440,7 +440,7 @@ public:
          appendExtension(path.c_str());
       }
    }
-#else
+#elif _LINUX
    FileName(const char* pathStr, bool withExtension)
    {
       copyName(pathStr);

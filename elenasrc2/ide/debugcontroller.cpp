@@ -1508,7 +1508,7 @@ inline void writeStatement(MemoryWriter& writer, text_t command)
    writer.writeChar((text_c)'\n');
 }
 
-#ifdef _WIN32
+#ifdef _WINDOW
 
 inline void writeStatement(MemoryWriter& writer, ident_t command)
 {

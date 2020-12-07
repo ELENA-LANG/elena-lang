@@ -9,7 +9,7 @@
 
 #include "common.h"
 
-#ifdef _WIN32
+#ifdef _WINDOW
 
 typedef const wchar_t* text_t;
 typedef wchar_t        text_c;
@@ -18,7 +18,7 @@ typedef _ELENA_::wide_t text_str;
 
 #define _T(x) L ## x
 
-#elif _LINUX32
+#elif _LINUX
 
 typedef const char* text_t;
 typedef char        text_c;
