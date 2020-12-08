@@ -198,7 +198,7 @@ AMD64Assembler::Operand AMD64Assembler :: defineOperand(TokenInfo& token, Proced
          token.read(":", err);
          token.read();
          if (token.check("%")) {
-            operand.type = AMD64Helper::otDD;
+            operand.type = AMD64Helper::otDQ;
             operand.reference = token.readInteger(constants) | mskPreloadDataRef;
             operand.offset = 0x0;
          }
@@ -634,8 +634,8 @@ void AMD64Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryW
 		code->writeByte(0xB8 + (char)sour.type);
       AMD64Helper::writeImm(code, dest);
 	}
-   else if (test(sour.type, AMD64Helper::otR64) && (dest.type == AMD64Helper::otDD || dest.type == AMD64Helper::otDB)) {
-      dest.type = AMD64Helper::otDD;
+   else if (test(sour.type, AMD64Helper::otR64) && (dest.type == AMD64Helper::otDQ || dest.type == AMD64Helper::otDB)) {
+      dest.type = AMD64Helper::otDQ;
       code->writeByte(0x48);
       code->writeByte(0xB8 + (char)sour.type);
       AMD64Helper::writeImm(code, dest);

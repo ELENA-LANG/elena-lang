@@ -8,6 +8,7 @@
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 #include <windows.h>
+#include <errhandlingapi.h>
 
 using namespace _ELENA_;
 

@@ -10,44 +10,26 @@
 
 using namespace _ELENA_;
 
-//static ELENARTMachine* _Instance = NULL;
-//static void*           _SystemEnv = NULL;
-
-EXTERN_DLL_EXPORT int test(int x)
-{
-   int k = x + 3;
-   return k;
-}
+//static ELENARTMachine* _Instance = nullptr;
+static void*           _SystemEnv = nullptr;
 
 EXTERN_DLL_EXPORT void PrepareEM(void* args)
 {
-   int n = 4;
-   int m = 5;
-   int k = test(n);
-
-   //printf("!!");
-   //fflush(stdout);
 }
 
 EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint,
    ProgramHeader* header)
 {
-//   ProgramHeader header;
-//   // initialize the exception handler
-//   __asm {
-//      mov header.root_exception_struct.core_catch_frame, ebp
-//      mov header.root_exception_struct.core_catch_level, esp
-//   }
-//   header.root_exception_struct.core_catch_addr = (pos_t)exceptionHandler;
-//
-//   // initialize the critical exception handler
-//   __routineProvider.InitCriticalStruct(&header.root_critical_struct, (pos_t)criticalHandler);
-//
-//   // initialize system env variable
-//   _SystemEnv = systemEnv;
-//
-//   // start the system
-//   _Instance->startSTA(&header, (SystemEnv*)systemEnv, entryPoint);
+   header->root_exception_struct.core_catch_addr = (uintptr_t)exceptionHandler;
+
+   // initialize the critical exception handler
+   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (uintptr_t)criticalHandler);
+
+   // initialize system env variable
+   _SystemEnv = systemEnv;
+
+   // start the system
+  // _Instance->startSTA(header, (SystemEnv*)systemEnv, entryPoint);
 }
 
 //EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)

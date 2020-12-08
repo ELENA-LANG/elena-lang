@@ -1706,18 +1706,39 @@ void _ELENA_::compilePopN(int, x86JITScope& scope)
 
 void _ELENA_ :: compileAllocI(int opcode, x86JITScope& scope)
 {
-   // sub esp, __arg1 * 4
-   int arg = scope.argument << 2;
-   if (arg < 0x80) {
-      scope.code->writeWord(0xEC83);
-      scope.code->writeByte(scope.argument << 2);
-   }
-   else {
-      scope.code->writeWord(0xEC81);
-      scope.code->writeDWord(scope.argument << 2);
+   switch (scope.argument) {
+      case 1:
+         scope.code->writeByte(0x68);
+         scope.code->writeDWord(0);
+         break;
+      case 2:
+         scope.code->writeByte(0x68);
+         scope.code->writeDWord(0);
+         scope.code->writeByte(0x68);
+         scope.code->writeDWord(0);
+         break;
+      default:
+      {
+         // sub esp, __arg1 * 4
+         int arg = scope.argument << 2;
+         if (arg < 0x80) {
+            scope.code->writeWord(0xEC83);
+            scope.code->writeByte(scope.argument << 2);
+         }
+         else {
+            scope.code->writeWord(0xEC81);
+            scope.code->writeDWord(scope.argument << 2);
+         }
+
+         loadNOp(opcode, scope);
+         break;
+      }
    }
 
-   loadNOp(opcode, scope);
+   if (scope.argument == 1) {
+   }
+
+
 }
 
 void _ELENA_::compileASaveR(int, x86JITScope& scope)

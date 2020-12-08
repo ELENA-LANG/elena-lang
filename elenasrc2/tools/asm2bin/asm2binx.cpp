@@ -25,22 +25,27 @@ int main(int argc, char* argv[])
    printf("ELENA Assembler Compiler %d.%d.%d (C)2011-2020 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_NUMBER);
 
    if (argc<2) {
-      printf("asm2binx [-amd64] <file.asm> <output path>");
+      printf("asm2binx [-amd64] <file.asm> <output path> <postfix>");
       return 0;
    }
    _ELENA_::Path target;
+   _ELENA_::IdentifierString postfix;
 
-   bool esmMode = _ELENA_::Path::checkExtension(argv[1], "esm");
    bool amd64Mode = false;
 
+   int fileIndex = 1;
    if (argc == 4) {
+      fileIndex = 2;
+      _ELENA_::FileName name(argv[2], true);
+
+      target.copy(argv[3]);
+      target.combine(name.c_str());
+
       if (_ELENA_::ident_t(argv[1]).compare("-amd64")) {
          amd64Mode = true;
-
-         _ELENA_::FileName name(argv[2], true); 
-
-         target.copy(argv[3]);
-         target.combine(name.c_str());
+      }
+      else if (_ELENA_::ident_t(argv[1]).startsWith("-p")) {
+         postfix.copy(argv[1] + 2);
       }
       else {
          printf("Invalid argument list");
@@ -50,6 +55,7 @@ int main(int argc, char* argv[])
    else if (argc==3) {
       if (_ELENA_::ident_t(argv[1]).compare("-amd64")) {
          amd64Mode = true;
+         fileIndex = 2;
 
          target.copy(argv[2]);
       }
@@ -62,6 +68,7 @@ int main(int argc, char* argv[])
    }
    else target.copy(argv[1]);
 
+   bool esmMode = _ELENA_::Path::checkExtension(argv[fileIndex], "esm");
    if (esmMode) {
 		target.changeExtension("nl");
    }
@@ -89,7 +96,7 @@ int main(int argc, char* argv[])
 	  // return -1;
    //}
 
-   _ELENA_::Path source(/*pp.getTempFileName()*/amd64Mode ? argv[2] : argv[1]);
+   _ELENA_::Path source(argv[fileIndex]);
    _ELENA_::TextFileReader reader(source.c_str(), _ELENA_::feUTF8, true);
    if (!reader.isOpened()) {
       printf("Cannot open the file %s", source.c_str());
@@ -100,7 +107,7 @@ int main(int argc, char* argv[])
 
    try {
       if (esmMode) {
-	      _ELENA_::ECodesAssembler	assembler;
+	      _ELENA_::ECodesAssembler assembler(postfix.c_str());
 		   assembler.compile(&reader, target.c_str());
       }
       else if (amd64Mode) {

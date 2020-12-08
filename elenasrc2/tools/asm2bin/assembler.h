@@ -156,17 +156,20 @@ struct TokenInfo
       return 0;
    }
 
-	int readSignedInteger(Map<ident_t, size_t>& constants)
+	int readSignedInteger(Map<ident_t, size_t>& constants, ident_t postfix)
 	{
       bool negative = false;
 		read();
       if (check("sizeof")) {
          read();
          if (check("ProgramHeader")) {
-            return align(sizeof(ProgramHeader), 4);
-         }
-         else if (check("ProgramHeader64")) {
-            return align(sizeof(ProgramHeader64), 4);
+            printf("%s\n", postfix.c_str());
+
+            if (postfix.compare("64")) {
+               return align(0x20, 4);
+            }
+            else return align(sizeof(ProgramHeader), 4);
+            
          }
          else raiseErr("Invalid number (%d)\n");
       }

@@ -538,7 +538,7 @@ void _ELENA_::loadSPOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument << 2, 0));
+         scope.code->writeDWord(getFPOffset(scope.argument << 3, 0));
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -739,12 +739,20 @@ void _ELENA_::compileBreakpoint(int, I64JITScope& scope)
 
 void _ELENA_::compilePush(int opcode, I64JITScope& scope)
 {
-   // push constant | reference
-   scope.code->writeByte(0x68);
-   if (opcode == bcPushR && scope.argument != 0) {
+   if (opcode == bcPushR && scope.bigAddressMode && !scope.argument) {
+      scope.code->writeByte(0x68);
       scope.writeReference(*scope.code, scope.argument, 0);
+      scope.code->writeDWord(0);
    }
-   else scope.code->writeDWord(scope.argument);
+   else {
+      // push constant | reference
+      scope.code->writeByte(0x68);
+      if (opcode == bcPushR && scope.argument != 0) {
+         scope.writeReference(*scope.code, scope.argument, 0);
+      }
+      else scope.code->writeDWord(scope.argument);
+   }
+
 }
 
 ////void _ELENA_::compilePopE(int, x86JITScope& scope)
@@ -1540,20 +1548,34 @@ void _ELENA_::compilePopN(int, I64JITScope& scope)
 
 void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
 {
-   // sub esp, __arg1 * 8
-   int arg = scope.argument << 3;
-   if (arg < 0x80) {
-      scope.code->writeByte(0x48);
-      scope.code->writeWord(0xEC83);
-      scope.code->writeByte(scope.argument << 3);
-   }
-   else {
-      scope.code->writeByte(0x48);
-      scope.code->writeWord(0xEC81);
-      scope.code->writeDWord(scope.argument << 3);
-   }
+   switch (scope.argument) {
+      case 1:
+         scope.code->writeByte(0x68);
+         scope.code->writeDWord(0);
+         break;
+      case 2:
+         scope.code->writeByte(0x68);
+         scope.code->writeDWord(0);
+         scope.code->writeByte(0x68);
+         scope.code->writeDWord(0);
+         break;
+      default:
+      {
+         // sub esp, __arg1 * 4
+         int arg = scope.argument << 3;
+         if (arg < 0x80) {
+            scope.code->writeWord(0xEC83);
+            scope.code->writeByte(scope.argument << 3);
+         }
+         else {
+            scope.code->writeWord(0xEC81);
+            scope.code->writeDWord(scope.argument << 3);
+         }
 
-   loadNOp(opcode, scope);
+         loadNOp(opcode, scope);
+         break;
+      }
+   }
 }
 
 void _ELENA_::compileRestore(int op, I64JITScope& scope)
@@ -1564,7 +1586,8 @@ void _ELENA_::compileRestore(int op, I64JITScope& scope)
 
 // --- AMD64JITScope ---
 
-I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, I64JITCompiler* compiler)
+I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, 
+   I64JITCompiler* compiler, bool bigAddressMode)
    : lh(code)
 {
    this->tape = tape;
@@ -1575,6 +1598,7 @@ I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    //this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
    this->module = nullptr;
    this->frameOffset = 0;
+   this->bigAddressMode = bigAddressMode;
 }
 
 void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, pos_t disp)
@@ -1594,9 +1618,10 @@ void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, pos_t di
 
 // --- I64JITCompiler ---
 
-I64JITCompiler :: I64JITCompiler(bool debugMode)
+I64JITCompiler :: I64JITCompiler(bool debugMode, bool bigAddressMode)
 {
    _debugMode = debugMode;
+   _bigAddressMode = bigAddressMode;
 }
 
 size_t I64JITCompiler:: getObjectHeaderSize() const
@@ -1626,7 +1651,7 @@ void I64JITCompiler :: writeCoreReference(I64JITScope& scope, ref_t reference, p
       // due to optimization section must be ROModule::ROSection instance
       SectionInfo info = scope.helper->getCoreSection(reference & ~mskAnyRef);
       // separate scope should be used to prevent overlapping
-      I64JITScope newScope(NULL, &writer, scope.helper, this);
+      I64JITScope newScope(NULL, &writer, scope.helper, this, _bigAddressMode);
       newScope.module = info.module;
 
       loadCoreOp(newScope, info.section ? (char*)info.section->get(0) : NULL);
@@ -1648,7 +1673,7 @@ void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    MemoryWriter codeWriter(code);
 
    // preloaded variables
-   I64JITScope dataScope(NULL, &dataWriter, &helper, this);
+   I64JITScope dataScope(NULL, &dataWriter, &helper, this, _bigAddressMode);
    for (int i = 0; i < coreVariableNumber; i++) {
       if (!_preloaded.exist(coreVariables[i])) {
          _preloaded.add(coreVariables[i], helper.getVAddress(dataWriter, mskDataRef));
@@ -1669,11 +1694,11 @@ void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    //rdataWriter.writeQWord(0);
 
    // HOTFIX : preload invoker
-   I64JITScope scope(NULL, &codeWriter, &helper, this);
+   I64JITScope scope(NULL, &codeWriter, &helper, this, _bigAddressMode);
    loadRoutines(envFunctionNumber, envFunctions, scope, _preloaded);
 
    // SYSTEM_ENV
-   I64JITScope rdataScope(NULL, &rdataWriter, &helper, this);
+   I64JITScope rdataScope(NULL, &rdataWriter, &helper, this, _bigAddressMode);
    _preloaded.add(SYSTEM_ENV, helper.getVAddress(rdataWriter, mskRDataRef));
    loadCoreData(helper, rdataScope, SYSTEM_ENV);
    // NOTE : the table is tailed with GCMGSize,GCYGSize,MaxThread
@@ -1775,7 +1800,7 @@ inline void compileTape(MemoryReader& tapeReader, size_t endPos, I64JITScope& sc
 
 void I64JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
 {
-   I64JITScope scope(&tapeReader, &codeWriter, &helper, this);
+   I64JITScope scope(&tapeReader, &codeWriter, &helper, this, _bigAddressMode);
 
    size_t codeSize = tapeReader.getDWord();
    size_t endPos = tapeReader.Position() + codeSize;

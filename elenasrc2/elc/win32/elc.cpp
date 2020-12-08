@@ -240,7 +240,7 @@ _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler()
 
 _ELENA_::_JITCompiler* _ELC_::Project :: createJITCompiler64()
 {
-   return new _ELENA_::I64JITCompiler(BoolSetting(_ELENA_::opDebugMode));
+   return new _ELENA_::I64JITCompiler(BoolSetting(_ELENA_::opDebugMode), false);
 }
 
 // --- Main function ---

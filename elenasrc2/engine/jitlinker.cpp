@@ -16,13 +16,27 @@ constexpr ref_t SIGNATURE_MASK = 0x80000000;
 
 // --- resolveReference ---
 
+inline bool writeVAddr(_Memory* image, pos_t position, vaddr_t addr)
+{
+   return image->write(position, &addr, sizeof(vaddr_t));
+}
+
+inline bool updateVAddr(_Memory* image, pos_t position, vaddr_t addr)
+{
+   vaddr_t val = 0;
+   image->read(position, &val, sizeof(vaddr_t));
+   addr += val;
+
+   return image->write(position, &addr, sizeof(vaddr_t));
+}
+
 inline void resolveReference(_Memory* image, pos_t position, vaddr_t vaddress, ref_t mask, bool virtualMode)
 {
    if (!virtualMode) {
       if ((mask & mskImageMask) == mskRelCodeRef) {
-         (*image)[position] = vaddress - ((vaddr_t)image->get(0)) - position - 4;
+         writeVAddr(image, position, vaddress - ((vaddr_t)image->get(0)) - position - 4);
       }
-      else (*image)[position] += vaddress;
+      else updateVAddr(image, position, vaddress);
    }
    // in virtual mode
    else if ((mask & mskImageMask) == mskRelCodeRef) {
@@ -355,7 +369,7 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
          if (_virtualMode) {
             image->addReference(mskRelCodeRef, offset);
          }
-         else (*image)[offset] -= (((vaddr_t)image->get(0)) + offset + 4);
+         else updateVAddr(image, offset, -(((vaddr_t)image->get(0)) + offset + 4));
       }
       // if it is a vmt message offset
       else if (currentMask == mskVMTEntryOffset) {

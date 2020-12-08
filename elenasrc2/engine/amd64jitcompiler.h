@@ -28,6 +28,7 @@ struct I64JITScope
    MemoryReader*     tape;
    AMD64LabelHelper  lh;
 
+   bool              bigAddressMode;
    bool              withDebugInfo;
 //   //int               objectSize;
    int               frameOffset;
@@ -50,7 +51,7 @@ struct I64JITScope
 //   //   return helper->getSection(reference, module);
 //   //}
 
-   I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, I64JITCompiler* compiler);
+   I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHelper* helper, I64JITCompiler* compiler, bool bigAddressMode);
 };
 
 // --- I64JITCompiler ---
@@ -59,6 +60,7 @@ class I64JITCompiler : public JITCompiler64
 {
 protected:
    bool _debugMode;
+   bool _bigAddressMode;
 
    // commands
    friend void writeCoreReference(I64JITScope& scope, ref_t reference, int position, int offset, char* code);
@@ -143,7 +145,7 @@ public:
    virtual void generateSymbolCall(MemoryDump& tape, vaddr_t address);
    virtual void generateProgramEnd(MemoryDump& tape);
 
-   I64JITCompiler(bool debugMode);
+   I64JITCompiler(bool debugMode, bool bigAddressMode);
 };
 
 // --- compiler friend functions---

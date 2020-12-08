@@ -99,9 +99,11 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\engine\win64\win64routines.cpp" />
     <ClCompile Include="..\win64\dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\engine\elenamachine.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

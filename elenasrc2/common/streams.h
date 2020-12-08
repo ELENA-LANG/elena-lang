@@ -25,13 +25,6 @@ public:
       return *(int*)get(position);
    }
 
-//#ifdef _WIN64
-//   int& operator[](pos64_t position) const
-//   {
-//      return *(uintptr_t*)getLong(position);
-//   }
-//#endif
-
    virtual pos_t Length() const = 0;
 
    //virtual pos64_t LongLength() const = 0;

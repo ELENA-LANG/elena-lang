@@ -15,7 +15,7 @@ bin\asm2binx src50\core\system.core_routines.esm lib50
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
-bin\asm2binx src50\core\system.core_routines.esm lib50_64
+bin\asm2binx -p64 src50\core\system.core_routines.esm lib50_64 
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on

@@ -394,8 +394,8 @@ end
 inline %0D1h
 
   // ; generated in jit : sub  esp, __arg1*4
-  mov  rcx, __arg1
-  xor  rax, rax
+  mov  ecx, __arg1
+  xor  eax, eax
   mov  rdi, rsp
   rep  stos
 

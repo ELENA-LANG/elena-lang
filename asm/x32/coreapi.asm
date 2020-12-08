@@ -4809,22 +4809,12 @@ procedure coreapi'seh_handler
 //; ...
   jmp lab5
 lab2:
-//; PUSH 0
-//; PUSH [EBP+8h]
-//; PUSH ADDR UN23
-//; PUSH [EBP+0Ch]
-//; CALL RtlUnwind
-//; UN23:
   mov esi, [ebp + 10h]
-//; MOV EDX,[EBP+0Ch]
-//; MOV [ESI+0C4h],EDX   // ; esp
 
   // ; get critical exception handler
   mov  eax, [data : % CORE_ET_TABLE]
   mov  [esi+0B8h], eax    // ; eip
 
-//; MOV EAX,[EDX+14h]
-//; MOV [ESI+0B4h],EAX   // ; ebp
   xor eax, eax
   jmp short lab6
 lab5:

@@ -3,6 +3,14 @@ In development:
 ------         
 
   [development]
+    * amd64 : supporting fastcall
+    * amd64 : critical exception handler, critical exception handler refactoring
+
+    * critical error handler should be moved to C code
+    * retiring core #77
+    * #206 - 64-bit architecture
+
+
     * test : string insert / delete
 
     * test generic methods
@@ -24,9 +32,6 @@ In development:
     * use message, extension, symbol correctly for x32 and x64
     * message and messagename should not be the same
 
-    * critical error handler should be moved to C code
-    * retiring core #77
-    * #206 - 64-bit architecture
     * #280
     * #443
 

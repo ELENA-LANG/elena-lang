@@ -50,7 +50,7 @@ void ECodesAssembler :: writeCommand(ByteCommand command, MemoryWriter& writer)
 
 void ECodesAssembler :: compileICommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
 {
-	int offset = token.readSignedInteger(constants);
+	int offset = token.readSignedInteger(constants, postfix);
 
    writeCommand(ByteCommand(code, offset), writer);
 }
@@ -216,7 +216,7 @@ ref_t ECodesAssembler :: compileMessageArg(TokenInfo& token, _Module* binary)
 
 int ECodesAssembler :: compileFArg(TokenInfo& token, _Module* binary)
 {
-   int n = token.readSignedInteger(constants);
+   int n = token.readSignedInteger(constants, postfix);
 
    return n;
 }
@@ -387,7 +387,7 @@ void ECodesAssembler :: compileVCommand(ByteCode code, TokenInfo& token, MemoryW
 
 void ECodesAssembler :: compileNNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer)
 {
-	int n1 = token.readSignedInteger(constants);
+	int n1 = token.readSignedInteger(constants, postfix);
 	int n2 = token.readInteger(constants);
 
    writeCommand(ByteCommand(code, n1, n2), writer);

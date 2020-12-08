@@ -20,6 +20,7 @@ namespace _ELENA_
 // --- ECodesAssembler ---
 class ECodesAssembler : public Assembler
 {
+   ident_t              postfix;
    Map<ident_t, size_t> constants;
    //MessageMap           verbs;
 
@@ -99,9 +100,9 @@ class ECodesAssembler : public Assembler
 public:
 	virtual void compile(TextReader* reader, path_t outputPath);
 
-	ECodesAssembler()
+	ECodesAssembler(ident_t postfix)
 	{
-//      ByteCodeCompiler::loadVerbs(verbs);
+      this->postfix = postfix;
 	}
 	virtual ~ECodesAssembler() {}
 };
