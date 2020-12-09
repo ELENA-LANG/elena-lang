@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA coder opcode helpers
 //		Supported platforms: amd64
-//                             (C)2005-2017, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2020, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef amd64helperH
@@ -60,6 +60,15 @@ public:
       otRSI       = 0x02000306,
       otRDI       = 0x02000307,
 
+      otRX8       = 0x02000400,
+      otRX9       = 0x02000401,
+      otRX10      = 0x02000402,
+      otRX11      = 0x02000403,
+      otRX12      = 0x02000404,
+      otRX13      = 0x02000405,
+      otRX14      = 0x02000406,
+      otRX15      = 0x02000407,
+
       otR32       = 0x00100300,
       otM32       = 0x00110000,
       otM32disp8  = 0x00110100,
@@ -73,6 +82,7 @@ public:
       otM16disp8  = 0x00410100,
 
       otR64       = 0x02000300,
+      otRX64      = 0x02000400,
       otM64       = 0x02010000,
       otM64disp8  = 0x02010100,
       otM64disp32 = 0x02010200,

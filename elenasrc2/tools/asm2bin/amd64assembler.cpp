@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA AMD64Assembler
 //		classes.
-//                             (C)2005-2017, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2020, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -164,6 +164,30 @@ AMD64Assembler::Operand AMD64Assembler :: defineRegister(TokenInfo& token)
    }
    else if (token.check("rdi")) {
       return Operand(AMD64Helper::otRDI);
+   }
+   else if (token.check("r8")) {
+      return Operand(AMD64Helper::otRX8);
+   }
+   else if (token.check("r9")) {
+      return Operand(AMD64Helper::otRX9);
+   }
+   else if (token.check("r10")) {
+      return Operand(AMD64Helper::otRX10);
+   }
+   else if (token.check("r11")) {
+      return Operand(AMD64Helper::otRX11);
+   }
+   else if (token.check("r12")) {
+      return Operand(AMD64Helper::otRX12);
+   }
+   else if (token.check("r13")) {
+      return Operand(AMD64Helper::otRX13);
+   }
+   else if (token.check("r14")) {
+      return Operand(AMD64Helper::otRX14);
+   }
+   else if (token.check("r15")) {
+      return Operand(AMD64Helper::otRX15);
    }
    else return Operand(AMD64Helper::otUnknown);
 }
@@ -613,6 +637,11 @@ void AMD64Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryW
 //	}
    /*else */if (test(sour.type, AMD64Helper::otR64) && (test(dest.type, AMD64Helper::otR64)||test(dest.type, AMD64Helper::otM64))) {
       code->writeByte(0x48);
+      code->writeByte(0x8B);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else if (test(sour.type, AMD64Helper::otRX64) && (test(dest.type, AMD64Helper::otR64) || test(dest.type, AMD64Helper::otM64))) {
+      code->writeByte(0x4C);
       code->writeByte(0x8B);
       AMD64Helper::writeModRM(code, sour, dest);
    }

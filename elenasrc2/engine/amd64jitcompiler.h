@@ -94,6 +94,7 @@ protected:
 //   friend void compileInvokeVMTOffset(int opcode, AMD64JITScope& scope);
    friend void compilePopN(int opcode, I64JITScope& scope);
    friend void compileAllocI(int opcode, I64JITScope& scope);
+   friend void compileReserve(int op, I64JITScope& scope);
    friend void compileRestore(int op, I64JITScope& scope);
    friend void compileDCopyCount(int, I64JITScope& scope);
    friend void compilePopA(int opcode, I64JITScope& scope);
@@ -107,6 +108,7 @@ protected:
 
    // preloaded command set
    void* _inlines[0x100];
+   IntFixedMap<void*> _inlineExs;
 
    // preloaded references
    IntFixedMap<vaddr_t> _preloaded;
@@ -180,6 +182,7 @@ void compileBreakpoint(int opcode, I64JITScope& scope);
 void compilePopN(int opcode, I64JITScope& scope);
 void compileAllocI(int opcode, I64JITScope& scope);
 void compileRestore(int op, I64JITScope& scope);
+void compileReserve(int op, I64JITScope& scope);
 void compileDCopyCount(int, I64JITScope& scope);
 void compilePopA(int opcode, I64JITScope& scope);
 void compilePopD(int opcode, I64JITScope& scope);

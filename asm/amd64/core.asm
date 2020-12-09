@@ -316,14 +316,6 @@ inline % 98h
 
 end
 
-// ; callextr
-inline % 0A5h
-
-  call extern __arg1
-  mov  rdx, rax
-
-end
-
 // ; savef
 inline % 0B9h
 
@@ -398,5 +390,50 @@ inline %0D1h
   xor  eax, eax
   mov  rdi, rsp
   rep  stos
+
+end
+
+// ; callextr
+inline % 0FFh
+
+  mov  rcx, [rsp]
+  mov  rdx, [rsp+8]
+  mov  r8, [rsp+16]
+  mov  r9, [rsp+24]
+  call extern __arg1
+  mov  rdx, rax
+
+end
+
+// ; callextr
+inline % 1FFh
+
+  mov  rcx, [rsp]
+  sub  rbp, 18h
+  call extern __arg1
+  mov  rdx, rax
+
+end
+
+// ; callextr
+inline % 2FFh
+
+  mov  rcx, [rsp]
+  mov  rdx, [rsp+8]
+  sub  rbp, 10h
+  call extern __arg1
+  mov  rdx, rax
+
+end
+
+// ; callextr
+inline % 3FFh
+
+  mov  rcx, [rsp]
+  mov  rdx, [rsp+8]
+  mov  r8, [rsp+16]
+  sub  rbp, 08h
+  call extern __arg1
+  mov  rdx, rax
 
 end

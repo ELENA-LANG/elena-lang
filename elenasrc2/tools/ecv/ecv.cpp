@@ -660,7 +660,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
          printCommand(command, opcode);
          printExternReference(command, module, argument);
          command.append(" ");
-         command.appendInt(argument2);
+         command.appendHex(argument2);
          break;
       case bcReserve:
       case bcRestore:
