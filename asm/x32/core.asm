@@ -2491,14 +2491,6 @@ inline % 0A2h
 
 end
 
-// ; callextr
-inline % 0A5h
-
-  call extern __arg1
-  mov  edx, eax
-
-end
-
 // ; hook label (ecx - offset)
 // ; NOTE : hook calling should be the first opcode
 inline % 0A6h
@@ -2712,15 +2704,6 @@ end
 inline % 0CBh
 
   mov  [ebx + __arg1], edx
-
-end
-
-// ; lcallextr
-inline % 0CDh
-
-  call extern __arg1
-  mov  edi, edx
-  mov  edx, eax
 
 end
 
@@ -3994,5 +3977,22 @@ end
 inline % 0FEh
 
    call code : __arg1
+
+end
+
+// ; callextr
+inline % 0FFh
+
+  call extern __arg1
+  mov  edx, eax
+
+end
+
+// ; lcallextr
+inline % 1FFh
+
+  call extern __arg1
+  mov  edi, edx
+  mov  edx, eax
 
 end

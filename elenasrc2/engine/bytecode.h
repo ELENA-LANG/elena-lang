@@ -157,7 +157,6 @@ enum ByteCode
    bcCallVI          = 0xA2,
    bcCallR           = 0xA3,
    bcJumpI           = 0xA4,
-   bcCallExtR        = 0xA5,
    bcHook            = 0xA6,
    bcAddress         = 0xA7,
    bcCallI           = 0xA8,
@@ -199,7 +198,6 @@ enum ByteCode
    bcLoadI           = 0xCA,
    bcSaveI           = 0xCB,
    bcStoreR          = 0xCC,
-   bcLCallExtR       = 0xCD,
    bcCloneF          = 0xCE,
    bcXLoad           = 0xCF,
 
@@ -253,7 +251,7 @@ enum ByteCode
    bcIfN             = 0xFC,
    bcElseN           = 0xFD,   
    bcCallRM          = 0xFE,
-   bcReserved        = 0xFF,
+   bcCallExtR        = 0xFF,
 
    // labels
    blLabelMask       = 0xC000,  // tape label mask
@@ -296,6 +294,11 @@ enum ByteCode
    bdIntArrayLocal  = 0x8473,
    bdStruct         = 0x8486,
    bdStructSelf     = 0x8484,
+
+   baCallArgsMask   = 0x00FF,
+   baReleaseArgs    = 0x0100,
+   baExternalCall   = 0x0200,
+   baLongCall       = 0x0400,
 };
 
 #define MAX_SINGLE_ECODE 0x4F
@@ -436,7 +439,6 @@ public:
          //case bcBCopyR:
          case bcCallRM:
          case bcCallExtR:
-         case bcLCallExtR:
          case bcSelect:
          case bcJumpRM:
          case bcVJumpRM:

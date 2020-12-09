@@ -44,14 +44,14 @@ const char* _fnOpcodes[256] =
    "dec", "geti", "restore", "peekr", "peekfi", "peeksi", "ifheap", "xseti",
    "open", "quitn", "create", "fillr", "movf", "movsip", "movr", "movm",
 
-   "jump", "jumpvi", "callvi", "callr", "jumpi", "callextr", "hook", "address",
+   "jump", "jumpvi", "callvi", "callr", "jumpi", OPCODE_UNKNOWN, "hook", "address",
    "calli", OPCODE_UNKNOWN, "notless", "notgreater", "elsed", "if", "else", "ifcount",
 
    "pushn", "movn", "pushr", "equalfi", "pushai", "loadf", "pushfi", "loadfi",
    "loadsi", "savef", "pushsi", "savesi", "savefi", "pushf", "pushsip", "reserve",
 
    "seti", "movfip", "pushfip", "storesi", "storefi", "naddf", "nmulf", OPCODE_UNKNOWN,
-   "nsubf", "ndivf", "loadi", "savei", "storer", "lcallextr", "clonef", "xload",
+   "nsubf", "ndivf", "loadi", "savei", "storer", OPCODE_UNKNOWN, "clonef", "xload",
 
    "freei", "alloci", "xcreate", "movv", "shl", "and", "inc", "or",
    "coalescer", "shr", "xor", "vjumprm", "xsaveai", "copyai", "move", "moveto",
@@ -60,7 +60,7 @@ const char* _fnOpcodes[256] =
    "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", "xrsavef", "xaddf", "xsavef",
 
    "new", "newn", "fillri", "xselectr", "vcallrm", "jumprm", "select", "lessn",
-   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", OPCODE_UNKNOWN,
+   OPCODE_UNKNOWN, OPCODE_UNKNOWN, "ifr", "elser", "ifn", "elsen", "callrm", "callextr",
 };
 
 using namespace _ELENA_;
@@ -393,7 +393,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
             *blocks.getIt(index) = 1;
          }
       }
-      else if (code <= bcReserved && code >= bcNop) {
+      else if (code <= bcCallExtR && code >= bcNop) {
          switch(code) {
             case bcThrow:
             //case bcJumpAcc:
@@ -474,7 +474,7 @@ inline bool optimizeProcJumps(ByteCodeIterator& it)
    int blockEnd = getBlockEnd(b_it, length);
    while (*it != blEnd || ((*it).argument != bsMethod && (*it).argument != bsSymbol)) {
       ByteCode code = *it;
-      bool command = (code <= bcReserved && code >= bcNop);
+      bool command = (code <= bcCallExtR && code >= bcNop);
 
       if (index == blockEnd) {
          b_it++;
@@ -527,7 +527,7 @@ bool CommandTape :: optimizeIdleBreakpoints(CommandTape& tape)
       else if (code == blLabel) {
          idle = false;
       }
-      else if (code <= bcReserved && code >= bcNop) {
+      else if (code <= bcCallExtR && code >= bcNop) {
          idle = false;
       }
 
@@ -556,7 +556,7 @@ bool CommandTape :: optimizeJumps(CommandTape& tape)
 
 inline bool matchable(ByteCodeIterator& it)
 {
-   return test(*it, blLabelMask) || (*it < bcReserved && *it > bcBreakpoint);
+   return test(*it, blLabelMask) || (*it <= bcCallExtR && *it > bcBreakpoint);
 }
 
 void TransformTape :: transform(ByteCodeIterator& trans_it, Node replacement)
@@ -716,7 +716,7 @@ void ByteCodeCompiler :: loadOperators(MessageMap& operators)
 
 ByteCode ByteCodeCompiler :: code(ident_t s)
 {
-   for(int i = 0 ; i < 255 ; i++) {
+   for(int i = 0 ; i <= 255 ; i++) {
       if (s.compare(_fnOpcodes[i])) {
          return (ByteCode)i;
       }

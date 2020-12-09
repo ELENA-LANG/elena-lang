@@ -215,9 +215,9 @@ class ByteCodeWriter
    void changeMessageCounter(CommandTape& tape, int paramCount, int flags);
    void resend(CommandTape& tape);
    void resendDirectResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message, bool sealedMode);
-   void callExternal(CommandTape& tape, ref_t functionReference/*, int paramCount*/);
-   void callLongExternal(CommandTape& tape, ref_t functionReference);
-   void callCore(CommandTape& tape, ref_t functionReference/*, int paramCount*/);
+   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
+   void callLongExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
+   void callCore(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
 
    void jumpIfLess(CommandTape& tape, ref_t ref);
    void jumpIfNotLess(CommandTape& tape, ref_t ref);

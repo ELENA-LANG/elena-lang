@@ -66,7 +66,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 158;
+const int gcCommandNumber = 157;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -98,12 +98,12 @@ const int gcCommands[gcCommandNumber] =
    bcMul, bcXOr, bcPeek, bcSwap, bcXCreate,
    bcIfHeap, bcEqualFI, bcLoadF, bcRSaveL, bcRAbs,
    bcCallI, bcIfCount, bcSub, bcSwapD, bcXSet,
-   bcMIndex, bcParent, bcCheckSI, bcLSave, bcLCallExtR,
+   bcMIndex, bcParent, bcCheckSI, bcLSave,
    bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF, bcXRSaveF,
    bcXRedirect, bcXVRedirect, bcVJumpRM,
 };
 
-const int gcCommandExNumber = 54;
+const int gcCommandExNumber = 55;
 const int gcCommandExs[gcCommandExNumber] =
 {
    bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
@@ -121,6 +121,7 @@ const int gcCommandExs[gcCommandExNumber] =
    bcCopyToAI + 0x100, bcCopyToAI + 0x200, bcCopyToAI + 0x300, bcCopyToAI + 0x400,
    bcMove + 0x100, bcMove + 0x200, bcMove + 0x300, bcMove + 0x400,
    bcMoveTo + 0x100, bcMoveTo + 0x200, bcMoveTo + 0x300, bcMoveTo + 0x400,
+   bcCallExtR + 0x100
 };
 
 // command table
@@ -156,14 +157,14 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileDec, &loadIndexOp, &compileRestore, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadIndexOp,
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
-   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &loadFunction, &compileHook, &compileHook,
+   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &compileNop, &compileHook, &compileHook,
    &loadIndexOp, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileIfE, &compileElseE, &compileIfCount,
 
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadSPOp, &loadNOp,
 
    &loadIndexOp, &compileACopyF, &compilePushF, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
-   &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadFunction, &loadFOp, &loadNOp,
+   &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileNop, &loadFOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &loadROp, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
    &loadROp, &compileDShiftN, &loadNOp, &compileInvokeVMTOffset, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,
@@ -172,7 +173,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
-   &compileNop, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &compileNop,
+   &compileNop, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &loadFunction,
 };
 
 constexpr int FPOffset = 4;
@@ -1109,19 +1110,52 @@ void _ELENA_::loadFOp(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
+inline void freeStack(int args, MemoryWriter* code)
+{
+   // add esp, arg
+   if (args < 0x80) {
+      code->writeWord(0xC483);
+      code->writeByte(args);
+   }
+   else {
+      code->writeWord(0xC481);
+      code->writeDWord(args);
+   }
+}
+
+void _ELENA_::compilePopN(int, x86JITScope& scope)
+{
+   freeStack(scope.argument << 2, scope.code);
+}
+
 void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
 {
+   int flags = scope.tape->getDWord();
+
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   if (test(flags, baLongCall)) {
+      for (int i = 0; i < gcCommandExNumber; i++) {
+         if (gcCommandExs[i] == opcode + 0x100) {
+            code = (char*)scope.compiler->_inlineExs[i];
+            break;
+         }
+      }
+   }
+
    // if it is internal native call
    switch (scope.argument & mskAnyRef) {
       case mskNativeCodeRef:
       case mskPreloadCodeRef:
          compileCallR(opcode, scope);
+
+         if (test(flags, baReleaseArgs))
+            freeStack((flags & baCallArgsMask) << 2, scope.code);
+
          return;
    }
 
    MemoryWriter* writer = scope.code;
 
-   char*  code = (char*)scope.compiler->_inlines[opcode];
    pos_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
 
@@ -1152,6 +1186,9 @@ void _ELENA_::loadFunction(int opcode, x86JITScope& scope)
       count--;
    }
    scope.code->seekEOF();
+
+   if (test(flags, baReleaseArgs))
+      freeStack((flags & baCallArgsMask) << 2, scope.code);
 }
 
 void _ELENA_::compileNop(int, x86JITScope& scope)
@@ -1688,20 +1725,6 @@ void _ELENA_::compileMCopy(int, x86JITScope& scope)
    // mov edx, message
    scope.code->writeByte(0xBA);
    scope.code->writeDWord(scope.resolveMessage(scope.argument));
-}
-
-void _ELENA_::compilePopN(int, x86JITScope& scope)
-{
-   // add esp, arg
-   int arg = scope.argument << 2;
-   if (arg < 0x80) {
-      scope.code->writeWord(0xC483);
-      scope.code->writeByte(scope.argument << 2);
-   }
-   else {
-      scope.code->writeWord(0xC481);
-      scope.code->writeDWord(scope.argument << 2);
-   }
 }
 
 void _ELENA_ :: compileAllocI(int opcode, x86JITScope& scope)

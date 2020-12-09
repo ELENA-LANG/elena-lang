@@ -401,7 +401,7 @@ void ECodesAssembler :: compileCreateCommand(ByteCode code, TokenInfo& token, Me
    writeCommand(ByteCommand(code, reference, n), writer);
 }
 
-void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
+void ECodesAssembler :: compileExtNCommand(ByteCode code, TokenInfo& token, MemoryWriter& writer, _Module* binary)
 {
    ident_t word = token.read();
    if (word.compare("extern")) {
@@ -416,7 +416,8 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
 
          size_t reference = binary->mapReference(function) | mskImportRef;
 
-         writeCommand(ByteCommand(code, reference), writer);
+         int flags = token.readInteger(constants);
+         writeCommand(ByteCommand(code, reference, flags), writer);
 
          return;
       }
@@ -427,7 +428,8 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
 
          size_t reference = binary->mapReference(function) | mskImportRef;
 
-         writeCommand(ByteCommand(code, reference), writer);
+         int flags = token.readInteger(constants);
+         writeCommand(ByteCommand(code, reference, flags), writer);
 
          return;
       }
@@ -441,7 +443,8 @@ void ECodesAssembler :: compileExtCommand(ByteCode code, TokenInfo& token, Memor
 
       size_t reference = binary->mapReference(functionName) | mskNativeCodeRef;
 
-      writeCommand(ByteCommand(code, reference), writer);
+      int flags = token.readInteger(constants);
+      writeCommand(ByteCommand(code, reference, flags), writer);
 
       return;
    }
@@ -583,8 +586,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
             compileRCommand(opcode, token, writer, binary);
             break;
          case bcCallExtR:
-         case bcLCallExtR:
-            compileExtCommand(opcode, token, writer, binary);
+            compileExtNCommand(opcode, token, writer, binary);
             break;
          case bcCallVI:
          case bcJumpVI:

@@ -163,8 +163,6 @@ struct TokenInfo
       if (check("sizeof")) {
          read();
          if (check("ProgramHeader")) {
-            printf("%s\n", postfix.c_str());
-
             if (postfix.compare("64")) {
                return align(0x20, 4);
             }

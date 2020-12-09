@@ -329,12 +329,10 @@ ELENA byte codes (or ecodes)
 
  Call operations:
  ----------------
- callextr r                 - calls the external procedure ; index contains the result
+ callextr r,f               - calls the external procedure ; index contains the result
  
  callr r                    - calls the procedure;
                               acc contains the result
-
- lcallextr r                - calls the external procedure ; index+eindex contains the result
  
  
 

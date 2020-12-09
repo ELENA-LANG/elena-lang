@@ -820,22 +820,28 @@ void ByteCodeWriter :: resend(CommandTape& tape)
    tape.write(bcJumpVI);
 }
 
-void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference/*, int paramCount*/)
+void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
 {
-   // callextr ref
-   tape.write(bcCallExtR, functionReference | mskImportRef/*, paramCount*/);
+   int flags = (argsToBeFreed ? baReleaseArgs : 0) | baExternalCall;
+
+   // callextr ref, flags
+   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount | flags);
 }
 
-void ByteCodeWriter :: callLongExternal(CommandTape& tape, ref_t functionReference)
+void ByteCodeWriter :: callLongExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
 {
+   int flags = (argsToBeFreed ? baReleaseArgs : 0) | baExternalCall | baLongCall;
+
    // callextr ref
-   tape.write(bcLCallExtR, functionReference | mskImportRef);
+   tape.write(bcCallExtR, functionReference | mskImportRef, paramCount | flags);
 }
 
-void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference/*, int paramCount*/)
+void ByteCodeWriter :: callCore(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
 {
-   // callextr ref
-   tape.write(bcCallExtR, functionReference | mskNativeCodeRef/*, paramCount*/);
+   int flags = (argsToBeFreed ? baReleaseArgs : 0);
+
+   // callextr ref, flags
+   tape.write(bcCallExtR, functionReference | mskNativeCodeRef, paramCount | flags);
 }
 
 void ByteCodeWriter :: jumpIfEqual(CommandTape& tape, ref_t comparingRef, bool referenceMode)
@@ -3086,17 +3092,14 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowS
       // if it is an API call
       // simply release parameters from the stack
       // without setting stack pointer directly - due to optimization
-      callCore(tape, node.argument/*, externalScope.frameSize*/);
+      callCore(tape, node.argument, paramCount, !cleaned);
    }
    else if (node.existChild(lxLongMode)) {
-      callLongExternal(tape, node.argument);
+      callLongExternal(tape, node.argument, paramCount, !cleaned);
    }
    else {
-      callExternal(tape, node.argument/*, externalScope.frameSize*/);
+      callExternal(tape, node.argument, paramCount, !cleaned);
    }
-
-   if (!cleaned)
-      releaseStack(tape, paramCount);
 }
 
 void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)

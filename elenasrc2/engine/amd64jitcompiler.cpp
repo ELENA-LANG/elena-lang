@@ -130,7 +130,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileDec, &loadIndexOp, &compileRestore, &/*compileALoadR*/compileNop, &loadFPOp, &loadIndexOp, &/*compileIfHeap*/compileNop, &loadIndexOp,
    &compileOpen, &compileQuitN, &/*loadROp*/compileNop, &/*loadROp*/compileNop, &compileACopyF, &compileACopyS, &/*compileSetR*/compileNop, &/*compileMCopy*/compileNop,
 
-   &/*compileJump*/compileNop, &/*loadVMTIndexOp*/compileNop, &/*loadVMTIndexOp*/compileNop, &compileCallR, &/*compileJumpN*/compileNop, &loadFunction, &/*compileHook*/compileNop, &/*compileHook*/compileNop,
+   &/*compileJump*/compileNop, &/*loadVMTIndexOp*/compileNop, &/*loadVMTIndexOp*/compileNop, &compileCallR, &/*compileJumpN*/compileNop, &compileNop, &/*compileHook*/compileNop, &/*compileHook*/compileNop,
    &loadIndexOp, &compileNop, &/*compileNotLessE*/compileNop, &/*compileNotGreaterE*/compileNop, &/*compileElseD*/compileNop, &/*compileIfE*/compileNop, &/*compileElseE*/compileNop, &/*compileIfCount*/compileNop,
 
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
@@ -146,7 +146,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &/*compileMTRedirect*/compileNop, &/*compileMTRedirect*/compileNop, &/*compileGreaterN*/compileNop, &/*compileGreaterN*/compileNop, &/*compileLessN*/compileNop, &loadFNOp, &loadFNOp, &loadFNOp,
 
    &/*compileCreate*/compileNop, &/*compileCreateN*/compileNop, &/*compileFill*/compileNop, &/*compileSelectR*/compileNop, &/*compileInvokeVMTOffset*/compileNop, &/*compileInvokeVMT*/compileNop, &/*compileSelectR*/compileNop, &/*compileLessN*/compileNop,
-   &compileNop, &compileNop, &/*compileIfR*/compileNop, &/*compileElseR*/compileNop, &/*compileIfN*/compileNop, &/*compileElseN*/compileNop, &compileInvokeVMT, &compileNop,
+   &compileNop, &compileNop, &/*compileIfR*/compileNop, &/*compileElseR*/compileNop, &/*compileIfN*/compileNop, &/*compileElseN*/compileNop, &compileInvokeVMT, &loadFunction,
 };
 
 constexpr int FPOffset = 8;
@@ -602,13 +602,39 @@ void _ELENA_::loadFOp(int opcode, I64JITScope& scope)
 //   scope.code->seekEOF();
 //}
 
+inline void freeStack(int args, MemoryWriter* code)
+{
+   // add esp, arg
+   if (args < 0x80) {
+      code->writeByte(0x48);
+      code->writeWord(0xC483);
+      code->writeByte(args);
+   }
+   else {
+      code->writeByte(0x48);
+      code->writeWord(0xC481);
+      code->writeDWord(args);
+   }
+}
+
+void _ELENA_::compilePopN(int, I64JITScope& scope)
+{
+   freeStack(scope.argument << 3, scope.code);
+}
+
 void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
 {
+   int flags = scope.tape->getDWord();
+
    // if it is internal native call
    switch (scope.argument & mskAnyRef) {
       case mskNativeCodeRef:
       case mskPreloadCodeRef:
          compileCallR(opcode, scope);
+
+         if (test(flags, baReleaseArgs))
+            freeStack((flags & baCallArgsMask) << 3, scope.code);
+
          return;
    }
 
@@ -645,6 +671,9 @@ void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
       count--;
    }
    scope.code->seekEOF();
+
+   if (test(flags, baReleaseArgs))
+      freeStack((flags & baCallArgsMask) << 3, scope.code);
 }
 
 //////void _ELENA_::loadCode(int opcode, x86JITScope& scope)
@@ -1529,22 +1558,6 @@ void _ELENA_::compileNot(int, I64JITScope& scope)
 ////   // or ebx, ecx
 ////   scope.code->writeWord(0xD90B);
 ////}
-
-void _ELENA_::compilePopN(int, I64JITScope& scope)
-{
-   // add esp, arg
-   int arg = scope.argument << 3;
-   if (arg < 0x80) {
-      scope.code->writeByte(0x48);
-      scope.code->writeWord(0xC483);
-      scope.code->writeByte(scope.argument << 3);
-   }
-   else {
-      scope.code->writeByte(0x48);
-      scope.code->writeWord(0xC481);
-      scope.code->writeDWord(scope.argument << 3);
-   }
-}
 
 void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
 {
