@@ -43,7 +43,7 @@ TLSEntry* SystemRoutineProvider :: GetTLSEntry(pos_t tlsIndex)
    return entry;
 }
 
-void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, ProgramHeader* frameHeader, uintptr_t* threadTable)
+void SystemRoutineProvider :: InitTLSEntry(pos_t threadIndex, pos_t tlsIndex, ProgramHeader* frameHeader, pos_t* threadTable)
 {
    TLSEntry* entry = GetTLSEntry(tlsIndex);
 

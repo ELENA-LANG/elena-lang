@@ -474,7 +474,7 @@ void XmlConfigFile :: setSetting(ident_t key, int value)
 void XmlConfigFile :: setSetting(ident_t key, size_t value)
 {
    String<char, 15> string;
-   string.appendInt(value);
+   string.appendSize(value);
 
    setSetting(key, (ident_t)string);
 }

@@ -111,9 +111,9 @@ inline bool emptystr(const wchar_t* s)
    return (s == NULL || s[0]==0);
 }
 
-inline static size_t getlength(const wchar_t* s)
+inline static pos_t getlength(const wchar_t* s)
 {
-   return (s==NULL) ? 0 : wcslen(s);
+   return (s==NULL) ? 0 : (pos_t)wcslen(s);
 }
 
 #endif
@@ -125,9 +125,9 @@ inline bool emptystr(const char* s)
    return (s == NULL || s[0] == 0);
 }
 
-inline static size_t getlength(const char* s)
+inline static pos_t getlength(const char* s)
 {
-   return (s == NULL) ? 0 : strlen(s);
+   return (s == NULL) ? 0 : (pos_t)strlen(s);
 }
 
 // --- resource freeing routines ---

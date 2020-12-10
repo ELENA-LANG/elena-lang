@@ -45,6 +45,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>elenart64</TargetName>
+    <OutDir>..\..\..\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>elenart</TargetName>
@@ -99,11 +100,35 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\common\altstrings.cpp" />
+    <ClCompile Include="..\..\common\config.cpp" />
+    <ClCompile Include="..\..\common\dump.cpp" />
+    <ClCompile Include="..\..\common\files.cpp" />
+    <ClCompile Include="..\..\common\xmlreader.cpp" />
+    <ClCompile Include="..\..\engine\amd64\amd64routines.cpp" />
+    <ClCompile Include="..\..\engine\elenamachine.cpp" />
+    <ClCompile Include="..\..\engine\libman.cpp" />
+    <ClCompile Include="..\..\engine\module.cpp" />
+    <ClCompile Include="..\..\engine\rtman.cpp" />
+    <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\engine\win64\win64routines.cpp" />
+    <ClCompile Include="..\elenartmachine.cpp" />
     <ClCompile Include="..\win64\dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\common\altstrings.h" />
+    <ClInclude Include="..\..\common\common.h" />
+    <ClInclude Include="..\..\common\config.h" />
+    <ClInclude Include="..\..\common\dump.h" />
+    <ClInclude Include="..\..\common\files.h" />
+    <ClInclude Include="..\..\common\streams.h" />
+    <ClInclude Include="..\..\common\xmlreader.h" />
     <ClInclude Include="..\..\engine\elenamachine.h" />
+    <ClInclude Include="..\..\engine\libman.h" />
+    <ClInclude Include="..\..\engine\module.h" />
+    <ClInclude Include="..\..\engine\rtman.h" />
+    <ClInclude Include="..\..\engine\section.h" />
+    <ClInclude Include="..\elenartmachine.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

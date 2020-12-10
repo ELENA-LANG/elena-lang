@@ -5323,7 +5323,8 @@ symbol vm_sta_start
   reserve  sizeof ProgramHeader
 
   pushsip  -2
-  callextr api : initProgramHeader 1
+  callextr api : initProcess 1
+
   pushr    rdata : "$elena'@tapekey"
   pushr    api : seh_handler
   pushr    api : default_handler
@@ -5348,7 +5349,8 @@ symbol mta_start
   reserve sizeof ProgramHeader
 
   pushsip  -2
-  callextr api : initProgramHeader 1
+  callextr api : initProcess 1
+
   pushr    entry : "$forwards'$program"
   pushr    api : seh_handler
   pushr    api : default_handler
@@ -5372,7 +5374,8 @@ symbol sta_start
   reserve sizeof ProgramHeader
 
   pushsip  -2
-  callextr api : initProgramHeader 1
+  callextr api : initProcess 1
+
   pushr    entry : "$forwards'$program"
   pushr    api : seh_handler
   pushr    api : default_handler
@@ -5394,7 +5397,7 @@ procedure thread_start
   reserve  sizeof ProgramHeader
 
   pushsip  -2
-  callextr api : initProgramHeader 1
+  callextr api : initThread 1
 
   loadfi   -9
   pushd

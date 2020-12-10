@@ -20,57 +20,65 @@ using namespace _ELENA_;
 
 // --- RTManager ---
 
-void RTManager :: readCallStack(StreamReader& stack, uintptr_t startPosition, uintptr_t currentAddress, StreamWriter& output)
+void RTManager :: readCallStack(StreamReader& stack, vaddr_t startPosition, vaddr_t currentAddress, StreamWriter& output)
 {
-   size_t position = startPosition;
-   size_t ret = 0;
+   vaddr_t position = startPosition;
+   vaddr_t ret = 0;
 
-   output.writeDWord(currentAddress);
+   output.writeVAddress(currentAddress);
 
    do {
       stack.seek(position);
-      position = stack.getDWord();
-      ret = stack.getDWord();
+      position = stack.getVAddress();
+      ret = stack.getVAddress();
       if (position == 0 && ret != 0) {
          position = ret;
       }
       else if (ret != 0) {
-         output.writeDWord(ret);
+         output.writeVAddress(ret);
       }
    } while (position != 0);
 }
 
-size_t RTManager :: readCallStack(StreamReader& reader, uintptr_t framePosition, uintptr_t currentAddress, uintptr_t startLevel, int* buffer, size_t maxLength)
+inline vaddr_t readVAddr(MemoryDump& dump, pos_t position)
+{
+   vaddr_t addr;
+   dump.read(position, &addr, sizeof(vaddr_t));
+
+   return addr;
+}
+
+pos_t RTManager :: readCallStack(StreamReader& reader, vaddr_t framePosition, vaddr_t currentAddress, vaddr_t startLevel, vaddr_t* buffer, pos_t maxLength)
 {
    MemoryDump retPoints;
    MemoryWriter writer(&retPoints);
 
    readCallStack(reader, framePosition, currentAddress, writer);
 
-   size_t index = 0;
-   size_t current = 0;
+   pos_t index = 0;
+   pos_t current = 0;
    while (current < retPoints.Length()) {
       if (startLevel == 0) {
          if (index == maxLength - 2) {
             buffer[index] = 0;
             index++;
-            buffer[index] = retPoints[retPoints.Length() - 4];
+            buffer[index] = readVAddr(retPoints, retPoints.Length() - sizeof(vaddr_t));
          }
          else {
-            buffer[index] = retPoints[current];
+            buffer[index] = readVAddr(retPoints, current);
 
             index++;
          }
       }
       else startLevel--;
 
-      current += 4;
+      current += sizeof(vaddr_t);
    }
 
    return index + 1;
 }
 
-size_t RTManager::readClassName(StreamReader& reader, uintptr_t classVAddress, char* buffer, size_t maxLength)
+vaddr_t RTManager::readClassName(StreamReader& reader, vaddr_t classVAddress, char* buffer, size_t maxLength)
 {
    ident_t symbol;
 
@@ -86,7 +94,7 @@ size_t RTManager::readClassName(StreamReader& reader, uintptr_t classVAddress, c
       // check the class
       size_t pos = symbol.findLast('\'');
       if (symbol[pos + 1] != '#') {
-         int vmtAddress = reader.getDWord();
+         vaddr_t vmtAddress = reader.getVAddress();
          if (vmtAddress == classVAddress) {
             size_t len = maxLength;
             if (len > getlength(symbol)) {
@@ -103,7 +111,7 @@ size_t RTManager::readClassName(StreamReader& reader, uintptr_t classVAddress, c
    return 0;
 }
 
-void* RTManager :: loadMetaAttribute(StreamReader& reader, ident_t name, int category, size_t len)
+vaddr_t RTManager :: loadMetaAttribute(StreamReader& reader, ident_t name, int category, size_t len)
 {
    pos_t pos = reader.Position();
 
@@ -113,7 +121,8 @@ void* RTManager :: loadMetaAttribute(StreamReader& reader, ident_t name, int cat
       int offset = 4 + reader.getDWord();
       if (current == category) {
          ident_t currentName = reader.getLiteral(DEFAULT_STR);
-         void* ptr = (void*)reader.getDWord();
+         vaddr_t ptr = 0;
+         reader.read(&ptr, sizeof(vaddr_t));
          if (name.compare(currentName))
             return ptr;
       }
@@ -122,7 +131,7 @@ void* RTManager :: loadMetaAttribute(StreamReader& reader, ident_t name, int cat
       reader.seek(pos);
    }
 
-   return nullptr;
+   return 0;
 }
 
 bool RTManager :: readAddressInfo(StreamReader& reader, uintptr_t retAddress, _LibraryManager* manager,
@@ -214,7 +223,7 @@ bool RTManager :: readAddressInfo(StreamReader& reader, uintptr_t retAddress, _L
    return found;
 }
 
-void copy(char* buffer, ident_t word, int& copied, size_t maxLength)
+void copy(char* buffer, ident_t word, size_t& copied, size_t maxLength)
 {
    size_t length = getlength(word);
 
@@ -227,7 +236,7 @@ void copy(char* buffer, ident_t word, int& copied, size_t maxLength)
    copied += length;
 }
 
-void copy(char* buffer, int value, int& copied)
+void copy(char* buffer, int value, size_t& copied)
 {
    String<char, 10> tmp;
    tmp.appendInt(value);
@@ -238,7 +247,7 @@ void copy(char* buffer, int value, int& copied)
    copied += length;
 }
 
-size_t RTManager :: readAddressInfo(StreamReader& debug, uintptr_t retAddress, _LibraryManager* manager, char* buffer, size_t maxLength)
+vaddr_t RTManager :: readAddressInfo(StreamReader& debug, uintptr_t retAddress, _LibraryManager* manager, char* buffer, size_t maxLength)
 {
    ident_t symbol = NULL;
    ident_t method = NULL;
@@ -246,7 +255,7 @@ size_t RTManager :: readAddressInfo(StreamReader& debug, uintptr_t retAddress, _
    int row = -1;
 
    if (readAddressInfo(debug, retAddress, manager, symbol, method, path, row)) {
-      int copied = 0;
+      size_t copied = 0;
       copy(buffer, symbol, copied, maxLength - 2);
       if (!emptystr(method)) {
          buffer[copied++] = '.';
@@ -285,10 +294,10 @@ size_t RTManager :: readAddressInfo(StreamReader& debug, uintptr_t retAddress, _
 //   return 0;
 //}
 
-void* RTManager :: loadSubject(StreamReader& reader, ident_t name)
+pos_t RTManager :: loadSubject(StreamReader& reader, ident_t name)
 {
    ReferenceMap subjects(0);
    subjects.read(&reader);
 
-   return (void*)subjects.get(name);
+   return subjects.get(name);
 }

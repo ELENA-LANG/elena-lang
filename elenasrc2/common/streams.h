@@ -90,6 +90,14 @@ public:
    virtual const char* getLiteral(const char* def) = 0;
    virtual const wide_c* getLiteral(const wide_c* def) = 0;
 
+   vaddr_t getVAddress()
+   {
+      vaddr_t value = 0;
+      read(&value, sizeof(vaddr_t));
+
+      return value;
+   }
+
    unsigned long long getQWord()
    {
       unsigned long long value = 0;
@@ -275,6 +283,11 @@ public:
    bool writeByte(int ch)
    {
       return write((void*)&ch, 1);
+   }
+
+   void writeVAddress(vaddr_t addr)
+   {
+      write(&addr, sizeof(vaddr_t));
    }
 
    virtual bool writeBytes(unsigned char ch, pos_t count)
@@ -896,7 +909,7 @@ public:
       }
       else return false;
    }
-//   virtual bool writeLong(const void* s, pos64_t length)
+//   virtual bool write(const void* s, pos64_t length)
 //   {
 //      if (length < INT_MAX) {
 //         return write(s, (pos_t)length);

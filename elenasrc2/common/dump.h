@@ -87,7 +87,7 @@ public:
    bool writeLiteral(pos_t position, const char* s)
    {
       if (!emptystr(s)) {
-         return write(position, s, strlen(s) + 1);
+         return write(position, s, getlength(s) + 1);
       }
       else return writeWord(position, 0);
    }

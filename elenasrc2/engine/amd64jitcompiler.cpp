@@ -1633,6 +1633,7 @@ I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->module = nullptr;
    this->frameOffset = 0;
    this->bigAddressMode = bigAddressMode;
+   this->argument = 0;
 }
 
 void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, pos_t disp)

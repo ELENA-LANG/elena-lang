@@ -31,13 +31,22 @@ namespace _ELENA_
    typedef unsigned char      uident_c;
    typedef unsigned int       ref_t;
    typedef unsigned int       pos_t;
-   typedef unsigned int       vaddr_t;
    typedef unsigned long long ref64_t;
    typedef unsigned long long pos64_t;
    typedef unsigned int       mssg_t;
    typedef unsigned long long mssg64_t;
 
    typedef unsigned __int64   uint64_t;
+
+#ifdef _WIN64
+
+   typedef unsigned __int64   vaddr_t;
+
+#elif _WIN32
+
+   typedef unsigned int       vaddr_t;
+
+#endif
 
    // --- FileEncoding ---
    enum FileEncoding { feAnsi = 0, feRaw = -1, feUTF8 = -2, feUTF16 = -3, feUTF32 = -4 };

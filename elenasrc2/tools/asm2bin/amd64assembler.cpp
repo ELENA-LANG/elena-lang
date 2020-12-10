@@ -3189,14 +3189,14 @@ void AMD64Assembler :: compileFSTSW(TokenInfo& token, ProcedureInfo& info, Memor
 //	}
 //	else token.raiseErr("Invalid command (%d)");
 //}
-//
-//void x86Assembler :: compileFINIT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{
-//   code->writeByte(0x9B);
-//   code->writeWord(0xE3DB);
-//
-//   token.read();
-//}
+
+void AMD64Assembler :: compileFINIT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   code->writeByte(0x9B);
+   code->writeWord(0xE3DB);
+
+   token.read();
+}
 
 void AMD64Assembler :: compileFSTCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
@@ -3739,10 +3739,10 @@ bool AMD64Assembler :: compileCommandC(/*PrefixInfo& prefix, */TokenInfo& token,
 //}
 bool AMD64Assembler :: compileCommandF(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer)
 {
-//   if (token.check("finit")) {
-//      compileFINIT(token, info, &writer);
-//      return true;
-//   }
+   if (token.check("finit")) {
+      compileFINIT(token, info, &writer);
+      return true;
+   }
 //   else if (token.check("fldz")) {
 //		compileFLDZ(token, info, &writer);
 //      return true;
@@ -3763,7 +3763,7 @@ bool AMD64Assembler :: compileCommandF(TokenInfo& token, ProcedureInfo& info, Me
 //		compileFCHS(token, info, &writer);
 //      return true;
 //	}
-   /*else */if (token.check("fild")) {
+   else if (token.check("fild")) {
 	   compileFILD(token, info, &writer);
       return true;
    }

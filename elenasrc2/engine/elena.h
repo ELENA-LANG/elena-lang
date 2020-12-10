@@ -828,12 +828,12 @@ inline bool isForwardReference(ident_t referenceName)
    return referenceName.startsWith(FORWARD_PREFIX_NS);
 }
 
-inline mssg_t encodeMessage(ref_t actionRef, size_t argCount, ref_t flags)
+inline mssg_t encodeMessage(ref_t actionRef, pos_t argCount, ref_t flags)
 {
    return flags | ((actionRef << ACTION_ORDER) + (mssg_t)argCount);
 }
 
-inline mssg64_t encodeMessage64(ref_t actionRef, size_t argCount, ref_t flags)
+inline mssg64_t encodeMessage64(ref_t actionRef, pos_t argCount, ref_t flags)
 {
    mssg64_t message = actionRef;
    message <<= ACTION_ORDER;
@@ -848,7 +848,7 @@ inline mssg_t encodeAction(ref_t actionId)
    return encodeMessage(actionId, 0, 0);
 }
 
-inline void decodeMessage(mssg_t message, ref_t& actionRef, size_t& argCount, ref_t& flags)
+inline void decodeMessage(mssg_t message, ref_t& actionRef, pos_t& argCount, ref_t& flags)
 {
    actionRef = (message >> ACTION_ORDER);
 
@@ -857,9 +857,9 @@ inline void decodeMessage(mssg_t message, ref_t& actionRef, size_t& argCount, re
    flags = message & MESSAGE_FLAG_MASK;
 }
 
-inline mssg_t overwriteArgCount(mssg_t message, int argCount)
+inline mssg_t overwriteArgCount(mssg_t message, pos_t argCount)
 {
-   size_t dummy;
+   pos_t dummy;
    ref_t actionRef, flags;
    decodeMessage(message, actionRef, dummy, flags);
 
@@ -868,14 +868,14 @@ inline mssg_t overwriteArgCount(mssg_t message, int argCount)
 
 inline mssg_t overwriteAction(mssg_t message, ref_t newAction)
 {
-   size_t argCount;
+   pos_t argCount;
    ref_t actionRef, flags;
    decodeMessage(message, actionRef, argCount, flags);
 
    return encodeMessage(newAction, argCount, flags);
 }
 
-inline void decodeMessage64(mssg64_t message, ref_t& actionRef, size_t& argCount, ref_t& flags)
+inline void decodeMessage64(mssg64_t message, ref_t& actionRef, pos_t& argCount, ref_t& flags)
 {
    actionRef = (ref_t)(message >> 16);
 
@@ -884,9 +884,9 @@ inline void decodeMessage64(mssg64_t message, ref_t& actionRef, size_t& argCount
    flags = message & MESSAGE_FLAG_MASK;
 }
 
-inline size_t getArgCount(mssg_t message)
+inline pos_t getArgCount(mssg_t message)
 {
-   size_t   argCount;
+   pos_t argCount;
    ref_t action, flags;
    decodeMessage(message, action, argCount, flags);
 
@@ -895,7 +895,7 @@ inline size_t getArgCount(mssg_t message)
 
 inline ref_t getAction(mssg_t message)
 {
-   size_t  argCount;
+   pos_t argCount;
    ref_t action, flags;
    decodeMessage(message, action, argCount, flags);
 
@@ -904,7 +904,7 @@ inline ref_t getAction(mssg_t message)
 
 inline mssg64_t toMessage64(mssg_t message)
 {
-   size_t   argCount;
+   pos_t argCount;
    ref_t actionRef, flags;
    decodeMessage(message, actionRef, argCount, flags);
 
@@ -913,7 +913,7 @@ inline mssg64_t toMessage64(mssg_t message)
 
 inline mssg_t fromMessage64(mssg64_t message)
 {
-   size_t   argCount;
+   pos_t argCount;
    ref_t actionRef, flags;
    decodeMessage64(message, actionRef, argCount, flags);
 
@@ -991,7 +991,7 @@ inline mssg_t importMessage(_Module* exporter, mssg_t exportRef, _Module* import
    if (!exportRef)
       return exportRef;
 
-   size_t paramCount = 0;
+   pos_t paramCount = 0;
    ref_t actionRef, flags;
    decodeMessage(exportRef, actionRef, paramCount, flags);
 

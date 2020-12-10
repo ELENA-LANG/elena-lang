@@ -3368,9 +3368,9 @@ template<class T> class IntFixedMap
 public:
    struct Iterator
    {
-      char*  _array;
-      size_t _position;
-      size_t _end;
+      char*        _array;
+      unsigned int _position;
+      unsigned int _end;
 
       Iterator& operator =(const Iterator& it)
       {

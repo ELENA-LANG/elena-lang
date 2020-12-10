@@ -200,6 +200,18 @@ void JITCompiler32 :: compileCollection(MemoryWriter* writer, _Memory* binary)
    writer->align(4, 0);
 }
 
+void JITCompiler32 :: compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode)
+{
+   writer.writeDWord(category);
+   writer.writeDWord(getlength(fullName) + 9);
+   writer.writeLiteral(fullName);
+
+   if (!virtualMode) {
+      writer.writeDWord(address);
+   }
+   else writer.writeRef((ref_t)address, 0);
+}
+
 vaddr_t JITCompiler32 :: findClassPtr(void* refVMT)
 {
    VMTHeader* header = (VMTHeader*)((uintptr_t)refVMT - elVMTClassOffset32);
@@ -558,6 +570,19 @@ void JITCompiler64 :: compileCollection(MemoryWriter* writer, _Memory* binary)
    writer->align(8, 0);
 }
 
+void JITCompiler64 :: compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode)
+{
+   writer.writeDWord(category);
+   writer.writeDWord(getlength(fullName) + 9);
+   writer.writeLiteral(fullName);
+
+   if (virtualMode) {
+      writer.writeRef((ref_t)address, 0);
+      writer.writeDWord(0);
+   }
+   else writer.writeQWord(address);
+}
+
 ref_t JITCompiler64 :: findFlags(void* refVMT)
 {
    VMTXHeader* header = (VMTXHeader*)((uintptr_t)refVMT - elVMTClassOffset64);
@@ -576,15 +601,15 @@ vaddr_t JITCompiler64 :: findClassPtr(void* refVMT)
 {
    VMTXHeader* header = (VMTXHeader*)((uintptr_t)refVMT - elVMTClassOffset64);
 
-   return header->packageRef;
+   return (vaddr_t)header->packageRef;
 }
 
-uintptr_t JITCompiler64 :: findMethodAddress(void* refVMT, mssg_t message, size_t count)
+vaddr_t JITCompiler64 :: findMethodAddress(void* refVMT, mssg_t message, size_t count)
 {
    return findMethodAddressX(refVMT, toMessage64(message), count);
 }
 
-uintptr_t JITCompiler64 :: findMethodAddressX(void* refVMT, mssg64_t messageID, size_t count)
+vaddr_t JITCompiler64 :: findMethodAddressX(void* refVMT, mssg64_t messageID, size_t count)
 {
    VMTXEntry* entries = (VMTXEntry*)refVMT;
 
@@ -596,7 +621,7 @@ uintptr_t JITCompiler64 :: findMethodAddressX(void* refVMT, mssg64_t messageID, 
 
    // return the method address
    // if the vmt entry was not resolved, SEND_MESSAGE routine should be used (the first method entry)
-   return (i < count) ? entries[i].address : entries[0].address;
+   return (i < count) ? (vaddr_t)entries[i].address : (vaddr_t)entries[0].address;
 }
 
 pos_t JITCompiler64 :: findMethodIndex(void* refVMT, mssg_t message, size_t count)

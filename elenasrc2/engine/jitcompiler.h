@@ -64,6 +64,8 @@ public:
    virtual void compileBinary(MemoryWriter* writer, _Memory* binary) = 0;
    virtual void compileCollection(MemoryWriter* writer, _Memory* binary) = 0;
 
+   virtual void compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode) = 0;
+
    virtual void compileMessage(MemoryWriter* writer, mssg_t mssg) = 0;
    virtual void compileAction(MemoryWriter* writer, ref_t actionRef) = 0;
    virtual void compileMssgExtension(MemoryWriter* writer, mssg_t low, ref_t ref, int refOffset) = 0;
@@ -133,6 +135,8 @@ public:
    virtual void compileMssgExtension(MemoryWriter* writer, mssg_t low, ref_t ref, int refOffset);
    virtual void compileMssgExtension(MemoryWriter* writer, mssg_t low, uintptr_t addr);
 
+   virtual void compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode);
+
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);
 
@@ -173,6 +177,8 @@ public:
    virtual void compileAction(MemoryWriter* writer, ref_t actionRef);
    virtual void compileMssgExtension(MemoryWriter* writer, mssg_t low, ref_t ref, int refOffset);
    virtual void compileMssgExtension(MemoryWriter* writer, mssg_t low, uintptr_t addr);
+
+   virtual void compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode);
 
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);

@@ -590,7 +590,7 @@ void* Instance :: loadMetaAttribute(ident_t name, int category)
 
    RTManager manager;
 
-   return manager.loadMetaAttribute(reader, name, category, len);
+   return (void*)manager.loadMetaAttribute(reader, name, category, len);
 }
 
 int Instance :: loadExtensionDispatcher(SystemEnv* env, const char* moduleList, mssg_t message, void* output)

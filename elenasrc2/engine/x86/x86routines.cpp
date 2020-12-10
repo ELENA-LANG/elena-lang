@@ -19,13 +19,6 @@ const pos_t page_align_mask = 0x000FFFF0;
 
 void SystemRoutineProvider :: Init(SystemEnv* env)
 {
-#ifdef _WIN32
-   // ; initialize fpu
-   __asm {
-      finit
-   }
-#endif
-
    // ; initialize static roots
  //  mov  ecx, [data : %CORE_STAT_COUNT]
  //  mov  edi, data : %CORE_STATICROOT

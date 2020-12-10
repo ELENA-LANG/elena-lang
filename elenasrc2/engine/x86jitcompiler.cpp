@@ -428,8 +428,8 @@ void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope, int prefix)
       }
    }
 
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -949,7 +949,7 @@ void _ELENA_::loadNOpX(int opcode, x86JITScope& scope, int prefix)
    }
 
    pos_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);

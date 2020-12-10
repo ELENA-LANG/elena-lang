@@ -38,7 +38,7 @@ end
 // ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
 rstructure %SYSTEM_ENV
 
-  dq 0
+  dd 0
   dq data : %CORE_STATICROOT
   dq data : %CORE_GC_TABLE
   dq data : %CORE_TLS_INDEX

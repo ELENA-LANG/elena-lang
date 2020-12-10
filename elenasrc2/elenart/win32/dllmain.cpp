@@ -166,7 +166,7 @@ EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, char* lineInfo, int length)
    return _Instance->loadSubjectName((size_t)subject, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
+EXTERN_DLL_EXPORT int LoadSubject(void* subjectName)
 {
    return _Instance->loadSubject((const char*)subjectName);
 }
@@ -176,14 +176,14 @@ EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* lineInfo, int length)
    return _Instance->loadMessageName((ref_t)message, lineInfo, length);
 }
 
-EXTERN_DLL_EXPORT void* LoadMessage(void* messageName)
+EXTERN_DLL_EXPORT int LoadMessage(void* messageName)
 {
    return _Instance->loadMessage((const char*)messageName);
 }
 
 EXTERN_DLL_EXPORT void* LoadClassByString(void* systemEnv, void* referenceName)
 {
-   return _Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
+   return (void*)_Instance->loadMetaAttribute((const char*)referenceName, caSerializable);
 }
 
 EXTERN_DLL_EXPORT void* LoadClassByBuffer(void* systemEnv, void* referenceName, size_t index, size_t length)
@@ -214,7 +214,7 @@ EXTERN_DLL_EXPORT int LoadExtensionDispatcher(const char* moduleList, void* mess
 
 EXTERN_DLL_EXPORT void* LoadSymbolByString(void* systemEnv, void* referenceName)
 {
-   return _Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
+   return (void*)_Instance->loadMetaAttribute((const char*)referenceName, caSymbolSerializable);
 }
 
 EXTERN_DLL_EXPORT void* LoadSymbolByString2(void* systemEnv, void* ns, void* referenceName)

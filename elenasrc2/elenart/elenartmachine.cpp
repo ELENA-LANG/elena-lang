@@ -153,7 +153,7 @@ void ELENARTMachine :: init(void* messageTable, void* mattributeTable, path_t co
    loadConfig(configPath);
 }
 
-int ELENARTMachine :: readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+int ELENARTMachine :: readCallStack(size_t framePosition, vaddr_t currentAddress, vaddr_t startLevel, vaddr_t* buffer, pos_t maxLength)
 {
    RTManager manager;
 
@@ -163,7 +163,7 @@ int ELENARTMachine :: readCallStack(size_t framePosition, size_t currentAddress,
    return manager.readCallStack(reader, framePosition, currentAddress, startLevel, buffer, maxLength);
 }
 
-int ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
+vaddr_t ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxLength)
 {
    // lazy load of debug data
    if (_debugSection.Length() == 0 && !loadDebugSection())
@@ -181,7 +181,7 @@ int ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t maxL
    return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
 
-int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t length)
+size_t ELENARTMachine :: loadClassName(vaddr_t classAddress, char* buffer, size_t length)
 {
    int packagePtr = *(int*)(classAddress - 24);
    int namePtr = *(int*)(classAddress - 20);
@@ -200,7 +200,7 @@ int ELENARTMachine :: loadClassName(size_t classAddress, char* buffer, size_t le
    return length + ns_len;
 }
 
-int ELENARTMachine :: loadSubjectName(size_t subjectRef, char* buffer, size_t length)
+size_t ELENARTMachine :: loadSubjectName(ref_t subjectRef, char* buffer, size_t length)
 {
    ImageSection messageSection;
    messageSection.init(_messageSection, 0x1000000); // !! dummy size
@@ -224,10 +224,10 @@ int ELENARTMachine :: loadSubjectName(size_t subjectRef, char* buffer, size_t le
    else return loadSubjectName(actionPtr, buffer, length);
 }
 
-int ELENARTMachine :: loadMessageName(size_t messageRef, char* buffer, size_t length)
+size_t ELENARTMachine :: loadMessageName(mssg_t messageRef, char* buffer, size_t length)
 {
-   int prefixLen = 0;
-   size_t paramCount = 0;
+   size_t prefixLen = 0;
+   pos_t paramCount = 0;
    ref_t actionRef, flags;
    decodeMessage(messageRef, actionRef, paramCount, flags);
    if (test(flags, VARIADIC_MESSAGE)) {
@@ -239,7 +239,7 @@ int ELENARTMachine :: loadMessageName(size_t messageRef, char* buffer, size_t le
       prefixLen += len;
    }
 
-   int used = loadSubjectName(actionRef, buffer, length);
+   size_t used = loadSubjectName(actionRef, buffer, length);
    if (used > 0) {
       size_t dummy = 10;
       String<char, 10>temp;
@@ -254,13 +254,13 @@ int ELENARTMachine :: loadMessageName(size_t messageRef, char* buffer, size_t le
    return prefixLen + used;
 }
 
-void* ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
+vaddr_t ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
 {
    ImageSection mattrSection;
    mattrSection.init(_mattributesSection, 0x10000); // !! dummy size
    MemoryReader reader(&mattrSection);
 
-   size_t len = reader.getDWord();
+   pos_t len = reader.getDWord();
 
    RTManager manager;
 
@@ -273,7 +273,7 @@ void* ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
 //   fflush(stdout);
 //}
 
-void* ELENARTMachine :: loadSubject(ident_t name)
+ref_t ELENARTMachine :: loadSubject(ident_t name)
 {
    ImageSection messageSection;
    messageSection.init(_messageSection, 0x1000000); // !! dummy size
@@ -291,28 +291,28 @@ void* ELENARTMachine :: loadSubject(ident_t name)
          reader.readString(messageName);
 
          if (messageName.compare(name)) {
-            return (void*)subjectRef;
+            return subjectRef;
          }
       }
    }
 
-   return nullptr;
+   return 0;
 }
 
-void* ELENARTMachine :: loadMessage(ident_t message)
+mssg_t ELENARTMachine :: loadMessage(ident_t message)
 {
    IdentifierString messageName;
-   size_t paramCount = -1;
+   pos_t paramCount = -1;
    ref_t flags = 0;
 
    if (SystemRoutineProvider::parseMessageLiteral(message, messageName, paramCount, flags)) {
-      ref_t actionRef = (ref_t)loadSubject(messageName.ident());
+      ref_t actionRef = loadSubject(messageName.ident());
       if (!actionRef)
-         return nullptr;
+         return 0;
 
-      return (void*)(encodeMessage(actionRef, paramCount, flags));
+      return encodeMessage(actionRef, paramCount, flags);
    }
-   else return nullptr;
+   else return 0;
 }
 
 ref_t ELENARTMachine :: loadDispatcherOverloadlist(ident_t referenceName)
@@ -324,7 +324,7 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
-   int mssgLen = loadMessageName(message, messageName, IDENTIFIER_LEN);
+   size_t mssgLen = loadMessageName(message, messageName, IDENTIFIER_LEN);
    messageName[mssgLen] = 0;
 
    int len = 0;

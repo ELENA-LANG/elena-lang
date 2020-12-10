@@ -4,7 +4,20 @@ define CORE_ET_TABLE     2000Bh
 
 // ; --- API ---
 
-procedure coreapi'initProgramHeader
+// ; initProcess(frameHeader)
+procedure coreapi'initProcess
+
+  finit
+  lea  rdx, [rsp+10h]
+  mov  rax, [rsp+8]
+  mov  [rax+8], rdx
+  mov  [rax+10h], rbp
+  ret
+
+end
+
+// ; initThread(frameHeader)
+procedure coreapi'initThread
 
   lea  rdx, [rsp+10h]
   mov  rax, [rsp+8]

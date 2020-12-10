@@ -4777,7 +4777,20 @@ procedure coreapi'get_seh_handler
 
 end
 
-procedure coreapi'initProgramHeader
+// ; initProcess(frameHeader)
+procedure coreapi'initProcess
+
+  finit
+  lea  edx, [esp+8]
+  mov  eax, [esp+4]
+  mov  [eax+4], edx
+  mov  [eax+8], ebp
+  ret
+
+end
+
+// ; initThread(frameHeader)
+procedure coreapi'initThread
 
   lea  edx, [esp+8]
   mov  eax, [esp+4]

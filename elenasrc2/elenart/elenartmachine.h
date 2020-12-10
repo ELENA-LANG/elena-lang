@@ -20,11 +20,11 @@ class ELENARTMachine
 public:
    class ImageSection : public _Memory
    {
-      void*  _section;
-      size_t _length;
+      void* _section;
+      pos_t _length;
 
    public:
-      void init(void* section, size_t length)
+      void init(void* section, pos_t length)
       {
          _section = section;
          _length = length;
@@ -126,17 +126,17 @@ public:
    void Exit(int exitCode);
    void ExitThread(SystemEnv* env, int exitCode);
 
-   int readCallStack(size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength);
+   int readCallStack(size_t framePosition, vaddr_t currentAddress, vaddr_t startLevel, vaddr_t* buffer, pos_t maxLength);
 
-   int loadAddressInfo(size_t retPoint, char* lineInfo, size_t length);
+   vaddr_t loadAddressInfo(size_t retPoint, char* lineInfo, size_t length);
 
-   int loadClassName(size_t classAddress, char* buffer, size_t length);
-   int loadSubjectName(size_t subjectRef, char* buffer, size_t length);
-   int loadMessageName(size_t subjectRef, char* buffer, size_t length);
+   size_t loadClassName(vaddr_t classAddress, char* buffer, size_t length);
+   size_t loadSubjectName(ref_t subjectRef, char* buffer, size_t length);
+   size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
 
-   void* loadMetaAttribute(ident_t name, int category);
-   void* loadSubject(ident_t name);
-   void* loadMessage(ident_t name);
+   vaddr_t loadMetaAttribute(ident_t name, int category);
+   ref_t loadSubject(ident_t name);
+   mssg_t loadMessage(ident_t name);
    
    int loadExtensionDispatcher(const char* moduleList, ref_t message, void* output);
 

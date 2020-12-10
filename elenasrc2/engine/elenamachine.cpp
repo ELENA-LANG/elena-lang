@@ -11,7 +11,7 @@
 using namespace _ELENA_;
 
 bool SystemRoutineProvider :: parseMessageLiteral(ident_t message, IdentifierString& messageName, 
-   size_t& paramCount, ref_t& flags)
+   pos_t& paramCount, ref_t& flags)
 {
    paramCount = -1;
 

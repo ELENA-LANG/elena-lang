@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    * amd64 : supporting fastcall
     * amd64 : critical exception handler, critical exception handler refactoring
 
     * critical error handler should be moved to C code

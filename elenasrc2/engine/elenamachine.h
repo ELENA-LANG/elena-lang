@@ -82,7 +82,7 @@ struct TLSEntry
 
 struct SystemEnv
 {
-   uintptr_t         StatLength;   // NOTE : it is an initial value, should be copied to GCTable
+   pos_t             StatLength;   // NOTE : it is an initial value, should be copied to GCTable
    void*             StatRoots;    // NOTE : it is an initial value, should be copied to GCTable
    GCTable*          Table;
    pos_t*            TLSIndex;
@@ -152,7 +152,7 @@ public:
 
    static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
 
-   static bool parseMessageLiteral(ident_t message, IdentifierString& messageName, size_t& paramCount, ref_t& flags);
+   static bool parseMessageLiteral(ident_t message, IdentifierString& messageName, pos_t& paramCount, ref_t& flags);
 
 } __routineProvider;
 

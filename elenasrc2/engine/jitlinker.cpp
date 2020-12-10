@@ -800,15 +800,7 @@ void JITLinker :: generateMetaAttribute(int category, ident_t fullName, vaddr_t 
    SectionInfo tableInfo = _loader->getSectionInfo(ReferenceInfo(MATTRIBUTE_TABLE), mskRDataRef, false);
 
    MemoryWriter writer(tableInfo.section);
-
-   writer.writeDWord(category);
-   writer.writeDWord(getlength(fullName) + 9);
-   writer.writeLiteral(fullName);
-
-   if (!_virtualMode) {
-      writer.writeDWord(address);
-   }
-   else writer.writeRef((ref_t)address, 0);
+   _compiler->compileMAttribute(writer, category, fullName, address, _virtualMode);
 }
 
 void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceInfo, ref_t mask)
