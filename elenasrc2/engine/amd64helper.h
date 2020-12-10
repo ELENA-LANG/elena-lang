@@ -90,10 +90,17 @@ public:
       otX128      = 0x01000300,
 
       otSIB       = 0x00000004,
+
+      otDisp32    = 0x00110005,
+
+      otFactor2   = 0x40000000,
+      otFactor4   = 0x80000000,
+      otFactor8   = 0xC0000000
    };
       
    struct Operand
    {
+      bool          factorReg;   // to implement [r*factor] SIB
       OperandType   type;
       int           offset;
       ref_t         reference;
@@ -101,16 +108,19 @@ public:
       Operand()
       {
          type = otUnknown;
+         factorReg = /*ebpReg = */false;
          reference = offset = 0;
       }
       Operand(OperandType type)
       {
          this->type = type;
+         factorReg = /*ebpReg = */false;
          reference = offset = 0;
       }
       Operand(int number)
       {
          this->type = (OperandType)number;
+         factorReg = /*ebpReg = */false;
          this->reference = this->offset = 0;
       }
    };
@@ -179,7 +189,7 @@ public:
          code->writeByte((unsigned char)dest.offset);
       }
       // !! should only otM32 be checked?
-      else if (test(dest.type, otM32disp32)/* || dest.factorReg*/) {
+      else if (test(dest.type, otM32disp32) || dest.factorReg) {
          if (dest.reference != 0) {
             code->writeRef(dest.reference, dest.offset);
          }

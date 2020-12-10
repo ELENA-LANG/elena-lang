@@ -14,28 +14,6 @@
 
 using namespace _ELENA_;
 
-// --- ELENA CORE built-in routines
-constexpr int GC_ALLOC           = 0x10001;
-constexpr int HOOK               = 0x10010;
-constexpr int INVOKER            = 0x10011;
-constexpr int INIT_RND           = 0x10012;
-constexpr int ENDFRAME           = 0x10016;
-constexpr int CALC_SIZE          = 0x1001F;
-constexpr int GET_COUNT          = 0x10020;
-constexpr int THREAD_WAIT        = 0x10021;
-constexpr int BREAK              = 0x10026;
-constexpr int EXPAND_HEAP        = 0x10028;
-
-constexpr int CORE_GC_TABLE      = 0x20002;
-constexpr int CORE_STATICROOT    = 0x20005;
-constexpr int CORE_TLS_INDEX     = 0x20007;
-constexpr int CORE_THREADTABLE   = 0x20008;
-constexpr int CORE_MESSAGE_TABLE = 0x2000A;
-constexpr int CORE_EH_TABLE      = 0x2000B;
-constexpr int SYSTEM_ENV         = 0x2000C;
-constexpr int VOID               = 0x2000D;
-constexpr int VOIDPTR            = 0x2000E;
-
 // preloaded gc routines
 const int coreVariableNumber = 2;
 const int coreVariables[coreVariableNumber] =
@@ -46,7 +24,7 @@ const int coreVariables[coreVariableNumber] =
 const int coreStaticNumber = 2;
 const int coreStatics[coreStaticNumber] =
 {
-   VOID, VOIDPTR
+   VOIDOBJ, VOIDPTR
 };
 
 // preloaded env routines
@@ -2201,17 +2179,17 @@ void x86JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    }
 }
 
-void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode)
+void x86JITCompiler :: setStaticRootCounter(_JITLoader* loader, pos_t counter, bool virtualMode)
 {
    if (virtualMode) {
       _Memory* data = loader->getTargetSection(mskRDataRef);
 
-      size_t offset = ((size_t)_preloaded.get(SYSTEM_ENV) & ~mskAnyRef);
+      ref_t offset = ((ref_t)_preloaded.get(SYSTEM_ENV) & ~mskAnyRef);
       (*data)[offset] = (counter << 2);
    }
    else {
- 	   size_t offset = (size_t)_preloaded.get(SYSTEM_ENV);
- 	   *(int*)offset = (counter << 2);
+      vaddr_t offset = _preloaded.get(SYSTEM_ENV);
+ 	   *(pos_t*)offset = (counter << 2);
    }
 }
 
@@ -2248,16 +2226,15 @@ vaddr_t x86JITCompiler :: getInvoker()
 void x86JITCompiler :: setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtualMode)
 {
    if (virtualMode) {
-      pos_t offset = ((size_t)_preloaded.get(VOID) & ~mskAnyRef);
+      pos_t offset = ((size_t)_preloaded.get(VOIDOBJ) & ~mskAnyRef);
 
       _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
 
       rdata->addReference((ref_t)ptr, offset);
    }
    else {
-      size_t offset = (size_t)_preloaded.get(VOID);
+      size_t offset = (size_t)_preloaded.get(VOIDOBJ);
       *(int*)offset = (int)ptr;
-      offset += 0;
    }
 }
 
@@ -2299,7 +2276,7 @@ int x86JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t lengt
    MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskRDataRef));
 
    // reserve space for TLS index
-   int position = dataWriter.Position();
+   pos_t position = dataWriter.Position();
 
    dataWriter.write(tape, length);
 

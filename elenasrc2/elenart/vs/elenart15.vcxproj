@@ -140,6 +140,7 @@
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\tools.h" />
     <ClInclude Include="..\..\engine\bytecode.h" />
+    <ClInclude Include="..\..\engine\elenamachine.h" />
     <ClInclude Include="..\..\engine\libman.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\rtman.h" />

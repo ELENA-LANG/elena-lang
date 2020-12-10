@@ -50,7 +50,10 @@ bin\asm2binx -amd64 asm\amd64\core.asm bin\amd64
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
-rem bin\asm2binx -amd64 asm\amd64\core_win.asm bin\amd64
+bin\asm2binx -amd64 asm\amd64\core_win.asm bin\amd64
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
 
 bin\asm2binx -amd64 asm\amd64\coreapi.asm bin\amd64
 @echo off 

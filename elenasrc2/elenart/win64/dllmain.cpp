@@ -29,7 +29,7 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, vo
    _SystemEnv = systemEnv;
 
    // start the system
-  // _Instance->startSTA(header, (SystemEnv*)systemEnv, entryPoint);
+   _Instance->startSTA(header, (SystemEnv*)systemEnv, entryPoint);
 }
 
 //EXTERN_DLL_EXPORT void InitializeMTA(void* systemEnv, void* exceptionHandler, void* criticalHandler, void* entryPoint)

@@ -211,7 +211,7 @@ public:
 
 //   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
 
-   virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
+   virtual void setStaticRootCounter(_JITLoader* loader, pos_t counter, bool virtualMode);
    virtual void setTLSKey(vaddr_t ptr);
    virtual void setThreadTable(vaddr_t ptr);
    virtual void setEHTable(vaddr_t ptr);

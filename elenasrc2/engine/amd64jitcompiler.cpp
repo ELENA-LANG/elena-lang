@@ -10,48 +10,24 @@
 // --------------------------------------------------------------------------
 #include "amd64jitcompiler.h"
 #include "bytecode.h"
+#include "core.h"
 
 //#pragma warning(disable : 4100)
 
 using namespace _ELENA_;
 
-// --- ELENA Object constants ---
-////const int gcPageSize = 0x0010;           // a heap page size constant
-constexpr int elObjectOffset = 0x0010;           // object header / offset constant
+// preloaded gc routines
+const int coreVariableNumber = /*2*/1;
+const int coreVariables[coreVariableNumber] =
+{
+   CORE_GC_TABLE//, CORE_EH_TABLE
+};
 
-// --- ELENA CORE built-in routines
-//#define GC_ALLOC             0x10001
-//#define HOOK                 0x10010
-constexpr int INVOKER    = 0x10011;
-//#define INIT                 0x10013
-//#define NEWFRAME             0x10014
-////#define INIT_ET              0x10015
-////#define ENDFRAME             0x10016
-////#define RESTORE_ET           0x10017
-////#define OPENFRAME            0x10019
-////#define CLOSEFRAME           0x1001A
-////#define NEWTHREAD            0x1001B
-////#define CLOSETHREAD          0x1001C
-//#define EXIT                 0x1001D
-////#define CALC_SIZE            0x1001F
-////#define GET_COUNT            0x10020
-////#define THREAD_WAIT          0x10021
-////#define NEW_HEAP             0x10025
-////#define BREAK                0x10026
-////#define EXPAND_HEAP          0x10028
-////#define EXITTHREAD           0x1002A
-////#define NEW_EVENT            0x10101
-//
-////#define CORE_EXCEPTION_TABLE 0x20001
-constexpr int CORE_GC_TABLE = 0x20002;
-//#define CORE_GC_SIZE         0x20003
-//#define CORE_STAT_COUNT      0x20004
-constexpr int CORE_STATICROOT = 0x20005;
-constexpr int CORE_TLS_INDEX  = 0x20007;
-constexpr int CORE_THREADTABLE = 0x20008;
-//#define CORE_OS_TABLE        0x20009
-constexpr int CORE_MESSAGE_TABLE = 0x2000A;
-constexpr int SYSTEM_ENV = 0x2000C;
+const int coreStaticNumber = 2;
+const int coreStatics[coreStaticNumber] =
+{
+   VOIDOBJ, VOIDPTR
+};
 
 // preloaded env routines
 const int envFunctionNumber = 1;
@@ -60,39 +36,37 @@ const int envFunctions[envFunctionNumber] =
    INVOKER
 };
 
-//// preloaded gc routines
-const int coreVariableNumber = /*3*/1;
-const int coreVariables[coreVariableNumber] =
+// preloaded gc routines
+const int coreFunctionNumber = 9;
+const int coreFunctions[coreFunctionNumber] =
 {
-   CORE_GC_TABLE
+   BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, ENDFRAME,
+   CALC_SIZE, GET_COUNT,
+   THREAD_WAIT
 };
 
-//// preloaded gc routines
-//const int coreFunctionNumber = /*22*/3;
-//const int coreFunctions[coreFunctionNumber] =
-//{
-///*   NEW_HEAP, EXPAND_HEAP, BREAK, GC_ALLOC, HOOK, INIT_RND, */INIT, NEWFRAME, //INIT_ET, ENDFRAME, RESTORE_ET,
-///*   OPENFRAME, CLOSEFRAME, NEWTHREAD, CLOSETHREAD, */EXIT, //CALC_SIZE, GET_COUNT,
-///*   THREAD_WAIT, EXITTHREAD, NEW_EVENT*/
-//};
-
 // preloaded gc commands
-const int gcCommandNumber = /*138*/37;
+const int gcCommandNumber = /*138*/47;
 const int gcCommands[gcCommandNumber] =
 {
-   bcLoadEnv, bcCallExtR, bcSaveSI, bcOpen,
-   bcReserve, bcPushSIP,
+   bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
+   bcReserve, bcPushSIP, bcPeekSI,
    bcClose,
-   bcAllocI,
-   bcRestore,   
+   bcPeekFI, bcAllocI,
+   bcRestore,
+   bcGetI,
+   bcClass,
+   bcNLess, bcSNop,
    bcSaveF,
    bcNShlF, bcNShrF,
-   bcNAndF, bcNOrF, bcNXorF,
+   bcRead,
+   bcEqual, bcNAndF, bcNOrF, bcNXorF,
    bcLMulF, bcLDivF, bcLShlF, bcLShrF, bcLAndF,
    bcLOrF, bcLXorF,
    bcRAddF, bcRSubF, bcRMulF, bcRDivF,
    bcRIntF, bcAddF,
    bcSubF,
+   bcRLn,
    bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF,
    bcNAddF, bcNMulF, bcNSubF, bcNDivF,
 };
@@ -1662,7 +1636,7 @@ I64JITCompiler :: I64JITCompiler(bool debugMode, bool bigAddressMode)
 
 size_t I64JITCompiler:: getObjectHeaderSize() const
 {
-   return elObjectOffset;
+   return elObjectOffset64;
 }
 
 bool I64JITCompiler:: isWithDebugInfo() const
@@ -1720,14 +1694,13 @@ void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 
    // MESSAGE TABLE POINTER
    _preloaded.add(CORE_MESSAGE_TABLE, helper.getVAddress(rdataWriter, mskRDataRef));
-   rdataWriter.writeDWord(0);
+   rdataWriter.writeQWord(0);
 
    // load GC static root
    _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
 
-   //// STAT COUNT
-   //_preloaded.add(CORE_STAT_COUNT, helper.getVAddress(rdataWriter, mskRDataRef));
-   //rdataWriter.writeQWord(0);
+   // STAT COUNT
+   _preloaded.add(CORE_STATICROOT, helper.getVAddress(sdataWriter, mskStatRef));
 
    // HOTFIX : preload invoker
    I64JITScope scope(NULL, &codeWriter, &helper, this, _bigAddressMode);
@@ -1747,18 +1720,21 @@ void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 
    //dataWriter.writeQWord(helper.getLinkerConstant(lnVMAPI_Instance));
 
-   //AMD64JITScope scope(NULL, &codeWriter, &helper, this);
-   //for (int i = 0; i < coreFunctionNumber; i++) {
-   //   if (!_preloaded.exist(coreFunctions[i])) {
-   //      _preloaded.add(coreFunctions[i], helper.getVAddress(codeWriter, mskCodeRef));
+   // preloaded core static variables
+   for (int i = 0; i < coreStaticNumber; i++) {
+      if (!_preloaded.exist(coreStatics[i])) {
+         _preloaded.add(coreStatics[i], helper.getVAddress(rdataWriter, mskRDataRef));
 
-   //      // due to optimization section must be ROModule::ROSection instance
-   //      SectionInfo info = helper.getCoreSection(coreFunctions[i]);
-   //      scope.module = info.module;
+         // due to optimization section must be ROModule::ROSection instance
+         SectionInfo info = helper.getCoreSection(coreStatics[i]);
+         rdataScope.module = info.module;
 
-   //      loadCoreOp(scope, info.section ? (char*)info.section->get(0) : NULL);
-   //   }
-   //}
+         loadCoreOp(rdataScope, info.section ? (char*)info.section->get(0) : nullptr);
+      }
+   }
+
+   // preloaded core functions
+   loadRoutines(coreFunctionNumber, coreFunctions, scope, _preloaded);
 
    // preload vm commands
    for (int i = 0; i < gcCommandNumber; i++) {
@@ -1775,21 +1751,21 @@ void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    }
 }
 
-void I64JITCompiler :: setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode)
+void I64JITCompiler :: setStaticRootCounter(_JITLoader* loader, pos_t counter, bool virtualMode)
 {
-   //if (virtualMode) {
-   //   _Memory* data = loader->getTargetSection(mskRDataRef);
+   if (virtualMode) {
+      _Memory* data = loader->getTargetSection(mskRDataRef);
 
-   //   size_t offset = ((size_t)_preloaded.get(CORE_STAT_COUNT) & ~mskAnyRef);
-   //   (*data)[offset] = (counter << 2);
-   //}
-   //else {
-   //   size_t offset = (size_t)_preloaded.get(CORE_STAT_COUNT);
-   //   *(int*)offset = (counter << 2);
-   //}
+      ref_t offset = ((ref_t)_preloaded.get(SYSTEM_ENV) & ~mskAnyRef);
+      (*data)[offset] = (counter << 3);
+   }
+   else {
+      vaddr_t offset = _preloaded.get(SYSTEM_ENV);
+      *(pos_t*)offset = (counter << 3);
+   }
 }
 
-ref_t I64JITCompiler :: getPreloadedReference(ref_t reference)
+vaddr_t I64JITCompiler :: getPreloadedReference(ref_t reference)
 {
    return _preloaded.get(reference);
 }
@@ -1859,14 +1835,14 @@ void I64JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tap
 
 void I64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& tapeReader, MemoryWriter& codeWriter)
 {
-   //AMD64JITScope scope(&tapeReader, &codeWriter, &helper, this);
+   I64JITScope scope(&tapeReader, &codeWriter, &helper, this, _bigAddressMode);
 
-   //size_t codeSize = tapeReader.getDWord();
-   //size_t endPos = tapeReader.Position() + codeSize;
+   size_t codeSize = tapeReader.getDWord();
+   size_t endPos = tapeReader.Position() + codeSize;
 
-   //compileTape(tapeReader, endPos, scope);
+   compileTape(tapeReader, endPos, scope);
 
-   //alignCode(&codeWriter, 0x08, true);
+   alignCode(&codeWriter, 0x08, true);
 }
 
 //void I64JITCompiler :: loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section)
@@ -1904,54 +1880,72 @@ void I64JITCompiler :: generateProgramStart(MemoryDump& tape)
 
 void I64JITCompiler :: generateSymbolCall(MemoryDump& tape, vaddr_t address)
 {
-   //MemoryWriter ecodes(&tape);
+   MemoryWriter ecodes(&tape);
 
-   //ecodes.writeByte(bcCallR);
-   //ecodes.writeDWord((size_t)address | mskCodeRef);
+   ecodes.writeByte(bcCallR);
+   ecodes.writeDWord(address | mskCodeRef);
 }
 
 void I64JITCompiler :: generateProgramEnd(MemoryDump& tape)
 {
-   //MemoryWriter ecodes(&tape);
+   MemoryWriter ecodes(&tape);
 
-   //ecodes.writeByte(bcCallExtR);
-   //ecodes.writeDWord(mskPreloadCodeRef | EXIT);
+   ecodes.writeByte(bcQuit);
 
-   //JITCompiler64::generateProgramEnd(tape);
+   JITCompiler64::generateProgramEnd(tape);
 }
 
 int I64JITCompiler :: allocateVMTape(_JITLoader* loader, void* tape, pos_t length)
 {
-   return -1; // !! temporal
+   MemoryWriter dataWriter(loader->getTargetSection((ref_t)mskRDataRef));
+
+   // reserve space for TLS index
+   pos_t position = dataWriter.Position();
+
+   dataWriter.write(tape, length);
+
+   // map VMTape
+   loader->mapReference(ReferenceInfo(TAPE_KEY), position | mskRDataRef, (ref_t)mskRDataRef);
+
+   return position;
 }
 
 void I64JITCompiler :: setTLSKey(vaddr_t ptr)
 {
-   // !! temporal
+   _preloaded.add(CORE_TLS_INDEX, ptr);
 }
 
 void I64JITCompiler :: setThreadTable(vaddr_t ptr)
 {
-   // !! temporal
+   _preloaded.add(CORE_THREADTABLE, ptr);
 }
 
 void I64JITCompiler :: setEHTable(vaddr_t ptr)
 {
-   // !! temporal
+   _preloaded.add(CORE_EH_TABLE, ptr);
 }
 
 void I64JITCompiler :: setGCTable(vaddr_t ptr)
 {
-   // !! temporal
+   _preloaded.add(CORE_GC_TABLE, ptr);
 }
 
 void I64JITCompiler :: setVoidParent(_JITLoader* loader, vaddr_t ptr, bool virtualMode)
 {
-   // !! temporal
+   if (virtualMode) {
+      ref_t offset = ((ref_t)_preloaded.get(VOIDOBJ) & ~mskAnyRef);
+
+      _Memory* rdata = loader->getTargetSection((ref_t)mskRDataRef);
+
+      rdata->addReference((ref_t)ptr, offset);
+   }
+   else {
+      vaddr_t offset = _preloaded.get(VOIDOBJ);
+      *(vaddr_t*)offset = ptr;
+   }
 }
 
 vaddr_t I64JITCompiler :: getInvoker()
 {
-   // !! temporal
-   return 0;
+   return _preloaded.get(INVOKER);
 }

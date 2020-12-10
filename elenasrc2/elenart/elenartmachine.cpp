@@ -26,7 +26,7 @@ void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void
    entry.address = env->Invoker;
 
    // executing the program
-   int retVal = entry.evaluate2(0, programEntry);
+   int retVal = entry.evaluate3(0, programEntry, nullptr);
 
    // winding down system
    Exit(0);

@@ -3,6 +3,9 @@ In development:
 ------         
 
   [development]
+    * amd64 : invoker
+    * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME
+
     * amd64 : critical exception handler, critical exception handler refactoring
 
     * critical error handler should be moved to C code

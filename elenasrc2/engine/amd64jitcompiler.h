@@ -121,7 +121,7 @@ public:
 
    virtual void alignCode(MemoryWriter* writer, int alignment, bool code);
 
-   virtual ref_t getPreloadedReference(ref_t reference);
+   virtual vaddr_t getPreloadedReference(ref_t reference);
 
    virtual void prepareCore(_ReferenceHelper& helper, _JITLoader* loader);
 
@@ -134,7 +134,7 @@ public:
 
 //   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section);
 
-   virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode);
+   virtual void setStaticRootCounter(_JITLoader* loader, pos_t counter, bool virtualMode);
    virtual void setTLSKey(vaddr_t ptr);
    virtual void setThreadTable(vaddr_t ptr);
    virtual void setEHTable(vaddr_t ptr);

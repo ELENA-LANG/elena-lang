@@ -1,12 +1,37 @@
 // --- Predefined References  --
 
+// --- Predefined References  --
+define GC_ALLOC	            10001h
+define HOOK                 10010h
 define INVOKER              10011h
+define INIT_RND             10012h
+define ENDFRAME             10016h
+define RESTORE_ET           10017h
+define CALC_SIZE            1001Fh
+define GET_COUNT            10020h
+define THREAD_WAIT          10021h
+define BREAK                10026h
+define EXPAND_HEAP          10028h
 
 define CORE_GC_TABLE        20002h
 define CORE_STATICROOT      20005h
 define CORE_TLS_INDEX       20007h
 define THREAD_TABLE         20008h
+define CORE_MESSAGE_TABLE   2000Ah
+define CORE_ET_TABLE        2000Bh
 define SYSTEM_ENV           2000Ch
+define VOID           	    2000Dh
+define VOIDPTR              2000Eh
+
+// Object header fields
+define elSizeOffset          0004h
+define elVMTOffset           000Ch 
+define elObjectOffset        000Ch
+
+// VMT header fields
+define elVMTSizeOffset       0004h
+define elVMTFlagOffset       0010h
+define elPackageOffset       0018h
 
 // --- System Core Preloaded Routines --
 
@@ -47,7 +72,264 @@ rstructure %SYSTEM_ENV
 
 end
 
+rstructure %VOID
+
+  dq 0
+  dd 0  // ; a reference to the super class class
+  dq 0
+  dd 0  
+  dd 0
+
+end
+
+rstructure %VOIDPTR
+
+  dq rdata : %VOID + elPackageOffset
+  dd 0
+
+end
+
+// --- GC_ALLOC ---
+// in: ecx - size ; out: ebx - created object
+procedure %GC_ALLOC
+
+//  mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
+//  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
+//  add  ecx, eax
+//  cmp  ecx, edx
+//  jae  short labYGCollect
+//  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
+//  lea  ebx, [eax + elObjectOffset]
+  ret
+
+//labYGCollect:
+  // ; restore ecx
+//  sub  ecx, eax
+
+  // ; save registers
+//  push ebp
+
+  // ; lock frame
+//  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
+
+//  push ecx
+  
+  // ; create set of roots
+//  mov  ebp, esp
+//  xor  ecx, ecx
+//  push ecx        // ; reserve place 
+//  push ecx
+//  push ecx
+
+//  // ; save static roots
+//  mov  esi, data : %CORE_STATICROOT
+//  mov  ecx, [data : %CORE_GC_TABLE + gc_rootcount]
+//  push esi
+//  push ecx
+
+//  // ; collect frames
+//  mov  eax, [data : %CORE_GC_TABLE + gc_stack_frame]  
+//  mov  ecx, eax
+
+//labYGNextFrame:
+//  mov  esi, eax
+//  mov  eax, [esi]
+//  test eax, eax
+//  jnz  short labYGNextFrame
+  
+//  push ecx
+ // sub  ecx, esi
+ // neg  ecx
+ // push ecx  
+  
+//  mov  eax, [esi + 4]
+//  test eax, eax
+//  mov  ecx, eax
+//  jnz  short labYGNextFrame
+
+  // === Minor collection ===
+//  mov [ebp-4], esp      // ; save position for roots
+
+  // ; save mg -> yg roots 
+//  mov  ebx, [data : %CORE_GC_TABLE + gc_mg_current]
+//  mov  edi, [data : %CORE_GC_TABLE + gc_mg_start]
+//  sub  ebx, edi                                        // ; we need to check only MG region
+//  jz   labWBEnd                                        // ; skip if it is zero
+//  mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
+//  shr  ebx, page_size_order
+//  // ; lea  edi, [edi + elObjectOffset]
+
+//labWBNext:
+//  cmp  [esi], 0
+//  lea  esi, [esi+4]
+//  jnz  short labWBMark
+//  sub  ebx, 4
+//  ja   short labWBNext
+//  nop
+//  nop
+//  jmp  short labWBEnd
+
+//labWBMark:
+//  lea  eax, [esi-4]
+//  sub  eax, [data : %CORE_GC_TABLE + gc_mg_wbar]
+//  mov  edx, [esi-4]
+//  shl  eax, page_size_order
+//  lea  eax, [edi + eax + elObjectOffset]
+  
+//  test edx, 0FFh
+//  jz   short labWBMark2
+//  mov  ecx, [eax-elSizeOffset]
+//  push eax
+//  and  ecx, 0FFFFFh
+//  push ecx
+
+//labWBMark2:
+//  lea  eax, [eax + page_size]
+//  test edx, 0FF00h
+//  jz   short labWBMark3
+//  mov  ecx, [eax-elSizeOffset]
+//  push eax
+//  and  ecx, 0FFFFFh
+//  push ecx
+
+//labWBMark3:
+//  lea  eax, [eax + page_size]
+//  test edx, 0FF0000h
+//  jz   short labWBMark4
+//  mov  ecx, [eax-elSizeOffset]
+//  push eax
+//  and  ecx, 0FFFFFh
+//  push ecx
+
+//labWBMark4:
+//  lea  eax, [eax + page_size]
+//  test edx, 0FF000000h
+//  jz   short labWBNext
+//  mov  ecx, [eax-elSizeOffset]
+//  push eax
+//  and  ecx, 0FFFFFh
+//  push ecx
+//  jmp  short labWBNext
+  
+//labWBEnd:
+//  mov  ebx, [ebp]
+//  mov  eax, esp
+//  push ebx
+//  push eax
+//  call extern 'rt_dlls.GCCollect
+
+//  mov  ebx, eax
+
+//  mov  esp, ebp 
+//  pop  ecx 
+//  pop  ebp
+
+//  ret
+
+end
+
+// ; --- HOOK ---
+// ; in: ecx - catch offset
+procedure %HOOK
+
+  //mov  eax, [esp]       
+  //lea  ecx, [eax + ecx - 5]               
+  // ; add  ecx, [esp]
+  // ; sub  ecx, 5             // ; call command size should be excluded
+  ret
+
+end
+
+// --- System Core Functions --
+
+procedure % ENDFRAME
+
+//  // ; save return pointer
+//  pop  ecx  
+  
+//  xor  edx, edx
+//  lea  esp, [esp+8]
+//  pop  ebp
+
+//  pop  eax
+//  mov  fs:[0], eax
+//  lea  esp, [esp+4]
+
+//  // ; restore return pointer
+//  push ecx   
+  ret
+
+end
+
+procedure % THREAD_WAIT
+
+  ret
+  
+end
+
+procedure % CALC_SIZE
+
+//  mov  ecx, edx
+//  add  ecx, page_ceil
+//  and  ecx, page_mask
+
+  ret
+
+end
+
+procedure % GET_COUNT
+
+//  mov  edx, [ebx - elSizeOffset]
+//  test edx, 0800000h
+//  jnz  short labErr
+//  and  edx, 0FFFFFFh
+//  shr  edx, 2
+//  ret
+
+//labErr:
+//  xor  edx, edx
+//  ret 
+
+end
+
 // ; ==== Command Set ==
+
+// ; snop
+inline % 4
+
+  nop
+
+end
+
+// ; bsredirect
+inline % 0Eh // (rbx - object, rdx - message)
+
+  mov  rdi, [rbx - elVMTOffset]
+  mov  rsi, [rdi - elVMTSizeOffset]
+  xor  rcx, rcx
+
+labSplit:
+  test rsi, rsi
+  jz   short labEnd
+
+labStart:
+  shr   rsi, 1
+  setnc cl
+  cmp   rdx, [rdi+rsi*8]
+  je    short labFound
+  lea   rax, [rdi+rsi*8]
+  jb    short labSplit
+  lea   rdi, [rax+8]
+  sub   rsi, rcx
+  jmp   labSplit
+  nop
+  nop
+labFound:
+  jmp   [rdi+rsi*8+4]
+
+labEnd:
+                                                                
+end
 
 // ; close
 inline % 15h
@@ -61,6 +343,67 @@ end
 inline % 2Ah
 
   mov  rdx, rdata : %SYSTEM_ENV
+
+end
+
+// ; rln
+inline % 2Ch
+
+  mov   rax, [rsp]
+  mov   rdx, 0
+  fld   qword ptr [rax]  
+  
+  fldln2
+  fxch
+  fyl2x                   // ->[log2(Src)]*ln(2) = ln(Src)
+
+  fstsw ax                // retrieve exception flags from FPU
+  shr   al,1              // test for invalid operation
+  jc    short lErr        // clean-up and return error
+
+  fstp  qword ptr [rbx]    // store result 
+  mov   rdx, 1
+  jmp   short labEnd
+
+lErr:
+  ffree st(0)
+
+labEnd:
+
+end
+
+// ; read
+inline % 2Dh
+
+  mov  rdx, [rbx + rdx]
+
+end
+
+// ; class
+inline % 36h
+
+  mov rbx, [rbx - elVMTOffset]
+
+end
+
+// ; equal
+inline % 3Eh
+
+  mov  rax, [rsp]
+  xor  rdx, rdx
+  cmp  eax, ebx
+  setz dl
+
+end
+
+// ; nless
+inline % 41h
+
+  mov  rax, [rsp]
+  xor  rdx, rdx
+  mov  rcx, [rbx]
+  cmp  rcx, [rax]
+  setl dl
 
 end
 
@@ -301,11 +644,32 @@ labEnd:
 
 end
 
+// ; geti
+inline % 91h
+
+  mov  rbx, [rbx+__arg1]
+  
+end
+
 // ; restore
 inline % 92h
 
   add  rbp, __arg1
   
+end
+
+// ; peekfi
+inline % 94h
+
+  mov  rbx, [rbp+__arg1]
+
+end
+
+// ; peeksi
+inline % 95h
+
+  mov  rbx, [rsp+__arg1]
+
 end
 
 // ; open

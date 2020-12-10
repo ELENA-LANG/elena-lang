@@ -103,7 +103,7 @@ public:
 
    virtual vaddr_t getPreloadedReference(ref_t reference) = 0;
 
-   virtual void setStaticRootCounter(_JITLoader* loader, size_t counter, bool virtualMode) = 0;
+   virtual void setStaticRootCounter(_JITLoader* loader, pos_t counter, bool virtualMode) = 0;
    virtual void setTLSKey(vaddr_t ptr) = 0;
    virtual void setThreadTable(vaddr_t ptr) = 0;
    virtual void setEHTable(vaddr_t ptr) = 0;

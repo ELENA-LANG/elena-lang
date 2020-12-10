@@ -105,7 +105,7 @@ protected:
 	//void compileMOVZX(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 
 	void compileRET(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileNOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileNOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileCDQ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileCWDE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileLODSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -190,7 +190,7 @@ protected:
  //  void compileFSQRT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFSIN(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFCOS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFYL2X(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFYL2X(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFTST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 
 	//void compileFBLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -206,7 +206,7 @@ protected:
 	void compileFMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFIDIV(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFXCH(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFXCH(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFSTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFBSTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFSTSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -219,9 +219,9 @@ protected:
  //  void compileFPREM(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFPATAN(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFLDL2E(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileFLDLN2(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileFLDLN2(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileFFREE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
+   void compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
  //  void compileCMOVCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);
  //  void compileCMPPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
  //  void compileCMPSS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
@@ -240,7 +240,7 @@ protected:
  //  bool compileCommandK(TokenInfo& token);
    bool compileCommandL(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer/*, x86JumpHelper& helper*/);
    bool compileCommandM(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
- //  bool compileCommandN(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
+   bool compileCommandN(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandO(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
    bool compileCommandP(TokenInfo& token, ProcedureInfo& info, MemoryWriter& writer);
  //  bool compileCommandQ(TokenInfo& token);
