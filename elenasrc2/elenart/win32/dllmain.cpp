@@ -129,7 +129,7 @@ void init(HMODULE hModule)
    _Instance->init(messageSection, mattributeSection, configPath.c_str());
 }
 
-EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, int* buffer, size_t maxLength)
+EXTERN_DLL_EXPORT int ReadCallStack(void* instance, size_t framePosition, size_t currentAddress, size_t startLevel, vaddr_t* buffer, size_t maxLength)
 {
    return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
 }
