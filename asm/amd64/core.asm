@@ -33,6 +33,10 @@ define elVMTSizeOffset       0004h
 define elVMTFlagOffset       0010h
 define elPackageOffset       0018h
 
+define gc_et_current         0058h 
+
+define struct_mask_inv     7FFFFFh
+
 // --- System Core Preloaded Routines --
 
 structure %CORE_GC_TABLE
@@ -294,10 +298,35 @@ end
 
 // ; ==== Command Set ==
 
+// ; coalesce
+inline % 2
+
+  mov    rax, [rsp]
+  test   rbx, rbx
+  cmovz  rbx, rax
+
+end
+
+// ; peek
+inline % 3
+
+  mov  rax, [rsp]
+  mov  rbx, [rax+rdx*4] 
+
+end
+
 // ; snop
 inline % 4
 
   nop
+
+end
+
+// ; throw
+inline % 7
+
+  mov  rax, [data : %CORE_GC_TABLE + gc_et_current]
+  jmp  [rax]
 
 end
 
@@ -313,13 +342,16 @@ labSplit:
   jz   short labEnd
 
 labStart:
+  mov   r9, rdi
+  lea   r8, [rsi*8]
   shr   rsi, 1
+  lea   r8, [r8*2]
   setnc cl
-  cmp   rdx, [rdi+rsi*8]
+  cmp   rdx, [r9+r8*2]
   je    short labFound
-  lea   rax, [rdi+rsi*8]
+  lea   rax, [r9+r8*2]
   jb    short labSplit
-  lea   rdi, [rax+8]
+  lea   rdi, [rax+16]
   sub   rsi, rcx
   jmp   labSplit
   nop
@@ -336,6 +368,17 @@ inline % 15h
 
   mov  rsp, rbp
   pop  rbp
+  
+end
+
+// ; unhook
+inline % 1Dh
+
+  mov  rsi, [data : %CORE_GC_TABLE + gc_et_current]
+  mov  rsp, [rsi + 4]
+  mov  rbp, [rsi + 8]
+  pop  rcx
+  mov  [data : %CORE_GC_TABLE + gc_et_current], rcx
   
 end
 
@@ -379,10 +422,60 @@ inline % 2Dh
 
 end
 
+// ; len
+inline % 31h
+
+  mov  edx, 0FFFFFh
+  mov  rcx, [rbx-elSizeOffset]
+  and  rdx, rcx
+
+end
+
 // ; class
 inline % 36h
 
   mov rbx, [rbx - elVMTOffset]
+
+end
+
+// ; save
+inline % 47h
+
+  mov [rbx], rdx
+
+end
+
+// ; mindex
+inline % 37h
+
+  mov  rcx, rdx
+  mov  rdi, [rbx - elVMTOffset]
+  xor  rdx, rdx
+  mov  esi, dword ptr [rdi - elVMTSizeOffset]
+
+labSplit:
+  test esi, esi
+  jz   short labEnd
+
+labStart:
+  mov   r9, rdi
+  lea   r8, [rsi*8]
+  shr   esi, 1
+  setnc dl
+  cmp   rdx, [r9+r8*2]
+  jb    short labSplit
+  nop
+  nop
+  jz    short labFound
+  lea   rdi, [rdi+r8+16]
+  lea   rdi, [r9+r8*2]
+  sub   rsi, rdx
+  jnz   short labStart
+  nop
+  nop
+labEnd:
+  mov  rdx, 0FFFFFFFFh
+labFound:
 
 end
 
@@ -404,6 +497,13 @@ inline % 41h
   mov  rcx, [rbx]
   cmp  rcx, [rax]
   setl dl
+
+end
+
+// ; load
+inline % 48h
+
+  mov rdx, [rbx]
 
 end
 
@@ -444,6 +544,14 @@ inline % 54h
 
   mov  ecx, dword ptr [rbx]
   and  dword ptr [rbp+__arg1], ecx
+
+end
+
+// ; xsave
+inline % 5Ah
+
+  lea rax, [rbx+__arg1]
+  mov dword ptr [rax], edx
 
 end
 
@@ -712,6 +820,20 @@ inline % 0BFh
 
 end
 
+// ; storesi
+inline % 0C3h
+
+  mov  [rsp+__arg1], rbx
+
+end
+
+// ; storefi
+inline % 0C4h
+
+  mov  [rbp+__arg1], rbx
+
+end
+
 // ; naddf
 inline % 0C5h
 
@@ -746,6 +868,18 @@ inline % 0C9h
 
 end
 
+// ; clonef
+inline % 0CEh
+
+  mov  rcx, [rbx - elSizeOffset]
+  and  ecx, struct_mask_inv
+  lea  rsi, [rbp+__arg1]
+  shr  rcx, 2
+  mov  rdi, rbx
+  rep  movsd
+
+end
+
 // ; alloci
 inline %0D1h
 
@@ -754,6 +888,35 @@ inline %0D1h
   xor  eax, eax
   mov  rdi, rsp
   rep  stos
+
+end
+
+// ; inc
+inline %0D6h
+
+  add  rdx, __arg1
+
+end
+
+// ; pushf
+inline % 0BDh
+
+  lea  rax, [rbp + __arg1]
+  push rax
+
+end
+
+// ; xaddf (__arg1 - index, __arg2 - n)
+inline % 0EEh
+
+  add dword ptr [rbp + __arg1], __arg2
+
+end
+
+// ; xsavef (__arg1 - index, __arg2 - n)
+inline % 0EFh
+
+  mov dword ptr [rbp + __arg1], __arg2
 
 end
 

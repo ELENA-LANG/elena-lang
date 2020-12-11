@@ -100,6 +100,7 @@ public:
       
    struct Operand
    {
+      bool          ebpReg;		// to resolve conflict between [ebp] and disp32
       bool          factorReg;   // to implement [r*factor] SIB
       OperandType   type;
       int           offset;
@@ -108,19 +109,19 @@ public:
       Operand()
       {
          type = otUnknown;
-         factorReg = /*ebpReg = */false;
+         factorReg = ebpReg = false;
          reference = offset = 0;
       }
       Operand(OperandType type)
       {
          this->type = type;
-         factorReg = /*ebpReg = */false;
+         factorReg = ebpReg = false;
          reference = offset = 0;
       }
       Operand(int number)
       {
          this->type = (OperandType)number;
-         factorReg = /*ebpReg = */false;
+         factorReg = ebpReg = false;
          this->reference = this->offset = 0;
       }
    };

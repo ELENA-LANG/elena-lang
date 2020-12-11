@@ -46,27 +46,32 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/47;
+const int gcCommandNumber = /*138*/63;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
-   bcReserve, bcPushSIP, bcPeekSI,
+   bcReserve, bcPushSIP, bcStoreSI, bcPeekSI, bcThrow,
    bcClose,
-   bcPeekFI, bcAllocI,
-   bcRestore,
+   bcPeekFI, bcStoreFI, bcAllocI,
+   bcRestore, bcPushF,
    bcGetI,
-   bcClass,
+   bcClass, bcXSaveF, bcLen, bcSave,
    bcNLess, bcSNop,
-   bcSaveF,
+   bcSaveF, bcLoad, bcUnhook,
+   bcCloneF, bcInc,
    bcNShlF, bcNShrF,
    bcRead,
    bcEqual, bcNAndF, bcNOrF, bcNXorF,
+   bcCoalesce,
    bcLMulF, bcLDivF, bcLShlF, bcLShrF, bcLAndF,
    bcLOrF, bcLXorF,
    bcRAddF, bcRSubF, bcRMulF, bcRDivF,
    bcRIntF, bcAddF,
    bcSubF,
    bcRLn,
+   bcXSave, bcXAddF,
+   bcPeek,
+   bcMIndex,
    bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF,
    bcNAddF, bcNMulF, bcNSubF, bcNDivF,
 };

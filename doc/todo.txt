@@ -3,18 +3,17 @@ In development:
 ------         
 
   [development]
-    * amd64 : invoker
+    * migrating command set
+
+    * test bsredirect, mindex
     * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME
-
     * amd64 : critical exception handler, critical exception handler refactoring
-
     * critical error handler should be moved to C code
     * retiring core #77
     * #206 - 64-bit architecture
 
 
     * test : string insert / delete
-
     * test generic methods
     * test string / wide operations
 
