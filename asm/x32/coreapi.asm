@@ -151,7 +151,6 @@ labEnd:
     
 end
 
-
 // strtowstr(target,source)
 procedure coreapi'wstrtostr
 

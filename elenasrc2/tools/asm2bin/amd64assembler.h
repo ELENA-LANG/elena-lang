@@ -150,7 +150,7 @@ protected:
 	//void compileDEC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileINC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileINT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileNEG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileNEG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileNOT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileMUL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileMULPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
@@ -178,14 +178,14 @@ protected:
 	//void compileFLDZ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFLDL2T(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFLDLG2(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFMULP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFMULP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFRNDINT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileF2XM1(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFLD1(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFADDP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileF2XM1(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFLD1(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFADDP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFSUBP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFDIVP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFSCALE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFSCALE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFXAM(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFABS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFSQRT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -198,7 +198,7 @@ protected:
  //  void compileFCHS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFILD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileFIST(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileFISTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFISTP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFLD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFADD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFISUB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
@@ -214,12 +214,12 @@ protected:
  //  void compileFNSTSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFSTCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileFLDCW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileFCOMIP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileFCOMIP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFCOMP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFLDPI(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFPREM(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileFPATAN(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
- //  void compileFLDL2E(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+   void compileFLDL2E(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileFLDLN2(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileFFREE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileSETCC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code, int postfix);

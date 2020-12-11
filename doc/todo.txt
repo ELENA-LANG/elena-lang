@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    * migrating command set
+    * implementing simple program
 
     * test bsredirect, mindex
     * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME

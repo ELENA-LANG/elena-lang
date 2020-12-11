@@ -33,9 +33,18 @@ define elVMTSizeOffset       0004h
 define elVMTFlagOffset       0010h
 define elPackageOffset       0018h
 
+define gc_header             0000h
+define gc_start              0008h
 define gc_et_current         0058h 
+define gc_stack_frame        0060h 
 
+define page_size_order          4h
 define struct_mask_inv     7FFFFFh
+
+define ACTION_ORDER              9
+define ARG_ACTION_MASK        1DFh
+define ACTION_MASK            1E0h
+define ARG_MASK               01Fh
 
 // --- System Core Preloaded Routines --
 
@@ -322,11 +331,34 @@ inline % 4
 
 end
 
+// ; loadverb
+inline % 6
+
+  mov   rcx, rdx
+  shr   rdx, ACTION_ORDER
+  mov   rax, rdata : % CORE_MESSAGE_TABLE
+  test  rcx, rcx
+  cmovs rdx, [rax + rdx]
+
+end
+
 // ; throw
 inline % 7
 
   mov  rax, [data : %CORE_GC_TABLE + gc_et_current]
   jmp  [rax]
+
+end
+
+// ; storev
+inline % 0Dh
+
+  mov eax, edx
+  and eax, ACTION_MASK
+  mov ecx, dword ptr [rsp]
+  and ecx, ARG_MASK
+  or  ecx, edx
+  mov dword ptr [rsp], ecx
 
 end
 
@@ -363,12 +395,69 @@ labEnd:
                                                                 
 end
 
+// ; setv
+inline % 0Fh
+
+  mov eax, dword ptr [rbx]
+  and eax, ARG_ACTION_MASK
+  mov ecx, edx
+  shl ecx, ACTION_ORDER
+  or  eax, ecx
+  mov dword ptr [rbx], eax
+
+end
+
 // ; close
 inline % 15h
 
   mov  rsp, rbp
   pop  rbp
   
+end
+
+// ; rexp
+inline % 16h
+
+  mov   rax, [rsp]
+  mov   rdx, 0
+  fld   qword ptr [rax]   // ; Src
+
+  fldl2e                  // ; ->log2(e)
+  fmulp                   // ; ->log2(e)*Src
+                                                              
+  // ; the FPU can compute the antilog only with the mantissa
+  // ; the characteristic of the logarithm must thus be removed
+      
+  fld   st(0)             // ; copy the logarithm
+  frndint                 // ; keep only the characteristic
+  fsub  st(1),st(0)       // ; keeps only the mantissa
+  fxch                    // ; get the mantissa on top
+
+  f2xm1                   // ; ->2^(mantissa)-1
+  fld1
+  faddp                   // ; add 1 back
+
+  //; the number must now be readjusted for the characteristic of the logarithm
+
+  fscale                  // ;, scale it with the characteristic
+      
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  jc    short lErr        // ; clean-up and return if error
+      
+  // ; the characteristic is still on the FPU and must be removed
+  
+  fstp  st(1)             // ; get rid of the characteristic
+
+  fstp  qword ptr [rbx]   // ; store result 
+  mov   rdx, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(1)
+  
+labEnd:
+
 end
 
 // ; unhook
@@ -380,6 +469,21 @@ inline % 1Dh
   pop  rcx
   mov  [data : %CORE_GC_TABLE + gc_et_current], rcx
   
+end
+
+// ; exclude
+inline % 26h
+                                                       
+  push rbp     
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], rsp
+
+end
+
+// ; freelock
+inline % 28h
+
+  nop
+
 end
 
 // ; loadenv
@@ -422,6 +526,27 @@ inline % 2Dh
 
 end
 
+// ; clone
+inline % 02Eh
+
+  mov  ecx, dword ptr [rbx - elSizeOffset]
+  mov  rsi, [rsp]
+  and  ecx, struct_mask_inv
+  mov  rdi, rbx
+  add  ecx, 3
+  shr  ecx, 2
+  rep  movsd
+
+end
+
+// ; xset
+inline % 2Fh
+            
+   mov  rax, [rsp]                  
+   mov  [rbx + rdx * 4], rax
+
+end
+
 // ; len
 inline % 31h
 
@@ -435,13 +560,6 @@ end
 inline % 36h
 
   mov rbx, [rbx - elVMTOffset]
-
-end
-
-// ; save
-inline % 47h
-
-  mov [rbx], rdx
 
 end
 
@@ -489,8 +607,42 @@ inline % 3Eh
 
 end
 
+// ; nequal
+inline % 40h
+
+  mov  rax, [rsp]
+  xor  edx, edx
+  mov  ecx, dword ptr [rbx]
+  cmp  ecx, dword ptr [rax]
+  setz dl
+
+end
+
 // ; nless
 inline % 41h
+
+  mov  rax, [rsp]
+  xor  edx, edx
+  mov  ecx, dword ptr [rbx]
+  cmp  ecx, dword ptr [rax]
+  setl dl
+
+end
+
+// ; lequal
+
+inline % 43h
+
+  mov  rax, [rsp]
+  xor  edx, edx
+  mov  rcx, [rbx]
+  cmp  rcx, [rax]
+  setz dl
+
+end
+
+// ; lless(lo, ro, tr, fr)
+inline % 44h
 
   mov  rax, [rsp]
   xor  rdx, rdx
@@ -500,10 +652,31 @@ inline % 41h
 
 end
 
+// ; rsave
+inline % 46h
+
+  fstp qword ptr [rbx]
+
+end
+
+// ; save
+inline % 47h
+
+  mov [rbx], rdx
+
+end
+
 // ; load
 inline % 48h
 
   mov rdx, [rbx]
+
+end
+
+// ; rsaven
+inline % 49h
+
+  fistp dword ptr [rbx]
 
 end
 
@@ -572,6 +745,32 @@ inline % 5Fh
   mov ecx, dword ptr [rbx]
   shr eax, cl
   mov dword ptr [rbp+__arg1], eax
+
+end
+
+// ; mul
+inline %060h
+
+  mov  rax, rdx
+  mov  ecx, __arg1
+  imul ecx
+  mov  rdx, rax
+
+end
+
+// ; laddf
+inline % 074h
+
+  mov  rcx, [rbx]
+  add  [rbp+__arg1], rcx
+
+end
+
+// ; lsubf
+inline % 075h
+
+  mov  rcx, [rbx]
+  sub  [rbp+__arg1], rcx
 
 end
 
@@ -664,6 +863,32 @@ inline % 82h
   fld   qword ptr [rdi]
   fimul dword ptr [rbx] 
   fstp  qword ptr [rdi]
+
+end
+
+// ; requal
+inline % 83h
+
+  mov    rdi, [rsp]
+  fld    qword ptr [rdi]
+  fld    qword ptr [rbx]
+  xor    edx, edx
+  fcomip st, st(1)
+  sete   dl
+  fstp  st(0)
+
+end
+
+// ; rless(lo, ro, tr, fr)
+inline % 84h
+
+  mov    rdi, [rsp]
+  fld    qword ptr [rdi]
+  fld    qword ptr [rbx]
+  xor    edx, edx
+  fcomip st, st(1)
+  setb   dl
+  fstp  st(0)
 
 end
 
@@ -780,11 +1005,47 @@ inline % 95h
 
 end
 
+// ; xseti
+inline %97h
+
+  mov  rax, [rsp]                   
+  mov [rbx + __arg1], rax
+
+end
+
 // ; open
 inline % 98h
 
   push rbp
   mov  rbp, rsp
+
+end
+
+// ; movn
+inline % 0B1h
+
+  mov  edx, __arg1
+
+end
+
+// ; pushai
+inline % 0B4h
+
+  push [rbx+__arg1]
+
+end
+
+// ; loadf
+inline % 0B5h
+
+  mov  edx, dword ptr [rbp + __arg1]
+
+end
+
+// ; loadfi
+inline % 0B7h
+
+  mov  edx, dword ptr [rbp + __arg1]
 
 end
 
@@ -817,6 +1078,21 @@ inline % 0BFh
   push rbp
   push 0
   mov  rbp, rsp
+
+end
+
+// ; seti
+inline %0C0h
+
+  mov  rsi, rbx
+  mov  rax, [rsp]                   
+  // calculate write-barrier address
+  sub  rsi, [data : %CORE_GC_TABLE + gc_start]
+  mov  rcx, [data : %CORE_GC_TABLE + gc_header]
+  shr  rsi, page_size_order
+  mov  byte ptr [rsi + rcx], 1  
+
+  mov [rbx + __arg1], rax
 
 end
 
@@ -868,6 +1144,20 @@ inline % 0C9h
 
 end
 
+// ; loadi
+inline % 0CAh
+
+  mov  rdx, [rbx + __arg1]
+
+end
+
+// ; savei
+inline % 0CBh
+
+  mov  [rbx + __arg1], rdx
+
+end
+
 // ; clonef
 inline % 0CEh
 
@@ -877,6 +1167,13 @@ inline % 0CEh
   shr  rcx, 2
   mov  rdi, rbx
   rep  movsd
+
+end
+
+// ; xload
+inline % 0CFh
+
+  mov  edx, dword ptr [rbx + __arg1]
 
 end
 
