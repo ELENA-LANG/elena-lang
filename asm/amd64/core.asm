@@ -556,6 +556,21 @@ inline % 31h
 
 end
 
+// ; rload
+inline %32h
+
+  fld   qword ptr [rbx]
+
+end
+
+// ; flag
+inline % 33h
+
+  mov  rax, [rbx - elVMTOffset]
+  mov  edx, dword ptr [rax - elVMTFlagOffset]
+  
+end
+
 // ; class
 inline % 36h
 
@@ -725,6 +740,17 @@ inline % 5Ah
 
   lea rax, [rbx+__arg1]
   mov dword ptr [rax], edx
+
+end
+
+// ; div
+inline %05Bh
+
+  mov  eax, edx
+  mov  ecx, __arg1
+  xor  edx, edx
+  idiv ecx
+  mov  edx, eax
 
 end
 

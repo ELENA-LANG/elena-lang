@@ -46,7 +46,7 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/90;
+const int gcCommandNumber = /*138*/93;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -59,8 +59,9 @@ const int gcCommands[gcCommandNumber] =
    bcClass, bcXSaveF, bcLen, bcSave,
    bcNEqual, bcNLess, bcSNop,
    bcSaveF, bcLoad, bcUnhook,
-   bcFreeLock,
+   bcFlag, bcFreeLock,
    bcMovN, bcCloneF, bcInc,
+   bcDiv,
    bcNShlF, bcNShrF,
    bcRead, bcExclude,
    bcLoadFI, bcEqual, bcNAndF, bcNOrF, bcNXorF,
@@ -71,7 +72,7 @@ const int gcCommands[gcCommandNumber] =
    bcREqual, bcRLess, bcRSave, bcRSaveN,
    bcLOrF, bcLXorF,
    bcRAddF, bcRSubF, bcRMulF, bcRDivF,
-   bcRIntF, bcAddF,
+   bcRIntF, bcRLoad, bcAddF,
    bcClone, bcSubF,
    bcLoadVerb, bcSetV,
    bcStoreV,

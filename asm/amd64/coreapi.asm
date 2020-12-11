@@ -836,3 +836,556 @@ Lab1:
   ret
 
 end
+
+// ; insert(dest,sour,index,size)
+procedure coreapi'insert
+
+  mov  rcx, [rsp+32]
+  mov  rdi, [rsp+8]
+  mov  ecx, dword ptr [rcx]
+  mov  rax, [rsp+24]
+  mov  rsi, [rsp+16]
+  mov  ebx, dword ptr [rax]
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, dword ptr [rsi]
+  mov  byte ptr [rdi + rbx], dl
+  add  ebx, 1
+  lea  rsi, [rsi + 1]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+end
+
+// strtochararray(src,index,dst,len)
+procedure coreapi'strtochararray
+
+  mov  rdx, [rsp+32]
+  mov  rdi, [rsp+24]
+  mov  ecx, dword ptr [rdx]
+  mov  rsi, [rsp+16]
+  mov  rax, [rsp+8]
+  mov  ebx, dword ptr[rsi]
+
+  lea  rdi, [rdi + rbx * 4]
+
+labStart:
+  xor  ebx, ebx
+  mov  bl, byte ptr [rax]
+  add  rax, 1
+  cmp  ebx, 00000080h
+  jl   short lab1
+  cmp  ebx, 000000E0h
+  jl   short lab2
+  cmp  ebx, 000000F0h
+  jl   short lab3
+  
+lab4:
+  mov  edx, ebx
+  mov  bl, byte ptr [rax]
+  add  rax, 1
+  shl  edx, 18
+  shl  ebx, 12
+  add  edx, ebx
+
+  xor  ebx, ebx
+  mov  bl, byte ptr [rax]
+  add  rax, 1
+  shl  ebx, 6
+  add  edx, ebx
+  
+  xor  ebx, ebx
+  mov  bl, byte ptr [rax]
+  add  rax, 1
+  
+  add  edx, ebx
+  sub  edx, 3C82080h
+  sub  ecx, 3
+  jmp  labSave  
+
+lab2:  
+  mov  edx, ebx
+  mov  bl, byte ptr [rax]
+  add  rax, 1
+
+  shl  edx, 6
+  add  edx, ebx
+  sub  edx, 3080h
+  sub  ecx, 1
+  jmp  short labSave  
+  
+lab3:
+  mov  edx, ebx
+  mov  bl, byte ptr [rax]
+  add  rax, 1
+  shl  edx, 12
+  shl  ebx, 6
+  add  edx, ebx
+  xor  ebx, ebx
+  mov  bl, byte ptr [rax]
+  add  rax, 1
+  add  edx, ebx
+  sub  edx, 0E2080h
+  sub  ecx, 2
+  jmp  short labSave  
+  
+lab1:
+  mov  edx, ebx
+
+labSave:
+  mov  dword ptr [rdi], edx
+  add  rdi, 4
+  sub  ecx, 1
+  jnz  labStart
+
+  mov  rcx, rdi
+  mov  rdi, [rsp+24]
+  sub  rcx, rdi
+  mov  rsi, [rsp+16]
+  shr  ecx, 2
+  sub  ecx, dword ptr [rsi]
+  mov  rax, [rsp+32]
+  mov  dword ptr [rax], ecx
+
+  ret
+
+end
+
+// ; strtochar(index,str; ebx = 0 if err ; edx - out)
+procedure coreapi'strtochar   
+
+  mov  rsi, [rsp+8]
+  mov  rax, [rsp+16]
+  mov  ebx, dword ptr [rsi]
+
+  xor  edx, edx
+  mov  dl, byte ptr [rax + rbx]
+  cmp  edx, 00000080h
+  jl   short lab1
+  cmp  edx, 000000C0h
+  jl   short err
+  cmp  edx, 000000E0h
+  jl   short lab2
+  cmp  edx, 000000F0h
+  jl   short lab3
+  cmp  edx, 000000F8h
+  jl   lab4
+
+err:
+  xor  ebx, ebx
+  ret 
+
+lab1:
+  mov  ebx, eax
+  ret
+
+lab2:  
+  mov  ecx, edx
+  mov  dl, byte ptr [rax + rbx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  shl  ecx, 6
+  add  edx, ecx
+  sub  edx, 3080h
+  mov  rbx, rax
+  ret
+  
+lab3:
+  mov  ecx, edx
+  mov  dl, byte ptr [rax + rbx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  cmp  ecx, 000000E0h
+  jnz  short lab3_1
+  cmp  ebx, 000000A0h
+  jl   short err
+
+lab3_1:
+  shl  ecx, 12
+  shl  edx, 6
+  add  ecx, edx
+  xor  edx, edx
+  mov  dl, byte ptr [rax + rbx + 2]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  add  edx, ecx
+  sub  edx, 0E2080h
+  mov  ebx, eax
+  ret
+  
+lab4:
+  mov  ecx, edx
+  mov  dl, byte ptr [rax + rbx + 1]
+  mov  esi, edx
+  and  esi, 0C0h
+  cmp  esi, 00000080h
+  jnz  err
+  cmp  ecx, 000000F0h
+  jnz  short lab4_1
+  cmp  edx, 00000090h
+  jl   short err
+
+lab4_1:
+  cmp  ecx, 000000F4h
+  jnz  short lab4_2
+  cmp  edx, 00000090h
+  jae  short err
+
+lab4_2:
+  shl  ecx, 18
+  shl  edx, 12
+  add  ecx, edx
+
+  xor  edx, edx
+  mov  dl, byte ptr [rax + rbx + 2]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
+  jnz  err
+
+  shl  edx, 6
+  add  ecx, edx
+  
+  xor  edx, edx
+  mov  dl, byte ptr [rax + rbx + 3]
+  mov  esi, edx
+  and  esi, 000000C0h
+  cmp  esi, 00000080h
+  jnz  err
+
+  add  edx, ecx
+  sub  edx, 3C82080h
+  mov  ebx, eax
+  ret
+  
+end                                                       
+
+// sseek(s,subs,index)
+procedure coreapi'sseek
+
+  mov  rdi, [rsp+8] // s
+  mov  rax, [rsp+24]
+  mov  rsi, [rsp+16] // subs
+  mov  edx, dword ptr [rax]
+  
+  mov  ebx, dword ptr[rdi-elSizeOffset]   // get total length  
+  and  ebx, 0FFFFFh
+  
+  sub  ebx, edx
+  jbe  short labEnd
+
+  add  ebx, 1
+  sub  edx, 1
+
+labNext:
+  add  edx, 1
+  mov  rsi, [rsp+16]
+  mov  ecx, dword ptr [rsi-elSizeOffset]
+  sub  ebx, 1
+  lea  ecx, [ecx-1]
+  jz   short labEnd
+  and  ecx, 0FFFFFh
+  cmp  ebx, ecx
+  jb   short labEnd
+  mov  rdi, [rsp+8]
+  add  rdi, rdx
+
+labCheck:
+  mov  eax, dword ptr [rdi]
+  cmp  al, byte ptr [rsi]
+  jnz  short labNext
+  lea  rdi, [rdi+1]
+  lea  rsi, [rsi+1]
+  sub  ecx, 1
+  jnz  short labCheck
+  nop
+  jmp  short labEnd2
+
+labEnd:
+  mov  edx, -1
+labEnd2:
+  ret
+
+end
+
+// ; chartostr (char,target, out edx - length)
+procedure coreapi'chartostr
+
+   mov  rax, [rsp+8]
+   mov  rdi, [rsp+16]
+
+   xor  ecx, ecx
+   mov  dword ptr[rdi], ecx
+   mov  dword ptr[rdi+4], ecx
+
+   mov  ebx, dword ptr [rax]
+   cmp  ebx, 00000080h
+   jl   short lab1
+   cmp  ebx, 0800h
+   jl   short lab2
+   cmp  ebx, 10000h
+   jl   short lab3
+   
+   mov  edx, ebx
+   and  edx, 03Fh
+   add  edx, 00000080h
+   shl  edx, 24
+   mov  ecx, edx
+
+   mov  edx, ebx
+   and  edx, 0FC0h   
+   shl  edx, 10
+   add  edx, 800000h 
+   or   ecx, edx
+
+   mov  edx, ebx
+   and  edx, 03F000h
+   shr  edx, 4
+   add  edx, 08000h 
+   or   ecx, edx
+
+   mov  edx, ebx
+   shr  edx, 18
+   and  edx, 03Fh
+   add  edx, 0F0h 
+   or   ecx, edx
+
+   mov  dword ptr [rdi], ecx
+   mov  edx, 4
+   ret
+   
+lab1:
+   mov  [edi], ebx
+   mov  edx, 1
+   ret
+
+lab2:
+   mov  edx, ebx
+   shr  edx, 6
+   add  edx, 0C0h
+   mov  byte ptr [rdi], dl
+   
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [rdi+1], bl
+
+   mov  edx, 2
+   ret
+
+lab3:
+   mov  edx, ebx
+   shr  edx, 12
+   add  edx, 0E0h
+   mov  byte ptr [rdi], dl
+
+   mov  edx, ebx
+   shr  edx, 6
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [rdi+1], dl
+
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [rdi+2], bl
+
+   mov  edx, 3
+   ret
+
+end
+
+// ; sadd(dest,sour,sindex,dindex)
+procedure coreapi'sadd
+
+  mov  rcx, [rsp+24]
+  mov  rax, [rsp+16]
+  mov  ecx, dword ptr [rcx]
+  mov  rdx, [rsp+32]
+  mov  rdi, [rsp+8]
+
+  mov  edx, dword ptr[rdx]       // ; dst index
+  mov  esi, ecx         // ; src index
+  
+  mov  ebx, dword ptr[rax-elSizeOffset]
+  and  ebx, 0FFFFFh
+  add  edx, edi
+  sub  ecx, ebx
+  add  esi, eax
+  
+labNext2:
+  mov  ebx, dword ptr[rsi]
+  mov  byte ptr [rdx], bl
+  lea  rsi, [rsi+1]
+  lea  rdx, [rdx+1]
+  add  ecx, 1
+  jnz  short labNext2
+
+  ret
+  
+end
+
+// subcopyz(target,index,size,arr)
+procedure coreapi'subcopyz
+
+  mov  rax, [rsp+32]
+  mov  rdx, [rsp+24]
+  mov  rsi, [rsp+8]
+  mov  ecx, dword ptr [rdx]
+  mov  rdi, [rsp+16]
+  test ecx, ecx
+  mov  ebx, dword ptr [edi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, dword ptr [rax + rbx]
+  mov  byte ptr [rsi], dl
+  add  rbx, 1
+  add  rsi, 1
+  sub  ecx, 1
+  jnz  short labNext
+  mov  byte ptr [rsi], cl
+
+labEnd:
+  ret
+
+end
+
+// subcopyz(target,index,size,arr)
+procedure coreapi'subcopyto
+
+  mov  rax, [rsp+32]
+  mov  rdx, [rsp+24]
+  mov  rsi, [rsp+8]
+  mov  ecx, dword ptr [rdx]
+  mov  rdi, [rsp+16]
+  test ecx, ecx
+  mov  ebx, dword ptr [rdi]
+  jz   short labEnd
+
+labNext:
+  mov  edx, dword ptr [rax]
+  mov  byte ptr [rsi + rbx], dl
+  add  rbx, 1
+  add  rax, 1
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+end
+
+procedure coreapi's_copychars
+
+  mov  rax, [rsp+32]
+  mov  rdx, [rsp+24]
+  mov  rsi, [rsp+16]
+  mov  ecx, dword ptr [rdx]
+  mov  rdi, [rsp+8]
+  mov  ebx, dword ptr [rsi]
+
+  test ecx, ecx
+  jz   labEnd
+
+  lea  rsi, [rax + rbx * 4]
+
+labNext:
+  mov  ebx, dword ptr [rsi]
+  
+  cmp  ebx, 00000080h
+  jl   short labs1
+  cmp  ebx, 0800h
+  jl   short labs2
+  cmp  ebx, 10000h
+  jl   short labs3
+  
+  mov  edx, ebx
+  shr  edx, 18
+  add  edx, 000000F0h 
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+   
+  mov  edx, ebx
+  shr  edx, 12
+  and  edx, 0000003Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+   
+  mov  edx, ebx
+  shr  edx, 6
+  and  edx, 0000003Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+   
+  mov  edx, ebx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  jmp  labSave
+
+labs2:
+  mov  edx, ebx
+  shr  edx, 6
+  add  edx, 000000C0h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  
+  mov  edx, ebx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  jmp  short labSave
+
+labs3:
+  mov  edx, ebx
+  shr  edx, 12
+  add  edx, 000000E0h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+
+  mov  edx, ebx
+  shr  edx, 6
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  
+  mov  edx, ebx
+  and  edx, 03Fh
+  add  edx, 00000080h
+  mov  byte ptr [rdi], dl
+  add  rdi, 1
+  jmp  short labSave
+  
+labs1:
+  mov  byte ptr [rdi], bl
+  add  rdi, 1
+
+labSave:
+  lea  rsi, [rsi + 4]
+  sub  ecx, 1
+  jnz  labNext
+
+labEnd:
+  mov  rdx,  rdi
+  mov  rdi, [rsp+18]
+  sub  rdx, rdi
+
+  ret
+
+end
+
