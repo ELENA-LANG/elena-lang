@@ -3642,8 +3642,6 @@ void AMD64Assembler:: compileStructure(TokenInfo& token, _Module* binary, int ma
                AMD64Helper::writeImm(&writer, operand);
                writer.writeDWord(0);
             }
-
-            AMD64Helper::writeImm(&writer, operand);
          }
          else if (operand.type == AMD64Helper::otDB) {
             operand.type = AMD64Helper::otDQ;

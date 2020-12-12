@@ -10,6 +10,7 @@
 namespace _ELENA_
 {
 
+#pragma pack(push, 1)
 struct ExceptionStruct
 {
    uintptr_t core_catch_addr;
@@ -118,6 +119,7 @@ struct GCRoot
       size_t stackPtrAddr;
    };   
 };
+#pragma pack(pop)
 
 // --- SystemRoutineProvider ---
 

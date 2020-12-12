@@ -15,7 +15,7 @@
 #endif
 #endif
 
-#define ELENART_REVISION_NUMBER        0x0012
+#define ELENART_REVISION_NUMBER        0x0013
 
 #define STRINGIZE2(s) #s
 #define STRINGIZE(s) STRINGIZE2(s)
