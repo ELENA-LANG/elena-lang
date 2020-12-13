@@ -22,15 +22,15 @@ namespace _GUI_
 
 struct LexicalInfo
 {
-   size_t       step;
-   size_t       style;
+   _ELENA_::pos_t step;
+   _ELENA_::pos_t style;
 
-   int          row;
-   TextBookmark bm;
+   int            row;
+   TextBookmark   bm;
 
-   bool         bandStyle;
-   bool         newLine;
-   bool         marker;
+   bool           bandStyle;
+   bool           newLine;
+   bool           marker;
 };
 
 // --- LexicalStyler ---
@@ -56,7 +56,7 @@ class LexicalStyler : public _TextWatcher
    text_c(*_makeStep)   (text_c ch, text_c state);
    size_t(*_defineStyle)(text_c state, size_t style);
 
-   int retrievePosition(size_t position)
+   int retrievePosition(_ELENA_::pos_t position)
    {
       position = (position >> INDEX_ORDER);
 
@@ -83,7 +83,7 @@ public:
 
    void parse();
 
-   virtual size_t proceed(size_t position, LexicalInfo& info);
+   virtual _ELENA_::pos_t proceed(_ELENA_::pos_t position, LexicalInfo& info);
 
    virtual bool addMarker(HighlightInfo info, int bandStyle, int style)
    {

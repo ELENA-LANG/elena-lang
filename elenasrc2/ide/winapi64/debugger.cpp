@@ -213,9 +213,9 @@ size_t ThreadContext :: ClassVMT(size_t objectPtr)
    return dump;
 }
 
-size_t ThreadContext :: VMTFlags(size_t vmtPtr)
+int ThreadContext :: VMTFlags(size_t vmtPtr)
 {
-   size_t dump = -1;
+   int    dump = -1;
    size_t size = 0;
 
    ReadProcessMemory(hProcess, (void*)(vmtPtr - 16), &dump, 8, &size);
@@ -701,7 +701,7 @@ bool Debugger :: findSignature(StreamReader& reader, char* signature)
    PEHelper::seekSection64(reader, ".rdata", rdata);
 
    // load Executable image
-   Context()->readDump(rdata, signature, strlen(ELENACLIENT_SIGNITURE));
+   Context()->readDump(rdata + 4, signature, strlen(ELENACLIENT_SIGNITURE));
    signature[strlen(ELENACLIENT_SIGNITURE)] = 0;
 
    return true;

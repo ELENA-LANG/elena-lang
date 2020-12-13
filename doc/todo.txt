@@ -3,6 +3,12 @@ In development:
 ------         
 
   [development]
+    * x64 debugger
+    * new object & call
+    * GC
+    * exception handling
+    * multi-theading
+
     * implementing simple program
 
     * test bsredirect, mindex
@@ -33,7 +39,7 @@ In development:
     * use message, extension, symbol correctly for x32 and x64
     * message and messagename should not be the same
 
-    * #280
+    * #280 64bit tool set
     * #443
 
     * Lexi project:

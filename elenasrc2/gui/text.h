@@ -99,8 +99,8 @@ private:
 
    // bookmark stream position
    size_t          _status;
-   size_t          _position;
-   size_t          _offset;
+   _ELENA_::pos_t  _position;
+   _ELENA_::pos_t  _offset;
    Pages::Iterator _page;
 
    void set(Pages* pages);

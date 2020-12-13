@@ -85,7 +85,7 @@ void LexicalStyler :: parse()
    writer.writeSize(scanner.getPosition() + length);
 }
 
-size_t LexicalStyler :: proceed(size_t position, LexicalInfo& info)
+_ELENA_::pos_t LexicalStyler :: proceed(_ELENA_::pos_t position, LexicalInfo& info)
 {
    if (!_enabled)
       return 0xFFFFFFFF;
@@ -693,7 +693,7 @@ size_t Document :: defineStyle(Reader& reader)
       }
    }
    if (_styler) {
-      size_t proceeded = _styler->proceed(position, reader);
+      _ELENA_::pos_t proceeded = _styler->proceed(position, reader);
       return min(length, proceeded);
    }
    else return length;

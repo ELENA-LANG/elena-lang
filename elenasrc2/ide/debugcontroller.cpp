@@ -1101,8 +1101,8 @@ void DebugController :: readMessage(_DebuggerWatch* watch, size_t address, ref_t
 
 void DebugController::readShortArray(_DebuggerWatch* watch, size_t address, ident_t name)
 {
-   short list[DEBUG_MAX_ARRAY_LENGTH];
-   int  length = 0;
+   short  list[DEBUG_MAX_ARRAY_LENGTH];
+   size_t length = 0;
 
    // get bytearray size
    getValue(address - 8, (char*)&length, 4);

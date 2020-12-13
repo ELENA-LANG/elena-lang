@@ -12,7 +12,7 @@
 
 #ifdef _WIN32
 
-#include "winapi32\wineditframe.h"
+#include "winapi\wineditframe.h"
 
 #elif _LINUX32
 

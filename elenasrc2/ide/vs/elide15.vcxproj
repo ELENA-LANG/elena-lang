@@ -45,7 +45,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\temp\ide\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\bin\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\temp\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\temp\ide\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -54,7 +54,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\gui;..\..\common;..\..\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\gui;..\..\common;..\..\engine;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);_WINDOW;UNICODE;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -66,9 +66,9 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
-      <OutputFile>$(OutDir)elide.exe</OutputFile>
+      <OutputFile>$(OutDir)elide64.exe</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(OutDir)elide.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)elide64.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -86,10 +86,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>..\..\gui;..\..\common;..\..\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\gui;..\..\common;..\..\engine;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)elide.exe</OutputFile>
+      <OutputFile>$(OutDir)elide64.exe</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -131,11 +131,11 @@
     <ClCompile Include="..\..\gui\winapi32\wintreeview.cpp" />
     <ClCompile Include="..\..\gui\text.cpp" />
     <ClCompile Include="..\..\gui\document.cpp" />
-    <ClCompile Include="..\winapi32\winide.cpp" />
+    <ClCompile Include="..\winapi\winide.cpp" />
     <ClCompile Include="..\winapi32\main.cpp" />
-    <ClCompile Include="..\winapi32\wineditframe.cpp" />
-    <ClCompile Include="..\winapi32\windialogs.cpp" />
-    <ClCompile Include="..\winapi32\winoutput.cpp" />
+    <ClCompile Include="..\winapi\wineditframe.cpp" />
+    <ClCompile Include="..\winapi\windialogs.cpp" />
+    <ClCompile Include="..\winapi\winoutput.cpp" />
     <ClCompile Include="..\winapi32\debugger.cpp" />
     <ClCompile Include="..\appwindow.cpp" />
     <ClCompile Include="..\sourcedoc.cpp" />
@@ -173,11 +173,11 @@
     <ClInclude Include="..\..\gui\winapi32\wintreeview.h" />
     <ClInclude Include="..\..\gui\text.h" />
     <ClInclude Include="..\..\gui\document.h" />
-    <ClInclude Include="..\winapi32\winideconst.h" />
-    <ClInclude Include="..\winapi32\winide.h" />
-    <ClInclude Include="..\winapi32\wineditframe.h" />
-    <ClInclude Include="..\winapi32\windialogs.h" />
-    <ClInclude Include="..\winapi32\winoutput.h" />
+    <ClInclude Include="..\winapi\winideconst.h" />
+    <ClInclude Include="..\winapi\winide.h" />
+    <ClInclude Include="..\winapi\wineditframe.h" />
+    <ClInclude Include="..\winapi\windialogs.h" />
+    <ClInclude Include="..\winapi\winoutput.h" />
     <ClInclude Include="..\winapi32\debugger.h" />
     <ClInclude Include="..\idecommon.h" />
     <ClInclude Include="..\appwindow.h" />
@@ -191,27 +191,27 @@
     <ClInclude Include="..\debugcontroller.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\winapi32\ide.rc" />
+    <ResourceCompile Include="..\winapi\ide.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\winapi32\icons\closeAll.bmp" />
-    <Image Include="..\winapi32\icons\closeFile.bmp" />
-    <Image Include="..\winapi32\icons\copy.bmp" />
-    <Image Include="..\winapi32\icons\cut.bmp" />
-    <Image Include="..\winapi32\icons\elgui.ico" />
-    <Image Include="..\winapi32\icons\file.ico" />
-    <Image Include="..\winapi32\icons\goto.bmp" />
-    <Image Include="..\winapi32\icons\newFile.bmp" />
-    <Image Include="..\winapi32\icons\openFile.bmp" />
-    <Image Include="..\winapi32\icons\paste.bmp" />
-    <Image Include="..\winapi32\icons\redo.bmp" />
-    <Image Include="..\winapi32\icons\run.bmp" />
-    <Image Include="..\winapi32\icons\saveAll.bmp" />
-    <Image Include="..\winapi32\icons\saveFile.bmp" />
-    <Image Include="..\winapi32\icons\stepinto.bmp" />
-    <Image Include="..\winapi32\icons\stepover.bmp" />
-    <Image Include="..\winapi32\icons\stop.bmp" />
-    <Image Include="..\winapi32\icons\undo.bmp" />
+    <Image Include="..\winapi\icons\closeAll.bmp" />
+    <Image Include="..\winapi\icons\closeFile.bmp" />
+    <Image Include="..\winapi\icons\copy.bmp" />
+    <Image Include="..\winapi\icons\cut.bmp" />
+    <Image Include="..\winapi\icons\elgui.ico" />
+    <Image Include="..\winapi\icons\file.ico" />
+    <Image Include="..\winapi\icons\goto.bmp" />
+    <Image Include="..\winapi\icons\newFile.bmp" />
+    <Image Include="..\winapi\icons\openFile.bmp" />
+    <Image Include="..\winapi\icons\paste.bmp" />
+    <Image Include="..\winapi\icons\redo.bmp" />
+    <Image Include="..\winapi\icons\run.bmp" />
+    <Image Include="..\winapi\icons\saveAll.bmp" />
+    <Image Include="..\winapi\icons\saveFile.bmp" />
+    <Image Include="..\winapi\icons\stepinto.bmp" />
+    <Image Include="..\winapi\icons\stepover.bmp" />
+    <Image Include="..\winapi\icons\stop.bmp" />
+    <Image Include="..\winapi\icons\undo.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

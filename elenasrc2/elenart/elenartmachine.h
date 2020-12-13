@@ -60,13 +60,13 @@ public:
 
       virtual bool read(pos_t position, void* s, pos_t length);
 
-      //virtual bool readLong(pos64_t position, void* s, pos64_t length)
-      //{
-      //   if (position < INT_MAX && length < INT_MAX) {
-      //      return read((pos_t)position, s, (pos_t)length);
-      //   }
-      //   else return false;
-      //}
+      virtual bool readLong(pos64_t position, void* s, pos64_t length)
+      {
+         if (position < INT_MAX && length < INT_MAX) {
+            return read((pos_t)position, s, (pos_t)length);
+         }
+         else return false;
+      }
 
       virtual bool write(pos_t position, const void* s, pos_t length)
       {
@@ -89,10 +89,10 @@ public:
       {
          // trim operations are not supported
       }
-      //virtual void trimLong(pos64_t position)
-      //{
-      //   // trim operations are not supported
-      //}
+      virtual void trimLong(pos64_t position)
+      {
+         // trim operations are not supported
+      }
 
       ImageSection()
       {

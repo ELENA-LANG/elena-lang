@@ -8,7 +8,7 @@
 #define wintreeviewH
 
 #include "wincommon.h"
-#include "..\ide\winapi32\winideconst.h"
+#include "..\ide\winapi\winideconst.h"
 
 namespace _GUI_
 {

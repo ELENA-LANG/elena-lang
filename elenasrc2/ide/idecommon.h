@@ -15,7 +15,7 @@
 #ifdef _WIN32
 
 #include "eng\messages.h"
-#include "winapi32\winideconst.h"
+#include "winapi\winideconst.h"
 
 #elif _LINUX32
 

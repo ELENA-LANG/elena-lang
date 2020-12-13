@@ -61,7 +61,7 @@ public:
 
    void release();
 
-    ViewStyles() { _marginWidth = _lineHeight = _count = 0; }
+   ViewStyles() { _marginWidth = _lineHeight = 0; _count = 0; }
    ~ViewStyles() { release(); }
 };
 

@@ -110,7 +110,7 @@ public:
 
    size_t Current(int offset) { return context.Rsp + offset * 4; }
    size_t ClassVMT(size_t address);
-   size_t VMTFlags(size_t address);
+   int VMTFlags(size_t address);
    size_t ObjectPtr(size_t address);
    size_t LocalPtr(int offset) { return ObjectPtr(Local(offset)); }
    size_t LocalPtr(int offset, int disp) { return ObjectPtr(Local(offset, disp)); }
