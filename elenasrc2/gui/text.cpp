@@ -16,7 +16,7 @@ using namespace _ELENA_;
 inline size_t readData(MemoryDump* buffer, size_t offset)
 {
    size_t size;
-   buffer->readLong(offset, &size, sizeof(size_t));
+   buffer->read(offset, &size, sizeof(size_t));
 
    return size;
 }

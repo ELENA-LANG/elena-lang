@@ -113,13 +113,13 @@ public:
          return true;
       }
 
-      //virtual bool readLong(pos64_t position, void* s, pos64_t length)
-      //{
-      //   if (position < INT_MAX && length < INT_MAX) {
-      //      return read((pos_t)position, s, (pos_t)length);
-      //   }
-      //   else return false;
-      //}
+      virtual bool readLong(pos64_t position, void* s, pos64_t length)
+      {
+         if (position < INT_MAX && length < INT_MAX) {
+            return read((pos_t)position, s, (pos_t)length);
+         }
+         else return false;
+      }
 
       virtual bool write(pos_t, const void*, pos_t)
       {
@@ -151,11 +151,11 @@ public:
          // should never be called
          throw InternalError("Read-only Module");
       }
-      //virtual void trimLong(pos64_t)
-      //{
-      //   // should never be called
-      //   throw InternalError("Read-only Module");
-      //}
+      virtual void trimLong(pos64_t)
+      {
+         // should never be called
+         throw InternalError("Read-only Module");
+      }
 
       ROSection& operator =(const ROSection& section)
       {

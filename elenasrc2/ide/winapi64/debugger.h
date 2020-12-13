@@ -106,12 +106,14 @@ public:
    size_t IP() const { return context.Rip; }
    size_t Frame() const { return context.Rbp; }
    size_t Local(int offset) { return context.Rbp - offset * 4; }
+   size_t Local(int offset, int disp) { return context.Rbp - offset * 4 + disp; }
 
    size_t Current(int offset) { return context.Rsp + offset * 4; }
    size_t ClassVMT(size_t address);
    size_t VMTFlags(size_t address);
    size_t ObjectPtr(size_t address);
    size_t LocalPtr(int offset) { return ObjectPtr(Local(offset)); }
+   size_t LocalPtr(int offset, int disp) { return ObjectPtr(Local(offset, disp)); }
    size_t CurrentPtr(int offset) { return ObjectPtr(Current(offset)); }
 
    bool readDump(size_t address, char* dump, size_t length);
@@ -266,7 +268,7 @@ public:
    size_t readRetAddress(_Memory& memory, size_t position)
    {
       size_t address = 0;
-      memory.readLong(position, &address, 8);
+      memory.read(position, &address, 8);
 
       return address;
    }

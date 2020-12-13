@@ -35,7 +35,7 @@ public:
 
    virtual bool read(pos_t position, void* s, pos_t length) = 0;
 
-   //virtual bool read(pos64_t position, void* s, pos64_t length) = 0;
+   virtual bool readLong(pos64_t position, void* s, pos64_t length) = 0;
 
    virtual bool write(pos_t position, const void* s, pos_t length) = 0;
 
@@ -53,7 +53,7 @@ public:
    virtual void* getReferences() { return nullptr; }
 
    virtual void trim(pos_t position) = 0;
-   //virtual void trimLong(pos64_t position) = 0;
+   virtual void trimLong(pos64_t position) = 0;
 
 //#ifdef _WIN64
 //

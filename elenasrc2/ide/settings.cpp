@@ -67,7 +67,7 @@ inline void saveSetting(_ELENA_::XmlConfigFile& config, const char* setting, boo
       config.setSetting(setting, value);
 }
 
-inline void saveSetting(_ELENA_::XmlConfigFile& config, const char* setting, unsigned int value, unsigned int defaultValue)
+inline void saveSetting(_ELENA_::XmlConfigFile& config, const char* setting, size_t value, unsigned int defaultValue)
 {
    if (value != defaultValue)
       config.setSetting(setting, value);
