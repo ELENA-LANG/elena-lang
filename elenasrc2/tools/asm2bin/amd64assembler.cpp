@@ -2737,12 +2737,12 @@ void AMD64Assembler :: compileCALL(TokenInfo& token, ProcedureInfo& info, Memory
 {
    token.read();
 
-//   Operand operand = defineRegister(token);
-//   if (operand.type != x86Helper::otUnknown) {
-//      code->writeByte(0xFF);
-//      code->writeByte(0xD0 + (char)operand.type);
-//   }
-   /*else */if (token.check("extern")) {
+   Operand operand = defineRegister(token);
+   if (operand.type != AMD64Helper::otUnknown) {
+      code->writeByte(0xFF);
+      code->writeByte(0xD0 + (char)operand.type);
+   }
+   else if (token.check("extern")) {
       code->writeWord(0x15FF);
       token.read();
       if (token.check(ARGUMENT1)) {

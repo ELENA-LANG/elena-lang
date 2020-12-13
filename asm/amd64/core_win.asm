@@ -44,10 +44,10 @@ procedure % INVOKER
   add  rsp, 24        // ; clear FrameHeader+arg
 
   // ; restore registers
-  pop  r12
-  pop  r13
-  pop  r14
   pop  r15
+  pop  r14
+  pop  r13
+  pop  r12
   pop  rbp
   pop  rbx
   pop  rdi
