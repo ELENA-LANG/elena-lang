@@ -331,6 +331,19 @@ inline % 4
 
 end
 
+// ; pushverb
+inline % 5
+
+  mov   rax, rdx
+  mov   rcx, rdx
+  shr   eax, ACTION_ORDER
+  mov   rdi, rdata : % CORE_MESSAGE_TABLE
+  test  rcx, rcx
+  cmovs rax, [rdi + rdx]
+  push  rax
+
+end
+
 // ; loadverb
 inline % 6
 
@@ -415,6 +428,15 @@ inline % 15h
   
 end
 
+// ; swapd
+inline % 14h
+
+  mov  rax, [rsp]
+  mov  [rsp], rdx
+  mov  rdx, rax 
+
+end
+
 // ; rexp
 inline % 16h
 
@@ -460,6 +482,43 @@ labEnd:
 
 end
 
+// ; get
+inline % 18h
+
+   mov  rbx, [rbx + rdx * 4]
+
+end
+
+// ; swap
+inline % 1Ah
+
+  mov rax, [rsp]
+  mov [rsp], rbx
+  mov rbx, rax 
+
+end
+
+// ; mquit
+inline % 1Bh
+
+  mov  rcx, rdx
+  pop  rsi
+  and  ecx, ARG_MASK
+  lea  rsp, [rsp + rcx * 4]
+  jmp  rsi
+ 
+end
+
+// ; count
+inline % 1Ch
+
+  mov  ecx, 0FFFFFh
+  mov  rdx, [rbx-elSizeOffset]
+  and  rdx, rcx
+  shr  rdx, 2
+
+end
+
 // ; unhook
 inline % 1Dh
 
@@ -469,6 +528,47 @@ inline % 1Dh
   pop  rcx
   mov  [data : %CORE_GC_TABLE + gc_et_current], rcx
   
+end
+
+// ; rsin
+inline % 1Eh
+
+  mov   rax, [rsp]
+  fld   qword ptr [rax]  
+  fldpi
+  fadd  st(0),st(0)       // ; ->2pi
+  fxch
+
+lReduce:
+  fprem                   // ; reduce the angle
+  fsin
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  // ; jc    short lErr        // ; clean-up and return error
+  sahf                    // ; transfer to the CPU flags
+  jpe   short lReduce     // ; reduce angle again if necessary
+  fstp  st(1)             // ; get rid of the 2pi
+
+  fstp  qword ptr [rbx]    // ; store result 
+
+end
+
+// ; rarctan
+inline % 21h
+
+  mov   rax, [rsp]
+  fld   qword ptr [rax]  
+  fld1
+  fpatan                  // i.e. arctan(Src/1)
+  fstp  qword ptr [rbx]    // store result 
+
+end
+
+// ; include
+inline % 25h
+
+  add  rsp, 8
+
 end
 
 // ; exclude
@@ -569,6 +669,13 @@ inline % 33h
   mov  rax, [rbx - elVMTOffset]
   mov  edx, dword ptr [rax - elVMTFlagOffset]
   
+end
+
+// ; parent
+inline % 35h
+
+  mov rbx, [rbx - elPackageOffset]
+
 end
 
 // ; class
@@ -781,6 +888,23 @@ inline %060h
   mov  ecx, __arg1
   imul ecx
   mov  rdx, rax
+
+end
+
+// ; checksi
+inline % 061h
+
+  mov    rdi, [rsp+__arg1]
+  xor    rdx, rdx
+  mov    rsi, [rbx-elVMTOffset]
+labNext:
+  mov    rax, 0
+  cmp    rsi, rdi
+  mov    rsi, [rsi - elPackageOffset]
+  setz   dl
+  cmovnz rax, rsi
+  and    rax, rax
+  jnz    short labNext
 
 end
 
@@ -1047,6 +1171,14 @@ inline % 98h
 
 end
 
+// ; callvi (ecx - offset to VMT entry)
+inline % 0A2h
+
+  mov  rax, [rbx - elVMTOffset]
+  call [rax + __arg1]
+
+end
+
 // ; movn
 inline % 0B1h
 
@@ -1229,6 +1361,504 @@ inline % 0BDh
 
 end
 
+// ; mtredirect (__arg3 - number of parameters, eax - points to the stack arg list)
+inline % 0E8h
+
+  mov  rsi, __arg1
+  mov  r8,  rbx
+  xor  edx, edx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  lea  r9, [rsi*8]
+  mov  r10, rdata : % CORE_MESSAGE_TABLE
+  shr  ebx, ACTION_ORDER
+  lea  r9,  [r10 + r9*2]
+  mov  r9, [r9 + 4]
+  mov  rcx, __arg3
+  lea  rbx, [r10 + r9 - 4]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  lea  r9, [rdx*8]
+  mov  r10, __arg1
+  mov  rbx, r8
+  mov  rax, [r10 + r9 * 2 + 4]
+  mov  rcx, [rbx - elVMTOffset]
+  lea  rax, [rax*8]
+  mov  rdx, [r10 + r9 * 2]
+  jmp  [rcx + rax * 2 + 4]
+
+labMatching:
+  mov  rdi, [rax + rcx * 4]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi                                              
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx + rcx * 4]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rsi, __arg1
+  add  rdx, 1
+  mov  rbx, [rsi + rdx * 8] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+end
+
+// ; xmtredirect (__arg3 - number of parameters, eax - points to the stack arg list)
+inline % 0E9h
+
+  mov  rsi, __arg1
+  mov  r8, rbx
+  xor  edx, edx
+  mov  rbx, [rsi] // ; message from overload list
+          	
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  r10, rdata : % CORE_MESSAGE_TABLE
+  lea  r9, [ebx * 8]
+  mov  rcx, __arg3
+  mov  r9, [r10 + r9 * 2 + 8]
+  lea  rbx, [r10 + r9 - 4]
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  mov  r9, __arg1
+  lea  r10, [rdx * 8]
+  mov  rbx, r8
+  mov  rdx, [r9 + r10 * 2]
+  jmp  [r9 + r10 * 2 + 8]
+
+labMatching:
+  mov  rdi, [rax + rcx * 4]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx + rcx * 4]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rsi, __arg1
+  add  rdx, 1
+  mov  rbx, [rsi + rdx * 8] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+end
+
+// ; mtredirect<1>
+inline % 1E8h
+
+  mov  rcx, __arg1
+  xor  edx, edx
+  mov  rax, [rax + 4]
+  mov  rcx, [rcx] // ; message from overload list
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rax, rax
+  cmovz rax, rsi
+
+  mov  rax, [rax - elVMTOffset]
+
+labNextOverloadlist:
+  mov  r9, rdata : % CORE_MESSAGE_TABLE
+  shr  ecx, ACTION_ORDER
+  lea  r10, [ecx*8]
+  mov  r10, [r9 + r10 * 2 + 8]
+  lea  rcx, [r9 + r10]
+
+labMatching:
+  mov  rdi, rax
+  mov  rsi, [rcx]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jnz  short labContinue
+
+  lea  r9, [rdx*2]  
+  mov  r10, __arg1
+  mov  rax, [r10 + r9 * 2 + 8]
+  mov  rcx, [rbx - elVMTOffset]
+  mov  rdx, [r10 + r9 * 2]
+  jmp  [rcx + rax * 8 + 4]
+
+labContinue:
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rcx, __arg1
+  add  rdx, 1
+  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+  and  rcx, rcx
+  jnz  labNextOverloadlist
+
+labEnd:
+
+end
+
+// ; xmtredirect<1>
+inline % 1E9h
+
+  mov  rcx, __arg1
+  mov  rax, [rax + 4]
+  xor  edx, edx
+  mov  rcx, [rcx] // ; message from overload list
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rax, rax
+  cmovz rax, rsi
+
+  mov  rax, [rax - elVMTOffset]
+
+labNextOverloadlist:
+  shr  rcx, ACTION_ORDER
+  mov  rdi, rdata : % CORE_MESSAGE_TABLE
+  mov  rcx, [rdi + rcx * 8 + 4]
+  lea  rcx, [rdi + rcx]
+
+labMatching:
+  mov  rdi, rax
+  mov  rsi, [rcx]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jnz  short labContinue
+
+  mov  rcx, rdx
+  mov  rsi, __arg1
+  mov  rdx, [rsi + rdx * 8]
+  jmp  [rsi + rcx * 8 + 4]
+
+labContinue:
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rcx, __arg1
+  add  rdx, 1
+  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+  and  rcx, rcx
+  jnz  labNextOverloadlist
+
+labEnd:
+
+end
+
+// ; mtredirect<2> (eax - refer to the stack)
+inline % 2E8h 
+
+  mov  rcx, __arg1
+  xor  edx, edx
+  mov  rcx, [rcx] // ; message from overload list
+
+labNextOverloadlist:
+  mov  rdi, rdata : % CORE_MESSAGE_TABLE
+  shr  rcx, ACTION_ORDER
+  mov  rcx, [rdi + rcx * 8 + 4]
+  lea  rcx, [rdi + rcx]
+
+labMatching:
+  mov  rdi, [rax+4]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi-elVMTOffset]
+  mov  rsi, [rcx]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jnz  labContinue
+
+  mov  rdi, [rax+8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi-4]
+  mov  rsi, [rcx + 4]
+
+labNextBaseClass2:
+  cmp  rsi, rdi
+  jnz  short labContinue2
+
+  mov  rsi, __arg1
+  mov  rax, [rsi + rdx * 8 + 4]
+  mov  rcx, [rbx - elVMTOffset]
+  mov  rdx, [rsi + rdx * 8]
+  jmp  [rcx + rax * 8 + 4]
+
+labContinue2:
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass2
+  nop
+  nop
+  jmp short labNext
+
+labContinue:
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+labNext:
+  mov  rcx, __arg1
+  add  rdx, 1
+  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+  and  rcx, rcx
+  jnz  labNextOverloadlist
+
+end
+
+// ; xmtredirect<2>  (eax - refer to the stack)
+inline % 2E9h
+
+// ecx -> eax
+// ebx -> ecx
+
+  mov  rcx, __arg1
+  xor  rdx, rdx
+  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+
+labNextOverloadlist:
+  mov  rdi, rdata : % CORE_MESSAGE_TABLE
+  shr  rcx, ACTION_ORDER
+  mov  rcx, [rdi + rcx * 8 + 4]
+  lea  rcx, [rdi + rcx]
+
+labMatching:
+  mov  rdi, [rax+4]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi-elVMTOffset]
+  mov  rsi, [rcx]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jnz  labContinue
+
+  mov  rdi, [rax+8]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi-elVMTOffset]
+  mov  rsi, [rcx + 4]
+
+labNextBaseClass2:
+  cmp  rsi, rdi
+  jnz  short labContinue2
+
+  mov  rsi, __arg1
+  mov  rcx, rdx
+  mov  rdx, [rsi + rcx * 8]
+  jmp  [rsi + rcx * 8 + 4]
+
+labContinue2:
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass2
+  nop
+  nop
+  jmp short labNext
+
+labContinue:
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+labNext:
+  mov  rcx, __arg1
+  add  rdx, 1
+  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+  and  rcx, rcx
+  jnz  labNextOverloadlist
+
+end
+
+// ; mtredirect<12> (__arg3 - number of parameters, eax - points to the stack arg list)
+
+inline % 0CE8h
+
+  push rbx
+  xor  rdx, rdx
+  mov  rbx, rax
+  xor  rcx, rcx
+
+labCountParam:
+  lea  rbx, [rbx+4]
+  cmp  [rbx], -1
+  lea  rcx, [rcx+1]
+  jnz  short labCountParam
+
+  mov  rsi, __arg1
+  push rcx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  rdi, rdata : % CORE_MESSAGE_TABLE
+  shr  rbx, ACTION_ORDER
+  mov  rcx, [rsp]              // ; param count
+  mov  rbx, [rdi + rbx * 8 + 4]
+  lea  rbx, [rdi + rbx - 4]
+
+labNextParam:
+  // ; check if signature contains the next class ptr
+  lea  rsi, [rbx + 4]
+  cmp [rsi], 0
+  cmovnz rbx, rsi
+
+  sub  rcx, 1
+  jnz  short labMatching
+
+  mov  rsi, __arg1
+  lea  rsp, [rsp + 4]
+  pop  rbx
+  mov  rax, [rsi + rdx * 8 + 4]
+  mov  rcx, [rbx - elVMTOffset]
+  mov  rdx, [rsi + rdx * 8]
+  jmp  [rcx + rax * 8 + 4]
+
+labMatching:
+  mov  rsi, [rsp]
+  sub  rsi, rcx
+  mov  rdi, [rax + rsi * 4]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rsi, __arg1
+  add  rdx, 1
+  mov  rbx, [rsi + rdx * 8] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+  lea  rsp, [rsp + 4]
+  pop  rax
+
+end
+
+// ; xmtredirect<12>
+
+inline % 0CE9h
+
+  push rbx
+  xor  rdx, rdx
+  mov  rbx, rax
+  xor  rcx, rcx
+
+labCountParam:
+  lea  rbx, [rbx+4]
+  cmp  [rbx], -1
+  lea  rcx, [rcx+1]
+  jnz  short labCountParam
+
+  mov  rsi, __arg1
+  push rcx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  rdi, rdata : % CORE_MESSAGE_TABLE
+  shr  rbx, ACTION_ORDER
+  mov  rcx, [rsp]              // ; param count
+  mov  rbx, [rdi + rbx * 8 + 4]
+  lea  rbx, [rdi + rbx - 4]
+
+labNextParam:
+  // ; check if signature contains the next class ptr
+  lea  rsi, [rbx + 4]
+  cmp [rsi], 0
+  cmovnz rbx, rsi
+
+  sub  rcx, 1
+  jnz  short labMatching
+
+  mov  rsi, __arg1
+  mov  rcx, rdx
+  lea  rsp, [rsp + 4]
+  pop  rbx
+  mov  rdx, [rsi + rcx * 8]
+  jmp  [rsi + rcx * 8 + 4]
+
+labMatching:
+  mov  rsi, [rsp]
+  sub  rsi, rcx
+  mov  rdi, [rax + rsi * 4]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rsi, __arg1
+  add  rdx, 1
+  mov  rbx, [rsi + rdx * 8] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+  lea  rsp, [rsp + 4]
+  pop  rax
+
+end
+
 // ; xaddf (__arg1 - index, __arg2 - n)
 inline % 0EEh
 
@@ -1240,6 +1870,42 @@ end
 inline % 0EFh
 
   mov dword ptr [rbp + __arg1], __arg2
+
+end
+
+// ; new (__arg1 - size)
+inline % 0F0h
+	
+  mov  ecx, __arg1
+  call code : %GC_ALLOC
+
+end
+
+// ; xselectr (eax - r1, __arg1 - r2)
+inline % 0F3h
+
+  test   rbx, rbx
+  mov    rbx, __arg1
+  cmovnz rbx, rax
+
+end
+
+// ; vcallrm
+inline % 0F4h
+
+  mov  ecx, __arg1
+  mov  rax, [rbx - elVMTOffset]
+  shl  ecx, 4
+  call [rax + rcx + 4]
+  
+end
+
+// ; selectr (ebx - r1, __arg1 - r2)
+inline % 0F6h
+
+  mov    rcx, __arg1
+  test   rdx, rdx
+  cmovnz rbx, rcx
 
 end
 

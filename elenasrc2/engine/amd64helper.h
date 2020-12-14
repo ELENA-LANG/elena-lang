@@ -343,7 +343,7 @@ public:
    void writeShortJmpForward(int label);
 
    //void writeLoadBack(int label);
-   //void writeJmpBack(int label);
+   void writeJmpBack(int label);
    void writeNearJmpBack(int label);
    void writeShortJmpBack(int label);
 

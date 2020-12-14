@@ -119,15 +119,15 @@ void AMD64LabelHelper::writeShortJmpForward(int label)
    code->writeByte(0);
 }
 
-//void x86LabelHelper::writeJmpBack(int label)
-//{
-//   int offset = labels.get(label) - code->Position();
-//
-//   if (abs(offset) < 0x7F) {
-//      writeShortJmpBack(label);
-//   }
-//   else writeNearJmpBack(label);
-//}
+void AMD64LabelHelper::writeJmpBack(int label)
+{
+   int offset = (int)labels.get(label) - (int)code->Position();
+
+   if (abs(offset) < 0x7F) {
+      writeShortJmpBack(label);
+   }
+   else writeNearJmpBack(label);
+}
 
 void AMD64LabelHelper::writeNearJmpBack(int label)
 {

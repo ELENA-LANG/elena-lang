@@ -46,26 +46,27 @@ const int coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded gc commands
-const int gcCommandNumber = /*138*/93;
+const int gcCommandNumber = /*138*/111;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
    bcReserve, bcPushSIP, bcStoreSI, bcPeekSI, bcThrow,
-   bcClose,
-   bcPeekFI, bcStoreFI, bcAllocI,
-   bcRestore, bcPushF,
+   bcCallVI, bcClose, bcNew,
+   bcPeekFI, bcStoreFI, bcAllocI, bcVCallRM,
+   bcMTRedirect, bcRestore, bcPushF,
+   bcCopyF,
    bcPushAI, bcGetI,
    bcSetI, bcXSetI,
    bcClass, bcXSaveF, bcLen, bcSave,
-   bcNEqual, bcNLess, bcSNop,
+   bcSelect, bcNEqual, bcNLess, bcSNop,
    bcSaveF, bcLoad, bcUnhook,
-   bcFlag, bcFreeLock,
+   bcFlag, bcFreeLock, bcGet,
    bcMovN, bcCloneF, bcInc,
-   bcDiv,
+   bcInclude, bcDiv,
    bcNShlF, bcNShrF,
    bcRead, bcExclude,
    bcLoadFI, bcEqual, bcNAndF, bcNOrF, bcNXorF,
-   bcCoalesce, bcLAddF,
+   bcCoalesce, bcXSelectR, bcLAddF,
    bcLMulF, bcLDivF, bcLShlF, bcLShrF, bcLAndF,
    bcLEqual, bcLLess, bcSaveI,
    bcLoadI,
@@ -74,24 +75,24 @@ const int gcCommands[gcCommandNumber] =
    bcRAddF, bcRSubF, bcRMulF, bcRDivF,
    bcRIntF, bcRLoad, bcAddF,
    bcClone, bcSubF,
-   bcLoadVerb, bcSetV,
-   bcStoreV,
-   bcRExp, bcRLn,
+   bcLoadVerb, bcSetV, bcCount,
+   bcPushVerb, bcMQuit, bcStoreV,
+   bcRExp, bcRSin, bcRArcTan, bcRLn,
    bcXSave, bcXLoad, bcXAddF, bcLSubF,
-   bcMul, bcPeek,
+   bcMul, bcPeek, bcSwap,
    bcLoadF,
-   bcXSet,
-   bcMIndex,
+   bcSwapD, bcXSet,
+   bcMIndex, bcParent, bcCheckSI,
    bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF,
    bcNAddF, bcNMulF, bcNSubF, bcNDivF,
 };
 
-const int gcCommandExNumber = 3;
+const int gcCommandExNumber = 13;
 const int gcCommandExs[gcCommandExNumber] =
 {
-   //bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
-   //bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
-   //bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
+   bcMTRedirect + 0x100, bcXMTRedirect + 0x100,
+   bcMTRedirect + 0x200, bcXMTRedirect + 0x200,
+   bcMTRedirect + 0xC00, bcXMTRedirect + 0xC00,
    //bcCreateN + 0x100, bcCreateN + 0x200, bcCreateN + 0x300, bcCreateN + 0x400,
    //bcXWrite + 0x100, bcXWrite + 0x200, bcXWrite + 0x300, bcXWrite + 0x400,
    //bcReadToF + 0x100, bcReadToF + 0x200, bcReadToF + 0x300, bcReadToF + 0x400,
@@ -99,7 +100,7 @@ const int gcCommandExs[gcCommandExNumber] =
    //bcCopyToF + 0x100, bcCopyToF + 0x200, bcCopyToF + 0x300, bcCopyToF + 0x400,
    //bcCopyToFI + 0x100, bcCopyToFI + 0x200, bcCopyToFI + 0x300, bcCopyToFI + 0x400,
    //bcCopyFI + 0x100, bcCopyFI + 0x200, bcCopyFI + 0x300, bcCopyFI + 0x400,
-   //bcCopyF + 0x100, bcCopyF + 0x200, bcCopyF + 0x300, bcCopyF + 0x400,
+   bcCopyF + 0x100, bcCopyF + 0x200, bcCopyF + 0x300, bcCopyF + 0x400,
    //bcCopyAI + 0x100, bcCopyAI + 0x200, bcCopyAI + 0x300, bcCopyAI + 0x400,
    //bcCopyToAI + 0x100, bcCopyToAI + 0x200, bcCopyToAI + 0x300, bcCopyToAI + 0x400,
    //bcMove + 0x100, bcMove + 0x200, bcMove + 0x300, bcMove + 0x400,
@@ -138,9 +139,9 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &loadFOp, &loadFOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadFOp, &compileNop,
 
    &compileDec, &loadIndexOp, &compileRestore, &/*compileALoadR*/compileNop, &loadFPOp, &loadIndexOp, &/*compileIfHeap*/compileNop, &loadIndexOp,
-   &compileOpen, &compileQuitN, &/*loadROp*/compileNop, &/*loadROp*/compileNop, &compileACopyF, &compileACopyS, &/*compileSetR*/compileNop, &/*compileMCopy*/compileNop,
+   &compileOpen, &compileQuitN, &/*loadROp*/compileNop, &/*loadROp*/compileNop, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
-   &/*compileJump*/compileNop, &/*loadVMTIndexOp*/compileNop, &/*loadVMTIndexOp*/compileNop, &compileCallR, &/*compileJumpN*/compileNop, &compileNop, &/*compileHook*/compileNop, &/*compileHook*/compileNop,
+   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &/*compileJumpN*/compileNop, &compileNop, &/*compileHook*/compileNop, &/*compileHook*/compileNop,
    &loadIndexOp, &compileNop, &/*compileNotLessE*/compileNop, &/*compileNotGreaterE*/compileNop, &/*compileElseD*/compileNop, &/*compileIfE*/compileNop, &/*compileElseE*/compileNop, &/*compileIfCount*/compileNop,
 
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
@@ -152,46 +153,46 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &compilePopN, &compileAllocI, &/*loadROp*/compileNop, &/*compileMovV*/compileNop, &/*compileDShiftN*/compileNop, &/*compileDAndN*/compileNop, &loadNOp, &/*compileDOrN*/compileNop,
    &/*loadROp*/compileNop, &/*compileDShiftN*/compileNop, &loadNOp, &/*compileInvokeVMTOffset*/compileNop, &/*loadIndexNOp*/compileNop, &/*loadIndexN4OpX*/compileNop, &/*loadNNOpX*/compileNop, &/*loadNNOpX*/compileNop,
 
-   &/*loadFN4OpX*/compileNop, &/*compileDynamicCreateN*/compileNop, &/*loadFPIndexOp*/compileNop, &/*loadIndexN4OpX*/compileNop, &/*loadFPN4OpX*/compileNop, &/*loadFN4OpX*/compileNop, &/*loadFPN4OpX*/compileNop, &/*loadFN4OpX*/compileNop,
-   &/*compileMTRedirect*/compileNop, &/*compileMTRedirect*/compileNop, &/*compileGreaterN*/compileNop, &/*compileGreaterN*/compileNop, &/*compileLessN*/compileNop, &loadFNOp, &loadFNOp, &loadFNOp,
+   &/*loadFN4OpX*/compileNop, &/*compileDynamicCreateN*/compileNop, &/*loadFPIndexOp*/compileNop, &/*loadIndexN4OpX*/compileNop, &/*loadFPN4OpX*/compileNop, &/*loadFN4OpX*/compileNop, &/*loadFPN4OpX*/compileNop, &loadFN4OpX,
+   &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
 
-   &/*compileCreate*/compileNop, &/*compileCreateN*/compileNop, &/*compileFill*/compileNop, &/*compileSelectR*/compileNop, &/*compileInvokeVMTOffset*/compileNop, &/*compileInvokeVMT*/compileNop, &/*compileSelectR*/compileNop, &/*compileLessN*/compileNop,
+   &compileCreate, &/*compileCreateN*/compileNop, &/*compileFill*/compileNop, &compileSelectR, &compileInvokeVMTOffset, &/*compileInvokeVMT*/compileNop, &compileSelectR, &compileLessN,
    &compileNop, &compileNop, &/*compileIfR*/compileNop, &/*compileElseR*/compileNop, &/*compileIfN*/compileNop, &/*compileElseN*/compileNop, &compileInvokeVMT, &loadFunction,
 };
 
 constexpr int FPOffset = 8;
 
-////// --- x86JITCompiler commands ---
-////
-////inline void compileJump(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-////{
-////   // jmp   lbEnding
-////   if (!forwardJump) {
-////      scope.lh.writeJmpBack(label);
-////   }
-////   else {
-////      // if it is forward jump, try to predict if it is short
-////      if (shortJump) {
-////         scope.lh.writeShortJmpForward(label);
-////      }
-////      else scope.lh.writeJmpForward(label);
-////   }
-////}
-////
-////inline void compileJumpX(x86JITScope& scope, int label, bool forwardJump, bool shortJump, x86Helper::x86JumpType prefix)
-////{
-////   if (!forwardJump) {
-////      scope.lh.writeJxxBack(prefix, label);
-////   }
-////   else {
-////      // if it is forward jump, try to predict if it is short
-////      if (shortJump) {
-////         scope.lh.writeShortJxxForward(label, prefix);
-////      }
-////      else scope.lh.writeJxxForward(label, prefix);
-////   }
-////}
-////
+// --- I64JITCompiler commands ---
+
+inline void compileJump(I64JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jmp   lbEnding
+   if (!forwardJump) {
+      scope.lh.writeJmpBack(label);
+   }
+   else {
+      // if it is forward jump, try to predict if it is short
+      if (shortJump) {
+         scope.lh.writeShortJmpForward(label);
+      }
+      else scope.lh.writeJmpForward(label);
+   }
+}
+
+inline void compileJumpX(I64JITScope& scope, int label, bool forwardJump, bool shortJump, AMD64Helper::AMD64JumpType prefix)
+{
+   if (!forwardJump) {
+      scope.lh.writeJxxBack(prefix, label);
+   }
+   else {
+      // if it is forward jump, try to predict if it is short
+      if (shortJump) {
+         scope.lh.writeShortJxxForward(label, prefix);
+      }
+      else scope.lh.writeJxxForward(label, prefix);
+   }
+}
+
 ////inline void compileJumpIf(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
 ////{
 ////   // jnz   lbEnding
@@ -215,19 +216,31 @@ constexpr int FPOffset = 8;
 ////   // jb   lbEnding
 ////   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JB);
 ////}
-////
-//////inline void compileJumpGreater(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-//////{
-//////   // jg   lbEnding
-//////   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JG);
-//////}
-////
-////inline void compileJumpLess(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
-////{
-////   // jl   lbEnding
-////   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JL);
-////}
-////
+
+inline void compileJumpGreater(I64JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jg   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, AMD64Helper::JUMP_TYPE_JG);
+}
+
+inline void compileJumpLess(I64JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, AMD64Helper::JUMP_TYPE_JL);
+}
+
+inline void compileJumpNotLess(I64JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jnl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, AMD64Helper::JUMP_TYPE_JGE);
+}
+
+inline void compileJumpNotGreater(I64JITScope& scope, int label, bool forwardJump, bool shortJump)
+{
+   // jl   lbEnding
+   compileJumpX(scope, label, forwardJump, shortJump, AMD64Helper::JUMP_TYPE_JLE);
+}
+
 ////inline void compileJumpLessOrEqual(x86JITScope& scope, int label, bool forwardJump, bool shortJump)
 ////{
 ////   // jle   lbEnding
@@ -239,6 +252,11 @@ constexpr int FPOffset = 8;
 ////   // jge   lbEnding
 ////   compileJumpX(scope, label, forwardJump, shortJump, x86Helper::JUMP_TYPE_JGE);
 ////}
+
+void _ELENA_::compileJump(int, I64JITScope& scope)
+{
+   ::compileJump(scope, scope.tape->Position() + scope.argument, (scope.argument > 0), (__abs(scope.argument) < 0x10));
+}
 
 void _ELENA_::loadCoreOp(I64JITScope& scope, char* code)
 {
@@ -360,32 +378,36 @@ void _ELENA_::loadOneByteLOp(int opcode, I64JITScope& scope)
    scope.code->write(code, *(pos_t*)(code - 4));
 }
 
-////void _ELENA_::loadROp(int opcode, x86JITScope& scope)
-////{
-////   char*  code = (char*)scope.compiler->_inlines[opcode];
-////   size_t position = scope.code->Position();
-////   size_t length = *(size_t*)(code - 4);
-////
-////   // simply copy correspondent inline code
-////   scope.code->write(code, length);
-////
-////   // resolve section references
-////   int count = *(int*)(code + length);
-////   int* relocation = (int*)(code + length + 4);
-////   while (count > 0) {
-////      // locate relocation position
-////      scope.code->seek(position + relocation[1]);
-////
-////      if (relocation[0] == -1) {
-////         scope.writeReference(*scope.code, scope.argument, 0);
-////      }
-////      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-////
-////      relocation += 2;
-////      count--;
-////   }
-////   scope.code->seekEOF();
-////}
+
+void _ELENA_::loadROp(int opcode, I64JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   pos_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         if (scope.argument == 0) {
+            scope.code->writeDWord(0);
+         }
+         else scope.writeReference(*scope.code, scope.argument, 0);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
 
 void _ELENA_::loadIndexOp(int opcode, I64JITScope& scope)
 {
@@ -414,33 +436,33 @@ void _ELENA_::loadIndexOp(int opcode, I64JITScope& scope)
    scope.code->seekEOF();
 }
 
-////void _ELENA_::loadVMTIndexOp(int opcode, x86JITScope& scope)
-////{
-////   char*  code = (char*)scope.compiler->_inlines[opcode];
-////   size_t position = scope.code->Position();
-////   size_t length = *(size_t*)(code - 4);
-////
-////   // simply copy correspondent inline code
-////   scope.code->write(code, length);
-////
-////   // resolve section references
-////   int count = *(int*)(code + length);
-////   int* relocation = (int*)(code + length + 4);
-////   while (count > 0) {
-////      // locate relocation position
-////      scope.code->seek(position + relocation[1]);
-////
-////      if (relocation[0] == -1) {
-////         scope.code->writeDWord((scope.argument << 3) + 4);
-////      }
-////      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-////
-////      relocation += 2;
-////      count--;
-////   }
-////   scope.code->seekEOF();
-////}
-////
+void _ELENA_::loadVMTIndexOp(int opcode, I64JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   pos_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord((scope.argument << 3) + 4);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 //////void _ELENA_::loadVMTMIndexOp(int opcode, x86JITScope& scope)
 //////{
 //////   char*  code = (char*)scope.compiler->_inlines[opcode];
@@ -612,6 +634,147 @@ void _ELENA_::loadFOp(int opcode, I64JITScope& scope)
 //   scope.code->seekEOF();
 //}
 
+void _ELENA_::loadFN4OpX(int opcode, I64JITScope& scope, int prefix)
+{
+   int arg2 = scope.tape->getDWord();
+   char* code = nullptr;
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      if (gcCommandExs[i] == opcode + prefix) {
+         code = (char*)scope.compiler->_inlineExs[i];
+         break;
+      }
+   }
+
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(getFPOffset(scope.argument, FPOffset));
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadFN4OpX(int opcode, I64JITScope& scope)
+{
+   pos_t pos = scope.tape->Position();
+   int arg2 = scope.tape->getDWord();
+   scope.tape->seek(pos);
+
+   switch (arg2) {
+   case 1:
+      loadFN4OpX(opcode, scope, 0x100);
+      break;
+   case 2:
+      loadFN4OpX(opcode, scope, 0x200);
+      break;
+   case 3:
+      loadFN4OpX(opcode, scope, 0x300);
+      break;
+   case 4:
+      loadFN4OpX(opcode, scope, 0x400);
+      break;
+   default:
+      loadFNOp(opcode, scope);
+      break;
+   }
+}
+
+void _ELENA_::loadMTOp(int opcode, I64JITScope& scope)
+{
+   char* code = (char*)scope.compiler->_inlines[opcode];
+   pos_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.writeReference(*scope.code, scope.argument, 0);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(scope.extra_arg);
+      }
+      else if (relocation[0] == -3) {
+         scope.code->writeDWord(scope.extra_arg2);
+      }
+      else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
+         scope.helper->writeMTReference(*scope.code);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadMTOpX(int opcode, I64JITScope& scope, int prefix)
+{
+   char* code = NULL;
+   for (int i = 0; i < gcCommandExNumber; i++) {
+      if (gcCommandExs[i] == opcode + prefix) {
+         code = (char*)scope.compiler->_inlineExs[i];
+         break;
+      }
+   }
+
+   pos_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.writeReference(*scope.code, scope.argument, 0);
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(scope.extra_arg);
+      }
+      else if (relocation[0] == -3) {
+         scope.code->writeDWord(scope.extra_arg2);
+      }
+      else if (relocation[0] == (CORE_MESSAGE_TABLE | mskPreloadDataRef)) {
+         scope.helper->writeMTReference(*scope.code);
+      }
+      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 inline void freeStack(int args, MemoryWriter* code)
 {
    // add esp, arg
@@ -769,6 +932,7 @@ void _ELENA_::compileBreakpoint(int, I64JITScope& scope)
 void _ELENA_::compilePush(int opcode, I64JITScope& scope)
 {
    if (opcode == bcPushR && scope.bigAddressMode && !scope.argument) {
+      scope.code->writeByte(0x48);
       scope.code->writeByte(0x68);
       scope.writeReference(*scope.code, scope.argument, 0);
       scope.code->writeDWord(0);
@@ -781,7 +945,6 @@ void _ELENA_::compilePush(int opcode, I64JITScope& scope)
       }
       else scope.code->writeDWord(scope.argument);
    }
-
 }
 
 ////void _ELENA_::compilePopE(int, x86JITScope& scope)
@@ -796,29 +959,6 @@ void _ELENA_::compilePopD(int, I64JITScope& scope)
    scope.code->writeByte(0x5B);
 }
 
-////void _ELENA_::compileSCopyF(int, x86JITScope& scope)
-////{
-////   // lea esp, [ebp - level * 4]
-////
-////   x86Helper::leaRM32disp(scope.code, x86Helper::otESP, x86Helper::otEBP, -(scope.argument << 2));
-////}
-////
-////void _ELENA_::compileALoadAI(int, x86JITScope& scope)
-////{
-////   // mov eax, [eax + __arg * 4]
-////
-////   scope.code->writeWord(0x808B);
-////   scope.code->writeDWord(scope.argument << 2);
-////}
-////
-////void _ELENA_::compilePushS(int, x86JITScope& scope)
-////{
-////   // push [esp+offset]
-////   scope.code->writeWord(0xB4FF);
-////   scope.code->writeByte(0x24);
-////   scope.code->writeDWord(scope.argument << 2);
-////}
-////
 ////void _ELENA_::compileJump(int, x86JITScope& scope)
 ////{
 ////   ::compileJump(scope, scope.tape->Position() + scope.argument, (scope.argument > 0), (__abs(scope.argument) < 0x10));
@@ -986,32 +1126,72 @@ void _ELENA_::compileQuitN(int, I64JITScope& scope)
 ////   scope.code->writeWord(0xC43B);
 ////   compileJumpBelow(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (__abs(jumpOffset) < 0x10));
 ////}
-////
-////void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
-////{
-////   // HOT FIX : reverse the argument order
-////   ref_t vmtRef = scope.argument;
-////   scope.argument = scope.tape->getDWord();
-////
-////   scope.argument <<= 2;
-////
-////   // mov ecx, #gc_page + (length - 1)
-////   scope.code->writeByte(0xB9);
-////   scope.code->writeDWord(align(scope.argument + scope.objectSize, gcPageSize));
-////
-////   //NOTE : empty length should be equal to 800000h
-////   // due to current GC algorithm
-////   if (scope.argument == 0)
-////      scope.argument = 0x800000;
-////
-////   loadNOp(opcode, scope);
-////
-////   // set vmt reference
-////   // mov [eax-4], vmt
-////   scope.code->writeWord(0x40C7);
-////   scope.code->writeByte(0xFC);
-////   scope.writeReference(*scope.code, vmtRef, 0);
-////}
+
+void _ELENA_::compileMTRedirect(int op, I64JITScope& scope)
+{
+   scope.extra_arg = scope.tape->getDWord();
+   scope.extra_arg2 = getArgCount(scope.extra_arg);
+
+   int startArg = 1;
+   if (test(scope.extra_arg, FUNCTION_MESSAGE)) {
+      startArg = 0;
+      scope.extra_arg2++;
+   }
+   //   else scope.extra_arg = 4;
+
+      // ; lea  eax, [esp + offs]
+   AMD64Helper::leaRM64disp(scope.code, AMD64Helper::otRAX, AMD64Helper::otRSP, startArg << 3);
+
+   if (test(scope.extra_arg, VARIADIC_MESSAGE)) {
+      loadMTOpX(op, scope, 0xC00);
+   }
+   else {
+      switch (getArgCount(scope.extra_arg) - startArg) {
+      case 1:
+         loadMTOpX(op, scope, 0x100);
+         break;
+      case 2:
+         loadMTOpX(op, scope, 0x200);
+         break;
+      default:
+         loadMTOp(op, scope);
+         break;
+      }
+   }
+}
+
+void _ELENA_::compileCreate(int opcode, I64JITScope& scope)
+{
+   // HOT FIX : reverse the argument order
+   ref_t vmtRef = scope.argument;
+   scope.argument = scope.tape->getDWord();
+
+   scope.argument <<= 2;
+   int length = scope.argument;
+
+   // __arg1 = #gc_page + (length - 1)
+   scope.argument = align(scope.argument + scope.objectSize, gcPageSize32);
+
+   loadNOp(opcode, scope);
+
+   // NOTE : empty length should be equal to 800000h
+   // due to current GC algorithm
+   if (length == 0)
+      length = 0x800000;
+
+   // mov [ebx-elPageSizeOffset], length
+   scope.code->writeWord(0x43C7);
+   scope.code->writeByte((unsigned char)-elPageSizeOffset32);
+   scope.code->writeDWord(length);
+
+   if (vmtRef) {
+      // ; set vmt reference
+      // mov [ebx-elPageVMTOffset], vmt
+      scope.code->writeWord(0x43C7);
+      scope.code->writeByte((unsigned char)-elPageVMTOffset32);
+      scope.writeReference(*scope.code, vmtRef, 0);
+   }
+}
 ////
 ////void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
 ////{
@@ -1035,47 +1215,47 @@ void _ELENA_::compileQuitN(int, I64JITScope& scope)
 ////   scope.code->writeByte(0xFC);
 ////   scope.writeReference(*scope.code, vmtRef, 0);
 ////}
-////
-////void _ELENA_::compileSelectR(int opcode, x86JITScope& scope)
-////{
-////   // HOT FIX : reverse the argument order
-////   ref_t r1 = scope.argument;
-////   scope.argument = scope.tape->getDWord();
-////
-////   if (opcode == bcSelectR) {
-////      // mov  eax, r1
-////      scope.code->writeByte(0xB8);
-////      scope.writeReference(*scope.code, r1, 0);
-////   }
-////   else {
-////      // mov  edx, r1
-////      scope.code->writeByte(0xBA);
-////      scope.writeReference(*scope.code, r1, 0);
-////   }
-////
-////   loadROp(opcode, scope);
-////}
-//
-//void _ELENA_::compileACopyR(int, AMD64JITScope& scope)
-//{
-//   // mov eax, r
-//   scope.code->writeByte(0xB8);
-//   if (scope.argument == 0) {
-//      scope.code->writeDWord(0);
-//   }
-//   else if (scope.argument == -1) {
-//      scope.code->writeDWord((pos_t)-1);
-//   }
-//   else scope.writeReference(*scope.code, scope.argument, 0);
-//}
-//
-////void _ELENA_::compileBCopyR(int, x86JITScope& scope)
-////{
-////   // mov edi, r
-////   scope.code->writeByte(0xBF);
-////   scope.writeReference(*scope.code, scope.argument, 0);
-////}
-//
+
+void _ELENA_::compileSelectR(int opcode, I64JITScope& scope)
+{
+   // HOT FIX : reverse the argument order
+   ref_t r1 = scope.argument;
+   scope.argument = scope.tape->getDWord();
+
+   if (opcode == bcSelect) {
+      // mov ebx, r1
+      scope.code->writeByte(0xBB);
+      scope.writeReference(*scope.code, r1, 0);
+   }
+   else {
+      // mov  eax, r1
+      scope.code->writeByte(0xB8);
+      scope.writeReference(*scope.code, r1, 0);
+   }
+
+   loadROp(opcode, scope);
+}
+
+
+void _ELENA_::compileSetR(int, I64JITScope& scope)
+{
+   // mov rbx, r
+   if (scope.argument == -1 || !scope.argument) {
+      scope.code->writeByte(0xBB);
+      scope.code->writeDWord((pos_t)scope.argument);
+   }
+   else if (scope.bigAddressMode) {
+      scope.code->writeByte(0x48);
+      scope.code->writeByte(0xBB);
+      scope.writeReference(*scope.code, scope.argument, 0);
+      scope.code->writeDWord(0);
+   }
+   else {
+      scope.code->writeByte(0xBB);
+      scope.writeReference(*scope.code, scope.argument, 0);
+   }
+}
+
 //void _ELENA_::compileDCopy(int, AMD64JITScope& scope)
 //{
 //   // mov ebx, i
@@ -1206,7 +1386,7 @@ void _ELENA_::compilePushA(int, I64JITScope& scope)
    scope.code->writeByte(0x50);
 }
 
-void _ELENA_::compilePushFI(int op, I64JITScope& scope)
+void _ELENA_::compilePushFI(int, I64JITScope& scope)
 {
    scope.code->writeWord(0xB5FF);
    // push [rbp-level*4]
@@ -1312,35 +1492,35 @@ void _ELENA_::compilePopA(int, I64JITScope& scope)
 ////   scope.code->writeWord(0xEB83);
 ////   scope.code->writeByte(1);
 ////}
-//
-//void _ELENA_::compileInvokeVMTOffset(int opcode, AMD64JITScope& scope)
-//{
-//   ref64_t message = scope.resolveMessage(scope.tape->getDWord());
-//
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0] == -1) {
-//         // resolve message offset
-//         scope.writeXReference(*scope.code, scope.argument | mskVMTEntryOffset, message);
-//      }
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
+
+void _ELENA_::compileInvokeVMTOffset(int opcode, I64JITScope& scope)
+{
+   ref64_t message = scope.resolveMessage(scope.tape->getDWord());
+
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         // resolve message offset
+         scope.writeReference(*scope.code, scope.argument | mskVMTEntryOffset, message);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
 
 void _ELENA_::compileInvokeVMT(int opcode, I64JITScope& scope)
 {
@@ -1439,19 +1619,35 @@ void _ELENA_::compileACopyS(int, I64JITScope& scope)
 ////   scope.code->writeDWord(scope.argument);
 ////   compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
 ////}
-////
-////void _ELENA_::compileLessN(int, x86JITScope& scope)
-////{
-////   int jumpOffset = scope.tape->getDWord();
-////
-////   // cmp ebx, n
-////   // jz lab
-////
-////   scope.code->writeWord(0xFB81);
-////   scope.code->writeDWord(scope.argument);
-////   compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
-////}
-////
+
+void _ELENA_::compileGreaterN(int op, I64JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+
+   // cmp edx, n
+   // jz lab
+   scope.code->writeWord(0xFA81);
+   scope.code->writeDWord(scope.argument);
+   if (op == bcGreaterN) {
+      compileJumpGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+   }
+   else compileJumpNotGreater(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
+
+void _ELENA_::compileLessN(int op, I64JITScope& scope)
+{
+   int jumpOffset = scope.tape->getDWord();
+
+   // cmp edx, n
+   // jz lab
+   scope.code->writeWord(0xFA81);
+   scope.code->writeDWord(scope.argument);
+   if (op == bcLessN) {
+      compileJumpLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+   }
+   else compileJumpNotLess(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));
+}
+
 ////void _ELENA_::compileSetVerb(int, x86JITScope& scope)
 ////{
 ////   // and ecx, VERB_MASK
@@ -1591,6 +1787,13 @@ void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
    }
 }
 
+void _ELENA_::compileMCopy(int, I64JITScope& scope)
+{
+   // mov edx, message
+   scope.code->writeByte(0xBA);
+   scope.code->writeDWord(scope.resolveMessage(scope.argument));
+}
+
 void _ELENA_::compileRestore(int op, I64JITScope& scope)
 {
    scope.argument += 16; // include EIP & EBP 
@@ -1618,11 +1821,13 @@ I64JITScope :: I64JITScope(MemoryReader* tape, MemoryWriter* code, _ReferenceHel
    this->helper = helper;
    this->compiler = compiler;
    this->withDebugInfo = compiler->isWithDebugInfo();
-   //this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
+   this->objectSize = helper ? helper->getLinkerConstant(lnObjectSize) : 0;
    this->module = nullptr;
    this->frameOffset = 0;
    this->bigAddressMode = bigAddressMode;
    this->argument = 0;
+   this->extra_arg = 0;
+   this->extra_arg2 = 0;
 }
 
 void I64JITScope::writeReference(MemoryWriter& writer, ref_t reference, pos_t disp)

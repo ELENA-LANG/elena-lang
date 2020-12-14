@@ -20,6 +20,7 @@
        <include>control.l</include>
        <include>memory.l</include>
        <include>win64_pointers.l</include>
+       <include>win64_strings.l</include>
        <include>dynamic.l</include>
        <include>extensions.l</include>
        <include>exceptions.l</include>
