@@ -68,7 +68,7 @@
       <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
       <OutputFile>$(OutDir)elide.exe</OutputFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(OutDir)elide64.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>$(OutDir)elide.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
@@ -89,7 +89,7 @@
       <AdditionalIncludeDirectories>..\..\gui;..\..\common;..\..\engine;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <OutputFile>$(OutDir)elide64.exe</OutputFile>
+      <OutputFile>$(OutDir)elide.exe</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
