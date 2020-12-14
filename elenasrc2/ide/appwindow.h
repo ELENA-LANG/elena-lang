@@ -106,15 +106,15 @@ class IDEController : public _Controller
 
    struct MarkerInfo
    {
-      HighlightInfo info;
-      int           style;
-      int           bandStyle;
+      HighlightInfo  info;
+      _ELENA_::pos_t style;
+      _ELENA_::pos_t bandStyle;
 
       MarkerInfo()
       {
          this->bandStyle = -1;
       }
-      MarkerInfo(HighlightInfo info, int bandStyle, int style)
+      MarkerInfo(HighlightInfo info, _ELENA_::pos_t bandStyle, _ELENA_::pos_t style)
       {
          this->info = info;
          this->style = style;
@@ -130,12 +130,12 @@ class IDEController : public _Controller
       MarkerInfo     _current;
 
       bool           _bracketHighlighting;
-      size_t         _openBracketPos, _closeBracketPos;
+      int            _openBracketPos, _closeBracketPos;
 
    public:
-      bool checkMarker(MarkerInfo& marker, LexicalInfo& li, size_t& styleLen);
+      bool checkMarker(MarkerInfo& marker, LexicalInfo& li, _ELENA_::pos_t& styleLen);
 
-      virtual bool addMarker(HighlightInfo info, int bandStyle, int style)
+      virtual bool addMarker(HighlightInfo info, _ELENA_::pos_t bandStyle, _ELENA_::pos_t style)
       {
          if (bandStyle == STYLE_TRACE_LINE || bandStyle == STYLE_ERROR_LINE) {
             _current.info = info;
@@ -157,7 +157,7 @@ class IDEController : public _Controller
          return false;
       }
 
-      virtual void removeMarker(int row, int bandStyle)
+      virtual void removeMarker(int row, _ELENA_::pos_t bandStyle)
       {
          if (bandStyle == STYLE_HIGHLIGHTED_BRACKET) {
             _bracketHighlighting = false;
@@ -165,10 +165,10 @@ class IDEController : public _Controller
          else _current.bandStyle = -1;
       }
 
-      size_t proceed(size_t position, LexicalInfo& info);
+      _ELENA_::pos_t proceed(_ELENA_::pos_t position, LexicalInfo& info);
 
-      IDELexicalStyler(IDEController* ide, Text* text, int defaultStyle, text_c lookaheadState, text_c startState,
-         text_c(*makeStep)(text_c ch, text_c state), size_t(*defineStyle)(text_c state, size_t style))
+      IDELexicalStyler(IDEController* ide, Text* text, _ELENA_::pos_t defaultStyle, text_c lookaheadState, text_c startState,
+         text_c(*makeStep)(text_c ch, text_c state), _ELENA_::pos_t(*defineStyle)(text_c state, _ELENA_::pos_t style))
          : LexicalStyler(text, defaultStyle, lookaheadState, startState, makeStep, defineStyle)
       {
          _bracketHighlighting = false;

@@ -62,7 +62,7 @@ text_c makeStep(text_c ch, text_c state)
    return (unsigned)ch < 128 ? lexDFA[state - lexStart][ch] : lexDFA[state - lexStart][127];
 }
 
-size_t defineStyle(text_c state, size_t style)
+_ELENA_::pos_t defineStyle(text_c state, _ELENA_::pos_t style)
 {
    switch (state) {
       case lexStart:
@@ -106,7 +106,7 @@ inline size_t evaluateLength(_GUI_::TextBookmark& bookmark, int column)
    return bm.getPosition() - bookmark.getPosition();
 }
 
-bool IDEController::IDELexicalStyler :: checkMarker(MarkerInfo& marker, LexicalInfo& li, size_t& styleLen)
+bool IDEController::IDELexicalStyler :: checkMarker(MarkerInfo& marker, LexicalInfo& li, _ELENA_::pos_t& styleLen)
 {
    if (marker.info.row == li.row) {
       int col = marker.info.col;
@@ -129,9 +129,9 @@ bool IDEController::IDELexicalStyler :: checkMarker(MarkerInfo& marker, LexicalI
    return false;
 }
 
-size_t IDEController::IDELexicalStyler :: proceed(size_t position, LexicalInfo& li)
+_ELENA_::pos_t IDEController::IDELexicalStyler :: proceed(_ELENA_::pos_t position, LexicalInfo& li)
 {
-   size_t styleLen = 0xFF; // !! temporal
+   _ELENA_::pos_t styleLen = 0xFF; // !! temporal
 
    if (_current.bandStyle != -1 && checkMarker(_current, li, styleLen)) {
       // set marker attribute if the breakpoint is set on the same line
@@ -167,7 +167,7 @@ size_t IDEController::IDELexicalStyler :: proceed(size_t position, LexicalInfo& 
 
       // highlight bracket
       if (_bracketHighlighting) {
-         size_t position = li.bm.getPosition();
+         _ELENA_::pos_t position = li.bm.getPosition();
          if (position == _openBracketPos || position == _closeBracketPos) {
             li.style = STYLE_HIGHLIGHTED_BRACKET;
 

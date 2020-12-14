@@ -10,6 +10,7 @@
 #include "debugger.h"
 #include "..\idecommon.h"
 #include "win32\pehelper.h"
+#include "elenamachine.h"
 
 using namespace _ELENA_;
 
@@ -707,25 +708,30 @@ bool Debugger :: findSignature(StreamReader& reader, char* signature)
    return true;
 }
 
-bool Debugger :: initDebugInfo(bool standalone, StreamReader& reader, size_t& debugInfoPtr)
+bool Debugger :: initDebugInfo(bool standAlone, StreamReader& reader, size_t& debugInfoPtr)
 {
-   if (standalone) {
-      reader.seek((pos64_t)baseAddress);
+   size_t rdata = 0;
+   PEHelper::seekSection(reader, ".rdata", rdata);
 
-      _ELENA_::PEHelper::seekSection(reader, ".debug", debugInfoPtr);
-   }
-   else if (_vmHook == 0) {
-      size_t rdata = Context()->readDWord(0x4000D0);
-      //HOTFIX : the actual length should be used
-      _vmHook = Context()->readDWord(rdata + 0x400000 + _ELENA_::alignSize(strlen(ELENACLIENT_SIGNITURE) + 3, 4));
-
-      // enable debug mode
-      Context()->writeDWord(_vmHook, -1);
-
+   if (standAlone) {
+      // is not supported for a standalone - dn file should be used 
       return false;
    }
-   // load VM debug section address
-   else debugInfoPtr = Context()->readDWord(_vmHook + 4);
+   else {
+      // read SystemEnv
+      SystemEnv env;
+      Context()->readDump(Context()->readDWord(rdata), (char*)&env, sizeof(SystemEnv));
 
+      // read Table
+      GCTable table;
+      Context()->readDump((size_t)env.Table, (char*)&table, sizeof(GCTable));
+
+      if (table.dbg_ptr != 0) {
+         debugInfoPtr = table.dbg_ptr;
+
+         return true;
+      }
+      else return false;
+   }
    return true;
 }

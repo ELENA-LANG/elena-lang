@@ -368,6 +368,7 @@ template <class Key, class T, bool KeyStored = true> struct _MapItem
 
 // --- MemoryMapItem structure ---
 
+#pragma pack(push, 1)
 template <class Key, class T, bool KeyStored> struct _MemoryMapItem
 {
    unsigned int next; // offset from the memory dump begining
@@ -716,6 +717,7 @@ template <class Key, class T> struct _Memory32MapItem
       this->next = next;
    }
 };
+#pragma pack(pop)
 
 //struct _IntItem
 //{

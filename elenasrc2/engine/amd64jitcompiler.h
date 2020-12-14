@@ -143,7 +143,6 @@ public:
 
    virtual vaddr_t getInvoker();
 
-   virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateSymbolCall(MemoryDump& tape, vaddr_t address);
    virtual void generateProgramEnd(MemoryDump& tape);
 

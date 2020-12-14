@@ -54,9 +54,9 @@ class LexicalStyler : public _TextWatcher
 
    // Lexical parser functions
    text_c(*_makeStep)   (text_c ch, text_c state);
-   size_t(*_defineStyle)(text_c state, size_t style);
+   _ELENA_::pos_t(*_defineStyle)(text_c state, _ELENA_::pos_t style);
 
-   int retrievePosition(_ELENA_::pos_t position)
+   _ELENA_::pos_t retrievePosition(_ELENA_::pos_t position)
    {
       position = (position >> INDEX_ORDER);
 
@@ -85,16 +85,16 @@ public:
 
    virtual _ELENA_::pos_t proceed(_ELENA_::pos_t position, LexicalInfo& info);
 
-   virtual bool addMarker(HighlightInfo info, int bandStyle, int style)
+   virtual bool addMarker(HighlightInfo info, _ELENA_::pos_t bandStyle, _ELENA_::pos_t style)
    {
       return false;
    }
-   virtual void removeMarker(int row, int bandStyle)
+   virtual void removeMarker(int row, _ELENA_::pos_t bandStyle)
    {
    }
 
-   LexicalStyler(Text* text, int defaultStyle, text_c lookaheadState, text_c startState,
-      text_c(*makeStep)(text_c ch, text_c state), size_t(*defineStyle)(text_c state, size_t style));
+   LexicalStyler(Text* text, _ELENA_::pos_t defaultStyle, text_c lookaheadState, text_c startState,
+      text_c(*makeStep)(text_c ch, text_c state), _ELENA_::pos_t(*defineStyle)(text_c state, _ELENA_::pos_t style));
 };
 
 // --- Document ---
@@ -311,7 +311,7 @@ public:
 
    void save(_ELENA_::path_t path);
 
-   bool addMarker(HighlightInfo info, int bandStyle, int style, bool withCursor = true)
+   bool addMarker(HighlightInfo info, _ELENA_::pos_t bandStyle, _ELENA_::pos_t style, bool withCursor = true)
    {
       if (info.col == 0) {
          info.col = retrieveColumn(info.row, info.disp);
@@ -328,7 +328,7 @@ public:
       else return false;
    }
 
-   void removeMarker(int row, int bandStyle)
+   void removeMarker(int row, _ELENA_::pos_t bandStyle)
    {
       if (_styler) {
          _styler->removeMarker(row, bandStyle);

@@ -1881,18 +1881,6 @@ void I64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& 
 //   //writer.seekEOF();
 //}
 
-void I64JITCompiler :: generateProgramStart(MemoryDump& tape)
-{
-   //JITCompiler64::generateProgramStart(tape);
-
-   //MemoryWriter ecodes(&tape);
-   //ecodes.writeByte(bcCallExtR);
-   //ecodes.writeDWord(INIT | mskPreloadCodeRef);
-
-   //ecodes.writeByte(bcCallExtR);
-   //ecodes.writeDWord(NEWFRAME | mskPreloadCodeRef);
-}
-
 void I64JITCompiler :: generateSymbolCall(MemoryDump& tape, vaddr_t address)
 {
    MemoryWriter ecodes(&tape);

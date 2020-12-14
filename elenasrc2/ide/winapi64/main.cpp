@@ -131,10 +131,10 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int)
 
    // init paths & settings
    Paths::init(&model, appPath, defPath);
-   Settings::init(&model, _T("..\\src50"), _T("..\\lib50"));
+   Settings::init(&model, _T("..\\src50"), _T("..\\lib50_64"));
 
    _ELENA_::Path configPath(model.paths.appPath);
-   configPath.combine(_T("ide.cfg"));
+   configPath.combine(_T("ide64.cfg"));
 
    // load command line arguments
    loadCommandLine(&model, cmdLine, configPath);
@@ -143,7 +143,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE, LPSTR cmdLine, int)
    initControls(hInstance);
 
    IDEController ide;
-   IDEWindow     view(hInstance, _T("IDE"), &ide, &model);
+   IDEWindow     view(hInstance, _T("IDE x64"), &ide, &model);
 
    // init IDE settings
    loadSettings(configPath.c_str(), &model, &view);
