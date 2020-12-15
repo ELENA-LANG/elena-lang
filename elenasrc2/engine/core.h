@@ -15,10 +15,14 @@ namespace _ELENA_
 constexpr int gcPageSize32       = 0x0010;            // a heap page size constant
 constexpr int elObjectOffset32   = 0x0008;            // object header / offset constant
 
+constexpr int gcPageSize64       = 0x0010;            // a heap page size constant
 constexpr int elObjectOffset64   = 0x0008;            // object header / offset constant
 
 constexpr int elPageVMTOffset32  = 0x0008;
 constexpr int elPageSizeOffset32 = 0x0004;
+
+constexpr int elPageVMTOffset64  = 0x0012;
+constexpr int elPageSizeOffset64 = 0x0004;
 
 constexpr int elVMTCountOffset32 = 0x0004;                // a VMT size offset
 constexpr int elVMTClassOffset32 = 0x0010;                // a VMT class offset

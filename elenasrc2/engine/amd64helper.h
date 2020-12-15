@@ -338,11 +338,11 @@ public:
    void writeNearJxxBack(AMD64Helper::AMD64JumpType prefix, int label);
    void writeShortJxxBack(AMD64Helper::AMD64JumpType prefix, int label);
 
-   //void writeLoadForward(int label);
+   void writeLoadForward(int label);
    void writeJmpForward(int label);
    void writeShortJmpForward(int label);
 
-   //void writeLoadBack(int label);
+   void writeLoadBack(int label);
    void writeJmpBack(int label);
    void writeNearJmpBack(int label);
    void writeShortJmpBack(int label);

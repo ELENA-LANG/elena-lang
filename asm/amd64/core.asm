@@ -35,10 +35,14 @@ define elPackageOffset       0018h
 
 define gc_header             0000h
 define gc_start              0008h
+define gc_end                0048h
+
 define gc_et_current         0058h 
 define gc_stack_frame        0060h 
 
+define page_ceil               17h
 define page_size_order          4h
+define page_mask        0FFFFFFF0h
 define struct_mask_inv     7FFFFFh
 
 define ACTION_ORDER              9
@@ -363,6 +367,14 @@ inline % 7
 
 end
 
+// ; push
+inline % 09h
+
+   mov  rax, [rbx + rdx * 4]
+   push rax
+
+end
+
 // ; storev
 inline % 0Dh
 
@@ -420,11 +432,10 @@ inline % 0Fh
 
 end
 
-// ; close
-inline % 15h
+// ; sub
+inline % 13h
 
-  mov  rsp, rbp
-  pop  rbp
+  sub  edx, [ebx]
   
 end
 
@@ -435,6 +446,14 @@ inline % 14h
   mov  [rsp], rdx
   mov  rdx, rax 
 
+end
+
+// ; close
+inline % 15h
+
+  mov  rsp, rbp
+  pop  rbp
+  
 end
 
 // ; rexp
@@ -486,6 +505,20 @@ end
 inline % 18h
 
    mov  rbx, [rbx + rdx * 4]
+
+end
+
+// ; set
+inline % 19h
+                                
+   // ; calculate write-barrier address
+   mov  rcx, rbx
+   mov  rsi, [data : %CORE_GC_TABLE + gc_header]
+   sub  rcx, [data : %CORE_GC_TABLE + gc_start]
+   mov  rax, [rsp]
+   shr  ecx, page_size_order
+   mov  [rbx + rdx*4], rax
+   mov  byte ptr [rcx + rsi], 1  
 
 end
 
@@ -553,6 +586,16 @@ lReduce:
 
 end
 
+// ; rcos
+inline % 20h
+
+  mov   rax, [rsp]
+  fld   qword ptr [rax]  
+  fcos
+  fstp  qword ptr [rbx]    // store result 
+
+end
+
 // ; rarctan
 inline % 21h
 
@@ -576,6 +619,13 @@ inline % 26h
                                                        
   push rbp     
   mov  [data : %CORE_GC_TABLE + gc_stack_frame], rsp
+
+end
+
+// ; trylock
+inline % 27h
+
+  xor  edx, edx
 
 end
 
@@ -645,6 +695,16 @@ inline % 2Fh
    mov  rax, [rsp]                  
    mov  [rbx + rdx * 4], rax
 
+end
+
+// ; rabs
+inline %30h
+
+  mov   rax, [rsp]
+  fld   qword ptr [rax]  
+  fabs
+  fstp  qword ptr [rbx]    // ; store result 
+  
 end
 
 // ; len
@@ -719,6 +779,41 @@ labFound:
 
 end
 
+// ; rround
+inline %3Dh
+
+  mov   rax, [rsp]
+  mov   edx, 0
+  fld   qword ptr [rax]  
+
+  push  rax               // ; reserve space on CPU stack
+
+  fstcw word ptr [rsp]    // ;get current control word
+  mov   rax, [rsp]
+  and   ax,0F3FFh         // ; code it for rounding 
+  push  rax
+  fldcw word ptr [rsp]    // ; change rounding code of FPU to round
+
+  frndint                 // ; round the number
+  pop   rax               // ; get rid of last push
+  fldcw word ptr [rsp]    // ; load back the former control word
+
+  fstsw ax                // ; retrieve exception flags from FPU
+  shr   al,1              // ; test for invalid operation
+  pop   rcx               // ; clean CPU stack
+  jc    short lErr        // ; clean-up and return error
+  
+  fstp  qword ptr [rbx]   // ; store result 
+  mov   edx, 1
+  jmp   short labEnd
+  
+lErr:
+  ffree st(0)
+
+labEnd:
+  
+end
+
 // ; equal
 inline % 3Eh
 
@@ -774,6 +869,15 @@ inline % 44h
 
 end
 
+// ; rset (src, tgt)
+inline % 45h
+
+  push rdx
+  fild dword ptr [rsp]
+  pop  rdx
+
+end
+
 // ; rsave
 inline % 46h
 
@@ -799,6 +903,56 @@ end
 inline % 49h
 
   fistp dword ptr [rbx]
+
+end
+               
+// ; rsavel
+inline % 4Ah
+
+  fistp qword ptr [rbx]
+
+end
+
+// ; lsave
+inline % 4Bh
+
+  mov  [rbx], rdx
+
+end
+
+// ; rint
+inline % 4Fh
+
+  mov   rax, [rsp]
+  mov   ecx, 0
+  fld   qword ptr [rax]
+
+  push  rcx                // reserve space on stack
+  fstcw word ptr [rsp]     // get current control word
+  mov   dx, word ptr [rsp]
+  or    dx,0c00h           // code it for truncating
+  push  rdx
+  fldcw word ptr [rsp]    // change rounding code of FPU to truncate
+
+  frndint                  // truncate the number
+  pop   rdx                // remove modified CW from CPU stack
+  fldcw word ptr [rsp]     // load back the former control word
+  pop   rdx                // clean CPU stack
+      
+  fstsw ax                 // retrieve exception flags from FPU
+  shr   al,1               // test for invalid operation
+  jc    short labErr       // clean-up and return error
+
+labSave:
+  fstp  qword ptr [rbx]    // store result
+  mov   ecx, 1
+  jmp   short labEnd
+  
+labErr:
+  ffree st(1)
+  
+labEnd:
+  mov  edx, ecx
 
 end
 
@@ -861,6 +1015,110 @@ inline %05Bh
 
 end
 
+// ; xwrite
+inline % 5Ch
+
+  mov  rsi, [rsp]
+  mov  ecx, __arg1
+  lea  rdi, [rbx+rdx]
+  rep  movsb
+
+end
+
+// ; xwrite
+inline % 15Ch
+
+  mov  rcx, [rsp]
+  lea  rdi, [rbx+rdx]
+  mov  rax, [rcx]
+  mov  byte ptr [rdi], al
+
+end
+
+// ; xwrite
+inline % 25Ch
+
+  mov  rcx, [rsp]
+  lea  rdi, [rbx+rdx]
+  mov  rax, [rcx]
+  mov  word ptr [rdi], ax
+
+end
+
+// ; xwrite
+inline % 35Ch
+
+  mov  rcx, [rsp]
+  lea  rdi, [rbx+rdx]
+  mov  rax, [rcx]
+  mov  dword ptr [rdi], eax
+
+end
+
+// ; xwrite
+inline % 45Ch
+
+  mov  rcx, [rsp]
+  lea  rdi, [rbx+rdx]
+  mov  rax, [rcx]
+  mov  [rdi], rax
+
+end
+
+// ; copyto
+inline % 5Dh
+
+  lea rdi, [rbx+rdx]
+  mov  ecx, __arg1
+  mov rsi, [rsp]
+  rep movsd
+
+end
+
+// ; copyto
+inline % 15Dh
+
+  mov rsi, [rsp]
+  lea rdi, [rbx+rdx]
+  mov rax, [rsi]
+  mov dword ptr [rdi], eax
+
+end
+
+// ; copyto
+inline % 25Dh
+
+  mov rsi, [rsp]
+  lea rdi, [rbx+rdx]
+  mov rax, [rsi]
+  mov [rdi], rax
+
+end
+
+// ; copyto
+inline % 35Dh
+
+  mov rsi, [rsp]
+  lea rdi, [rbx+rdx]
+  mov rax, [rsi]
+  mov [rdi], rax
+  mov rcx, [rsi+8]
+  mov dword ptr [rdi+8], ecx
+
+end
+
+// ; copyto
+inline % 45Dh
+
+  mov rsi, [rsp]
+  lea rdi, [rbx+rdx]
+  mov rax, [rsi]
+  mov [rdi], rax
+  mov rcx, [rsi+8]
+  mov [rdi+8], rcx
+
+end
+
 // ; nshlf
 inline % 5Eh
 
@@ -905,6 +1163,168 @@ labNext:
   cmovnz rax, rsi
   and    rax, rax
   jnz    short labNext
+
+end
+
+// ; xredirect 
+inline % 062h
+
+  lea  rbx, [rbx + __arg2] // ; NOTE use __arg2 due to current implementation
+  push rbx
+  push rdx 
+
+  mov  rsi, [rbx]   // ; get next overload list
+  test rsi, rsi
+  jz   labEnd
+
+labNextList:
+  xor  edx, edx
+  mov  ebx, dword ptr[rsi] // ; message from overload list
+
+labNextOverloadlist:
+  shr  ebx, ACTION_ORDER
+  mov  rdi, rdata : % CORE_MESSAGE_TABLE
+  mov  rcx, [rsp]
+  mov  rbx, [rdi + rbx * 8 + 4]
+  and  ecx, ARG_MASK
+  lea  rbx, [rdi + rbx - 4]
+  inc  ecx 
+
+labNextParam:
+  sub  ecx, 1
+  jnz  short labMatching
+
+  pop  rax
+  pop  rsi
+  mov  rcx, rdx
+  mov  rsi, [rsi]
+  mov  rbx, [rsp]
+  mov  rdx, [rsi + rcx * 8]
+  jmp  [rsi + rcx * 8 + 4]
+
+labMatching:
+  mov  rdi, [rax + rcx * 4]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx + rcx * 4]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rsi, [rsp+4]
+  add  rdx, 1
+  mov  rsi, [rsi]
+  mov  rbx, [rsi + rdx * 8] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+  add  [rsp+4], 4
+  mov  rsi, [rsp+4]
+  mov  rdx, [rsi]
+  test rdx, rdx
+  jnz  labNextList
+
+labEnd:
+  pop  rdx
+  pop  rbx
+
+end
+
+// ; xvredirect
+inline % 063h
+
+  lea  rbx, [rbx + __arg2] // ; NOTE use __arg2 due to current implementation
+  push rbx
+  push rdx 
+
+  mov  rsi, [rbx]   // ; get next overload list
+  test rsi, rsi
+  jz   labEnd
+
+labNextList:
+  xor  rdx, rdx
+  mov  rbx, rax
+  xor  rcx, rcx
+
+labCountParam:
+  lea  rbx, [rbx+4]
+  cmp  [rbx], -1
+  lea  rcx, [rcx+1]
+  jnz  short labCountParam
+
+  push rcx
+  mov  rbx, [rsi] // ; message from overload list
+
+labNextOverloadlist:
+  mov  rdi, rdata : % CORE_MESSAGE_TABLE
+  shr  ebx, ACTION_ORDER
+  mov  rcx, [rsp]              // ; param count
+  mov  rbx, [rdi + rbx * 8 + 4]
+  lea  rbx, [rdi + rbx - 4]
+
+labNextParam:
+  // ; check if signature contains the next class ptr
+  lea  rsi, [rbx + 4]
+  cmp [rsi], 0
+  cmovnz rbx, rsi
+
+  sub  ecx, 1
+  jnz  short labMatching
+
+  lea  rsp, [rsp + 8]
+  pop  rax
+  pop  rsi
+  mov  rcx, rdx
+  mov  rsi, [rsi]
+  mov  rbx, [rsp]
+  mov  rdx, [rsi + rcx * 8]
+  jmp  [rsi + rcx * 8 + 4]
+
+labMatching:
+  mov  rsi, [rsp]
+  sub  rsi, rcx
+  mov  rdi, [rax + rsi * 4]
+
+  //; check nil
+  mov   rsi, rdata : %VOIDPTR + 4
+  test  rdi, rdi
+  cmovz rdi, rsi
+
+  mov  rdi, [rdi - elVMTOffset]
+  mov  rsi, [rbx]
+
+labNextBaseClass:
+  cmp  rsi, rdi
+  jz   labNextParam
+  mov  rdi, [rdi - elPackageOffset]
+  and  rdi, rdi
+  jnz  short labNextBaseClass
+
+  mov  rsi, [rsp+8]
+  add  rdx, 1
+  mov  rsi, [rsi]
+  mov  rbx, [rsi + rdx * 8] // ; message from overload list
+  and  rbx, rbx
+  jnz  labNextOverloadlist
+
+  add  [rsp+8], 4
+  mov  rsi, [rsp+8]
+  mov  rdx, [rsi]
+  test rdx, rdx
+  jnz  labNextList
+
+labEnd:
+  lea  rsp, [rsp + 8]
+  pop  rdx
+  pop  rbx
 
 end
 
@@ -1155,6 +1575,21 @@ inline % 95h
 
 end
 
+// ; ifheap - part of the command
+inline % 96h
+
+  xor    edx, edx
+  mov    rax,[data : %CORE_GC_TABLE + gc_start]
+  mov    esi, 1
+  mov    rcx,[data : %CORE_GC_TABLE + gc_end]
+  cmp    rbx, rax
+  cmovl  rdx, rsi
+  cmp    rbx, rcx
+  cmovg  rdx, rsi
+  and    rdx, rdx
+
+end
+
 // ; xseti
 inline %97h
 
@@ -1171,6 +1606,38 @@ inline % 98h
 
 end
 
+// ; create
+inline % 9Ah
+
+  mov  rax, [rsp]
+  mov  ecx, page_ceil
+  mov  rdx, [rax]
+  lea  rcx, [rcx + rdx*4]
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   rax, [rsp]
+  xor   edx, edx
+  mov   [rbx-elVMTOffset], __arg1
+  mov   rcx, [rax]
+  mov   esi, 800000h
+  test  ecx, ecx
+  cmovz rdx, rsi
+  shl   ecx, 2
+  or    ecx, edx
+  mov   dword ptr[rbx-elSizeOffset], ecx
+
+end
+
+// ; ajumpvi
+inline % 0A1h
+
+  mov  rax, [rbx - elVMTOffset]
+  jmp  [rax + __arg1]
+
+end
+
 // ; callvi (ecx - offset to VMT entry)
 inline % 0A2h
 
@@ -1179,10 +1646,65 @@ inline % 0A2h
 
 end
 
+// ; hook label (ecx - offset)
+// ; NOTE : hook calling should be the first opcode
+inline % 0A6h
+
+  call code : %HOOK
+
+  push [data : %CORE_GC_TABLE + gc_et_current]
+
+  mov  rdx, rsp 
+  push rbp
+  push rdx
+  push rcx
+
+  mov  [data : %CORE_GC_TABLE + gc_et_current], rsp
+  
+end
+
+// ; address label (ecx - offset)
+inline % 0A7h
+
+  call code : %HOOK
+  mov  rdx, rcx
+
+end
+
+// ; calli
+inline % 0A8h
+
+  mov  rsi, [rbx + __arg1]
+  call rsi
+
+end
+
+// ; ifcount
+// ; - partial opcode
+inline % 0AFh
+
+  mov  ecx, 0FFFFFh
+  mov  eax, dword ptr [rbx-elSizeOffset]
+  and  rax, rcx
+  shr  rax, 2
+  cmp  rax, rdx
+
+end
+
 // ; movn
 inline % 0B1h
 
   mov  edx, __arg1
+
+end
+
+// ; equalfi
+inline % 0B3h
+
+  mov  rax, [rbp+__arg1]
+  xor  rdx, rdx
+  cmp  rax, rbx
+  setz dl
 
 end
 
@@ -1207,6 +1729,13 @@ inline % 0B7h
 
 end
 
+// ; dloadsi
+inline % 0B8h
+
+  mov  edx, dword ptr[rsp + __arg1]
+
+end
+
 // ; savef
 inline % 0B9h
 
@@ -1218,6 +1747,22 @@ end
 inline % 0BBh
 
   mov  dword ptr [rsp + __arg1], edx
+
+end
+
+// ; savefi
+inline % 0BCh
+
+  mov  rax, [rbp + __arg1]
+  mov  dword ptr[rax], edx
+
+end
+
+// ; pushf
+inline % 0BDh
+
+  lea  rax, [rbp + __arg1]
+  push rax
 
 end
 
@@ -1346,6 +1891,28 @@ inline %0D1h
 
 end
 
+// ; xcreate
+inline % 0D2h
+
+  mov   rax, [rsp]
+  mov   edx, 0FFFFFh
+  mov   ecx, dword ptr[rax-elSizeOffset]
+  and   edx, ecx
+  mov   ecx, page_ceil
+  add   ecx, edx
+  and   ecx, page_mask 
+ 
+  call  code : %GC_ALLOC
+
+  mov   rax, [rsp]
+  mov   [rbx-elVMTOffset], __arg1
+  mov   edx, 0FFFFFh
+  mov   ecx, dword ptr[rax-elSizeOffset]
+  and   edx, ecx
+  mov   dword ptr[rbx-elSizeOffset], edx
+  
+end
+
 // ; inc
 inline %0D6h
 
@@ -1353,11 +1920,585 @@ inline %0D6h
 
 end
 
-// ; pushf
-inline % 0BDh
+// ; coalescer
+inline % 0D8h
 
-  lea  rax, [rbp + __arg1]
-  push rax
+  mov    rax, __arg1
+  test   rbx, rbx
+  cmovz  rbx, rax
+
+end
+
+// ; xor
+inline % 0DAh
+
+  xor    edx, __arg1
+
+end
+
+// ; vjumprm
+inline % 0DBh
+
+  mov  ecx, __arg1
+  mov  rax, [rbx - elVMTOffset]
+  jmp  [rax + rcx * 8 + 4]
+
+end
+
+// ; xsaveai (__arg1 - index, __arg2 - n)
+inline % 0DCh
+
+  mov  rax, __arg2
+  mov  [rbx + __arg1], rax
+
+end
+
+// ; copyai (__arg1 - index, __arg2 - n)
+inline % 0DDh
+
+  mov  ecx, __arg2	
+  lea  rsi, [rbx + __arg1]
+  mov  rdi, [rsp]
+  rep  movsd
+
+end
+
+inline % 01DDh
+
+  lea  rsi, [rbx + __arg1]
+  mov  rdi, [rsp]
+  mov  rax, [rsi]
+  mov  [rdi], rax
+
+end
+
+inline % 02DDh
+
+  lea  rsi, [rbx + __arg1]
+  mov  rdi, [rsp]
+  mov  rax, [rsi]
+  mov  [rdi], rax
+  mov  rcx, [rsi+8]
+  mov  [rdi+4], rcx
+
+end
+
+inline % 03DDh
+
+  lea  rsi, [rbx + __arg1]
+  mov  rdi, [rsp]
+  mov  rax, [rsi]
+  mov  [rdi], rax
+  mov  rcx, [rsi+8]
+  mov  [rdi+8], rcx
+  mov  rax, [rsi+16]
+  mov  [rdi+16], rax
+
+end
+
+inline % 04DDh
+
+  lea  rsi, [rbx + __arg1]
+  mov  rdi, [rsp]
+  mov  rax, [rsi]
+  mov  [rdi], rax
+  mov  rcx, [rsi+8]
+  mov  [rdi+8], rcx
+  mov  rax, [rsi+16]
+  mov  [rdi+16], rax
+  mov  rcx, [rsi+24]
+  mov  [rdi+24], rcx
+
+end
+
+// ; move
+inline % 0DEh
+
+  lea rsi, [rbx+__arg1]
+  mov ecx, __arg2
+  mov rdi, [rsp]
+  rep movsb
+
+end
+
+// ; move
+inline % 01DEh
+
+  lea rsi, [rbx+__arg1]
+  mov rdi, [rsp]
+  mov rax, [rsi]
+  mov byte ptr [rdi], al
+
+end
+
+inline % 02DEh
+
+  lea rsi, [rbx+__arg1]
+  mov rdi, [rsp]
+  mov rax, [rsi]
+  mov word ptr [rdi], ax
+
+end
+
+inline % 03DEh
+
+  lea rsi, [rbx+__arg1]
+  mov rdi, [rsp]
+  mov rax, [rsi]
+  mov dword ptr [rdi], eax
+
+end
+
+inline % 04DEh
+
+  lea rsi, [rbx+__arg1]
+  mov rdi, [rsp]
+  mov rax, [rsi]
+  mov [rdi], rax
+
+end
+
+// ; moveto
+inline % 0DFh
+
+  lea rdi, [rbx+__arg1]
+  mov ecx, __arg2
+  mov rsi, [rsp]
+  rep movsb
+
+end
+
+inline % 01DFh
+
+  mov rsi, [rsp]
+  lea rdi, [rbx+__arg1]
+  mov rax, [rsi] 
+  mov byte ptr [rdi], al
+
+end
+
+inline % 02DFh
+
+  mov rsi, [rsp]
+  lea rdi, [rbx+__arg1]
+  mov rax, [rsi] 
+  mov word ptr [rdi], ax
+
+end
+
+inline % 03DFh
+
+  mov rsi, [rsp]
+  lea rdi, [rbx+__arg1]
+  mov rax, [rsi] 
+  mov dword ptr[rdi], eax
+
+end
+
+inline % 04DFh
+
+  mov rsi, [rsp]
+  lea rdi, [rbx+__arg1]
+  mov rax, [rsi] 
+  mov [rdi], rax
+
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 0E0h
+
+  mov  ecx, __arg2	
+  lea  rdi, [rbp + __arg1]
+  lea  rsi, [rbx+rdx]                                                    
+  rep  movsd
+
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 1E0h
+
+  mov  rcx, [rbx+rdx]
+  lea  rdi, [rbp + __arg1]
+  mov  dword ptr [rdi], ecx
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 2E0h
+
+  mov  rcx, [rbx+rdx]
+  lea  rdi, [rbp + __arg1]
+  mov  [rdi], rcx
+
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 3E0h
+
+  mov  rcx, [rbx+rdx]
+  lea  rdi, [rbp + __arg1]
+  mov  [rdi], rcx
+  mov  rax, [rbx+rdx+8]
+  mov  dword ptr [rdi+8], eax
+
+end
+
+// ; readtof (__arg1 - index, __arg2 - n)
+inline % 4E0h
+
+  mov  rcx, [rbx+rdx]
+  lea  rdi, [rbp + __arg1]
+  mov  [rdi], rcx
+  mov  rax, [rbx+rdx+8]
+  mov  [rdi+8], rax
+
+end
+
+// ; createn (__arg1 - item size)
+inline % 0E1h                                                                  
+
+  mov  rax, [rsp]
+  mov  ecx, page_ceil
+  mov  rax, [rax]
+  mov  ebx, __arg1
+  imul ebx
+  add  ecx, eax
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   rax, [rsp]
+  mov   ecx, 800000h
+  mov   rax, [rax]
+  mov   esi, __arg1
+  imul  esi
+  or    ecx, eax
+  mov   dword ptr [rbx-elSizeOffset], ecx
+  
+end
+
+// ; createn (__arg1 = 1)
+inline % 1E1h
+
+  mov  rax, [rsp]
+  mov  ecx, page_ceil
+  add  ecx, dword ptr[rax]
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   rax, [rsp]
+  mov   ecx, 800000h
+  or    ecx, dword ptr[rax]
+  mov   dword ptr[rbx-elSizeOffset], ecx
+  
+end
+
+// ; createn (__arg1 = 2)
+inline % 2E1h
+
+  mov  rax, [rsp]
+  mov  ecx, page_ceil
+  mov  eax, dword ptr [rax]
+  shl  eax, 1
+  add  ecx, eax
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   rax, [rsp]
+  mov   ecx, 800000h
+  mov   rax, [rax]
+  shl   eax, 1
+  or    ecx, eax
+  mov   dword ptr[rbx-elSizeOffset], ecx
+  
+end
+
+// ; createn (__arg1 = 4)
+inline % 3E1h
+
+  mov  rax, [rsp]
+  mov  ecx, page_ceil
+  mov  eax, dword ptr [rax]
+  shl  eax, 2
+  add  ecx, eax
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   rax, [rsp]
+  mov   ecx, 800000h
+  mov   rax, [rax]
+  shl   eax, 2
+  or    ecx, eax
+  mov   dword ptr[rbx-elSizeOffset], ecx
+  
+end
+
+// ; createn (__arg1 = 8)
+inline % 4E1h
+
+  mov  rax, [rsp]
+  mov  rcx, page_ceil
+  mov  eax, dword ptr [rax]
+  shl  eax, 3
+  add  ecx, eax
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  mov   rax, [rsp]
+  mov   rcx, 800000h
+  mov   rax, [rax]
+  shl  eax, 3
+  or    ecx, eax
+  mov   dword ptr[rbx-elSizeOffset], ecx
+  
+end
+
+// ; xsetfi (__arg1 - index, __arg2 - index)
+inline % 0E2h
+
+  mov  rax, [rbp + __arg1]
+  mov  [rbx + __arg2], rax
+
+end
+
+// ; copytoai (__arg1 - index, __arg2 - n)
+inline % 0E3h
+
+  mov  ecx, __arg2	
+  lea  rdi, [rbx + __arg1]
+  mov  rsi, [rsp]
+  rep  movsd
+
+end
+
+inline % 01E3h
+
+  mov  rsi, [rsp]
+  lea  rdi, [rbx + __arg1]
+  mov  rax, [rsi]
+  mov  dword ptr[rdi], eax
+
+end
+
+inline % 02E3h
+
+  mov  rsi, [rsp]
+  lea  rdi, [rbx + __arg1]
+  mov  rax, [rsi]
+  mov  [rdi], rax
+
+end
+
+inline % 03E3h
+
+  mov  rsi, [rsp]
+  lea  rdi, [rbx + __arg1]
+  mov  rax, [rsi]
+  mov  [rdi], rax
+  mov  rcx, [rsi+8]
+  mov  dword ptr[rdi+8], ecx
+
+end
+
+inline % 04E3h
+
+  mov  rsi, [rsp]
+  lea  rdi, [rbx + __arg1]
+  mov  rax, [rsi]
+  mov  [rdi], rax
+  mov  rcx, [rsi+8]
+  mov  [rdi+8], rcx
+
+end
+
+// ; copytofi (__arg1 - index, __arg2 - n)
+inline % 0E4h
+
+  mov  ecx, __arg2	
+  mov  rdi, [rbp + __arg1]
+  mov  rsi, rbx
+  rep  movsd
+
+end
+
+inline % 1E4h
+
+  mov  rdi, [rbp + __arg1]
+  mov  rax, [rbx]
+  mov  dword ptr[rdi], eax
+
+end
+
+inline % 2E4h
+
+  mov  rdi, [rbp + __arg1]
+  mov  rax, [rbx]
+  mov  [rdi], rax
+
+end
+
+inline % 3E4h
+
+  mov  rdi, [rbp + __arg1]
+  mov  rax, [rbx]
+  mov  rcx, [rbx+8]
+  mov  [rdi], rax
+  mov  dword ptr[rdi+8], ecx
+
+end
+
+inline % 4E4h
+
+  mov  rdi, [rbp + __arg1]
+  mov  rax, [rbx]
+  mov  rcx, [rbx+8]
+  mov  [rdi], rax
+  mov  [rdi+8], rsi
+
+end
+
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 0E5h
+
+  mov  ecx, __arg2	
+  lea  rdi, [rbp + __arg1]
+  mov  rsi, rbx
+  rep  movsd
+
+end
+
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 1E5h
+
+  lea  rdi, [rbp + __arg1]
+  mov  rax, [rbx]
+  mov  dword ptr[rdi], eax
+
+end
+
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 2E5h
+
+  lea  rdi, [rbp + __arg1]
+  mov  rax, [rbx]
+  mov  [rdi], rax
+
+end
+
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 3E5h
+
+  lea  rdi, [rbp + __arg1]
+  mov  rax, [rbx]
+  mov  [rdi], rax
+  mov  rcx, [rbx+8]
+  mov  dword ptr[rdi+8], ecx
+
+end
+
+// ; copytof (__arg1 - index, __arg2 - n)
+inline % 4E5h
+
+  lea  rdi, [rbp + __arg1]
+  mov  rax, [rbx]
+  mov  [rdi], rax
+  mov  rcx, [rbx+8]
+  mov  [rdi+8], rax
+
+end
+
+// ; copyfi (__arg1 - index, __arg2 - n)
+inline % 0E6h
+
+  mov  ecx, __arg2	
+  mov  rsi, [rbp + __arg1]
+  mov  rdi, rbx
+  rep  movsd
+
+end
+
+inline % 01E6h
+
+  mov  rsi, [rbp + __arg1]
+  mov  rax, [rsi]
+  mov  dword ptr[rbx], eax
+
+end
+
+inline % 02E6h
+
+  mov  rsi, [rbp + __arg1]
+  mov  rax, [rsi]
+  mov  [rbx], rax
+
+end
+
+inline % 03E6h
+
+  mov  rsi, [rbp + __arg1]
+  mov  rax, [rsi]
+  mov  [rbx], rax
+  mov  rcx, [rsi+8]
+  mov  dword ptr [rbx+8], ecx
+
+end
+
+inline % 04E6h
+
+  mov  rsi, [rbp + __arg1]
+  mov  rax, [rsi]
+  mov  [rbx], rax
+  mov  rcx, [rsi+8]
+  mov  [rbx+8], rcx
+
+end
+
+// ; copyf (__arg1 - index, __arg2 - n)
+inline % 0E7h
+
+  mov  ecx, __arg2	
+  lea  rsi, [rbp + __arg1]
+  mov  rdi, rbx
+  rep  movsd
+
+end
+
+inline % 01E7h
+
+  lea  rsi, [rbp + __arg1]
+  mov  rax, [rsi]
+  mov  dword ptr[rbx], eax
+
+end
+
+inline % 02E7h
+
+  lea  rsi, [rbp + __arg1]
+  mov  rax, [rsi]
+  mov  [rbx], rax
+
+end
+
+inline % 03E7h
+
+  lea  rsi, [rbp + __arg1]
+  mov  rax, [rsi]
+  mov  [rbx], rax
+  mov  rcx, [rsi+8]
+  mov  dword ptr[rbx+8], eax
+
+end
+
+inline % 04E7h
+
+  lea  rsi, [rbp + __arg1]
+  mov  rax, [rsi]
+  mov  [rbx], rax
+  mov  rcx, [rsi+8]
+  mov  [rbx+8], rcx
 
 end
 
@@ -1859,6 +3000,17 @@ labNextBaseClass:
 
 end
 
+// ; xrsavef (__arg1 - index, __arg2 - n)
+inline % 0EDh
+
+  push  __arg2
+  fild  dword ptr [rsp]
+  lea   rdi, [rbp+__arg1]
+  fstp  qword ptr [rdi]
+  lea   rsp, [rsp+8]
+
+end
+
 // ; xaddf (__arg1 - index, __arg2 - n)
 inline % 0EEh
 
@@ -1881,6 +3033,25 @@ inline % 0F0h
 
 end
 
+// ; fillr (__arg1 - r)
+inline % 09Bh
+  mov  rsi, [rsp]	
+  mov  rax, __arg1	
+  mov  rdi, rbx
+  mov  ecx, dword ptr[rsi]
+  rep  stosd
+
+end
+
+// ; fillri (__arg1 - count)
+inline % 0F2h
+
+  mov  rdi, rbx
+  mov  ecx, __arg1
+  rep  stosd
+
+end
+
 // ; xselectr (eax - r1, __arg1 - r2)
 inline % 0F3h
 
@@ -1900,12 +3071,27 @@ inline % 0F4h
   
 end
 
+// ; jumprm
+inline % 0F5h
+
+  cmp [rbx], rbx
+  jmp __arg1
+
+end
+
 // ; selectr (ebx - r1, __arg1 - r2)
 inline % 0F6h
 
   mov    rcx, __arg1
   test   rdx, rdx
   cmovnz rbx, rcx
+
+end
+
+// callrm (edx contains message, __arg1 contains vmtentry)
+inline % 0FEh
+
+   call code : __arg1
 
 end
 

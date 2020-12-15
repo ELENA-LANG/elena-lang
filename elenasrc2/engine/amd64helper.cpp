@@ -92,23 +92,23 @@ void AMD64LabelHelper :: writeJmpForward(int label)
    code->writeDWord(0);
 }
 
-//void x86LabelHelper::writeLoadForward(int label)
-//{
-//   code->writeByte(0xB9);
-//
-//   jumps.add(label, x86JumpInfo(code->Position()));
-//
-//   code->writeDWord(0);
-//}
-//
-//void x86LabelHelper::writeLoadBack(int label)
-//{
-//   code->writeByte(0xB9);
-//
-//   int offset = labels.get(label) - code->Position() - 4;
-//
-//   code->writeDWord(offset);
-//}
+void AMD64LabelHelper::writeLoadForward(int label)
+{
+   code->writeByte(0xB9);
+
+   jumps.add(label, AMD64JumpInfo(code->Position()));
+
+   code->writeDWord(0);
+}
+
+void AMD64LabelHelper::writeLoadBack(int label)
+{
+   code->writeByte(0xB9);
+
+   int offset = labels.get(label) - code->Position() - 4;
+
+   code->writeDWord(offset);
+}
 
 void AMD64LabelHelper::writeShortJmpForward(int label)
 {

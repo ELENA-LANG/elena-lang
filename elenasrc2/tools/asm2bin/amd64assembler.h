@@ -148,7 +148,7 @@ protected:
    void compilePOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 
 	//void compileDEC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileINC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileINC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileINT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
    void compileNEG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileNOT(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
