@@ -1304,23 +1304,11 @@ void _ELENA_::compilePush(int opcode, I64JITScope& scope)
    }
 }
 
-////void _ELENA_::compilePopE(int, x86JITScope& scope)
-////{
-////   // pop ecx
-////   scope.code->writeByte(0x59);
-////}
-
 void _ELENA_::compilePopD(int, I64JITScope& scope)
 {
    // pop ebx
    scope.code->writeByte(0x5B);
 }
-
-////void _ELENA_::compileJump(int, x86JITScope& scope)
-////{
-////   ::compileJump(scope, scope.tape->Position() + scope.argument, (scope.argument > 0), (__abs(scope.argument) < 0x10));
-////}
-////
 
 void _ELENA_::compileHook(int opcode, I64JITScope& scope)
 {
@@ -1520,44 +1508,12 @@ void _ELENA_::compileSetR(int, I64JITScope& scope)
    }
 }
 
-//void _ELENA_::compileDCopy(int, AMD64JITScope& scope)
-//{
-//   // mov ebx, i
-//   scope.code->writeByte(0xBB);
-//   scope.code->writeDWord(scope.argument);
-//}
-//
-////void _ELENA_::compileECopy(int, x86JITScope& scope)
-////{
-////   // mov ecx, i
-////   scope.code->writeByte(0xB9);
-////   scope.code->writeDWord(scope.argument);
-////}
-
 void _ELENA_::compileDAndN(int, I64JITScope& scope)
 {
    // and edx, mask
    scope.code->writeWord(0xE281);
    scope.code->writeDWord(scope.argument);
 }
-
-//void _ELENA_::compileDOrN(int, x86JITScope& scope)
-//{
-//   // or ebx, mask
-//   scope.code->writeWord(0xCB81);
-//   scope.code->writeDWord(scope.argument);
-//}
-
-//void _ELENA_::compileDMulN(int, x86JITScope& scope)
-//{
-//   // mov  esi, scope.argument
-//   scope.code->writeByte(0xBE);
-//   scope.code->writeDWord(scope.argument);
-//
-//   // imul ebx, esi
-//   scope.code->writeWord(0xAF0F);
-//   scope.code->writeByte(0xDE);
-//}
 
 void _ELENA_::compileDec(int, I64JITScope& scope)
 {
@@ -1776,31 +1732,31 @@ void _ELENA_::compileFill(int opcode, I64JITScope& scope)
 
 void _ELENA_::compileInvokeVMT(int opcode, I64JITScope& scope)
 {
-   /*ref_t message = fromMessage64(scope.resolveMessage(*/scope.tape->getDWord()/*))*/;
+   ref_t message = /*fromMessage64(*/scope.resolveMessage(scope.tape->getDWord())/*)*/;
 
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0] == -1) {
-//         // resolve message offset
-//         scope.writeReference(*scope.code, (scope.argument & ~mskAnyRef) | mskVMTMethodAddress, message);
-//      }
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
+   char*  code = (char*)scope.compiler->_inlines[opcode];
+   size_t position = scope.code->Position();
+   size_t length = *(size_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         // resolve message offset
+         scope.writeReference(*scope.code, (scope.argument & ~mskAnyRef) | mskVMTMethodAddress, message);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
 }
 
 void _ELENA_::compileACopyS(int, I64JITScope& scope)
