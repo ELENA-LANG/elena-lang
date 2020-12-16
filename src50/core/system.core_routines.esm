@@ -3844,7 +3844,7 @@ procedure __closuretape."#dispatch[1]"
   
   pushn   -1
   
-  movfip  -2
+  movfip  -1
   
 // ; copy message parameters
   loadf   -8
