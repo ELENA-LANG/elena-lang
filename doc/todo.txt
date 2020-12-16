@@ -3,9 +3,7 @@ In development:
 ------         
 
   [development]
-    * nilDispatcher
-
-
+    * fix script samples
 
     * x64 debugger
     * new object & call

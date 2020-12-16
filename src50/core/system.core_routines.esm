@@ -3838,16 +3838,16 @@ procedure __closuretape."#dispatch[1]"
   reserve 8
   pusha
   
-  savef   -12
-  movn    0  
   savef   -8
+  movn    0  
+  savef   -4
   
   pushn   -1
   
-  movf    -24
+  movfip  -2
   
 // ; copy message parameters
-  loadfi  -3
+  loadf   -8
   ifn     labSkipCopy 0
 labNextParam:
   dec     1
@@ -3860,13 +3860,13 @@ labSkipCopy:
 labNext:
   breakpoint
 
-  loadfi  -2
+  loadf   -4
 
   ifcount labEnd
 
   get
   inc 1
-  savef   -8
+  savef   -4
 
   vcallrm system'dynamic'TapeFunction mssgconst : "params##invoke<system'Object>[0]"
   pusha
@@ -3876,7 +3876,7 @@ labNext:
 labEnd:
   popa
 
-  loadfi  -3
+  loadf  -8
   restore 8
   close
 
