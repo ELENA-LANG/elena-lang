@@ -138,7 +138,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileDec, &loadIndexOp, &compileRestore, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadIndexOp,
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
-   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &compileNop, &compileHook, &compileHook,
+   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &compileSetFrame, &compileHook, &compileHook,
    &loadIndexOp, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileIfE, &compileElseE, &compileIfCount,
 
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
@@ -1038,7 +1038,7 @@ void _ELENA_::loadMTOpX(int opcode, I64JITScope& scope, int prefix)
    scope.code->seekEOF();
 }
 
-inline void freeStack(int args, MemoryWriter* code)
+void freeStack64(int args, MemoryWriter* code)
 {
    // add esp, arg
    if (args < 0x80) {
@@ -1055,7 +1055,7 @@ inline void freeStack(int args, MemoryWriter* code)
 
 void _ELENA_::compilePopN(int, I64JITScope& scope)
 {
-   freeStack(scope.argument << 3, scope.code);
+   freeStack64(scope.argument << 3, scope.code);
 }
 
 void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
@@ -1073,7 +1073,7 @@ void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
          compileCallR(opcode, scope);
 
          if (argsToFree)
-            freeStack(argsToFree << 3, scope.code);
+            freeStack64(argsToFree << 3, scope.code);
 
          return;
    }
@@ -1142,7 +1142,7 @@ void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
    scope.code->seekEOF();
 
    if (argsToFree)
-      freeStack((flags & baCallArgsMask) << 3, scope.code);
+      freeStack64((flags & baCallArgsMask) << 3, scope.code);
 }
 
 void _ELENA_::loadNOp(int opcode, I64JITScope& scope)
@@ -1324,6 +1324,11 @@ void _ELENA_::compileOpen(int opcode, I64JITScope& scope)
 {
    loadOneByteLOp(opcode, scope);
 
+   compileSetFrame(opcode, scope);
+}
+
+void _ELENA_::compileSetFrame(int, I64JITScope& scope)
+{
    // include current frame and FrameHeader if required
    if (scope.argument) {
       scope.frameOffset = align((scope.argument << 2) + 24, 8);

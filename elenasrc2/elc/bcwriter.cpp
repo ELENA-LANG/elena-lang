@@ -197,7 +197,7 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, mssg_t message, ref_t so
       tape.write(bcPushA);
 
       if (withPresavedMessage) {
-         tape.write(bcSaveF, -1);
+         tape.write(bcSaveF, -4);
       }         
 
       if (allocated > 0) {
@@ -522,7 +522,7 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, 
    tape.write(bcPushA);
 
    if (withPresavedMessage) {
-      tape.write(bcSaveF, -1);
+      tape.write(bcSaveF, -4);
    }
 
    if (allocated > 0) {
@@ -4283,12 +4283,12 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
 
             if (genericResending) {
                // save message
-               tape.write(bcSaveF, -1);
+               tape.write(bcSaveF, -4);
                
                generateExpression(tape, current, scope);
 
                // restore message
-               tape.write(bcLoadFI, -1);
+               tape.write(bcLoadF, -4);
             }
             else generateExpression(tape, current, scope);
 

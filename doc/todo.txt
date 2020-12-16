@@ -3,6 +3,10 @@ In development:
 ------         
 
   [development]
+    * test generic methods
+
+
+
     * x64 debugger
     * new object & call
     * GC
@@ -20,7 +24,6 @@ In development:
 
 
     * test : string insert / delete
-    * test generic methods
     * test string / wide operations
 
     * migrate core changes to corex

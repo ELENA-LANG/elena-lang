@@ -101,6 +101,7 @@ protected:
    friend void compilePopN(int opcode, x86JITScope& scope);
    friend void compileAllocI(int opcode, x86JITScope& scope);
    friend void compileOpen(int opcode, x86JITScope& scope);
+   friend void compileSetFrame(int opcode, x86JITScope& scope);
    friend void compilePush(int opcode, x86JITScope& scope);
    friend void compilePushFI(int opcode, x86JITScope& scope);
    friend void compilePushF(int opcode, x86JITScope& scope);
@@ -242,6 +243,7 @@ void compilePopA(int opcode, x86JITScope& scope);
 void compilePopN(int opcode, x86JITScope& scope);
 void compileAllocI(int opcode, x86JITScope& scope);
 void compileOpen(int opcode, x86JITScope& scope);
+void compileSetFrame(int opcode, x86JITScope& scope);
 void compilePush(int opcode, x86JITScope& scope);
 void compilePushF(int opcode, x86JITScope& scope);
 void compilePushFI(int opcode, x86JITScope& scope);

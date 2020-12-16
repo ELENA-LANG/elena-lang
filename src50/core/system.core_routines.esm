@@ -4051,7 +4051,7 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
   Lab00:   nop
   snop  
   
-  peekfi   -13 // len
+  peekfi   -3 // len
   pusha      
   movf     -8  // i
   nless      
@@ -4060,8 +4060,8 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
   ifr      Lab01 const : false 
 
   //command := buffer[i];
-  peekfi   -12 // buffer
-  loadfi   -2
+  peekfi   -2 // buffer
+  loadf    -8
   read
   and      0FFh
   savef    -12
@@ -4070,8 +4070,8 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
   xaddf    -8 1
 
   // size := buffer[i];
-  peekfi   -12
-  loadfi   -2
+  peekfi   -2
+  loadf    -8
   read
   savef    -16
 
@@ -4079,14 +4079,14 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
   xaddf    -8 4
 
   // commands[command](size,buffer,i);
-  loadfi   -3
-  movr       constarray : "system'dynamic'$private'commands#$inline0"
+  loadf    -12
+  movr     constarray : "system'dynamic'$private'commands#$inline0"
   get
   callvi   0
   pusha
 
   // i += size
-  movf     -4
+  movf     -16
   naddf    -8
 
   jump     Lab00
@@ -4098,22 +4098,27 @@ procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
 
 end
 
-procedure __invoke0."#dispatch[1]"   // 4 - size, -2 - index, -12 - buffer
+procedure loadClass
+
+  setframe 7
 
   // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
+  loadf    -16
+  pushd
+  loadf    -8
+  pushd
   pushfi   -2
-  pushfi   -12
   loadenv
   pushd
   callextr extern : LoadClassByBuffer 0304h
   ifn      labNotFound 0
+  
+  popa
   swapd    
-  pushd
-
-  movm     mssgconst : "#constructor[1]"
-  peeksi   1
-  jumpvi   0
+  pushd  
+  pusha
+  
+  quit
 
 labNotFound:
 
@@ -4121,772 +4126,372 @@ labNotFound:
 
 end
 
+procedure __invoke0."#dispatch[1]"   // 4 - size, -2 - index, -12 - buffer
+
+  callr intern : system'core_routines'loadClass
+
+  movm     mssgconst : "#constructor[1]"
+  peeksi   1
+  jumpvi   0
+
+end
+
 procedure invokerError
 
+  setframe 7
+
   // ; remove a return point
-  freei  1
+  freei    1
 
   // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -4
-  pushf  -2    
-  movr   const : system'text'UTF8Encoding
+  pushfi   -12
+  pushf    -16
+  pushf    -8    
+  movr     const : system'text'UTF8Encoding
   pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  movm     mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  callrm   system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
 
-  open   0  
+  open     0  
   pusha  
-  pushr  class : system'TypeLoaderException
-  pushr  mssgconst : "new[2]"
+  pushr    class : system'TypeLoaderException
+  pushr    mssgconst : "new[2]"
   throw
 
 end
 
 procedure __invoke1."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[2]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke2."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi    -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[3]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke3."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[4]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke4."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[5]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke5."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[6]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke6."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[7]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke7."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[8]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke8."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[9]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke9."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[10]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke10."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[11]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke11."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[12]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke12."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[13]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke13."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[14]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke14."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[15]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke15."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[16]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke16."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[17]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke17."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[18]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke18."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[19]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke19."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[20]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke20."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[21]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke21."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[22]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke22."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[23]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke23."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[24]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke24."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[25]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke25."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[26]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke26."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[27]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke27."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[28]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke28."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[29]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke29."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[30]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke30."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "#constructor[31]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __invoke31."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "params##constructor[2]"
   peeksi   1
   jumpvi   0
-
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
 
 end
 
 procedure __invokeV1."#dispatch[1]"   // -4 - size, -2 - index, -12 - buffer
 
-  // extern elenart.LoadClassByBuffer(buffer, i, size)
-  pushfi   -4
-  pushfi   -2
-  pushfi   -12
-  loadenv
-  pushd
-  callextr extern : LoadClassByBuffer 0304h
-  ifn      labNotFound 0
-  swapd    
-  pushd
+  callr intern : system'core_routines'loadClass
 
   movm     mssgconst : "params##constructor[2]"
   peeksi   1
   jumpvi   0
 
-labNotFound:
-
-  callr intern : system'core_routines'invokerError
-
 end
 
 procedure __loadString."#dispatch[1]" // -4 - size, -2 - index, -12 - buffer
 
+  setframe 7
+
   // UTF8Encoding.toString(i,size,buffer)
-  pushfi -12
-  pushf  -16
-  pushf  -8    
-  movr   const : system'text'UTF8Encoding
+  pushfi   -2
+  pushf    -16
+  pushf    -8    
+  movr     const : system'text'UTF8Encoding
   pusha  
-  movm   mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
-  callrm system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  movm     mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
+  callrm   system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
 
   quit
 

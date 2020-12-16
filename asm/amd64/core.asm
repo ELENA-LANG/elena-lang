@@ -2746,7 +2746,7 @@ labNextBaseClass:
   test  rdi, rdi
   cmovz rdi, rsi
 
-  mov  rdi, [rdi-4]
+  mov  rdi, [rdi-elVMTOffset]
   mov  rsi, [rcx + 4]
 
 labNextBaseClass2:

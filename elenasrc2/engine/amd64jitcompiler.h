@@ -110,6 +110,7 @@ protected:
    friend void compileSetR(int opcode, I64JITScope& scope);
    friend void compileInvokeVMT(int opcode, I64JITScope& scope);
    friend void compileOpen(int opcode, I64JITScope& scope);
+   friend void compileSetFrame(int opcode, I64JITScope& scope);
    friend void compileQuit(int opcode, I64JITScope& scope);
    friend void compileQuitN(int opcode, I64JITScope& scope);
    friend void compileACopyS(int opcode, I64JITScope& scope);
@@ -238,7 +239,8 @@ void compileSelectR(int opcode, I64JITScope& scope);
 void compileSetR(int opcode, I64JITScope& scope);
 void compileInvokeVMT(int opcode, I64JITScope& scope);
 void compileInvokeVMTOffset(int opcode, I64JITScope& scope);
-void compileOpen(int opcode, I64JITScope& scope);
+void compileOpen(int opcode, I64JITScope& scope); 
+void compileSetFrame(int opcode, I64JITScope& scope);
 void compileQuit(int opcode, I64JITScope& scope);
 void compileQuitN(int opcode, I64JITScope& scope);
 void compileACopyS(int opcode, I64JITScope& scope);

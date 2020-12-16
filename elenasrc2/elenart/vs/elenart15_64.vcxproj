@@ -46,6 +46,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>elenart64</TargetName>
     <OutDir>..\..\..\bin\</OutDir>
+    <IntDir>..\temp\elenart64\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>elenart</TargetName>

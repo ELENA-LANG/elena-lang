@@ -3196,7 +3196,7 @@ labNextBaseClass:
   test  edi, edi
   cmovz edi, esi
 
-  mov  edi, [edi-4]
+  mov  edi, [edi-elVMTOffset]
   mov  esi, [ecx + 4]
 
 labNextBaseClass2:

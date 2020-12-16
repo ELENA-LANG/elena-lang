@@ -157,6 +157,7 @@ enum ByteCode
    bcCallVI          = 0xA2,
    bcCallR           = 0xA3,
    bcJumpI           = 0xA4,
+   bcSetFrame        = 0xA5,
    bcHook            = 0xA6,
    bcAddress         = 0xA7,
    bcCallI           = 0xA8,

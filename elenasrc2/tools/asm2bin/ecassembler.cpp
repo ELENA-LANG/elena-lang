@@ -595,6 +595,7 @@ void ECodesAssembler :: compileCommand(TokenInfo& token, MemoryWriter& writer, L
          case bcPeekFI:
          case bcPushAI:
          case bcOpen:
+         case bcSetFrame:
          case bcLoadFI:
          case bcLoadSI:
          case bcSaveSI:

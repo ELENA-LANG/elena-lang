@@ -44,7 +44,7 @@ const char* _fnOpcodes[256] =
    "dec", "geti", "restore", "peekr", "peekfi", "peeksi", "ifheap", "xseti",
    "open", "quitn", "create", "fillr", "movf", "movsip", "movr", "movm",
 
-   "jump", "jumpvi", "callvi", "callr", "jumpi", OPCODE_UNKNOWN, "hook", "address",
+   "jump", "jumpvi", "callvi", "callr", "jumpi", "setframe", "hook", "address",
    "calli", OPCODE_UNKNOWN, "notless", "notgreater", "elsed", "if", "else", "ifcount",
 
    "pushn", "movn", "pushr", "equalfi", "pushai", "loadf", "pushfi", "loadfi",

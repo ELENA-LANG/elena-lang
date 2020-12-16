@@ -7517,7 +7517,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
    // declare the current subject for a generic method
    if (scope.generic) {
       codeScope.allocated2++;
-      codeScope.mapLocal(MESSAGE_VAR, -2, V_MESSAGE, 0, 0);
+      codeScope.mapLocal(MESSAGE_VAR, -1, V_MESSAGE, 0, 0);
    }
 
    scope.preallocated = codeScope.allocated1;

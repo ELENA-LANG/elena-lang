@@ -135,7 +135,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileDec, &loadIndexOp, &compileRestore, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadIndexOp,
    &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
-   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &compileNop, &compileHook, &compileHook,
+   &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &compileSetFrame, &compileHook, &compileHook,
    &loadIndexOp, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileIfE, &compileElseE, &compileIfCount,
 
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
@@ -1088,7 +1088,7 @@ void _ELENA_::loadFOp(int opcode, x86JITScope& scope)
    scope.code->seekEOF();
 }
 
-inline void freeStack(int args, MemoryWriter* code)
+void freeStack(int args, MemoryWriter* code)
 {
    // add esp, arg
    if (args < 0x80) {
@@ -1229,6 +1229,11 @@ void _ELENA_::compileOpen(int opcode, x86JITScope& scope)
 {
    loadOneByteLOp(opcode, scope);
 
+   compileSetFrame(opcode, scope);
+}
+
+void _ELENA_::compileSetFrame(int, x86JITScope& scope)
+{
    // include current frame and FrameHeader if required
    if (scope.argument) {
       scope.frameOffset = (scope.argument << 2) + 12;
