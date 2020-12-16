@@ -91,17 +91,17 @@ EXTERN_DLL_EXPORT void Exit(int exitCode)
 //{
 //   return ((ELENARTMachine*)instance)->readCallStack(framePosition, currentAddress, startLevel, buffer, maxLength);
 //}
-//
-//EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
-//{
-//   return _Instance->loadAddressInfo(retPoint, lineInfo, length);
-//}
-//
-//EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)
-//{
-//   return _Instance->loadClassName((size_t)object, buffer, length);
-//}
-//
+
+EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, char* lineInfo, int length)
+{
+   return _Instance->loadAddressInfo(retPoint, lineInfo, length);
+}
+
+EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)
+{
+   return _Instance->loadClassName((size_t)object, buffer, length);
+}
+
 //EXTERN_DLL_EXPORT void* EvaluateTape(void* tape)
 //{
 //   // !! terminator code
@@ -118,16 +118,16 @@ EXTERN_DLL_EXPORT void Exit(int exitCode)
 //{
 //   return NULL;
 //}
-//
-//EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, char* lineInfo, int length)
-//{
-//   return _Instance->loadSubjectName((size_t)subject, lineInfo, length);
-//}
-//
-//EXTERN_DLL_EXPORT void* LoadSubject(void* subjectName)
-//{
-//   return _Instance->loadSubject((const char*)subjectName);
-//}
+
+EXTERN_DLL_EXPORT int LoadSubjectName(void* subject, char* lineInfo, int length)
+{
+   return _Instance->loadSubjectName((size_t)subject, lineInfo, length);
+}
+
+EXTERN_DLL_EXPORT ref_t LoadSubject(void* subjectName)
+{
+   return _Instance->loadSubject((const char*)subjectName);
+}
 
 EXTERN_DLL_EXPORT int LoadMessageName(void* message, char* lineInfo, int length)
 {
