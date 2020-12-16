@@ -21,7 +21,7 @@ constexpr int elObjectOffset64   = 0x0008;            // object header / offset 
 constexpr int elPageVMTOffset32  = 0x0008;
 constexpr int elPageSizeOffset32 = 0x0004;
 
-constexpr int elPageVMTOffset64  = 0x0012;
+constexpr int elPageVMTOffset64  = 0x0018;
 constexpr int elPageSizeOffset64 = 0x0004;
 
 constexpr int elVMTCountOffset32 = 0x0004;                // a VMT size offset

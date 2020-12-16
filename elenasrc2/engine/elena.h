@@ -521,7 +521,7 @@ struct ClassHeader
 
 struct VMTHeader
 {
-   pos_t packageRef;
+   pos_t parentRef;
    ref_t flags;
    ref_t classRef;
    pos_t count;
@@ -530,7 +530,7 @@ struct VMTHeader
 #pragma pack(push, 1)
 struct VMTXHeader
 {
-   pos64_t packageRef;
+   pos64_t parentRef;
    ref_t   flags;
    pos64_t classRef;
    pos_t   count;

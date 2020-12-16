@@ -103,6 +103,7 @@ rstructure %VOIDPTR
 
   dq rdata : %VOID + elPackageOffset
   dd 0
+  dd 0
 
 end
 
@@ -1206,7 +1207,7 @@ labMatching:
   mov  rdi, [rax + rcx * 4]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi
   cmovz rdi, rsi
 
@@ -1294,7 +1295,7 @@ labMatching:
   mov  rdi, [rax + rsi * 4]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi
   cmovz rdi, rsi
 
@@ -2536,7 +2537,7 @@ labMatching:
   mov  rdi, [rax + rcx * 4]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi                                              
   cmovz rdi, rsi
 
@@ -2588,7 +2589,7 @@ labMatching:
   mov  rdi, [rax + rcx * 4]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi
   cmovz rdi, rsi
 
@@ -2619,7 +2620,7 @@ inline % 1E8h
   mov  rcx, [rcx] // ; message from overload list
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rax, rax
   cmovz rax, rsi
 
@@ -2671,7 +2672,7 @@ inline % 1E9h
   mov  rcx, [rcx] // ; message from overload list
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rax, rax
   cmovz rax, rsi
 
@@ -2728,7 +2729,7 @@ labMatching:
   mov  rdi, [rax+4]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi
   cmovz rdi, rsi
 
@@ -2742,7 +2743,7 @@ labNextBaseClass:
   mov  rdi, [rax+8]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi
   cmovz rdi, rsi
 
@@ -2801,7 +2802,7 @@ labMatching:
   mov  rdi, [rax+4]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi
   cmovz rdi, rsi
 
@@ -2815,7 +2816,7 @@ labNextBaseClass:
   mov  rdi, [rax+8]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi
   cmovz rdi, rsi
 
@@ -2902,7 +2903,7 @@ labMatching:
   mov  rdi, [rax + rsi * 4]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi
   cmovz rdi, rsi
 
@@ -2975,7 +2976,7 @@ labMatching:
   mov  rdi, [rax + rsi * 4]
 
   //; check nil
-  mov   rsi, rdata : %VOIDPTR + 4
+  mov   rsi, rdata : %VOIDPTR + elObjectOffset
   test  rdi, rdi
   cmovz rdi, rsi
 

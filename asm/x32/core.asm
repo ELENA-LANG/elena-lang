@@ -134,6 +134,7 @@ rstructure %VOIDPTR
 
   dd rdata : %VOID + elPackageOffset
   dd 0
+  dd 0
 
 end
 
@@ -1818,7 +1819,7 @@ labMatching:
   mov  edi, [eax + ecx * 4]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 
@@ -1906,7 +1907,7 @@ labMatching:
   mov  edi, [eax + esi * 4]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 
@@ -2985,7 +2986,7 @@ labMatching:
   mov  edi, [eax + ecx * 4]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 
@@ -3038,7 +3039,7 @@ labMatching:
   mov  edi, [eax + ecx * 4]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 
@@ -3071,7 +3072,7 @@ inline % 1E8h
   mov  ecx, [ecx] // ; message from overload list
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  eax, eax
   cmovz eax, esi
 
@@ -3121,7 +3122,7 @@ inline % 1E9h
   mov  ecx, [ecx] // ; message from overload list
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  eax, eax
   cmovz eax, esi
 
@@ -3178,7 +3179,7 @@ labMatching:
   mov  edi, [eax+4]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 
@@ -3192,7 +3193,7 @@ labNextBaseClass:
   mov  edi, [eax+8]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 
@@ -3251,7 +3252,7 @@ labMatching:
   mov  edi, [eax+4]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 
@@ -3265,7 +3266,7 @@ labNextBaseClass:
   mov  edi, [eax+8]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 
@@ -3352,7 +3353,7 @@ labMatching:
   mov  edi, [eax + esi * 4]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 
@@ -3425,7 +3426,7 @@ labMatching:
   mov  edi, [eax + esi * 4]
 
   //; check nil
-  mov   esi, rdata : %VOIDPTR + 4
+  mov   esi, rdata : %VOIDPTR + elObjectOffset
   test  edi, edi
   cmovz edi, esi
 

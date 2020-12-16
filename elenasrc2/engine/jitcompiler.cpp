@@ -216,7 +216,7 @@ vaddr_t JITCompiler32 :: findClassPtr(void* refVMT)
 {
    VMTHeader* header = (VMTHeader*)((uintptr_t)refVMT - elVMTClassOffset32);
 
-   return header->packageRef;
+   return header->parentRef;
 }
 
 ref_t JITCompiler32 :: findFlags(void* refVMT)
@@ -292,7 +292,7 @@ void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t 
    // create VMT header:
    VMTHeader header;
    //   dummy parent reference
-   header.packageRef = 0;
+   header.parentRef = 0;
    header.flags = flags;
    //   dummy class reference
    header.classRef = 0;
@@ -352,19 +352,19 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, uintptr_t codePosition, VMTEnt
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t packageParentVAddress, size_t count, bool virtualMode)
+void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t parentVAddress, size_t count, bool virtualMode)
 {
    _Memory* image = vmtWriter.Memory();
 
    // update class package reference if available
    pos_t position = vmtWriter.Position();
-   if (packageParentVAddress != 0) {
+   if (parentVAddress != 0) {
       vmtWriter.seek(position - 0x10);
 
       if (virtualMode) {
-         vmtWriter.writeRef((ref_t)packageParentVAddress, 0);
+         vmtWriter.writeRef((ref_t)parentVAddress, 0);
       }
-      else vmtWriter.writeDWord((pos_t)packageParentVAddress);
+      else vmtWriter.writeDWord((pos_t)parentVAddress);
 
       vmtWriter.seek(position);
    }
@@ -606,7 +606,7 @@ vaddr_t JITCompiler64 :: findClassPtr(void* refVMT)
 {
    VMTXHeader* header = (VMTXHeader*)((uintptr_t)refVMT - elVMTClassOffset64);
 
-   return (vaddr_t)header->packageRef;
+   return (vaddr_t)header->parentRef;
 }
 
 vaddr_t JITCompiler64 :: findMethodAddress(void* refVMT, mssg_t message, size_t count)
@@ -678,7 +678,7 @@ void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t 
    // create VMT header:
    VMTXHeader header;
    //   dummy parent reference
-   header.packageRef = 0;
+   header.parentRef = 0;
    header.flags = flags;
    //   dummy class reference
    header.classRef = 0;
@@ -752,27 +752,27 @@ void JITCompiler64 :: addVMTXEntry(mssg64_t message, uintptr_t codePosition, VMT
    entries[index].address = codePosition;
 }
 
-void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t packageParentVAddress, 
+void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t parentVAddress, 
    size_t count, bool virtualMode)
 {
    _Memory* image = vmtWriter.Memory();
 
    // update class package reference if available
-   if (packageParentVAddress != NULL) {
+   if (parentVAddress != NULL) {
       int position = vmtWriter.Position();
       vmtWriter.seek(position - 0x20);
 
       if (virtualMode) {
-         vmtWriter.writeRef((ref_t)packageParentVAddress, 0);
+         vmtWriter.writeRef((ref_t)parentVAddress, 0);
       }
-      else vmtWriter.writeQWord(packageParentVAddress);
+      else vmtWriter.writeQWord(parentVAddress);
 
       vmtWriter.seek(position);
    }
 
    // update class vmt reference if available
    if (classClassVAddress != NULL) {
-      vmtWriter.seek(vmtWriter.Position() - 8);
+      vmtWriter.seek(vmtWriter.Position() - elPageVMTOffset64);
 
       if (virtualMode) {
          vmtWriter.writeRef((ref_t)classClassVAddress, 0);

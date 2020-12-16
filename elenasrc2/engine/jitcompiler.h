@@ -96,7 +96,7 @@ public:
 
    virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count) = 0;
 
-   virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t packageParentVAddress,
+   virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress,
       pos_t count, bool virtualMode) = 0;
 
 ////   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
@@ -153,7 +153,7 @@ public:
    virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
    virtual pos_t copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count);
-   virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t packageParentVAddress, 
+   virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress, 
       pos_t count, bool virtualMode);
 
    virtual void generateProgramStart(MemoryDump& tape);
