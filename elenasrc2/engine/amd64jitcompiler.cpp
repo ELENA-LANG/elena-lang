@@ -1554,8 +1554,8 @@ void _ELENA_::compileALoadR(int, I64JITScope& scope)
 
 void _ELENA_::compilePushA(int, I64JITScope& scope)
 {
-   // push rax
-   scope.code->writeByte(0x50);
+   // push ebx
+   scope.code->writeByte(0x53);
 }
 
 void _ELENA_::compilePushFI(int, I64JITScope& scope)

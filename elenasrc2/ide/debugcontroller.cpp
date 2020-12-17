@@ -139,7 +139,7 @@ DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, iden
 DebugLineInfo* DebugController :: seekClassInfo(size_t address, IdentifierString &className, size_t& flags, size_t vmtPtr)
 {
    // read class VMT address if not provided
-   if (vmtPtr == 0) {
+   if (vmtPtr == 0 && address) {
       vmtPtr = _debugger.Context()->ClassVMT(address);
    }
 

@@ -1,6 +1,6 @@
 public program()
 {
-//    var n := nil
+    var n := nil
 }
 
 startUp = program();

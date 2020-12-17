@@ -88,6 +88,7 @@ public:
 
    virtual vaddr_t findMethodAddress(void* refVMT, mssg_t messageID, size_t vmtLength) = 0;
    virtual pos_t findMethodIndex(void* refVMT, mssg_t messageID, size_t vmtLength) = 0;
+   virtual pos_t findMemberPosition(int index) = 0;
 
    virtual ref_t findFlags(void* refVMT) = 0;
 
@@ -156,6 +157,11 @@ public:
    virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress, 
       pos_t count, bool virtualMode);
 
+   virtual pos_t findMemberPosition(int index)
+   {
+      return index << 2;
+   }
+
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateProgramEnd(MemoryDump& tape);
 };
@@ -201,6 +207,11 @@ public:
    virtual void addVMTXEntry(mssg64_t message, vaddr_t codePosition, VMTXEntry* entries, pos_t& entryCount);
    virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t packageParentVAddress, pos_t count, 
       bool virtualMode);
+
+   virtual pos_t findMemberPosition(int index)
+   {
+      return index << 3;
+   }
 
    virtual void generateProgramStart(MemoryDump& tape);
    virtual void generateProgramEnd(MemoryDump& tape);

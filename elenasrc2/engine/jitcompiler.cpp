@@ -653,7 +653,7 @@ pos_t JITCompiler64 :: allocateConstant(MemoryWriter& writer, size_t objectOffse
 {
    writer.writeBytes(0, objectOffset);
 
-   alignCode(&writer, VA_ALIGNMENT, false);
+   //alignCode(&writer, VA_ALIGNMENT, false);
 
    return writer.Position() - elObjectOffset64;
 }
