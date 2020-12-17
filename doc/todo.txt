@@ -3,8 +3,6 @@ In development:
 ------         
 
   [development]
-    * redesign compileBinary / compileCollection - update references
-
     * fix script samples
 
     * x64 debugger

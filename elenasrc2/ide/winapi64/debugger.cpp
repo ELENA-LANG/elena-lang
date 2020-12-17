@@ -221,7 +221,7 @@ int ThreadContext :: VMTFlags(size_t vmtPtr)
    int    dump = -1;
    size_t size = 0;
 
-   ReadProcessMemory(hProcess, (void*)(vmtPtr - elVMTFlagOffset64), &dump, 8, &size);
+   ReadProcessMemory(hProcess, (void*)(vmtPtr - elVMTFlagOffset64), &dump, 4, &size);
 
    return dump;
 }

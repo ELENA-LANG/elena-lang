@@ -243,6 +243,9 @@ DebugLineInfo* DebugController :: getEndStep(DebugLineInfo* step)
 DebugLineInfo* DebugController :: seekLineInfo(size_t address, ident_t &moduleName, ident_t &className,
    ident_t &methodName, ident_t &procPath)
 {
+   if (!address)
+      return nullptr;
+
    ModuleMap::Iterator it = _modules.start();
    while (!it.Eof()) {
       moduleName = (*it)->Name();
