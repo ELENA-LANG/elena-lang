@@ -53,9 +53,6 @@ AMD64Assembler::Operand AMD64Assembler :: defineRegister(TokenInfo& token)
    else if (token.check("edx")) {
       return Operand(AMD64Helper::otEDX);
    }
-//	else if (token.check("esp")) {
-//		return Operand(x86Helper::otESP);
-//	}
    else if (token.check("al")) {
       return Operand(AMD64Helper::otAL);
    }
@@ -229,25 +226,24 @@ AMD64Assembler::Operand AMD64Assembler :: defineOperand(TokenInfo& token, Proced
             operand.type = AMD64Helper::otDD;
             operand.reference = info.binary->mapReference(structRef) | mskNativeRDataRef;
          }
-
       }
-//		else if (token.check("stat")) {
-//         token.read(":", err);
-//         token.read();
-//         IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
-//
-//         operand.type = x86Helper::otDD;
-//         operand.reference = info.binary->mapReference(structRef) | mskStatSymbolRef;
-//      }
-//		else if (token.check("const")) {
-//         token.read(":", err);
-//         token.read();
-//         operand.type = x86Helper::otDD;
-//
-//         IdentifierString constRef(token.terminal.line + 1, token.terminal.length-2);
-//         operand.reference = info.binary->mapReference(constRef) | mskConstantRef;
-//         operand.offset = 0;
-//      }
+	   else if (token.check("stat")) {
+         token.read(":", err);
+         token.read();
+         IdentifierString structRef(token.terminal.line + 1, token.terminal.length-2);
+
+         operand.type = AMD64Helper::otDD;
+         operand.reference = info.binary->mapReference(structRef) | mskStatSymbolRef;
+      }
+	   else if (token.check("const")) {
+         token.read(":", err);
+         token.read();
+         operand.type = AMD64Helper::otDD;
+
+         IdentifierString constRef(token.terminal.line + 1, token.terminal.length-2);
+         operand.reference = info.binary->mapReference(constRef) | mskConstantRef;
+         operand.offset = 0;
+      }
       else if (token.check("code")) {
          token.read(":", err);
          token.read();
@@ -276,14 +272,14 @@ AMD64Assembler::Operand AMD64Assembler :: defineOperand(TokenInfo& token, Proced
          operand.type = AMD64Helper::otDD;
          operand.reference = -3;
       }
-//      else if (info.parameters.exist(token.value)) {
-//         if (info.inlineMode) {
-//            operand.type = x86Helper::addPrefix(x86Helper::otEBP, x86Helper::otM32disp32);
-//         }
-//         else operand.type = x86Helper::addPrefix(x86Helper::otESP, x86Helper::otM32disp32);
-//
-//         operand.offset = (info.parameters.Count() - info.parameters.get(token.value))*4;
-//      }
+      else if (info.parameters.exist(token.value)) {
+         if (info.inlineMode) {
+            operand.type = AMD64Helper::addPrefix(AMD64Helper::otRBP, AMD64Helper::otM32disp32);
+         }
+         else operand.type = AMD64Helper::addPrefix(AMD64Helper::otRSP, AMD64Helper::otM32disp32);
+
+         operand.offset = (info.parameters.Count() - info.parameters.get(token.value))*4;
+      }
       else {
          token.raiseErr(err);
 
@@ -311,12 +307,19 @@ bool AMD64Assembler :: setOffset(Operand& operand, Operand disp)
       else if (test(operand.type, AMD64Helper::otM8)) {
          operand.type = (OperandType)(operand.type | AMD64Helper::otM8disp8);
       }
+      else if (test(operand.type, AMD64Helper::otM32)) {
+         operand.type = (OperandType)(operand.type | AMD64Helper::otM32disp8);
+      }
       else operand.type = (OperandType)(operand.type | AMD64Helper::otM64disp8);
 
       return true;
    }
    else if (disp.type==AMD64Helper::otDD) {
-      operand.type = (OperandType)(operand.type | AMD64Helper::otM32disp32);
+      if (test(operand.type, AMD64Helper::otM32)) {
+         operand.type = (OperandType)(operand.type | AMD64Helper::otM32disp32);
+      }
+      else operand.type = (OperandType)(operand.type | AMD64Helper::otM64disp32);
+
       return true;
    }
    return false;
@@ -477,10 +480,10 @@ AMD64Assembler::Operand AMD64Assembler:: readDispOperand(TokenInfo& token, Proce
          }
          else {
             // if it is register disp [r]
-          //  if (operand.ebpReg && operand.type == x86Helper::otDisp32) {
-          //     operand.type = (OperandType)(operand.type | x86Helper::otM32disp8);
-	         //   operand.offset = 0;
-	         //}
+            if (operand.ebpReg && operand.type == AMD64Helper::otDisp32) {
+               operand.type = (OperandType)(operand.type | AMD64Helper::otM32disp8);
+	            operand.offset = 0;
+	         }
             return operand;
          }
       }
@@ -523,8 +526,6 @@ AMD64Assembler::Operand AMD64Assembler :: readPtrOperand(TokenInfo& token, Proce
 
       return operand;
    }
-
-   return AMD64Helper::otUnknown; // !! temporal
 }
 
 AMD64Assembler::Operand AMD64Assembler:: compileOperand(TokenInfo& token, ProcedureInfo& info/*, _Module* binary*/, const char* err)
@@ -636,7 +637,12 @@ void AMD64Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryW
 //      }
 //      else code->writeDWord(sour.offset);
 //	}
-   /*else */if (test(sour.type, AMD64Helper::otR64) && (test(dest.type, AMD64Helper::otR64)||test(dest.type, AMD64Helper::otM64))) {
+   /*else */if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otMX64)) {
+      code->writeByte(0x49);
+      code->writeByte(0x8B);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else if (test(sour.type, AMD64Helper::otR64) && (test(dest.type, AMD64Helper::otR64)||test(dest.type, AMD64Helper::otM64))) {
       code->writeByte(0x48);
       code->writeByte(0x8B);
       AMD64Helper::writeModRM(code, sour, dest);
@@ -1227,7 +1233,12 @@ void AMD64Assembler :: compileTEST(TokenInfo& token, ProcedureInfo& info, Memory
 //		code->writeByte(0xA9);
 //		x86Helper::writeImm(code, dest);
 //	}
-   /*else */if ((test(sour.type, AMD64Helper::otR64)||test(sour.type, AMD64Helper::otM64)) && test(dest.type, AMD64Helper::otR64)) {
+   /*else */if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otRX64)) {
+      code->writeByte(0x4D);
+      code->writeByte(0x85);
+      AMD64Helper::writeModRM(code, dest, sour);
+   }
+   else if ((test(sour.type, AMD64Helper::otR64)||test(sour.type, AMD64Helper::otM64)) && test(dest.type, AMD64Helper::otR64)) {
       code->writeByte(0x48);
       code->writeByte(0x85);
       AMD64Helper::writeModRM(code, dest, sour);
@@ -1302,6 +1313,11 @@ void AMD64Assembler :: compileSUB(TokenInfo& token, ProcedureInfo& info, MemoryW
    }
    else if (test(sour.type, AMD64Helper::otR64) && (test(dest.type, AMD64Helper::otR64) || test(dest.type, AMD64Helper::otM64))) {
       code->writeByte(0x48);
+      code->writeByte(0x2B);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otR64)) {
+      code->writeByte(0x4C);
       code->writeByte(0x2B);
       AMD64Helper::writeModRM(code, sour, dest);
    }
@@ -1446,7 +1462,7 @@ void AMD64Assembler :: compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryW
 	   code->writeByte(dest.offset);
    }
    else if ((test(sour.type, AMD64Helper::otR64) || test(sour.type, AMD64Helper::otM64)) && dest.type == AMD64Helper::otDB) {
-      code->writeByte(0x48);
+      code->writeByte(0x4d8);
       code->writeByte(0x83);
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 3), sour);
       code->writeByte(dest.offset);
@@ -1466,17 +1482,32 @@ void AMD64Assembler :: compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryW
 
    Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
-   if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otM64)) {
+   //if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otMX64)) {
+   //   code->writeByte(0x48);
+   //   code->writeByte(0x8D);
+   //   AMD64Helper::writeModRM(code, sour, dest);
+   //}
+   /*else */if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otM64)) {
+      code->writeByte(0x4C);
+      code->writeByte(0x8D);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otMX64)) {
+      code->writeByte(0x49);
+      code->writeByte(0x8D);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otMX64)) {
+      code->writeByte(0x4D);
+      code->writeByte(0x8D);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otM64)) {
       code->writeByte(0x48);
 	   code->writeByte(0x8D);
       AMD64Helper::writeModRM(code, sour, dest);
    }
    else if (test(sour.type, AMD64Helper::otR32) && test(dest.type, AMD64Helper::otM32)) {
-      code->writeByte(0x8D);
-      AMD64Helper::writeModRM(code, sour, dest);
-   }
-   else if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otM64)) {
-      code->writeByte(0x4C);
       code->writeByte(0x8D);
       AMD64Helper::writeModRM(code, sour, dest);
    }

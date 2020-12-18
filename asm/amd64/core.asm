@@ -392,33 +392,33 @@ end
 inline % 0Eh // (rbx - object, rdx - message)
 
   mov  rdi, [rbx - elVMTOffset]
-  mov  rsi, [rdi - elVMTSizeOffset]
-  xor  rcx, rcx
+  mov  esi, dword ptr[rdi - elVMTSizeOffset]
+  xor  ecx, ecx
 
 labSplit:
-  test rsi, rsi
+  test esi, esi
   jz   short labEnd
 
 labStart:
-  mov   r9, rdi
-  lea   r8, [rsi*8]
-  shr   rsi, 1
-  lea   r8, [r8*2]
+  shr   esi, 1
+  lea   rax, [rsi*2]
   setnc cl
-  cmp   rdx, [r9+r8*2]
+  //cmp   edx, [edi+esi*8]
+  //cmp   edx, [edi+eax*8]
+  cmp   rdx, [rdi+rax*8]
   je    short labFound
-  lea   rax, [r9+r8*2]
+  lea   r8, [rdi+rax*8]
   jb    short labSplit
-  lea   rdi, [rax+16]
-  sub   rsi, rcx
+  lea   rdi, [r8+16]
+  sub   esi, ecx
   jmp   labSplit
   nop
   nop
 labFound:
-  jmp   [rdi+rsi*8+4]
+  jmp   [rdi+rax*8+8]
 
 labEnd:
-                                                                
+                               
 end
 
 // ; setv
@@ -436,7 +436,7 @@ end
 // ; sub
 inline % 13h
 
-  sub  edx, [ebx]
+  sub  edx, dword ptr [rbx]
   
 end
 
@@ -1123,7 +1123,7 @@ end
 // ; nshlf
 inline % 5Eh
 
-  mov eax, [rbp+__arg1]
+  mov eax, dword ptr [rbp+__arg1]
   mov ecx, dword ptr [rbx]
   shl eax, cl
   mov dword ptr [rbp+__arg1], eax
@@ -1133,7 +1133,7 @@ end
 // ; nshrf
 inline % 5Fh
 
-  mov eax, [rbp+__arg1]
+  mov eax, dword ptr [rbp+__arg1]
   mov ecx, dword ptr [rbx]
   shr eax, cl
   mov dword ptr [rbp+__arg1], eax
@@ -1767,7 +1767,7 @@ inline % 0BDh
 
 end
 
-// ; pushs
+// ; pushsip
 inline % 0BEh
 
   lea  rax, [rsp + __arg1]
@@ -3112,7 +3112,7 @@ end
 inline % 1FFh
 
   mov  rcx, [rsp]
-  sub  rbp, 18h
+  sub  rsp, 18h
   call extern __arg1
   mov  rdx, rax
 
@@ -3123,7 +3123,7 @@ inline % 2FFh
 
   mov  rcx, [rsp]
   mov  rdx, [rsp+8]
-  sub  rbp, 10h
+  sub  rsp, 10h
   call extern __arg1
   mov  rdx, rax
 
@@ -3134,8 +3134,8 @@ inline % 3FFh
 
   mov  rcx, [rsp]
   mov  rdx, [rsp+8]
-  mov  r8, [rsp+16]
-  sub  rbp, 08h
+  mov  r8,  [rsp+16]
+  sub  rsp, 08h
   call extern __arg1
   mov  rdx, rax
 

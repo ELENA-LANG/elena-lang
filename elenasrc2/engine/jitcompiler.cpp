@@ -760,7 +760,7 @@ void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddre
    // update class package reference if available
    if (parentVAddress != NULL) {
       int position = vmtWriter.Position();
-      vmtWriter.seek(position - 0x20);
+      vmtWriter.seek(position - elVMTClassOffset64);
 
       if (virtualMode) {
          vmtWriter.writeRef((ref_t)parentVAddress, 0);
@@ -772,12 +772,15 @@ void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddre
 
    // update class vmt reference if available
    if (classClassVAddress != NULL) {
+      int position = vmtWriter.Position();
       vmtWriter.seek(vmtWriter.Position() - elPageVMTOffset64);
 
       if (virtualMode) {
          vmtWriter.writeRef((ref_t)classClassVAddress, 0);
       }
       else vmtWriter.writeQWord(classClassVAddress);
+
+      vmtWriter.seek(position);
    }
 
    // if in virtual mode mark method addresses as reference

@@ -544,7 +544,7 @@ void _ELENA_::loadVMTIndexOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord((scope.argument << 3) + 4);
+         scope.code->writeDWord((scope.argument << 3) + 8);
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 
@@ -553,33 +553,6 @@ void _ELENA_::loadVMTIndexOp(int opcode, I64JITScope& scope)
    }
    scope.code->seekEOF();
 }
-
-//void _ELENA_::loadVMTMIndexOp(int opcode, x86JITScope& scope)
-//{
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0]==-1) {
-//         scope.code->writeDWord(scope.argument << 3);
-//      }
-//      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
 
 inline int getFPOffset(int argument, int argOffset)
 {
@@ -1142,7 +1115,7 @@ void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
    scope.code->seekEOF();
 
    if (argsToFree)
-      freeStack64((flags & baCallArgsMask) << 3, scope.code);
+      freeStack64(argsToFree << 3, scope.code);
 }
 
 void _ELENA_::loadNOp(int opcode, I64JITScope& scope)

@@ -108,7 +108,7 @@ public:
       bool          factorReg;   // to implement [r*factor] SIB
       OperandType   type;
 		int           offset;
-      size_t        reference;
+      ref_t         reference;
       SegmentPrefix prefix;
 
       Operand()

@@ -24,9 +24,31 @@ public:
       otDD        = 0x00100005,
       otDB        = 0x00200005,
       otDW        = 0x00400005,
-      otDQ        = 0x02000005,
+      otDQ        = 0x00008005,
 
+      otPtr32     = 0x00100000,
+      otPtr8      = 0x00200000,
       otPtr16     = 0x00400000,
+      otPtr64     = 0x00008000,
+      otPtrX64    = 0x00004000,
+
+      otRX8       = 0x00004300,
+      otRX9       = 0x00004301,
+      otRX10      = 0x00004302,
+      otRX11      = 0x00004303,
+      otRX12      = 0x00004304,
+      otRX13      = 0x00004305,
+      otRX14      = 0x00004306,
+      otRX15      = 0x00004307,
+
+      otRAX       = 0x00008300,
+      otRCX       = 0x00008301,
+      otRDX       = 0x00008302,
+      otRBX       = 0x00008303,
+      otRSP       = 0x00008304,
+      otRBP       = 0x00008305,
+      otRSI       = 0x00008306,
+      otRDI       = 0x00008307,
 
       otEAX       = 0x00100300,
       otECX       = 0x00100301,
@@ -48,31 +70,40 @@ public:
       otDX        = 0x00400302,
       otBX        = 0x00400303,
 
-      otXMM0      = 0x01000300,
-      otXMM1      = 0x01000301,
+      otMM0       = 0x00800300,
+      otMM1       = 0x00800301,
+      otMM2       = 0x00800302,
+      otMM3       = 0x00800303,
+      otMM4       = 0x00800304,
+      otMM5       = 0x00800305,
+      otMM6       = 0x00800306,
+      otMM7       = 0x00800307,
 
-      otRAX       = 0x02000300,
-      otRCX       = 0x02000301,
-      otRDX       = 0x02000302,
-      otRBX       = 0x02000303,
-      otRSP       = 0x02000304,
-      otRBP       = 0x02000305,
-      otRSI       = 0x02000306,
-      otRDI       = 0x02000307,
-
-      otRX8       = 0x02000400,
-      otRX9       = 0x02000401,
-      otRX10      = 0x02000402,
-      otRX11      = 0x02000403,
-      otRX12      = 0x02000404,
-      otRX13      = 0x02000405,
-      otRX14      = 0x02000406,
-      otRX15      = 0x02000407,
+      otXMM0      = 0x00001300,
+      otXMM1      = 0x00001301,
+      otXMM2      = 0x00001302,
+      otXMM3      = 0x00001303,
+      otXMM4      = 0x00001304,
+      otXMM5      = 0x00001305,
+      otXMM6      = 0x00001306,
+      otXMM7      = 0x00001307,
 
       otR32       = 0x00100300,
       otM32       = 0x00110000,
       otM32disp8  = 0x00110100,
       otM32disp32 = 0x00110200,
+
+      otR64       = 0x00008300,
+      otM64       = 0x00018000,
+      otM64disp8  = 0x00018100,
+      otM64disp32 = 0x00018200,
+
+      otRX64      = 0x00004300,
+      otMX64      = 0x00014000,
+      otMX64disp8 = 0x00014100,
+      otMX64disp32= 0x00014200,
+      
+      otX128      = 0x00001300,
 
       otR8        = 0x00200300,
       otM8        = 0x00210000,
@@ -82,23 +113,22 @@ public:
       otM16       = 0x00410000,
       otM16disp8  = 0x00410100,
 
-      otR64       = 0x02000300,
-      otRX64      = 0x02000400,
-      otM64       = 0x02010000,
-      otM64disp8  = 0x02010100,
-      otM64disp32 = 0x02010200,
-
-      otX128      = 0x01000300,
-
       otSIB       = 0x00000004,
 
       otDisp32    = 0x00110005,
+      otDisp64    = 0x00018005,
 
       otFactor2   = 0x40000000,
       otFactor4   = 0x80000000,
       otFactor8   = 0xC0000000
    };
       
+   //enum SegmentPrefix
+   //{
+   //   spNone = 0,
+   //   spFS = 0x64
+   //};
+
    struct Operand
    {
       bool          ebpReg;		// to resolve conflict between [ebp] and disp32
@@ -106,24 +136,30 @@ public:
       OperandType   type;
       int           offset;
       ref_t         reference;
+      //SegmentPrefix prefix;
 
       Operand()
       {
          type = otUnknown;
          factorReg = ebpReg = false;
          reference = offset = 0;
+         //prefix = spNone;
       }
       Operand(OperandType type)
       {
          this->type = type;
-         factorReg = ebpReg = false;
-         reference = offset = 0;
+         this->ebpReg = (this->type == otRBP);
+         this->reference = this->offset = 0;
+         //this->prefix = spNone;
+         this->factorReg = false;
       }
       Operand(int number)
       {
          this->type = (OperandType)number;
-         factorReg = ebpReg = false;
+         this->ebpReg = (this->type == otRBP);
          this->reference = this->offset = 0;
+         //this->prefix = spNone;
+         this->factorReg = false;
       }
    };
 
@@ -154,6 +190,9 @@ public:
          if (test(type, otR64)) {
             type = (OperandType)((type & ~otR64) | prefix);
          }
+         else if (test(type, otR32)) {
+            type = (OperandType)((type & ~otR32) | prefix);
+         }
          else if (type == otDB) {
             type = (OperandType)((type & ~otDB) | otDD | prefix);
          }
@@ -173,36 +212,26 @@ public:
       return type;
    }
 
-   static void writeModRM(MemoryWriter* code, Operand sour, Operand dest)
+   static OperandType addPrefix(OperandType type, OperandType prefix)
    {
-      int prefix = (dest.type & 0x300) >> 2;
-
-      int opcode = prefix + ((char)sour.type << 3) + (char)dest.type;
-
-      code->writeByte((unsigned char)opcode);
-      if ((char)dest.type == otSIB && dest.type != otRSP && dest.type != otAH) {
-         int sib = (char)(dest.type >> 24) & 0xFD; // excluding 64bit mask
-         if (sib == 0) {
-            sib = 0x24;
+      if (prefix != otNone) {
+         if (test(type, otR64)) {
+            type = (OperandType)((type & ~otR64) | prefix);
          }
-         code->writeByte((unsigned char)sib);
-      }
-      if (test(dest.type, otM32disp8) || test(dest.type, otM8disp8) || test(dest.type, otM64disp8)) {
-         code->writeByte((unsigned char)dest.offset);
-      }
-      // !! should only otM32 be checked?
-      else if (test(dest.type, otM32disp32) || dest.factorReg) {
-         if (dest.reference != 0) {
-            code->writeRef(dest.reference, dest.offset);
+         else if (test(type, otR32)) {
+            type = (OperandType)((type & ~otR32) | prefix);
          }
-         else code->writeDWord(dest.offset);
+         else if (type == otDB) {
+            if (prefix == otDW) {
+               type = (OperandType)((type & ~otDB) | prefix);
+            }
+            else if (prefix != otDB) {
+               type = (OperandType)((type & ~otDB) | otDD | prefix);
+            }
+         }
+         else type = (OperandType)(type | prefix);
       }
-      //else if (dest.type == otDisp32) {
-      //   if (dest.reference != 0) {
-      //      code->writeRef(dest.reference, dest.offset);
-      //   }
-      //   else code->writeDWord(dest.offset);
-      //}
+      return type;
    }
 
    static OperandType overrideOperand16(OperandType op16)
@@ -216,6 +245,38 @@ public:
          op16 = (OperandType)(op16 & ~otR16);
 
          return (OperandType)(otR32 + op16);
+      }
+   }
+
+   static void writeModRM(MemoryWriter* code, Operand sour, Operand dest)
+   {
+      int prefix = (dest.type & 0x300) >> 2;
+
+      int opcode = prefix + ((char)sour.type << 3) + (char)dest.type;
+
+      code->writeByte((unsigned char)opcode);
+      if ((char)dest.type == otSIB && dest.type != otRSP && dest.type != otAH) {
+         int sib = (char)(dest.type >> 24);
+         if (sib == 0) {
+            sib = 0x24;
+         }
+         code->writeByte((unsigned char)sib);
+      }
+      if (test(dest.type, otM32disp8) || test(dest.type, otM8disp8) || test(dest.type, otM64disp8)) {
+         code->writeByte((unsigned char)dest.offset);
+      }
+      // !! should only otM32 be checked?
+      else if (test(dest.type, otM32disp32) || test(dest.type, otM64disp32) || dest.factorReg) {
+         if (dest.reference != 0) {
+            code->writeRef(dest.reference, dest.offset);
+         }
+         else code->writeDWord(dest.offset);
+      }
+      else if (dest.type == otDisp32) {
+         if (dest.reference != 0) {
+            code->writeRef(dest.reference, dest.offset);
+         }
+         else code->writeDWord(dest.offset);
       }
    }
 
@@ -262,28 +323,6 @@ public:
          writeImm(code, sour);
       }
       else writeImm(code, sour);
-   }
-
-   static OperandType addPrefix(OperandType type, OperandType prefix)
-   {
-      if (prefix != otNone) {
-         if (test(type, otR64)) {
-            type = (OperandType)((type & ~otR64) | prefix);
-         }
-      //   if (test(type, otR32)) {
-      //      type = (OperandType)((type & ~otR32) | prefix);
-      //   }
-         else if (type == otDB) {
-            if (prefix == otDW) {
-               type = (OperandType)((type & ~otDB) | prefix);
-            }
-            else if (prefix != otDB) {
-               type = (OperandType)((type & ~otDB) | otDD | prefix);
-            }
-         }
-         else type = (OperandType)(type | prefix);
-      }
-      return type;
    }
 };
 

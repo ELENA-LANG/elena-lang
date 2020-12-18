@@ -1,6 +1,16 @@
+singleton Helper
+{
+    test()
+    {
+    }
+}
+
 public program()
 {
-    var n := nil
+    var o := Helper;
+    
+    //Helper
+    o.test()
 }
 
 startUp = program();

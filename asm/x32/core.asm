@@ -2622,7 +2622,7 @@ inline % 0BFh
 
 end
 
-// ; pushs
+// ; pushsip
 inline % 0BEh
 
   lea  eax, [esp + __arg1]

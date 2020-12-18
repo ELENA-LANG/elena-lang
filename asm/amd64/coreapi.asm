@@ -538,7 +538,7 @@ labNext:
   mov  rsi, [rsp+16]
   mov  ecx, dword ptr [rsi-elSizeOffset]
   sub  ebx, 2
-  lea  ecx, [ecx-2]
+  lea  rcx, [rcx-2]
   jz   short labEnd
   and  ecx, 0FFFFFh
   cmp  ebx, ecx
@@ -1093,7 +1093,7 @@ labNext:
   mov  rsi, [rsp+16]
   mov  ecx, dword ptr [rsi-elSizeOffset]
   sub  ebx, 1
-  lea  ecx, [ecx-1]
+  lea  rcx, [rcx-1]
   jz   short labEnd
   and  ecx, 0FFFFFh
   cmp  ebx, ecx
@@ -1166,7 +1166,7 @@ procedure coreapi'chartostr
    ret
    
 lab1:
-   mov  [edi], ebx
+   mov  dword ptr[rdi], ebx
    mov  edx, 1
    ret
 
@@ -1488,7 +1488,7 @@ procedure coreapi'strtoint
   xor  edx, edx                     // ; clear flag
   and  ecx, 0FFFFFh
   cmp  byte ptr [rsi], 2Dh
-  lea  ecx, [ecx-1]                 // ; to skip zero
+  lea  rcx, [rcx-1]                 // ; to skip zero
   jnz  short Lab4
   lodsb
   mov  edx, 1                        // ; set flag
@@ -1541,7 +1541,7 @@ procedure coreapi'wstrtoint
   xor  edx, edx                     // ; clear flag
   and  ecx, 0FFFFFh
   cmp  byte ptr [esi], 2Dh
-  lea  ecx, [ecx-2]                 // ; to skip zero
+  lea  rcx, [rcx-2]                 // ; to skip zero
   jnz  short Lab4
   lodsw
   mov  edx, 1                        // ; set flag
@@ -2180,7 +2180,7 @@ procedure coreapi'strtouint
   mov  ecx, dword ptr [rsi-elSizeOffset]
   and  ecx, 0FFFFFh
   xor  eax, eax
-  lea  ecx, [ecx-1]                 // ; to skip zero
+  lea  rcx, [rcx-1]                 // ; to skip zero
 Lab1:
   mov  edx, ebx
   mul  edx
@@ -2851,7 +2851,7 @@ procedure coreapi'strtolong
   and  ecx, 0FFFFFh
 
   cmp  byte ptr [rsi], 2Dh
-  lea  ecx, [ecx-1]
+  lea  rcx, [rcx-1]
   jnz  short labStart
 
   lea  rsi, [rsi+1]
@@ -3297,7 +3297,7 @@ procedure coreapi'realtostr
 
    push  rdi
    
-   lea   ebx, [ebx-3]         // get the number of decimal digits (minus 2 for sign and dot)
+   lea   rbx, [rbx-3]         // get the number of decimal digits (minus 2 for sign and dot)
    cmp   ebx, 13
    jbe   short ftoa1   
    mov   ebx, 13
@@ -3573,8 +3573,8 @@ ftoa12:
    div   cl                   // ->thousands in al, hundreds in AH
    add   eax,3030h            // convert to characters
    mov   bl, al               // insert them 
-   mov   byte ptr [edi], bl
-   lea   edi, [edi+1]
+   mov   byte ptr [rdi], bl
+   lea   rdi, [rdi+1]
    shr   eax, 8
    mov   bl, al
    mov   byte ptr [rdi], bl
