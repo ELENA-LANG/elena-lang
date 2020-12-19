@@ -218,6 +218,12 @@ public:
          if (test(type, otR64)) {
             type = (OperandType)((type & ~otR64) | prefix);
          }
+         else if (test(type, otRX64)) {
+            if (prefix == otM64) {
+               type = (OperandType)((type & ~otR64) | otMX64);
+            }
+            else type = (OperandType)((type & ~otR64) | prefix);
+         }
          else if (test(type, otR32)) {
             type = (OperandType)((type & ~otR32) | prefix);
          }

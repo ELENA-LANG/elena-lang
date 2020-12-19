@@ -392,8 +392,8 @@ end
 inline % 0Eh // (rbx - object, rdx - message)
 
   mov  rdi, [rbx - elVMTOffset]
-  mov  esi, dword ptr[rdi - elVMTSizeOffset]
   xor  ecx, ecx
+  mov  esi, dword ptr[rdi - elVMTSizeOffset]
 
 labSplit:
   test esi, esi
@@ -403,8 +403,6 @@ labStart:
   shr   esi, 1
   lea   rax, [rsi*2]
   setnc cl
-  //cmp   edx, [edi+esi*8]
-  //cmp   edx, [edi+eax*8]
   cmp   rdx, [rdi+rax*8]
   je    short labFound
   lea   r8, [rdi+rax*8]

@@ -988,8 +988,8 @@ end
 inline % 0Eh // (ebx - object, edx - message)
 
   mov  edi, [ebx - elVMTOffset]
-  mov  esi, [edi - elVMTSizeOffset]
   xor  ecx, ecx
+  mov  esi, [edi - elVMTSizeOffset]
 
 labSplit:
   test esi, esi

@@ -765,7 +765,12 @@ void AMD64Assembler :: compileCMP(TokenInfo& token, ProcedureInfo& info, MemoryW
       code->writeByte(0x3B);
       AMD64Helper::writeModRM(code, sour, dest);
    }
-   else if ((test(sour.type, AMD64Helper::otR64) || test(sour.type, AMD64Helper::otM64)) && dest.type == AMD64Helper::otDB) {      
+   else if (test(sour.type, AMD64Helper::otR64) && (test(dest.type, AMD64Helper::otRX64) || test(dest.type, AMD64Helper::otMX64))) {
+      code->writeByte(0x49);
+      code->writeByte(0x3B);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else if ((test(sour.type, AMD64Helper::otR64) || test(sour.type, AMD64Helper::otM64)) && dest.type == AMD64Helper::otDB) {
       code->writeByte(0x48); 
       code->writeByte(0x83);
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 7), sour);
