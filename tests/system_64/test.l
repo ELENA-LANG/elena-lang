@@ -1,7 +1,10 @@
+A;
+
 singleton Helper
 {
     test()
     {
+        var a := new A();
     }
 }
 

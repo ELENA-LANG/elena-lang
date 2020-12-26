@@ -95,6 +95,21 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
    }
 }
 
+ref_t reallocateX(ref_t pos, ref_t key, ref_t disp, void* map)
+{
+   switch (key & mskAnyRef) {
+      case mskNativeRelDataRef:
+      {
+         int tableAddress = ((ImageBaseMap*)map)->bss + disp;
+         int codeAddress = ((ImageBaseMap*)map)->code + pos + 4;
+
+         return tableAddress - codeAddress;
+      }
+      default:
+         return reallocate(pos, key, disp, map);
+   }
+}
+
 ref_t reallocateImport(ref_t, ref_t key, ref_t disp, void* map)
 {
    if ((key & mskImageMask)==mskImportRef) {
@@ -284,7 +299,10 @@ void Linker :: fixImage(ImageInfo& info)
    adata->fixupReferences(&info.map, reallocate);
 
   // fix up bss section
-   bss->fixupReferences(&info.map, reallocate);
+   if (_mode64bit) {
+      bss->fixupReferences(&info.map, reallocateX);
+   }
+   else bss->fixupReferences(&info.map, reallocate);
 
   // fix up stat section
    stat->fixupReferences(&info.map, reallocate);

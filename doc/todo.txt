@@ -3,16 +3,16 @@ In development:
 ------         
 
   [development]
-    * fix script samples
-
-    * x64 debugger
-    * new object & call
+    * new object
+    * console op
     * GC
     * exception handling
     * multi-theading
 
     * implementing simple program
+    * migrate all samples to win64
 
+    * fix script samples
     * test bsredirect, mindex
     * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME
     * amd64 : critical exception handler, critical exception handler refactoring

@@ -235,6 +235,9 @@ public:
                type = (OperandType)((type & ~otDB) | otDD | prefix);
             }
          }
+         else if (type == otDD && prefix == otM64) {
+            type = (OperandType)((type & ~otDD) | otDQ | prefix);
+         }
          else type = (OperandType)(type | prefix);
       }
       return type;
@@ -281,6 +284,15 @@ public:
       else if (dest.type == otDisp32) {
          if (dest.reference != 0) {
             code->writeRef(dest.reference, dest.offset);
+         }
+         else code->writeDWord(dest.offset);
+      }
+      else if (dest.type == otDisp64) {
+         if (dest.reference != 0) {
+            if ((dest.reference & mskAnyRef) == mskPreloadDataRef) {
+               code->writeRef((dest.reference & ~mskAnyRef) | mskPreloadRelDataRef, dest.offset);
+            }
+            else code->writeRef(dest.reference, dest.offset);
          }
          else code->writeDWord(dest.offset);
       }

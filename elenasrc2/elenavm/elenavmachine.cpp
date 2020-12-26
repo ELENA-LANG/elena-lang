@@ -158,13 +158,19 @@ void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, ref_
    else writer.writeDWord((test(reference, mskRDataRef) ? _statBase : _codeBase) + pos + disp);
 }
 
-void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, vaddr_t vaddress, bool relative, size_t disp)
+void Instance::ImageReferenceHelper :: writeVAddress(MemoryWriter& writer, vaddr_t vaddress, size_t disp)
+{
+   ref_t address = (ref_t)vaddress;
+
+   writer.writeDWord(address + disp);
+}
+
+void Instance::ImageReferenceHelper :: writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t, size_t disp)
 {
    ref_t address = (ref_t)vaddress;
 
    // calculate relative address
-   if (relative)
-      address -= ((ref_t)writer.Address() + 4);
+   address -= ((ref_t)writer.Address() + 4);
 
    writer.writeDWord(address + disp);
 }

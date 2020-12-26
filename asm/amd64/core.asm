@@ -37,6 +37,8 @@ define gc_header             0000h
 define gc_start              0008h
 define gc_end                0048h
 
+define gc_yg_current         0018h
+define gc_yg_end             0020h
 define gc_et_current         0058h 
 define gc_stack_frame        0060h 
 
@@ -111,16 +113,16 @@ end
 // in: ecx - size ; out: ebx - created object
 procedure %GC_ALLOC
 
-//  mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-//  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
-//  add  ecx, eax
-//  cmp  ecx, edx
-//  jae  short labYGCollect
-//  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
-//  lea  ebx, [eax + elObjectOffset]
+  mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
+  mov  rdx, [data : %CORE_GC_TABLE + gc_yg_end]
+  add  rcx, rax
+  cmp  rcx, rdx
+  jae  short labYGCollect
+  mov  [data : %CORE_GC_TABLE + gc_yg_current], rcx
+  lea  rbx, [rax + elObjectOffset]
   ret
 
-//labYGCollect:
+labYGCollect:
   // ; restore ecx
 //  sub  ecx, eax
 
@@ -242,7 +244,7 @@ procedure %GC_ALLOC
 //  pop  ecx 
 //  pop  ebp
 
-//  ret
+  ret
 
 end
 

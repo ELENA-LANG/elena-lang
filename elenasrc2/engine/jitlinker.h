@@ -86,8 +86,10 @@ class JITLinker : _JITLoaderListener
 
       virtual void addBreakpoint(pos_t position);
 
+      virtual void writeVAddress(MemoryWriter& writer, vaddr_t vaddress, pos_t disp);
+      virtual void writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t mask, pos_t disp);
+
       virtual void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp, _Module* module);
-      virtual void writeReference(MemoryWriter& writer, vaddr_t vaddress, bool relative, pos_t disp);
       virtual void writeMTReference(MemoryWriter& writer)
       {
          if (_owner->_virtualMode) {

@@ -130,10 +130,13 @@ namespace _ELENA_
       mskNativeRelCodeRef    = 0x38000000u,
       mskNativeRDataRef      = 0x48000000u,
       mskNativeDataRef       = 0xA8000000u,
+      mskNativeRelDataRef    = 0xAA000000u,
+
       mskPreloadCodeRef      = 0x1C000000u,
       mskPreloadRelCodeRef   = 0x3C000000u,
       mskPreloadDataRef      = 0xAC000000u,
-//      mskNativeVariable      = 0xAD000000u,
+      mskPreloadRelDataRef   = 0xAF000000u,
+      //      mskNativeVariable      = 0xAD000000u,
 //      mskConstVariable       = 0x4D000000u,
       mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
 
@@ -169,6 +172,7 @@ namespace _ELENA_
       mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
       mskConstArray          = 0x0D000000u,   // constant array
+      mskRelPreloaded        = 0x0F000000u,   // preloaded mask, should be used in combination with image mask
 
       mskDebugRef            = 0x60000000u,
       mskMetaAttributes      = 0x61000000u,

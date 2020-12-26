@@ -287,13 +287,13 @@ inline void _ELENA_::writeCoreReference(x86JITScope& scope, ref_t reference, int
 {
    // references should be already preloaded
    if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
-      scope.helper->writeReference(*scope.code,
-         scope.compiler->_preloaded.get(reference & ~mskAnyRef), true, *(int*)(code + offset));
+      scope.helper->writeRelVAddress(*scope.code,
+         scope.compiler->_preloaded.get(reference & ~mskAnyRef), mskRelCodeRef, *(int*)(code + offset));
 
       scope.lh.addFixableJump(offset + position, (*scope.code->Memory())[offset + position]);
    }
-   else scope.helper->writeReference(*scope.code,
-      scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
+   else scope.helper->writeVAddress(*scope.code,
+      scope.compiler->_preloaded.get(reference & ~mskAnyRef), *(int*)(code + offset));
 }
 
 void _ELENA_::loadOneByteOp(int opcode, x86JITScope& scope)

@@ -373,7 +373,7 @@ AMD64Assembler::Operand AMD64Assembler:: readDispOperand(TokenInfo& token, Proce
    if (operand.type != AMD64Helper::otUnknown) {
       operand.type = AMD64Helper::addPrefix(operand.type, prefix);
 
-      if (operand.type == AMD64Helper::otDisp32 && !operand.ebpReg) {
+      if (operand.type == AMD64Helper::otDisp64 && !operand.ebpReg) {
          token.read();
          Operand disp = defineDisplacement(token, info, err);
          if (disp.type == AMD64Helper::otDD || disp.type == AMD64Helper::otDB) {

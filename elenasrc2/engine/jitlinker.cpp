@@ -146,21 +146,27 @@ void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, ref_t re
 //   else throw InternalError("64bit references are not supported");
 //}
 
-void JITLinker::ReferenceHelper :: writeReference(MemoryWriter& writer, vaddr_t vaddress, bool relative, pos_t disp)
+void JITLinker::ReferenceHelper :: writeVAddress(MemoryWriter& writer, vaddr_t vaddress, pos_t disp)
+{
+   if (!_owner->_virtualMode) {
+      ref_t address = vaddress;
+
+      writer.writeDWord(address + disp);
+   }
+   else writer.writeRef(vaddress, disp);
+}
+
+void JITLinker::ReferenceHelper::writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t mask, pos_t disp)
 {
    if (!_owner->_virtualMode) {
       ref_t address = vaddress;
 
       // calculate relative address
-      if (relative)
-         address -= ((ref_t)writer.Address() + 4);
+      address -= ((ref_t)writer.Address() + 4);
 
       writer.writeDWord(address + disp);
    }
-   else if (relative) {
-      writer.writeRef((vaddress | mskRelCodeRef), disp);
-   }
-   else writer.writeRef(vaddress, disp);
+   else writer.writeRef((vaddress | mask), disp);
 }
 
 // --- JITLinker ---
@@ -534,6 +540,9 @@ vaddr_t JITLinker :: resolveNativeSection(ReferenceInfo referenceInfo, ref_t mas
 
       if (currentMask == mskPreloadDataRef) {
          resolveReference(image, *it + position, (uintptr_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeDataRef, _virtualMode);
+      }
+      else if (currentMask == mskPreloadRelDataRef) {
+         resolveReference(image, *it + position, (uintptr_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeRelDataRef, _virtualMode);
       }
       else if (currentMask == mskPreloadCodeRef) {
          resolveReference(image, *it + position, (uintptr_t)_compiler->getPreloadedReference(currentRef), (ref_t)mskNativeCodeRef, _virtualMode);
@@ -1507,6 +1516,9 @@ vaddr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t mask, bool silen
          case mskNativeRDataRef:
             vaddress = resolveNativeSection(referenceInfo, mask, _loader->getSectionInfo(referenceInfo, mask, silentMode));
             break;
+         //case mskNativeRelDataRef:
+         //   vaddress = resolveNativeSection(referenceInfo, mask, _loader->getSectionInfo(referenceInfo, mskNativeDataRef, silentMode));
+         //   break;
          case mskNativeRelCodeRef:
             vaddress = resolveNativeSection(referenceInfo, mskNativeCodeRef, _loader->getSectionInfo(referenceInfo, mskNativeCodeRef, silentMode));
             break;

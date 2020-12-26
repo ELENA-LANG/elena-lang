@@ -281,6 +281,9 @@ void _ELENA_::loadCoreOp(I64JITScope& scope, char* code)
       if ((key & mskTypeMask) == mskPreloaded) {
          scope.compiler->writeCoreReference(scope, key, position, offset, code);
       }
+      else if ((key & mskTypeMask) == mskRelPreloaded) {
+         scope.compiler->writeCoreReference(scope, key, position, offset, code);
+      }
       else {
          //if ((key & mskAnyRef) == mskLinkerConstant) {
          //   scope.code->writeDWord(scope.helper->getLinkerConstant(key & ~mskAnyRef));
@@ -298,13 +301,17 @@ inline void _ELENA_::writeCoreReference(I64JITScope& scope, ref_t reference, int
 {
    // references should be already preloaded
    if ((reference & mskAnyRef) == mskPreloadRelCodeRef) {
-      scope.helper->writeReference(*scope.code,
-         scope.compiler->_preloaded.get(reference & ~mskAnyRef), true, *(int*)(code + offset));
+      scope.helper->writeRelVAddress(*scope.code,
+         scope.compiler->_preloaded.get(reference & ~mskAnyRef), mskRelCodeRef, *(int*)(code + offset));
 
       scope.lh.addFixableJump(offset + position, (*scope.code->Memory())[offset + position]);
    }
-   else scope.helper->writeReference(*scope.code,
-      scope.compiler->_preloaded.get(reference & ~mskAnyRef), false, *(int*)(code + offset));
+   else if ((reference & mskAnyRef) == mskPreloadRelDataRef) {
+      scope.helper->writeRelVAddress(*scope.code,
+         scope.compiler->_preloaded.get(reference & ~mskAnyRef), mskNativeRelDataRef, *(int*)(code + offset));
+   }
+   else scope.helper->writeVAddress(*scope.code,
+      scope.compiler->_preloaded.get(reference & ~mskAnyRef), *(int*)(code + offset));
 }
 
 
@@ -357,6 +364,9 @@ void _ELENA_::loadOneByteOp(int opcode, I64JITScope& scope)
       writer->seek(position + relocation[1]);
 
       if ((key & mskTypeMask) == mskPreloaded) {
+         scope.compiler->writeCoreReference(scope, key, position, offset, code);
+      }
+      else if ((key & mskTypeMask) == mskRelPreloaded) {
          scope.compiler->writeCoreReference(scope, key, position, offset, code);
       }
       else scope.writeReference(*writer, key, *(int*)(code + offset));

@@ -25,8 +25,10 @@ public:
 
    virtual mssg_t resolveMessage(mssg_t reference, _Module* module = nullptr) = 0;
 
+   virtual void writeVAddress(MemoryWriter& writer, vaddr_t vaddress, pos_t disp) = 0;
+   virtual void writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t mask, pos_t disp) = 0;
+
    virtual void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp, _Module* module = NULL) = 0;
-   virtual void writeReference(MemoryWriter& writer, vaddr_t vaddress, bool relative, pos_t disp) = 0;
    virtual void writeMTReference(MemoryWriter& writer) = 0;
 
    //// used for 64bit programming, currently only for mskVMTXMethodAddress and mskVMTXEntryOffset
