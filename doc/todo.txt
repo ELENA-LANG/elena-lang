@@ -3,7 +3,6 @@ In development:
 ------         
 
   [development]
-    * new object
     * console op
     * GC
     * exception handling

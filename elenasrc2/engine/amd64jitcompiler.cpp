@@ -1373,7 +1373,7 @@ void _ELENA_::compileCreate(int opcode, I64JITScope& scope)
    int length = scope.argument;
 
    // __arg1 = #gc_page + (length - 1)
-   scope.argument = align(scope.argument + scope.objectSize, gcPageSize32);
+   scope.argument = align(scope.argument + scope.objectSize, gcPageSize64);
 
    loadNOp(opcode, scope);
 
@@ -1384,14 +1384,14 @@ void _ELENA_::compileCreate(int opcode, I64JITScope& scope)
 
    // mov [ebx-elPageSizeOffset], length
    scope.code->writeWord(0x43C7);
-   scope.code->writeByte((unsigned char)-elPageSizeOffset32);
+   scope.code->writeByte((unsigned char)-elPageSizeOffset64);
    scope.code->writeDWord(length);
 
    if (vmtRef) {
       // ; set vmt reference
       // mov [ebx-elPageVMTOffset], vmt
       scope.code->writeWord(0x43C7);
-      scope.code->writeByte((unsigned char)-elPageVMTOffset32);
+      scope.code->writeByte((unsigned char)-elPageVMTOffset64);
       scope.writeReference(*scope.code, vmtRef, 0);
    }
 }
@@ -1451,7 +1451,7 @@ void _ELENA_::compileDynamicCreateN(int opcode, I64JITScope& scope)
       // ; set vmt reference
       // mov [ebx-elVMT], vmt
       scope.code->writeWord(0x43C7);
-      scope.code->writeByte((unsigned char)(-elPageVMTOffset32));
+      scope.code->writeByte((unsigned char)(-elPageVMTOffset64));
       scope.writeReference(*scope.code, vmtRef, 0);
    }
 }
