@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Win32 / Win64 (limited)
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -100,7 +100,7 @@ ref_t reallocateX(ref_t pos, ref_t key, ref_t disp, void* map)
    switch (key & mskAnyRef) {
       case mskNativeRelDataRef:
       {
-         int tableAddress = ((ImageBaseMap*)map)->bss + disp;
+         int tableAddress = ((ImageBaseMap*)map)->bss + disp + (key & ~mskAnyRef);
          int codeAddress = ((ImageBaseMap*)map)->code + pos + 4;
 
          return tableAddress - codeAddress;
@@ -287,7 +287,10 @@ void Linker :: fixImage(ImageInfo& info)
    Section* import = info.image->getImportSection();
 
   // fix up text reallocate
-   text->fixupReferences(&info.map, reallocate);
+   if (_mode64bit) {
+      text->fixupReferences(&info.map, reallocateX);
+   }
+   else text->fixupReferences(&info.map, reallocate);
 
   // fix up rdata section
    rdata->fixupReferences(&info.map, reallocate);
@@ -299,10 +302,7 @@ void Linker :: fixImage(ImageInfo& info)
    adata->fixupReferences(&info.map, reallocate);
 
   // fix up bss section
-   if (_mode64bit) {
-      bss->fixupReferences(&info.map, reallocateX);
-   }
-   else bss->fixupReferences(&info.map, reallocate);
+   bss->fixupReferences(&info.map, reallocate);
 
   // fix up stat section
    stat->fixupReferences(&info.map, reallocate);
