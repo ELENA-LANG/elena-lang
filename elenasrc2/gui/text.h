@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class header
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2020, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef textH
@@ -162,21 +162,26 @@ private:
    bool prevChar(disp_t& disp)
    {
 #ifdef _UTF8
-      if (_status == 0 && _ELENA_::test((*_page).text[_offset-1], 0x80)) {
-         while (!_ELENA_::test((*_page).text[_offset-1], 0xC0)) {
-            if (!go(-1))
-               return false;
+      if (go(-1)) {
+         if (_status == 0 && _ELENA_::test((*_page).text[_offset], 0x80)) {
+            do {
+               if (!go(-1))
+                  return false;
+            } while (!_ELENA_::test((*_page).text[_offset], 0xC0));
 
-            disp++;
+            return true;
          }
       }
-      return go(-1);
+      else return false;
 #else
-      if ((unsigned)(*_page).text[_offset - 1] >= 0xDC00) {
-         disp++;
-         return go(-2);
+      if (go(-1)) {
+         if ((unsigned)(*_page).text[_offset] >= 0xDC00) {
+            disp++;
+            return go(-1);
+         }
+         else return true;
       }
-      else return go(-1);
+      else return false;
 #endif
    }
 

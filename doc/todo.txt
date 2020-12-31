@@ -3,6 +3,26 @@ In development:
 ------         
 
   [development]
+
+0010
+
+0100
+0110
+
+1000
+1010
+
+1100
+1110
+
+
+0110
+0110
+0110
+
+
+    * static symbol
+
     * console op
     * GC
     * exception handling

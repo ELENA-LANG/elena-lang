@@ -89,7 +89,7 @@ vaddr_t _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
    if (mask != 0) {
       switch (mask) {
          case mskConstantRef:
-         //case mskConstArray:
+         case mskConstArray:
             return _constReferences.get(reference);
          case mskInt64Ref:
          case mskInt32Ref:

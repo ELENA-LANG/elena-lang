@@ -152,7 +152,7 @@ void Instance::ImageReferenceHelper :: writeTape(MemoryWriter& tape, vaddr_t vad
 void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, ref_t reference, pos_t disp, _Module* module)
 {
    size_t pos = reference & ~mskImageMask;
-   if (test(reference, mskRelCodeRef)) {
+   if ((reference & mskImageMask) == mskRelCodeRef) {
       writer.writeDWord(pos - writer.Position() - 4);
    }
    else writer.writeDWord((test(reference, mskRDataRef) ? _statBase : _codeBase) + pos + disp);

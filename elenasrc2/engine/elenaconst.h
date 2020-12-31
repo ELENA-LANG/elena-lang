@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION           5                 // ELENA Engine version
-   #define ENGINE_MINOR_VERSION           4
+   #define ENGINE_MINOR_VERSION           5
 
    constexpr auto LINE_LEN                = 0x1000;         // the maximal source line length
    constexpr auto IDENTIFIER_LEN          = 0x0300;         // the maximal identifier length
@@ -112,46 +112,50 @@ namespace _ELENA_
    {
       // masks
       mskAnyRef              = 0xFF000000u,
-      mskImageMask           = 0xE0000000u,
+      mskImageMask           = 0xF0000000u,
       mskTypeMask            = 0x0F000000u,
 
-      mskCodeRef             = 0x00000000u,
-      mskRelCodeRef          = 0x20000000u,
+      mskRelRef              = 0x10000000u,
+      mskCodeRef             = 0x20000000u,
+      mskRelCodeRef          = 0x30000000u,
       mskRDataRef            = 0x40000000u,
+      mskRelRDataRef         = 0x50000000u,
       mskMetaRef             = 0x60000000u,
       mskStatRef             = 0x80000000u,
+      mskRelStatRef          = 0x90000000u,
       mskDataRef             = 0xA0000000u,
+      mskRelDataRef          = 0xB0000000u,
       mskTLSRef              = 0xC0000000u,
       mskImportRef           = 0xE0000000u,
 
-      mskRelImportRef        = 0xEF000000u,
+      mskRelImportRef        = 0xFF000000u,
 
-      mskNativeCodeRef       = 0x18000000u,
+      mskNativeCodeRef       = 0x28000000u,
       mskNativeRelCodeRef    = 0x38000000u,
       mskNativeRDataRef      = 0x48000000u,
       mskNativeDataRef       = 0xA8000000u,
-      mskNativeRelDataRef    = 0xAA000000u,
+      mskNativeRelDataRef    = 0xB8000000u,
 
-      mskPreloadCodeRef      = 0x1C000000u,
+      mskPreloadCodeRef      = 0x2C000000u,
       mskPreloadRelCodeRef   = 0x3C000000u,
       mskPreloadDataRef      = 0xAC000000u,
-      mskPreloadRelDataRef   = 0xAF000000u,
-      //      mskNativeVariable      = 0xAD000000u,
+      mskPreloadRelDataRef   = 0xBC000000u,
+//      mskNativeVariable      = 0xAD000000u,
 //      mskConstVariable       = 0x4D000000u,
       mskLockVariable        = 0xAE000000u,   // HOTFIX : used to fool trylock opcode, adding virtual offset
 
-      mskInternalRef         = 0x13000000u,   // internal code
+      mskInternalRef         = 0x23000000u,   // internal code
       mskInternalRelRef      = 0x33000000u,   // internal code
-      mskSymbolRef           = 0x12000000u,   // symbol code
+      mskSymbolRef           = 0x22000000u,   // symbol code
       mskSymbolRelRef        = 0x32000000u,   // symbol code
       mskVMTRef              = 0x41000000u,   // class VMT
-      mskClassRef            = 0x11000000u,   // class code
+      mskClassRef            = 0x21000000u,   // class code
 //      mskClassRelRef         = 0x31000000u,   // class relative code
       mskStatSymbolRef       = 0x82000000u,   // reference to static symbol
-      mskEntryRef            = 0x14000000u,   // reference to the program entry
+      mskStatSymbolRelRef    = 0x92000000u,
+      mskEntryRef            = 0x24000000u,   // reference to the program entry
       mskEntryRelRef         = 0x34000000u,   // reference to the program entry
-      mskSymbolAttributeRef  = 0x17000000u,
-
+      
       mskVMTMethodAddress    = 0x43000000u,   // the method address, where the reference offset is a message id, reference values is VMT
       mskMetaRDataRef        = 0x44000000u,   // meta data
       mskVMTEntryOffset      = 0x45000000u,   // the message offset in VMT, where the reference offset is a message id, reference values is VMT
@@ -172,12 +176,12 @@ namespace _ELENA_
       mskExtMessage          = 0x0B000000u,   // external message verb constant
       mskPreloaded           = 0x0C000000u,   // preloaded mask, should be used in combination with image mask
       mskConstArray          = 0x0D000000u,   // constant array
-      mskRelPreloaded        = 0x0F000000u,   // preloaded mask, should be used in combination with image mask
 
       mskDebugRef            = 0x60000000u,
       mskMetaAttributes      = 0x61000000u,
       mskMessageTableRef     = 0x62000000u,
       mskMetaConstant        = 0x62000000u,
+      mskSymbolAttributeRef  = 0x67000000u,
    };
 
    // --- ELENA Debug symbol constants ---
@@ -366,7 +370,7 @@ namespace _ELENA_
    constexpr auto ELENA_SIGNITURE         = "ELENA.";      // the stand alone image
    constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.";   // the ELENAVM client
 
-   constexpr auto MODULE_SIGNATURE        = "ELENA.056";   // the module version
+   constexpr auto MODULE_SIGNATURE        = "ELENA.057";   // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!03";
 
   // --- ELENA core module names ---

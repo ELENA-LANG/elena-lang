@@ -281,9 +281,6 @@ void _ELENA_::loadCoreOp(I64JITScope& scope, char* code)
       if ((key & mskTypeMask) == mskPreloaded) {
          scope.compiler->writeCoreReference(scope, key, position, offset, code);
       }
-      else if ((key & mskTypeMask) == mskRelPreloaded) {
-         scope.compiler->writeCoreReference(scope, key, position, offset, code);
-      }
       else {
          //if ((key & mskAnyRef) == mskLinkerConstant) {
          //   scope.code->writeDWord(scope.helper->getLinkerConstant(key & ~mskAnyRef));
@@ -364,9 +361,6 @@ void _ELENA_::loadOneByteOp(int opcode, I64JITScope& scope)
       writer->seek(position + relocation[1]);
 
       if ((key & mskTypeMask) == mskPreloaded) {
-         scope.compiler->writeCoreReference(scope, key, position, offset, code);
-      }
-      else if ((key & mskTypeMask) == mskRelPreloaded) {
          scope.compiler->writeCoreReference(scope, key, position, offset, code);
       }
       else scope.writeReference(*writer, key, *(int*)(code + offset));
@@ -1527,12 +1521,24 @@ void _ELENA_::compileASaveR(int, I64JITScope& scope)
    scope.writeReference(*scope.code, scope.argument, 0);
 }
 
+inline void writeDisp32(I64JITScope& scope, pos_t disp)
+{
+   switch (scope.argument & mskAnyRef) {
+      case mskStatSymbolRef:
+         scope.writeReference(*scope.code, scope.argument | mskStatSymbolRelRef, disp);
+         break;
+      default:
+         scope.writeReference(*scope.code, scope.argument, disp);
+         break;
+   }
+}
+
 void _ELENA_::compileALoadR(int, I64JITScope& scope)
 {
    // mov rbx, [r]
    scope.code->writeByte(0x48);
    scope.code->writeWord(0x1D8B);
-   scope.writeReference(*scope.code, scope.argument, 0);
+   writeDisp32(scope, 0);
 }
 
 void _ELENA_::compilePushA(int, I64JITScope& scope)

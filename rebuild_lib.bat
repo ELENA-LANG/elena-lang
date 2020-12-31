@@ -108,6 +108,10 @@ if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
 bin\elc tests\system\system_test.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 tests\system\system_test.exe
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO TestError

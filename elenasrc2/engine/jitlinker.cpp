@@ -1502,11 +1502,11 @@ vaddr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t mask, bool silen
             break;
          case mskSymbolRelRef:
 //         case mskClassRelRef:
-            vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelCodeRef, _loader->getSectionInfo(referenceInfo, mask & ~mskRelCodeRef, silentMode));
+            vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelRef, _loader->getSectionInfo(referenceInfo, mask & ~mskRelRef, silentMode));
             break;
          case mskInternalRef:
          case mskInternalRelRef:
-            vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelCodeRef, _loader->getSectionInfo(referenceInfo, 0, silentMode));
+            vaddress = resolveBytecodeSection(referenceInfo, mask & ~mskRelRef, _loader->getSectionInfo(referenceInfo, mskCodeRef, silentMode));
             break;
          case mskVMTRef:
             vaddress = resolveBytecodeVMTSection(referenceInfo, mask, _loader->getClassSectionInfo(referenceInfo, mskClassRef, mskVMTRef, silentMode));
@@ -1535,6 +1535,9 @@ vaddr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t mask, bool silen
             vaddress = resolveConstant(referenceInfo, mask, silentMode);
             break;
          case mskStatSymbolRef:
+            vaddress = resolveStaticVariable(referenceInfo, mskStatRef);
+            break;
+         case mskStatSymbolRelRef:
             vaddress = resolveStaticVariable(referenceInfo, mskStatRef);
             break;
          case mskMessage:

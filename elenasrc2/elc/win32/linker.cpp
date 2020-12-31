@@ -105,6 +105,13 @@ ref_t reallocateX(ref_t pos, ref_t key, ref_t disp, void* map)
 
          return tableAddress - codeAddress;
       }
+      case mskStatSymbolRelRef:
+      {
+         int tableAddress = ((ImageBaseMap*)map)->stat + disp + (key & ~mskAnyRef);
+         int codeAddress = ((ImageBaseMap*)map)->code + pos + 4;
+
+         return tableAddress - codeAddress;
+      }
       default:
          return reallocate(pos, key, disp, map);
    }
