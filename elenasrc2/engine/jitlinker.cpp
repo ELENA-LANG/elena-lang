@@ -33,16 +33,29 @@ inline bool updateVAddr(_Memory* image, pos_t position, vaddr_t addr)
 inline void resolveReference(_Memory* image, pos_t position, vaddr_t vaddress, ref_t mask, bool virtualMode)
 {
    if (!virtualMode) {
-      if ((mask & mskImageMask) == mskRelCodeRef) {
-         writeVAddr(image, position, vaddress - ((vaddr_t)image->get(0)) - position - 4);
+      switch (mask & mskImageMask) {
+         case mskRelCodeRef:
+         case mskRelStatRef:
+            writeVAddr(image, position, vaddress - ((vaddr_t)image->get(0)) - position - 4);
+            break;
+         default:
+            updateVAddr(image, position, vaddress);
+            break;
       }
-      else updateVAddr(image, position, vaddress);
    }
-   // in virtual mode
-   else if ((mask & mskImageMask) == mskRelCodeRef) {
-      image->addReference((ref_t)vaddress | mskRelCodeRef, position);
+   else {
+      switch (mask & mskImageMask) {
+         case mskRelCodeRef:
+            image->addReference((ref_t)vaddress | mskRelCodeRef, position);
+            break;
+         case mskRelStatRef:
+            image->addReference((ref_t)vaddress | mskRelStatRef, position);
+            break;
+         default:
+            image->addReference((ref_t)vaddress, position);
+            break;
+      }
    }
-   else image->addReference((ref_t)vaddress, position);
 }
 
 // --- ReferenceLoader::ReferenceHelper ---

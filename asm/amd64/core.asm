@@ -557,8 +557,8 @@ end
 inline % 1Dh
 
   mov  rsi, [data : %CORE_GC_TABLE + gc_et_current]
-  mov  rsp, [rsi + 4]
-  mov  rbp, [rsi + 8]
+  mov  rsp, [rsi + 8]
+  mov  rbp, [rsi + 16]
   pop  rcx
   mov  [data : %CORE_GC_TABLE + gc_et_current], rcx
   

@@ -71,17 +71,9 @@ ref_t reallocate(ref_t pos, ref_t key, ref_t disp, void* map)
          return ((ImageBaseMap*)map)->tls + base + disp;
       case mskImportRef:
       {
-         if ((key & mskAnyRef) == mskRelImportRef) {
-            int tableAddress = ((ImageBaseMap*)map)->import + ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get((key & ~mskAnyRef) | mskImportRef);
-            int codeAddress = ((ImageBaseMap*)map)->code + ((ImageBaseMap*)map)->base + pos + 4;
+         int address = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
 
-            return tableAddress - codeAddress;
-         }
-         else {
-            int address = ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get(key);
-
-            return ((ImageBaseMap*)map)->import + address + disp;
-         }
+         return ((ImageBaseMap*)map)->import + address + disp;
       }
       case mskMetaRef:
          switch (key) {
@@ -105,10 +97,17 @@ ref_t reallocateX(ref_t pos, ref_t key, ref_t disp, void* map)
 
          return tableAddress - codeAddress;
       }
-      case mskStatSymbolRelRef:
+      case mskRelStatRef:
       {
          int tableAddress = ((ImageBaseMap*)map)->stat + disp + (key & ~mskAnyRef);
          int codeAddress = ((ImageBaseMap*)map)->code + pos + 4;
+
+         return tableAddress - codeAddress;
+      }
+      case mskRelImportRef:
+      {
+         int tableAddress = ((ImageBaseMap*)map)->import + ((ImageBaseMap*)map)->base + ((ImageBaseMap*)map)->importMapping.get((key & ~mskAnyRef) | mskImportRef);
+         int codeAddress = ((ImageBaseMap*)map)->code + ((ImageBaseMap*)map)->base + pos + 4;
 
          return tableAddress - codeAddress;
       }

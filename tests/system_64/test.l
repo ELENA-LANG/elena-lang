@@ -5,13 +5,13 @@ A
     }
 }
 
-static X = new A();
+public static X = new A();
 
 public program()
 {
     X;
     
-//    X;
+    X;
     
 //    handle h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
     

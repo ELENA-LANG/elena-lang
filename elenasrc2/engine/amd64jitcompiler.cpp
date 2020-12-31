@@ -1283,8 +1283,8 @@ void _ELENA_::compilePush(int opcode, I64JITScope& scope)
 
 void _ELENA_::compilePopD(int, I64JITScope& scope)
 {
-   // pop ebx
-   scope.code->writeByte(0x5B);
+   // pop rdx
+   scope.code->writeByte(0x5A);
 }
 
 void _ELENA_::compileHook(int opcode, I64JITScope& scope)
@@ -1513,24 +1513,24 @@ void _ELENA_::compileDCopyCount(int, I64JITScope& scope)
    scope.code->writeDWord(ARG_MASK);
 }
 
+inline void writeDisp32(I64JITScope& scope, pos_t disp)
+{
+   switch (scope.argument & mskAnyRef) {
+   case mskStatSymbolRef:
+      scope.writeReference(*scope.code, scope.argument | mskStatSymbolRelRef, disp);
+      break;
+   default:
+      scope.writeReference(*scope.code, scope.argument, disp);
+      break;
+   }
+}
+
 void _ELENA_::compileASaveR(int, I64JITScope& scope)
 {
    // mov [ref], rbx
    scope.code->writeByte(0x48);
    scope.code->writeWord(0x1D89);
-   scope.writeReference(*scope.code, scope.argument, 0);
-}
-
-inline void writeDisp32(I64JITScope& scope, pos_t disp)
-{
-   switch (scope.argument & mskAnyRef) {
-      case mskStatSymbolRef:
-         scope.writeReference(*scope.code, scope.argument | mskStatSymbolRelRef, disp);
-         break;
-      default:
-         scope.writeReference(*scope.code, scope.argument, disp);
-         break;
-   }
+   writeDisp32(scope, 0);
 }
 
 void _ELENA_::compileALoadR(int, I64JITScope& scope)
@@ -1575,8 +1575,8 @@ void _ELENA_::compilePushF(int op, I64JITScope& scope)
 
 void _ELENA_::compilePushD(int, I64JITScope& scope)
 {
-   // push ebx
-   scope.code->writeByte(0x53);
+   // push rdx
+   scope.code->writeByte(0x52);
 }
 
 void _ELENA_::compileCallR(int, I64JITScope& scope)
@@ -1588,8 +1588,8 @@ void _ELENA_::compileCallR(int, I64JITScope& scope)
 
 void _ELENA_::compilePopA(int, I64JITScope& scope)
 {
-   // pop eax
-   scope.code->writeByte(0x58);
+   // pop rbx
+   scope.code->writeByte(0x5B);
 }
 
 void _ELENA_::compileIfE(int, I64JITScope& scope)
@@ -1775,11 +1775,11 @@ void _ELENA_::compileIfR(int, I64JITScope& scope)
 {
    int jumpOffset = scope.tape->getDWord();
 
-   // cmp rax, r
+   // cmp rbx, r
    // jz lab
 
    scope.code->writeByte(0x48);
-   scope.code->writeByte(0x3D);
+   scope.code->writeWord(0xFB81);
    // HOTFIX : support zero references
    if (scope.argument == 0) {
       scope.code->writeDWord(0);
@@ -1810,11 +1810,11 @@ void _ELENA_::compileElseR(int, I64JITScope& scope)
 {
    int jumpOffset = scope.tape->getDWord();
 
-   // cmp rax, r
+   // cmp rbx, r
    // jz lab
 
    scope.code->writeByte(0x48);
-   scope.code->writeByte(0x3D);
+   scope.code->writeWord(0xFB81);
    // HOTFIX : support zero references
    if (scope.argument != 0) {
       scope.writeReference(*scope.code, scope.argument, 0);
@@ -1853,7 +1853,7 @@ void _ELENA_::compileNotLessE(int, I64JITScope& scope)
 {
    int jumpOffset = scope.argument;
 
-   // cmp dwotd ptr[ebx], edx
+   // cmp dword ptr[ebx], edx
    scope.code->writeWord(0x1339);
 
    // try to use short jump if offset small (< 0x10?)
@@ -1865,7 +1865,7 @@ void _ELENA_::compileNotGreaterE(int, I64JITScope& scope)
 {
    int jumpOffset = scope.argument;
 
-   // cmp dwotd ptr[ebx], edx
+   // cmp dword ptr[ebx], edx
    scope.code->writeWord(0x1339);
 
    // try to use short jump if offset small (< 0x10?)

@@ -123,6 +123,7 @@ vaddr_t _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
                   return _codeReferences.get(reference);
                case mskRDataRef:
                   return _dataReferences.get(reference);
+               case mskRelStatRef:
                case mskStatRef:
                   return _statReferences.get(reference);
                case mskDataRef:
