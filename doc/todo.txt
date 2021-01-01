@@ -3,27 +3,24 @@ In development:
 ------         
 
   [development]
+    * arg multi method
+    * arg multi method - nil
 
-0010
+    * two arg multi method
+    * two arg multi method - nil
 
-0100
-0110
+    * three arg multi method
+    * three arg multi method - nil
 
-1000
-1010
+    * four arg multi method
+    * four arg multi method - nil
 
-1100
-1110
+    * varg multi method
+    * varg multi method - nil
 
-
-0110
-0110
-0110
-
-
-    * static symbol
 
     * console op
+
     * GC
     * exception handling
     * multi-theading

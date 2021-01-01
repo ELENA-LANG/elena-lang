@@ -1,21 +1,26 @@
 A
 {
+    x;
+    y;
+    
     constructor()
     {
+        x := 1;
+        y := 2;
     }
+    
+    add(int n)
+        = y.add(n); 
 }
-
-public static X = new A();
 
 public program()
 {
-    X;
+    var a := new A();
     
-    X;
+    var r := a.add(4)
     
-//    handle h := extern KERNEL32.GetStdHandle(0FFFFFFF5h);
-    
-//    extern KERNEL32.WriteConsoleW(h,"abc"w,3,0,0)
+//    console;
+//    console.write("abc"w)
 }
 
 startUp = program();

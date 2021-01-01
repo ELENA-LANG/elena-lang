@@ -2,8 +2,8 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler Engine
 //
 //		This file contains ELENA JIT-X linker class.
-//		Supported platforms: I64
-//                                              (C)2005-2020, by Alexei Rakov
+//		Supported platforms: x86-64
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1336,7 +1336,7 @@ void _ELENA_::compileMTRedirect(int op, I64JITScope& scope)
    }
    //   else scope.extra_arg = 4;
 
-      // ; lea  eax, [esp + offs]
+      // ; lea  rax, [rsp + offs]
    AMD64Helper::leaRM64disp(scope.code, AMD64Helper::otRAX, AMD64Helper::otRSP, startArg << 3);
 
    if (test(scope.extra_arg, VARIADIC_MESSAGE)) {
@@ -1642,7 +1642,7 @@ void _ELENA_::compileXRedirect(int op, I64JITScope& scope)
    int startArg = 0;
 
    // ; lea  rax, [rsp + offs]
-   AMD64Helper::leaRM64disp(scope.code, AMD64Helper::otRAX, AMD64Helper::otRSP, startArg << 2);
+   AMD64Helper::leaRM64disp(scope.code, AMD64Helper::otRAX, AMD64Helper::otRSP, startArg << 3);
 
    // HOTFIX : to adjust the command for loadMTOp
    scope.extra_arg = scope.argument << 3;

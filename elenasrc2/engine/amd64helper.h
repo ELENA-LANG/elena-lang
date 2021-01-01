@@ -2,8 +2,8 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains ELENA coder opcode helpers
-//		Supported platforms: amd64
-//                             (C)2005-2020, by Alexei Rakov, Alexandre Bencz
+//		Supported platforms: x32-64
+//                             (C)2005-2021, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef amd64helperH
@@ -301,7 +301,7 @@ public:
    static void leaRM64disp(MemoryWriter* code, OperandType sour, OperandType dest, int destOffs)
    {
       Operand sourOp(sour);
-      Operand destOp(getOperandType(dest, otR64, destOffs));
+      Operand destOp(getOperandType(dest, otM64, destOffs));
 
       destOp.offset = destOffs;
 

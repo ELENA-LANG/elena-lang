@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA AMD64Assembler
 //		classes.
-//                             (C)2005-2020, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2021, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -637,8 +637,13 @@ void AMD64Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryW
 //      }
 //      else code->writeDWord(sour.offset);
 //	}
-   /*else */if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otMX64)) {
-      code->writeByte(0x49);
+   /*else */if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otMX64)) {
+      code->writeByte(0x4F);
+      code->writeByte(0x8B);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otMX64)) {
+      code->writeByte(0x4B);
       code->writeByte(0x8B);
       AMD64Helper::writeModRM(code, sour, dest);
    }
@@ -677,8 +682,8 @@ void AMD64Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryW
 	}
    else if (test(sour.type, AMD64Helper::otRX64) && (dest.type == AMD64Helper::otDD || dest.type == AMD64Helper::otDB 
       || dest.type == AMD64Helper::otDQ)) {
-      dest.type = AMD64Helper::otDD;
-      code->writeByte(0x4C);
+      dest.type = AMD64Helper::otDQ;
+      code->writeByte(0x49);
       code->writeByte(0xB8 + (char)sour.type);
       AMD64Helper::writeImm(code, dest);
    }
@@ -1487,23 +1492,18 @@ void AMD64Assembler :: compileLEA(TokenInfo& token, ProcedureInfo& info, MemoryW
 
    Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
 
-   //if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otMX64)) {
-   //   code->writeByte(0x48);
-   //   code->writeByte(0x8D);
-   //   AMD64Helper::writeModRM(code, sour, dest);
-   //}
-   /*else */if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otM64)) {
+   if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otM64)) {
       code->writeByte(0x4C);
       code->writeByte(0x8D);
       AMD64Helper::writeModRM(code, sour, dest);
    }
-   else if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otMX64)) {
-      code->writeByte(0x49);
+   else if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otMX64)) {
+      code->writeByte(0x4F);
       code->writeByte(0x8D);
       AMD64Helper::writeModRM(code, sour, dest);
    }
-   else if (test(sour.type, AMD64Helper::otRX64) && test(dest.type, AMD64Helper::otMX64)) {
-      code->writeByte(0x4D);
+   else if (test(sour.type, AMD64Helper::otR64) && test(dest.type, AMD64Helper::otMX64)) {
+      code->writeByte(0x4B);
       code->writeByte(0x8D);
       AMD64Helper::writeModRM(code, sour, dest);
    }

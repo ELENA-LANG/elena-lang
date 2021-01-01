@@ -3633,3 +3633,677 @@ unpacked:- (52)  // -32
   ret
 end
 
+// ; s_encode(index,out length, src, dst, out len2)
+procedure coreapi's_encode
+
+  mov  rbx, [rsp+16]
+  mov  rsi, [rsp+8]
+  mov  ecx, dword ptr [rbx]
+  mov  rdi, [rsp+32]
+  mov  rax, [rsp+24]
+
+  push rdi
+  add  eax, dword ptr [rsi]
+  push rax
+  push rbx
+  
+labNext:
+  xor  ebx, ebx
+  mov  bl, byte ptr [rax]
+  add  eax, 1
+  cmp  ebx, 00000080h
+  jl   lab1
+  cmp  ebx, 000000C0h
+  jl   err2
+  cmp  ebx, 000000E0h
+  jl   short lab2
+  cmp  ebx, 000000F0h
+  jl   lab3
+  cmp  ebx, 000000F8h
+  jl   lab4
+  nop
+  nop
+  jmp err2
+
+lab2:  
+  sub  ecx, 2
+  jb   short err
+  mov  esi, ebx
+  mov  bl, byte ptr [rax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 0C0h
+  cmp  edx, 00000080h
+  jnz  err2
+  shl  esi, 6
+  add  esi, ebx
+  sub  esi, 3080h
+  jmp  labSave
+  
+lab3:
+  sub  ecx, 3
+  jb   err
+  mov  esi, ebx
+  mov  bl, byte ptr [rax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 0C0h
+  cmp  edx, 00000080h
+  jnz  err2
+  cmp  esi, 000000E0h
+  jnz  short lab3_1
+  cmp  ebx, 000000A0h
+  jl   err2
+
+lab3_1:
+  shl  esi, 12
+  shl  ebx, 6
+  add  esi, ebx
+  xor  ebx, ebx
+  mov  bl, byte ptr [rax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 0C0h
+  cmp  edx, 00000080h
+  jnz  err2
+  add  esi, ebx
+  sub  esi, 0E2080h
+  jmp  labSave
+  
+lab4:
+  sub  ecx, 4
+  jb   short err
+  mov  esi, ebx
+  mov  bl, byte ptr [rax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 0C0h
+  cmp  edx, 00000080h
+  jnz  err2
+  cmp  esi, 000000F0h
+  jnz  short lab4_1
+  cmp  ebx, 00000090h
+  jl   err2
+
+lab4_1:
+  cmp  esi, 000000F4h
+  jnz  short lab4_2
+  cmp  ebx, 00000090h
+  jae  err2
+
+lab4_2:
+  shl  esi, 18
+  shl  ebx, 12
+  add  esi, ebx
+
+  xor  ebx, ebx
+  mov  bl, byte ptr [rax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 000000C0h
+  cmp  edx, 00000080h
+  jnz  err2
+
+  shl  ebx, 6
+  add  esi, ebx
+  
+  xor  ebx, ebx
+  mov  bl, byte ptr [rax]
+  add  eax, 1
+  mov  edx, ebx
+  and  edx, 000000C0h
+  cmp  edx, 00000080h
+  jnz  err2
+
+  add  esi, ebx
+  sub  esi, 3C82080h
+  jmp  labSave
+
+lab1:
+  mov  esi, ebx  
+  sub  ecx, 1
+
+labSave:
+  mov  dword ptr [rdi], esi
+  add  edi, 4
+
+  test ecx, ecx
+  jnz  labNext
+
+err:
+  pop  rbx
+  mov  edx, eax
+  pop  rax
+  sub  edx, eax
+  mov  ecx, edi
+  pop  rdi
+  sub  ecx, edi
+  shr  ecx, 2
+  mov  rax, [rsp+40]
+  mov  dword ptr [rax], ecx
+  mov  rsi, [rsp+16]
+  mov  dword ptr [rsi], edx
+
+  ret
+  
+err2:
+  add  rsp, 24
+  xor  ebx, ebx
+  ret 
+
+end
+
+// ; s_decode(index,out length, src, dst, out len2)
+procedure coreapi's_decode
+
+   mov  rbx, [rsp+16]
+   mov  rsi, [rsp+8]
+   mov  ecx, dword ptr [rbx]
+   mov  rdi, [rsp+32]
+   mov  ebx, dword ptr [rsi]
+   mov  rax, [rsp+24]
+
+   push rdi
+   lea  rax, [rax + rbx * 4]
+   push rax
+   push rbx
+
+labNext:
+   mov  ebx, dword ptr [rax]
+   cmp  ebx, 00000080h
+   jl   short lab1
+   cmp  ebx, 0800h
+   jl   short lab2
+   cmp  ebx, 10000h
+   jl   short lab3
+
+   sub  ecx, 1
+
+   mov  edx, ebx
+   shr  edx, 18
+   and  edx, 03Fh
+   add  edx, 000000F0h 
+   mov  byte ptr [rdi], dl
+   add  edi, 1
+
+   mov  edx, ebx
+   and  edx, 03F000h
+   shr  edx, 12
+   add  edx, 00000080h 
+   mov  byte ptr [rdi], dl
+   add  edi, 1
+
+   mov  edx, ebx
+   and  edx, 0FC0h   
+   shr  edx, 6
+   add  edx, 00000080h
+   mov  byte ptr [rdi], dl
+   add  edi, 1
+
+   mov  edx, ebx
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [rdi], dl
+   add  edi, 1
+
+   jmp  labSave
+
+lab2:
+   sub  ecx, 1
+
+   mov  edx, ebx
+   shr  edx, 6
+   add  edx, 0C0h
+   mov  byte ptr [rdi], dl
+   add  edi, 1
+   
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [rdi], bl
+   add  edi, 1
+   jmp  labSave
+
+lab3:
+   sub  ecx, 1
+
+   mov  edx, ebx
+   shr  edx, 12
+   add  edx, 0E0h
+   mov  byte ptr [rdi], dl
+   add  edi, 1
+
+   mov  edx, ebx
+   shr  edx, 6
+   and  edx, 03Fh
+   add  edx, 00000080h
+   mov  byte ptr [rdi], dl
+   add  edi, 1
+
+   and  ebx, 03Fh
+   add  ebx, 00000080h
+   mov  byte ptr [rdi], bl
+   jmp  short labSave
+   
+lab1:
+   mov  byte ptr [rdi], bl
+   add  edi, 1
+   sub  ecx, 1
+
+labSave:
+   add  eax, 4
+   test ecx, ecx
+   jnz  labNext
+
+err:
+   pop  rbx
+   mov  edx, eax
+   pop  rax
+   sub  edx, eax
+   shr  edx, 2
+   mov  ecx, edi
+   pop  rdi
+   sub  ecx, edi
+   mov  rax, [rsp+40]
+   mov  dword ptr [rax], ecx
+   mov  rsi, [rsp+16]
+   mov  dword ptr [rsi], edx
+   mov  ebx, eax
+
+   ret
+
+end
+
+procedure coreapi'ws_encode
+
+  mov  rbx, [rsp+16]
+  mov  rsi, [rsp+8]
+  mov  ecx, dword ptr [rbx]
+  mov  rdi, [rsp+32]
+  mov  rax, [rsp+24]
+
+  push rdi
+  add  eax, dword ptr [rsi]
+  push rax
+  push rbx
+
+labNext:
+  mov  ebx, dword ptr [rax]
+  add  eax, 2
+  and  ebx, 0FFFFh
+  cmp  ebx, 0D800h
+  jl   short lab1
+  cmp  ebx, 0DBFFh
+  jg   short err2
+
+  sub  ecx, 2
+  jl   short err
+
+  mov  esi, ebx
+  shl  esi, 10
+  mov  ebx, dword ptr [rax]
+  add  eax, 2
+  and  ebx, 0FFFFh
+  cmp  ebx, 0DC00h
+  jl   short lab2
+  cmp  ebx, 0DFFFh
+  jg   short err2
+  
+lab2:
+  add  ebx, esi
+  sub  ebx, 35FDC00h
+
+lab1:
+  mov  esi, ebx
+  sub  ecx, 2
+
+labSave:
+  mov  dword ptr [rdi], esi
+  add  edi, 4
+
+  test ecx, ecx
+  jnz  labNext
+
+err:
+  pop  rbx
+  mov  edx, eax
+  pop  rax
+  sub  edx, eax
+  mov  ecx, edi
+  pop  rdi
+  sub  ecx, edi
+  shr  ecx, 2
+  mov  rax, [rsp+40]
+  mov  dword ptr[rax], ecx
+  mov  rsi, [rsp+16]
+  mov  dword ptr [rsi], edx
+
+  ret
+  
+err2:
+  add  rsp, 24
+  xor  ebx, ebx
+  ret 
+
+end
+
+
+procedure coreapi'ws_encodew
+
+  mov  rbx, [rsp+16]
+  mov  rsi, [rsp+8]
+  mov  ecx, dword ptr [rbx]
+  mov  rdi, [rsp+32]
+  shl  ecx, 1
+  mov  rax, [rsp+24]
+
+  push rdi
+  add  eax, dword ptr [rsi]
+  add  eax, dword ptr [rsi]
+  push rax
+  push rbx
+
+labNext:
+  mov  ebx, dword ptr [rax]
+  add  eax, 2
+  and  ebx, 0FFFFh
+  cmp  ebx, 0D800h
+  jl   short lab1
+  cmp  ebx, 0DBFFh
+  jg   short err2
+
+  sub  ecx, 2
+  jl   short err
+
+  mov  esi, ebx
+  shl  esi, 10
+  mov  ebx, dword ptr [rax]
+  add  eax, 2
+  and  ebx, 0FFFFh
+  cmp  ebx, 0DC00h
+  jl   short lab2
+  cmp  ebx, 0DFFFh
+  jg   short err2
+  
+lab2:
+  add  ebx, esi
+  sub  ebx, 35FDC00h
+
+lab1:
+  mov  esi, ebx
+  sub  ecx, 2
+
+labSave:
+  mov  dword ptr [rdi], esi
+  add  edi, 4
+
+  test ecx, ecx
+  jnz  labNext
+
+err:
+  pop  rbx
+  mov  edx, eax
+  pop  rax
+  sub  edx, eax
+  mov  ecx, edi
+  pop  rdi
+  sub  ecx, edi
+  shr  ecx, 2
+  mov  rax, [rsp+40]
+  mov  dword ptr [rax], ecx
+
+  ret
+  
+err2:
+  add  rsp, 24
+  xor  ebx, ebx
+  ret 
+
+end
+
+procedure coreapi'ws_decode
+
+   mov  rbx, [rsp+16]
+   mov  rsi, [rsp+8]
+   mov  ecx, dword ptr [rbx]
+   mov  rdi, [rsp+32]
+   mov  ebx, dword ptr [rsi]
+   mov  rax, [rsp+24]
+
+   push rdi
+   lea  rax, [rax + rbx * 4]
+   push rax
+   push rbx
+
+labNext:
+   mov  ebx, dword ptr [rax]
+   cmp  ebx, dword ptr 128
+   jl   short labCH1
+
+   cmp  ebx, 0800h
+   jl   short lab1
+
+   sub  ecx, 2
+   jl   short err
+
+   mov  edx, ebx
+   shr  edx, 10
+   add  edx, 0D7C0h
+   mov  word ptr [rdi], dx
+   add  rdi, 2
+
+   mov  edx, ebx
+   and  edx, 03FFh
+   add  edx, 0DC00h
+   mov  word ptr [rdi], dx
+   add  rdi, 2
+   jmp  short labSave
+   
+lab1:
+   mov  word ptr [rdi], bx
+   add  edi, 2
+   sub  ecx, 1
+   jmp  short labSave
+
+labCH1:
+   mov  word ptr [rdi], bx
+   add  edi, 2
+   sub  ecx, 1
+      
+labSave:
+   add  eax, 4
+   test ecx, ecx
+   jnz  labNext
+
+err:
+   pop  rbx
+   mov  edx, eax
+   pop  rax
+   sub  edx, eax
+   shr  edx, 2
+   mov  ecx, edi
+   pop  rdi
+   sub  ecx, edi
+   shr  ecx, 1
+   mov  rax, [rsp+40]
+   mov  dword ptr[rax], ecx
+   mov  esi, dword ptr [rsp+16]
+   mov  dword ptr [rsi], edx
+   mov  ebx, eax
+
+   ret
+  
+err2:
+   add  rsp, 24
+   xor  ebx, ebx
+   ret    
+
+end
+
+
+procedure coreapi'ws_decodew
+
+   mov  rbx, [rsp+16]
+   mov  rsi, [rsp+8]
+   mov  ecx, dword ptr [rbx]
+   mov  rdi, [rsp+32]
+   mov  ebx, dword ptr [rsi]
+   mov  rax, [rsp+24]
+
+   push rdi
+   lea  rax, [rax + rbx * 4]
+   push rax
+   push rbx
+
+labNext:
+   mov  ebx, dword ptr [rax]
+   cmp  ebx, dword ptr 128
+   jl   short labCH1
+
+   cmp  ebx, 0800h
+   jl   short lab1
+
+   sub  ecx, 2
+   jl   short err
+
+   mov  edx, ebx
+   shr  edx, 10
+   add  edx, 0D7C0h
+   mov  word ptr [rdi], dx
+   add  edi, 2
+
+   mov  edx, ebx
+   and  edx, 03FFh
+   add  edx, 0DC00h
+   mov  word ptr [rdi], dx
+   add  edi, 2
+   jmp  short labSave
+   
+lab1:
+   mov  word ptr [rdi], bx
+   add  edi, 2
+   sub  ecx, 1
+   jmp  short labSave
+
+labCH1:
+   mov  word ptr [rdi], bx
+   add  edi, 2
+   sub  ecx, 1
+      
+labSave:
+   add  eax, 4
+   test ecx, ecx
+   jnz  labNext
+
+err:
+   pop  rbx
+   mov  edx, eax
+   pop  rax
+   sub  edx, eax
+   shr  edx, 2
+   mov  ecx, edi
+   pop  rdi
+   sub  ecx, edi
+   shr  ecx, 1
+   mov  rax, [rsp+40]
+   mov  dword ptr [rax], ecx
+   mov  rsi, [rsp+16]
+   mov  dword ptr [rsi], edx
+   mov  ebx, eax
+
+   ret
+  
+err2:
+   add  rsp, 24
+   xor  ebx, ebx
+   ret    
+
+end
+
+procedure coreapi'wstrcharlen
+
+  mov  rax, [rsp+8]
+  mov  rcx, [rsp+16]                                         
+  push rax
+
+labNext:
+  mov  edx, dword ptr [rax]
+  and  edx, 0FFFFh
+  cmp  edx, 0D800h
+  jl   short lab1
+  
+  add  ebx, 1
+  add  eax, 4
+  sub  ecx, 2
+  jnz  short labNext
+  pop  rax
+  ret
+
+lab1:
+  add  ebx, 1
+  add  eax, 2
+  sub  ecx, 1
+  jnz  short labNext
+  mov  edx, ebx
+  pop  rax
+  ret
+
+end
+
+// ; strcharlen(s,len)
+procedure coreapi'strcharlen
+
+  mov  rax, [rsp+8]
+  mov  rcx, [rsp+16]                                         
+  push rax
+
+  xor  edx, edx
+  xor  ebx, ebx
+
+labNext:
+  mov  dl, byte ptr [rax]
+  cmp  edx, 00000080h
+  jl   short lab1
+  cmp  edx, 000000E0h
+  jl   short lab2
+  cmp  edx, 000000F0h
+  jl   short lab3
+  cmp  edx, 000000F5h
+  jl   short lab4
+
+lab1:
+  add  ebx, 1
+  add  eax, 1
+  sub  ecx, 1
+  jnz  short labNext
+  mov  edx, ebx
+  pop  rax
+  ret
+  
+lab2:
+  add  ebx, 1
+  add  eax, 2
+  sub  ecx, 2
+  jnz  short labNext
+  mov  edx, ebx
+  pop  rax
+  ret
+  
+lab3:
+  add  ebx, 1
+  add  eax, 3
+  sub  ecx, 3
+  jnz  short labNext
+  mov  edx, ebx
+  pop  rax
+  ret
+  
+lab4:
+  add  ebx, 1
+  add  eax, 4
+  sub  ecx, 4
+  jnz  short labNext
+  mov  edx, ebx
+  pop  rbx
+  ret
+
+end

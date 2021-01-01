@@ -2616,7 +2616,7 @@ inline % 1E8h
 
   mov  rcx, __arg1
   xor  edx, edx
-  mov  rax, [rax + 4]
+  mov  rax, [rax + 8]
   mov  rcx, [rcx] // ; message from overload list
 
   //; check nil
@@ -2667,7 +2667,7 @@ end
 inline % 1E9h
 
   mov  rcx, __arg1
-  mov  rax, [rax + 4]
+  mov  rax, [rax + 8]
   xor  edx, edx
   mov  rcx, [rcx] // ; message from overload list
 
@@ -2726,7 +2726,7 @@ labNextOverloadlist:
   lea  rcx, [rdi + rcx]
 
 labMatching:
-  mov  rdi, [rax+4]
+  mov  rdi, [rax+8]
 
   //; check nil
   mov   rsi, rdata : %VOIDPTR + elObjectOffset
@@ -2740,7 +2740,7 @@ labNextBaseClass:
   cmp  rsi, rdi
   jnz  labContinue
 
-  mov  rdi, [rax+8]
+  mov  rdi, [rax+16]
 
   //; check nil
   mov   rsi, rdata : %VOIDPTR + elObjectOffset
@@ -2799,7 +2799,7 @@ labNextOverloadlist:
   lea  rcx, [rdi + rcx]
 
 labMatching:
-  mov  rdi, [rax+4]
+  mov  rdi, [rax+8]
 
   //; check nil
   mov   rsi, rdata : %VOIDPTR + elObjectOffset
@@ -2813,7 +2813,7 @@ labNextBaseClass:
   cmp  rsi, rdi
   jnz  labContinue
 
-  mov  rdi, [rax+8]
+  mov  rdi, [rax+16]
 
   //; check nil
   mov   rsi, rdata : %VOIDPTR + elObjectOffset

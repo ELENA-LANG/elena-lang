@@ -3,7 +3,7 @@
 //
 //      This file contains the common constants of the command-line
 //      compiler and a ELC project class
-//                                             (C)2005-2020, by Aleksey Rakov
+//                                             (C)2005-2021, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elcH
@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x01CE
+#define ELC_REVISION_NUMBER         0x01CF
 
 // --- ELC default file names ---
 #ifdef _WINDOW
@@ -101,7 +101,7 @@ constexpr auto ELC_EXTDISPATCHER  = "configuration/project/extdispatcher";
 #define ELC_MANIFEST_AUTHOR         "configuration/manifest/author"
 
 // --- ELC information messages ---
-#define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2020 by Alex Rakov\n"
+#define ELC_GREETING                "ELENA Command-line compiler %d.%d.%d (C)2005-2021 by Alex Rakov\n"
 #define ELC_INTERNAL_ERROR          "Internal error:%s\n"
 #define ELC_STARTING                "Project : %s, Platform: %s"
 #define ELC_COMPILING               "Compiling..."
