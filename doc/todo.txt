@@ -3,13 +3,6 @@ In development:
 ------         
 
   [development]
-    * message table
-
-    * arg multi method - second overload list
-    * arg multi method - sealed
-    * arg multi method - sealed - second overload list
-    * arg multi method - nil
-
     * two arg multi method
     * two arg multi method - sealed
     * two arg multi method - second overload list

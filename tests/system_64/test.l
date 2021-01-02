@@ -9,16 +9,16 @@ sealed A
         y := 2;
     }
 
-    add(object o)
+    add(object o, object o2)
     {
     }
     
-    add(string s)
+    add(string s, int n)
     {
         ^ s
     }
     
-    add(int n)
+    add(int n, string s)
         = y.add(n); 
 }
 
@@ -33,16 +33,16 @@ B
         y := 2;
     }
     
-    add(object o)
+    add(object o, object o2)
     {
     }
     
-    add(string s)
+    add(string s, int n)
     {
         ^ s
     }
     
-    add(int n)
+    add(int n, string s)
         = y.add(n); 
 }
 
@@ -52,13 +52,13 @@ public program()
     var a := new A();
     var b := new B();
 
-    var s2 := b.add("a");
-    var r2 := b.add(4);
-    b.add(o);
+    var s2 := b.add("a", 3);
+    var r2 := b.add(4, "c");
+    b.add(o,2);
         
-    var s := a.add("a");
-    var r := a.add(4);
-    a.add(o);
+    var s := a.add("a", 1);
+    var r := a.add(4, "r");
+    a.add(o,2);
     
 //    console;
 //    console.write("abc"w)

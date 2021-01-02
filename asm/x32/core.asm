@@ -3240,7 +3240,7 @@ inline % 2E9h
 
   mov  ecx, __arg1
   xor  edx, edx
-  mov  ecx, [ecx + edx * 8] // ; message from overload list
+  mov  ecx, [ecx] // ; message from overload list
 
 labNextOverloadlist:
   mov  edi, rdata : % CORE_MESSAGE_TABLE

@@ -2719,14 +2719,15 @@ end
 inline % 2E8h 
 
   mov  rcx, __arg1
-  xor  edx, edx
+  xor  rdx, rdx
   mov  rcx, [rcx] // ; message from overload list
 
 labNextOverloadlist:
-  mov  rdi, rdata : % CORE_MESSAGE_TABLE
-  shr  rcx, ACTION_ORDER
-  mov  rcx, [rdi + rcx * 8 + 4]
-  lea  rcx, [rdi + rcx]
+  mov  r9, rdata : % CORE_MESSAGE_TABLE
+  shr  ecx, ACTION_ORDER
+  lea  r10, [rcx*8]
+  mov  r10, [r9 + r10 * 2 + 8]
+  lea  rcx, [r9 + r10]
 
 labMatching:
   mov  rdi, [rax+8]
@@ -2751,17 +2752,18 @@ labNextBaseClass:
   cmovz rdi, rsi
 
   mov  rdi, [rdi-elVMTOffset]
-  mov  rsi, [rcx + 4]
+  mov  rsi, [rcx + 8]
 
 labNextBaseClass2:
   cmp  rsi, rdi
   jnz  short labContinue2
 
-  mov  rsi, __arg1
-  mov  rax, [rsi + rdx * 8 + 4]
+  lea  r9, [rdx*8]  
+  mov  r10, __arg1
+  mov  rax, [r10 + r9 * 2 + 8]
   mov  rcx, [rbx - elVMTOffset]
-  mov  rdx, [rsi + rdx * 8]
-  jmp  [rcx + rax * 8 + 4]
+  mov  rdx, [r10 + r9 * 2]
+  jmp  [rcx + rax * 8 + 8]
 
 labContinue2:
   mov  rdi, [rdi - elPackageOffset]
@@ -2777,9 +2779,10 @@ labContinue:
   jnz  short labNextBaseClass
 
 labNext:
-  mov  rcx, __arg1
   add  rdx, 1
-  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+  mov  r10, __arg1
+  lea  r9, [rdx * 8]
+  mov  rcx, [r10 + r9 * 2] // ; message from overload list
   and  rcx, rcx
   jnz  labNextOverloadlist
 
@@ -2788,18 +2791,16 @@ end
 // ; xmtredirect<2>  (eax - refer to the stack)
 inline % 2E9h
 
-// ecx -> eax
-// ebx -> ecx
-
   mov  rcx, __arg1
   xor  rdx, rdx
-  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+  mov  rcx, [rcx] // ; message from overload list
 
 labNextOverloadlist:
-  mov  rdi, rdata : % CORE_MESSAGE_TABLE
-  shr  rcx, ACTION_ORDER
-  mov  rcx, [rdi + rcx * 8 + 4]
-  lea  rcx, [rdi + rcx]
+  mov  r9, rdata : % CORE_MESSAGE_TABLE
+  shr  ecx, ACTION_ORDER
+  lea  r10, [rcx*8]
+  mov  r10, [r9 + r10 * 2 + 8]
+  lea  rcx, [r9 + r10]
 
 labMatching:
   mov  rdi, [rax+8]
@@ -2824,16 +2825,16 @@ labNextBaseClass:
   cmovz rdi, rsi
 
   mov  rdi, [rdi-elVMTOffset]
-  mov  rsi, [rcx + 4]
+  mov  rsi, [rcx + 8]
 
 labNextBaseClass2:
   cmp  rsi, rdi
   jnz  short labContinue2
 
-  mov  rsi, __arg1
-  mov  rcx, rdx
-  mov  rdx, [rsi + rcx * 8]
-  jmp  [rsi + rcx * 8 + 4]
+  lea  r9, [rdx*8]  
+  mov  r10, __arg1
+  mov  rdx, [r10 + r9 * 2]
+  jmp  [r10 + r9 * 2 + 8]
 
 labContinue2:
   mov  rdi, [rdi - elPackageOffset]
@@ -2849,9 +2850,10 @@ labContinue:
   jnz  short labNextBaseClass
 
 labNext:
-  mov  rcx, __arg1
   add  rdx, 1
-  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+  mov  r10, __arg1
+  lea  r9, [rdx * 8]
+  mov  rcx, [r10 + r9 * 2] // ; message from overload list
   and  rcx, rcx
   jnz  labNextOverloadlist
 
