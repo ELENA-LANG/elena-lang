@@ -662,6 +662,11 @@ void AMD64Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryW
       code->writeByte(0x8B);
       AMD64Helper::writeModRM(code, sour, dest);
    }
+   else if (test(sour.type, AMD64Helper::otRX64) && (test(dest.type, AMD64Helper::otRX64))) {
+      code->writeByte(0x4F);
+      code->writeByte(0x8B);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
    else if (test(sour.type, AMD64Helper::otM64) && test(dest.type, AMD64Helper::otR64)) {
       code->writeByte(0x48);
       code->writeByte(0x89);
@@ -2779,7 +2784,12 @@ void AMD64Assembler :: compileJMP(TokenInfo& token, ProcedureInfo& info, MemoryW
    //   code->writeByte(0xFF);
    //   x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 4), operand);
    //}
-   /*else */if (test(operand.type, AMD64Helper::otR64)||test(operand.type, AMD64Helper::otM64)) {
+   /*else */if (test(operand.type, AMD64Helper::otRX64) || test(operand.type, AMD64Helper::otMX64)) {
+      code->writeByte(0x4F);
+      code->writeByte(0xFF);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 4), operand);
+   }
+   else if (test(operand.type, AMD64Helper::otR64)||test(operand.type, AMD64Helper::otM64)) {
       code->writeByte(0x48);
       code->writeByte(0xFF);
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 4), operand);
@@ -3708,6 +3718,16 @@ void AMD64Assembler:: compileStructure(TokenInfo& token, _Module* binary, int ma
       if (token.check("dd")) {
          token.read();
          Operand operand = defineOperand(token, info, "Invalid constant");
+         if (operand.type != AMD64Helper::otUnknown) {
+            token.read();
+
+            if (token.check("+")) {
+               operand.offset += token.readInteger(constants);
+
+               token.read();
+            }
+         }
+
          if (operand.type== AMD64Helper::otDD) {
             AMD64Helper::writeImm(&writer, operand);
          }
@@ -3720,6 +3740,16 @@ void AMD64Assembler:: compileStructure(TokenInfo& token, _Module* binary, int ma
       else if (token.check("dq")) {
          token.read();
          Operand operand = defineOperand(token, info, "Invalid constant");
+         if (operand.type != AMD64Helper::otUnknown) {
+            token.read();
+
+            if (token.check("+")) {
+               operand.offset += token.readInteger(constants);
+
+               token.read();
+            }
+         }
+
          if (operand.type == AMD64Helper::otDQ) {
             AMD64Helper::writeImm(&writer, operand);
          }
@@ -3742,6 +3772,9 @@ void AMD64Assembler:: compileStructure(TokenInfo& token, _Module* binary, int ma
       else if (token.check("dw")) {
          token.read();
          Operand operand = defineOperand(token, info, "Invalid constant");
+         if (operand.type != AMD64Helper::otUnknown)
+            token.read();
+
          if (operand.type== AMD64Helper::otDB) {
             operand.type = AMD64Helper::otDW;
             AMD64Helper::writeImm(&writer, operand);
@@ -3751,6 +3784,9 @@ void AMD64Assembler:: compileStructure(TokenInfo& token, _Module* binary, int ma
       else if (token.check("db")) {
          token.read();
          Operand operand = defineOperand(token, info, "Invalid constant");
+         if (operand.type != AMD64Helper::otUnknown)
+            token.read();
+
          if (operand.type== AMD64Helper::otDB) {
             AMD64Helper::writeImm(&writer, operand);
          }
@@ -3759,7 +3795,7 @@ void AMD64Assembler:: compileStructure(TokenInfo& token, _Module* binary, int ma
       else if (token.Eof()) {
          token.raiseErr("Invalid end of the file\n");
       }
-      else token.read();
+      else token.raiseErr("Invalid operand (%d)");
    }
 }
 

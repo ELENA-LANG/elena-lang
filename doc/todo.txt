@@ -5,19 +5,33 @@ In development:
   [development]
     * message table
 
-    * arg multi method
+    * arg multi method - second overload list
+    * arg multi method - sealed
+    * arg multi method - sealed - second overload list
     * arg multi method - nil
 
     * two arg multi method
+    * two arg multi method - sealed
+    * two arg multi method - second overload list
+    * two arg multi method - sealed- second overload list
     * two arg multi method - nil
 
     * three arg multi method
+    * three arg multi method - sealed
+    * three arg multi method - second overload list
+    * three arg multi method - sealed - second overload list
     * three arg multi method - nil
 
     * four arg multi method
+    * four arg multi method - sealed
+    * four arg multi method - second overload list
+    * four arg multi method - sealed - second overload list
     * four arg multi method - nil
 
     * varg multi method
+    * varg multi method - sealed
+    * varg multi method - second overload list
+    * varg multi method - sealed - second overload list
     * varg multi method - nil
 
 

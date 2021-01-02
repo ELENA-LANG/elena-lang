@@ -1697,29 +1697,47 @@ void _ELENA_::compileFill(int opcode, I64JITScope& scope)
 
    if (scope.argument == 1) {
       // mov [ebx], eax
+      scope.code->writeByte(0x48);
       scope.code->writeWord(0x0389);
    }
    else if (scope.argument == 2) {
       // mov [rbx], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x0389);
+      // mov [ebx+8], eax
+      scope.code->writeByte(0x48);
+      scope.code->writeWord(0x4389);
+      scope.code->writeByte(8);
    }
    else if (scope.argument == 3) {
       // mov [rbx], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x0389);
       // mov [ebx+8], eax
+      scope.code->writeByte(0x48);
       scope.code->writeWord(0x4389);
       scope.code->writeByte(8);
+      // mov [ebx+16], eax
+      scope.code->writeByte(0x48);
+      scope.code->writeWord(0x4389);
+      scope.code->writeByte(16);
    }
    else if (scope.argument == 4) {
       // mov [rbx], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x0389);
-      // mov [ebx+8], rax
+      // mov [ebx+8], eax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x4389);
-      scope.code->writeByte(4);
+      scope.code->writeByte(8);
+      // mov [ebx+16], eax
+      scope.code->writeByte(0x48);
+      scope.code->writeWord(0x4389);
+      scope.code->writeByte(16);
+      // mov [ebx+24], eax
+      scope.code->writeByte(0x48);
+      scope.code->writeWord(0x4389);
+      scope.code->writeByte(24);
    }
    else loadNOp(opcode, scope);
 }

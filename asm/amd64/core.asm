@@ -2629,7 +2629,7 @@ inline % 1E8h
 labNextOverloadlist:
   mov  r9, rdata : % CORE_MESSAGE_TABLE
   shr  ecx, ACTION_ORDER
-  lea  r10, [ecx*8]
+  lea  r10, [rcx*8]
   mov  r10, [r9 + r10 * 2 + 8]
   lea  rcx, [r9 + r10]
 
@@ -2641,21 +2641,22 @@ labNextBaseClass:
   cmp  rsi, rdi
   jnz  short labContinue
 
-  lea  r9, [rdx*2]  
+  lea  r9, [rdx*8]  
   mov  r10, __arg1
   mov  rax, [r10 + r9 * 2 + 8]
   mov  rcx, [rbx - elVMTOffset]
   mov  rdx, [r10 + r9 * 2]
-  jmp  [rcx + rax * 8 + 4]
+  jmp  [rcx + rax * 8 + 8]
 
 labContinue:
   mov  rdi, [rdi - elPackageOffset]
   and  rdi, rdi
   jnz  short labNextBaseClass
 
-  mov  rcx, __arg1
   add  rdx, 1
-  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+  mov  r10, __arg1
+  lea  r9, [rdx * 8]
+  mov  rcx, [r10 + r9 * 2] // ; message from overload list
   and  rcx, rcx
   jnz  labNextOverloadlist
 
@@ -2667,8 +2668,8 @@ end
 inline % 1E9h
 
   mov  rcx, __arg1
-  mov  rax, [rax + 8]
   xor  edx, edx
+  mov  rax, [rax + 8]
   mov  rcx, [rcx] // ; message from overload list
 
   //; check nil
@@ -2679,10 +2680,11 @@ inline % 1E9h
   mov  rax, [rax - elVMTOffset]
 
 labNextOverloadlist:
-  shr  rcx, ACTION_ORDER
-  mov  rdi, rdata : % CORE_MESSAGE_TABLE
-  mov  rcx, [rdi + rcx * 8 + 4]
-  lea  rcx, [rdi + rcx]
+  mov  r9, rdata : % CORE_MESSAGE_TABLE
+  shr  ecx, ACTION_ORDER
+  lea  r10, [rcx*8]
+  mov  r10, [r9 + r10 * 2 + 8]
+  lea  rcx, [r9 + r10]
 
 labMatching:
   mov  rdi, rax
@@ -2692,19 +2694,20 @@ labNextBaseClass:
   cmp  rsi, rdi
   jnz  short labContinue
 
-  mov  rcx, rdx
-  mov  rsi, __arg1
-  mov  rdx, [rsi + rdx * 8]
-  jmp  [rsi + rcx * 8 + 4]
+  lea  r9, [rdx*8]  
+  mov  r10, __arg1
+  mov  rdx, [r10 + r9 * 2]
+  jmp  [r10 + r9 * 2 + 8]
 
 labContinue:
   mov  rdi, [rdi - elPackageOffset]
   and  rdi, rdi
   jnz  short labNextBaseClass
 
-  mov  rcx, __arg1
   add  rdx, 1
-  mov  rcx, [rcx + rdx * 8] // ; message from overload list
+  mov  r10, __arg1
+  lea  r9, [rdx * 8]
+  mov  rcx, [r10 + r9 * 2] // ; message from overload list
   and  rcx, rcx
   jnz  labNextOverloadlist
 

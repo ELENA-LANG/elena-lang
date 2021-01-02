@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA x86Compiler
 //		classes.
-//                             (C)2005-2020, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2021, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -3473,6 +3473,9 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
       else if (token.check("dw")) {
          token.read();
          Operand operand = defineOperand(token, info, "Invalid constant");
+			if (operand.type != x86Helper::otUnknown)
+				token.read();
+
          if (operand.type==x86Helper::otDB) {
             operand.type = x86Helper::otDW;
             x86Helper::writeImm(&writer, operand);
@@ -3482,7 +3485,10 @@ void x86Assembler :: compileStructure(TokenInfo& token, _Module* binary, int mas
       else if (token.check("db")) {
          token.read();
          Operand operand = defineOperand(token, info, "Invalid constant");
-         if (operand.type==x86Helper::otDB) {
+			if (operand.type != x86Helper::otUnknown)
+				token.read();
+
+			if (operand.type==x86Helper::otDB) {
             x86Helper::writeImm(&writer, operand);
          }
          else token.raiseErr("Invalid operand (%d)");
