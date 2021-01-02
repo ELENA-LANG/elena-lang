@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class implementation.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -37,6 +37,13 @@ void _JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& reade
 }
 
 // --- JITCompiler32 ---
+
+void JITCompiler32 :: allocateMetaInfo(_Module* messages)
+{
+   messages->mapSection(messages->mapReference(MATTRIBUTE_TABLE + getlength(META_MODULE)) | mskRDataRef, false);
+   messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 8); // write dummy place holder
+   messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
+}
 
 void JITCompiler32 :: compileInt32(MemoryWriter* writer, int integer)
 {
@@ -392,6 +399,38 @@ void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddre
    }
 }
 
+ref_t JITCompiler32 :: allocateActionEntry(MemoryWriter& mdataWriter, MemoryWriter& bodyWriter, ident_t actionName,
+   ref_t weakActionRef, ref_t signature)
+{
+   ref_t actionRef = mdataWriter.Position() / 8;
+   // weak action ref for strong one or the same ref
+   if (weakActionRef) {
+      mdataWriter.writeDWord(weakActionRef);
+   }
+   else mdataWriter.writeDWord(0);
+
+   // signature or action name for weak message
+   if (signature) {
+      mdataWriter.writeRef(mskMessageTableRef | signature, 0);
+   }
+   else {
+      mdataWriter.writeRef(mskMessageTableRef | bodyWriter.Position(), 0);
+
+      bodyWriter.writeLiteral(actionName, getlength(actionName) + 1);
+      bodyWriter.align(4, 0);
+   }
+
+   return actionRef;
+}
+
+void JITCompiler32 :: allocateSignatureEntry(MemoryWriter& writer, ref_t typeClassRef)
+{
+   if (typeClassRef) {
+      writer.writeRef(typeClassRef | mskVMTRef, 0);
+   }
+   else writer.writeDWord(0);
+}
+
 void JITCompiler32 :: generateProgramStart(MemoryDump& tape)
 {
    MemoryWriter ecodes(&tape);
@@ -408,13 +447,20 @@ void JITCompiler32 :: generateProgramEnd(MemoryDump& tape)
 
 // --- JITCompiler64 ---
 
+void JITCompiler64 :: allocateMetaInfo(_Module* messages)
+{
+   messages->mapSection(messages->mapReference(MATTRIBUTE_TABLE + getlength(META_MODULE)) | mskRDataRef, false);
+   messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 16); // write dummy place holder
+   messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 8); // write dummy place holder
+}
+
 void JITCompiler64 :: compileInt32(MemoryWriter* writer, int integer)
 {
    writer->seek(writer->Position() - elObjectOffset64);
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000004u);
+   writer->writeQWord(0x80000004u);
 
    // object body
    writer->writeDWord(integer);
@@ -426,7 +472,7 @@ void JITCompiler64 :: compileMessage(MemoryWriter* writer, mssg_t mssg)
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000008u);
+   writer->writeQWord(0x80000008u);
 
    // object body
    writer->writeQWord(toMessage64(mssg));
@@ -438,7 +484,7 @@ void JITCompiler64 :: compileAction(MemoryWriter* writer, ref_t integer)
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000008u);
+   writer->writeQWord(0x80000008u);
 
    // object body
    writer->writeQWord(integer);
@@ -450,7 +496,7 @@ void JITCompiler64 :: compileInt64(MemoryWriter* writer, long long integer)
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000008u);
+   writer->writeQWord(0x80000008u);
 
    // object body
    writer->write(&integer, 8);
@@ -462,7 +508,7 @@ void JITCompiler64 :: compileMssgExtension(MemoryWriter* writer, mssg_t mssg, re
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000010u);
+   writer->writeQWord(0x80000010u);
 
    // object body
    writer->writeQWord(toMessage64(mssg));
@@ -476,7 +522,7 @@ void JITCompiler64 ::compileMssgExtension(MemoryWriter* writer, mssg_t mssg, uin
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000010u);
+   writer->writeQWord(0x80000010u);
 
    // object body
    writer->writeQWord(toMessage64(mssg));
@@ -489,7 +535,7 @@ void JITCompiler64 :: compileReal64(MemoryWriter* writer, double number)
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000008u);
+   writer->writeQWord(0x80000008u);
 
    // object body
    writer->write(&number, 8);
@@ -503,7 +549,7 @@ void JITCompiler64 :: compileLiteral(MemoryWriter* writer, const char* value)
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000000u | length);
+   writer->writeQWord(0x80000000u | length);
 
    // object body
    writer->writeLiteral(value, length);
@@ -518,7 +564,7 @@ void JITCompiler64 :: compileWideLiteral(MemoryWriter* writer, const wide_c* val
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000000u | length);
+   writer->writeQWord(0x80000000u | length);
 
    // object body
    writer->writeLiteral(value, length);
@@ -535,7 +581,7 @@ void JITCompiler64 :: compileChar32(MemoryWriter* writer, const char* value)
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000004u);
+   writer->writeQWord(0x80000004u);
 
    // object body
    writer->writeQWord(ch);
@@ -549,7 +595,7 @@ void JITCompiler64 :: compileBinary(MemoryWriter* writer, _Memory* binary)
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(0x80000000u | length);
+   writer->writeQWord(0x80000000u | length);
 
    // object body
    writer->write(binary->get(0), length);
@@ -564,7 +610,7 @@ void JITCompiler64 :: compileCollection(MemoryWriter* writer, _Memory* binary)
 
    // object header
    writer->writeQWord(0);
-   writer->writeDWord(length);
+   writer->writeQWord(length);
 
    // object body
    pos_t index = 0;
@@ -792,6 +838,41 @@ void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddre
          entryPosition += 16;
       }
    }
+}
+
+ref_t JITCompiler64 :: allocateActionEntry(MemoryWriter& mdataWriter, MemoryWriter& bodyWriter, ident_t actionName,
+   ref_t weakActionRef, ref_t signature)
+{
+   ref_t actionRef = mdataWriter.Position() / 16;
+   // weak action ref for strong one or the same ref
+   if (weakActionRef) {
+      mdataWriter.writeQWord(weakActionRef);
+   }
+   else mdataWriter.writeQWord(0);
+
+   // signature or action name for weak message
+   if (signature) {
+      mdataWriter.writeRef(mskMessageTableRef | signature, 0);
+      mdataWriter.writeDWord(0);
+   }
+   else {
+      mdataWriter.writeRef(mskMessageTableRef | bodyWriter.Position(), 0);
+      mdataWriter.writeDWord(0);
+
+      bodyWriter.writeLiteral(actionName, getlength(actionName) + 1);
+      bodyWriter.align(8, 0);
+   }
+
+   return actionRef;
+}
+
+void JITCompiler64 :: allocateSignatureEntry(MemoryWriter& writer, ref_t typeClassRef)
+{
+   if (typeClassRef) {
+      writer.writeRef(typeClassRef | mskVMTRef, 0);
+      writer.writeDWord(0);
+   }
+   else writer.writeQWord(0);
 }
 
 void JITCompiler64 :: generateProgramStart(MemoryDump& tape)

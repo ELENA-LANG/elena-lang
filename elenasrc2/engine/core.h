@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA Core constants
 //
-//                                              (C)2020, by Alekey Rakov
+//                                              (C)2020-2021, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef coreH
@@ -15,22 +15,22 @@ namespace _ELENA_
 constexpr int gcPageSize32       = 0x0010;            // a heap page size constant
 constexpr int elObjectOffset32   = 0x0008;            // object header / offset constant
 
-constexpr int gcPageSize64       = 0x0010;            // a heap page size constant
-constexpr int elObjectOffset64   = 0x000C;            // object header / offset constant
+constexpr int gcPageSize64       = 0x0020;            // a heap page size constant
+constexpr int elObjectOffset64   = 0x0010;            // object header / offset constant
 
 constexpr int elPageVMTOffset32  = 0x0008;
 constexpr int elPageSizeOffset32 = 0x0004;
 
-constexpr int elPageVMTOffset64  = 0x000C;
-constexpr int elPageSizeOffset64 = 0x0004;
+constexpr int elPageVMTOffset64  = 0x0010;
+constexpr int elPageSizeOffset64 = 0x0008;
 
 constexpr int elVMTCountOffset32 = 0x0004;                // a VMT size offset
 constexpr int elVMTClassOffset32 = 0x0010;                // a VMT class offset
 constexpr int elVMTFlagOffset32  = 0x000C;                // a VMT class offset
 
-constexpr int elVMTCountOffset64 = 0x0004;                // a VMTX size offset
-constexpr int elVMTClassOffset64 = 0x0018;                // a VMTX class offset
-constexpr int elVMTFlagOffset64  = 0x0010;                // a VMT class offset
+constexpr int elVMTCountOffset64 = 0x0008;                // a VMTX size offset
+constexpr int elVMTClassOffset64 = 0x0020;                // a VMTX class offset
+constexpr int elVMTFlagOffset64  = 0x0018;                // a VMTX flags offset
 
 // --- ELENA CORE built-in routines
 constexpr int GC_ALLOC = 0x10001;

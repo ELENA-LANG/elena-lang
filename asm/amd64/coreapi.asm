@@ -1,7 +1,7 @@
 // Object header fields
-define elSizeOffset          0004h
-define elVMTOffset           000Ch 
-define elObjectOffset        000Ch
+define elSizeOffset          0008h
+define elVMTOffset           0010h 
+define elObjectOffset        0010h
 
 // --- System Core API  --
 

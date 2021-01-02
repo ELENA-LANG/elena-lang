@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -190,26 +190,9 @@ ref_t JITLinker :: mapAction(SectionInfo& messageTable, ident_t actionName, ref_
       return weakActionRef;
 
    MemoryWriter mdataWriter(messageTable.section);
+   MemoryWriter bodyWriter(_loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true).section);
 
-   ref_t actionRef = mdataWriter.Position() / 8;
-   // weak action ref for strong one or the same ref
-   if (weakActionRef) {
-      mdataWriter.writeDWord(weakActionRef);
-   }
-   else mdataWriter.writeDWord(0);
-
-   // signature or action name for weak message
-   if (signature) {
-      mdataWriter.writeRef(mskMessageTableRef | signature, 0);
-   }
-   else {
-      MemoryWriter bodyWriter(_loader->getSectionInfo(ReferenceInfo(MESSAGEBODY_TABLE), mskRDataRef, true).section);
-
-      mdataWriter.writeRef(mskMessageTableRef | bodyWriter.Position(), 0);
-
-      bodyWriter.writeLiteral(actionName, getlength(actionName) + 1);
-      bodyWriter.align(4, 0);
-   }
+   ref_t actionRef = _compiler->allocateActionEntry(mdataWriter, bodyWriter, actionName, weakActionRef, signature);
 
    messageTable.module->mapPredefinedAction(actionName, actionRef, signature);
 
@@ -271,7 +254,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
          else typeName.copy(referenceName);
 
          ref_t typeClassRef = info.module->mapReference(typeName.c_str(), false);
-         writer.writeRef(typeClassRef | mskVMTRef, 0);
+         _compiler->allocateSignatureEntry(writer, typeClassRef);
 
          // NOTE : indicate weak class reference, to be later resolved if required
          if (references) {
@@ -285,7 +268,7 @@ ref_t JITLinker :: resolveSignature(_Module* module, ref_t signature, bool varia
 
       if (variadicOne) {
          // HOTFIX : vardiatic signature should end with zero for correct multi-dispatching operation
-         writer.writeDWord(0);
+         _compiler->allocateSignatureEntry(writer, 0);
       }
 
       // HOTFIX : adding a mask to tell apart a message name from a signature in meta module

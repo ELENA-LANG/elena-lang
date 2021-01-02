@@ -24,14 +24,14 @@ define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
 // Object header fields
-define elSizeOffset          0004h
-define elVMTOffset           000Ch 
-define elObjectOffset        000Ch
+define elSizeOffset          0008h
+define elVMTOffset           0010h 
+define elObjectOffset        0010h
 
 // VMT header fields
-define elVMTSizeOffset       0004h
-define elVMTFlagOffset       0010h
-define elPackageOffset       0018h
+define elVMTSizeOffset       0008h
+define elVMTFlagOffset       0018h
+define elPackageOffset       0020h
 
 define gc_header             0000h
 define gc_start              0008h
@@ -42,9 +42,9 @@ define gc_yg_end             0020h
 define gc_et_current         0058h 
 define gc_stack_frame        0060h 
 
-define page_ceil               17h
-define page_size_order          4h
-define page_mask        0FFFFFFF0h
+define page_ceil               1Fh
+define page_size_order          5h
+define page_mask        0FFFFFFE0h
 define struct_mask_inv     7FFFFFh
 
 define ACTION_ORDER              9
@@ -94,18 +94,18 @@ end
 rstructure %VOID
 
   dq 0
-  dd 0  // ; a reference to the super class class
+  dq 0  // ; a reference to the super class class
   dq 0
-  dd 0  
-  dd 0
+  dq 0  
+  dq 0
 
 end
 
 rstructure %VOIDPTR
 
   dq rdata : %VOID + elPackageOffset
-  dd 0
-  dd 0
+  dq 0
+  dq 0
 
 end
 

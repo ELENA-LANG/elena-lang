@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaH
@@ -531,9 +531,9 @@ struct VMTHeader
 struct VMTXHeader
 {
    pos64_t parentRef;
-   ref_t   flags;
+   pos64_t flags;
    pos64_t classRef;
-   pos_t   count;
+   pos64_t count;
 };
 #pragma pack(pop)
 

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jitcompilerH
@@ -49,6 +49,8 @@ public:
 class _JITCompiler
 {
 public:
+   virtual void allocateMetaInfo(_Module* messages) = 0;
+
    virtual size_t getObjectHeaderSize() const = 0;
 
    virtual bool isWithDebugInfo() const = 0;
@@ -67,6 +69,10 @@ public:
    virtual void compileCollection(MemoryWriter* writer, _Memory* binary) = 0;
 
    virtual void compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode) = 0;
+
+   virtual ref_t allocateActionEntry(MemoryWriter& mdataWriter, MemoryWriter& bodyWriter, ident_t actionName,
+      ref_t weakActionRef, ref_t signature) = 0;
+   virtual void allocateSignatureEntry(MemoryWriter& writer, ref_t typeRef) = 0;
 
    virtual void compileMessage(MemoryWriter* writer, mssg_t mssg) = 0;
    virtual void compileAction(MemoryWriter* writer, ref_t actionRef) = 0;
@@ -102,8 +108,6 @@ public:
    virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress,
       pos_t count, bool virtualMode) = 0;
 
-////   virtual void loadNativeCode(_BinaryHelper& helper, MemoryWriter& writer, _Module* binary, _Memory* section) = 0;
-
    virtual vaddr_t getPreloadedReference(ref_t reference) = 0;
 
    virtual void setStaticRootCounter(_JITLoader* loader, pos_t counter, bool virtualMode) = 0;
@@ -124,6 +128,8 @@ public:
 class JITCompiler32 : public _JITCompiler
 {
 public:
+   virtual void allocateMetaInfo(_Module* messages);
+
    virtual void compileInt32(MemoryWriter* writer, int integer);
    virtual void compileInt64(MemoryWriter* writer, long long integer);
    virtual void compileReal64(MemoryWriter* writer, double number);
@@ -139,6 +145,10 @@ public:
    virtual void compileMssgExtension(MemoryWriter* writer, mssg_t low, uintptr_t addr);
 
    virtual void compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode);
+
+   virtual ref_t allocateActionEntry(MemoryWriter& mdataWriter, MemoryWriter& bodyWriter, ident_t actionName,
+      ref_t weakActionRef, ref_t signature);
+   virtual void allocateSignatureEntry(MemoryWriter& writer, ref_t typeRef);
 
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);
@@ -172,6 +182,8 @@ public:
 class JITCompiler64 : public _JITCompiler
 {
 public:
+   virtual void allocateMetaInfo(_Module* messages);
+
    virtual void compileInt32(MemoryWriter* writer, int integer);
    virtual void compileInt64(MemoryWriter* writer, long long integer);
    virtual void compileReal64(MemoryWriter* writer, double number);
@@ -187,6 +199,10 @@ public:
    virtual void compileMssgExtension(MemoryWriter* writer, mssg_t low, uintptr_t addr);
 
    virtual void compileMAttribute(MemoryWriter& writer, int category, ident_t fullName, vaddr_t address, bool virtualMode);
+
+   virtual ref_t allocateActionEntry(MemoryWriter& mdataWriter, MemoryWriter& bodyWriter, ident_t actionName,
+      ref_t weakActionRef, ref_t signature);
+   virtual void allocateSignatureEntry(MemoryWriter& writer, ref_t typeRef);
 
    virtual void allocateVariable(MemoryWriter& writer);
    virtual void allocateArray(MemoryWriter& writer, size_t count);

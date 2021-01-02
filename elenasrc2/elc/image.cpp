@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image class implementations
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -23,9 +23,7 @@ ExecutableImage :: ExecutableImage(bool standAlone, Project* project, _JITCompil
 
   // create a special module containing message and meta attribute data
    _Module* messages = _project->createModule(META_MODULE);
-   messages->mapSection(messages->mapReference(MATTRIBUTE_TABLE + getlength(META_MODULE)) | mskRDataRef, false);
-   messages->mapSection(messages->mapReference(MESSAGE_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 8); // write dummy place holder
-   messages->mapSection(messages->mapReference(MESSAGEBODY_TABLE + getlength(META_MODULE)) | mskRDataRef, false)->writeBytes(0, 0, 4); // write dummy place holder
+   compiler->allocateMetaInfo(messages);
 
   // load default forwards
    _literal = project->resolveForward(STR_FORWARD);
