@@ -2568,12 +2568,12 @@ inline % 0E9h
   mov  rbx, [rsi] // ; message from overload list
           	
 labNextOverloadlist:
+  mov  r9, rdata : % CORE_MESSAGE_TABLE
   shr  ebx, ACTION_ORDER
-  mov  r10, rdata : % CORE_MESSAGE_TABLE
-  lea  r9, [ebx * 8]
-  mov  rcx, __arg3
-  mov  r9, [r10 + r9 * 2 + 8]
-  lea  rbx, [r10 + r9 - 4]
+  lea  r10, [rbx*8]
+  mov  r10, [r9 + r10 * 2 + 8]
+  mov  ecx, __arg3
+  lea  rbx, [r9 + r10 - 8]
 
 labNextParam:
   sub  ecx, 1
@@ -2586,7 +2586,7 @@ labNextParam:
   jmp  [r9 + r10 * 2 + 8]
 
 labMatching:
-  mov  rdi, [rax + rcx * 4]
+  mov  rdi, [rax + rcx * 8]
 
   //; check nil
   mov   rsi, rdata : %VOIDPTR + elObjectOffset
@@ -2594,7 +2594,7 @@ labMatching:
   cmovz rdi, rsi
 
   mov  rdi, [rdi - elVMTOffset]
-  mov  rsi, [rbx + rcx * 4]
+  mov  rsi, [rbx + rcx * 8]
 
 labNextBaseClass:
   cmp  rsi, rdi
@@ -2603,9 +2603,10 @@ labNextBaseClass:
   and  rdi, rdi
   jnz  short labNextBaseClass
 
-  mov  rsi, __arg1
   add  rdx, 1
-  mov  rbx, [rsi + rdx * 8] // ; message from overload list
+  mov  r10, __arg1
+  lea  r9, [rdx * 8]
+  mov  rbx, [r10 + r9 * 2] // ; message from overload list
   and  rbx, rbx
   jnz  labNextOverloadlist
 

@@ -3,12 +3,6 @@ In development:
 ------         
 
   [development]
-    * three arg multi method
-    * three arg multi method - sealed
-    * three arg multi method - second overload list
-    * three arg multi method - sealed - second overload list
-    * three arg multi method - nil
-
     * varg multi method
     * varg multi method - sealed
     * varg multi method - second overload list
