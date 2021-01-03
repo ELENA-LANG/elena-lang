@@ -9,17 +9,17 @@ sealed A
         y := 2;
     }
 
-    add(object o, object o2, object o3)
+//    add(object o, object o2, object o3)
+//    {
+//    }
+    
+    add(params int[] args)
     {
     }
     
-    add(string s, int n, wide w)
+    add(params string[] args)
     {
-        ^ s
     }
-    
-    add(int n, string s, wide w)
-        = y.add(n); 
 }
 
 B
@@ -37,27 +37,27 @@ B
     {
     }
     
-    add(string s, int n, wide w)
+    add(params int[] args)
     {
-        ^ s
     }
     
-    add(int n, string s, wide w)
-        = y.add(n); 
+    add(params string[] args)
+    {
+    }
 }
 
 public program()
 {
 //    var o := nil;
-    var a := new A();
+    //var a := new A();
     var b := new B();
 
-    var s2 := b.add("a", 3, "b"w);
-    var r2 := b.add(4, "c", "b"w);
+    var s2 := b.add("a", "b", "c");
+    var r2 := b.add(1,2,3);
 //    b.add(o,2);
         
-    var s := a.add("a", 1, "b"w);
-    var r := a.add(4, "r", "b"w);
+//    var s := a.add("a", 1, "b"w);
+//    var r := a.add(4, "r", "b"w);
 //    a.add(o,2);
     
 //    console;
