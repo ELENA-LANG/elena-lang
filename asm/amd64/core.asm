@@ -2930,55 +2930,55 @@ labNextBaseClass:
   mov  rbx, [r10 + r9 * 2] // ; message from overload list
   and  rbx, rbx
   jnz  labNextOverloadlist
+  mov  rbx, r8
 
 end
 
 // ; xmtredirect<12>
-
 inline % 0CE9h
 
-  push rbx
+  mov  r8, rbx
   xor  rdx, rdx
   mov  rbx, rax
   xor  rcx, rcx
 
 labCountParam:
-  lea  rbx, [rbx+4]
-  cmp  [rbx], -1
+  lea  rbx, [rbx+8]
+  cmp  qword ptr [rbx], -1
   lea  rcx, [rcx+1]
   jnz  short labCountParam
 
   mov  rsi, __arg1
-  push rcx
+  mov  r11, rcx
   mov  rbx, [rsi] // ; message from overload list
 
 labNextOverloadlist:
-  mov  rdi, rdata : % CORE_MESSAGE_TABLE
+  mov  r9, rdata : % CORE_MESSAGE_TABLE
   shr  rbx, ACTION_ORDER
-  mov  rcx, [rsp]              // ; param count
-  mov  rbx, [rdi + rbx * 8 + 4]
-  lea  rbx, [rdi + rbx - 4]
+  mov  rcx, r11              // ; param count
+  lea  r10, [rbx*8]
+  mov  r10, [r9 + r10 * 2 + 8]
+  lea  rbx, [r8 + r10 - 8]
 
 labNextParam:
   // ; check if signature contains the next class ptr
-  lea  rsi, [rbx + 4]
+  lea  rsi, [rbx + 8]
   cmp [rsi], 0
   cmovnz rbx, rsi
 
   sub  rcx, 1
   jnz  short labMatching
 
-  mov  rsi, __arg1
-  mov  rcx, rdx
-  lea  rsp, [rsp + 4]
-  pop  rbx
-  mov  rdx, [rsi + rcx * 8]
-  jmp  [rsi + rcx * 8 + 4]
+  mov  r9, __arg1
+  lea  r10, [rdx * 8]
+  mov  rbx, r8
+  mov  rdx, [r9 + r10 * 2]
+  jmp  [r9 + r10 * 2 + 8]
 
 labMatching:
-  mov  rsi, [rsp]
+  mov  rsi, r11
   sub  rsi, rcx
-  mov  rdi, [rax + rsi * 4]
+  mov  rdi, [rax + rsi * 8]
 
   //; check nil
   mov   rsi, rdata : %VOIDPTR + elObjectOffset
@@ -2995,14 +2995,13 @@ labNextBaseClass:
   and  rdi, rdi
   jnz  short labNextBaseClass
 
-  mov  rsi, __arg1
   add  rdx, 1
-  mov  rbx, [rsi + rdx * 8] // ; message from overload list
+  mov  r10, __arg1
+  lea  r9, [rdx * 8]
+  mov  rbx, [r10 + r9 * 2] // ; message from overload list
   and  rbx, rbx
   jnz  labNextOverloadlist
-
-  lea  rsp, [rsp + 4]
-  pop  rax
+  mov  rbx, r8
 
 end
 
