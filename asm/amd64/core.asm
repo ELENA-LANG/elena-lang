@@ -373,7 +373,7 @@ end
 // ; push
 inline % 09h
 
-   mov  rax, [rbx + rdx * 4]
+   mov  rax, [rbx + rdx * 8]
    push rax
 
 end
@@ -2884,7 +2884,7 @@ labNextOverloadlist:
   mov  rcx, r11              // ; param count
   lea  r10, [rbx*8]
   mov  r10, [r9 + r10 * 2 + 8]
-  lea  rbx, [r8 + r10 - 8]
+  lea  rbx, [r9 + r10 - 8]
 
 labNextParam:
   // ; check if signature contains the next class ptr
@@ -2958,7 +2958,7 @@ labNextOverloadlist:
   mov  rcx, r11              // ; param count
   lea  r10, [rbx*8]
   mov  r10, [r9 + r10 * 2 + 8]
-  lea  rbx, [r8 + r10 - 8]
+  lea  rbx, [r9 + r10 - 8]
 
 labNextParam:
   // ; check if signature contains the next class ptr

@@ -3,14 +3,6 @@ In development:
 ------         
 
   [development]
-    * fix varg multi method for x86
-
-    * varg multi method
-    * varg multi method - sealed
-    * varg multi method - second overload list
-    * varg multi method - sealed - second overload list
-    * varg multi method - nil
-
     * console op
 
     * GC
