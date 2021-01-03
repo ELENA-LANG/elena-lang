@@ -658,7 +658,7 @@ void AMD64Assembler :: compileMOV(TokenInfo& token, ProcedureInfo& info, MemoryW
       AMD64Helper::writeModRM(code, sour, dest);
    }
    else if (test(sour.type, AMD64Helper::otR64) && (test(dest.type, AMD64Helper::otRX64))) {
-      code->writeByte(0x4C);
+      code->writeByte(0x49);
       code->writeByte(0x8B);
       AMD64Helper::writeModRM(code, sour, dest);
    }
