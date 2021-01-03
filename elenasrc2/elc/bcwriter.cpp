@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //#define FULL_OUTOUT_INFO 1
@@ -508,6 +508,12 @@ void ByteCodeWriter :: declareAlt(CommandTape& tape)
    tape.write(bcUnhook);
 }
 
+void ByteCodeWriter :: openFrame(CommandTape& tape, int reserved)
+{
+   tape.write(bcOpen, reserved);
+   tape.write(bcReserve, reserved << 2); // NOTE : converting to actual value
+}
+
 void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage)
 {
    //   open 1
@@ -779,14 +785,14 @@ void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
    tape.write(bcBSRedirect);
 }
 
-void ByteCodeWriter :: changeMessageCounter(CommandTape& tape, int paramCount, int flags)
+void ByteCodeWriter :: changeMessageCounter(CommandTape& tape, int arg, int paramCount, int flags)
 {
    // ; change param count
-   // loadfi - 1
+   // loadf -4
    // and ~PARAM_MASK
    // orn OPEN_ARG_COUNT
 
-   tape.write(bcLoadFI, -1);
+   tape.write(bcLoadF, arg);
    tape.write(bcAnd, ~ARG_MASK);
    tape.write(bcOr, paramCount | flags);
 }
@@ -796,20 +802,20 @@ void ByteCodeWriter :: unboxMessage(CommandTape& tape)
    // ; copy the call stack
    // mcount
    //
-   // pushn 0
+   // pushn  -1
+   // movfip -1
    // labNextParam:
-   // movf -2
-   // push
    // dec 1
+   // push
    // elsen labNextParam 0
 
    tape.write(bcMCount);
    tape.write(bcPushN, -1);
-   tape.write(bcMovF, -8);
+   tape.write(bcMovFIP, -1);
    tape.newLabel();
    tape.setLabel(true);
-   tape.write(bcPush);
    tape.write(bcDec, 1);
+   tape.write(bcPush);
    tape.write(bcElseN, baCurrentLabel, 0);
    tape.releaseLabel();
 }
@@ -4251,18 +4257,19 @@ void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree
       SNode message = node.findChild(lxMessage);
       if (isOpenArg(message.argument)) {
          // if it is open argument dispatching
-         tape.write(bcPushD);
-         tape.write(bcOpen);
+         openFrame(tape, 1);
+         tape.write(bcSaveF, -4);
+
          tape.write(bcPushA);
 
          unboxMessage(tape);
-         changeMessageCounter(tape, 2, VARIADIC_MESSAGE);
+         changeMessageCounter(tape, -4, 2, VARIADIC_MESSAGE);
          loadObject(tape, lxLocal, 1, scope, 0);
 
          callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument/*, false, false*/);
 
-         closeFrame(tape, 0);
-         tape.write(bcPopD);
+         tape.write(bcLoadF, -4);
+         closeFrame(tape, 1);
          tape.write(bcMQuit);
       }
       else {

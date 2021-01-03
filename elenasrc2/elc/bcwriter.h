@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef bcwriterH
@@ -183,6 +183,7 @@ class ByteCodeWriter
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
+   void openFrame(CommandTape& tape, int reserved);
    void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
    void newStructure(CommandTape& tape, int size, ref_t reference);
    void newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference);
@@ -212,7 +213,7 @@ class ByteCodeWriter
    void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
    void doGenericHandler(CommandTape& tape);
    void unboxMessage(CommandTape& tape);
-   void changeMessageCounter(CommandTape& tape, int paramCount, int flags);
+   void changeMessageCounter(CommandTape& tape, int arg, int paramCount, int flags);
    void resend(CommandTape& tape);
    void resendDirectResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message, bool sealedMode);
    void callExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
