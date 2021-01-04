@@ -91,6 +91,7 @@ protected:
    friend void loadFOp(int opcode, I64JITScope& scope);
    friend void loadFN4OpX(int opcode, I64JITScope& scope, int prefix);
    friend void loadFN4OpX(int opcode, I64JITScope& scope);
+   friend void loadFPN4Op(int opcode, I64JITScope& scope);
    friend void loadFPN4OpX(int opcode, I64JITScope& scope);
    friend void loadFPN4OpX(int opcode, I64JITScope& scope, int prefix);
    friend void loadFNOp(int opcode, I64JITScope& scope, int arg2);
@@ -226,6 +227,7 @@ void loadNNOpX(int opcode, I64JITScope& scope, int prefix);
 void loadFNOp(int opcode, I64JITScope& scope, int arg2);
 void loadFNOp(int opcode, I64JITScope& scope);
 void loadFPIndexOp(int opcode, I64JITScope& scope);
+void loadFPN4Op(int opcode, I64JITScope& scope);
 void loadFPN4OpX(int opcode, I64JITScope& scope);
 void loadFPN4OpX(int opcode, I64JITScope& scope, int prefix);
 void loadNOpX(int opcode, I64JITScope& scope, int prefix);

@@ -3,10 +3,6 @@ In development:
 ------         
 
   [development]
-    * boxing an array
-
-    * console op
-
     * GC (NOTE : copy lock byte as well)
     * exception handling
     * multi-theading

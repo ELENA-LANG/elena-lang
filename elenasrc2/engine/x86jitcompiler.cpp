@@ -400,6 +400,37 @@ void _ELENA_::loadFNOp(int opcode, x86JITScope& scope, int arg2)
    scope.code->seekEOF();
 }
 
+void _ELENA_::loadFPN4Op(int opcode, x86JITScope& scope)
+{
+   int arg2 = scope.tape->getDWord();
+   char* code = (char*)scope.compiler->_inlines[opcode];
+
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.frameOffset));
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
 void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope, int prefix)
 {
    int arg2 = scope.tape->getDWord();
@@ -568,21 +599,21 @@ void _ELENA_::loadFPN4OpX(int opcode, x86JITScope& scope)
    scope.tape->seek(pos);
 
    switch (arg2) {
-   case 1:
-      loadFPN4OpX(opcode, scope, 0x100);
-      break;
-   case 2:
-      loadFPN4OpX(opcode, scope, 0x200);
-      break;
-   case 3:
-      loadFPN4OpX(opcode, scope, 0x300);
-      break;
-   case 4:
-      loadFN4OpX(opcode, scope, 0x400);
-      break;
-   default:
-      loadFNOp(opcode, scope);
-      break;
+      case 1:
+         loadFPN4OpX(opcode, scope, 0x100);
+         break;
+      case 2:
+         loadFPN4OpX(opcode, scope, 0x200);
+         break;
+      case 3:
+         loadFPN4OpX(opcode, scope, 0x300);
+         break;
+      case 4:
+         loadFPN4OpX(opcode, scope, 0x400);
+         break;
+      default:
+         loadFPN4Op(opcode, scope);
+         break;
    }
 }
 

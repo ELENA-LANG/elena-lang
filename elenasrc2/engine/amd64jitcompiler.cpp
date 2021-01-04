@@ -798,7 +798,38 @@ void _ELENA_::loadFPN4OpX(int opcode, I64JITScope& scope, int prefix)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord(getFPOffset(scope.argument << 2, scope.frameOffset));
+         scope.code->writeDWord(getFPOffset(scope.argument << 3, scope.frameOffset));
+      }
+      else if (relocation[0] == -2) {
+         scope.code->writeDWord(arg2);
+      }
+
+      relocation += 2;
+      count--;
+   }
+   scope.code->seekEOF();
+}
+
+void _ELENA_::loadFPN4Op(int opcode, I64JITScope& scope)
+{
+   int arg2 = scope.tape->getDWord();
+   char* code = (char*)scope.compiler->_inlines[opcode];
+
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
+
+   // simply copy correspondent inline code
+   scope.code->write(code, length);
+
+   // resolve section references
+   int count = *(int*)(code + length);
+   int* relocation = (int*)(code + length + 4);
+   while (count > 0) {
+      // locate relocation position
+      scope.code->seek(position + relocation[1]);
+
+      if (relocation[0] == -1) {
+         scope.code->writeDWord(getFPOffset(scope.argument << 3, scope.frameOffset));
       }
       else if (relocation[0] == -2) {
          scope.code->writeDWord(arg2);
@@ -817,21 +848,21 @@ void _ELENA_::loadFPN4OpX(int opcode, I64JITScope& scope)
    scope.tape->seek(pos);
 
    switch (arg2) {
-   case 1:
-      loadFPN4OpX(opcode, scope, 0x100);
-      break;
-   case 2:
-      loadFPN4OpX(opcode, scope, 0x200);
-      break;
-   case 3:
-      loadFPN4OpX(opcode, scope, 0x300);
-      break;
-   case 4:
-      loadFN4OpX(opcode, scope, 0x400);
-      break;
-   default:
-      loadFNOp(opcode, scope);
-      break;
+      case 1:
+         loadFPN4OpX(opcode, scope, 0x100);
+         break;
+      case 2:
+         loadFPN4OpX(opcode, scope, 0x200);
+         break;
+      case 3:
+         loadFPN4OpX(opcode, scope, 0x300);
+         break;
+      case 4:
+         loadFPN4OpX(opcode, scope, 0x400);
+         break;
+      default:
+         loadFPN4Op(opcode, scope);
+         break;
    }
 }
 
@@ -1538,13 +1569,13 @@ void _ELENA_::compilePushSI(int, I64JITScope& scope)
    scope.code->writeByte(0x48);
    scope.code->writeWord(0xB4FF);
    scope.code->writeByte(0x24);
-   scope.code->writeDWord(scope.argument << 2);
+   scope.code->writeDWord(scope.argument << 3);
 }
 
 void _ELENA_::compilePushF(int op, I64JITScope& scope)
 {
    if (op == bcPushFIP) {
-      scope.argument = getFPOffset(scope.argument << 2, scope.frameOffset);
+      scope.argument = getFPOffset(scope.argument << 3, scope.frameOffset);
    }
    else scope.argument = getFPOffset(scope.argument, FPOffset);
 

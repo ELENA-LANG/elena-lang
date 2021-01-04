@@ -3073,7 +3073,7 @@ inline % 0F4h
   mov  ecx, __arg1
   mov  rax, [rbx - elVMTOffset]
   shl  ecx, 4
-  call [rax + rcx + 4]
+  call [rax + rcx + 8]
   
 end
 
