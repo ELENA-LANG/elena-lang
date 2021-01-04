@@ -275,7 +275,7 @@ class ByteCodeWriter
 //   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
 //   void saveSubject(CommandTape& tape);
    void saveIntConstant(CommandTape& tape, LexicalType target, int targetArg, int value);
-////////   void invertBool(CommandTape& tape, ref_t trueRef, ref_t falseRef);
+   void saveLength(CommandTape& tape, LexicalType target, int targetArg, int value);
    void doIntOperation(CommandTape& tape, int operator_id, int localOffset);
    void doIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue);
    void doIntBoolOperation(CommandTape& tape, int operator_id);

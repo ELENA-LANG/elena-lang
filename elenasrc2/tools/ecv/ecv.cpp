@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2012-2020, by Alexei Rakov
+//                                              (C)2012-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include <stdlib.h>
@@ -575,6 +575,7 @@ bool printCommand(_Module* module, MemoryReader& codeReader, int indent, List<in
       case bcCopyF:
       case bcCopyToF:
       case bcXSaveF:
+      case bcXSaveLenF:
          printCommand(command, opcode);
          printFArgument(command, argument);
          command.append(" ");
@@ -1490,7 +1491,7 @@ void getAppPath(_ELENA_::Path& appPath)
 // === Main Program ===
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2020 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
+   printf("ELENA command line ByteCode Viewer %d.%d.%d (C)2011-2021 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
 
    if (argc<2) {
       printf("ecv <module name> | ecv -p<module path>");

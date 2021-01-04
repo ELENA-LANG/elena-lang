@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: I64
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef amd64jitcompilerH
@@ -93,6 +93,7 @@ protected:
    friend void loadFN4OpX(int opcode, I64JITScope& scope);
    friend void loadFPN4OpX(int opcode, I64JITScope& scope);
    friend void loadFPN4OpX(int opcode, I64JITScope& scope, int prefix);
+   friend void loadFNOp(int opcode, I64JITScope& scope, int arg2);
    friend void loadFNOp(int opcode, I64JITScope& scope);
    friend void loadROp(int opcode, I64JITScope& scope);
    friend void loadMTOp(int opcode, I64JITScope& scope);
@@ -157,6 +158,7 @@ protected:
    friend void compileIfCount(int opcode, I64JITScope& scope);
    friend void compileElseE(int opcode, I64JITScope& scope);
    friend void compileDOrN(int opcode, I64JITScope& scope);
+   friend void compileSaveLen(int op, I64JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -221,6 +223,7 @@ void loadNOp(int opcode, I64JITScope& scope);
 void loadNNOp(int opcode, I64JITScope& scope); 
 void loadNNOpX(int opcode, I64JITScope& scope);
 void loadNNOpX(int opcode, I64JITScope& scope, int prefix);
+void loadFNOp(int opcode, I64JITScope& scope, int arg2);
 void loadFNOp(int opcode, I64JITScope& scope);
 void loadFPIndexOp(int opcode, I64JITScope& scope);
 void loadFPN4OpX(int opcode, I64JITScope& scope);
@@ -286,6 +289,7 @@ void compileIfE(int opcode, I64JITScope& scope);
 void compileIfCount(int opcode, I64JITScope& scope);
 void compileElseE(int opcode, I64JITScope& scope);
 void compileDOrN(int opcode, I64JITScope& scope);
+void compileSaveLen(int op, I64JITScope& scope);
 
 } // _ELENA_
 

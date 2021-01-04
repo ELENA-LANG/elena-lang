@@ -2,7 +2,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                              (C)2009-2020, by Alexei Rakov
+//                                              (C)2009-2021, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #ifndef bytecodeH
@@ -199,6 +199,7 @@ enum ByteCode
    bcLoadI           = 0xCA,
    bcSaveI           = 0xCB,
    bcStoreR          = 0xCC,
+   bcXOr             = 0xCD,
    bcCloneF          = 0xCE,
    bcXLoad           = 0xCF,
 
@@ -211,9 +212,9 @@ enum ByteCode
    bcInc             = 0xD6,
    bcOr              = 0xD7,
    bcCoalesceR       = 0xD8,
-   bcShr             = 0xD9,
-   bcXOr             = 0xDA,
+   bcShr             = 0xD9,   
 
+   bcXSaveLenF       = 0xDA,
    bcVJumpRM         = 0xDB,
    bcXSaveAI         = 0xDC,
    bcCopyAI          = 0xDD,
@@ -303,7 +304,7 @@ enum ByteCode
 };
 
 #define MAX_SINGLE_ECODE 0x4F
-#define MAX_DOUBLE_ECODE 0xDA
+#define MAX_DOUBLE_ECODE 0xD8
 
 enum PseudoArg
 {

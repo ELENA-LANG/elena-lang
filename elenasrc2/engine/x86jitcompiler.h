@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef x86jitcompilerH
@@ -71,6 +71,7 @@ protected:
    friend void loadNOpX(int opcode, x86JITScope& scope);
    friend void loadN4OpX(int opcode, x86JITScope& scope);
    friend void loadFNOp(int opcode, x86JITScope& scope);
+   friend void loadFNOp(int opcode, x86JITScope& scope, int arg2);
    friend void loadFN4OpX(int opcode, x86JITScope& scope);
    friend void loadFN4OpX(int opcode, x86JITScope& scope, int prefix);
    friend void loadFPN4OpX(int opcode, x86JITScope& scope);
@@ -158,6 +159,7 @@ protected:
    friend void compileMTRedirect(int op, x86JITScope& scope);
    friend void compileXRedirect(int op, x86JITScope& scope);
    friend void compileRestore(int op, x86JITScope& scope);
+   friend void compileSaveLen(int op, x86JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -222,6 +224,7 @@ void loadNNOp(int opcode, x86JITScope& scope);
 void loadNNOpX(int opcode, x86JITScope& scope);
 void loadNNOpX(int opcode, x86JITScope& scope, int prefix);
 void loadFNOp(int opcode, x86JITScope& scope);
+void loadFNOp(int opcode, x86JITScope& scope, int arg2);
 void loadFN4OpX(int opcode, x86JITScope& scope);
 void loadFN4OpX(int opcode, x86JITScope& scope, int prefix); 
 void loadFPN4OpX(int opcode, x86JITScope& scope);
@@ -324,6 +327,7 @@ void compileNot(int opcode, x86JITScope& scope);
 void compileMTRedirect(int op, x86JITScope& scope);
 void compileXRedirect(int op, x86JITScope& scope);
 void compileRestore(int op, x86JITScope& scope);
+void compileSaveLen(int op, x86JITScope& scope);
 
 } // _ELENA_
 

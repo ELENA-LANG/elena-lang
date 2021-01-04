@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Engine constants
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenaconstH
@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION           5                 // ELENA Engine version
-   #define ENGINE_MINOR_VERSION           5
+   #define ENGINE_MINOR_VERSION           6
 
    constexpr auto LINE_LEN                = 0x1000;         // the maximal source line length
    constexpr auto IDENTIFIER_LEN          = 0x0300;         // the maximal identifier length
@@ -370,7 +370,7 @@ namespace _ELENA_
    constexpr auto ELENA_SIGNITURE         = "ELENA.";      // the stand alone image
    constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.";   // the ELENAVM client
 
-   constexpr auto MODULE_SIGNATURE        = "ELENA.057";   // the module version
+   constexpr auto MODULE_SIGNATURE        = "ELENA.056";   // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!03";
 
   // --- ELENA core module names ---

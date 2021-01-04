@@ -24,7 +24,7 @@ define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
 // Object header fields
-define elSizeOffset          0008h
+define elSizeOffset          0004h
 define elVMTOffset           0010h 
 define elObjectOffset        0010h
 
@@ -45,7 +45,8 @@ define gc_stack_frame        0060h
 define page_ceil               1Fh
 define page_size_order          5h
 define page_mask        0FFFFFFE0h
-define struct_mask_inv     7FFFFFh
+define struct_mask_inv   3FFFFFFFh
+define stuct_mask        40000000h
 
 define ACTION_ORDER              9
 define ARG_ACTION_MASK        1DFh
@@ -546,7 +547,7 @@ end
 // ; count
 inline % 1Ch
 
-  mov  ecx, 0FFFFFh
+  mov  ecx, struct_mask_inv
   mov  rdx, [rbx-elSizeOffset]
   and  rdx, rcx
   shr  rdx, 2
@@ -711,7 +712,7 @@ end
 // ; len
 inline % 31h
 
-  mov  edx, 0FFFFFh
+  mov  edx, struct_mask_inv
   mov  rcx, [rbx-elSizeOffset]
   and  rdx, rcx
 
@@ -1622,7 +1623,7 @@ inline % 9Ah
   xor   edx, edx
   mov   [rbx-elVMTOffset], __arg1
   mov   rcx, [rax]
-  mov   esi, 800000h
+  mov   esi, stuct_mask
   test  ecx, ecx
   cmovz rdx, rsi
   shl   ecx, 2
@@ -1684,7 +1685,7 @@ end
 // ; - partial opcode
 inline % 0AFh
 
-  mov  ecx, 0FFFFFh
+  mov  ecx, struct_mask_inv
   mov  eax, dword ptr [rbx-elSizeOffset]
   and  rax, rcx
   shr  rax, 2
@@ -1862,6 +1863,13 @@ inline % 0CBh
 
 end
 
+// ; xor
+inline % 0CDh
+
+  xor    edx, __arg1
+
+end
+
 // ; clonef
 inline % 0CEh
 
@@ -1896,7 +1904,7 @@ end
 inline % 0D2h
 
   mov   rax, [rsp]
-  mov   edx, 0FFFFFh
+  mov   edx, struct_mask_inv
   mov   ecx, dword ptr[rax-elSizeOffset]
   and   edx, ecx
   mov   ecx, page_ceil
@@ -1907,7 +1915,7 @@ inline % 0D2h
 
   mov   rax, [rsp]
   mov   [rbx-elVMTOffset], __arg1
-  mov   edx, 0FFFFFh
+  mov   edx, struct_mask_inv
   mov   ecx, dword ptr[rax-elSizeOffset]
   and   edx, ecx
   mov   dword ptr[rbx-elSizeOffset], edx
@@ -1927,13 +1935,6 @@ inline % 0D8h
   mov    rax, __arg1
   test   rbx, rbx
   cmovz  rbx, rax
-
-end
-
-// ; xor
-inline % 0DAh
-
-  xor    edx, __arg1
 
 end
 
@@ -2168,7 +2169,7 @@ inline % 0E1h
   call code : %GC_ALLOC
 
   mov   rax, [rsp]
-  mov   ecx, 800000h
+  mov   ecx, stuct_mask
   mov   rax, [rax]
   mov   esi, __arg1
   imul  esi
@@ -2188,7 +2189,7 @@ inline % 1E1h
   call code : %GC_ALLOC
 
   mov   rax, [rsp]
-  mov   ecx, 800000h
+  mov   ecx, stuct_mask
   or    ecx, dword ptr[rax]
   mov   dword ptr[rbx-elSizeOffset], ecx
   
@@ -2207,7 +2208,7 @@ inline % 2E1h
   call code : %GC_ALLOC
 
   mov   rax, [rsp]
-  mov   ecx, 800000h
+  mov   ecx, stuct_mask
   mov   rax, [rax]
   shl   eax, 1
   or    ecx, eax
@@ -2228,7 +2229,7 @@ inline % 3E1h
   call code : %GC_ALLOC
 
   mov   rax, [rsp]
-  mov   ecx, 800000h
+  mov   ecx, stuct_mask
   mov   rax, [rax]
   shl   eax, 2
   or    ecx, eax
@@ -2249,7 +2250,7 @@ inline % 4E1h
   call code : %GC_ALLOC
 
   mov   rax, [rsp]
-  mov   rcx, 800000h
+  mov   rcx, stuct_mask
   mov   rax, [rax]
   shl  eax, 3
   or    ecx, eax

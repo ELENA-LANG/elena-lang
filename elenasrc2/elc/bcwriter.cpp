@@ -378,7 +378,7 @@ void ByteCodeWriter :: declareElseBlock(CommandTape& tape)
    tape.write(bcJump, baPreviousLabel);
    tape.setLabel();
 
-   //tape.write(bcResetStack);
+   //tape.write(bcRe tack);
 }
 
 void ByteCodeWriter :: declareSwitchBlock(CommandTape& tape)
@@ -1646,14 +1646,16 @@ void ByteCodeWriter :: saveIntConstant(CommandTape& tape, LexicalType target, in
       tape.write(bcXSaveF, targetArg << 2, value);
    }
    else throw InternalError("Not yet implemented");
+}
 
-//   // bcopya
-//   // dcopy value
-//   // nsave
-//
-//   tape.write(bcBCopyA);
-//   tape.write(bcDCopy, value);
-//   tape.write(bcNSave);
+void ByteCodeWriter :: saveLength(CommandTape& tape, LexicalType target, int targetArg, int value)
+{
+   if (target == lxLocalAddress) {
+      // xsavef arg, value
+
+      tape.write(bcXSaveLenF, targetArg << 2, value);
+   }
+   else throw InternalError("Not yet implemented");
 }
 
 void ByteCodeWriter :: doIntBoolOperation(CommandTape& tape, int operator_id)
@@ -4584,7 +4586,7 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, FlowSco
 
 void ByteCodeWriter :: generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset)
 {
-   saveIntConstant(tape, lxLocalAddress, offset + 1, 0x800000 + node.argument);
+   saveLength(tape, lxLocalAddress, offset + 1, node.argument);
 }
 
 void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node current)

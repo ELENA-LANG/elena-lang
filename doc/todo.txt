@@ -3,9 +3,11 @@ In development:
 ------         
 
   [development]
+    * boxing an array
+
     * console op
 
-    * GC
+    * GC (NOTE : copy lock byte as well)
     * exception handling
     * multi-theading
 
@@ -17,6 +19,7 @@ In development:
     * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME
     * amd64 : critical exception handler, critical exception handler refactoring
     * critical error handler should be moved to C code
+    * compiler option : stack data alignment - 4 or 8
     * retiring core #77
     * #206 - 64-bit architecture
 

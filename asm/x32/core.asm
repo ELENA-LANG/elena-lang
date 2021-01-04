@@ -2708,6 +2708,13 @@ inline % 0CBh
 
 end
 
+// ; xor
+inline % 0CDh
+
+  xor    edx, __arg1
+
+end
+
 // ; clonef
 inline % 0CEh
 
@@ -2773,13 +2780,6 @@ inline % 0D8h
   mov    eax, __arg1
   test   ebx, ebx
   cmovz  ebx, eax
-
-end
-
-// ; xor
-inline % 0DAh
-
-  xor    edx, __arg1
 
 end
 

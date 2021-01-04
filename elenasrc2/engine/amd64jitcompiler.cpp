@@ -145,10 +145,10 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadSPOp, &compileReserve,
 
    &loadIndexOp, &compileACopyF, &compilePushF, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
-   &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadFunction, &loadFOp, &loadNOp,
+   &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadNOp, &loadFOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &loadROp, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
-   &loadROp, &compileDShiftN, &loadNOp, &compileInvokeVMTOffset, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,
+   &loadROp, &compileDShiftN, &compileSaveLen, &compileInvokeVMTOffset, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,
 
    &loadFN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexN4OpX, &loadFPN4OpX, &loadFN4OpX, &loadFPN4OpX, &loadFN4OpX,
    &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
@@ -567,6 +567,11 @@ void _ELENA_::loadFNOp(int opcode, I64JITScope& scope)
 {
    int arg2 = scope.tape->getDWord();
 
+   loadFNOp(opcode, scope, arg2);
+}
+
+void _ELENA_::loadFNOp(int opcode, I64JITScope& scope, int arg2)
+{
    char* code = (char*)scope.compiler->_inlines[opcode];
    size_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
@@ -674,33 +679,6 @@ void _ELENA_::loadFOp(int opcode, I64JITScope& scope)
    }
    scope.code->seekEOF();
 }
-
-//void _ELENA_::loadFPOpX(int opcode, AMD64JITScope& scope)
-//{
-//   char*  code = (char*)scope.compiler->_inlines[opcode];
-//   size_t position = scope.code->Position();
-//   size_t length = *(size_t*)(code - 4);
-//
-//   // simply copy correspondent inline code
-//   scope.code->write(code, length);
-//
-//   // resolve section references
-//   int count = *(int*)(code + length);
-//   int* relocation = (int*)(code + length + 4);
-//   while (count > 0) {
-//      // locate relocation position
-//      scope.code->seek(position + relocation[1]);
-//
-//      if (relocation[0] == -1) {
-//         scope.code->writeDWord(-(scope.argument << 3));
-//      }
-//      else writeCoreReference(scope, relocation[0], position, relocation[1], code);
-//
-//      relocation += 2;
-//      count--;
-//   }
-//   scope.code->seekEOF();
-//}
 
 void _ELENA_::loadFN4OpX(int opcode, I64JITScope& scope, int prefix)
 {
@@ -1374,9 +1352,9 @@ void _ELENA_::compileCreate(int opcode, I64JITScope& scope)
    // NOTE : empty length should be equal to 800000h
    // due to current GC algorithm
    if (length == 0)
-      length = 0x800000;
+      length = elStructMask64;
 
-   // mov [ebx-elPageSizeOffset], length
+   // mov dword ptr [rbx-elPageSizeOffset], length
    scope.code->writeWord(0x43C7);
    scope.code->writeByte((unsigned char)-elPageSizeOffset64);
    scope.code->writeDWord(length);
@@ -1396,14 +1374,14 @@ void _ELENA_::compileCreateN(int, I64JITScope& scope)
    ref_t vmtRef = scope.argument;
    scope.argument = scope.tape->getDWord();
 
-   int length = scope.argument | 0x800000; // mark object as a binary structure
+   int length = scope.argument | elStructMask64; // mark object as a binary structure
 
    // __arg1 = #gc_page + (length - 1)
    scope.argument = align(scope.argument + scope.objectSize, gcPageSize64);
 
    loadNOp(bcNew, scope);
 
-   // mov [ebx-elPageSizeOffset], length
+   // mov dword ptr [rbx-elPageSizeOffset], length
    scope.code->writeWord(0x43C7);
    scope.code->writeByte((unsigned char)-elPageSizeOffset64);
    scope.code->writeDWord(length);
@@ -1967,18 +1945,6 @@ void _ELENA_::compileDShiftN(int op, I64JITScope& scope)
    }
 }
 
-////void _ELENA_::compileDAdd(int, x86JITScope& scope)
-////{
-////   // add ebx, ecx
-////   scope.code->writeWord(0xD903);
-////}
-////
-////void _ELENA_::compileOr(int, x86JITScope& scope)
-////{
-////   // or ebx, ecx
-////   scope.code->writeWord(0xD90B);
-////}
-
 void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
 {
    switch (scope.argument) {
@@ -2032,6 +1998,13 @@ void _ELENA_::compileReserve(int op, I64JITScope& scope)
    scope.argument = align(scope.argument, 8);
 
    loadNOp(op, scope);
+}
+
+void _ELENA_::compileSaveLen(int op, I64JITScope& scope)
+{
+   int arg2 = scope.tape->getDWord() | elStructMask64;
+
+   loadFNOp(bcXSaveF, scope, arg2);
 }
 
 // --- AMD64JITScope ---

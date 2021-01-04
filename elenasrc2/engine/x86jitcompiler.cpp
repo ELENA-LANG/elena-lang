@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -142,10 +142,10 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadSPOp, &loadNOp,
 
    &loadIndexOp, &compileACopyF, &compilePushF, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
-   &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &compileNop, &loadFOp, &loadNOp,
+   &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadNOp, &loadFOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &loadROp, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
-   &loadROp, &compileDShiftN, &loadNOp, &compileInvokeVMTOffset, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,
+   &loadROp, &compileDShiftN, &compileSaveLen, &compileInvokeVMTOffset, &loadIndexNOp, &loadIndexN4OpX, &loadNNOpX, &loadNNOpX,
 
    &loadFN4OpX, &compileDynamicCreateN, &loadFPIndexOp, &loadIndexN4OpX, &loadFPN4OpX, &loadFN4OpX, &loadFPN4OpX, &loadFN4OpX,
    &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
@@ -368,6 +368,11 @@ void _ELENA_::loadFNOp(int opcode, x86JITScope& scope)
 {
    int arg2 = scope.tape->getDWord();
 
+   loadFNOp(opcode, scope, arg2);
+}
+
+void _ELENA_::loadFNOp(int opcode, x86JITScope& scope, int arg2)
+{
    char* code = (char*)scope.compiler->_inlines[opcode];
    size_t position = scope.code->Position();
    size_t length = *(size_t*)(code - 4);
@@ -1468,7 +1473,7 @@ void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
    // NOTE : empty length should be equal to 800000h
    // due to current GC algorithm
    if (length == 0)
-      length = 0x800000;
+      length = elStructMask32;
 
    // mov [ebx-elPageSizeOffset], length
    scope.code->writeWord(0x43C7);
@@ -1490,7 +1495,7 @@ void _ELENA_::compileCreateN(int, x86JITScope& scope)
    ref_t vmtRef = scope.argument;
    scope.argument = scope.tape->getDWord();
 
-   int length = scope.argument | 0x800000; // mark object as a binary structure
+   int length = scope.argument | elStructMask32; // mark object as a binary structure
 
    // __arg1 = #gc_page + (length - 1)
    scope.argument = align(scope.argument + scope.objectSize, gcPageSize32);
@@ -2004,6 +2009,13 @@ void _ELENA_ :: compileRestore(int op, x86JITScope& scope)
 {
    scope.argument += 8; // include EIP & EBP 
    loadNOp(op, scope);
+}
+
+void _ELENA_::compileSaveLen(int op, x86JITScope& scope)
+{
+   int arg2 = scope.tape->getDWord() | elStructMask32;
+
+   loadFNOp(bcXSaveF, scope, arg2);
 }
 
 // --- x86JITScope ---

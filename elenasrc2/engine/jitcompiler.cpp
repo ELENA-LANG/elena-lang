@@ -460,7 +460,8 @@ void JITCompiler64 :: compileInt32(MemoryWriter* writer, int integer)
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000004u);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000004u);
 
    // object body
    writer->writeDWord(integer);
@@ -472,7 +473,8 @@ void JITCompiler64 :: compileMessage(MemoryWriter* writer, mssg_t mssg)
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000008u);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000008u);
 
    // object body
    writer->writeQWord(toMessage64(mssg));
@@ -484,7 +486,8 @@ void JITCompiler64 :: compileAction(MemoryWriter* writer, ref_t integer)
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000008u);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000008u);
 
    // object body
    writer->writeQWord(integer);
@@ -496,7 +499,8 @@ void JITCompiler64 :: compileInt64(MemoryWriter* writer, long long integer)
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000008u);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000008u);
 
    // object body
    writer->write(&integer, 8);
@@ -508,7 +512,8 @@ void JITCompiler64 :: compileMssgExtension(MemoryWriter* writer, mssg_t mssg, re
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000010u);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000010u);
 
    // object body
    writer->writeQWord(toMessage64(mssg));
@@ -522,7 +527,8 @@ void JITCompiler64 ::compileMssgExtension(MemoryWriter* writer, mssg_t mssg, uin
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000010u);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000010u);
 
    // object body
    writer->writeQWord(toMessage64(mssg));
@@ -535,7 +541,8 @@ void JITCompiler64 :: compileReal64(MemoryWriter* writer, double number)
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000008u);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000008u);
 
    // object body
    writer->write(&number, 8);
@@ -549,7 +556,8 @@ void JITCompiler64 :: compileLiteral(MemoryWriter* writer, const char* value)
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000000u | length);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000000u | length);
 
    // object body
    writer->writeLiteral(value, length);
@@ -564,7 +572,8 @@ void JITCompiler64 :: compileWideLiteral(MemoryWriter* writer, const wide_c* val
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000000u | length);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000000u | length);
 
    // object body
    writer->writeLiteral(value, length);
@@ -581,7 +590,8 @@ void JITCompiler64 :: compileChar32(MemoryWriter* writer, const char* value)
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000004u);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000004u);
 
    // object body
    writer->writeQWord(ch);
@@ -595,7 +605,8 @@ void JITCompiler64 :: compileBinary(MemoryWriter* writer, _Memory* binary)
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(0x80000000u | length);
+   writer->writeDWord(0);
+   writer->writeDWord(0x40000000u | length);
 
    // object body
    writer->write(binary->get(0), length);
@@ -610,7 +621,8 @@ void JITCompiler64 :: compileCollection(MemoryWriter* writer, _Memory* binary)
 
    // object header
    writer->writeQWord(0);
-   writer->writeQWord(length);
+   writer->writeDWord(0);
+   writer->writeDWord(length);
 
    // object body
    pos_t index = 0;

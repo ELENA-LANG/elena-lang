@@ -1,5 +1,5 @@
 // Object header fields
-define elSizeOffset          0008h
+define elSizeOffset          0004h
 define elVMTOffset           0010h 
 define elObjectOffset        0010h
 

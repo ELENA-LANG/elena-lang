@@ -3,7 +3,7 @@
 //
 //		This file contains implementation of ELENA byte code routines.
 //
-//                                                 (C)2009-2020, by Alexei Rakov
+//                                                 (C)2009-2021, by Alexei Rakov
 //------------------------------------------------------------------------------
 
 #include "elena.h"
@@ -51,10 +51,10 @@ const char* _fnOpcodes[256] =
    "loadsi", "savef", "pushsi", "savesi", "savefi", "pushf", "pushsip", "reserve",
 
    "seti", "movfip", "pushfip", "storesi", "storefi", "naddf", "nmulf", OPCODE_UNKNOWN,
-   "nsubf", "ndivf", "loadi", "savei", "storer", OPCODE_UNKNOWN, "clonef", "xload",
+   "nsubf", "ndivf", "loadi", "savei", "storer", "xor", "clonef", "xload",
 
    "freei", "alloci", "xcreate", "movv", "shl", "and", "inc", "or",
-   "coalescer", "shr", "xor", "vjumprm", "xsaveai", "copyai", "move", "moveto",
+   "coalescer", "shr", "xsavelenf", "vjumprm", "xsaveai", "copyai", "move", "moveto",
 
    "readtof", "createn", "xsetfi", "copytoai", "copytofi", "copytof", "copyfi", "copyf",
    "mtredirect", "xmtredirect", "greatern", "notgreatern", "notlessn", "xrsavef", "xaddf", "xsavef",
