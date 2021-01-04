@@ -12,8 +12,12 @@ namespace _ELENA_
 {
 
 // --- ELENA Object constants ---
-constexpr int gcPageSize32       = 0x0010;            // a heap page size constant
-constexpr int elObjectOffset32   = 0x0008;            // object header / offset constant
+constexpr int gcPageSize32             = 0x0010;            // a heap page size constant
+constexpr int gcPageSizeOrder32        = 4;
+constexpr int gcPageSizeOrderMinus2_32 = 2;
+constexpr int gcPageCeil32             = 0x17;
+constexpr int gcPageMask32             = 0x0FFFFFFF0;
+constexpr int elObjectOffset32         = 0x0008;            // object header / offset constant
 
 constexpr int gcPageSize64       = 0x0020;            // a heap page size constant
 constexpr int elObjectOffset64   = 0x0010;            // object header / offset constant
@@ -34,6 +38,7 @@ constexpr int elVMTFlagOffset64  = 0x0018;                // a VMTX flags offset
 
 constexpr int elStructMask32     = 0x800000;
 constexpr int elStructMask64     = 0x40000000;
+
 
 // --- ELENA CORE built-in routines
 constexpr int GC_ALLOC = 0x10001;

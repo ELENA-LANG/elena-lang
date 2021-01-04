@@ -66,6 +66,14 @@ uintptr_t SystemRoutineProvider :: NewHeap(int totalSize, int committedSize)
    return (uintptr_t)allocPtr;
 }
 
+uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, int newSize)
+{
+   // allocate
+   VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
+
+   return (uintptr_t)allocPtr;
+}
+
 void SystemRoutineProvider :: Exit(pos_t exitCode)
 {
    ::ExitProcess(exitCode);

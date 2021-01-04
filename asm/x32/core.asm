@@ -427,7 +427,7 @@ labMGCompactNext2:
   add  edi, eax
 
 labMGCopy:
-  mov  eax, [esi]
+  mov  eax, [esi]      
   mov  [ebp], eax
   sub  ecx, 4
   lea  esi, [esi+4]

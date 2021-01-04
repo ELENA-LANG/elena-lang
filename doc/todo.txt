@@ -3,7 +3,13 @@ In development:
 ------         
 
   [development]
+    * #77 : move full collection to elenart / elenavm
+    * test full collection with pi & anagram samples
+    * get rid of EXPAND_HEAP in core
+
+    * support both x32 and x32-64 modes
     * GC (NOTE : copy lock byte as well)
+
     * exception handling
     * multi-theading
 
