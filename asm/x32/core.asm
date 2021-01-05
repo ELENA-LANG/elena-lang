@@ -2639,9 +2639,8 @@ inline %0C0h
   sub  esi, [data : %CORE_GC_TABLE + gc_start]
   mov  ecx, [data : %CORE_GC_TABLE + gc_header]
   shr  esi, page_size_order
+  mov  [ebx + __arg1], eax
   mov  byte ptr [esi + ecx], 1  
-
-  mov [ebx + __arg1], eax
 
 end
 

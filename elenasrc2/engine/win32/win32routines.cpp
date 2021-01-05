@@ -69,7 +69,7 @@ uintptr_t SystemRoutineProvider :: NewHeap(int totalSize, int committedSize)
 uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, int newSize)
 {
    // allocate
-   VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
+   LPVOID r = VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
 
    return (uintptr_t)allocPtr;
 }

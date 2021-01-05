@@ -3,9 +3,13 @@ In development:
 ------         
 
   [development]
+    * GC - do not put empty roots
+
+    * test full collection with anagram samples
+
     * #77 : move full collection to elenart / elenavm
-    * test full collection with pi & anagram samples
-    * get rid of EXPAND_HEAP in core
+    * #77 : migrate core changes to corex
+
 
     * support both x32 and x32-64 modes
     * GC (NOTE : copy lock byte as well)
@@ -29,7 +33,6 @@ In development:
     * test : string insert / delete
     * test string / wide operations
 
-    * migrate core changes to corex
 
     * test all samples
     * check all mtredirect commands (class, parent class)
@@ -105,6 +108,7 @@ In development:
     * [clear todos]
     * [resolve open issues]
     * [support ELENA 3.x syntax]
+    * get rid of EXPAND_HEAP in core (after retiring core GC routines)
 
   [documentation]
     * docs

@@ -23,11 +23,6 @@ const pos_t page_align_mask = 0x000FFFF0; // !! temp
 void SystemRoutineProvider :: Init(SystemEnv* env)
 {
    // ; initialize static roots
- //  mov  ecx, [data : %CORE_STAT_COUNT]
- //  mov  edi, data : %CORE_STATICROOT
- //  shr  ecx, 2
- //  xor  eax, eax
- //  rep  stos
    memset(env->StatRoots, 0, env->StatLength);
 
    // set the GC root counter
@@ -35,57 +30,26 @@ void SystemRoutineProvider :: Init(SystemEnv* env)
    env->Table->gc_roots = (uintptr_t)env->StatRoots;
 
    // ; allocate memory heap
-//  mov  ecx, 8000000h // ; 10000000h
-//  mov  ebx, [data : %CORE_GC_SIZE]
-//  and  ebx, 0FFFFFF80h     // ; align to 128
-//  shr  ebx, page_size_order_minus2
-//  call code : %NEW_HEAP
-//  mov  [data : %CORE_GC_TABLE + gc_header], eax
    env->Table->gc_header = NewHeap(0x8000000, align(env->GCMGSize, 128) >> page_size_order_minus2);
 
-   //  mov  ecx, 20000000h // ; 40000000h
-   //  mov  ebx, [data : %CORE_GC_SIZE]
-   //  and  ebx, 0FFFFFF80h     // align to 128
-   //  call code : %NEW_HEAP
-   //  mov  [data : %CORE_GC_TABLE + gc_start], eax
    uintptr_t mg_ptr = NewHeap(0x20000000, align(env->GCMGSize, 128));
    env->Table->gc_start = mg_ptr;
 
    // ; initialize yg
- //  mov  [data : %CORE_GC_TABLE + gc_yg_start], eax
- //  mov  [data : %CORE_GC_TABLE + gc_yg_current], eax
    env->Table->gc_yg_current = env->Table->gc_yg_start = mg_ptr;
 
    // ; initialize gc end
- //  mov  ecx, [data : %CORE_GC_SIZE]
- //  and  ecx, 0FFFFFF80h     // ; align to 128
- //  add  ecx, eax
- //  mov  [data : %CORE_GC_TABLE + gc_end], ecx
    env->Table->gc_end = mg_ptr + align(env->GCMGSize, 128);
 
    // ; initialize gc shadow
- //  mov  ecx, [data : %CORE_GC_SIZE + gcs_YGSize]
- //  and  ecx, page_mask
- //  add  eax, ecx
- //  mov  [data : %CORE_GC_TABLE + gc_yg_end], eax
- //  mov  [data : %CORE_GC_TABLE + gc_shadow], eax
    mg_ptr += (env->GCYGSize & page_mask);
    env->Table->gc_shadow = env->Table->gc_yg_end = mg_ptr;
 
    // ; initialize gc mg
- //  add  eax, ecx
- //  mov  [data : %CORE_GC_TABLE + gc_shadow_end], eax
- //  mov  [data : %CORE_GC_TABLE + gc_mg_start], eax
- //  mov  [data : %CORE_GC_TABLE + gc_mg_current], eax
    mg_ptr += (env->GCYGSize & page_mask);
    env->Table->gc_shadow_end = env->Table->gc_mg_start = env->Table->gc_mg_current = mg_ptr;
 
    // ; initialize wbar start
- //  mov  edx, eax
- //  sub  edx, [data : %CORE_GC_TABLE + gc_start]
- //  shr  edx, page_size_order
- //  add  edx, [data : %CORE_GC_TABLE + gc_header]
- //  mov  [data : %CORE_GC_TABLE + gc_mg_wbar], edx
    env->Table->gc_mg_wbar = ((mg_ptr - env->Table->gc_start) >> page_size_order) + env->Table->gc_header;
 
    env->Table->gc_signal = 0;
@@ -196,22 +160,9 @@ inline void __vectorcall orSize(uintptr_t objptr, int mask)
    getObjectPage(objptr)->size |= mask;
 }
 
-inline void __vectorcall CopyObject(size_t bytesToCopy, void* dst, void* src)
+inline void __vectorcall MoveObject(size_t bytesToCopy, void* dst, void* src)
 {
-#ifdef _WIN32
-   __asm {
-      mov  esi, src
-      mov  edi, dst
-      mov  ecx, bytesToCopy
-      labYGCopyData :
-      mov  eax, [esi]
-         sub  ecx, 4
-         mov[edi], eax
-         lea  esi, [esi + 4]
-         lea  edi, [edi + 4]
-         jnz  short labYGCopyData
-   }
-#endif
+   memmove(dst, src, bytesToCopy);
 }
 
 inline void __vectorcall CopyObjectData(size_t bytesToCopy, void* dst, void* src)
@@ -219,28 +170,14 @@ inline void __vectorcall CopyObjectData(size_t bytesToCopy, void* dst, void* src
    bytesToCopy += 3;
    bytesToCopy &= 0xFFFFC;
 
-#ifdef _WIN32
-   __asm {
-         mov  esi, src
-         mov  edi, dst
-         mov  ecx, bytesToCopy
-      labYGCopyData :
-         mov  eax, [esi]
-         sub  ecx, 4
-         mov[edi], eax
-         lea  esi, [esi + 4]
-         lea  edi, [edi + 4]
-         jnz  short labYGCopyData
-   }
-#endif
-
+   memcpy(dst, src, bytesToCopy);
 }
 
-void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*& shadowHeap)
+void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*& shadowHeap, void* src)
 {
    size_t* ptr = (size_t*)root->stackPtr;
    size_t  size = root->size;
-   size_t  new_ptr = 0;
+   intptr_t new_ptr = 0;
    GCRoot  current;
 
    // ; collect roots
@@ -272,34 +209,34 @@ void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*&
             // ; get object size
             current.size &= 0x8FFFFF;
             
-            //      // ; save ESI
-            //      push esi
-            //      mov  esi, eax
-            //
             // ; save new reference
             setVMTPtr(current.stackPtrAddr, (void*)new_ptr);
             
             if (current.size < 0x800000) {
                // ; check if the object has fields
-               YGCollect(&current, start, end, shadowHeap);
+               YGCollect(&current, start, end, shadowHeap, current.stackPtr);
             }
             else if (current.size != 0x800000) {
                CopyObjectData(current.size, (void*)new_ptr, current.stackPtr);
             }
          }
          else {
-            //   // ; update reference
-            //   mov  edi, [eax - elVMTOffset]
-            //   mov[esi], edi
+            // ; update reference
             *ptr = (size_t)getVMTPtr(current.stackPtrAddr);
          }
       }
       ptr++;
       size -= 4;
    }
+
+   // ; copy object to shadow YG
+   if (src) {
+      void* dst = getVMTPtr((intptr_t)src);
+      CopyObjectData(root->size, dst, src);
+   }
 }
 
-void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end)
+void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end, int b)
 {
    size_t* ptr = (size_t*)root->stackPtr;
    size_t  size = root->size;
@@ -309,18 +246,25 @@ void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end)
    while (size > 0) {
       // ; check if it valid reference
       if (*ptr >= start && *ptr < end) {
+
          current.stackPtrAddr = *ptr;
 
          // ; check if it was collected
          current.size = getSize((size_t)current.stackPtr);
          if (!(current.size & 0x80000000)) {
             // ; mark as collected
-            // or [eax - elSizeOffset], 080000000h
             orSize(current.stackPtrAddr, 0x80000000);
+
+            int p2 = current.stackPtrAddr - b;
+            if (p2 == 0x00026868)
+               size |= 0;
+
+            if (p2 >= 0x0002a000 && p2 < 0x0002a100)
+               size |= 0;
 
             // ; check if the object has fields
             if (current.size < 0x800000) {
-               MGCollect(&current, start, end);
+               MGCollect(&current, start, end, b);
             }
          }
       }
@@ -339,18 +283,23 @@ inline void __vectorcall FixObject(GCTable* table, GCRoot* roots, size_t start, 
    while (size > 0) {
       // ; check if it valid reference
       if (*ptr >= start && *ptr < end) {
-
          ObjectPage* pagePtr = getObjectPage((uintptr_t)(*ptr));
-         uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) << page_size_order_minus2);
-
-         *ptr = *(uintptr_t*)mappings;
+         uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
 
          // ; make sure the object was not already fixed
          if (pagePtr->size & 0x80000000) {
+            uintptr_t p = *(uintptr_t*)mappings;
+            if (p == 0)
+               p = 0;
+
+            uintptr_t newPtr = *(uintptr_t*)mappings;
+            *ptr = newPtr;
+            pagePtr = getObjectPage(newPtr);
+
             pagePtr->size = pagePtr->size & 0x7FFFFFFF;
 
             if (!test(pagePtr->size, struct_mask)) {
-               current.stackPtrAddr = *ptr;
+               current.stackPtrAddr = newPtr;
                current.size = pagePtr->size;
 
                FixObject(table, &current, start, end);
@@ -364,29 +313,38 @@ inline void __vectorcall FixObject(GCTable* table, GCRoot* roots, size_t start, 
 
 inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
 {
+   uintptr_t yg_start = table->gc_yg_start;
    uintptr_t mg_end = table->gc_mg_current;
 
    // ; ====== Major Collection ====
       
    // ; collect roots
-   while (roots->stackPtr) {
-      //   ; mark both yg and mg objects
-      MGCollect(roots, table->gc_yg_start, mg_end);
+   GCRoot* current = roots;
+   while (current->stackPtr) {
+      if (current->stackPtrAddr >= yg_start && current->stackPtrAddr < mg_end) {
+         // HOTFIX : mark WB objects as collected
+         orSize(current->stackPtrAddr, 0x80000000);
+      }
 
-      roots++;
+      //   ; mark both yg and mg objects
+      MGCollect(current, yg_start, mg_end, table->gc_start);
+
+      current++;
    }
 
    // ; == compact mg ==
 
-   uintptr_t mappings = table->gc_header + ((table->gc_mg_start - table->gc_start) << page_size_order_minus2);
+   uintptr_t mappings = table->gc_header + ((table->gc_mg_start - table->gc_start) >> page_size_order_minus2);
 
    // ; skip the permanent part
    ObjectPage* mgPtr = (ObjectPage*)table->gc_mg_start;
    while (mgPtr->size < 0) {
+      int object_size = ((mgPtr->size + page_ceil) & page_align_mask);
+
       *(uintptr_t*)mappings = getObjectPtr((uintptr_t)mgPtr);
 
-      mgPtr = (ObjectPage*)((size_t)mgPtr + ((mgPtr->size + page_ceil) & page_align_mask));
-      mappings += (mgPtr->size << page_size_order_minus2);
+      mgPtr = (ObjectPage*)((size_t)mgPtr + object_size);
+      mappings += (object_size >> page_size_order_minus2);
    }
 
    // ; compact	
@@ -394,36 +352,43 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    while ((uintptr_t)mgPtr < mg_end) {
       int object_size = ((mgPtr->size + page_ceil) & page_align_mask);
 
+      if ((uintptr_t)mgPtr - table->gc_start == 0x0003e4b0)
+         object_size |= 0;
+
       if (mgPtr->size < 0) {
          *(uintptr_t*)mappings = getObjectPtr((uintptr_t)newPtr);
 
          // ; copy page
-         CopyObject(object_size, newPtr, mgPtr);
+         MoveObject(object_size, newPtr, mgPtr);
          newPtr = (ObjectPage*)((size_t)newPtr + object_size);
       }
 
       mgPtr = (ObjectPage*)((size_t)mgPtr + object_size);
-      mappings += (mgPtr->size << page_size_order_minus2);
+      mappings += (object_size >> page_size_order_minus2);
    }
 
    // ; promote yg
    ObjectPage* ygPtr = (ObjectPage*)table->gc_yg_start;
-   mappings = table->gc_header + ((table->gc_yg_start - table->gc_start) << page_size_order_minus2);
+   mappings = table->gc_header + ((table->gc_yg_start - table->gc_start) >> page_size_order_minus2);
 
    uintptr_t yg_end = table->gc_yg_current;
    while ((uintptr_t)ygPtr < yg_end) {
-      int object_size = ((mgPtr->size + page_ceil) & page_align_mask);
+      int object_size = ((ygPtr->size + page_ceil) & page_align_mask);
+
+      if (((uintptr_t)ygPtr <= table->gc_start + 0x00029fb8) && ((uintptr_t)ygPtr > table->gc_start + 0x00029f80))
+         object_size |= 0;
 
       if (ygPtr->size < 0) {
+         // ; copy page
+         MoveObject(object_size, newPtr, ygPtr);
+
          *(uintptr_t*)mappings = getObjectPtr((uintptr_t)newPtr);
 
-         // ; copy page
-         CopyObject(object_size, newPtr, ygPtr);
          newPtr = (ObjectPage*)((size_t)newPtr + object_size);
       }
 
       ygPtr = (ObjectPage*)((size_t)ygPtr + object_size);
-      mappings += (mgPtr->size << page_size_order_minus2);
+      mappings += (object_size >> page_size_order_minus2);
    }
 
    // ; set mg_current, clear yg and survive
@@ -433,22 +398,34 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    // ; fix roots
    while (roots->stackPtr) {
       //   ; mark both yg and mg objects
-      FixObject(table, roots, table->gc_yg_start, mg_end);
+      if (roots->stackPtrAddr >= yg_start && roots->stackPtrAddr < mg_end) {
+         ObjectPage* pagePtr = getObjectPage(roots->stackPtrAddr);
+         uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
+
+         uintptr_t p = *(uintptr_t*)mappings;
+
+         roots->stackPtrAddr = *(uintptr_t*)mappings;
+
+
+      }
+      FixObject(table, roots, yg_start, mg_end);
 
       roots++;
    }
 
    // ; clear WBar
-   memset((void*)table->gc_mg_wbar, 0, table->gc_end - table->gc_mg_start);
+   int size = (table->gc_end - table->gc_mg_start) >> page_size_order;
+   memset((void*)table->gc_mg_wbar, 0, size);
 }
 
 void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t size)
 {
    ObjectPage* shadowPtr = (ObjectPage*)table->gc_shadow;
-   while (roots->stackPtr) {
-      YGCollect(roots, table->gc_yg_start, table->gc_yg_end, shadowPtr);
+   GCRoot* current = roots;
+   while (current->stackPtr) {
+      YGCollect(current, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
 
-      roots++;
+      current++;
    }
 
    // ; save gc_yg_current to mark  objects
@@ -464,7 +441,7 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
 
    if (table->gc_yg_end - table->gc_yg_current < size) {
       // ; expand MG if required to promote YG
-      if (table->gc_end - table->gc_mg_current < table->gc_yg_current - table->gc_yg_start) {
+      while (table->gc_end - table->gc_mg_current < table->gc_yg_current - table->gc_yg_start) {
          ExpandHeap((void*)table->gc_end, 0x2A000);
          ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), 0x0A800);
 
