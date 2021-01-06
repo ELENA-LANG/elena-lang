@@ -160,6 +160,11 @@ inline void __vectorcall orSize(uintptr_t objptr, int mask)
    getObjectPage(objptr)->size |= mask;
 }
 
+inline void __vectorcall andSize(uintptr_t objptr, int mask)
+{
+   getObjectPage(objptr)->size &= mask;
+}
+
 inline void __vectorcall MoveObject(size_t bytesToCopy, void* dst, void* src)
 {
    memmove(dst, src, bytesToCopy);
@@ -255,13 +260,6 @@ void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end, int b)
             // ; mark as collected
             orSize(current.stackPtrAddr, 0x80000000);
 
-            int p2 = current.stackPtrAddr - b;
-            if (p2 == 0x00026868)
-               size |= 0;
-
-            if (p2 >= 0x0002a000 && p2 < 0x0002a100)
-               size |= 0;
-
             // ; check if the object has fields
             if (current.size < 0x800000) {
                MGCollect(&current, start, end, b);
@@ -286,16 +284,20 @@ inline void __vectorcall FixObject(GCTable* table, GCRoot* roots, size_t start, 
          ObjectPage* pagePtr = getObjectPage((uintptr_t)(*ptr));
          uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
 
+         uintptr_t p = *(uintptr_t*)mappings;
+         if (p < 0x1000)
+            p = 0;
+
+         // ; replace old reference with a new one
+         uintptr_t newPtr = *(uintptr_t*)mappings;
+         if ((newPtr & 3))
+            p = 0;
+
+         *ptr = newPtr;
+         pagePtr = getObjectPage(newPtr);
+
          // ; make sure the object was not already fixed
-         if (pagePtr->size & 0x80000000) {
-            uintptr_t p = *(uintptr_t*)mappings;
-            if (p == 0)
-               p = 0;
-
-            uintptr_t newPtr = *(uintptr_t*)mappings;
-            *ptr = newPtr;
-            pagePtr = getObjectPage(newPtr);
-
+         if (pagePtr->size < 0) {
             pagePtr->size = pagePtr->size & 0x7FFFFFFF;
 
             if (!test(pagePtr->size, struct_mask)) {
@@ -375,8 +377,8 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    while ((uintptr_t)ygPtr < yg_end) {
       int object_size = ((ygPtr->size + page_ceil) & page_align_mask);
 
-      if (((uintptr_t)ygPtr <= table->gc_start + 0x00029fb8) && ((uintptr_t)ygPtr > table->gc_start + 0x00029f80))
-         object_size |= 0;
+      //if (((uintptr_t)ygPtr <= table->gc_start + 0x00029fb8) && ((uintptr_t)ygPtr > table->gc_start + 0x00029f80))
+      //   object_size |= 0;
 
       if (ygPtr->size < 0) {
          // ; copy page
@@ -402,13 +404,18 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
          ObjectPage* pagePtr = getObjectPage(roots->stackPtrAddr);
          uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
 
-         uintptr_t p = *(uintptr_t*)mappings;
+         // replace old reference with a new one if it is a valid mg object
+         uintptr_t newPtr = *(uintptr_t*)mappings;
+         roots->stackPtrAddr = newPtr;
 
-         roots->stackPtrAddr = *(uintptr_t*)mappings;
+         // ; make sure the object was not already fixed
+         if (getSize(newPtr) < 0) {
+            andSize(newPtr, 0x7FFFFFFF);
 
-
+            FixObject(table, roots, yg_start, mg_end);
+         }
       }
-      FixObject(table, roots, yg_start, mg_end);
+      else FixObject(table, roots, yg_start, mg_end);
 
       roots++;
    }
@@ -448,6 +455,10 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
          table->gc_end += 0x2A000;
       }
 
+      if (table->gc_mg_current - table->gc_start >= 0x005f0000) {
+         table->gc_mg_current |= 0;
+      }
+
       FullCollect(table, roots);
 
       uintptr_t allocated = table->gc_yg_current;
@@ -465,7 +476,7 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
          uintptr_t allocated = table->gc_mg_current;
          table->gc_mg_current += size;
 
-         *(char*)(table->gc_start + ((allocated - table->gc_start) >> page_size_order)) = 1;
+         *(char*)(table->gc_header + ((allocated - table->gc_start) >> page_size_order)) = 1;
 
          return (void*)getObjectPtr(allocated);
       }

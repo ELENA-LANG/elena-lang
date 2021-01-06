@@ -109,6 +109,7 @@ In development:
     * [resolve open issues]
     * [support ELENA 3.x syntax]
     * get rid of EXPAND_HEAP in core (after retiring core GC routines)
+    * test why analog example need large stack size
 
   [documentation]
     * docs
