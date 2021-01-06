@@ -62,6 +62,13 @@ constexpr int SYSTEM_ENV = 0x2000C;
 constexpr int VOIDOBJ = 0x2000D;
 constexpr int VOIDPTR = 0x2000E;
 
+struct ObjectPage32
+{
+   void* vmtPtr;
+   int   size;
+   int   body[2];
+};
+
 } // _ELENA_
 
 #endif // coreH

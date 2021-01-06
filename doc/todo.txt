@@ -3,11 +3,8 @@ In development:
 ------         
 
   [development]
-    * GC - do not put empty roots
-
-    * test full collection with anagram samples
-
     * #77 : move full collection to elenart / elenavm
+
     * #77 : migrate core changes to corex
 
 
@@ -110,6 +107,7 @@ In development:
     * [support ELENA 3.x syntax]
     * get rid of EXPAND_HEAP in core (after retiring core GC routines)
     * test why analog example need large stack size
+    * GC - do not put empty roots
 
   [documentation]
     * docs
