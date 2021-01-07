@@ -142,6 +142,7 @@ labYGCollect:
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
 
@@ -208,7 +209,6 @@ labSkipTT:
   push ecx
   push ebx
   call extern 'rt_dlls.GCWaitForSignals
-  add  esp, 8
 
 labSkipWait:
   // ; remove list

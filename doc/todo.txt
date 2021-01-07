@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    * test corex apps
+    * test corex apps : mttest, chat
 
 
     * GC : support both x32 and x32-64 modes

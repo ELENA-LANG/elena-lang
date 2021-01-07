@@ -104,5 +104,6 @@ void SystemRoutineProvider :: GCWaitForSignal(int handle)
 
 void SystemRoutineProvider :: GCWaitForSignals(int count, int* handles)
 {
-   ::WaitForMultipleObjects(count, (HANDLE*)handles, -1, -1);
+   if (count > 0)
+      ::WaitForMultipleObjects(count, (HANDLE*)handles, -1, -1);
 }
