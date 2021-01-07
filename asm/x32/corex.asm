@@ -1,25 +1,21 @@
 // --- Predefined References  --
 define GC_ALLOC	            10001h
 define HOOK                 10010h
+define INVOKER              10011h
 define INIT_RND             10012h
-define ENDFRAME             10016h
-define OPENFRAME            10019h
-define CLOSEFRAME           1001Ah
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
-define NEW_HEAP             10025h
-define BREAK                10026h
-define EXPAND_HEAP          10028h
 
 define CORE_GC_TABLE        20002h
 define CORE_STATICROOT      20005h
 define CORE_TLS_INDEX       20007h
 define THREAD_TABLE         20008h
-define CORE_OS_TABLE        20009h
 define CORE_MESSAGE_TABLE   2000Ah
 define CORE_ET_TABLE        2000Bh
 define SYSTEM_ENV           2000Ch
+define VOID           	    2000Dh
+define VOIDPTR              2000Eh
 
 // GC TABLE OFFSETS
 define gc_header             0000h
@@ -37,6 +33,7 @@ define gc_et_current         002Ch
 define gc_stack_frame        0030h 
 define gc_lock               0034h 
 define gc_signal             0038h 
+define tt_ptr                003Ch 
 define tt_lock               0040h 
 define gc_rootcount          004Ch
 
@@ -57,29 +54,34 @@ define page_size_order_minus2   2h
 define page_mask        0FFFFFFF0h
 define page_ceil               17h
 define struct_mask         800000h
+define struct_mask_inv     7FFFFFh
 
 // Object header fields
-define elObjectOffset        0008h
 define elSizeOffset          0004h
 define elSyncOffset          0004h
 define elVMTOffset           0008h 
+define elObjectOffset        0008h
 
-define elPageSizeOffset      0004h
-define elPageVMTOffset       0000h
+define elPageSizeOffset     0004h
+define elPageVMTOffset      0000h
 
 // VMT header fields
-define elVMTFlagOffset       000Ch
 define elVMTSizeOffset       0004h
+define elVMTFlagOffset       000Ch
 define elPackageOffset       0010h
 
 define page_align_mask   000FFFF0h
 
-define SUBJ_MASK          1FFFFFFh                          
+define ACTION_ORDER              9
+define ARG_ACTION_MASK        1DFh
+define ACTION_MASK            1E0h
+define ARG_MASK               01Fh
+define ARG_MASK_INV     0FFFFFFE0h
 
 // --- GC_ALLOC ---
 // in: ecx - size ; out: ebx - created object
 procedure %GC_ALLOC
-
+  
   // ; GCXT: set lock
 labStart:
   mov  esi, data : %CORE_GC_TABLE + gc_lock
@@ -95,7 +97,7 @@ labWait:
   cmp  ecx, edx
   jae  short labYGCollect
   mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
-  
+
   // ; GCXT: clear sync field
   mov  edx, 0FFFFFFFFh
   lea  ebx, [eax + elObjectOffset]
@@ -133,13 +135,10 @@ labYGCollect:
   // ; otherwise eax contains the collecting thread event
 
   // ; signal the collecting thread that it is stopped
-  push 0FFFFFFFFh // -1
-  mov  edi, data : %CORE_GC_TABLE + gc_lock
   push edx
   push esi
-
-  // ; signal the collecting thread that it is stopped
-  call extern 'dlls'kernel32.SetEvent
+  call extern 'rt_dlls.GCSignalStop
+  add  esp, 4
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
@@ -147,7 +146,8 @@ labYGCollect:
   lock xadd [edi], ebx
 
   // ; stop until GC is ended
-  call extern 'dlls'kernel32.WaitForSingleObject
+  call extern 'rt_dlls.GCWaitForSignal
+  add  esp, 4
 
   // ; restore registers and try again
   pop  ecx
@@ -182,7 +182,8 @@ labSkipSave:
 
   // ; reset all signal events
   push [edx + tls_sync_event]
-  call extern 'dlls'kernel32.ResetEvent      
+  call extern 'rt_dlls.GCSignalClear
+  add  esp, 4
 
   lea  esi, [esi+4]
   mov  eax, [data : %CORE_GC_TABLE + gc_signal]
@@ -203,12 +204,11 @@ labSkipTT:
   jz   short labSkipWait
 
   // ; wait until they all stopped
-  push 0FFFFFFFFh // -1
   shr  ebx, 2
-  push 0FFFFFFFFh // -1
   push ecx
   push ebx
-  call extern 'dlls'kernel32.WaitForMultipleObjects
+  call extern 'rt_dlls.GCWaitForSignals
+  add  esp, 8
 
 labSkipWait:
   // ; remove list
@@ -219,7 +219,7 @@ labSkipWait:
   // ; create set of roots
   mov  ebp, esp
   xor  ecx, ecx
-  push ecx
+  push ecx        // ; reserve place 
   push ecx
   push ecx                                                              
 
@@ -270,7 +270,7 @@ labYGNextThreadSkip:
   // ; == GCXT: end ==
   
   // === Minor collection ===
-  mov [ebp-4], esp
+  mov [ebp-4], esp      // ; save position for roots
 
   // ; save mg -> yg roots 
   mov  ebx, [data : %CORE_GC_TABLE + gc_mg_current]
@@ -334,65 +334,13 @@ labWBMark4:
   jmp  short labWBNext
 
 labWBEnd:
-  push ebp                      // save the stack restore-point
-
-  // ; init registers
-  mov  ebx, [data : %CORE_GC_TABLE + gc_yg_start]
-  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
-  mov  ebp, [data : %CORE_GC_TABLE + gc_shadow]
-
-  // ; collect roots
-  lea  eax, [esp+4]
-  mov  ecx, [eax]
-  mov  esi, [esp+8]
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ebp
-
-labCollectFrame:
+  mov  ebx, [ebp]
+  mov  eax, esp
+  push ebx
   push eax
-  call labCollectYG
-  pop  eax
-  lea  eax, [eax+8]
-  mov  esi, [eax+4]
-  test esi, esi
-  mov  ecx, [eax]
-  jnz short labCollectFrame 
-  
-  // ; save gc_yg_current to mark survived objects
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ebp
-  
-  // ; switch main YG heap with a shadow one
-  mov  eax, [data : %CORE_GC_TABLE + gc_yg_start]
-  mov  ebx, [data : %CORE_GC_TABLE + gc_shadow]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_yg_end]
-  mov  edx, [data : %CORE_GC_TABLE + gc_shadow_end]
+  call extern 'rt_dlls.GCCollect
 
-  mov  [data : %CORE_GC_TABLE + gc_yg_start], ebx
-  mov  [data : %CORE_GC_TABLE + gc_yg_end], edx
-  mov  ebx, [esp]
-  mov  [data : %CORE_GC_TABLE + gc_shadow], eax  
-  mov  ebx, [ebx]                           // ; restore object size  
-  mov  [data : %CORE_GC_TABLE + gc_shadow_end], ecx
-
-  sub  edx, ebp
-  
-  pop  ebp
-  mov  esp, [ebp-4]  // ; remove wb-roots
-
-  // ; check if it is enough place
-  cmp  ebx, edx
-  jae  short labFullCollect
-
-  // ; free root set
-  mov  esp, ebp
-
-  // ; restore registers
-  pop  ecx
-
-  // ; try to allocate once again
-  mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  add  ecx, eax
-  lea  edi, [eax + elObjectOffset]
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
+  mov  edi, eax
 
   // ; GCXT: signal the collecting thread that GC is ended
   // ; should it be placed into critical section?
@@ -401,564 +349,14 @@ labCollectFrame:
   // ; clear thread signal var
   mov  [data : %CORE_GC_TABLE + gc_signal], ecx
   push esi
-  call extern 'dlls'kernel32.SetEvent 
+  call extern 'rt_dlls.GCSignalStop
 
   mov  ebx, edi
+
+  mov  esp, ebp 
+  pop  ecx 
   pop  ebp
 
-  ret
-
-labFullCollect:
-  // ; ====== Major Collection ====
-  // ; save the stack restore-point
-  push ebp                     
-	
-  // ; expand MG if required
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
-  sub  ecx, [data : %CORE_GC_TABLE + gc_mg_current]
-  mov  edx, [data : %CORE_GC_TABLE + gc_yg_current]
-  sub  edx, [data : %CORE_GC_TABLE + gc_yg_start]
-  cmp  ecx, edx
-  ja   labSkipExpand
-
-  mov  eax, [data : %CORE_GC_TABLE + gc_end]
-  mov  ecx, 2A000h
-  call code : % EXPAND_HEAP
-
-  mov  eax, [data : %CORE_GC_TABLE + gc_header]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
-  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
-  shr  ecx, page_size_order_minus2
-  add  eax, ecx
-  mov  ecx, 0A800h
-  call code : % EXPAND_HEAP
-
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
-  add  ecx, 15000h
-  mov  [data : %CORE_GC_TABLE + gc_end], ecx
-
-labSkipExpand:
-
-  // ; mark both yg and mg objects
-  mov  ebx, [data : %CORE_GC_TABLE + gc_yg_start]
-  mov  edx, [data : %CORE_GC_TABLE + gc_mg_current]
-
-  // ; collect roots
-  lea  eax, [esp+4]
-  mov  ecx, [eax]
-  mov  esi, [esp+8]
-
-labMGCollectFrame:
-  push eax
-  call labCollectMG
-  pop  eax
-  lea  eax, [eax+8]
-  mov  esi, [eax+4]
-  test esi, esi
-  mov  ecx, [eax]
-  jnz short labMGCollectFrame 
-
-  // ; compact mg
-  mov  esi, [data : %CORE_GC_TABLE + gc_mg_start]
-  mov  edi, esi
-  sub  edi, [data : %CORE_GC_TABLE + gc_start]
-  shr  edi, page_size_order_minus2
-  add  edi, [data : %CORE_GC_TABLE + gc_header]
-
-  // ; skip the permanent part
-labMGSkipNext:
-  mov  ecx, [esi]
-  test ecx, ecx
-  jns  short labMGSkipEnd
-  add  ecx, page_ceil
-  mov  eax, esi
-  and  ecx, page_align_mask
-  lea  eax, [eax + elObjectOffset]
-  add  esi, ecx
-  mov  [edi], eax
-  shr  ecx, page_size_order_minus2
-  add  edi, ecx
-  cmp  esi, edx
-  jb   short labMGSkipNext
-  // ; !! undefined behaviour
-  xor  ecx, ecx
-
-labMGSkipEnd:
-  mov  ebp, esi
-  
-  // ; compact
-labMGCompactNext:
-  add  ecx, page_ceil
-  and  ecx, page_align_mask  
-  add  esi, ecx  
-  
-  shr  ecx, page_size_order_minus2
-  add  edi, ecx
-  cmp  esi, edx
-  jae  short labMGCompactEnd
-
-labMGCompactNext2:
-  mov  ecx, [esi]
-  test ecx, ecx
-  jns  short labMGCompactNext
-  add  ecx, page_ceil
-  mov  eax, ebp
-  and  ecx, page_align_mask
-  lea  eax, [eax + elObjectOffset]
-  mov  [edi], eax
-  mov  eax, ecx
-  shr  eax, page_size_order_minus2
-  add  edi, eax
-
-labMGCopy:
-  mov  eax, [esi]
-  mov  [ebp], eax
-  sub  ecx, 4
-  lea  esi, [esi+4]
-  lea  ebp, [ebp+4]
-  jnz  short labMGCopy
-  cmp  esi, edx
-  jb   short labMGCompactNext2
-labMGCompactEnd:
-
-  // ; promote yg
-  mov  ebx, [data : %CORE_GC_TABLE + gc_end]
-  mov  esi, [data : %CORE_GC_TABLE + gc_yg_start]
-  sub  ebx, ebp
-  mov  edi, esi
-  sub  edi, [data : %CORE_GC_TABLE + gc_start]
-  shr  edi, page_size_order_minus2
-  mov  edx, [data : %CORE_GC_TABLE + gc_yg_current]
-  add  edi, [data : %CORE_GC_TABLE + gc_header]
-  jmp  short labYGPromNext2
-
-labYGPromNext:
-  add  ecx, page_ceil
-  and  ecx, page_align_mask
-  add  esi, ecx
-  shr  ecx, page_size_order_minus2
-  add  edi, ecx
-  cmp  esi, edx
-  jae  short labYGPromEnd
-labYGPromNext2:
-  mov  ecx, [esi]
-  test ecx, ecx
-  jns  short labYGPromNext
-  add  ecx, page_ceil
-  mov  eax, ebp
-  and  ecx, page_align_mask
-  // ; raise an exception if it is not enough memory to promote object
-  lea  eax, [eax + elObjectOffset]
-  sub  ebx, ecx
-  js   short labError
-  mov  [edi], eax
-  mov  eax, ecx
-  shr  eax, page_size_order_minus2
-  add  edi, eax
-labYGProm:
-  mov  eax, [esi]
-  sub  ecx, 4
-  mov  [ebp], eax
-  lea  esi, [esi+4]
-  lea  ebp, [ebp+4]
-  jnz  short labYGProm
-  cmp  esi, edx
-  jb   short labYGPromNext2
-labYGPromEnd:
-
-  // ; get previous heap end
-  mov  edx, [data : %CORE_GC_TABLE + gc_mg_current]
-
-  // ; set mg_current, clear yg and survive
-  mov  [data : %CORE_GC_TABLE + gc_mg_current], ebp
-  mov  eax, [data : %CORE_GC_TABLE + gc_yg_start]
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], eax
-  
-  // ; fix roots
-  lea  eax, [esp+4]
-  mov  ecx, [eax]
-  mov  esi, [esp+8]
-
-  mov  ebx, [data : %CORE_GC_TABLE + gc_yg_start]
-  mov  ebp, [data : %CORE_GC_TABLE + gc_start]
-
-labFixRoot:
-  push eax
-  call labFixObject
-  pop  eax
-  lea  eax, [eax+8]
-  mov  esi, [eax+4]
-  test esi, esi
-  mov  ecx, [eax]
-  jnz  short labFixRoot 
-
-  // ; clear WBar
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end ] 
-  mov  edi, [data : %CORE_GC_TABLE + gc_mg_wbar]
-  sub  ecx, [data : %CORE_GC_TABLE + gc_mg_start]
-  xor  eax, eax
-  shr  ecx, page_size_order // !! pay attention
-  rep  stos 
-	
-  // ; free root set
-  mov  esp, [esp]
-  pop  ecx
-
-  // ; allocate
-  mov  eax, [data : %CORE_GC_TABLE + gc_yg_current]
-  mov  edx, [data : %CORE_GC_TABLE + gc_yg_end]
-  add  ecx, eax
-  cmp  ecx, edx
-  jae  labBigAlloc
-  mov  [data : %CORE_GC_TABLE + gc_yg_current], ecx
-  lea  edi, [eax + elObjectOffset]
-
-  // ; GCXT: signal the collecting thread that GC is ended
-  // ; should it be placed into critical section?
-  xor  ecx, ecx
-  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
-  // ; clear thread signal var
-  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
-  push esi
-  call extern 'dlls'kernel32.SetEvent 
-
-  mov  ebx, edi
-  pop  ebp
-  ret
-
-labError:
-  // ; restore stack
-  mov  esp, [esp]
-  pop  ecx
-  pop  ebp
-
-labError2:
-  mov  ebx, 17h
-  call code : % BREAK
-  ret  
-
-// ; bad luck, we have to expand GC
-labBigAlloc2:
-  push ecx
-
-  mov  eax, [data : %CORE_GC_TABLE + gc_end]
-  mov  ecx, 2A000h
-  call code : % EXPAND_HEAP
-
-  mov  eax, [data : %CORE_GC_TABLE + gc_header]
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
-  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
-  shr  ecx, page_size_order_minus2
-  add  eax, ecx
-  mov  ecx, 0A800h
-  call code : % EXPAND_HEAP
-
-  mov  ecx, [data : %CORE_GC_TABLE + gc_end]
-  add  ecx, 15000h
-  mov  [data : %CORE_GC_TABLE + gc_end], ecx
-
-  pop  ecx
-
-labBigAlloc:
-  // ; try to allocate in the mg
-  sub  ecx, eax
-  cmp  ecx, 800000h
-  jae  labError2
-
-  mov  eax, [data : %CORE_GC_TABLE + gc_mg_current]
-  mov  edx, [data : %CORE_GC_TABLE + gc_end]
-  add  ecx, eax
-  cmp  ecx, edx
-  jae  labBigAlloc2
-  mov  [data : %CORE_GC_TABLE + gc_mg_current], ecx
-  lea  ebx, [eax + elObjectOffset]
-
-  // ; mark it as root in WB
-  mov  ecx, ebx
-  mov  esi, [data : %CORE_GC_TABLE + gc_header]
-  sub  ecx, [data : %CORE_GC_TABLE + gc_start]
-  shr  ecx, page_size_order
-  mov  byte ptr [ecx + esi], 1  
-
-  mov  edi, ebx
-  // ; GCXT: signal the collecting thread that GC is ended
-  // ; should it be placed into critical section?
-  xor  ecx, ecx
-  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
-  // ; clear thread signal var
-  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
-  push esi
-  call extern 'dlls'kernel32.SetEvent 
-
-  mov  ebx, edi
-  ret  
-
-  // ; start collecting: esi => ebp, [ebx, edx] ; ecx - count
-labCollectYG:
-  push 0
-
-  lea  ecx, [ecx+4]
-  lea  esi, [esi-4]
-
-labYGNext:
-  lea  esi, [esi+4]
-  sub  ecx, 4
-  jz   labYGResume
-
-labYGCheck:
-  mov  eax, [esi]
-
-  // ; check if it valid reference
-  mov  edi, eax
-  cmp  edi, ebx
-  setb al
-  cmp  edx, edi
-  setb ah
-  test eax, 0FFFFh
-  mov  eax, edi
-  jnz  labYGNext
-
-  // ; check if it was collected
-  mov  edi, [eax-elSizeOffset]
-  test edi, edi
-  js   labYGContinue
-
-  // ; save previous ecx field
-  push ecx
-
-  // ; copy object size
-  mov  [ebp], edi
-  
-  // ; copy object vmt
-  mov  ecx, [eax - elVMTOffset]
-  mov  [ebp + 04h], ecx
-  
-  // ; mark as collected
-  or   [eax - elSizeOffset], 80000000h
-
-  // ; reserve shadow YG
-  mov  ecx, edi
-  add  ecx, page_ceil
-  lea  edi, [ebp + elObjectOffset]
-  and  ecx, page_align_mask  
-  mov  [esi], edi          // ; update reference 
-  add  ebp, ecx
-
-  // ; get object size
-  mov  ecx, [eax-elSizeOffset]
-  and  ecx, 8FFFFFh
-
-  // ; save ESI
-  push esi
-  mov  esi, eax
-
-  // ; save new reference
-  mov  [eax - elVMTOffset], edi
-
-  // ; check if the object has fields
-  cmp  ecx, 800000h
-
-  // ; save original reference
-  push eax
-
-  // ; collect object fields if it has them
-  jb   labYGCheck
-
-  lea  esp, [esp+4]
-  jz   short labYGSkipCopyData
-
-  // ; copy meta data object to shadow YG
-  add  ecx, 3
-  and  ecx, 0FFFFCh
-
-labYGCopyData:
-  mov  eax, [esi]
-  sub  ecx, 4
-  mov  [edi], eax
-  lea  esi, [esi+4]
-  lea  edi, [edi+4]
-  jnz  short labYGCopyData
-
-labYGSkipCopyData:
-  pop  esi
-  pop  ecx
-  jmp  labYGNext
-
-labYGResume:
-  // ; copy object to shadow YG
-  pop  edi
-  test edi, edi
-  jz   short labYGEnd
-
-  mov  ecx, [edi-elSizeOffset]
-  mov  esi, [edi - elVMTOffset]
-  and  ecx, 0FFFFFh
-
-labYGCopy:
-  mov  eax, [edi]
-  sub  ecx, 4
-  mov  [esi], eax
-  lea  esi, [esi+4]
-  lea  edi, [edi+4]
-  jnz  short labYGCopy
-
-  pop  esi
-  pop  ecx
-  jmp  labYGNext
-
-  nop
-labYGEnd:
-  ret
-
-labYGContinue:
-  // ; update reference
-  mov  edi, [eax - elVMTOffset]
-  mov  [esi], edi
-  jmp  labYGNext
-
-  // ---- start collecting: esi => ebp, [ebx, edx] ; ecx - count ---
-labCollectMG:
-
-  lea  ecx, [ecx+4]
-  push 0
-  lea  esi, [esi-4]
-  push 0
-
-labMGNext:
-  sub  ecx, 4
-  lea  esi, [esi+4]
-  jz   short labMGResume
-
-labMGCheck:
-  mov  eax, [esi]
-
-  // ; check if it valid reference
-  mov  edi, eax
-  cmp  edi, ebx
-  setb al
-  cmp  edx, edi
-  setb ah
-  test eax, 0FFFFh
-  mov  eax, edi
-  jnz  labMGNext
-
-  // ; check if it was collected
-  mov  edi, [eax-elSizeOffset]
-  test edi, edi
-  js   short labMGNext
-
-  // ; mark as collected
-  or  [eax - elSizeOffset], 080000000h
-
-  cmp  edi, 0800000h
-  jae  short labMGNext
-
-  // ; save previous ecx field
-  push ecx
-
-  // ; get object size
-  mov  ecx, [eax - elSizeOffset]
-
-  // ; save ESI
-  push esi
-  and  ecx, 0FFFFFh
-
-  mov  esi, eax
-
-  // ; collect object fields if it has them
-  jmp   short labMGCheck
-
-labMGResume:
-  pop  esi
-  pop  ecx
-  test esi, esi
-  jnz  short labMGNext
-
-  nop
-labMGEnd:
-  ret
-
-labFixObject:
-
-  lea  ecx, [ecx+4]
-  push 0
-  lea  esi, [esi-4]
-  push 0
-
-labFixNext:
-  sub  ecx, 4
-  lea  esi, [esi+4]
-  jz   short labFixResume
-
-labFixCheck:
-  mov  eax, [esi]
-
-  // ; check if it valid reference
-  mov  edi, eax
-  cmp  edi, ebx
-  setb al
-  cmp  edx, edi
-  setb ah
-  test eax, 0FFFFh
-  mov  eax, edi
-  jnz  labFixNext
-
-  lea  edi, [eax-elObjectOffset]
-
-  sub  edi, ebp
-  shr  edi, page_size_order_minus2
-  add  edi, [data : %CORE_GC_TABLE + gc_header]
-
-  mov  eax, [edi]
-  mov  [esi], eax
-
-  // ; make sure the object was not already fixed
-  mov  edi, [eax - elSizeOffset]
-  test edi, edi
-  jns  short labFixNext
-
-  and  edi, 7FFFFFFFh
-  mov  [eax - elSizeOffset], edi
-
-  cmp  edi, 0800000h
-  jae  short labFixNext
-
-  // ; save previous ecx field
-  push ecx
-
-  // ; get object size
-  mov  ecx, [eax - elSizeOffset]
-  and  ecx, 0FFFFFh
-
-  // ; save ESI
-  push esi
-  mov  esi, eax
-
-  // ; collect object fields if it has them
-  jmp   short labFixCheck
-
-labFixResume:
-  pop  esi
-  pop  ecx
-  test esi, esi
-  jnz  short labFixNext
-  nop
-
-  ret
-
-end
-
-procedure % ENDFRAME
-
-  // ; save return pointer
-  pop  ecx  
-  
-  xor  edx, edx
-  lea  esp, [esp+8]
-  pop  ebp
-
-  // ; restore return pointer
-  push ecx   
   ret
 
 end
@@ -972,7 +370,6 @@ procedure % THREAD_WAIT
   push ebp
   mov  edi, esp
 
-  push 0FFFFFFFFh // -1     // WaitForSingleObject::dwMilliseconds
   push edx                  // hHandle
 
   // ; set lock
@@ -989,14 +386,15 @@ labWait:
   mov  eax, [edx+eax*4]
 
   mov  esi, [eax+tls_sync_event]   // ; get current thread event
-  mov  [eax+tls_stack_frame], edi                  // ; lock stack frame
+  mov  [eax+tls_stack_frame], edi  // ; lock stack frame
 
   // ; signal the collecting thread that it is stopped
   push esi
   mov  edi, data : %CORE_GC_TABLE + gc_lock
 
   // ; signal the collecting thread that it is stopped
-  call extern 'dlls'kernel32.SetEvent
+  call extern 'rt_dlls.GCSignalStop
+  add  esp, 4
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
@@ -1004,9 +402,9 @@ labWait:
   lock xadd [edi], ebx
 
   // ; stop until GC is ended
-  call extern 'dlls'kernel32.WaitForSingleObject
+  call extern 'rt_dlls.GCWaitForSignal
 
-  add  esp, 4
+  add  esp, 8
   pop  ebx
 
   ret

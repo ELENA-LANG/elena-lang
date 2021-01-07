@@ -155,6 +155,11 @@ public:
 
    static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
 
+   static void GCSignalStop(int handle);
+   static void GCSignalClear(int handle);
+   static void GCWaitForSignal(int handle);
+   static void GCWaitForSignals(int count, int* handles);
+
    static bool parseMessageLiteral(ident_t message, IdentifierString& messageName, pos_t& paramCount, ref_t& flags);
 
 } __routineProvider;

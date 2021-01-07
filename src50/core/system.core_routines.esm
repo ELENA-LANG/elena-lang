@@ -4924,7 +4924,7 @@ symbol vm_sta_start
   pushsip  0
   callextr extern : PrepareEM 0301h
 
-  open     0
+  open     lenof ProgramHeader
   reserve  sizeof ProgramHeader
 
   pushsip  -2
@@ -4950,7 +4950,7 @@ symbol mta_start
   pushsip  0
   callextr extern : PrepareEM 0301h
 
-  open    0
+  open    lenof ProgramHeader
   reserve sizeof ProgramHeader
 
   pushsip  -2
@@ -4975,7 +4975,7 @@ symbol sta_start
   pushsip  0
   callextr extern : PrepareEM 0301h
 
-  open    0
+  open    lenof ProgramHeader
   reserve sizeof ProgramHeader
 
   pushsip  -2
@@ -4998,13 +4998,14 @@ end
 
 procedure thread_start
 
-  open     0
+  open     lenof ProgramHeader
   reserve  sizeof ProgramHeader
 
   pushsip  -2
   callextr api : initThread 1
 
-  loadfi   -9
+  movfip   -1
+  load
   pushd
 
   pushr    intern : system'core_routines'threadEntry

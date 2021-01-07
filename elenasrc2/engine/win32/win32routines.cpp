@@ -86,3 +86,23 @@ void SystemRoutineProvider :: CloseThreadHandle(TLSEntry* entry, bool withExit, 
    if (withExit)
       ::ExitThread(exitCode);
 }
+
+void SystemRoutineProvider :: GCSignalStop(int handle)
+{
+   ::SetEvent((HANDLE)handle);
+}
+
+void SystemRoutineProvider :: GCSignalClear(int handle)
+{
+   ::ResetEvent((HANDLE)handle);
+}
+
+void SystemRoutineProvider :: GCWaitForSignal(int handle)
+{
+   ::WaitForSingleObject((HANDLE)handle, -1);
+}
+
+void SystemRoutineProvider :: GCWaitForSignals(int count, int* handles)
+{
+   ::WaitForMultipleObjects(count, (HANDLE*)handles, -1, -1);
+}

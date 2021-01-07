@@ -3,13 +3,9 @@ define GC_ALLOC	            10001h
 define HOOK                 10010h
 define INVOKER              10011h
 define INIT_RND             10012h
-define ENDFRAME             10016h
-define RESTORE_ET           10017h
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
-define BREAK                10026h
-define EXPAND_HEAP          10028h
 
 define CORE_GC_TABLE        20002h
 define CORE_STATICROOT      20005h
@@ -290,25 +286,6 @@ procedure %HOOK
 end
 
 // --- System Core Functions --
-
-procedure % ENDFRAME
-
-  // ; save return pointer
-  pop  ecx  
-  
-  xor  edx, edx
-  lea  esp, [esp+8]
-  pop  ebp
-
-  pop  eax
-  mov  fs:[0], eax
-  lea  esp, [esp+4]
-
-  // ; restore return pointer
-  push ecx   
-  ret
-
-end
 
 procedure % THREAD_WAIT
 

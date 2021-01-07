@@ -4,42 +4,11 @@ define HOOK                 10010h
 define INVOKER              10011h
 define INIT_RND             10012h
 define INIT_ET              10015h
-define ENDFRAME             10016h
-define RESTORE_ET           10017h
-define OPENFRAME            10019h
-define CLOSEFRAME           1001Ah
 define LOCK                 10021h
 define UNLOCK               10022h
 define LOAD_CALLSTACK       10024h
-define BREAK                10026h
-define EXPAND_HEAP          10028h
 
 define GC_HEAP_ATTRIBUTE    00Dh
-
-// ; in - eax - heap, ebx - size
-// ; out - eax - heap
-procedure % EXPAND_HEAP
-
-  push 4
-  push 00001000h
-  push ecx
-  push eax
-  call extern 'dlls'KERNEL32.VirtualAlloc
-
-  ret
-
-end
-
-// ; ebx - exception code
-procedure % BREAK
-
-  push 0
-  push 0
-  push 0
-  push ebx
-  call extern 'dlls'KERNEL32.RaiseException
-
-end
 
 procedure % INIT_RND
 

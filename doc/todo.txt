@@ -3,12 +3,10 @@ In development:
 ------         
 
   [development]
-    * #77 : move full collection to elenart / elenavm
-
-    * #77 : migrate core changes to corex
+    * test corex apps
 
 
-    * support both x32 and x32-64 modes
+    * GC : support both x32 and x32-64 modes
     * GC (NOTE : copy lock byte as well)
 
     * exception handling
@@ -30,6 +28,7 @@ In development:
     * test : string insert / delete
     * test string / wide operations
 
+    * linux : implement INIT_RND
 
     * test all samples
     * check all mtredirect commands (class, parent class)

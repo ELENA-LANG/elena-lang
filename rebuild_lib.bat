@@ -25,11 +25,6 @@ bin\asm2binx asm\x32\core.asm bin\x32
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
-bin\asm2binx asm\x32\core2.asm bin\x32
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-
 bin\asm2binx asm\x32\corex.asm bin\x32                
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError

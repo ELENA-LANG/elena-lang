@@ -37,10 +37,10 @@ const int envFunctions[envFunctionNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 9;
+const int coreFunctionNumber = 6;
 const int coreFunctions[coreFunctionNumber] =
 {
-   BREAK, EXPAND_HEAP, GC_ALLOC, HOOK, INIT_RND, ENDFRAME,
+   GC_ALLOC, HOOK, INIT_RND,
    CALC_SIZE, GET_COUNT,
    THREAD_WAIT
 };

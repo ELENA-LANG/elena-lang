@@ -164,10 +164,21 @@ struct TokenInfo
          read();
          if (check("ProgramHeader")) {
             if (postfix.compare("64")) {
-               return align(0x20, 4);
+               return align(0x20, 8);
             }
             else return align(sizeof(ProgramHeader), 4);
             
+         }
+         else raiseErr("Invalid number (%d)\n");
+      }
+      if (check("lenof")) {
+         read();
+         if (check("ProgramHeader")) {
+            if (postfix.compare("64")) {
+               return align(0x20, 8) >> 3;
+            }
+            else return align(sizeof(ProgramHeader), 4) >> 2;
+
          }
          else raiseErr("Invalid number (%d)\n");
       }
