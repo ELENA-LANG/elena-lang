@@ -11,7 +11,7 @@
 namespace _ELENA_
 {
 
-// --- ELENA Object constants ---
+// --- 32bit ELENA Object constants ---
 constexpr int gcPageSize32             = 0x0010;            // a heap page size constant
 constexpr int gcPageSizeOrder32        = 4;
 constexpr int gcPageSizeOrderMinus2_32 = 2;
@@ -19,26 +19,35 @@ constexpr int gcPageCeil32             = 0x17;
 constexpr int gcPageMask32             = 0x0FFFFFFF0;
 constexpr int elObjectOffset32         = 0x0008;            // object header / offset constant
 
-constexpr int gcPageSize64       = 0x0020;            // a heap page size constant
-constexpr int elObjectOffset64   = 0x0010;            // object header / offset constant
+constexpr int elPageVMTOffset32        = 0x0008;
+constexpr int elPageSizeOffset32       = 0x0004;
 
-constexpr int elPageVMTOffset32  = 0x0008;
-constexpr int elPageSizeOffset32 = 0x0004;
+constexpr int elVMTCountOffset32       = 0x0004;                // a VMT size offset
+constexpr int elVMTClassOffset32       = 0x0010;                // a VMT class offset
+constexpr int elVMTFlagOffset32        = 0x000C;                // a VMT class offset
 
-constexpr int elPageVMTOffset64  = 0x0010;
-constexpr int elPageSizeOffset64 = 0x0004;
+constexpr int elStructMask32           = 0x800000;
+constexpr int elSizeCeil32             = 0x0FFFFC;
+constexpr int elObjectSizeMask32       = 0xFFFFFF;
 
-constexpr int elVMTCountOffset32 = 0x0004;                // a VMT size offset
-constexpr int elVMTClassOffset32 = 0x0010;                // a VMT class offset
-constexpr int elVMTFlagOffset32  = 0x000C;                // a VMT class offset
+// --- 64bit ELENA Object constants ---
+constexpr int gcPageSize64             = 0x0020;            // a heap page size constant
+constexpr int gcPageSizeOrder64        = 5;
+constexpr int gcPageCeil64             = 0x2F;
+constexpr int gcPageMask64             = 0x0FFFFFFE0;
+constexpr int gcPageSizeOrderMinus2_64 = 3;
+constexpr int elObjectOffset64         = 0x0010;            // object header / offset constant
 
-constexpr int elVMTCountOffset64 = 0x0008;                // a VMTX size offset
-constexpr int elVMTClassOffset64 = 0x0020;                // a VMTX class offset
-constexpr int elVMTFlagOffset64  = 0x0018;                // a VMTX flags offset
+constexpr int elPageVMTOffset64        = 0x0010;
+constexpr int elPageSizeOffset64       = 0x0004;
 
-constexpr int elStructMask32     = 0x800000;
-constexpr int elStructMask64     = 0x40000000;
+constexpr int elVMTCountOffset64       = 0x0008;                // a VMTX size offset
+constexpr int elVMTClassOffset64       = 0x0020;                // a VMTX class offset
+constexpr int elVMTFlagOffset64        = 0x0018;                // a VMTX flags offset
 
+constexpr int elStructMask64           = 0x40000000;
+constexpr int elSizeCeil64             = 0x3FFFFFF8;
+constexpr int elObjectSizeMask64       = 0x3FFFFFFF;
 
 // --- ELENA CORE built-in routines
 constexpr int GC_ALLOC = 0x10001;
@@ -67,6 +76,14 @@ struct ObjectPage32
    void* vmtPtr;
    int   size;
    int   body[2];
+};
+
+struct ObjectPage64
+{
+   void* vmtPtr;
+   int   lock_flag;
+   int   size;
+   int   body[4];
 };
 
 } // _ELENA_

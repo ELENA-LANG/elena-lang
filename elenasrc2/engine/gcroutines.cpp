@@ -11,18 +11,47 @@
 
 using namespace _ELENA_;
 
+#ifdef _WIN64
+
+constexpr int page_size = gcPageSize64;
+constexpr int page_size_order = gcPageSizeOrder64;
+constexpr int page_size_order_minus2 = gcPageSizeOrderMinus2_64;
+constexpr int page_ceil = gcPageCeil64;
+constexpr int page_mask = gcPageMask64;
+constexpr int struct_mask = elStructMask64;
+constexpr int size_ceil = elSizeCeil64;
+constexpr int size_mask = elObjectSizeMask64;
+
+constexpr int page_align_mask = 0x3FFFFFE0;
+constexpr int heap_inc = 0x54000;
+constexpr int heapheader_inc = 0x0A800;
+
+constexpr int elObjectOffset = elObjectOffset32;
+
+typedef ObjectPage64 ObjectPage;
+
+#else
+
 constexpr int page_size = gcPageSize32;
 constexpr int page_size_order = gcPageSizeOrder32;
 constexpr int page_size_order_minus2 = gcPageSizeOrderMinus2_32;
 constexpr int page_ceil = gcPageCeil32;
 constexpr int page_mask = gcPageMask32;
 constexpr int struct_mask = elStructMask32;
+constexpr int size_ceil = elSizeCeil32;
+constexpr int size_mask = elObjectSizeMask32;
 
-const pos_t page_align_mask = 0x000FFFF0; // !! temp
+constexpr int page_align_mask = 0x000FFFF0; // !! temp - is 7FFFF0 correct value?
+constexpr int heap_inc = 0x2A000;
+constexpr int heapheader_inc = 0x0A800;
 
 constexpr int elObjectOffset = elObjectOffset32;
 
 typedef ObjectPage32 ObjectPage;
+
+#endif
+
+constexpr int gcCollectedMask = 0x80000000;
 
 inline uintptr_t __vectorcall getObjectPtr(uintptr_t pagePtr)
 {
@@ -67,11 +96,10 @@ inline void __vectorcall MoveObject(size_t bytesToCopy, void* dst, void* src)
 inline void __vectorcall CopyObjectData(size_t bytesToCopy, void* dst, void* src)
 {
    bytesToCopy += 3;
-   bytesToCopy &= 0xFFFFC;
+   bytesToCopy &= size_ceil;
 
    memcpy(dst, src, bytesToCopy);
 }
-
 
 void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*& shadowHeap, void* src)
 {
@@ -88,7 +116,7 @@ void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*&
 
          // ; check if it was collected
          current.size = getSize((size_t)current.stackPtr);
-         if (!(current.size & 0x80000000)) {
+         if (!(current.size & gcCollectedMask)) {
             // ; copy object size
             shadowHeap->size = current.size;
 
@@ -96,7 +124,7 @@ void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*&
             shadowHeap->vmtPtr = getVMTPtr(current.stackPtrAddr);
 
             // ; mark as collected
-            orSize(current.stackPtrAddr, 0x80000000);
+            orSize(current.stackPtrAddr, gcCollectedMask);
 
             // ; reserve shadow YG
             new_ptr = (size_t)shadowHeap + elObjectOffset;
@@ -107,16 +135,16 @@ void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*&
             *ptr = new_ptr;
 
             // ; get object size
-            current.size &= 0x8FFFFF;
+            current.size &= size_mask;
 
             // ; save new reference
             setVMTPtr(current.stackPtrAddr, (void*)new_ptr);
 
-            if (current.size < 0x800000) {
+            if (current.size < struct_mask) {
                // ; check if the object has fields
                YGCollect(&current, start, end, shadowHeap, current.stackPtr);
             }
-            else if (current.size != 0x800000) {
+            else if (current.size != struct_mask) {
                CopyObjectData(current.size, (void*)new_ptr, current.stackPtr);
             }
          }
@@ -126,7 +154,7 @@ void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*&
          }
       }
       ptr++;
-      size -= 4;
+      size -= sizeof(intptr_t);
    }
 
    // ; copy object to shadow YG
@@ -151,18 +179,18 @@ void __vectorcall MGCollect(GCRoot* root, size_t start, size_t end, int b)
 
          // ; check if it was collected
          current.size = getSize((size_t)current.stackPtr);
-         if (!(current.size & 0x80000000)) {
+         if (!(current.size & gcCollectedMask)) {
             // ; mark as collected
-            orSize(current.stackPtrAddr, 0x80000000);
+            orSize(current.stackPtrAddr, gcCollectedMask);
 
             // ; check if the object has fields
-            if (current.size < 0x800000) {
+            if (current.size < struct_mask) {
                MGCollect(&current, start, end, b);
             }
          }
       }
       ptr++;
-      size -= 4;
+      size -= sizeof(intptr_t);
    }
 }
 
@@ -213,7 +241,7 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    while (current->stackPtr) {
       if (current->stackPtrAddr >= yg_start && current->stackPtrAddr < mg_end) {
          // HOTFIX : mark WB objects as collected
-         orSize(current->stackPtrAddr, 0x80000000);
+         orSize(current->stackPtrAddr, gcCollectedMask);
       }
 
       //   ; mark both yg and mg objects
@@ -331,10 +359,10 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
    if (table->gc_yg_end - table->gc_yg_current < size) {
       // ; expand MG if required to promote YG
       while (table->gc_end - table->gc_mg_current < table->gc_yg_current - table->gc_yg_start) {
-         ExpandHeap((void*)table->gc_end, 0x2A000);
-         ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), 0x0A800);
+         ExpandHeap((void*)table->gc_end, heap_inc);
+         ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), heapheader_inc);
 
-         table->gc_end += 0x2A000;
+         table->gc_end += heap_inc;
       }
 
       FullCollect(table, roots);
@@ -345,10 +373,10 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
          while (table->gc_end - table->gc_mg_current < size) {
             // ; bad luck, we have to expand GC
 
-            ExpandHeap((void*)table->gc_end, 0x2A000);
-            ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), 0x0A800);
+            ExpandHeap((void*)table->gc_end, heap_inc);
+            ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), heapheader_inc);
 
-            table->gc_end += 0x2A000;
+            table->gc_end += heap_inc;
          }
 
          uintptr_t allocated = getObjectPtr(table->gc_mg_current);

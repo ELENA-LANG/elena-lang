@@ -5,6 +5,7 @@
   - binary incompatible due to module structure change / new opcodes / support for amd64
   - #519 : abstract methods should not have a body
   - #521 : Auto generating multi-method default handler with type casting
+  - #77 : retiring core 
 - ELC
   - a warning shown when an object cannot be converted into another one
   - a warning shown when an object does not handle a message (for strong-typed ones)

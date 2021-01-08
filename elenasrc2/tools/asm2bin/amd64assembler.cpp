@@ -1171,12 +1171,12 @@ void AMD64Assembler :: compileOR(TokenInfo& token, ProcedureInfo& info, MemoryWr
 //		}
 //		else x86Helper::writeImm(code, dest);
 //	}
-//	else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && test(dest.type, x86Helper::otDB)) {
-//		code->writeByte(0x83);
-//		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 1), sour);
-//		code->writeByte(dest.offset);
-//	}
-   /*else */if ((test(sour.type, AMD64Helper::otR8)||test(sour.type, AMD64Helper::otM8)) && test(dest.type, AMD64Helper::otR8)) {
+   /*else */if ((test(sour.type, AMD64Helper::otR32)||test(sour.type, AMD64Helper::otM32)) && test(dest.type, AMD64Helper::otDB)) {
+	   code->writeByte(0x83);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 1), sour);
+	   code->writeByte(dest.offset);
+   }
+   else if ((test(sour.type, AMD64Helper::otR8)||test(sour.type, AMD64Helper::otM8)) && test(dest.type, AMD64Helper::otR8)) {
 	   code->writeByte(0x08);
       AMD64Helper::writeModRM(code, dest, sour);
    }
@@ -1268,16 +1268,16 @@ void AMD64Assembler :: compileTEST(TokenInfo& token, ProcedureInfo& info, Memory
 	   code->writeByte(0x85);
       AMD64Helper::writeModRM(code, dest, sour);
    }
-//	else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && dest.type==x86Helper::otDD) {
-//		code->writeByte(0xF7);
-//		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 0), sour);
-//		x86Helper::writeImm(code, dest);
-//	}
-//	else if ((test(sour.type, x86Helper::otR32)||test(sour.type, x86Helper::otM32)) && dest.type==x86Helper::otDB) {
-//		code->writeByte(0xF7);
-//		x86Helper::writeModRM(code, Operand(x86Helper::otR32 + 0), sour);
-//		code->writeDWord(dest.offset);
-//	}
+   else if ((test(sour.type, AMD64Helper::otR32)||test(sour.type, AMD64Helper::otM32)) && dest.type== AMD64Helper::otDD) {
+	   code->writeByte(0xF7);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 0), sour);
+      AMD64Helper::writeImm(code, dest);
+   }
+   else if ((test(sour.type, AMD64Helper::otR32)||test(sour.type, AMD64Helper::otM32)) && dest.type== AMD64Helper::otDB) {
+	   code->writeByte(0xF7);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 0), sour);
+	   code->writeDWord(dest.offset);
+   }
    else if ((test(sour.type, AMD64Helper::otR8)||test(sour.type, AMD64Helper::otM8)) && dest.type== AMD64Helper::otDB) {
 	   code->writeByte(0xF6);
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR8 + 0), sour);
@@ -1605,6 +1605,12 @@ void AMD64Assembler :: compileSHL(TokenInfo& token, ProcedureInfo& info, MemoryW
 	   code->writeByte(0xC1);
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 4), sour);
 	   code->writeByte(dest.offset);
+   }
+   else if (test(sour.type, AMD64Helper::otR64) && dest.type == AMD64Helper::otDB) {
+      code->writeByte(0x48);
+      code->writeByte(0xC1);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 4), sour);
+      code->writeByte(dest.offset);
    }
    else if (test(sour.type, AMD64Helper::otR32) && dest.type== AMD64Helper::otCL) {
 	   code->writeByte(0xD3);
@@ -2102,6 +2108,11 @@ void AMD64Assembler :: compileNEG(TokenInfo& token, ProcedureInfo& info, MemoryW
    Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
    if (test(sour.type, AMD64Helper::otR32)) {
 	   code->writeByte(0xF7);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 3), sour);
+   }
+   else if (test(sour.type, AMD64Helper::otR64)) {
+      code->writeByte(0x48);
+      code->writeByte(0xF7);
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 3), sour);
    }
    else token.raiseErr("Invalid command (%d)");

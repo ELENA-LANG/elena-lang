@@ -108,6 +108,7 @@
     <ClCompile Include="..\..\common\xmlreader.cpp" />
     <ClCompile Include="..\..\engine\amd64\amd64routines.cpp" />
     <ClCompile Include="..\..\engine\elenamachine.cpp" />
+    <ClCompile Include="..\..\engine\gcroutines.cpp" />
     <ClCompile Include="..\..\engine\libman.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\rtman.cpp" />

@@ -3,16 +3,13 @@ In development:
 ------         
 
   [development]
-    * test corex apps : mttest, chat
 
-
-    * GC : support both x32 and x32-64 modes
+    * GC : support x32-64 modes  - allocate twice as much
     * GC (NOTE : copy lock byte as well)
 
     * exception handling
     * multi-theading
 
-    * implementing simple program
     * migrate all samples to win64
 
     * fix script samples
@@ -27,6 +24,7 @@ In development:
 
     * test : string insert / delete
     * test string / wide operations
+    * fix chat sample
 
     * linux : implement INIT_RND
 

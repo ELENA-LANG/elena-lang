@@ -39,10 +39,15 @@ define gc_end                0048h
 
 define gc_yg_current         0018h
 define gc_yg_end             0020h
+define gc_mg_start           0038h
+define gc_mg_current         0040h
+define gc_mg_wbar            0050h
 define gc_et_current         0058h 
 define gc_stack_frame        0060h 
+define gc_rootcount          0088h
 
-define page_ceil               1Fh
+define page_size               20h
+define page_ceil               2Fh
 define page_size_order          5h
 define page_mask        0FFFFFFE0h
 define struct_mask_inv   3FFFFFFFh
@@ -125,125 +130,127 @@ procedure %GC_ALLOC
 
 labYGCollect:
   // ; restore ecx
-//  sub  ecx, eax
+  sub  rcx, rax
 
   // ; save registers
-//  push ebp
+  push rbp
 
   // ; lock frame
-//  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], rsp
 
-//  push ecx
+  push rcx
   
   // ; create set of roots
-//  mov  ebp, esp
-//  xor  ecx, ecx
-//  push ecx        // ; reserve place 
-//  push ecx
-//  push ecx
+  mov  rbp, rsp
+  xor  ecx, ecx
+  push rcx        // ; reserve place 
+  push rcx
+  push rcx
 
-//  // ; save static roots
-//  mov  esi, data : %CORE_STATICROOT
-//  mov  ecx, [data : %CORE_GC_TABLE + gc_rootcount]
-//  push esi
-//  push ecx
+  // ; save static roots
+  mov  rsi, data : %CORE_STATICROOT
+  mov  ecx, dword ptr [data : %CORE_GC_TABLE + gc_rootcount]
+  push rsi
+  push rcx
 
-//  // ; collect frames
-//  mov  eax, [data : %CORE_GC_TABLE + gc_stack_frame]  
-//  mov  ecx, eax
+  // ; collect frames
+  mov  rax, [data : %CORE_GC_TABLE + gc_stack_frame]  
+  mov  rcx, rax
 
-//labYGNextFrame:
-//  mov  esi, eax
-//  mov  eax, [esi]
-//  test eax, eax
-//  jnz  short labYGNextFrame
+labYGNextFrame:
+  mov  rsi, rax
+  mov  rax, [rsi]
+  test rax, rax
+  jnz  short labYGNextFrame
   
-//  push ecx
- // sub  ecx, esi
- // neg  ecx
- // push ecx  
+  push rcx
+  sub  rcx, rsi
+  neg  rcx
+  push rcx  
   
-//  mov  eax, [esi + 4]
-//  test eax, eax
-//  mov  ecx, eax
-//  jnz  short labYGNextFrame
+  mov  rax, [rsi + 8]
+  test rax, rax
+  mov  rcx, rax
+  jnz  short labYGNextFrame
 
   // === Minor collection ===
-//  mov [ebp-4], esp      // ; save position for roots
+  mov [rbp-8], rsp      // ; save position for roots
 
   // ; save mg -> yg roots 
-//  mov  ebx, [data : %CORE_GC_TABLE + gc_mg_current]
-//  mov  edi, [data : %CORE_GC_TABLE + gc_mg_start]
-//  sub  ebx, edi                                        // ; we need to check only MG region
-//  jz   labWBEnd                                        // ; skip if it is zero
-//  mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
-//  shr  ebx, page_size_order
-//  // ; lea  edi, [edi + elObjectOffset]
+  mov  rbx, [data : %CORE_GC_TABLE + gc_mg_current]
+  mov  rdi, [data : %CORE_GC_TABLE + gc_mg_start]
+  sub  rbx, rdi                                        // ; we need to check only MG region
+  jz   labWBEnd                                        // ; skip if it is zero
+  mov  rsi, [data : %CORE_GC_TABLE + gc_mg_wbar]
+  shr  rbx, page_size_order
+  // ; lea  edi, [edi + elObjectOffset]
 
-//labWBNext:
-//  cmp  [esi], 0
-//  lea  esi, [esi+4]
-//  jnz  short labWBMark
-//  sub  ebx, 4
-//  ja   short labWBNext
-//  nop
-//  nop
-//  jmp  short labWBEnd
+labWBNext:
+  cmp  dword ptr [rsi], 0
+  lea  rsi, [rsi+4]
+  jnz  short labWBMark
+  sub  rbx, 4
+  ja   short labWBNext
+  nop
+  nop
+  jmp  short labWBEnd
 
-//labWBMark:
-//  lea  eax, [esi-4]
-//  sub  eax, [data : %CORE_GC_TABLE + gc_mg_wbar]
-//  mov  edx, [esi-4]
-//  shl  eax, page_size_order
-//  lea  eax, [edi + eax + elObjectOffset]
+labWBMark:
+  lea  rax, [rsi-4]
+  sub  rax, [data : %CORE_GC_TABLE + gc_mg_wbar]
+  mov  edx, dword ptr [rsi-4]
+  shl  rax, page_size_order
+  lea  rax, [rdi + rax + elObjectOffset]
   
-//  test edx, 0FFh
-//  jz   short labWBMark2
-//  mov  ecx, [eax-elSizeOffset]
-//  push eax
-//  and  ecx, 0FFFFFh
-//  push ecx
+  test edx, 0FFh
+  jz   short labWBMark2
+  mov  ecx, dword ptr[rax-elSizeOffset]
+  push rax
+  and  ecx, struct_mask_inv
+  push rcx
 
-//labWBMark2:
-//  lea  eax, [eax + page_size]
-//  test edx, 0FF00h
-//  jz   short labWBMark3
-//  mov  ecx, [eax-elSizeOffset]
-//  push eax
-//  and  ecx, 0FFFFFh
-//  push ecx
+labWBMark2:
+  lea  rax, [rax + page_size]
+  test edx, 0FF00h
+  jz   short labWBMark3
+  mov  ecx, dword ptr [eax-elSizeOffset]
+  push rax
+  and  ecx, struct_mask_inv
+  push rcx
 
-//labWBMark3:
-//  lea  eax, [eax + page_size]
-//  test edx, 0FF0000h
-//  jz   short labWBMark4
-//  mov  ecx, [eax-elSizeOffset]
-//  push eax
-//  and  ecx, 0FFFFFh
-//  push ecx
+labWBMark3:
+  lea  rax, [rax + page_size]
+  test edx, 0FF0000h
+  jz   short labWBMark4
+  mov  ecx, dword ptr[rax-elSizeOffset]
+  push rax
+  and  ecx, struct_mask_inv
+  push rcx
 
-//labWBMark4:
-//  lea  eax, [eax + page_size]
-//  test edx, 0FF000000h
-//  jz   short labWBNext
-//  mov  ecx, [eax-elSizeOffset]
-//  push eax
-//  and  ecx, 0FFFFFh
-//  push ecx
-//  jmp  short labWBNext
+labWBMark4:
+  lea  rax, [rax + page_size]
+  test edx, 0FF000000h
+  jz   short labWBNext
+  mov  ecx, dword ptr[rax-elSizeOffset]
+  push rax
+  and  ecx, struct_mask_inv
+  push rcx
+  jmp  short labWBNext
   
-//labWBEnd:
-//  mov  ebx, [ebp]
-//  mov  eax, esp
-//  push ebx
-//  push eax
-//  call extern 'rt_dlls.GCCollect
+labWBEnd:
+  mov  rcx, [rbp]
+  mov  rdx, rsp
+  push rcx
+  push rdx
+  sub  rsp, 20h
+  call extern 'rt_dlls.GCCollect
+  add  rsp, 20h
 
-//  mov  ebx, eax
+  mov  rbx, rax
 
-//  mov  esp, ebp 
-//  pop  ecx 
-//  pop  ebp
+  mov  rsp, rbp 
+  pop  rcx 
+  pop  rbp
 
   ret
 
@@ -253,34 +260,13 @@ end
 // ; in: ecx - catch offset
 procedure %HOOK
 
-  //mov  eax, [esp]       
-  //lea  ecx, [eax + ecx - 5]               
-  // ; add  ecx, [esp]
-  // ; sub  ecx, 5             // ; call command size should be excluded
+  mov  rax, [rsp]       
+  lea  rcx, [rax + rcx - 5]               
   ret
 
 end
 
 // --- System Core Functions --
-
-procedure % ENDFRAME
-
-//  // ; save return pointer
-//  pop  ecx  
-  
-//  xor  edx, edx
-//  lea  esp, [esp+8]
-//  pop  ebp
-
-//  pop  eax
-//  mov  fs:[0], eax
-//  lea  esp, [esp+4]
-
-//  // ; restore return pointer
-//  push ecx   
-  ret
-
-end
 
 procedure % THREAD_WAIT
 
@@ -290,9 +276,9 @@ end
 
 procedure % CALC_SIZE
 
-//  mov  ecx, edx
-//  add  ecx, page_ceil
-//  and  ecx, page_mask
+  mov  ecx, edx
+  add  ecx, page_ceil
+  and  ecx, page_mask
 
   ret
 
@@ -300,16 +286,16 @@ end
 
 procedure % GET_COUNT
 
-//  mov  edx, [ebx - elSizeOffset]
-//  test edx, 0800000h
-//  jnz  short labErr
-//  and  edx, 0FFFFFFh
-//  shr  edx, 2
-//  ret
+  mov  edx, dword ptr [rbx - elSizeOffset]
+  test edx, stuct_mask
+  jnz  short labErr
+  and  edx, struct_mask_inv
+  shr  edx, 3
+  ret
 
-//labErr:
-//  xor  edx, edx
-//  ret 
+labErr:
+  xor  edx, edx
+  ret 
 
 end
 

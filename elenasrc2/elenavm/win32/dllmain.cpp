@@ -431,6 +431,11 @@ EXTERN_DLL_EXPORT int LoadExtensionDispatcher(const char* moduleList, void* mess
    return instance->loadExtensionDispatcher((SystemEnv*)_SystemEnv, moduleList, (mssg_t)message, output);
 }
 
+EXTERN_DLL_EXPORT void* GCCollect(void* roots, size_t size)
+{
+   return SystemRoutineProvider::GCRoutine(((SystemEnv*)_SystemEnv)->Table, (GCRoot*)roots, size);
+}
+
 // --- initmachine ---
 
 void initMachine(path_t rootPath)

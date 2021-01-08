@@ -279,8 +279,6 @@ procedure %HOOK
 
   mov  eax, [esp]       
   lea  ecx, [eax + ecx - 5]               
-  // ; add  ecx, [esp]
-  // ; sub  ecx, 5             // ; call command size should be excluded
   ret
 
 end
@@ -306,7 +304,7 @@ end
 procedure % GET_COUNT
 
   mov  edx, [ebx - elSizeOffset]
-  test edx, 0800000h
+  test edx, struct_mask
   jnz  short labErr
   and  edx, 0FFFFFFh
   shr  edx, 2
@@ -1869,7 +1867,7 @@ inline % 9Ah
   xor   edx, edx
   mov   [ebx-elVMTOffset], __arg1
   mov   ecx, [eax]
-  mov   esi, 800000h
+  mov   esi, struct_mask
   test  ecx, ecx
   cmovz edx, esi
   shl   ecx, 2
@@ -2933,7 +2931,7 @@ inline % 0E1h
   call code : %GC_ALLOC
 
   mov   eax, [esp]
-  mov   ecx, 800000h
+  mov   ecx, struct_mask
   mov   eax, [eax]
   mov   esi, __arg1
   imul  esi
@@ -2953,7 +2951,7 @@ inline % 1E1h
   call code : %GC_ALLOC
 
   mov   eax, [esp]
-  mov   ecx, 800000h
+  mov   ecx, struct_mask
   or    ecx, [eax]
   mov   [ebx-elSizeOffset], ecx
   
@@ -2972,7 +2970,7 @@ inline % 2E1h
   call code : %GC_ALLOC
 
   mov   eax, [esp]
-  mov   ecx, 800000h
+  mov   ecx, struct_mask
   mov   eax, [eax]
   shl  eax, 1
   or    ecx, eax
@@ -2993,7 +2991,7 @@ inline % 3E1h
   call code : %GC_ALLOC
 
   mov   eax, [esp]
-  mov   ecx, 800000h
+  mov   ecx, struct_mask
   mov   eax, [eax]
   shl  eax, 2
   or    ecx, eax
@@ -3014,7 +3012,7 @@ inline % 4E1h
   call code : %GC_ALLOC
 
   mov   eax, [esp]
-  mov   ecx, 800000h
+  mov   ecx, struct_mask
   mov   eax, [eax]
   shl  eax, 3
   or    ecx, eax

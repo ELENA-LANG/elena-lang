@@ -79,7 +79,7 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, vo
 
 EXTERN_DLL_EXPORT void Exit(int exitCode)
 {
-//   _Instance->Exit(exitCode);
+   _Instance->Exit(exitCode);
 }
 
 //EXTERN_DLL_EXPORT void StopThread(int exitCode)
@@ -180,6 +180,11 @@ EXTERN_DLL_EXPORT int LoadMessage(void* messageName)
 //      return LoadSymbolByString(systemEnv, (void*)str.str());
 //   }
 //}
+
+EXTERN_DLL_EXPORT void* GCCollect(void* roots, size_t size)
+{
+   return SystemRoutineProvider::GCRoutine(((SystemEnv*)_SystemEnv)->Table, (GCRoot*)roots, size);
+}
 
 void loadModulePath(HMODULE hModule, Path& rootPath, bool includeName)
 {
