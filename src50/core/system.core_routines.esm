@@ -10,8 +10,9 @@ define elStructure           00000008h
 define elSubject             04000000h
 define elMessage             00200000h
 
-
 define EXCEPTION_ACCESS_VIOLATION  101h
+define ELENA_ERR_DIVIDE_BY_ZERO    102h
+define ELENA_ERR_OUT_OF_MEMORY     103h
 
 // ; external methods
 
@@ -4917,12 +4918,25 @@ procedure critical_exception_handler
 
   open 0
   ifn   labAccessViolation EXCEPTION_ACCESS_VIOLATION
+  ifn   labDivisionByZero ELENA_ERR_DIVIDE_BY_ZERO
+  ifn   labOutOfMemory ELENA_ERR_OUT_OF_MEMORY
+
   pushr class : system'CriticalException
   pushr mssgconst : "new[1]"
   throw
 
 labAccessViolation:
   pushr class : system'NilReferenceException
+  pushr mssgconst : "new[1]"
+  throw
+
+labDivisionByZero:
+  pushr class : system'DivisionByZeroException
+  pushr mssgconst : "new[1]"
+  throw
+
+labOutOfMemory:
+  pushr class : system'OutOfMemoryException
   pushr mssgconst : "new[1]"
   throw
 

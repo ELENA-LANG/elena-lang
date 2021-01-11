@@ -156,6 +156,9 @@ public:
    static void GCWaitForSignal(int handle);
    static void GCWaitForSignals(int count, int* handles);
 
+   static void RaiseError(int code);
+   static intptr_t AlignHeapSize(intptr_t size);
+
    static bool parseMessageLiteral(ident_t message, IdentifierString& messageName, pos_t& paramCount, ref_t& flags);
 
 } __routineProvider;

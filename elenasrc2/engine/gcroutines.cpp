@@ -359,10 +359,13 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
    if (table->gc_yg_end - table->gc_yg_current < size) {
       // ; expand MG if required to promote YG
       while (table->gc_end - table->gc_mg_current < table->gc_yg_current - table->gc_yg_start) {
-         ExpandHeap((void*)table->gc_end, heap_inc);
+         int inc = AlignHeapSize(heap_inc);
+         int header_inc= AlignHeapSize(heap_inc >> page_size_order_minus2);
+
+         ExpandHeap((void*)table->gc_end, inc);
          ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), heapheader_inc);
 
-         table->gc_end += heap_inc;
+         table->gc_end += inc;
       }
 
       FullCollect(table, roots);
@@ -372,11 +375,15 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
          // ; try to allocate in the mg
          while (table->gc_end - table->gc_mg_current < size) {
             // ; bad luck, we have to expand GC
+            int inc = AlignHeapSize(size - (table->gc_end - table->gc_mg_current));
+            int header_inc = AlignHeapSize(inc >> page_size_order_minus2);
 
-            ExpandHeap((void*)table->gc_end, heap_inc);
-            ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), heapheader_inc);
+            if (ExpandHeap((void*)table->gc_end, inc)) {
+               ExpandHeap((void*)(table->gc_header + ((inc) >> page_size_order_minus2)), heapheader_inc);
+            }
+            else RaiseError(ELENA_ERR_OUT_OF_MEMORY);
 
-            table->gc_end += heap_inc;
+            table->gc_end += inc;
          }
 
          uintptr_t allocated = getObjectPtr(table->gc_mg_current);

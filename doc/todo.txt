@@ -3,9 +3,7 @@ In development:
 ------         
 
   [development]
-    * handle access violation #378
     * Raise an out of memory exception #467
-    * handle access violation #378
 
     * test elenavm critical handler
 

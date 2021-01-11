@@ -357,6 +357,7 @@ namespace _ELENA_
    constexpr int ELENA_ERR_CRITICAL          = 0x100;
    constexpr int ELENA_ERR_ACCESS_VIOLATION  = 0x101;
    constexpr int ELENA_ERR_DIVIDE_BY_ZERO    = 0x102;
+   constexpr int ELENA_ERR_OUT_OF_MEMORY     = 0x103;
 
   // --- Project warning levels
    constexpr int WARNING_LEVEL_1          = 1;

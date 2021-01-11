@@ -224,3 +224,22 @@ public class NilReferenceException : CriticalException
     constructor new()
         <= new("Critical exception : an operation with nil");
 }
+
+// --- DivisionByZeroException ---
+
+public class DivisionByZeroException : CriticalException
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception : a division by zero");
+}
+
+
+// --- OutOfMemoryException ---
+
+public class OutOfMemoryException : CriticalException
+{
+    /// Creates the exception
+    constructor new()
+        <= new("Critical exception : out of memory");
+}

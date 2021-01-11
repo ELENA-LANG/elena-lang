@@ -336,6 +336,11 @@ labWBMark4:
 labWBEnd:
   mov  ebx, [ebp]
   mov  eax, esp
+
+  // ; restore rbp
+  mov  edx, ebp
+  mov  ebp, [edx+4]
+
   push ebx
   push eax
   call extern 'rt_dlls.GCCollect

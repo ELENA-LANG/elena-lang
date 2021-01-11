@@ -240,6 +240,11 @@ labWBMark4:
 labWBEnd:
   mov  rcx, [rbp]
   mov  rdx, rsp
+
+  // ; restore rbp
+  mov  rax, rbp
+  mov  rbp, [rax+8]
+
   push rcx
   push rdx
   sub  rsp, 20h

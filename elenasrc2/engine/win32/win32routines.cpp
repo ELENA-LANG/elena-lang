@@ -15,6 +15,16 @@ static uintptr_t CriticalHandler = 0;
 
 #define CALL_FIRST 1  
 
+void SystemRoutineProvider :: RaiseError(int code)
+{
+   ::RaiseException(code, 0, 0, 0);
+}
+
+intptr_t SystemRoutineProvider::AlignHeapSize(intptr_t size)
+{
+   return align(size, 128);
+}
+
 LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {
    int r = 0;
@@ -29,6 +39,13 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
          ExceptionInfo->ContextRecord->Edx = ExceptionInfo->ContextRecord->Eip;
          ExceptionInfo->ContextRecord->Eax = ELENA_ERR_ACCESS_VIOLATION;
          ExceptionInfo->ContextRecord->Eip = CriticalHandler;
+
+         return EXCEPTION_CONTINUE_EXECUTION;
+      case ELENA_ERR_OUT_OF_MEMORY:
+         ExceptionInfo->ContextRecord->Edx = ExceptionInfo->ContextRecord->Eip;
+         ExceptionInfo->ContextRecord->Eax = ELENA_ERR_OUT_OF_MEMORY;
+         ExceptionInfo->ContextRecord->Eip = CriticalHandler;
+         ExceptionInfo->ContextRecord->Ebx = 0;
 
          return EXCEPTION_CONTINUE_EXECUTION;
       case EXCEPTION_INT_DIVIDE_BY_ZERO:
@@ -99,7 +116,7 @@ uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, int newSize)
    // allocate
    LPVOID r = VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
 
-   return (uintptr_t)allocPtr;
+   return !r ? 0 : (uintptr_t)allocPtr;
 }
 
 void SystemRoutineProvider :: Exit(pos_t exitCode)
