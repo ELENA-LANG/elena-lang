@@ -10,6 +10,9 @@ define elStructure           00000008h
 define elSubject             04000000h
 define elMessage             00200000h
 
+
+define EXCEPTION_ACCESS_VIOLATION  101h
+
 // ; external methods
 
 procedure __object."#dispatch[1]"
@@ -4913,7 +4916,13 @@ end
 procedure critical_exception_handler
 
   open 0
+  ifn   labAccessViolation EXCEPTION_ACCESS_VIOLATION
   pushr class : system'CriticalException
+  pushr mssgconst : "new[1]"
+  throw
+
+labAccessViolation:
+  pushr class : system'NilReferenceException
   pushr mssgconst : "new[1]"
   throw
 
@@ -4932,6 +4941,7 @@ symbol vm_sta_start
 
   pushr    rdata : "$elena'@tapekey"
   pushr    api : seh_handler
+//  pushr    api : veh_handler
   pushr    api : default_handler
   alloci   1
   loadenv
@@ -4982,7 +4992,8 @@ symbol sta_start
   callextr api : initProcess 1
 
   pushr    entry : "$forwards'$program"
-  pushr    api : seh_handler
+//  pushr    api : seh_handler
+  pushr    api : veh_handler
   pushr    api : default_handler
   alloci   1
   loadenv

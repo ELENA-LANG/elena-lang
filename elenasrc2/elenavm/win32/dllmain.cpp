@@ -42,7 +42,7 @@ EXTERN_DLL_EXPORT void InitializeVMSTA(void* sehTable, void* systemEnv, void* ex
 
    // initialize the critical exception handler
    if (criticalHandler != nullptr)
-      __routineProvider.InitCriticalStruct(&header->root_critical_struct, (uintptr_t)criticalHandler);
+      __routineProvider.InitCriticalStruct((uintptr_t)criticalHandler);
 
    //// initialize system env variable
    //_SystemEnv = systemEnv;

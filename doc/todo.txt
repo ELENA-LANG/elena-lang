@@ -3,17 +3,22 @@ In development:
 ------         
 
   [development]
-    * fix exceptional handler
-    * exception handling : redesign exception handling - support vector exceptions, 
     * handle access violation #378
+    * Raise an out of memory exception #467
+    * handle access violation #378
+
+    * test elenavm critical handler
+
 
     * multi-theading
 
     * x86-64 YG GC : copy lock byte as well
 
     * migrate all samples to win64
+    * win64 : test access violation exception
 
     * fix script samples
+
     * test bsredirect, mindex
     * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME
     * amd64 : critical exception handler, critical exception handler refactoring

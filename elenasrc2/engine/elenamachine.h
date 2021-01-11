@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                              (C)2018-2020, by Alexei Rakov
+//                                              (C)2018-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenamachineH
@@ -14,15 +14,12 @@ namespace _ELENA_
 struct ExceptionStruct
 {
    uintptr_t core_catch_addr;
-   pos_t core_catch_level;
-   pos_t core_catch_frame;
+   uintptr_t core_catch_level;
+   uintptr_t core_catch_frame;
 };
 
-struct CriticalStruct
-{
-   uintptr_t previousStruct;
-   uintptr_t handler;
-};
+constexpr int SizeOfExceptionStruct64 = 0x10;
+constexpr int SizeOfExceptionStruct32 = 0x0C;
 
 // --- _Entry ---
 
@@ -99,7 +96,6 @@ struct SystemEnv
 struct ProgramHeader
 {
    ExceptionStruct root_exception_struct;
-   CriticalStruct  root_critical_struct;
 };
 
 // --- FrameHeader ---
@@ -134,7 +130,7 @@ public:
    static void OpenSTAFrame(SystemEnv* env, FrameHeader* frameHeader);
    static void CloseSTAFrame(SystemEnv* env, FrameHeader* frameHeader);
 
-   static void InitCriticalStruct(CriticalStruct* header, uintptr_t criticalHandler);
+   static void InitCriticalStruct(uintptr_t criticalHandler);
    static void InitTLSEntry(pos_t threadIndex, pos_t index, ProgramHeader* frameHeader, pos_t* threadTable);
 
    static void Init(SystemEnv* env);

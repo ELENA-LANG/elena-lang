@@ -4799,46 +4799,57 @@ procedure coreapi'initThread
 
 end
 
-procedure coreapi'seh_handler
+procedure coreapi'veh_handler
 
+  push edx
   push ebp
   mov  ebp, esp
-  // ;** now [EBP+8]=pointer to EXCEPTION_RECORD
-  // ;** [EBP+0Ch]=pointer to ERR structure
-  // ;** [EBP+10h]=pointer to CONTEXT record
-  push ebx
-  push edi
-  push esi
-  mov  ebx, [ebp+8]
-  test ebx, ebx
-  jz   short lab5
-  test dword ptr[ebx+4],1h
-  jnz  lab5
-  test dword ptr[ebx+4],2h
-  jz   lab2
-//; ...
-//; ...
-//; ...
-  jmp lab5
-lab2:
-  mov esi, [ebp + 10h]
-
-  // ; get critical exception handler
+  mov  edx, eax   // ; set exception code
   mov  eax, [data : % CORE_ET_TABLE]
-  mov  [esi+0B8h], eax    // ; eip
+  jmp  eax
 
-  xor eax, eax
-  jmp short lab6
-lab5:
-  mov eax, 1
-lab6:
-  pop esi
-  pop edi
-  pop ebx 
-  mov esp, ebp
-  pop ebp
-  ret
 end
+
+//procedure coreapi'seh_handler
+//
+//  push ebp
+//  mov  ebp, esp
+//  // ;** now [EBP+8]=pointer to EXCEPTION_RECORD
+//  // ;** [EBP+0Ch]=pointer to ERR structure
+//  // ;** [EBP+10h]=pointer to CONTEXT record
+//  push ebx
+//  push edi
+//  push esi
+//  mov  ebx, [ebp+8]
+//  test ebx, ebx
+//  jz   short lab5
+//  test dword ptr[ebx+4],1h
+//  jnz  lab5
+//  test dword ptr[ebx+4],2h
+//  jz   lab2
+// //; ...
+// //; ...
+// //; ...
+//  jmp lab5
+//lab2:
+//  mov esi, [ebp + 10h]
+//
+//  // ; get critical exception handler
+//  mov  eax, [data : % CORE_ET_TABLE]
+//  mov  [esi+0B8h], eax    // ; eip
+//
+//  xor eax, eax
+//  jmp short lab6
+//lab5:
+//  mov eax, 1
+//lab6:
+//  pop esi
+//  pop edi
+//  pop ebx 
+//  mov esp, ebp
+//  pop ebp
+//  ret
+//end
 
 procedure coreapi'thread_default_handler
 

@@ -353,8 +353,10 @@ namespace _ELENA_
 
    constexpr int lnVMAPI_Instance         = 0x00001001;   // reference to VM;
 
-//  // ELENA run-time exceptions
-//   #define ELENA_ERR_OUTOF_MEMORY  0x190
+  // ELENA run-time exceptions
+   constexpr int ELENA_ERR_CRITICAL          = 0x100;
+   constexpr int ELENA_ERR_ACCESS_VIOLATION  = 0x101;
+   constexpr int ELENA_ERR_DIVIDE_BY_ZERO    = 0x102;
 
   // --- Project warning levels
    constexpr int WARNING_LEVEL_1          = 1;

@@ -3,7 +3,7 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef assemblerH
@@ -164,7 +164,7 @@ struct TokenInfo
          read();
          if (check("ProgramHeader")) {
             if (postfix.compare("64")) {
-               return align(0x20, 8);
+               return align(SizeOfExceptionStruct64, 8);
             }
             else return align(sizeof(ProgramHeader), 4);
             
@@ -175,7 +175,7 @@ struct TokenInfo
          read();
          if (check("ProgramHeader")) {
             if (postfix.compare("64")) {
-               return align(0x20, 8) >> 3;
+               return align(SizeOfExceptionStruct64, 8) >> 3;
             }
             else return align(sizeof(ProgramHeader), 4) >> 2;
 

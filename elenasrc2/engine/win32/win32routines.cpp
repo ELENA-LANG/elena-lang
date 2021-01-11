@@ -8,24 +8,52 @@
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 #include <windows.h>
-#include <errhandlingapi.h>
 
 using namespace _ELENA_;
 
-void SystemRoutineProvider :: InitCriticalStruct(CriticalStruct* header, uintptr_t criticalHandler)
-{
-   uintptr_t previousHeader = 0;
+static uintptr_t CriticalHandler = 0; 
 
-   // ; set SEH handler / frame / stack pointers
-   __asm {
-      mov  eax, header
-      mov  ecx, fs: [0]
-      mov  previousHeader, ecx
-      mov  fs : [0] , eax
+#define CALL_FIRST 1  
+
+LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
+{
+   int r = 0;
+   switch (ExceptionInfo->ExceptionRecord->ExceptionCode)
+   {
+      case EXCEPTION_BREAKPOINT:
+      case EXCEPTION_SINGLE_STEP:
+      case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+      case CONTROL_C_EXIT:
+         return EXCEPTION_CONTINUE_SEARCH;
+      case EXCEPTION_ACCESS_VIOLATION:
+         ExceptionInfo->ContextRecord->Edx = ExceptionInfo->ContextRecord->Eip;
+         ExceptionInfo->ContextRecord->Eax = ELENA_ERR_ACCESS_VIOLATION;
+         ExceptionInfo->ContextRecord->Eip = CriticalHandler;
+
+         return EXCEPTION_CONTINUE_EXECUTION;
+      case EXCEPTION_INT_DIVIDE_BY_ZERO:
+      case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+         ExceptionInfo->ContextRecord->Edx = ExceptionInfo->ContextRecord->Eip;
+         ExceptionInfo->ContextRecord->Eax = ELENA_ERR_DIVIDE_BY_ZERO;
+         ExceptionInfo->ContextRecord->Eip = CriticalHandler;
+
+         return EXCEPTION_CONTINUE_EXECUTION;
+      default:
+         ExceptionInfo->ContextRecord->Edx = ExceptionInfo->ContextRecord->Eip;
+         ExceptionInfo->ContextRecord->Eax = ELENA_ERR_CRITICAL;
+         ExceptionInfo->ContextRecord->Eip = CriticalHandler;
+
+         return EXCEPTION_CONTINUE_EXECUTION;
    }
 
-   header->previousStruct = previousHeader;
-   header->handler = criticalHandler;
+   return EXCEPTION_CONTINUE_SEARCH;
+}
+
+void SystemRoutineProvider :: InitCriticalStruct(uintptr_t criticalHandler)
+{
+   CriticalHandler = criticalHandler;
+
+   AddVectoredExceptionHandler(CALL_FIRST, ELENAVectoredHandler);
 }
 
 TLSEntry* SystemRoutineProvider :: GetTLSEntry(pos_t tlsIndex)
