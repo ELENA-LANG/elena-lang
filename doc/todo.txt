@@ -3,12 +3,13 @@ In development:
 ------         
 
   [development]
+    * fix exceptional handler
+    * exception handling : redesign exception handling - support vector exceptions, 
+    * handle access violation #378
 
-    * GC : support x32-64 modes  - allocate twice as much
-    * GC (NOTE : copy lock byte as well)
-
-    * exception handling
     * multi-theading
+
+    * x86-64 YG GC : copy lock byte as well
 
     * migrate all samples to win64
 
@@ -118,7 +119,6 @@ Pipeline:
     * migrate tutorials from reddit
 
     * linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
-    * GC : mov GC to C code : #77
     * external ops: operation inside external call - see HMENU.append
     * chat
     * rosetta code samples: Sockets, Zhang-Suen thinning algorithm
@@ -143,9 +143,6 @@ Pipeline:
                 * redux : closure tape generation (reusing local variables for nested scopes)
                 * debugger : sub code - do not show the variable from noncurrent sub codes
 
-                * migrating MG
-                * get rid of EXPAND_HEAP, NEW_HEAP
-
                 * sqlite : support float / blob
                 * String / WideString - add<'Char>
                 * support module description from manifest
@@ -160,7 +157,6 @@ Pipeline:
                 * ifheap - is not correctly recognize data allocated classes
                 * if bug structure is allocated - it will be marked as root - will it work?
                 * do we need ENDFRAME?
-                * loadfi vs loadf, savefi vs savef
                 * declaring several variables in a row?
 
                 * function closures : strong one - should be resolved directly if possible
@@ -212,7 +208,7 @@ Pipeline:
                 * ByteNumber#class.new[2] - idle command - "pushr 0"
                 * optimize IntNumber#class.#constructor[1]
                 * optimize array creation
-                * call inernal function directly (without intermediate step in system'routines) when it is possible
+                * call internal function directly (without intermediate step in system'routines) when it is possible
                 * optimize xreadn, xwriten
                 * optimization : do not call idle method
                 * bytecode optimization : storefi peekfi ==  => storefi nop; (storefi and peekfi have the same argument, no need to name all 
@@ -250,7 +246,6 @@ Pipeline:
                 * uncomment validateUnresolved
                 * error by viewing translit sample
                 * port Linux IDE
-                * compile elenart64.dll
 
                 * fix bug with inserting unicode character
                 * add test case  : i := i + j, i := j + i, i := j + i*2, i := j + j*(i+2)

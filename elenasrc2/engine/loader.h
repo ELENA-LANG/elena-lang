@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image Loader class declarations
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef loaderH
@@ -23,11 +23,9 @@ protected:
    // addresses
    ReferenceMap  _codeReferences, _dataReferences, _symbolReferences;
    ReferenceMap  _statReferences, _exportReferences;
-   ReferenceMap _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
+   ReferenceMap  _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
+   ReferenceMap  _mssgReferences, _subjReferences;
    ReferenceMap  _bssReferences;
-
-   //// actions
-   //ReferenceMap  _actions;         // actions
 
    void mapReference(ident_t reference, vaddr_t vaddress, ref_t mask);
    vaddr_t resolveReference(ident_t reference, ref_t mask);
@@ -53,14 +51,15 @@ public:
       _characterReferences.clear();
       _wideReferences.clear();
       _bssReferences.clear();
-//      _actions.clear();
+      _mssgReferences.clear();
+      _subjReferences.clear();
    }
 
    _ImageLoader()
       : _codeReferences(INVALID_REF), _dataReferences(INVALID_REF), _symbolReferences(INVALID_REF),
         _statReferences(INVALID_REF), _constReferences(INVALID_REF), _numberReferences(INVALID_REF), _characterReferences(INVALID_REF),
-        _literalReferences(INVALID_REF), _bssReferences(INVALID_REF), _exportReferences(INVALID_REF), _wideReferences(INVALID_REF)/*,
-        _actions(0)*/
+        _literalReferences(INVALID_REF), _bssReferences(INVALID_REF), _exportReferences(INVALID_REF), _wideReferences(INVALID_REF),
+        _mssgReferences(INVALID_REF), _subjReferences(INVALID_REF)
    {
    }
 };
