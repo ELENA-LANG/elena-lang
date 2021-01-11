@@ -1,10 +1,6 @@
-import system'text;
-
 public program()
 {
-//    console;
-    console.writeLine("abc")
-
+    console.writeLine("Hello World - Привет Мир");
 }
 
 startUp = program();

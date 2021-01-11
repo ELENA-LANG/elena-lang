@@ -7,6 +7,7 @@
   - #521 : Auto generating multi-method default handler with type casting
   - #77 : retiring core 
   - #378 : handle access violation
+  - #467 : Raise an out of memory exception 
 - ELC
   - a warning shown when an object cannot be converted into another one
   - a warning shown when an object does not handle a message (for strong-typed ones)

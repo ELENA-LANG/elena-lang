@@ -23,7 +23,7 @@ EXTERN_DLL_EXPORT void InitializeSTA(void* systemEnv, void* exceptionHandler, vo
    header->root_exception_struct.core_catch_addr = (uintptr_t)exceptionHandler;
 
    // initialize the critical exception handler
-   __routineProvider.InitCriticalStruct(&header->root_critical_struct, (uintptr_t)criticalHandler);
+   __routineProvider.InitCriticalStruct((uintptr_t)criticalHandler);
 
    // initialize system env variable
    _SystemEnv = systemEnv;

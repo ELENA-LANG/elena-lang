@@ -4954,8 +4954,8 @@ symbol vm_sta_start
   callextr api : initProcess 1
 
   pushr    rdata : "$elena'@tapekey"
-  pushr    api : seh_handler
-//  pushr    api : veh_handler
+//  pushr    api : seh_handler
+  pushr    api : veh_handler
   pushr    api : default_handler
   alloci   1
   loadenv
@@ -4981,7 +4981,8 @@ symbol mta_start
   callextr api : initProcess 1
 
   pushr    entry : "$forwards'$program"
-  pushr    api : seh_handler
+//  pushr    api : seh_handler
+  pushr    api : veh_handler
   pushr    api : default_handler
   alloci   1
   loadenv
@@ -5034,7 +5035,8 @@ procedure thread_start
   pushd
 
   pushr    intern : system'core_routines'threadEntry
-  pushr    api : seh_handler
+  //pushr    api : seh_handler
+  pushr    api : veh_handler
   pushr    api : thread_default_handler
   loadenv
   pushd

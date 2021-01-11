@@ -1,0 +1,16 @@
+<configuration>
+    <project>
+        <executable>helloworld64.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>u_helloworld</namespace>
+        <template>console_64</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>helloworld.l</include>
+        </module>
+    </files>
+</configuration>

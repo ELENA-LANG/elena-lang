@@ -107,6 +107,8 @@ public:
    size_t Frame() const { return context.Rbp; }
    size_t Local(int offset) { return context.Rbp - offset * 8; }
    size_t Local(int offset, int disp) { return context.Rbp - offset * 8 + disp; }
+   size_t Data(int offset) { return context.Rbp - offset * 4; }
+   size_t Data(int offset, int disp) { return context.Rbp - offset * 4 + disp; }
 
    size_t Current(int offset) { return context.Rsp + offset * 8; }
    size_t ClassVMT(size_t address);

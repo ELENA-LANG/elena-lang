@@ -3,16 +3,16 @@ In development:
 ------         
 
   [development]
-    * Raise an out of memory exception #467
+    * win64 : debugger - int
+    * win64 : debugger - array
 
-    * test elenavm critical handler
-
+    * test helloworld
+    * migrate all samples to win64
 
     * multi-theading
 
     * x86-64 YG GC : copy lock byte as well
 
-    * migrate all samples to win64
     * win64 : test access violation exception
 
     * fix script samples
@@ -22,10 +22,10 @@ In development:
     * amd64 : critical exception handler, critical exception handler refactoring
     * critical error handler should be moved to C code
     * compiler option : stack data alignment - 4 or 8
-    * retiring core #77
     * #206 - 64-bit architecture
 
 
+    * test elenavm critical handler
     * test : string insert / delete
     * test string / wide operations
     * fix chat sample

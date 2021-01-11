@@ -881,14 +881,14 @@ end
 // ; save
 inline % 47h
 
-  mov [rbx], rdx
+  mov dword ptr [rbx], edx
 
 end
 
 // ; load
 inline % 48h
 
-  mov rdx, [rbx]
+  mov edx, dword ptr [rbx]
 
 end
 

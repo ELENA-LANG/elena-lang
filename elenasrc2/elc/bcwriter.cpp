@@ -2376,9 +2376,11 @@ void ByteCodeWriter :: pushIntConstant(CommandTape& tape, int value)
 
 void ByteCodeWriter :: pushIntValue(CommandTape& tape)
 {
-   // pushai 0
+   // load
+   // pushd
 
-   tape.write(bcPushAI, 0);
+   tape.write(bcLoad);
+   tape.write(bcPushD);
 }
 
 void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int)

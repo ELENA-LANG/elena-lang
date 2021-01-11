@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //      its helpers
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-202, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1258,7 +1258,7 @@ void DebugController::readParams(_DebuggerWatch* watch, size_t address, ident_t 
 inline int getDisp(DebugLineInfo* lineInfo, int index)
 {
    if (lineInfo[index + 1].symbol == dsFrameOffset) {
-      return lineInfo[index + 1].addresses.offset.disp + 4;
+      return lineInfo[index + 1].addresses.offset.disp + sizeof(uintptr_t);
    }
    else return 0;
 }
@@ -1284,7 +1284,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          }
          else if (lineInfo[index].symbol == dsIntLocalPtr) {
             // write stack allocated local variable
-            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level, 4);
+            size_t localPtr = _debugger.Context()->Data(lineInfo[index].addresses.local.level, getDisp(lineInfo, index));
             readLocalInt(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsLongLocal) {
@@ -1294,7 +1294,7 @@ void DebugController :: readAutoContext(_DebuggerWatch* watch)
          }
          else if (lineInfo[index].symbol == dsLongLocalPtr) {
             // write stack allocated local variable
-            size_t localPtr = _debugger.Context()->Local(lineInfo[index].addresses.local.level);
+            size_t localPtr = _debugger.Context()->Data(lineInfo[index].addresses.local.level);
             readLocalLong(watch, localPtr, (const char*)unmapDebugPTR32(lineInfo[index].addresses.local.nameRef));
          }
          else if (lineInfo[index].symbol == dsRealLocal) {
