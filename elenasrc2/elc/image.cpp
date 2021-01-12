@@ -185,6 +185,8 @@ size_t ExecutableImage :: getLinkerConstant(int id)
          return _project->IntSetting(opGCMGSize);
       case lnGCYGSize:
          return _project->IntSetting(opGCYGSize);
+      case lnGCPERMSize:
+         return _project->IntSetting(opGCPERMSize);
       case lnThreadCount:
          return _project->IntSetting(opThreadMax);
       case lnObjectSize:

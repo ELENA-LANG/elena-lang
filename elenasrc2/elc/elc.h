@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x01DA
+#define ELC_REVISION_NUMBER         0x01DB
 
 // --- ELC default file names ---
 #ifdef _WINDOW
@@ -88,6 +88,7 @@ constexpr auto ELC_EXTDISPATCHER  = "configuration/project/extdispatcher";
 #define ELC_YG_SIZE                 "configuration/linker/ygsize"
 #define ELC_L0                      "configuration/compiler/l0"                // optimization: byte code optimization
 #define ELC_L1                      "configuration/compiler/l1"               // optimization: source code optimization
+#define ELC_PERM_SIZE               "configuration/linker/permsize"
 
 #define ELC_TARGET_NAME             "target"
 #define ELC_TYPE_NAME               "type"
@@ -176,6 +177,8 @@ class Project : public _ELENA_::Project
             return config.getSetting(ELC_MG_SIZE);
          case _ELENA_::opGCYGSize:
             return config.getSetting(ELC_YG_SIZE);
+         case _ELENA_::opGCPERMSize:
+            return config.getSetting(ELC_PERM_SIZE);
          case _ELENA_::opSizeOfStackReserv:
             return config.getSetting(ELC_STACK_RESERV);
          case _ELENA_::opSizeOfStackCommit:

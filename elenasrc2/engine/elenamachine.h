@@ -62,7 +62,10 @@ struct GCTable
    pos_t tt_lock;                      // !! is not used for STA
    uintptr_t dbg_ptr;                      // NOTE : used only for VM Client
    uintptr_t gc_roots;
-   pos_t gc_rootcount;
+   uintptr_t gc_rootcount;
+   uintptr_t gc_perm_start;
+   uintptr_t gc_perm_end;
+   uintptr_t gc_perm_current;
 };
 
 // --- TLSEntry ---
@@ -88,6 +91,7 @@ struct SystemEnv
    void*             Invoker;
    pos_t             GCMGSize;
    pos_t             GCYGSize;
+   pos_t             GCPERMSize;
    pos_t             MaxThread;
 };
 

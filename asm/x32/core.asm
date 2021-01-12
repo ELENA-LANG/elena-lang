@@ -36,6 +36,9 @@ define gc_signal             0038h
 define tt_ptr                003Ch 
 define tt_lock               0040h 
 define gc_rootcount          004Ch
+define gc_perm_start         0050h 
+define gc_perm_end           0054h 
+define gc_perm_current       0058h 
 
 // SYSTEM_ENV OFFSETS
 define se_mgsize	     0014h
@@ -101,6 +104,9 @@ structure %CORE_GC_TABLE
   dd 0 // ; dbg_ptr               : +44h 
   dd 0 // ; gc_roots              : +48h 
   dd 0 // ; gc_rootcount          : +4Ch 
+  dd 0 // ; gc_perm_start         : +50h 
+  dd 0 // ; gc_perm_end           : +54h 
+  dd 0 // ; gc_perm_current       : +58h 
 
 end
 

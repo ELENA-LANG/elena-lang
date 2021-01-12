@@ -239,11 +239,6 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    // ; collect roots
    GCRoot* current = roots;
    while (current->stackPtr) {
-      //if (current->stackPtrAddr >= yg_start && current->stackPtrAddr < mg_end) {
-      //   // HOTFIX : mark WB objects as collected
-      //   orSize(current->stackPtrAddr, gcCollectedMask);
-      //}
-
       //   ; mark both yg and mg objects
       MGCollect(current, yg_start, mg_end, table->gc_start);
 
@@ -310,22 +305,7 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    // ; fix roots
    while (roots->stackPtr) {
       //   ; mark both yg and mg objects
-      //if (roots->stackPtrAddr >= yg_start && roots->stackPtrAddr < mg_end) {
-      //   ObjectPage* pagePtr = getObjectPage(roots->stackPtrAddr);
-      //   uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
-
-      //   // replace old reference with a new one if it is a valid mg object
-      //   uintptr_t newPtr = *(uintptr_t*)mappings;
-      //   roots->stackPtrAddr = newPtr;
-
-      //   // ; make sure the object was not already fixed
-      //   if (getSize(newPtr) < 0) {
-      //      andSize(newPtr, 0x7FFFFFFF);
-
-      //      FixObject(table, roots, yg_start, mg_end);
-      //   }
-      //}
-      /*else*/ FixObject(table, roots, yg_start, mg_end);
+      FixObject(table, roots, yg_start, mg_end);
 
       roots++;
    }

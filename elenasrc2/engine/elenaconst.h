@@ -350,6 +350,7 @@ namespace _ELENA_
    constexpr int lnGCYGSize               = 0x00000002;
    constexpr int lnThreadCount            = 0x00000003;
    constexpr int lnObjectSize             = 0x00000004;
+   constexpr int lnGCPERMSize             = 0x00000005;
 
    constexpr int lnVMAPI_Instance         = 0x00001001;   // reference to VM;
 

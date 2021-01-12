@@ -3,8 +3,8 @@ In development:
 ------         
 
   [development]
-    * GC optimization : mg -> yg collecting #212
-    * introduce PERM heap
+    * introduce PERM heap : gc table new three fields, allocate perm space
+
 
     + dynamic mixin :  create a dynamic interface  {vmt}[ messag1 ][ messag2 ]
 

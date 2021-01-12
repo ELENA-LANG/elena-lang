@@ -232,6 +232,7 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
    // load linker settings
    loadHexOption(config, opGCMGSize);
    loadHexOption(config, opGCYGSize);
+   loadHexOption(config, opGCPERMSize);
    loadIntOption(config, opPlatform);
 
    loadIntOption(config, opSizeOfStackReserv);

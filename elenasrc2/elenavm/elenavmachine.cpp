@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2020, by Alexei Rakov
+//                                              (C)2009-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -24,6 +24,7 @@ using namespace _ELENA_;
 //#define SYSTEM_MAXTHREAD            _T("maxthread")
 #define LINKER_MGSIZE               "configuration/linker/mgsize"
 #define LINKER_YGSIZE               "configuration/linker/ygsize"
+#define LINKER_PERMSIZE             "configuration/linker/permsize"
 #define SYSTEM_PLATFORM             "configuration/system/platform"
 #define LIBRARY_PATH                "configuration/project/libpath"
 
@@ -128,6 +129,7 @@ void InstanceConfig :: init(path_t configPath, XmlConfigFile& config)
    //maxThread = config.getIntSetting(SYSTEM_CATEGORY, SYSTEM_MAXTHREAD, maxThread);
    mgSize = config.getHexSetting(LINKER_MGSIZE, mgSize);
    ygSize = config.getHexSetting(LINKER_YGSIZE, ygSize);
+   permSize = config.getHexSetting(LINKER_PERMSIZE, permSize);
    platform = config.getIntSetting(SYSTEM_PLATFORM, platform);
 
    const char* path = config.getSetting(LIBRARY_PATH);
@@ -261,7 +263,9 @@ size_t Instance :: getLinkerConstant(int id)
          return _config.mgSize;
       case lnGCYGSize:
          return _config.ygSize;
-      //case lnThreadCount:
+      case lnGCPERMSize:
+         return _config.permSize;
+         //case lnThreadCount:
       //   return (size_t)_config.maxThread;
       case lnObjectSize:
          return _compiler->getObjectHeaderSize();

@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of the base class implementing
 //      ELENA Project interface.
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef projectH
@@ -55,6 +55,7 @@ enum ProjectSetting
    opSizeOfHeapCommit      = 0x0029,
    opPlatform              = 0x002A,      // defines the project platform type
    opGCYGSize              = 0x002B,
+   opGCPERMSize            = 0x002C,
 
    // compiler engine options
    opWarnOnWeakUnresolved  = 0x0042,

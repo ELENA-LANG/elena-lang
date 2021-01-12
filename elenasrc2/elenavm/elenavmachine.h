@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA JIT Compiler Engine
 //
-//                                              (C)2009-2020, by Alexei Rakov
+//                                              (C)2009-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenavmachineH
@@ -16,12 +16,12 @@ constexpr auto ELENAVM_REVISION = 0x0012;
 
 // --- ELENAVM common constants ---
 #ifdef _WINDOW
-constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2020 by Alex Rakov";
+constexpr auto ELENAVM_GREETING = L"ELENA VM %d.%d.%d (C)2005-2021 by Alex Rakov";
 constexpr auto ELENAVM_INITIALIZING = L"Initializing...";
 constexpr auto ELENAVM_DEBUGINFO = L"Debug mode...";
 constexpr auto ELENAVM_DONEINFO = L"Done...";
 #elif _LINUX
-constexpr auto ELENAVM_GREETING = "ELENA VM %d.%d.%d (C)2005-2020 by Alex Rakov";
+constexpr auto ELENAVM_GREETING = "ELENA VM %d.%d.%d (C)2005-2021 by Alex Rakov";
 constexpr auto ELENAVM_INITIALIZING = "Initializing...";
 constexpr auto ELENAVM_DEBUGINFO = "Debug mode...";
 constexpr auto ELENAVM_DONEINFO = "Done...";
@@ -44,6 +44,7 @@ struct InstanceConfig
 //   int maxThread;
    int mgSize;
    int ygSize;
+   int permSize;
 
    // paths
    Path libPath;
@@ -65,6 +66,7 @@ struct InstanceConfig
       //maxThread = 1;
       mgSize = 20000;
       ygSize = 4000;
+      permSize = 1000;
       platform = 0;
    }
    InstanceConfig(InstanceConfig& parent)
@@ -73,6 +75,7 @@ struct InstanceConfig
       //maxThread = parent.maxThread;
       mgSize = parent.mgSize;
       ygSize = parent.ygSize;
+      permSize = parent.permSize;
 
       // copy paths
       libPath.copy(parent.libPath.c_str());

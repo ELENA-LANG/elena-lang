@@ -2158,9 +2158,10 @@ void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
    I64JITScope rdataScope(NULL, &rdataWriter, &helper, this, _bigAddressMode);
    _preloaded.add(SYSTEM_ENV, helper.getVAddress(rdataWriter, mskRDataRef));
    loadCoreData(helper, rdataScope, SYSTEM_ENV);
-   // NOTE : the table is tailed with GCMGSize,GCYGSize,MaxThread
+   // NOTE : the table is tailed with GCMGSize,GCYGSize,GCPERMSize,MaxThread
    rdataWriter.writeDWord(helper.getLinkerConstant(lnGCMGSize));
    rdataWriter.writeDWord(helper.getLinkerConstant(lnGCYGSize));
+   rdataWriter.writeDWord(helper.getLinkerConstant(lnGCPERMSize));
    rdataWriter.writeDWord(helper.getLinkerConstant(lnThreadCount));
 
    // resolve reference to SYSTEM_ENV at rdata header

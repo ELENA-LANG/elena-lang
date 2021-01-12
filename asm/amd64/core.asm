@@ -81,11 +81,15 @@ structure %CORE_GC_TABLE
   dd 0 // ; tt_lock               : +74h 
   dq 0 // ; dbg_ptr               : +78h 
   dq 0 // ; gc_roots              : +80h 
-  dd 0 // ; gc_rootcount          : +88h 
+  dq 0 // ; gc_rootcount          : +88h 
+
+  dq 0 // ; gc_perm_start         : +90h 
+  dq 0 // ; gc_perm_end           : +98h 
+  dq 0 // ; gc_perm_current       : +A0h 
 
 end
 
-// ; NOTE : the table is tailed with GCMGSize,GCYGSize and MaxThread fields
+// ; NOTE : the table is tailed with GCMGSize,GCYGSize,GCPERMSize and MaxThread fields
 rstructure %SYSTEM_ENV
 
   dd 0
