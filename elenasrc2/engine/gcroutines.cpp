@@ -239,10 +239,10 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    // ; collect roots
    GCRoot* current = roots;
    while (current->stackPtr) {
-      if (current->stackPtrAddr >= yg_start && current->stackPtrAddr < mg_end) {
-         // HOTFIX : mark WB objects as collected
-         orSize(current->stackPtrAddr, gcCollectedMask);
-      }
+      //if (current->stackPtrAddr >= yg_start && current->stackPtrAddr < mg_end) {
+      //   // HOTFIX : mark WB objects as collected
+      //   orSize(current->stackPtrAddr, gcCollectedMask);
+      //}
 
       //   ; mark both yg and mg objects
       MGCollect(current, yg_start, mg_end, table->gc_start);
@@ -310,22 +310,22 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
    // ; fix roots
    while (roots->stackPtr) {
       //   ; mark both yg and mg objects
-      if (roots->stackPtrAddr >= yg_start && roots->stackPtrAddr < mg_end) {
-         ObjectPage* pagePtr = getObjectPage(roots->stackPtrAddr);
-         uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
+      //if (roots->stackPtrAddr >= yg_start && roots->stackPtrAddr < mg_end) {
+      //   ObjectPage* pagePtr = getObjectPage(roots->stackPtrAddr);
+      //   uintptr_t mappings = table->gc_header + (((uintptr_t)pagePtr - table->gc_start) >> page_size_order_minus2);
 
-         // replace old reference with a new one if it is a valid mg object
-         uintptr_t newPtr = *(uintptr_t*)mappings;
-         roots->stackPtrAddr = newPtr;
+      //   // replace old reference with a new one if it is a valid mg object
+      //   uintptr_t newPtr = *(uintptr_t*)mappings;
+      //   roots->stackPtrAddr = newPtr;
 
-         // ; make sure the object was not already fixed
-         if (getSize(newPtr) < 0) {
-            andSize(newPtr, 0x7FFFFFFF);
+      //   // ; make sure the object was not already fixed
+      //   if (getSize(newPtr) < 0) {
+      //      andSize(newPtr, 0x7FFFFFFF);
 
-            FixObject(table, roots, yg_start, mg_end);
-         }
-      }
-      else FixObject(table, roots, yg_start, mg_end);
+      //      FixObject(table, roots, yg_start, mg_end);
+      //   }
+      //}
+      /*else*/ FixObject(table, roots, yg_start, mg_end);
 
       roots++;
    }
@@ -338,11 +338,76 @@ inline void __vectorcall FullCollect(GCTable* table, GCRoot* roots)
 void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t size)
 {
    ObjectPage* shadowPtr = (ObjectPage*)table->gc_shadow;
+   // ; collect roots 
    GCRoot* current = roots;
    while (current->stackPtr) {
       YGCollect(current, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
 
       current++;
+   }
+
+   // ; collect mg -> yg roots 
+   int wbar_count = (table->gc_mg_current - table->gc_mg_start) >> page_size_order;
+   uintptr_t wb_current = table->gc_mg_wbar;
+   uintptr_t mg_current = table->gc_mg_start;
+
+   GCRoot wb_root;
+   while (wbar_count > 0) {
+      long long card = *(long long*)wb_current;
+      if (card) {
+         if (testanyLong(card, 0xFFULL)) {
+            wb_root.stackPtrAddr = mg_current + elObjectOffset;
+            wb_root.size = getSize(wb_root.stackPtrAddr);
+
+            YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+         }
+         if (testanyLong(card, 0xFF00ULL)) {
+            wb_root.stackPtrAddr = mg_current + page_size + elObjectOffset;
+            wb_root.size = getSize(wb_root.stackPtrAddr);
+
+            YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+         }
+         if (testanyLong(card, 0xFF0000ULL)) {
+            wb_root.stackPtrAddr = mg_current + (page_size << 1) + elObjectOffset;
+            wb_root.size = getSize(wb_root.stackPtrAddr);
+
+            YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+         }
+         if (testanyLong(card, 0xFF000000ULL)) {
+            wb_root.stackPtrAddr = mg_current + (page_size * 3) + elObjectOffset;
+            wb_root.size = getSize(wb_root.stackPtrAddr);
+
+            YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+         }
+         if (testanyLong(card, 0xFF00000000ULL)) {
+            wb_root.stackPtrAddr = mg_current + (page_size << 2) + elObjectOffset;
+            wb_root.size = getSize(wb_root.stackPtrAddr);
+
+            YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+         }
+         if (testanyLong(card, 0xFF0000000000ULL)) {
+            wb_root.stackPtrAddr = mg_current + ((page_size << 2) + page_size) + elObjectOffset;
+            wb_root.size = getSize(wb_root.stackPtrAddr);
+
+            YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+         }
+         if (testanyLong(card, 0xFF000000000000ULL)) {
+            wb_root.stackPtrAddr = mg_current + (page_size * 6) + elObjectOffset;
+            wb_root.size = getSize(wb_root.stackPtrAddr);
+
+            YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+         }
+         if (testanyLong(card, 0xFF00000000000000ULL)) {
+            wb_root.stackPtrAddr = mg_current + (page_size * 7) + elObjectOffset;
+            wb_root.size = getSize(wb_root.stackPtrAddr);
+
+            YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
+         }
+      }
+      
+      mg_current += (page_size << 3);
+      wb_current += 8;
+      wbar_count -= 8;
    }
 
    // ; save gc_yg_current to mark  objects

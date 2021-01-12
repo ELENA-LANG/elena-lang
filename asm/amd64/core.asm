@@ -173,85 +173,22 @@ labYGNextFrame:
   mov  rcx, rax
   jnz  short labYGNextFrame
 
-  // === Minor collection ===
   mov [rbp-8], rsp      // ; save position for roots
 
-  // ; save mg -> yg roots 
-  mov  rbx, [data : %CORE_GC_TABLE + gc_mg_current]
-  mov  rdi, [data : %CORE_GC_TABLE + gc_mg_start]
-  sub  rbx, rdi                                        // ; we need to check only MG region
-  jz   labWBEnd                                        // ; skip if it is zero
-  mov  rsi, [data : %CORE_GC_TABLE + gc_mg_wbar]
-  shr  rbx, page_size_order
-  // ; lea  edi, [edi + elObjectOffset]
-
-labWBNext:
-  cmp  dword ptr [rsi], 0
-  lea  rsi, [rsi+4]
-  jnz  short labWBMark
-  sub  rbx, 4
-  ja   short labWBNext
-  nop
-  nop
-  jmp  short labWBEnd
-
-labWBMark:
-  lea  rax, [rsi-4]
-  sub  rax, [data : %CORE_GC_TABLE + gc_mg_wbar]
-  mov  edx, dword ptr [rsi-4]
-  shl  rax, page_size_order
-  lea  rax, [rdi + rax + elObjectOffset]
-  
-  test edx, 0FFh
-  jz   short labWBMark2
-  mov  ecx, dword ptr[rax-elSizeOffset]
-  push rax
-  and  ecx, struct_mask_inv
-  push rcx
-
-labWBMark2:
-  lea  rax, [rax + page_size]
-  test edx, 0FF00h
-  jz   short labWBMark3
-  mov  ecx, dword ptr [eax-elSizeOffset]
-  push rax
-  and  ecx, struct_mask_inv
-  push rcx
-
-labWBMark3:
-  lea  rax, [rax + page_size]
-  test edx, 0FF0000h
-  jz   short labWBMark4
-  mov  ecx, dword ptr[rax-elSizeOffset]
-  push rax
-  and  ecx, struct_mask_inv
-  push rcx
-
-labWBMark4:
-  lea  rax, [rax + page_size]
-  test edx, 0FF000000h
-  jz   short labWBNext
-  mov  ecx, dword ptr[rax-elSizeOffset]
-  push rax
-  and  ecx, struct_mask_inv
-  push rcx
-  jmp  short labWBNext
-  
-labWBEnd:
-  mov  rcx, [rbp]
-  mov  rdx, rsp
+  mov  rdx, [rbp]
+  mov  rcx, rsp
 
   // ; restore rbp
   mov  rax, rbp
   mov  rbp, [rax+8]
 
-  push rcx
-  push rdx
+  push rax
   sub  rsp, 20h
   call extern 'rt_dlls.GCCollect
   add  rsp, 20h
 
   mov  rbx, rax
+  pop  rbp
 
   mov  rsp, rbp 
   pop  rcx 

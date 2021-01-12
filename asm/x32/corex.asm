@@ -272,80 +272,21 @@ labYGNextThreadSkip:
   // === Minor collection ===
   mov [ebp-4], esp      // ; save position for roots
 
-  // ; save mg -> yg roots 
-  mov  ebx, [data : %CORE_GC_TABLE + gc_mg_current]
-  mov  edi, [data : %CORE_GC_TABLE + gc_mg_start]
-  sub  ebx, edi                                        // ; we need to check only MG region
-  jz   labWBEnd                                        // ; skip if it is zero
-  mov  esi, [data : %CORE_GC_TABLE + gc_mg_wbar]
-  shr  ebx, page_size_order
-  // ; lea  edi, [edi + elObjectOffset]
-
-labWBNext:
-  cmp  [esi], 0
-  lea  esi, [esi+4]
-  jnz  short labWBMark
-  sub  ebx, 4
-  ja   short labWBNext
-  nop
-  nop
-  jmp  short labWBEnd
-
-labWBMark:
-  lea  eax, [esi-4]
-  sub  eax, [data : %CORE_GC_TABLE + gc_mg_wbar]
-  mov  edx, [esi-4]
-  shl  eax, page_size_order
-  lea  eax, [edi + eax + elObjectOffset]
-  
-  test edx, 0FFh
-  jz   short labWBMark2
-  mov  ecx, [eax-elSizeOffset]
-  push eax
-  and  ecx, 0FFFFFh
-  push ecx
-
-labWBMark2:
-  lea  eax, [eax + page_size]
-  test edx, 0FF00h
-  jz   short labWBMark3
-  mov  ecx, [eax-elSizeOffset]
-  push eax
-  and  ecx, 0FFFFFh
-  push ecx
-
-labWBMark3:
-  lea  eax, [eax + page_size]
-  test edx, 0FF0000h
-  jz   short labWBMark4
-  mov  ecx, [eax-elSizeOffset]
-  push eax
-  and  ecx, 0FFFFFh
-  push ecx
-
-labWBMark4:
-  lea  eax, [eax + page_size]
-  test edx, 0FF000000h
-  jz   short labWBNext
-  mov  ecx, [eax-elSizeOffset]
-  push eax
-  and  ecx, 0FFFFFh
-  push ecx
-  jmp  short labWBNext
-
-labWBEnd:
   mov  ebx, [ebp]
   mov  eax, esp
 
-  // ; restore rbp
+  // ; restore rbp to correctly display a call stack
   mov  edx, ebp
   mov  ebp, [edx+4]
 
+  push edx
   push ebx
   push eax
   call extern 'rt_dlls.GCCollect
 
   mov  edi, eax
+  add  esp, 8
+  pop  ebp
 
   // ; GCXT: signal the collecting thread that GC is ended
   // ; should it be placed into critical section?

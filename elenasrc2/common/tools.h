@@ -210,6 +210,11 @@ inline bool testany(int number, int mask)
    return ((number & mask) != 0);
 }
 
+inline bool testanyLong(long long number, long long mask)
+{
+   return ((number & mask) != 0LL);
+}
+
 inline bool isbetween(size_t starting, size_t len , size_t value)
 {
    return (starting < value && value < starting + len);
