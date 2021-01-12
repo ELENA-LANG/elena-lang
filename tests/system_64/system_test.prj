@@ -13,7 +13,4 @@
             <include>test.l</include>
         </module>
     </files>
-  <forwards>
-     <forward key="$program">system_test'$private'startUp</forward>
-  </forwards>
 </configuration>

@@ -3,9 +3,13 @@ In development:
 ------         
 
   [development]
-    * win64 : debugger - int
-    * win64 : debugger - array
+    * GC optimization : mg -> yg collecting #212
+    * introduce PERM heap
 
+    + dynamic mixin :  create a dynamic interface  {vmt}[ messag1 ][ messag2 ]
+
+    * lib5_64 : try / catch
+    * lib5_64 : get rid of temp_app module
     * test helloworld
     * migrate all samples to win64
 
@@ -98,7 +102,6 @@ In development:
     * chat
     * graph
     * [service release]
-    * GC to C
     * web server
     * make compatible with ELENA 3.1, convert to and from ELENA 3.1
     * pi optimization : assigning int-const to real (#86)
@@ -108,7 +111,6 @@ In development:
     * [support ELENA 3.x syntax]
     * get rid of EXPAND_HEAP in core (after retiring core GC routines)
     * test why analog example need large stack size
-    * GC - do not put empty roots
 
   [documentation]
     * docs
@@ -228,7 +230,6 @@ Pipeline:
                 * assigning struct field with int constant
                 * auto conversion methods should be marked as idle
                 * resend to constant - no need for frame
-                * optimize GC : copying blocks
                 * optimize GC : bit cards
                 * optimize copying operation
                 * optimite yield operstions
@@ -290,7 +291,6 @@ Pipeline:
                  * building expression tree - raise an exceptoion with missing class name
                  * the following code should not be allowed - real n := n;
 
-                 * optimize gc - mg -> yg 
                  * optimize intOp.Absolute method
                  * variadic closure : correctly free argument list - using the code to free until the zero is encounter
                  * bool_expr ? 1 : 0 - the expression result should be strong-typed

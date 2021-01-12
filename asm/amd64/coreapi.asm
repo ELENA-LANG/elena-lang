@@ -4318,3 +4318,11 @@ lab4:
   ret
 
 end
+
+procedure coreapi'register_critical_exception_handler
+
+  mov  [data : % CORE_ET_TABLE], rbx
+  ret
+
+end
+
