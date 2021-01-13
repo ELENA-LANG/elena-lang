@@ -35,16 +35,16 @@ const int envFunctions[envFunctionNumber] =
 };
 
 // preloaded gc routines
-const int coreFunctionNumber = 6;
+const int coreFunctionNumber = 7;
 const int coreFunctions[coreFunctionNumber] =
 {
    GC_ALLOC, HOOK, INIT_RND,
    CALC_SIZE, GET_COUNT,
-   THREAD_WAIT
+   THREAD_WAIT, GC_ALLOCPERM
 };
 
 // preloaded gc commands
-const int gcCommandNumber = 157;
+const int gcCommandNumber = 158;
 const int gcCommands[gcCommandNumber] =
 {
    bcLoadEnv, bcCallExtR, bcSaveSI, bcBSRedirect, bcOpen,
@@ -78,7 +78,7 @@ const int gcCommands[gcCommandNumber] =
    bcCallI, bcIfCount, bcSub, bcSwapD, bcXSet,
    bcMIndex, bcParent, bcCheckSI, bcLSave,
    bcRAddNF, bcRSubNF, bcRMulNF, bcRDivNF, bcXRSaveF,
-   bcXRedirect, bcXVRedirect, bcVJumpRM,
+   bcXRedirect, bcXVRedirect, bcVJumpRM, bcAllocN
 };
 
 const int gcCommandExNumber = 55;
@@ -151,7 +151,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileMTRedirect, &compileMTRedirect, &compileGreaterN, &compileGreaterN, &compileLessN, &loadFNOp, &loadFNOp, &loadFNOp,
 
    &compileCreate, &compileCreateN, &compileFill, &compileSelectR, &compileInvokeVMTOffset, &compileInvokeVMT, &compileSelectR, &compileLessN,
-   &compileNop, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &loadFunction,
+   &compileCreateN, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &loadFunction,
 };
 
 constexpr int FPOffset = 4;
@@ -1520,7 +1520,7 @@ void _ELENA_::compileCreate(int opcode, x86JITScope& scope)
    }
 }
 
-void _ELENA_::compileCreateN(int, x86JITScope& scope)
+void _ELENA_::compileCreateN(int opcode, x86JITScope& scope)
 {
    // HOT FIX : reverse the argument order
    ref_t vmtRef = scope.argument;
@@ -1531,7 +1531,7 @@ void _ELENA_::compileCreateN(int, x86JITScope& scope)
    // __arg1 = #gc_page + (length - 1)
    scope.argument = align(scope.argument + scope.objectSize, gcPageSize32);
 
-   loadNOp(bcNew, scope);
+   loadNOp(opcode == bcAllocN ? bcAllocN : bcNew, scope);
 
    // mov [ebx-elPageSizeOffset], length
    scope.code->writeWord(0x43C7);

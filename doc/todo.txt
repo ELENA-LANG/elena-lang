@@ -6,7 +6,8 @@ In development:
     * introduce PERM heap : gc table new three fields, allocate perm space
 
 
-    + dynamic mixin :  create a dynamic interface  {vmt}[ messag1 ][ messag2 ]
+    + dynamic mixin :  create a dynamic interface  - redirecting to the target object
+    + dynamic bridge mixin
 
     * lib5_64 : try / catch
     * lib5_64 : get rid of temp_app module

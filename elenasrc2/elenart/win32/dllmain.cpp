@@ -86,6 +86,11 @@ EXTERN_DLL_EXPORT void* GCCollect(void* roots, size_t size)
    return SystemRoutineProvider::GCRoutine(((SystemEnv*)_SystemEnv)->Table, (GCRoot*)roots, size);
 }
 
+EXTERN_DLL_EXPORT void* GCCollectPerm(size_t size)
+{
+   return SystemRoutineProvider::GCRoutinePerm(((SystemEnv*)_SystemEnv)->Table, size, ((SystemEnv*)_SystemEnv)->GCPERMSize);
+}
+
 EXTERN_DLL_EXPORT void GCSignalStop(int handle)
 {
    SystemRoutineProvider::GCSignalStop(handle);

@@ -6,6 +6,7 @@ define INIT_RND             10012h
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
+define GC_ALLOCPERM	    10031h
 
 define CORE_GC_TABLE        20002h
 define CORE_STATICROOT      20005h
@@ -219,6 +220,36 @@ labYGNextFrame:
   mov  esp, ebp 
   pop  ecx 
   pop  ebp
+
+  ret
+
+end
+
+// --- GC_ALLOCPERM ---
+// in: ecx - size ; out: ebx - created object
+procedure %GC_ALLOCPERM
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_perm_current]
+  mov  edx, [data : %CORE_GC_TABLE + gc_perm_end]
+  add  ecx, eax
+  cmp  ecx, edx
+  jae  short labPERMCollect
+  mov  [data : %CORE_GC_TABLE + gc_perm_current], ecx
+  lea  ebx, [eax + elObjectOffset]
+  ret
+
+labPERMCollect:
+  // ; restore ecx
+  sub  ecx, eax
+
+  // ; lock frame
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], esp
+
+  push ecx
+  call extern 'rt_dlls.GCCollectPerm
+
+  mov  ebx, eax
+  add  esp, 4
 
   ret
 
@@ -3333,6 +3364,15 @@ inline % 0F6h
   cmovnz ebx, ecx
 
 end
+
+// ; allocn (__arg1 - size)
+inline % 0F8h
+	
+  mov  ecx, __arg1
+  call code : %GC_ALLOCPERM
+
+end
+
 
 // callrm (edx contains message, __arg1 contains vmtentry)
 inline % 0FEh

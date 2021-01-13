@@ -108,3 +108,11 @@ uintptr_t SystemRoutineProvider::ExpandHeap(void* allocPtr, int newSize)
 
    return (uintptr_t)allocPtr;
 }
+
+uintptr_t SystemRoutineProvider::ExpandPerm(void* allocPtr, int newSize)
+{
+   // allocate
+   LPVOID r = VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
+
+   return !r ? 0 : (uintptr_t)allocPtr;
+}

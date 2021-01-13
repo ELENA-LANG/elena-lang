@@ -6,6 +6,7 @@ define INIT_RND             10012h
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
+define GC_ALLOCPERM	    10031h
 
 define CORE_GC_TABLE        20002h
 define CORE_STATICROOT      20005h
@@ -36,6 +37,9 @@ define gc_signal             0038h
 define tt_ptr                003Ch 
 define tt_lock               0040h 
 define gc_rootcount          004Ch
+define gc_perm_start         0050h 
+define gc_perm_end           0054h 
+define gc_perm_current       0058h 
 
 // SYSTEM_ENV OFFSETS
 define se_mgsize	     0014h
@@ -302,6 +306,164 @@ labYGNextThreadSkip:
   mov  esp, ebp 
   pop  ecx 
   pop  ebp
+
+  ret
+
+end
+
+// --- GC_ALLOCPERM ---
+// in: ecx - size ; out: ebx - created object
+procedure %GC_ALLOCPERM
+  
+  // ; GCXT: set lock
+labStart:
+  mov  esi, data : %CORE_GC_TABLE + gc_lock
+labWait:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[esi], edx
+  jnz  short labWait
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_perm_current]
+  mov  edx, [data : %CORE_GC_TABLE + gc_perm_end]
+  add  ecx, eax
+  cmp  ecx, edx
+  jae  short labPERMCollect
+  mov  [data : %CORE_GC_TABLE + gc_perm_current], ecx
+
+  // ; GCXT: clear sync field
+  mov  edx, 0FFFFFFFFh
+  lea  ebx, [eax + elObjectOffset]
+  
+  // ; GCXT: free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [esi], edx
+
+  ret
+
+labPERMCollect:
+  // ; restore ecx
+  sub  ecx, eax
+
+  // ; GCXT: find the current thread entry
+  mov  edx, fs:[2Ch]
+  mov  eax, [data : %CORE_TLS_INDEX]
+
+  // ; GCXT: save registers
+  mov  eax, [edx+eax*4]
+  
+  // ; GCXT: lock stack frame
+  // ; get current thread event
+  mov  esi, [eax + tls_sync_event]         
+  mov  [eax + tls_stack_frame], esp
+  
+  push ecx
+
+  // ; === GCXT: safe point ===
+  mov  edx, [data : %CORE_GC_TABLE + gc_signal]
+  // ; if it is a collecting thread, starts the GC
+  test edx, edx                       
+  jz   short labConinue
+  // ; otherwise eax contains the collecting thread event
+
+  // ; signal the collecting thread that it is stopped
+  push edx
+  push esi
+  call extern 'rt_dlls.GCSignalStop
+  add  esp, 4
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [edi], ebx
+
+  // ; stop until GC is ended
+  call extern 'rt_dlls.GCWaitForSignal
+  add  esp, 4
+
+  // ; restore registers and try again
+  pop  ecx
+
+  jmp  labStart
+
+labConinue:
+
+  push ebp
+  mov  [data : %CORE_GC_TABLE + gc_signal], esi // set the collecting thread signal
+  mov  ebp, esp
+
+  // ; === thread synchronization ===
+
+  // ; create list of threads need to be stopped
+  mov  eax, esi
+  // ; get tls entry address  
+  mov  esi, data : %THREAD_TABLE
+  mov  edi, [esi - 4]
+labNext:
+  mov  edx, [esi]
+  test edx, edx
+  jz   short labSkipTT
+  cmp  eax, [edx + tls_sync_event]
+  setz cl
+  or  ecx, [edx + tls_flags]
+  test ecx, 1
+  // ; skip current thread signal / thread in safe region from wait list
+  jnz  short labSkipSave
+  push [edx + tls_sync_event]
+labSkipSave:
+
+  // ; reset all signal events
+  push [edx + tls_sync_event]
+  call extern 'rt_dlls.GCSignalClear
+  add  esp, 4
+
+  lea  esi, [esi+4]
+  mov  eax, [data : %CORE_GC_TABLE + gc_signal]
+labSkipTT:
+  sub  edi, 1
+  jnz  short labNext
+
+  mov  esi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  mov  ebx, ebp
+
+  // ; free lock
+  // ; could we use mov [esi], 0 instead?
+  lock xadd [esi], edx
+
+  mov  ecx, esp
+  sub  ebx, esp
+  jz   short labSkipWait
+
+  // ; wait until they all stopped
+  shr  ebx, 2
+  push ecx
+  push ebx
+  call extern 'rt_dlls.GCWaitForSignals
+
+labSkipWait:
+  // ; remove list
+  mov  esp, ebp    
+  pop  ebp
+
+  // ==== GCXT end ==============
+  
+  call extern 'rt_dlls.GCCollectPerm
+
+  mov  edi, eax
+  add  esp, 4
+
+  // ; GCXT: signal the collecting thread that GC is ended
+  // ; should it be placed into critical section?
+  xor  ecx, ecx
+  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
+  // ; clear thread signal var
+  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
+  push esi
+  call extern 'rt_dlls.GCSignalStop
+
+  mov  ebx, edi
 
   ret
 

@@ -49,10 +49,10 @@ void SystemRoutineProvider :: Init(SystemEnv* env)
    // ; initialize wbar start
    env->Table->gc_mg_wbar = ((mg_ptr - env->Table->gc_start) >> page_size_order) + env->Table->gc_header;
 
-   // ; initialize perm
+   // ; initialize but not commit perm space
    int perm_size = align(env->GCPERMSize, 128);
-   env->Table->gc_perm_start = env->Table->gc_perm_current = NewHeap(perm_size, perm_size);
-   env->Table->gc_perm_end = env->Table->gc_perm_start + perm_size;
+   env->Table->gc_perm_start = env->Table->gc_perm_current = NewHeap(perm_size, 0);
+   env->Table->gc_perm_end = env->Table->gc_perm_start;
 
    env->Table->gc_signal = 0;
 }

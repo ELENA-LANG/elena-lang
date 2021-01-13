@@ -59,7 +59,7 @@ constexpr int CALC_SIZE = 0x1001F;
 constexpr int GET_COUNT = 0x10020;
 constexpr int THREAD_WAIT = 0x10021;
 constexpr int BREAK = 0x10026;
-constexpr int EXPAND_HEAP = 0x10028;
+constexpr int GC_ALLOCPERM = 0x10031;
 
 constexpr int CORE_GC_TABLE = 0x20002;
 constexpr int CORE_STATICROOT = 0x20005;

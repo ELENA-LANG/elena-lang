@@ -1,17 +1,12 @@
 // --- Predefined References  --
-
-// --- Predefined References  --
 define GC_ALLOC	            10001h
 define HOOK                 10010h
 define INVOKER              10011h
 define INIT_RND             10012h
-define ENDFRAME             10016h
-define RESTORE_ET           10017h
 define CALC_SIZE            1001Fh
 define GET_COUNT            10020h
 define THREAD_WAIT          10021h
-define BREAK                10026h
-define EXPAND_HEAP          10028h
+define GC_ALLOCPERM	    10031h
 
 define CORE_GC_TABLE        20002h
 define CORE_STATICROOT      20005h
@@ -45,6 +40,9 @@ define gc_mg_wbar            0050h
 define gc_et_current         0058h 
 define gc_stack_frame        0060h 
 define gc_rootcount          0088h
+define gc_perm_start         0090h 
+define gc_perm_end           0098h 
+define gc_perm_current       00A0h 
 
 define page_size               20h
 define page_ceil               2Fh
@@ -82,7 +80,6 @@ structure %CORE_GC_TABLE
   dq 0 // ; dbg_ptr               : +78h 
   dq 0 // ; gc_roots              : +80h 
   dq 0 // ; gc_rootcount          : +88h 
-
   dq 0 // ; gc_perm_start         : +90h 
   dq 0 // ; gc_perm_end           : +98h 
   dq 0 // ; gc_perm_current       : +A0h 
@@ -197,6 +194,38 @@ labYGNextFrame:
   mov  rsp, rbp 
   pop  rcx 
   pop  rbp
+
+  ret
+
+end
+
+// --- GC_ALLOCPERM ---
+// in: ecx - size ; out: ebx - created object
+procedure %GC_ALLOCPERM
+
+  mov  rax, [data : %CORE_GC_TABLE + gc_perm_current]
+  mov  rdx, [data : %CORE_GC_TABLE + gc_perm_end]
+  add  rcx, rax
+  cmp  rcx, rdx
+  jae  short labPERMCollect
+  mov  [data : %CORE_GC_TABLE + gc_perm_current], rcx
+  lea  rbx, [rax + elObjectOffset]
+  ret
+
+labPERMCollect:
+  // ; restore ecx
+  sub  rcx, rax
+
+  // ; lock frame
+  mov  [data : %CORE_GC_TABLE + gc_stack_frame], rsp
+
+  push rcx
+  
+  sub  rsp, 18h
+  call extern 'rt_dlls.GCCollectPerm
+  add  rsp, 20h
+
+  mov  rbx, rax
 
   ret
 
@@ -3023,6 +3052,14 @@ inline % 0F6h
   mov    rcx, __arg1
   test   rdx, rdx
   cmovnz rbx, rcx
+
+end
+
+// ; allocn (__arg1 - size)
+inline % 0F8h
+	
+  mov  ecx, __arg1
+  call code : %GC_ALLOCPERM
 
 end
 

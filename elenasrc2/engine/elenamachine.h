@@ -128,6 +128,7 @@ static class SystemRoutineProvider
 public:
    static uintptr_t NewHeap(int totalSize, int committedSize);
    static uintptr_t ExpandHeap(void* allocPtr, int newSize);
+   static uintptr_t ExpandPerm(void* allocPtr, int newSize);
    static void CloseThreadHandle(TLSEntry* entry, bool withExit, pos_t exitCode);
    static TLSEntry* GetTLSEntry(pos_t tlsIndex);
 
@@ -154,6 +155,7 @@ public:
    static void CloseFrame(SystemEnv* env, FrameHeader* frameHeader);
 
    static void* GCRoutine(GCTable* table, GCRoot* roots, size_t size);
+   static void* GCRoutinePerm(GCTable* table, size_t size, size_t permSize);
 
    static void GCSignalStop(int handle);
    static void GCSignalClear(int handle);

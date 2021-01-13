@@ -455,4 +455,21 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
    }
 }
 
+void* SystemRoutineProvider :: GCRoutinePerm(GCTable* table, size_t size, size_t permSize)
+{
+   if (table->gc_perm_start == table->gc_perm_end) {
+      // allocate a perm space
+      ExpandPerm((void*)table->gc_perm_start, permSize);
 
+      table->gc_perm_end += permSize;
+   }
+   else if (table->gc_perm_current + size > table->gc_perm_end) {
+      RaiseError(ELENA_ERR_OUT_OF_PERMMEMORY);
+   }
+   
+   uintptr_t allocated = table->gc_perm_current;
+
+   table->gc_perm_current += size;
+
+   return (void*)getObjectPtr(allocated);
+}
