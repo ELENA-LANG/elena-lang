@@ -364,6 +364,32 @@ inline % 09h
 
 end
 
+// ; xnew
+inline % 0Ch
+
+  mov  eax, [esp]
+  mov  ecx, page_ceil
+  push ebx
+  mov  edx, [eax]
+  lea  ecx, [ecx + edx*4]
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  pop   edi
+  mov   eax, [esp]
+  xor   edx, edx
+  mov   [ebx-elVMTOffset], edi
+  mov   ecx, [eax]
+  mov   esi, struct_mask
+  test  ecx, ecx
+  cmovz edx, esi
+  shl   ecx, 2
+  or    ecx, edx
+  mov   [ebx-elSizeOffset], ecx
+
+end
+
 // ; storev
 inline % 0Dh
 

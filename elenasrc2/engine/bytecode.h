@@ -27,6 +27,7 @@ enum ByteCode
    bcPush            = 0x09,
    bcPushA           = 0x0A,
    bcPopA            = 0x0B,
+   bcXNew            = 0x0C,
    bcStoreV          = 0x0D,
    bcBSRedirect      = 0x0E,
    bcSetV            = 0x0F,

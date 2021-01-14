@@ -340,6 +340,32 @@ inline % 09h
 
 end
 
+// ; xnew
+inline % 0Ch
+
+  mov  rax, [rsp]
+  mov  ecx, page_ceil
+  push rbx
+  mov  rdx, [rax]
+  lea  rcx, [rcx + rdx*4]
+  and  ecx, page_mask 
+ 
+  call code : %GC_ALLOC
+
+  pop   rdi
+  xor   edx, edx
+  mov   rax, [rsp]
+  mov   [rbx-elVMTOffset], rdi
+  mov   rcx, [rax]
+  mov   esi, stuct_mask
+  test  ecx, ecx
+  cmovz rdx, rsi
+  shl   ecx, 2
+  or    ecx, edx
+  mov   dword ptr[rbx-elSizeOffset], ecx
+
+end
+
 // ; storev
 inline % 0Dh
 

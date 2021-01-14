@@ -3,13 +3,14 @@ In development:
 ------         
 
   [development]
-    * introduce PERM heap : gc table new three fields, allocate perm space
-
+    * new API routine - clone VMT
 
     + dynamic mixin :  create a dynamic interface  - redirecting to the target object
-    + dynamic bridge mixin
 
     * lib5_64 : try / catch
+    + dynamic bridge mixin
+
+    + new tutorial : multidispatching mixing objects
     * lib5_64 : get rid of temp_app module
     * test helloworld
     * migrate all samples to win64

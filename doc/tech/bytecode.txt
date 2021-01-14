@@ -176,6 +176,9 @@ ELENA byte codes (or ecodes)
 
  xcreate r                  - create the object with size=[esp].Size, out : acc, index is affected
 
+ xnew                       - create the object with length=[esp], acc contains VMT reference, 
+                              out : acc, index is affected
+
 
  Arithmeric operations:
  ----------------------
