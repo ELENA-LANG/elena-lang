@@ -784,9 +784,9 @@ inline ref_t mapReferenceKey(ident_t key)
 
 // --- Common type definitions ---
 
-typedef Map<ident_t, _Module*> ModuleMap;
-//typedef List<_Module*>         ModuleList;
-typedef List<char*>            IdentifierList;
+typedef Map<ident_t, _Module*>    ModuleMap;
+typedef Map<ident_t, void*, true> ClassMap;
+typedef List<char*>               IdentifierList;
 
 //// --- Reference mapping types ---
 //////typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;

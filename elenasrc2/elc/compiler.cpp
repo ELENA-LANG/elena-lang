@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //#define FULL_OUTOUT_INFO 1
@@ -1477,6 +1477,9 @@ void Compiler :: declareProcedureDebugInfo(SNode node, MethodScope& scope, bool 
 
 inline SNode findIdentifier(SNode current)
 {
+   while (current == lxAttribute)
+      current = current.nextNode();
+
    if (current.firstChild(lxTerminalMask))
       return current.firstChild(lxTerminalMask);
 
@@ -1541,7 +1544,7 @@ void Compiler :: importCode(SNode node, Scope& scope, ref_t functionRef, mssg_t 
    if (section != NULL) {
       node.set(lxImporting, _writer.registerImportInfo(section, api, moduleScope->module));
    }
-   else scope.raiseError(errInvalidLink, findIdentifier(node.findChild(lxInternalRef)));
+   else scope.raiseError(errInvalidLink, findIdentifier(node.firstSubNodeMask()));
 }
 
 Compiler::InheritResult Compiler :: inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed)

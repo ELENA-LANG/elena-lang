@@ -9,6 +9,7 @@
   - #378 : handle access violation
   - #467 : Raise an out of memory exception 
   - #212 : GC optimization : mg -> yg collecting 
+  - #532 : PERM Space 
 - ELC
   - a warning shown when an object cannot be converted into another one
   - a warning shown when an object does not handle a message (for strong-typed ones)

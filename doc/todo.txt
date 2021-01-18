@@ -3,9 +3,8 @@ In development:
 ------         
 
   [development]
-    * new API routine - clone VMT
-
-    + dynamic mixin :  create a dynamic interface  - redirecting to the target object
+    + do not dispatch cast message
+    + interface typecast message should return itself
 
     * lib5_64 : try / catch
     + dynamic bridge mixin

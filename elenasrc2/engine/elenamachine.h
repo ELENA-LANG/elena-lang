@@ -126,6 +126,10 @@ struct GCRoot
 static class SystemRoutineProvider
 {
 public:
+   static uintptr_t GetParent(void* classPtr);
+   static size_t GetLength(void* classPtr);
+   static size_t GetFlags(void* classPtr);
+
    static uintptr_t NewHeap(int totalSize, int committedSize);
    static uintptr_t ExpandHeap(void* allocPtr, int newSize);
    static uintptr_t ExpandPerm(void* allocPtr, int newSize);

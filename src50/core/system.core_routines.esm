@@ -165,6 +165,38 @@ procedure __object."readLength$system@Object$@system@ref#1&system@IntNumber[2]"
 
 end
 
+procedure __object."__newProxy$system@Object$system@Object[2]"
+
+  peeksi   1
+  open     1
+  reserve  4
+  xsavef   -4 1
+  pushf    -4
+  xnew
+  pushfi   -2
+  seti     0
+
+  restore  4
+  close
+  quitn    2
+
+end
+
+procedure __object."__inheritProxy$system@Object[1]"
+
+  // extern elenart.Inherit(name, classPtr, handle)
+  pushr    intern : system'core_routines'proxyDispatcher
+  peeksi   2
+  pusha
+  pushn    0
+  callextr extern : Inherit 0303h
+  pushd
+  popa
+  quitn    1
+
+
+end
+
 
 procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2]"
 
@@ -5067,3 +5099,12 @@ labError:
   throw
 
 end
+
+procedure proxyDispatcher 
+
+  peeksi   1
+  geti     0
+  jumpvi   0
+
+end
+

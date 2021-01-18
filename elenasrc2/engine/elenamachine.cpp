@@ -1,16 +1,38 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common implementation
 //
-//                                              (C)2018-2020, by Alexei Rakov
+//                                              (C)2018-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
+#include "core.h"
 
 using namespace _ELENA_;
 
-bool SystemRoutineProvider :: parseMessageLiteral(ident_t message, IdentifierString& messageName, 
+uintptr_t SystemRoutineProvider :: GetParent(void* classPtr)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset32);
+
+   return header->parentRef;
+}
+
+size_t SystemRoutineProvider :: GetLength(void* classPtr)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset32);
+
+   return header->count;
+}
+
+size_t SystemRoutineProvider::GetFlags(void* classPtr)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset32);
+
+   return header->flags;
+}
+
+bool SystemRoutineProvider :: parseMessageLiteral(ident_t message, IdentifierString& messageName,
    pos_t& paramCount, ref_t& flags)
 {
    paramCount = -1;

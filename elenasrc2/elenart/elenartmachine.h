@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2019, by Alexei Rakov
+//                                              (C)2009-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef elenartmachineH
@@ -105,6 +105,7 @@ private:
    Path           _rootPath;   
    Path           _debugFilePath;
    MemoryDump     _debugSection;
+   ClassMap       _generated;
 
    void*          _messageSection;
    void*          _mattributesSection;
@@ -138,6 +139,9 @@ public:
    ref_t loadSubject(ident_t name);
    mssg_t loadMessage(ident_t name);
    
+   vaddr_t inherit(SystemEnv* env, const char* name, VMTEntry* src, VMTEntry* base, size_t srcLength, size_t baseLength, 
+      pos_t* addresses, size_t length, int flags);
+
    int loadExtensionDispatcher(const char* moduleList, ref_t message, void* output);
 
    void init(void* messageTable, void* mattributeTable, path_t configPath);

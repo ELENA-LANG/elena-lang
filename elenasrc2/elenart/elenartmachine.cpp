@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                              (C)2009-2020, by Alexei Rakov
+//                                              (C)2009-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -10,6 +10,7 @@
 #include "rtman.h"
 #include "config.h"
 #include "bytecode.h"
+#include "core.h"
 
 #define LIBRARY_PATH                "configuration/library/path"
 
@@ -87,7 +88,7 @@ bool ELENARTMachine :: ImageSection :: read(pos_t position, void* s, pos_t lengt
 }
 
 ELENARTMachine :: ELENARTMachine(path_t rootPath, path_t execFileName)
-   : _rootPath(rootPath)
+   : _rootPath(rootPath), _generated(nullptr)
 {
    _messageSection = nullptr;
    _mattributesSection = nullptr;
@@ -350,4 +351,53 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
    }
 
    return len;
+}
+
+
+
+vaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* src, VMTEntry* base, size_t srcLength, 
+   size_t baseLength, pos_t* addresses, size_t length, int flags)
+{
+   bool namedOne = !emptystr(name);
+   if (namedOne) {
+      void* addr = _generated.get(name);
+      if (addr)
+         return (vaddr_t)addr;
+   }
+
+   size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset32;
+   vaddr_t ptr = (vaddr_t)SystemRoutineProvider::GCRoutinePerm(env->Table, size,
+      env->GCPERMSize);
+
+   VMTHeader* header = (VMTHeader*)ptr;
+   VMTEntry* entries = (VMTEntry*)(ptr + sizeof(VMTHeader));
+
+   size_t i = 0;
+   size_t j = 0;
+   size_t addr_i = 0;
+
+   while (i < srcLength) {
+      if (base[j].message == src[i].message) {
+         entries[i] = src[i];
+         j++;
+      }
+      else {
+         entries[i].message = src[i].message;
+         entries[i].address = addresses[addr_i];
+         
+         addr_i += (addr_i < (length - 1) ? 1 : 0);
+      }
+
+      i++;
+   }
+
+   header->parentRef = (pos_t)src;
+   header->count = srcLength;
+   header->flags = flags;
+   header->parentRef = (pos_t)base;
+
+   if (namedOne)
+      _generated.add(name, entries);
+
+   return (vaddr_t)entries;
 }

@@ -263,6 +263,21 @@ EXTERN_DLL_EXPORT void* LoadSymbolByBuffer(void* systemEnv, void* referenceName,
    }
 }
 
+/// <summary>
+/// Creates a dynamic class inheriting the given VMT
+/// </summary>
+/// <returns>a reference to dynamically created VMT</returns>
+EXTERN_DLL_EXPORT void* Inherit(const char* name, void* classPtr, void* handler)
+{
+   void* basePtr = (void*)SystemRoutineProvider::GetParent(classPtr);
+   size_t classLen = SystemRoutineProvider::GetLength(classPtr);
+   size_t baseLen = SystemRoutineProvider::GetLength(basePtr);
+   int flags = SystemRoutineProvider::GetFlags(classPtr);
+
+   return (void*)_Instance->inherit((SystemEnv*)_SystemEnv, name, (VMTEntry*)classPtr, (VMTEntry*)basePtr,
+      classLen, baseLen, (pos_t*)&handler, 1, flags);
+}
+
 // --- dllmain ---
 
 extern "C"
