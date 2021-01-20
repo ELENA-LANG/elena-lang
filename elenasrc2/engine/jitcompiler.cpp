@@ -359,7 +359,8 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, uintptr_t codePosition, VMTEnt
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t parentVAddress, size_t count, bool virtualMode)
+void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t parentVAddress, size_t count, 
+   bool virtualMode, bool abstractMode)
 {
    _Memory* image = vmtWriter.Memory();
 
@@ -391,10 +392,22 @@ void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddre
    // if in virtual mode mark method addresses as reference
    if (virtualMode) {
       pos_t entryPosition = vmtWriter.Position();
-      for (size_t i = 0 ; i < count ; i++) {
-         image->addReference(mskCodeRef, entryPosition + 4);
+      if (abstractMode) {
+         // HOTFIX : skip abstract methods in abstract mode
+         for (size_t i = 0; i < count; i++) {
+            if ((*image)[entryPosition + 4])
+               image->addReference(mskCodeRef, entryPosition + 4);
 
-         entryPosition += 8;
+            entryPosition += 8;
+         }
+      }
+      else {
+         for (size_t i = 0; i < count; i++) {
+            image->addReference(mskCodeRef, entryPosition + 4);
+
+            entryPosition += 8;
+         }
+
       }
    }
 }
@@ -811,7 +824,7 @@ void JITCompiler64 :: addVMTXEntry(mssg64_t message, uintptr_t codePosition, VMT
 }
 
 void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t parentVAddress, 
-   size_t count, bool virtualMode)
+   size_t count, bool virtualMode, bool abstractMode)
 {
    _Memory* image = vmtWriter.Memory();
 
@@ -844,10 +857,22 @@ void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddre
    // if in virtual mode mark method addresses as reference
    if (virtualMode) {
       pos_t entryPosition = vmtWriter.Position();
-      for (size_t i = 0; i < count; i++) {
-         image->addReference(mskCodeRef, entryPosition + 8);
 
-         entryPosition += 16;
+      if (abstractMode) {
+         // HOTFIX : skip abstract methods in abstract mode
+         for (size_t i = 0; i < count; i++) {
+            if ((*image)[entryPosition + 8])
+               image->addReference(mskCodeRef, entryPosition + 8);
+
+            entryPosition += 16;
+         }
+      }
+      else {
+         for (size_t i = 0; i < count; i++) {
+            image->addReference(mskCodeRef, entryPosition + 8);
+
+            entryPosition += 16;
+         }
       }
    }
 }

@@ -317,13 +317,13 @@ enum PseudoArg
 
 enum TapeStructure
 {
-   bsNone        = 0x0,
-   bsSymbol      = 0x1,
-   bsClass       = 0x2,
-   bsMethod      = 0x3,
-   //bsBranch      = 0x5,
-   bsImport      = 0x6,
-   bsInitializer = 0x7,
+   bsNone            = 0x0,
+   bsSymbol          = 0x1,
+   bsClass           = 0x2,
+   bsMethod          = 0x3,
+   bsAbstractMethod  = 0x4,
+   bsImport          = 0x6,
+   bsInitializer     = 0x7,
 };
 
 struct ByteCommand

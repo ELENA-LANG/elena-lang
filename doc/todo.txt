@@ -3,8 +3,12 @@ In development:
 ------         
 
   [development]
-    + do not dispatch cast message
-    + interface typecast message should return itself
+    + Generic typecast handler #534
+
+    * fix script samples
+    * current => master
+
+    + new article : multi-methods and mixins in ELENA Programming Language
 
     * lib5_64 : try / catch
     + dynamic bridge mixin
@@ -20,7 +24,6 @@ In development:
 
     * win64 : test access violation exception
 
-    * fix script samples
 
     * test bsredirect, mindex
     * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME

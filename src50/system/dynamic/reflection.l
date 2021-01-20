@@ -80,3 +80,13 @@ public extension classROp
         ^ self
     }
 }
+
+public extension classExOp
+{
+    __newProxy(target)
+        => intern system'core_routines'__object;
+        
+    __inheritProxy()
+        => intern system'core_routines'__object;
+}
+

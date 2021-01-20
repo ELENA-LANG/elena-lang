@@ -7681,12 +7681,12 @@ void Compiler :: compileAbstractMethod(SNode node, MethodScope& scope)
    else if (body != lxNone) {
       if (body.firstChild() == lxEOP) {
          scope.raiseWarning(WARNING_LEVEL_2, wrnAbstractMethodBody, body);
+
+         body.set(lxNoBody, 0);
       }
       else scope.raiseError(errAbstractMethodCode, node);
    }
    else scope.raiseError(errAbstractMethodCode, node);
-
-   body.set(lxNil, 0);
 }
 
 void Compiler :: compileInitializer(SNode node, MethodScope& scope)

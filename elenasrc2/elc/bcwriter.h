@@ -139,6 +139,7 @@ class ByteCodeWriter
    void writeDebugInfoStopper(MemoryWriter* debug);
 
    void writeProcedure(ByteCodeIterator& it, Scope& scope);
+   void writeAbstractProcedure(ByteCodeIterator& it, Scope& scope);
    void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
    void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode);
    void writeClass(ref_t reference, ByteCodeIterator& it, _ModuleScope& scope);
@@ -148,6 +149,7 @@ class ByteCodeWriter
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
    void declareIdleMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef);
+   void declareAbstractMethod(CommandTape& tape, mssg_t message);
    void declareMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef, int reserved, int allocated,
       bool withPresavedMessage, bool withNewFrame = true);
    //void declareExternalBlock(CommandTape& tape);

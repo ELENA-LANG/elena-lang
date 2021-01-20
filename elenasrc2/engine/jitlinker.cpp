@@ -724,6 +724,7 @@ vaddr_t JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t
    // read VMT header
    ClassHeader header;
    vmtReader.read((void*)&header, sizeof(ClassHeader));
+   bool abstractOne = test(header.flags, elAbstract);
 
    // get target image & resolve virtual address
    _Memory* vmtImage = _loader->getTargetSection(mask);
@@ -762,8 +763,13 @@ vaddr_t JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t
       while (size > 0) {
          vmtReader.read((void*)&entry, sizeof(VMTEntry));
 
-         codeReader.seek(entry.address);
-         methodPosition = loadMethod(refHelper, codeReader, codeWriter);
+         if (entry.address == INVALID_REF) {
+            methodPosition = 0;
+         }
+         else {
+            codeReader.seek(entry.address);
+            methodPosition = loadMethod(refHelper, codeReader, codeWriter);
+         }
 
          // NOTE : statically linked message is not added to VMT
          if (test(entry.message, STATIC_MESSAGE)) {
@@ -787,7 +793,7 @@ vaddr_t JITLinker :: createBytecodeVMTSection(ReferenceInfo referenceInfo, ref_t
          parentVAddress = resolve(_loader->retrieveReference(sectionInfo.module, header.parentRef, mskVMTRef), mskVMTRef, true);
 
       // fix VMT
-      _compiler->fixVMT(vmtWriter, classClassVAddress, parentVAddress, count, _virtualMode);
+      _compiler->fixVMT(vmtWriter, classClassVAddress, parentVAddress, count, _virtualMode, abstractOne);
 
       if (!test(header.flags, elVirtualVMT)) {
          // HOTFIX : to presave the string name

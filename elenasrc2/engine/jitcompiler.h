@@ -106,7 +106,7 @@ public:
    virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count) = 0;
 
    virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress,
-      pos_t count, bool virtualMode) = 0;
+      pos_t count, bool virtualMode, bool abstractMode) = 0;
 
    virtual vaddr_t getPreloadedReference(ref_t reference) = 0;
 
@@ -167,7 +167,7 @@ public:
    virtual pos_t copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count);
    virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress, 
-      pos_t count, bool virtualMode);
+      pos_t count, bool virtualMode, bool abstractMode);
 
    virtual pos_t findMemberPosition(int index)
    {
@@ -224,7 +224,7 @@ public:
    virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count);
    virtual void addVMTXEntry(mssg64_t message, vaddr_t codePosition, VMTXEntry* entries, pos_t& entryCount);
    virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t packageParentVAddress, pos_t count, 
-      bool virtualMode);
+      bool virtualMode, bool abstractMode);
 
    virtual pos_t findMemberPosition(int index)
    {

@@ -381,6 +381,10 @@ vaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* sr
          entries[i] = src[i];
          j++;
       }
+      else if (src[i].address) {
+         // if the method is not abstract
+         entries[i] = src[i];
+      }
       else {
          entries[i].message = src[i].message;
          entries[i].address = addresses[addr_i];

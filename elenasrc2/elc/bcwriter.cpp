@@ -170,6 +170,12 @@ void ByteCodeWriter :: declareIdleMethod(CommandTape& tape, mssg_t message, ref_
       tape.write(bdSourcePath, sourcePathRef);
 }
 
+void ByteCodeWriter :: declareAbstractMethod(CommandTape& tape, mssg_t message)
+{
+   // method-begin:
+   tape.write(blBegin, bsAbstractMethod, message);
+}
+
 void ByteCodeWriter :: declareMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef, int reserved, int allocated,
    bool withPresavedMessage, bool withNewFrame)
 {
@@ -1412,12 +1418,39 @@ void ByteCodeWriter :: writeVMT(size_t classPosition, ByteCodeIterator& it, Scop
 
                writeProcedure(++it, scope);
             }
+            else if ((*it).Argument() == bsAbstractMethod) {
+               scope.vmt->writeDWord((*it).additional);                     // Message ID
+               scope.vmt->writeDWord(-1);                                   // NOTE : -1 for an abstract entry
+
+               writeAbstractProcedure(++it, scope);
+            }
             break;
       };
       it++;
    }
    // save the real section size
    (*scope.vmt->Memory())[classPosition - 4] = scope.vmt->Position() - classPosition;
+}
+
+void ByteCodeWriter :: writeAbstractProcedure(ByteCodeIterator& it, Scope& scope)
+{
+   // go to the end
+   int level = 1;
+   while (!it.Eof() && level > 0) {
+      // save command
+      switch (*it) {
+         case blBegin:
+            level++;
+            break;
+         case blEnd:
+            level--;
+            break;
+      }
+      if (level == 0)
+         break;
+      it++;
+   }
+
 }
 
 void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
@@ -1439,35 +1472,12 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
 
    Map<int, int> labels;
    Map<int, int> fwdJumps;
-   //Stack<int>    stackLevels;                          // scope stack levels
 
    int frameLevel = 0;
    int level = 1;
-   //int stackLevel = 0;
    while (!it.Eof() && level > 0) {
-      // calculate stack level
-      //if(*it == bcAllocStack) {
-      //   stackLevel += (*it).argument;
-      //}
-      //else if (*it == bcResetStack) {
-      //   stackLevel = stackLevels.peek();
-      //}
-      //else if (ByteCodeCompiler::IsPush(*it)) {
-      //   stackLevel++;
-      //}
-      //else if (ByteCodeCompiler::IsPop(*it) || *it == bcFreeStack) {
-      //   stackLevel -= (/**it == bcPopI || */*it == bcFreeStack) ? (*it).argument : 1;
-
-      //   // clear previous stack level bookmarks when they are no longer valid
-      //   while (stackLevels.Count() > 0 && stackLevels.peek() > stackLevel)
-      //      stackLevels.pop();
-      //}
-
       // save command
       switch (*it) {
-         //case bcFreeStack:
-         //case bcAllocStack:
-         //case bcResetStack:
          case bcNone:
          case bcNop:
          case blBreakLabel:
@@ -1484,16 +1494,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             scope.code->writeByte(bcNop);
 
             break;
-         //case blDeclare:
-         //   if ((*it).Argument() == bsBranch) {
-         //      stackLevels.push(stackLevel);
-         //   }
-         //   break;
          case blEnd:
-            /*if ((*it).Argument() == bsBranch) {
-               stackLevels.pop();
-            }
-            else */level--;
+            level--;
             break;
          case blStatement:
             // generate debug exception only if debug info enabled
@@ -1579,7 +1581,6 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
             break;
          case bcOpen:
             frameLevel = (*it).argument;
-            //stackLevel = 0;
             (*it).save(scope.code);
             break;
          case bcIfR:
@@ -5028,6 +5029,10 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
             exitLabel = true;
             generateMethodDebugInfo(tape, node);   // HOTFIX : debug info should be declared inside the frame body
             generateCodeBlock(tape, current, scope);
+            break;
+         case lxNoBody:
+            declareAbstractMethod(tape, node.argument);
+            open = true;
             break;
          default:
             if (test(current.type, lxObjectMask)) {
