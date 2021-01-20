@@ -739,10 +739,10 @@ bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Modu
    size_t argCount = 0;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
-   if (test(flags, VARIADIC_MESSAGE)) {
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       messageName.append("params#");
    }
-   if (test(flags, PROPERTY_MESSAGE)) {
+   if ((flags & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE) {
       messageName.append("prop#");
    }
 

@@ -850,7 +850,7 @@ void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t c
          ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
          ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
 
-         compiler.injectVirtualReturningMethod(scope, node, encodeMessage(actionRef, 1, 0), SELF_VAR, classRef);
+         compiler.injectVirtualReturningMethod(scope, node, encodeMessage(actionRef, 1, CONVERSION_MESSAGE), SELF_VAR, classRef);
       }
 
       if (test(info.header.flags, elStructureRole)) {
@@ -2312,7 +2312,7 @@ inline mssg_t resolveNonpublic(ClassInfo& info, _Module* module, mssg_t publicMe
 
          ident_t actionStr = module->resolveAction(actionRef, signRef);
 
-         if (test(flags, VARIADIC_MESSAGE)) {
+         if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
             // COMPILER MAGIC : for variadic message - use the most general message
             ref_t genericActionRef = module->mapAction(actionStr, 0, false);
             mssg_t genericMessage = encodeMessage(genericActionRef, 2, flags);
@@ -2581,7 +2581,7 @@ bool CompilerLogic :: validateMessage(_ModuleScope& scope, mssg_t message, int h
    //}
 
    // const attribute can be applied only to a get-property
-   if (test(hints, tpConstant) && (!test(message, PROPERTY_MESSAGE) && getArgCount(message) > 1))
+   if (test(hints, tpConstant) && ((message & PREFIX_MESSAGE_MASK) != PROPERTY_MESSAGE && getArgCount(message) > 1))
       return false;
 
    return true;

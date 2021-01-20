@@ -940,7 +940,7 @@ inline bool IsExprOperator(int operator_id)
 
 inline bool isOpenArg(mssg_t message)
 {
-   return test(message, VARIADIC_MESSAGE);
+   return (message & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
 }
 
 inline bool isPrimitiveRef(ref_t reference)

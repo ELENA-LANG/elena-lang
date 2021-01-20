@@ -551,7 +551,7 @@ int Instance :: loadMessageName(mssg_t message, char* buffer, size_t maxLength)
    ref_t action, flags;
    size_t count;
    decodeMessage(message, action, count, flags);
-   if (test(flags, VARIADIC_MESSAGE)) {
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       size_t len = 7;
       Convertor::copy(buffer, "params#", 7, len);
 

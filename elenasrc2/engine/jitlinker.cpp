@@ -842,7 +842,7 @@ void JITLinker :: generateOverloadListMetaAttribute(_Module* module, mssg_t mess
    fullName.copy(module->Name());
    fullName.append('\'');
 
-   if (test(flags, VARIADIC_MESSAGE)) {
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       fullName.append("params#");
    }
 

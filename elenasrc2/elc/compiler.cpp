@@ -1507,7 +1507,7 @@ void Compiler :: importCode(SNode node, Scope& scope, ref_t functionRef, mssg_t 
       virtualReference.append("$");
    }
 
-   if (test(flags, VARIADIC_MESSAGE))
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE)
       virtualReference.append("params#");
 
    ref_t signature = 0;
@@ -3450,7 +3450,8 @@ ObjectInfo Compiler :: sendTypecast(SNode& node, ExprScope& scope, ref_t targetR
             node.injectAndReplaceNode(lxExpression);
 
          bool dummy;
-         compileMessage(node, scope, source, encodeMessage(actionRef, 1, 0), HINT_NODEBUGINFO | HINT_CONVERSIONOP, 0, dummy);
+         compileMessage(node, scope, source, encodeMessage(actionRef, 1, CONVERSION_MESSAGE), 
+            HINT_NODEBUGINFO | HINT_CONVERSIONOP, 0, dummy);
 
          return ObjectInfo(okObject, 0, targetRef);
       }
@@ -4240,7 +4241,7 @@ ObjectInfo Compiler :: compilePropAssigning(SNode node, ExprScope& scope, Object
    ref_t actionRef, flags;
    size_t argCount;
    decodeMessage(messageRef, actionRef, argCount, flags);
-   if (argCount == 1 && test(flags, PROPERTY_MESSAGE)) {
+   if (argCount == 1 && (flags & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE) {
       messageRef = encodeMessage(actionRef, 2, flags);
    }
    else scope.raiseError(errInvalidOperation, node);
@@ -6460,7 +6461,7 @@ ref_t Compiler :: mapMethodName(MethodScope& scope, int paramCount, ref_t action
    IdentifierString& actionStr, ref_t* signature, size_t signatureLen,
    bool withoutWeakMessages, bool noSignature)
 {
-   if (test(flags, VARIADIC_MESSAGE)) {
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       paramCount = 1;
       // HOTFIX : extension is a special case - target should be included as well for variadic function
       if (scope.extensionMode && test(flags, FUNCTION_MESSAGE))
@@ -6567,7 +6568,7 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
             scope.raiseError(errDuplicatedLocal, current);
 
          paramCount++;
-         if (paramCount >= ARG_COUNT || test(flags, VARIADIC_MESSAGE))
+         if (paramCount >= ARG_COUNT || (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE)
             scope.raiseError(errTooManyParameters, current);
 
          if (classRef == V_ARGARRAY) {
@@ -6619,10 +6620,29 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       }
       else if (test(scope.hints, tpConversion)) {
          if (paramCount == 0 && unnamedMessage && scope.outputRef) {
-            ref_t signatureRef = scope.moduleScope->module->mapSignature(&scope.outputRef, 1, false);
-            actionRef = scope.moduleScope->module->mapAction(CAST_MESSAGE, signatureRef, false);
+            /*if (test(scope.hints, tpSealed | tpGeneric)) {
+               // COMPILER MAGIC : if it is generic conversion routine
+               if (signatureLen > 0 || !unnamedMessage || test(scope.hints, tpFunction))
+                  scope.raiseError(errInvalidHint, node);
+
+
+            } 
+            else {*/
+               ref_t signatureRef = scope.moduleScope->module->mapSignature(&scope.outputRef, 1, false);
+               actionRef = scope.moduleScope->module->mapAction(CAST_MESSAGE, signatureRef, false);
+               flags |= CONVERSION_MESSAGE;
+            //}
 
             unnamedMessage = false;
+
+
+            //if (test(scope.hints, tpSealed | tpGeneric)) {
+            //   // COMPILER MAGIC : if it is generic conversion routine
+            //   if (signatureLen > 0 || !unnamedMessage || test(scope.hints, tpFunction))
+            //      scope.raiseError(errInvalidHint, node);
+
+            //   actionStr.copy(GENERIC_PREFIX);
+            //}
          }
          else if (paramCount == 1 && !unnamedMessage && signature[0] == scope.moduleScope->literalReference) {
             constantConversion = true;
@@ -8829,7 +8849,7 @@ void Compiler :: saveExtension(ClassScope& scope, mssg_t message, bool internalO
    ident_t actionName = scope.module->resolveAction(getAction(message), signRef);
    if (signRef) {
       extensionMessage = overwriteAction(message, scope.module->mapAction(actionName, 0, false));
-      if (test(extensionMessage, VARIADIC_MESSAGE))
+      if ((extensionMessage & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE)
          extensionMessage = overwriteArgCount(extensionMessage, 2);
    }
    else extensionMessage = message;
@@ -9006,7 +9026,7 @@ void Compiler :: generateMethodDeclaration(SNode current, ClassScope& scope, boo
 
       if (!closed && test(methodHints, tpEmbeddable)
          && !testany(methodHints, tpDispatcher | tpFunction | tpConstructor | tpConversion | tpGeneric | tpCast)
-         && !test(message, VARIADIC_MESSAGE)
+         && ((message & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE)
          && !current.existChild(lxDispatchCode, lxResendExpression))
       {
          // COMPILER MAGIC : if embeddable returning argument is allowed
@@ -9103,7 +9123,7 @@ mssg_t Compiler :: resolveMultimethod(ClassScope& scope, mssg_t messageRef)
 
    ident_t actionStr = scope.module->resolveAction(actionRef, signRef);
 
-   if (test(flags, VARIADIC_MESSAGE)) {
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       // COMPILER MAGIC : for variadic message - use the most general message
       ref_t genericActionRef = scope.moduleScope->module->mapAction(actionStr, 0, false);
 
@@ -11545,7 +11565,7 @@ bool Compiler :: injectVirtualStrongTypedMultimethod(_ModuleScope& moduleScope, 
    }
    messageNode.appendNode(lxTemplate, actionName);
 
-   if (test(resendMessage, PROPERTY_MESSAGE))
+   if ((resendMessage & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE)
       resendExpr.appendNode(lxPropertyParam);
 
    IdentifierString arg;
@@ -11612,7 +11632,7 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
 
    // try to resolve an argument list in run-time if it is only a single dispatch and argument list is not weak
    // !! temporally do not support variadic arguments
-   if (isSingleDispatch(info, message, resendMessage) && !test(message, VARIADIC_MESSAGE) &&
+   if (isSingleDispatch(info, message, resendMessage) && ((message & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE) &&
       injectVirtualStrongTypedMultimethod(scope, classNode, message, methodType, resendMessage, privateOne))
    {
       // mark the message as a signle multi-method dispatcher if the class is sealed / closed
@@ -11634,7 +11654,7 @@ void Compiler :: injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, 
          ref_t signatures[ARG_COUNT];
 
          int firstArg = test(flags, FUNCTION_MESSAGE) ? 0 : 1;
-         if (test(message, VARIADIC_MESSAGE)) {
+         if ((message & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
          }
          else {
             for (size_t i = firstArg; i < argCount; i++) {

@@ -1420,7 +1420,7 @@ void ByteCodeWriter :: writeVMT(size_t classPosition, ByteCodeIterator& it, Scop
             }
             else if ((*it).Argument() == bsAbstractMethod) {
                scope.vmt->writeDWord((*it).additional);                     // Message ID
-               scope.vmt->writeDWord(-1);                                   // NOTE : -1 for an abstract entry
+               scope.vmt->writeDWord(INVALID_REF);                          // NOTE : -1 for an abstract entry
 
                writeAbstractProcedure(++it, scope);
             }

@@ -1964,7 +1964,7 @@ void _ELENA_::compileMTRedirect(int op, x86JITScope& scope)
    // ; lea  eax, [esp + offs]
    x86Helper::leaRM32disp(scope.code, x86Helper::otEAX, x86Helper::otESP, startArg << 2);
 
-   if (test(scope.extra_arg, VARIADIC_MESSAGE)) {
+   if ((scope.extra_arg & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       loadMTOpX(op, scope, 0xC00);
    }
    else {

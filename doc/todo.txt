@@ -3,6 +3,7 @@ In development:
 ------         
 
   [development]
+    + conversion : there should be special flag to indicate that it is an conversion
     + Generic typecast handler #534
 
     * fix script samples

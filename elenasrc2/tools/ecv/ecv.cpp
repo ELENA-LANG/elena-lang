@@ -229,6 +229,9 @@ ref_t resolveMessage(_Module* module, ident_t method, bool extension)
    if (method.compare("#init")) {
       flags |= FUNCTION_MESSAGE;
    }
+   if (method.startsWith("#cast")) {
+      flags |= CONVERSION_MESSAGE;
+   }
 
    IdentifierString actionName;
    int paramIndex = method.find('[', -1);

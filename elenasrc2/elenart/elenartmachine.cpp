@@ -231,7 +231,7 @@ size_t ELENARTMachine :: loadMessageName(mssg_t messageRef, char* buffer, size_t
    pos_t paramCount = 0;
    ref_t actionRef, flags;
    decodeMessage(messageRef, actionRef, paramCount, flags);
-   if (test(flags, VARIADIC_MESSAGE)) {
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       size_t len = 7;
       Convertor::copy(buffer, "params#", 7, len);
 

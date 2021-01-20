@@ -13,7 +13,7 @@ namespace _ELENA_
 {
   // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION           5                 // ELENA Engine version
-   #define ENGINE_MINOR_VERSION           6
+   #define ENGINE_MINOR_VERSION           7
 
    constexpr auto LINE_LEN                = 0x1000;         // the maximal source line length
    constexpr auto IDENTIFIER_LEN          = 0x0300;         // the maximal identifier length
@@ -23,13 +23,16 @@ namespace _ELENA_
 
    constexpr auto ACTION_MASK             = 0x1C0u;
    constexpr auto MESSAGE_FLAG_MASK       = 0x1E0u;
-   // indicates it is an invoke message (without target variable in the call stack)
-   constexpr auto FUNCTION_MESSAGE        = 0x020u;
-   constexpr auto PROPERTY_MESSAGE        = 0x040u;
+   
+   constexpr auto FUNCTION_MESSAGE        = 0x020u;         // indicates it is an invoke message (without target variable in the call stack)   
    constexpr auto VARIADIC_MESSAGE        = 0x080u;
+   constexpr auto CONVERSION_MESSAGE      = 0x040u;
+   constexpr auto PROPERTY_MESSAGE        = 0x0C0u;
+   constexpr auto PREFIX_MESSAGE_MASK     = 0x0C0u;         // HOTFIX : is used to correctly identify VARIADIC_MESSAGE or PROPERTY_MESSAGE
+
    constexpr auto STATIC_MESSAGE          = 0x100u;
-   constexpr auto ARG_MASK                = 0x01Fu;
    constexpr auto ARG_COUNT               = 0x01Eu;
+   constexpr auto ARG_MASK                = 0x01Fu;
    constexpr auto ARGX_MASK               = 0x000000000000001Fu;
 
    constexpr auto INVALID_REF             = 0xFFFFFFFFu;
@@ -375,7 +378,7 @@ namespace _ELENA_
    constexpr auto ELENA_SIGNITURE         = "ELENA.";      // the stand alone image
    constexpr auto ELENACLIENT_SIGNITURE   = "VM.ELENA.";   // the ELENAVM client
 
-   constexpr auto MODULE_SIGNATURE        = "ELENA.056";   // the module version
+   constexpr auto MODULE_SIGNATURE        = "ELENA.057";   // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE  = "ED!03";
 
   // --- ELENA core module names ---

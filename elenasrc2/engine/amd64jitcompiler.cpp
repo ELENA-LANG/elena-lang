@@ -1347,7 +1347,7 @@ void _ELENA_::compileMTRedirect(int op, I64JITScope& scope)
       // ; lea  rax, [rsp + offs]
    AMD64Helper::leaRM64disp(scope.code, AMD64Helper::otRAX, AMD64Helper::otRSP, startArg << 3);
 
-   if (test(scope.extra_arg, VARIADIC_MESSAGE)) {
+   if ((scope.extra_arg & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       loadMTOpX(op, scope, 0xC00);
    }
    else {
@@ -1811,7 +1811,7 @@ void _ELENA_::compileIfR(int, I64JITScope& scope)
       scope.code->writeDWord(0);
    }
    else if (scope.argument == -1) {
-      scope.code->writeDWord(-1);
+      scope.code->writeDWord(INVALID_REF);
    }
    else scope.writeReference(*scope.code, scope.argument, 0);
    //NOTE: due to compileJumpX implementation - compileJumpIf is called
