@@ -58,6 +58,12 @@ define ARG_MASK               01Fh
 
 // --- System Core Preloaded Routines --
 
+structure % CORE_ET_TABLE
+
+  dq 0 // ; critical_exception    ; +x00   - pointer to critical exception handler
+
+end
+
 structure %CORE_GC_TABLE
 
   dq 0 // ; gc_header             : +00h

@@ -1,5 +1,7 @@
 public program()
 {
+    console.writeLine("--");
+    
     try
     {
         var o := 2;

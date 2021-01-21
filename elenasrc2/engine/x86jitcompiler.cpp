@@ -1749,6 +1749,8 @@ void _ELENA_::compileMCopy(int, x86JITScope& scope)
 void _ELENA_ :: compileAllocI(int opcode, x86JITScope& scope)
 {
    switch (scope.argument) {
+      case 0:
+         break;
       case 1:
          scope.code->writeByte(0x68);
          scope.code->writeDWord(0);
@@ -1776,11 +1778,6 @@ void _ELENA_ :: compileAllocI(int opcode, x86JITScope& scope)
          break;
       }
    }
-
-   if (scope.argument == 1) {
-   }
-
-
 }
 
 void _ELENA_::compileASaveR(int, x86JITScope& scope)

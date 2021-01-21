@@ -456,7 +456,7 @@ vaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* sr
    header->parentRef = (pos_t)src;
    header->count = srcLength;
    header->flags = flags;
-   header->parentRef = (pos_t)base;
+   header->classRef = (pos_t)base;
 
    if (namedOne)
       _generated.add(name, entries);

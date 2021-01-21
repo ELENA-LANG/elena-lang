@@ -3,11 +3,6 @@ In development:
 ------         
 
   [development]
-    * current => master
-
-    + #531 : Inhert should support only stateless interface type
-    + new article : multi-methods and mixins in ELENA Programming Language
-
     * lib5_64 : try / catch
     + dynamic bridge mixin
 
@@ -22,6 +17,7 @@ In development:
 
     * win64 : test access violation exception
 
+    + #531 : Inhert should support only stateless interface type
 
     * test bsredirect, mindex
     * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME

@@ -51,6 +51,9 @@ inline void resolveReference(_Memory* image, pos_t position, vaddr_t vaddress, r
          case mskRelStatRef:
             image->addReference((ref_t)vaddress | mskRelStatRef, position);
             break;
+         case mskRelDataRef:
+            image->addReference((ref_t)vaddress | mskRelDataRef, position);
+            break;
          default:
             image->addReference((ref_t)vaddress, position);
             break;

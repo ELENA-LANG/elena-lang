@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Win32 / Win64 (limited)
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -91,6 +91,7 @@ ref_t reallocateX(ref_t pos, ref_t key, ref_t disp, void* map)
 {
    switch (key & mskAnyRef) {
       case mskNativeRelDataRef:
+      case mskRelDataRef:
       {
          int tableAddress = ((ImageBaseMap*)map)->bss + disp + (key & ~mskAnyRef);
          int codeAddress = ((ImageBaseMap*)map)->code + pos + 4;

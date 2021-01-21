@@ -17,10 +17,10 @@
 using namespace _ELENA_;
 
 // preloaded gc routines
-const int coreVariableNumber = /*2*/1;
+const int coreVariableNumber = 2;
 const int coreVariables[coreVariableNumber] =
 {
-   CORE_GC_TABLE//, CORE_EH_TABLE
+   CORE_GC_TABLE, CORE_EH_TABLE
 };
 
 const int coreStaticNumber = 2;
@@ -1978,6 +1978,8 @@ void _ELENA_::compileDShiftN(int op, I64JITScope& scope)
 void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
 {
    switch (scope.argument) {
+      case 0:
+         break;
       case 1:
          scope.code->writeByte(0x68);
          scope.code->writeDWord(0);
@@ -1993,10 +1995,12 @@ void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
          // sub esp, __arg1 * 4
          int arg = scope.argument << 3;
          if (arg < 0x80) {
+            scope.code->writeWord(0x48);
             scope.code->writeWord(0xEC83);
             scope.code->writeByte(scope.argument << 3);
          }
          else {
+            scope.code->writeWord(0x48);
             scope.code->writeWord(0xEC81);
             scope.code->writeDWord(scope.argument << 3);
          }
