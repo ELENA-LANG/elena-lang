@@ -32,6 +32,19 @@ size_t SystemRoutineProvider::GetFlags(void* classPtr)
    return header->flags;
 }
 
+uintptr_t SystemRoutineProvider :: GetSignatureMember(void* messageTable, mssg_t message, int index)
+{
+   ref_t action = message >> ACTION_ORDER;
+
+   uintptr_t ptr = (uintptr_t)messageTable + (action * sizeof(uintptr_t) * 2) + sizeof(uintptr_t);
+
+   uintptr_t sign = (uintptr_t)messageTable + *(uintptr_t*)ptr;
+
+   uintptr_t t = ((uintptr_t*)sign)[index];
+
+   return t;
+}
+
 bool SystemRoutineProvider :: parseMessageLiteral(ident_t message, IdentifierString& messageName,
    pos_t& paramCount, ref_t& flags)
 {

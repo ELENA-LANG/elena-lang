@@ -166,7 +166,7 @@ EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, char* lineInfo, int lengt
 
 EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)
 {
-   return _Instance->loadClassName((size_t)object, buffer, length);
+   return _Instance->loadClassName((SystemEnv*)_SystemEnv, (size_t)object, buffer, length);
 }
 
 EXTERN_DLL_EXPORT void* EvaluateTape(void* tape)
@@ -276,6 +276,18 @@ EXTERN_DLL_EXPORT void* Inherit(const char* name, void* classPtr, void* handler)
 
    return (void*)_Instance->inherit((SystemEnv*)_SystemEnv, name, (VMTEntry*)classPtr, (VMTEntry*)basePtr,
       classLen, baseLen, (pos_t*)&handler, 1, flags);
+}
+
+/// <summary>
+/// Returns the signature member type at the specified position
+/// </summary>
+/// <param name="message">A strong-typed message</param>
+/// <param name="index">A signature member index</param>
+/// <param name="output">Signature tyoe</param>
+/// <returns></returns>
+EXTERN_DLL_EXPORT void* LoadSignatureMember(void* message, int index)
+{
+   return (void*)_Instance->loadSignatureMember((mssg_t)message, index);
 }
 
 // --- dllmain ---

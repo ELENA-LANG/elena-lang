@@ -130,6 +130,8 @@ public:
    static size_t GetLength(void* classPtr);
    static size_t GetFlags(void* classPtr);
 
+   static uintptr_t GetSignatureMember(void* messageTable, mssg_t message, int index);
+
    static uintptr_t NewHeap(int totalSize, int committedSize);
    static uintptr_t ExpandHeap(void* allocPtr, int newSize);
    static uintptr_t ExpandPerm(void* allocPtr, int newSize);

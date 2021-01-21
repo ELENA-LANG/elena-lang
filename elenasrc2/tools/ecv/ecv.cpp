@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   91
+#define REVISION_VERSION   92
 
 using namespace _ELENA_;
 
@@ -231,6 +231,11 @@ ref_t resolveMessage(_Module* module, ident_t method, bool extension)
    }
    if (method.startsWith("#cast")) {
       flags |= CONVERSION_MESSAGE;
+   }
+   if (method.startsWith("#cast&")) {
+      flags |= CONVERSION_MESSAGE;
+
+      method = method.c_str() + getlength("#cast&");
    }
 
    IdentifierString actionName;
@@ -1212,10 +1217,6 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       }
    }
 
-   //if (header.classRef != 0 && withConstructors) {
-   //   listConstructorMethods(module, className, header.classRef);
-   //}
-
    VMTEntry        entry;
 
    size -= sizeof(ClassHeader);
@@ -1231,6 +1232,7 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
       bool isPrivate = (hints & tpMask) == tpPrivate;
       bool isProteced = test(hints, tpProtected);
       bool isFunction = test(entry.message, FUNCTION_MESSAGE);
+      bool isConversion = (entry.message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE;
 
       // print the method name
       temp.copy(className);

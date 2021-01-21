@@ -182,7 +182,7 @@ vaddr_t ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t 
    return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
 
-size_t ELENARTMachine :: loadClassName(vaddr_t classAddress, char* buffer, size_t length)
+size_t ELENARTMachine :: loadClassName(SystemEnv* env, vaddr_t classAddress, char* buffer, size_t length)
 {
    int packagePtr = *(int*)(classAddress - 24);
    int namePtr = *(int*)(classAddress - 20);
@@ -268,11 +268,13 @@ vaddr_t ELENARTMachine :: loadMetaAttribute(ident_t name, int category)
    return manager.loadMetaAttribute(reader, name, category, len);
 }
 
-//inline void printInfo(char n)
-//{
-//   putchar(n);
-//   fflush(stdout);
-//}
+vaddr_t ELENARTMachine :: loadSignatureMember(mssg_t message, int index)
+{
+   ImageSection messageSection;
+   messageSection.init(_messageSection, 0x1000000); // !! dummy size
+
+   return SystemRoutineProvider::GetSignatureMember(messageSection.get(0), message, index);
+}
 
 ref_t ELENARTMachine :: loadSubject(ident_t name)
 {
@@ -353,11 +355,37 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
    return len;
 }
 
+uintptr_t ELENARTMachine :: createPermString(SystemEnv* env, ident_t s, uintptr_t classPtr)
+{
+   size_t nameLen = getlength(s) + 1;
+   uintptr_t nameAddr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->Table, align(nameLen, gcPageSize32),
+      env->GCPERMSize);
 
+   Convertor::copy((char*)nameAddr, s.c_str(), nameLen, nameLen);
+
+   ObjectPage32* header = (ObjectPage32*)(nameAddr - elObjectOffset32);
+   header->vmtPtr = (void*)classPtr;
+   header->size = nameLen;
+
+   return nameAddr;
+}
+
+inline uintptr_t RetrievePackageVMT(uintptr_t ptr)
+{
+   // HOTFIX : it is hard-coded, better to redesign the routine;
+   // probably to keep the reference to the string class in SystemEnv
+
+   uintptr_t str = *(uintptr_t*)(ptr - sizeof(VMTHeader) - 4);
+
+   return *(uintptr_t*)(str - elPageVMTOffset32);
+}
 
 vaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* src, VMTEntry* base, size_t srcLength, 
    size_t baseLength, pos_t* addresses, size_t length, int flags)
 {
+   static int nameIndex = 0;
+   static uintptr_t packageAddr = 0;
+
    bool namedOne = !emptystr(name);
    if (namedOne) {
       void* addr = _generated.get(name);
@@ -365,12 +393,42 @@ vaddr_t ELENARTMachine :: inherit(SystemEnv* env, const char* name, VMTEntry* sr
          return (vaddr_t)addr;
    }
 
-   size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset32;
+   // TODO : check if the source class is stateless interface (and probably without static fields?)
+
+   uintptr_t stringVMT = RetrievePackageVMT((uintptr_t)src);
+
+   // HOTFIX : generate package name (note it is hard-coded, better to analize class attributes and generate accordinately)
+   if (!packageAddr) {
+      packageAddr = createPermString(env, "$d", stringVMT);
+   }
+
+   // HOTFIX : generate class name (note it is hard-coded, better to analize class attributes and generate accordinately)
+   IdentifierString dynamicName("'");
+   if (emptystr(name)) {
+      nameIndex++;
+
+      dynamicName.append('$');
+      dynamicName.appendHex(nameIndex);
+   }
+   else dynamicName.append(name);
+
+   uintptr_t nameAddr = createPermString(env, dynamicName.c_str(), stringVMT);
+
+   // HOTFIX : currently only two built-in static fields are supported,;
+   // the correct check should be implemented; 
+   // interface static and constant fields should be supported
+   int staticSize = 2;
+
+   size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset32 + staticSize * sizeof(uintptr_t);
    vaddr_t ptr = (vaddr_t)SystemRoutineProvider::GCRoutinePerm(env->Table, size,
       env->GCPERMSize);
 
-   VMTHeader* header = (VMTHeader*)ptr;
-   VMTEntry* entries = (VMTEntry*)(ptr + sizeof(VMTHeader));
+   // HOTFIX : hard-codied copy build-in static variables
+   *(uintptr_t*)ptr = packageAddr;
+   *(uintptr_t*)(ptr + 4) = nameAddr;
+
+   VMTHeader* header = (VMTHeader*)(ptr + staticSize * sizeof(uintptr_t));
+   VMTEntry* entries = (VMTEntry*)(ptr + staticSize * sizeof(uintptr_t) + sizeof(VMTHeader));
 
    size_t i = 0;
    size_t j = 0;

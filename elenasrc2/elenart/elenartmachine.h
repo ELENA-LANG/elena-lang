@@ -131,7 +131,7 @@ public:
 
    vaddr_t loadAddressInfo(size_t retPoint, char* lineInfo, size_t length);
 
-   size_t loadClassName(vaddr_t classAddress, char* buffer, size_t length);
+   size_t loadClassName(SystemEnv* env, vaddr_t classAddress, char* buffer, size_t length);
    size_t loadSubjectName(ref_t subjectRef, char* buffer, size_t length);
    size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
 
@@ -139,6 +139,10 @@ public:
    ref_t loadSubject(ident_t name);
    mssg_t loadMessage(ident_t name);
    
+   vaddr_t loadSignatureMember(mssg_t message, int index);
+   
+   uintptr_t createPermString(SystemEnv* env, ident_t s, uintptr_t classPtr);
+
    vaddr_t inherit(SystemEnv* env, const char* name, VMTEntry* src, VMTEntry* base, size_t srcLength, size_t baseLength, 
       pos_t* addresses, size_t length, int flags);
 

@@ -90,3 +90,10 @@ public extension classExOp
         => intern system'core_routines'__object;
 }
 
+public extension MessageExOp : Message
+{
+    __getFirstSignatureMember()
+        => intern system'core_routines'__message;
+}
+
+

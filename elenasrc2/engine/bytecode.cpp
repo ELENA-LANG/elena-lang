@@ -765,6 +765,9 @@ bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Modu
    if (emptystr(actionName))
       return false;
 
+   if (actionName.compare(GENERIC_PREFIX) && (flags & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE)
+      messageName.append("#cast&");
+
    messageName.append(actionName);
    if (signature) {
       ref_t references[ARG_COUNT];

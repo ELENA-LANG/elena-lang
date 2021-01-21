@@ -6620,29 +6620,21 @@ void Compiler :: declareArgumentList(SNode node, MethodScope& scope, bool withou
       }
       else if (test(scope.hints, tpConversion)) {
          if (paramCount == 0 && unnamedMessage && scope.outputRef) {
-            /*if (test(scope.hints, tpSealed | tpGeneric)) {
+            if (test(scope.hints, tpSealed | tpGeneric)) {
                // COMPILER MAGIC : if it is generic conversion routine
                if (signatureLen > 0 || !unnamedMessage || test(scope.hints, tpFunction))
                   scope.raiseError(errInvalidHint, node);
 
-
+               actionRef = scope.moduleScope->module->mapAction(GENERIC_PREFIX, 0, false);
+               flags |= CONVERSION_MESSAGE;
             } 
-            else {*/
+            else {
                ref_t signatureRef = scope.moduleScope->module->mapSignature(&scope.outputRef, 1, false);
                actionRef = scope.moduleScope->module->mapAction(CAST_MESSAGE, signatureRef, false);
                flags |= CONVERSION_MESSAGE;
-            //}
+            }
 
             unnamedMessage = false;
-
-
-            //if (test(scope.hints, tpSealed | tpGeneric)) {
-            //   // COMPILER MAGIC : if it is generic conversion routine
-            //   if (signatureLen > 0 || !unnamedMessage || test(scope.hints, tpFunction))
-            //      scope.raiseError(errInvalidHint, node);
-
-            //   actionStr.copy(GENERIC_PREFIX);
-            //}
          }
          else if (paramCount == 1 && !unnamedMessage && signature[0] == scope.moduleScope->literalReference) {
             constantConversion = true;

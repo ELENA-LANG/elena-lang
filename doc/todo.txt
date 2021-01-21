@@ -3,12 +3,12 @@ In development:
 ------         
 
   [development]
-    + conversion : there should be special flag to indicate that it is an conversion
     + Generic typecast handler #534
 
     * fix script samples
     * current => master
 
+    + #531 : Inhert should support only stateless interface type
     + new article : multi-methods and mixins in ELENA Programming Language
 
     * lib5_64 : try / catch
@@ -31,6 +31,7 @@ In development:
     * amd64 : critical exception handler, critical exception handler refactoring
     * critical error handler should be moved to C code
     * compiler option : stack data alignment - 4 or 8
+    * move ELENARTMachine::inherit to 64bit
     * #206 - 64-bit architecture
 
 

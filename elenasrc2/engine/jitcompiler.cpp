@@ -416,6 +416,7 @@ ref_t JITCompiler32 :: allocateActionEntry(MemoryWriter& mdataWriter, MemoryWrit
    ref_t weakActionRef, ref_t signature)
 {
    ref_t actionRef = mdataWriter.Position() / 8;
+
    // weak action ref for strong one or the same ref
    if (weakActionRef) {
       mdataWriter.writeDWord(weakActionRef);

@@ -197,7 +197,6 @@ procedure __object."__inheritProxy$system@Object[1]"
 
 end
 
-
 procedure __literal."readLengthTo$system@String$@system@ref#1&system@IntNumber[2]"
 
   peeksi 1
@@ -2841,6 +2840,20 @@ labErr:
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw
+
+end
+
+procedure __message."__getFirstSignatureMember$system@Message[1]"
+
+  // extern elenart.LoadSignatureMember(message, 1)
+  peeksi   1
+  pushn    0
+  load
+  pushd
+  callextr extern : LoadSignatureMember 0302h
+  pushd
+  popa
+  quitn    1
 
 end
 
