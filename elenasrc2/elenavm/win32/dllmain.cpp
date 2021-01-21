@@ -436,6 +436,42 @@ EXTERN_DLL_EXPORT void* GCCollect(void* roots, size_t size)
    return SystemRoutineProvider::GCRoutine(((SystemEnv*)_SystemEnv)->Table, (GCRoot*)roots, size);
 }
 
+EXTERN_DLL_EXPORT void* GCCollectPerm(size_t size)
+{
+   return SystemRoutineProvider::GCRoutinePerm(((SystemEnv*)_SystemEnv)->Table, size, ((SystemEnv*)_SystemEnv)->GCPERMSize);
+}
+
+/// <summary>
+/// Creates a dynamic class inheriting the given VMT
+/// </summary>
+/// <returns>a reference to dynamically created VMT</returns>
+EXTERN_DLL_EXPORT void* Inherit(const char* name, void* classPtr, void* handler)
+{
+   return nullptr; // !! currently is not implemented
+
+   //void* basePtr = (void*)SystemRoutineProvider::GetParent(classPtr);
+   //size_t classLen = SystemRoutineProvider::GetLength(classPtr);
+   //size_t baseLen = SystemRoutineProvider::GetLength(basePtr);
+   //int flags = SystemRoutineProvider::GetFlags(classPtr);
+
+   //return (void*)_Instance->inherit((SystemEnv*)_SystemEnv, name, (VMTEntry*)classPtr, (VMTEntry*)basePtr,
+   //   classLen, baseLen, (pos_t*)&handler, 1, flags);
+}
+
+/// <summary>
+/// Returns the signature member type at the specified position
+/// </summary>
+/// <param name="message">A strong-typed message</param>
+/// <param name="index">A signature member index</param>
+/// <param name="output">Signature tyoe</param>
+/// <returns></returns>
+EXTERN_DLL_EXPORT void* LoadSignatureMember(void* message, int index)
+{
+   return nullptr; // !! currently is not implemented
+
+//   return (void*)_Instance->loadSignatureMember((mssg_t)message, index);
+}
+
 // --- initmachine ---
 
 void initMachine(path_t rootPath)

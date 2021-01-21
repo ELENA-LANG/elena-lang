@@ -131,7 +131,7 @@ public:
 
    vaddr_t loadAddressInfo(size_t retPoint, char* lineInfo, size_t length);
 
-   size_t loadClassName(SystemEnv* env, vaddr_t classAddress, char* buffer, size_t length);
+   size_t loadClassName(vaddr_t classAddress, char* buffer, size_t length);
    size_t loadSubjectName(ref_t subjectRef, char* buffer, size_t length);
    size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
 

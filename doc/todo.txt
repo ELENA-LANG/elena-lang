@@ -3,9 +3,6 @@ In development:
 ------         
 
   [development]
-    + Generic typecast handler #534
-
-    * fix script samples
     * current => master
 
     + #531 : Inhert should support only stateless interface type

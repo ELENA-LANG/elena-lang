@@ -2134,7 +2134,7 @@ public singleton nilValue
     }
     
     [info:"Returns nil<br/>Any typecasting message will be handled and nil value returned"]
-    generic() = nil;
+    cast generic() = nil;
 }
 
 // === Basic Factory symbols ==

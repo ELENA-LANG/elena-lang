@@ -182,7 +182,7 @@ vaddr_t ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t 
    return manager.readAddressInfo(reader, retPoint, &_loader, buffer, maxLength);
 }
 
-size_t ELENARTMachine :: loadClassName(SystemEnv* env, vaddr_t classAddress, char* buffer, size_t length)
+size_t ELENARTMachine :: loadClassName(vaddr_t classAddress, char* buffer, size_t length)
 {
    int packagePtr = *(int*)(classAddress - 24);
    int namePtr = *(int*)(classAddress - 20);

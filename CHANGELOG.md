@@ -11,6 +11,7 @@
   - #212 : GC optimization : mg -> yg collecting 
   - #532 : PERM Space 
   - #531 : Dynamic interface mixin 
+  - #534 : Generic typecast handler 
 - ELC
   - a warning shown when an object cannot be converted into another one
   - a warning shown when an object does not handle a message (for strong-typed ones)

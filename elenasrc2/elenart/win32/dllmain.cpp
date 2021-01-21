@@ -166,7 +166,7 @@ EXTERN_DLL_EXPORT int LoadAddressInfo(size_t retPoint, char* lineInfo, int lengt
 
 EXTERN_DLL_EXPORT int LoadClassName(void* object, char* buffer, int length)
 {
-   return _Instance->loadClassName((SystemEnv*)_SystemEnv, (size_t)object, buffer, length);
+   return _Instance->loadClassName((size_t)object, buffer, length);
 }
 
 EXTERN_DLL_EXPORT void* EvaluateTape(void* tape)
