@@ -4,11 +4,11 @@ In development:
 
   [development]
     * lib5_64 : try / catch
-    + dynamic bridge mixin
 
-    + new tutorial : multidispatching mixing objects
     * lib5_64 : get rid of temp_app module
     * test helloworld
+
+    + housekeeping - review pipeline
     * migrate all samples to win64
 
     * multi-theading

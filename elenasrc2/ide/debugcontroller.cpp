@@ -1255,10 +1255,20 @@ void DebugController::readParams(_DebuggerWatch* watch, size_t address, ident_t 
    else watch->write(this, address, name, "<nil>");
 }
 
+#ifdef _WIN64
+
+constexpr int FPOffset = 0xC;
+
+#else
+
+constexpr int FPOffset = 0x4;
+
+#endif
+
 inline int getDisp(DebugLineInfo* lineInfo, int index)
 {
    if (lineInfo[index + 1].symbol == dsFrameOffset) {
-      return lineInfo[index + 1].addresses.offset.disp + sizeof(uintptr_t);
+      return lineInfo[index + 1].addresses.offset.disp + FPOffset;
    }
    else return 0;
 }

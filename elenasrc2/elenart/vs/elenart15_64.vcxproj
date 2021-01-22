@@ -113,6 +113,7 @@
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\rtman.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
+    <ClCompile Include="..\..\engine\win64\pehelper.cpp" />
     <ClCompile Include="..\..\engine\win64\win64routines.cpp" />
     <ClCompile Include="..\elenartmachine.cpp" />
     <ClCompile Include="..\win64\dllmain.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\rtman.h" />
     <ClInclude Include="..\..\engine\section.h" />
+    <ClInclude Include="..\..\engine\win64\pehelper.h" />
     <ClInclude Include="..\elenartmachine.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

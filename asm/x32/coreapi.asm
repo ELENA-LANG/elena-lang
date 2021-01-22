@@ -6,8 +6,11 @@ define GET_COUNT         10020h
 
 define CORE_ET_TABLE     2000Bh
 
-define elSizeOffset      0004h
-define elVMTSizeOffset   0004h
+define elVMTSizeOffset    0004h
+
+define elSizeOffset       0004h
+define elVMTOffset        0008h 
+define elObjectOffset     0008h
 
 // ; --- API ---
 
@@ -4863,9 +4866,9 @@ end
 procedure coreapi'tempObject
 
   mov  eax, [esp+4]
-  mov  [eax-8], ebx
+  mov  [eax-elVMTOffset], ebx
   mov  [eax], edx
-  mov  [eax-4], 0800004h
+  mov  [eax-elSizeOffset], 0800004h
   ret
 
 end

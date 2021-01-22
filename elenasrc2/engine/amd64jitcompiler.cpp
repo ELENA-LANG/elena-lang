@@ -156,7 +156,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileCreateN, &compileNop, &compileIfR, &compileElseR, &compileIfN, &compileElseN, &compileInvokeVMT, &loadFunction,
 };
 
-constexpr int FPOffset = 8;
+constexpr int FPOffset = 0xC;
 
 // --- I64JITCompiler commands ---
 
@@ -547,7 +547,7 @@ void _ELENA_::loadVMTIndexOp(int opcode, I64JITScope& scope)
       scope.code->seek(position + relocation[1]);
 
       if (relocation[0] == -1) {
-         scope.code->writeDWord((scope.argument << 3) + 8);
+         scope.code->writeDWord((scope.argument << 4) + 8);
       }
       else writeCoreReference(scope, relocation[0], position, relocation[1], code);
 

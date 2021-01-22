@@ -206,11 +206,11 @@ size_t ELENARTMachine :: loadSubjectName(ref_t subjectRef, char* buffer, size_t 
    ImageSection messageSection;
    messageSection.init(_messageSection, 0x1000000); // !! dummy size
 
-   ref_t actionPtr = messageSection[subjectRef * 8];
+   ref_t actionPtr = messageSection[subjectRef * sizeof(uintptr_t) * 2];
 
    if (actionPtr == 0) {
       size_t used = length;
-      pos_t namePtr = messageSection[subjectRef * 8 + 4];
+      pos_t namePtr = messageSection[subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t)];
 
       MemoryReader reader(&messageSection);
       reader.seek(namePtr);

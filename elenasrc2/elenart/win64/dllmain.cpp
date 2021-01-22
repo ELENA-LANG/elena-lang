@@ -2,11 +2,11 @@
 // --------------------------------------------------------------------------
 #include "elenartmachine.h"
 #include <windows.h>
-//#include "pehelper.h"
+#include "pehelper.h"
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
-//#define CONFIG_PATH "elenart64.cfg"
+#define CONFIG_PATH "elenart64.cfg"
 
 using namespace _ELENA_;
 
@@ -218,20 +218,20 @@ void init(HMODULE hModule)
 
    _Instance = new ELENARTMachine(rootPath.c_str(), execPath.c_str());
 
-   //void* messageSection = nullptr;
-   //void* mattributeSection = nullptr;
-   //ELENARTMachine::ImageSection section;
-   //section.init((void*)0x400000, 0x1000);
+   void* messageSection = nullptr;
+   void* mattributeSection = nullptr;
+   ELENARTMachine::ImageSection section;
+   section.init((void*)0x400000, 0x1000);
 
-   //size_t ptr = 0;
-   //PEHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
-   //messageSection = (void*)ptr;
+   size_t ptr = 0;
+   PEHelper::seekSection(MemoryReader(&section), ".mdata", ptr);
+   messageSection = (void*)ptr;
 
-   //PEHelper::seekSection(MemoryReader(&section), ".adata", ptr);
-   //mattributeSection = (void*)ptr;
+   PEHelper::seekSection(MemoryReader(&section), ".adata", ptr);
+   mattributeSection = (void*)ptr;
 
-   //Path configPath(CONFIG_PATH);
-   //_Instance->init(messageSection, mattributeSection, configPath.c_str());
+   Path configPath(CONFIG_PATH);
+   _Instance->init(messageSection, mattributeSection, configPath.c_str());
 }
 
 // --- dllmain ---
