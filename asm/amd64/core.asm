@@ -427,6 +427,14 @@ inline % 0Fh
 
 end
 
+// ; open
+inline % 11h
+
+  push rbp
+  mov  rbp, rsp
+
+end
+
 // ; sub
 inline % 13h
 
@@ -1590,14 +1598,6 @@ inline %97h
 
   mov  rax, [rsp]                   
   mov [rbx + __arg1], rax
-
-end
-
-// ; open
-inline % 98h
-
-  push rbp
-  mov  rbp, rsp
 
 end
 

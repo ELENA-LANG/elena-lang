@@ -444,6 +444,14 @@ inline % 0Fh
 
 end
 
+// ; open
+inline % 11h
+
+  push ebp
+  mov  ebp, esp
+
+end
+
 // ; sub
 inline % 13h
 
@@ -1849,14 +1857,6 @@ inline %97h
 
   mov  eax, [esp]                   
   mov [ebx + __arg1], eax
-
-end
-
-// ; open
-inline % 98h
-
-  push ebp
-  mov  ebp, esp
 
 end
 
