@@ -17,7 +17,7 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", "coalesce", "peek", "snop", "pushverb", "loadverb", "throw",
    "mcount", "push", "pusha", "popa", "xnew", "storev", "bsredirect", "setv",
 
-   "not", OPCODE_UNKNOWN, OPCODE_UNKNOWN, "sub", "swapd", "close", "rexp", "quit",
+   "not", "open", OPCODE_UNKNOWN, "sub", "swapd", "close", "rexp", "quit",
    "get", "set", "swap", "mquit", "count", "unhook", "rsin", OPCODE_UNKNOWN,
 
    "rcos", "rarctan", "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",
@@ -42,7 +42,7 @@ const char* _fnOpcodes[256] =
    "rdivf", "rdivnf", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, "rintf", OPCODE_UNKNOWN,
 
    "dec", "geti", "restore", "peekr", "peekfi", "peeksi", "ifheap", "xseti",
-   "open", "quitn", "create", "fillr", "movf", "movsip", "movr", "movm",
+   OPCODE_UNKNOWN, "quitn", "create", "fillr", "movf", "movsip", "movr", "movm",
 
    "jump", "jumpvi", "callvi", "callr", "jumpi", "setframe", "hook", "address",
    "calli", OPCODE_UNKNOWN, "notless", "notgreater", "elsed", "if", "else", "ifcount",

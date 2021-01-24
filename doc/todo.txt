@@ -3,7 +3,14 @@ In development:
 ------         
 
   [development]
-    * lib5_64 : try / catch
+    * redesign open and reserve - open add only 4 / 8 byte, reserve add 8 + size / 16 + size
+    * get rid of lenof
+
+    * x86-64 : maintain 16 bit stack alignment
+    * compiler option : raw / managed stack alignment
+  
+
+    * lib5_64 : callstack.toPrintable
 
     * lib5_64 : get rid of temp_app module
     * test helloworld
@@ -19,11 +26,11 @@ In development:
 
     + #531 : Inhert should support only stateless interface type
 
+    * review setframe opcode - argument should be an index or absolute value?
     * test bsredirect, mindex
     * uncomment BREAK, EXPAND_HEAP, ALLOC, HOOK, GET_COUNT, CALC_SIZE, THREAD_WAIT, END_FRAME
     * amd64 : critical exception handler, critical exception handler refactoring
     * critical error handler should be moved to C code
-    * compiler option : stack data alignment - 4 or 8
     * move ELENARTMachine::inherit to 64bit
     * #206 - 64-bit architecture
 

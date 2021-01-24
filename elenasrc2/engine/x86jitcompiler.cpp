@@ -108,7 +108,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compileNop, &compileBreakpoint, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
    &compileDCopyCount, &loadOneByteOp, &compilePushA, &compilePopA, & loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &compileNot, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteOp, &compileQuit,
+   &compileNot, &compileOpen, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteOp, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop,
 
    &loadOneByteOp, &loadOneByteOp, &compilePushD, &compilePopD, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
@@ -133,13 +133,13 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &loadFOp, &loadFOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadFOp, &compileNop,
 
    &compileDec, &loadIndexOp, &compileRestore, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadIndexOp,
-   &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
+   &compileNop, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &compileSetFrame, &compileHook, &compileHook,
    &loadIndexOp, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileIfE, &compileElseE, &compileIfCount,
 
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
-   &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadSPOp, &loadNOp,
+   &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadSPOp, &compileReserve,
 
    &loadIndexOp, &compileACopyF, &compilePushF, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
    &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadNOp, &loadFOp, &loadNOp,
@@ -1261,22 +1261,6 @@ void _ELENA_::compileHook(int opcode, x86JITScope& scope)
    loadOneByteOp(opcode, scope);
 }
 
-void _ELENA_::compileOpen(int opcode, x86JITScope& scope)
-{
-   loadOneByteLOp(opcode, scope);
-
-   compileSetFrame(opcode, scope);
-}
-
-void _ELENA_::compileSetFrame(int, x86JITScope& scope)
-{
-   // include current frame and FrameHeader if required
-   if (scope.argument) {
-      scope.frameOffset = (scope.argument << 2) + 12;
-   }
-   else scope.frameOffset = 4;
-}
-
 void _ELENA_::compileQuit(int, x86JITScope& scope)
 {
    scope.code->writeByte(0xC3);
@@ -2036,6 +2020,28 @@ void _ELENA_ :: compileDShiftN(int op, x86JITScope& scope)
 void _ELENA_ :: compileRestore(int op, x86JITScope& scope)
 {
    scope.argument += 8; // include EIP & EBP 
+   loadNOp(op, scope);
+}
+
+void _ELENA_::compileOpen(int opcode, x86JITScope& scope)
+{
+   loadOneByteLOp(opcode, scope);
+
+   scope.frameOffset = 4;
+}
+
+void _ELENA_::compileSetFrame(int, x86JITScope& scope)
+{
+   scope.frameOffset = (scope.argument << 2) + 12;
+}
+
+void _ELENA_ :: compileReserve(int op, x86JITScope& scope)
+{
+   scope.argument = align(scope.argument, 4);
+
+   // include raw data frame header
+   scope.frameOffset += (scope.argument + 8);
+
    loadNOp(op, scope);
 }
 

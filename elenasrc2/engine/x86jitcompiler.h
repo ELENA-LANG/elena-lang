@@ -159,6 +159,7 @@ protected:
    friend void compileNot(int opcode, x86JITScope& scope);
    friend void compileMTRedirect(int op, x86JITScope& scope);
    friend void compileXRedirect(int op, x86JITScope& scope);
+   friend void compileReserve(int op, x86JITScope& scope);
    friend void compileRestore(int op, x86JITScope& scope);
    friend void compileSaveLen(int op, x86JITScope& scope);
 

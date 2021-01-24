@@ -20,7 +20,7 @@ procedure __object."#dispatch[1]"
 
   bsredirect  
 
-  open     6
+  open
   reserve  24
   pushf    -16
   pusha
@@ -109,7 +109,7 @@ procedure __object."setField$system@Object$system@IntNumber$system@Object[3]"
   quitn   3
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -132,7 +132,7 @@ procedure __object."getField$system@Object$system@IntNumber[2]"
   quitn   2
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -168,7 +168,7 @@ end
 procedure __object."__newProxy$system@Object$system@Object[2]"
 
   peeksi   1
-  open     1
+  open
   reserve  4
   xsavef   -4 1
   pushf    -4
@@ -334,7 +334,7 @@ procedure __literal."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
   quitn      3
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -343,7 +343,7 @@ end
 
 procedure __literal."add$system@String[2]"
 
-  open     3
+  open
   reserve  12
 
   len
@@ -428,7 +428,7 @@ end
 
 procedure __literal."insert$system@IntNumber$system@String[3]"
 
-  open     3
+  open
   reserve  12
 
   len
@@ -488,7 +488,7 @@ end
 
 procedure __literal."delete$system@IntNumber$system@IntNumber[3]"
 
-  open     3
+  open
   reserve  12
 
   // ; -4 - new size
@@ -686,7 +686,7 @@ procedure __wide."read$system@IntNumber$@system@ref#1&system@CharValue[3]"
   quitn      3
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -695,7 +695,7 @@ end
 
 procedure __wide."add$system@WideString[2]"
 
-  open     3
+  open 
   reserve  12
 
   len
@@ -782,7 +782,7 @@ end
 
 procedure __wide."insert$system@IntNumber$system@WideString[3]"
 
-  open     3
+  open  
   reserve  12
 
   len
@@ -844,7 +844,7 @@ end
 
 procedure __wide."delete$system@IntNumber$system@IntNumber[3]"
 
-  open     3
+  open
   reserve  12
 
   // ; -4 - new size
@@ -1238,7 +1238,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   quitn   3
   
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1265,7 +1265,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$s
   quitn 4
   
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1292,7 +1292,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   quitn   3
   
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1318,7 +1318,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   quitn 3
   
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1344,7 +1344,7 @@ procedure __bytearray."read$@system@Array#1&system@ByteNumber$system@IntNumber$@
   quitn 3
   
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1367,7 +1367,7 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1390,7 +1390,7 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1413,7 +1413,7 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1436,7 +1436,7 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1459,7 +1459,7 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1487,7 +1487,7 @@ procedure __bytearray."write$@system@Array#1&system@ByteNumber$system@IntNumber$
   quitn    4
 
 labErr:
-  open     0
+  open     
   pushr    class : system'InvalidArgumentException
   pushr    mssgconst : "new[1]"
   throw  
@@ -1524,7 +1524,7 @@ procedure __intarray."write$@system@Array#1&system@IntNumber$system@IntNumber$sy
   quitn  4
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1546,7 +1546,7 @@ procedure __chararray."write$@system@Array#1&system@CharValue$system@IntNumber$s
   quitn  4
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1568,7 +1568,7 @@ procedure __chararray."move$@system@Array#1&system@CharValue$system@IntNumber$sy
   quitn  4
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -1588,7 +1588,7 @@ procedure __intconvertor."convert$system@String$system@IntNumber$@system@ref#1&s
   quitn    3
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -1608,7 +1608,7 @@ procedure __intconvertor."convertUnsigned$system@String$system@IntNumber$@system
   quitn    3
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -1628,7 +1628,7 @@ procedure __intconvertor."convert$system@WideString$system@IntNumber$@system@ref
   quitn    3
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -1803,7 +1803,7 @@ end
 procedure __shortconvertor."convert$system@RealNumber$@system@ref#1&system@ShortNumber[2]"
 
   peeksi   1
-  open     1
+  open
   reserve  4
 
   rintf    4
@@ -1875,7 +1875,7 @@ labExit:
   quitn    3
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -1905,7 +1905,7 @@ labExit:
   quitn    3
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -2039,7 +2039,7 @@ end
 procedure __byteconvertor."convert$system@RealNumber$@system@ref#1&system@ByteNumber[2]"
 
   peeksi   1
-  open     1
+  open
   reserve  4
 
   rintf    4
@@ -2091,7 +2091,7 @@ labExit:
   quitn    3
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -2121,7 +2121,7 @@ labExit:
   quitn    3
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -2295,7 +2295,7 @@ procedure __longconvertor."convert$system@String$system@IntNumber$@system@ref#1&
   quitn    3
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -2314,7 +2314,7 @@ procedure __longconvertor."convert$system@WideString$system@IntNumber$@system@re
   quitn    3
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -2410,7 +2410,7 @@ procedure __realconvertor."convert$system@String$system@IntNumber$@system@ref#1&
   quitn    2
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -2428,7 +2428,7 @@ procedure __realconvertor."convert$system@WideString$system@IntNumber$@system@re
   quitn    2
 
 labErr:
-  open 0
+  open
   pushr class : system'FormatException
   pushr mssgconst : "new[1]"
   throw
@@ -2444,7 +2444,7 @@ procedure __charconvertor."convert$system@IntNumber$@system@ref#1&system@CharVal
   lessn labCopy 110000h
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw  
@@ -2499,7 +2499,7 @@ procedure __charconvertor."convert$system@IntNumber$system@String$@system@ref#1&
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw
@@ -2520,7 +2520,7 @@ procedure __charconvertor."convert$system@IntNumber$@system@Array#1&system@ByteN
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw
@@ -2541,7 +2541,7 @@ procedure __charconvertor."convert$system@IntNumber$@system@Array#1&system@Short
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw
@@ -2562,7 +2562,7 @@ procedure __charconvertor."convert$system@IntNumber$system@WideString$@system@re
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw
@@ -2578,7 +2578,7 @@ procedure __charconvertor."convert$system@ByteNumber$@system@ref#1&system@CharVa
   lessn labCopy 080h
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw
@@ -2600,7 +2600,7 @@ procedure __charconvertor."convert$system@ShortNumber$@system@ref#1&system@CharV
   lessn labCopy 010000h
 
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw
@@ -2646,7 +2646,7 @@ end
 
 procedure __exception."on[2]"
 
-  open   0
+  open 
   hook   labNotFound
   pusha
   peekfi -2
@@ -2799,7 +2799,7 @@ labDefault:
   popd
   bsredirect 
 
-  open     6
+  open
   reserve  24
   pushf    -16
   pusha
@@ -2836,7 +2836,7 @@ procedure __message."load$system@Message$system@String[2]"
   quitn 2
  
 labErr:
-  open 0
+  open
   pushr class : system'InvalidArgumentException
   pushr mssgconst : "new[1]"
   throw
@@ -2877,7 +2877,7 @@ labDefault:
   popd
   bsredirect 
 
-  open     6
+  open
   reserve  24
   pushf    -16
   pusha
@@ -2905,7 +2905,7 @@ procedure __signature."load$system@MessageName$system@String[2]"
  
 labErr:
   peeksi   2
-  open 0
+  open
   pusha
   pushr class : system'MessageLoaderException
   pushr mssgconst : "new[2]"
@@ -2983,7 +2983,7 @@ labDefault:
   popd
   bsredirect 
 
-  open     6
+  open 
   reserve  24
   pushf    -16
   pusha
@@ -3023,7 +3023,7 @@ labDefault2:
   peeksi     1
   bsredirect 
 
-  open     6
+  open
   reserve  24
   pushf    -16
   pusha
@@ -3055,7 +3055,7 @@ procedure __vextdispatcher."#dispatch[1]"
 labBoxing:
 
   loadsi     0
-  open       0
+  open
   pusha      
   mcount     
   pushn      0FFFFFFFFh
@@ -3105,7 +3105,7 @@ end
 
 procedure __symbol."#dispatch[1]"
 
-  open     1
+  open 
   reserve  4
   savesi   2
   calli    0
@@ -3131,7 +3131,7 @@ procedure __symbol."load$system@Symbol$system@String[2]"
  
 labErr:
   peeksi  2
-  open    0
+  open 
   pusha
   pushr   class : system'SymbolLoaderException
   pushr   mssgconst : "new[2]"
@@ -3177,7 +3177,7 @@ procedure __class."load$system@ClassReference$system@String[2]"
  
 labErr:
   peeksi   2
-  open     0
+  open
   pusha
   pushr class : system'TypeLoaderException
   pushr mssgconst : "new[2]"
@@ -3238,7 +3238,7 @@ labEnd:
   popd
   popa
 
-  open     6
+  open
   reserve  24
   pushf    -16
   pusha
@@ -3278,7 +3278,7 @@ procedure __array."at$system@IntNumber[2]"
   quitn 2
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -3303,7 +3303,7 @@ procedure __array."setAt$system@IntNumber$system@Object[3]"
   quitn 3
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -3348,7 +3348,7 @@ procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber
   quitn 6
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -3370,7 +3370,7 @@ procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber
   quitn 6
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -3392,7 +3392,7 @@ procedure __utf8encoder."convert$system@IntNumber$@system@ref#1&system@IntNumber
   quitn 6
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -3429,7 +3429,7 @@ procedure __utf16encoder."convert$system@IntNumber$@system@ref#1&system@IntNumbe
   quitn 6
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -3451,7 +3451,7 @@ procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$@system@Arra
   quitn 6
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -3473,7 +3473,7 @@ procedure __utf16encoder."convert$system@IntNumber$@system@ref#1&system@IntNumbe
   quitn 6
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -3495,7 +3495,7 @@ procedure __utf16encoder."convert$system@IntNumber$system@IntNumber$@system@Arra
   quitn 6
 
 labErr:
-  open 0
+  open
   pushr class : system'OutOfRangeException
   pushr mssgconst : "new[1]"
   throw
@@ -3665,7 +3665,7 @@ procedure __event."#dispatch[1]"
 
   bsredirect  
 
-  open     2
+  open
   reserve  8
 
   savef    -8
@@ -3883,7 +3883,7 @@ procedure __closuretape."#dispatch[1]"
   popd
   mcount
 
-  open    2
+  open 
   reserve 8
   pusha
   
@@ -3935,7 +3935,7 @@ labDefault:
   popd
   bsredirect  
 
-  open     6
+  open
   reserve  24
   pushf    -16
   pusha
@@ -3952,7 +3952,7 @@ end
 
 procedure __group."#dispatch[1]"
 
-  open     2
+  open
   reserve  8
 
   savef    -12
@@ -4016,7 +4016,7 @@ labContinueError:
 labEnd:
   unhook
 
-  open     6
+  open
   reserve  24
   pushf    -16
   pusha
@@ -4070,7 +4070,7 @@ labEnd:
   loadsi   1
   freei    3
 
-  open     6
+  open
   reserve  24
   pushf    -16
   pusha
@@ -4087,7 +4087,7 @@ end
 
 procedure __tape."build$@system@Array#1&system@ByteNumber$system@IntNumber[3]"
 
-  open     7
+  open
   reserve  28
   pusha    
   // int i := 0;
@@ -4201,7 +4201,7 @@ procedure invokerError
   movm     mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
   callrm   system'text'UTF8Encoding mssgconst : "toString<system'IntNumber,system'IntNumber,'$auto'system@Array#1&system@ByteNumber>[4]"
 
-  open     0  
+  open 
   pusha  
   pushr    class : system'TypeLoaderException
   pushr    mssgconst : "new[2]"
@@ -4689,7 +4689,7 @@ labEnd:
   quitn    4 
   
 labCreate:
-  open     0
+  open
   reserve  0  // ; open new frame
   movsip   0
   pusha
@@ -4728,7 +4728,7 @@ labCreate:
   quitn    4
   
 labDestroy:
-  open     0
+  open
   reserve  0  // ; open new frame
   movsip   0
   pusha
@@ -4764,7 +4764,7 @@ labDestroy:
   quitn    4
   
 labCommand:
-  open     0
+  open
   reserve  0  // ; open new frame
   movsip   0
   pusha
@@ -4802,7 +4802,7 @@ labCommand:
   quitn    4
   
 labCursor:
-  open     0
+  open
   reserve  0  // ; open new frame
   movsip   0
   pusha
@@ -4840,7 +4840,7 @@ labCursor:
   quitn    4
   
 labPaint:
-  open     0
+  open
   reserve  0  // ; open new frame
   movsip   0
   pusha
@@ -4876,7 +4876,7 @@ labPaint:
   quitn    4
   
 labSize:
-  open     0
+  open
   reserve  0  // ; open new frame
   movsip   0
   pusha
@@ -4961,7 +4961,7 @@ end
 
 procedure critical_exception_handler
 
-  open 0
+  open
   ifn   labAccessViolation EXCEPTION_ACCESS_VIOLATION
   ifn   labDivisionByZero ELENA_ERR_DIVIDE_BY_ZERO
   ifn   labOutOfMemory ELENA_ERR_OUT_OF_MEMORY
@@ -4992,7 +4992,7 @@ symbol vm_sta_start
   pushsip  0
   callextr extern : PrepareEM 0301h
 
-  open     lenof ProgramHeader
+  open
   reserve  sizeof ProgramHeader
 
   pushsip  -2
@@ -5019,7 +5019,7 @@ symbol mta_start
   pushsip  0
   callextr extern : PrepareEM 0301h
 
-  open    lenof ProgramHeader
+  open
   reserve sizeof ProgramHeader
 
   pushsip  -2
@@ -5045,7 +5045,7 @@ symbol sta_start
   pushsip  0
   callextr extern : PrepareEM 0301h
 
-  open    lenof ProgramHeader
+  open
   reserve sizeof ProgramHeader
 
   pushsip  -2
@@ -5069,7 +5069,7 @@ end
 
 procedure thread_start
 
-  open     lenof ProgramHeader
+  open
   reserve  sizeof ProgramHeader
 
   pushsip  -2
@@ -5106,7 +5106,7 @@ procedure threadEntry
   quit
 
 labError:
-  open 0
+  open
   pushr class : system'NotSupportedException
   pushr mssgconst : "new[1]"
   throw

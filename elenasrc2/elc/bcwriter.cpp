@@ -195,7 +195,7 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, mssg_t message, ref_t so
    if (withNewFrame) {
       if (reserved > 0) {
          // to include new frame header
-         tape.write(bcOpen, reserved); 
+         tape.write(bcOpen); 
          tape.write(bcReserve, reserved << 2);   // NOTE : converting to actual value
       }
       else tape.write(bcOpen);
@@ -516,7 +516,7 @@ void ByteCodeWriter :: declareAlt(CommandTape& tape)
 
 void ByteCodeWriter :: openFrame(CommandTape& tape, int reserved)
 {
-   tape.write(bcOpen, reserved);
+   tape.write(bcOpen);
    tape.write(bcReserve, reserved << 2); // NOTE : converting to actual value
 }
 
@@ -526,7 +526,7 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, 
    //   pusha
    if (reserved > 0) {
       // to include new frame header
-      tape.write(bcOpen, reserved);
+      tape.write(bcOpen);
       tape.write(bcReserve, reserved << 2); // NOTE : converting to actual value
    }
    else tape.write(bcOpen);
@@ -1579,8 +1579,8 @@ void ByteCodeWriter :: writeProcedure(ByteCodeIterator& it, Scope& scope)
                writeInfo(scope, dsStructInfo, (const char*)_strings.get((*it).Argument()));
             }
             break;
-         case bcOpen:
-            frameLevel = (*it).argument;
+         case bcReserve:
+            frameLevel = (*it).argument >> 2;
             (*it).save(scope.code);
             break;
          case bcIfR:

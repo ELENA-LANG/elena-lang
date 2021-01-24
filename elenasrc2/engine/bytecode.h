@@ -33,6 +33,7 @@ enum ByteCode
    bcSetV            = 0x0F,
 
    bcNot             = 0x10,
+   bcOpen            = 0x11,
    bcSub             = 0x13,
    bcSwapD           = 0x14,
    bcClose           = 0x15,
@@ -144,7 +145,6 @@ enum ByteCode
    bcPeekSI          = 0x95,
    bcIfHeap          = 0x96,
    bcXSetI           = 0x97,
-   bcOpen            = 0x98,
    bcQuitN           = 0x99,
    bcCreate          = 0x9A,
    bcFillR           = 0x9B,

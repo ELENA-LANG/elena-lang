@@ -110,7 +110,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileNop, &compileBreakpoint, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
    &compileDCopyCount, &loadOneByteOp, &compilePushA, &compilePopA, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &compileNot, &compileNop, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteOp, &compileQuit,
+   &compileNot, &compileOpen, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteOp, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop,
 
    &loadOneByteOp, &loadOneByteOp, &compilePushD, &compilePopD, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
@@ -135,7 +135,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &loadFOp, &loadFOp, &compileNop, &compileNop, &compileNop, &compileNop, &loadFOp, &compileNop,
 
    &compileDec, &loadIndexOp, &compileRestore, &compileALoadR, &loadFPOp, &loadIndexOp, &compileIfHeap, &loadIndexOp,
-   &compileOpen, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
+   &compileNop, &compileQuitN, &loadROp, &loadROp, &compileACopyF, &compileACopyS, &compileSetR, &compileMCopy,
 
    &compileJump, &loadVMTIndexOp, &loadVMTIndexOp, &compileCallR, &compileJumpN, &compileSetFrame, &compileHook, &compileHook,
    &loadIndexOp, &compileNop, &compileNotLessE, &compileNotGreaterE, &compileElseD, &compileIfE, &compileElseE, &compileIfCount,
@@ -1305,22 +1305,6 @@ void _ELENA_::compileHook(int opcode, I64JITScope& scope)
    loadOneByteOp(opcode, scope);
 }
 
-void _ELENA_::compileOpen(int opcode, I64JITScope& scope)
-{
-   loadOneByteLOp(opcode, scope);
-
-   compileSetFrame(opcode, scope);
-}
-
-void _ELENA_::compileSetFrame(int, I64JITScope& scope)
-{
-   // include current frame and FrameHeader if required
-   if (scope.argument) {
-      scope.frameOffset = align((scope.argument << 2) + 24, 8);
-   }
-   else scope.frameOffset = 8;
-}
-
 void _ELENA_::compileQuit(int, I64JITScope& scope)
 {
    scope.code->writeByte(0xC3);
@@ -2027,9 +2011,24 @@ void _ELENA_::compileRestore(int op, I64JITScope& scope)
    loadNOp(op, scope);
 }
 
+void _ELENA_::compileOpen(int opcode, I64JITScope& scope)
+{
+   loadOneByteLOp(opcode, scope);
+
+   scope.frameOffset = 8;
+}
+
+void _ELENA_::compileSetFrame(int, I64JITScope& scope)
+{
+   scope.frameOffset = align((scope.argument << 2) + 24, 8);
+}
+
 void _ELENA_::compileReserve(int op, I64JITScope& scope)
 {
    scope.argument = align(scope.argument, 8);
+
+   // include raw data frame header
+   scope.frameOffset += align(scope.argument + 16, 8);
 
    loadNOp(op, scope);
 }
