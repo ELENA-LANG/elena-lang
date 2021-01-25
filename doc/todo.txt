@@ -3,14 +3,12 @@ In development:
 ------         
 
   [development]
-    * compiler option : raw stack alignment
-  
-
-    * lib5_64 : callstack.toPrintable
+    * system_tests fails
 
     * lib5_64 : get rid of temp_app module
     * test helloworld
 
+    + compiler option : raw stack alignment  
     + housekeeping - review pipeline
     * migrate all samples to win64
 
@@ -113,6 +111,7 @@ In development:
     * [support ELENA 3.x syntax]
     * get rid of EXPAND_HEAP in core (after retiring core GC routines)
     * test why analog example need large stack size
+    + optimization : merge several push 0, into single operation
 
   [documentation]
     * docs

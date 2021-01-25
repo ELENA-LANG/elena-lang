@@ -522,7 +522,7 @@ procedure coreapi'tempObject
 
   mov  rax, [rsp+8]
   mov  [rax-elVMTOffset], rbx
-  mov  dword ptr [rax], edx
+  mov  qword ptr [rax], rdx
   mov  dword ptr [rax-elSizeOffset], 40000008h
   ret
 

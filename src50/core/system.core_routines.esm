@@ -14,6 +14,12 @@ define EXCEPTION_ACCESS_VIOLATION  101h
 define ELENA_ERR_DIVIDE_BY_ZERO    102h
 define ELENA_ERR_OUT_OF_MEMORY     103h
 
+// ; NOTE : __ indicates platform dependant constant!!
+define __rsrv_object_offset32        12      
+define __rsrv_object_offset64        20
+define __page_size32                 16
+define __page_size64                 32
+
 // ; external methods
 
 procedure __object."#dispatch[1]"
@@ -21,10 +27,10 @@ procedure __object."#dispatch[1]"
   bsredirect  
 
   open
-  reserve  24
-  pushf    -16
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
   pusha
-  pushf    -16
+  pushf    -__rsrv_object_offset
   movr     class : system'Message
   callextr api : tempObject 1 
   movr     class : system'MethodNotFoundException

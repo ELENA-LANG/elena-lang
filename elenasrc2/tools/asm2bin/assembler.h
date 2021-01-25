@@ -166,8 +166,7 @@ struct TokenInfo
             if (postfix.compare("64")) {
                return align(SizeOfExceptionStruct64, 8);
             }
-            else return align(sizeof(ProgramHeader), 4);
-            
+            else return align(sizeof(ProgramHeader), 4);            
          }
          else raiseErr("Invalid number (%d)\n");
       }

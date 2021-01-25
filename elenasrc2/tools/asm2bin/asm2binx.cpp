@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
       return 0;
    }
    _ELENA_::Path target;
-   _ELENA_::IdentifierString postfix;
+   _ELENA_::IdentifierString postfix("32");
 
    bool amd64Mode = false;
 

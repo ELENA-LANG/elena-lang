@@ -791,8 +791,19 @@ void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
          if (name[0]=='\'')
             constants.erase(name);
 
-			if (!constants.add(name, value, true))
-				token.raiseErr("Constant already exists (%d)\n");
+         // COMPILER MAGIC : check if it is platform dependant constant
+         bool skip = false;
+         if (name.ident().startsWith("__")) {
+            if (name.ident().endsWith(postfix.c_str())) {
+               name.truncate(name.Length() - getlength(postfix));
+            }
+            else skip = true;
+         }
+
+         if (!skip) {
+            if (!constants.add(name, value, true))
+               token.raiseErr("Constant already exists (%d)\n");
+         }
 
 			token.read();
 		}
@@ -817,4 +828,9 @@ void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
 
    FileWriter writer(outputPath, feRaw, false);
    binary.save(writer);
+}
+
+void ECodesAssembler :: loadDefaultConstants()
+{
+
 }

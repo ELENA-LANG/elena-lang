@@ -97,12 +97,16 @@ class ECodesAssembler : public Assembler
 
    void compileProcedure(TokenInfo& token, _Module* binary, bool inlineMode, bool aligned, int mask);
 
+   void loadDefaultConstants();
+
 public:
 	virtual void compile(TextReader* reader, path_t outputPath);
 
 	ECodesAssembler(ident_t postfix)
 	{
       this->postfix = postfix;
+
+      loadDefaultConstants();
 	}
 	virtual ~ECodesAssembler() {}
 };
