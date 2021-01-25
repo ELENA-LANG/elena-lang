@@ -20,6 +20,9 @@ define __rsrv_object_offset64        20
 define __page_size32                 16
 define __page_size64                 32
 
+define __temp_index32                4      
+define __temp_index64                4      
+
 // ; external methods
 
 procedure __object."#dispatch[1]"
@@ -2676,7 +2679,7 @@ labNotFound:
   restore 4
 
   close
-  pushsi 10
+  pushsi __temp_index
 
 labContinueError:
 
@@ -2806,10 +2809,10 @@ labDefault:
   bsredirect 
 
   open
-  reserve  24
-  pushf    -16
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
   pusha
-  pushf    -16
+  pushf    -__rsrv_object_offset
   movr     class : system'Message
   callextr api : tempObject 1 
   movr     class : system'MethodNotFoundException
@@ -2884,10 +2887,10 @@ labDefault:
   bsredirect 
 
   open
-  reserve  24
-  pushf    -16
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
   pusha
-  pushf    -16
+  pushf    -__rsrv_object_offset
   movr     class : system'Message
   callextr api : tempObject 1 
   movr     class : system'MethodNotFoundException
@@ -2990,10 +2993,10 @@ labDefault:
   bsredirect 
 
   open 
-  reserve  24
-  pushf    -16
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
   pusha
-  pushf    -16
+  pushf    -__rsrv_object_offset
   movr     class : system'Message
   callextr api : tempObject 1 
   movr     class : system'MethodNotFoundException
@@ -3030,10 +3033,10 @@ labDefault2:
   bsredirect 
 
   open
-  reserve  24
-  pushf    -16
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
   pusha
-  pushf    -16
+  pushf    -__rsrv_object_offset
   movr     class : system'Message
   callextr api : tempObject 1 
   movr     class : system'MethodNotFoundException
@@ -3245,10 +3248,10 @@ labEnd:
   popa
 
   open
-  reserve  24
-  pushf    -16
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
   pusha
-  pushf    -16
+  pushf    -__rsrv_object_offset
   movr     class : system'Message
   callextr api : tempObject 1 
   movr     class : system'MethodNotFoundException
@@ -3942,10 +3945,10 @@ labDefault:
   bsredirect  
 
   open
-  reserve  24
-  pushf    -16
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
   pusha
-  pushf    -16
+  pushf    -__rsrv_object_offset
   movr     class : system'Message
   callextr api : tempObject 1 
   movr     class : system'MethodNotFoundException
@@ -4023,10 +4026,10 @@ labEnd:
   unhook
 
   open
-  reserve  24
-  pushf    -16
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
   pusha
-  pushf    -16
+  pushf    -__rsrv_object_offset
   movr     class : system'Message
   callextr api : tempObject 1 
   movr     class : system'MethodNotFoundException
@@ -4077,10 +4080,10 @@ labEnd:
   freei    3
 
   open
-  reserve  24
-  pushf    -16
+  reserve  __page_size
+  pushf    -__rsrv_object_offset
   pusha
-  pushf    -16
+  pushf    -__rsrv_object_offset
   movr     class : system'Message
   callextr api : tempObject 1 
   movr     class : system'MethodNotFoundException

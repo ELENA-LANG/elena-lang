@@ -3,8 +3,6 @@ In development:
 ------         
 
   [development]
-    * system_tests fails
-
     * lib5_64 : get rid of temp_app module
     * test helloworld
 
