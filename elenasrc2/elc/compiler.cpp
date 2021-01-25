@@ -1209,6 +1209,8 @@ Compiler :: Compiler(_CompilerLogic* logic)
    _optFlag = 0;
    _autoSystemImport = false;
    _dynamicDispatching = true; // !! temporal
+   _stackEvenMode = false;
+   _reservedAling = 4;
 
    this->_logic = logic;
 
@@ -9489,7 +9491,7 @@ void Compiler :: generateClassImplementation(SNode node, ClassScope& scope)
 
    CommandTape tape;
    _writer.generateClass(*scope.moduleScope, tape, node, scope.reference, sourcePathRef,
-      scope.classClassMode ? isClassClassMethod : isClassMethod);
+      scope.classClassMode ? isClassClassMethod : isClassMethod, _stackEvenMode);
 
    // optimize
    optimizeTape(tape);

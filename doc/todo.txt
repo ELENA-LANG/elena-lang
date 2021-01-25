@@ -3,11 +3,7 @@ In development:
 ------         
 
   [development]
-    * redesign open and reserve - open add only 4 / 8 byte, reserve add 8 + size / 16 + size
-    * get rid of lenof
-
-    * x86-64 : maintain 16 bit stack alignment
-    * compiler option : raw / managed stack alignment
+    * compiler option : raw stack alignment
   
 
     * lib5_64 : callstack.toPrintable
@@ -19,6 +15,7 @@ In development:
     * migrate all samples to win64
 
     * multi-theading
+    * thread - make sure stack is correctly aligned to 16
 
     * x86-64 YG GC : copy lock byte as well
 
@@ -33,7 +30,6 @@ In development:
     * critical error handler should be moved to C code
     * move ELENARTMachine::inherit to 64bit
     * #206 - 64-bit architecture
-
 
     * test elenavm critical handler
     * test : string insert / delete

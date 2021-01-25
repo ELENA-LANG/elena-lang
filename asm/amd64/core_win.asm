@@ -1,3 +1,9 @@
+// !! NOTE : ELENA 64 will not maintain 16 byte stack alignment due to the current call conventions 
+//           and some language features (like a command tape). 
+//           The alignment will be maintained only for external operations
+
+// !! NOTE : R15 register must be preserved
+
 // --- Predefined References  --
 define GC_ALLOC	            10001h
 define HOOK                 10010h

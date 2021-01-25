@@ -4989,17 +4989,18 @@ end
 
 symbol vm_sta_start
 
-  pushsip  0
-  callextr extern : PrepareEM 0301h
-
   open
   reserve  sizeof ProgramHeader
 
-  pushsip  -2
+  pushfip  -1
+  callextr extern : PrepareEM 0301h
+
+  pushn    0  // ; add dumy value to maintain 16 byte alignment
+
+  pushsip  -3
   callextr api : initProcess 1
 
   pushr    rdata : "$elena'@tapekey"
-//  pushr    api : seh_handler
   pushr    api : veh_handler
   pushr    api : default_handler
   alloci   1
@@ -5016,17 +5017,18 @@ end
 
 symbol mta_start
 
-  pushsip  0
+  open
+  reserve  sizeof ProgramHeader
+
+  pushfip  -1
   callextr extern : PrepareEM 0301h
 
-  open
-  reserve sizeof ProgramHeader
+  pushn    0  // ; add dumy value to maintain 16 byte alignment
 
-  pushsip  -2
+  pushsip  -3
   callextr api : initProcess 1
 
   pushr    entry : "$forwards'$program"
-//  pushr    api : seh_handler
   pushr    api : veh_handler
   pushr    api : default_handler
   alloci   1
@@ -5042,17 +5044,18 @@ end
 
 symbol sta_start
 
-  pushsip  0
+  open
+  reserve  sizeof ProgramHeader
+
+  pushfip  -1
   callextr extern : PrepareEM 0301h
 
-  open
-  reserve sizeof ProgramHeader
+  pushn    0  // ; add dumy value to maintain 16 byte alignment
 
-  pushsip  -2
+  pushsip  -3
   callextr api : initProcess 1
 
   pushr    entry : "$forwards'$program"
-//  pushr    api : seh_handler
   pushr    api : veh_handler
   pushr    api : default_handler
   alloci   1

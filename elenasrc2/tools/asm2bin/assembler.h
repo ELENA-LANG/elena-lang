@@ -171,17 +171,6 @@ struct TokenInfo
          }
          else raiseErr("Invalid number (%d)\n");
       }
-      if (check("lenof")) {
-         read();
-         if (check("ProgramHeader")) {
-            if (postfix.compare("64")) {
-               return align(SizeOfExceptionStruct64, 8) >> 3;
-            }
-            else return align(sizeof(ProgramHeader), 4) >> 2;
-
-         }
-         else raiseErr("Invalid number (%d)\n");
-      }
       else {
          if (check("-")) {
             negative = true;

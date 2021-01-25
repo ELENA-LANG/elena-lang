@@ -1,3 +1,5 @@
+// !! NOTE : R15 register must be preserved
+
 // Object header fields
 define elSizeOffset          0004h
 define elVMTOffset           0010h 

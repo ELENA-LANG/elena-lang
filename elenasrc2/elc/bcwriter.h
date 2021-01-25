@@ -93,6 +93,7 @@ class ByteCodeWriter
    {
       RegScope acc;
       bool     debugBlockStarted;
+      bool     stackEvenMode;
 
       void clear()
       {
@@ -102,6 +103,7 @@ class ByteCodeWriter
       FlowScope()
       {
          debugBlockStarted = false;
+         stackEvenMode = false;
       }
    };
 
@@ -154,7 +156,7 @@ class ByteCodeWriter
       bool withPresavedMessage, bool withNewFrame = true);
    //void declareExternalBlock(CommandTape& tape);
    void excludeFrame(CommandTape& tape);
-   void includeFrame(CommandTape& tape);
+   void includeFrame(CommandTape& tape, bool withThreadSafeNop);
 //   void declareVariable(CommandTape& tape, int value);
    void allocateStack(CommandTape& tape, int count);
    int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
@@ -322,7 +324,7 @@ class ByteCodeWriter
    void saveObject(CommandTape& tape, SNode node);
 //   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal, int mode);
 
-   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode);
 //   void unboxCallParameters(CommandTape& tape, SyntaxTree::Node node);
 //   void unboxCallParameter(CommandTape& tape, SNode current);
 
@@ -395,7 +397,7 @@ class ByteCodeWriter
    void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode);
    void generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
-   void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef);
+   void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef, bool extStackEvenMode);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
 
    void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
@@ -406,7 +408,8 @@ public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
    int writeString(ident_t path);
 
-   void generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, bool(*cond)(LexicalType));
+   void generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, 
+      bool(*cond)(LexicalType), bool extStackEvenMode);
    void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
    void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);

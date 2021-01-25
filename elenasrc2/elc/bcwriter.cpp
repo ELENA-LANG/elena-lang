@@ -223,10 +223,11 @@ void ByteCodeWriter :: excludeFrame(CommandTape& tape)
    tape.write(bcExclude);
 }
 
-void ByteCodeWriter :: includeFrame(CommandTape& tape)
+void ByteCodeWriter :: includeFrame(CommandTape& tape, bool withThreadSafeNop)
 {
    tape.write(bcInclude);
-   tape.write(bcSNop);
+   if (withThreadSafeNop)
+      tape.write(bcSNop);
 }
 
 void ByteCodeWriter :: declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className)
@@ -3070,7 +3071,7 @@ void ByteCodeWriter :: generateNilOperation(CommandTape& tape, SyntaxTree::Node 
    else throw new InternalError("Not yet implemented"); // temporal
 }
 
-int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode)
 {
    int paramCount = 0;
 
@@ -3079,7 +3080,8 @@ int ByteCodeWriter :: saveExternalParameters(CommandTape& tape, SyntaxTree::Node
    SNode current = node.lastChild();
    while (current != lxNone) {
       if (test(current.type, lxObjectMask)) {
-         generateObject(tape, current, scope, STACKOP_MODE);
+         if (!idleMode)
+            generateObject(tape, current, scope, STACKOP_MODE);
 
          paramCount++;
       }
@@ -3095,8 +3097,20 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowS
    bool apiCall = (node == lxCoreAPICall);
    bool cleaned = (node == lxStdExternalCall);
 
+   int paramCount = 0;
+   bool evenMode = false;
+   if (!apiCall && scope.stackEvenMode) {
+      paramCount = saveExternalParameters(tape, node, scope, true);
+      // HOTFIX : for WIN64, first four arguments are passed in registers
+      //          and 0x20 is reserved 
+      if (paramCount > 4 && test(paramCount, 1)) {
+         evenMode = true;
+         tape.write(bcAllocI, 1);
+      }
+   }
+
    // save function parameters
-   int paramCount = saveExternalParameters(tape, node, scope);
+   paramCount = saveExternalParameters(tape, node, scope, false);
 
    // call the function
    if (apiCall) {
@@ -3111,6 +3125,9 @@ void ByteCodeWriter :: generateExternalCall(CommandTape& tape, SNode node, FlowS
    else {
       callExternal(tape, node.argument, paramCount, !cleaned);
    }
+
+   if (evenMode)
+      tape.write(bcFreeI, 1);
 }
 
 void ByteCodeWriter :: generateCall(CommandTape& tape, SNode callNode)
@@ -3860,7 +3877,7 @@ void ByteCodeWriter :: generateExternFrame(CommandTape& tape, SyntaxTree::Node n
 
    generateCodeBlock(tape, node, scope);
 
-   includeFrame(tape);
+   includeFrame(tape, true);
 }
 
 void ByteCodeWriter :: generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
@@ -4959,13 +4976,14 @@ void ByteCodeWriter :: generateYieldReturn(CommandTape& tape, SyntaxTree::Node n
    tape.setLabel();
 }
 
-void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef)
+void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef, bool extStackEvenMode)
 {
    FlowScope scope;
    bool open = false;
    bool withNewFrame = false;
    bool exit = false;
    bool exitLabel = true;
+   scope.stackEvenMode = extStackEvenMode;
 
    int argCount = node.findChild(lxArgCount).argument;
    int reserved = node.findChild(lxReserved).argument;
@@ -5068,7 +5086,8 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
    else endIdleMethod(tape);
 }
 
-void ByteCodeWriter :: generateClass(_ModuleScope&, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef, bool(*cond)(LexicalType))
+void ByteCodeWriter :: generateClass(_ModuleScope&, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathRef, 
+   bool(*cond)(LexicalType), bool stackEvenMode)
 {
 #ifdef FULL_OUTOUT_INFO
    // info
@@ -5086,7 +5105,7 @@ void ByteCodeWriter :: generateClass(_ModuleScope&, CommandTape& tape, SNode roo
          scope.printMessageInfo("method %s", current.argument);
 #endif // FULL_OUTOUT_INFO
 
-         generateMethod(tape, current, sourcePathRef);
+         generateMethod(tape, current, sourcePathRef, stackEvenMode);
       }
       current = current.nextNode();
    }

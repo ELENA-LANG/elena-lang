@@ -6,6 +6,12 @@
 //                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
+// !! NOTE : ELENA 64 will not maintain 16 byte stack alignment due to the current call conventions 
+//           and some language features (like a command tape). 
+//           The alignment will be maintained only for external operations (inside exclude / include brackets)
+
+// !! NOTE : R15 register must be preserved
+
 #include "elena.h"
 // --------------------------------------------------------------------------
 #include "amd64jitcompiler.h"

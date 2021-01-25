@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerH
@@ -132,7 +132,6 @@ public:
       okOuterSelf,                    // param - field offset, extraparam - outer field offset
 //      okOuterStaticField,             // param - field offset, extraparam - outer field offset
 //      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
-////////      okCurrent,                      // param - stack offset
       okLocal,                        // param - local / out parameter offset, extraparam : class reference
       okParam,                        // param - parameter offset, extraparam = class reference
       okParamField,
@@ -142,7 +141,6 @@ public:
       okSuper,
       okLocalAddress,                 // param - local offset
       okParams,                       // param - local offset
-//////      okBlockLocal,                   // param - local offset
       okConstantRole,                 // param - overridden message, reference - role reference
       okExplicitConstant,             // param - reference, extraparam - subject
       okExtension,
@@ -964,8 +962,10 @@ private:
    int               _optFlag;
    bool              _autoSystemImport;
    bool              _dynamicDispatching;
+   bool              _stackEvenMode;
    TransformTape     _rules;
    SyntaxTrie        _sourceRules;
+   int               _reservedAling;
 
    // optmimization routines
    bool applyRules(CommandTape& tape);
@@ -1351,6 +1351,11 @@ public:
    void turnOnOptimiation(int level)
    {
       _optFlag |= level;
+   }
+
+   void turnOnEvenStack()
+   {
+      _stackEvenMode = true;
    }
 
    void declareModuleIdentifiers(SyntaxTree& tree, _ModuleScope& scope);

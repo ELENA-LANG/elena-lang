@@ -243,6 +243,8 @@ void Project :: loadConfig(_ConfigFile& config, path_t configPath)
 
    // load compiler engine options
    loadIntOption(config, opL0);
+   loadIntOption(config, opStackReservAlignment);
+   loadBoolOption(config, opEvenStackMode);
 
    // load primitive aliases
    loadPrimitiveCategory(config, configPath);

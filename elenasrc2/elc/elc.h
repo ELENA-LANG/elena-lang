@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x01E4
+#define ELC_REVISION_NUMBER         0x01E5
 
 // --- ELC default file names ---
 #ifdef _WINDOW
@@ -87,8 +87,10 @@ constexpr auto ELC_EXTDISPATCHER  = "configuration/project/extdispatcher";
 ////#define ELC_WARNON_SIGNATURE        "warn:signature"
 #define ELC_YG_SIZE                 "configuration/linker/ygsize"
 #define ELC_L0                      "configuration/compiler/l0"                // optimization: byte code optimization
-#define ELC_L1                      "configuration/compiler/l1"               // optimization: source code optimization
+#define ELC_L1                      "configuration/compiler/l1"                // optimization: source code optimization
 #define ELC_PERM_SIZE               "configuration/linker/permsize"
+#define ELC_RESEVALIGN              "configuration/compiler/reservalign"       // reserved stack alignment (4,8)
+#define ELC_EVENSTACKMODE           "configuration/compiler/evenstack"         // even stack alignment mode - used for x86-64 mode
 
 #define ELC_TARGET_NAME             "target"
 #define ELC_TYPE_NAME               "type"
@@ -215,6 +217,10 @@ class Project : public _ELENA_::Project
             return config.getSetting(ELC_L1);
             //   //   case _ELENA_::opL2:
             //   //      return config.getSetting(COMPILER_CATEGORY, ELC_L2);
+         case _ELENA_::opStackReservAlignment:
+            return config.getSetting(ELC_RESEVALIGN);
+         case _ELENA_::opEvenStackMode:
+            return config.getSetting(ELC_EVENSTACKMODE);
          case _ELENA_::opTemplate:
             return config.getSetting(ELC_PROJECT_TEMPLATE);
          case _ELENA_::opManifestName:
@@ -688,6 +694,9 @@ public:
       }
       if (IntSetting(_ELENA_::opL1, -1) != 0) {
          compiler.turnOnOptimiation(1);
+      }
+      if (IntSetting(_ELENA_::opEvenStackMode, 0) != 0) {
+         compiler.turnOnEvenStack();
       }
       if (IntSetting(_ELENA_::opAutoSystemImport, -1) != 0) {
          compiler.turnAutoImport(true);

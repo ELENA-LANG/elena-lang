@@ -1,3 +1,9 @@
+// !! NOTE : ELENA 64 will not maintain 16 byte stack alignment due to the current call conventions 
+//           and some language features (like a command tape). 
+//           The alignment will be maintained only for external operations (inside exclude / include brackets)
+
+// !! NOTE : R15 register must be preserved
+
 // --- Predefined References  --
 define GC_ALLOC	            10001h
 define HOOK                 10010h
@@ -613,15 +619,21 @@ end
 // ; include
 inline % 25h
 
-  add  rsp, 8
+  mov   rsp, r15
 
 end
 
 // ; exclude
 inline % 26h
-                                                       
-  push rbp     
-  mov  [data : %CORE_GC_TABLE + gc_stack_frame], rsp
+       
+  mov    r15, rsp
+  mov    eax, 8                                            
+  push   rbp   
+  xor    ecx, ecx
+  mov    [data : %CORE_GC_TABLE + gc_stack_frame], rsp
+  test   rsp, 0FH
+  cmovnz ecx, eax
+  sub    rsp, rcx
 
 end
 
