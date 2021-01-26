@@ -476,7 +476,7 @@ EXTERN_DLL_EXPORT void* LoadSignatureMember(void* message, int index)
 
 void initMachine(path_t rootPath)
 {
-   _Machine = new x86ELENAVMMachine(rootPath);
+   _Machine = new AMD64ELENAVMMachine(rootPath);
 
    if (::IsDebuggerPresent()) {
       _Machine->getInstance()->setDebugMode();

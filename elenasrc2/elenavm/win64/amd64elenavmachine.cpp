@@ -53,7 +53,7 @@ _Memory* AMD64Instance :: getTargetDebugSection()
    return &_debugProcess;
 }
 
-_Memory* AMD64Instance :: getTargetSection(size_t mask)
+_Memory* AMD64Instance :: getTargetSection(pos_t mask)
 {
    switch(mask & mskImageMask)
    {
