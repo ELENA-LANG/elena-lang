@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine File class declarations.
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef filesH
@@ -33,6 +33,8 @@ class Path
    String<path_c, LOCAL_PATH_LENGTH>  _path;
 
 public:
+   static bool ifExist(path_t path);
+
    static bool comparePaths(path_t s1, path_t s2, size_t length);
 
    static bool checkExtension(path_t path, path_t extension);

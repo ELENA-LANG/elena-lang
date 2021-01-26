@@ -1796,29 +1796,39 @@ bool IDEController :: isOutaged(bool noWarning)
       return false;
    }
 
-   //_ELENA_::Path rootPath(_model->project.path.c_str(), _project.getOutputPath());
-   //for (_ProjectManager::SourceIterator it = _project.SourceFiles(); !it.Eof(); it++) {
-   //   _ELENA_::Path source(rootPath.c_str(), *it);
+   _ELENA_::Path rootPath(_model->project.path.c_str(), _project.getOutputPath());
+   for (_ProjectManager::SourceIterator it = _project.SourceFiles(); !it.Eof(); it++) {
+      _ELENA_::Path source(rootPath.c_str(), *it);
 
-   //   _ELENA_::Path module;
-   //   module.copySubPath(*it);
+      _ELENA_::Path module;
+      module.copySubPath(*it);
 
-   //   _ELENA_::ReferenceNs name(_project.getPackage());
-   //   name.pathToName(module.c_str());          // get a full name
+      _ELENA_::ReferenceNs name(_project.getPackage());
+      name.pathToName(module.c_str());          // get a full name
 
-   //   module.copy(rootPath.c_str());
-   //   module.nameToPath(name, _T("nl"));
+      while (name.Length() != 0) {
+         module.copy(rootPath.c_str());
+         module.nameToPath(name, _T("nl"));
 
-   //   DateTime sourceDT = DateTime::getFileTime(source);
-   //   DateTime moduleDT = DateTime::getFileTime(module);
+         if (!_ELENA_::Path::ifExist(module.c_str())) {
+            name.trimProperName();
+         }
+         else break;
+      }
 
-   //   if (sourceDT > moduleDT) {
-   //      if (!noWarning)
-   //         _view->error(ERROR_RUN_OUT_OF_DATE);
+      if (name.Length() > 0) {
+         DateTime sourceDT = DateTime::getFileTime(source);
+         DateTime moduleDT = DateTime::getFileTime(module);
 
-   //      return false;
-   //   }
-   //}
+         if (sourceDT > moduleDT) {
+            if (!noWarning)
+               _view->error(ERROR_RUN_OUT_OF_DATE);
+
+            return false;
+         }
+      }
+      else return false;
+   }
 
    return true;
 }

@@ -66,6 +66,11 @@ bool Path :: isRelative(path_t path, size_t length)
    else return false;
 }
 
+bool Path :: ifExist(path_t path)
+{
+   return checkDir(path, 0) == 0;
+}
+
 bool Path :: create(path_t root, path_t path)
 {
    Path dirPath;

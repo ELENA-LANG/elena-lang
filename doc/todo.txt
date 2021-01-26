@@ -4,6 +4,7 @@ In development:
 
   [development]
     + housekeeping - review pipeline
+  
     * elenavm64
     * migrate all samples to win64
 
@@ -118,7 +119,8 @@ In development:
 ------                                                           
 Pipeline:
 ------   
-    * migrate tutorials from reddit
+                * uncomment IDEController :: isOutaged
+                * uncomment exclude from the project command
 
     * linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * external ops: operation inside external call - see HMENU.append
@@ -187,7 +189,6 @@ Pipeline:
                 * should child have an access to the parent static fields?
                 * private extension method should be possible to use for internal work
                 * it should be possible to extend attributes / template statements from anoter libraries
-                * abstract class cannot be sealed
                 * do-while - if the second agrument is code brackets?
                 * static fields should be accessaible from strong typed extensions
                 * yield can be used only for yieldable method
@@ -220,7 +221,6 @@ Pipeline:
                 * check if there are extnension duplicates, probably no need to save extension multi-dispatcher
                 * alt - no need to assign temp local for local / field / param
                 * boxing byref variable : use intializing, direct assinging after creation without filling with nils
-                * boxing ext call result
                 * CreateClass / CreateStruct with initializers - no need to clear newly created object
                 * resolving byref template - cache the resolved results
                 * read / write byte, short - without AND operation
@@ -261,11 +261,8 @@ Pipeline:
                 * operation with dynamic array should be direct???
                 * inline arg : variadic normal arg list
                 * inline arg : variadic long arg list
-                * uncomment IDEController :: isOutaged
-                * uncomment exclude from the project command
+
                 * build : returning (goto)
-                * operations with weak array
-                * operations with variadic array
                 * check nil boxing
                 * check boxing of incompatible types
                 * redesign invoke1..invoke31 - they should use the same class with messageid as a field
