@@ -338,6 +338,19 @@ bool XMLTree :: save(path_t path, int encoding, bool withBOM, bool formatted)
    return true;
 }
 
+void XMLTree :: removeNode(size_t position)
+{
+   XMLNodeTag tag;
+   size_t start = loadTag(_content.str(), position, tag, NULL);
+   size_t end = parse(_content.str(), position, _content.Length(), NULL) - tag.Length() - 3;
+
+   if (isClosingTag(_content.str(), end, tag)) {
+      end = end + 3 + tag.Length();
+   }
+
+   _content.cut(position, end - start);
+}
+
 void XMLTree :: setContent(size_t position, ident_t value)
 {
    XMLNodeTag tag;

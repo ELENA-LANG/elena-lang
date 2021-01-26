@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class implementation
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------
@@ -502,6 +502,37 @@ void XmlConfigFile  :: appendSetting(ident_t key, ident_t attribute, const char*
 
       newNode.writeAttribute("key", attribute);
       newNode.writeContent(value);
+   }
+}
+
+void XmlConfigFile :: removeSetting(ident_t key, const char* value)
+{
+   DynamicString<char> content;
+
+   size_t length = getlength(key);
+   size_t end = key.findLast('/', length);
+   if (end != NOTFOUND_POS) {
+      String<char, 255> subCategory(key, end);
+
+      size_t position = find(subCategory.c_str());
+      if (position == NOTFOUND_POS) {
+         setSetting(subCategory.c_str(), DEFAULT_STR);
+         position = find(subCategory.c_str());
+      }
+
+      XMLNode node(position, &_tree);
+      NodeList nodeList;
+      if (node.getNodeList(nodeList)) {
+         for (NodeList::Iterator it = nodeList.start(); !it.Eof(); it++) {
+            position = (*it).Position();
+            (*it).readContent(content);
+            if (ident_t(content.str()).compare(value)) {
+               (*it).remove();
+               break;
+            }
+         }
+      }
+
    }
 }
 

@@ -2331,12 +2331,15 @@ void IDEController::ProjectManager :: includeSource(_ELENA_::path_t path)
 
 void IDEController::ProjectManager::excludeSource(_ELENA_::path_t path)
 {
-   //_ELENA_::Path relPath(path);
-   //Paths::makeRelativePath(relPath, _model->project.path.c_str());
+   _ELENA_::Path relPath(path);
+   Paths::makeRelativePath(relPath, _model->project.path.c_str());
 
-   //reloadSources();
+   _ELENA_::IdentifierString str(relPath.c_str());
+   _model->project.xmlConfig.removeSetting(IDE_SOURCE_ELEMENT, str.c_str());
 
-   //_model->project.changed = true;
+   reloadSources();
+
+   _model->project.changed = true;
 }
 
 void IDEController::ProjectManager :: clearForwards()

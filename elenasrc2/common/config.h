@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class header
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef configH
@@ -97,6 +97,8 @@ public:
 
    void appendSetting(ident_t key, ident_t attribute, const char* value);
    void appendSetting(ident_t key, const char* value);
+
+   void removeSetting(ident_t key, const char* value);
 
    void setSetting(ident_t key, const char* value);
    void setSetting(ident_t key, int value);

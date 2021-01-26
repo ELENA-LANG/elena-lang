@@ -3,8 +3,6 @@ In development:
 ------         
 
   [development]
-    + housekeeping - review pipeline
-  
     * elenavm64
     * migrate all samples to win64
 
@@ -16,6 +14,7 @@ In development:
 
     * x86-64 YG GC : copy lock byte as well
 
+    + housekeeping - review pipeline
     + #531 : Inhert should support only stateless interface type
 
     * review setframe opcode - argument should be an index or absolute value?
@@ -119,9 +118,6 @@ In development:
 ------                                                           
 Pipeline:
 ------   
-                * uncomment IDEController :: isOutaged
-                * uncomment exclude from the project command
-
     * linux : elenart.LoadMessageName/LoadSubject, method not found exception handling
     * external ops: operation inside external call - see HMENU.append
     * chat

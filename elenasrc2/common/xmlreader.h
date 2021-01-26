@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains XML Reader / Writer class header
-//                                              (C)2005-2018, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef xmlreaderH
@@ -59,15 +59,17 @@ protected:
       return _parent->insertNode(position, name);
    }
 
+   virtual void removeNode(size_t position)
+   {
+      _parent->removeNode(position);
+   }
+
    // recognize opening tag and parse it starting from start, return value - the node content position
    size_t loadTag(ident_t content, size_t start, XMLNodeTag& tag, AttributeList* list);
    // find and return the closing node position starting from start
    bool isClosingTag(ident_t content, size_t start, XMLNodeTag& tag);
    // parse xml
    size_t parse(ident_t content, size_t start, size_t end, PositionList* list);
-
-//   //// add new sub node to the node content and return the node id
-//   //virtual int appendContent(const char* s);
 
 public:
    size_t Position() { return _position; }
@@ -84,8 +86,11 @@ public:
 
    virtual XMLNode appendNode(ident_t name);
 
-//   //// remove the node from the parent
-//   //void remove();
+   // remove the node from the parent
+   void remove()
+   {
+      removeNode(_position);
+   }
 
    // search for the nodes with provided tag and return their indexes
    bool getNodeList(NodeList& list);
@@ -110,6 +115,7 @@ class XMLTree : public XMLNode
 
    virtual void setContent(size_t position, ident_t value);
    virtual size_t insertNode(size_t position, ident_t name);
+   virtual void removeNode(size_t position);
 
    virtual void setAttribute(size_t start, ident_t name, ident_t s);
 
