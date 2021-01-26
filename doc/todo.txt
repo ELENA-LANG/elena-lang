@@ -3,19 +3,17 @@ In development:
 ------         
 
   [development]
-    * lib5_64 : get rid of temp_app module
-    * test helloworld
-
-    + compiler option : raw stack alignment  
     + housekeeping - review pipeline
+    * elenavm64
     * migrate all samples to win64
 
     * multi-theading
     * thread - make sure stack is correctly aligned to 16
 
-    * x86-64 YG GC : copy lock byte as well
+    + compiler option : raw stack alignment  
+    + bf interpreter optimization
 
-    * win64 : test access violation exception
+    * x86-64 YG GC : copy lock byte as well
 
     + #531 : Inhert should support only stateless interface type
 

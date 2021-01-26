@@ -1,16 +1,6 @@
 public program()
 {
-    console.writeLine("--");
+    console.writeLine("Hello World - Привет Мир");
     
-//    try
-//    {
-        var o := 2;
-        o.test()
-//    }
-//    catch(Exception e)
-//    {
-//        console.writeLine(e.toPrintable());
-//    }
-    
-//    console.writeLine("Hello World - Привет Мир");
+    console.readChar()
 }

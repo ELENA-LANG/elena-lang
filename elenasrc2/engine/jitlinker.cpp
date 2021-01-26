@@ -698,7 +698,7 @@ void JITLinker :: resolveStaticValues(ReferenceInfo referenceInfo, MemoryReader&
          else if (currentRef != 0)
             refVAddress = resolve(_loader->retrieveReference(referenceInfo.module, currentRef, currentMask), currentMask, false);
 
-         resolveReference(vmtImage, position + it.key() * 4, refVAddress, currentMask, _virtualMode);
+         resolveReference(vmtImage, position + _compiler->findMemberPosition(it.key()), refVAddress, currentMask, _virtualMode);
       }
    }
 

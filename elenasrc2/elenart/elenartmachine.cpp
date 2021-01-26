@@ -16,6 +16,18 @@
 
 using namespace _ELENA_;
 
+#ifdef _WIN64
+
+constexpr auto cnNameOffset = sizeof(VMTXHeader) + sizeof(uintptr_t);
+constexpr auto cnPackageOffset = cnNameOffset + sizeof(uintptr_t);
+
+#else
+
+constexpr size_t cnNameOffset = sizeof(VMTHeader) + sizeof(uintptr_t);
+constexpr size_t cnPackageOffset = cnNameOffset + sizeof(uintptr_t);
+
+#endif
+
 // --- Instance ---
 
 void ELENARTMachine :: startSTA(ProgramHeader* frameHeader, SystemEnv* env, void* programEntry)
@@ -184,8 +196,8 @@ vaddr_t ELENARTMachine :: loadAddressInfo(size_t retPoint, char* buffer, size_t 
 
 size_t ELENARTMachine :: loadClassName(vaddr_t classAddress, char* buffer, size_t length)
 {
-   int packagePtr = *(int*)(classAddress - 24);
-   int namePtr = *(int*)(classAddress - 20);
+   uintptr_t packagePtr = *(uintptr_t*)(classAddress - cnPackageOffset);
+   uintptr_t namePtr = *(uintptr_t*)(classAddress - cnNameOffset);
 
    char* name = (char*)namePtr;
    char* ns = ((char**)packagePtr)[0];
