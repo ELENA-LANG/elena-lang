@@ -540,7 +540,7 @@ public:
       }
    }
 
-   static bool resolveMessageName(IdentifierString& messageName, _Module* module, size_t messageRef);
+   static bool resolveMessageName(IdentifierString& messageName, _Module* module, mssg_t messageRef);
 };
 
 // --- CommandTape ---

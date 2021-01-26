@@ -306,7 +306,7 @@ mssg_t JITLinker :: resolveMessage(_Module* module, mssg_t message, References* 
    SectionInfo messageTable = _loader->getSectionInfo(ReferenceInfo(MESSAGE_TABLE), mskRDataRef, true);
 
    ref_t actionRef, flags;
-   size_t argCount = 0;
+   pos_t argCount = 0;
    decodeMessage(message, actionRef, argCount, flags);
 
    // signature and custom verb should be imported
@@ -834,7 +834,7 @@ void JITLinker :: generateMetaAttribute(int category, ReferenceInfo& referenceIn
 void JITLinker :: generateOverloadListMetaAttribute(_Module* module, mssg_t message, ref_t listRef)
 {
    ref_t actionRef, flags;
-   size_t argCount = 0;
+   pos_t argCount = 0;
    decodeMessage(message, actionRef, argCount, flags);
 
    // write the overload list name

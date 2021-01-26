@@ -112,6 +112,8 @@
     <ClCompile Include="..\..\engine\elenamachine.cpp" />
     <ClCompile Include="..\..\engine\gcroutines.cpp" />
     <ClCompile Include="..\..\engine\rtman.cpp" />
+    <ClCompile Include="..\win64\amd64elenavmachine.cpp" />
+    <ClCompile Include="..\win64\amd64process.cpp" />
     <ClCompile Include="..\win64\dllmain.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </PrecompiledHeader>
@@ -153,6 +155,8 @@
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\common\tools.h" />
+    <ClInclude Include="..\win64\amd64elenavmachine.h" />
+    <ClInclude Include="..\win64\amd64process.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

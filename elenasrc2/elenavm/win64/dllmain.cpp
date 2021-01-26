@@ -1,6 +1,6 @@
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "x86elenavmachine.h"
+#include "amd64elenavmachine.h"
 //#include "evmscope.h"
 
 #include <windows.h>
@@ -9,7 +9,7 @@
 
 using namespace _ELENA_;
 
-static x86ELENAVMMachine* _Machine = nullptr;
+static AMD64ELENAVMMachine* _Machine = nullptr;
 static Path rootPath;
 static void* _SystemEnv = nullptr;
 

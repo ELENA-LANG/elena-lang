@@ -237,9 +237,9 @@ protected:
    _Module* resolveModule(ident_t referenceName, LoadResult& result, ref_t& reference);
    _Module* resolveWeakModule(ident_t weakReferenceName, ref_t& reference);
 
-   virtual SectionInfo getSectionInfo(ReferenceInfo referenceInfo, size_t mask, bool silentMode);
-   virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, size_t codeMask, size_t vmtMask, bool silentMode);
-   virtual SectionInfo getCoreSectionInfo(ref_t reference, size_t mask);
+   virtual SectionInfo getSectionInfo(ReferenceInfo referenceInfo, ref_t mask, bool silentMode);
+   virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode);
+   virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask);
 
    virtual _Memory* getMessageSection() = 0;
    virtual _Memory* getMetaAttributeSection() = 0;

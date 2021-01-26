@@ -289,7 +289,7 @@ void JITCompiler32 :: allocateArray(MemoryWriter& writer, size_t count)
    writer.writeBytes(0, count * 4);
 }
 
-void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize)
+void JITCompiler32 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticSize)
 {
    // create VMT static table
    vmtWriter.writeBytes(0, staticSize << 2);
@@ -339,7 +339,7 @@ pos_t JITCompiler32 :: copyParentVMT(void* parentVMT, VMTEntry* entries)
    else return 0;
 }
 
-void JITCompiler32 :: addVMTEntry(mssg_t message, uintptr_t codePosition, VMTEntry* entries, size_t& entryCount)
+void JITCompiler32 :: addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& entryCount)
 {
    size_t index = 0;
 
@@ -359,7 +359,7 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, uintptr_t codePosition, VMTEnt
    entries[index].address = codePosition;
 }
 
-void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t parentVAddress, size_t count, 
+void JITCompiler32 :: fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress, pos_t count,
    bool virtualMode, bool abstractMode)
 {
    _Memory* image = vmtWriter.Memory();
@@ -740,7 +740,7 @@ void JITCompiler64 :: allocateArray(MemoryWriter& writer, size_t count)
    writer.writeBytes(0, count * 8);
 }
 
-void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize)
+void JITCompiler64 :: allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticSize)
 {
    // create VMT static table
    vmtWriter.writeBytes(0, staticSize << 3);
@@ -798,13 +798,13 @@ pos_t JITCompiler64 :: copyParentVMTX(void* parentVMT, VMTXEntry* entries)
    else return 0;
 }
 
-void JITCompiler64 :: addVMTEntry(mssg_t message, uintptr_t codePosition, VMTEntry* entries, size_t& entryCount)
+void JITCompiler64 :: addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& entryCount)
 {
    // HOTFIX : 64bit compiler supports only VMTX
    addVMTXEntry(toMessage64(message), codePosition, (VMTXEntry*)entries, entryCount);
 }
 
-void JITCompiler64 :: addVMTXEntry(mssg64_t message, uintptr_t codePosition, VMTXEntry* entries, size_t& entryCount)
+void JITCompiler64 :: addVMTXEntry(mssg64_t message, vaddr_t codePosition, VMTXEntry* entries, pos_t& entryCount)
 {
    size_t index = 0;
 
@@ -824,8 +824,8 @@ void JITCompiler64 :: addVMTXEntry(mssg64_t message, uintptr_t codePosition, VMT
    entries[index].address = codePosition;
 }
 
-void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, uintptr_t classClassVAddress, uintptr_t parentVAddress, 
-   size_t count, bool virtualMode, bool abstractMode)
+void JITCompiler64 :: fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress,
+   pos_t count, bool virtualMode, bool abstractMode)
 {
    _Memory* image = vmtWriter.Memory();
 

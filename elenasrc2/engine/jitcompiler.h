@@ -163,7 +163,7 @@ public:
    virtual pos_t findMethodIndex(void* refVMT, mssg_t messageID, size_t vmtLength);
    virtual vaddr_t findClassPtr(void* refVMT);
 
-   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
+   virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticSize);
    virtual pos_t copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count);
    virtual void fixVMT(MemoryWriter& vmtWriter, vaddr_t classClassVAddress, vaddr_t parentVAddress, 
@@ -218,7 +218,7 @@ public:
    virtual pos_t findMethodIndexX(void* refVMT, mssg64_t messageID, size_t vmtLength);
    virtual vaddr_t findClassPtr(void* refVMT);
 
-   virtual void allocateVMT(MemoryWriter& vmtWriter, size_t flags, size_t vmtLength, size_t staticSize);
+   virtual void allocateVMT(MemoryWriter& vmtWriter, pos_t flags, pos_t vmtLength, pos_t staticSize);
    virtual pos_t copyParentVMT(void* parentVMT, VMTEntry* entries);
    virtual pos_t copyParentVMTX(void* parentVMT, VMTXEntry* entries);
    virtual void addVMTEntry(mssg_t message, vaddr_t codePosition, VMTEntry* entries, pos_t& count);

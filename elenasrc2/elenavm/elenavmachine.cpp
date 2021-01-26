@@ -160,14 +160,14 @@ void Instance::ImageReferenceHelper :: writeReference(MemoryWriter& writer, ref_
    else writer.writeDWord((test(reference, mskRDataRef) ? _statBase : _codeBase) + pos + disp);
 }
 
-void Instance::ImageReferenceHelper :: writeVAddress(MemoryWriter& writer, vaddr_t vaddress, size_t disp)
+void Instance::ImageReferenceHelper :: writeVAddress(MemoryWriter& writer, vaddr_t vaddress, pos_t disp)
 {
    ref_t address = (ref_t)vaddress;
 
    writer.writeDWord(address + disp);
 }
 
-void Instance::ImageReferenceHelper :: writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t, size_t disp)
+void Instance::ImageReferenceHelper :: writeRelVAddress(MemoryWriter& writer, vaddr_t vaddress, ref_t, pos_t disp)
 {
    ref_t address = (ref_t)vaddress;
 
@@ -184,7 +184,7 @@ void Instance::ImageReferenceHelper :: writeMTReference(MemoryWriter& writer)
    writer.writePtr((uintptr_t)section->get(0));
 }
 
-void Instance::ImageReferenceHelper :: addBreakpoint(size_t position)
+void Instance::ImageReferenceHelper :: addBreakpoint(pos_t position)
 {
    MemoryWriter writer(_instance->getTargetDebugSection());
 
@@ -549,7 +549,7 @@ int Instance :: loadMessageName(mssg_t message, char* buffer, size_t maxLength)
 {
    int prefixLen = 0;
    ref_t action, flags;
-   size_t count;
+   pos_t count;
    decodeMessage(message, action, count, flags);
    if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {
       size_t len = 7;
@@ -1150,7 +1150,7 @@ bool Instance :: loadAddressInfo(void* address, char* buffer, size_t& maxLength)
 void* Instance :: parseMessage(SystemEnv* systemEnv, ident_t message)
 {
    IdentifierString messageName;
-   size_t paramCount = -1;
+   pos_t paramCount = -1;
    ref_t flags = 0;
 
    if (SystemRoutineProvider::parseMessageLiteral(message, messageName, paramCount, flags)) {

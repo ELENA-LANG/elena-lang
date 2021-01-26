@@ -736,7 +736,7 @@ ident_t ByteCodeCompiler :: decode(ByteCode code, char* s)
 bool ByteCodeCompiler :: resolveMessageName(IdentifierString& messageName, _Module* module, mssg_t messageRef)
 {
    ref_t actionRef, flags;
-   size_t argCount = 0;
+   pos_t argCount = 0;
    decodeMessage(messageRef, actionRef, argCount, flags);
 
    if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE) {

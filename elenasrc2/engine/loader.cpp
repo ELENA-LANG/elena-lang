@@ -13,7 +13,7 @@ using namespace _ELENA_;
 
 // --- ImageLoader ---
 
-void _ImageLoader :: mapReference(ident_t reference, vaddr_t vaddress, size_t mask)
+void _ImageLoader :: mapReference(ident_t reference, vaddr_t vaddress, pos_t mask)
 {
    switch (mask) {
       case mskConstantRef:

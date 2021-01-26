@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenart15_64", "elenart\vs\elenart15_64.vcxproj", "{191F5360-84B0-43D7-BA23-C9AA254A19B8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elide_64", "ide\vs\elide_64.vcxproj", "{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elide64", "ide\vs\elide_64.vcxproj", "{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elenavm15_64", "elenavm\vs\elenavm15_64.vcxproj", "{7D64C701-DDAA-467C-96BA-513438A1DE42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,12 @@ Global
 		{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}.Release|x64.Build.0 = Release|x64
 		{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}.Release|x86.ActiveCfg = Release|Win32
 		{B0C65195-DB0F-4965-BDFF-B0CB5C19C72D}.Release|x86.Build.0 = Release|Win32
+		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Debug|x64.ActiveCfg = Debug|x64
+		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Debug|x64.Build.0 = Debug|x64
+		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Debug|x86.ActiveCfg = Debug|x64
+		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Release|x64.ActiveCfg = Release|x64
+		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Release|x64.Build.0 = Release|x64
+		{7D64C701-DDAA-467C-96BA-513438A1DE42}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
