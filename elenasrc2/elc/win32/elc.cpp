@@ -407,6 +407,17 @@ int main()
 
          print(ELC_SUCCESSFUL_LINKING);
       }
+      else if (platform == _ELENA_::ptVMWin64Console) {
+         print(ELC_LINKING);
+
+         _ELENA_::Linker linker(true);
+         ImageHelper helper(&linker, true, true);
+         _ELENA_::ExecutableImage image(false, &project, project.createJITCompiler64(), helper);
+
+         linker.run(project, image, (_ELENA_::ref_t)-1);
+
+         print(ELC_SUCCESSFUL_LINKING);
+      }
       else if (platform == _ELENA_::ptWin32GUI) {
          print(ELC_LINKING);
 

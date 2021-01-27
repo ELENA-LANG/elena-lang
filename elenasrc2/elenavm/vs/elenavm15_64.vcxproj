@@ -97,7 +97,7 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <TargetMachine>MachineX86</TargetMachine>
+      <TargetMachine>MachineX64</TargetMachine>
       <OutputFile>..\..\..\bin\elenavm64.dll</OutputFile>
       <EnableUAC>false</EnableUAC>
     </Link>

@@ -4329,3 +4329,9 @@ procedure coreapi'register_critical_exception_handler
 
 end
 
+procedure coreapi'get_seh_handler
+
+  mov  rdx, data : % CORE_ET_TABLE
+  ret
+
+end
