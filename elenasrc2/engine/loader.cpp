@@ -78,10 +78,10 @@ void _ImageLoader :: mapReference(ReferenceInfo referenceInfo, vaddr_t vaddress,
    else mapReference(referenceInfo.referenceName, vaddress, mask);
 }
 
-ref_t _ImageLoader :: resolveExternal(ident_t external)
+vaddr_t _ImageLoader :: resolveExternal(ident_t external)
 {
-   ref_t reference = _exportReferences.get(external);
-   if (reference == (size_t)-1) {
+   vaddr_t reference = _exportReferences.get(external);
+   if (reference == INVALID_VADDR) {
       reference = (_exportReferences.Count() + 1) | mskImportRef;
 
       _exportReferences.add(external, reference);
@@ -125,7 +125,7 @@ vaddr_t _ImageLoader :: resolveReference(ident_t reference, ref_t mask)
 //            return (void*)_statReferences.get(reference);
          case mskMessageTableRef:
          case mskMetaAttributes:
-            return INVALID_REF; // !! HOTFIX : should be always resolved
+            return INVALID_VADDR; // !! HOTFIX : should be always resolved
          default:
          {
             size_t imageMask = mask & mskImageMask;

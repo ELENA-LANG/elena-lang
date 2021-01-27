@@ -1,6 +1,8 @@
 public program()
 {
-    console.writeLine("Hello World - Привет Мир");
+    console;
     
-    console.readChar()
+//    console.writeLine("Hello World - Привет Мир");
+    
+//    console.readChar()
 }

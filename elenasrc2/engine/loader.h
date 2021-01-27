@@ -33,7 +33,7 @@ protected:
 public:
    virtual vaddr_t resolveReference(ReferenceInfo referenceInfo, ref_t mask);
 
-   virtual ref_t resolveExternal(ident_t external);
+   virtual vaddr_t resolveExternal(ident_t external);
 
    virtual void mapReference(ReferenceInfo referenceInfo, vaddr_t vaddress, ref_t mask);
    //virtual void mapPredefinedAction(ident_t name, ref_t reference);

@@ -425,7 +425,7 @@ void DebugController :: onInitBreakpoint()
          char header[5];
          reader.read(header, 5);
          if (ident_t(DEBUG_MODULE_SIGNATURE).compare(header, 0, 5)) {
-            _debugInfoPtr = INVALID_REF;
+            _debugInfoPtr = INVALID_VADDR;
             _debugInfoSize = reader.getDWord();
 
             loadDebugSection(reader, starting);

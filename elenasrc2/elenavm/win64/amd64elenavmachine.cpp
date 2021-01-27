@@ -88,10 +88,10 @@ _Memory* AMD64Instance :: getMetaAttributeSection()
    return &_mattributeProcess;
 }
 
-ref_t AMD64Instance :: resolveExternal(ident_t external)
+vaddr_t AMD64Instance :: resolveExternal(ident_t external)
 {
-   ref_t reference = _exportReferences.get(external);
-   if (reference == (size_t)-1) {
+   vaddr_t reference = _exportReferences.get(external);
+   if (reference == INVALID_VADDR) {
       ident_t function = external + external.findLast('.') + 1;
 
       Path dll;
@@ -108,7 +108,7 @@ ref_t AMD64Instance :: resolveExternal(ident_t external)
       reference = _dataProcess.Length();
 
       if(!_dataProcess.exportFunction(_rootPath, reference, dll.c_str(), function))
-         return (ref_t)LOADER_NOTLOADED;
+         return LOADER_NOTLOADED;
 
       reference = (ref_t)_dataProcess.get(reference); // !! should loader do this?
 

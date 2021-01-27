@@ -113,8 +113,8 @@ class JITLinker : _JITLoaderListener
       }
    };
 
-   typedef Pair<ref_t, mssg_t>                 MethodInfo;
-   typedef MemoryMap<MethodInfo, ref_t, false> MethodMap;
+   typedef Pair<vaddr_t, mssg_t>                 MethodInfo;
+   typedef MemoryMap<MethodInfo, vaddr_t, false> MethodAddressMap;
 //   typedef Memory32HashTable<ident_t, void*, mapReferenceKey, 29> StrongTypeMap;
 
    typedef Pair<_Module*, ref_t>            ModuleReference;
@@ -128,7 +128,7 @@ class JITLinker : _JITLoaderListener
    bool              _withExtDispatchers;
    vaddr_t           _codeBase;
    pos_t             _statLength;
-   MethodMap         _staticMethods;
+   MethodAddressMap  _staticMethods;
    ModuleReferences  _initializers;
 
 //   int            _uniqueID;           // used for dynamic subject
@@ -142,8 +142,8 @@ class JITLinker : _JITLoaderListener
    vaddr_t getVMTAddress(_Module* module, ref_t reference, References& references);
    void* getVMTReference(_Module* module, ref_t reference, References& references);
    vaddr_t resolveVMTMethodAddress(_Module* module, ref_t reference, mssg_t messageID);
-   vaddr_t getVMTMethodAddress(ref_t vaddress, mssg_t messageID);
-   pos_t getVMTMethodIndex(ref_t address, mssg_t messageID);
+   vaddr_t getVMTMethodAddress(vaddr_t vaddress, mssg_t messageID);
+   pos_t getVMTMethodIndex(vaddr_t address, mssg_t messageID);
    ref_t getVMTFlags(vaddr_t vaddress);
 
    void generateMetaAttribute(int category, ident_t fullName, vaddr_t address);

@@ -143,5 +143,5 @@ bool AMD64Process :: exportFunction(path_t rootPath, pos_t position, path_t dllN
    if (address == 0)
       return false;
    
-   return write(position, &address, 4);
+   return write(position, &address, sizeof(uintptr_t));
 }

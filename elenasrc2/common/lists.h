@@ -525,6 +525,16 @@ template <class Key, class T, bool KeyStored> struct _MemoryMapItem
       return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
    }
 
+   bool operator ==(Pair<unsigned long long, unsigned int> key) const
+   {
+      return (this->key.value1 == key.value1 && this->key.value2 == key.value2);
+   }
+
+   bool operator !=(Pair<unsigned long long, unsigned int> key) const
+   {
+      return (this->key.value1 != key.value1 || this->key.value2 != key.value2);
+   }
+
    ident_t getKey(ident_t key) const
    {
       if (KeyStored) {
@@ -2090,6 +2100,11 @@ public:
    }
 
    unsigned int storeKey(unsigned int position, Pair<unsigned int, unsigned int>)
+   {
+      return position;
+   }
+
+   unsigned int storeKey(unsigned int position, Pair<unsigned long long, unsigned int>)
    {
       return position;
    }
