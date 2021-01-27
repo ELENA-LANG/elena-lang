@@ -1986,6 +1986,11 @@ void AMD64Assembler :: compileIMUL(TokenInfo& token, ProcedureInfo& info, Memory
          AMD64Helper::writeModRM(code, sour, sour);
 		   code->writeByte(dest.offset);
 	   }
+      else if (test(sour.type, AMD64Helper::otR32) && dest.type == AMD64Helper::otDD) {
+         code->writeByte(0x69);
+         AMD64Helper::writeModRM(code, sour, sour);
+         AMD64Helper::writeImm(code, dest);
+      }
 	   else if (test(sour.type, AMD64Helper::otR32) && test(dest.type, AMD64Helper::otR32)) {
 		   code->writeByte(0x0F);
 		   code->writeByte(0xAF);

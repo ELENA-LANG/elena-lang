@@ -142,7 +142,7 @@ public:
    virtual SectionInfo getCoreSectionInfo(ref_t reference, ref_t mask) = 0;
    virtual ClassSectionInfo getClassSectionInfo(ReferenceInfo referenceInfo, ref_t codeMask, ref_t vmtMask, bool silentMode) = 0;
 
-   virtual size_t getLinkerConstant(int id) = 0;
+   virtual pos_t getLinkerConstant(int id) = 0;
 
    virtual ident_t getLiteralClass() = 0;
    virtual ident_t getWideLiteralClass() = 0;
@@ -788,14 +788,10 @@ typedef Map<ident_t, _Module*>    ModuleMap;
 typedef Map<ident_t, void*, true> ClassMap;
 typedef List<char*>               IdentifierList;
 
-//// --- Reference mapping types ---
-//////typedef Memory32HashTable<ident_t, ref_t, mapIdentifierKey, 29> TypeMap;
-typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>  ReferenceMap;
-//typedef Memory32HashTable<ident_t, mssg_t, mapReferenceKey, 29> MReferenceMap;
-////typedef Memory32HashTable<ref_t, ref_t, __mapKey, 64>           AddressMap;
-//typedef Map<ref_t, ref_t>                                       SubjectMap;
-////typedef List<ref_t>                                             SubjectList;
-typedef Memory32HashTable<ref64_t, ref_t, __map64Key, 64>       ActionMap;
+// --- Reference mapping types ---
+typedef Memory32HashTable<ident_t, ref_t, mapReferenceKey, 29>   ReferenceMap;
+typedef Memory32HashTable<ident_t, vaddr_t, mapReferenceKey, 29> VAddressMap;
+typedef Memory32HashTable<ref64_t, ref_t, __map64Key, 64>        ActionMap;
 
 // --- Message mapping types ---
 typedef Map<ident_t, ref_t> AttributeMap;

@@ -21,11 +21,11 @@ class _ImageLoader : public _JITLoader
 {
 protected:
    // addresses
-   ReferenceMap  _codeReferences, _dataReferences, _symbolReferences;
-   ReferenceMap  _statReferences, _exportReferences;
-   ReferenceMap  _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
-   ReferenceMap  _mssgReferences, _subjReferences;
-   ReferenceMap  _bssReferences;
+   VAddressMap  _codeReferences, _dataReferences, _symbolReferences;
+   VAddressMap  _statReferences, _exportReferences;
+   VAddressMap  _constReferences, _numberReferences, _literalReferences, _characterReferences, _wideReferences;
+   VAddressMap  _mssgReferences, _subjReferences;
+   VAddressMap  _bssReferences;
 
    void mapReference(ident_t reference, vaddr_t vaddress, ref_t mask);
    vaddr_t resolveReference(ident_t reference, ref_t mask);
@@ -56,10 +56,11 @@ public:
    }
 
    _ImageLoader()
-      : _codeReferences(INVALID_REF), _dataReferences(INVALID_REF), _symbolReferences(INVALID_REF),
-        _statReferences(INVALID_REF), _constReferences(INVALID_REF), _numberReferences(INVALID_REF), _characterReferences(INVALID_REF),
-        _literalReferences(INVALID_REF), _bssReferences(INVALID_REF), _exportReferences(INVALID_REF), _wideReferences(INVALID_REF),
-        _mssgReferences(INVALID_REF), _subjReferences(INVALID_REF)
+      : _codeReferences(INVALID_VADDR), _dataReferences(INVALID_VADDR), _symbolReferences(INVALID_VADDR),
+        _statReferences(INVALID_VADDR), _constReferences(INVALID_VADDR), _numberReferences(INVALID_VADDR), 
+        _characterReferences(INVALID_VADDR), _literalReferences(INVALID_VADDR), _bssReferences(INVALID_VADDR), 
+        _exportReferences(INVALID_VADDR), _wideReferences(INVALID_VADDR), _mssgReferences(INVALID_VADDR), 
+        _subjReferences(INVALID_VADDR)
    {
    }
 };

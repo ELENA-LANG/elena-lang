@@ -13,6 +13,9 @@ static x86ELENAVMMachine* _Machine = nullptr;
 static Path rootPath;
 static void* _SystemEnv = nullptr;
 
+constexpr size_t cnNameOffset = sizeof(VMTHeader) + sizeof(uintptr_t);
+constexpr size_t cnPackageOffset = cnNameOffset + sizeof(uintptr_t);
+
 // --- getAppPath ---
 
 void loadDLLPath(HMODULE hModule)
@@ -112,8 +115,8 @@ EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLengt
    try {
       size_t length = maxLength;
 
-      int packagePtr = *(int*)((int)vmtAddress - 24);
-      int namePtr = *(int*)((int)vmtAddress - 20);
+      uintptr_t packagePtr = *(uintptr_t*)((vaddr_t)vmtAddress - cnPackageOffset);
+      uintptr_t namePtr = *(uintptr_t*)((vaddr_t)vmtAddress - cnNameOffset);
 
       char* name = (char*)namePtr;
       char* ns = ((char**)packagePtr)[0];

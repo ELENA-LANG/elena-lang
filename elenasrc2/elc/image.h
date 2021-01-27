@@ -40,7 +40,7 @@ public:
 private:
    Project* _project;
    vaddr_t  _entryPoint;
-   size_t   _objectHeaderSize;
+   pos_t    _objectHeaderSize;
 
    ident_t  _literal;
    ident_t  _wideLiteral;
@@ -76,7 +76,7 @@ public:
       return &_debug;
    }
 
-   virtual size_t getLinkerConstant(int id);
+   virtual pos_t getLinkerConstant(int id);
 
    virtual ident_t getLiteralClass();
    virtual ident_t getWideLiteralClass();

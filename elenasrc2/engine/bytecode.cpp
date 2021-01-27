@@ -65,7 +65,7 @@ const char* _fnOpcodes[256] =
 
 using namespace _ELENA_;
 
-inline ref_t importRef(_Module* sour, size_t ref, _Module* dest)
+inline ref_t importRef(_Module* sour, ref_t ref, _Module* dest)
 {
    if (ref != 0 && ref != -1) {
       int mask = ref & mskAnyRef;

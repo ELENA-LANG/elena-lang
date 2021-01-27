@@ -267,8 +267,8 @@ void _ELENA_::loadCoreOp(I64JITScope& scope, char* code)
    if (code == NULL)
       throw InternalError("Cannot load core command");
 
-   size_t position = writer->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = writer->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    writer->write(code, length);
 
@@ -348,8 +348,8 @@ void _ELENA_::loadOneByteOp(int opcode, I64JITScope& scope)
    MemoryWriter* writer = scope.code;
 
    char* code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = writer->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = writer->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    writer->write(code, *(int*)(code - 4));
@@ -389,7 +389,7 @@ void _ELENA_::loadROp(int opcode, I64JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
    pos_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -418,8 +418,8 @@ void _ELENA_::loadROp(int opcode, I64JITScope& scope)
 void _ELENA_::loadIndexOp(int opcode, I64JITScope& scope)
 {
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -448,8 +448,8 @@ void _ELENA_::loadIndexNOp(int opcode, I64JITScope& scope)
    int arg2 = scope.tape->getDWord();
 
    char* code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -485,8 +485,8 @@ void _ELENA_::loadIndexN4OpX(int opcode, I64JITScope& scope, int prefix)
       }
    }
 
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -540,7 +540,7 @@ void _ELENA_::loadVMTIndexOp(int opcode, I64JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
    pos_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -578,8 +578,8 @@ void _ELENA_::loadFNOp(int opcode, I64JITScope& scope)
 void _ELENA_::loadFNOp(int opcode, I64JITScope& scope, int arg2)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -607,8 +607,8 @@ void _ELENA_::loadFNOp(int opcode, I64JITScope& scope, int arg2)
 void _ELENA_::loadFPOp(int opcode, I64JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -635,7 +635,7 @@ void _ELENA_::loadSPOp(int opcode, I64JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
    pos_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -661,8 +661,8 @@ void _ELENA_::loadSPOp(int opcode, I64JITScope& scope)
 void _ELENA_::loadFOp(int opcode, I64JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -696,8 +696,8 @@ void _ELENA_::loadFN4OpX(int opcode, I64JITScope& scope, int prefix)
       }
    }
 
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -752,8 +752,8 @@ void _ELENA_::loadFPIndexOp(int opcode, I64JITScope& scope)
    int arg2 = scope.tape->getDWord();
 
    char* code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -954,7 +954,7 @@ void _ELENA_::loadMTOp(int opcode, I64JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
    pos_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -997,7 +997,7 @@ void _ELENA_::loadMTOpX(int opcode, I64JITScope& scope, int prefix)
    }
 
    pos_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -1101,8 +1101,8 @@ void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
       }
    }
 
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    writer->write(code, length);
@@ -1139,8 +1139,8 @@ void _ELENA_::loadFunction(int opcode, I64JITScope& scope)
 void _ELENA_::loadNOp(int opcode, I64JITScope& scope)
 {
    char* code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -1171,8 +1171,8 @@ void _ELENA_::loadNNOp(int opcode, I64JITScope& scope)
    int arg2 = scope.tape->getDWord();
 
    char* code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -1209,8 +1209,8 @@ void _ELENA_::loadNNOpX(int opcode, I64JITScope& scope, int prefix)
       }
    }
 
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -1279,7 +1279,7 @@ void _ELENA_::compileBreakpoint(int, I64JITScope& scope)
 
 void _ELENA_::compilePush(int opcode, I64JITScope& scope)
 {
-   if (opcode == bcPushR && scope.bigAddressMode && !scope.argument) {
+   if (opcode == bcPushR && scope.bigAddressMode && scope.argument) {
       scope.code->writeByte(0x48);
       scope.code->writeByte(0x68);
       scope.writeReference(*scope.code, scope.argument, 0);
@@ -1653,8 +1653,8 @@ void _ELENA_::compileInvokeVMTOffset(int opcode, I64JITScope& scope)
    ref64_t message = scope.resolveMessage(scope.tape->getDWord());
 
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -1745,8 +1745,8 @@ void _ELENA_::compileInvokeVMT(int opcode, I64JITScope& scope)
    ref_t message = /*fromMessage64(*/scope.resolveMessage(scope.tape->getDWord())/*)*/;
 
    char*  code = (char*)scope.compiler->_inlines[opcode];
-   size_t position = scope.code->Position();
-   size_t length = *(size_t*)(code - 4);
+   pos_t position = scope.code->Position();
+   pos_t length = *(pos_t*)(code - 4);
 
    // simply copy correspondent inline code
    scope.code->write(code, length);
@@ -2090,7 +2090,7 @@ I64JITCompiler :: I64JITCompiler(bool debugMode, bool bigAddressMode)
    _bigAddressMode = bigAddressMode;
 }
 
-size_t I64JITCompiler:: getObjectHeaderSize() const
+pos_t I64JITCompiler:: getObjectHeaderSize() const
 {
    return elObjectOffset64;
 }
@@ -2174,8 +2174,6 @@ void I64JITCompiler :: prepareCore(_ReferenceHelper& helper, _JITLoader* loader)
 
    // resolve reference to SYSTEM_ENV at rdata header
    rdata->addReference((ref_t)_preloaded.get(SYSTEM_ENV), 0);
-
-   //dataWriter.writeQWord(helper.getLinkerConstant(lnVMAPI_Instance));
 
    // preloaded core static variables
    for (int i = 0; i < coreStaticNumber; i++) {
@@ -2277,8 +2275,8 @@ void I64JITCompiler :: compileSymbol(_ReferenceHelper& helper, MemoryReader& tap
 {
    I64JITScope scope(&tapeReader, &codeWriter, &helper, this, _bigAddressMode);
 
-   size_t codeSize = tapeReader.getDWord();
-   size_t endPos = tapeReader.Position() + codeSize;
+   pos_t codeSize = tapeReader.getDWord();
+   pos_t endPos = tapeReader.Position() + codeSize;
 
    compileTape(tapeReader, endPos, scope);
 
@@ -2294,8 +2292,8 @@ void I64JITCompiler :: compileProcedure(_ReferenceHelper& helper, MemoryReader& 
 {
    I64JITScope scope(&tapeReader, &codeWriter, &helper, this, _bigAddressMode);
 
-   size_t codeSize = tapeReader.getDWord();
-   size_t endPos = tapeReader.Position() + codeSize;
+   pos_t codeSize = tapeReader.getDWord();
+   pos_t endPos = tapeReader.Position() + codeSize;
 
    compileTape(tapeReader, endPos, scope);
 

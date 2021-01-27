@@ -28,7 +28,11 @@ using namespace _ELENA_;
 #define SYSTEM_PLATFORM             "configuration/system/platform"
 #define LIBRARY_PATH                "configuration/project/libpath"
 
-#ifdef _WIN32
+#if _WIN64
+
+#define CONFIG_PATH "elenavm64.cfg"
+
+#elif _WIN32
 
 #define CONFIG_PATH "elenavm.cfg"
 
@@ -256,7 +260,7 @@ ident_t Instance :: resolveForward(ident_t forward)
    return reference;
 }
 
-size_t Instance :: getLinkerConstant(int id)
+pos_t Instance :: getLinkerConstant(int id)
 {
    switch (id) {
       case lnGCMGSize:
@@ -269,8 +273,6 @@ size_t Instance :: getLinkerConstant(int id)
       //   return (size_t)_config.maxThread;
       case lnObjectSize:
          return _compiler->getObjectHeaderSize();
-      case lnVMAPI_Instance:
-         return (size_t)this;
       default:
          return 0;
    }
@@ -670,8 +672,8 @@ void Instance :: clearMessageTable()
    _messageTable->trim(0);
    _messageBodyTable->trim(0);
 
-   _messageTable->writeBytes(0, 0, 8); // write dummy place holder
-   _messageBodyTable->writeBytes(0, 0, 4); // write dummy place holder
+   _messageTable->writeBytes(0, 0, sizeof(uintptr_t) * 2); // write dummy place holder
+   _messageBodyTable->writeBytes(0, 0, sizeof(uintptr_t)); // write dummy place holder
 }
 
 void Instance :: clearMetaAttributeTable()
@@ -769,11 +771,10 @@ void Instance :: translate(MemoryReader& reader, ImageReferenceHelper& helper, M
    MemoryWriter ecodes(&dump);
 
    ecodes.writeDWord(0);            // write size place holder
-   int procPtr = ecodes.Position();
+   pos_t procPtr = ecodes.Position();
 
    // open 0
    ecodes.writeByte(bcOpen);
-   ecodes.writeDWord(0);
 
    // resolve tape
    size_t command = reader.getDWord();

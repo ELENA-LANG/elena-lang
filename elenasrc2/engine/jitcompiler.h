@@ -51,7 +51,7 @@ class _JITCompiler
 public:
    virtual void allocateMetaInfo(_Module* messages) = 0;
 
-   virtual size_t getObjectHeaderSize() const = 0;
+   virtual pos_t getObjectHeaderSize() const = 0;
 
    virtual bool isWithDebugInfo() const = 0;
 

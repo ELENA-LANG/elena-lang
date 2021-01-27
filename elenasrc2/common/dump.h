@@ -3,7 +3,7 @@
 //
 //		This header contains the declaration of ELENA Engine Data Memory dump
 //		classes.
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DumpH
@@ -119,8 +119,8 @@ public:
 
    MemoryDump();
    MemoryDump(pos_t capacity);
-//   MemoryDump(MemoryDump& copy);
-//   virtual ~MemoryDump() { freestr(_buffer); }
+   MemoryDump(MemoryDump& copy);
+   virtual ~MemoryDump() { freestr(_buffer); }
 };
 
 // --- ByteArray ---

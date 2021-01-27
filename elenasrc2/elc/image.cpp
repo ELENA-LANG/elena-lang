@@ -178,7 +178,7 @@ ClassSectionInfo ExecutableImage :: getClassSectionInfo(ReferenceInfo referenceI
    return sectionInfo;
 }
 
-size_t ExecutableImage :: getLinkerConstant(int id)
+pos_t ExecutableImage :: getLinkerConstant(int id)
 {
    switch (id) {
       case lnGCMGSize:

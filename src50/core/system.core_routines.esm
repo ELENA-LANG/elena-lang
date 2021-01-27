@@ -5004,8 +5004,6 @@ symbol vm_sta_start
   pushfip  -1
   callextr extern : PrepareEM 0301h
 
-  pushn    0  // ; add dumy value to maintain 16 byte alignment
-
   pushsip  -3
   callextr api : initProcess 1
 

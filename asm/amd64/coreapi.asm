@@ -4335,3 +4335,272 @@ procedure coreapi'get_seh_handler
   ret
 
 end
+
+// core_utf8hashcode(s,len)
+procedure coreapi'core_utf8hashcode
+
+  mov  rax, [rsp+8]
+  mov  rcx, [rsp+16]
+
+  mov  edi, 15051505h
+  mov  esi, edi
+
+labLoop:
+  cmp  ecx, 8
+  jb   short labSkip
+
+  mov  ebx, edi
+  shl  ebx, 5
+  mov  edx, edi
+  add  ebx, edi
+  shr  edx, 27
+  add  ebx, edx
+  mov  edx, dword ptr [rax]
+  xor  ebx, edx
+  mov  edi, ebx
+
+  mov  ebx, esi
+  shl  ebx, 5
+  mov  edx, esi
+  add  ebx, esi
+  shr  edx, 27
+  add  ebx, edx
+  mov  edx, dword ptr [rax+4]
+  xor  ebx, edx                    
+  mov  esi, ebx
+
+  add  eax, 8
+  sub  ecx, 8
+  jmp  short labLoop
+
+  add  ecx, 8
+  and  ecx, 7
+
+labSkip:  
+  cmp  ecx, 4
+  jb   short labSkip2
+
+  mov  ebx, edi
+  shl  ebx, 5
+  mov  edx, edi
+  add  ebx, edi
+  shr  edx, 27
+  add  ebx, edx
+  mov  edx, dword ptr [rax]
+  xor  ebx, edx
+  mov  edi, ebx
+  add  eax, 4
+  sub  ecx, 4
+
+labSkip2:
+  mov  ebx, 3
+  sub  ebx, ecx
+  shl  ebx, 3
+  mov  ecx, ebx
+
+  mov  ebx, 0FFFFFFFFh
+  shr  ebx, cl
+  mov  ecx, dword ptr [rax]
+  and  ecx, ebx
+
+  mov  ebx, esi
+  shl  ebx, 5
+  mov  edx, esi
+  add  ebx, esi
+  shr  edx, 27
+  add  ebx, edx
+  xor  ebx, ecx
+  mov  esi, ebx
+
+  mov  edx, esi
+  imul  edx, 1566083941
+  add  edx, edi
+  mov  eax, edx 
+  ret
+
+end
+
+// core_utf16hashcode(s,len)
+procedure coreapi'core_utf16hashcode
+
+  mov  rax, [rsp+8]
+  mov  rcx, [rsp+16]
+
+  mov  edi, 15051505h
+  mov  esi, edi
+
+labLoop:
+  cmp  ecx, 4
+  jb   short labSkip
+
+  mov  ebx, edi
+  shl  ebx, 5
+  mov  edx, edi
+  add  ebx, edi
+  shr  edx, 27
+  add  ebx, edx
+  mov  edx, dword ptr [rax]
+  xor  ebx, edx
+  mov  edi, ebx
+
+  mov  ebx, esi
+  shl  ebx, 5
+  mov  edx, esi
+  add  ebx, esi
+  shr  edx, 27
+  add  ebx, edx
+  mov  edx, dword ptr[rax+4]
+  xor  ebx, edx                    
+  mov  esi, ebx
+
+  add  eax, 8
+  sub  ecx, 4
+  jmp  short labLoop
+
+  add  ecx, 4
+  and  ecx, 7
+
+labSkip:  
+  cmp  ecx, 2
+  jb   short labSkip2
+
+  mov  ebx, edi
+  shl  ebx, 5
+  mov  edx, edi
+  add  ebx, edi
+  shr  edx, 27
+  add  ebx, edx
+  mov  edx, dword ptr [rax]
+  xor  ebx, edx
+  mov  edi, ebx
+  add  eax, 4
+  sub  ecx, 2
+
+labSkip2:
+  mov  ecx, dword ptr [rax]
+
+  mov  ebx, esi
+  shl  ebx, 5
+  mov  edx, esi
+  add  ebx, esi
+  shr  edx, 27
+  add  ebx, edx
+  xor  ebx, ecx
+  mov  esi, ebx
+
+  mov  ebx, esi
+  imul ebx, 1566083941
+  add  ebx, edi
+  ret
+
+end
+
+procedure coreapi'nsubcopy
+
+  mov  rdi, [rsp+8]
+  mov  rsi, [rsp+24]
+  mov  rdx, [rsp+8]
+  mov  rax, [rsp+32]
+  mov  ecx, dword ptr [rsi]
+  mov  ebx, dword ptr [rdx]
+
+  mov  esi, edi
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, dword ptr [rax + rbx * 4]
+  mov  dword ptr[rsi], edx
+  add  ebx, 1
+  lea  rsi, [rsi + 4]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+end
+
+// ninsert(target,index,len,source)
+procedure coreapi'ninsert
+
+  mov  rdx, [rsp+16]
+  mov  rax, [rsp+24]
+  mov  rdi, [rsp+8]
+  mov  ecx, dword ptr [rax]
+  mov  rsi, [rsp+32]
+  mov  ebx, dword ptr [rdx]
+  test ecx, ecx
+  jz   short labEnd
+
+labNext:
+  mov  edx, dword ptr [rsi]
+  mov  dword ptr [rdi + rbx*4], edx
+  add  ebx, 1
+  lea  rsi, [rsi + 4]
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  mov  edx, ebx
+  mov  rbx, rdi
+  ret
+
+end
+
+// ; nmove(target,index,len,offs)
+procedure coreapi'nmove
+
+  mov  rdi, [rsp+8]
+  mov  rax, [rsp+24]
+  mov  rbx, [rsp+16]
+  mov  ecx, dword ptr[rax]
+  mov  ebx, dword ptr [rbx]
+  mov  rdx, [rsp+32]
+
+  test ecx, ecx
+  jz   short labEnd
+
+  mov  esi, dword ptr [rdx]
+  cmp  esi, 0
+  jl   short labDelete
+
+  add  ebx, ecx
+  sub  ebx, 1
+
+  add  esi, ebx
+  shl  esi, 2
+
+  add  esi, edi
+  shl  ebx, 2
+  add  ebx, edi
+  
+labNext:
+  mov  edx, dword ptr [rbx]
+  mov  dword ptr [rsi], edx
+  sub  ebx, 4
+  sub  esi, 4
+  sub  ecx, 1
+  jnz  short labNext
+
+labEnd:
+  ret
+
+labDelete:
+  add  rsi, rbx
+  shl  rsi, 2
+
+  add  rsi, rdi
+  shl  rbx, 2
+  add  rbx, rdi
+
+labNext2:
+  mov  edx, dword ptr [rbx]
+  mov  dword ptr [rsi], edx
+  add  ebx, 4
+  add  esi, 4
+  sub  ecx, 1
+  jnz  short labNext2
+  ret
+
+end

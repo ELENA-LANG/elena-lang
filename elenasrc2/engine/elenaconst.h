@@ -37,6 +37,7 @@ namespace _ELENA_
 
    constexpr auto INVALID_REF             = 0xFFFFFFFFu;
    constexpr auto INVALID_PTR             = (uintptr_t)-1;
+   constexpr auto INVALID_VADDR           = (vaddr_t)-1;
 
    constexpr auto EQUAL_OPERATOR_ID       = 0x0004;
    constexpr auto SET_OPERATOR_ID         = 0x0007;
@@ -355,8 +356,6 @@ namespace _ELENA_
    constexpr int lnThreadCount            = 0x00000003;
    constexpr int lnObjectSize             = 0x00000004;
    constexpr int lnGCPERMSize             = 0x00000005;
-
-   constexpr int lnVMAPI_Instance         = 0x00001001;   // reference to VM;
 
   // ELENA run-time exceptions
    constexpr int ELENA_ERR_CRITICAL          = 0x100;

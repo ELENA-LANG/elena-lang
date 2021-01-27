@@ -410,7 +410,7 @@ void JITLinker :: fixReferences(References& references, _Memory* image)
          vaddr_t refVAddress = resolve(_loader->retrieveReference(current.module, currentRef, currentMask), currentMask, false);
 
          // NOTE : check if it is a weak class reference (used for Message table generation)
-         if (it.key() != INVALID_PTR)
+         if (it.key() != INVALID_REF)
             resolveReference(image, it.key(), refVAddress, currentMask, _virtualMode);
       }
       it++;

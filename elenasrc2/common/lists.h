@@ -3,7 +3,7 @@
 //
 //              This header contains various ELENA Engine list templates
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef listsH
@@ -1977,7 +1977,7 @@ public:
    {
       it++;
 
-      unsigned int beginning = (unsigned int)_buffer.get(0);
+      uintptr_t beginning = (uintptr_t)_buffer.get(0);
 
       if (!it.Eof()) {
          // get top item position
@@ -2019,8 +2019,8 @@ public:
 
    T exclude(Key key)
    {
-      unsigned int beginning = (unsigned int)_buffer.get(0);
-      unsigned int previous = (unsigned int)-1;
+      uintptr_t beginning = (uintptr_t)_buffer.get(0);
+      uintptr_t previous = (uintptr_t)-1;
 
       if (_buffer.Length() > 0) {
          // get top item position
@@ -2065,7 +2065,7 @@ public:
 
    bool exist(Key key, T item) const
    {
-      unsigned int beginning = (unsigned int)_buffer.get(0);
+      uintptr_t beginning = (uintptr_t)_buffer.get(0);
 
       if (_buffer.Length() > 0) {
          // get top item position

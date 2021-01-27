@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Engine Data Section
 //		classes.
-//                                              (C)2005-2017, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"
@@ -35,15 +35,15 @@ MemoryDump :: MemoryDump(pos_t capacity)
    _buffer = (capacity > 0) ? (char*)realloc(NULL, capacity) : nullptr;
 }
 
-//MemoryDump :: MemoryDump(MemoryDump& copy)
-//{
-//   _used = copy._used;
-//   _total = copy._total;
-//
-//   //_buffer = (char*)malloc(_total);
-//   _buffer = (char*)realloc(NULL, _total);
-//   memcpy(_buffer, copy._buffer, _total);
-//}
+MemoryDump :: MemoryDump(MemoryDump& copy)
+{
+   _used = copy._used;
+   _total = copy._total;
+
+   //_buffer = (char*)malloc(_total);
+   _buffer = (char*)realloc(NULL, _total);
+   memcpy(_buffer, copy._buffer, _total);
+}
 
 void* MemoryDump :: get(pos_t position) const
 {

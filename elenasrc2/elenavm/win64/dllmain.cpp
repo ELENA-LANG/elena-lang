@@ -13,6 +13,9 @@ static AMD64ELENAVMMachine* _Machine = nullptr;
 static Path rootPath;
 static void* _SystemEnv = nullptr;
 
+constexpr auto cnNameOffset = sizeof(VMTXHeader) + sizeof(uintptr_t);
+constexpr auto cnPackageOffset = cnNameOffset + sizeof(uintptr_t);
+
 // --- getAppPath ---
 
 void loadDLLPath(HMODULE hModule)
@@ -111,8 +114,8 @@ EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLengt
    try {
       size_t length = maxLength;
 
-      int packagePtr = *(int*)((int)vmtAddress - 24);
-      int namePtr = *(int*)((int)vmtAddress - 20);
+      uintptr_t packagePtr = *(uintptr_t*)((vaddr_t)vmtAddress - cnPackageOffset);
+      uintptr_t namePtr = *(uintptr_t*)((vaddr_t)vmtAddress - cnNameOffset);
 
       char* name = (char*)namePtr;
       char* ns = ((char**)packagePtr)[0];
@@ -126,18 +129,6 @@ EXTERN_DLL_EXPORT int LoadClassName(void* vmtAddress, char* buffer, int maxLengt
          return 0;
 
       return length + ns_len;
-
-
-      //ident_t className = instance->getClassName(vmtAddress);
-      //size_t length = getlength(className);
-      //if (length > 0) {
-      //   if (maxLength >= (int)length) {
-      //      Convertor::copy(buffer, className, length, length);
-      //   }
-      //   else buffer[0] = 0;
-      //}
-
-      //return length;
    }
    catch (JITUnresolvedException& e)
    {

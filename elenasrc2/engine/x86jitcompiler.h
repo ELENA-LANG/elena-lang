@@ -39,7 +39,7 @@ struct x86JITScope
    int            extra_arg;
    int            extra_arg2;
 
-   void writeReference(MemoryWriter& writer, ref_t reference, size_t disp);
+   void writeReference(MemoryWriter& writer, ref_t reference, pos_t disp);
 
    mssg_t resolveMessage(mssg_t reference)
    {

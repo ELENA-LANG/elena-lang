@@ -3,7 +3,7 @@
 //
 //		This file contains the class implementing ELENA Engine Module class
 //
-//                                              (C)2005-2019, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -248,7 +248,7 @@ void Module :: loadSections(StreamReader& reader)
 
 void Module :: saveSections(StreamWriter& writer)
 {
-   int totalSize = 0;
+   pos_t totalSize = 0;
 
    // calculate the total section size
    SectionMap::Iterator it = _sections.start();

@@ -3,6 +3,9 @@ In development:
 ------         
 
   [development]
+    * helloworld for vm_console64
+    + ecv - a new feature - by default do not show comments, it should be possible to turn it on
+
     * elenavm64
     * migrate all samples to win64
 
@@ -16,6 +19,7 @@ In development:
 
     + housekeeping - review pipeline
     + #531 : Inhert should support only stateless interface type
+    + #69 : GC info 
 
     * review setframe opcode - argument should be an index or absolute value?
     * test bsredirect, mindex

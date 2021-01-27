@@ -470,7 +470,7 @@ public:
       else return false;
    }
 
-   virtual size_t getLinkerConstant(int id);
+   virtual pos_t getLinkerConstant(int id);
 
    virtual void* loadDebugSection() = 0;
 

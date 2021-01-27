@@ -370,8 +370,8 @@ class AMD64LabelHelper
    };
 
    MemoryWriter* code;
-   MemoryMap<int, AMD64JumpInfo> jumps;
-   MemoryMap<int, pos_t>         labels;
+   MemoryMap<int, AMD64JumpInfo, false> jumps;
+   MemoryMap<int, pos_t, false>         labels;
 
 public:
    void addFixableJump(pos_t position, int offset)
@@ -418,7 +418,7 @@ public:
    {
       shift(labels.start(), position + 1, displacement);
 
-      MemoryMap<int, AMD64JumpInfo>::Iterator it = jumps.start();
+      auto it = jumps.start();
       while (!it.Eof()) {
          if ((*it).position == position) {
             (*it).position += firstDisplacement;
