@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINVER
@@ -11,8 +11,8 @@
 #include <windows.h>
 #include "elena.h"
 
-#define TITLE "ELENA Standard Library 5.2: Module "
-#define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>5.2"
+#define TITLE "ELENA Standard Library 5.8: Module "
+#define TITLE2 "ELENA&nbsp;Standard&nbsp;Library<br>5.8"
 
 constexpr auto ByRefPrefix = "'$auto'system@ref#1&";
 constexpr auto ArrayPrefix = "'$auto'system@Array#1&";
@@ -1810,7 +1810,7 @@ bool readClassInfo(String<char, LINE_LEN>& line, TextFileReader& reader, List<Ap
 
 int main(int argc, char* argv[])
 {
-   printf("ELENA command line Html Documentation generator %d.%d.%d (C)2006-20 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
+   printf("ELENA command line Html Documentation generator %d.%d.%d (C)2006-21 by Alexei Rakov\n", ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, REVISION_VERSION);
 
    if (argc != 2) {
       printf("api2html <file>\n");

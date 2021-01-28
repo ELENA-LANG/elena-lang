@@ -28,7 +28,7 @@
 #define ROOTPATH_OPTION "libpath"
 
 #define MAX_LINE           256
-#define REVISION_VERSION   93
+#define REVISION_VERSION   94
 
 using namespace _ELENA_;
 
@@ -36,6 +36,7 @@ using namespace _ELENA_;
 bool    _ignoreBreakpoints = true;
 bool    _showBytecodes = false;
 bool    _noPaging = false;
+bool    _noComments = true;
 
 TextFileWriter* _writer;
 
@@ -144,6 +145,7 @@ void printHelp()
    printf("-c                      - hide / show byte codes\n");
    printf("-b                      - hide / show breakpoints\n");
    printf("-p                      - turn off / turn on pagination\n");
+   printf("-i                      - turn off / turn on desciptions\n");
    printf("-q                      - quit\n");
    printf("-h                      - help\n");
    printf("<class>.<method name>   - view method byte codes\n");
@@ -913,33 +915,6 @@ void printMethod(_Module* module, ident_t methodReference, int pageSize)
    }
 }
 
-//void printConstructor(_Module* module, const wchar_t* className, int pageSize)
-//{
-//   className = trim(className);
-//
-//   // find class VMT
-//   ReferenceNs reference(module->Name(), className);
-//   _Memory* vmt = findClassVMT(module, reference);
-//   _Memory* code = findClassCode(module, reference);
-//   if (vmt == NULL || code == NULL) {
-//      wprintf(_T("Class %s not found\n"), (const wchar_t*)reference);
-//
-//      return;
-//   }
-//
-//   ClassInfo info;
-//   loadClassInfo(module, className, info);
-//
-//   if (info.constructor != 0) {
-//      print(_T("@constructor\n"));
-//      printByteCodes(module, code, 0, 4, pageSize);
-//      print(_T("@end\n"));
-//   }
-//   else {
-//      print(_T("Constructor is not available\n"));
-//   }
-//}
-
 void printSymbol(_Module* module, ident_t symbolReference, int pageSize)
 {
    // find class VMT
@@ -1251,30 +1226,32 @@ void listClassMethods(_Module* module, ident_t className, int pageSize, bool ful
          temp.append(typeName);
       }
 
-      temp.append(";;");
-      for (auto param_it = info.mattributes.getIt(ClassInfo::Attribute(caParamName, entry.message));
-         !param_it.Eof(); param_it = info.mattributes.getNextIt(ClassInfo::Attribute(caParamName, entry.message), param_it))
-      {
-         ReferenceNs sectionName("'", METAINFO_SECTION);
-         _Memory* section = module->mapSection(module->mapReference(sectionName, true) | mskMetaRDataRef, true);
+      if (!_noComments) {
+         temp.append(";;");
+         for (auto param_it = info.mattributes.getIt(ClassInfo::Attribute(caParamName, entry.message));
+            !param_it.Eof(); param_it = info.mattributes.getNextIt(ClassInfo::Attribute(caParamName, entry.message), param_it))
+         {
+            ReferenceNs sectionName("'", METAINFO_SECTION);
+            _Memory* section = module->mapSection(module->mapReference(sectionName, true) | mskMetaRDataRef, true);
 
-         ident_t paramName = (const char*)section->get(*param_it);
+            ident_t paramName = (const char*)section->get(*param_it);
 
-         temp.append(paramName);
-         temp.append('|');
+            temp.append(paramName);
+            temp.append('|');
+         }
+
+         ref_t val = info.mattributes.get(ClassInfo::Attribute(caInfo, entry.message));
+         if (val) {
+            ReferenceNs sectionName("'", METAINFO_SECTION);
+            _Memory* section = module->mapSection(module->mapReference(sectionName, true) | mskMetaRDataRef, true);
+
+            ident_t desc = (const char*)section->get(val);
+
+            temp.append(desc);
+         }
+         if (temp.ident().endsWith(";;"))
+            temp.truncate(temp.Length() - 2);
       }
-
-      ref_t val = info.mattributes.get(ClassInfo::Attribute(caInfo, entry.message));
-      if (val) {
-         ReferenceNs sectionName("'", METAINFO_SECTION);
-         _Memory* section = module->mapSection(module->mapReference(sectionName, true) | mskMetaRDataRef, true);
-
-         ident_t desc = (const char*)section->get(val);
-
-         temp.append(desc);
-      }
-      if (temp.ident().endsWith(";;"))
-         temp.truncate(temp.Length() - 2);
 
       prefix.copy("@method ");
       if (isProteced)
@@ -1434,6 +1411,9 @@ void runSession(_Module* module, int pageSize)
             case 'c':
                _showBytecodes = !_showBytecodes;
                break;
+            case 'i':
+               _noComments = !_noComments;
+               break;
             case 'o':
             {
                Path path(line + 2);
@@ -1566,8 +1546,11 @@ int main(int argc, char* argv[])
          path.changeExtension("out");
 
       setOutputMode(path.c_str());
+      _noComments = false;
 
       printAPI(module, 0, true);
+
+      _noComments = true;
 
       return 0;
    }
