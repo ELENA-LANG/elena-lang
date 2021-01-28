@@ -3,12 +3,11 @@ In development:
 ------         
 
   [development]
-    * helloworld for vm_console64
-    + post : mixin instead of mutli-inheritance (lec24)
     + ecv - a new feature - by default do not show comments, it should be possible to turn it on
 
-    * elenavm64
     * migrate all samples to win64
+
+    + post : mixin instead of mutli-inheritance (lec24)
 
     * multi-theading
     * thread - make sure stack is correctly aligned to 16
