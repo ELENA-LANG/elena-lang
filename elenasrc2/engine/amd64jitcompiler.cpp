@@ -1831,10 +1831,13 @@ void _ELENA_::compileElseR(int, I64JITScope& scope)
    scope.code->writeByte(0x48);
    scope.code->writeWord(0xFB81);
    // HOTFIX : support zero references
-   if (scope.argument != 0) {
-      scope.writeReference(*scope.code, scope.argument, 0);
+   if (scope.argument == -1) {
+      scope.code->writeDWord((pos_t)-1);
    }
-   else scope.code->writeDWord(0);
+   else if (scope.argument == 0) {
+      scope.code->writeDWord(0);
+   }
+   else scope.writeReference(*scope.code, scope.argument, 0);
 
    //NOTE: due to compileJumpX implementation - compileJumpIfNot is called
    compileJumpIf(scope, scope.tape->Position() + jumpOffset, (jumpOffset > 0), (jumpOffset < 0x10));

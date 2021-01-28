@@ -102,6 +102,11 @@ bin\elc src50\system\system_64.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elc src50\extensions\extensions_64.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 bin\elc tests\system\system_test.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError

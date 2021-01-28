@@ -301,7 +301,7 @@ end
 inline % 3
 
   mov  rax, [rsp]
-  mov  rbx, [rax+rdx*4] 
+  mov  rbx, [rax+rdx*8] 
 
 end
 
@@ -513,7 +513,7 @@ end
 // ; get
 inline % 18h
 
-   mov  rbx, [rbx + rdx * 4]
+   mov  rbx, [rbx + rdx * 8]
 
 end
 
@@ -526,7 +526,7 @@ inline % 19h
    sub  rcx, [data : %CORE_GC_TABLE + gc_start]
    mov  rax, [rsp]
    shr  ecx, page_size_order
-   mov  [rbx + rdx*4], rax
+   mov  [rbx + rdx*8], rax
    mov  byte ptr [rcx + rsi], 1  
 
 end
@@ -546,7 +546,7 @@ inline % 1Bh
   mov  rcx, rdx
   pop  rsi
   and  ecx, ARG_MASK
-  lea  rsp, [rsp + rcx * 4]
+  lea  rsp, [rsp + rcx * 8]
   jmp  rsi
  
 end
@@ -708,7 +708,7 @@ end
 inline % 2Fh
             
    mov  rax, [rsp]                  
-   mov  [rbx + rdx * 4], rax
+   mov  [rbx + rdx * 8], rax
 
 end
 

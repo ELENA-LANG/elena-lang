@@ -1,6 +1,6 @@
+import extensions;
+
 public program()
 {
-    console.writeLine("Hello World"w);
-    
-    console.readChar()
+    console.printLine("Hello World"w);
 }

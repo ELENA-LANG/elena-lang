@@ -3,11 +3,11 @@ In development:
 ------         
 
   [development]
-    + ecv - a new feature - by default do not show comments, it should be possible to turn it on
-
+    * fix realsum64
     * migrate all samples to win64
 
     + post : mixin instead of mutli-inheritance (lec24)
+    + compilation speed - Amicable pairs variants
 
     * multi-theading
     * thread - make sure stack is correctly aligned to 16
@@ -88,7 +88,6 @@ In development:
     * #515 : Resolving an interface in run-time 
         - proxy redirect class
         - generate proxy redirect class if the target class is not sealed or closed
-    * [ compilation speed - Amicable pairs variants ]
     * create a new class in run-time with fields
     * [API Docs : Func1 has one argument which is not shown]
     * tscript : support property assignment

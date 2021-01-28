@@ -31,9 +31,19 @@
        <include>collections\queues.l</include>
        <include>collections\tuples.l</include>
        <include>collections\maps.l</include>
+       <include>calendar\win64_datetime.l</include>
+       <include>calendar\dates.l</include>
        <include>text\encoder.l</include>
        <include>text\win32_encoder.l</include>
+       <include>text\textbuffer.l</include>
+       <include>io\common.l</include>
+       <include>io\ioexceptions.l</include>
+       <include>io\streamreader.l</include>
+       <include>io\streamwriter.l</include>
        <include>io\win32_console.l</include>
+       <include>io\win32_files.l</include>
+       <include>io\files.l</include>
+       <include>io\win32_getfiles.l</include>
      </module>
   </files>
 </configuration>
