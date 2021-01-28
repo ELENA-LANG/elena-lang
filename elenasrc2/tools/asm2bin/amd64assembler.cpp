@@ -1477,7 +1477,7 @@ void AMD64Assembler :: compileSBB(TokenInfo& token, ProcedureInfo& info, MemoryW
 	   code->writeByte(dest.offset);
    }
    else if ((test(sour.type, AMD64Helper::otR64) || test(sour.type, AMD64Helper::otM64)) && dest.type == AMD64Helper::otDB) {
-      code->writeByte(0x4d8);
+      code->writeByte(0x48);
       code->writeByte(0x83);
       AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR32 + 3), sour);
       code->writeByte(dest.offset);

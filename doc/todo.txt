@@ -6,20 +6,25 @@ In development:
     * fix realsum64
     * migrate all samples to win64
 
+    + housekeeping - review pipeline
     + post : mixin instead of mutli-inheritance (lec24)
+    + housekeeping - review pipeline
     + compilation speed - Amicable pairs variants
 
     * multi-theading
     * thread - make sure stack is correctly aligned to 16
 
     + compiler option : raw stack alignment  
+    + housekeeping - review pipeline
     + bf interpreter optimization
 
     * x86-64 YG GC : copy lock byte as well
 
     + housekeeping - review pipeline
     + #531 : Inhert should support only stateless interface type
+    + housekeeping - review pipeline
     + #69 : GC info 
+    + housekeeping - review pipeline
 
     * review setframe opcode - argument should be an index or absolute value?
     * test bsredirect, mindex

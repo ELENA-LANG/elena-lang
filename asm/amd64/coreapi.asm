@@ -1798,10 +1798,11 @@ Lab8:
    
 end
 
+// ; realtowstr(str,radix,r)
 procedure coreapi'realtowstr
 
-   mov  rdi, [rsp+24]                 
-   mov  rsi, [rsp+16]                 // ; radix
+   mov  rdi, [rsp+24]                // ; r 
+   mov  rsi, [rsp+16]                // ; radix
    mov  rax, [rsp+8]                 // ; get str
    mov  ebx, dword ptr [rsi]
 
@@ -1949,7 +1950,7 @@ ftoa22:
    // unpack BCD, the 10 bytes returned by the FPU being in the little-endian style
    //------------------------------------------------------------------------------
 
-   lea   rsi, [rbp-37]        // go to the most significant byte (sign byte)
+   lea   rsi, [rbp-47]        // go to the most significant byte (sign byte)
    push  rdi
    lea   rdi,[rbp-104]
    mov   eax,3020h
@@ -1972,7 +1973,7 @@ ftoa6:
    jnz   short ftoa6
 
    pop   rdi
-   lea   rsi,[rbp-52]
+   lea   rsi,[rbp-104]
    
    cmp   edx, 0
    jnz   short scientific
@@ -3295,19 +3296,19 @@ Lab8:
    
 end
 
-// ; rcopyl (eax:src, ecx : base, ebx - result)
+// ; realtostr(str,radix,r)
 procedure coreapi'realtostr
 
-   mov  rdi, [rsp+24]                 
-   mov  rsi, [rsp+16]                 // ; radix
+   mov  rdi, [rsp+24]                // ; r 
+   mov  rsi, [rsp+16]                // ; radix
    mov  rax, [rsp+8]                 // ; get str
    mov  ebx, dword ptr [rsi]
 
-   mov   ecx, eax
+   mov   rcx, rax
    push  rbp
    mov   rbp, rsp
 
-   sub   rsp, 52  
+   sub   rsp, 104  
 
    push  rdi
    
@@ -3375,19 +3376,19 @@ getnumsize:
    fabs                       // insures a positive value
    fyl2x                      // ->[log2(Src)]*[log10(2)] = log10(Src)
       
-   fstcw word ptr [rbp-4]     // get current control word
-   mov   ax, word ptr [rbp-4]
+   fstcw word ptr [rbp-8]     // get current control word
+   mov   ax, word ptr [rbp-8]
    or    ax,0C00h             // code it for truncating
-   mov   word ptr [rbp-8],ax
-   fldcw word ptr [rbp-8]     // insure rounding code of FPU to truncating
+   mov   word ptr [rbp-16],ax
+   fldcw word ptr [rbp-16]     // insure rounding code of FPU to truncating
       
-   fist  [rbp-12]             // store characteristic of logarithm
-   fldcw word ptr [rbp-4]     // load back the former control word
+   fist  [rbp-24]             // store characteristic of logarithm
+   fldcw word ptr [rbp-8]     // load back the former control word
 
    ftst                       // test logarithm for its sign
    fstsw ax                   // get result
    sahf                       // transfer to CPU flags
-   sbb   [rbp-12],0           // decrement esize if log is negative
+   sbb   [rbp-24],0           // decrement esize if log is negative
    fstp  st(0)                // get rid of the logarithm
 
    //-----------------------------------------------------------------------
@@ -3395,7 +3396,7 @@ getnumsize:
    // number of significant digits
    //-----------------------------------------------------------------------
    
-   mov   eax, dword ptr[rbp-12]
+   mov   eax, dword ptr[rbp-24]
    lea   rax, [rax+1]  // one digit is required
    or    eax, eax
    js    short ftoa21
@@ -3405,7 +3406,7 @@ getnumsize:
    mov   ebx, 13
    mov   ecx, ebx
    sub   ecx, eax
-   mov   dword ptr [rbp-16], ecx
+   mov   dword ptr [rbp-32], ecx
    jmp   short ftoa22
 
 ftoa20:
@@ -3416,7 +3417,7 @@ ftoa20:
    sub   ebx, eax      
 
 ftoa21:
-   mov   dword ptr[rbp-16], ebx
+   mov   dword ptr[rbp-32], ebx
 
 ftoa22:
 
@@ -3424,7 +3425,7 @@ ftoa22:
    // multiply the number by the power of 10 to generate required integer and store it as BCD
    //----------------------------------------------------------------------------------------
 
-   fild  dword ptr [rbp-16]
+   fild  dword ptr [rbp-32]
    fldl2t
    fmulp                      // ->log2(10)*exponent
    fld   st(0)
@@ -3438,7 +3439,7 @@ ftoa22:
    fstp  st(1)                // get rid of the characteristic of the log
    fmulp                      // ->16-digit integer
 
-   fbstp tbyte ptr[rbp-28]    // ->TBYTE containing the packed digits
+   fbstp tbyte ptr[rbp-56]    // ->TBYTE containing the packed digits
    fstsw ax                   // retrieve exception flags from FPU
    shr   eax,1                // test for invalid operation
    jc    srcerr               // clean-up and return error
@@ -3447,9 +3448,9 @@ ftoa22:
    // unpack BCD, the 10 bytes returned by the FPU being in the little-endian style
    //------------------------------------------------------------------------------
 
-   lea   rsi, [rbp-19]        // go to the most significant byte (sign byte)
+   lea   rsi, [rbp-47]        // go to the most significant byte (sign byte)
    push  rdi
-   lea   rdi,[rbp-52]
+   lea   rdi,[rbp-104]
    mov   eax,3020h
    movzx  ecx,byte ptr[rsi]     // sign byte
    cmp   ecx, 00000080h
@@ -3470,7 +3471,7 @@ ftoa6:
    jnz   short ftoa6
 
    pop   rdi
-   lea   rsi,[rbp-52]
+   lea   rsi,[rbp-104]
    
    cmp   edx, 0
    jnz   short scientific
@@ -3487,7 +3488,7 @@ ftoa6:
 
 ftoa60:
    mov   ecx,1                // at least 1 integer digit
-   mov   eax, dword ptr[rbp-12]
+   mov   eax, dword ptr[rbp-24]
    or    eax, eax             // is size negative (i.e. number smaller than 1)
    js    short ftoa61
    add   ecx, eax
@@ -3563,7 +3564,7 @@ ftoa10Next:                    // copy the decimal digits
    mov   eax,69                // "E"
    stosb
    mov   eax,43                // "+"
-   mov   ecx,dword ptr [rbp-12]
+   mov   ecx,dword ptr [rbp-24]
    popfd                      // retrieve flags for extra "1"
    jnz   short ftoa11          // no extra "1"
    add   ecx, 1               // adjust exponent
@@ -3620,7 +3621,7 @@ finish1:
 finish2:
    mov   rbx, rdi
    pop   rdi
-   add   rsp, 52
+   add   rsp, 104
    pop   rbp
 
    sub   rbx, rdi
@@ -3630,7 +3631,7 @@ finish2:
 
 srcerr:
    pop   rdi
-   add   rsp, 52
+   add   rsp, 104
    pop   rbp
    xor   ebx,ebx
 finish3:

@@ -1974,8 +1974,8 @@ inline % 01DDh
 
   lea  rsi, [rbx + __arg1]
   mov  rdi, [rsp]
-  mov  rax, [rsi]
-  mov  [rdi], rax
+  mov  eax, dword ptr [rsi]
+  mov  dword ptr [rdi], eax
 
 end
 
@@ -1985,8 +1985,6 @@ inline % 02DDh
   mov  rdi, [rsp]
   mov  rax, [rsi]
   mov  [rdi], rax
-  mov  rcx, [rsi+8]
-  mov  [rdi+4], rcx
 
 end
 
@@ -1996,10 +1994,8 @@ inline % 03DDh
   mov  rdi, [rsp]
   mov  rax, [rsi]
   mov  [rdi], rax
-  mov  rcx, [rsi+8]
-  mov  [rdi+8], rcx
-  mov  rax, [rsi+16]
-  mov  [rdi+16], rax
+  mov  ecx, dword ptr [rsi+8]
+  mov  dword ptr [rdi+8], ecx
 
 end
 
@@ -2011,10 +2007,6 @@ inline % 04DDh
   mov  [rdi], rax
   mov  rcx, [rsi+8]
   mov  [rdi+8], rcx
-  mov  rax, [rsi+16]
-  mov  [rdi+16], rax
-  mov  rcx, [rsi+24]
-  mov  [rdi+24], rcx
 
 end
 
