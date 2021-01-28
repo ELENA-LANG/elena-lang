@@ -3446,14 +3446,14 @@ public:
       {
          _array = (char*)buffer;
          _position = 4;
-         _end = (*(int*)_array) << 3;  // _array starts with the number of items
+         _end = (*(int*)_array) * (sizeof(T) + 4);  // _array starts with the number of items
       }
 
       Iterator(char* buffer, int position)
       {
          _array = buffer;
          _position = position;
-         _end = (*(int*)_array) << 3;  // _array starts with the number of items
+         _end = (*(int*)_array) * (sizeof(T) + 4);  // _array starts with the number of items
       }
    };
 

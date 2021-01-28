@@ -608,7 +608,7 @@ void JITCompiler64 :: compileChar32(MemoryWriter* writer, const char* value)
    writer->writeDWord(0x40000004u);
 
    // object body
-   writer->writeQWord(ch);
+   writer->writeDWord(ch);
 }
 
 void JITCompiler64 :: compileBinary(MemoryWriter* writer, _Memory* binary)

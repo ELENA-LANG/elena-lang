@@ -1279,20 +1279,19 @@ void _ELENA_::compileBreakpoint(int, I64JITScope& scope)
 
 void _ELENA_::compilePush(int opcode, I64JITScope& scope)
 {
-   if (opcode == bcPushR && scope.bigAddressMode && scope.argument) {
-      scope.code->writeByte(0x48);
-      scope.code->writeByte(0x68);
-      scope.writeReference(*scope.code, scope.argument, 0);
-      scope.code->writeDWord(0);
-   }
-   else {
+   //if (opcode == bcPushR && scope.bigAddressMode && scope.argument) {
+   //   scope.code->writeByte(??);
+   //   scope.writeReference(*scope.code, scope.argument, 0);
+   //   scope.code->writeDWord(0);
+   //}
+   //else {
       // push constant | reference
       scope.code->writeByte(0x68);
       if (opcode == bcPushR && scope.argument != 0) {
          scope.writeReference(*scope.code, scope.argument, 0);
       }
       else scope.code->writeDWord(scope.argument);
-   }
+//   }
 }
 
 void _ELENA_::compilePopD(int, I64JITScope& scope)

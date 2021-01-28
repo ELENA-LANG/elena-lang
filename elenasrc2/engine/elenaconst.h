@@ -131,6 +131,7 @@ namespace _ELENA_
       mskRelDataRef          = 0xB0000000u,
       mskTLSRef              = 0xC0000000u,
       mskImportRef           = 0xE0000000u,
+      mskRelExternakRef      = 0xF0000000u, // in fact the same as mskRelImportRef, but should contain only image part
 
       mskRelImportRef        = 0xFF000000u,
 

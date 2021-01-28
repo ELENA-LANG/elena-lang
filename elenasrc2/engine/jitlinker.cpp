@@ -45,6 +45,11 @@ inline void resolveReference(_Memory* image, pos_t position, vaddr_t vaddress, r
             // NOTE : the offset should be written
             writeVAddrOffset(image, position, (pos_t)(vaddress - ((vaddr_t)image->get(0)) - position - 4));
             break;
+         case mskRelExternakRef:
+            // NOTE : the offset should be written
+            vaddress &= ~mskRelImportRef;
+            writeVAddrOffset(image, position, (pos_t)(vaddress - ((vaddr_t)image->get(0)) - position - 4));
+            break;
          default:
             updateVAddr(image, position, vaddress);
             break;
