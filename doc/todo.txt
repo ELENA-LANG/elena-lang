@@ -3,7 +3,11 @@ In development:
 ------         
 
   [development]
-    * words64
+
+-   8b 0d 
+
+
+    * pi64
     * migrate all samples to win64
 
     + housekeeping - review pipeline

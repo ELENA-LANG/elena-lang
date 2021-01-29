@@ -1,45 +1,25 @@
-import system'routines;
-import system'collections;
+//import system'math.
+import system'calendar;
 import extensions;
-import extensions'routines;
-import extensions'text;
 
-class WordList
-{
-    int       theTotal;
-    ArrayList theList;
-
-    constructor()
-    {
-        theList := new ArrayList();
-        theTotal := 0;
-    }
-
-    append(word)
-    {
-        theTotal := theTotal + 1;
-
-        ifnot(theList.ifExists(word))
-            { theList.append(word) }
-    }
-
-    total_words = theTotal;
-
-    unique_words = theList.Length;
-        
-    dispatch() => theList;
-}
+const int MAX = 50000000;
 
 public program()
 {
-    var text := "a b c";
-    
-    var list := new WordList();
+//    var started := now;
 
-    text.forEachWord:(word){ list.append:word };
-    
-    console.printLine("There are ",list.unique_words," unique words out of ",list.total_words);
-    if (list.total_words > 0)
-        { console.printLine("the list of unique words:",list.ascendant()) };
-    
+    real pi := 0.0r;
+    for(int i := 0, i < MAX, i += 1)
+    {
+        pi += -1.0r.power(i) / (i*2+1) * 4
+    };
+
+//    var ended := now;
+
+    console.printLine(pi);
+
+//    var diff := ended - started;
+//    console.printLine("Time elapsed in msec:",diff.Milliseconds);
+
+//    console.readChar()
 }

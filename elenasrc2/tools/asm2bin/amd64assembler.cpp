@@ -394,6 +394,27 @@ AMD64Assembler::Operand AMD64Assembler:: readDispOperand(TokenInfo& token, Proce
          // if it is [disp]
          return operand;
       }
+      else if (prefix == AMD64Helper::otM32 && operand.type == AMD64Helper::otDisp32 && !operand.ebpReg) {
+         token.read();
+         Operand disp = defineDisplacement(token, info, err);
+         if (disp.type == AMD64Helper::otDD || disp.type == AMD64Helper::otDB) {
+            if (disp.reference == 0) {
+               operand.offset += disp.offset;
+            }
+            else if (operand.reference == 0) {
+               operand.offset += disp.offset;
+               operand.reference = disp.reference;
+            }
+            else token.raiseErr(err);
+
+            token.read();
+         }
+         else if (disp.type != AMD64Helper::otUnknown)
+            token.raiseErr(err);
+
+         // if it is [disp]
+         return operand;
+      }
       else {
          token.read();
 
