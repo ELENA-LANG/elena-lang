@@ -1286,6 +1286,9 @@ void _ELENA_::compilePush(int opcode, I64JITScope& scope)
    //}
    //else {
       // push constant | reference
+   if (scope.argument == -1)
+      scope.argument = -1;
+
       scope.code->writeByte(0x68);
       if (opcode == bcPushR && scope.argument != 0) {
          scope.writeReference(*scope.code, scope.argument, 0);
@@ -1987,12 +1990,12 @@ void _ELENA_::compileAllocI(int opcode, I64JITScope& scope)
          // sub esp, __arg1 * 4
          int arg = scope.argument << 3;
          if (arg < 0x80) {
-            scope.code->writeWord(0x48);
+            scope.code->writeByte(0x48);
             scope.code->writeWord(0xEC83);
             scope.code->writeByte(scope.argument << 3);
          }
          else {
-            scope.code->writeWord(0x48);
+            scope.code->writeByte(0x48);
             scope.code->writeWord(0xEC81);
             scope.code->writeDWord(scope.argument << 3);
          }
