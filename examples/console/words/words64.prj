@@ -1,0 +1,16 @@
+<configuration>    
+    <project>        
+        <executable>words64.exe</executable>        
+        <arguments></arguments>        
+        <output></output>        
+        <options>-w3</options>        
+        <namespace>words</namespace>        
+        <template>console_64</template>        
+        <debuginfo>-1</debuginfo>    
+    </project>    
+    <files>        
+        <module>            
+            <include>words.l</include>        
+        </module>    
+    </files>
+</configuration>

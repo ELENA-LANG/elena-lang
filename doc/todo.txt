@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    * fix realsum64
+    * words64
     * migrate all samples to win64
 
     + housekeeping - review pipeline

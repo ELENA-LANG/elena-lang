@@ -834,7 +834,7 @@ inline % 3Eh
 
   mov  rax, [rsp]
   xor  rdx, rdx
-  cmp  eax, ebx
+  cmp  rax, rbx
   setz dl
 
 end
@@ -1947,8 +1947,9 @@ end
 inline % 0DBh
 
   mov  ecx, __arg1
+  shl  ecx, 4
   mov  rax, [rbx - elVMTOffset]
-  jmp  [rax + rcx * 8 + 4]
+  jmp  [rax + rcx + 8]
 
 end
 
@@ -3042,7 +3043,7 @@ inline % 09Bh
   mov  rax, __arg1	
   mov  rdi, rbx
   mov  ecx, dword ptr[rsi]
-  rep  stosd
+  rep  stos
 
 end
 
@@ -3051,7 +3052,7 @@ inline % 0F2h
 
   mov  rdi, rbx
   mov  ecx, __arg1
-  rep  stosd
+  rep  stos
 
 end
 

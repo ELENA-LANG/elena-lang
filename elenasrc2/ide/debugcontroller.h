@@ -189,7 +189,7 @@ protected:
       return /*(lineInfoAddress < _tape.Length()) ? (DebugLineInfo*)_tape.get(lineInfoAddress) :*/ (DebugLineInfo*)lineInfoAddress;
    }
 
-   DebugLineInfo* seekClassInfo(size_t address, IdentifierString &className, size_t& flags, size_t vmtAddress = 0);
+   DebugLineInfo* seekClassInfo(uintptr_t address, IdentifierString &className, size_t& flags, size_t vmtAddress = 0);
    DebugLineInfo* seekLineInfo(size_t address, ident_t &moduleName, ident_t &className,
       ident_t &methodName, ident_t &path);
 
@@ -199,7 +199,7 @@ protected:
    size_t findNearestAddress(_Module* module, ident_t path, int row);
 
    void readFields(_DebuggerWatch* watch, DebugLineInfo* self, size_t address);
-   void readList(_DebuggerWatch* watch, int* list, int length);
+   void readList(_DebuggerWatch* watch, uintptr_t* list, int length);
    void readByteArray(_DebuggerWatch* watch, size_t address, ident_t name);
    void readShortArray(_DebuggerWatch* watch, size_t address, ident_t name);
    void readIntArray(_DebuggerWatch* watch, size_t address, ident_t name);

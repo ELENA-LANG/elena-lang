@@ -2358,11 +2358,19 @@ void AMD64Assembler::compileMOVSD(TokenInfo& token, ProcedureInfo& info, MemoryW
 //   else token.raiseErr("Invalid command (%d)");
 //}
 
-void AMD64Assembler :: compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+void AMD64Assembler :: compileSTOSQ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
-	code->writeByte(0xAB);
+   code->writeByte(0x48);
+   code->writeByte(0xAB);
 
 	token.read();
+}
+
+void AMD64Assembler :: compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   code->writeByte(0xAB);
+
+   token.read();
 }
 
 void AMD64Assembler :: compileSTOSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
@@ -4504,7 +4512,11 @@ bool AMD64Assembler :: compileCommandS(TokenInfo& token, ProcedureInfo& info, Me
 	   compileSTC(token, info, &writer);
       return true;
    }
-   else if (token.check("stosd") || token.check("stos")) {
+   else if (token.check("stosq") || token.check("stos")) {
+      compileSTOSQ(token, info, &writer);
+      return true;
+   }
+   else if (token.check("stosd")) {
 	   compileSTOSD(token, info, &writer);
       return true;
    }

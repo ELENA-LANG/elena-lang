@@ -3,7 +3,7 @@
 //
 //		This header contains I64Assembler declarations
 //
-//                             (C)2005-2020, by Alexei Rakov, Alexandre Bencz
+//                             (C)2005-2021, by Alexei Rakov, Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef amd64assemblerH
@@ -112,6 +112,7 @@ protected:
 	void compileLODSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileLODSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileSTOSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileSTOSQ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileSTOSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMOVSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMOVSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);

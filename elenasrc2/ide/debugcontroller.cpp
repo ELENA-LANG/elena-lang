@@ -136,7 +136,7 @@ DebugLineInfo* DebugController :: seekDebugLineInfo(size_t lineInfoAddress, iden
 //   }
 }
 
-DebugLineInfo* DebugController :: seekClassInfo(size_t address, IdentifierString &className, size_t& flags, size_t vmtPtr)
+DebugLineInfo* DebugController :: seekClassInfo(uintptr_t address, IdentifierString &className, size_t& flags, size_t vmtPtr)
 {
    // read class VMT address if not provided
    if (vmtPtr == 0 && address) {
@@ -1028,14 +1028,14 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
    }
 }
 
-void DebugController :: readList(_DebuggerWatch* watch, int* list, int length)
+void DebugController :: readList(_DebuggerWatch* watch, uintptr_t* list, int length)
 {
    String<char, 10> index;
    for (int i = 0 ; i < length ; i++)  {
       index.copy("[");
       index.appendInt(i);
       index.append("]");
-      size_t memberPtr = list[i];
+      uintptr_t memberPtr = list[i];
       if (memberPtr==0) {
          watch->write(this, memberPtr, ident_t(index), "<nil>");
       }
@@ -1452,7 +1452,7 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
             watch->write(this, *(long long*)value);
          }
          else if (type==elDebugArray) {
-            int list[DEBUG_MAX_LIST_LENGTH];
+            uintptr_t list[DEBUG_MAX_LIST_LENGTH];
             int length = 0;
 
             // get array size
@@ -1465,7 +1465,8 @@ void DebugController :: readContext(_DebuggerWatch* watch, size_t selfPtr, size_
 
             getValue(selfPtr, (char*)list, length);
 
-            length >>= 2;
+            length = _debugger.calcCount(length);
+
             readList(watch, list, length);
          }
          else if (type==elDebugBytes) {

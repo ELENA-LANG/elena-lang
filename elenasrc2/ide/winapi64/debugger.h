@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Debugger class and its helpers header
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef debuggerH
@@ -273,6 +273,13 @@ public:
       memory.read(position, &address, 8);
 
       return address;
+   }
+
+   int calcCount(int length) const
+   {
+      length >>= 3;
+
+      return length;
    }
 
    Debugger();

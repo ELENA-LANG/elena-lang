@@ -1360,7 +1360,7 @@ void _ELENA_::compileCreate(int opcode, I64JITScope& scope)
    ref_t vmtRef = scope.argument;
    scope.argument = scope.tape->getDWord();
 
-   scope.argument <<= 2;
+   scope.argument <<= 3;
    int length = scope.argument;
 
    // __arg1 = #gc_page + (length - 1)
@@ -1693,7 +1693,7 @@ void _ELENA_::compileFill(int opcode, I64JITScope& scope)
    }
 
    if (scope.argument == 1) {
-      // mov [ebx], eax
+      // mov [rbx], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x0389);
    }
@@ -1701,7 +1701,7 @@ void _ELENA_::compileFill(int opcode, I64JITScope& scope)
       // mov [rbx], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x0389);
-      // mov [ebx+8], eax
+      // mov [rbx+8], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x4389);
       scope.code->writeByte(8);
@@ -1710,11 +1710,11 @@ void _ELENA_::compileFill(int opcode, I64JITScope& scope)
       // mov [rbx], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x0389);
-      // mov [ebx+8], eax
+      // mov [rbx+8], eax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x4389);
       scope.code->writeByte(8);
-      // mov [ebx+16], eax
+      // mov [rbx+16], eax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x4389);
       scope.code->writeByte(16);
@@ -1723,15 +1723,15 @@ void _ELENA_::compileFill(int opcode, I64JITScope& scope)
       // mov [rbx], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x0389);
-      // mov [ebx+8], eax
+      // mov [rbx+8], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x4389);
       scope.code->writeByte(8);
-      // mov [ebx+16], eax
+      // mov [rbx+16], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x4389);
       scope.code->writeByte(16);
-      // mov [ebx+24], eax
+      // mov [rbx+24], rax
       scope.code->writeByte(0x48);
       scope.code->writeWord(0x4389);
       scope.code->writeByte(24);

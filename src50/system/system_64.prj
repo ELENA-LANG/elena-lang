@@ -45,5 +45,10 @@
        <include>io\files.l</include>
        <include>io\win32_getfiles.l</include>
      </module>
+     <module name="routines">
+       <include>routines\enumerables.l</include>
+       <include>routines\patterns.l</include>
+       <include>routines\sorting.l</include>
+     </module>
   </files>
 </configuration>
