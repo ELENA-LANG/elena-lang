@@ -2173,6 +2173,14 @@ void AMD64Assembler :: compileRET(TokenInfo& token, ProcedureInfo& info, MemoryW
    else code->writeByte(0xC3);
 }
 
+void AMD64Assembler :: compileCQO(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   code->writeByte(0x48);
+   code->writeByte(0x99);
+
+   token.read();
+}
+
 //void x86Assembler :: compileCDQ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 //{
 //	code->writeByte(0x99);
@@ -3891,7 +3899,11 @@ bool AMD64Assembler :: compileCommandC(/*PrefixInfo& prefix, */TokenInfo& token,
       compileCALL(token, info, &writer/*, helper*/);
       return true;
    }
-//	else if (token.check("cdq")) {
+   else if (token.check("cqo")) {
+      compileCQO(token, info, &writer);
+      return true;
+   }
+   //	else if (token.check("cdq")) {
 //		compileCDQ(token, info, &writer);
 //      return true;
 //	}

@@ -3222,60 +3222,44 @@ procedure coreapi'longtostr
 
    mov  rbx, [rsp+16]
    mov  rax, [rsp+8]
-   mov  ecx, dword ptr [rbx]
+   mov  rsi, [rbx]
    mov  rdi, [rsp+24]
 
    push rbp
-   push [rax+4]
+   mov  rax, [rax]
    mov  rbp, rsp
-   mov  edx, dword ptr[rax]     // NLO
-   mov  eax, dword ptr[rax+4]   // NHI
-   push 0
-   or   eax, eax
-   jge  short Lab6
-
-   neg  eax 
-   neg  edx 
-   sbb  eax, 0
-
-Lab6:                 // convert 
-   mov  esi, edx      // NLO
-   mov  edi, eax      // NHI
-
-Lab1:
-   test edi, edi
-   jnz  short labConvert
-   cmp  esi, ecx
+   xor  ecx, ecx
+   push rax
+   // ; take sign into account only for the decimal representation
+   cmp  rsi, 10        
+   jnz  short Lab6
+   cmp  rax, 0
+   jns  short Lab6
+   neg  rax
+Lab6:
+   cmp  rax, rsi
    jb   short Lab5
-
-labConvert:
-   mov  eax, edi      // NHI
-   xor  edx, edx
-   div  ecx
-   mov  ebx, eax
-   mov  eax, esi      // NLO
-   div  ecx
-   mov  edi,ebx 
-   mov  esi,eax
-
+Lab1:
+   cqo
+   idiv rsi
    push rdx
-   add  [rbp-8], 1
-   jmp  short Lab1
-
-Lab5:   
-   push rsi
-
-   mov  ecx, dword ptr[rbp-8]
    add  ecx, 1
-
-   mov  eax, dword ptr[rbp]
+   cmp  rax, rsi
+   jae  short Lab1
+Lab5:   
+   add  ecx, 2
+   push rax
+   cmp  rsi, 10        
+   jnz  short Lab7
+   mov  rax, [rbp-8]
    cmp  eax, 0
    jns  short Lab7
    push 0F6h      // to get "-" after adding 0x30
-   add  ecx, 1                  
+   add  ecx, 1
 Lab7:
-   mov  esi, dword ptr[rbp+20]
-   mov  ebx, 0FFh
+   sub  ecx, 1
+   mov  rsi, rdi
+   mov  edx, 0FFh
 Lab2:
    pop  rax
    cmp  eax, 0Ah
@@ -3283,15 +3267,16 @@ Lab2:
    add  eax, 7
 Lab8:
    add  eax, 30h
-   and  eax, ebx
+   and  eax, edx
    mov  byte ptr [rsi], al
    add  esi, 1
    sub  ecx, 1
    jnz  short Lab2
    mov  edx, esi
+   sub  edx, edi
    lea  rsp, [rsp+8]
    pop  rbp
-   sub  rdx, [rsp+12]
+
    ret
    
 end

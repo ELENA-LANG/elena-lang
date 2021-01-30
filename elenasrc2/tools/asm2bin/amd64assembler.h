@@ -106,6 +106,7 @@ protected:
 
 	void compileRET(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileNOP(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileCQO(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileCDQ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
  //  void compileCWDE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileLODSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);

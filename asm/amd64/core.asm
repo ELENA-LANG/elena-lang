@@ -1372,6 +1372,7 @@ end
 inline % 077h
 
   mov  rax, qword ptr [rbp+__arg1]
+  cqo
   idiv qword ptr [rbx]
   mov  [rbp+__arg1], rax
 

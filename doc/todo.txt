@@ -4,7 +4,7 @@ In development:
 
   [development]
 
-    * pi64
+    * pi64 - datetime ops
     * migrate all samples to win64
 
     + housekeeping - review pipeline
