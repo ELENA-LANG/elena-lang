@@ -2181,19 +2181,19 @@ void AMD64Assembler :: compileCQO(TokenInfo& token, ProcedureInfo& info, MemoryW
    token.read();
 }
 
-//void x86Assembler :: compileCDQ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{
-//	code->writeByte(0x99);
-//
-//	token.read();
-//}
+void AMD64Assembler :: compileCDQ(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   code->writeByte(0x99);
+   
+   token.read();
+}
  
-//void x86Assembler :: compileCWDE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{
-//   code->writeByte(0x98);
-//
-//   token.read();
-//}
+void AMD64Assembler :: compileCWDE(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   code->writeByte(0x98);
+
+   token.read();
+}
 
 void AMD64Assembler :: compileSTC(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
@@ -3903,14 +3903,14 @@ bool AMD64Assembler :: compileCommandC(/*PrefixInfo& prefix, */TokenInfo& token,
       compileCQO(token, info, &writer);
       return true;
    }
-   //	else if (token.check("cdq")) {
-//		compileCDQ(token, info, &writer);
-//      return true;
-//	}
-//	else if (token.check("cmpsb")) {
-//		compileCMPSB(token, info, &writer);
-//      return true;
-//	}
+   else if (token.check("cdq")) {
+      compileCDQ(token, info, &writer);
+      return true;
+   }
+   //else if (token.check("cmpsb")) {
+   //   compileCMPSB(token, info, &writer);
+   //   return true;
+   //}
 //   else if (token.check("cmpxchg")) {
 //      compileCMPXCHG(prefix, token, info, &writer);
 //      prefix.clear();
@@ -3944,10 +3944,10 @@ bool AMD64Assembler :: compileCommandC(/*PrefixInfo& prefix, */TokenInfo& token,
       compileCMOVCC(token, info, &writer, AMD64Helper::JUMP_TYPE_JS);
       return true;
    }
-//   else if (token.check("cwde")) {
-//      compileCWDE(token, info, &writer);
-//      return true;
-//   }
+   else if (token.check("cwde")) {
+      compileCWDE(token, info, &writer);
+      return true;
+   }
 //	// SSE instructions
 //	else if (token.check("cmpss")) {
 //		compileCMPSS(token, info, &writer);

@@ -3,8 +3,7 @@ In development:
 ------         
 
   [development]
-
-    * pi64 - datetime ops
+    * bsort64
     * migrate all samples to win64
 
     + housekeeping - review pipeline

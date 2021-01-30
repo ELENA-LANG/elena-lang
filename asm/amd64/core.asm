@@ -557,7 +557,7 @@ inline % 1Ch
   mov  ecx, struct_mask_inv
   mov  rdx, [rbx-elSizeOffset]
   and  rdx, rcx
-  shr  rdx, 2
+  shr  rdx, 3
 
 end
 
@@ -1024,7 +1024,7 @@ inline %05Bh
 
   mov  eax, edx
   mov  ecx, __arg1
-  xor  edx, edx
+  cdq
   idiv ecx
   mov  edx, eax
 
@@ -1850,6 +1850,7 @@ end
 inline % 0C9h
 
   mov  eax, dword ptr [rbp+__arg1]
+  cdq
   idiv dword ptr [rbx]
   mov  dword ptr [rbp+__arg1], eax
 
