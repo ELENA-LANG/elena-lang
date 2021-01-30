@@ -162,7 +162,7 @@ labYGCollect:
 
   // ; save static roots
   mov  rsi, data : %CORE_STATICROOT
-  mov  ecx, dword ptr [data : %CORE_GC_TABLE + gc_rootcount]
+  mov  rcx, [data : %CORE_GC_TABLE + gc_rootcount]
   push rsi
   push rcx
 
@@ -359,7 +359,7 @@ inline % 0Ch
   mov  ecx, page_ceil
   push rbx
   mov  rdx, [rax]
-  lea  rcx, [rcx + rdx*4]
+  lea  rcx, [rcx + rdx*8]
   and  ecx, page_mask 
  
   call code : %GC_ALLOC
@@ -372,7 +372,7 @@ inline % 0Ch
   mov   esi, stuct_mask
   test  ecx, ecx
   cmovz rdx, rsi
-  shl   ecx, 2
+  shl   ecx, 3
   or    ecx, edx
   mov   dword ptr[rbx-elSizeOffset], ecx
 
@@ -1619,7 +1619,7 @@ inline % 9Ah
   mov  rax, [rsp]
   mov  ecx, page_ceil
   mov  rdx, [rax]
-  lea  rcx, [rcx + rdx*4]
+  lea  rcx, [rcx + rdx*8]
   and  ecx, page_mask 
  
   call code : %GC_ALLOC
@@ -1631,7 +1631,7 @@ inline % 9Ah
   mov   esi, stuct_mask
   test  ecx, ecx
   cmovz rdx, rsi
-  shl   ecx, 2
+  shl   ecx, 3
   or    ecx, edx
   mov   dword ptr[rbx-elSizeOffset], ecx
 

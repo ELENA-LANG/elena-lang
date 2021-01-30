@@ -47,7 +47,7 @@ constexpr int elVMTFlagOffset64        = 0x0018;                // a VMTX flags 
 
 constexpr int elStructMask64           = 0x40000000;
 constexpr int elSizeCeil64             = 0x3FFFFFF8;
-constexpr int elObjectSizeMask64       = 0x3FFFFFFF;
+constexpr int elObjectSizeMask64       = 0x7FFFFFFF;
 
 // --- ELENA CORE built-in routines
 constexpr int GC_ALLOC = 0x10001;

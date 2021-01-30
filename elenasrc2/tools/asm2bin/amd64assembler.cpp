@@ -501,8 +501,8 @@ AMD64Assembler::Operand AMD64Assembler:: readDispOperand(TokenInfo& token, Proce
          }
          else {
             // if it is register disp [r]
-            if (operand.ebpReg && operand.type == AMD64Helper::otDisp32) {
-               operand.type = (OperandType)(operand.type | AMD64Helper::otM32disp8);
+            if (operand.ebpReg && operand.type == AMD64Helper::otDisp64) {
+               operand.type = (OperandType)(operand.type | AMD64Helper::otM64disp8);
 	            operand.offset = 0;
 	         }
             return operand;

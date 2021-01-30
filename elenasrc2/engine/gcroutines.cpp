@@ -26,7 +26,7 @@ constexpr int page_align_mask = 0x3FFFFFE0;
 constexpr int heap_inc = 0x54000;
 constexpr int heapheader_inc = 0x0A800;
 
-constexpr int elObjectOffset = elObjectOffset32;
+constexpr int elObjectOffset = elObjectOffset64;
 
 typedef ObjectPage64 ObjectPage;
 

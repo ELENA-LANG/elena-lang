@@ -4,9 +4,6 @@ In development:
 
   [development]
 
--   8b 0d 
-
-
     * pi64
     * migrate all samples to win64
 
