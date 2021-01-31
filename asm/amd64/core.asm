@@ -2647,6 +2647,7 @@ labNextBaseClass:
   mov  r10, __arg1
   mov  rax, [r10 + r9 * 2 + 8]
   mov  rcx, [rbx - elVMTOffset]
+  shl  rax, 1
   mov  rdx, [r10 + r9 * 2]
   jmp  [rcx + rax * 8 + 8]
 

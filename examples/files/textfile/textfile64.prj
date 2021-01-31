@@ -1,0 +1,16 @@
+<configuration>
+    <project>
+        <executable>textfile64.exe</executable>
+        <arguments>sample.txt</arguments>
+        <output></output>
+        <options></options>
+        <namespace>textfile</namespace>
+        <template>console_64</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>viewer.l</include>
+        </module>
+    </files>
+</configuration>
