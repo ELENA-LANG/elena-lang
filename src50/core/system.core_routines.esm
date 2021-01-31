@@ -444,7 +444,7 @@ procedure __literal."insert$system@IntNumber$system@String[3]"
   movf     -8
   dec      1
   save
-  peekfi   -9
+  peekfi   -3
   len
   movf     -12
   save
@@ -459,30 +459,30 @@ procedure __literal."insert$system@IntNumber$system@String[3]"
 
   // ; copy left side               
   pushn    0
-  pushfi   -8
+  pushfi   -2
   pushsip  -1
-  pushfi   -7
+  pushfi   -1
   pushsi   4
   callextr api : insert 4
   freei    5
 
   // ; insert
-  pushf    -16
-  pushfi   -8
-  pushfi   -9
-  pushsi   3
+  pushf    -12 // ; len
+  pushfi   -2  // ; index 
+  pushfi   -3  // ; sour
+  pushsi   3   // ; dest
   callextr api : insert 4
   freei    4
 
   // ; copy right side    
-  peekfi   -8
+  peekfi   -2
   load
   addf     -12
            
-  pushf    -12
-  pushfi   -8
-  pushfi   -7
-  pushsi   3
+  pushf    -12 // ; dindex
+  pushfi   -2  // ; sindex
+  pushfi   -1  // ; sour
+  pushsi   3   // ; dest
   callextr api : sadd 4
   freei    4
 
