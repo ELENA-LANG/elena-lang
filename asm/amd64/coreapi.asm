@@ -609,20 +609,19 @@ lab1:
 
 end
 
-
-// ; sadd(dest,sour,sindex,dindex)
+// ; wadd(dest,sour,sindex,dindex)
 procedure coreapi'wadd
 
-  mov  rcx, [rsp+24]
-  mov  rax, [rsp+16]
-  mov  ecx, dword ptr [ecx]
-  mov  rdx, [rsp+32]
-  mov  rdi, [rsp+8]
+  mov  rcx, [rsp+24]              // 
+  mov  rax, [rsp+16]              // ; src
+  mov  ecx, dword ptr [ecx]       // ; sindex
+  mov  rdx, [rsp+32]              // ; dindex
+  mov  rdi, [rsp+8]               // ; dst
 
   mov  ebx, dword ptr [rdx]       // ; dst index
   
   shl  ebx, 1
-  shl  edx, 1
+  shl  ecx, 1
 
   mov  edx, ebx         // ; dst index
   mov  esi, ecx         // ; src index
