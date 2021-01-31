@@ -117,6 +117,7 @@ protected:
 	void compileSTOSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMOVSB(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileMOVSD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileMOVSXD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	//void compileMOVAPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	//void compileMOVUPS(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code); // SSE
 	void compileSTOSW(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);

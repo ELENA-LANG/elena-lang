@@ -1,7 +1,7 @@
 <configuration>
     <project>
         <executable>system_test64.exe</executable>
-        <arguments></arguments>
+        <arguments>test</arguments>
         <output></output>
         <options></options>
         <namespace>system_test</namespace>

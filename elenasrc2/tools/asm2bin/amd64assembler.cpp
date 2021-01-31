@@ -1804,6 +1804,22 @@ void AMD64Assembler :: compileMOVZX(TokenInfo& token, ProcedureInfo& info, Memor
    else token.raiseErr("Invalid command (%d)");
 }
 
+void AMD64Assembler :: compileMOVSXD(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+
+   checkComma(token);
+
+   Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+   if (test(sour.type, AMD64Helper::otR64) && (test(dest.type, AMD64Helper::otM32))) {
+      code->writeByte(0x48);
+      code->writeByte(0x63);
+      AMD64Helper::writeModRM(code, Operand(AMD64Helper::otR8 + (char)sour.type), dest);
+   }
+   else token.raiseErr("Invalid command (%d)");
+}
+
 void AMD64Assembler :: compilePUSH(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
    Operand sour = compileOperand(token, info, "Invalid operand (%d)\n");
@@ -4328,7 +4344,11 @@ bool AMD64Assembler :: compileCommandM(TokenInfo& token, ProcedureInfo& info, Me
 	   compileMOVSD(token, info, &writer);
       return true;
    }
-//	// SSE instructions
+   else if (token.check("movsxd")) {
+      compileMOVSXD(token, info, &writer);
+      return true;
+   }
+   //	// SSE instructions
 //	else if (token.check("movaps")) {
 //		compileMOVAPS(token, info, &writer);
 //		return true;

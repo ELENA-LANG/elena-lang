@@ -3104,9 +3104,9 @@ procedure coreapi'move
   test ecx, ecx          // ; len
   jz   short labEnd
 
-  mov  edx, dword ptr[rsi]        // ; offs
-  cmp  edx, 0
-  jl   short labDelete
+  movsxd rdx, dword ptr[rsi]        // ; offs
+  cmp    rdx, 0
+  jl     short labDelete
 
   add  ebx, ecx
   sub  ebx, 1
@@ -3128,10 +3128,10 @@ labEnd:
   ret
 
 labDelete:
-  add  edx, ebx
+  add  rdx, rbx
 
-  add  edx, edi
-  add  ebx, edi
+  add  rdx, rdi
+  add  rbx, rdi
 
 labNext2:
   mov  esi, dword ptr [rbx]
@@ -4494,10 +4494,10 @@ procedure coreapi'nsubcopy
   jz   short labEnd
 
 labNext:
-  mov  edx, dword ptr [rax + rbx * 4]
-  mov  dword ptr[rsi], edx
+  mov  rdx, [rax + rbx * 8]
+  mov  [rsi], rdx
   add  ebx, 1
-  lea  rsi, [rsi + 4]
+  lea  rsi, [rsi + 8]
   sub  ecx, 1
   jnz  short labNext
 
@@ -4546,9 +4546,9 @@ procedure coreapi'nmove
   test ecx, ecx
   jz   short labEnd
 
-  mov  esi, dword ptr [rdx]
-  cmp  esi, 0
-  jl   short labDelete
+  movsxd rsi, dword ptr [rdx]
+  cmp    esi, 0
+  jl     short labDelete
 
   add  ebx, ecx
   sub  ebx, 1
