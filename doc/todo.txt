@@ -4,11 +4,14 @@ In development:
 
   [development]
     * random64
+    + warn on operations with unassigned variable; warn an operation with not initialized variable: var a.test();
+    * #206 : console samples
+    + mixin sample - doubler method
+    + setting property inline
+    + mixings ruby style
+    + post : mixin instead of mutli-inheritance (lec24) - simple way to include several roles into the class
+    + housekeeping - review pipeline
     * migrate all samples to win64
-
-    + housekeeping - review pipeline
-    + post : mixin instead of mutli-inheritance (lec24)
-    + housekeeping - review pipeline
     + compilation speed - Amicable pairs variants
 
     * multi-theading
@@ -17,8 +20,6 @@ In development:
     + compiler option : raw stack alignment  
     + housekeeping - review pipeline
     + bf interpreter optimization
-
-    * x86-64 YG GC : copy lock byte as well
 
     + housekeeping - review pipeline
     + #531 : Inhert should support only stateless interface type
@@ -237,7 +238,6 @@ Pipeline:
                 * move all description to meta info using descr inline template
                 * ide message : display internal error
                 * ref argument should be a variable
-                * warn an operation with not initialized variable: var a.test();
                 * warn if the extension method is called from itself (short-cutting)
                 * (re)implement internal String.read<int,ref<byte>>
                 * (re)implement UnsafePointer.cast<string>
@@ -334,8 +334,6 @@ Pipeline:
                  * attribute cannot be used as a class constant - s the code - 
                        = { bool equal(o) = self(object); }; - is not allowed
                  * allow to work with ref<int> directly
-
-                 * warn on operations with unassigned variable
 
                  * uncomment __closuretape."#dispatch[1]  - check the subject correctly
 

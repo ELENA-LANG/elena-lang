@@ -15,7 +15,7 @@
 #endif
 #endif
 
-#define ELENAVM_REVISION_NUMBER    0x000C             // ELENAVM revision version
+#define ELENAVM_REVISION_NUMBER    0x000D             // ELENAVM revision version
 
 #define STRINGIZE2(s) #s
 #define STRINGIZE(s) STRINGIZE2(s)

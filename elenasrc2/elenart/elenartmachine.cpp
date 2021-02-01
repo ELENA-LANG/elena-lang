@@ -376,7 +376,7 @@ uintptr_t ELENARTMachine :: createPermString(SystemEnv* env, ident_t s, uintptr_
    Convertor::copy((char*)nameAddr, s.c_str(), nameLen, nameLen);
 
    ObjectPage32* header = (ObjectPage32*)(nameAddr - elObjectOffset32);
-   header->vmtPtr = (void*)classPtr;
+   header->vmtPtr = classPtr;
    header->size = nameLen;
 
    return nameAddr;

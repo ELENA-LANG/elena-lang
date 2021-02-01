@@ -1383,7 +1383,8 @@ void _ELENA_::compileCreate(int opcode, I64JITScope& scope)
 
    if (vmtRef) {
       // ; set vmt reference
-      // mov [ebx-elPageVMTOffset], vmt
+      // mov [rbx-elPageVMTOffset], vmt
+      scope.code->writeByte(0x48);
       scope.code->writeWord(0x43C7);
       scope.code->writeByte((unsigned char)-elPageVMTOffset64);
       scope.writeReference(*scope.code, vmtRef, 0);
@@ -1411,6 +1412,7 @@ void _ELENA_::compileCreateN(int, I64JITScope& scope)
    if (vmtRef) {
       // ; set vmt reference
       // mov [rbx-elPageVMTOffset], vmt
+      scope.code->writeByte(0x48);
       scope.code->writeWord(0x43C7);
       scope.code->writeByte((unsigned char)-elPageVMTOffset64);
       scope.writeReference(*scope.code, vmtRef, 0);
@@ -1443,7 +1445,8 @@ void _ELENA_::compileDynamicCreateN(int opcode, I64JITScope& scope)
 
    if (vmtRef) {
       // ; set vmt reference
-      // mov [ebx-elVMT], vmt
+      // mov [rbx-elVMT], vmt
+      scope.code->writeByte(0x48);
       scope.code->writeWord(0x43C7);
       scope.code->writeByte((unsigned char)(-elPageVMTOffset64));
       scope.writeReference(*scope.code, vmtRef, 0);

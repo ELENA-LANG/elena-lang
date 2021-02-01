@@ -73,17 +73,17 @@ constexpr int VOIDPTR = 0x2000E;
 
 struct ObjectPage32
 {
-   void* vmtPtr;
-   int   size;
-   int   body[2];
+   uintptr_t vmtPtr;
+   int       size;
+   int       body[2];
 };
 
 struct ObjectPage64
 {
-   void* vmtPtr;
-   int   lock_flag;
-   int   size;
-   int   body[4];
+   uintptr_t vmtPtr;
+   int       lock_flag;
+   int       size;
+   int       body[4];
 };
 
 } // _ELENA_

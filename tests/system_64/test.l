@@ -7,7 +7,8 @@ import extensions;
 const int rows = 4;
 const int cols = 6;
 
-const int runCount = 1000000;
+//const int runCount = 1000000;
+const int runCount = 500/*000*/;
 const int distGroupCount = 20;
 
 public program()
@@ -40,7 +41,7 @@ public program()
         console.writeLine()
     };
 
-    console.writeLine();
+//    console.writeLine();
     console.writeLine:"Distribution";
 
     for(int i := 0, i < runCount, i += 1)

@@ -70,12 +70,7 @@ inline int __vectorcall getSize(uintptr_t objptr)
 
 inline void* __vectorcall getVMTPtr(uintptr_t objptr)
 {
-   return getObjectPage(objptr)->vmtPtr;
-}
-
-inline void __vectorcall setVMTPtr(uintptr_t objptr, void* ptr)
-{
-   getObjectPage(objptr)->vmtPtr = ptr;
+   return (void*)getObjectPage(objptr)->vmtPtr;
 }
 
 inline void __vectorcall orSize(uintptr_t objptr, int mask)
@@ -95,7 +90,7 @@ inline void __vectorcall MoveObject(size_t bytesToCopy, void* dst, void* src)
 
 inline void __vectorcall CopyObjectData(size_t bytesToCopy, void* dst, void* src)
 {
-   bytesToCopy += 3;
+   bytesToCopy += (sizeof(uintptr_t) - 1);
    bytesToCopy &= size_ceil;
 
    memcpy(dst, src, bytesToCopy);
@@ -103,10 +98,10 @@ inline void __vectorcall CopyObjectData(size_t bytesToCopy, void* dst, void* src
 
 void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*& shadowHeap, void* src)
 {
-   size_t* ptr = (size_t*)root->stackPtr;
-   size_t  size = root->size;
-   intptr_t new_ptr = 0;
-   GCRoot  current;
+   uintptr_t* ptr = (size_t*)root->stackPtr;
+   uintptr_t  size = root->size;
+   uintptr_t  new_ptr = 0;
+   GCRoot     current;
 
    // ; collect roots
    while (size > 0) {
@@ -114,22 +109,28 @@ void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*&
       if (*ptr >= start && *ptr < end) {
          current.stackPtrAddr = *ptr;
 
+         ObjectPage* currentPage = getObjectPage(current.stackPtrAddr);
+
          // ; check if it was collected
-         current.size = getSize((size_t)current.stackPtr);
+         current.size = currentPage->size;
          if (!(current.size & gcCollectedMask)) {
             // ; copy object size
             shadowHeap->size = current.size;
 
             // ; copy object vmt
-            shadowHeap->vmtPtr = getVMTPtr(current.stackPtrAddr);
+            shadowHeap->vmtPtr = currentPage->vmtPtr;
+
+#if _WIN64
+            shadowHeap->lock_flag = currentPage->lock_flag;
+#endif
 
             // ; mark as collected
-            orSize(current.stackPtrAddr, gcCollectedMask);
+            currentPage->size |= gcCollectedMask;
 
             // ; reserve shadow YG
-            new_ptr = (size_t)shadowHeap + elObjectOffset;
+            new_ptr = (uintptr_t)shadowHeap + elObjectOffset;
 
-            shadowHeap = (ObjectPage*)((size_t)shadowHeap + ((current.size + page_ceil) & page_align_mask));
+            shadowHeap = (ObjectPage*)((uintptr_t)shadowHeap + ((current.size + page_ceil) & page_align_mask));
 
             // ; update reference 
             *ptr = new_ptr;
@@ -138,7 +139,7 @@ void __vectorcall YGCollect(GCRoot* root, size_t start, size_t end, ObjectPage*&
             current.size &= size_mask;
 
             // ; save new reference
-            setVMTPtr(current.stackPtrAddr, (void*)new_ptr);
+            currentPage->vmtPtr = new_ptr;
 
             if (current.size < struct_mask) {
                // ; check if the object has fields
@@ -225,7 +226,7 @@ inline void __vectorcall FixObject(GCTable* table, GCRoot* roots, size_t start, 
          }
       }
       ptr++;
-      size -= 4;
+      size -= sizeof(intptr_t);
    }
 }
 
