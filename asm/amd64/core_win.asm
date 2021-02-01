@@ -17,8 +17,6 @@ define CLOSEFRAME           1001Ah
 define LOCK                 10021h
 define UNLOCK               10022h
 define LOAD_CALLSTACK       10024h
-define BREAK                10026h
-define EXPAND_HEAP          10028h
 
 //R12, R13, R14, and R15
 
@@ -62,45 +60,27 @@ procedure % INVOKER
 
 end
 
-// ; ebx - exception code
-procedure % BREAK
-
-//  push 0
-//  push 0
-//  push 0
-//  push ebx
-//  call extern 'dlls'KERNEL32.RaiseException
-
-end
-
-// ; in - eax - heap, ebx - size
-// ; out - eax - heap
-procedure % EXPAND_HEAP
-
-//  push 4
-//  push 00001000h
-//  push ecx
-//  push eax
-//  call extern 'dlls'KERNEL32.VirtualAlloc
-
-  ret
-
-end
-
 procedure % INIT_RND
 
-//  sub  esp, 8h
-//  mov  eax, esp
-//  sub  esp, 10h
-//  lea  ebx, [esp]
-//  push eax 
-//  push ebx
-//  push ebx
-//  call extern 'dlls'KERNEL32.GetSystemTime
-//  call extern 'dlls'KERNEL32.SystemTimeToFileTime
-//  add  esp, 10h
-//  pop  eax
-//  pop  edx
+  sub  rsp, 8h
+  mov  rax, rsp
+  sub  rsp, 10h
+  lea  rbx, [rsp]
+  push rax 
+  push rbx
+  push rbx
+  mov  rcx, [rsp]
+  sub  rsp, 18h
+  call extern 'dlls'KERNEL32.GetSystemTime
+  add  rsp, 20h
+
+  mov  rcx, [rsp]
+  mov  rdx, [rsp+8]
+  sub  rsp, 10h
+  call extern 'dlls'KERNEL32.SystemTimeToFileTime
+  add  rsp, 30h
+
+  pop  rax
   ret
   
 end

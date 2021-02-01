@@ -12,7 +12,7 @@ define elSizeOffset       0004h
 define elVMTOffset        0008h 
 define elObjectOffset     0008h
 
-// ; --- API ---
+// ; --- API ---                                                                                             	
 
 procedure coreapi'core_callstack_load
 

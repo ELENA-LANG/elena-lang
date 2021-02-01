@@ -1,5 +1,7 @@
 // !! NOTE : R15 register must be preserved
 
+define INIT_RND          10012h
+
 // Object header fields
 define elSizeOffset          0004h
 define elVMTOffset           0010h 
@@ -4587,5 +4589,102 @@ labNext2:
   sub  ecx, 1
   jnz  short labNext2
   ret
+
+end
+
+procedure coreapi'core_rnd_init
+
+  mov  rdi, [rsp+8]
+  call code : % INIT_RND
+  mov  [rdi], rax 
+  mov  rbx, rax
+  ret
+  
+end
+
+procedure coreapi'core_rnd_next
+
+   mov  rdi, [rsp+8]
+   mov  rax, [rsp+24]
+   mov  rbx, [rsp+16]
+
+   xor  rdx, rdx
+   mov  rcx, rbx
+   cmp  rcx, rdx
+   jle  short labEnd
+
+   push rax
+   push rbx
+
+   mov  ebx, dword ptr [rdi+4] // NUM.RE
+   mov  esi, dword ptr [rdi]   // NUM.FR             
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h                              
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   mul  esi
+   add  eax, ecx
+   xchg eax, esi
+   mul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  rcx, rdi
+   mov  dword ptr [rcx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  dword ptr[rcx] , esi
+   cdq
+   pop  rcx
+   idiv ecx
+   pop  rax
+labEnd:
+   mov  dword ptr [rax], edx
+   ret
+
+end
+
+procedure coreapi'core_rnd_nextint
+
+   mov  rdi, [rsp+8]
+   mov  rax, [rsp+16]
+
+   push rax
+   
+   mov  ebx, dword ptr [rdi+4] // NUM.RE
+   mov  esi, dword ptr [rdi]   // NUM.FR             
+   mov  eax, ebx
+   mov  ecx, 15Ah
+   mov  ebx, 4E35h                              
+   test eax, eax
+   jz   short Lab1
+   mul  ebx
+Lab1: 
+   xchg eax, ecx
+   imul  esi
+   add  eax, ecx
+   xchg eax, esi
+   imul  ebx
+   add  edx, esi
+   add  eax, 1
+   adc  edx, 0
+   mov  ebx, eax
+   mov  esi, edx
+   mov  rcx, rdi
+   mov  dword ptr [rcx+4], ebx
+   mov  eax, esi
+   and  eax, 7FFFFFFFh
+   mov  dword ptr [rcx], esi
+   mov  edx, eax
+   pop  rax
+labEnd:
+   mov  dword ptr [rax], edx
+   ret
 
 end

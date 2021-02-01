@@ -1752,23 +1752,23 @@ void AMD64Assembler :: compileRCR(TokenInfo& token, ProcedureInfo& info, MemoryW
    else token.raiseErr("Invalid command (%d)");
 }
 
-//void x86Assembler :: compileXCHG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
-//{
-//	Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
-//
-//	checkComma(token);
-//
-//	Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
-//
-//	if (sour.type== x86Helper::otEAX && test(dest.type, x86Helper::otR32)) {
-//		code->writeByte(0x90 + (char)dest.type);
-//	}
-//	else if (test(sour.type, x86Helper::otR32) && (test(dest.type, x86Helper::otR32)||test(dest.type, x86Helper::otM32))) {
-//		code->writeByte(0x87);
-//		x86Helper::writeModRM(code, sour, dest);
-//	}
-//	else token.raiseErr("Invalid command (%d)");
-//}
+void AMD64Assembler :: compileXCHG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
+{
+   Operand sour = compileOperand(token, info, "Invalid source operand (%d)\n");
+
+   checkComma(token);
+
+   Operand dest = compileOperand(token, info, "Invalid destination operand (%d)\n");
+
+   if (sour.type== AMD64Helper::otEAX && test(dest.type, AMD64Helper::otR32)) {
+	   code->writeByte(0x90 + (char)dest.type);
+   }
+   else if (test(sour.type, AMD64Helper::otR32) && (test(dest.type, AMD64Helper::otR32)||test(dest.type, AMD64Helper::otM32))) {
+	   code->writeByte(0x87);
+      AMD64Helper::writeModRM(code, sour, dest);
+   }
+   else token.raiseErr("Invalid command (%d)");
+}
 
 void AMD64Assembler :: compileRCL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code)
 {
@@ -4666,11 +4666,10 @@ bool AMD64Assembler :: compileCommandX(TokenInfo& token, ProcedureInfo& info, Me
       compileXOR(token, info, &writer);
       return true;
    }
-//	else if (token.check("xchg")) {
-//		compileXCHG(token, info, &writer);
-//      prefix.clear();
-//      return true;
-//	}
+   else if (token.check("xchg")) {
+	   compileXCHG(token, info, &writer);
+      return true;
+   }
 //	else if (token.check("xadd")) {
 //		compileXADD(prefix, token, info, &writer);
 //      prefix.clear();

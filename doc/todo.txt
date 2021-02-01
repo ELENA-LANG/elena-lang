@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    * bsort64
+    * random64
     * migrate all samples to win64
 
     + housekeeping - review pipeline

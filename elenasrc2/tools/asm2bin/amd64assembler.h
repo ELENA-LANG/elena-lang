@@ -100,7 +100,7 @@ protected:
 	void compileROR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileRCR(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 	void compileRCL(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
-	//void compileXCHG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
+	void compileXCHG(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 
 	void compileMOVZX(TokenInfo& token, ProcedureInfo& info, MemoryWriter* code);
 
