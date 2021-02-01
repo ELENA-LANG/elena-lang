@@ -3,7 +3,7 @@
 //
 //		This file contains the ELENA Compiler error messages
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef jeterrorsH
@@ -146,6 +146,7 @@ namespace _ELENA_
    constexpr auto wrnUnresolvedDispatch   = "%s(%d:%d): warning 429: a target does not handle dispatched message\n";
    constexpr auto wrnUnresolvedInterface  = "%s(%d:%d): warning 430: a class does not contain an interface implementation\n";
    constexpr auto wrnAbstractMethodBody   = "%s(%d:%d): warning 431: an abstract method should have no body\n";
+   constexpr auto wrnUnassignedVaiable    = "%s(%d:%d): warning 432: an unassined variable - '%s'\n";
    constexpr auto wrnInvalidModule        = "Invalid or unknown module %s\n";
 
    constexpr auto infoAbstractMetod       = "abstract method %s";

@@ -3,8 +3,8 @@ In development:
 ------         
 
   [development]
-    * random64
     + warn on operations with unassigned variable; warn an operation with not initialized variable: var a.test();
+
     * #206 : console samples
     + mixin sample - doubler method
     + setting property inline

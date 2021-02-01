@@ -50,6 +50,7 @@ public:
       ref_t  class_ref;
       ref_t  element_ref;
       int    size;
+      bool   unassigned;
 
       Parameter()
       {
@@ -57,6 +58,7 @@ public:
          class_ref = 0;
          element_ref = 0;
          size = 0;
+         unassigned = false;
       }
       Parameter(int offset)
       {
@@ -64,6 +66,7 @@ public:
          this->class_ref = 0;
          this->element_ref = 0;
          this->size = 0;
+         this->unassigned = false;
       }
       Parameter(int offset, ref_t class_ref)
       {
@@ -71,20 +74,23 @@ public:
          this->class_ref = class_ref;
          this->element_ref = 0;
          this->size = 0;
+         this->unassigned = false;
       }
-////      Parameter(int offset, ref_t class_ref, int size)
-////      {
-////         this->offset = offset;
-////         this->class_ref = class_ref;
-////         this->element_ref = 0;
-////         this->size = size;
-////      }
       Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
       {
          this->offset = offset;
          this->class_ref = class_ref;
          this->element_ref = element_ref;
          this->size = size;
+         this->unassigned = false;
+      }
+      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size, bool unassigned)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->element_ref = element_ref;
+         this->size = size;
+         this->unassigned = unassigned;
       }
    };
 
@@ -287,6 +293,11 @@ private:
          else return NULL;
       }
    
+      virtual void markAsAssigned(ObjectInfo object)
+      {
+         // by default is not implemented
+      }
+
       Scope(_ModuleScope* moduleScope)
       {
          this->moduleScope = moduleScope;
@@ -733,8 +744,14 @@ private:
       {
          locals.add(local, Parameter(level, class_ref, element_ref, size));
       }
+      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size, bool unassigned)
+      {
+         locals.add(local, Parameter(level, class_ref, element_ref, size, unassigned));
+      }
 
 //      ObjectInfo mapGlobal(ident_t identifier);
+
+      virtual void markAsAssigned(ObjectInfo object);
 
       ObjectInfo mapLocal(ident_t identifier);
 
@@ -826,6 +843,11 @@ private:
 
       Map<ClassInfo::Attribute, int> tempLocals;
       Map<int, int> originals;
+
+      virtual void markAsAssigned(ObjectInfo object)
+      {
+         parent->markAsAssigned(object);
+      }
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -963,6 +985,7 @@ private:
    bool              _autoSystemImport;
    bool              _dynamicDispatching;
    bool              _stackEvenMode;
+   bool              _trackingUnassigned;
    TransformTape     _rules;
    SyntaxTrie        _sourceRules;
    int               _reservedAling;
@@ -1193,6 +1216,7 @@ private:
    ObjectInfo compileInternalCall(SNode node, ExprScope& scope, mssg_t message, ref_t signature, ObjectInfo info);
 
    void warnOnUnresolvedDispatch(SNode node, Scope& scope, mssg_t message, bool errorMode);
+   void warnOnUnassignedLocal(SNode node, Scope& scope, int offset);
 
    void compileConstructorResendExpression(SNode node, CodeScope& scope, ClassScope& classClassScope, 
       bool& withFrame);
@@ -1356,6 +1380,11 @@ public:
    void turnOnEvenStack()
    {
       _stackEvenMode = true;
+   }
+
+   void turnOnTrackingUnassigned()
+   {
+      _trackingUnassigned = true;
    }
 
    void declareModuleIdentifiers(SyntaxTree& tree, _ModuleScope& scope);

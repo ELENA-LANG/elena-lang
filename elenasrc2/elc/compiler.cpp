@@ -824,6 +824,20 @@ Compiler::CodeScope :: CodeScope(CodeScope* parent)
    this->withRetStatement = false;
 }
 
+void Compiler::CodeScope :: markAsAssigned(ObjectInfo object)
+{
+   if (object.kind == okLocal || object.kind == okLocalAddress) {
+      for (auto it = locals.start(); !it.Eof(); it++) {
+         if ((*it).offset == object.param) {
+            (*it).unassigned = false;
+            return;
+         }
+      }
+   }
+   
+   parent->markAsAssigned(object);
+}
+
 //ObjectInfo Compiler::CodeScope :: mapGlobal(ident_t identifier)
 //{
 //   NamespaceScope* nsScope = (NamespaceScope*)getScope(Scope::slNamespace);
@@ -2112,6 +2126,17 @@ LexicalType Compiler :: declareVariableType(CodeScope& scope, ObjectInfo& variab
    return variableType;
 }
 
+inline void copyIdentInfo(SNode target, SNode terminal, ident_t identifier)
+{
+   SNode ident = target.appendNode(lxIdentifier, identifier);
+
+   SNode col = terminal.findChild(lxCol);
+   ident.appendNode(col.type, col.argument);
+
+   SNode row = terminal.findChild(lxRow);
+   ident.appendNode(row.type, row.argument);
+}
+
 void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRef/*, bool dynamicArray*/, bool canBeIdle)
 {
    CodeScope* codeScope = (CodeScope*)scope.getScope(Scope::ScopeLevel::slCode);
@@ -2214,14 +2239,14 @@ void Compiler :: declareVariable(SNode& terminal, ExprScope& scope, ref_t typeRe
    variableType = declareVariableType(*codeScope, variable, localInfo, size, binaryArray, variableArg, className);
 
    if (!codeScope->locals.exist(identifier)) {
-      codeScope->mapLocal(identifier, variable.param, variable.reference, variable.element, size);
+      codeScope->mapLocal(identifier, variable.param, variable.reference, variable.element, size, true);
 
       // injecting variable label
       SNode rootNode = findRootNode(terminal, lxNewFrame, lxCode, lxCodeExpression);
 
       SNode varNode = rootNode.prependSibling(variableType, variableArg);
       varNode.appendNode(lxLevel, variable.param);
-      varNode.appendNode(lxIdentifier, identifier);
+      copyIdentInfo(varNode, terminal, identifier);
 
       if (!emptystr(className)) {
          if (isWeakReference(className)) {
@@ -4096,15 +4121,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
    SNode current = node;
    node = current.parentNode();
 
-   SNode sourceNode;
-//   if (current == lxReturning) {
-//      sourceNode = current.firstChild(lxObjectMask);
-//      if (test(sourceNode.type, lxTerminalMask)) {
-//         // HOTFIX
-//         sourceNode = current;
-//      }
-//   }
-   /*else */sourceNode = current.nextNode(lxObjectMask);
+   SNode sourceNode = current.nextNode(lxObjectMask);
 
    if (accumulateMode)
       // !! temporally
@@ -4116,6 +4133,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //   bool byRefAssigning = false;
    switch (target.kind) {
       case okLocal:
+         scope.markAsAssigned(target);
       case okField:
       case okStaticField:
 //      case okClassStaticField:
@@ -6103,6 +6121,15 @@ ObjectInfo Compiler :: compileCode(SNode node, CodeScope& scope)
       eop.insertNode(lxBreakpoint, dsVirtualEnd);
    }
 
+   if (_trackingUnassigned) {
+      // warn if the variable was not assigned
+      for (auto it = scope.locals.start(); !it.Eof(); it++) {
+         if ((*it).unassigned) {
+            warnOnUnassignedLocal(node, scope, (*it).offset);
+         }
+      }
+   }
+
    return retVal;
 }
 
@@ -6862,6 +6889,29 @@ void Compiler :: compileExpressionMethod(SNode node, MethodScope& scope, bool la
 //   }
 //   else compileDispatchExpression2(node, scope, false);
 //}
+
+void Compiler :: warnOnUnassignedLocal(SNode node, Scope& scope, int level)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current.type) {
+         case lxVariable:
+         case lxIntVariable:
+         case lxReal64Variable:
+         case lxLongVariable:
+         {
+            SNode levelNode = current.findChild(lxLevel);
+            if (levelNode.argument == level) {
+               scope.raiseWarning(WARNING_LEVEL_3, wrnUnassignedVaiable, current.firstChild(lxTerminalMask));
+               break;
+            }
+         }
+         default:
+            break;
+      }
+      current = current.nextNode();
+   }
+}
 
 void Compiler :: warnOnUnresolvedDispatch(SNode node, Scope& scope, mssg_t message, bool errorMode)
 {

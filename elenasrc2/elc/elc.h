@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x01EE
+#define ELC_REVISION_NUMBER         0x01EF
 
 // --- ELC default file names ---
 #ifdef _WINDOW
@@ -700,6 +700,9 @@ public:
       }
       if (IntSetting(_ELENA_::opAutoSystemImport, -1) != 0) {
          compiler.turnAutoImport(true);
+      }
+      if (_ELENA_::test(_warningMasks, _ELENA_::WARNING_LEVEL_3)) {
+         compiler.turnOnTrackingUnassigned();
       }
    }
 
