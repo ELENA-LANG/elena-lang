@@ -656,27 +656,31 @@ struct SymbolExpressionInfo
       Normal = 0,
       Constant = 1,
       Singleton = 2,
-      ConstantSymbol = 3
+      ConstantSymbol = 3,
+      ArrayConst = 4,
    };
 
-   ref_t exprRef;
    Type  type;
+   ref_t exprRef;
+   ref_t typeRef;
 
    void save(StreamWriter* writer)
    {
       writer->writeDWord((int)type);
       writer->writeDWord(exprRef);
+      writer->writeDWord(typeRef);
    }
 
    void load(StreamReader* reader)
    {
       type = (Type)reader->getDWord();
       exprRef = reader->getDWord();
+      typeRef = reader->getDWord();
    }
 
    SymbolExpressionInfo()
    {
-      exprRef = 0;
+      typeRef = exprRef = 0;
       type = Type::Normal;
    }
 };

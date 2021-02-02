@@ -5177,7 +5177,6 @@ void ByteCodeWriter :: generateConstantMember(MemoryWriter& writer, LexicalType 
    }
 }
 
-
 void ByteCodeWriter :: generateConstantList(SNode node, _Module* module, ref_t reference)
 {
    SNode target = node.findChild(lxType);

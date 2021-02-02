@@ -3,8 +3,7 @@ In development:
 ------         
 
   [development]
-    + warn on operations with unassigned variable; warn an operation with not initialized variable: var a.test();
-
+    * translit
     * #206 : console samples
     + mixin sample - doubler method
     + setting property inline

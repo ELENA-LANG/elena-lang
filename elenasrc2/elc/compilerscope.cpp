@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class scope implementation.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -200,6 +200,7 @@ ref_t ModuleScope :: loadSymbolExpressionInfo(SymbolExpressionInfo& info, ident_
    if (argModule != module) {
       // import type
       info.exprRef = importReference(argModule, info.exprRef, module);
+      info.typeRef = importReference(argModule, info.typeRef, module);
    }
    return moduleRef;
 }

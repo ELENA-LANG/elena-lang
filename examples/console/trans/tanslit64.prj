@@ -1,0 +1,16 @@
+<configuration>
+    <project>
+        <executable>translit64.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <namespace>translit</namespace>
+        <template>console_64</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>translit.l</include>
+            <include>control.l</include>
+        </module>
+    </files>
+</configuration>

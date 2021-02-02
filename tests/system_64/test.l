@@ -1,70 +1,81 @@
-// based on msdn random sample
-
 import extensions;
+import extensions'text;
+import system'routines;
+import system'text;
 
-// --- program ---
+// --- RusLatRules ---
 
-const int rows = 4;
-const int cols = 6;
+const rusLatRules = new object[]
+{
+    new { from = "а"; to = "a"; },
+    new { from = "б"; to = "b"; },
+    new { from = "в"; to = "v"; },
+    new { from = "г"; to = "g"; },
+    new { from = "д"; to = "d"; },
+    new { from = "е"; to = "e"; },
+    new { from = "ë"; to = "jo"; },
+    new { from = "ж"; to = "zh"; },
+    new { from = "з"; to = "z"; },
+    new { from = "и"; to = "i"; },
+    new { from = "й"; to = "ij"; },
+    new { from = "к"; to = "k"; },
+    new { from = "л"; to = "l"; },
+    new { from = "m"; to = "m"; },
+    new { from = "н"; to = "n"; },
+    new { from = "о"; to = "о"; },
+    new { from = "п"; to = "p"; },
+    new { from = "р"; to = "r"; },
+    new { from = "c"; to = "s"; },
+    new { from = "т"; to = "t"; },
+    new { from = "у"; to = "u"; },
+    new { from = "ф"; to = "f"; },
+    new { from = "х"; to = "h"; },
+    new { from = "ц"; to = "c"; },
+    new { from = "ч"; to = "ch"; },
+    new { from = "ш"; to = "sh"; },
+    new { from = "щ"; to = "w"; },
+    new { from = "ы"; to = "y"; },
+    new { from = "ь"; to = "'"; },
+    new { from = "э"; to = "je"; },
+    new { from = "ю"; to = "ju"; },
+    new { from = "я"; to = "ja"; }
+};
 
-//const int runCount = 1000000;
-const int runCount = 500/*000*/;
-const int distGroupCount = 20;
+//// === Transliteration ===
+//
+//Transliteration(text)
+//{
+//    var output := new TextBuilder();
+//    
+//    text.forEach:(ch)
+//    {
+//        var rule := rusLatRules.seekEach:
+//            (x => x.from == ch.toPrintable() );
+//                
+//        if (nil == rule)
+//        { 
+//            output.write(ch) 
+//        }
+//        else
+//        { 
+//            output.write(rule.to)
+//        }
+//    };
+//    
+//    ^ output.Value
+//}
 
 public program()
 {
-    auto intGroupSize := (1.0r + IntNumber.MaxValue) / distGroupCount;
+    var r := rusLatRules;
+    
+//    while(true)
+//    {
+//        var source := console.writeLine:"Enter the cyrillic text for transliteration or prese enter to exit:".loadLineTo(new StringWriter());
+//
+//        if (0 == source.Length)
+//            { AbortException.raise() };
 
-    var intCounts := new int[](distGroupCount);
-    var realCounts := new int[](distGroupCount);
-
-    console.printLine:"Random reals:";
-    for(int i := 0, i < rows, i += 1)
-    {
-        for(int j := 0, j <= cols, j += 1)
-        {
-            console.printPaddingRight(12, randomGenerator.nextReal());
-        };
-        
-        console.writeLine()
-    };
-
-    console.writeLine();
-    console.writeLine:"Random integers:";
-    for(int i := 0, i < rows, i += 1)
-    {
-        for(int j := 0, j <= cols, j += 1)
-        {
-            console.printPaddingRight(12, randomGenerator.nextInt());
-        };
-        
-        console.writeLine()
-    };
-
-//    console.writeLine();
-    console.writeLine:"Distribution";
-
-    for(int i := 0, i < runCount, i += 1)
-    {
-        int index := (randomGenerator.nextInt() / intGroupSize).toInt();
-        if(index < distGroupCount)
-            { intCounts[index] := intCounts[index] + 1 };
-        
-        index := (randomGenerator.nextReal() * distGroupCount).toInt();
-        if(index < distGroupCount)
-            { realCounts[index] := realCounts[index] + 1 }
-    };    
-
-    for(int i := 0, i < distGroupCount, i += 1)
-    {
-        console.printPaddingLeft(12, (i * intGroupSize).toInt(),"-");
-        console.printPaddingLeft(12, ((i + 1) * intGroupSize - 1).toInt());
-        console.printPaddingLeft(12, intCounts[i]);
-
-        console.printPaddingLeft(14, i.toReal() / distGroupCount,"-");
-        console.printPaddingLeft(12, (i + 1).toReal() / distGroupCount);
-        console.printPaddingLeft(12, realCounts[i]);
-                
-        console.writeLine()
-    }
+//        console.writeLine(Transliteration("привет"))
+//    }
 }

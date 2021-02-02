@@ -919,7 +919,6 @@ void JITLinker :: fixSectionReferences(SectionInfo& sectionInfo,  _Memory* image
       currentMask = it.key() & mskAnyRef;
       currentRef = it.key() & ~mskAnyRef;
 
-      int i = *it + position;
       pos_t imageOffset = (constArrayMode ? _compiler->findMemberPosition(*it >> 2) : *it) + position;
 
       if (currentMask == 0) {

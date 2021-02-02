@@ -419,12 +419,10 @@ ObjectInfo Compiler::NamespaceScope :: defineObjectInfo(ref_t reference, bool ch
 
             // if it is a constant
             if (symbolInfo.type == SymbolExpressionInfo::Type::Constant) {
-               //ref_t classRef = symbolInfo.exprRef;
-
-               /*if (symbolInfo.listRef != 0) {
-                  return ObjectInfo(okArrayConst, symbolInfo.listRef, classRef);
-               }
-               else */return ObjectInfo(okConstantSymbol, reference, outputRef);
+               return ObjectInfo(okConstantSymbol, reference, outputRef);
+            }
+            else if (symbolInfo.type == SymbolExpressionInfo::Type::ArrayConst) {
+               return ObjectInfo(okArrayConst, outputRef, symbolInfo.typeRef);
             }
             else if (symbolInfo.type == SymbolExpressionInfo::Type::Singleton) {
                return ObjectInfo(okSingleton, outputRef, outputRef);
@@ -9606,13 +9604,14 @@ bool Compiler :: compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal, bo
       else if (retVal.kind == okConstantSymbol) {
          scope.info.type = SymbolExpressionInfo::Type::ConstantSymbol;
          scope.info.exprRef = classRef;
+
+         nsScope->defineConstantSymbol(classRef, parentRef);
       }
       else if (retVal.kind == okArrayConst) {
-         scope.info.type = SymbolExpressionInfo::Type::ConstantSymbol;
+         scope.info.type = SymbolExpressionInfo::Type::ArrayConst;
          scope.info.exprRef = classRef;
+         scope.info.typeRef = parentRef;
       }
-
-      nsScope->defineConstantSymbol(classRef, parentRef);
 
       return true;
    }

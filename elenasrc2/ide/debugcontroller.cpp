@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //      its helpers
-//                                              (C)2005-202, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -1257,7 +1257,7 @@ void DebugController::readParams(_DebuggerWatch* watch, size_t address, ident_t 
 
 #ifdef _WIN64
 
-constexpr int FPOffset = 0xC;
+constexpr int FPOffset = 0x8;
 
 #else
 
