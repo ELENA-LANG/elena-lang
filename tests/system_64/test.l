@@ -68,6 +68,7 @@ const rusLatRules = new object[]
 public program()
 {
     var r := rusLatRules;
+    var l := r.Length;
     
 //    while(true)
 //    {
@@ -77,5 +78,6 @@ public program()
 //            { AbortException.raise() };
 
 //        console.writeLine(Transliteration("привет"))
+//    console.writeLine(Transliteration("п"))
 //    }
 }

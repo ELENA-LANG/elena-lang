@@ -636,7 +636,7 @@ void JITCompiler64 :: compileCollection(MemoryWriter* writer, _Memory* binary)
    // object header
    writer->writeQWord(0);
    writer->writeDWord(0);
-   writer->writeDWord(length);
+   writer->writeDWord(length << 1);
 
    // object body
    pos_t index = 0;
