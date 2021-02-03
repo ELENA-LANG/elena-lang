@@ -18,3 +18,7 @@ define SYSTEM_ENV           2000Ch
 define VOID           	    2000Dh
 define VOIDPTR              2000Eh
 
+// --- GC_ALLOC ---
+procedure %GC_ALLOC
+
+end
