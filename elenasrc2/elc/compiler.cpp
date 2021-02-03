@@ -16,14 +16,14 @@
 
 using namespace _ELENA_;
 
-//void test2(SNode node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      test2(current);
-//      current = current.nextNode();
-//   }
-//}
+void test2(SNode node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      test2(current);
+      current = current.nextNode();
+   }
+}
 
 // --- Expr hint constants ---
 constexpr auto HINT_NODEBUGINFO     = EAttr::eaNoDebugInfo;
@@ -2599,6 +2599,21 @@ mssg_t Compiler :: mapMessage(SNode node, ExprScope& scope, bool extensionCall)
       }
       else if (test(current.type, lxObjectMask)) {
          argCount++;
+      }
+      else if (current == lxSubMessage) {
+         name = current.firstChild(lxTerminalMask);
+
+         int attr = scope.moduleScope->attributes.get(messageStr);
+         if (_logic->validateImplicitMethodAttribute(attr, true)) {
+            if (attr == tpSetAccessor) {
+               // COMPILER MAGIC : recognize an inline property set call
+               actionFlags = PROPERTY_MESSAGE;
+
+               messageStr.copy(name.identifier());
+            }
+            else scope.raiseError(errInvalidComlexMessageName, node);
+         }
+         else scope.raiseError(errInvalidComlexMessageName, node);
       }
       else break;
 
@@ -5420,6 +5435,8 @@ EAttr Compiler :: declareExpressionAttributes(SNode& current, ExprScope& scope, 
 
 ObjectInfo Compiler :: compileRootExpression(SNode node, CodeScope& scope, ref_t targetRef, EAttr mode)
 {
+   test2(node);
+
    // renaming top expression into sequence one to be used in root boxing routines
    node.set(lxSeqExpression, (ref_t)-1);
 
@@ -7595,10 +7612,7 @@ void Compiler :: compileMethodCode(SNode node, SNode body, MethodScope& scope, C
 
    // if the method returns itself
    if (retVal.kind == okUnknown && !codeScope.withRetStatement) {
-      if (test(scope.hints, tpSetAccessor)) {
-         retVal = scope.mapParameter(*scope.parameters.start(), EAttr::eaNone);
-      }
-      else retVal = scope.mapSelf();
+      retVal = scope.mapSelf();
 
       // adding the code loading self / parameter (for set accessor)
       SNode retNode = body.appendNode(lxReturning);
@@ -9343,7 +9357,7 @@ void Compiler :: declareMethodAttributes(SNode node, MethodScope& scope)
       else if (current == lxNameAttr && !explicitMode) {
          // resolving implicit method attributes
          int attr = scope.moduleScope->attributes.get(current.firstChild(lxTerminalMask).identifier());
-         if (_logic->validateImplicitMethodAttribute(attr/*, current.nextNode().type == lxMessage*/)) {
+         if (_logic->validateImplicitMethodAttribute(attr, false)) {
             scope.hints |= attr;
             current.set(lxAttribute, attr);
          }

@@ -1019,7 +1019,7 @@ void DebugController :: readFields(_DebuggerWatch* watch, DebugLineInfo* info, s
             else watch->write(this, fieldPtr, fieldName, "<unknown>");
          }
 
-         address += 8;
+         address += sizeof(uintptr_t);
       }
 
       index++;

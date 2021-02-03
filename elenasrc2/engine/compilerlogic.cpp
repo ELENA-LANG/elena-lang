@@ -1688,7 +1688,7 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
    }
 }
 
-bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/)
+bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue, bool complexName)
 {
    bool dummy = false;
    switch ((size_t)attrValue)
@@ -1702,10 +1702,10 @@ bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue/*, bool com
          return validateMethodAttribute(attrValue, dummy);
       case V_GETACCESSOR:
       case V_SETACCESSOR:
-//         if (complexName) {
-//            return validateMethodAttribute(attrValue, dummy);
-//         }
-         /*else */return false;
+         if (complexName) {
+            return validateMethodAttribute(attrValue, dummy);
+         }
+         else return false;
       default:
          return false;
    }

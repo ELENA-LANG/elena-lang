@@ -3,15 +3,15 @@ In development:
 ------         
 
   [development]
-    * #206 : console samples
-    + mixin sample - doubler method
-    * #206 : samples
     + setting property inline
+    * #206 : samples
     + mixings ruby style
     + post : mixin instead of mutli-inheritance (lec24) - simple way to include several roles into the class
     + housekeeping - review pipeline
     * migrate all samples to win64
     + compilation speed - Amicable pairs variants
+
+    * xforms - set property returns the object itself, redesign the current mode; probably we could return the property value
 
     * multi-theading
     * thread - make sure stack is correctly aligned to 16
@@ -24,6 +24,7 @@ In development:
     + #531 : Inhert should support only stateless interface type
     + housekeeping - review pipeline
     + #69 : GC info 
+    + docs : introduce __target built-in variable
     + housekeeping - review pipeline
 
     * review setframe opcode - argument should be an index or absolute value?
@@ -172,7 +173,6 @@ Pipeline:
                 * stack allocation should not be cleared
                 * system'Extension : variadic argument should be boxed directly into extension
                 * replacing embeddable constructor call with direct operarions?
-                * setting several properties in row  new A().set(subj A,2).set(subj B,3) 
                 * initialize property
                 * countable
                 * implement analog of C# enum

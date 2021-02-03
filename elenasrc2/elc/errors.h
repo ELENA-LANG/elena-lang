@@ -41,7 +41,6 @@ namespace _ELENA_
    #define errUnknownVariableType   "%s(%d:%d): error 104: Type of the variable '%s' doesn't exist\n"
    #define errIllegalField          "%s(%d:%d): error 111: Illegal field declaration '%s'\n"
    #define errTooManyParameters     "%s(%d:%d): error 113: Too many parameters for '%s' message\n"
-//////   #define errUnknownRole           "%s(%d:%d): error 117: Unknown role '%s'\n"
    #define errDuplicatedDefinition  "%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n"
 //////   #define errInvalidProperty       "%s(%d:%d): error 121: Invalid or none-existing property '%s'\n"
 //////   #define errInvalidRedirectMessage "%s(%d:%d): error 127: It is not possible to use redirect message in this case\n"
@@ -98,6 +97,7 @@ namespace _ELENA_
    constexpr auto errUnresolvedDispatch         = "%s(%d:%d): error 178: a target does not handle dispatched message\n";
    constexpr auto errUnresolvedInterface        = "%s(%d:%d): error 179: a class does not contain an interface implementation\n";
    constexpr auto errNoBodyMethod               = "%s(%d:%d): error 180: only abstract method can have no body\n";
+   constexpr auto errInvalidComlexMessageName   = "%s(%d:%d): error 103: Invalid complex message name '%s'\n";
 
    constexpr auto errUnknownBaseClass           = "internal error 500: Base class doesn't exist\n";
    constexpr auto errNotDefinedBaseClass        = "internal error 501: Base class doesn't defined\n";

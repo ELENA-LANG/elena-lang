@@ -1967,9 +1967,11 @@ void DerivationWriter :: generateExpressionNode(SyntaxWriter& writer, SNode& cur
       case lxExpression:
          generateExpressionTree(writer, current, derivationScope);
          break;
-//      case lxSubMessage:
-//         generateMesage(writer, current, derivationScope);
-//         break;
+      case lxSubMessage:
+         writer.newNode(lxSubMessage);
+         copyIdentifier(writer, current.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
+         writer.closeNode();
+         break;
       case lxAttrExpression:
          generateExpressionTree(writer, current.findChild(lxExpression), derivationScope, 0);
          break;

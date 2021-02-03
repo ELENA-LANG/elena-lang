@@ -12,6 +12,7 @@
   - #532 : PERM Space 
   - #531 : Dynamic interface mixin 
   - #534 : Generic typecast handler 
+  - #535 : Setting several properties in a row 
 - ELC
   - a warning shown when an object cannot be converted into another one
   - a warning shown when an object does not handle a message (for strong-typed ones)

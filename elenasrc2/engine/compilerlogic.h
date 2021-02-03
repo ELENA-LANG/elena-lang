@@ -200,7 +200,7 @@ public:
    virtual bool validateNsAttribute(int attrValue, Visibility& visibility);
    virtual bool validateClassAttribute(int& attrValue, Visibility& visibility);
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
-   virtual bool validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/);
+   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName);
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 

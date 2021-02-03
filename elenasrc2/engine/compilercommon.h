@@ -716,7 +716,7 @@ public:
    virtual bool validateNsAttribute(int attrValue, Visibility& visibility) = 0;
    virtual bool validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
    virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
-   virtual bool validateImplicitMethodAttribute(int& attrValue/*, bool complexName*/) = 0;
+   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
    virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 

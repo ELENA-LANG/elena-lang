@@ -47,6 +47,7 @@ __define ASSIGNING_OPERATOR    135415
 __define L8c_OPERATOR          135416
 __define ARRAY_OPERATOR        135552
 __define COLLECTION	       135632
+__define SUBMESSAGE	       135664
 __define EXPRESSION	       364592
 __define ROOT_EXPRESSION       364593
 __define OPERAND_EXPRESSION    364594
@@ -641,6 +642,7 @@ MESSAGE_BODY ->
 	| EMPTY_PARAMETER
 	| : OPERAND_EXPRESSION
 	| :: DBLCOLON_EXPRESSION
+	| SUBMESSAGE MESSAGE_BODY
 
 RESEND_BODY ->
 	( MESSAGE_PARAMETERS )
@@ -756,6 +758,9 @@ ARRAY_OPERATOR ->
 	[
 
 MESSAGE ->                                                                                                   
+	identifier
+
+SUBMESSAGE ->                                                                                                   
 	identifier
 
 SWITCHING ->
