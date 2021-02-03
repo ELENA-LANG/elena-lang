@@ -4139,6 +4139,7 @@ ObjectInfo Compiler :: compileAssigning(SNode node, ExprScope& scope, ObjectInfo
 //      case okOuterStaticField:
          break;
       case okLocalAddress:
+         scope.markAsAssigned(target);
       case okFieldAddress:
       {
          size_t size = _logic->defineStructSize(*scope.moduleScope, targetRef, 0u);
