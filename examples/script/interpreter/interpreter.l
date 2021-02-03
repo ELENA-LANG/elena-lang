@@ -234,7 +234,7 @@ public solution1()
 {
     // .[,.]
     
-    var c := DynamicSingleton.new(
+    auto c := DynamicSingleton.new(
                 Expression.Method(
                    "eval",
                    new ScopeVariable("tape"),                   
@@ -351,7 +351,7 @@ public solution5()
     console.writeLine(bfProgram)
 }
 
-const int Solution = 4;
+const int Solution = 1;
 
 public program()
 {

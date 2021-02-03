@@ -1884,7 +1884,7 @@ namespace expressions
         }
     }
 
-    public class DynamicExpressionSymbol : DynamicSymbol
+    public sealed class DynamicExpressionSymbol : DynamicSymbol
     {
         Expression expr;
         
@@ -1893,13 +1893,16 @@ namespace expressions
             this expr := expr
         }
         
+        compile()
+            <= compile(nil, IdleExpressionScope);
+
         compile(module, ExpressionScope scope)
         {
             ^ expr.compile(scope)
         }        
     }
           
-    public class DynamicSingleton : DynamicSymbol
+    public sealed class DynamicSingleton : DynamicSymbol
     {
         Expression[] methods;
     
@@ -1958,7 +1961,10 @@ namespace expressions
         {
             this methods := methods;                
         }
-        
+                    
+        compile()
+            <= compile(nil, IdleExpressionScope);
+
         compile(module, ExpressionScope scope)
         {
             auto list := new List<Tuple<Message,DynamicTape>>();
