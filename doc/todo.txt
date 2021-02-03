@@ -59,7 +59,7 @@ In development:
 
     * do we need win64_pointers.l / win32_pointers.l and win64_strings.l / win32_strings.l or there is no difference?
     * #280 64bit tool set
-    * #443
+    * #443 : power8
 
     * Lexi project:
         - load simple text and display it
