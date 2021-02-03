@@ -1,0 +1,20 @@
+<configuration>
+    <project>
+        <executable>matrix64.exe</executable>
+        <arguments></arguments>
+        <output></output>
+        <options></options>
+        <namespace>matrix</namespace>
+        <template>console_64</template>
+        <debuginfo>-1</debuginfo>
+    </project>
+    <files>
+        <module>
+            <include>matrix.l</include>
+        </module>
+    </files>
+    <forwards>
+        <forward key="program">extensions'programLoop</forward>
+        <forward key="program'control">matrix'control</forward>
+    </forwards>
+</configuration>

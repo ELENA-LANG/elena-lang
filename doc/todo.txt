@@ -3,7 +3,7 @@ In development:
 ------         
 
   [development]
-    * translit
+    + int len := 0; - there should be no warning 
     * #206 : console samples
     + mixin sample - doubler method
     + setting property inline

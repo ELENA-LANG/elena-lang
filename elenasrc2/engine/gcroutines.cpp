@@ -435,7 +435,7 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
          uintptr_t allocated = getObjectPtr(table->gc_mg_current);
          table->gc_mg_current += size;
 
-         *(char*)(table->gc_header + ((allocated - table->gc_start) >> page_size_order)) = 1;
+         //*(char*)(table->gc_header + ((allocated - table->gc_start) >> page_size_order)) = 1;
 
          return (void*)allocated;
       }

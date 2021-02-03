@@ -143,7 +143,17 @@ bin\elc examples\console\matrix\matrix.prj
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
+bin\elc examples\console\matrix\matrix64.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
 bin\elc examples\console\pi2\pi2.prj
+@echo off 
+if %ERRORLEVEL% EQU -2 GOTO CompilerError
+@echo on
+
+bin\elc examples\console\pi2\pi2_64.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
