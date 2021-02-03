@@ -288,6 +288,8 @@ vaddr_t ELENARTMachine :: loadSignatureMember(mssg_t message, int index)
    return SystemRoutineProvider::GetSignatureMember(messageSection.get(0), message, index);
 }
 
+constexpr pos_t MessageEntryLen = sizeof(uintptr_t) * 2;
+
 ref_t ELENARTMachine :: loadSubject(ident_t name)
 {
    ImageSection messageSection;
@@ -295,8 +297,8 @@ ref_t ELENARTMachine :: loadSubject(ident_t name)
    MemoryReader reader(&messageSection);
 
    for (ref_t subjectRef = 1; true; subjectRef++) {
-      if (messageSection[subjectRef * 8] == 0) {
-         pos_t namePtr = messageSection[subjectRef * 8 + 4];
+      if (messageSection[subjectRef * MessageEntryLen] == 0) {
+         pos_t namePtr = messageSection[subjectRef * MessageEntryLen + sizeof(uintptr_t)];
          if (!namePtr)
             break;
 

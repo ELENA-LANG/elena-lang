@@ -832,5 +832,5 @@ void ECodesAssembler :: compile(TextReader* source, path_t outputPath)
 
 void ECodesAssembler :: loadDefaultConstants()
 {
-
+   constants.add("prop_mssg_mask", PROPERTY_MESSAGE);
 }

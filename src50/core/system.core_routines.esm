@@ -1,6 +1,9 @@
 //        ELENA Language 5.0
 //      inline system library
 
+// built-in constants
+// prop_mssg_mask - property message mask
+
 define ARG_MASK              0000001Fh
 define SPECIAL_MESSAGE       00000020h
 define VARIADIC_MESSAGE      00000080h
@@ -2932,7 +2935,7 @@ procedure __signature."getProperty$system@MessageName$@system@ref#1&system@Messa
   movsip 0
   setv
   popd
-  or     40h  
+  or     prop_mssg_mask  
   peeksi 2
   save
 
@@ -2948,7 +2951,7 @@ procedure __signature."setProperty$system@MessageName$@system@ref#1&system@Messa
   movsip 0
   setv
   popd
-  or     40h
+  or     prop_mssg_mask
   peeksi 2
   save
 
