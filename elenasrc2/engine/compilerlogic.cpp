@@ -1,18 +1,18 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Compiler
-////
-////		This file contains ELENA compiler logic class implementation.
-////
-////                                              (C)2005-2020, by Alexei Rakov
-////---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//#include "elena.h"
-//// --------------------------------------------------------------------------
-//#include "compilerlogic.h"
-//#include "errors.h"
+//		This file contains ELENA compiler logic class implementation.
 //
-//using namespace _ELENA_;
-//
+//                                              (C)2005-2020, by Alexei Rakov
+//---------------------------------------------------------------------------
+
+#include "elena.h"
+// --------------------------------------------------------------------------
+#include "compilerlogic.h"
+#include "errors.h"
+
+using namespace _ELENA_;
+
 //typedef ClassInfo::Attribute Attribute;
 //
 ////inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
@@ -569,16 +569,16 @@
 //{
 //   return test(info.header.flags, elDynamicRole);
 //}
-//
-//bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, classReference, true))
-//      return ignoreUndeclared;
-//
-//   return isValidType(info, allowRole);
-//}
-//
+
+bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, bool ignoreUndeclared, bool allowRole)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, classReference, true))
+      return ignoreUndeclared;
+
+   return isValidType(info, allowRole);
+}
+
 //bool CompilerLogic :: doesClassExist(_ModuleScope& scope, ref_t targetRef)
 //{
 //   if (!targetRef)
@@ -603,12 +603,12 @@
 //
 //   return true;
 //}
-//
-//bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
-//{
-//   return allowRole || !testany(info.header.flags, elRole);
-//}
-//
+
+bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
+{
+   return allowRole || !testany(info.header.flags, elRole);
+}
+
 //bool CompilerLogic :: isEmbeddable(ClassInfo& info)
 //{
 //   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
@@ -1339,103 +1339,103 @@
 //
 //   node.set((LexicalType)operation, targetRef);
 //}
-//
-//bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
-//{
-//   if (isPrimitiveRef(reference) && !headerOnly) {
-//      scope.loadClassInfo(info, scope.superReference);
-//   }
-//
-//   switch (reference)
-//   {
-//      case V_INT32:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
-//         info.size = 4;
-//         break;
-//      case V_INT64:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
-//         info.size = 8;
-//         break;
-//      case V_REAL64:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugReal64 | elStructureRole | elReadOnlyRole;
-//         info.size = 8;
-//         break;
-//      case V_PTR32:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elStructureRole;
-//         info.size = 4;
-//         break;
-//      case V_DWORD:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elStructureRole | elReadOnlyRole;
-//         info.size = 4;
-//         break;
-//      case V_SUBJECT:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugSubject | elStructureRole | elReadOnlyRole;
-//         info.size = 4;
-//         break;
-//      case V_MESSAGE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
-//         info.size = 4;
-//         break;
-//      case V_EXTMESSAGE:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
-//         info.size = 8;
-//         break;
-//      case V_SYMBOL:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugReference | elStructureRole | elReadOnlyRole;
-//         info.size = 4;
-//         break;
-//      case V_INT32ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elWrapper;
-//         info.size = -4;
-//         break;
-//      case V_INT16ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elWrapper;
-//         info.size = -2;
-//         break;
-//      case V_INT8ARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
-//         info.size = -1;
-//         break;
-//      case V_OBJARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDebugArray | elDynamicRole;
-//         info.size = 0;
-//         break;
-//      case V_BINARYARRAY:
-//         info.header.parentRef = scope.superReference;
-//         info.header.flags = elDynamicRole | elStructureRole | elWrapper;
-//         info.size = -1;
-//         break;
-//      case V_AUTO:
-//         break;
-//      default:
-//         if (reference != 0) {
-//            if (!scope.loadClassInfo(info, reference, headerOnly))
-//               return false;
-//         }
-//         else {
-//            info.header.parentRef = 0;
-//            info.header.flags = 0;
-//            //info.size = 0;
-//         }
-//         break;
-//   }
-//
-//   return true;
-//}
-//
+
+bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly)
+{
+   if (isPrimitiveRef(reference) && !headerOnly) {
+      scope.loadClassInfo(info, scope.superReference);
+   }
+
+   switch (reference)
+   {
+      case V_INT32:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
+      case V_INT64:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
+         info.size = 8;
+         break;
+      case V_REAL64:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugReal64 | elStructureRole | elReadOnlyRole;
+         info.size = 8;
+         break;
+      case V_PTR32:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elStructureRole;
+         info.size = 4;
+         break;
+      case V_DWORD:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
+      case V_SUBJECT:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugSubject | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
+      case V_MESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
+      case V_EXTMESSAGE:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugMessage | elStructureRole | elReadOnlyRole;
+         info.size = 8;
+         break;
+      case V_SYMBOL:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugReference | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
+      case V_INT32ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugIntegers | elStructureRole | elDynamicRole | elWrapper;
+         info.size = -4;
+         break;
+      case V_INT16ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugShorts | elStructureRole | elDynamicRole | elWrapper;
+         info.size = -2;
+         break;
+      case V_INT8ARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
+         info.size = -1;
+         break;
+      case V_OBJARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDebugArray | elDynamicRole;
+         info.size = 0;
+         break;
+      case V_BINARYARRAY:
+         info.header.parentRef = scope.superReference;
+         info.header.flags = elDynamicRole | elStructureRole | elWrapper;
+         info.size = -1;
+         break;
+      case V_AUTO:
+         break;
+      default:
+         if (reference != 0) {
+            if (!scope.loadClassInfo(info, reference, headerOnly))
+               return false;
+         }
+         else {
+            info.header.parentRef = 0;
+            info.header.flags = 0;
+            //info.size = 0;
+         }
+         break;
+   }
+
+   return true;
+}
+
 //int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable)
 //{
 //   if (reference == V_BINARYARRAY && elementRef != 0) {
@@ -1603,29 +1603,29 @@
 //   }
 //   return false;
 //}
-//
-//bool CompilerLogic :: validateNsAttribute(int attrValue, Visibility& visibility)
-//{
-//   switch ((size_t)attrValue)
-//   {
-//      case 0:
-//         return true;
-//      case V_PUBLIC:
-//         visibility = Visibility::Public;
-//         return true;
-//      case V_INTERNAL:
-//         visibility = Visibility::Internal;
-//         return true;
-//      case V_PRIVATE:
-//         visibility = Visibility::Private;
-//         return true;
-//      case V_NAMESPACE:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+
+bool CompilerLogic :: validateNsAttribute(int attrValue, Visibility& visibility)
+{
+   switch ((size_t)attrValue)
+   {
+      case 0:
+         return true;
+      case V_PUBLIC:
+         visibility = Visibility::Public;
+         return true;
+      case V_INTERNAL:
+         visibility = Visibility::Internal;
+         return true;
+      case V_PRIVATE:
+         visibility = Visibility::Private;
+         return true;
+      case V_NAMESPACE:
+         return true;
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibility)
 //{
 //   switch ((size_t)attrValue)
@@ -1920,46 +1920,46 @@
 //         return false;
 //   }
 //}
-//
-//bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
-//   Visibility& visibility)
-//{
-//   if (attrValue == (int)V_CONST) {
-//      constant = true;
-//
-//      return true;
-//   }
-//   else if (attrValue == (int)V_SYMBOLEXPR) {
-//      return true;
-//   }
-//   else if (attrValue == (int)V_STATIC) {
-//      staticOne = true;
-//
-//      return true;
-//   }
-//   else if (attrValue == (int)V_PRELOADED) {
-//      preloadedOne = true;
-//
-//      return true;
-//   }
-//   else if (attrValue == (int)V_PUBLIC) {
-//      visibility = Visibility::Public;
-//
-//      return true;
-//   }
-//   else if (attrValue == (int)V_PRIVATE) {
-//      visibility = Visibility::Private;
-//
-//      return true;
-//   }
-//   else if (attrValue == (int)V_INTERNAL) {
-//      visibility = Visibility::Internal;
-//
-//      return true;
-//   }   
-//   else return attrValue == 0;
-//}
-//
+
+bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
+   Visibility& visibility)
+{
+   if (attrValue == (int)V_CONST) {
+      constant = true;
+
+      return true;
+   }
+   else if (attrValue == (int)V_SYMBOLEXPR) {
+      return true;
+   }
+   else if (attrValue == (int)V_STATIC) {
+      staticOne = true;
+
+      return true;
+   }
+   else if (attrValue == (int)V_PRELOADED) {
+      preloadedOne = true;
+
+      return true;
+   }
+   else if (attrValue == (int)V_PUBLIC) {
+      visibility = Visibility::Public;
+
+      return true;
+   }
+   else if (attrValue == (int)V_PRIVATE) {
+      visibility = Visibility::Private;
+
+      return true;
+   }
+   else if (attrValue == (int)V_INTERNAL) {
+      visibility = Visibility::Internal;
+
+      return true;
+   }   
+   else return attrValue == 0;
+}
+
 //void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
 //{
 //   // if it is a primitive field

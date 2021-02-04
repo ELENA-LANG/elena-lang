@@ -80,9 +80,9 @@ class CompilerLogic : public _CompilerLogic
 //
 //   virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
 //   virtual int checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
-//
-//   virtual bool defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
-//
+
+   virtual bool __fastcall defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
+
 //   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef)
 //   {
 //      bool dummy = false;
@@ -119,8 +119,8 @@ class CompilerLogic : public _CompilerLogic
 //   virtual bool isVariable(ClassInfo& info);
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef);
 //   virtual bool isArray(ClassInfo& info);
-//   virtual bool isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole);
-//   virtual bool isValidType(ClassInfo& info, bool allowRole);
+   virtual bool __fastcall isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole);
+   virtual bool __fastcall isValidType(ClassInfo& info, bool allowRole);
 //   virtual bool doesClassExist(_ModuleScope& scope, ref_t targetRef);
 //   virtual bool isEmbeddable(ClassInfo& info);
 //   virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference)
@@ -196,15 +196,15 @@ class CompilerLogic : public _CompilerLogic
 //
 //   virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
 //   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
-//
-//   virtual bool validateNsAttribute(int attrValue, Visibility& visibility);
+
+   virtual bool validateNsAttribute(int attrValue, Visibility& visibility);
 //   virtual bool validateClassAttribute(int& attrValue, Visibility& visibility);
 //   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode);
 //   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName);
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
 //   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable);
-//   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
-//      Visibility& visibility);
+   virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
+      Visibility& visibility);
 //   virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints);
 //   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg);
 //

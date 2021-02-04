@@ -104,164 +104,156 @@ public:
 //      //irInvalid,
 ////      irObsolete
 //   };
-//
-//   enum ObjectKind
-//   {
-//      okUnknown = 0,
-//
-//      okObject,                       // param - class reference
-//      okSymbol,                       // param - reference
-//      okConstantSymbol,               // param - reference
-//      okClass,                        // param - reference
-//      okSingleton,                    // param - reference
-//      okLiteralConstant,              // param - reference
-//      okWideLiteralConstant,          // param - reference
-//      okCharConstant,                 // param - reference
-//      okIntConstant,                  // param - reference, extraparam - imm argument
-//      okUIntConstant,                 // param - reference, extraparam - imm argument
-//      okLongConstant,                 // param - reference
-//      okRealConstant,                 // param - reference
-//      okMessageConstant,              // param - reference
-//      okExtMessageConstant,           // param - reference
-//      okMessageNameConstant,          // param - reference
-//      okArrayConst,
-//      okField,                        // param - reference, param - field offset
-//      okReadOnlyField,                // param - reference, param - field offset
-//      okStaticField,                  // param - reference
-//      okStaticConstantField,          // param - reference
-//      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
-//      okFieldAddress,                 // param - field offset
-//      okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
-//      okOuter,                        // param - field offset
-//      okOuterField,                   // param - field offset, extraparam - outer field offset
-//      okOuterReadOnlyField,           // param - field offset, extraparam - outer field offset
-//      okOuterSelf,                    // param - field offset, extraparam - outer field offset
-////      okOuterStaticField,             // param - field offset, extraparam - outer field offset
-////      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
-//      okLocal,                        // param - local / out parameter offset, extraparam : class reference
-//      okParam,                        // param - parameter offset, extraparam = class reference
-//      okParamField,
-//      okMessage,                      // param - parameter offset
-//      okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
-//      okNil,
-//      okSuper,
-//      okLocalAddress,                 // param - local offset
-//      okParams,                       // param - local offset
-//      okConstantRole,                 // param - overridden message, reference - role reference
-//      okExplicitConstant,             // param - reference, extraparam - subject
-//      okExtension,
-//      okClassSelf,                    // param - class reference; used in class resending expression
-//      okMetaField,                    // param - meta attribute id
-//      okInternalSelf,
-//
-//      okExternal,
-//      okInternal,
-//      //okPrimitive,                    // param * 4 = size 
-//      //okPrimCollection                // param - length
-//   };
-//
-//   struct ObjectInfo
-//   {
-//      ObjectKind kind;
-//      ref_t      param;
-//      // target class reference
-//      ref_t      reference;
-//      ref_t      element;
-//      ref_t      extraparam;
-//
-//      ObjectInfo()
-//      {
-//         this->kind = okUnknown;
-//         this->param = 0;
-//         this->reference = 0;
-//         this->element = 0;
-//         this->extraparam = 0;
-//      }
-//      ObjectInfo(ObjectKind kind)
-//      {
-//         this->kind = kind;
-//         this->param = 0;
-//         this->reference = 0;
-//         this->extraparam = 0;
-//         this->element = 0;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->reference = 0;
-//         this->element = 0;
-//         this->extraparam = 0;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->reference = reference;
-//         this->element = 0;
-//         this->extraparam = 0;
-//      }
-//      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference, ref_t element, ref_t extraparam)
-//      {
-//         this->kind = kind;
-//         this->param = param;
-//         this->reference = reference;
-//         this->element = element;
-//         this->extraparam = extraparam;
-//      }
-//   };
-//
+
+   enum ObjectKind
+   {
+      okUnknown = 0,
+
+      okObject,                       // param - class reference
+      okSymbol,                       // param - reference
+      okConstantSymbol,               // param - reference
+      okClass,                        // param - reference
+      okSingleton,                    // param - reference
+      okLiteralConstant,              // param - reference
+      okWideLiteralConstant,          // param - reference
+      okCharConstant,                 // param - reference
+      okIntConstant,                  // param - reference, extraparam - imm argument
+      okUIntConstant,                 // param - reference, extraparam - imm argument
+      okLongConstant,                 // param - reference
+      okRealConstant,                 // param - reference
+      okMessageConstant,              // param - reference
+      okExtMessageConstant,           // param - reference
+      okMessageNameConstant,          // param - reference
+      okArrayConst,
+      okField,                        // param - reference, param - field offset
+      okReadOnlyField,                // param - reference, param - field offset
+      okStaticField,                  // param - reference
+      okStaticConstantField,          // param - reference
+      okClassStaticConstantField,     // param - class reference / 0 (for static methods), extraparam - field offset
+      okFieldAddress,                 // param - field offset
+      okReadOnlyFieldAddress,         // param - field offset, extraparam - class reference
+      okOuter,                        // param - field offset
+      okOuterField,                   // param - field offset, extraparam - outer field offset
+      okOuterReadOnlyField,           // param - field offset, extraparam - outer field offset
+      okOuterSelf,                    // param - field offset, extraparam - outer field offset
+//      okOuterStaticField,             // param - field offset, extraparam - outer field offset
+//      okClassStaticField,             // param - class reference / 0 (for static methods), extraparam - field offset
+      okLocal,                        // param - local / out parameter offset, extraparam : class reference
+      okParam,                        // param - parameter offset, extraparam = class reference
+      okParamField,
+      okMessage,                      // param - parameter offset
+      okSelfParam,                    // param - parameter offset, extraparam = -1 (stack allocated) / -2 (primitive array)
+      okNil,
+      okSuper,
+      okLocalAddress,                 // param - local offset
+      okParams,                       // param - local offset
+      okConstantRole,                 // param - overridden message, reference - role reference
+      okExplicitConstant,             // param - reference, extraparam - subject
+      okExtension,
+      okClassSelf,                    // param - class reference; used in class resending expression
+      okMetaField,                    // param - meta attribute id
+      okInternalSelf,
+
+      okExternal,
+      okInternal,
+      //okPrimitive,                    // param * 4 = size 
+      //okPrimCollection                // param - length
+   };
+
+   struct ObjectInfo
+   {
+      ObjectKind kind;
+      ref_t      param;
+      // target class reference
+      ref_t      reference;
+      ref_t      element;
+      ref_t      extraparam;
+
+      ObjectInfo()
+      {
+         this->kind = okUnknown;
+         this->param = 0;
+         this->reference = 0;
+         this->element = 0;
+         this->extraparam = 0;
+      }
+      ObjectInfo(ObjectKind kind)
+      {
+         this->kind = kind;
+         this->param = 0;
+         this->reference = 0;
+         this->extraparam = 0;
+         this->element = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->reference = 0;
+         this->element = 0;
+         this->extraparam = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->reference = reference;
+         this->element = 0;
+         this->extraparam = 0;
+      }
+      ObjectInfo(ObjectKind kind, ref_t param, ref_t reference, ref_t element, ref_t extraparam)
+      {
+         this->kind = kind;
+         this->param = param;
+         this->reference = reference;
+         this->element = element;
+         this->extraparam = extraparam;
+      }
+   };
+
 //   typedef MemoryMap<ident_t, Parameter>  LocalMap;
 
 private:
    // - Scope -
    struct Scope : _CompileScope
    {
-//      enum class ScopeLevel
-//      {
-//         slNamespace,
-//         slClass,
-//         slSymbol,
-//         slMethod,
-//         slCode,
-//         slYieldScope,
-//         slExpression,
-//         slOwnerClass,
-//      };
+      enum class ScopeLevel
+      {
+         slNamespace,
+         slClass,
+         slSymbol,
+         slMethod,
+         slCode,
+         slYieldScope,
+         slExpression,
+         slOwnerClass,
+      };
    
       _Module*      module;
       Scope*        parent;
 
-//      virtual void raiseError(const char* message)
-//      {
-//         moduleScope->project->raiseError(message);
-//      }
-//      virtual void raiseError(const char* message, SNode terminal)
-//      {
-//         parent->raiseError(message, terminal);
-//      }
-//      virtual void raiseWarning(int level, const char* message, SNode terminal)
-//      {
-//         parent->raiseWarning(level, message, terminal);
-//      }
-////         virtual void raiseWarning(int level, const char* message, ident_t identifier)
-////         {
-////            parent->raiseWarning(level, message, identifier);
-////         }
-////         virtual void raiseWarning(int level, const char* message)
-////         {
-////            parent->raiseWarning(level, message);
-////         }
-//
-//      virtual pos_t saveSourcePath(ByteCodeWriter& writer)
-//      {
-//         return parent->saveSourcePath(writer);
-//      }
-//      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path)
-//      {
-//         return parent->saveSourcePath(writer, path);
-//      }
-//
+      virtual void raiseError(const char* message)
+      {
+         moduleScope->project->raiseError(message);
+      }
+      virtual void raiseError(const char* message, SNode terminal)
+      {
+         parent->raiseError(message, terminal);
+      }
+      virtual void raiseWarning(int level, const char* message, SNode terminal)
+      {
+         parent->raiseWarning(level, message, terminal);
+      }
+
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer)
+      {
+         return parent->saveSourcePath(writer);
+      }
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path)
+      {
+         return parent->saveSourcePath(writer, path);
+      }
+
 //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element)
 //      {
 //         if (parent) {
@@ -276,23 +268,23 @@ private:
 //         }
 //         else return false;
 //      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
-//      {
-//         if (parent) {
-//            return parent->mapTerminal(identifier, referenceOne, mode);
-//         }
-//         else return ObjectInfo();
-//      }
-//   
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (parent) {
-//            return parent->getScope(level);
-//         }
-//         else return NULL;
-//      }
-//   
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode)
+      {
+         if (parent) {
+            return parent->mapTerminal(identifier, referenceOne, mode);
+         }
+         else return ObjectInfo();
+      }
+   
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (parent) {
+            return parent->getScope(level);
+         }
+         else return NULL;
+      }
+   
 //      virtual void markAsAssigned(ObjectInfo object)
 //      {
 //         // by default is not implemented
@@ -318,7 +310,7 @@ private:
    {
       // imported namespaces
       IdentifierList    importedNs;
-//      ForwardMap        forwards;       // forward declarations
+      ForwardMap        forwards;       // forward declarations
 
       // symbol hints
       Map<ref_t, ref_t> constantHints;
@@ -343,63 +335,55 @@ private:
       IdentifierString  name;
       IdentifierString  sourcePath;
 
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == ScopeLevel::slNamespace) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slNamespace) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
 //      void defineConstantSymbol(ref_t reference, ref_t classReference)
 //      {
 //         constantHints.add(reference, classReference);
 //      }
-//
-//      virtual void raiseError(const char* message)
-//      {
-//         Scope::raiseError(message);
-//      }
-//      virtual void raiseError(const char* message, SNode terminal)
-//      {
-//         ident_t path = sourcePath;
-//         if (terminal.existChild(lxSourcePath)) {
-//            path = terminal.findChild(lxSourcePath).identifier();
-//         }
-//
-//         moduleScope->raiseError(message, path, terminal);
-//      }
-//      virtual void raiseWarning(int level, const char* message, SNode terminal)
-//      {
-//         ident_t path = sourcePath;
-//         if (terminal.existChild(lxSourcePath)) {
-//            path = terminal.findChild(lxSourcePath).identifier();
-//         }
-//
-//         moduleScope->raiseWarning(level, message, path, terminal);
-//      }
-//////      virtual void raiseWarning(int level, const char* message)
-//////      {
-//////         moduleScope->raiseWarning(level, message, sourcePath);
-//////      }
-//////      virtual void raiseWarning(int level, const char* message, ident_t identifier)
-//////      {
-//////         moduleScope->raiseWarning(level, message, sourcePath, identifier);
-//////      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//
-//      ObjectInfo mapGlobal(ident_t identifier);
-//      ObjectInfo mapWeakReference(ident_t identifier, bool directResolved);
-//
-//      virtual pos_t saveSourcePath(ByteCodeWriter& writer);
-//      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
-//
-//      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne, bool innermost);
-//
-//      ref_t mapNewTerminal(SNode terminal, Visibility visibility);
-//
-//      ObjectInfo defineObjectInfo(ref_t reference, bool checkState = false);
+
+      virtual void raiseError(const char* message)
+      {
+         Scope::raiseError(message);
+      }
+      virtual void raiseError(const char* message, SNode terminal)
+      {
+         ident_t path = sourcePath;
+         if (terminal.existChild(lxSourcePath)) {
+            path = terminal.findChild(lxSourcePath).identifier();
+         }
+
+         moduleScope->raiseError(message, path, terminal);
+      }
+      virtual void raiseWarning(int level, const char* message, SNode terminal)
+      {
+         ident_t path = sourcePath;
+         if (terminal.existChild(lxSourcePath)) {
+            path = terminal.findChild(lxSourcePath).identifier();
+         }
+
+         moduleScope->raiseWarning(level, message, path, terminal);
+      }
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+
+      ObjectInfo mapGlobal(ident_t identifier);
+      ObjectInfo mapWeakReference(ident_t identifier, bool directResolved);
+
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer);
+      virtual pos_t saveSourcePath(ByteCodeWriter& writer, ident_t path);
+
+      ref_t resolveImplicitIdentifier(ident_t name, bool referenceOne, bool innermost);
+
+      ref_t mapNewTerminal(SNode terminal, Visibility visibility);
+
+      ObjectInfo __fastcall defineObjectInfo(ref_t reference, bool checkState = false);
 
       void loadExtensions(ident_t ns);
       void loadExtensions(ident_t ns, ident_t subns, bool internalOne)
@@ -436,15 +420,15 @@ private:
       NamespaceScope(NamespaceScope* parent);
    };
 
-//   // - SourceScope -
-//   struct SourceScope : public Scope
-//   {
-//      ref_t      reference;
-//      Visibility visibility;
-//
-//      SourceScope(Scope* parent, ref_t reference, Visibility visibility);
-//   };
-//
+   // - SourceScope -
+   struct SourceScope : public Scope
+   {
+      ref_t      reference;
+      Visibility visibility;
+
+      SourceScope(Scope* parent, ref_t reference, Visibility visibility);
+   };
+
 //   // - ClassScope -
 //   struct ClassScope : public SourceScope
 //   {
@@ -545,33 +529,31 @@ private:
 //      {
 //      }
 //   };
-//
-//   // - SymbolScope -
-//   struct SymbolScope : public SourceScope
-//   {
-//      SymbolExpressionInfo info;
-//      bool                 staticOne;
-//      bool                 preloaded;
-//
-//////      virtual ObjectInfo mapTerminal(ident_t identifier);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == ScopeLevel::slSymbol) {
-//            return this;
-//         }
-//         else return Scope::getScope(level);
-//      }
-//
-//      void save();
-//
-//      SymbolScope(NamespaceScope* parent, ref_t reference, Visibility visibility);
-//      SymbolScope(NamespaceScope* parent, Visibility visibility)
-//         : SymbolScope(parent, 0, visibility)
-//      {
-//      }
-//   };
-//
+
+   // - SymbolScope -
+   struct SymbolScope : public SourceScope
+   {
+      SymbolExpressionInfo info;
+      bool                 staticOne;
+      bool                 preloaded;
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slSymbol) {
+            return this;
+         }
+         else return Scope::getScope(level);
+      }
+
+      void save();
+
+      SymbolScope(NamespaceScope* parent, ref_t reference, Visibility visibility);
+      SymbolScope(NamespaceScope* parent, Visibility visibility)
+         : SymbolScope(parent, 0, visibility)
+      {
+      }
+   };
+
 //   // - MethodScope -
 //   struct MethodScope : public Scope
 //   {
@@ -829,9 +811,9 @@ private:
 //      CodeScope(CodeScope* parent);
 //      CodeScope(YieldScope* parent);
 //   };
-//
-//   struct ExprScope : public Scope
-//   {
+
+   struct ExprScope : public Scope
+   {
 //      SNode callNode;        // HOTFIX : used to implement closure unboxing, should refer to the closest message call
 //
 //      bool ignoreDuplicates; // used for code templates, should be applied only to the statement
@@ -907,11 +889,11 @@ private:
 //
 //      ObjectInfo mapGlobal(ident_t identifier);
 //      ObjectInfo mapMember(ident_t identifier);
-//
-//      ExprScope(SourceScope* parent);
+
+      ExprScope(SourceScope* parent);
 //      ExprScope(CodeScope* parent);
-//   };
-//
+   };
+
 //   // --- ResendScope ---
 //   struct ResendScope : public ExprScope
 //   {
@@ -975,7 +957,7 @@ private:
 //   };
 
    _CompilerLogic*   _logic;
-//   ByteCodeWriter    _writer;
+   ByteCodeWriter    _writer;
 //   MessageMap        _operators;                        // list of operators
 
    // optimization rules
@@ -993,9 +975,9 @@ private:
 //   bool optimizeIdleBreakpoints(CommandTape& tape);
 //   bool optimizeJumps(CommandTape& tape);
 //   void optimizeTape(CommandTape& tape);
-//
-//   void validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared, bool allowType);
-//
+
+   void validateType(Scope& scope, SNode current, ref_t typeRef, bool ignoreUndeclared, bool allowType);
+
 //   bool calculateIntOp(int operation_id, int arg1, int arg2, int& retVal);
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 //
@@ -1029,31 +1011,28 @@ private:
 //
 //      return retVal;
 //   }
-//
-//   bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
-//
+
+   bool loadAttributes(_ModuleScope& scope, ident_t name, MessageMap* attributes, bool silentMode);
+
 //   ObjectInfo mapClassSymbol(Scope& scope, int classRef);
-//
-////   ref_t resolveTypeAttribute(Scope& scope, SNode node, bool declarationMode);
 //
 //   ref_t resolveMultimethod(ClassScope& scope, mssg_t messageRef);
 //
 //   virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode);
-//
-//   ref_t resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
-//
+
+   ref_t resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
+
 //   ref_t resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode);
 ////   ref_t resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
 //
 //   ref_t resolveConstantObjectReference(_CompileScope& scope, ObjectInfo object);
 //   ref_t resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode, 
 //      bool unboxWrapper = true);
-//
-//////   ref_t resolveObjectReference(CodeScope& scope, ObjectInfo object, ref_t targetRef);
-//   ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, 
-//      bool declarationMode, bool extensionAllowed);
-//   ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode, bool extensionAllowed);
-//
+
+   ref_t resolveTypeIdentifier(Scope& scope, ident_t terminal, LexicalType terminalType, 
+      bool declarationMode, bool extensionAllowed);
+   ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode, bool extensionAllowed);
+
 //   ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
 //   ref_t generateConstant(_CompileScope& scope, ObjectInfo retVal);
 //
@@ -1086,7 +1065,7 @@ private:
 //   void validateClassFields(SNode node, ClassScope& scope);
 //
 ////   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
-//   void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool ignoreType);
+   void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool ignoreType);
 //   void declareClassAttributes(SNode node, ClassScope& scope, bool visibilityOnly);
 //   void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
 //   void declareVMT(SNode member, ClassScope& scope, bool& withConstructors, bool& withDefaultConstructor);
@@ -1109,11 +1088,11 @@ private:
 //      bool withoutWeakMessages, bool noSignature);
 //
 //   size_t resolveArraySize(SNode node, Scope& scope);
-//
-//   ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode, bool allowRole);
-//   ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
-//   ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
-//
+
+   ref_t resolveTypeAttribute(SNode node, Scope& scope, bool declarationMode, bool allowRole);
+   //ref_t resolveTemplateDeclarationUnsafe(SNode node, Scope& scope, bool declarationMode);
+   ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
+
 //   void compileSwitch(SNode node, ExprScope& scope);
 //
 //   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
@@ -1170,12 +1149,13 @@ private:
 //
 //   ObjectInfo mapIntConstant(ExprScope& scope, int value);
 //   ObjectInfo mapRealConstant(ExprScope& scope, double val);
-//
-//   ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
-//   ObjectInfo mapObject(SNode node, ExprScope& scope, EAttr mode);
-//
-//   ObjectInfo compileExpression(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
-//   ObjectInfo compileExpression(SNode& node, ExprScope& scope, ref_t targetRef, EAttr mode);
+
+   ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
+   ObjectInfo mapObject(SNode node, ExprScope& scope, EAttr mode);
+
+   void compileObject(SyntaxWriter& writer, ObjectInfo objectInfo);
+//   ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
+   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, /*ref_t targetRef,*/ EAttr mode);
 //
 //   ObjectInfo compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
@@ -1292,8 +1272,8 @@ private:
 //   void compileClassImplementation(SNode node, ClassScope& scope);
 //   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(SNode node, ClassScope& classClassScope, ClassScope& classScope);
-//   void compileSymbolDeclaration(SNode node, SymbolScope& scope);
-//   void compileSymbolImplementation(SNode node, SymbolScope& scope);
+   void compileSymbolDeclaration(SNode node, SymbolScope& scope);
+   void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
 //   bool compileSymbolConstant(/*SNode node, */SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);
 //   void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
 ////////   bool validate(_ProjectManager& project, _Module* module, int reference);
@@ -1328,8 +1308,8 @@ private:
 //   void analizeOperands(SNode& node, ExprScope& scope, int stackSafeAttr, bool inPlace);
 //
 //   void defineEmbeddableAttributes(ClassScope& scope, SNode node);
-//
-//   void createPackageInfo(_Module* module, _ProjectManager& project);
+
+   void createPackageInfo(_Module* module, _ProjectManager& project);
 
    void declareMembers(SNode node, NamespaceScope& scope);
 
@@ -1337,9 +1317,8 @@ private:
    void compileImplementations(SNode node, NamespaceScope& scope);
 
 //   void generateClassSymbol(SyntaxWriter& writer, ClassScope& scope);
-////   void generateSymbolWithInitialization(SyntaxWriter& writer, ClassScope& scope, ref_t implicitConstructor);
-//
-//   void copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target);
+
+   void copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target);
    void declareNamespace(SNode& node, NamespaceScope& scope, bool withImports, bool withFullInfo);
 
 //   void registerExtensionTemplateMethod(SNode node, NamespaceScope& scope, ref_t extensionRef);

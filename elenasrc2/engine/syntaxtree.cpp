@@ -612,42 +612,23 @@ void SyntaxTree :: copyNode(Writer& writer, LexicalType type, Node owner)
    }
 }
 
-////void SyntaxTree :: copyMatchedNodes(Writer& writer, LexicalType type, Node node)
-////{
-////   SyntaxTree::Node current = node.firstChild();
-////   while (current != lxNone) {
-////      if (current == type) {
-////         if (current.strArgument != INVALID_REF) {
-////            writer.newNode(current.type, current.identifier());
-////         }
-////         else writer.newNode(current.type, current.argument);
-////
-////         copyNode(writer, current);
-////
-////         writer.closeNode();
-////      }
-////
-////      current = current.nextNode();
-////   }
-////}
-//
-//void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
-//{
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current.strArgument != INVALID_REF) {
-//         writer.newNode(current.type, current.identifier());
-//      }
-//      else writer.newNode(current.type, current.argument);
-//
-//      copyNode(writer, current);
-//
-//      writer.closeNode();
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
+{
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current.strArgument != INVALID_REF) {
+         writer.newNode(current.type, current.identifier());
+      }
+      else writer.newNode(current.type, current.argument);
+
+      copyNode(writer, current);
+
+      writer.closeNode();
+
+      current = current.nextNode();
+   }
+}
+
 //SyntaxTree::Node SyntaxTree::insertNodeCopy(SyntaxTree::Node source, SyntaxTree::Node destination)
 //{
 //   Node insertedNode;

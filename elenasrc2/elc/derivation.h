@@ -24,14 +24,9 @@ class DerivationWriter : public _DerivationWriter
    enum class MetaScope : int
    {
       None,
-//      Namespace,
+      Namespace,
 //      Type,
-////   //      daClass       = 0x0002,
-////      daTemplate    = 0x0004,
-////      daProperty    = 0x0008,
-////      daInline      = 0x0010,
 //      Import,
-////      daExtension   = 0x8000,
    };
 
 //   enum ScopeType
@@ -137,13 +132,13 @@ class DerivationWriter : public _DerivationWriter
    void saveScope(SyntaxWriter& writer);
 
 //   ref_t resolveTemplate(ident_t templateName);
-//
-//   ref_t mapAttribute(SNode terminal, bool allowType, bool& allowPropertyTemplate, ref_t& previusCategory);
+
+   ref_t mapAttribute(SNode terminal, bool allowType/*, bool& allowPropertyTemplate*/, ref_t& previusCategory);
 //   ref_t mapInlineAttribute(SNode terminal);
 //   void declareAttribute(SNode node);
 //   void declareStatement(SNode node, ScopeType templateType);
-//
-//   void recognizeAttributes(SNode node, int mode, LexicalType nameType);
+
+   void recognizeAttributes(SNode node, int mode, LexicalType nameType);
 
    void recognizeScope();
    void recognizeDefinition(SNode scopeNode);
@@ -152,9 +147,9 @@ class DerivationWriter : public _DerivationWriter
 //   void recognizeMethodMebers(SNode node);
 //
 // //  bool recognizeMetaScope(SNode node);
-//
-//   void declareNestedNamespace(SNode node, Scope& derivationScope);
-//
+
+   void declareNestedNamespace(SNode node, Scope& derivationScope);
+
 //   void saveTemplateParameters(SyntaxWriter& tempWriter, SNode current, Scope& derivationScope);
 //
 //   void copyScope(SyntaxWriter& writer, SNode node, Scope& derivationScope);
@@ -180,8 +175,8 @@ class DerivationWriter : public _DerivationWriter
 //   void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
    void flushTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope/*, bool rootMode*/);
-//   void generateTypeAttribute(SyntaxWriter& writer, SNode terminal, ref_t typeRef, int dimensionCounter, 
-//      Scope& derivationScope);
+   void flushTypeAttribute(SyntaxWriter& writer, SNode terminal, ref_t typeRef/*, int dimensionCounter*/, 
+      Scope& derivationScope);
    void flushAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 //   void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, 
