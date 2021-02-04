@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x01F3
+#define ELC_REVISION_NUMBER         0x01F4
 
 // --- ELC default file names ---
 #ifdef _WINDOW
@@ -288,43 +288,43 @@ class Project : public _ELENA_::Project
 
    void buildSyntaxTree(_ELENA_::ScriptParser& parser, _ELENA_::FileMapping* source, _ELENA_::ModuleScope&, _ELENA_::SyntaxTree& derivationTree)
    {
-      _ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
-      while (!file_it.Eof()) {
-         _ELENA_::ident_t filePath = *file_it;
+      //_ELENA_::ForwardIterator file_it = source->getIt(ELC_INCLUDE);
+      //while (!file_it.Eof()) {
+      //   _ELENA_::ident_t filePath = *file_it;
 
-         try {
-            // based on the target type generate the syntax tree for the file
-            _ELENA_::Path fullPath(StrSetting(_ELENA_::opProjectPath));
-            fullPath.combine(filePath);
+      //   try {
+      //      // based on the target type generate the syntax tree for the file
+      //      _ELENA_::Path fullPath(StrSetting(_ELENA_::opProjectPath));
+      //      fullPath.combine(filePath);
 
-            parser.parse(fullPath.c_str(), derivationTree);
-            // NOTE : source path node should be the first one due to current implementation
-            derivationTree.readRoot().firstChild().insertNode(_ELENA_::lxSourcePath, filePath);
-         }
-         catch (_ELENA_::LineTooLong& e)
-         {
-            raiseError(errLineTooLong, filePath, e.row, 1);
-         }
-         catch (_ELENA_::InvalidChar& e)
-         {
-            size_t destLength = 6;
+      //      parser.parse(fullPath.c_str(), derivationTree);
+      //      // NOTE : source path node should be the first one due to current implementation
+      //      derivationTree.readRoot().firstChild().insertNode(_ELENA_::lxSourcePath, filePath);
+      //   }
+      //   catch (_ELENA_::LineTooLong& e)
+      //   {
+      //      raiseError(errLineTooLong, filePath, e.row, 1);
+      //   }
+      //   catch (_ELENA_::InvalidChar& e)
+      //   {
+      //      size_t destLength = 6;
 
-            _ELENA_::String<char, 6> symbol;
-            _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*) & e.ch, 1, destLength);
+      //      _ELENA_::String<char, 6> symbol;
+      //      _ELENA_::Convertor::copy(symbol, (_ELENA_::unic_c*) & e.ch, 1, destLength);
 
-            raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
-         }
-         catch (_ELENA_::SyntaxError& e)
-         {
-            raiseError(e.error, filePath, e.row, e.column, e.token);
-         }
-         catch (_ELENA_::ScriptError& e)
-         {
-            raiseError(e.error, filePath);
-         }
+      //      raiseError(errInvalidChar, filePath, e.row, e.column, (const char*)symbol);
+      //   }
+      //   catch (_ELENA_::SyntaxError& e)
+      //   {
+      //      raiseError(e.error, filePath, e.row, e.column, e.token);
+      //   }
+      //   catch (_ELENA_::ScriptError& e)
+      //   {
+      //      raiseError(e.error, filePath);
+      //   }
 
-         file_it = source->nextIt(ELC_INCLUDE, file_it);
-      }
+      //   file_it = source->nextIt(ELC_INCLUDE, file_it);
+      //}
    }
 
 public:
@@ -695,9 +695,9 @@ public:
       if (IntSetting(_ELENA_::opL1, -1) != 0) {
          compiler.turnOnOptimiation(1);
       }
-      if (IntSetting(_ELENA_::opEvenStackMode, 0) != 0) {
-         compiler.turnOnEvenStack();
-      }
+      //if (IntSetting(_ELENA_::opEvenStackMode, 0) != 0) {
+      //   compiler.turnOnEvenStack();
+      //}
       if (IntSetting(_ELENA_::opAutoSystemImport, -1) != 0) {
          compiler.turnAutoImport(true);
       }

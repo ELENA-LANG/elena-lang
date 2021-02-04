@@ -106,12 +106,12 @@ inline static size_t getlength(const unsigned short* s)
 namespace _ELENA_
 {
 
-inline bool emptystr(const wchar_t* s)
+inline bool __fastcall emptystr(const wchar_t* s)
 {
    return (s == NULL || s[0]==0);
 }
 
-inline static pos_t getlength(const wchar_t* s)
+inline static pos_t __fastcall getlength(const wchar_t* s)
 {
    return (s==NULL) ? 0 : (pos_t)wcslen(s);
 }
@@ -120,12 +120,12 @@ inline static pos_t getlength(const wchar_t* s)
 
 // --- miscellaneous string routines ---
 
-inline bool emptystr(const char* s)
+inline bool __fastcall emptystr(const char* s)
 {
    return (s == NULL || s[0] == 0);
 }
 
-inline static pos_t getlength(const char* s)
+inline static pos_t __fastcall getlength(const char* s)
 {
    return (s == NULL) ? 0 : (pos_t)strlen(s);
 }
@@ -180,42 +180,42 @@ inline size_t alignSize(size_t number, size_t alignment)
 
 // --- miscellaneous routines ---
 
-inline bool ifAny(int target, int value1, int value2)
+inline bool __fastcall ifAny(int target, int value1, int value2)
 {
    return target == value1 || target == value2;
 }
 
-inline bool test(int number, int mask)
+inline bool __fastcall test(int number, int mask)
 {
    return ((number & mask) == mask);
 }
 
-inline bool test(int number, int mask, int value)
+inline bool __fastcall test(int number, int mask, int value)
 {
    return ((number & mask) == value);
 }
 
-inline bool testLong(long long number, long long mask)
+inline bool __fastcall testLong(long long number, long long mask)
 {
    return ((number & mask) == mask);
 }
 
-inline bool testLong(long long number, long long mask, long long value)
+inline bool __fastcall testLong(long long number, long long mask, long long value)
 {
    return ((number & mask) == value);
 }
 
-inline bool testany(int number, int mask)
+inline bool __fastcall testany(int number, int mask)
 {
    return ((number & mask) != 0);
 }
 
-inline bool testanyLong(long long number, long long mask)
+inline bool __fastcall testanyLong(long long number, long long mask)
 {
    return ((number & mask) != 0LL);
 }
 
-inline bool isbetween(size_t starting, size_t len , size_t value)
+inline bool __fastcall isbetween(size_t starting, size_t len , size_t value)
 {
    return (starting < value && value < starting + len);
 }

@@ -664,14 +664,14 @@ ref_t JITCompiler64 :: findFlags(void* refVMT)
 {
    VMTXHeader* header = (VMTXHeader*)((uintptr_t)refVMT - elVMTClassOffset64);
 
-   return header->flags;
+   return (ref_t)header->flags;
 }
 
 size_t JITCompiler64 :: findLength(void* refVMT)
 {
    VMTXHeader* header = (VMTXHeader*)((uintptr_t)refVMT - elVMTClassOffset64);
 
-   return header->count;
+   return (size_t)header->count;
 }
 
 vaddr_t JITCompiler64 :: findClassPtr(void* refVMT)

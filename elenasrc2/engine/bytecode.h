@@ -14,6 +14,14 @@ namespace _ELENA_
 // --- Byte code command set ---
 enum ByteCode
 {
+
+
+
+
+
+
+
+
    // commands:
    bcNop             = 0x00,
    bcBreakpoint      = 0x01,

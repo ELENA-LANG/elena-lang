@@ -3,9 +3,22 @@ In development:
 ------         
 
   [development]
-    * #206 : interpreter sample
+    * derivationtree - simplify
+    * compilation - simplify all major operations : message, property, new op, array set / get, nested class,
+      closure, array, operations, branching, alt / try ops, loops, attributes, field accumulators, ...
+    * build new tree instead of modifying - simplify the tree - it should be easy to analize
+    * minimize lookahead in compiler - it should be straight forward
+
+    * ELENA should support several calling convention (cdecl, stddecl, fastcall), by default - cdecl
+    * tape should use cdecl with fixed size - no need to clear the stack
+
+
     + mixings ruby style
-    * #206 : samples
+    * compilerx - use cdelc calling convention
+
+    * test all console & files samples
+    * #206 : interpreter sample
+    * #206 : samples, tutorials
     + post : mixin instead of mutli-inheritance (lec24) - simple way to include several roles into the class
     + housekeeping - review pipeline
     * migrate all samples to win64
