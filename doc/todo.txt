@@ -4,10 +4,10 @@ In development:
 
   [development]
     * derivationtree - simplify
+    * uncomment all code
 
-    * new symbol, new class, ops, templates, 
-
-
+    * new symbol, new class, ops, templates, 		
+                                                       	
     * compilation - simplify all major operations : message, property, new op, array set / get, nested class,
       closure, array, operations, branching, alt / try ops, loops, attributes, field accumulators, ...
     * build new tree instead of modifying - simplify the tree - it should be easy to analize
@@ -19,6 +19,7 @@ In development:
 
     + mixings ruby style
     * compilerx - use cdelc calling convention
+    * corex - edi should contain the thread TLS pointer
 
     * test all console & files samples
     * #206 : interpreter sample

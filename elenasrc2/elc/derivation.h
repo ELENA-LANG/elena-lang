@@ -119,6 +119,8 @@ class DerivationWriter : public _DerivationWriter
    int           _cachingLevel;
    SyntaxTree    _cache;
    SyntaxWriter  _cacheWriter;
+   Stack<pos_t>  _bookmarks;
+   int           _last_bookmark;
 
    SyntaxWriter  _output;
 
@@ -143,9 +145,9 @@ class DerivationWriter : public _DerivationWriter
    void recognizeScope();
    void recognizeDefinition(SNode scopeNode);
    void recognizeScopeAttributes(SNode node, int mode);
-//   void recognizeClassMebers(SNode node);
+   void recognizeClassMebers(SNode node);
 //   void recognizeMethodMebers(SNode node);
-//
+
 // //  bool recognizeMetaScope(SNode node);
 
    void declareNestedNamespace(SNode node, Scope& derivationScope);
@@ -168,7 +170,7 @@ class DerivationWriter : public _DerivationWriter
 //   //void generateClassTemplateTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
 ////   //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void flushSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-//   void generateClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool nested = false);
+   void flushClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool nested = false*/);
 //   void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode, bool propertyMode, SyntaxTree& buffer);
 ////   // returns true if in-place init found
 //   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
@@ -187,8 +189,8 @@ class DerivationWriter : public _DerivationWriter
 //   void generateSwitchTree(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 //   void generateCodeExpression(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool closureMode);
    void flushIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);
-//   void generateMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
-//
+   void flushMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
+
 //   void declareType(SNode node);
 //   void generateImport(SyntaxWriter& writer, SNode ns);
 
@@ -210,6 +212,7 @@ public:
       :  _output(target), _cacheWriter(_cache)
    {
       _cachingLevel = _level = 0;
+      _last_bookmark = 0;
 
       _scope = scope;
 

@@ -1,3 +1,7 @@
+// r1 - stack frame pointer
+// r2 - TOC
+// r31 - frame pointer
+
 // --- Predefined References  --
 define GC_ALLOC	            10001h
 define HOOK                 10010h
@@ -20,5 +24,15 @@ define VOIDPTR              2000Eh
 
 // --- GC_ALLOC ---
 procedure %GC_ALLOC
+
+  // ; mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
+
+  // mov  rdx, [data : %CORE_GC_TABLE + gc_yg_end]
+  // add  rcx, rax
+  // cmp  rcx, rdx
+  // jae  short labYGCollect
+  // mov  [data : %CORE_GC_TABLE + gc_yg_current], rcx
+  // lea  rbx, [rax + elObjectOffset]
+  // ret
 
 end

@@ -118,26 +118,26 @@ using namespace _ELENA_;
 //{
 //   return (bookmark == 0) ? bookmarks.peek() : *bookmarks.get(bookmarks.Count() - bookmark);
 //}
-//
-//inline void updateBookmarks(Stack<pos_t>& bookmarks, pos_t oldPos, pos_t newPos)
-//{
-//   for (auto it = bookmarks.start(); !it.Eof(); it++) {
-//      if (*it == oldPos)
-//         * it = newPos;
-//   }
-//}
-//
-//void SyntaxWriter :: inject(pos_t position, LexicalType type, ref_t argument, pos_t strArgRef)
-//{
-//   pos_t prev = _syntaxTree->getPrevious(position);
-//   if (prev != INVALID_REF) {
-//      _current = _syntaxTree->injectSibling(prev, type, argument, strArgRef);
-//   }
-//   else _current = _syntaxTree->injectChild(position, type, argument, strArgRef);
-//
-//   updateBookmarks(_bookmarks, position, _current);
-//}
-//
+
+inline void __fastcall updateBookmarks(Stack<pos_t>& bookmarks, pos_t oldPos, pos_t newPos)
+{
+   for (auto it = bookmarks.start(); !it.Eof(); it++) {
+      if (*it == oldPos)
+         * it = newPos;
+   }
+}
+
+void SyntaxWriter :: inject(pos_t position, LexicalType type, ref_t argument, pos_t strArgRef)
+{
+   pos_t prev = _syntaxTree->getPrevious(position);
+   if (prev != INVALID_REF) {
+      _current = _syntaxTree->injectSibling(prev, type, argument, strArgRef);
+   }
+   else _current = _syntaxTree->injectChild(position, type, argument, strArgRef);
+
+   updateBookmarks(_bookmarks, position, _current);
+}
+
 //void SyntaxWriter :: insert(LexicalType type, ref_t argument, pos_t strArgRef, bool newMode)
 //{
 //   pos_t pos = _syntaxTree->insertChild(_current, type, argument, strArgRef);
@@ -169,7 +169,7 @@ void SyntaxWriter :: newNode(LexicalType type, ref_t argument)
    }
    else _current = _syntaxTree->appendChild(_current, type, argument, INVALID_REF);
 
-   //insertPendingBookmarks(_current);
+   insertPendingBookmarks(_current);
 }
 
 void SyntaxWriter :: newNode(LexicalType type, ident_t argument)
@@ -179,7 +179,7 @@ void SyntaxWriter :: newNode(LexicalType type, ident_t argument)
    }
    else _current = _syntaxTree->appendChild(_current, type, 0, _syntaxTree->saveStrArgument(argument));
 
-   //insertPendingBookmarks(_current);
+   insertPendingBookmarks(_current);
 }
 
 void SyntaxWriter :: closeNode()
@@ -303,46 +303,46 @@ inline void __fastcall appendChild(_Memory& body, pos_t parent, pos_t child)
 //   nw->next = p->next;
 //   p->next = node;
 //}
-//
-//inline void updateParents(_Memory& body, pos_t node)
-//{
-//   auto r = (_NodeRecord*)body.get(node);
-//   pos_t child = r->child;
-//   while (child != INVALID_REF) {
-//      auto c = (_NodeRecord*)body.get(child);
-//      c->parent = node;
-//
-//      child = c->next;
-//   }
-//}
-//
-//inline void injectChild(_Memory& body, pos_t parent, pos_t child)
-//{
-//   auto r = (_NodeRecord*)body.get(parent);
-//   if (r->child == INVALID_REF) {
-//      r->child = child;
-//   }
-//   else {
-//      auto nw = (_NodeRecord*)body.get(child);
-//      nw->child = r->child;
-//      r->child = child;
-//
-//      // HOTFIX : modify the parents of injected nodes
-//      updateParents(body, child);
-//   }
-//}
-//
-//inline void injectSibling(_Memory& body, pos_t node, pos_t child)
-//{
-//   auto r = (_NodeRecord*)body.get(node);
-//   auto nw = (_NodeRecord*)body.get(child);
-//   nw->child = r->next;
-//   r->next = child;
-//
-//   // HOTFIX : modify the parents of injected nodes
-//   updateParents(body, child);
-//}
-//
+
+inline void __fastcall updateParents(_Memory& body, pos_t node)
+{
+   auto r = (_NodeRecord*)body.get(node);
+   pos_t child = r->child;
+   while (child != INVALID_REF) {
+      auto c = (_NodeRecord*)body.get(child);
+      c->parent = node;
+
+      child = c->next;
+   }
+}
+
+inline void __fastcall injectChild(_Memory& body, pos_t parent, pos_t child)
+{
+   auto r = (_NodeRecord*)body.get(parent);
+   if (r->child == INVALID_REF) {
+      r->child = child;
+   }
+   else {
+      auto nw = (_NodeRecord*)body.get(child);
+      nw->child = r->child;
+      r->child = child;
+
+      // HOTFIX : modify the parents of injected nodes
+      updateParents(body, child);
+   }
+}
+
+inline void __fastcall injectSibling(_Memory& body, pos_t node, pos_t child)
+{
+   auto r = (_NodeRecord*)body.get(node);
+   auto nw = (_NodeRecord*)body.get(child);
+   nw->child = r->next;
+   r->next = child;
+
+   // HOTFIX : modify the parents of injected nodes
+   updateParents(body, child);
+}
+
 //inline void clearChildren(_Memory& body, pos_t parent)
 //{
 //   auto r = (_NodeRecord*)body.get(parent);
@@ -438,27 +438,27 @@ pos_t SyntaxTree :: appendChild(pos_t position, LexicalType type, ref_t argument
 //
 //   return child;
 //}
-//
-//pos_t SyntaxTree :: injectChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
-//{
-//   pos_t parentNode = getParent(position);
-//   pos_t child = ::newChild(_body, parentNode, type, argument, strArgumentRef);
-//
-//   ::injectChild(_body, parentNode, child);
-//
-//   return child;
-//}
-//
-//pos_t SyntaxTree :: injectSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
-//{
-//   pos_t parentNode = getParent(position);
-//   pos_t child = ::newChild(_body, parentNode, type, argument, strArgumentRef);
-//
-//   ::injectSibling(_body, position, child);
-//
-//   return child;
-//}
-//
+
+pos_t SyntaxTree :: injectChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
+{
+   pos_t parentNode = getParent(position);
+   pos_t child = ::newChild(_body, parentNode, type, argument, strArgumentRef);
+
+   ::injectChild(_body, parentNode, child);
+
+   return child;
+}
+
+pos_t SyntaxTree :: injectSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
+{
+   pos_t parentNode = getParent(position);
+   pos_t child = ::newChild(_body, parentNode, type, argument, strArgumentRef);
+
+   ::injectSibling(_body, position, child);
+
+   return child;
+}
+
 //void SyntaxTree :: clearChildren(pos_t position)
 //{
 //   ::clearChildren(_body, position);
@@ -646,25 +646,25 @@ void SyntaxTree :: copyNode(SyntaxTree::Writer& writer, SyntaxTree::Node node)
 //
 //   return insertedNode;
 //}
-//
-//void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destination)
-//{
-//   SNode current = source.firstChild();
-//   while (current != lxNone) {
-//      if (current.strArgument != INVALID_REF) {
-//         if (source.tree == destination.tree) {
-//            // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
-//            // so the special routine should be used
-//            copyNode(current, destination.appendStrNode(current.type, current.strArgument));
-//         }
-//         else copyNode(current, destination.appendNode(current.type, current.identifier()));
-//      }
-//      else copyNode(current, destination.appendNode(current.type, current.argument));
-//
-//      current = current.nextNode();
-//   }
-//}
-//
+
+void SyntaxTree :: copyNode(SyntaxTree::Node source, SyntaxTree::Node destination)
+{
+   SNode current = source.firstChild();
+   while (current != lxNone) {
+      if (current.strArgument != INVALID_REF) {
+         if (source.tree == destination.tree) {
+            // HOTFIX : literal argument could be corrupted by reallocating the string buffer,
+            // so the special routine should be used
+            copyNode(current, destination.appendStrNode(current.type, current.strArgument));
+         }
+         else copyNode(current, destination.appendNode(current.type, current.identifier()));
+      }
+      else copyNode(current, destination.appendNode(current.type, current.argument));
+
+      current = current.nextNode();
+   }
+}
+
 //SyntaxTree::Node SyntaxTree :: findPattern(Node node, int counter, ...)
 //{
 //   va_list argptr;

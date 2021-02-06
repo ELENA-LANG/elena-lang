@@ -19,44 +19,22 @@ namespace _ELENA_
 // --- ByteCodeWriter class ---
 class ByteCodeWriter
 {
-//   struct Scope
-//   {
-//      MemoryWriter* vmt;
-//      MemoryWriter* code;
-//      MemoryWriter* debug;
-//      MemoryWriter* debugStrings;
-//      bool          appendMode;
-//
-//      Scope()
-//      {
-//         vmt = code = NULL;
-//         debug = debugStrings = NULL;
-//         appendMode = false;
-//      }
-//   };
-//
-////   struct ExternalScope
-////   {
-////      struct ParamInfo
-////      {
-////         int offset;
-////
-////         ParamInfo()
-////         {
-////            offset = 0;
-////         }
-////      };
-////      
-////      int               frameSize;
-////      Stack<ParamInfo>  operands;
-////   
-////      ExternalScope()
-////         : operands(ParamInfo())
-////      {
-////         frameSize = 0;
-////      }
-////   };
-//
+   struct Scope
+   {
+      MemoryWriter* vmt;
+      MemoryWriter* code;
+      MemoryWriter* debug;
+      MemoryWriter* debugStrings;
+      bool          appendMode;
+
+      Scope()
+      {
+         vmt = code = NULL;
+         debug = debugStrings = NULL;
+         appendMode = false;
+      }
+   };
+
 //   struct ImportScope
 //   {
 //      _Memory*    section; 
@@ -108,44 +86,44 @@ class ByteCodeWriter
    };
 
 //   List<ImportScope> imports;
-//   MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
-//
-//   ByteCode peekNext(ByteCodeIterator it)
-//   {
-//      it++;
-//
-//      return (*it).code;
-//   }
-//
-//   ByteCode peekPrevious(ByteCodeIterator it)
-//   {
-//      it--;
-//
-//      return (*it).code;
-//   }
-//
-//   void writeNewStatement(MemoryWriter* debug);
-//   void writeNewBlock(MemoryWriter* debug);
-//   void writeSelf(Scope& scope, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
-//   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
-//   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
-//   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
-//   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
-//
-//   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings, _Module* module);
-//   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
-//   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
-//   void writeProcedureDebugInfo(Scope& scope, ref_t sourceRef);
-//   void writeCodeDebugInfo(Scope& scope, ref_t sourceRef);
-//   void writeDebugInfoStopper(MemoryWriter* debug);
-//
-//   void writeProcedure(ByteCodeIterator& it, Scope& scope);
-//   void writeAbstractProcedure(ByteCodeIterator& it, Scope& scope);
-//   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
-//   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode);
-//   void writeClass(ref_t reference, ByteCodeIterator& it, _ModuleScope& scope);
-//
+   MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
+
+   ByteCode peekNext(ByteCodeIterator it)
+   {
+      it++;
+
+      return (*it).code;
+   }
+
+   ByteCode peekPrevious(ByteCodeIterator it)
+   {
+      it--;
+
+      return (*it).code;
+   }
+
+   void writeNewStatement(MemoryWriter* debug);
+   void writeNewBlock(MemoryWriter* debug);
+   void writeSelf(Scope& scope, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, int frameLevel);
+   void writeLocal(Scope& scope, ident_t localName, int level, DebugSymbol symbol, int frameLevel);
+   void writeMessageInfo(Scope& scope, DebugSymbol symbol, ident_t message);
+   void writeInfo(Scope& scope, DebugSymbol symbol, ident_t className);
+   void writeBreakpoint(ByteCodeIterator& it, MemoryWriter* debug);
+
+   void writeFieldDebugInfo(ClassInfo& info, MemoryWriter* writer, MemoryWriter* debugStrings, _Module* module);
+   void writeClassDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t className, int flags);
+   void writeSymbolDebugInfo(_Module* debugModule, MemoryWriter* debug, MemoryWriter* debugStrings, ident_t symbolName);
+   void writeProcedureDebugInfo(Scope& scope, ref_t sourceRef);
+   void writeCodeDebugInfo(Scope& scope, ref_t sourceRef);
+   void writeDebugInfoStopper(MemoryWriter* debug);
+
+   void writeProcedure(ByteCodeIterator& it, Scope& scope);
+   void writeAbstractProcedure(ByteCodeIterator& it, Scope& scope);
+   void writeVMT(size_t classPosition, ByteCodeIterator& it, Scope& scope);
+   void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode);
+   void writeClass(ref_t reference, ByteCodeIterator& it, _ModuleScope& scope);
+
 //   void declareInitializer(CommandTape& tape, ref_t reference);
 //   void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
@@ -185,8 +163,8 @@ class ByteCodeWriter
 //   void declareSelfInfo(CommandTape& tape, int level);
 //   void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
-//   void declareBlock(CommandTape& tape);
-//
+   void declareBlock(CommandTape& tape);
+
 //   void openFrame(CommandTape& tape, int reserved);
 //   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
 //   void newStructure(CommandTape& tape, int size, ref_t reference);
@@ -302,13 +280,9 @@ class ByteCodeWriter
 //   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize, int target, int immValue);
 //   void doArrayImmOperation(CommandTape& tape, int operator_id, int target);
 //   void doArrayOperation(CommandTape& tape, int operator_id, int immValue);
-//   //   void doIntArrayOperation(CommandTape& tape, int operator_id);
-////   void doByteArrayOperation(CommandTape& tape, int operator_id);
-////   void doShortArrayOperation(CommandTape& tape, int operator_id);
-////   void doBinaryArrayOperation(CommandTape& tape, int operator_id, int itemSize);
-//
-//   void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope/*, bool ignoreBranching*/);
-//
+
+   void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope/*, bool ignoreBranching*/);
+
 //   void loadFieldAddress(CommandTape& tape, int size, int argument);
 //   void copyFieldAddress(CommandTape& tape, int size, int argument, FlowScope& scope);
 //   void copyToFieldAddress(CommandTape& tape, int size, int argument);
@@ -362,8 +336,8 @@ class ByteCodeWriter
 ////   void generateExternalArguments(CommandTape& tape, SyntaxTree::Node node, ExternalScope& externalScope);
 //   void generateExternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateInternalCall(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateCall(CommandTape& tape, SyntaxTree::Node node);
-//
+   void generateCall(CommandTape& tape, SyntaxTree::Node node);
+
 //   void generateExternFrame(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateTrying(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateAlt(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
@@ -378,7 +352,7 @@ class ByteCodeWriter
 //   void generateIndexSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   //   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
 //   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateInlineArgCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message, FlowScope& scope);
 ////   void generateVariadicInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message);
@@ -413,20 +387,16 @@ public:
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);
    void generateConstantList(SNode node, _Module* module, ref_t reference);
 //   void generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument);
-//
-//   void saveTape(CommandTape& tape, _ModuleScope& scope);
-//
+
+   void saveTape(CommandTape& tape, _ModuleScope& scope);
+
 //   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
 //   {
 //      imports.add(ImportScope(section, sour, dest));
 //
 //      return imports.Count();
 //   }
-////   void clear()
-////   {
-////      _strings.clear();
-////      imports.clear();
-////   }
+
 };
 
 //bool isSimpleObjectExpression(SyntaxTree::Node node, bool ignoreFields = false);

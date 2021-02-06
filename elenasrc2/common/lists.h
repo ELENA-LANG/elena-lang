@@ -3375,6 +3375,8 @@ public:
    }
 };
 
+// --- 
+
 // --- IntFixedMap ---
 
 template<class T> class IntFixedMap
@@ -4142,6 +4144,54 @@ public:
       : _trie(defaultVal)
    {
 
+   }
+};
+
+template <class T, int cacheSize> class CachedList
+{
+private:
+   T            _cached[cacheSize];
+   T*           _allocated;
+   unsigned int _length;
+   unsigned int _allocatedSize;
+
+public:
+   T& operator[](unsigned int index)
+   {
+      if (index < cacheSize) {
+         return _cached[index];
+      }
+      else return _allocated[index - cacheSize];
+   }
+
+   void add(T item)
+   {
+      if (_length < cacheSize) {
+         _cached[_length] = item;
+      }
+      else {
+         if (_length - cacheSize < _allocatedSize) {
+            _allocatedSize += 10;
+
+            _allocated = (T*)realloc(_allocated, _allocatedSize * sizeof(T));
+         }
+
+         _allocated[_length - cacheSize] = item;
+      }
+
+      _length++;
+   }
+
+   pos_t Length() const { return _length; }
+
+   CachedList()
+   {
+      _allocated = nullptr;
+      _allocatedSize = _length = 0;
+   }
+   ~CachedList()
+   {
+      freeobj(_allocated);
    }
 };
 

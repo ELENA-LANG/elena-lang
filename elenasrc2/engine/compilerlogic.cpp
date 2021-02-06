@@ -13,18 +13,8 @@
 
 using namespace _ELENA_;
 
-//typedef ClassInfo::Attribute Attribute;
-//
-////inline ref_t firstNonZero(ref_t ref1, ref_t ref2)
-////{
-////   return ref1 ? ref1 : ref2;
-////}
-////
-//////inline bool isWrappable(int flags)
-//////{
-//////   return !test(flags, elWrapper) && test(flags, elSealed);
-//////}
-//
+typedef ClassInfo::Attribute Attribute;
+
 //inline bool isPrimitiveArrayRef(ref_t classRef)
 //{
 //   switch (classRef) {
@@ -38,38 +28,6 @@ using namespace _ELENA_;
 //         return false;
 //   }
 //}
-//
-//////inline bool isOpenArgRef(ref_t classRef)
-//////{
-//////   return classRef == V_ARGARRAY;
-//////}
-//////
-//////inline ref_t definePrimitiveArrayItem(ref_t classRef)
-//////{
-//////   switch (classRef)
-//////   {
-//////      case V_INT32ARRAY:
-//////      case V_INT16ARRAY:
-//////      case V_INT8ARRAY:
-//////         return V_INT32;
-//////      default:
-//////         return 0;
-//////   }
-//////}
-//////
-//////inline bool isPrimitiveStructArrayRef(ref_t classRef)
-//////{
-//////   switch (classRef)
-//////   {
-//////      case V_INT32ARRAY:
-//////      case V_INT16ARRAY:
-//////      case V_INT8ARRAY:
-//////      case V_BINARYARRAY:
-//////         return true;
-//////      default:
-//////         return false;
-//////   }
-//////}
 //
 //inline bool IsInvertedOperator(int& operator_id)
 //{
@@ -91,20 +49,20 @@ using namespace _ELENA_;
 //         return false;
 //   }
 //}
-//
-//inline ident_t findSourceRef(SNode node)
-//{
-//   while (node != lxNone && node != lxNamespace) {
-//      if (node.compare(lxConstructor, lxStaticMethod, lxClassMethod) && node.existChild(lxSourcePath)) {
-//         return node.findChild(lxSourcePath).identifier();
-//      }
-//
-//      node = node.parentNode();
-//   }
-//
-//   return node.findChild(lxSourcePath).identifier();
-//}
-//
+
+inline ident_t __fastcall findSourceRef(SNode node)
+{
+   while (node != lxNone && node != lxNamespace) {
+      if (node.compare(lxConstructor, lxStaticMethod, lxClassMethod) && node.existChild(lxSourcePath)) {
+         return node.findChild(lxSourcePath).identifier();
+      }
+
+      node = node.parentNode();
+   }
+
+   return node.findChild(lxSourcePath).identifier();
+}
+
 //// --- CompilerLogic Optimization Ops ---
 //struct EmbeddableOp
 //{
@@ -458,85 +416,77 @@ using namespace _ELENA_;
 //
 //   return 0;
 //}
-//
-//inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
-//{
-//   switch (targetRef) {
-//      case V_PTR32:
-//         return sourceRef == V_INT32;
-//      case V_DWORD:
-//         return sourceRef == V_INT32 || sourceRef == V_PTR32 || sourceRef == V_MESSAGE || sourceRef == V_SUBJECT;
-//      default:
-//         return false;
-//   }
-//}
-//
-//bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils)
-//{
-//   if ((!targetRef || targetRef == scope.superReference) && !isPrimitiveRef(sourceRef))
-//      return true;
-//
-//   if (sourceRef == V_NIL) {
-//      // nil is compatible with a super class for the message dispatching
-//      // and with all types for all other cases
-//      if (!ignoreNils || targetRef == scope.superReference)
-//         return true;
-//   }
-//
-//   if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
-//      return true;
-//
-//   // !! temporal for the debugging
-//   ClassInfo tmp;
-//   defineClassInfo(scope, tmp, targetRef);
-//
-//   while (sourceRef != 0) {
-//      if (targetRef != sourceRef) {
-//         ClassInfo info;
-//         if (!defineClassInfo(scope, info, sourceRef))
-//            return false;
-//
-//         if (test(info.header.flags, elTemplatebased) && !isPrimitiveRef(targetRef)) {
-//            // HOTFIX : resolve weak reference before checking compability
-//            targetRef = scope.resolveWeakTemplateReferenceID(targetRef);
-//            info.header.parentRef = scope.resolveWeakTemplateReferenceID(info.header.parentRef);
-//            if (targetRef == sourceRef) {
-//               return true;
-//            }
-//         }
-//
-//         // if it is a structure wrapper
-//         if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
-//            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-//            if (isCompatible(scope, targetRef, inner.value1, ignoreNils))
-//               return true;
-//         }
-//
-//         if (test(info.header.flags, elClassClass)) {
-//            // class class can be compatible only with itself and the super class
-//            sourceRef = scope.superReference;
-//         }
-//         else sourceRef = info.header.parentRef;
-//      }
-//      else return true;
-//   }
-//
-//   return false;
-//}
-//
-////ref_t CompilerLogic :: resolvePrimitive(ClassInfo& info, ref_t& element)
-////{
-////   ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
-////   element = inner.value2;
-////
-////   return inner.value1;
-////}
-//
-//bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
-//{
-//   return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
-//}
-//
+
+inline bool isPrimitiveCompatible(ref_t targetRef, ref_t sourceRef)
+{
+   switch (targetRef) {
+      case V_PTR32:
+         return sourceRef == V_INT32;
+      case V_DWORD:
+         return sourceRef == V_INT32 || sourceRef == V_PTR32 || sourceRef == V_MESSAGE || sourceRef == V_SUBJECT;
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils)
+{
+   if ((!targetRef || targetRef == scope.superReference) && !isPrimitiveRef(sourceRef))
+      return true;
+
+   if (sourceRef == V_NIL) {
+      // nil is compatible with a super class for the message dispatching
+      // and with all types for all other cases
+      if (!ignoreNils || targetRef == scope.superReference)
+         return true;
+   }
+
+   if (isPrimitiveRef(targetRef) && isPrimitiveCompatible(targetRef, sourceRef))
+      return true;
+
+   // !! temporal for the debugging
+   ClassInfo tmp;
+   defineClassInfo(scope, tmp, targetRef);
+
+   while (sourceRef != 0) {
+      if (targetRef != sourceRef) {
+         ClassInfo info;
+         if (!defineClassInfo(scope, info, sourceRef))
+            return false;
+
+         if (test(info.header.flags, elTemplatebased) && !isPrimitiveRef(targetRef)) {
+            // HOTFIX : resolve weak reference before checking compability
+            targetRef = scope.resolveWeakTemplateReferenceID(targetRef);
+            info.header.parentRef = scope.resolveWeakTemplateReferenceID(info.header.parentRef);
+            if (targetRef == sourceRef) {
+               return true;
+            }
+         }
+
+         // if it is a structure wrapper
+         if (isPrimitiveRef(targetRef) && test(info.header.flags, elWrapper)) {
+            ClassInfo::FieldInfo inner = info.fieldTypes.get(0);
+            if (isCompatible(scope, targetRef, inner.value1, ignoreNils))
+               return true;
+         }
+
+         if (test(info.header.flags, elClassClass)) {
+            // class class can be compatible only with itself and the super class
+            sourceRef = scope.superReference;
+         }
+         else sourceRef = info.header.parentRef;
+      }
+      else return true;
+   }
+
+   return false;
+}
+
+bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
+{
+   return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
+}
+
 //bool CompilerLogic :: isVariable(_ModuleScope& scope, ref_t classReference)
 //{
 //   ClassInfo info;
@@ -579,15 +529,15 @@ bool CompilerLogic :: isValidType(_ModuleScope& scope, ref_t classReference, boo
    return isValidType(info, allowRole);
 }
 
-//bool CompilerLogic :: doesClassExist(_ModuleScope& scope, ref_t targetRef)
-//{
-//   if (!targetRef)
-//      return false;
-//
-//   ClassInfo info;
-//   return defineClassInfo(scope, info, targetRef, true);
-//}
-//
+bool CompilerLogic :: doesClassExist(_ModuleScope& scope, ref_t targetRef)
+{
+   if (!targetRef)
+      return false;
+
+   ClassInfo info;
+   return defineClassInfo(scope, info, targetRef, true);
+}
+
 //bool CompilerLogic :: validateAutoType(_ModuleScope& scope, ref_t& reference)
 //{
 //   ClassInfo info;
@@ -609,34 +559,29 @@ bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
    return allowRole || !testany(info.header.flags, elRole);
 }
 
-//bool CompilerLogic :: isEmbeddable(ClassInfo& info)
-//{
-//   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
-//}
-//
-//bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
-//{
-//   if (test(info.header.flags, elDynamicRole)) {
-//      return isEmbeddableArray(info);
-//   }
-//   else return isEmbeddable(info);
-//}
-//
-//bool CompilerLogic :: isRole(ClassInfo& info)
-//{
-//   return test(info.header.flags, elRole);
-//}
-//
-//bool CompilerLogic :: isAbstract(ClassInfo& info)
-//{
-//   return test(info.header.flags, elAbstract);
-//}
-//
-////bool CompilerLogic :: isMethodStacksafe(ClassInfo& info, ref_t message)
-////{
-////   return test(info.methodHints.get(Attribute(message, maHint)), tpStackSafe);
-////}
-//
+bool CompilerLogic :: isEmbeddable(ClassInfo& info)
+{
+   return test(info.header.flags, elStructureRole) && !test(info.header.flags, elDynamicRole);
+}
+
+bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
+{
+   if (test(info.header.flags, elDynamicRole)) {
+      return isEmbeddableArray(info);
+   }
+   else return isEmbeddable(info);
+}
+
+bool CompilerLogic :: isRole(ClassInfo& info)
+{
+   return test(info.header.flags, elRole);
+}
+
+bool CompilerLogic :: isAbstract(ClassInfo& info)
+{
+   return test(info.header.flags, elAbstract);
+}
+
 //bool CompilerLogic :: isMethodAbstract(ClassInfo& info, mssg_t message)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpAbstract);
@@ -666,118 +611,108 @@ bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
 //{
 //   return test(info.methodHints.get(Attribute(message, maHint)), tpMixin);
 //}
-//
-//bool CompilerLogic :: isMethodGeneric(ClassInfo& info, mssg_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
-//}
-//
-//bool CompilerLogic :: isMultiMethod(ClassInfo& info, mssg_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
-//}
-//
-//bool CompilerLogic :: isMultiMethod(_ModuleScope& scope, ref_t reference, mssg_t message)
-//{
-//   ClassInfo info;
-//   defineClassInfo(scope, info, reference, true);
-//
-//   return isMultiMethod(info, message);
-//}
-//
-////bool CompilerLogic :: isFunction(ClassInfo& info, ref_t message)
-////{
-////   return test(info.methodHints.get(Attribute(message, maHint)), tpFunction);
-////}
-//
-//////bool CompilerLogic :: isDispatcher(ClassInfo& info, ref_t message)
-//////{
-//////   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpDispatcher;
-//////}
-//
-//inline ident_t resolveActionName(_Module* module, mssg_t message)
-//{
-//   ref_t signRef = 0;
-//   return module->resolveAction(getAction(message), signRef);
-//}
-//
-//ref_t CompilerLogic :: generateOverloadList(_ModuleScope& scope, _Compiler& compiler, mssg_t message,
-//   ClassInfo::CategoryInfoMap& methodHints, void* param, ref_t(*resolve)(void*,ref_t), int flags)
-//{
-//   // create a new overload list
-//   ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
-//
-//   // sort the overloadlist
-//   int defaultOne[0x20];
-//   int* list = defaultOne;
-//   size_t capcity = 0x20;
-//   size_t len = 0;
-//   for (auto h_it = methodHints.start(); !h_it.Eof(); h_it++) {
-//      if (h_it.key().value2 == maMultimethod && *h_it == message) {
-//         if (len == capcity) {
-//            int* new_list = new int[capcity + 0x10];
-//            memmove(new_list, list, capcity * 4);
-//            list = new_list;
-//            capcity += 0x10;
-//         }
-//
-//         mssg_t omsg = h_it.key().value1;
-//         list[len] = omsg;
-//         for (size_t i = 0; i < len; i++) {
-//            if (isSignatureCompatible(scope, omsg, list[i])) {
-//               memmove((void*)((size_t)list + (i + 1) * 4), (void*)((size_t)list + i * 4), (len - i) * 4);
-//               list[i] = omsg;
-//               break;
-//            }
-//         }
-//         len++;
-//      }
-//   }
-//
-//   // fill the overloadlist
-//   for (size_t i = 0; i < len; i++) {
-//      ref_t classRef = resolve(param, list[i]);
-//
-//      if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
-//         compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
-//      }
-//      else if (test(flags, elClosed)) {
-//         compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
-//      }
-//      else compiler.generateOverloadListMember(scope, listRef, list[i]);
-//   }
-//
-//   if (capcity > 0x20)
-//      delete[] list;
-//
-//   return listRef;
-//}
-//
-//ref_t paramFeedback(void* param, ref_t)
-//{
-//   return (ref_t)param;
-//}
-//
-//void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
-//{
-//   for (auto it = info.methods.start(); !it.Eof(); it++) {
-//      if (*it && isMultiMethod(info, it.key())) {
-//         mssg_t message = it.key();
-//
-//         // create a new overload list
-//         ref_t listRef = generateOverloadList(scope, compiler, message, info.methodHints, (void*)classRef, 
-//            paramFeedback, info.header.flags);
-//
-//         info.methodHints.exclude(Attribute(message, maOverloadlist));
-//         info.methodHints.add(Attribute(message, maOverloadlist), listRef);
-//         if (test(message, STATIC_MESSAGE)) {
-//            info.methodHints.exclude(Attribute(message & ~STATIC_MESSAGE, maOverloadlist));
-//            info.methodHints.add(Attribute(message & ~STATIC_MESSAGE, maOverloadlist), listRef);
-//         }
-//      }
-//   }
-//}
-//
+
+bool CompilerLogic :: isMethodGeneric(ClassInfo& info, mssg_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpGeneric);
+}
+
+bool CompilerLogic :: isMultiMethod(ClassInfo& info, mssg_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpMultimethod);
+}
+
+bool CompilerLogic :: isMultiMethod(_ModuleScope& scope, ref_t reference, mssg_t message)
+{
+   ClassInfo info;
+   defineClassInfo(scope, info, reference, true);
+
+   return isMultiMethod(info, message);
+}
+
+inline ident_t resolveActionName(_Module* module, mssg_t message)
+{
+   ref_t signRef = 0;
+   return module->resolveAction(getAction(message), signRef);
+}
+
+ref_t CompilerLogic :: generateOverloadList(_ModuleScope& scope, _Compiler& compiler, mssg_t message,
+   ClassInfo::CategoryInfoMap& methodHints, void* param, ref_t(*resolve)(void*,ref_t), int flags)
+{
+   // create a new overload list
+   ref_t listRef = scope.mapAnonymous(resolveActionName(scope.module, message));
+
+   // sort the overloadlist
+   int defaultOne[0x20];
+   int* list = defaultOne;
+   size_t capcity = 0x20;
+   size_t len = 0;
+   for (auto h_it = methodHints.start(); !h_it.Eof(); h_it++) {
+      if (h_it.key().value2 == maMultimethod && *h_it == message) {
+         if (len == capcity) {
+            int* new_list = new int[capcity + 0x10];
+            memmove(new_list, list, capcity * 4);
+            list = new_list;
+            capcity += 0x10;
+         }
+
+         mssg_t omsg = h_it.key().value1;
+         list[len] = omsg;
+         for (size_t i = 0; i < len; i++) {
+            if (isSignatureCompatible(scope, omsg, list[i])) {
+               memmove((void*)((size_t)list + (i + 1) * 4), (void*)((size_t)list + i * 4), (len - i) * 4);
+               list[i] = omsg;
+               break;
+            }
+         }
+         len++;
+      }
+   }
+
+   // fill the overloadlist
+   for (size_t i = 0; i < len; i++) {
+      ref_t classRef = resolve(param, list[i]);
+
+      if (test(flags, elSealed) || test(message, STATIC_MESSAGE)) {
+         compiler.generateSealedOverloadListMember(scope, listRef, list[i], classRef);
+      }
+      else if (test(flags, elClosed)) {
+         compiler.generateClosedOverloadListMember(scope, listRef, list[i], classRef);
+      }
+      else compiler.generateOverloadListMember(scope, listRef, list[i]);
+   }
+
+   if (capcity > 0x20)
+      delete[] list;
+
+   return listRef;
+}
+
+ref_t paramFeedback(void* param, ref_t)
+{
+   return (ref_t)param;
+}
+
+void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _Compiler& compiler, ref_t classRef)
+{
+   for (auto it = info.methods.start(); !it.Eof(); it++) {
+      if (*it && isMultiMethod(info, it.key())) {
+         mssg_t message = it.key();
+
+         // create a new overload list
+         ref_t listRef = generateOverloadList(scope, compiler, message, info.methodHints, (void*)classRef, 
+            paramFeedback, info.header.flags);
+
+         info.methodHints.exclude(Attribute(message, maOverloadlist));
+         info.methodHints.add(Attribute(message, maOverloadlist), listRef);
+         if (test(message, STATIC_MESSAGE)) {
+            info.methodHints.exclude(Attribute(message & ~STATIC_MESSAGE, maOverloadlist));
+            info.methodHints.add(Attribute(message & ~STATIC_MESSAGE, maOverloadlist), listRef);
+         }
+      }
+   }
+}
+
 //inline int countFields(SNode node)
 //{
 //   int counter = 0;
@@ -823,83 +758,76 @@ bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
 ////      compiler.injectVirtualStaticConstField(scope, node, ENUM_VAR, classRef);
 ////   }
 //}
-//
-//void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
-//{
-//////   // generate enumeration list
-//////   if ((info.header.flags & elDebugMask) == elEnumList && test(info.header.flags, elNestedClass)) {
-//////      ClassInfo::FieldInfo valuesField = info.statics.get(ENUM_VAR);
-//////
-//////      compiler.generateListMember(scope, valuesField.value1, classRef);
-//////   }
-//
-//   if (test(info.header.flags, elClassClass)) {
-//   }
-//   else if (!test(info.header.flags, elNestedClass) && !test(info.header.flags, elRole)) 
-//   {
-//      if (test(info.header.flags, elDynamicRole)) {
-//         // HOTFIX : remove auto generated default constructor for a dynamic object
-//         SNode methNode = SyntaxTree::goToChild(node, lxConstructor, scope.constructor_message);
-//         if (methNode != lxNone && methNode.existChild(lxAutogenerated))
-//            methNode = lxIdle;
-//      }
-//
-//      // skip class classes, extensions and singletons
-//      if (classRef != scope.superReference && !closed) {
-//         // auto generate cast$<type> message for explicitly declared classes
-//         ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
-//         ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
-//
-//         compiler.injectVirtualReturningMethod(scope, node, encodeMessage(actionRef, 1, CONVERSION_MESSAGE), SELF_VAR, classRef);
-//      }
-//
-//      if (test(info.header.flags, elStructureRole)) {
-//         List<mssg_t> generatedConstructors;
-//         bool found = 0;
-//         SNode current = node.firstChild();
-//         while (current != lxNone) {
-//            if (current == lxConstructor) {
-//               SNode attr = current.firstChild();
-//               while (attr != lxNone) {
-//                  if (attr == lxAttribute) {
-//                     if (attr.argument == tpEmbeddable) {
-//                        generatedConstructors.add(current.argument);
-//
-//                        current.set(lxClassMethod, current.argument | STATIC_MESSAGE);
-//                        attr.setArgument(tpPrivate | tpSealed);
-//
-//                        found = true;
-//                        break;
-//                     }
-//                  }
-//                  else break;
-//
-//                  attr = attr.nextNode();
-//               }
-//            }
-//            current = current.nextNode();
-//         }
-//
-//         if (found) {
-//            for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
-//               mssg_t message = *it;
-//
-//               compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE);
-//            }
-//         }
-//      }
-//   }
-//}
-//
-//void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
-//   List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info)
-//{
-//   // generate implicit mutli methods
-//   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-//      compiler.injectVirtualMultimethod(scope, node, *it, methodType, info);
-//   }
-//}
-//
+
+void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
+{
+   if (test(info.header.flags, elClassClass)) {
+   }
+   else if (!test(info.header.flags, elNestedClass) && !test(info.header.flags, elRole)) 
+   {
+      if (test(info.header.flags, elDynamicRole)) {
+         // HOTFIX : remove auto generated default constructor for a dynamic object
+         SNode methNode = SyntaxTree::goToChild(node, lxConstructor, scope.constructor_message);
+         if (methNode != lxNone && methNode.existChild(lxAutogenerated))
+            methNode = lxIdle;
+      }
+
+      // skip class classes, extensions and singletons
+      if (classRef != scope.superReference && !closed) {
+         // auto generate cast$<type> message for explicitly declared classes
+         ref_t signRef = scope.module->mapSignature(&classRef, 1, false);
+         ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
+
+         compiler.injectVirtualReturningMethod(scope, node, encodeMessage(actionRef, 1, CONVERSION_MESSAGE), SELF_VAR, classRef);
+      }
+
+      if (test(info.header.flags, elStructureRole)) {
+         List<mssg_t> generatedConstructors;
+         bool found = 0;
+         SNode current = node.firstChild();
+         while (current != lxNone) {
+            if (current == lxConstructor) {
+               SNode attr = current.firstChild();
+               while (attr != lxNone) {
+                  if (attr == lxAttribute) {
+                     if (attr.argument == tpEmbeddable) {
+                        generatedConstructors.add(current.argument);
+
+                        current.set(lxClassMethod, current.argument | STATIC_MESSAGE);
+                        attr.setArgument(tpPrivate | tpSealed);
+
+                        found = true;
+                        break;
+                     }
+                  }
+                  else break;
+
+                  attr = attr.nextNode();
+               }
+            }
+            current = current.nextNode();
+         }
+
+         //if (found) {
+         //   for (auto it = generatedConstructors.start(); !it.Eof(); it++) {
+         //      mssg_t message = *it;
+
+         //      compiler.injectEmbeddableConstructor(node, message, message | STATIC_MESSAGE);
+         //   }
+         //}
+      }
+   }
+}
+
+void CompilerLogic :: injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
+   List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info)
+{
+   // generate implicit mutli methods
+   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
+      compiler.injectVirtualMultimethod(scope, node, *it, methodType, info);
+   }
+}
+
 //bool isEmbeddableDispatcher(_ModuleScope& scope, SNode current)
 //{
 //   SNode attr = current.firstChild();
@@ -979,46 +907,46 @@ bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
 //
 //   dispatchMethodNode = lxIdle;
 //}
-//
-//void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods)
-//{
-//   // HOTFIX : Make sure the multi-method methods have the same output type as generic one
-//   bool needVerification = false;
-//   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
-//      mssg_t message = *it;
-//
-//      ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
-//      if (outputRef != 0) {
-//         // Bad luck we have to verify all overloaded methods
-//         needVerification = true;
-//         break;
-//      }
-//   }
-//
-//   if (!needVerification)
-//      return;
-//
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      if (current == lxClassMethod) {
-//         mssg_t multiMethod = info.methodHints.get(Attribute(current.argument, maMultimethod));
-//         if (multiMethod != lxNone) {
-//            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethod, maReference));
-//            if (outputRefMulti != 0) {
-//               ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
-//               if (outputRef == 0) {
-//                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
-//               }
-//               else if (!isCompatible(scope, outputRefMulti, outputRef, true)) {
-//                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
-//               }
-//            }            
-//         }
-//      }
-//      current = current.nextNode();
-//   }
-//}
-//
+
+void CompilerLogic :: verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods)
+{
+   // HOTFIX : Make sure the multi-method methods have the same output type as generic one
+   bool needVerification = false;
+   for (auto it = implicitMultimethods.start(); !it.Eof(); it++) {
+      mssg_t message = *it;
+
+      ref_t outputRef = info.methodHints.get(Attribute(message, maReference));
+      if (outputRef != 0) {
+         // Bad luck we have to verify all overloaded methods
+         needVerification = true;
+         break;
+      }
+   }
+
+   if (!needVerification)
+      return;
+
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      if (current == lxClassMethod) {
+         mssg_t multiMethod = info.methodHints.get(Attribute(current.argument, maMultimethod));
+         if (multiMethod != lxNone) {
+            ref_t outputRefMulti = info.methodHints.get(Attribute(multiMethod, maReference));
+            if (outputRefMulti != 0) {
+               ref_t outputRef = info.methodHints.get(Attribute(current.argument, maReference));
+               if (outputRef == 0) {
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
+               }
+               else if (!isCompatible(scope, outputRefMulti, outputRef, true)) {
+                  scope.raiseError(errNotCompatibleMulti, findSourceRef(current), current.findChild(lxNameAttr).firstChild(lxTerminalMask));
+               }
+            }            
+         }
+      }
+      current = current.nextNode();
+   }
+}
+
 //bool CompilerLogic :: isBoolean(_ModuleScope& scope, ref_t reference)
 //{
 //   return isCompatible(scope, scope.branchingInfo.reference, reference, true);
@@ -1077,65 +1005,65 @@ bool CompilerLogic :: isValidType(ClassInfo& info, bool allowRole)
 //{
 //   return test(info.header.flags, elReadOnlyRole);
 //}
-//
-//inline ref_t getSignature(_ModuleScope& scope, mssg_t message)
-//{
-//   ref_t actionRef = getAction(message);
-//   ref_t signRef = 0;
-//   scope.module->resolveAction(actionRef, signRef);
-//
-//   return signRef;
-//}
-//
-//bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage)
-//{
-//   ref_t sourceSignatures[ARG_COUNT];
-//   size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
-//
-//   return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
-//}
-//
-//bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen)
-//{
-//   ref_t targetSignatures[ARG_COUNT];
-//   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
-//   if (sourceLen == 0 && len == 0)
-//      return true;
-//
-//   if (len < 1)
-//      return false;
-//
-//   for (size_t i = 0; i < sourceLen; i++) {
-//      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
-//      if (!isCompatible(scope, targetSign, sourceSignatures[i], true))
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
-//bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, 
-//   ref_t* sourceSignatures, size_t sourceLen)
-//{
-//   ref_t targetSignatures[ARG_COUNT];
-//   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
-//
-//   if (sourceLen == 0 && len == 0)
-//      return true;
-//
-//   if (len < 1)
-//      return false;
-//
-//   for (size_t i = 0; i < sourceLen; i++) {
-//      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
-//
-//      if (!isCompatible(scope, importReference(targetModule, targetSign, scope.module), sourceSignatures[i], true))
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
+
+inline ref_t __fastcall getSignature(_ModuleScope& scope, mssg_t message)
+{
+   ref_t actionRef = getAction(message);
+   ref_t signRef = 0;
+   scope.module->resolveAction(actionRef, signRef);
+
+   return signRef;
+}
+
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage)
+{
+   ref_t sourceSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
+
+   return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
+}
+
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (sourceLen == 0 && len == 0)
+      return true;
+
+   if (len < 1)
+      return false;
+
+   for (size_t i = 0; i < sourceLen; i++) {
+      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
+      if (!isCompatible(scope, targetSign, sourceSignatures[i], true))
+         return false;
+   }
+
+   return true;
+}
+
+bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, 
+   ref_t* sourceSignatures, size_t sourceLen)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+
+   if (sourceLen == 0 && len == 0)
+      return true;
+
+   if (len < 1)
+      return false;
+
+   for (size_t i = 0; i < sourceLen; i++) {
+      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
+
+      if (!isCompatible(scope, importReference(targetModule, targetSign, scope.module), sourceSignatures[i], true))
+         return false;
+   }
+
+   return true;
+}
+
 //int CompilerLogic :: defineStackSafeAttrs(_ModuleScope& scope, mssg_t message)
 //{
 //   ref_t signRef = getSignature(scope, message);
@@ -1502,87 +1430,87 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
 //
 //   return 0;
 //}
-//
-//void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
-//{
-//   if (classClassMode) {
-//      // class class is always stateless and final
-//      info.header.flags |= elStateless;
-//      info.header.flags |= elSealed;
-//   }
-//
-//   if (test(info.header.flags, elNestedClass)) {
-//      // stateless inline class
-//      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
-//         info.header.flags |= elStateless;
-//
-//         // stateless inline class is its own class class
-//         info.header.classRef = classRef;
-//      }
-//      else info.header.flags &= ~elStateless;
-//
-//      // nested class is sealed
-//      info.header.flags |= elSealed;
-//   }
-//
-//   if (test(info.header.flags, elExtension)) {
-//      info.header.flags |= elSealed;
-//   }
-//
-//   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
-//      if (classRef == scope.literalReference) {
-//         // recognize string constant
-//         if (info.size == -1) {
-//            info.header.flags |= elDebugLiteral;
-//         }
-//      }
-//      else if (classRef == scope.wideReference) {
-//         // recognize wide string constant
-//         if (info.size == -2) {
-//            info.header.flags |= elDebugWideLiteral;
-//         }
-//      }
-//   }
-//
-//   // adjust array
-//   if (test(info.header.flags, elDynamicRole) && !test(info.header.flags, elStructureRole)/* | elNonStructureRole*/) {
-//      info.header.flags |= elNonStructureRole;
-//
-//      if ((info.header.flags & elDebugMask) == 0) {
-//         info.header.flags |= elDebugArray;
-//      }
-//   }
-//
-//   // adjust binary array
-//   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
-//      if ((info.header.flags & elDebugMask) == 0) {
-//         ref_t itemRef = info.fieldTypes.get(-1).value1;
-//         switch (itemRef) {
-//            case V_INT32ARRAY:
-//               info.header.flags |= elDebugIntegers;
-//               break;
-//            case V_INT16ARRAY:
-//               info.header.flags |= elDebugShorts;
-//               break;
-//            case V_INT8ARRAY:
-//               info.header.flags |= elDebugBytes;
-//               break;
-//            default:
-//               info.header.flags |= elDebugBytes;
-//               break;
-//         }
-//      }
-//   }
-//
-//   // adjust objects with custom dispatch handler
-//   if (info.methods.exist(scope.dispatch_message, true) && classRef != scope.superReference) {
-//      info.header.flags |= elWithCustomDispatcher;
-//   }
-//
-//   // generate operation list if required
-//   injectOverloadList(scope, info, compiler, classRef);
-//}
-//
+
+void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
+{
+   if (classClassMode) {
+      // class class is always stateless and final
+      info.header.flags |= elStateless;
+      info.header.flags |= elSealed;
+   }
+
+   if (test(info.header.flags, elNestedClass)) {
+      // stateless inline class
+      if (info.fields.Count() == 0 && !test(info.header.flags, elStructureRole)) {
+         info.header.flags |= elStateless;
+
+         // stateless inline class is its own class class
+         info.header.classRef = classRef;
+      }
+      else info.header.flags &= ~elStateless;
+
+      // nested class is sealed
+      info.header.flags |= elSealed;
+   }
+
+   if (test(info.header.flags, elExtension)) {
+      info.header.flags |= elSealed;
+   }
+
+   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
+      if (classRef == scope.literalReference) {
+         // recognize string constant
+         if (info.size == -1) {
+            info.header.flags |= elDebugLiteral;
+         }
+      }
+      else if (classRef == scope.wideReference) {
+         // recognize wide string constant
+         if (info.size == -2) {
+            info.header.flags |= elDebugWideLiteral;
+         }
+      }
+   }
+
+   // adjust array
+   if (test(info.header.flags, elDynamicRole) && !test(info.header.flags, elStructureRole)/* | elNonStructureRole*/) {
+      info.header.flags |= elNonStructureRole;
+
+      if ((info.header.flags & elDebugMask) == 0) {
+         info.header.flags |= elDebugArray;
+      }
+   }
+
+   // adjust binary array
+   if (test(info.header.flags, elDynamicRole | elStructureRole)) {
+      if ((info.header.flags & elDebugMask) == 0) {
+         ref_t itemRef = info.fieldTypes.get(-1).value1;
+         switch (itemRef) {
+            case V_INT32ARRAY:
+               info.header.flags |= elDebugIntegers;
+               break;
+            case V_INT16ARRAY:
+               info.header.flags |= elDebugShorts;
+               break;
+            case V_INT8ARRAY:
+               info.header.flags |= elDebugBytes;
+               break;
+            default:
+               info.header.flags |= elDebugBytes;
+               break;
+         }
+      }
+   }
+
+   // adjust objects with custom dispatch handler
+   if (info.methods.exist(scope.dispatch_message, true) && classRef != scope.superReference) {
+      info.header.flags |= elWithCustomDispatcher;
+   }
+
+   // generate operation list if required
+   injectOverloadList(scope, info, compiler, classRef);
+}
+
 //bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg)
 //{
 //   switch ((size_t)attrValue) {
@@ -1626,175 +1554,175 @@ bool CompilerLogic :: validateNsAttribute(int attrValue, Visibility& visibility)
    }
 }
 
-//bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibility)
-//{
-//   switch ((size_t)attrValue)
-//   {
-//      case 0:
-//         return true;
-//      case V_SEALED:
-//         attrValue = elSealed;
-//         return true;
-//      case V_ABSTRACT:
-//         attrValue = elAbstract;
-//         return true;
-//      case V_LIMITED:
-//         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
-//         return true;
-//      case V_TEMPLATEBASED:
-//         attrValue = elTemplatebased;
-//         return true;
-//      case V_CLOSED:
-//         attrValue = elClosed;
-//         return true;
-//      case V_STRUCT:
-//         attrValue = elStructureRole;
-//         return true;
-//      case V_CONST:
-//         attrValue = elReadOnlyRole;
-//         return true;
-//      case V_EXTENSION:
-//         attrValue = elExtension;
-//         return true;
-//      case V_NOSTRUCT:
-//         attrValue = elNonStructureRole;
-//         return true;
-//      case V_MIXIN:
-//         attrValue = elGroup;
-//         return true;
-////      //case V_TAPEGROUP:
-////      //   attrValue = elTapeGroup;
-//////         return true;
-//      case V_PUBLIC:
-//         attrValue = 0;
-//         visibility = Visibility::Public;
-//         return true;
-//      case V_INTERNAL:
-//         attrValue = 0;
-//         visibility = Visibility::Internal;
-//         return true;
-//      case V_PRIVATE:
-//         attrValue = 0;
-//         visibility = Visibility::Private;
-//         return true;
-//      case V_CLASS:
-//         attrValue = 0;
-//         return true;
-//      case V_SINGLETON:
-//         attrValue = elRole | elSealed | elStateless/* | elNestedClass*/;
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
-//bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue, bool complexName)
-//{
-//   bool dummy = false;
-//   switch ((size_t)attrValue)
-//   {
-//      case V_METHOD:
-//      case V_CONSTRUCTOR:
-//      case V_DISPATCHER:
-//      case V_CONVERSION:
-//      case V_GENERIC:
-//      case V_FUNCTION:
-//         return validateMethodAttribute(attrValue, dummy);
-//      case V_GETACCESSOR:
-//      case V_SETACCESSOR:
-//         if (complexName) {
-//            return validateMethodAttribute(attrValue, dummy);
-//         }
-//         else return false;
-//      default:
-//         return false;
-//   }
-//}
-//
-//bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
-//{
-//   switch ((size_t)attrValue)
-//   {
-//      case V_EMBEDDABLE:
-//         attrValue = tpEmbeddable;
-//         return true;
-//      case V_GENERIC:
-//         attrValue = (tpGeneric | tpSealed);
-//         return true;
-//      case V_MIXIN:
-//         attrValue = tpMixin;
-//         return true;
-//      case V_PRIVATE:
-//         attrValue = (tpPrivate | tpSealed);
-//         return true;
-//      case V_PUBLIC:
-//         attrValue = 0;
-//         return true;
-//      case V_INTERNAL:
-//         attrValue = tpInternal;
-//         return true;
-//      case V_PROTECTED:
-//         attrValue = tpProtected;
-//         return true;
-//      case V_SEALED:
-//         attrValue = tpSealed;
-//         return true;
-//      case V_FUNCTION:
-//         attrValue = tpFunction;
-//         explicitMode = true;
-//         return true;
-//      case V_CONSTRUCTOR:
-//         attrValue = tpConstructor | tpInitializer;
-//         explicitMode = true;
-//         return true;
-//      case V_CONVERSION:
-//         attrValue = tpConversion;
-//         return true;
-//      case V_INITIALIZER:
-//         attrValue = (tpFunction | tpPrivate | tpInitializer);
-//         return true;
-//      case V_METHOD:
-//         attrValue = 0;
-//         explicitMode = true;
-//         return true;
-//      case V_STATIC:
-//         attrValue = tpStatic;
-//         return true;
-//      case V_ABSTRACT:
-//         attrValue = tpAbstract;
-//         return true;
-//      case V_PREDEFINED:
-//         attrValue = tpPredefined;
-//         return true;
-//      case V_DISPATCHER:
-//         attrValue = tpDispatcher;
-//         explicitMode = true;
-//         return true;
-//      case V_GETACCESSOR:
-//         attrValue = tpGetAccessor;
-//         return true;
-//      case V_SETACCESSOR:
-//         attrValue = tpSetAccessor;
-//         return true;
-//      case V_SCRIPTSELFMODE:
-//         attrValue = tpTargetSelf;
-//         return true;
-//      case V_YIELDABLE:
-//         attrValue = tpYieldable;
-//         return true;
-//      case V_CONST:
-//         attrValue = tpConstant;
-//         return true;
-//      case V_MULTIRETVAL:
-//         attrValue = tpMultiRetVal | tpEmbeddable;
-//         return true;
-//      case 0:
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibility)
+{
+   switch ((size_t)attrValue)
+   {
+      case 0:
+         return true;
+      case V_SEALED:
+         attrValue = elSealed;
+         return true;
+      case V_ABSTRACT:
+         attrValue = elAbstract;
+         return true;
+      case V_LIMITED:
+         attrValue = (elClosed | elAbstract | elNoCustomDispatcher);
+         return true;
+      case V_TEMPLATEBASED:
+         attrValue = elTemplatebased;
+         return true;
+      case V_CLOSED:
+         attrValue = elClosed;
+         return true;
+      case V_STRUCT:
+         attrValue = elStructureRole;
+         return true;
+      case V_CONST:
+         attrValue = elReadOnlyRole;
+         return true;
+      case V_EXTENSION:
+         attrValue = elExtension;
+         return true;
+      case V_NOSTRUCT:
+         attrValue = elNonStructureRole;
+         return true;
+      case V_MIXIN:
+         attrValue = elGroup;
+         return true;
+//      //case V_TAPEGROUP:
+//      //   attrValue = elTapeGroup;
+////         return true;
+      case V_PUBLIC:
+         attrValue = 0;
+         visibility = Visibility::Public;
+         return true;
+      case V_INTERNAL:
+         attrValue = 0;
+         visibility = Visibility::Internal;
+         return true;
+      case V_PRIVATE:
+         attrValue = 0;
+         visibility = Visibility::Private;
+         return true;
+      case V_CLASS:
+         attrValue = 0;
+         return true;
+      case V_SINGLETON:
+         attrValue = elRole | elSealed | elStateless/* | elNestedClass*/;
+         return true;
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: validateImplicitMethodAttribute(int& attrValue, bool complexName)
+{
+   bool dummy = false;
+   switch ((size_t)attrValue)
+   {
+      case V_METHOD:
+      case V_CONSTRUCTOR:
+      case V_DISPATCHER:
+      case V_CONVERSION:
+      case V_GENERIC:
+      case V_FUNCTION:
+         return validateMethodAttribute(attrValue, dummy);
+      case V_GETACCESSOR:
+      case V_SETACCESSOR:
+         if (complexName) {
+            return validateMethodAttribute(attrValue, dummy);
+         }
+         else return false;
+      default:
+         return false;
+   }
+}
+
+bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode)
+{
+   switch ((size_t)attrValue)
+   {
+      case V_EMBEDDABLE:
+         attrValue = tpEmbeddable;
+         return true;
+      case V_GENERIC:
+         attrValue = (tpGeneric | tpSealed);
+         return true;
+      case V_MIXIN:
+         attrValue = tpMixin;
+         return true;
+      case V_PRIVATE:
+         attrValue = (tpPrivate | tpSealed);
+         return true;
+      case V_PUBLIC:
+         attrValue = 0;
+         return true;
+      case V_INTERNAL:
+         attrValue = tpInternal;
+         return true;
+      case V_PROTECTED:
+         attrValue = tpProtected;
+         return true;
+      case V_SEALED:
+         attrValue = tpSealed;
+         return true;
+      case V_FUNCTION:
+         attrValue = tpFunction;
+         explicitMode = true;
+         return true;
+      case V_CONSTRUCTOR:
+         attrValue = tpConstructor | tpInitializer;
+         explicitMode = true;
+         return true;
+      case V_CONVERSION:
+         attrValue = tpConversion;
+         return true;
+      case V_INITIALIZER:
+         attrValue = (tpFunction | tpPrivate | tpInitializer);
+         return true;
+      case V_METHOD:
+         attrValue = 0;
+         explicitMode = true;
+         return true;
+      case V_STATIC:
+         attrValue = tpStatic;
+         return true;
+      case V_ABSTRACT:
+         attrValue = tpAbstract;
+         return true;
+      case V_PREDEFINED:
+         attrValue = tpPredefined;
+         return true;
+      case V_DISPATCHER:
+         attrValue = tpDispatcher;
+         explicitMode = true;
+         return true;
+      case V_GETACCESSOR:
+         attrValue = tpGetAccessor;
+         return true;
+      case V_SETACCESSOR:
+         attrValue = tpSetAccessor;
+         return true;
+      case V_SCRIPTSELFMODE:
+         attrValue = tpTargetSelf;
+         return true;
+      case V_YIELDABLE:
+         attrValue = tpYieldable;
+         return true;
+      case V_CONST:
+         attrValue = tpConstant;
+         return true;
+      case V_MULTIRETVAL:
+         attrValue = tpMultiRetVal | tpEmbeddable;
+         return true;
+      case 0:
+         return true;
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& attrs)
 //{
 //   switch ((size_t)attrValue)
@@ -2035,37 +1963,29 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
 //   else return V_OBJARRAY;
 //}
 //
-//////////bool CompilerLogic :: validateClassFlag(ClassInfo& info, int flag)
-//////////{
-//////////   if (test(flag, elDynamicRole) && info.fields.Count() != 0)
-//////////      return false;
-//////////
-//////////   return true;
-//////////}
-//
-//void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
-//   bool& disptacherNotAllowed, bool& emptyStructure)
-//{
-//   if (!isAbstract(info)) {
-//      for (auto it = info.methodHints.start(); !it.Eof(); it++) {
-//         auto key = it.key();
-//         if (key.value2 == maHint && test(*it, tpAbstract)) {
-//            scope.printMessageInfo(infoAbstractMetod, key.value1);
-//
-//            withAbstractMethods = true;
-//         }            
-//      }
-//   }
-//
-//   // interface class cannot have a custom dispatcher method
-//   if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(scope.dispatch_message, true))
-//      disptacherNotAllowed = true;
-//
-//   // a structure class should contain fields
-//   if (test(info.header.flags, elStructureRole) && info.size == 0)
-//      emptyStructure = true;
-//}
-//
+void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
+   bool& disptacherNotAllowed, bool& emptyStructure)
+{
+   if (!isAbstract(info)) {
+      for (auto it = info.methodHints.start(); !it.Eof(); it++) {
+         auto key = it.key();
+         if (key.value2 == maHint && test(*it, tpAbstract)) {
+            scope.printMessageInfo(infoAbstractMetod, key.value1);
+
+            withAbstractMethods = true;
+         }            
+      }
+   }
+
+   // interface class cannot have a custom dispatcher method
+   if (test(info.header.flags, elNoCustomDispatcher) && info.methods.exist(scope.dispatch_message, true))
+      disptacherNotAllowed = true;
+
+   // a structure class should contain fields
+   if (test(info.header.flags, elStructureRole) && info.size == 0)
+      emptyStructure = true;
+}
+
 //bool CompilerLogic :: recognizeEmbeddableIdle(SNode methodNode, bool extensionOne)
 //{
 //   SNode frameNode = methodNode.findChild(lxNewFrame);
@@ -2566,23 +2486,23 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
 //   
 //   return 0;
 //}
-//
-//bool CompilerLogic :: validateMessage(_ModuleScope& scope, mssg_t message, int hints)
-//{
-//   bool dispatchOne = message == scope.dispatch_message;
-//   if (testany(hints, tpConstructor | tpStatic)) {
-//      if (dispatchOne)
-//         return false;
-//   }
-//   //else {
-//      //else if (!isClassClass && dispatchOne && getParamCount(message) != 0) {
-//      //   return false;
-//      //}
-//   //}
-//
-//   // const attribute can be applied only to a get-property
-//   if (test(hints, tpConstant) && ((message & PREFIX_MESSAGE_MASK) != PROPERTY_MESSAGE && getArgCount(message) > 1))
-//      return false;
-//
-//   return true;
-//}
+
+bool CompilerLogic :: validateMessage(_ModuleScope& scope, mssg_t message, int hints)
+{
+   bool dispatchOne = message == scope.dispatch_message;
+   if (testany(hints, tpConstructor | tpStatic)) {
+      if (dispatchOne)
+         return false;
+   }
+   //else {
+      //else if (!isClassClass && dispatchOne && getParamCount(message) != 0) {
+      //   return false;
+      //}
+   //}
+
+   // const attribute can be applied only to a get-property
+   if (test(hints, tpConstant) && ((message & PREFIX_MESSAGE_MASK) != PROPERTY_MESSAGE && getArgCount(message) > 1))
+      return false;
+
+   return true;
+}

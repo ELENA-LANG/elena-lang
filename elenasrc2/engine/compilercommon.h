@@ -275,10 +275,10 @@ struct _ModuleScope
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
 //   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
-//
-//   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode,
-//                                 bool ignoreFields) = 0;
-//
+
+   virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode,
+                                 bool ignoreFields) = 0;
+
 //   virtual ref_t resolveClosure(ref_t closureMessage, ref_t outputRef, ident_t ns) = 0;
 
    virtual ref_t mapNewIdentifier(ident_t ns, ident_t identifier, Visibility visibility) = 0;
@@ -344,8 +344,7 @@ struct _ModuleScope
 //   virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 //   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, 
 //      int bookmark, bool inlineMode) = 0;
-////   virtual void generateExtensionTemplate(SyntaxTree& tree, ident_t ns, ref_t extensionRef) = 0;
-//   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
+   virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 
    virtual void declareNamespace(ident_t name) = 0;
    virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion) = 0;
@@ -405,9 +404,9 @@ public:
 ////   virtual void injectEmbeddableRet(SNode assignNode, SNode callNode, ref_t subject) = 0;
 //   virtual void injectEmbeddableOp(_ModuleScope& scope, SNode assignNode, SNode callNode, ref_t subject, int paramCount/*, int verb*/) = 0;
 //   virtual void injectEmbeddableConstructor(SNode classNode, mssg_t message, ref_t privateRef) = 0;
-//   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
-//      ClassInfo& info) = 0;
-//   virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef) = 0;
+   virtual void injectVirtualMultimethod(_ModuleScope& scope, SNode classNode, mssg_t message, LexicalType methodType,
+      ClassInfo& info) = 0;
+   virtual void injectVirtualReturningMethod(_ModuleScope& scope, SNode classNode, mssg_t message, ident_t variable, ref_t outputRef) = 0;
 //   virtual void injectVirtualDispatchMethod(SNode classNode, mssg_t message, LexicalType type, ident_t argument) = 0;
 //////   virtual void injectDirectMethodCall(SyntaxWriter& writer, ref_t targetRef, ref_t message) = 0;
 //   virtual void injectDefaultConstructor(_ModuleScope& scope, SNode classNode, ref_t classRef, bool protectedOne) = 0;
@@ -417,10 +416,10 @@ public:
 //   virtual SNode injectTempLocal(SNode node, int size, bool boxingMode) = 0;
 //
 //   virtual void injectVirtualField(SNode classNode, LexicalType sourceType, ref_t sourceArg, int postfixIndex) = 0;
-//
-//   virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
-//   virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
-//   virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
+
+   virtual void generateOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef) = 0;
+   virtual void generateClosedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
+   virtual void generateSealedOverloadListMember(_ModuleScope& scope, ref_t enumRef, ref_t memberRef, ref_t classRef) = 0;
 //   virtual ref_t generateExtensionTemplate(_ModuleScope& scope, ref_t templateRef, size_t argumentLen, 
 //      ref_t* arguments, ident_t ns, ExtensionMap* outerExtensionList) = 0;
 //
@@ -468,7 +467,7 @@ public:
    enum class ExpressionAttribute : uint64_t
    {
       eaNone               = 0x00000000000,
-//      eaNoDebugInfo        = 0x00000000001,
+      eaNoDebugInfo        = 0x00000000001,
       eaNestedNs           = 0x00000000002,
 //      eaIntern             = 0x00000000004,
 //      eaModuleScope        = 0x00000000008,
@@ -499,7 +498,7 @@ public:
 //      eaVirtualExpr        = 0x00010000000,
 //      eaSubj               = 0x00020000000,
 //      eaDirectCall         = 0x00040000000,
-//      eaParameter          = 0x00080000000,
+      eaParameter          = 0x00080000000,
 //      eaLazy               = 0x00100000000,
 //      eaInlineArg          = 0x00200000000,
 //      eaConstExpr          = 0x00400000000,
@@ -650,49 +649,48 @@ public:
 //   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference) = 0;
 //
 ////   virtual bool isDeclared(_ModuleScope& scope, ref_t reference) = 0;
-//
-//   // check if the classes is compatible
-//   virtual bool isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils) = 0;
-//
+
+   // check if the classes is compatible
+   virtual bool __fastcall isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils) = 0;
+
 //   virtual bool isVariable(_ModuleScope& scope, ref_t targetRef) = 0;
    virtual bool __fastcall isValidType(_ModuleScope& scope, ref_t targetRef, bool ignoreUndeclared, bool allowRole) = 0;
-//   virtual bool doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
+   virtual bool __fastcall doesClassExist(_ModuleScope& scope, ref_t targetRef) = 0;
 //   virtual bool isArray(_ModuleScope& scope, ref_t targetRef) = 0;
 //   virtual bool isSealedOrClosed(_ModuleScope& scope, ref_t targetRef) = 0;
 //
 ////   virtual bool isWrapper(ClassInfo& info) = 0;
 ////   virtual ref_t resolvePrimitive(ClassInfo& info, ref_t& element) = 0;
 ////   // check if the class can be used as a fixed-size embeddable array
-//   virtual bool isEmbeddableArray(ClassInfo& info) = 0;
-////   virtual bool isVariable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(ClassInfo& info) = 0;
-//   virtual bool isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
-//   virtual bool isStacksafeArg(ClassInfo& info) = 0;
-//   virtual bool isStacksafeArg(_ModuleScope& scope, ref_t reference) = 0;
+   virtual bool __fastcall isEmbeddableArray(ClassInfo& info) = 0;
+   virtual bool __fastcall isEmbeddable(ClassInfo& info) = 0;
+   virtual bool __fastcall isEmbeddable(_ModuleScope& scope, ref_t reference) = 0;
+   virtual bool __fastcall isStacksafeArg(ClassInfo& info) = 0;
+   virtual bool __fastcall isStacksafeArg(_ModuleScope& scope, ref_t reference) = 0;
 //   virtual bool isMethodAbstract(ClassInfo& info, mssg_t message) = 0;
 //   virtual bool isMethodYieldable(ClassInfo& info, mssg_t message) = 0;
-//   virtual bool isMethodGeneric(ClassInfo& info, mssg_t message) = 0;
+   virtual bool __fastcall isMethodGeneric(ClassInfo& info, mssg_t message) = 0;
 //   virtual bool isMixinMethod(ClassInfo& info, mssg_t message) = 0;
-//   virtual bool isMultiMethod(ClassInfo& info, mssg_t message) = 0;
+   virtual bool __fastcall isMultiMethod(ClassInfo& info, mssg_t message) = 0;
 ////   virtual bool isFunction(ClassInfo& info, ref_t message) = 0;
 ////   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;
 ////   //   virtual bool isDispatcher(ClassInfo& info, ref_t message) = 0;
-//
-//   // class is considered to be a role if it cannot be initiated
-//   virtual bool isRole(ClassInfo& info) = 0;
-//   virtual bool isAbstract(ClassInfo& info) = 0;
+
+   // class is considered to be a role if it cannot be initiated
+   virtual bool __fastcall isRole(ClassInfo& info) = 0;
+   virtual bool __fastcall isAbstract(ClassInfo& info) = 0;
 //   virtual bool validateAutoType(_ModuleScope& scope, ref_t& reference) = 0;
 //
 //   virtual bool isWithEmbeddableDispatcher(_ModuleScope& scope, SNode node) = 0;
-//
-//   // auto generate virtual methods / fields
-//   virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
+
+   // auto generate virtual methods / fields
+   virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
 //   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
 //   virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, mssg_t message,
 //      ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags) = 0;
-//   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
-//      List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info) = 0;
-//   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods) = 0;
+   virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
+      List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info) = 0;
+   virtual void verifyMultimethods(_ModuleScope& scope, SNode node, ClassInfo& info, List<mssg_t>& implicitMultimethods) = 0;
 //   virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, ref_t& reference, 
 //      ref_t elementRef, int tempLocal) = 0;
 //   virtual bool injectImplicitConversion(_CompileScope& scope, SNode& node, _Compiler& compiler, ref_t targetRef, ref_t sourceRef,
@@ -701,24 +699,24 @@ public:
 //   virtual void injectNewOperation(SNode& node, _ModuleScope& scope, int operation, ref_t targetRef, ref_t elementRef) = 0;
 //   virtual void injectInterfaceDispatch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef) = 0;
 //   virtual bool injectConstantConstructor(SNode& node, _ModuleScope& scope, _Compiler& compiler, ref_t targetRef, mssg_t messageRef) = 0;
-//
-//   // auto generate class flags
-//   virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
+
+   // auto generate class flags
+   virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
 //   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
-//
-//   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,
-//      bool& disptacherNotAllowed, bool& emptyStructure) = 0;
+
+   virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,
+      bool& disptacherNotAllowed, bool& emptyStructure) = 0;
 
    // attribute validations
-   virtual bool validateNsAttribute(int attrValue, Visibility& visibility) = 0;
-//   virtual bool validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
-//   virtual bool validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
-//   virtual bool validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
+   virtual bool __fastcall validateNsAttribute(int attrValue, Visibility& visibility) = 0;
+   virtual bool __fastcall validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
+   virtual bool __fastcall validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
+   virtual bool __fastcall validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
 //   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
 //   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility) = 0;
-//   virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints) = 0;
+   virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints) = 0;
 //   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
 //
 //   virtual bool isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage) = 0;

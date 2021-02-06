@@ -4,7 +4,9 @@ __define eps            	 2
 // NOTE : low word should be unique for every key
 __define TOKEN 			 4112
 __define SCOPE_DECLARATION	 4128
-__define EXPRESSION             70160
+__define MESSAGE	         4224
+__define MESSAGE_OP           4264496
+__define EXPRESSION           8458768
 
 __define eof            	 8208
 __define identifier 	 	 8209
@@ -50,10 +52,36 @@ SYMBOL_DECLARATION ->
 	= EXPRESSION
 
 EXPRESSION ->
-        TOKEN
+        TOKEN TI_OPERATIONS
 
 TOKEN ->
 	identifier
+	| reference
+
+TI_OPERATIONS ->
+	L2_OPERATION
+	| OPERATIONS
+
+OPERATIONS ->
+	eps
+
+L2_OPERATION ->
+	. L2_OPERATOR_BODY
+
+L2_OPERATOR_BODY ->
+	MESSAGE MESSAGE_BODY
+
+MESSAGE_BODY ->
+	MESSAGE_OP MESSAGE_PARAMETERS )
+
+MESSAGE_OP ->
+	( 
+
+MESSAGE_PARAMETERS ->
+	eps
+
+MESSAGE ->
+	identifier	
 
 DECLARATION_END ->
 	;
