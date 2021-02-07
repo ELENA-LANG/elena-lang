@@ -50,16 +50,16 @@ void fixJumps(_Memory* code, int labelPosition, Map<int, int>& jumps, int label)
 
 // --- ByteCodeWriter ---
 
-//int ByteCodeWriter :: writeString(ident_t path)
-//{
-//   MemoryWriter writer(&_strings);
-//
-//   int position = writer.Position();
-//
-//   writer.writeLiteral(path);
-//
-//   return position;
-//}
+int ByteCodeWriter :: writeString(ident_t path)
+{
+   MemoryWriter writer(&_strings);
+
+   int position = writer.Position();
+
+   writer.writeLiteral(path);
+
+   return position;
+}
 
 pos_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
 {
@@ -208,13 +208,13 @@ void ByteCodeWriter :: declareMethod(CommandTape& tape, mssg_t message, ref_t so
 //      tape.write(bdLocalInfo, writeString(className));
 //   }
 //}
-//
-//void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
-//{
-//   if (!emptystr(localName))
-//      tape.write(bdLocal, writeString(localName), level);
-//}
-//
+
+void ByteCodeWriter :: declareLocalInfo(CommandTape& tape, ident_t localName, int level)
+{
+   if (!emptystr(localName))
+      tape.write(bdLocal, writeString(localName), level);
+}
+
 //void ByteCodeWriter :: declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame)
 //{
 //   tape.write(includeFrame ? bdIntLocal : bdIntLocalPtr, writeString(localName), level);
@@ -4430,17 +4430,17 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, FlowSco
 //{
 //   saveLength(tape, lxLocalAddress, offset + 1, node.argument);
 //}
-//
-//void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node current)
-//{
-//   LexicalType type = current.type;
-//   switch (type)
-//   {
-//      case lxVariable:
-//         declareLocalInfo(tape,
-//            current.firstChild(lxTerminalMask).identifier(),
-//            current.findChild(lxLevel).argument);
-//         break;
+
+void ByteCodeWriter :: generateDebugInfo(CommandTape& tape, SyntaxTree::Node current)
+{
+   LexicalType type = current.type;
+   switch (type)
+   {
+      case lxVariable:
+         declareLocalInfo(tape,
+            current.firstChild(lxTerminalMask).identifier(),
+            current.findChild(lxLevel).argument);
+         break;
 //      case lxIntVariable:
 //         declareLocalIntInfo(tape,
 //            current.findChild(lxIdentifier/*, lxPrivate*/).identifier(),
@@ -4502,11 +4502,8 @@ void ByteCodeWriter :: generateExpression(CommandTape& tape, SNode node, FlowSco
 //            level, current.findChild(lxClassName).identifier());
 //         break;
 //      }
-////      case lxBreakpoint:
-////         translateBreakpoint(tape, current, false);
-////         break;
-//   }
-//}
+   }
+}
 
 void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 {
@@ -4544,7 +4541,7 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 ////         case lxBreakpoint:
 ////            translateBreakpoint(tape, current, false);
 ////            break;
-//         case lxVariable:
+         case lxVariable:
 //         case lxIntVariable:
 //         case lxLongVariable:
 //         case lxReal64Variable:
@@ -4553,17 +4550,17 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 //         case lxShortsVariable:
 //         case lxIntsVariable:
 //         case lxBinaryVariable:
-//            generateDebugInfo(tape, current);
-//            break;
+            generateDebugInfo(tape, current);
+            break;
 //         case lxYieldDispatch:
 //            generateYieldDispatch(tape, current, scope);
 //            break;
-//         case lxEOP:
-//            scope.debugBlockStarted = /*false*/true;
-//            if (current.firstChild() == lxBreakpoint)
-//               translateBreakpoint(tape, current.findChild(lxBreakpoint), scope);
-//            scope.debugBlockStarted = false;
-//            break;
+         case lxEOP:
+            scope.debugBlockStarted = /*false*/true;
+            if (current.firstChild() == lxBreakpoint)
+               translateBreakpoint(tape, current.findChild(lxBreakpoint), scope);
+            scope.debugBlockStarted = false;
+            break;
 //         case lxCode:
 //         case lxCodeExpression:
 //            // HOTFIX : nested code, due to resend implementation

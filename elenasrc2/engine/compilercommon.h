@@ -670,7 +670,7 @@ public:
 //   virtual bool isMethodAbstract(ClassInfo& info, mssg_t message) = 0;
 //   virtual bool isMethodYieldable(ClassInfo& info, mssg_t message) = 0;
    virtual bool __fastcall isMethodGeneric(ClassInfo& info, mssg_t message) = 0;
-//   virtual bool isMixinMethod(ClassInfo& info, mssg_t message) = 0;
+   virtual bool __fastcall isMixinMethod(ClassInfo& info, mssg_t message) = 0;
    virtual bool __fastcall isMultiMethod(ClassInfo& info, mssg_t message) = 0;
 ////   virtual bool isFunction(ClassInfo& info, ref_t message) = 0;
 ////   virtual bool isMethodEmbeddable(ClassInfo& info, ref_t message) = 0;
@@ -717,8 +717,8 @@ public:
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility) = 0;
    virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints) = 0;
-//   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
-//
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg) = 0;
+
 //   virtual bool isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage) = 0;
 //   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
 //      ref_t* sourceSignatures, size_t len, int& stackSafeAttr) = 0;

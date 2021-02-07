@@ -132,7 +132,7 @@ public:
    virtual bool __fastcall isRole(ClassInfo& info);
    virtual bool __fastcall isAbstract(ClassInfo& info);
    virtual bool __fastcall isMethodGeneric(ClassInfo& info, mssg_t message);
-//   virtual bool isMixinMethod(ClassInfo& info, mssg_t message);
+   virtual bool __fastcall isMixinMethod(ClassInfo& info, mssg_t message);
 //   virtual bool isMethodAbstract(ClassInfo& info, mssg_t message);
 //   virtual bool isMethodYieldable(ClassInfo& info, mssg_t message);
 ////   virtual bool isMethodInternal(ClassInfo& info, ref_t message);
@@ -194,7 +194,7 @@ public:
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility);
    virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints);
-//   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg);
+   virtual bool validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg);
 
    virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
       bool& disptacherNotAllowed, bool& emptyStructure);

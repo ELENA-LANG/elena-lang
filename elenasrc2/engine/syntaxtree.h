@@ -18,8 +18,8 @@ enum LexicalType
 {
    // key attributes
    lxTerminalMask             = 0x002000,
-   lxScopeMask                = 0x800000,   // indicates that the bookmark should be created 
-   lxModifierMask             = 0x400000,   // indicates that the special node should be inserted at the bookmark
+   lxSubScopeMask             = 0x800000,   // indicates that the bookmark should be created 
+   lxSubScopeEndMask          = 0x400000,   // indicates that the special node should be inserted at the bookmark
    lxObjectMask               = 0x010000,
 
    //   lxInvalid                  = -2,
@@ -35,6 +35,7 @@ enum LexicalType
    lxConstructor              = 0x000014,
    lxParent                   = 0x000015,
    lxClassField               = 0x000016,
+   lxMethodParameter          = 0x000019,
    lxStaticMethod             = 0x00001A,
    lxClassImport              = 0x00001D,
 
@@ -51,7 +52,7 @@ enum LexicalType
 //   lxAssign                   = 0x0210A0,
 //   lxTemplateArgs             = 0x0010B0,
 //   lxNestedClass              = 0x0010C0,
-//   lxParameter                = 0x0010D0,
+   lxParameter                = 0x0010D0,
 //   lxPropertyParam            = 0x0010E0, // !!
 //   lxOperator                 = 0x0210F0,
 //   lxStatementDecl            = 0x001100,
@@ -84,6 +85,7 @@ enum LexicalType
    lxConstantString           = 0x010281,   // arg - reference
    lxConstantList             = 0x010282,   // arg - reference
    lxNewFrame                 = 0x000290,   // if argument -1 - than with presaved message
+   lxVariable                 = 0x0002A0,
 
    lxCalling_0                = 0x0103A0,   // calling a method, arg - message
 
@@ -127,7 +129,6 @@ enum LexicalType
 //   lxImport                   = 0x000012,
 //   lxRedirect                 = 0x000017,
 //   lxTemplate                 = 0x000018,
-//   lxMethodParameter          = 0x000019,
 //   lxForward                  = 0x00001B,
 //   lxClassProperty            = 0x00001C,
 //   lxFinalblock               = 0x00001E,
@@ -159,7 +160,6 @@ enum LexicalType
 //   lxInlineArgCall            = 0x0580A4,
 //   lxCreatingClass            = 0x0580E0,   // arg - count
 //   lxCreatingStruct           = 0x0580F0,   // arg - size
-//   lxVariable                 = 0x010100,
 //   lxIntVariable              = 0x010101,
 //   lxIntsVariable             = 0x010102,
 //   lxBytesVariable            = 0x010103,
@@ -263,7 +263,7 @@ enum LexicalType
    lxType                     = 0x000F09,   // arg - reference
    lxClassFlag                = 0x000F0A,   // class fields
    lxCallTarget               = 0x000F0B,   // arg - reference
-//   lxLevel                    = 0x000F0C,
+   lxLevel                    = 0x000F0C,
    lxAllocated                = 0x000F0D,
    lxMessageVariable          = 0x000F0E,   // debug info only
    lxSelfVariable             = 0x000F0F,   // debug info only
@@ -753,34 +753,34 @@ public:
 
          return current;
       }
-//      Node findChild(LexicalType type1, LexicalType type2)
-//      {
-//         Node current = firstChild();
-//      
-//         while (current != lxNone && current != type1) {
-//            if (current == type2)
-//               return current;
-//      
-//            current = current.nextNode();
-//         }
-//      
-//         return current;
-//      }
-//      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3)
-//      {
-//         Node current = firstChild();
-//
-//         while (current != lxNone && current != type1) {
-//            if (current == type2)
-//               return current;
-//            else if (current == type3)
-//               return current;
-//
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
+      Node findChild(LexicalType type1, LexicalType type2)
+      {
+         Node current = firstChild();
+      
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+      
+            current = current.nextNode();
+         }
+      
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
 //      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
 //      {
 //         Node current = firstChild();

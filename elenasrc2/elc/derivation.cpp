@@ -198,19 +198,21 @@ void DerivationWriter :: newNode(LexicalType symbol)
 //   else if (symbol == lxAttributeDecl || symbol == lxStatementDecl || symbol == lxInlineDecl || symbol == lxPropertyDecl) {
 //      _cachingLevel = _level;
 //   }
-
-   _cacheWriter.newNode(symbol);
-
-   if (test(symbol, lxScopeMask)) {
-      // PARSER MAGIC : a bookmark should be created
-      _cacheWriter.newBookmark();
-      _bookmarks.push(_level);
-      _last_bookmark = _level;
-   }
-   else if (test(symbol, lxModifierMask)) {
-      LexicalType injected = (LexicalType)((int)symbol & ~lxModifierMask);
+   if (test(symbol, lxSubScopeEndMask)) {
+      LexicalType injected = (LexicalType)((int)symbol & ~lxSubScopeEndMask);
       _cacheWriter.inject(injected);
    }
+   else {
+      _cacheWriter.newNode(symbol);
+
+      if (test(symbol, lxSubScopeMask)) {
+         // PARSER MAGIC : a bookmark should be created
+         _cacheWriter.newBookmark();
+         _bookmarks.push(_level);
+         _last_bookmark = _level;
+      }
+   }
+   
 }
 
 void DerivationWriter :: closeNode()
@@ -718,13 +720,13 @@ void DerivationWriter :: recognizeMethodMembers(SNode node)
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current) {
-         //case lxParameter:
-         //{
-         //   SNode paramNode = current.lastChild();
-         //   recognizeScopeAttributes(paramNode, 0);
-         //   paramNode.refresh();
-         //   break;
-         //}
+         case lxParameter:
+         {
+            SNode paramNode = current.lastChild();
+            recognizeScopeAttributes(paramNode, 0);
+            //paramNode.refresh();
+            break;
+         }
       }
 
       current = current.nextNode();
@@ -1251,38 +1253,38 @@ void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope
 //   }
    /*else */flushAttributes(writer, node.prevNode(), derivationScope, buffer);
 
-//   // copy method arguments
-//   SNode current = node.firstChild();
-//   while (current != lxNone) {
-//      switch (current) {
-//         case lxParameter:
+   // copy method arguments
+   SNode current = node.firstChild();
+   while (current != lxNone) {
+      switch (current) {
+         case lxParameter:
+         {
+            writer.newNode(lxMethodParameter, current.argument);
+
+            SNode paramNode = current.lastChild();
+            flushAttributes(writer, paramNode, derivationScope, buffer);
+
+            writer.closeNode();
+            break;
+         }
+//         case lxParent:
 //         {
-//            writer.newNode(lxMethodParameter, current.argument);
-//
-//            SNode paramNode = current.lastChild();
-//            generateAttributes(writer, paramNode, derivationScope, buffer);
-//
+//            // COMPILER MAGIC : if it is a complex name
+//            writer.newNode(lxMessage);
+//            SNode identNode = current.findChild(lxToken).firstChild(lxTerminalMask);
+//            copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
 //            writer.closeNode();
 //            break;
 //         }
-////         case lxParent:
-////         {
-////            // COMPILER MAGIC : if it is a complex name
-////            writer.newNode(lxMessage);
-////            SNode identNode = current.findChild(lxToken).firstChild(lxTerminalMask);
-////            copyIdentifier(writer, identNode, derivationScope.ignoreTerminalInfo);
-////            writer.closeNode();
-////            break;
-////         }
-//         default:
-//            // otherwise break the loop
-//            current = SNode();
-//            break;
-//      }
-//
-//      current = current.nextNode();
-//   }
-//
+         default:
+            // otherwise break the loop
+            current = SNode();
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
 //   if (propertyMode) {
 //      writer.newNode(lxReturning);
 //      generateExpressionTree(writer, node.findChild(lxExpression), derivationScope, 0);
@@ -1991,10 +1993,7 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 ////         }
 ////         break;
       default:
-         if (test(current.type, lxModifierMask)) {
-            // skip auxiliary nodes
-         }
-         else if (test(current.type, lxObjectMask)) {
+         if (test(current.type, lxObjectMask)) {
             writer.newNode(current.type);
             flushExpressionTree(writer, current, derivationScope, EXPRESSION_IMPLICIT_MODE);
             writer.closeNode();

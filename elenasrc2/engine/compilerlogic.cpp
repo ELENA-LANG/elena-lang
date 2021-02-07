@@ -606,11 +606,11 @@ bool CompilerLogic :: isAbstract(ClassInfo& info)
 //{
 //   return (info.methodHints.get(Attribute(message, maHint)) & tpMask) == tpPrivate;
 //}
-//
-//bool CompilerLogic :: isMixinMethod(ClassInfo& info, mssg_t message)
-//{
-//   return test(info.methodHints.get(Attribute(message, maHint)), tpMixin);
-//}
+
+bool CompilerLogic :: isMixinMethod(ClassInfo& info, mssg_t message)
+{
+   return test(info.methodHints.get(Attribute(message, maHint)), tpMixin);
+}
 
 bool CompilerLogic :: isMethodGeneric(ClassInfo& info, mssg_t message)
 {
@@ -1511,26 +1511,26 @@ void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, 
    injectOverloadList(scope, info, compiler, classRef);
 }
 
-//bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg)
-//{
-//   switch ((size_t)attrValue) {
-//      case V_WRAPPER:
-//         if (!byRefArg) {
-//            byRefArg = true;
-//            return true;
-//         }
-//         else return false;
-//      case V_ARGARRAY:
-//         if (!paramsArg) {
-//            paramsArg = true;
-//            return true;
-//         }
-//         else return false;
-//      case V_VARIABLE:
-//         return true;
-//   }
-//   return false;
-//}
+bool CompilerLogic :: validateArgumentAttribute(int attrValue, bool& byRefArg, bool& paramsArg)
+{
+   switch ((size_t)attrValue) {
+      case V_WRAPPER:
+         if (!byRefArg) {
+            byRefArg = true;
+            return true;
+         }
+         else return false;
+      case V_ARGARRAY:
+         if (!paramsArg) {
+            paramsArg = true;
+            return true;
+         }
+         else return false;
+      case V_VARIABLE:
+         return true;
+   }
+   return false;
+}
 
 bool CompilerLogic :: validateNsAttribute(int attrValue, Visibility& visibility)
 {

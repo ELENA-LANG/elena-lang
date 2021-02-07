@@ -44,55 +44,55 @@ namespace _ELENA_
 class Compiler : public _Compiler
 {
 public:
-//   struct Parameter
-//   {
-//      int    offset;
-//      ref_t  class_ref;
-//      ref_t  element_ref;
-//      int    size;
-//      bool   unassigned;
-//
-//      Parameter()
-//      {
-//         offset = -1;
-//         class_ref = 0;
-//         element_ref = 0;
-//         size = 0;
-//         unassigned = false;
-//      }
-//      Parameter(int offset)
-//      {
-//         this->offset = offset;
-//         this->class_ref = 0;
-//         this->element_ref = 0;
-//         this->size = 0;
-//         this->unassigned = false;
-//      }
-//      Parameter(int offset, ref_t class_ref)
-//      {
-//         this->offset = offset;
-//         this->class_ref = class_ref;
-//         this->element_ref = 0;
-//         this->size = 0;
-//         this->unassigned = false;
-//      }
-//      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
-//      {
-//         this->offset = offset;
-//         this->class_ref = class_ref;
-//         this->element_ref = element_ref;
-//         this->size = size;
-//         this->unassigned = false;
-//      }
-//      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size, bool unassigned)
-//      {
-//         this->offset = offset;
-//         this->class_ref = class_ref;
-//         this->element_ref = element_ref;
-//         this->size = size;
-//         this->unassigned = unassigned;
-//      }
-//   };
+   struct Parameter
+   {
+      int    offset;
+      ref_t  class_ref;
+      ref_t  element_ref;
+      int    size;
+      bool   unassigned;
+
+      Parameter()
+      {
+         offset = -1;
+         class_ref = 0;
+         element_ref = 0;
+         size = 0;
+         unassigned = false;
+      }
+      Parameter(int offset)
+      {
+         this->offset = offset;
+         this->class_ref = 0;
+         this->element_ref = 0;
+         this->size = 0;
+         this->unassigned = false;
+      }
+      Parameter(int offset, ref_t class_ref)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->element_ref = 0;
+         this->size = 0;
+         this->unassigned = false;
+      }
+      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->element_ref = element_ref;
+         this->size = size;
+         this->unassigned = false;
+      }
+      Parameter(int offset, ref_t class_ref, ref_t element_ref, int size, bool unassigned)
+      {
+         this->offset = offset;
+         this->class_ref = class_ref;
+         this->element_ref = element_ref;
+         this->size = size;
+         this->unassigned = unassigned;
+      }
+   };
 
    // InheritResult
    enum class InheritResult
@@ -211,7 +211,7 @@ public:
       }
    };
 
-//   typedef MemoryMap<ident_t, Parameter>  LocalMap;
+   typedef MemoryMap<ident_t, Parameter>  LocalMap;
    typedef CachedList<ObjectInfo, 5> ArgumentsInfo;
 
 private:
@@ -559,19 +559,19 @@ private:
    struct MethodScope : public Scope
    {
       mssg_t        message;
-//      LocalMap     parameters;
+      LocalMap     parameters;
 //      EAttr        scopeMode;
       int          reserved1;             // defines managed frame size
       int          reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
       int          hints;
-//      ref_t        outputRef;
-//      bool         withOpenArg;
+      ref_t        outputRef;
+      bool         withOpenArg;
 //      bool         classStacksafe;
 //      bool         generic;
-//      bool         mixinFunction;
-//      bool         extensionMode;
+      bool         mixinFunction;
+      bool         extensionMode;
 //      bool         multiMethod;
-//      bool         functionMode;
+      bool         functionMode;
 //      bool         nestedMode;
 ////      bool         subCodeMode;       
 //      bool         abstractMethod;
@@ -580,49 +580,40 @@ private:
 //      bool         targetSelfMode;        // used for script generated methods - self refers to __target
 //      bool         constMode;
 
-//      ref_t getAttribute(MethodAttribute attr, bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-//
-//         return scope->getAttribute(message, attr);
-//      }
-//
-//      ref_t getAttribute(mssg_t attrMessage, MethodAttribute attr, bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-//
-//         return scope->getAttribute(attrMessage, attr);
-//      }
-//
-//      void addAttribute(MethodAttribute attr, ref_t argument, bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-//
-//         scope->addAttribute(message, attr, argument);
-//      }
-//
-////      void setAttribute(MethodAttribute attr, ref_t value, bool ownerClass = true)
-////      {
-////         ClassInfo::Attribute key(message, attr);
-////         ClassScope* scope = (ClassScope*)getScope(ownerClass ? slOwnerClass : slClass);
-////
-////         scope->info.methodHints.exclude(key);
-////         scope->info.methodHints.add(key, value);
-////      }
-//
+      ref_t __fastcall getAttribute(MethodAttribute attr, bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope->getAttribute(message, attr);
+      }
+
+      ref_t getAttribute(mssg_t attrMessage, MethodAttribute attr, bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope->getAttribute(attrMessage, attr);
+      }
+
+      void addAttribute(MethodAttribute attr, ref_t argument, bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         scope->addAttribute(message, attr, argument);
+      }
+
 //      bool isPrivate()
 //      {
 //         return (hints & tpMask) == tpPrivate;
 //      }
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == ScopeLevel::slMethod) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slMethod) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      ref_t getReturningRef(bool ownerClass = true)
 //      {
 //         if (outputRef == INVALID_REF) {
@@ -632,27 +623,27 @@ private:
 //         }
 //         return outputRef;
 //      }
-//
-//      Visibility getClassVisibility(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-//
-//         return scope->visibility;
-//      }
-//
-//      ref_t getClassFlags(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-//
-//         return scope ? scope->info.header.flags : 0;
-//      }
-//      ref_t getClassRef(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
-//
+
+      Visibility __fastcall getClassVisibility(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope->visibility;
+      }
+
+      ref_t __fastcall getClassFlags(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope ? scope->info.header.flags : 0;
+      }
+      ref_t __fastcall getClassRef(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope ? scope->reference : 0;
+      }
+
 //      virtual bool resolveAutoOutput(ref_t reference)
 //      {
 //         if (outputRef == V_AUTO) {
@@ -735,15 +726,15 @@ private:
 //
 //      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == ScopeLevel::slCode) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
-//
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slCode) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
+
 //      mssg_t getMessageID()
 //      {
 //         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
@@ -826,14 +817,14 @@ private:
 //      {
 //         parent->markAsAssigned(object);
 //      }
-//
-//      virtual Scope* getScope(ScopeLevel level)
-//      {
-//         if (level == ScopeLevel::slExpression) {
-//            return this;
-//         }
-//         else return parent->getScope(level);
-//      }
+
+      virtual Scope* getScope(ScopeLevel level)
+      {
+         if (level == ScopeLevel::slExpression) {
+            return this;
+         }
+         else return parent->getScope(level);
+      }
 
       int newTempLocal();
       int newTempLocalAddress();
@@ -1016,13 +1007,12 @@ private:
 
    ref_t __fastcall resolveMultimethod(ClassScope& scope, mssg_t messageRef);
 
-//   virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode);
+   virtual ref_t resolvePrimitiveReference(_CompileScope& scope, ref_t argRef, ref_t elementRef, bool declarationMode);
 
    ref_t resolvePrimitiveArray(_CompileScope& scope, ref_t templateRef, ref_t elementRef, bool declarationMode);
 
-//   ref_t resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode);
-////   ref_t resolveReferenceTemplate(Scope& scope, ref_t elementRef, bool declarationMode);
-//
+   ref_t resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode);
+
 //   ref_t resolveConstantObjectReference(_CompileScope& scope, ObjectInfo object);
 //   ref_t resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode, 
 //      bool unboxWrapper = true);
@@ -1081,8 +1071,8 @@ private:
 //                                     bool withExtension, int& stackSafeAttr);
    mssg_t mapMessage(SNode node, ExprScope& scope/*, bool extensionCall*/);
    mssg_t mapMethodName(MethodScope& scope, int paramCount, ref_t actionRef, int flags,
-      IdentifierString& actionStr/*, ref_t* signature, size_t signatureLen, 
-      bool withoutWeakMessages, bool noSignature*/);
+      IdentifierString& actionStr, ref_t* signature, size_t signatureLen, 
+      bool withoutWeakMessages, bool noSignature);
 
 //   size_t resolveArraySize(SNode node, Scope& scope);
 
@@ -1127,8 +1117,8 @@ private:
 //   ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo info);
 //   ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo param1, ObjectInfo param2);
 
-   ref_t compileMessageParameters(SNode node/*, ExprScope& scope, EAttr mode, ref_t expectedSignRef, 
-      bool& variadicOne, bool& inlineArg*/);
+   ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, /*ref_t expectedSignRef,
+      bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments);
 
    ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, /*ref_t exptectedRef, */EAttr mode);
    ObjectInfo compileMessage(SyntaxWriter& writer, /*SNode& node, ExprScope& scope, ObjectInfo target, */mssg_t messageRef,
@@ -1201,8 +1191,8 @@ private:
 
    ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
 
-//   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
-   void declareArgumentList(SNode node, MethodScope& scope/*, bool withoutWeakMessages*/, bool declarationMode);
+   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
+   void declareArgumentList(SNode node, MethodScope& scope, bool withoutWeakMessages, bool declarationMode);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
 //   bool declareActionScope(ClassScope& scope, SNode argNode, MethodScope& methodScope, EAttr mode);
 //

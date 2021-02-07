@@ -149,8 +149,8 @@ class ByteCodeWriter
 //   void declareSafeCatch(CommandTape& tape, SyntaxTree::Node finallyNode, int retLabel, FlowScope& scope);
    void doCatch(CommandTape& tape);
 //   void declareAlt(CommandTape& tape);
-//
-//   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
+
+   void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -348,7 +348,7 @@ class ByteCodeWriter
 //   //   void generateStructExpression(CommandTape& tape, SyntaxTree::Node node);
    void generateObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
-//   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
+   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode);
 //   void generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
@@ -360,8 +360,8 @@ class ByteCodeWriter
 
 public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
-//   int writeString(ident_t path);
-//
+   int writeString(ident_t path);
+
    void generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, 
       bool(*cond)(LexicalType)/*, bool extStackEvenMode*/);
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
