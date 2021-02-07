@@ -1364,72 +1364,72 @@ bool CompilerLogic :: defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_
    return true;
 }
 
-//int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable)
-//{
-//   if (reference == V_BINARYARRAY && elementRef != 0) {
-//      variable = true;
-//
-//      return -defineStructSizeVariable(scope, elementRef, 0, variable);
-//   }
-//   else if (reference == V_WRAPPER && elementRef != 0) {
-//      return defineStructSizeVariable(scope, elementRef, 0, variable);
-//   }
-//   else if (reference == V_OBJARRAY && elementRef != 0) {
-//      return -defineStructSizeVariable(scope, elementRef, 0, variable);
-//   }
-//   else if (reference == V_BINARY && elementRef != 0) {
-//      return defineStructSizeVariable(scope, elementRef, 0, variable);
-//   }
-//   else if (reference == V_INT32ARRAY) {
-//      variable = true;
-//
-//      return -4;
-//   }
-//   else if (reference == V_INT16ARRAY) {
-//      variable = true;
-//
-//      return -2;
-//   }
-//   else if (reference == V_INT8ARRAY) {
-//      variable = true;
-//
-//      return -1;
-//   }
-//   else {
-//      auto sizeInfo = scope.cachedSizes.get(reference);
-//      if (!sizeInfo.value1) {
-//         ClassInfo classInfo;
-//         if (defineClassInfo(scope, classInfo, reference)) {
-//            sizeInfo.value1 = defineStructSize(classInfo, variable);
-//            sizeInfo.value2 = variable;
-//
-//            scope.cachedSizes.add(reference, sizeInfo);
-//
-//            return sizeInfo.value1;
-//         }
-//         else return 0;
-//      }
-//      else {
-//         variable = sizeInfo.value2;
-//
-//         return sizeInfo.value1;
-//      }
-//   }
-//}
-//
-//int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
-//{
-//   variable = !test(info.header.flags, elReadOnlyRole);
-//   
-//   if (isEmbeddable(info)) {
-//      return info.size;
-//   }
-//   else if (isEmbeddableArray(info)) {
-//      return info.size;
-//   }
-//
-//   return 0;
-//}
+int CompilerLogic :: defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable)
+{
+   if (reference == V_BINARYARRAY && elementRef != 0) {
+      variable = true;
+
+      return -defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
+   else if (reference == V_WRAPPER && elementRef != 0) {
+      return defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
+   else if (reference == V_OBJARRAY && elementRef != 0) {
+      return -defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
+   else if (reference == V_BINARY && elementRef != 0) {
+      return defineStructSizeVariable(scope, elementRef, 0, variable);
+   }
+   else if (reference == V_INT32ARRAY) {
+      variable = true;
+
+      return -4;
+   }
+   else if (reference == V_INT16ARRAY) {
+      variable = true;
+
+      return -2;
+   }
+   else if (reference == V_INT8ARRAY) {
+      variable = true;
+
+      return -1;
+   }
+   else {
+      auto sizeInfo = scope.cachedSizes.get(reference);
+      if (!sizeInfo.value1) {
+         ClassInfo classInfo;
+         if (defineClassInfo(scope, classInfo, reference)) {
+            sizeInfo.value1 = defineStructSize(classInfo, variable);
+            sizeInfo.value2 = variable;
+
+            scope.cachedSizes.add(reference, sizeInfo);
+
+            return sizeInfo.value1;
+         }
+         else return 0;
+      }
+      else {
+         variable = sizeInfo.value2;
+
+         return sizeInfo.value1;
+      }
+   }
+}
+
+int CompilerLogic :: defineStructSize(ClassInfo& info, bool& variable)
+{
+   variable = !test(info.header.flags, elReadOnlyRole);
+   
+   if (isEmbeddable(info)) {
+      return info.size;
+   }
+   else if (isEmbeddableArray(info)) {
+      return info.size;
+   }
+
+   return 0;
+}
 
 void CompilerLogic :: tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode)
 {
@@ -1723,51 +1723,51 @@ bool CompilerLogic :: validateMethodAttribute(int& attrValue, bool& explicitMode
    }
 }
 
-//bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& attrs)
-//{
-//   switch ((size_t)attrValue)
-//   {
-//      case V_EMBEDDABLE:
-//         attrs.isEmbeddable = true;
+bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& attrs)
+{
+   switch ((size_t)attrValue)
+   {
+      case V_EMBEDDABLE:
+         attrs.isEmbeddable = true;
+         attrValue = -1;
+         return true;
+      case V_STATIC:
+         attrValue = lxStaticAttr;
+         return true;
+//      case V_SEALED:
 //         attrValue = -1;
+//         attrs.isSealedAttr = true;
 //         return true;
-//      case V_STATIC:
-//         attrValue = lxStaticAttr;
-//         return true;
-////      case V_SEALED:
-////         attrValue = -1;
-////         attrs.isSealedAttr = true;
-////         return true;
-//      case V_CONST:
+      case V_CONST:
+         attrValue = -1;
+         attrs.isConstAttr = true;
+         return true;
+//      case V_ATTRIBUTE:
 //         attrValue = -1;
+//         attrs.isClassAttr = true;
 //         attrs.isConstAttr = true;
 //         return true;
-////      case V_ATTRIBUTE:
-////         attrValue = -1;
-////         attrs.isClassAttr = true;
-////         attrs.isConstAttr = true;
-////         return true;
-//      case V_FLOAT:
-//      case V_BINARY:
-//      case V_INTBINARY:
-//      case V_PTRBINARY:
-//      case V_STRING:
-//      case V_MESSAGE:
-//      case V_SUBJECT:
-//      case V_EXTMESSAGE:
-//      case V_SYMBOL:
-//         attrValue = 0;
-//         return true;
-////      case 0:
-////         // ignore idle attribute
-//      case V_FIELD:
-//         attrValue = -1;
-//         return true;
-//      default:
-//         return false;
-//   }
-//}
-//
+      case V_FLOAT:
+      case V_BINARY:
+      case V_INTBINARY:
+      case V_PTRBINARY:
+      case V_STRING:
+      case V_MESSAGE:
+      case V_SUBJECT:
+      case V_EXTMESSAGE:
+      case V_SYMBOL:
+         attrValue = 0;
+         return true;
+//      case 0:
+//         // ignore idle attribute
+      case V_FIELD:
+         attrValue = -1;
+         return true;
+      default:
+         return false;
+   }
+}
+
 //bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable)
 //{
 //   switch (attrValue) {
@@ -1888,81 +1888,70 @@ bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, boo
    else return attrValue == 0;
 }
 
-//void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
-//{
-//   // if it is a primitive field
-//   if (info.fields.Count() == 1) {
-//      switch (classRef) {
-//         case V_DWORD:
-//         case V_INT32:
-//            info.header.flags |= elDebugDWORD;
-//            break;
-//         case V_PTR32:
-//            info.header.flags |= elDebugPTR;
-//            break;
-//         case V_INT64:
-//            info.header.flags |= elDebugQWORD;
-//            break;
-//         case V_REAL64:
-//            info.header.flags |= elDebugReal64;
-//            break;
-//////         case V_PTR:
-//////            info.header.flags |= (elDebugPTR | elWrapper);
-//////            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));
-//////            return info.size == 4;
-//         case V_SUBJECT:
-//            info.header.flags |= elDebugSubject | elSubject;
-//            break;
-//         case V_MESSAGE:
-//            info.header.flags |= (elDebugMessage | elMessage);
-//            break;
-//         case V_EXTMESSAGE:
-//            info.header.flags |= (elDebugMessage | elExtMessage);
-//            break;
-//         case V_SYMBOL:
-//            info.header.flags |= (elDebugReference | elSymbol);
-//            break;
-//         default:
-//            break;
-//      }
-//   }
-//}
-//
-////ref_t CompilerLogic :: retrievePrimitiveReference(_ModuleScope&, ClassInfo& info)
-////{
-////   if (test(info.header.flags, elWrapper)) {
-////      ClassInfo::FieldInfo field = info.fieldTypes.get(0);
-////      if (isPrimitiveRef(field.value1))
-////         return field.value1;
-////   }
-////
-////   return 0;
-////}
-//
-//ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne)
-//{
-//   ClassInfo info;
-//   if (!defineClassInfo(scope, info, elementRef, true))
-//      return 0;
-//
-//   if (isEmbeddable(info) && structOne) {
-//      if (isCompatible(scope, V_INT32, elementRef, true)) {
-//         switch (info.size) {
-//            case 4:
-//               return V_INT32ARRAY;
-//            case 2:
-//               return V_INT16ARRAY;
-//            case 1:
-//               return V_INT8ARRAY;
-//            default:
-//               break;
-//         }
-//      }
-//      return V_BINARYARRAY;
-//   }
-//   else return V_OBJARRAY;
-//}
-//
+void CompilerLogic :: tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info)
+{
+   // if it is a primitive field
+   if (info.fields.Count() == 1) {
+      switch (classRef) {
+         case V_DWORD:
+         case V_INT32:
+            info.header.flags |= elDebugDWORD;
+            break;
+         case V_PTR32:
+            info.header.flags |= elDebugPTR;
+            break;
+         case V_INT64:
+            info.header.flags |= elDebugQWORD;
+            break;
+         case V_REAL64:
+            info.header.flags |= elDebugReal64;
+            break;
+////         case V_PTR:
+////            info.header.flags |= (elDebugPTR | elWrapper);
+////            info.fieldTypes.add(0, ClassInfo::FieldInfo(V_PTR, 0));
+////            return info.size == 4;
+         case V_SUBJECT:
+            info.header.flags |= elDebugSubject | elSubject;
+            break;
+         case V_MESSAGE:
+            info.header.flags |= (elDebugMessage | elMessage);
+            break;
+         case V_EXTMESSAGE:
+            info.header.flags |= (elDebugMessage | elExtMessage);
+            break;
+         case V_SYMBOL:
+            info.header.flags |= (elDebugReference | elSymbol);
+            break;
+         default:
+            break;
+      }
+   }
+}
+
+ref_t CompilerLogic :: definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne)
+{
+   ClassInfo info;
+   if (!defineClassInfo(scope, info, elementRef, true))
+      return 0;
+
+   if (isEmbeddable(info) && structOne) {
+      if (isCompatible(scope, V_INT32, elementRef, true)) {
+         switch (info.size) {
+            case 4:
+               return V_INT32ARRAY;
+            case 2:
+               return V_INT16ARRAY;
+            case 1:
+               return V_INT8ARRAY;
+            default:
+               break;
+         }
+      }
+      return V_BINARYARRAY;
+   }
+   else return V_OBJARRAY;
+}
+
 void CompilerLogic :: validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods, 
    bool& disptacherNotAllowed, bool& emptyStructure)
 {

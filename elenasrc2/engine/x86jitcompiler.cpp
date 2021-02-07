@@ -141,7 +141,7 @@ void (*commands[0x100])(int opcode, x86JITScope& scope) =
    &compilePush, &loadNOp, &compilePush, &loadFPOp, &loadIndexOp, &loadFOp, &compilePushFI, &loadFPOp,
    &loadIndexOp, &loadFOp, &compilePushSI, &loadIndexOp, &loadFPOp, &compilePushF, &loadSPOp, &compileReserve,
 
-   &loadIndexOp, &compileACopyF, &compilePushF, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileNop,
+   &loadIndexOp, &compileACopyF, &compilePushF, &loadIndexOp, &loadFPOp, &loadFOp, &loadFOp, &compileAllocI,
    &loadFOp, &loadFOp, &loadIndexOp, &loadIndexOp, &compileASaveR, &loadNOp, &loadFOp, &loadNOp,
 
    &compilePopN, &compileAllocI, &loadROp, &compileMovV, &compileDShiftN, &compileDAndN, &loadNOp, &compileDOrN,
@@ -1732,34 +1732,48 @@ void _ELENA_::compileMCopy(int, x86JITScope& scope)
 
 void _ELENA_ :: compileAllocI(int opcode, x86JITScope& scope)
 {
-   switch (scope.argument) {
-      case 0:
-         break;
-      case 1:
-         scope.code->writeByte(0x68);
-         scope.code->writeDWord(0);
-         break;
-      case 2:
-         scope.code->writeByte(0x68);
-         scope.code->writeDWord(0);
-         scope.code->writeByte(0x68);
-         scope.code->writeDWord(0);
-         break;
-      default:
-      {
-         // sub esp, __arg1 * 4
-         int arg = scope.argument << 2;
-         if (arg < 0x80) {
-            scope.code->writeWord(0xEC83);
-            scope.code->writeByte(scope.argument << 2);
-         }
-         else {
-            scope.code->writeWord(0xEC81);
-            scope.code->writeDWord(scope.argument << 2);
-         }
+   if (opcode == bcXAllocI) {
+      // sub esp, __arg1 * 4
+      int arg = scope.argument << 2;
+      if (arg < 0x80) {
+         scope.code->writeWord(0xEC83);
+         scope.code->writeByte(scope.argument << 2);
+      }
+      else {
+         scope.code->writeWord(0xEC81);
+         scope.code->writeDWord(scope.argument << 2);
+      }
+   }
+   else {
+      switch (scope.argument) {
+         case 0:
+            break;
+         case 1:
+            scope.code->writeByte(0x68);
+            scope.code->writeDWord(0);
+            break;
+         case 2:
+            scope.code->writeByte(0x68);
+            scope.code->writeDWord(0);
+            scope.code->writeByte(0x68);
+            scope.code->writeDWord(0);
+            break;
+         default:
+         {
+            // sub esp, __arg1 * 4
+            int arg = scope.argument << 2;
+            if (arg < 0x80) {
+               scope.code->writeWord(0xEC83);
+               scope.code->writeByte(scope.argument << 2);
+            }
+            else {
+               scope.code->writeWord(0xEC81);
+               scope.code->writeDWord(scope.argument << 2);
+            }
 
-         loadNOp(opcode, scope);
-         break;
+            loadNOp(opcode, scope);
+            break;
+         }
       }
    }
 }

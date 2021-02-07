@@ -125,18 +125,18 @@ class ByteCodeWriter
    void writeClass(ref_t reference, ByteCodeIterator& it, _ModuleScope& scope);
 
 //   void declareInitializer(CommandTape& tape, ref_t reference);
-//   void declareClass(CommandTape& tape, ref_t reference);
+   void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
-//   void declareIdleMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef);
-//   void declareAbstractMethod(CommandTape& tape, mssg_t message);
-//   void declareMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef, int reserved, int allocated,
-//      bool withPresavedMessage, bool withNewFrame = true);
+   void declareIdleMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef);
+   void declareAbstractMethod(CommandTape& tape, mssg_t message);
+   void declareMethod(CommandTape& tape, mssg_t message, ref_t sourcePathRef, int reserved, int allocated,
+      bool withPresavedMessage, bool withNewFrame = true);
 //   //void declareExternalBlock(CommandTape& tape);
 //   void excludeFrame(CommandTape& tape);
 //   void includeFrame(CommandTape& tape, bool withThreadSafeNop);
 ////   void declareVariable(CommandTape& tape, int value);
-//   void allocateStack(CommandTape& tape, int count);
+   void allocateStack(CommandTape& tape, int count);
 //   int declareLoop(CommandTape& tape, bool threadFriendly);  // thread friendly means the loop contains safe point
 //   void declareThenBlock(CommandTape& tape);
 //   void declareThenElseBlock(CommandTape& tape);
@@ -160,13 +160,13 @@ class ByteCodeWriter
 //   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level);
 //   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareSelfInfo(CommandTape& tape, int level);
-//   void declareMessageInfo(CommandTape& tape, ident_t message);
+   void declareSelfInfo(CommandTape& tape, int level);
+   void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
    void declareBlock(CommandTape& tape);
 
-//   void openFrame(CommandTape& tape, int reserved);
-//   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
+   void openFrame(CommandTape& tape, int reserved);
+   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
 //   void newStructure(CommandTape& tape, int size, ref_t reference);
 //   void newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference);
 //
@@ -227,33 +227,17 @@ class ByteCodeWriter
 //   void endLoop(CommandTape& tape);
 //   void endLoop(CommandTape& tape, ref_t comparingRef);
 //   //void endExternalBlock(CommandTape& tape, bool idle = false);
-//   void exitMethod(CommandTape& tape, int count, int reserved, bool withFrame = true);
-//   void endMethod(CommandTape& tape, int argCount, int reserved, bool withFrame = true);
-//   void endIdleMethod(CommandTape& tape);
-//   void endClass(CommandTape& tape);
+   void exitMethod(CommandTape& tape, int reserved, bool withFrame = true);
+   void endMethod(CommandTape& tape, int reserved, bool withFrame = true);
+   void endIdleMethod(CommandTape& tape);
+   void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
 //   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
-//   void closeFrame(CommandTape& tape, int reserved);
-//
-////   void assignBaseTo(CommandTape& tape, LexicalType target);
-////
-////   void assignInt(CommandTape& tape, LexicalType target, int offset, bool& accRequired);
-////   void assignLong(CommandTape& tape, LexicalType target, int offset, bool& accRequired);
-////   void assignShort(CommandTape& tape, LexicalType target, int offset, bool& accRequired);
-////   void assignByte(CommandTape& tape, LexicalType target, int offset, bool& accRequired);
-////   void assignStruct(CommandTape& tape, LexicalType target, int offset, int size);
-////   void saveInt(CommandTape& tape, LexicalType target, int argument);
-////   void saveReal(CommandTape& tape, LexicalType target, int argument);
-////   void saveLong(CommandTape& tape, LexicalType target, int argument);
-////   void copyInt(CommandTape& tape, int offset);
-////   void copyShort(CommandTape& tape, int offset);
-////   void copyByte(CommandTape& tape, int offset);
-////   void copyStructure(CommandTape& tape, int offset, int size);
-////   void copyStructureField(CommandTape& tape, int sour_offset, int dest_offset, int size);
-////   void saveSubject(CommandTape& tape);
+   void closeFrame(CommandTape& tape, int reserved);
+
 //   void saveIntConstant(CommandTape& tape, LexicalType target, int targetArg, int value);
 //   void saveLength(CommandTape& tape, LexicalType target, int targetArg, int value);
 //   void doIntOperation(CommandTape& tape, int operator_id, int localOffset);
@@ -291,8 +275,8 @@ class ByteCodeWriter
 //   void saveToLocal(CommandTape& tape, int size, int argument);
 //   void copyToLocal(CommandTape& tape, int size, int argument);
 //   void copyFromLocalAddress(CommandTape& tape, int size, int argument);
-//
-//   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
+
+   void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
 //   void saveObject(CommandTape& tape, SNode node);
 ////   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal, int mode);
 //
@@ -365,28 +349,26 @@ class ByteCodeWriter
    void generateObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
-//   void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode);
 //   void generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//
-//   void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef, bool extStackEvenMode);
-//   void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
-//
+
+   void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef/*, bool extStackEvenMode*/);
+   void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
+
 //   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
-//
-//////   void generateTemplateMethods(CommandTape& tape, SNode root);
 
 public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
 //   int writeString(ident_t path);
 //
-//   void generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, 
-//      bool(*cond)(LexicalType), bool extStackEvenMode);
+   void generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, 
+      bool(*cond)(LexicalType)/*, bool extStackEvenMode*/);
 //   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
 //   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);
    void generateConstantList(SNode node, _Module* module, ref_t reference);
-//   void generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument);
+   void generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument);
 
    void saveTape(CommandTape& tape, _ModuleScope& scope);
 

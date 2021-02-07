@@ -145,8 +145,8 @@ class DerivationWriter : public _DerivationWriter
    void recognizeScope();
    void recognizeDefinition(SNode scopeNode);
    void recognizeScopeAttributes(SNode node, int mode);
-   void recognizeClassMebers(SNode node);
-//   void recognizeMethodMebers(SNode node);
+   void recognizeClassMembers(SNode node);
+   void recognizeMethodMembers(SNode node);
 
 // //  bool recognizeMetaScope(SNode node);
 
@@ -171,11 +171,11 @@ class DerivationWriter : public _DerivationWriter
 ////   //void generateMetaTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void flushSymbolTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
    void flushClassTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool nested = false*/);
-//   void generateMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, bool functionMode, bool propertyMode, SyntaxTree& buffer);
+   void flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool functionMode, bool propertyMode*/, SyntaxTree& buffer);
 ////   // returns true if in-place init found
 //   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
-//   void generateCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
+   void flushCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
    void flushTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope/*, bool rootMode*/);
    void flushTypeAttribute(SyntaxWriter& writer, SNode terminal, ref_t typeRef/*, int dimensionCounter*/, 
       Scope& derivationScope);

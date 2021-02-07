@@ -50,7 +50,7 @@ const char* _fnOpcodes[256] =
    "pushn", "movn", "pushr", "equalfi", "pushai", "loadf", "pushfi", "loadfi",
    "loadsi", "savef", "pushsi", "savesi", "savefi", "pushf", "pushsip", "reserve",
 
-   "seti", "movfip", "pushfip", "storesi", "storefi", "naddf", "nmulf", OPCODE_UNKNOWN,
+   "seti", "movfip", "pushfip", "storesi", "storefi", "naddf", "nmulf", "xalloci",
    "nsubf", "ndivf", "loadi", "savei", "storer", "xor", "clonef", "xload",
 
    "freei", "alloci", "xcreate", "movv", "shl", "and", "inc", "or",

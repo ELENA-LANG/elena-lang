@@ -275,9 +275,9 @@ ELENA byte codes (or ecodes)
 
  Stack operations:
  -----------------                                           
- alloci i                   - sp+=i;
+ alloci i                   - sp+=i; reserve and fill with zeros; i is aligned to 2 in x86-64 mode
 
- freei i                    - sp-=i; 
+ freei i                    - sp-=i; i is aligned to 2 in x86-64 mode 
  
  popa                       - acc <= [sp] ; sp--
  
@@ -305,6 +305,8 @@ ELENA byte codes (or ecodes)
 
  pushsi i                   - [sp+i] => [sp+1] ; sp++
  
+ xalloci i                   - sp+=i; ; reserve stack; i is aligned to 2 in x86-64 mode
+
 
  Frame operations:
  -----------------              

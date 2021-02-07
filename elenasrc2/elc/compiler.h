@@ -561,8 +561,8 @@ private:
       mssg_t        message;
 //      LocalMap     parameters;
 //      EAttr        scopeMode;
-//      int          reserved1;             // defines managed frame size
-//      int          reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
+      int          reserved1;             // defines managed frame size
+      int          reserved2;             // defines unmanaged frame size (excluded from GC frame chain)
       int          hints;
 //      ref_t        outputRef;
 //      bool         withOpenArg;
@@ -578,11 +578,8 @@ private:
 //      bool         yieldMethod;
 //      bool         embeddableRetMode;
 //      bool         targetSelfMode;        // used for script generated methods - self refers to __target
-//////      bool         dispatchMode;
 //      bool         constMode;
-//
-//      int          preallocated;
-//
+
 //      ref_t getAttribute(MethodAttribute attr, bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
@@ -690,29 +687,29 @@ private:
 //
 //      YieldScope(MethodScope* parent);
 //   };
-//
-//   // - CodeScope -
-//   struct CodeScope : public Scope
-//   {
+
+   // - CodeScope -
+   struct CodeScope : public Scope
+   {
 //      SNode       parentCallNode; // HOTFIX : used to implement closure unboxing, should refer to the closest message call
 //
 //      // scope local variables
 //      LocalMap     locals;
 //      bool         genericMethod;
 //      bool         withRetStatement;
-//
-//      int reserved1, allocated1; // managed scope stack allocation
-//      int reserved2, allocated2; // unmanaged scope stack allocation
-//
-//      int newLocal()
-//      {
-//         allocated1++;
-//         if (allocated1 > reserved1)
-//            reserved1 = allocated1;
-//
-//         return allocated1;
-//      }
-//
+
+      int reserved1, allocated1; // managed scope stack allocation
+      int reserved2, allocated2; // unmanaged scope stack allocation
+
+      int newLocal()
+      {
+         allocated1++;
+         if (allocated1 > reserved1)
+            reserved1 = allocated1;
+
+         return allocated1;
+      }
+
 //      void mapLocal(ident_t local, int level)
 //      {
 //         locals.add(local, Parameter(level));
@@ -781,47 +778,47 @@ private:
 //
 //         return scope ? scope->embeddableRetMode : false;
 //      }
-//
-//      void syncStack(MethodScope* methodScope)
-//      {
-//         if (reserved1 < allocated1) {
-//            reserved1 = allocated1;
-//         }
-//         if (reserved2 < allocated2) {
-//            reserved2 = allocated2;
-//         }
-//
-//         if (reserved1 > methodScope->reserved1)
-//            methodScope->reserved1 = reserved1;
-//
-//         if (reserved2 > methodScope->reserved2)
-//            methodScope->reserved2 = reserved2;
-//      }
-//
-//      void syncStack(CodeScope* codeScope)
-//      {
-//         if (reserved1 > codeScope->reserved1)
-//            codeScope->reserved1 = reserved1;
-//
-//         if (reserved2 > codeScope->reserved2)
-//            codeScope->reserved2 = reserved2;
-//      }
-//
+
+      void syncStack(MethodScope* methodScope)
+      {
+         if (reserved1 < allocated1) {
+            reserved1 = allocated1;
+         }
+         if (reserved2 < allocated2) {
+            reserved2 = allocated2;
+         }
+
+         if (reserved1 > methodScope->reserved1)
+            methodScope->reserved1 = reserved1;
+
+         if (reserved2 > methodScope->reserved2)
+            methodScope->reserved2 = reserved2;
+      }
+
+      void syncStack(CodeScope* codeScope)
+      {
+         if (reserved1 > codeScope->reserved1)
+            codeScope->reserved1 = reserved1;
+
+         if (reserved2 > codeScope->reserved2)
+            codeScope->reserved2 = reserved2;
+      }
+
 //      CodeScope(SourceScope* parent);
-//      CodeScope(MethodScope* parent);
+      CodeScope(MethodScope* parent);
 //      CodeScope(CodeScope* parent);
 //      CodeScope(YieldScope* parent);
-//   };
+   };
 
    struct ExprScope : public Scope
    {
 //      SNode exprNode;
 //
 //      bool ignoreDuplicates; // used for code templates, should be applied only to the statement
-//
-//      int  tempAllocated1;
-//      int  tempAllocated2;
-//
+
+      int  tempAllocated1;
+      int  tempAllocated2;
+
 //      Map<ClassInfo::Attribute, int> tempLocals;
 //      Map<int, int> originals;
 //
@@ -837,10 +834,10 @@ private:
 //         }
 //         else return parent->getScope(level);
 //      }
-//
-//      int newTempLocal();
-//      int newTempLocalAddress();
-//
+
+      int newTempLocal();
+      int newTempLocalAddress();
+
 //      mssg_t getMessageID()
 //      {
 //         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
@@ -892,7 +889,7 @@ private:
 //      ObjectInfo mapMember(ident_t identifier);
 
       ExprScope(SourceScope* parent);
-//      ExprScope(CodeScope* parent);
+      ExprScope(CodeScope* parent);
    };
 
 //   // --- ResendScope ---
@@ -989,9 +986,9 @@ private:
 
    ref_t retrieveImplicitIdentifier(NamespaceScope& scope, ident_t identifier, bool referenceOne, bool innermost);
 
-//   void writeMessageInfo(SNode node, _ModuleScope& scope, mssg_t messageRef);
-//   void initialize(ClassScope& scope, MethodScope& methodScope);
-//
+   void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, mssg_t messageRef);
+   void initialize(ClassScope& scope, MethodScope& methodScope);
+
 //   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, mssg_t message,
 //      bool ignoreSelf = false);
 //
@@ -1047,12 +1044,12 @@ private:
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed);
 //   void inheritClassConstantList(_ModuleScope& scope, ref_t sourceRef, ref_t targetRef);
-//
-//   // NOTE : the method is used to set template pseudo variable
-//   void declareProcedureDebugInfo(SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
+
+   // NOTE : the method is used to set template pseudo variable
+   void declareProcedureDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf/*, bool withTargetSelf*/);
 //   void declareCodeDebugInfo(SNode node, MethodScope& scope);
-//
-//   int resolveSize(SNode node, Scope& scope);
+
+   int resolveSize(SNode node, Scope& scope);
    ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
 ////   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
 
@@ -1062,13 +1059,12 @@ private:
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false);
    void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode);
-//   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
+   void generateClassFields(SNode member, ClassScope& scope, bool singleField);
 //   void validateClassFields(SNode node, ClassScope& scope);
 //
-////   //void declareMetaAttributes(SNode node, NamespaceScope& nsScope);
    void declareSymbolAttributes(SNode node, SymbolScope& scope, bool declarationMode, bool ignoreType);
    void declareClassAttributes(SNode node, ClassScope& scope, bool visibilityOnly);
-//   void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
+   void declareFieldAttributes(SNode member, ClassScope& scope, _CompilerLogic::FieldAttributes& attrs);
    void declareVMT(SNode member, ClassScope& scope, bool& withConstructors, bool& withDefaultConstructor);
 
 ////   ref_t mapTypeAttribute(SNode member, Scope& scope);
@@ -1165,8 +1161,7 @@ private:
 //   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
 //   ObjectInfo compilePropAssigning(SNode node, ExprScope& scope, ObjectInfo target);
-////   ObjectInfo compileWrapping(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, bool callMode);
-//   ObjectInfo compileRootExpression(SNode node, CodeScope& scope, ref_t targetRef, EAttr mode);
+   ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t targetRef*/, EAttr mode);
 //   ObjectInfo compileRetExpression(SNode node, CodeScope& scope, EAttr mode);
 //   void compileEmbeddableRetExpression(SNode node, ExprScope& scope);
 //
@@ -1203,9 +1198,9 @@ private:
 //   void compileResendExpression(SNode node, CodeScope& scope, bool multiMethod/*, bool extensionMode*/);
 //   void compileDispatchExpression(SNode node, CodeScope& scope, bool withGenericMethods);
 //   void compileMultidispatch(SNode node, CodeScope& scope, ClassScope& classScope);
-//
-//   ObjectInfo compileCode(SNode node, CodeScope& scope);
-//
+
+   ObjectInfo compileCode(SyntaxWriter& writer, SNode node, CodeScope& scope);
+
 //   void declareArgumentAttributes(SNode node, Scope& scope, ref_t& classRef, ref_t& elementRef, bool declarationMode);
    void declareArgumentList(SNode node, MethodScope& scope/*, bool withoutWeakMessages*/, bool declarationMode);
 //   ref_t declareInlineArgumentList(SNode node, MethodScope& scope, bool declarationMode);
@@ -1215,14 +1210,14 @@ private:
 //   void compileExpressionMethod(SNode member, MethodScope& scope, bool lazyMode);
 //   void compileDispatcher(SNode node, MethodScope& scope, LexicalType methodType, 
 //      bool withGenericMethods = false, bool withOpenArgGenerics = false);
-//
-//   void beginMethod(SNode node, MethodScope& scope);
-//   void endMethod(SNode node, MethodScope& scope);
-//   void compileMethodCode(SNode node, SNode body, MethodScope& scope, CodeScope& codeScope);
-//
+
+   void beginMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
+   void endMethod(SyntaxWriter& writer, MethodScope& scope);
+   void compileMethodCode(SyntaxWriter& writer, SNode body, MethodScope& scope, CodeScope& codeScope);
+
 //   void predefineMethod(SNode node, ClassScope& classScope, MethodScope& scope);
 //   void compileEmbeddableMethod(SNode node, MethodScope& scope);
-//   void compileMethod(/*SyntaxWriter& writer, */SNode node, MethodScope& scope);
+   void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //   void compileAbstractMethod(SNode node, MethodScope& scope);
 //   void compileConstructor(SNode node, MethodScope& scope, ClassScope& classClassScope);
 //   void compileInitializer(SNode node, MethodScope& scope);
@@ -1241,21 +1236,21 @@ private:
 //   void compilePreloadedExtensionCode(ClassScope& scope);
 //
 ////   void compilePreloadedCode(_ModuleScope& scope, SNode node);
-   void compileSymbolCode(ClassScope& scope);
+   void compileSymbolCode(SyntaxTree& expressionTree, ClassScope& scope);
 
 //   void compileAction(SNode& node, ClassScope& scope, SNode argNode, EAttr mode);
 //   void compileNestedVMT(SNode& node, InlineClassScope& scope);
 
-   void compileVMT(SNode node, ClassScope& scope, bool exclusiveMode = false, bool ignoreAutoMultimethods = false);
+   void compileVMT(SyntaxWriter& writer, SNode node, ClassScope& scope, bool exclusiveMode = false, bool ignoreAutoMultimethods = false);
 //   void compileClassVMT(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 ////   void compileForward(SNode ns, NamespaceScope& scope);
 //
 //   void compileModuleExtensionDispatcher(NamespaceScope& scope);
 //   ref_t compileExtensionDispatcher(NamespaceScope& scope, mssg_t genericMessageRef);
-//
-//   void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
-//   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isStatic, 
-//      bool isConst, bool isArray);
+
+   void generateClassField(ClassScope& scope, SNode node, _CompilerLogic::FieldAttributes& attrs, bool singleField);
+   void generateClassStaticField(ClassScope& scope, SNode current, ref_t fieldRef, ref_t elementRef, bool isStatic, 
+      bool isConst, bool isArray);
 
    void generateClassFlags(ClassScope& scope, SNode node);
 //   void generateParamNameInfo(ClassScope& scope, SNode node, mssg_t message);
@@ -1270,7 +1265,7 @@ private:
    void generateClassImplementation(SNode node, ClassScope& scope);
 
    void compileClassDeclaration(SNode node, ClassScope& scope);
-   void compileClassImplementation(SNode node, ClassScope& scope);
+   void compileClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& scope);
 //   void compileClassClassDeclaration(SNode node, ClassScope& classClassScope, ClassScope& classScope);
 //   void compileClassClassImplementation(SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);

@@ -169,9 +169,9 @@ enum MethodHint
 class _ProjectManager
 {
 public:
-//   virtual ident_t getManinfestName() = 0;
-//   virtual ident_t getManinfestVersion() = 0;
-//   virtual ident_t getManinfestAuthor() = 0;
+   virtual ident_t getManinfestName() = 0;
+   virtual ident_t getManinfestVersion() = 0;
+   virtual ident_t getManinfestAuthor() = 0;
 
    virtual void printInfo(const char* msg, ident_t value) = 0;
 
@@ -248,8 +248,8 @@ struct _ModuleScope
    // cached paths
    SymbolMap         savedPaths;
 
-//   // cached requests
-//   Map<ref_t, Pair<int, bool>> cachedSizes;
+   // cached requests
+   Map<ref_t, Pair<int, bool>> cachedSizes;
 
    AttributeMap        attributes;
 
@@ -364,7 +364,7 @@ struct _ModuleScope
    }
 
    _ModuleScope()
-      : attributes(0), savedPaths(INVALID_REF)//, cachedSizes(Pair<int,bool>(0, false))
+      : attributes(0), savedPaths(INVALID_REF), cachedSizes(Pair<int,bool>(0, false))
    {
       project = nullptr;
       debugModule = module = nullptr;
@@ -628,12 +628,12 @@ public:
    // retrieve the class info / size
    virtual bool __fastcall defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
 
-//   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
-//   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
-//   virtual int defineStructSize(ClassInfo& info, bool& variable) = 0;
-//
-//   virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
-//
+   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable) = 0;
+   virtual int __fastcall defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef) = 0;
+   virtual int __fastcall defineStructSize(ClassInfo& info, bool& variable) = 0;
+
+   virtual ref_t __fastcall definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
+
 //   // retrieve the call type
 //   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result) = 0;
 //
@@ -702,7 +702,7 @@ public:
 
    // auto generate class flags
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode) = 0;
-//   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
+   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info) = 0;
 
    virtual void validateClassDeclaration(_ModuleScope& scope, ClassInfo& info, bool& withAbstractMethods,
       bool& disptacherNotAllowed, bool& emptyStructure) = 0;
@@ -712,7 +712,7 @@ public:
    virtual bool __fastcall validateClassAttribute(int& attrValue, Visibility& visibility) = 0;
    virtual bool __fastcall validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool __fastcall validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
-//   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
+   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
 //   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility) = 0;

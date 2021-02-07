@@ -83,14 +83,14 @@ public:
 
    virtual bool __fastcall defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
-//   virtual int defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef)
-//   {
-//      bool dummy = false;
-//      return defineStructSizeVariable(scope, reference, elementRef, dummy);
-//   }
-//   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable);
-//   virtual int defineStructSize(ClassInfo& info, bool& variable);
-//
+   virtual int __fastcall defineStructSize(_ModuleScope& scope, ref_t reference, ref_t elementRef)
+   {
+      bool dummy = false;
+      return defineStructSizeVariable(scope, reference, elementRef, dummy);
+   }
+   virtual int defineStructSizeVariable(_ModuleScope& scope, ref_t reference, ref_t elementRef, bool& variable);
+   virtual int __fastcall defineStructSize(ClassInfo& info, bool& variable);
+
 ////   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info);
 //
 //   virtual mssg_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message);
@@ -100,13 +100,7 @@ public:
 ////   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
 //   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand);
 //   virtual bool resolveBranchOperation(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t& reference);
-//   virtual ref_t definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne);
-//
-////   virtual bool isDeclared(_ModuleScope& scope, ref_t reference)
-////   {
-////      ClassInfo info;
-////      return defineClassInfo(scope, info, reference, true);
-////   }
+   virtual ref_t __fastcall definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne);
 
    virtual bool __fastcall isCompatible(_ModuleScope& scope, ref_t targetRef, ref_t sourceRef, bool ignoreNils);
    virtual bool __fastcall isEmbeddableArray(ClassInfo& info);
@@ -189,13 +183,13 @@ public:
 //   virtual void injectInterfaceDispatch(_ModuleScope& scope, _Compiler& compiler, SNode node, ref_t parentRef);
 
    virtual void tweakClassFlags(_ModuleScope& scope, _Compiler& compiler, ref_t classRef, ClassInfo& info, bool classClassMode);
-//   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
+   virtual void tweakPrimitiveClassFlags(ref_t classRef, ClassInfo& info);
 
    virtual bool __fastcall validateNsAttribute(int attrValue, Visibility& visibility);
    virtual bool __fastcall validateClassAttribute(int& attrValue, Visibility& visibility);
    virtual bool __fastcall validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool __fastcall validateImplicitMethodAttribute(int& attrValue, bool complexName);
-//   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
+   virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
 //   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility);
