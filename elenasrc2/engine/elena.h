@@ -893,7 +893,7 @@ inline pos_t getArgCount(mssg_t message)
    return argCount;
 }
 
-inline ref_t getAction(mssg_t message)
+inline ref_t __fastcall getAction(mssg_t message)
 {
    pos_t argCount;
    ref_t action, flags;

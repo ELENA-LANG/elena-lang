@@ -1768,12 +1768,12 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
    }
 }
 
-//bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable)
-//{
-//   switch (attrValue) {
-//      case 0:
-//         // HOTFIX : recognize idle attributes
-//         return true;
+bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes/*, bool& newVariable*/)
+{
+   switch (attrValue) {
+      case 0:
+         // HOTFIX : recognize idle attributes
+         return true;
 //      //case V_AUTOSIZE:
 //      //   attributes.include(EAttr::eaAutoSize);
 //      //   return true;
@@ -1784,9 +1784,9 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
 //      case V_CONVERSION:
 //         attributes.include(EAttr::eaCast);
 //         return true;
-//      case V_NEWOP:
-//         attributes.include(EAttr::eaNewOp);
-//         return true;
+      case V_NEWOP:
+         attributes.include(EAttr::eaNewOp);
+         return true;
 //      case V_FORWARD:
 //         attributes.include(EAttr::eaForward);
 //         return true;
@@ -1844,10 +1844,10 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
 //      case V_PREVIOUS:
 //         attributes.include(EAttr::eaPreviousScope);
 //         return true;
-//      default:
-//         return false;
-//   }
-//}
+      default:
+         return false;
+   }
+}
 
 bool CompilerLogic :: validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
    Visibility& visibility)

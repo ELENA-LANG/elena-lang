@@ -166,18 +166,16 @@ class ByteCodeWriter
    void declareBlock(CommandTape& tape);
 
    void openFrame(CommandTape& tape, int reserved);
-   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage);
-//   void newStructure(CommandTape& tape, int size, ref_t reference);
+   void newFrame(CommandTape& tape, int reserved, int allocated, bool withPresavedMessage, bool withPresavedAcc);
+   void newStructure(CommandTape& tape, int size, ref_t reference);
 //   void newDynamicStructure(CommandTape& tape, int itemSize, ref_t reference);
-//
-//   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
-////   void newVariable(CommandTape& tape, ref_t reference, LexicalType field, ref_t argument = 0);
+
+   void newObject(CommandTape& tape, int fieldCount, ref_t reference);
 //   void newDynamicObject(CommandTape& tape, ref_t reference);
-////   void copyDynamicObject(CommandTape& tape, bool unsafeMode, bool swapMode);
 //
 //   void popObject(CommandTape& tape, LexicalType sourceType);
-//
-//   void clearObject(CommandTape& tape, int fieldCount);
+
+   void clearObject(CommandTape& tape, int fieldCount);
 //   void clearDynamicObject(CommandTape& tape);
 //   void unboxArgList(CommandTape& tape, bool arrayMode);
 //
@@ -185,12 +183,10 @@ class ByteCodeWriter
 //   void releaseArgList(CommandTape& tape);
 //
 //   void setSubject(CommandTape& tape, ref_t subject);
-//
-////   void callMethod(CommandTape& tape, int vmtOffset, int paramCount);
-//   void callResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode, bool withValidattion = true*/);
-////   void callInitMethod(CommandTape& tape, ref_t reference, ref_t message, bool withValidattion = true);
-//   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode*/);
-//
+
+   void callResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode, bool withValidattion = true*/);
+   void callVMTResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode*/);
+
 //   void doMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
 //   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
 //   void doGenericHandler(CommandTape& tape);
@@ -277,7 +273,7 @@ class ByteCodeWriter
 //   void copyFromLocalAddress(CommandTape& tape, int size, int argument);
 
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
-//   void saveObject(CommandTape& tape, SNode node);
+   void saveObject(CommandTape& tape, SNode node);
 ////   void saveObjectIfChanged(CommandTape& tape, LexicalType type, ref_t argument, int checkLocal, int mode);
 //
 //   int saveExternalParameters(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode);
@@ -287,7 +283,7 @@ class ByteCodeWriter
    void pushObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode);
 //   void pushObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
    void loadObject(CommandTape& tape, LexicalType type, ref_t argument, FlowScope& scope, int mode);
-//   void loadObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
+   void loadObject(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void pushIntConstant(CommandTape& tape, int value);
 //   void pushIntValue(CommandTape& tape);
 //
@@ -328,7 +324,7 @@ class ByteCodeWriter
 //   void generateLooping(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateBranching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
+   void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateByRefAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
@@ -350,7 +346,7 @@ class ByteCodeWriter
    void generateExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
    void generateDebugInfo(CommandTape& tape, SyntaxTree::Node current);
    void generateCodeBlock(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode);
+   void generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode);
 //   void generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef/*, bool extStackEvenMode*/);

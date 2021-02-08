@@ -471,10 +471,10 @@ public:
       eaNestedNs           = 0x00000000002,
 //      eaIntern             = 0x00000000004,
 //      eaModuleScope        = 0x00000000008,
-//      eaNewOp              = 0x00000000010,
+      eaNewOp              = 0x00000000010,
 //      eaSilent             = 0x00000000020,
-//      eaRootSymbol         = 0x00000000040,
-//      eaRoot               = 0x00000000080,
+      eaRootSymbol         = 0x000000000C0,
+      eaRoot               = 0x00000000080,
 //      eaInlineExpr         = 0x00000000100,
 //      eaCast               = 0x00000000200,
 //      eaNoPrimitives       = 0x00000000400,
@@ -499,6 +499,7 @@ public:
 //      eaSubj               = 0x00020000000,
 //      eaDirectCall         = 0x00040000000,
       eaParameter          = 0x00080000000,
+      eaTarget             = 0x00080000040,
 //      eaLazy               = 0x00100000000,
 //      eaInlineArg          = 0x00200000000,
 //      eaConstExpr          = 0x00400000000,
@@ -553,17 +554,17 @@ public:
 
       operator const ExpressionAttribute () const { return attrs; }
 
-      static bool test(ExpressionAttribute attrs, ExpressionAttribute mask)
+      static bool __fastcall test(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
          return ((uint64_t)attrs & (uint64_t)mask) == (uint64_t)mask;
       }
 
-      static bool testany(ExpressionAttribute attrs, ExpressionAttribute mask)
+      static bool __fastcall testany(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
          return ((uint64_t)attrs & (uint64_t)mask) != (uint64_t)0;
       }
 
-      static ExpressionAttribute exclude(ExpressionAttribute attrs, ExpressionAttribute mask)
+      static ExpressionAttribute __fastcall exclude(ExpressionAttribute attrs, ExpressionAttribute mask)
       {
          return (ExpressionAttribute)((uint64_t)attrs & ~(uint64_t)mask);
       }
@@ -713,7 +714,7 @@ public:
    virtual bool __fastcall validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool __fastcall validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
-//   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
+   virtual bool __fastcall validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes/*, bool& newVariable*/) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility) = 0;
    virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints) = 0;

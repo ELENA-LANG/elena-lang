@@ -190,7 +190,7 @@ public:
    virtual bool __fastcall validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool __fastcall validateImplicitMethodAttribute(int& attrValue, bool complexName);
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
-//   virtual bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable);
+   virtual bool __fastcall validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes/*, bool& newVariable*/);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility);
    virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints);

@@ -181,8 +181,8 @@ class DerivationWriter : public _DerivationWriter
       Scope& derivationScope);
    void flushAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
 //   void generateTemplateAttributes(SyntaxWriter& writer, SNode node, Scope& derivationScope);
-//   void generateExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory, 
-//      int dimensionCounter, bool templateArgMode = false/*, bool onlyAttributes = false*/);
+   void flushExpressionAttribute(SyntaxWriter& writer, SNode node, Scope& derivationScope, ref_t& previousCategory/*, 
+      int dimensionCounter, bool templateArgMode = false*/);
    void flushExpressionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, int mode = 0);
    void flushExpressionNode(SyntaxWriter& writer, SNode& current,/*bool& first, bool& expressionExpected, */Scope& derivationScope);
 //   void generateCollectionTree(SyntaxWriter& writer, SNode node, Scope& derivationScope);
