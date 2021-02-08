@@ -2580,10 +2580,15 @@ mssg_t Compiler :: mapMessage(SNode node, ExprScope& scope, /*bool extensionCall
    }
 
    if (messageStr.Length() == 0) {
-      actionFlags |= FUNCTION_MESSAGE;
+      if (newOpCall) {
+         messageStr.copy(CONSTRUCTOR_MESSAGE);
+      }
+      else {
+         actionFlags |= FUNCTION_MESSAGE;
 
-      // if it is an implicit message
-      messageStr.copy(newOpCall ? CONSTRUCTOR_MESSAGE : INVOKE_MESSAGE);
+         // if it is an implicit message
+         messageStr.copy(INVOKE_MESSAGE);
+      }
    }
 
    if (test(actionFlags, FUNCTION_MESSAGE))
@@ -9781,11 +9786,11 @@ void Compiler :: compileSymbolImplementation(SyntaxTree& expressionTree, SNode n
    writer.closeNode();
    writer.closeNode();
 
-   if (codeScope.allocated1 > 0 || codeScope.allocated2 > 0) {
+   if (codeScope.reserved1 > 0 || codeScope.reserved2 > 0) {
       SNode root = expressionTree.readRoot();
       
-      root.appendNode(lxAllocated, codeScope.allocated1);
-      root.appendNode(lxReserved, codeScope.allocated2);
+      root.appendNode(lxAllocated, codeScope.reserved1);
+      root.appendNode(lxReserved, codeScope.reserved2);
    }
 
 //   analizeSymbolTree(expression, scope);

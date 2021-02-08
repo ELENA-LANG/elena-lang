@@ -498,8 +498,8 @@ void ByteCodeWriter :: newFrame(CommandTape& tape, int reserved, int allocated, 
       tape.write(bcSaveF, -4);
    }
 
+   allocateStack(tape, allocated);
    if (withPresavedAcc) {
-      allocateStack(tape, allocated);
       tape.write(bcStoreFI, 1);
    }
 }
