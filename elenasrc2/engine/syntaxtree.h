@@ -83,15 +83,30 @@ enum LexicalType
    lxClassSymbol              = 0x010250,   // arg - reference
    lxConstantSymbol           = 0x010260,   // arg - reference
    lxCurrent                  = 0x010270,   // arg - offset
+   lxConstantInt              = 0x010280,   // arg - reference
    lxConstantString           = 0x010281,   // arg - reference
    lxConstantList             = 0x010282,   // arg - reference
+   lxConstantWideStr          = 0x010283,   // arg - reference
+   lxConstantChar             = 0x010284,   // arg - reference
+   lxConstantLong             = 0x010285,   // arg - reference
+   lxConstantReal             = 0x010286,   // arg - reference
    lxNewFrame                 = 0x000290,   // if argument -1 - than with presaved message
    lxVariable                 = 0x0002A0,
+   lxIntVariable              = 0x0002A1,
+   lxIntsVariable             = 0x0002A2,
+   lxBytesVariable            = 0x0002A3,
+   lxShortsVariable           = 0x0002A4,
+   lxBinaryVariable           = 0x0002A5,
+   lxParamsVariable           = 0x0002A6,
+   lxLongVariable             = 0x0002A7,
+   lxReal64Variable           = 0x0002A8,
    lxLocal                    = 0x0102B0,   // arg - offset
    lxSelfLocal                = 0x0102B1,
+   lxLocalAddress             = 0x0102B2,   // arg - offset
    lxCreatingClass            = 0x0302C0,   // arg - count
    lxCreatingStruct           = 0x0302D0,   // arg - size
    lxAssigning                = 0x0302E0,   // an assigning expression, arg - size
+   lxCopying                  = 0x0302E1,
    lxTempLocal                = 0x0102F0,
    lxAssigningOp              = 0x431300,
    lxAssigningExpression      = 0x031300,
@@ -166,17 +181,7 @@ enum LexicalType
 //   lxSymbolReference          = 0x058060,
 //   lxImporting                = 0x018090,
 //   lxInlineArgCall            = 0x0580A4,
-//   lxIntVariable              = 0x010101,
-//   lxIntsVariable             = 0x010102,
-//   lxBytesVariable            = 0x010103,
-//   lxShortsVariable           = 0x010104,
-//   lxBinaryVariable           = 0x010105,
-//   lxParamsVariable           = 0x010106,
-//   lxLongVariable             = 0x010107,
-//   lxReal64Variable           = 0x010108,
-//   lxLocalAddress             = 0x018112,   // arg - offset
 //   lxBlockLocalAddr           = 0x018114, // arg - offset
-//   lxCopying                  = 0x058121,
 //   lxByRefAssigning           = 0x058122,
 //   lxSaving                   = 0x058123,
 //   lxCondCopying              = 0x058124,
@@ -201,11 +206,6 @@ enum LexicalType
 //   lxGenericResending         = 0x058191,   // resending a generic message
 //   lxDirectResending          = 0x058192,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
 //   lxSDirectResending         = 0x058193,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
-//   lxConstantInt              = 0x0181A0,   // arg - reference
-//   lxConstantWideStr          = 0x0181A3,   // arg - reference
-//   lxConstantChar             = 0x0181A4,   // arg - reference
-//   lxConstantLong             = 0x0181A5,   // arg - reference
-//   lxConstantReal             = 0x0181A6,   // arg - reference
 //   lxMessageConstant          = 0x0181A7, // arg - rererence
 //   lxSubjectConstant          = 0x0181A8, // arg - reference
 //   lxExtMessageConstant       = 0x0181A9, // arg -reference
@@ -274,7 +274,7 @@ enum LexicalType
 //   lxTemplateParam            = 0x000F12,
    lxSize                     = 0x000F13,
    lxReserved                 = 0x000F14,
-//   lxIntValue                 = 0x000F16,   // arg - integer value
+   lxIntValue                 = 0x000F16,   // arg - integer value
 //   lxTemplateIdentParam       = 0x000F17,
    lxArrayType                = 0x000F18,
    lxMember                   = 0x000F19,  // a collection member, arg - offset
@@ -283,7 +283,7 @@ enum LexicalType
 //   lxBookmark                 = 0x000F1C,
 //   lxBookmarkReference        = 0x000F1D,
 //   lxInternalRef              = 0x000F1E,
-//   lxClassName                = 0x000F1F, // arg - identifier
+   lxClassName                = 0x000F1F, // arg - identifier
 //   lxIfValue                  = 0x000F20, // arg - reference
 //   lxElseValue                = 0x000F21, // arg - reference
 //   lxTemplateNameParam        = 0x000F22,
@@ -439,25 +439,25 @@ public:
 //
 //         return current;
 //      }
-//
-//      Node firstSubNodeMask()
-//      {
-//         Node current = firstChild();
-//         if (current == lxExpression) {
-//            return current.firstSubNodeMask();
-//         }
-//         else return current;
-//      }
-//
-//      Node findSubNodeMask(LexicalType mask)
-//      {
-//         Node current = firstChild(mask);
-//         if (current == lxExpression) {
-//            return current.findSubNodeMask(mask);
-//         }
-//         else return current;
-//      }
-//
+
+      Node firstSubNodeMask()
+      {
+         Node current = firstChild();
+         if (current == lxExpression) {
+            return current.firstSubNodeMask();
+         }
+         else return current;
+      }
+
+      Node findSubNodeMask(LexicalType mask)
+      {
+         Node current = firstChild(mask);
+         if (current == lxExpression) {
+            return current.findSubNodeMask(mask);
+         }
+         else return current;
+      }
+
 //      Node findSubNode(LexicalType type)
 //      {
 //         Node current = firstChild();

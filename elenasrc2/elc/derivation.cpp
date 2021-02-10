@@ -1669,13 +1669,13 @@ void DerivationWriter :: flushExpressionAttribute(SyntaxWriter& writer, SNode cu
    //bool allowProperty = false;
 
    //if (!templateArgMode) {
-   //   SNode assignNode = current.nextNode().nextNode();
+      SNode assignNode = current.nextNode().nextNode();
       //// HOTFIX : skip the dimension token
       //for (int i = 0; i < dimensionCounter; i++) {
       //   assignNode = assignNode.nextNode();
       //}
 
-   //   allowType = assignNode != lxToken;
+      allowType = assignNode != lxToken;
    //}
    //else allowType = true;
    
@@ -1962,17 +1962,17 @@ void DerivationWriter :: flushExpressionNode(SyntaxWriter& writer, SNode& curren
 //         //                  the one with parameters should be handled in default case
 //         generateClosureTree(writer, current, derivationScope);
 //         break;
-//      case lxInteger:
-//      case lxHexInteger:
-//      case lxLiteral:
-//      case lxWide:
-//      case lxCharacter:
-//      case lxMetaConstant:
-//      case lxLong:
-//      case lxReal:
-//      case lxExplicitConst:
-//         generateIdentifier(writer, current, derivationScope);
-//         break;
+      case lxInteger:
+      case lxHexInteger:
+      case lxLiteral:
+      case lxWide:
+      case lxCharacter:
+      case lxMetaConstant:
+      case lxLong:
+      case lxReal:
+      case lxExplicitConst:
+         flushIdentifier(writer, current, derivationScope);
+         break;
 ////      default:
 ////         if (isTerminal(current.type)) {
 ////            generateTokenExpression(writer, current, derivationScope, true);

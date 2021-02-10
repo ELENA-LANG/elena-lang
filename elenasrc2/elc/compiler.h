@@ -1082,9 +1082,9 @@ private:
 
 //   void compileSwitch(SNode node, ExprScope& scope);
 
-   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo/*, int size, bool binaryArray, 
-                                    int& variableArg, ident_t& className*/);
-   void declareVariable(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t typeRef/*, bool dynamicArray*/, bool canBeIdle);
+   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
+                                    int& variableArg, ident_t& className);
+   void declareVariable(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t typeRef, bool canBeIdle);
 
 //   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);
 //   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
@@ -1135,9 +1135,9 @@ private:
 //   void recognizeTerminal(SNode& node, ObjectInfo info, ExprScope& scope, EAttr mode);
 //
 //   ObjectInfo mapMetaField(ident_t token);
-//
-//   ObjectInfo mapIntConstant(ExprScope& scope, int value);
-//   ObjectInfo mapRealConstant(ExprScope& scope, double val);
+
+   ObjectInfo mapIntConstant(ExprScope& scope, int value);
+   ObjectInfo mapRealConstant(ExprScope& scope, double val);
 
    ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
 
@@ -1173,9 +1173,9 @@ private:
 
    void importClassMembers(SNode classNode, SNode importNode, NamespaceScope& scope);
 
-//   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
+   int allocateStructure(bool bytearray, int& allocatedSize, int& reserved);
 //   int allocateStructure(SNode node, int& size);
-//   bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
+   bool allocateStructure(CodeScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 //   bool allocateTempStructure(ExprScope& scope, int size, bool binaryArray, ObjectInfo& exprOperand);
 //
 //   ObjectInfo compileExternalCall(SNode node, ExprScope& scope, ref_t expectedRef, EAttr mode);

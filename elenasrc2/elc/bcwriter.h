@@ -151,15 +151,15 @@ class ByteCodeWriter
 //   void declareAlt(CommandTape& tape);
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
+   void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
 //   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
-//   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
-//   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level);
-//   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
+   void declareLocalByteArrayInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalShortArrayInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalIntArrayInfo(CommandTape& tape, ident_t localName, int level);
+   void declareLocalParamsInfo(CommandTape& tape, ident_t localName, int level);
    void declareSelfInfo(CommandTape& tape, int level);
    void declareMessageInfo(CommandTape& tape, ident_t message);
    void declareBreakpoint(CommandTape& tape, int row, int disp, int length, int stepType);
@@ -235,7 +235,7 @@ class ByteCodeWriter
    void closeFrame(CommandTape& tape, int reserved);
 
 //   void saveIntConstant(CommandTape& tape, LexicalType target, int targetArg, int value);
-//   void saveLength(CommandTape& tape, LexicalType target, int targetArg, int value);
+   void saveLength(CommandTape& tape, LexicalType target, int targetArg, int value);
 //   void doIntOperation(CommandTape& tape, int operator_id, int localOffset);
 //   void doIntOperation(CommandTape& tape, int operator_id, int localOffset, int immValue);
 //   void doIntBoolOperation(CommandTape& tape, int operator_id);
@@ -266,10 +266,10 @@ class ByteCodeWriter
 //   void loadFieldAddress(CommandTape& tape, int size, int argument);
 //   void copyFieldAddress(CommandTape& tape, int size, int argument, FlowScope& scope);
 //   void copyToFieldAddress(CommandTape& tape, int size, int argument);
-//   void copyToLocalAddress(CommandTape& tape, int size, int argument);
+   void copyToLocalAddress(CommandTape& tape, int size, int argument);
 //   void saveToLocalAddress(CommandTape& tape, int size, int argument);
 //   void saveToLocal(CommandTape& tape, int size, int argument);
-//   void copyToLocal(CommandTape& tape, int size, int argument);
+   void copyToLocal(CommandTape& tape, int size, int argument);
 //   void copyFromLocalAddress(CommandTape& tape, int size, int argument);
 
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
@@ -294,11 +294,11 @@ class ByteCodeWriter
 //
 ////   void saveUnboxingVar(CommandTape& tape, SNode member, bool& accTrarget, bool& accPresaving, int& presavedCount);
 ////   void loadUnboxingVar(CommandTape& tape, SNode current, int paramCount, int& presavedCount);
-//
-//   void copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope, bool condCopying);
-//
-//   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
-//
+
+   void copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope/*, bool condCopying*/);
+
+   void generateBinary(CommandTape& tape, SyntaxTree::Node node, int offset);
+
 //   void generateBoolLogicOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
 //   void generateNilOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
@@ -326,7 +326,7 @@ class ByteCodeWriter
 //   void generateSwitching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateByRefAssigningExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
+   void generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateIndexLoadingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateIndexSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
