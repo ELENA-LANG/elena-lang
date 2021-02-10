@@ -1330,12 +1330,12 @@ void DerivationWriter :: flushCodeTree(SyntaxWriter& writer, SNode node, Scope& 
    SNode current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-//         case lxExpression:
-//            generateExpressionTree(writer, current, derivationScope);
-//            break;
-//         case lxCode:
-//            generateCodeTree(writer, current, derivationScope);
-//            break;
+         case lxExpression:
+            flushExpressionTree(writer, current, derivationScope);
+            break;
+         //case lxCode:
+         //   generateCodeTree(writer, current, derivationScope);
+         //   break;
 //         case lxReturning:
 ////         case lxExtension:
 //            writer.newNode(current.type, current.argument);

@@ -845,11 +845,11 @@ void ByteCodeWriter :: jumpIfNotEqual(CommandTape& tape, ref_t comparingRef, boo
    else tape.write(bcElseR, jumpToEnd ? baFirstLabel : baCurrentLabel, comparingRef | mskConstantRef);
 }
 
-//void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
-//{
-//   // jump labEnd
-//   tape.write(bcJump, label);
-//}
+void ByteCodeWriter :: gotoEnd(CommandTape& tape, PseudoArg label)
+{
+   // jump labEnd
+   tape.write(bcJump, label);
+}
 
 void ByteCodeWriter :: endCatch(CommandTape& tape)
 {
@@ -2154,7 +2154,7 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcPushR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-//      case lxSelfLocal:
+      case lxSelfLocal:
       case lxTempLocal:
          // pushfi index
          tape.write(bcPushFI, argument);
@@ -2289,7 +2289,7 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcMovR, argument | defineConstantMask(type));
          break;
       case lxLocal:
-//      case lxSelfLocal:
+      case lxSelfLocal:
       case lxTempLocal:
          tape.write(bcPeekFI, argument);
          break;
@@ -2368,7 +2368,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
 {
    switch (type) {
       case lxLocal:
-//      case lxSelfLocal:
+      case lxSelfLocal:
       case lxTempLocal:
          // storefi index
          tape.write(bcStoreFI, argument);
@@ -3238,19 +3238,13 @@ void ByteCodeWriter :: generateCallExpression(CommandTape& tape, SNode node, Flo
    scope.clear();
 }
 
-//void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, FlowScope& scope)
-//{
-//   generateExpression(tape, node, scope/*, ACC_REQUIRED*/);
-//
-//   gotoEnd(tape, baFirstLabel);
-//}
-//
-////inline bool isAssignOp(SNode source)
-////{
-////   return test(source.type, lxPrimitiveOpMask) && (IsExprOperator(source.argument) || (source.argument == REFER_OPERATOR_ID && source.type != lxArrOp && source.type != lxArgArrOp) ||
-////      (IsShiftOperator(source.argument) && (source.type == lxIntOp || source.type == lxLongOp)));
-////}
-//
+void ByteCodeWriter :: generateReturnExpression(CommandTape& tape, SNode node, FlowScope& scope)
+{
+   generateExpression(tape, node, scope/*, ACC_REQUIRED*/);
+
+   gotoEnd(tape, baFirstLabel);
+}
+
 //SyntaxTree::Node ByteCodeWriter :: loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode)
 //{
 //   SNode current = node.firstChild(lxObjectMask);
@@ -4340,9 +4334,9 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxPrimArrBoxableExpression:
 //         throw InternalError("Unboxed expression");
 //         break;
-//      case lxReturning:
-//         generateReturnExpression(tape, node, scope);
-//         break;
+      case lxReturning:
+         generateReturnExpression(tape, node, scope);
+         break;
 //      case lxExtIntConst:
 //         if (stackOp) {
 //            pushIntConstant(tape, node.findChild(lxIntValue).argument);
@@ -4646,11 +4640,11 @@ void ByteCodeWriter :: generateMethodDebugInfo(CommandTape& tape, SyntaxTree::No
          case lxMessageVariable:
             declareMessageInfo(tape, current.identifier());
             break;
-//         case lxVariable:
-//            declareLocalInfo(tape,
-//               current.firstChild(lxTerminalMask).identifier(),
-//               current.findChild(lxLevel).argument);
-//            break;
+         case lxVariable:
+            declareLocalInfo(tape,
+               current.firstChild(lxTerminalMask).identifier(),
+               current.findChild(lxLevel).argument);
+            break;
          case lxSelfVariable:
             declareSelfInfo(tape, current.argument);
             break;

@@ -86,11 +86,11 @@ inline ident_t __fastcall findSourceRef(SNode node)
 ////   EmbeddableOp(maEmbeddableEval2, 3, EVAL_MESSAGE_ID),
 //   EmbeddableOp(maEmbeddableNew, -1/*, 0*/) 
 //};
-//
-//// --- CompilerLogic ---
-//
-//CompilerLogic :: CompilerLogic()
-//{
+
+// --- CompilerLogic ---
+
+CompilerLogic :: CompilerLogic()
+{
 //   // nil
 //   operators.add(OperatorInfo(EQUAL_OPERATOR_ID, V_NIL, 0, lxNilOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTEQUAL_OPERATOR_ID, V_NIL, 0, lxNilOp, V_FLAG));
@@ -212,53 +212,53 @@ inline ident_t __fastcall findSourceRef(SNode node)
 //   operators.add(OperatorInfo(GREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
 //   operators.add(OperatorInfo(NOTGREATER_OPERATOR_ID, V_DWORD, V_DWORD, lxIntBoolOp, V_FLAG));
 //
-//}
-//
-//int CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result, bool resolveProtected)
-//{
-//   bool methodFound = info.methods.exist(message);
-//
-//   if (methodFound) {
-//      int hint = info.methodHints.get(Attribute(message, maHint));
-//      if ((hint & tpMask) == tpPrivate) {
-//         // recognize the private message
-//         message |= STATIC_MESSAGE;
-//
-//         hint = info.methodHints.get(Attribute(message, maHint));
-//      }
-//
-//      result.outputReference = info.methodHints.get(Attribute(message, maReference));
-//      result.constRef = info.methodHints.get(Attribute(message, maConstant));
-//
-//      result.embeddable = test(hint, tpEmbeddable);
-////      result.function = test(hint, tpFunction);
-////      result.dynamicRequired = test(hint, tpDynamic);
-//
-//      if ((hint & tpMask) == tpSealed || (hint & tpMask) == tpPrivate) {
-//         return hint;
-//      }
-//      else if (test(info.header.flags, elSealed)) {
-//         return tpSealed | hint;
-//      }
-//      else if (test(info.header.flags, elClosed)) {
-//         return tpClosed | hint;
-//      }
-//      else return tpNormal | hint;
-//   }
-//   else {
-//      //HOTFIX : to recognize the predefined messages
-//      result.outputReference = info.methodHints.get(Attribute(message, maReference));
-//
-//      if (resolveProtected) {
-//         result.protectedRef = info.methodHints.get(Attribute(message, maProtected));
-//      }
-//
-//      //HOTFIX : to recognize the sealed private method call
-//      //         hint search should be done even if the method is not declared
-//      return info.methodHints.get(Attribute(message, maHint));
-//   }
-//}
-//
+}
+
+int CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result, bool resolveProtected)
+{
+   bool methodFound = info.methods.exist(message);
+
+   if (methodFound) {
+      int hint = info.methodHints.get(Attribute(message, maHint));
+      if ((hint & tpMask) == tpPrivate) {
+         // recognize the private message
+         message |= STATIC_MESSAGE;
+
+         hint = info.methodHints.get(Attribute(message, maHint));
+      }
+
+      result.outputReference = info.methodHints.get(Attribute(message, maReference));
+      result.constRef = info.methodHints.get(Attribute(message, maConstant));
+
+      result.embeddable = test(hint, tpEmbeddable);
+//      result.function = test(hint, tpFunction);
+//      result.dynamicRequired = test(hint, tpDynamic);
+
+      if ((hint & tpMask) == tpSealed || (hint & tpMask) == tpPrivate) {
+         return hint;
+      }
+      else if (test(info.header.flags, elSealed)) {
+         return tpSealed | hint;
+      }
+      else if (test(info.header.flags, elClosed)) {
+         return tpClosed | hint;
+      }
+      else return tpNormal | hint;
+   }
+   else {
+      //HOTFIX : to recognize the predefined messages
+      result.outputReference = info.methodHints.get(Attribute(message, maReference));
+
+      if (resolveProtected) {
+         result.protectedRef = info.methodHints.get(Attribute(message, maProtected));
+      }
+
+      //HOTFIX : to recognize the sealed private method call
+      //         hint search should be done even if the method is not declared
+      return info.methodHints.get(Attribute(message, maHint));
+   }
+}
+
 //ref_t CompilerLogic :: resolveArrayElement(_ModuleScope& scope, ref_t reference)
 //{
 //   ClassInfo info;
@@ -267,29 +267,29 @@ inline ident_t __fastcall findSourceRef(SNode node)
 //   }
 //   else return 0;
 //}
-//
-//int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, 
-//   ChechMethodInfo& result, bool resolveProtected)
-//{
-//   ClassInfo info;
-//   result.found = reference && defineClassInfo(scope, info, reference);
-//
-//   if (result.found) {
-//      if (testany(info.header.flags, elClosed | elClassClass))
-//         result.directResolved = true;
-//
-//      if (test(info.header.flags, elWithCustomDispatcher))
-//         result.withCustomDispatcher = true;
-//
-//      int hint = checkMethod(info, message, result, resolveProtected);
-//
-//      result.withEmbeddableRet = info.methodHints.get(Attribute(message, maEmbeddableRet)) != 0; 
-//
-//      return hint;
-//   }
-//   else return tpUnknown;
-//}
-//
+
+int CompilerLogic :: checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, 
+   ChechMethodInfo& result, bool resolveProtected)
+{
+   ClassInfo info;
+   result.found = reference && defineClassInfo(scope, info, reference);
+
+   if (result.found) {
+      if (testany(info.header.flags, elClosed | elClassClass))
+         result.directResolved = true;
+
+      if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
+      int hint = checkMethod(info, message, result, resolveProtected);
+
+      result.withEmbeddableRet = info.methodHints.get(Attribute(message, maEmbeddableRet)) != 0; 
+
+      return hint;
+   }
+   else return tpUnknown;
+}
+
 //mssg_t CompilerLogic :: resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message)
 //{
 //   if (!reference)
@@ -301,22 +301,22 @@ inline ident_t __fastcall findSourceRef(SNode node)
 //   }
 //   else return 0;
 //}
-//
-//int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t messageRef, ChechMethodInfo& result)
-//{
-//   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result, false);
-//   int callType = methodHint & tpMask;
-//
-//   result.stackSafe = test(methodHint, tpStackSafe);
-//
-////   if (test(messageRef, SPECIAL_MESSAGE)) {
-////      // HOTFIX : calling closure
-////      result.closure = true;
-////   }
-//
-//   return callType;
-//}
-//
+
+int CompilerLogic :: resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t messageRef, ChechMethodInfo& result)
+{
+   int methodHint = checkMethod(scope, classReference != 0 ? classReference : scope.superReference, messageRef, result, false);
+   int callType = methodHint & tpMask;
+
+   result.stackSafe = test(methodHint, tpStackSafe);
+
+//   if (test(messageRef, SPECIAL_MESSAGE)) {
+//      // HOTFIX : calling closure
+//      result.closure = true;
+//   }
+
+   return callType;
+}
+
 //int CompilerLogic :: resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result)
 //{
 //   if ((loperand == 0 && roperand != V_NIL) || (roperand == 0 && loperand != V_NIL))
@@ -1768,7 +1768,7 @@ bool CompilerLogic :: validateFieldAttribute(int& attrValue, FieldAttributes& at
    }
 }
 
-bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes/*, bool& newVariable*/)
+bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable)
 {
    switch (attrValue) {
       case 0:
@@ -1777,10 +1777,10 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      //case V_AUTOSIZE:
 //      //   attributes.include(EAttr::eaAutoSize);
 //      //   return true;
-//      case V_VARIABLE:
-//      case V_AUTO:
-//         newVariable = true;
-//         return true;
+      case V_VARIABLE:
+      case V_AUTO:
+         newVariable = true;
+         return true;
 //      case V_CONVERSION:
 //         attributes.include(EAttr::eaCast);
 //         return true;
@@ -1832,15 +1832,15 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //      case V_INLINEARG:
 //         attributes.include(EAttr::eaInlineArg);
 //         return true;
-//      case V_IGNOREDUPLICATE:
-//         attributes.include(EAttr::eaIgnoreDuplicates);
-//         return true;
+      case V_IGNOREDUPLICATE:
+         attributes.include(EAttr::eaIgnoreDuplicates);
+         return true;
 //      case V_YIELD:
 //         attributes.include(EAttr::eaYieldExpr);
 //         return true;
-//      case V_NODEBUGINFO:
-//         attributes.include(EAttr::eaNoDebugInfo);
-//         return true;
+      case V_NODEBUGINFO:
+         attributes.include(EAttr::eaNoDebugInfo);
+         return true;
 //      case V_PREVIOUS:
 //         attributes.include(EAttr::eaPreviousScope);
 //         return true;

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler common interfaces.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerCommonH
@@ -470,7 +470,7 @@ public:
       eaNoDebugInfo        = 0x00000000001,
       eaNestedNs           = 0x00000000002,
 //      eaIntern             = 0x00000000004,
-//      eaModuleScope        = 0x00000000008,
+      eaModuleScope        = 0x00000000008,
       eaNewOp              = 0x00000000010,
 //      eaSilent             = 0x00000000020,
       eaRootSymbol         = 0x000000000C0,
@@ -493,7 +493,7 @@ public:
 //      eaSwitch             = 0x00000800000,
 //      eaClass              = 0x00001000000,
 //      eaYieldExpr          = 0x00002000000,
-//      eaIgnoreDuplicates   = 0x00004000000,
+      eaIgnoreDuplicates   = 0x00004000000,
 //      eaMssg               = 0x00008000000,
 //      eaVirtualExpr        = 0x00010000000,
 //      eaSubj               = 0x00020000000,
@@ -505,7 +505,7 @@ public:
 //      eaConstExpr          = 0x00400000000,
 //      eaCallOp             = 0x00800000000,
 //      eaRefExpr            = 0x01000000000,
-//      eaPreviousScope      = 0x02000000000,
+      eaPreviousScope      = 0x02000000000,
 //      eaConversionOp       = 0x04000000000,
 
       eaScopeMask          = /*0x0300041400A*/eaNestedNs,
@@ -590,35 +590,35 @@ public:
 //      }
    };
 
-//   struct ChechMethodInfo
-//   {
-//      bool  found;
-//      bool  directResolved;
-//      bool  withCustomDispatcher;
-//      bool  stackSafe;
-//      bool  embeddable;
-//      bool  withEmbeddableRet;
-////      bool  function;
-////      bool  dynamicRequired;
-//      ref_t outputReference;
-//      ref_t constRef;
-//      ref_t protectedRef;
-//
-//      ChechMethodInfo()
-//      {
-//         directResolved = false;
-//         embeddable = found = false;
-//         outputReference = 0;
-//         constRef = 0;
-//         protectedRef = 0;
-//         withCustomDispatcher = false;
-//         stackSafe = false;
-//         withEmbeddableRet = false;
-////         function = false;
-////         dynamicRequired = false;
-//      }
-//   };
-//
+   struct ChechMethodInfo
+   {
+      bool  found;
+      bool  directResolved;
+      bool  withCustomDispatcher;
+      bool  stackSafe;
+      bool  embeddable;
+      bool  withEmbeddableRet;
+//      bool  function;
+//      bool  dynamicRequired;
+      ref_t outputReference;
+      ref_t constRef;
+      ref_t protectedRef;
+
+      ChechMethodInfo()
+      {
+         directResolved = false;
+         embeddable = found = false;
+         outputReference = 0;
+         constRef = 0;
+         protectedRef = 0;
+         withCustomDispatcher = false;
+         stackSafe = false;
+         withEmbeddableRet = false;
+//         function = false;
+//         dynamicRequired = false;
+      }
+   };
+
 //   virtual int defineStackSafeAttrs(_ModuleScope& scope, mssg_t message) = 0;
 //
 //   virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message,
@@ -635,9 +635,9 @@ public:
 
    virtual ref_t __fastcall definePrimitiveArray(_ModuleScope& scope, ref_t elementRef, bool structOne) = 0;
 
-//   // retrieve the call type
-//   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result) = 0;
-//
+   // retrieve the call type
+   virtual int __fastcall resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result) = 0;
+
 //   // retrieve the operation type
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result) = 0;
 ////   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result) = 0;
@@ -714,7 +714,7 @@ public:
    virtual bool __fastcall validateMethodAttribute(int& attrValue, bool& explicitMode) = 0;
    virtual bool __fastcall validateImplicitMethodAttribute(int& attrValue, bool complexName) = 0;
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs) = 0;
-   virtual bool __fastcall validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes/*, bool& newVariable*/) = 0;
+   virtual bool __fastcall validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable) = 0;
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility) = 0;
    virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints) = 0;

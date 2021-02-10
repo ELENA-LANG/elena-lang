@@ -79,7 +79,7 @@ enum LexicalType
    lxResult                   = 0x010230,   // arg - offset
    lxMessageOp                = 0x431230,
    lxMessageExpression        = 0x031230,
-   lxReturning                = /*0x059130*/0x11240,
+   lxReturning                = 0x011240,
    lxClassSymbol              = 0x010250,   // arg - reference
    lxConstantSymbol           = 0x010260,   // arg - reference
    lxCurrent                  = 0x010270,   // arg - offset
@@ -88,10 +88,13 @@ enum LexicalType
    lxNewFrame                 = 0x000290,   // if argument -1 - than with presaved message
    lxVariable                 = 0x0002A0,
    lxLocal                    = 0x0102B0,   // arg - offset
+   lxSelfLocal                = 0x0102B1,
    lxCreatingClass            = 0x0302C0,   // arg - count
    lxCreatingStruct           = 0x0302D0,   // arg - size
    lxAssigning                = 0x0302E0,   // an assigning expression, arg - size
    lxTempLocal                = 0x0102F0,
+   lxAssigningOp              = 0x431300,
+   lxAssigningExpression      = 0x031300,
 
    lxCalling_0                = 0x0303A0,   // calling a method, arg - message
    lxCalling_1                = 0x0303A1,
@@ -171,7 +174,6 @@ enum LexicalType
 //   lxParamsVariable           = 0x010106,
 //   lxLongVariable             = 0x010107,
 //   lxReal64Variable           = 0x010108,
-//   lxSelfLocal                = 0x018111,
 //   lxLocalAddress             = 0x018112,   // arg - offset
 //   lxBlockLocalAddr           = 0x018114, // arg - offset
 //   lxCopying                  = 0x058121,
@@ -674,15 +676,15 @@ public:
          return tree->read(tree->getParent(position));
       }
 
-//      Node insertNode(LexicalType type, int argument = 0)
-//      {
-//         return tree->read(tree->insertChild(position, type, argument, INVALID_REF));
-//      }
-//
-//      Node insertNode(LexicalType type, ident_t argument)
-//      {
-//         return tree->read(tree->insertChild(position, type, 0, tree->saveStrArgument(argument)));
-//      }
+      Node insertNode(LexicalType type, int argument = 0)
+      {
+         return tree->read(tree->insertChild(position, type, argument, INVALID_REF));
+      }
+
+      Node insertNode(LexicalType type, ident_t argument)
+      {
+         return tree->read(tree->insertChild(position, type, 0, tree->saveStrArgument(argument)));
+      }
 
       Node appendNode(LexicalType type, int argument = 0)
       {
@@ -724,20 +726,20 @@ public:
          else return appendNode(type, argument);
       }
 
-//      Node prependSibling(LexicalType type, int argument = 0)
-//      {
-//         return tree->read(tree->insertSibling(position, type, argument, INVALID_REF));
-//      }
-//      Node prependSibling(LexicalType type, ident_t argument)
-//      {
-//         return tree->read(tree->insertSibling(position, type, 0, tree->saveStrArgument(argument)));
-//      }
-//
-//      void refresh()
-//      {
-//         tree->refresh(*this);
-//      }
-//
+      Node prependSibling(LexicalType type, int argument = 0)
+      {
+         return tree->read(tree->insertSibling(position, type, argument, INVALID_REF));
+      }
+      Node prependSibling(LexicalType type, ident_t argument)
+      {
+         return tree->read(tree->insertSibling(position, type, 0, tree->saveStrArgument(argument)));
+      }
+
+      void refresh()
+      {
+         tree->refresh(*this);
+      }
+
 //      //Node findPattern(NodePattern pattern)
 //      //{
 //      //   return tree->findPattern(*this, 1, pattern);
@@ -1160,8 +1162,8 @@ private:
 
    pos_t newRoot(LexicalType type, ref_t argument, pos_t strArgumentRef);
    pos_t appendChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // append a child to the end
-//   pos_t insertChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child at the start 
-//   pos_t insertSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
+   pos_t insertChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child at the start 
+   pos_t insertSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
    pos_t injectChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
    pos_t injectSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef);  // insert a child node between the current node and the node children
 //   void clearSibling(pos_t position);
@@ -1176,7 +1178,7 @@ private:
 
    Node read(pos_t position);
    void save(Node& node);
-//   void refresh(Node& node);
+   void refresh(Node& node);
 
 public:
 ////   static void moveNodes(Writer& writer, SyntaxTree& buffer);

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class.
 //
-//                                              (C)2005-2020, by Alexei Rakov
+//                                              (C)2005-2021, by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #ifndef compilerLogicH
@@ -77,9 +77,9 @@ public:
 
 //   virtual bool isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
 //      ref_t* sourceSignatures, size_t len, int& stackSafeAttr);
-//
-//   virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
-//   virtual int checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
+
+   virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
+   virtual int checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result, bool resolveProtected);
 
    virtual bool __fastcall defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false);
 
@@ -94,8 +94,8 @@ public:
 ////   virtual ref_t retrievePrimitiveReference(_ModuleScope& scope, ClassInfo& info);
 //
 //   virtual mssg_t resolveSingleMultiDisp(_ModuleScope& scope, ref_t reference, mssg_t message);
-//
-//   virtual int resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result);
+
+   virtual int __fastcall resolveCallType(_ModuleScope& scope, ref_t& classReference, mssg_t message, ChechMethodInfo& result);
 //   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t& result);
 ////   virtual int resolveOperationType(_ModuleScope& scope, int operatorId, ref_t loperand, ref_t roperand, ref_t roperand2, ref_t& result);
 //   virtual int resolveNewOperationType(_ModuleScope& scope, ref_t loperand, ref_t roperand);
@@ -190,7 +190,7 @@ public:
    virtual bool __fastcall validateMethodAttribute(int& attrValue, bool& explicitMode);
    virtual bool __fastcall validateImplicitMethodAttribute(int& attrValue, bool complexName);
    virtual bool validateFieldAttribute(int& attrValue, FieldAttributes& attrs);
-   virtual bool __fastcall validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes/*, bool& newVariable*/);
+   virtual bool __fastcall validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attributes, bool& newVariable);
    virtual bool validateSymbolAttribute(int attrValue, bool& constant, bool& staticOne, bool& preloadedOne, 
       Visibility& visibility);
    virtual bool validateMessage(_ModuleScope& scope, mssg_t message, int hints);
@@ -216,8 +216,8 @@ public:
 //   virtual ref_t resolveExtensionTemplate(_ModuleScope& scope, _Compiler& compiler, ident_t pattern, 
 //      ref_t signatureRef, ident_t ns, ExtensionMap* outerExtensionList);
 //   virtual ref_t resolveArrayElement(_ModuleScope& scope, ref_t reference);
-//
-//   CompilerLogic();
+
+   CompilerLogic();
 };
 
 } // _ELENA_

@@ -208,8 +208,8 @@ class ByteCodeWriter
    void tryLock(CommandTape& tape);
    void freeLock(CommandTape& tape);
 
-//   void gotoEnd(CommandTape& tape, PseudoArg label);
-//
+   void gotoEnd(CommandTape& tape, PseudoArg label);
+
 //   void selectByIndex(CommandTape& tape, ref_t r1, ref_t r2);
 //   void selectByAcc(CommandTape& tape, ref_t r1, ref_t r2);
 //
@@ -331,7 +331,7 @@ class ByteCodeWriter
 //   void generateIndexLoadingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   void generateIndexSavingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode = 0);
 //   //   void generateCopying(CommandTape& tape, SyntaxTree::Node node, int mode = 0);
-//   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateReturnExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
    void generateCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateInlineArgCallExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 //   void generateInlineArgCall(CommandTape& tape, SNode larg, SNode rarg, int message, FlowScope& scope);

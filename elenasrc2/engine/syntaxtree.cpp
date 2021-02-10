@@ -282,27 +282,27 @@ inline void __fastcall appendChild(_Memory& body, pos_t parent, pos_t child)
    }
 }
 
-//inline void insertChild(_Memory& body, pos_t parent, pos_t child)
-//{
-//   auto r = (_NodeRecord*)body.get(parent);
-//   if (r->child == INVALID_REF) {
-//      r->child = child;
-//   }
-//   else {
-//      auto nw = (_NodeRecord*)body.get(child);
-//      nw->next = r->child;
-//      r->child = child;
-//   }
-//}
-//
-//inline void insertSibling(_Memory& body, pos_t prev, pos_t node)
-//{
-//   auto p = (_NodeRecord*)body.get(prev);
-//   auto nw = (_NodeRecord*)body.get(node);
-//
-//   nw->next = p->next;
-//   p->next = node;
-//}
+inline void __fastcall insertChild(_Memory& body, pos_t parent, pos_t child)
+{
+   auto r = (_NodeRecord*)body.get(parent);
+   if (r->child == INVALID_REF) {
+      r->child = child;
+   }
+   else {
+      auto nw = (_NodeRecord*)body.get(child);
+      nw->next = r->child;
+      r->child = child;
+   }
+}
+
+inline void __fastcall insertSibling(_Memory& body, pos_t prev, pos_t node)
+{
+   auto p = (_NodeRecord*)body.get(prev);
+   auto nw = (_NodeRecord*)body.get(node);
+
+   nw->next = p->next;
+   p->next = node;
+}
 
 inline void __fastcall updateParents(_Memory& body, pos_t node)
 {
@@ -413,31 +413,31 @@ pos_t SyntaxTree :: appendChild(pos_t position, LexicalType type, ref_t argument
    return child;
 }
 
-//pos_t SyntaxTree :: insertChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
-//{
-//   pos_t child = ::newChild(_body, position, type, argument, strArgumentRef);
-//
-//   ::insertChild(_body, position, child);
-//
-//   return child;
-//}
-//
-//pos_t SyntaxTree :: insertSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
-//{
-//   pos_t parent = ::readParent(_body, position);
-//   pos_t child = ::newChild(_body, parent, type, argument, strArgumentRef);
-//
-//   pos_t prev = getPrevious(position);
-//   if (prev != INVALID_REF) {
-//      ::insertSibling(_body, prev, child);
-//   }
-//   else {
-//      if (parent != INVALID_REF)
-//         ::insertChild(_body, parent, child);
-//   }
-//
-//   return child;
-//}
+pos_t SyntaxTree :: insertChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
+{
+   pos_t child = ::newChild(_body, position, type, argument, strArgumentRef);
+
+   ::insertChild(_body, position, child);
+
+   return child;
+}
+
+pos_t SyntaxTree :: insertSibling(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
+{
+   pos_t parent = ::readParent(_body, position);
+   pos_t child = ::newChild(_body, parent, type, argument, strArgumentRef);
+
+   pos_t prev = getPrevious(position);
+   if (prev != INVALID_REF) {
+      ::insertSibling(_body, prev, child);
+   }
+   else {
+      if (parent != INVALID_REF)
+         ::insertChild(_body, parent, child);
+   }
+
+   return child;
+}
 
 pos_t SyntaxTree :: injectChild(pos_t position, LexicalType type, ref_t argument, pos_t strArgumentRef)
 {
@@ -533,18 +533,18 @@ SyntaxTree::Node SyntaxTree :: read(pos_t position)
 //   }
 //   else return lxNone;
 //}
-//
-//void SyntaxTree :: refresh(SyntaxTree::Node& node)
-//{
-//   LexicalType type;
-//   ref_t arg;
-//   pos_t strArg;
-//   if (::read(_body, node.position, type, arg, strArg)) {
-//      node.type = type;
-//      node.argument = arg;
-//      node.strArgument = strArg;
-//   }
-//}
+
+void SyntaxTree :: refresh(SyntaxTree::Node& node)
+{
+   LexicalType type;
+   ref_t arg;
+   pos_t strArg;
+   if (::read(_body, node.position, type, arg, strArg)) {
+      node.type = type;
+      node.argument = arg;
+      node.strArgument = strArg;
+   }
+}
 
 void SyntaxTree :: save(Node& node)
 {

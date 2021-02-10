@@ -288,10 +288,10 @@ private:
          else return NULL;
       }
    
-//      virtual void markAsAssigned(ObjectInfo object)
-//      {
-//         // by default is not implemented
-//      }
+      virtual void markAsAssigned(ObjectInfo object)
+      {
+         // by default is not implemented
+      }
 
       Scope(_ModuleScope* moduleScope)
       {
@@ -445,8 +445,8 @@ private:
 //      bool        extensionDispatcher;
 //
 //      ObjectInfo mapField(ident_t identifier, EAttr scopeMode);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -616,15 +616,15 @@ private:
          else return parent->getScope(level);
       }
 
-//      ref_t getReturningRef(bool ownerClass = true)
-//      {
-//         if (outputRef == INVALID_REF) {
-//            ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-//
-//            outputRef = scope ? scope->info.methodHints.get(ClassInfo::Attribute(message, maReference)) : 0;
-//         }
-//         return outputRef;
-//      }
+      ref_t __fastcall getReturningRef(bool ownerClass = true)
+      {
+         if (outputRef == INVALID_REF) {
+            ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+            outputRef = scope ? scope->info.methodHints.get(ClassInfo::Attribute(message, maReference)) : 0;
+         }
+         return outputRef;
+      }
 
       Visibility __fastcall getClassVisibility(bool ownerClass = true)
       {
@@ -655,12 +655,12 @@ private:
 //         }
 //         else return Scope::resolveAutoOutput(reference);
 //      }
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
-//
-//      ObjectInfo mapSelf();
-//      ObjectInfo mapGroup();
-//      ObjectInfo mapParameter(Parameter param, EAttr mode);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+
+      ObjectInfo __fastcall mapSelf();
+      ObjectInfo __fastcall mapGroup();
+      ObjectInfo mapParameter(Parameter param, EAttr mode);
 
       MethodScope(ClassScope* parent);
    };
@@ -685,11 +685,11 @@ private:
    struct CodeScope : public Scope
    {
 //      SNode       parentCallNode; // HOTFIX : used to implement closure unboxing, should refer to the closest message call
-//
-//      // scope local variables
-//      LocalMap     locals;
+
+      // scope local variables
+      LocalMap     locals;
 //      bool         genericMethod;
-//      bool         withRetStatement;
+      bool         withRetStatement;
 
       int reserved1, allocated1; // managed scope stack allocation
       int reserved2, allocated2; // unmanaged scope stack allocation
@@ -703,30 +703,28 @@ private:
          return allocated1;
       }
 
-//      void mapLocal(ident_t local, int level)
-//      {
-//         locals.add(local, Parameter(level));
-//      }
-//      void mapLocal(ident_t local, int level, ref_t class_ref/*, int size*/)
-//      {
-//         locals.add(local, Parameter(level, class_ref/*, size*/));
-//      }
-//      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
-//      {
-//         locals.add(local, Parameter(level, class_ref, element_ref, size));
-//      }
-//      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size, bool unassigned)
-//      {
-//         locals.add(local, Parameter(level, class_ref, element_ref, size, unassigned));
-//      }
-//
-////      ObjectInfo mapGlobal(ident_t identifier);
-//
-//      virtual void markAsAssigned(ObjectInfo object);
-//
-//      ObjectInfo mapLocal(ident_t identifier);
-//
-//      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
+      void mapLocal(ident_t local, int level)
+      {
+         locals.add(local, Parameter(level));
+      }
+      void mapLocal(ident_t local, int level, ref_t class_ref/*, int size*/)
+      {
+         locals.add(local, Parameter(level, class_ref/*, size*/));
+      }
+      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size)
+      {
+         locals.add(local, Parameter(level, class_ref, element_ref, size));
+      }
+      void mapLocal(ident_t local, int level, ref_t class_ref, ref_t element_ref, int size, bool unassigned)
+      {
+         locals.add(local, Parameter(level, class_ref, element_ref, size, unassigned));
+      }
+
+      virtual void markAsAssigned(ObjectInfo object);
+
+      ObjectInfo mapLocal(ident_t identifier);
+
+      virtual ObjectInfo mapTerminal(ident_t identifier, bool referenceOne, EAttr mode);
 //      virtual bool resolveAutoType(ObjectInfo& info, ref_t reference, ref_t element);
 
       virtual Scope* getScope(ScopeLevel level)
@@ -743,14 +741,14 @@ private:
 //
 //         return scope ? scope->message : 0;
 //      }
-//
-//      ref_t getReturningRef()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
-//
-//         return scope ? scope->getReturningRef() : 0;
-//      }
-//
+
+      ref_t __fastcall getReturningRef()
+      {
+         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
+
+         return scope ? scope->getReturningRef() : 0;
+      }
+
 //      ref_t getClassRefId(bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
@@ -806,19 +804,19 @@ private:
    struct ExprScope : public Scope
    {
 //      SNode exprNode;
-//
-//      bool ignoreDuplicates; // used for code templates, should be applied only to the statement
+
+      bool ignoreDuplicates; // used for code templates, should be applied only to the statement
 
       int  tempAllocated1;
       int  tempAllocated2;
 
 //      Map<ClassInfo::Attribute, int> tempLocals;
 //      Map<int, int> originals;
-//
-//      virtual void markAsAssigned(ObjectInfo object)
-//      {
-//         parent->markAsAssigned(object);
-//      }
+
+      virtual void markAsAssigned(ObjectInfo object)
+      {
+         parent->markAsAssigned(object);
+      }
 
       virtual Scope* getScope(ScopeLevel level)
       {
@@ -862,14 +860,14 @@ private:
 //      {
 //         return getMessageID() == moduleScope->init_message;
 //      }
-//
-//      // check if a local was declared in one of nested code scopes
-//      bool checkLocal(ident_t local)
-//      {
-//         ObjectInfo info = mapTerminal(local, false, EAttr::eaNone);
-//         return info.kind == okLocal || info.kind == okLocalAddress;
-//      }
-//
+
+      // check if a local was declared in one of nested code scopes
+      bool checkLocal(ident_t local)
+      {
+         ObjectInfo info = mapTerminal(local, false, EAttr::eaNone);
+         return info.kind == okLocal || info.kind == okLocalAddress;
+      }
+
 //      void setCodeRetStatementFlag(bool retStatement)
 //      {
 //         if (retStatement) {
@@ -973,8 +971,8 @@ private:
 //   bool calculateRealOp(int operation_id, double arg1, double arg2, double& retVal);
 
    bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool& isProtectedDefConst);
-//   bool isSelfCall(ObjectInfo info);
-//
+   bool __fastcall isSelfCall(ObjectInfo info);
+
 //   bool isMethodEmbeddable(MethodScope& scope, SNode node);
 
    ref_t retrieveImplicitIdentifier(NamespaceScope& scope, ident_t identifier, bool referenceOne, bool innermost);
@@ -1083,11 +1081,11 @@ private:
    ref_t resolveTemplateDeclaration(SNode node, Scope& scope, bool declarationMode);
 
 //   void compileSwitch(SNode node, ExprScope& scope);
-//
-//   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo, int size, bool binaryArray, 
-//                                    int& variableArg, ident_t& className);
-//   void declareVariable(SNode& node, ExprScope& scope, ref_t typeRef/*, bool dynamicArray*/, bool canBeIdle);
-//
+
+   LexicalType declareVariableType(CodeScope& scope, ObjectInfo& variable, ClassInfo& localInfo/*, int size, bool binaryArray, 
+                                    int& variableArg, ident_t& className*/);
+   void declareVariable(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t typeRef/*, bool dynamicArray*/, bool canBeIdle);
+
 //   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, EAttr mode);
 //   ObjectInfo compileClosure(SNode node, ExprScope& ownerScope, InlineClassScope& scope, EAttr mode);
 //   ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target, EAttr mode);
@@ -1119,18 +1117,20 @@ private:
 //   ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo info);
 //   ref_t resolveStrongArgument(ExprScope& scope, ObjectInfo param1, ObjectInfo param2);
 
+   ObjectInfo compileAssigningExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
+
    ref_t compileMessageParameters(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode, /*ref_t expectedSignRef,
       bool& variadicOne, bool& inlineArg, */ArgumentsInfo& arguments);
 
    ObjectInfo compileMessageExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, /*ref_t exptectedRef, */EAttr mode);
-   ObjectInfo compileMessage(SyntaxWriter& writer, /*SNode& node, ExprScope& scope, ObjectInfo target, */mssg_t messageRef,
-      ArgumentsInfo& arguments/*, EAttr mode, int stackSafeAttr, bool& embeddableRet*/);
+   ObjectInfo compileMessage(SyntaxWriter& writer, /*SNode node, */ExprScope& scope, ObjectInfo target, mssg_t messageRef,
+      ArgumentsInfo* arguments/*, EAttr mode, int stackSafeAttr, bool& embeddableRet*/);
 //////   ObjectInfo compileExtensionMessage(SyntaxWriter& writer, SNode node, CodeScope& scope, ObjectInfo target, ObjectInfo role, ref_t targetRef = 0);
 //
 //   SNode injectAttributeIdentidier(SNode current, Scope& scope);
 //   void compileTemplateAttributes(SNode current, List<SNode>& parameters, Scope& scope, bool declarationMode);
-   EAttr recognizeExpressionAttributes(SNode& current, Scope& scope/*, ref_t& typeRef, bool& newVariable*/);
-   EAttr declareExpressionAttributes(SNode& node, ExprScope& scope, EAttr mode);
+   EAttr recognizeExpressionAttributes(SNode& current, Scope& scope, ref_t& typeRef, bool& newVariable);
+   EAttr declareExpressionAttributes(SyntaxWriter& writer, SNode& node, ExprScope& scope, EAttr mode);
 //
 //   void recognizeTerminal(SNode& node, ObjectInfo info, ExprScope& scope, EAttr mode);
 //
@@ -1143,9 +1143,9 @@ private:
 
    void writeTerminal(SyntaxWriter& writer, ObjectInfo objectInfo);
 
-//   ObjectInfo compileObject(SyntaxWriter& writer, SNode node, ExprScope& scope, EAttr mode);
+   ObjectInfo compileObject(SyntaxWriter& writer, SNode& node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
-   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, /*ref_t targetRef,*/ EAttr mode);
+   ObjectInfo compileExpression(SyntaxWriter& writer, SNode node, ExprScope& scope, ref_t targetRef, EAttr mode);
 //
 //   ObjectInfo compileCastingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
 //   ObjectInfo compileBoxingExpression(SNode node, ExprScope& scope, ObjectInfo target, EAttr mode);
@@ -1153,8 +1153,8 @@ private:
 //   ObjectInfo compileVariadicUnboxing(SNode node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileAssigning(SNode node, ExprScope& scope, ObjectInfo target, bool accumulateMode);
 //   ObjectInfo compilePropAssigning(SNode node, ExprScope& scope, ObjectInfo target);
-   ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope/*, ref_t targetRef*/, EAttr mode);
-//   ObjectInfo compileRetExpression(SNode node, CodeScope& scope, EAttr mode);
+   ObjectInfo compileRootExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, ref_t targetRef, EAttr mode);
+   ObjectInfo compileRetExpression(SyntaxWriter& writer, SNode node, CodeScope& scope, EAttr mode);
 //   void compileEmbeddableRetExpression(SNode node, ExprScope& scope);
 //
 //   ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode, bool& withRetStatement);
@@ -1265,11 +1265,11 @@ private:
    void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
 
 //   ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef, ref_t elementRef = 0);
-//
-//   // NOTE : if the conversion is not possible - the methods return unknown result
-//   ObjectInfo convertObject(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
-//   ObjectInfo sendTypecast(SNode& node, ExprScope& scope, ref_t targetRef, ObjectInfo source);
-//
+
+   // NOTE : if the conversion is not possible - the methods return unknown result
+   ObjectInfo convertObject(SyntaxWriter& writer, ExprScope& scope, ref_t targetRef, ObjectInfo source, EAttr mode);
+   ObjectInfo sendTypecast(SyntaxWriter& writer, ExprScope& scope, ref_t targetRef, ObjectInfo source);
+
 //   void compileExternalArguments(SNode node, ExprScope& scope, SNode callNode);
 //
 //   void injectCopying(SNode& copyingNode, int size, bool variadic, bool primArray);

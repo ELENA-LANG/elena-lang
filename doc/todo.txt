@@ -17,8 +17,9 @@ In development:
     * tape should use cdecl with fixed size - no need to clear the stack
 
     * symbol - do not use a frame if not requiered (e.g. it is a leaf call)
-    * by default always allocate 4 variables
+    * by default always allocate 4 variables, assigning argument list - could we do it only once for a whole statement?
     * support 16 byte stack alignment for x86-64, get rid of current temporal solution
+    * idle typecast method should simply return itself
 
 
     + mixings ruby style
