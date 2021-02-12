@@ -727,37 +727,37 @@ void CompilerLogic :: injectOverloadList(_ModuleScope& scope, ClassInfo& info, _
 //
 //   return counter;
 //}
-//
-//void CompilerLogic :: injectVirtualFields(_ModuleScope&, SNode node, ref_t, ClassInfo& info, _Compiler& compiler)
-//{
-//   // generate yield fields
-//   if (test(info.header.flags, elWithYieldable)) {
-//      int index = info.fields.Count();
-//
-//      // HOTFIX : take into account newly declared fields as well
-//      index += countFields(node);
-//
-//      SNode current = node.firstChild();
-//      while (current != lxNone) {
-//         if (current == lxClassMethod && SyntaxTree::existChild(current, lxAttribute, tpYieldable)) {
-//
-//            // NOTE : field initialization MUST be declared after the yield method declaration
-//            info.methodHints.add(ClassInfo::Attribute(current.argument, maYieldContext), index);
-//            compiler.injectVirtualField(node, lxYieldContext, current.argument, index);
-//
-//            info.methodHints.add(ClassInfo::Attribute(current.argument, maYieldLocals), ++index);
-//            compiler.injectVirtualField(node, lxYieldLocals, current.argument, index);
-//         }
-//
-//         current = current.nextNode();
-//      }
+
+void CompilerLogic :: injectVirtualFields(_ModuleScope&, SNode node, ref_t, ClassInfo& info, _Compiler& compiler)
+{
+   // generate yield fields
+   if (test(info.header.flags, elWithYieldable)) {
+      int index = info.fields.Count();
+
+      //// HOTFIX : take into account newly declared fields as well
+      //index += countFields(node);
+
+      //SNode current = node.firstChild();
+      //while (current != lxNone) {
+      //   if (current == lxClassMethod && SyntaxTree::existChild(current, lxAttribute, tpYieldable)) {
+
+      //      // NOTE : field initialization MUST be declared after the yield method declaration
+      //      info.methodHints.add(ClassInfo::Attribute(current.argument, maYieldContext), index);
+      //      compiler.injectVirtualField(node, lxYieldContext, current.argument, index);
+
+      //      info.methodHints.add(ClassInfo::Attribute(current.argument, maYieldLocals), ++index);
+      //      compiler.injectVirtualField(node, lxYieldLocals, current.argument, index);
+      //   }
+
+      //   current = current.nextNode();
+      //}
+   }
+
+//   // generate enumeration list static field
+//   if ((info.header.flags & elDebugMask) == elEnumList && !test(info.header.flags, elNestedClass)) {
+//      compiler.injectVirtualStaticConstField(scope, node, ENUM_VAR, classRef);
 //   }
-//
-////   // generate enumeration list static field
-////   if ((info.header.flags & elDebugMask) == elEnumList && !test(info.header.flags, elNestedClass)) {
-////      compiler.injectVirtualStaticConstField(scope, node, ENUM_VAR, classRef);
-////   }
-//}
+}
 
 void CompilerLogic :: injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed)
 {
@@ -1590,9 +1590,6 @@ bool CompilerLogic :: validateClassAttribute(int& attrValue, Visibility& visibil
       case V_MIXIN:
          attrValue = elGroup;
          return true;
-//      //case V_TAPEGROUP:
-//      //   attrValue = elTapeGroup;
-////         return true;
       case V_PUBLIC:
          attrValue = 0;
          visibility = Visibility::Public;

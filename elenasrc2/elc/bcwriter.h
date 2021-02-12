@@ -152,7 +152,7 @@ class ByteCodeWriter
 
    void declareLocalInfo(CommandTape& tape, ident_t localName, int level);
    void declareStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
-//   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
+   void declareSelfStructInfo(CommandTape& tape, ident_t localName, int level, ident_t className);
    void declareLocalIntInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalLongInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
    void declareLocalRealInfo(CommandTape& tape, ident_t localName, int level, bool includeFrame);
@@ -178,9 +178,10 @@ class ByteCodeWriter
    void clearObject(CommandTape& tape, int fieldCount);
 //   void clearDynamicObject(CommandTape& tape);
 //   void unboxArgList(CommandTape& tape, bool arrayMode);
-//
-//   void releaseStack(CommandTape& tape, int count = 1);
-//   void releaseArgList(CommandTape& tape);
+
+   void releaseStack(CommandTape& tape, int count);
+   void releaseArg(CommandTape& tape);
+   //   void releaseArgList(CommandTape& tape);
 //
 //   void setSubject(CommandTape& tape, ref_t subject);
 
@@ -290,10 +291,7 @@ class ByteCodeWriter
 //   void saveIndexToFieldExpression(CommandTape& tape, SNode dstObj, SNode source, FlowScope& scope);
 //   void saveIndexToObject(CommandTape& tape, SNode dstObj, SNode source, FlowScope& scope, int size);
 //   void saveFieldExpression(CommandTape& tape, SNode dstObj, SNode source, int size, FlowScope& scope);
-//   SyntaxTree::Node loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode);
-//
-////   void saveUnboxingVar(CommandTape& tape, SNode member, bool& accTrarget, bool& accPresaving, int& presavedCount);
-////   void loadUnboxingVar(CommandTape& tape, SNode current, int paramCount, int& presavedCount);
+   SyntaxTree::Node loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode);
 
    void copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope/*, bool condCopying*/);
 

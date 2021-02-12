@@ -25,24 +25,24 @@ class DerivationWriter : public _DerivationWriter
    {
       None,
       Namespace,
-//      Type,
-//      Import,
+      Type,
+      Import,
    };
 
-//   enum ScopeType
-//   {
-//      stNormal = 0,
-//      stClassTemplate,
-//      stCodeTemplate,
-//      stPropertyTemplate,
-//      stExtensionTemplate,
-//      stInlineTemplate
-//   };
+   enum ScopeType
+   {
+      stNormal = 0,
+      stClassTemplate,
+      stCodeTemplate,
+      stPropertyTemplate,
+      stExtensionTemplate,
+      stInlineTemplate
+   };
 
    struct Scope
    {
-//      ScopeType      templateMode;
-//      ForwardMap     parameters;
+      ScopeType      templateMode;
+      ForwardMap     parameters;
 //      int            nestedLevel;
       bool           ignoreTerminalInfo;
 //      int            bookmark;
@@ -108,7 +108,7 @@ class DerivationWriter : public _DerivationWriter
 
       Scope()
       {
-//         templateMode = ScopeType::stNormal;
+         templateMode = ScopeType::stNormal;
 //         nestedLevel = 0;
          ignoreTerminalInfo = false;
 //         bookmark = 0;
@@ -126,7 +126,7 @@ class DerivationWriter : public _DerivationWriter
 
    _ModuleScope* _scope;
 
-//   void loadTemplateParameters(Scope& scope, SNode node);
+   void loadTemplateParameters(Scope& scope, SNode node);
 //   void loadTemplateExprParameters(Scope& scope, SNode node);
 
    MetaScope recognizeMetaScope(SNode node);
@@ -158,7 +158,7 @@ class DerivationWriter : public _DerivationWriter
 //
 //   void generateOperatorTemplateTree(SyntaxWriter& writer, SNode& current, Scope& derivationScope);
 //   void generateClassImport(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
-//   void generateTemplateTree(SNode node, ScopeType templateType);
+   void generateTemplateTree(SNode node, ScopeType templateType);
    void flushScope(SyntaxWriter& writer, SNode node, Scope& scope);
 //   void generateClosureTree(SyntaxWriter& writer, SNode& node, Scope& derivationScope);
 //   void generateStatementTemplateTree(SyntaxWriter& writer, SNode node, SyntaxTree& tempTree, ident_t templateName, 
@@ -174,7 +174,7 @@ class DerivationWriter : public _DerivationWriter
    void flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool functionMode, bool propertyMode*/, SyntaxTree& buffer);
 ////   // returns true if in-place init found
 //   void generatePropertyTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
-//   void generateFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
+   void flushFieldTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, SyntaxTree& buffer);
    void flushCodeTree(SyntaxWriter& writer, SNode node, Scope& derivationScope/*, bool withBookmark = false*/);
    void flushTokenExpression(SyntaxWriter& writer, SNode& node, Scope& derivationScope/*, bool rootMode*/);
    void flushTypeAttribute(SyntaxWriter& writer, SNode terminal, ref_t typeRef/*, int dimensionCounter*/, 
@@ -191,8 +191,8 @@ class DerivationWriter : public _DerivationWriter
    void flushIdentifier(SyntaxWriter& writer, SNode current, Scope& derivationScope);
    void flushMesage(SyntaxWriter& writer, SNode current, Scope& derivationScope);
 
-//   void declareType(SNode node);
-//   void generateImport(SyntaxWriter& writer, SNode ns);
+   void declareType(SNode node);
+   void flushImport(SyntaxWriter& writer, SNode ns);
 
    void raiseError(ident_t err, SNode node);
    void raiseWarning(int level, ident_t msg, SNode node);

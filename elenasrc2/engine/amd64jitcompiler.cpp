@@ -116,7 +116,7 @@ void (*commands[0x100])(int opcode, I64JITScope& scope) =
    &compileNop, &compileBreakpoint, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
    &compileDCopyCount, &loadOneByteOp, &compilePushA, &compilePopA, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
 
-   &compileNot, &compileOpen, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteOp, &compileQuit,
+   &compileNot, &compileOpen, &compilePop, &loadOneByteOp, &loadOneByteOp, &loadOneByteLOp, &loadOneByteOp, &compileQuit,
    &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp, &compileNop,
 
    &loadOneByteOp, &loadOneByteOp, &compilePushD, &compilePopD, &compileNop, &loadOneByteOp, &loadOneByteOp, &loadOneByteOp,
@@ -1042,6 +1042,11 @@ void freeStack64(int args, MemoryWriter* code)
       code->writeWord(0xC481);
       code->writeDWord(args);
    }
+}
+
+void _ELENA_::compilePop(int, I64JITScope& scope)
+{
+   freeStack64(8, scope.code);
 }
 
 void _ELENA_::compilePopN(int, I64JITScope& scope)

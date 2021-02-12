@@ -279,6 +279,8 @@ ELENA byte codes (or ecodes)
 
  freei i                    - sp-=i; i is aligned to 2 in x86-64 mode 
  
+ pop                        - sp--
+ 
  popa                       - acc <= [sp] ; sp--
  
  popd                       - index <= [sp] ; sp--

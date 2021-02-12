@@ -164,7 +164,7 @@ public:
 //   }
 
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed);
-//   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
+   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler);
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 
       List<mssg_t>& implicitMultimethods, LexicalType methodType, ClassInfo& info);
 //   virtual void injectOperation(SNode& node, _CompileScope& scope, _Compiler& compiler, int operatorId, int operation, 

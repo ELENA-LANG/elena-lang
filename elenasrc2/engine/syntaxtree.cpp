@@ -556,28 +556,28 @@ SyntaxTree::Node SyntaxTree :: readRoot()
    return read(0u);
 }
 
-//void SyntaxTree :: saveNode(Node node, _Memory* dump, bool inclusingNode)
-//{
-//   SyntaxTree tree;
-//   SyntaxWriter writer(tree);
-//
-//   writer.newNode(lxRoot);
-//
-//   if (inclusingNode) {
-//      if (node.strArgument != INVALID_REF) {
-//         writer.newNode(node.type, node.identifier());
-//      }
-//      else writer.newNode(node.type, node.argument);
-//      copyNode(writer, node);
-//      writer.closeNode();
-//   }
-//   else copyNode(writer, node);
-//
-//   writer.closeNode();
-//
-//   tree.save(dump);
-//}
-//
+void SyntaxTree :: saveNode(Node node, _Memory* dump, bool inclusingNode)
+{
+   SyntaxTree tree;
+   SyntaxWriter writer(tree);
+
+   writer.newNode(lxRoot);
+
+   if (inclusingNode) {
+      if (node.strArgument != INVALID_REF) {
+         writer.newNode(node.type, node.identifier());
+      }
+      else writer.newNode(node.type, node.argument);
+      copyNode(writer, node);
+      writer.closeNode();
+   }
+   else copyNode(writer, node);
+
+   writer.closeNode();
+
+   tree.save(dump);
+}
+
 ////void SyntaxTree :: loadNode(Node node, _Memory* dump)
 ////{
 ////   SyntaxTree tree(dump);

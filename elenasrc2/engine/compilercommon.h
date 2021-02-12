@@ -255,8 +255,7 @@ struct _ModuleScope
 
    virtual ref_t mapAnonymous(ident_t prefix = nullptr) = 0;
 
-//   virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
-////   virtual void saveAutogerenatedExtension(ref_t attr, ref_t extension) = 0;
+   virtual void saveAttribute(ident_t typeName, ref_t classReference) = 0;
 
    virtual ref_t __fastcall loadClassInfo(ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;
    virtual ref_t __fastcall loadClassInfo(ClassInfo& info, ident_t vmtName, bool headerOnly = false) = 0;
@@ -489,7 +488,7 @@ public:
 //      eaExtern             = 0x00000080000,
 //      eaForward            = 0x00000100000,
 //      eaParams             = 0x00000200000,
-//      eaInitializerScope   = 0x00000400000,
+      eaInitializerScope   = 0x00000400000,
 //      eaSwitch             = 0x00000800000,
 //      eaClass              = 0x00001000000,
 //      eaYieldExpr          = 0x00002000000,
@@ -686,7 +685,7 @@ public:
 
    // auto generate virtual methods / fields
    virtual void injectVirtualCode(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler, bool closed) = 0;
-//   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
+   virtual void injectVirtualFields(_ModuleScope& scope, SNode node, ref_t classRef, ClassInfo& info, _Compiler& compiler) = 0;
 //   virtual ref_t generateOverloadList(_ModuleScope& scope, _Compiler& compiler, mssg_t message,
 //      ClassInfo::CategoryInfoMap& list, void* param, ref_t(*resolve)(void*, ref_t), int flags) = 0;
    virtual void injectVirtualMultimethods(_ModuleScope& scope, SNode node, _Compiler& compiler, 

@@ -100,7 +100,7 @@ struct ModuleScope : _ModuleScope
 //      int bookmark, bool inlineMode);
    virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters);
 
-//   virtual void saveAttribute(ident_t typeName, ref_t classReference);
+   virtual void saveAttribute(ident_t typeName, ref_t classReference);
 
    virtual void declareNamespace(ident_t name);
    virtual bool includeNamespace(IdentifierList& importedNs, ident_t name, bool& duplicateInclusion);

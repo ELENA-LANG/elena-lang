@@ -334,16 +334,16 @@ ref_t ModuleScope :: mapFullReference(ident_t referenceName, bool existing)
    return reference;
 }
 
-//void ModuleScope :: saveAttribute(ident_t name, ref_t attr)
-//{
-//   if (attr) {
-//      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
-//      MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
-//
-//      metaWriter.writeDWord(attr);
-//      metaWriter.writeLiteral(name);
-//   }
-//}
+void ModuleScope :: saveAttribute(ident_t name, ref_t attr)
+{
+   if (attr) {
+      ReferenceNs sectionName("'", ATTRIBUTE_SECTION);
+      MemoryWriter metaWriter(module->mapSection(module->mapReference(sectionName, false) | mskMetaRDataRef, false));
+
+      metaWriter.writeDWord(attr);
+      metaWriter.writeLiteral(name);
+   }
+}
 
 ref_t ModuleScope :: mapWeakReference(ident_t referenceName, bool existing)
 {

@@ -32,22 +32,26 @@ enum LexicalType
    lxNamespace                = 0x000003,
    lxSymbol                   = 0x000010,
    lxClass                    = 0x000011,
+   lxImport                   = 0x000012,
    lxClassMethod              = 0x000013,
    lxConstructor              = 0x000014,
    lxParent                   = 0x000015,
    lxClassField               = 0x000016,
+   lxTemplate                 = 0x000018,
    lxMethodParameter          = 0x000019,
    lxStaticMethod             = 0x00001A,
    lxClassImport              = 0x00001D,
+   lxForward                  = 0x00001B,
+   lxExtensionTemplate        = 0x00001F,
 
    // NOTE : low word should be unique for every key
-   lxToken                    = 0x001010,
+   lxToken                    = 0x801010,
    lxScope                    = 0x001020,
    //   lxAttributeDecl            = 0x001030,
 //   lxSizeDecl                 = 0x001040,
 //   lxBaseDecl                 = 0x001050,
    lxCode                     = 0x001060,
-//   lxDispatchCode             = 0x001070,
+   lxDispatchCode             = 0x001070,
    lxMessage                  = 0x001080,   
    lxEOP                      = 0x001090,   // end of the code block
 //   lxAssign                   = 0x0210A0,
@@ -75,6 +79,7 @@ enum LexicalType
 //   lxSubMessage               = 0x021200,
    lxExpression               = 0x831210,
    lxSeqExpression            = 0x831211,
+   lxFieldExpression          = 0x831213,
    lxNil                      = 0x010220,
    lxResult                   = 0x010230,   // arg - offset
    lxMessageOp                = 0x431230,
@@ -109,7 +114,13 @@ enum LexicalType
    lxCopying                  = 0x0302E1,
    lxTempLocal                = 0x0102F0,
    lxAssigningOp              = 0x431300,
-   lxAssigningExpression      = 0x031300,
+   lxAssigningExpression      = 0x031300,   
+   lxTokenOp                  = 0x401310,
+   lxTokenArgs                = 0x001310,
+   lxResendExpression         = 0x031320,
+   lxImplicitJump             = 0x030330,
+   lxNoBody                   = 0x031340,
+   lxField                    = 0x010350,   // arg - offset
 
    lxCalling_0                = 0x0303A0,   // calling a method, arg - message
    lxCalling_1                = 0x0303A1,
@@ -137,9 +148,7 @@ enum LexicalType
 //
 //
 //
-//   lxResendExpression = 0x059170,
 //   lxSwitching = 0x059250,
-//   lxNoBody = 0x0592B0,
 //
 //
 //
@@ -152,13 +161,9 @@ enum LexicalType
 //
 //
 //
-//   lxImport                   = 0x000012,
 //   lxRedirect                 = 0x000017,
-//   lxTemplate                 = 0x000018,
-//   lxForward                  = 0x00001B,
 //   lxClassProperty            = 0x00001C,
 //   lxFinalblock               = 0x00001E,
-//   lxExtensionTemplate        = 0x00001F,
 //
 //   // derivation symbols
 //   lxNewOperation             = 0x021081,
@@ -171,7 +176,6 @@ enum LexicalType
 //
 //   // expression nodes
 //   lxBoxableExpression        = 0x059032,
-//   lxFieldExpression          = 0x059033,
 //   lxArgBoxableExpression     = 0x059034,
 //   lxCodeExpression           = 0x059035,
 //   lxCondBoxableExpression    = 0x059036,
@@ -187,7 +191,6 @@ enum LexicalType
 //   lxCondCopying              = 0x058124,
 //   lxFloatSaving              = 0x058125,
 //   lxCondAssigning            = 0x058126,
-//   lxImplicitJump             = 0x058140,
 //   lxBranching                = 0x058150,   // branch expression      
 //   lxIf                       = 0x058160,   // optional arg - reference
 //   lxElse                     = 0x058161,   // optional arg - reference
@@ -218,7 +221,6 @@ enum LexicalType
 //   lxRealBoolOp               = 0x0581B6,   // arg - operation id
 //   lxNilOp                    = 0x0581B7,   // arg - operation id
 //   lxRealIntOp                = 0x0581B8,   // arg - operation id
-//   lxField                    = 0x0181C0,   // arg - offset
 //   lxFieldAddress             = 0x0181C1,   // arg - offset
 //   lxStaticField              = 0x0181C2,   // arg - reference   // - lxClassStaticField
 //   lxClassRef                 = 0x0181C3,
@@ -271,7 +273,7 @@ enum LexicalType
    lxSelfVariable             = 0x000F0F,   // debug info only
    lxAutoMultimethod          = 0x000F10,
 //   lxConstAttr                = 0x000F11,
-//   lxTemplateParam            = 0x000F12,
+   lxTemplateParam            = 0x000F12,
    lxSize                     = 0x000F13,
    lxReserved                 = 0x000F14,
    lxIntValue                 = 0x000F16,   // arg - integer value
@@ -288,7 +290,7 @@ enum LexicalType
 //   lxElseValue                = 0x000F21, // arg - reference
 //   lxTemplateNameParam        = 0x000F22,
 //   lxEmbeddableMssg           = 0x000F23,
-//   lxBinarySelf               = 0x000F24, // debug info only
+   lxBinarySelf               = 0x000F24, // debug info only
    lxStatConstRef             = 0x000F25, 
    lxStatIndex                = 0x000F26,
 //   lxRetEmbeddableAttr        = 0x000F27,
@@ -783,139 +785,139 @@ public:
 
          return current;
       }
-//      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
-//      {
-//         Node current = firstChild();
-//
-//         while (current != lxNone && current != type1) {
-//            if (current == type2)
-//               return current;
-//            else if (current == type3)
-//               return current;
-//            else if (current == type4)
-//               return current;
-//
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
-//      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
-//      {
-//         Node current = firstChild();
-//
-//         while (current != lxNone && current != type1) {
-//            if (current == type2)
-//               return current;
-//            else if (current == type3)
-//               return current;
-//            else if (current == type4)
-//               return current;
-//            else if (current == type5)
-//               return current;
-//
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
-//      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6)
-//      {
-//         Node current = firstChild();
-//
-//         while (current != lxNone && current != type1) {
-//            if (current == type2)
-//               return current;
-//            else if (current == type3)
-//               return current;
-//            else if (current == type4)
-//               return current;
-//            else if (current == type5)
-//               return current;
-//            else if (current == type6)
-//               return current;
-//
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
-//      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7)
-//      {
-//         Node current = firstChild();
-//
-//         while (current != lxNone && current != type1) {
-//            if (current == type2)
-//               return current;
-//            else if (current == type3)
-//               return current;
-//            else if (current == type4)
-//               return current;
-//            else if (current == type5)
-//               return current;
-//            else if (current == type6)
-//               return current;
-//            else if (current == type7)
-//               return current;
-//
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
-//      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7, LexicalType type8)
-//      {
-//         Node current = firstChild();
-//
-//         while (current != lxNone && current != type1) {
-//            if (current == type2)
-//               return current;
-//            else if (current == type3)
-//               return current;
-//            else if (current == type4)
-//               return current;
-//            else if (current == type5)
-//               return current;
-//            else if (current == type6)
-//               return current;
-//            else if (current == type7)
-//               return current;
-//            else if (current == type8)
-//               return current;
-//
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
-//      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7, LexicalType type8, LexicalType type9)
-//      {
-//         Node current = firstChild();
-//
-//         while (current != lxNone && current != type1) {
-//            if (current == type2)
-//               return current;
-//            else if (current == type3)
-//               return current;
-//            else if (current == type4)
-//               return current;
-//            else if (current == type5)
-//               return current;
-//            else if (current == type6)
-//               return current;
-//            else if (current == type7)
-//               return current;
-//            else if (current == type8)
-//               return current;
-//            else if (current == type9)
-//               return current;
-//
-//            current = current.nextNode();
-//         }
-//
-//         return current;
-//      }
-//
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+            else if (current == type7)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7, LexicalType type8)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+            else if (current == type7)
+               return current;
+            else if (current == type8)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+      Node findChild(LexicalType type1, LexicalType type2, LexicalType type3, LexicalType type4, LexicalType type5, LexicalType type6, LexicalType type7, LexicalType type8, LexicalType type9)
+      {
+         Node current = firstChild();
+
+         while (current != lxNone && current != type1) {
+            if (current == type2)
+               return current;
+            else if (current == type3)
+               return current;
+            else if (current == type4)
+               return current;
+            else if (current == type5)
+               return current;
+            else if (current == type6)
+               return current;
+            else if (current == type7)
+               return current;
+            else if (current == type8)
+               return current;
+            else if (current == type9)
+               return current;
+
+            current = current.nextNode();
+         }
+
+         return current;
+      }
+
       bool existChild(LexicalType type)
       {
          return findChild(type) == type;
@@ -1187,7 +1189,7 @@ public:
    static void copyNode(Node source, Node destination);
 //   static Node insertNodeCopy(Node source, Node destination);
 //   //   static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
-//   static void saveNode(Node node, _Memory* dump, bool includingNode = false);
+   static void saveNode(Node node, _Memory* dump, bool includingNode = false);
 ////   static void loadNode(Node node, _Memory* dump);
 ////
 ////   static void copyMatchedNodes(Writer& writer, LexicalType type, Node owner);
@@ -1230,65 +1232,37 @@ public:
 //
 //      return counter;
 //   }
-//
-////   static int countNode(Node current, LexicalType type1, LexicalType type2, LexicalType type3)
-////   {
-////      int counter = 0;
-////      while (current != lxNone) {
-////         if (current.compare(type1, type2, type3))
-////            counter++;
-////
-////         current = current.nextNode();
-////      }
-////
-////      return counter;
-////   }
-//
-//   static int countChild(Node node, LexicalType type)
-//   {
-//      int counter = 0;
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone) {
-//         if (current == type)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
-////   static int countChildMask(Node node, LexicalType mask)
-////   {
-////      int counter = 0;
-////      Node current = node.firstChild();
-////
-////      while (current != lxNone) {
-////         if (test(current.type, mask))
-////            counter++;
-////
-////         current = current.nextNode();
-////      }
-////
-////      return counter;
-////   }
-//
-//   static int countChild(Node node, LexicalType type1, LexicalType type2)
-//   {
-//      int counter = 0;
-//      Node current = node.firstChild();
-//
-//      while (current != lxNone) {
-//         if (current == type1 || current == type2)
-//            counter++;
-//
-//         current = current.nextNode();
-//      }
-//
-//      return counter;
-//   }
-//
+
+   static int countChild(Node node, LexicalType type)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (current == type)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
+   static int countChild(Node node, LexicalType type1, LexicalType type2)
+   {
+      int counter = 0;
+      Node current = node.firstChild();
+
+      while (current != lxNone) {
+         if (current == type1 || current == type2)
+            counter++;
+
+         current = current.nextNode();
+      }
+
+      return counter;
+   }
+
 //   static bool existChild(Node node, LexicalType type, ref_t arg)
 //   {
 //      Node current = node.firstChild();
@@ -1402,10 +1376,10 @@ public:
 
 void loadSyntaxTokens(Map<ident_t, int>& tokens, bool fullMode = false);
 
-//inline bool isSingleStatement(SyntaxTree::Node expr)
-//{
-//   return expr.findSubNodeMask(lxOperatorMask) == lxNone;
-//}
+inline bool isSingleStatement(SyntaxTree::Node expr)
+{
+   return expr.findSubNodeMask(lxOpScopeMask) == lxNone;
+}
 
 typedef SyntaxTree::Writer       SyntaxWriter;
 typedef SyntaxTree::Node         SNode;

@@ -162,6 +162,7 @@ protected:
    friend void compileReserve(int op, x86JITScope& scope);
    friend void compileRestore(int op, x86JITScope& scope);
    friend void compileSaveLen(int op, x86JITScope& scope);
+   friend void compilePop(int op, x86JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -331,6 +332,7 @@ void compileMTRedirect(int op, x86JITScope& scope);
 void compileXRedirect(int op, x86JITScope& scope);
 void compileRestore(int op, x86JITScope& scope);
 void compileSaveLen(int op, x86JITScope& scope);
+void compilePop(int op, x86JITScope& scope);
 
 } // _ELENA_
 

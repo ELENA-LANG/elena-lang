@@ -17,7 +17,7 @@ const char* _fnOpcodes[256] =
    "nop", "breakpoint", "coalesce", "peek", "snop", "pushverb", "loadverb", "throw",
    "mcount", "push", "pusha", "popa", "xnew", "storev", "bsredirect", "setv",
 
-   "not", "open", OPCODE_UNKNOWN, "sub", "swapd", "close", "rexp", "quit",
+   "not", "open", "pop", "sub", "swapd", "close", "rexp", "quit",
    "get", "set", "swap", "mquit", "count", "unhook", "rsin", OPCODE_UNKNOWN,
 
    "rcos", "rarctan", "pushd", "popd", OPCODE_UNKNOWN, "include", "exclude", "trylock",

@@ -18,7 +18,7 @@
 #include "errors.h"
 
 // --- ELC common constants ---
-#define ELC_REVISION_NUMBER         0x01FC
+#define ELC_REVISION_NUMBER         0x01FD
 
 // --- ELC default file names ---
 #ifdef _WINDOW
@@ -611,7 +611,7 @@ public:
    {
       bool debugMode = BoolSetting(_ELENA_::opDebugMode);
 
-      //   //_ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
+      //_ELENA_::Unresolveds unresolveds(_ELENA_::Unresolved(), NULL);
       _ELENA_::SyntaxTree derivationTree;
       for (_ELENA_::SourceIterator it = _sources.start(); !it.Eof(); it++) {
          _ELENA_::Map<_ELENA_::ident_t, _ELENA_::ProjectSettings::VItem>* source = *it;

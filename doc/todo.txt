@@ -3,8 +3,25 @@ In development:
 ------         
 
   [development]
-    * derivationtree - simplify
+    * fields
+
+    * fields intializer
+    * template based types
+
+    * property explicit / implicit
+    * property get
+    * property set
+
     * uncomment all code
+    * uncomment compileResendExpression, compileDispatchExpression, compileDispatcher, compileMultidispatch
+    * uncomment fieldinit routines, yield methods
+
+    * derivation template attributes
+    * compiler template attributes
+
+    * template based classes
+    * arrays
+    * statement operands
 
     * new symbol, new class, ops, templates, 		
                                                        	
@@ -20,7 +37,7 @@ In development:
     * by default always allocate 4 variables, assigning argument list - could we do it only once for a whole statement?
     * support 16 byte stack alignment for x86-64, get rid of current temporal solution
     * idle typecast method should simply return itself
-
+    * optimize generated code : assigning, boxing, returning
 
     + mixings ruby style
     * compilerx - use cdelc calling convention

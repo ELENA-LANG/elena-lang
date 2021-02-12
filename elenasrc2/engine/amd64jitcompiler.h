@@ -160,6 +160,7 @@ protected:
    friend void compileElseE(int opcode, I64JITScope& scope);
    friend void compileDOrN(int opcode, I64JITScope& scope);
    friend void compileSaveLen(int op, I64JITScope& scope);
+   friend void compilePop(int op, I64JITScope& scope);
 
    // preloaded command set
    void* _inlines[0x100];
@@ -292,6 +293,7 @@ void compileIfCount(int opcode, I64JITScope& scope);
 void compileElseE(int opcode, I64JITScope& scope);
 void compileDOrN(int opcode, I64JITScope& scope);
 void compileSaveLen(int op, I64JITScope& scope);
+void compilePop(int op, I64JITScope& scope);
 
 } // _ELENA_
 
