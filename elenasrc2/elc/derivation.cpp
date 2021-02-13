@@ -489,22 +489,22 @@ void DerivationWriter :: raiseWarning(int level, ident_t msg, SNode node)
    _scope->raiseWarning(level, msg, "<not defined>", node);
 }
 
-//void DerivationWriter :: appendFilePath(SNode node, IdentifierString& path)
-//{
-//   SNode parentNode = node.parentNode();
-//   while (parentNode != lxNone) {
-//      if (parentNode == lxNamespace && parentNode.existChild(lxSourcePath)) {
-//         path.append(parentNode.findChild(lxSourcePath).identifier());
-//
-//         return;
-//      }
-//
-//      parentNode = parentNode.parentNode();
-//   }
-//
-//   path.append("<not defined>");
-//}
-//
+void DerivationWriter :: appendFilePath(SNode node, IdentifierString& path)
+{
+   SNode parentNode = node.parentNode();
+   while (parentNode != lxNone) {
+      if (parentNode == lxNamespace && parentNode.existChild(lxSourcePath)) {
+         path.append(parentNode.findChild(lxSourcePath).identifier());
+
+         return;
+      }
+
+      parentNode = parentNode.parentNode();
+   }
+
+   path.append("<not defined>");
+}
+
 //void DerivationWriter :: declareAttribute(SNode node)
 //{
 //   ident_t name = node.findChild(lxIdentifier).identifier();
@@ -722,7 +722,7 @@ void DerivationWriter :: recognizeClassMembers(SNode node)
 
             recognizeMethodMembers(current);
          }
-         else if (current.firstChild()/*.compare(lxSizeDecl, lxFieldInit, lxFieldAccum, */ == lxNone/*)*/) {
+         else if (current.firstChild().compare(/*lxSizeDecl, */lxFieldInit, /*lxFieldAccum, */lxNone)) {
             // if it is a field
             current = lxClassField;
             //mode = MODE_PROPERTYALLOWED;
@@ -827,9 +827,9 @@ void DerivationWriter :: flushSymbolTree(SyntaxWriter& writer, SNode node, Scope
 
    flushExpressionTree(writer, node.findChild(lxExpression), derivationScope);
 
-//   if (!buffer.isEmpty())
-//      SyntaxTree::copyNode(writer, buffer.readRoot());
-//
+   if (!buffer.isEmpty())
+      SyntaxTree::copyNode(writer, buffer.readRoot());
+
    writer.closeNode();
 }
 
@@ -893,7 +893,7 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
          /*else */if (current == lxClassMethod) {
             flushMethodTree(writer, current, derivationScope, /*false, current.argument == MODE_PROPERTYMETHOD, */buffer);
          }
-         else if (current == lxClassField/* || current == lxFieldInit*/) {
+         else if (current.compare(lxClassField, lxFieldInit)) {
             flushFieldTree(writer, current, derivationScope, buffer);
          }
 //         else if (current == lxClassProperty) {
@@ -902,9 +902,9 @@ void DerivationWriter :: flushClassTree(SyntaxWriter& writer, SNode node, Scope&
          current = current.nextNode();
       }
 
-//      if (!buffer.isEmpty()) {
-//         SyntaxTree::copyNode(writer, buffer.readRoot());
-//      }
+      if (!buffer.isEmpty()) {
+         SyntaxTree::copyNode(writer, buffer.readRoot());
+      }
 //   }
 //
 //   if (nested)
@@ -1025,10 +1025,10 @@ void DerivationWriter :: flushAttributes(SyntaxWriter& writer, SNode node, Scope
    }
 }
 
-//inline bool isInitializerPrefix(SNode current)
-//{
-//   return current == lxAttribute && (current.argument == V_MEMBER || current.argument == V_META);
-//}
+inline bool isInitializerPrefix(SNode current)
+{
+   return current == lxAttribute && (current.argument == V_MEMBER || current.argument == V_META);
+}
 
 inline void checkFieldPropAttributes(SNode node, bool& isPropertyTemplate, bool& isInitializer)
 {
@@ -1037,9 +1037,9 @@ inline void checkFieldPropAttributes(SNode node, bool& isPropertyTemplate, bool&
       //if (current == lxAttribute && current.argument == V_PROPERTY) {
       //   isPropertyTemplate = true;
       //}
-      //else if (isInitializerPrefix(current)) {
-      //   isInitializer = true;
-      //}
+      /*else */if (isInitializerPrefix(current)) {
+         isInitializer = true;
+      }
 
       current = current.prevNode();
    }
@@ -1146,60 +1146,60 @@ void DerivationWriter :: flushFieldTree(SyntaxWriter& writer, SNode node, Scope&
       writer.closeNode();
    }
 
-   //// copy inplace initialization
-   //SNode bodyNode = node.findChild(lxFieldInit, lxFieldAccum);
-   //if (bodyNode != lxNone) {
-   //   SyntaxWriter bufferWriter(buffer);
-   //   if (buffer.isEmpty()) {
-   //      // HOTFIX : create a root node
-   //      bufferWriter.newNode(lxRoot);
-   //   }
-   //   else bufferWriter.findRoot();
+   // copy inplace initialization
+   SNode bodyNode = node.findChild(lxFieldInit/*, lxFieldAccum*/);
+   if (bodyNode != lxNone) {
+      SyntaxWriter bufferWriter(buffer);
+      if (buffer.isEmpty()) {
+         // HOTFIX : create a root node
+         bufferWriter.newNode(lxRoot);
+      }
+      else bufferWriter.findRoot();
 
-   //   SNode nameNode = node.prevNode();
+      SNode nameNode = node.prevNode();
 
-   //   bufferWriter.newNode(lxFieldInit);
+      bufferWriter.newNode(lxFieldInit, /*bodyNode == lxFieldAccum ? -1 : */0);
+      bufferWriter.newNode(lxAssigningExpression);
 
-   //   if (derivationScope.templateMode != stNormal) {
-   //      // HOTFIX : save the template source path
-   //      IdentifierString fullPath(_scope->module->Name());
-   //      fullPath.append('\'');
-   //      appendFilePath(writer.CurrentNode(), fullPath);
+      if (derivationScope.templateMode != stNormal) {
+         // HOTFIX : save the template source path
+         IdentifierString fullPath(_scope->module->Name());
+         fullPath.append('\'');
+         appendFilePath(writer.CurrentNode(), fullPath);
 
-   //      writer.appendNode(lxSourcePath, fullPath.c_str());
-   //      //writer.appendNode(lxTemplate, scope.templateRef);
-   //   }
+         writer.appendNode(lxSourcePath, fullPath.c_str());
+         //writer.appendNode(lxTemplate, scope.templateRef);
+      }
 
-   //   SNode attrNode = nameNode.prevNode();
-   //   if (isInitializerPrefix(attrNode)) {
-   //      // HOTFIX : if the field has scope prefix - copy it as well
-   //      bufferWriter.newNode(lxAttribute, attrNode.argument);
-   //      copyIdentifier(bufferWriter, attrNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
-   //      bufferWriter.closeNode();
-   //   }
+      SNode attrNode = nameNode.prevNode();
+      if (isInitializerPrefix(attrNode)) {
+         // HOTFIX : if the field has scope prefix - copy it as well
+         bufferWriter.newNode(lxAttribute, attrNode.argument);
+         copyIdentifier(bufferWriter, attrNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
+         bufferWriter.closeNode();
+      }
 
-   //   ::copyIdentifier(bufferWriter, nameNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
-   //   
-   //   bufferWriter.appendNode(lxAssign, bodyNode == lxFieldAccum ? -1 : 0);
-
-   //   generateExpressionTree(bufferWriter, bodyNode.findChild(lxExpression), derivationScope);
-   //   bufferWriter.closeNode();
-   //}
+      ::copyIdentifier(bufferWriter, nameNode.firstChild(lxTerminalMask), derivationScope.ignoreTerminalInfo);
+      
+      flushExpressionTree(bufferWriter, bodyNode.findChild(lxExpression), derivationScope);
+      bufferWriter.closeNode();
+      bufferWriter.closeNode();
+   }
 }
 
 void DerivationWriter :: flushMethodTree(SyntaxWriter& writer, SNode node, Scope& derivationScope, /*bool functionMode, 
    bool propertyMode, */SyntaxTree& buffer)
 {
    writer.newNode(lxClassMethod);
-//   if (derivationScope.templateMode != stNormal) {
-//      // HOTFIX : save the template source path
-//      IdentifierString fullPath(_scope->module->Name());
-//      fullPath.append('\'');
-//      appendFilePath(writer.CurrentNode(), fullPath);
-//
-//      writer.appendNode(lxSourcePath, fullPath.c_str());
-//   }
-//
+   if (derivationScope.templateMode != stNormal) {
+      // HOTFIX : save the template source path
+      IdentifierString fullPath(_scope->module->Name());
+      fullPath.append('\'');
+      appendFilePath(writer.CurrentNode(), fullPath);
+
+      writer.appendNode(lxSourcePath, fullPath.c_str());
+   }
+
 //   if (propertyMode) {
 //      writer.appendNode(lxAttribute, V_GETACCESSOR);
 //   }

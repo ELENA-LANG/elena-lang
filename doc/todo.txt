@@ -3,9 +3,9 @@ In development:
 ------         
 
   [development]
-    * fields
+    * Object class
 
-    * fields intializer
+    * template
     * template based types
 
     * property explicit / implicit
@@ -13,7 +13,7 @@ In development:
     * property set
 
     * uncomment all code
-    * uncomment compileResendExpression, compileDispatchExpression, compileDispatcher, compileMultidispatch
+    * uncomment compileResendExpression, compileDispatchExpression, compileDispatcher, compileMultidispatch, matchTriePatterns
     * uncomment fieldinit routines, yield methods
 
     * derivation template attributes

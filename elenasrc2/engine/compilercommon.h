@@ -619,11 +619,11 @@ public:
    };
 
 //   virtual int defineStackSafeAttrs(_ModuleScope& scope, mssg_t message) = 0;
-//
-//   virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message,
-//      ChechMethodInfo& result, bool resolveProtected) = 0;
-//   virtual int checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result,
-//      bool resolveProtected) = 0;
+
+   virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message,
+      ChechMethodInfo& result, bool resolveProtected) = 0;
+   virtual int checkMethod(ClassInfo& info, mssg_t message, ChechMethodInfo& result,
+      bool resolveProtected) = 0;
 
    // retrieve the class info / size
    virtual bool __fastcall defineClassInfo(_ModuleScope& scope, ClassInfo& info, ref_t reference, bool headerOnly = false) = 0;

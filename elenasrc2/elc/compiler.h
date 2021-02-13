@@ -346,10 +346,10 @@ private:
          else return Scope::getScope(level);
       }
 
-//      void defineConstantSymbol(ref_t reference, ref_t classReference)
-//      {
-//         constantHints.add(reference, classReference);
-//      }
+      void defineConstantSymbol(ref_t reference, ref_t classReference)
+      {
+         constantHints.add(reference, classReference);
+      }
 
       virtual void raiseError(const char* message)
       {
@@ -441,7 +441,7 @@ private:
       bool        classClassMode;
       bool        abstractMode;
       bool        abstractBaseMode;
-//      bool        withInitializers;
+      bool        withInitializers;
 //      bool        extensionDispatcher;
 
       ObjectInfo mapField(ident_t identifier, EAttr scopeMode);
@@ -749,12 +749,12 @@ private:
          return scope ? scope->getReturningRef() : 0;
       }
 
-//      ref_t getClassRefId(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-//
-//         return scope ? scope->reference : 0;
-//      }
+      ref_t getClassRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+
+         return scope ? scope->reference : 0;
+      }
 
       ref_t __fastcall getClassFlags(bool ownerClass = true)
       {
@@ -835,14 +835,14 @@ private:
 //      
 //         return scope ? scope->message : 0;
 //      }
-//
-//      ref_t getClassRefId(bool ownerClass = true)
-//      {
-//         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
-//      
-//         return scope ? scope->reference : 0;
-//      }
-//
+
+      ref_t getClassRefId(bool ownerClass = true)
+      {
+         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
+      
+         return scope ? scope->reference : 0;
+      }
+
 //      ref_t getAttribute(mssg_t message, MethodAttribute attr, bool ownerClass = true)
 //      {
 //         ClassScope* scope = (ClassScope*)getScope(ownerClass ? ScopeLevel::slOwnerClass : ScopeLevel::slClass);
@@ -980,16 +980,16 @@ private:
    void writeMessageInfo(SyntaxWriter& writer, _ModuleScope& scope, mssg_t messageRef);
    void initialize(ClassScope& scope, MethodScope& methodScope);
 
-//   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, mssg_t message,
-//      bool ignoreSelf = false);
-//
-//   int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message)
-//   {
-//      _CompilerLogic::ChechMethodInfo dummy;
-//
-//      return _logic->checkMethod(scope, reference, message, dummy, false);
-//   }
-//
+   ref_t resolveMessageOwnerReference(_ModuleScope& scope, ClassInfo& classInfo, ref_t reference, mssg_t message,
+      bool ignoreSelf = false);
+
+   int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message)
+   {
+      _CompilerLogic::ChechMethodInfo dummy;
+
+      return _logic->checkMethod(scope, reference, message, dummy, false);
+   }
+
 //   int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message, ref_t& protectedRef)
 //   {
 //      _CompilerLogic::ChechMethodInfo dummy;
@@ -1013,7 +1013,7 @@ private:
 
    ref_t resolveReferenceTemplate(_CompileScope& scope, ref_t operandRef, bool declarationMode);
 
-//   ref_t resolveConstantObjectReference(_CompileScope& scope, ObjectInfo object);
+   ref_t resolveConstantObjectReference(_CompileScope& scope, ObjectInfo object);
    ref_t __fastcall resolveObjectReference(_CompileScope& scope, ObjectInfo object, bool noPrimitivesMode, 
       bool unboxWrapper = true);
 
@@ -1021,7 +1021,7 @@ private:
       bool declarationMode, bool extensionAllowed);
    ref_t resolveTypeIdentifier(Scope& scope, SNode terminal, bool declarationMode, bool extensionAllowed);
 
-//   ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
+   ref_t resolveConstant(ObjectInfo retVal, ref_t& parentRef);
    ref_t generateConstant(_CompileScope& scope, ObjectInfo retVal);
 
 //   void saveExtension(ClassScope& scope, mssg_t message, bool internalOne);
@@ -1037,7 +1037,7 @@ private:
 
    // NOTE : the method is used to set template pseudo variable
    void declareProcedureDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope, bool withSelf, bool withTargetSelf);
-//   void declareCodeDebugInfo(SNode node, MethodScope& scope);
+   void declareCodeDebugInfo(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
    int resolveSize(SNode node, Scope& scope);
    ref_t resolveParentRef(SNode node, Scope& moduleScope, bool silentMode);
@@ -1141,7 +1141,7 @@ private:
 
    ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
 
-   void writeTerminal(SyntaxWriter& writer, ObjectInfo objectInfo);
+   void writeTerminal(SyntaxWriter& writer, ObjectInfo objectInfo, ExprScope& scope);
 
    ObjectInfo compileObject(SyntaxWriter& writer, SNode& node, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileExpression(SNode node, ExprScope& scope, ObjectInfo objectInfo, ref_t targetRef, EAttr mode);
@@ -1158,13 +1158,13 @@ private:
 //   void compileEmbeddableRetExpression(SNode node, ExprScope& scope);
 //
 //   ObjectInfo compileSubCode(SNode thenNode, ExprScope& scope, bool branchingMode, bool& withRetStatement);
-//
-//   bool recognizeCompileTimeAssigning(SNode node, ClassScope& scope);
-//   void compileCompileTimeAssigning(SNode node, ClassScope& scope);
-//   void compileStaticAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*//*, int mode*/);
-//   void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope, bool accumulatorMode);
-//   void compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope);
-//
+
+   bool recognizeCompileTimeAssigning(SNode node, ClassScope& scope);
+   void compileCompileTimeAssigning(SNode node, ClassScope& scope);
+   void compileStaticAssigning(SNode node, ClassScope& scope/*, int mode*/);
+   void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/);
+   void compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope);
+
 //   ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t expectedRef,
 //      EAttr mode, bool propMode);
 //
@@ -1212,8 +1212,8 @@ private:
    void compileMethod(SyntaxWriter& writer, SNode node, MethodScope& scope);
 //   void compileAbstractMethod(SNode node, MethodScope& scope);
    void compileConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope, ClassScope& classClassScope);
-//   void compileInitializer(SNode node, MethodScope& scope);
-//
+   void compileInitializer(SyntaxWriter& writer, SNode node, MethodScope& scope);
+
 //   void compileYieldDispatch(SNode node, MethodScope& scope);
 ////   void compileYieldEnd(SyntaxWriter& writer, int index);
 //   void compileYieldableMethod(SNode node, MethodScope& scope);
@@ -1222,7 +1222,7 @@ private:
 
    void compileDefConvConstructor(SyntaxWriter& writer, SNode node, MethodScope& scope);
 
-//   ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
+   ref_t compileClassPreloadedCode(_ModuleScope& scope, ref_t classRef, SNode node);
 //   void compilePreloadedCode(SymbolScope& scope);
 //   void compilePreloadedExtensionCode(ClassScope& scope);
 //
@@ -1261,7 +1261,7 @@ private:
    void compileClassClassImplementation(SyntaxTree& expressionTree, SNode node, ClassScope& classClassScope, ClassScope& classScope);
    void compileSymbolDeclaration(SNode node, SymbolScope& scope);
    void compileSymbolImplementation(SyntaxTree& expressionTree, SNode node, SymbolScope& scope);
-//   bool compileSymbolConstant(/*SNode node, */SymbolScope& scope, ObjectInfo retVal, bool accumulatorMode, ref_t accumulatorRef);
+   bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal/*, bool accumulatorMode, ref_t accumulatorRef*/);
    void compileSymbolAttribtes(_ModuleScope& scope, ref_t reference, bool publicAttr);
 
 //   ObjectInfo allocateResult(ExprScope& scope, /*bool fpuMode, */ref_t targetRef, ref_t elementRef = 0);
@@ -1272,7 +1272,8 @@ private:
 
 //   void compileExternalArguments(SNode node, ExprScope& scope, SNode callNode);
 
-   void appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int size/*, bool variadic, bool primArray*/, ObjectInfo target, int tempLocal);
+   void appendCopying(SyntaxWriter& writer, /*SNode& copyingNode, */int size/*, bool variadic, bool primArray*/, ObjectInfo target, 
+      ExprScope& scope, int tempLocal);
    void appendCreating(SyntaxWriter& writer/*SNode& assigningNode, SNode objNode, ExprScope& scope, bool insertMode*/, int size,
       ref_t typeRef/*, bool variadic*/);
 
@@ -1282,10 +1283,10 @@ private:
 //   void injectMemberPreserving(SNode node, ExprScope& scope, LexicalType tempType, int tempLocal, 
 //      ObjectInfo member, int memberIndex, int& oriTempLocal);
 //   void injectIndexBoxing(SNode node, SNode objNode, ExprScope& scope);
-//   void analizeCodePatterns(SNode node, NamespaceScope& scope);
+   void analizeCodePatterns(SNode node, NamespaceScope& scope);
 //   void analizeMethod(SNode node, NamespaceScope& scope);
 //   void analizeClassTree(SNode node, ClassScope& scope, bool(*cond)(LexicalType));
-//   void analizeSymbolTree(SNode node, Scope& scope);
+   void analizeSymbolTree(SNode node, Scope& scope);
    ObjectInfo boxArgumentInPlace(SyntaxWriter& writer, SNode boxNode, ObjectInfo target, /*SNode objNode, */ExprScope& scope/*,
       bool localBoxingMode, bool condBoxing*/);
    void boxArgument(SyntaxWriter& writer, SNode boxNode, ObjectInfo& arg, ExprScope& scope/*, bool boxingMode,
@@ -1314,7 +1315,7 @@ private:
    void registerExtensionTemplate(SNode node, NamespaceScope& scope, ref_t extensionRef);
    void registerTemplateSignature(SNode node, NamespaceScope& scope, IdentifierString& signature);
 
-//   bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
+   bool matchTriePatterns(_ModuleScope& scope, SNode& node, SyntaxTrie& trie, List<SyntaxTrieNode>& matchedPatterns);
 //   bool optimizeTriePattern(_ModuleScope& scope, SNode& node, int patternId);
 //   bool optimizeConstProperty(_ModuleScope& scope, SNode& node);
 //   bool optimizeEmbeddable(_ModuleScope& scope, SNode& node/*, bool argMode*/);

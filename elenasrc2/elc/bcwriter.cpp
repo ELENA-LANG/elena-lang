@@ -75,11 +75,11 @@ pos_t ByteCodeWriter :: writeSourcePath(_Module* debugModule, ident_t path)
    else return 0;
 }
 
-//void ByteCodeWriter :: declareInitializer(CommandTape& tape, ref_t reference)
-//{
-//   // symbol-begin:
-//   tape.write(blBegin, bsInitializer, reference);
-//}
+void ByteCodeWriter :: declareInitializer(CommandTape& tape, ref_t reference)
+{
+   // symbol-begin:
+   tape.write(blBegin, bsInitializer, reference);
+}
 
 void ByteCodeWriter :: declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef)
 {
@@ -959,11 +959,11 @@ void ByteCodeWriter :: endSymbol(CommandTape& tape)
    tape.write(blEnd, bsSymbol);
 }
 
-//void ByteCodeWriter :: endInitializer(CommandTape& tape)
-//{
-//   // symbol-end:
-//   tape.write(blEnd, bsInitializer);
-//}
+void ByteCodeWriter :: endInitializer(CommandTape& tape)
+{
+   // symbol-end:
+   tape.write(blEnd, bsInitializer);
+}
 
 void ByteCodeWriter :: endStaticSymbol(CommandTape& tape, ref_t staticReference)
 {
@@ -2167,15 +2167,15 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushfi index
          tape.write(bcPushFI, argument);
          break;
-//      case lxClassRef:
-//         // class
-//         tape.write(bcClass);
-//         tape.write(bcPushA);
-//         break;
-//      case lxLocalAddress:
-//         // pushf n
-//         tape.write(bcPushF, argument << 2);
-//         break;
+      case lxClassRef:
+         // class
+         tape.write(bcClass);
+         tape.write(bcPushA);
+         break;
+      case lxLocalAddress:
+         // pushf n
+         tape.write(bcPushF, argument << 2);
+         break;
 //      case lxBlockLocalAddr:
 //         // pushf n
 //         tape.write(bcPushFIP, argument);
@@ -2188,38 +2188,38 @@ void ByteCodeWriter :: pushObject(CommandTape& tape, LexicalType type, ref_t arg
          // pushai index
          tape.write(bcPushAI, argument);
          break;
-//      case lxStaticConstField:
-////         if ((int)argument > 0) {
-////            // aloadr r
-////            // pusha
-////            tape.write(bcALoadR, argument | mskStatSymbolRef);
-////            tape.write(bcPushA);
-////         }
-////         else {
-//         loadObject(tape, type, argument, scope, 0);
-//         tape.write(bcPushA);
-////            // aloadai -offset
-////            // pusha
-////            tape.write(bcALoadAI, argument);
-////            tape.write(bcPushA);
-////         }
-//         break;
-//      case lxStaticField:
-////         if ((int)argument > 0) {
-//            // peekr r
+      case lxStaticConstField:
+//         if ((int)argument > 0) {
+//            // aloadr r
 //            // pusha
-//            loadObject(tape, type, argument, scope, 0);
+//            tape.write(bcALoadR, argument | mskStatSymbolRef);
 //            tape.write(bcPushA);
-////         }
-////         else {
-////            // aloadai -offset
-////            // aloadai 0
-////            // pusha
-////            tape.write(bcALoadAI, argument);
-////            tape.write(bcALoadAI, 0);
-////            tape.write(bcPushA);
-////         }
-//         break;
+//         }
+//         else {
+         loadObject(tape, type, argument, scope, 0);
+         tape.write(bcPushA);
+//            // aloadai -offset
+//            // pusha
+//            tape.write(bcALoadAI, argument);
+//            tape.write(bcPushA);
+//         }
+         break;
+      case lxStaticField:
+//         if ((int)argument > 0) {
+            // peekr r
+            // pusha
+            loadObject(tape, type, argument, scope, 0);
+            tape.write(bcPushA);
+//         }
+//         else {
+//            // aloadai -offset
+//            // aloadai 0
+//            // pusha
+//            tape.write(bcALoadAI, argument);
+//            tape.write(bcALoadAI, 0);
+//            tape.write(bcPushA);
+//         }
+         break;
 ////      case lxBlockLocal:
 ////         // pushfi index
 ////         tape.write(bcPushFI, argument, bpBlock);
@@ -2303,46 +2303,38 @@ void ByteCodeWriter :: loadObject(CommandTape& tape, LexicalType type, ref_t arg
          tape.write(bcGetI, argument);
          scope.clear();
          return;
-//      case lxStaticConstField:
-////         if ((int)argument > 0) {
-////            // aloadr r
-////            tape.write(bcALoadR, argument | mskStatSymbolRef);
-////         }
-////         else {
-//            // geti -offset
-//            tape.write(bcGetI, argument);
-//            //         }
-//         scope.clear();
-//         return;
-//      case lxStaticField:
-////         if ((int)argument > 0) {
-//            // peekr r
-//            tape.write(bcPeekR, argument | mskStatSymbolRef);
-////         }
-////         else {
-////            // aloadai -offset
-////            // aloadai 0
-////            tape.write(bcALoadAI, argument);
-////            tape.write(bcALoadAI, 0);
-////         }
-//         scope.clear();
-//         return;
-////      case lxFieldAddress:
-////         // aloadfi 1
-////         tape.write(bcALoadFI, 1, bpFrame);
-////         break;
-////      case lxBlockLocal:
-////         // aloadfi n
-////         tape.write(bcALoadFI, argument, bpBlock);
-////         break;
+      case lxStaticConstField:
+//         if ((int)argument > 0) {
+//            // aloadr r
+//            tape.write(bcALoadR, argument | mskStatSymbolRef);
+//         }
+//         else {
+            // geti -offset
+            tape.write(bcGetI, argument);
+            //         }
+         scope.clear();
+         return;
+      case lxStaticField:
+//         if ((int)argument > 0) {
+            // peekr r
+            tape.write(bcPeekR, argument | mskStatSymbolRef);
+//         }
+//         else {
+//            // aloadai -offset
+//            // aloadai 0
+//            tape.write(bcALoadAI, argument);
+//            tape.write(bcALoadAI, 0);
+//         }
+         scope.clear();
+         return;
       case lxLocalAddress:
          // acopyf n
          tape.write(bcMovF, argument << 2);
          break;
-//      case lxClassRef:
-//         // class
-//         tape.write(bcClass);
-//         break;
+      case lxClassRef:
+         // class
+         tape.write(bcClass);
+         break;
 //      case lxBlockLocalAddr:
 //         // acopyf n
 //         tape.write(bcMovFIP, argument);
@@ -2375,11 +2367,11 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, LexicalType type, ref_t arg
          // set index
          tape.write(bcSetI, argument);
          break;
-//      case lxStaticField:
-////         if ((int)argument > 0) {
-//            // storer arg
-//            tape.write(bcStoreR, argument | mskStatSymbolRef);
-//         break;
+      case lxStaticField:
+//         if ((int)argument > 0) {
+            // storer arg
+            tape.write(bcStoreR, argument | mskStatSymbolRef);
+         break;
       default:
          throw InternalError("Not yet implemented"); // !! temporal
          break;
@@ -2397,7 +2389,7 @@ void ByteCodeWriter :: saveObject(CommandTape& tape, SNode node)
 void ByteCodeWriter :: loadObject(CommandTape& tape, SNode node, FlowScope& scope, int mode)
 {
    if (test(node.type, lxOpScopeMask)) {
-      generateObject(tape, node, scope);
+      generateObject(tape, node, scope, mode);
    }
    else loadObject(tape, node.type, node.argument, scope, mode);
 }
@@ -3261,50 +3253,50 @@ SyntaxTree::Node ByteCodeWriter :: loadFieldExpression(CommandTape& tape, Syntax
    return current;
 }
 
-//void ByteCodeWriter :: copyToFieldAddress(CommandTape& tape, int size, int argument)
-//{
-//   if ((size & 3) == 0 && (argument & 3) == 0) {
-//      // if it is a dword aligned
-//      tape.write(bcCopyToAI, argument >> 2, size >> 2);
-//   }
-//   else {
-//      tape.write(bcMoveTo, argument, size);
-//   }
-//}
-//
-//void ByteCodeWriter :: copyFieldAddress(CommandTape& tape, int size, int argument, FlowScope& scope)
-//{
-//   if ((size & 3) == 0 && (argument & 3) == 0) {
-//      // if it is a dword aligned
-//      tape.write(bcCopyAI, argument >> 2, size >> 2);
-//   }
-//   else if (size == 2) {
-//      tape.write(bcXLoad, argument);
-//      tape.write(bcAnd, 0xFFFF);
-//      tape.write(bcPeekSI, 0);
-//      tape.write(bcSave);
-//      scope.clear();
-//   }
-//   else if (size == 1) {
-//      tape.write(bcXLoad, argument);
-//      tape.write(bcAnd, 0xFF);
-//      tape.write(bcPeekSI, 0);
-//      tape.write(bcSave);
-//      scope.clear();
-//   }
-//   else {
-//      tape.write(bcMove, argument, size);
-//   }
-//}
-//
-//void ByteCodeWriter :: copyFromLocalAddress(CommandTape& tape, int size, int argument)
-//{
-//   // stack operations are always 4-byte aligned
-//   size = align(size, 4);
-//
-//   // if it is a dword aligned
-//   tape.write(bcCopyF, argument << 2, size >> 2);
-//}
+void ByteCodeWriter :: copyToFieldAddress(CommandTape& tape, int size, int argument)
+{
+   if ((size & 3) == 0 && (argument & 3) == 0) {
+      // if it is a dword aligned
+      tape.write(bcCopyToAI, argument >> 2, size >> 2);
+   }
+   else {
+      tape.write(bcMoveTo, argument, size);
+   }
+}
+
+void ByteCodeWriter :: copyFieldAddress(CommandTape& tape, int size, int argument, FlowScope& scope)
+{
+   if ((size & 3) == 0 && (argument & 3) == 0) {
+      // if it is a dword aligned
+      tape.write(bcCopyAI, argument >> 2, size >> 2);
+   }
+   else if (size == 2) {
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0xFFFF);
+      tape.write(bcPeekSI, 0);
+      tape.write(bcSave);
+      scope.clear();
+   }
+   else if (size == 1) {
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0xFF);
+      tape.write(bcPeekSI, 0);
+      tape.write(bcSave);
+      scope.clear();
+   }
+   else {
+      tape.write(bcMove, argument, size);
+   }
+}
+
+void ByteCodeWriter :: copyFromLocalAddress(CommandTape& tape, int size, int argument)
+{
+   // stack operations are always 4-byte aligned
+   size = align(size, 4);
+
+   // if it is a dword aligned
+   tape.write(bcCopyF, argument << 2, size >> 2);
+}
 
 void ByteCodeWriter :: copyToLocalAddress(CommandTape& tape, int size, int argument)
 {
@@ -3322,52 +3314,52 @@ void ByteCodeWriter :: copyToLocalAddress(CommandTape& tape, int size, int argum
 //   }
 //   else throw InternalError("not yet implemente"); // !! temporal
 //}
-//
-//void ByteCodeWriter :: saveToLocalAddress(CommandTape& tape, int size, int argument)
-//{
-//   switch (size) {
-//      case 1:
-//         tape.write(bcAnd, 0xFF);
-//         break;
-//      case 2:
-//         tape.write(bcAnd, 0xFFFF);
-//         break;
-//      case 4:
-//         break;
-//      default:
-//         throw InternalError("not yet implemente"); // !! temporal
-//   }
-//
-//   // savef arg
-//   tape.write(bcSaveF, argument << 2);
-//}
-//
-//void ByteCodeWriter :: loadFieldAddress(CommandTape& tape, int size, int argument)
-//{
-//   if (size == 4) {
-//      // xload arg
-//      tape.write(bcXLoad, argument);
-//   }
-//   else if (size == 3) {
-//      // xload arg
-//      // and 0FFFFFFh
-//      tape.write(bcXLoad, argument);
-//      tape.write(bcAnd, 0x0FFFFFF);
-//   }
-//   else if (size == 2) {
-//      // xload arg
-//      // and 0FFFFh
-//      tape.write(bcXLoad, argument);
-//      tape.write(bcAnd, 0x0FFFF);
-//   }
-//   else if (size == 1) {
-//      // xload arg
-//      // and 0FFh
-//      tape.write(bcXLoad, argument);
-//      tape.write(bcAnd, 0x0FF);
-//   }
-//   else throw InternalError("not yet implemente"); // !! temporal
-//}
+
+void ByteCodeWriter :: saveToLocalAddress(CommandTape& tape, int size, int argument)
+{
+   switch (size) {
+      case 1:
+         tape.write(bcAnd, 0xFF);
+         break;
+      case 2:
+         tape.write(bcAnd, 0xFFFF);
+         break;
+      case 4:
+         break;
+      default:
+         throw InternalError("not yet implemente"); // !! temporal
+   }
+
+   // savef arg
+   tape.write(bcSaveF, argument << 2);
+}
+
+void ByteCodeWriter :: loadFieldAddress(CommandTape& tape, int size, int argument)
+{
+   if (size == 4) {
+      // xload arg
+      tape.write(bcXLoad, argument);
+   }
+   else if (size == 3) {
+      // xload arg
+      // and 0FFFFFFh
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0x0FFFFFF);
+   }
+   else if (size == 2) {
+      // xload arg
+      // and 0FFFFh
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0x0FFFF);
+   }
+   else if (size == 1) {
+      // xload arg
+      // and 0FFh
+      tape.write(bcXLoad, argument);
+      tape.write(bcAnd, 0x0FF);
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
+}
 
 void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
 {
@@ -3378,40 +3370,40 @@ void ByteCodeWriter :: copyToLocal(CommandTape& tape, int size, int argument)
    tape.write(bcCopyToFI, argument, size >> 2);
 }
 
-//inline bool isAligned(int size)
-//{
-//   return (size & 3) == 0;
-//}
-//
-//void ByteCodeWriter :: saveFieldExpression(CommandTape& tape, SNode dstObj, SNode source, int size, FlowScope& scope)
-//{
-//   SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
-//   if (fieldNode.compare(lxFieldAddress, lxField)) {
-//      generateObject(tape, source, scope, STACKOP_MODE | NOBREAKPOINTS);
-//      loadFieldExpression(tape, dstObj, scope, false);
-//      if (fieldNode == lxField) {
-//         loadObject(tape, fieldNode, scope);
-//
-//         copyToFieldAddress(tape, size, 0);
-//      }
-//      else copyToFieldAddress(tape, size, fieldNode.argument);
-//      releaseStack(tape);
-//   }
-//   else if (fieldNode.compare(lxSelfLocal, lxTempLocal)) {
-//      if (isAligned(size)) {
-//         loadObject(tape, source, scope);
-//         copyToLocal(tape, size, fieldNode.argument);
-//      }
-//      else {
-//         generateObject(tape, source, scope, STACKOP_MODE | NOBREAKPOINTS);
-//         generateObject(tape, dstObj, scope, 0);
-//         copyToFieldAddress(tape, size, 0);
-//         releaseStack(tape);
-//      }
-//   }
-//   else throw InternalError("not yet implemente"); // !! temporal
-//}
-//
+inline bool isAligned(int size)
+{
+   return (size & 3) == 0;
+}
+
+void ByteCodeWriter :: saveFieldExpression(CommandTape& tape, SNode dstObj, SNode source, int size, FlowScope& scope)
+{
+   SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
+   if (fieldNode.compare(lxFieldAddress, lxField)) {
+      generateObject(tape, source, scope, STACKOP_MODE | NOBREAKPOINTS);
+      loadFieldExpression(tape, dstObj, scope, false);
+      if (fieldNode == lxField) {
+         loadObject(tape, fieldNode, scope);
+
+         copyToFieldAddress(tape, size, 0);
+      }
+      else copyToFieldAddress(tape, size, fieldNode.argument);
+      releaseArg(tape);
+   }
+   else if (fieldNode.compare(lxSelfLocal, lxTempLocal)) {
+      if (isAligned(size)) {
+         loadObject(tape, source, scope, NOBREAKPOINTS);
+         copyToLocal(tape, size, fieldNode.argument);
+      }
+      else {
+         generateObject(tape, source, scope, STACKOP_MODE | NOBREAKPOINTS);
+         generateObject(tape, dstObj, scope, 0);
+         copyToFieldAddress(tape, size, 0);
+         releaseArg(tape);
+      }
+   }
+   else throw InternalError("not yet implemente"); // !! temporal
+}
+
 //void ByteCodeWriter :: saveIndexToFieldExpression(CommandTape& tape, SNode dstObj, SNode srcObj, FlowScope& scope)
 //{
 //   SNode fieldNode = loadFieldExpression(tape, dstObj, scope, true);
@@ -3469,13 +3461,13 @@ void ByteCodeWriter :: copyExpression(CommandTape& tape, SNode source, SNode dst
       loadObject(tape, source, scope);
       copyToLocalAddress(tape, size, dstObj.argument);
    }
-   //else if (dstObj == lxFieldExpression) {
-   //   saveFieldExpression(tape, dstObj, source, size, scope);
-   //}
+   else if (dstObj == lxFieldExpression) {
+      saveFieldExpression(tape, dstObj, source, size, scope);
+   }
    else throw InternalError("not yet implemente"); // !! temporal
 }
 
-void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int)
+void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode)
 {
    SNode target;
    SNode source;
@@ -3484,45 +3476,45 @@ void ByteCodeWriter :: generateCopyingExpression(CommandTape& tape, SyntaxTree::
    SNode srcObj = /*source == lxExpression ? source.findSubNodeMask(lxObjectMask) : */source;
    SNode dstObj = target == lxExpression ? target.findSubNodeMask(lxObjectMask) : target;
 
-   //if (srcObj.firstChild() == lxBreakpoint) {
-   //   translateBreakpoint(tape, srcObj.firstChild(), scope);
-   //}
+   if (srcObj.firstChild() == lxBreakpoint && !test(mode, NOBREAKPOINTS)) {
+      translateBreakpoint(tape, srcObj.firstChild(), scope);
+   }
 
-   //if (srcObj == lxLocalAddress && dstObj != lxFieldExpression) {
-   //   loadObject(tape, target, scope);
-   //   copyFromLocalAddress(tape, node.argument, srcObj.argument);
-   //}
-   //else if (srcObj == lxFieldExpression && dstObj != lxFieldExpression) {
-   //   SNode fieldNode = loadFieldExpression(tape, srcObj, scope, true);
-   //   if (fieldNode.compare(lxFieldAddress, lxSelfLocal)) {
-   //      if (dstObj == lxLocalAddress && node.argument <= 4) {
-   //         loadFieldExpression(tape, srcObj, scope, false);
-   //         if (fieldNode == lxFieldAddress) {
-   //            loadFieldAddress(tape, 4, fieldNode.argument);
-   //         }
-   //         else {
-   //            loadObject(tape, fieldNode, scope);
-   //            tape.write(bcLoad);
-   //         }
-   //         saveToLocalAddress(tape, node.argument, dstObj.argument);
-   //      }
-   //      else {
-   //         generateObject(tape, target, scope, STACKOP_MODE | NOBREAKPOINTS);
-   //         loadFieldExpression(tape, srcObj, scope, false);
-   //         if (fieldNode == lxFieldAddress) {
-   //            copyFieldAddress(tape, node.argument, fieldNode.argument, scope);
-   //         }
-   //         else {
-   //            loadObject(tape, fieldNode, scope);
-   //            copyFieldAddress(tape, node.argument, 0, scope);
-   //         }
+   if (srcObj == lxLocalAddress && dstObj != lxFieldExpression) {
+      loadObject(tape, target, scope);
+      copyFromLocalAddress(tape, node.argument, srcObj.argument);
+   }
+   else if (srcObj == lxFieldExpression && dstObj != lxFieldExpression) {
+      SNode fieldNode = loadFieldExpression(tape, srcObj, scope, true);
+      if (fieldNode.compare(lxFieldAddress, lxSelfLocal)) {
+         if (dstObj == lxLocalAddress && node.argument <= 4) {
+            loadFieldExpression(tape, srcObj, scope, false);
+            if (fieldNode == lxFieldAddress) {
+               loadFieldAddress(tape, 4, fieldNode.argument);
+            }
+            else {
+               loadObject(tape, fieldNode, scope);
+               tape.write(bcLoad);
+            }
+            saveToLocalAddress(tape, node.argument, dstObj.argument);
+         }
+         else {
+            generateObject(tape, target, scope, STACKOP_MODE | NOBREAKPOINTS);
+            loadFieldExpression(tape, srcObj, scope, false);
+            if (fieldNode == lxFieldAddress) {
+               copyFieldAddress(tape, node.argument, fieldNode.argument, scope);
+            }
+            else {
+               loadObject(tape, fieldNode, scope);
+               copyFieldAddress(tape, node.argument, 0, scope);
+            }
 
-   //         releaseStack(tape);
-   //      }
-   //   }
-   //   else copyExpression(tape, source, dstObj, node.argument, scope, node == lxCondCopying);
-   //}
-   /*else */copyExpression(tape, source, dstObj, node.argument, scope/*, node == lxCondCopying*/);
+            releaseArg(tape);
+         }
+      }
+      else copyExpression(tape, source, dstObj, node.argument, scope/*, node == lxCondCopying*/);
+   }
+   else copyExpression(tape, source, dstObj, node.argument, scope/*, node == lxCondCopying*/);
 }
 
 //void ByteCodeWriter :: generateIndexLoadingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope&, int)
@@ -4168,6 +4160,8 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 {
    if (node.firstChild() == lxBreakpoint && !test(mode, NOBREAKPOINTS)) {
       translateBreakpoint(tape, node.firstChild(), scope);
+
+      mode |= NOBREAKPOINTS;
    }
 
    bool stackOp = test(mode, STACKOP_MODE);
@@ -4199,7 +4193,7 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
          break;
       case lxCopying:
 //      case lxCondCopying:
-         generateCopyingExpression(tape, node, scope);
+         generateCopyingExpression(tape, node, scope, mode);
          break;
 //      case lxSaving:
 //      case lxFloatSaving:
@@ -4886,23 +4880,23 @@ void ByteCodeWriter :: generateClass(_ModuleScope&, CommandTape& tape, SNode roo
    //tape.clearArguments();
 }
 
-//void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
-//{
-//   FlowScope scope;
-//
-//   declareInitializer(tape, reference);
-//   loadObject(tape, type, argument, scope, 0);
-//   endInitializer(tape);
-//}
-//
-//void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, SNode root)
-//{
-//   FlowScope scope;
-//
-//   declareInitializer(tape, reference);
-//   generateCodeBlock(tape, root, scope);
-//   endInitializer(tape);
-//}
+void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument)
+{
+   FlowScope scope;
+
+   declareInitializer(tape, reference);
+   loadObject(tape, type, argument, scope, 0);
+   endInitializer(tape);
+}
+
+void ByteCodeWriter :: generateInitializer(CommandTape& tape, ref_t reference, SNode root)
+{
+   FlowScope scope;
+
+   declareInitializer(tape, reference);
+   generateCodeBlock(tape, root, scope);
+   endInitializer(tape);
+}
 
 void ByteCodeWriter :: generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathRef)
 {

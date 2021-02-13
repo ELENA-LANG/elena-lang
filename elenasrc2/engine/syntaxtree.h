@@ -62,7 +62,8 @@ enum LexicalType
 //   lxOperator                 = 0x0210F0,
 //   lxStatementDecl            = 0x001100,
 //   lxControlArgs              = 0x001110,
-//   lxFieldInit                = 0x001120,
+   lxFieldInit                = 0x001120,
+   lxStaticFieldInit          = 0x001121,
 //   lxDynamicSizeDecl          = 0x001130,
 //   lxClosureExpr              = 0x001140,
 //   lxInlineDecl               = 0x001150,
@@ -86,6 +87,7 @@ enum LexicalType
    lxMessageExpression        = 0x031230,
    lxReturning                = 0x011240,
    lxClassSymbol              = 0x010250,   // arg - reference
+   lxClassRef                 = 0x010253,
    lxConstantSymbol           = 0x010260,   // arg - reference
    lxCurrent                  = 0x010270,   // arg - offset
    lxConstantInt              = 0x010280,   // arg - reference
@@ -121,6 +123,9 @@ enum LexicalType
    lxImplicitJump             = 0x030330,
    lxNoBody                   = 0x031340,
    lxField                    = 0x010350,   // arg - offset
+   lxFieldAddress             = 0x010351,   // arg - offset
+   lxStaticField              = 0x010352,   // arg - reference   // - lxClassStaticField
+   lxStaticConstField         = 0x010354,
 
    lxCalling_0                = 0x0303A0,   // calling a method, arg - message
    lxCalling_1                = 0x0303A1,
@@ -169,7 +174,6 @@ enum LexicalType
 //   lxNewOperation             = 0x021081,
 //   lxCastOperation            = 0x021082,
 //
-//   lxStaticFieldInit          = 0x001121,
 //
 //   lxTemplateSource           = 0x00201E,
 //   lxVirtualReference         = 0x00201F,
@@ -221,10 +225,6 @@ enum LexicalType
 //   lxRealBoolOp               = 0x0581B6,   // arg - operation id
 //   lxNilOp                    = 0x0581B7,   // arg - operation id
 //   lxRealIntOp                = 0x0581B8,   // arg - operation id
-//   lxFieldAddress             = 0x0181C1,   // arg - offset
-//   lxStaticField              = 0x0181C2,   // arg - reference   // - lxClassStaticField
-//   lxClassRef                 = 0x0181C3,
-//   lxStaticConstField         = 0x0181C4,
 //   lxNewArrOp                 = 0x0581D0,
 //   lxInitializing             = 0x0581E0,
 //   lxCloning                  = 0x0581E1,
@@ -1078,12 +1078,12 @@ public:
 
 //      bool seekUp(LexicalType type);
 //      bool seekUp(LexicalType type1, LexicalType type2);
-//      void findRoot()
-//      {
-//         if (_current == INVALID_REF && !_syntaxTree->isEmpty()) {
-//            _current = 0;
-//         }
-//      }
+      void findRoot()
+      {
+         if (_current == INVALID_REF && !_syntaxTree->isEmpty()) {
+            _current = 0;
+         }
+      }
 
       Node CurrentNode();
 

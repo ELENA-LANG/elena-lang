@@ -124,7 +124,7 @@ class ByteCodeWriter
    void writeSymbol(ref_t reference, ByteCodeIterator& it, _Module* module, _Module* debugModule, bool appendMode);
    void writeClass(ref_t reference, ByteCodeIterator& it, _ModuleScope& scope);
 
-//   void declareInitializer(CommandTape& tape, ref_t reference);
+   void declareInitializer(CommandTape& tape, ref_t reference);
    void declareClass(CommandTape& tape, ref_t reference);
    void declareSymbol(CommandTape& tape, ref_t reference, ref_t sourcePathRef);
    void declareStaticSymbol(CommandTape& tape, ref_t staticReference, ref_t sourcePathRef);
@@ -229,7 +229,7 @@ class ByteCodeWriter
    void endIdleMethod(CommandTape& tape);
    void endClass(CommandTape& tape);
    void endSymbol(CommandTape& tape);
-//   void endInitializer(CommandTape& tape);
+   void endInitializer(CommandTape& tape);
    void endStaticSymbol(CommandTape& tape, ref_t staticReference);
 //   void endSwitchOption(CommandTape& tape);
 //   void endSwitchBlock(CommandTape& tape);
@@ -264,14 +264,14 @@ class ByteCodeWriter
 
    void translateBreakpoint(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope/*, bool ignoreBranching*/);
 
-//   void loadFieldAddress(CommandTape& tape, int size, int argument);
-//   void copyFieldAddress(CommandTape& tape, int size, int argument, FlowScope& scope);
-//   void copyToFieldAddress(CommandTape& tape, int size, int argument);
+   void loadFieldAddress(CommandTape& tape, int size, int argument);
+   void copyFieldAddress(CommandTape& tape, int size, int argument, FlowScope& scope);
+   void copyToFieldAddress(CommandTape& tape, int size, int argument);
    void copyToLocalAddress(CommandTape& tape, int size, int argument);
-//   void saveToLocalAddress(CommandTape& tape, int size, int argument);
+   void saveToLocalAddress(CommandTape& tape, int size, int argument);
 //   void saveToLocal(CommandTape& tape, int size, int argument);
    void copyToLocal(CommandTape& tape, int size, int argument);
-//   void copyFromLocalAddress(CommandTape& tape, int size, int argument);
+   void copyFromLocalAddress(CommandTape& tape, int size, int argument);
 
    void saveObject(CommandTape& tape, LexicalType type, ref_t argument);
    void saveObject(CommandTape& tape, SNode node);
@@ -290,7 +290,7 @@ class ByteCodeWriter
 //
 //   void saveIndexToFieldExpression(CommandTape& tape, SNode dstObj, SNode source, FlowScope& scope);
 //   void saveIndexToObject(CommandTape& tape, SNode dstObj, SNode source, FlowScope& scope, int size);
-//   void saveFieldExpression(CommandTape& tape, SNode dstObj, SNode source, int size, FlowScope& scope);
+   void saveFieldExpression(CommandTape& tape, SNode dstObj, SNode source, int size, FlowScope& scope);
    SyntaxTree::Node loadFieldExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool idleMode);
 
    void copyExpression(CommandTape& tape, SNode source, SNode dstObj, int size, FlowScope& scope/*, bool condCopying*/);
@@ -358,8 +358,8 @@ public:
 
    void generateClass(_ModuleScope& scope, CommandTape& tape, SNode root, ref_t reference, pos_t sourcePathBookmark, 
       bool(*cond)(LexicalType)/*, bool extStackEvenMode*/);
-//   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
-//   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
+   void generateInitializer(CommandTape& tape, ref_t reference, LexicalType type, ref_t argument);
+   void generateInitializer(CommandTape& tape, ref_t reference, SNode root);
    void generateSymbol(CommandTape& tape, SNode root, bool isStatic, pos_t sourcePathBookmark);
    void generateConstantList(SNode node, _Module* module, ref_t reference);
    void generateConstantMember(MemoryWriter& writer, LexicalType type, ref_t argument);
