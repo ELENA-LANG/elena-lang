@@ -3,17 +3,23 @@ In development:
 ------         
 
   [development]
-    * Object class
-
     * template
     * template based types
+    * array types
+    * extensions
+    * template based extensions
+    * parents / class import
 
     * property explicit / implicit
     * property get
     * property set
+    * operators
+    * arrays
+    * declaration attributes
 
     * uncomment all code
-    * uncomment compileResendExpression, compileDispatchExpression, compileDispatcher, compileMultidispatch, matchTriePatterns
+    * uncomment compileResendExpression, compileDispatchExpression, compileDispatcher, compileMultidispatch, matchTriePatterns,
+      resolveMetaConstant, generateDispatching
     * uncomment fieldinit routines, yield methods
 
     * derivation template attributes
@@ -49,6 +55,7 @@ In development:
     + post : mixin instead of mutli-inheritance (lec24) - simple way to include several roles into the class
     + housekeeping - review pipeline
     * migrate all samples to win64
+    + using inline arguments in the code : some ideas
     + compilation speed - Amicable pairs variants
 
     * xforms - set property returns the object itself, redesign the current mode; probably we could return the property value

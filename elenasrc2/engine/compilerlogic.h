@@ -60,9 +60,9 @@ class CompilerLogic : public _CompilerLogic
    bool isSignatureCompatible(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, ref_t* sourceSignatures, size_t len);
    bool isSignatureCompatible(_ModuleScope& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t len);
 
-//   void setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr);
-//   void setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
-//
+   void setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr);
+   void setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr);
+
 //   bool injectImplicitConstructor(_ModuleScope& scope, SNode& node, _Compiler& compiler, ClassInfo& info, ref_t targetRef,
 //      /*ref_t elementRef, */ref_t* signatures, size_t paramCount, int& stackSafeAttr);
 //
@@ -71,7 +71,7 @@ class CompilerLogic : public _CompilerLogic
 //   bool isBoolean(_ModuleScope& scope, ref_t reference);
 
 public:
-//   virtual int defineStackSafeAttrs(_ModuleScope& scope, mssg_t message);
+   virtual int __fastcall defineStackSafeAttrs(_ModuleScope& scope, mssg_t message);
 
    virtual bool isSignatureCompatible(_ModuleScope& scope, mssg_t targetMessage, mssg_t sourceMessage);
 

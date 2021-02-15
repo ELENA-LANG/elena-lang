@@ -138,6 +138,20 @@ void SyntaxWriter :: inject(pos_t position, LexicalType type, ref_t argument, po
    updateBookmarks(_bookmarks, position, _current);
 }
 
+void SyntaxWriter :: replace(pos_t position, LexicalType type, ref_t argument, pos_t strArgRef)
+{
+   _current = position;
+
+   pos_t parent = _syntaxTree->getParent(position);
+   auto node = _syntaxTree->read(parent);
+
+   node.type = type;
+   node.argument = argument;
+   node.strArgument = strArgRef;
+
+   _syntaxTree->save(node);
+}
+
 //void SyntaxWriter :: insert(LexicalType type, ref_t argument, pos_t strArgRef, bool newMode)
 //{
 //   pos_t pos = _syntaxTree->insertChild(_current, type, argument, strArgRef);
@@ -221,6 +235,22 @@ void SyntaxWriter :: closeNode()
 //   }
 //   else return false;
 //}
+
+void SyntaxWriter :: moveToPrevious()
+{
+   pos_t lastChild = _syntaxTree->getChild(_current);
+
+   auto n = _syntaxTree->read(lastChild);
+   auto n2 = _syntaxTree->read(_current);
+
+   pos_t next = _syntaxTree->getNext(lastChild);
+   while (next != INVALID_REF) {
+      lastChild = next;
+      next = _syntaxTree->getNext(lastChild);
+   }
+
+   _current = lastChild;
+}
 
 SyntaxTree::Node SyntaxWriter :: CurrentNode()
 {

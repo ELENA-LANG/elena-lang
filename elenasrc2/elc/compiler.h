@@ -829,12 +829,12 @@ private:
       int newTempLocal();
       int newTempLocalAddress();
 
-//      mssg_t getMessageID()
-//      {
-//         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
-//      
-//         return scope ? scope->message : 0;
-//      }
+      mssg_t getMessageID()
+      {
+         MethodScope* scope = (MethodScope*)getScope(ScopeLevel::slMethod);
+      
+         return scope ? scope->message : 0;
+      }
 
       ref_t getClassRefId(bool ownerClass = true)
       {
@@ -1027,9 +1027,9 @@ private:
 //   void saveExtension(ClassScope& scope, mssg_t message, bool internalOne);
 ////   void saveExtension(NamespaceScope& nsScope, ref_t reference, ref_t extensionClassRef, ref_t message, bool internalOne);
 //   ref_t mapExtension(Scope& scope, mssg_t& messageRef, ref_t implicitSignatureRef, ObjectInfo target, int& stackSafeAttr);
-//
-//   void importCode(SNode node, Scope& scope, ref_t reference, mssg_t message);
-//
+
+   void importCode(SyntaxWriter& writer, SNode node, Scope& scope, ref_t reference, mssg_t message);
+
 //   int defineFieldSize(Scope& scope, int offset);
 
    InheritResult inheritClass(ClassScope& scope, ref_t parentRef, bool ignoreFields, bool ignoreSealed);
@@ -1044,8 +1044,8 @@ private:
 ////   bool isDependentOnNotDeclaredClass(SNode baseNode, Scope& scope);
 
 ////   bool isValidAttributeType(Scope& scope, _CompilerLogic::FieldAttributes& attrs);
-//
-//   void resolveMetaConstant(SNode node);
+
+   void resolveMetaConstant(SNode node);
 
    void compileParentDeclaration(SNode baseNode, ClassScope& scope, ref_t parentRef, bool ignoreFields = false);
    void compileParentDeclaration(SNode node, ClassScope& scope, bool extensionMode);
@@ -1091,7 +1091,7 @@ private:
 //   ObjectInfo compileCollection(SNode objectNode, ExprScope& scope, ObjectInfo target, EAttr mode);
 //
 //   ObjectInfo compileMessageReference(SNode objectNode, ExprScope& scope);
-//   ObjectInfo compileSubjectReference(SNode objectNode, ExprScope& scope, EAttr mode);
+   ObjectInfo compileSubjectReference(SNode objectNode, ExprScope& scope, EAttr mode);
 //   ObjectInfo compileYieldExpression(SNode objectNode, ExprScope& scope, EAttr mode);
 //
 //   void setSuperTerminal(SNode& node, ExprScope& scope, ObjectInfo object, EAttr mode, LexicalType type);
@@ -1133,12 +1133,13 @@ private:
    EAttr declareExpressionAttributes(SyntaxWriter& writer, SNode& node, ExprScope& scope, EAttr mode);
 //
 //   void recognizeTerminal(SNode& node, ObjectInfo info, ExprScope& scope, EAttr mode);
-//
-//   ObjectInfo mapMetaField(ident_t token);
+
+   ObjectInfo mapMetaField(ident_t token);
 
    ObjectInfo mapIntConstant(ExprScope& scope, int value);
    ObjectInfo mapRealConstant(ExprScope& scope, double val);
 
+   ObjectInfo mapTarget(SNode node, ExprScope& scope);
    ObjectInfo mapTerminal(SNode node, ExprScope& scope, EAttr mode);
 
    void writeTerminal(SyntaxWriter& writer, ObjectInfo objectInfo, ExprScope& scope);
@@ -1163,7 +1164,7 @@ private:
    void compileCompileTimeAssigning(SNode node, ClassScope& scope);
    void compileStaticAssigning(SNode node, ClassScope& scope/*, int mode*/);
    void compileClassConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope/*, bool accumulatorMode*/);
-   void compileMetaConstantAssigning(ObjectInfo target, SNode node, ClassScope& scope);
+   void compileMetaConstantAssigning(ObjectInfo target, SNode node, int bookmarkReference, ClassScope& scope);
 
 //   ObjectInfo compileOperation(SNode& node, ExprScope& scope, ObjectInfo objectInfo, ref_t expectedRef,
 //      EAttr mode, bool propMode);
@@ -1325,8 +1326,8 @@ private:
 //   bool optimizeOpDoubleAssigning(_ModuleScope& scope, SNode& node);
 //   bool optimizeBranching(_ModuleScope& scope, SNode& node);
 //   bool optimizeDispatchingExpr(_ModuleScope& scope, SNode& node);
-//
-//   int saveMetaInfo(_ModuleScope& scope, ident_t info);
+
+   int saveMetaInfo(_ModuleScope& scope, ident_t info);
 
    void saveNamespaceInfo(SNode node, NamespaceScope& scope, bool innerMost);
    void declareTemplate(SNode node, NamespaceScope& scope);

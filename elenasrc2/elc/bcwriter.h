@@ -35,25 +35,25 @@ class ByteCodeWriter
       }
    };
 
-//   struct ImportScope
-//   {
-//      _Memory*    section; 
-//      _Module*    sour;
-//      _Module*    dest;
-//
-//      ImportScope()
-//      {
-//         section = NULL;
-//         sour = NULL;
-//         dest = NULL;
-//      }
-//      ImportScope(_Memory* section, _Module* sour, _Module* dest)
-//      {
-//         this->section = section;
-//         this->sour = sour;
-//         this->dest = dest;
-//      }
-//   };
+   struct ImportScope
+   {
+      _Memory*    section; 
+      _Module*    sour;
+      _Module*    dest;
+
+      ImportScope()
+      {
+         section = NULL;
+         sour = NULL;
+         dest = NULL;
+      }
+      ImportScope(_Memory* section, _Module* sour, _Module* dest)
+      {
+         this->section = section;
+         this->sour = sour;
+         this->dest = dest;
+      }
+   };
 
    struct RegScope
    {
@@ -85,7 +85,7 @@ class ByteCodeWriter
       }
    };
 
-//   List<ImportScope> imports;
+   List<ImportScope> imports;
    MemoryDump _strings; // NOTE : all literal constants are copied into this temporal buffer
 
    ByteCode peekNext(ByteCodeIterator it)
@@ -182,19 +182,19 @@ class ByteCodeWriter
    void releaseStack(CommandTape& tape, int count);
    void releaseArg(CommandTape& tape);
    //   void releaseArgList(CommandTape& tape);
-//
-//   void setSubject(CommandTape& tape, ref_t subject);
+
+   void setSubject(CommandTape& tape, ref_t subject);
 
    void callResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode, bool withValidattion = true*/);
    void callVMTResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode*/);
 
 //   void doMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
 //   void doSealedMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message);
-//   void doGenericHandler(CommandTape& tape);
-//   void unboxMessage(CommandTape& tape);
-//   void changeMessageCounter(CommandTape& tape, int arg, int paramCount, int flags);
-//   void resend(CommandTape& tape);
-//   void resendDirectResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message, bool sealedMode);
+   void doGenericHandler(CommandTape& tape);
+   void unboxMessage(CommandTape& tape);
+   void changeMessageCounter(CommandTape& tape, int arg, int paramCount, int flags);
+   void resend(CommandTape& tape);
+   void resendDirectResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message, bool sealedMode);
 //   void callExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
 //   void callLongExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
 //   void callCore(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed);
@@ -303,9 +303,9 @@ class ByteCodeWriter
 //   void generateBoolOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
 //   void generateArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, int mode);
 //   void generateNewArrOperation(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//
-//   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
-//   void generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+
+   void generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
+   void generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
 ////   void generateResending(CommandTape& tape, SyntaxTree::Node node);
 //   void generateMultiDispatching(CommandTape& tape, SyntaxTree::Node node, mssg_t message);
 //   void generateYieldDispatch(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope);
@@ -350,7 +350,7 @@ class ByteCodeWriter
    void generateMethod(CommandTape& tape, SyntaxTree::Node node, ref_t sourcePathRef/*, bool extStackEvenMode*/);
    void generateMethodDebugInfo(CommandTape& tape, SyntaxTree::Node node);
 
-//   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
+   void importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints);
 
 public:
    pos_t writeSourcePath(_Module* debugModule, ident_t path);
@@ -366,12 +366,12 @@ public:
 
    void saveTape(CommandTape& tape, _ModuleScope& scope);
 
-//   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
-//   {
-//      imports.add(ImportScope(section, sour, dest));
-//
-//      return imports.Count();
-//   }
+   int registerImportInfo(_Memory* section, _Module* sour, _Module* dest)
+   {
+      imports.add(ImportScope(section, sour, dest));
+
+      return imports.Count();
+   }
 
 };
 

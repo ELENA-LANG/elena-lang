@@ -1064,15 +1064,15 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* target
    return true;
 }
 
-//int CompilerLogic :: defineStackSafeAttrs(_ModuleScope& scope, mssg_t message)
-//{
-//   ref_t signRef = getSignature(scope, message);
-//   int stackSafeAttr = 0;
-//   setSignatureStacksafe(scope, signRef, stackSafeAttr);
-//
-//   return stackSafeAttr;
-//}
-//
+int CompilerLogic :: defineStackSafeAttrs(_ModuleScope& scope, mssg_t message)
+{
+   ref_t signRef = getSignature(scope, message);
+   int stackSafeAttr = 0;
+   setSignatureStacksafe(scope, signRef, stackSafeAttr);
+
+   return stackSafeAttr;
+}
+
 //bool CompilerLogic :: isMessageCompatibleWithSignature(_ModuleScope& scope, ref_t targetRef, mssg_t targetMessage,
 //   ref_t* sourceSignatures, size_t len, int& stackSafeAttr)
 //{
@@ -1088,39 +1088,39 @@ bool CompilerLogic :: isSignatureCompatible(_ModuleScope& scope, _Module* target
 //   }
 //   else return false;
 //}
-//
-//void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr)
-//{
-//   ref_t targetSignatures[ARG_COUNT];
-//   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
-//   if (len <= 0)
-//      return;
-//
-//   int flag = 1;
-//   for (size_t i = 0; i < len; i++) {
-//      flag <<= 1;
-//
-//      if (isStacksafeArg(scope, targetSignatures[i]))
-//         stackSafeAttr |= flag;
-//   }
-//}
-//
-//void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr)
-//{
-//   ref_t targetSignatures[ARG_COUNT];
-//   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
-//   if (len <= 0)
-//      return;
-//
-//   int flag = 1;
-//   for (size_t i = 0; i < len; i++) {
-//      flag <<= 1;
-//
-//      if (isStacksafeArg(scope, importReference(targetModule, targetSignatures[i], scope.module)))
-//         stackSafeAttr |= flag;
-//   }
-//}
-//
+
+void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (isStacksafeArg(scope, targetSignatures[i]))
+         stackSafeAttr |= flag;
+   }
+}
+
+void CompilerLogic :: setSignatureStacksafe(_ModuleScope& scope, _Module* targetModule, ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (isStacksafeArg(scope, importReference(targetModule, targetSignatures[i], scope.module)))
+         stackSafeAttr |= flag;
+   }
+}
+
 //bool CompilerLogic :: isMethodEmbeddable(_ModuleScope& scope, ref_t reference, mssg_t message)
 //{
 //   ClassInfo info;
@@ -1796,27 +1796,24 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
 //	  case V_ARGARRAY:
 //         attributes.include(EAttr::eaParams);
 //			return true;
-//	  case V_INTERN:
-//         attributes.include(EAttr::eaIntern);
-//         return true;
+     case V_INTERN:
+         attributes.include(EAttr::eaIntern);
+         return true;
 //      case V_LOOP:
 //         attributes.include(EAttr::eaLoop);
 //         return true;
 //      case V_MEMBER:
 //         attributes.include(EAttr::eaMember);
 //         return true;
-//      case V_META:
-//         attributes.include(EAttr::eaMetaField);
-//         return true;
+      case V_META:
+         attributes.include(EAttr::eaMetaField);
+         return true;
 //      case V_SUBJECT:
 //         attributes.include(EAttr::eaSubj);
 //         return true;
 //      case V_MESSAGE:
 //         attributes.include(EAttr::eaMssg);
 //         return true;
-////      case V_GROUP:
-////         attributes.include(EAttr::eaWrap);
-////         return true;
 //      case V_CLASS:
 //         attributes.include(EAttr::eaClass);
 //         return true;

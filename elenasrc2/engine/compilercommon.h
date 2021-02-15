@@ -273,7 +273,7 @@ struct _ModuleScope
    }
 
    virtual _Memory* mapSection(ref_t reference, bool existing) = 0;
-//   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
+   virtual ref_t mapTemplateClass(ident_t ns, ident_t templateName, bool& alreadyDeclared) = 0;
 
    virtual void importClassInfo(ClassInfo& copy, ClassInfo& target, _Module* exporter, bool headerOnly, bool inheritMode,
                                  bool ignoreFields) = 0;
@@ -341,8 +341,8 @@ struct _ModuleScope
    virtual ref_t generateTemplate(ref_t reference, List<SNode>& parameters, ident_t ns, bool declarationMode,
       ExtensionMap* outerExtensionList) = 0;
 //   virtual void generateStatementCode(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
-//   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, 
-//      int bookmark, bool inlineMode) = 0;
+   virtual void generateTemplateProperty(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters, 
+      int bookmark, bool inlineMode) = 0;
    virtual void importClassTemplate(SyntaxWriter& writer, ref_t reference, List<SNode>& parameters) = 0;
 
    virtual void declareNamespace(ident_t name) = 0;
@@ -468,7 +468,7 @@ public:
       eaNone               = 0x00000000000,
       eaNoDebugInfo        = 0x00000000001,
       eaNestedNs           = 0x00000000002,
-//      eaIntern             = 0x00000000004,
+      eaIntern             = 0x00000000004,
       eaModuleScope        = 0x00000000008,
       eaNewOp              = 0x00000000010,
 //      eaSilent             = 0x00000000020,
@@ -483,7 +483,7 @@ public:
 //      eaMember             = 0x00000004000,
 //      eaRef                = 0x00000008000,
 //      eaPropExpr           = 0x00000010000,
-//      eaMetaField          = 0x00000020000,
+      eaMetaField          = 0x00000020000,
 //      eaLoop               = 0x00000040000,
 //      eaExtern             = 0x00000080000,
 //      eaForward            = 0x00000100000,
@@ -618,7 +618,7 @@ public:
       }
    };
 
-//   virtual int defineStackSafeAttrs(_ModuleScope& scope, mssg_t message) = 0;
+   virtual int __fastcall defineStackSafeAttrs(_ModuleScope& scope, mssg_t message) = 0;
 
    virtual int checkMethod(_ModuleScope& scope, ref_t reference, mssg_t message,
       ChechMethodInfo& result, bool resolveProtected) = 0;

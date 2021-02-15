@@ -689,29 +689,21 @@ void ByteCodeWriter :: releaseArg(CommandTape& tape)
 //   tape.releaseLabel();
 //   tape.write(bcPopA);
 //}
-//
-//void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
-//{
-//   // movv subj
-//   tape.write(bcMovV, getAction(subject));
-//}
-//
-////void ByteCodeWriter :: callMethod(CommandTape& tape, int vmtOffset, int paramCount)
-////{
-////   // acallvi offs
-////
-////   tape.write(bcACallVI, vmtOffset);
-////   tape.write(bcFreeStack, 1 + paramCount);
-////}
-//
-//void ByteCodeWriter :: resendDirectResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message, bool sealedMode)
-//{
-//   // jumprm r, m
-//   if (sealedMode) {
-//      tape.write(bcJumpRM, reference | mskVMTMethodAddress, message);
-//   }
-//   else tape.write(bcVJumpRM, reference | mskVMTEntryOffset, message);
-//}
+
+void ByteCodeWriter :: setSubject(CommandTape& tape, ref_t subject)
+{
+   // movv subj
+   tape.write(bcMovV, getAction(subject));
+}
+
+void ByteCodeWriter :: resendDirectResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message, bool sealedMode)
+{
+   // jumprm r, m
+   if (sealedMode) {
+      tape.write(bcJumpRM, reference | mskVMTMethodAddress, message);
+   }
+   else tape.write(bcVJumpRM, reference | mskVMTEntryOffset, message);
+}
 
 void ByteCodeWriter :: callResolvedMethod(CommandTape& tape, ref_t reference, mssg_t message/*, bool invokeMode, bool withValidattion*/)
 {
@@ -731,54 +723,54 @@ void ByteCodeWriter :: callVMTResolvedMethod(CommandTape& tape, ref_t reference,
    tape.write(bcVCallRM, reference | mskVMTEntryOffset, message);
 }
 
-//void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
-//{
-//   // bsredirect
-//
-//   tape.write(bcBSRedirect);
-//}
-//
-//void ByteCodeWriter :: changeMessageCounter(CommandTape& tape, int arg, int paramCount, int flags)
-//{
-//   // ; change param count
-//   // loadf -4
-//   // and ~PARAM_MASK
-//   // orn OPEN_ARG_COUNT
-//
-//   tape.write(bcLoadF, arg);
-//   tape.write(bcAnd, ~ARG_MASK);
-//   tape.write(bcOr, paramCount | flags);
-//}
-//
-//void ByteCodeWriter :: unboxMessage(CommandTape& tape)
-//{
-//   // ; copy the call stack
-//   // mcount
-//   //
-//   // pushn  -1
-//   // movfip -1
-//   // labNextParam:
-//   // dec 1
-//   // push
-//   // elsen labNextParam 0
-//
-//   tape.write(bcMCount);
-//   tape.write(bcPushN, -1);
-//   tape.write(bcMovFIP, -1);
-//   tape.newLabel();
-//   tape.setLabel(true);
-//   tape.write(bcDec, 1);
-//   tape.write(bcPush);
-//   tape.write(bcElseN, baCurrentLabel, 0);
-//   tape.releaseLabel();
-//}
-//
-//void ByteCodeWriter :: resend(CommandTape& tape)
-//{
-//   // jumpvi 0
-//   tape.write(bcJumpVI);
-//}
-//
+void ByteCodeWriter :: doGenericHandler(CommandTape& tape)
+{
+   // bsredirect
+
+   tape.write(bcBSRedirect);
+}
+
+void ByteCodeWriter :: changeMessageCounter(CommandTape& tape, int arg, int paramCount, int flags)
+{
+   // ; change param count
+   // loadf -4
+   // and ~PARAM_MASK
+   // orn OPEN_ARG_COUNT
+
+   tape.write(bcLoadF, arg);
+   tape.write(bcAnd, ~ARG_MASK);
+   tape.write(bcOr, paramCount | flags);
+}
+
+void ByteCodeWriter :: unboxMessage(CommandTape& tape)
+{
+   // ; copy the call stack
+   // mcount
+   //
+   // pushn  -1
+   // movfip -1
+   // labNextParam:
+   // dec 1
+   // push
+   // elsen labNextParam 0
+
+   tape.write(bcMCount);
+   tape.write(bcPushN, -1);
+   tape.write(bcMovFIP, -1);
+   tape.newLabel();
+   tape.setLabel(true);
+   tape.write(bcDec, 1);
+   tape.write(bcPush);
+   tape.write(bcElseN, baCurrentLabel, 0);
+   tape.releaseLabel();
+}
+
+void ByteCodeWriter :: resend(CommandTape& tape)
+{
+   // jumpvi 0
+   tape.write(bcJumpVI);
+}
+
 //void ByteCodeWriter :: callExternal(CommandTape& tape, ref_t functionReference, int paramCount, bool argsToBeFreed)
 //{
 //   int flags = (argsToBeFreed ? baReleaseArgs : 0) | baExternalCall;
@@ -4042,78 +4034,79 @@ void ByteCodeWriter :: generateAssigningExpression(CommandTape& tape, SyntaxTree
 //      }
 //   }
 //}
-//
-//void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
-//{
-//   bool genericResending = node == lxGenericResending;
-//
-//   SNode target = node.findChild(lxCallTarget);
-//   if (!genericResending && node.argument == 0) {
-//      SNode message = node.findChild(lxMessage);
-//      if (isOpenArg(message.argument)) {
-//         // if it is open argument dispatching
-//         openFrame(tape, 1);
-//         tape.write(bcSaveF, -4);
-//
-//         tape.write(bcPushA);
-//
-//         unboxMessage(tape);
-//         changeMessageCounter(tape, -4, 2, VARIADIC_MESSAGE);
-//         loadObject(tape, lxLocal, 1, scope, 0);
-//
-//         callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument/*, false, false*/);
-//
-//         tape.write(bcLoadF, -4);
-//         closeFrame(tape, 1);
-//         tape.write(bcMQuit);
-//      }
-//      else {
-//         tape.write(bcPushD);
-//         setSubject(tape, message.argument);
-//
-//         resendDirectResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument, true);
-//      }
-//   }
-//   else {
-//      SNode current = node.firstChild();
-//      while (current != lxNone) {
-//         if (current == lxNewFrame) {
-//            int reserved = current.findChild(lxReserved).argument;
-//
-//            // new frame
-//            newFrame(tape, 1, reserved, false);
-//
-//            if (genericResending) {
-//               // save message
-//               tape.write(bcSaveF, -4);
-//               
-//               generateExpression(tape, current, scope);
-//
-//               // restore message
-//               tape.write(bcLoadF, -4);
-//            }
-//            else generateExpression(tape, current, scope);
-//
-//            // close frame
-//            closeFrame(tape, 1);
-//         }
-//         else if (test(current.type, lxObjectMask)) {
-//            generateObject(tape, current, scope);
-//         }
-//
-//         current = current.nextNode();
-//      }
-//
-//      if (!genericResending)
-//         tape.write(bcMovM, node.argument);
-//
-//      if (target.argument != 0 && (node.type == lxDirectResending || node.type == lxSDirectResending)) {
-//         resendDirectResolvedMethod(tape, target.argument, node.argument, node.type == lxDirectResending);
-//      }
-//      else resend(tape);
-//   }
-//}
-//
+
+void ByteCodeWriter :: generateResendingExpression(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   bool genericResending = node == lxGenericResending;
+
+   SNode target = node.findChild(lxCallTarget);
+   if (!genericResending && node.argument == 0) {
+      SNode message = node.findChild(lxMessage);
+      if (isOpenArg(message.argument)) {
+         // if it is open argument dispatching
+         openFrame(tape, 1);
+         tape.write(bcAllocI, 1);
+
+         tape.write(bcSaveF, -4);
+         tape.write(bcSaveFI, -1);
+
+         unboxMessage(tape);
+         changeMessageCounter(tape, -4, 2, VARIADIC_MESSAGE);
+         loadObject(tape, lxLocal, 1, scope, 0);
+
+         callResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument/*, false, false*/);
+
+         tape.write(bcLoadF, -4);
+         closeFrame(tape, 1);
+         tape.write(bcQuit);
+      }
+      else {
+         tape.write(bcPushD);
+         setSubject(tape, message.argument);
+
+         resendDirectResolvedMethod(tape, target.argument, target.findChild(lxMessage).argument, true);
+      }
+   }
+   else {
+      SNode current = node.firstChild();
+      while (current != lxNone) {
+         if (current == lxNewFrame) {
+            int reserved = current.findChild(lxReserved).argument;
+
+            // new frame
+            newFrame(tape, 1, reserved, false, true);
+
+            if (genericResending) {
+               // save message
+               tape.write(bcSaveF, -4);
+               
+               generateExpression(tape, current, scope);
+
+               // restore message
+               tape.write(bcLoadF, -4);
+            }
+            else generateExpression(tape, current, scope);
+
+            // close frame
+            closeFrame(tape, 1);
+         }
+         else if (test(current.type, lxObjectMask)) {
+            generateObject(tape, current, scope);
+         }
+
+         current = current.nextNode();
+      }
+
+      if (!genericResending)
+         tape.write(bcMovM, node.argument);
+
+      if (target.argument != 0 && (node.type == lxDirectResending || node.type == lxSDirectResending)) {
+         resendDirectResolvedMethod(tape, target.argument, node.argument, node.type == lxDirectResending);
+      }
+      else resend(tape);
+   }
+}
+
 //void ByteCodeWriter :: generateCondBoxing(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
 //{
 //   SNode step1;
@@ -4289,12 +4282,12 @@ void ByteCodeWriter :: generateObject(CommandTape& tape, SNode node, FlowScope& 
 //      case lxNewArrOp:
 //         generateNewArrOperation(tape, node, scope);
 //         break;
-//      case lxResending:
-//      case lxDirectResending:
-//      case lxSDirectResending:
-//      case lxGenericResending:
-//         generateResendingExpression(tape, node, scope);
-//         break;
+      case lxResending:
+      case lxDirectResending:
+      case lxSDirectResending:
+      case lxGenericResending:
+         generateResendingExpression(tape, node, scope);
+         break;
 ////      case lxDispatching:
 ////         generateDispatching(tape, node);
 ////         break;
@@ -4523,22 +4516,22 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
    }
 }
 
-//void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints)
-//{
-//   ByteCodeIterator it = tape.end();
-//
-//   tape.import(scope.section, true, withBreakpoints);
-//
-//   // goes to the first imported command
-//   it++;
-//
-//   // import references
-//   while (!it.Eof()) {
-//      CommandTape::importReference(*it, scope.sour, scope.dest);
-//      it++;
-//   }
-//}
-//
+void ByteCodeWriter :: importCode(CommandTape& tape, ImportScope& scope, bool withBreakpoints)
+{
+   ByteCodeIterator it = tape.end();
+
+   tape.import(scope.section, true, withBreakpoints);
+
+   // goes to the first imported command
+   it++;
+
+   // import references
+   while (!it.Eof()) {
+      CommandTape::importReference(*it, scope.sour, scope.dest);
+      it++;
+   }
+}
+
 //void ByteCodeWriter :: doMultiDispatch(CommandTape& tape, ref_t operationList, mssg_t message)
 //{
 //   tape.write(bcMTRedirect, operationList | mskConstArray, message);
@@ -4575,32 +4568,19 @@ void ByteCodeWriter :: generateCodeBlock(CommandTape& tape, SyntaxTree::Node nod
 ////   }
 //}
 //
-////void ByteCodeWriter :: generateResending(CommandTape& tape, SyntaxTree::Node node)
-////{
-////   if (node.argument != 0) {
-////      tape.write(bcCopyM, node.argument);
-////
-////      SNode target = node.findChild(lxTarget);
-////      if (target == lxTarget) {
-////         resendResolvedMethod(tape, target.argument, node.argument);
-////      }
-////      else resend(tape);
-////   }
-////}
-//
-//void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
-//{
-//   doGenericHandler(tape);
-//   if (node.argument != 0) {
-//      // if it is a generic dispatcher with the custom target
-//      tape.write(bcPushD);
-//      setSubject(tape, node.argument);
-//      doGenericHandler(tape);
-//      tape.write(bcPopD);
-//   }
-//
-//   generateExpression(tape, node, scope);
-//}
+void ByteCodeWriter :: generateDispatching(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope)
+{
+   doGenericHandler(tape);
+   //if (node.argument != 0) {
+   //   // if it is a generic dispatcher with the custom target
+   //   tape.write(bcPushD);
+   //   setSubject(tape, node.argument);
+   //   doGenericHandler(tape);
+   //   tape.write(bcPopD);
+   //}
+
+   generateExpression(tape, node, scope);
+}
 
 void ByteCodeWriter :: generateCreating(CommandTape& tape, SyntaxTree::Node node, FlowScope& scope, bool fillMode)
 {
@@ -4761,15 +4741,15 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
    SyntaxTree::Node current = node.firstChild();
    while (current != lxNone) {
       switch (current.type) {
-//         case lxDispatching:
-//            exit = true;
-//            if (!open) {
-//               open = true;
-//               exitLabel = false;
-//               declareIdleMethod(tape, node.argument, sourcePathRef);
-//            }
-//            generateDispatching(tape, current, scope);
-//            break;
+         case lxDispatching:
+            exit = true;
+            if (!open) {
+               open = true;
+               exitLabel = false;
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+            }
+            generateDispatching(tape, current, scope);
+            break;
 //         case lxMultiDispatching:
 //         case lxSealedMultiDispatching:
 //            if (!open) {
@@ -4788,15 +4768,15 @@ void ByteCodeWriter :: generateMethod(CommandTape& tape, SyntaxTree::Node node, 
 //                  // open = true;
 //         //            declareIdleMethod(tape, node.argument, sourcePathRef);
 //         //            break;
-//         case lxImporting:
-//            if (!open) {
-//               open = true;
-//
-//               declareIdleMethod(tape, node.argument, sourcePathRef);
-//            }
-//            importCode(tape, *imports.get(current.argument - 1), true);
-//            exit = true; // NOTE : the imported code should already contain an exit command
-//            break;
+         case lxImporting:
+            if (!open) {
+               open = true;
+
+               declareIdleMethod(tape, node.argument, sourcePathRef);
+            }
+            importCode(tape, *imports.get(current.argument - 1), true);
+            exit = true; // NOTE : the imported code should already contain an exit command
+            break;
          case lxNewFrame:
             withNewFrame = true;
             if (!open) {

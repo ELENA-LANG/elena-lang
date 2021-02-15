@@ -20,8 +20,10 @@ enum LexicalType
    lxTerminalMask             = 0x002000,
    lxSubScopeMask             = 0x800000,   // indicates that the bookmark should be created 
    lxSubScopeEndMask          = 0x400000,   // indicates that the special node should be inserted at the bookmark
+   lxPreviousMask             = 0x100000,
    lxObjectMask               = 0x010000,
    lxOpScopeMask              = 0x030000,
+   lxReplaceMask              = 0x200000,
 
    //   lxInvalid                  = -2,
    lxNone                     = 0x000000,
@@ -44,12 +46,15 @@ enum LexicalType
    lxForward                  = 0x00001B,
    lxExtensionTemplate        = 0x00001F,
 
+   lxTemplateSource           = 0x00201E,
+   //   lxVirtualReference         = 0x00201F,
+
    // NOTE : low word should be unique for every key
    lxToken                    = 0x801010,
    lxScope                    = 0x001020,
    //   lxAttributeDecl            = 0x001030,
 //   lxSizeDecl                 = 0x001040,
-//   lxBaseDecl                 = 0x001050,
+   lxBaseDecl                 = 0x001050,
    lxCode                     = 0x001060,
    lxDispatchCode             = 0x001070,
    lxMessage                  = 0x001080,   
@@ -66,8 +71,8 @@ enum LexicalType
    lxStaticFieldInit          = 0x001121,
 //   lxDynamicSizeDecl          = 0x001130,
 //   lxClosureExpr              = 0x001140,
-//   lxInlineDecl               = 0x001150,
-//   lxInlineAttribute          = 0x001160,
+   lxInlineDecl               = 0x001150,
+   lxInlineAttribute          = 0x001160,
 //   lxFieldAccum               = 0x001170,
 //   lxArrOperator              = 0x021180,
 //   lxAttrExpression           = 0x001190,
@@ -81,11 +86,12 @@ enum LexicalType
    lxExpression               = 0x831210,
    lxSeqExpression            = 0x831211,
    lxFieldExpression          = 0x831213,
+   lxCodeExpression           = 0x831215,
    lxNil                      = 0x010220,
    lxResult                   = 0x010230,   // arg - offset
    lxMessageOp                = 0x431230,
    lxMessageExpression        = 0x031230,
-   lxReturning                = 0x011240,
+   lxReturning                = 0x031240,
    lxClassSymbol              = 0x010250,   // arg - reference
    lxClassRef                 = 0x010253,
    lxConstantSymbol           = 0x010260,   // arg - reference
@@ -97,6 +103,7 @@ enum LexicalType
    lxConstantChar             = 0x010284,   // arg - reference
    lxConstantLong             = 0x010285,   // arg - reference
    lxConstantReal             = 0x010286,   // arg - reference
+   lxSubjectConstant          = 0x010288, // arg - reference
    lxNewFrame                 = 0x000290,   // if argument -1 - than with presaved message
    lxVariable                 = 0x0002A0,
    lxIntVariable              = 0x0002A1,
@@ -117,15 +124,23 @@ enum LexicalType
    lxTempLocal                = 0x0102F0,
    lxAssigningOp              = 0x431300,
    lxAssigningExpression      = 0x031300,   
-   lxTokenOp                  = 0x401310,
-   lxTokenArgs                = 0x001310,
+   lxTokenOp                  = 0x601310,
+   lxExprTokenArgs            = 0x701310,
+   lxTokenArgs                = 0x201310,
    lxResendExpression         = 0x031320,
+   lxDispatching              = 0x031321,   // dispatching a message, optional arg - message
    lxImplicitJump             = 0x030330,
    lxNoBody                   = 0x031340,
    lxField                    = 0x010350,   // arg - offset
    lxFieldAddress             = 0x010351,   // arg - offset
    lxStaticField              = 0x010352,   // arg - reference   // - lxClassStaticField
    lxStaticConstField         = 0x010354,
+   lxImporting                = 0x010360,
+
+   lxResending                = 0x031360,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+   lxGenericResending         = 0x031361,   // resending a generic message
+   lxDirectResending          = 0x031362,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
+   lxSDirectResending         = 0x031363,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
 
    lxCalling_0                = 0x0303A0,   // calling a method, arg - message
    lxCalling_1                = 0x0303A1,
@@ -175,19 +190,14 @@ enum LexicalType
 //   lxCastOperation            = 0x021082,
 //
 //
-//   lxTemplateSource           = 0x00201E,
-//   lxVirtualReference         = 0x00201F,
-//
 //   // expression nodes
 //   lxBoxableExpression        = 0x059032,
 //   lxArgBoxableExpression     = 0x059034,
-//   lxCodeExpression           = 0x059035,
 //   lxCondBoxableExpression    = 0x059036,
 //   lxPrimArrBoxableExpression = 0x059037,
 //   lxNestedSeqExpression      = 0x059038,
 //   lxStopper                  = 0x018041,   // used for variadic arguments as a last argument
 //   lxSymbolReference          = 0x058060,
-//   lxImporting                = 0x018090,
 //   lxInlineArgCall            = 0x0580A4,
 //   lxBlockLocalAddr           = 0x018114, // arg - offset
 //   lxByRefAssigning           = 0x058122,
@@ -206,15 +216,9 @@ enum LexicalType
 //   lxNotLessN                 = 0x058167,
 //   lxGreaterN                 = 0x058168,
 //   lxNotGreaterN              = 0x058169,
-//   lxDispatching              = 0x059171,   // dispatching a message, optional arg - message
 //   lxMultiDispatching         = 0x058180,
 //   lxSealedMultiDispatching   = 0x058181,
-//   lxResending                = 0x058190,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
-//   lxGenericResending         = 0x058191,   // resending a generic message
-//   lxDirectResending          = 0x058192,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
-//   lxSDirectResending         = 0x058193,   // resending a message, optional arg - message / -1 (if follow-up operation is available)
 //   lxMessageConstant          = 0x0181A7, // arg - rererence
-//   lxSubjectConstant          = 0x0181A8, // arg - reference
 //   lxExtMessageConstant       = 0x0181A9, // arg -reference
 //   lxOp                       = 0x0581B0,
 //   lxIntOp                    = 0x0581B1,   // arg - operation id
@@ -277,27 +281,27 @@ enum LexicalType
    lxSize                     = 0x000F13,
    lxReserved                 = 0x000F14,
    lxIntValue                 = 0x000F16,   // arg - integer value
-//   lxTemplateIdentParam       = 0x000F17,
+   lxTemplateIdentParam       = 0x000F17,
    lxArrayType                = 0x000F18,
    lxMember                   = 0x000F19,  // a collection member, arg - offset
    lxStaticAttr               = 0x000F1A,
 //   lxEmbeddableAttr           = 0x000F1B,
-//   lxBookmark                 = 0x000F1C,
-//   lxBookmarkReference        = 0x000F1D,
+   lxBookmark                 = 0x000F1C,
+   lxBookmarkReference        = 0x000F1D,
 //   lxInternalRef              = 0x000F1E,
    lxClassName                = 0x000F1F, // arg - identifier
 //   lxIfValue                  = 0x000F20, // arg - reference
 //   lxElseValue                = 0x000F21, // arg - reference
-//   lxTemplateNameParam        = 0x000F22,
+   lxTemplateNameParam        = 0x000F22,
 //   lxEmbeddableMssg           = 0x000F23,
    lxBinarySelf               = 0x000F24, // debug info only
    lxStatConstRef             = 0x000F25, 
    lxStatIndex                = 0x000F26,
 //   lxRetEmbeddableAttr        = 0x000F27,
 //   lxElementType              = 0x000F28, // arg - reference
-//   lxSubjectRef               = 0x000F29, // arg - reference
+   lxSubjectRef               = 0x000F29, // arg - reference
 //   lxLongMode                 = 0x000F2A,
-//   lxDispatchMode             = 0x000F2B,
+   lxDispatchMode             = 0x000F2B,
 };
 
 // --- SyntaxTree ---
@@ -324,18 +328,18 @@ public:
       {
          return tree->read(tree->appendChild(position, nodeType, 0, strOffset));
       }
-//      Node injectStrNode(LexicalType nodeType, int strOffset)
-//      {
-//         pos_t child = tree->getChild(position);
-//         if (child != INVALID_REF) {
-//            return tree->read(tree->injectChild(child, nodeType, 0, strOffset));
-//         }
-//         else return appendStrNode(nodeType, strOffset);
-//      }
-//      Node insertStrNode(LexicalType nodeType, int strOffset)
-//      {
-//         return tree->read(tree->insertChild(position, nodeType, 0, strOffset));
-//      }
+      Node injectStrNode(LexicalType nodeType, int strOffset)
+      {
+         pos_t child = tree->getChild(position);
+         if (child != INVALID_REF) {
+            return tree->read(tree->injectChild(child, nodeType, 0, strOffset));
+         }
+         else return appendStrNode(nodeType, strOffset);
+      }
+      Node insertStrNode(LexicalType nodeType, int strOffset)
+      {
+         return tree->read(tree->insertChild(position, nodeType, 0, strOffset));
+      }
 
    public:
       LexicalType   type;
@@ -697,18 +701,18 @@ public:
          return tree->read(tree->appendChild(position, type, 0, tree->saveStrArgument(argument)));
       }
 
-//      // inject a node in place of the current one
-//      void injectAndReplaceNode(LexicalType type, int argument = 0)
-//      {
-//         refresh();
-//
-//         if (this->strArgument != INVALID_REF) {
-//            injectStrNode(this->type, this->strArgument);
-//         }
-//         else injectNode(this->type, this->argument);
-//
-//         set(type, argument);
-//      }
+      // inject a node in place of the current one
+      void injectAndReplaceNode(LexicalType type, int argument = 0)
+      {
+         refresh();
+
+         if (this->strArgument != INVALID_REF) {
+            injectStrNode(this->type, this->strArgument);
+         }
+         else injectNode(this->type, this->argument);
+
+         set(type, argument);
+      }
 
       // inject a child node between the current one and its children
       Node injectNode(LexicalType type, int argument = 0)
@@ -985,6 +989,7 @@ public:
          }
       }
 
+      void replace(pos_t position, LexicalType type, ref_t argument, pos_t strArgRef);
       void inject(pos_t position, LexicalType type, ref_t argument, pos_t strArgRef);
 //      void insert(LexicalType type, ref_t argument, pos_t strArgRef, bool newMode);
 
@@ -1031,6 +1036,16 @@ public:
       {
          inject(_bookmarks.peek(), type, 0, INVALID_REF);
       }
+
+      void replace(LexicalType type, ref_t argument)
+      {
+         replace(_bookmarks.peek(), type, argument, INVALID_REF);
+      }
+      void replace(LexicalType type)
+      {
+         replace(_bookmarks.peek(), type, 0, INVALID_REF);
+      }
+
       void newNode(LexicalType type, ref_t argument);
 //      void newNode(LexicalType type, int argument)
 //      {
@@ -1084,6 +1099,8 @@ public:
             _current = 0;
          }
       }
+
+      void moveToPrevious();
 
       Node CurrentNode();
 
@@ -1183,16 +1200,11 @@ private:
    void refresh(Node& node);
 
 public:
-////   static void moveNodes(Writer& writer, SyntaxTree& buffer);
    static void copyNode(Writer& writer, LexicalType type, Node owner);
    static void copyNode(Writer& writer, Node node);
    static void copyNode(Node source, Node destination);
 //   static Node insertNodeCopy(Node source, Node destination);
-//   //   static void copyNodeSafe(Node source, Node destination, bool inclusingNode = false);
    static void saveNode(Node node, _Memory* dump, bool includingNode = false);
-////   static void loadNode(Node node, _Memory* dump);
-////
-////   static void copyMatchedNodes(Writer& writer, LexicalType type, Node owner);
 //
 //   static int countNodeMask(Node current, LexicalType mask)
 //   {
